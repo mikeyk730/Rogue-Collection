@@ -50,25 +50,25 @@ setup()
   if (COLS==40) {maxrow = 22; terse = TRUE;}
   expert = terse;
   //Vector CTRL-BREAK to call quit()
-  COFF();
+  //COFF();
   ocb = set_ctrlb(0);
 }
 
 clock_on()
 {
-  extern int _csval, clock(), (*cls_)(), no_clock();
-  int new_vec[2];
+  //extern int _csval, clock(), (*cls_)(), no_clock();
+  //int new_vec[2];
 
-  new_vec[0] = clock;
-  new_vec[1] = _csval;
-  dmain(clk_vec, 2, 0, TICK_ADDR);
-  dmaout(new_vec, 2, 0, TICK_ADDR);
-  cls_ = no_clock;
+  //new_vec[0] = clock;
+  //new_vec[1] = _csval;
+  //dmain(clk_vec, 2, 0, TICK_ADDR);
+  //dmaout(new_vec, 2, 0, TICK_ADDR);
+  //cls_ = no_clock;
 }
 
 no_clock()
 {
-  dmaout(clk_vec, 2, 0, TICK_ADDR);
+  //dmaout(clk_vec, 2, 0, TICK_ADDR);
 }
 
 //returns a seed for a random number generator
@@ -190,30 +190,32 @@ bdos(int fnum, int dxval)
 //newmem - memory allocater - motto: allocate or die trying
 newmem(unsigned int nbytes, int clrflag)
 {
-  char *newaddr;
+  return malloc(nbytes);
+  //char *newaddr;
 
-  newaddr = sbrk(nbytes);
-  if (newaddr==-1) fatal("No Memory");
-  end_mem = newaddr+nbytes;
-  if ((unsigned)end_mem&1) end_mem = sbrk(1);
-  return (newaddr);
+  //newaddr = sbrk(nbytes);
+  //if (newaddr==-1) fatal("No Memory");
+  //end_mem = newaddr+nbytes;
+  //if ((unsigned)end_mem&1) end_mem = sbrk(1);
+  //return (newaddr);
 }
 
 isjr()
 {
-  static int machine = 0;
+  //static int machine = 0;
 
-  if (machine==0) {dmain(&machine, 1, 0xf000, 0xfffe); machine &= 0xff;}
-  return machine==JR;
+  //if (machine==0) {dmain(&machine, 1, 0xf000, 0xfffe); machine &= 0xff;}
+  //return machine==JR;
+   return 0;
 }
 
 swint(int intno, struct sw_regs *rp)
 {
-  extern int _dsval;
+  //extern int _dsval;
 
-  rp->ds = rp->es = _dsval;
-  sysint(intno, rp, rp);
-  return rp->ax;
+  //rp->ds = rp->es = _dsval;
+  //sysint(intno, rp, rp);
+  //return rp->ax;
 }
 
 set_ctrlb(state)

@@ -2,9 +2,10 @@
 //@(#)daemons.c       5.1 (Berkeley) 5/11/82
 
 #include "rogue.h"
+#include "daemons.h"
 
 //doctor: A healing daemon that restores hit points after rest
-doctor()
+void doctor()
 {
   int lv, ohp;
 
@@ -26,13 +27,13 @@ doctor()
 }
 
 //Swander: Called when it is time to start rolling for wandering monsters
-swander()
+void swander()
 {
   daemon(rollwand, 0);
 }
 
 //rollwand: Called to roll to see if a wandering monster starts up
-rollwand()
+void rollwand()
 {
   static int between = 0;
 
@@ -44,14 +45,14 @@ rollwand()
 }
 
 //unconfuse: Release the poor player from his confusion
-unconfuse()
+void unconfuse()
 {
   player.t_flags &= ~ISHUH;
   msg("you feel less confused now");
 }
 
 //unsee: Turn off the ability to see invisible
-unsee()
+void unsee()
 {
   THING *th;
 
@@ -60,7 +61,7 @@ unsee()
 }
 
 //sight: He gets his sight back
-sight()
+void sight()
 {
   if (on(player, ISBLIND))
   {
@@ -72,14 +73,14 @@ sight()
 }
 
 //nohaste: End the hasting
-nohaste()
+void nohaste()
 {
   player.t_flags &= ~ISHASTE;
   msg("you feel yourself slowing down");
 }
 
 //stomach: Digest the hero's food
-stomach()
+void stomach()
 {
   int oldfood, deltafood;
 

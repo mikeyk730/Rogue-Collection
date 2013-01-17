@@ -2,6 +2,8 @@
 //new_level.c 1.4 (A.I. Design) 12/13/84
 
 #include "rogue.h"
+#include "monsters.h"
+#include "potions.h"
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room
@@ -42,8 +44,9 @@ new_level()
     extern int svwin_ds;
 
     reinit = TRUE;
-    if (svwin_ds==-1) {move(maxrow, 0); clrtoeol();}
-    else clear();
+    //if (svwin_ds==-1) {move(maxrow, 0); clrtoeol();}
+    //else 
+       clear();
   }
   implode();
   status();

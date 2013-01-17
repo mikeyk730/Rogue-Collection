@@ -1,6 +1,8 @@
 //Rogue definitions and variable declarations
 //rogue.h      1.4 (AI Design) 12/14/84
 
+#include <string.h>
+
 //Options set for PC rogue
 
 //copy protection
@@ -40,10 +42,22 @@
 
 //MANX C compiler funnies
 
-#define bcopy(a,b)  movmem(&(b),&(a),sizeof(a))
-#define stpchr  index
+#define bcopy(a,b)  memcpy(&(a),&(b),sizeof(b))
+#define stpchr  strchr
+#define setmem(a,b,c) memset(a,c,b)
+#define wsetmem(a,b,c) memset(a,c,b)
+#define putchr putchar
 typedef unsigned char byte;
 typedef unsigned char bool;
+
+void move(int x, int y);
+void beep();
+int csum();
+char curch(); //TODO
+void _halt(); //TODO
+int no_char(); //TODO
+void dmain(char*, int, int, int);
+void dmaout(char*, int, int, int);
 
 //Maximum number of different things
 

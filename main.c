@@ -13,6 +13,9 @@
 //main.c      1.4 (A.I. Design) 11/28/84
 
 #include "rogue.h"
+#include "main.h"
+#include "daemons.h"
+#include "chase.h"
 
 #define is_key(s)  ((*s=='-')||(*s=='/'))
 #define is_char(c1,c2)  ((c1==c2)||((c1+'a'-'A')==c2))
@@ -42,7 +45,7 @@ main(int argc, char **argv)
   epyx_yuck();
   init_ds();
   setenv(ENVFILE);
-  protect(find_drive());
+  //protect(find_drive());
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.  If it ends with "fast" then we disable retrace checking
   if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;
   if ((sl = strlen(s_screen))>=4 && strncmp(&s_screen[sl-4], "fast", 4)==0) do_force = TRUE;
@@ -127,7 +130,7 @@ roll(int number, int sides)
 }
 
 //playit: The main loop of the program.  Loop until the game is over, refreshing things and looking at the proper times.
-playit(char *sname, int bw)
+playit(char *sname)
 {
   if (sname)
   {
@@ -205,7 +208,12 @@ leave()
 }
 
 //fatal: exit with a message
-fatal(char *msg, int arg)
+fatal(char *msg)
+{
+   fatal_arg(msg, 0);
+}
+
+fatal_arg(char *msg, int arg)
 {
   endwin();
   printw(msg, arg);

@@ -2,6 +2,7 @@
 //scrolls.c   1.4 (AI Design) 12/14/84
 
 #include "rogue.h"
+#include "monsters.h"
 
 char *laugh = "you hear maniacal laughter%s.";
 char *in_dist = " in the distance";

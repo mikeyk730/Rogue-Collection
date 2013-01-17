@@ -2,13 +2,14 @@
 //chase.c     1.32    (A.I. Design) 12/12/84
 
 #include "rogue.h"
+#include "chase.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
 coord ch_ret; //Where chasing takes you
 
 //runners: Make all the running monsters move.
-runners()
+void runners()
 {
   THING *tp;
   int dist;
@@ -28,7 +29,7 @@ runners()
 }
 
 //do_chase: Make one thing chase another.
-do_chase(THING *th)
+void do_chase(THING *th)
 {
   int mindist = 32767, i, dist;
   byte sch;
@@ -128,7 +129,7 @@ over:
 
 //see_monst: Return TRUE if the hero can see the monster
 
-see_monst(THING *mp)
+int see_monst(THING *mp)
 {
   if (on(player, ISBLIND)) return FALSE;
   if (on(*mp, ISINVIS) && !on(player, CANSEE)) return FALSE;
@@ -143,7 +144,7 @@ see_monst(THING *mp)
 }
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)
-start_run(coord *runner)
+void start_run(coord *runner)
 {
   THING *tp;
 
@@ -162,7 +163,7 @@ start_run(coord *runner)
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
-chase(THING *tp, coord *ee)
+void chase(THING *tp, coord *ee)
 {
   int x, y;
   int dist, thisdist;

@@ -2,6 +2,7 @@
 //weapons.c   1.4 (AI Design) 12/22/84
 
 #include "rogue.h"
+#include "monsters.h"
 
 #define NONE 100
 
@@ -95,7 +96,7 @@ char *short_name(THING *obj)
     case WEAPON: return w_names[obj->o_which];
     case ARMOR: return a_names[obj->o_which];
     case FOOD: return "food";
-    case POTION: case SCROLL: case AMULET: case STICK: case RING: return index(inv_name(obj, TRUE), ' ')+1;
+    case POTION: case SCROLL: case AMULET: case STICK: case RING: return stpchr(inv_name(obj, TRUE), ' ')+1;
     default: return "bizzare thing";
   }
 }

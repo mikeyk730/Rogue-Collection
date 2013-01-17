@@ -2,6 +2,8 @@
 //slime.c     1.0     (A.I. Design 1.42)      1/17/85
 
 #include "rogue.h"
+#include "slime.h"
+#include "misc.h"
 
 static coord slimy;
 

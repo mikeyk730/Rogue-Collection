@@ -2,6 +2,10 @@
 //misc.c       1.4             (A.I. Design)   12/14/84
 
 #include "rogue.h"
+#include "io.h"
+#include "daemons.h"
+#include "misc.h"
+#include "monsters.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)

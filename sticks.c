@@ -2,6 +2,8 @@
 //@(#)sticks.c1.2 (AI Design) 2/12/84
 
 #include "rogue.h"
+#include "sticks.h"
+#include "monsters.h"
 
 //fix_stick: Set up a new stick
 fix_stick(THING *cur)

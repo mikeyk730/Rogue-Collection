@@ -2,6 +2,7 @@
 //io.c         1.4             (A.I. Design) 12/10/84
 
 #include "rogue.h"
+#include "io.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)

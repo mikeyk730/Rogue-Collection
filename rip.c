@@ -2,6 +2,7 @@
 //rip.c        1.4 (A.I. Design)       12/14/84
 
 #include "rogue.h"
+#include "rip.h"
 
 static int sc_fd;
 

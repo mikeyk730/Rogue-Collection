@@ -2,6 +2,7 @@
 //wizard.c    1.4 (AI Design) 12/14/84
 
 #include "rogue.h"
+#include "daemons.h"
 
 //whatis: What a certain object is
 whatis()

@@ -24,6 +24,7 @@ add_pack(THING *obj, bool silent)
   {
     from_floor = TRUE;
     if ((obj = find_obj(hero.y, hero.x))==NULL) return;
+    floor = (proom->r_flags&ISGONE)?PASSAGE:FLOOR;
   }
   else from_floor = FALSE;
   //Link it into the pack.  Search the pack for a object of similar type
@@ -33,7 +34,7 @@ add_pack(THING *obj, bool silent)
   //is not ordered so that you can't tell good food from bad.  First check
   //to see if there is something in the same group and if there is then
   //increment the count.
-  floor = (proom->r_flags&ISGONE)?PASSAGE:FLOOR;
+
   if (obj->o_group)
   {
     for (op = pack; op!=NULL; op = next(op))
@@ -108,7 +109,7 @@ add_pack(THING *obj, bool silent)
   }
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
-  for (op = mlist; op!=NULL; op = next(op)) if ((op->t_dest->x==obj->o_pos.x) && (op->t_dest->y==obj->o_pos.y)) op->t_dest = &hero;
+  //for (op = mlist; op!=NULL; op = next(op)) if ((op->t_dest->x==obj->o_pos.x) && (op->t_dest->y==obj->o_pos.y)) op->t_dest = &hero;
   if (obj->o_type==AMULET) {amulet = TRUE; saw_amulet = TRUE;}
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));

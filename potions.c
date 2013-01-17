@@ -2,6 +2,8 @@
 //potions.c   1.4 (AI Design) 2/12/84
 
 #include "rogue.h"
+#include "daemons.h"
+#include "potions.h"
 
 //quaff: Quaff a potion from the pack
 quaff()

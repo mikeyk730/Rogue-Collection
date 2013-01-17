@@ -2,6 +2,8 @@
 //command.c   1.44    (A.I. Design)   2/14/85
 
 #include "rogue.h"
+#include "daemons.h"
+#include "command.h"
 
 static int lastcount;
 static byte lastch, do_take, lasttake;

@@ -2,6 +2,7 @@
 //move.c      1.4 (A.I. Design)       12/22/84
 
 #include "rogue.h"
+#include "move.h"
 
 //Used to hold the new hero position
 coord nh;

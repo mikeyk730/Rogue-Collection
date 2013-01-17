@@ -78,8 +78,9 @@ byte spc_box[BX_SIZE] = {0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
 //clear screen
 clear()
 {
-  if (scr_ds==svwin_ds) wsetmem(savewin, LINES*COLS, 0x0720);
-  else blot_out(0, 0, LINES-1, COLS-1);
+  //if (scr_ds==svwin_ds) wsetmem(savewin, LINES*COLS, 0x0720);
+  //else
+     blot_out(0, 0, LINES-1, COLS-1);
 }
 
 //Turn cursor on and off
@@ -128,7 +129,7 @@ clrtoeol()
 {
   int r, c;
 
-  if (scr_ds==svwin_ds) return;
+  //if (scr_ds==svwin_ds) return;
   getrc(&r, &c);
   blot_out(r, c, r, COLS-1);
 }
@@ -148,7 +149,7 @@ mvaddch(int r, int c, char chr)
 mvinch(int r, int c)
 {
   move(r, c);
-  return (curch()&0xff);
+  return (inch());
 }
 
 //put the character on the screen and update the character position
@@ -250,48 +251,48 @@ set_cursor()
 winit(char drive)
 {
   int i, cnt;
-  extern int _dsval;
+  //extern int _dsval;
 
-  //Get monitor type
-  regs->ax = 15<<8;
-  swint(SW_SCR, regs);
-  old_page_no = regs->bx>>8;
-  scr_type = regs->ax = 0xff&regs->ax;
-  //initialization is any good because restarting game has old values!!! So reassign defaults
+  ////Get monitor type
+  //regs->ax = 15<<8;
+  //swint(SW_SCR, regs);
+  //old_page_no = regs->bx>>8;
+  //scr_type = regs->ax = 0xff&regs->ax;
+  ////initialization is any good because restarting game has old values!!! So reassign defaults
   LINES = 25;
   COLS = 80;
-  scr_ds = 0xB800;
+  //scr_ds = 0xB800;
   at_table = monoc_attr;
-  switch (scr_type)
-  {
-    //It is a TV
-    case 1: at_table = color_attr;
-    case 0: COLS = 40; break;
-    //It's a high resolution monitor
-    case 3: at_table = color_attr;
-    case 2: break;
-    case 7: scr_ds = 0xB000; no_check = TRUE; break;
-    default: move(24, 0); fatal("Unknown screen type (%d)", regs->ax);
-  }
-  //Read current cursor position
-  real_rc(old_page_no, &c_row, &c_col);
-  if ((savewin = sbrk(4096))==-1)
-  {
-    svwin_ds = -1;
-    savewin = (char *)_flags;
-    if (scr_type==7) fatal(no_mem);
-  }
-  else
-  {
-    savewin = (char *)(((int)savewin+0xf)&0xfff0);
-    svwin_ds = (((int)savewin>>4)&0xfff)+_dsval;
-  }
+  //switch (scr_type)
+  //{
+  //  //It is a TV
+  //  case 1: at_table = color_attr;
+  //  case 0: COLS = 40; break;
+  //  //It's a high resolution monitor
+  //  case 3: at_table = color_attr;
+  //  case 2: break;
+  //  case 7: scr_ds = 0xB000; no_check = TRUE; break;
+  //  default: move(24, 0); fatal("Unknown screen type (%d)", regs->ax);
+  //}
+  ////Read current cursor position
+  //real_rc(old_page_no, &c_row, &c_col);
+  //if ((savewin = sbrk(4096))==-1)
+  //{
+  //  svwin_ds = -1;
+  //  savewin = (char *)_flags;
+  //  if (scr_type==7) fatal(no_mem);
+  //}
+  //else
+  //{
+  //  savewin = (char *)(((int)savewin+0xf)&0xfff0);
+  //  svwin_ds = (((int)savewin>>4)&0xfff)+_dsval;
+  //}
   for (i = 0, cnt = 0; i<25; cnt += 2*COLS, i++) scr_row[i] = cnt;
   newmem(2);
   switch_page(3);
   if (old_page_no!=page_no) clear();
   move(c_row, c_col);
-  if (isjr()) no_check = TRUE;
+  //if (isjr()) no_check = TRUE;
 }
 
 forcebw()
@@ -407,11 +408,15 @@ scroll()
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
 blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
-  regs->ax = 0x600;
-  regs->bx = 0x700;
-  regs->cx = (ul_row<<8)+ul_col;
-  regs->dx = (lr_row<<8)+lr_col;
-  swint(SW_SCR, regs);
+   int r, c;
+   for(r = ul_row; r <= lr_row; ++r)
+   {
+      for(c = ul_col; c <= lr_col; ++c)
+      {
+         move(r,c);
+         putchar(' ');
+      }
+   }
   move(ul_row, ul_col);
 }
 
@@ -433,7 +438,7 @@ implode()
 
   er = (COLS==80?LINES-3:LINES-4);
   //If the curtain is down, just clear the memory
-  if (scr_ds==svwin_ds) {wsetmem(savewin, (er+1)*COLS, 0x0720); return;}
+  //if (scr_ds==svwin_ds) {wsetmem(savewin, (er+1)*COLS, 0x0720); return;}
   delay = scr_type==7?500:10;
   for (r = 0, c = 0, ec = COLS-1; r<10; r++, c += cinc, er--, ec -= cinc)
   {
@@ -453,7 +458,7 @@ drop_curtain()
 {
   int r, c, j, delay;
 
-  if (svwin_ds==-1) return;
+  //if (svwin_ds==-1) return;
   old_ds = scr_ds;
   dmain(savewin, LINES*COLS, scr_ds, 0);
   cursor(FALSE);
@@ -467,7 +472,7 @@ drop_curtain()
     repchr(0xb1, COLS-2);
     for (j = delay; j--;) ;
   }
-  scr_ds = svwin_ds;
+  //scr_ds = svwin_ds;
   move(0, 0);
   standend();
 }
@@ -476,7 +481,7 @@ raise_curtain()
 {
   int i, j, o, delay;
 
-  if (svwin_ds==-1) return;
+  //if (svwin_ds==-1) return;
   scr_ds = old_ds;
   delay = (scr_type==7?3000:2000);
   for (i = 0, o = (LINES-1)*COLS*2; i<LINES; i++, o -= COLS*2)

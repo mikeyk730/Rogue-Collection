@@ -2,6 +2,7 @@
 //things.c     1.4 (AI Design) 12/14/84
 
 #include "rogue.h"
+#include "things.h"
 
 #define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
 
@@ -280,7 +281,7 @@ pick_one(struct magic_item *magic, int nitems)
 }
 
 //discovered: list what the player has discovered in this game of a certain type
-discovered()
+void discovered()
 {
   print_disc(POTION);
   add_line(nullstr, " ", 0);
@@ -293,7 +294,7 @@ discovered()
 }
 
 //print_disc: Print what we've discovered of type 'type'
-print_disc(byte type)
+void print_disc(byte type)
 {
   bool *know;
   char **guess;
@@ -324,7 +325,7 @@ print_disc(byte type)
 
 //set_order: Set up order for list
 
-set_order(short *order, int numthings)
+void set_order(short *order, int numthings)
 {
   int i, r, t;
 
@@ -339,7 +340,7 @@ set_order(short *order, int numthings)
 }
 
 //add_line: Add a line to the list of discoveries
-add_line(char *use, char *fmt, char *arg)
+int add_line(char *use, char *fmt, char *arg)
 {
   int x, y;
   int retchar = ' ';
@@ -369,7 +370,7 @@ add_line(char *use, char *fmt, char *arg)
 }
 
 //end_line: End the list of lines
-end_line(char *use)
+int end_line(char *use)
 {
   int retchar;
 

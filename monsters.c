@@ -2,6 +2,8 @@
 //monsters.c  1.4 (A.I. Design)       12/14/84
 
 #include "rogue.h"
+#include "monsters.h"
+#include "daemons.h"
 
 //List of monsters in rough order of vorpalness
 static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";

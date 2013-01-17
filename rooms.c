@@ -2,6 +2,10 @@
 //rooms.c     1.4 (A.I. Design)       12/16/84
 
 #include "rogue.h"
+#include "main.h"
+#include "rooms.h"
+#include "monsters.h"
+#include <ctype.h>
 
 #define GOLDGRP  1
 
