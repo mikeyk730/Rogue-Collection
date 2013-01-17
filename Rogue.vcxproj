@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E26D8B74-2734-44D9-B418-B00E890E4073}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Rogue</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="armor.c" />
+    <ClCompile Include="chase.c" />
+    <ClCompile Include="command.c" />
+    <ClCompile Include="croot.c" />
+    <ClCompile Include="curses.c" />
+    <ClCompile Include="daemon.c" />
+    <ClCompile Include="daemons.c" />
+    <ClCompile Include="env.c" />
+    <ClCompile Include="extern.c" />
+    <ClCompile Include="fakedos.c" />
+    <ClCompile Include="fight.c" />
+    <ClCompile Include="init.c" />
+    <ClCompile Include="io.c" />
+    <ClCompile Include="list.c" />
+    <ClCompile Include="load.c" />
+    <ClCompile Include="mach_dep.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="maze.c" />
+    <ClCompile Include="misc.c" />
+    <ClCompile Include="monsters.c" />
+    <ClCompile Include="move.c" />
+    <ClCompile Include="new_leve.c" />
+    <ClCompile Include="pack.c" />
+    <ClCompile Include="passages.c" />
+    <ClCompile Include="potions.c" />
+    <ClCompile Include="protect.c" />
+    <ClCompile Include="rings.c" />
+    <ClCompile Include="rip.c" />
+    <ClCompile Include="rogue.c" />
+    <ClCompile Include="rooms.c" />
+    <ClCompile Include="save.c" />
+    <ClCompile Include="scrolls.c" />
+    <ClCompile Include="slime.c" />
+    <ClCompile Include="sticks.c" />
+    <ClCompile Include="strings.c" />
+    <ClCompile Include="things.c" />
+    <ClCompile Include="weapons.c" />
+    <ClCompile Include="wizard.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="begin.asm" />
+    <None Include="csav.asm" />
+    <MASM Include="dos.asm">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </MASM>
+    <None Include="fio.asm" />
+    <None Include="oprotec.asm" />
+    <None Include="sbrk.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="zoom.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="chase.h" />
+    <ClInclude Include="command.h" />
+    <ClInclude Include="daemons.h" />
+    <ClInclude Include="io.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="misc.h" />
+    <ClInclude Include="monsters.h" />
+    <ClInclude Include="move.h" />
+    <ClInclude Include="potions.h" />
+    <ClInclude Include="rip.h" />
+    <ClInclude Include="rogue.h" />
+    <ClInclude Include="rooms.h" />
+    <ClInclude Include="slime.h" />
+    <ClInclude Include="sticks.h" />
+    <ClInclude Include="things.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>
