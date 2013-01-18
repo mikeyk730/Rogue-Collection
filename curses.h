@@ -1,5 +1,7 @@
 void clear();
 
+void putchr(int c, int attr);
+
 //Turn cursor on and off
 int cursor(bool ison);
 
@@ -78,9 +80,3 @@ void implode();
 void drop_curtain();
 
 void raise_curtain();
-
-void switch_page(int pn);
-
-int get_mode(int type);
-
-int video_mode(int type);

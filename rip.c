@@ -109,7 +109,6 @@ void pr_scores(int newrank, struct sc_ent *top10)
   char dthstr[30];
   char *altmsg;
 
-  switch_page(old_page_no);
   clear();
   high();
   if (scr_type==7) standout();
@@ -190,7 +189,6 @@ void death(char monst)
 #ifndef DEMO
 
   purse -= purse/10;
-  switch_page(old_page_no);
   clear();
   drop_curtain();
   if (is_color) brown();
@@ -205,12 +203,12 @@ void death(char monst)
   center(22, "___\\/(\\/)/(\\/ \\\\(//)\\)\\/(//)\\\\)//(\\__");
   standend();
   if (scr_type==7) uline();
-  center(14, your_na);
+  center(14, whoami);
   standend();
   killer = killname(monst, TRUE);
   strcpy(buf, "killed by");
   center(15, buf);
-  center(16, kild_by);
+  center(16, killer);
   sprintf(buf, "%u Au", purse);
   center(18, buf);
   regs->ax = 0x2a<<8;
@@ -249,7 +247,6 @@ void total_winner()
   byte c;
   int oldpurse;
 
-  switch_page(old_page_no);
   clear();
 
 #ifdef MINROG

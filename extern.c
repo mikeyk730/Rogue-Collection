@@ -369,8 +369,6 @@ long seed;             //Random number seed
 
 int hit_mul = P_DAMAGE;
 int goodchk = 1;
-char *your_na = "Software Pirate";
-char *kild_by = "Copy Protection Mafia";
 char *_whoami;
 
 //WINDOW *hw; //Used as a scratch window

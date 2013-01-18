@@ -303,8 +303,7 @@ void winit()
     svwin_ds = (((int)savewin>>4)&0xfff)+_dsval;
   }
   for (i = 0, cnt = 0; i<25; cnt += 2*COLS, i++) scr_row[i] = cnt;
-  newmem(2);
-  switch_page(3);
+  
   if (old_page_no!=page_no) clear();
   move(c_row, c_col);
   if (isjr()) no_check = TRUE;
@@ -344,9 +343,7 @@ void wrestor()
 //wclose(): close the window file
 void wclose()
 {
-  //Restore cursor (really you want to restore video state, but be careful)
-  if (scr_type>=0) cursor(TRUE);
-  if (page_no!=old_page_no) switch_page(old_page_no);
+
 }
 
 //Some general drawing routines
@@ -503,36 +500,6 @@ void raise_curtain()
     dmaout(savewin+o, COLS, scr_ds, o);
     for (j = delay; j--;) ;
   }
-}
-
-void switch_page(int pn)
-{
-  int pgsize;
-
-  if (scr_type==7) {page_no = 0; return;}
-  if (COLS==40) pgsize = 2048; else pgsize = 4096;
-  regs->ax = 0x0500|pn;
-  swint(SW_SCR, regs);
-  scr_ds = 0xb800+((pgsize*pn)>>4);
-  page_no = pn;
-}
-
-int get_mode(int type)
-{
-  struct sw_regs regs;
-
-  regs.ax = 0xF00;
-  swint(SW_SCR, &regs);
-  return 0xff&regs.ax;
-}
-
-int video_mode(int type)
-{
-  struct sw_regs regs;
-
-  regs.ax = type;
-  swint(SW_SCR, &regs);
-  return regs.ax;
 }
 
 void move(int y, int x) 
