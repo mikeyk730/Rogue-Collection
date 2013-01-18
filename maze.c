@@ -6,6 +6,7 @@
 #include "main.h"
 #include "misc.h"
 #include "rooms.h"
+#include "io.h"
 
 #define MAXFRNT  100
 #define FRONTIER  'F'

@@ -12,6 +12,7 @@
 #include "move.h"
 #include "chase.h"
 #include "misc.h"
+#include "io.h"
 
 #include <ctype.h>
 
@@ -176,7 +177,7 @@ void enter_room(coord *cp)
   if (bailout || (rp->r_flags&ISGONE && (rp->r_flags&ISMAZE)==0))
   {
 #ifdef DEBUG
-    msg("in a gone room");
+    debug("in a gone room");
 #endif DEBUG
     return;
   }

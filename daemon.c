@@ -3,6 +3,7 @@
 
 #include "rogue.h"
 #include "daemon.h"
+#include "io.h"
 
 #define EMPTY  0
 #define FULL  1

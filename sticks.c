@@ -201,7 +201,7 @@ void do_zap()
     break;
 
 #ifdef DEBUG
-    default: msg("what a bizarre schtick!"); break;
+    default: debug("what a bizarre schtick!"); break;
 #endif
 
   }

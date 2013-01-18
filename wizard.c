@@ -1,6 +1,9 @@
 //Special wizard commands (some of which are also non-wizard commands under strange circumstances)
 //wizard.c    1.4 (AI Design) 12/14/84
 
+#include <ctype.h>
+#include <stdlib.h>
+
 #include "rogue.h"
 #include "daemons.h"
 #include "pack.h"
@@ -16,6 +19,8 @@
 #include "new_leve.h"
 #include "monsters.h"
 #include "mach_dep.h"
+#include "sticks.h"
+#include "weapons.h"
 
 //whatis: What a certain object is
 void whatis()
@@ -66,26 +71,27 @@ void whatis()
 #ifdef WIZARD
 
 //create_obj: Wizard command for getting anything he wants
-create_obj()
+void create_obj()
 {
   THING *obj;
   byte ch, bless;
+  int limit;
 
   if ((obj = new_item())==NULL) {msg("can't create anything now"); return;}
   msg("type of item: ");
   switch (readchar())
   {
-    case '!': obj->o_type = POTION; break;
-    case '?': obj->o_type = SCROLL; break;
-    case '/': obj->o_type = STICK; break;
-    case '=': obj->o_type = RING; break;
-    case ')': obj->o_type = WEAPON; break;
-    case ']': obj->o_type = ARMOR; break;
-    case ',': obj->o_type = AMULET; break;
-    default: obj->o_type = FOOD; break;
+    case '!': obj->o_type = POTION; limit=MAXPOTIONS-1; break;
+    case '?': obj->o_type = SCROLL; limit=MAXSCROLLS-1; break;
+    case '/': obj->o_type = STICK; limit=MAXSTICKS-1; break;
+    case '=': obj->o_type = RING; limit=MAXRINGS-1; break;
+    case ')': obj->o_type = WEAPON; limit=MAXWEAPONS-1; break;
+    case ']': obj->o_type = ARMOR; limit=MAXARMORS-1; break;
+    case ',': obj->o_type = AMULET; limit=0; break;
+    default: obj->o_type = FOOD; limit=1; break;
   }
   mpos = 0;
-  msg("which %c do you want? (0-f)", obj->o_type);
+  msg("which %c do you want? (0-%x)", obj->o_type, limit);
   obj->o_which = (isdigit((ch = readchar()))?ch-'0':ch-'a'+10);
   obj->o_group = 0;
   obj->o_count = 1;
@@ -125,7 +131,7 @@ create_obj()
     break;
   }
   else if (obj->o_type==STICK) fix_stick(obj);
-  else if (obj->o_type==GOLD) {msg("how much?"); get_num(&obj->o_goldval, stdscr);}
+  else if (obj->o_type==GOLD) {msg("how much?"); get_num(&obj->o_goldval);}
   add_pack(obj, FALSE);
 }
 
@@ -162,30 +168,6 @@ int teleport()
   return rm;
 }
 
-#ifdef UNIX
-#ifdef WIZARD
-
-//passwd: See if user knows password
-passwd()
-{
-  char *sp, c;
-  char buf[MAXSTR];
-
-  msg("wizard's Password:");
-  mpos = 0;
-  sp = buf;
-  while ((c = getchar())!='\n' && c!='\r' && c!=ESCAPE)
-  if (c==_tty.sg_kill) sp = buf;
-  else if (c==_tty.sg_erase && sp>buf) sp--;
-  else *sp++ = c;
-  if (sp==buf) return FALSE;
-  *sp = '\0';
-  return (strcmp(PASSWD, crypt(buf, "mT"))==0);
-}
-
-#endif
-#endif
-
 #ifdef WIZARD
 
 //show_map: Print out the map for the wizard
@@ -205,7 +187,7 @@ show_map()
   wrestor(0);
 }
 
-get_num(int *place)
+int get_num(short *place)
 {
   char numbuf[12];
 

@@ -7,6 +7,7 @@
 #include "curses.h"
 #include "misc.h"
 #include "passages.h"
+#include "io.h"
 
 static int pnum;
 static byte newpnum;

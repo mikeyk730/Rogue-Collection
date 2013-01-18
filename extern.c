@@ -3,14 +3,6 @@
 
 #include "rogue.h"
 
-#ifdef LOG
-int captains_log = FALSE;
-#endif LOG
-
-#ifdef SDEBUG
-int is_com;
-#endif SDEBUG
-
 //revno: current revision level
 //verno: current version of a particular rev
 
@@ -320,7 +312,7 @@ int is_me;
 bool was_trapped = FALSE;   //Was a trap sprung
 
 #ifdef WIZARD
-bool wizard = FALSE;        //True if allows wizard commands
+bool wizard = TRUE;        //True if allows wizard commands
 #endif
 
 int bailout = FALSE;

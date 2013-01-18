@@ -205,15 +205,16 @@ int readchar()
 
 int bdos(int fnum, int dxval)
 {
-  struct sw_regs *saveptr;
+  //struct sw_regs *saveptr;
 
-  regs->ax = fnum<<8;
-  regs->bx = regs->cx = 0;
-  regs->dx = dxval;
-  saveptr = regs;
-  swint(SW_DOS, regs);
-  regs = saveptr;
-  return (0xff&regs->ax);
+  //regs->ax = fnum<<8;
+  //regs->bx = regs->cx = 0;
+  //regs->dx = dxval;
+  //saveptr = regs;
+  //swint(SW_DOS, regs);
+  //regs = saveptr;
+  //return (0xff&regs->ax);
+   return 0;
 }
 
 int isjr()

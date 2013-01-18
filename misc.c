@@ -1,6 +1,8 @@
 //All sorts of miscellaneous routines
 //misc.c       1.4             (A.I. Design)   12/14/84
 
+#include <stdio.h>
+
 #include "rogue.h"
 #include "io.h"
 #include "daemons.h"
@@ -158,7 +160,7 @@ THING *find_obj(int y, int x)
 
 #ifdef DEBUG
 
-  debug(sprintf(prbuf, "Non-object %c %d,%d", chat(y, x), y, x));
+  debug("Non-object %c %d,%d", chat(y, x), y, x);
 
 #endif
 

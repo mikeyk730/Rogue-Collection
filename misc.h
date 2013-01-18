@@ -78,6 +78,6 @@ void call();
 //prompt player for definition of macro
 void do_macro(char *buf, int sz);
 
-void me();
+int me();
 
-void istest();
+int istest();

@@ -562,12 +562,6 @@ extern int goodchk;
 extern char *_whoami;
 extern int cksum;
 
-#ifdef LOG
-
-extern int captains_log;
-
-#endif LOG
-
 //Cursor motion header for Monochrome display
 
 #define abs(x)              ((x)<0?-(x):(x))

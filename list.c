@@ -4,6 +4,8 @@
 
 #include "rogue.h"
 #include "list.h"
+#include "io.h"
+#include "misc.h"
 
 extern THING *_things;
 extern int *_t_alloc;
@@ -40,7 +42,7 @@ THING *new_item()
   THING *item;
 
 #ifdef DEBUG
-  if ((item = (THING *)talloc())==NULL) if (me()) msg("no more things!"); else
+  if ((item = (THING *)talloc())==NULL) if (me()) { debug("no more things!"); } else
 #else
   if ((item = (THING *)talloc())!=NULL)
 #endif DEBUG

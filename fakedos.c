@@ -12,22 +12,20 @@
 void fakedos()
 {
   char comline[132];
-  char *savedir = "a:", *comhead;
+  char *comhead;
 
   wdump();
   clear();
   move(0, 0);
   cursor(TRUE);
-  *savedir = bdos(0x19, 0)+'A';
   do
   {
     setmem(comline, sizeof(comline), 0);
-    printw("\n%c>", bdos(0x19, 0)+'A');
+    printw("\nC:\\>");
     getinfo(comline, 130);
     comhead = stpblk(comline);
     endblk(comhead);
   } while (dodos(comhead));
-  dodos(savedir);
   cursor(FALSE);
   wrestor();
 }
@@ -35,14 +33,7 @@ void fakedos()
 //execute a dos like command
 int dodos(char *com)
 {
-  if ((*com&0x80) || (strcmp(com, "rogue")==0)) return 0;
-  if (com[1]==':' && com[2]==0)
-  {
-    int drv = (*com&0x1f)-1;
-
-    printw("\n");
-    if ((!isalpha(*com)) || drv>=bdos(0x0e, drv)) printw("Invalid drive specification\n");
-  }
-  else if (com[0]) printw("\nBad command or file name\n");
+  if (strcmp(com, "rogue")==0) return 0;
+  printw("\nBad command or file name\n");
   return 1;
 }
