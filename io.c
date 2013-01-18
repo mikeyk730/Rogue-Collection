@@ -2,7 +2,6 @@
 //io.c         1.4             (A.I. Design) 12/10/84
 
 #include <stdio.h>
-#include <conio.h>
 #include <ctype.h>
 
 #include "rogue.h"
@@ -258,7 +257,7 @@ int getinfo(char *str, int size)
   retstr = str;
   *str = 0;
   wason = cursor(TRUE);
-  while (ret==1) switch (ch = _getch())
+  while (ret==1) switch (ch = getkey())
   {
     case ESCAPE:
       while (str!=retstr) {backspace(); readcnt--; str--;}

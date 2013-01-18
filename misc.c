@@ -321,7 +321,7 @@ void call_it(bool know, char **guess)
 }
 
 //step_ok: Returns true if it is ok to step on ch
-int step_ok(ch)
+int step_ok(int ch)
 {
   switch (ch)
   {
@@ -427,7 +427,7 @@ int _ce(coord *a, coord *b)
   return (a->x==b->x && a->y==b->y);
 }
 
-int INDEX(y,x)
+int INDEX(int y, int x)
 {
 
 #ifdef DEBUG
@@ -439,7 +439,7 @@ int INDEX(y,x)
   return ((x*(maxrow-1))+y-1);
 }
 
-int offmap(y,x)
+int offmap(int y, int x)
 {
   return (y<1 || y>=maxrow || x<0 || x>=COLS);
 }

@@ -80,7 +80,6 @@
     <ClCompile Include="armor.c" />
     <ClCompile Include="chase.c" />
     <ClCompile Include="command.c" />
-    <ClCompile Include="croot.c" />
     <ClCompile Include="curses.c" />
     <ClCompile Include="daemon.c" />
     <ClCompile Include="daemons.c" />
@@ -117,14 +116,20 @@
     <ClCompile Include="wizard.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="begin.asm" />
+    <None Include="begin.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
     <None Include="csav.asm" />
     <MASM Include="dos.asm">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </MASM>
-    <None Include="fio.asm" />
-    <None Include="oprotec.asm" />
+    <None Include="fio.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="oprotec.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </None>
     <None Include="sbrk.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </None>

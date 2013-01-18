@@ -19,6 +19,30 @@
 static int clk_vec[2];
 static int ocb;
 
+#define C_LEFT    0x4b
+#define C_RIGHT   0x4d
+#define C_UP      0x48
+#define C_DOWN    0x50
+#define C_HOME    0x47
+#define C_PGUP    0x49
+#define C_END     0x4f
+#define C_PGDN    0x51
+#define C_ESCAPE  0x1b
+#define C_INS     0x52
+#define C_DEL     0x53
+#define C_F1      0x3b
+#define C_F2      0x3c
+#define C_F3      0x3d
+#define C_F4      0x3e
+#define C_F5      0x3f
+#define C_F6      0x40
+#define C_F7      0x41
+#define C_F8      0x42
+#define C_F9      0x43
+#define C_F10     0x44
+#define ALT_F9    0x70
+
+
 //Table for IBM extended key translation
 static struct xlate
 {
@@ -149,6 +173,12 @@ void credits()
   standend();
 }
 
+int getkey()
+{
+   int key = _getch();
+   return (key == 0 || key == 0xE0) ? _getch() : key;
+}
+
 //readchar: Return the next input character, from the macro or from the keyboard.
 int readchar()
 {
@@ -159,7 +189,7 @@ int readchar()
   //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
   do SIG2(); while (no_char()); //Rogue spends a lot of time here
   //Now read a character and translate it if it appears in the translation table
-  for (ch = _getch(), x = xtab; x<xtab+(sizeof xtab)/sizeof *xtab; x++) if (ch==x->keycode)
+  for (ch = getkey(), x = xtab; x<xtab+(sizeof xtab)/sizeof *xtab; x++) if (ch==x->keycode)
   {
     ch = x->keyis;
     break;
@@ -200,7 +230,7 @@ int swint(int intno, struct sw_regs *rp)
    return 0;
 }
 
-int set_ctrlb(state)
+int set_ctrlb(int state)
 {
   struct sw_regs rg;
   int retcode;

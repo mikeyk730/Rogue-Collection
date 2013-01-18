@@ -24,9 +24,6 @@
     <ClCompile Include="command.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="croot.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="curses.c">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -29,7 +29,7 @@ void score(int amount, int flags, char monst)
 #ifndef WIZARD
 
   struct sc_ent his_score, top_ten[TOPSCORES];
-  int newfile = FALSE, rank = 0;
+  int rank = 0;
   char response = ' ';
 
   is_saved = TRUE;

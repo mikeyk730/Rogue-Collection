@@ -44,7 +44,7 @@ int spread(int nm);
 void call_it(bool know, char **guess);
 
 //step_ok: Returns true if it is ok to step on ch
-int step_ok(ch);
+int step_ok(int ch);
 
 //goodch: Decide how good an object is and return the correct character for printing.
 int goodch(THING *obj);
@@ -56,9 +56,9 @@ int DISTANCE(int y1, int x1, int y2, int x2);
 
 int _ce(coord *a, coord *b);
 
-int INDEX(y,x);
+int INDEX(int y, int x);
 
-int offmap(y,x);
+int offmap(int y, int x);
 
 int winat(int y, int x);
 

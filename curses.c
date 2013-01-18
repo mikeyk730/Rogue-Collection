@@ -350,7 +350,7 @@ void wclose()
 }
 
 //Some general drawing routines
-void box(ul_r, ul_c, lr_r, lr_c)
+void box(int ul_r, int ul_c, int lr_r, int lr_c)
 {
   vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
 }
@@ -505,7 +505,7 @@ void raise_curtain()
   }
 }
 
-void switch_page(pn)
+void switch_page(int pn)
 {
   int pgsize;
 
@@ -517,7 +517,7 @@ void switch_page(pn)
   page_no = pn;
 }
 
-int get_mode(type)
+int get_mode(int type)
 {
   struct sw_regs regs;
 
@@ -526,7 +526,7 @@ int get_mode(type)
   return 0xff&regs.ax;
 }
 
-int video_mode(type)
+int video_mode(int type)
 {
   struct sw_regs regs;
 

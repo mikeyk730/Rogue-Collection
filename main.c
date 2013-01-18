@@ -47,8 +47,10 @@ int log_read, log_write;
 //Permanent stack data
 struct sw_regs *regs;
 
+
+
 //main: The main program, of course
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
   char *curarg, *savfile = 0;
   struct sw_regs _treg;
@@ -131,7 +133,7 @@ long ran()
 }
 
 //rnd: Pick a very random number.
-rnd(int range)
+int rnd(int range)
 {
   return range<1?0:((ran()+ran())&0x7fffffffl)%range;
 }

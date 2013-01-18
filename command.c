@@ -75,7 +75,7 @@ int com_char()
 }
 
 //Read a command, setting things up according to prefix like devices. Return the command character to be executed.
-get_prefix()
+int get_prefix()
 {
   int retch, ch, junk;
 

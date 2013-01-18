@@ -46,7 +46,7 @@ void wrestor();
 void wclose();
 
 //Some general drawing routines
-void box(ul_r, ul_c, lr_r, lr_c);
+void box(int ul_r, int ul_c, int lr_r, int lr_c);
 
 //box: draw a box given the upper left coordinate and the lower right
 void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
@@ -79,8 +79,8 @@ void drop_curtain();
 
 void raise_curtain();
 
-void switch_page(pn);
+void switch_page(int pn);
 
-int get_mode(type);
+int get_mode(int type);
 
-int video_mode(type);
+int video_mode(int type);

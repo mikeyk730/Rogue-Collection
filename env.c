@@ -111,7 +111,7 @@ int setenv(char *envfile)
 
 //Peekc: Return the next char associated with efd (environment file descriptor)
 //This routine has some knowledge of the file parsing state so that it knows if there has been a premature eof.  This way I can avoid checking for premature eof every time a character is read.
-peekc()
+int peekc()
 {
   ch = 0;
   //we make sure that the strings never get filled past the end, this way we only have to check for these things once
