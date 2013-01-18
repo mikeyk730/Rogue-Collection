@@ -222,13 +222,13 @@ char *helpobjs[MAXHELPO] =
   "\x1: the hero",
   "\x5: some food",
   "\xc: the amulet of yendor",
-  "\xd: a scroll",
+  "\xe: a scroll",
   "\x18: a weapon",
-  "\x8: a piece of armor",
+  "\xdb: a piece of armor",
   "\xf: some gold",
   "\xe7: a magic staff",
   "\xad: a potion",
-  "\x9: a magic ring",
+  "\xf8: a magic ring",
   "\xb2: a passage",
 
   //make sure in 40 or 80 column none of line draw set connects. this is currently in column 1 for 80

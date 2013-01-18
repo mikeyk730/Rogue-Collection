@@ -103,22 +103,14 @@ void clear()
 int cursor(bool ison)
 {
   int oldstate;
-
-  if (iscuron==ison) return ison;
-  oldstate = iscuron;
-  iscuron = ison;
-  regs->ax = 0x100;
-  if (ison)
-  {
-    regs->cx = (is_color?0x607:0xb0c);
-    swint(SW_SCR, regs);
-    move(c_row, c_col);
-  }
-  else
-  {
-    regs->cx = 0xf00;
-    swint(SW_SCR, regs);
-  }
+  CONSOLE_CURSOR_INFO info;
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+  
+  GetConsoleCursorInfo(hConsole, &info);
+  if (info.bVisible == ison) return ison;
+  oldstate = info.bVisible;
+  info.bVisible = ison;
+  SetConsoleCursorInfo(hConsole, &info);
   return (oldstate);
 }
 

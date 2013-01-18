@@ -120,14 +120,14 @@ void dmaout(char*, int, int, int);
 #define STAIRS    (0xf0)
 #define GOLD      (0x0f)
 #define POTION    (0xad)
-#define SCROLL    (0x0d)
+#define SCROLL    (0x0e) //(0x0d)
 #define MAGIC     '$'
 #define BMAGIC    '+'
 #define FOOD      (0x05)
 #define STICK     (0xe7)
-#define ARMOR     (0x08)
+#define ARMOR     (0xdb) //(0x08)
 #define AMULET    (0x0c)
-#define RING      (0x09)
+#define RING      (0xf8) //(0x09)
 #define WEAPON    (0x18)
 #define CALLABLE  -1
 
@@ -497,20 +497,6 @@ struct sw_regs {int ax; int bx; int cx; int dx; int si; int di; int ds; int es;}
 #define SETHILO(reg,hi,lo)  (reg)=((hi)<<8)|lo)
 
 extern struct sw_regs *regs;
-
-//processor flags
-
-#define CF  0x001
-#define PF  0x004
-#define AF  0x010
-#define ZF  0x040
-#define SF  0x080
-#define TF  0x100
-#define IF  0x200
-#define DF  0x400
-#define OF  0x800
-
-
 
 //Defines for things used in mach_dep.c
 //@(#)extern.h5.1 (Berkeley) 5/11/82
