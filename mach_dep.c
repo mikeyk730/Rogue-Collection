@@ -175,25 +175,30 @@ void credits()
 
 int getkey()
 {
-   int key = _getch();
-   return (key == 0 || key == 0xE0) ? _getch() : key;
+  struct xlate *x;
+  int key = _getch();
+  if (key != 0 && key != 0xE0) return key;
+   
+  for (key = _getch(), x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
+  {
+    if (key == x->keycode)
+    {
+      return x->keyis;
+    }
+  }
+  return 0;
 }
 
 //readchar: Return the next input character, from the macro or from the keyboard.
 int readchar()
 {
-  struct xlate *x;
   byte ch;
 
   if (*typeahead) {SIG2(); return(*typeahead++);}
   //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
   do SIG2(); while (no_char()); //Rogue spends a lot of time here
   //Now read a character and translate it if it appears in the translation table
-  for (ch = getkey(), x = xtab; x<xtab+(sizeof xtab)/sizeof *xtab; x++) if (ch==x->keycode)
-  {
-    ch = x->keyis;
-    break;
-  }
+  ch = getkey();
   if (ch==ESCAPE) count = 0;
   return ch;
 }
