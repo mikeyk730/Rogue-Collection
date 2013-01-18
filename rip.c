@@ -189,8 +189,10 @@ void death(char monst)
 #ifndef DEMO
 
   purse -= purse/10;
+
   clear();
   drop_curtain();
+  clear();
   if (is_color) brown();
   box((COLS==40)?1:7, (COLS-28)/2, 22, (COLS+28)/2);
   standend();
