@@ -1,14 +1,18 @@
 //Cursor motion stuff to simulate a "no refresh" version of curses
 
+
+
 #include <stdlib.h>
 #include <stdio.h>
 
 #include "rogue.h"
 #include "curses.h"
 #include "mach_dep.h"
+#include "main.h"
+
+#include <Windows.h>
 
 //Globals for curses
-
 int LINES = 25, COLS = 80;
 int is_saved = FALSE;
 int iscuron = TRUE;
@@ -80,8 +84,15 @@ byte sng_box[BX_SIZE] = {0xda, 0xbf, 0xc0, 0xd9, 0xb3, 0xc4, 0xc4};
 byte fat_box[BX_SIZE] = {0xdb, 0xdb, 0xdb, 0xdb, 0xdb, 0xdf, 0xdc};
 byte spc_box[BX_SIZE] = {0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
 
+void putchr(int c, int attr)
+{
+   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+   SetConsoleTextAttribute(hConsole, attr);
+   putchar(c);
+}
+
 //clear screen
-clear()
+void clear()
 {
   //if (scr_ds==svwin_ds) wsetmem(savewin, LINES*COLS, 0x0720);
   //else
@@ -89,7 +100,7 @@ clear()
 }
 
 //Turn cursor on and off
-cursor(bool ison)
+int cursor(bool ison)
 {
   int oldstate;
 
@@ -112,13 +123,13 @@ cursor(bool ison)
 }
 
 //get curent cursor position
-getrc(int *rp, int *cp)
+void getrc(int *rp, int *cp)
 {
   *rp = c_row;
   *cp = c_col;
 }
 
-real_rc(int pn, int *rp, int *cp)
+void real_rc(int pn, int *rp, int *cp)
 {
   //pc bios: read current cursor position
   regs->ax = 0x300;
@@ -129,7 +140,7 @@ real_rc(int pn, int *rp, int *cp)
 }
 
 //clrtoeol
-clrtoeol()
+void clrtoeol()
 {
   int r, c;
 
@@ -138,26 +149,26 @@ clrtoeol()
   blot_out(r, c, r, COLS-1);
 }
 
-mvaddstr(int r, int c, char *s)
+void mvaddstr(int r, int c, char *s)
 {
   move(r, c);
   addstr(s);
 }
 
-mvaddch(int r, int c, char chr)
+void mvaddch(int r, int c, char chr)
 {
   move(r, c);
   addch(chr);
 }
 
-mvinch(int r, int c)
+int mvinch(int r, int c)
 {
   move(r, c);
   return (inch());
 }
 
 //put the character on the screen and update the character position
-addch(byte chr)
+int addch(byte chr)
 {
   int r, c;
   byte old_attr;
@@ -213,25 +224,25 @@ addch(byte chr)
     ch_attr = old_attr;
     return c_row;
   }
-  putchr(chr);
+  putchr(chr, ch_attr);
   move(r, c+1);
   ch_attr = old_attr;
   //if you have gone off the screen scroll the whole window
   return (c_row);
 }
 
-addstr(char *s)
+void addstr(char *s)
 {
   while (*s) addch(*s++);
 }
 
-set_attr(int bute)
+void set_attr(int bute)
 {
   if (bute<MAXATTR) ch_attr = at_table[bute];
   else ch_attr = bute;
 }
 
-error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
+void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 {
   int row, col;
 
@@ -243,86 +254,87 @@ error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 }
 
 //Called when rogue runs to move our cursor to be where DOS thinks the cursor is
-set_cursor()
+void set_cursor()
 {
-  //regs->ax = 15 << 8;
-  //swint(SW_SCR, regs);
-  //real_rc(regs->bx >> 8, &c_row, &c_col);
+  regs->ax = 15 << 8;
+  swint(SW_SCR, regs);
+  real_rc(regs->bx >> 8, &c_row, &c_col);
 }
 
 //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
-winit()
+void winit()
 {
   int i, cnt;
   //extern int _dsval;
+  int _dsval=0;
 
   ////Get monitor type
   //regs->ax = 15<<8;
   //swint(SW_SCR, regs);
   //old_page_no = regs->bx>>8;
-  //scr_type = regs->ax = 0xff&regs->ax;
-  ////initialization is any good because restarting game has old values!!! So reassign defaults
+  scr_type = 3; //regs->ax = 0xff&regs->ax;
+  //initialization is any good because restarting game has old values!!! So reassign defaults
   LINES = 25;
   COLS = 80;
-  //scr_ds = 0xB800;
+  scr_ds = 0xB800;
   at_table = monoc_attr;
-  //switch (scr_type)
-  //{
-  //  //It is a TV
-  //  case 1: at_table = color_attr;
-  //  case 0: COLS = 40; break;
-  //  //It's a high resolution monitor
-  //  case 3: at_table = color_attr;
-  //  case 2: break;
-  //  case 7: scr_ds = 0xB000; no_check = TRUE; break;
-  //  default: move(24, 0); fatal("Unknown screen type (%d)", regs->ax);
-  //}
-  ////Read current cursor position
-  //real_rc(old_page_no, &c_row, &c_col);
-  //if ((savewin = sbrk(4096))==-1)
-  //{
-  //  svwin_ds = -1;
-  //  savewin = (char *)_flags;
-  //  if (scr_type==7) fatal(no_mem);
-  //}
-  //else
-  //{
-  //  savewin = (char *)(((int)savewin+0xf)&0xfff0);
-  //  svwin_ds = (((int)savewin>>4)&0xfff)+_dsval;
-  //}
+  switch (scr_type)
+  {
+    //It is a TV
+    case 1: at_table = color_attr;
+    case 0: COLS = 40; break;
+    //It's a high resolution monitor
+    case 3: at_table = color_attr;
+    case 2: break;
+    case 7: scr_ds = 0xB000; no_check = TRUE; break;
+    default: move(24, 0); fatal("Unknown screen type (%d)", regs->ax);
+  }
+  //Read current cursor position
+  real_rc(old_page_no, &c_row, &c_col);
+  if ((savewin = 0)) //sbrk(4096))==-1) //TODO: hook up savewin and wrestor to redraw screen
+  {
+    svwin_ds = -1;
+    savewin = (char *)_flags;
+    if (scr_type==7) fatal(no_mem);
+  }
+  else
+  {
+    savewin = (char *)(((int)savewin+0xf)&0xfff0);
+    svwin_ds = (((int)savewin>>4)&0xfff)+_dsval;
+  }
   for (i = 0, cnt = 0; i<25; cnt += 2*COLS, i++) scr_row[i] = cnt;
   newmem(2);
   switch_page(3);
   if (old_page_no!=page_no) clear();
   move(c_row, c_col);
-  //if (isjr()) no_check = TRUE;
+  if (isjr()) no_check = TRUE;
 }
 
-forcebw()
+void forcebw()
 {
   at_table = monoc_attr;
 }
 
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
-wdump()
+void wdump()
 {
   sav_win();
   dmain(savewin, LINES*COLS, scr_ds, 0);
   is_saved = TRUE;
 }
 
-sav_win()
+void sav_win()
 {
   if (savewin==_flags) dmaout(savewin, LINES*COLS, 0xb800, 8192);
 }
 
-res_win()
+void res_win()
 {
   if (savewin==_flags) dmain(savewin, LINES*COLS, 0xb800, 8192);
 }
 
 //wrestor(windex): restore the window saved on disk
-wrestor()
+void wrestor()
 {
   dmaout(savewin, LINES*COLS, scr_ds, 0);
   res_win();
@@ -330,7 +342,7 @@ wrestor()
 }
 
 //wclose(): close the window file
-wclose()
+void wclose()
 {
   //Restore cursor (really you want to restore video state, but be careful)
   if (scr_type>=0) cursor(TRUE);
@@ -338,13 +350,13 @@ wclose()
 }
 
 //Some general drawing routines
-box(ul_r, ul_c, lr_r, lr_c)
+void box(ul_r, ul_c, lr_r, lr_c)
 {
   vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
 }
 
 //box: draw a box given the upper left coordinate and the lower right
-vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
+void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
   int i, wason;
   int r, c;
@@ -368,13 +380,13 @@ vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 }
 
 //center a string according to how many columns there really are
-center(int row, char *string)
+void center(int row, char *string)
 {
   mvaddstr(row, (COLS-strlen(string))/2, string);
 }
 
 //printw(Ieeeee)
-printw(char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
+void printw(char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
 {
   char pwbuf[132];
 
@@ -382,7 +394,7 @@ printw(char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8
   addstr(pwbuf);
 }
 
-scroll_up(int start_row, int end_row, int nlines)
+void scroll_up(int start_row, int end_row, int nlines)
 {
   regs->ax = 0x600+nlines;
   regs->bx = 0x700;
@@ -392,7 +404,7 @@ scroll_up(int start_row, int end_row, int nlines)
   move(end_row, c_col);
 }
 
-scroll_dn(int start_row, int end_row, int nlines)
+void scroll_dn(int start_row, int end_row, int nlines)
 {
   regs->ax = 0x700+nlines;
   regs->bx = 0x700;
@@ -402,13 +414,13 @@ scroll_dn(int start_row, int end_row, int nlines)
   move(start_row, c_col);
 }
 
-scroll()
+void scroll()
 {
   scroll_up(0, 24, 1);
 }
 
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
-blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
+void blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
    int r, c;
    for(r = ul_row; r <= lr_row; ++r)
@@ -416,25 +428,25 @@ blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
       for(c = ul_col; c <= lr_col; ++c)
       {
          move(r,c);
-         putchar(' ');
+         putchr(' ', ch_attr);
       }
    }
   move(ul_row, ul_col);
 }
 
-repchr(int chr, int cnt)
+void repchr(int chr, int cnt)
 {
-  while(cnt-->0) {putchr(chr); c_col++;}
+  while(cnt-->0) {putchr(chr, ch_attr); c_col++;}
 }
 
 //try to fixup screen after we get a control break
-fixup()
+void fixup()
 {
   blot_out(c_row, c_col, c_row, c_col+1);
 }
 
 //Clear the screen in an interesting fashion
-implode()
+void implode()
 {
   int j, delay, r, c, cinc = COLS/10/2, er, ec;
 
@@ -456,7 +468,7 @@ implode()
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
-drop_curtain()
+void drop_curtain()
 {
   int r, j, delay;
 
@@ -479,7 +491,7 @@ drop_curtain()
   standend();
 }
 
-raise_curtain()
+void raise_curtain()
 {
   int i, j, o, delay;
 
@@ -505,7 +517,7 @@ void switch_page(pn)
   page_no = pn;
 }
 
-get_mode(type)
+int get_mode(type)
 {
   struct sw_regs regs;
 
@@ -514,7 +526,7 @@ get_mode(type)
   return 0xff&regs.ax;
 }
 
-video_mode(type)
+int video_mode(type)
 {
   struct sw_regs regs;
 
@@ -522,3 +534,13 @@ video_mode(type)
   swint(SW_SCR, &regs);
   return regs.ax;
 }
+
+void move(int y, int x) 
+{ 
+   HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE) ; 
+   COORD position = { x, y } ; 
+   SetConsoleCursorPosition( hStdout, position ) ;
+   c_row = y;
+   c_col = x;
+}
+

@@ -177,7 +177,7 @@ void quaff()
   //Throw the item away
   inpack--;
   if (obj->o_count>1) obj->o_count--;
-  else {detach(pack, obj); discardit = TRUE;}
+  else {detach(ppack, obj); discardit = TRUE;}
   call_it(p_know[obj->o_which], &p_guess[obj->o_which]);
   if (discardit) discard(obj);
 }

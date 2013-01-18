@@ -48,7 +48,7 @@ void missile(int ydelta, int xdelta)
   if (!can_drop(obj) || is_current(obj)) return;
   //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
 hack:
-  if (obj->o_count<2) {detach(pack, obj); inpack--;}
+  if (obj->o_count<2) {detach(ppack, obj); inpack--;}
   else
   {
     //here is a quick hack to check if we can get a new item

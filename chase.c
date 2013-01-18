@@ -250,14 +250,14 @@ struct room *roomin(coord *cp)
 }
 
 //diag_ok: Check to see if the move is legal if it is diagonal
-diag_ok(coord *sp, coord *ep)
+int diag_ok( coord *sp, coord *ep )
 {
   if (ep->x==sp->x || ep->y==sp->y) return TRUE;
   return (step_ok(chat(ep->y, sp->x)) && step_ok(chat(sp->y, ep->x)));
 }
 
 //cansee: Returns true if the hero can see a certain coordinate.
-cansee(int y, int x)
+int cansee(int y, int x)
 {
   struct room *rer;
   coord tp;

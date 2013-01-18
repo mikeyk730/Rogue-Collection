@@ -159,7 +159,7 @@ void execcom()
       case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N': do_run(tolower(ch)); break;
       case 't': if (get_dir()) missile(delta.y, delta.x); else after = FALSE; break;
       case 'Q': after = FALSE; quit(); break;
-      case 'i': after = FALSE; inventory(pack, 0, ""); break;
+      case 'i': after = FALSE; inventory(ppack, 0, ""); break;
       case 'd': drop(); break;
       case 'q': quaff(); break;
       case 'r': read_scroll(); break;

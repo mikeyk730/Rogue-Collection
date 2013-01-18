@@ -1,14 +1,6 @@
-#include <windows.h> 
 #include "rogue.h"
 
 int tick = 0;
-
-void move(int y, int x) 
-{ 
-   HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE) ; 
-   COORD position = { x, y } ; 
-   SetConsoleCursorPosition( hStdout, position ) ; 
-}
 
 void beep()
 {}

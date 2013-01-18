@@ -22,7 +22,7 @@ void whatis()
 {
   THING *obj;
 
-  if (pack==NULL) {msg("You don't have anything in your pack to identify"); return;}
+  if (ppack==NULL) {msg("You don't have anything in your pack to identify"); return;}
   for (;;) if ((obj = get_item("identify", 0))==NULL)
   {
     msg("You must identify something");

@@ -54,7 +54,7 @@ int fight(coord *mp, char mn, THING *weap, bool thrown)
       if (!thrown)
       {
         if (weap->o_count>1) weap->o_count--;
-        else {detach(pack, weap); discard(weap);}
+        else {detach(ppack, weap); discard(weap);}
         cur_weapon = NULL;
       }
     }
@@ -156,7 +156,7 @@ void attack(THING *mp)
         char *she_stole = "she stole %s!";
 
         steal = NULL;
-        for (nobj = 0, obj = pack; obj!=NULL; obj = next(obj))
+        for (nobj = 0, obj = ppack; obj!=NULL; obj = next(obj))
         if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
         if (steal!=NULL)
         {
@@ -171,7 +171,7 @@ void attack(THING *mp)
             msg(she_stole, inv_name(steal, TRUE));
             steal->o_count = oc;
           }
-          else {detach(pack, steal); discard(steal); msg(she_stole, inv_name(steal, TRUE));}
+          else {detach(ppack, steal); discard(steal); msg(she_stole, inv_name(steal, TRUE));}
         }
 
         break;

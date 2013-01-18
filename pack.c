@@ -17,7 +17,7 @@ THING *pack_obj(byte ch, byte *chp)
   THING *obj;
   byte och;
 
-  for (obj = pack, och = 'a'; obj!=NULL; obj = next(obj), och++) if (ch==och) return obj;
+  for (obj = ppack, och = 'a'; obj!=NULL; obj = next(obj), och++) if (ch==och) return obj;
   *chp = och;
   return NULL;
 }
@@ -46,7 +46,7 @@ void add_pack(THING *obj, bool silent)
 
   if (obj->o_group)
   {
-    for (op = pack; op!=NULL; op = next(op))
+    for (op = ppack; op!=NULL; op = next(op))
     {
       if (op->o_group==obj->o_group)
       {
@@ -75,11 +75,11 @@ void add_pack(THING *obj, bool silent)
   if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); chat(hero.y, hero.x) = floor;}
   //Search for an object of the same type
   exact = FALSE;
-  for (op = pack; op!=NULL; op = next(op)) if (obj->o_type==op->o_type) break;
+  for (op = ppack; op!=NULL; op = next(op)) if (obj->o_type==op->o_type) break;
   if (op==NULL)
   {
     //Put it at the end of the pack since it is a new type
-    for (op = pack; op!=NULL; op = next(op))
+    for (op = ppack; op!=NULL; op = next(op))
     {
       if (op->o_type!=FOOD) break;
       lp = op;
@@ -98,7 +98,7 @@ void add_pack(THING *obj, bool silent)
   if (op==NULL)
   {
     //Didn't find an exact match, just stick it here
-    if (pack==NULL) pack = obj;
+    if (ppack==NULL) ppack = obj;
     else {lp->l_next = obj; obj->l_prev = lp; obj->l_next = NULL;}
   }
   else
@@ -112,7 +112,7 @@ void add_pack(THING *obj, bool silent)
       goto picked_up;
     }
     if ((obj->l_prev = prev(op))!=NULL) obj->l_prev->l_next = obj;
-    else pack = obj;
+    else ppack = obj;
     obj->l_next = op;
     op->l_prev = obj;
   }
@@ -182,7 +182,7 @@ THING *get_item(char *purpose, int type)
 
   if (((!strncmp(s_menu, "sel", 3) && strcmp(purpose, "eat") && strcmp(purpose, "drop"))) || !strcmp(s_menu, "on")) once_only = TRUE;
   gi_state = again;
-  if (pack==NULL) msg("you aren't carrying anything");
+  if (ppack==NULL) msg("you aren't carrying anything");
   else
   {
     ch = lch;
@@ -201,7 +201,7 @@ skip:
       once_only = FALSE;
       if (ch=='*')
       {
-        if ((ch = inventory(pack, type, purpose))==0) {after = FALSE; return NULL;}
+        if ((ch = inventory(ppack, type, purpose))==0) {after = FALSE; return NULL;}
         if (ch==' ') continue;
         lch = ch;
       }
@@ -230,7 +230,7 @@ pack_char(THING *obj)
   byte c;
 
   c = 'a';
-  for (item = pack; item!=NULL; item = next(item)) if (item==obj) return c; else c++;
+  for (item = ppack; item!=NULL; item = next(item)) if (item==obj) return c; else c++;
   return '?';
 }
 

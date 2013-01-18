@@ -295,7 +295,7 @@ backspace()
   getxy(&x, &y);
   if (--y<0) y = 0;
   move(x, y);
-  putchr(' ');
+  putchar(' ');
 }
 
 //str_attr: format a string with attributes.

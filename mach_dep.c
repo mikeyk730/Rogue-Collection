@@ -132,7 +132,7 @@ credits()
   if (is_color) yellow();
   center(21, "All Rights Reserved");
   if (is_color) brown();
-  for (i = 1; i<(COLS-1); i++) {move(22, i); putchr(205);}
+  for (i = 1; i<(COLS-1); i++) {move(22, i); putchar(205);}
   mvaddch(22, 0, 204);
   mvaddch(22, COLS-1, 185);
   standend();

@@ -118,7 +118,7 @@ char *inv_name(THING *obj, bool drop)
   return prbuf;
 }
 
-chopmsg(char *s, char *shmsg, char *lnmsg, int arg1, int arg2, int arg3)
+void chopmsg(char *s, char *shmsg, char *lnmsg, int arg1, int arg2, int arg3)
 {
   sprintf(s, lnmsg, arg1, arg2, arg3);
   if (terse || expert) sprintf(s, shmsg, arg1, arg2, arg3);
@@ -144,7 +144,7 @@ void drop()
     op = nobj;
     if (op->o_group!=0) inpack++;
   }
-  else detach(pack, op);
+  else detach(ppack, op);
   inpack--;
   //Link it into the level object list
   attach(lvl_obj, op);
@@ -156,7 +156,7 @@ void drop()
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
 
-can_drop(THING *op)
+int can_drop(THING *op)
 {
   if (op==NULL) return TRUE;
   if (op!=cur_armor && op!=cur_weapon && op!=cur_ring[LEFT] && op!=cur_ring[RIGHT]) return TRUE;
@@ -272,7 +272,7 @@ THING *new_thing()
 }
 
 //pick_one: Pick an item out of a list of nitems possible magic items
-pick_one(struct magic_item *magic, int nitems)
+int pick_one(struct magic_item *magic, int nitems)
 {
   struct magic_item *end;
   int i;

@@ -287,7 +287,7 @@ void total_winner()
   clear();
   mvaddstr(0, 0, "   Worth  Item");
   oldpurse = purse;
-  for (c = 'a', obj = pack; obj!=NULL; c++, obj = next(obj))
+  for (c = 'a', obj = ppack; obj!=NULL; c++, obj = next(obj))
   {
     switch (obj->o_type)
     {

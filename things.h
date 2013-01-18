@@ -2,20 +2,20 @@
 
 char *inv_name(THING *obj, bool drop);
 
-chopmsg(char *s, char *shmsg, char *lnmsg, ...);
+void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 
 //drop: Put something down
 void drop();
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
 
-can_drop(THING *op);
+int can_drop(THING *op);
 
 //new_thing: Return a new thing
 THING *new_thing();
 
 //pick_one: Pick an item out of a list of nitems possible magic items
-pick_one(struct magic_item *magic, int nitems);
+int pick_one(struct magic_item *magic, int nitems);
 
 //discovered: list what the player has discovered in this game of a certain type
 void discovered();

@@ -230,12 +230,7 @@ leave()
 }
 
 //fatal: exit with a message
-fatal(char *msg)
-{
-   fatal_arg(msg, 0);
-}
-
-fatal_arg(char *msg, int arg)
+fatal(char *msg, int arg)
 {
   endwin();
   printw(msg, arg);

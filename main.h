@@ -22,5 +22,4 @@ quit();
 leave();
 
 //fatal: exit with a message
-fatal(char *msg);
-fatal_arg(char *msg, int arg);
+fatal(char *msg, ...);

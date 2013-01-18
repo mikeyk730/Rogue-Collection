@@ -46,7 +46,6 @@
 #define stpchr  strchr
 #define setmem(a,b,c) memset(a,c,b)
 #define wsetmem(a,b,c) memset(a,c,b)
-#define putchr putchar
 #define newmem malloc
 typedef unsigned char byte;
 typedef unsigned char bool;
@@ -90,7 +89,7 @@ void dmaout(char*, int, int, int);
 #endif
 #define hero            player.t_pos
 #define pstats          player.t_stats
-#define pack            player.t_pack
+#define ppack            player.t_pack
 #define proom           player.t_room
 #define max_hp          player.t_stats.s_maxhp
 #define attach(a,b)     _attach(&a,b)

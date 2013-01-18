@@ -18,10 +18,10 @@ void chase(THING *tp, coord *ee);
 struct room *roomin(coord *cp);
 
 //diag_ok: Check to see if the move is legal if it is diagonal
-diag_ok(coord *sp, coord *ep);
+int diag_ok(coord *sp, coord *ep);
 
 //cansee: Returns true if the hero can see a certain coordinate.
-cansee(int y, int x);
+int cansee(int y, int x);
 
 //find_dest: find the proper destination for the monster
 coord *find_dest(THING *tp);

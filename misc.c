@@ -173,7 +173,7 @@ void eat()
   if ((obj = get_item("eat", FOOD))==NULL) return;
   if (obj->o_type!=FOOD) {msg("ugh, you would get ill if you ate that"); return;}
   inpack--;
-  if (--obj->o_count<1) {detach(pack, obj); discard(obj);}
+  if (--obj->o_count<1) {detach(ppack, obj); discard(obj);}
   if (food_left<0) food_left = 0;
   if (food_left>(STOMACHSIZE-20)) no_command += 2+rnd(5);
   if ((food_left += HUNGERTIME-200+rnd(400))>STOMACHSIZE) food_left = STOMACHSIZE;

@@ -196,7 +196,7 @@ void read_scroll()
         if (cur_weapon->o_enemy!=0)
         {
           msg("your %s vanishes in a puff of smoke", w_names[cur_weapon->o_which]);
-          detach(pack, cur_weapon);
+          detach(ppack, cur_weapon);
           discard(cur_weapon);
           cur_weapon = NULL;
         }
@@ -218,7 +218,7 @@ void read_scroll()
   //Get rid of the thing
   inpack--;
   if (obj->o_count>1) obj->o_count--;
-  else {detach(pack, obj); discardit = TRUE;}
+  else {detach(ppack, obj); discardit = TRUE;}
   call_it(s_know[obj->o_which], &s_guess[obj->o_which]);
   if (discardit) discard(obj);
 }
