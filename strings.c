@@ -35,7 +35,7 @@ char* endblk(char *str)
 }
 
 //lcase: convert a string to lower case
-lcase(char *str)
+void lcase(char *str)
 {
   while (*str = tolower(*str)) str++;
 }

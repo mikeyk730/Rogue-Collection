@@ -25,11 +25,8 @@ static char *formats = "scud%", *bp, left_justify;
 static int min_width, max_width;
 static char ibuf[6];
 
-static int pf_str(), pf_chr(), pf_uint(), pf_int(), pf_per();
-static int (*(pfuncs[]))() = {pf_str, pf_chr, pf_uint, pf_int, pf_per};
-
 //msg: Display a message at the top of the screen.
-ifterse(char *tfmt, char *fmt, int a1, int a2, int a3, int a4, int a5)
+void ifterse(char *tfmt, char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   if (expert) msg(tfmt, a1, a2, a3, a4, a5);
   else msg(fmt, a1, a2, a3, a4, a5);
@@ -45,13 +42,13 @@ void msg(char *fmt, int a1, int a2, int a3, int a4, int a5)
 }
 
 //addmsg: Add things to the current message
-addmsg(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void addmsg(char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   doadd(fmt, a1, a2, a3, a4, a5);
 }
 
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
-endmsg()
+void endmsg()
 {
   if (save_msg) strcpy(huh, msgbuf);
   if (mpos) {look(FALSE); move(0, mpos); more(" More ");}
@@ -63,7 +60,7 @@ endmsg()
 }
 
 //More: tag the end of a line and wait for a space
-more(char *msg)
+void more(char *msg)
 {
   int x, y;
   int i, msz;
@@ -96,14 +93,14 @@ more(char *msg)
 }
 
 //doadd: Perform an add onto the message buffer
-doadd(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void doadd(char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   sprintf(&msgbuf[newpos], fmt, a1, a2, a3, a4, a5);
   newpos = strlen(msgbuf);
 }
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
-putmsg(int msgline, char *msg)
+void putmsg(int msgline, char *msg)
 {
   char *curmsg, *lastmsg=0, *tmpmsg;
   int curlen;
@@ -130,7 +127,7 @@ putmsg(int msgline, char *msg)
 }
 
 //scrl: scroll a message across the line
-scrl(int msgline, char *str1, char *str2)
+void scrl(int msgline, char *str1, char *str2)
 {
   char *fmt;
 
@@ -161,7 +158,7 @@ char *unctrl(unsigned char ch)
 }
 
 //status: Display the important stats line.  Keep the cursor where it was.
-status()
+void status()
 {
   int oy, ox;
   static int s_hungry;
@@ -233,7 +230,7 @@ status()
 }
 
 //wait_for: Sit around until the guy types the right key
-wait_for(char ch)
+void wait_for(char ch)
 {
   char c;
 
@@ -242,7 +239,7 @@ wait_for(char ch)
 }
 
 //show_win: Function used to display a window and wait before returning
-show_win(int *scr, char *message)
+void show_win(int *scr, char *message)
 {
   mvaddstr(0, 0, message);
   move(hero.y, hero.x);
@@ -250,7 +247,7 @@ show_win(int *scr, char *message)
 }
 
 //This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
-getinfo(char *str, int size)
+int getinfo(char *str, int size)
 {
   char *retstr, ch;
   int readcnt = 0;
@@ -288,7 +285,7 @@ getinfo(char *str, int size)
   return ret;
 }
 
-backspace()
+void backspace()
 {
   int x, y;
 
@@ -316,7 +313,7 @@ backspace()
 //     attributes.  And I'm not sure how I'm going to interface this with
 //     printf certainly '%' isn't a good choice of characters.  jll.
 
-str_attr(char *str)
+void str_attr(char *str)
 {
 
 #ifdef LUXURY
@@ -482,65 +479,6 @@ char *my_stccpy(char* a, char* b, int c)
 {
   stccpy(a, b, c);
   return a+strlen(a);
-}
-
-scan_num(char *cp)
-{
-  int i = 0;
-
-  bp = cp;
-  while (isdigit(*bp)) i = i*10+*bp++ -'0';
-  return i;
-}
-
-pf_str(char **cp)
-{
-  bp = my_stccpy(bp, *cp, 200);
-  return 1;
-}
-
-blanks(cnt)
-{
-  while (cnt-->0) *bp++ = ' ';
-  *bp = 0;
-}
-
-pf_chr(char *c)
-{
-  *bp++ = *c;
-  return 1;
-}
-
-pf_int(int *ip)
-{
-  if (*ip<0) {*bp++ = '-'; *ip = (-*ip);}
-  return pf_uint(ip);
-}
-
-pf_uint(unsigned int *ip)
-{
-  char *cp = ibuf, once;
-  unsigned int i = *ip, d = 10000, r;
-
-  if (*ip==0) {*ibuf = '0'; ibuf[1] = 0;}
-  else
-  {
-    once = 0;
-    while (d)
-    {
-      if ((r = i/d) || once) {*cp++ = r+'0'; once = 1; i -= r*d;}
-      d /= 10;
-    }
-    *cp = 0;
-  }
-  bp = my_stccpy(bp, ibuf, 6);
-  return 1;
-}
-
-pf_per(ip)
-{
-  *bp++ = '%';
-  return 0;
 }
 
 char *noterse(char *str)

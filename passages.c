@@ -12,7 +12,7 @@ static int pnum;
 static byte newpnum;
 
 //conn: Draw a corridor from a room in a certain direction.
-conn(int r1, int r2)
+void conn(int r1, int r2)
 {
   struct room *rpf, *rpt;
   int rmt, rm;
@@ -112,7 +112,7 @@ conn(int r1, int r2)
 }
 
 //do_passages: Draw all the passages on a level.
-do_passages()
+void do_passages()
 {
   int i, j;
   int roomcount;
@@ -188,7 +188,7 @@ do_passages()
 }
 
 //door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
-door(struct room *rm, coord *cp)
+void door(struct room *rm, coord *cp)
 {
   int index, xit;
 
@@ -217,7 +217,7 @@ add_pass()
 #endif
 
 //passnum: Assign a number to each passageway
-passnum()
+void passnum()
 {
   struct room *rp;
   int i;

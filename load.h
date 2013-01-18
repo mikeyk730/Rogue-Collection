@@ -1,7 +1,7 @@
-epyx_yuck();
+void epyx_yuck();
 
-scr_load();
+void scr_load();
 
-bload(unsigned int segment);
+void bload(unsigned int segment);
 
-find_drive();
+int find_drive();

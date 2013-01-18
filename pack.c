@@ -125,7 +125,7 @@ picked_up:
 }
 
 //inventory: List what is in the pack
-inventory(THING *list, int type, char *lstr)
+int inventory(THING *list, int type, char *lstr)
 {
   byte ch;
   int n_objs;
@@ -224,7 +224,7 @@ skip:
 }
 
 //pack_char: Return which character would address a pack object
-pack_char(THING *obj)
+int pack_char(THING *obj)
 {
   THING *item;
   byte c;
@@ -235,7 +235,7 @@ pack_char(THING *obj)
 }
 
 //money: Add or subtract gold from the pack
-money(int value)
+void money(int value)
 {
   byte floor;
 

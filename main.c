@@ -117,7 +117,7 @@ main(int argc, char **argv)
 }
 
 //endit: Exit the program abnormally.
-endit()
+void endit()
 {
   fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
 }
@@ -144,7 +144,7 @@ int srand2()
 }
 
 //roll: Roll a number of dice
-roll(int number, int sides)
+int roll(int number, int sides)
 {
   int dtotal = 0;
 
@@ -153,7 +153,7 @@ roll(int number, int sides)
 }
 
 //playit: The main loop of the program.  Loop until the game is over, refreshing things and looking at the proper times.
-playit(char *sname)
+void playit(char *sname)
 {
   if (sname)
   {
@@ -175,7 +175,7 @@ playit(char *sname)
 }
 
 //quit: Have player make certain, then exit.
-quit()
+void quit()
 {
   int oy, ox;
   byte answer;
@@ -218,7 +218,7 @@ quit()
 }
 
 //leave: Leave quickly, but courteously
-leave()
+void leave()
 {
   look(FALSE);
   move(LINES-1, 0);
@@ -230,7 +230,7 @@ leave()
 }
 
 //fatal: exit with a message
-fatal(char *msg, int arg)
+void fatal(char *msg, int arg)
 {
   endwin();
   printw(msg, arg);

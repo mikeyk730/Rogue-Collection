@@ -34,7 +34,7 @@ char *tr_name(byte type)
 }
 
 //look: A quick glance all around the player
-look(bool wakeup)
+void look(bool wakeup)
 {
   int x, y;
   byte ch, pch;
@@ -199,14 +199,14 @@ void chg_str(int amt)
 }
 
 //add_str: Perform the actual add, checking upper and lower bound
-add_str(str_t *sp, int amt)
+void add_str(str_t *sp, int amt)
 {
   if ((*sp += amt)<3) *sp = 3;
   else if (*sp>31) *sp = 31;
 }
 
 //add_haste: Add a haste to the player
-add_haste(bool potion)
+int add_haste(bool potion)
 {
   if (on(player, ISHASTE))
   {
@@ -226,7 +226,7 @@ add_haste(bool potion)
 }
 
 //aggravate: Aggravate all the monsters on this level
-aggravate()
+void aggravate()
 {
   THING *mi;
 
@@ -245,7 +245,7 @@ char *vowelstr(char *str)
 }
 
 //is_current: See if the object is one of the currently used items
-is_current(THING *obj)
+int is_current(THING *obj)
 {
   if (obj==NULL) return FALSE;
   if (obj==cur_armor || obj==cur_weapon || obj==cur_ring[LEFT] || obj==cur_ring[RIGHT])
@@ -257,7 +257,7 @@ is_current(THING *obj)
 }
 
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
-get_dir()
+int get_dir()
 {
   int ch;
 
@@ -273,7 +273,7 @@ get_dir()
   return TRUE;
 }
 
-find_dir(byte ch, coord *cp)
+bool find_dir(byte ch, coord *cp)
 {
   bool gotit;
 
@@ -294,21 +294,21 @@ find_dir(byte ch, coord *cp)
 }
 
 //sign: Return the sign of the number
-sign(int nm)
+int sign(int nm)
 {
   if (nm<0) return -1;
   else return (nm>0);
 }
 
 //spread: Give a spread around a given number (+/- 10%)
-spread(int nm)
+int spread(int nm)
 {
   int r = nm-nm/10+rnd(nm/5);
   return r;
 }
 
 //call_it: Call an object something after use.
-call_it(bool know, char **guess)
+void call_it(bool know, char **guess)
 {
   if (know && **guess) **guess = 0;
   else if (!know && **guess==0)
@@ -321,7 +321,7 @@ call_it(bool know, char **guess)
 }
 
 //step_ok: Returns true if it is ok to step on ch
-step_ok(ch)
+int step_ok(ch)
 {
   switch (ch)
   {
@@ -331,7 +331,7 @@ step_ok(ch)
 }
 
 //goodch: Decide how good an object is and return the correct character for printing.
-goodch(THING *obj)
+int goodch(THING *obj)
 {
   int ch = MAGIC;
 
@@ -365,7 +365,7 @@ goodch(THING *obj)
 }
 
 //help: prints out help screens
-help(char **helpscr)
+void help(char **helpscr)
 {
 
 #ifdef HELP
@@ -413,7 +413,7 @@ help(char **helpscr)
 
 #ifndef UNIX
 
-DISTANCE(int y1, int x1, int y2, int x2)
+int DISTANCE(int y1, int x1, int y2, int x2)
 {
   int dx, dy;
 
@@ -422,12 +422,12 @@ DISTANCE(int y1, int x1, int y2, int x2)
   return dx*dx+dy*dy;
 }
 
-_ce(coord *a, coord *b)
+int _ce(coord *a, coord *b)
 {
   return (a->x==b->x && a->y==b->y);
 }
 
-INDEX(y,x)
+int INDEX(y,x)
 {
 
 #ifdef DEBUG
@@ -439,12 +439,12 @@ INDEX(y,x)
   return ((x*(maxrow-1))+y-1);
 }
 
-offmap(y,x)
+int offmap(y,x)
 {
   return (y<1 || y>=maxrow || x<0 || x>=COLS);
 }
 
-winat(int y, int x)
+int winat(int y, int x)
 {
   return (moat(y, x)!=NULL?moat(y, x)->t_disguise:chat(y, x));
 }
@@ -486,14 +486,14 @@ void search()
 
 
 //d_level: He wants to go down a level
-d_level()
+void d_level()
 {
   if (chat(hero.y, hero.x)!=STAIRS) msg("I see no way down");
   else {level++; new_level();}
 }
 
 //u_level: He wants to go up a level
-u_level()
+void u_level()
 {
   if (chat(hero.y, hero.x)==STAIRS) if (amulet) {level--; if (level==0) total_winner(); new_level(); msg("you feel a wrenching sensation in your gut");} else msg("your way is magically blocked");
   else msg("I see no way up");
@@ -527,7 +527,7 @@ void call()
 }
 
 //prompt player for definition of macro
-do_macro(char *buf, int sz)
+void do_macro(char *buf, int sz)
 {
   char *cp = prbuf;
 
@@ -539,7 +539,7 @@ do_macro(char *buf, int sz)
 
 #ifdef ME
 
-me()
+int me()
 {
   return is_me;
 }
@@ -548,7 +548,7 @@ me()
 
 #ifdef TEST
 
-istest()
+int istest()
 {
   return (!strcmp("debug",fruit));
 }

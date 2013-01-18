@@ -342,7 +342,7 @@ void miss(char *er, char *ee)
 }
 
 //save_throw: See if a creature save against something
-save_throw(int which, THING *tp)
+int save_throw(int which, THING *tp)
 {
   int need;
 
@@ -351,7 +351,7 @@ save_throw(int which, THING *tp)
 }
 
 //save: See if he saves against various nasty things
-save(int which)
+int save(int which)
 {
   if (which==VS_MAGIC)
   {
@@ -375,7 +375,7 @@ int str_plus(str_t str)
 }
 
 //add_dam: Compute additional damage done for exceptionally high or low strength
-add_dam(str_t str)
+int add_dam(str_t str)
 {
   int add = 6;
 
@@ -390,14 +390,14 @@ add_dam(str_t str)
 }
 
 //raise_level: The guy just magically went up a level.
-raise_level()
+void raise_level()
 {
   pstats.s_exp = e_levels[pstats.s_lvl-1]+1L;
   check_level();
 }
 
 //thunk: A missile hit or missed a monster
-thunk(THING *weap, char *mname, char *does, char *did)
+void thunk(THING *weap, char *mname, char *does, char *did)
 {
   if (weap->o_type==WEAPON) addmsg("the %s %s ", w_names[weap->o_which], does);
   else addmsg("you %s ", did);

@@ -1,25 +1,25 @@
 //setup: Get starting setup for all games
-setup();
+void setup();
 
-clock_on();
+void clock_on();
 
-no_clock();
+void no_clock();
 
 //flush_type: Flush typeahead for traps, etc.
-flush_type();
+void flush_type();
 
-credits();
+void credits();
 
 //readchar: Return the next input character, from the macro or from the keyboard.
-readchar();
+int readchar();
 
-bdos(int fnum, int dxval);
-isjr();
+int bdos(int fnum, int dxval);
+int isjr();
 
-swint(int intno, struct sw_regs *rp);
+int swint(int intno, struct sw_regs *rp);
 
-set_ctrlb(state);
+int set_ctrlb(state);
 
-unsetup();
+void unsetup();
 
 void one_tick();

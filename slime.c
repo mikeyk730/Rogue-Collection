@@ -30,7 +30,7 @@ void slime_split(THING *tp)
   start_run(&slimy);
 }
 
-new_slime(THING *tp)
+int new_slime(THING *tp)
 {
   int y, x, ty, tx, ret;
   THING *ntp;
@@ -54,7 +54,7 @@ new_slime(THING *tp)
   return ret;
 }
 
-plop_monster(int r, int c, coord *cp)
+bool plop_monster(int r, int c, coord *cp)
 {
   int y, x;
   bool appear = 0;

@@ -4,7 +4,7 @@ THING *pack_obj(byte ch, byte *chp);
 void add_pack(THING *obj, bool silent);
 
 //inventory: List what is in the pack
-inventory(THING *list, int type, char *lstr);
+int inventory(THING *list, int type, char *lstr);
 
 //pick_up: Add something to characters pack.
 void pick_up(byte ch);
@@ -13,7 +13,7 @@ void pick_up(byte ch);
 THING *get_item(char *purpose, int type);
 
 //pack_char: Return which character would address a pack object
-pack_char(THING *obj);
+int pack_char(THING *obj);
 
 //money: Add or subtract gold from the pack
-money(int value);
+void money(int value);

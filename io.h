@@ -1,42 +1,42 @@
 //msg: Display a message at the top of the screen.
-ifterse(char *tfmt, char *fmt, ...);
+void ifterse(char *tfmt, char *fmt, ...);
 
 void msg(char *fmt, ...);
 
 //addmsg: Add things to the current message
-addmsg(char *fmt, ...);
+void addmsg(char *fmt, ...);
 
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
-endmsg();
+void endmsg();
 
 //More: tag the end of a line and wait for a space
-more(char *msg);
+void more(char *msg);
 
 //doadd: Perform an add onto the message buffer
-doadd(char *fmt, int a1, int a2, int a3, int a4, int a5);
+void doadd(char *fmt, int a1, int a2, int a3, int a4, int a5);
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
-putmsg(int msgline, char *msg);
+void putmsg(int msgline, char *msg);
 
 //scrl: scroll a message across the line
-scrl(int msgline, char *str1, char *str2);
+void scrl(int msgline, char *str1, char *str2);
 
 //unctrl: Print a readable version of a certain character
 char *unctrl(unsigned char ch);
 
 //status: Display the important stats line.  Keep the cursor where it was.
-status();
+void status();
 
 //wait_for: Sit around until the guy types the right key
-wait_for(char ch);
+void wait_for(char ch);
 
 //show_win: Function used to display a window and wait before returning
-show_win(int *scr, char *message);
+void show_win(int *scr, char *message);
 
 //This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
-getinfo(char *str, int size);
+int getinfo(char *str, int size);
 
-backspace();
+void backspace();
 
 //str_attr: format a string with attributes.
 //
@@ -56,7 +56,7 @@ backspace();
 //     attributes.  And I'm not sure how I'm going to interface this with
 //     printf certainly '%' isn't a good choice of characters.  jll.
 
-str_attr(char *str);
+void str_attr(char *str);
 
 //key_state:
 void SIG2();
@@ -65,19 +65,5 @@ void SIG2();
 //Michael Toy, AI Design, January 1984
 
 char *my_stccpy(char* a, char* b, int c);
-
-scan_num(char *cp);
-
-pf_str(char **cp);
-
-blanks(cnt);
-
-pf_chr(char *c);
-
-pf_int(int *ip);
-
-pf_uint(unsigned int *ip);
-
-pf_per(ip);
 
 char *noterse(char *str);

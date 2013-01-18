@@ -19,7 +19,7 @@ static shint frcnt, ny, nx, topy, topx;
 static shint maxx, maxy;
 static shint *fr_y, *fr_x;
 
-draw_maze(struct room *rp)
+void draw_maze(struct room *rp)
 {
   int y, x;
   shint fy[MAXFRNT], fx[MAXFRNT];
@@ -58,7 +58,7 @@ draw_maze(struct room *rp)
   splat(spos.y, spos.x);
 }
 
-new_frontier(int y, int x)
+void new_frontier(int y, int x)
 {
   add_frnt(y-2, x);
   add_frnt(y+2, x);
@@ -66,7 +66,7 @@ new_frontier(int y, int x)
   add_frnt(y, x+2);
 }
 
-add_frnt(int y, int x)
+void add_frnt(int y, int x)
 {
 #ifdef DEBUG
   if (frcnt==MAXFRNT-1) debug("MAZE DRAWING ERROR #3\n");
@@ -80,7 +80,7 @@ add_frnt(int y, int x)
 }
 
 //Connect randomly to one of the adjacent points in the spanning tree
-con_frnt()
+void con_frnt()
 {
   int n, which, ydelt = 0, xdelt = 0;
   int choice[4];
@@ -112,13 +112,13 @@ con_frnt()
   if (inrange(y, x)) splat(y, x);
 }
 
-maze_at(int y, int x)
+int maze_at(int y, int x)
 {
   if (inrange(y, x) && chat(y, x)==PASSAGE) return 1;
   else return 0;
 }
 
-splat(int y, int x)
+void splat(int y, int x)
 {
   chat(y, x) = PASSAGE;
   flat(y, x) = F_MAZE|F_REAL;
@@ -126,7 +126,7 @@ splat(int y, int x)
   if (y>maxy) maxy = y;
 }
 
-inrange(int y, int x)
+int inrange(int y, int x)
 {
   return (y>=topy && y<MAXY && x>=topx && x<MAXX);
 }

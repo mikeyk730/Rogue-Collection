@@ -23,28 +23,28 @@ void hit(char *er, char *ee);
 void miss(char *er, char *ee);
 
 //save_throw: See if a creature save against something
-save_throw(int which, THING *tp);
+int save_throw(int which, THING *tp);
 
 //save: See if he saves against various nasty things
-save(int which);
+int save(int which);
 
 //str_plus: Compute bonus/penalties for strength on the "to hit" roll
 int str_plus(str_t str);
 
 //add_dam: Compute additional damage done for exceptionally high or low strength
-add_dam(str_t str);
+int add_dam(str_t str);
 
 //raise_level: The guy just magically went up a level.
-raise_level();
+void raise_level();
 
 //thunk: A missile hit or missed a monster
-thunk(THING *weap, char *mname, char *does, char *did);
+void thunk(THING *weap, char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen
 void remove_mons(coord *mp, THING *tp, bool waskill);
 
 //is_magic: Returns true if an object radiates magic
-is_magic(THING *obj);
+int is_magic(THING *obj);
 
 //killed: Called to put a monster to death
 void killed(THING *tp, bool pr);

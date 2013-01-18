@@ -2,7 +2,7 @@
 char *tr_name(byte type);
 
 //look: A quick glance all around the player
-look(bool wakeup);
+void look(bool wakeup);
 
 //find_obj: Find the unclaimed object at y, x
 THING *find_obj(int y, int x);
@@ -14,70 +14,70 @@ void eat();
 void chg_str(int amt);
 
 //add_str: Perform the actual add, checking upper and lower bound
-add_str(str_t *sp, int amt);
+void add_str(str_t *sp, int amt);
 
 //add_haste: Add a haste to the player
-add_haste(bool potion);
+int add_haste(bool potion);
 
 //aggravate: Aggravate all the monsters on this level
-aggravate();
+void aggravate();
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
 
 char *vowelstr(char *str);
 
 //is_current: See if the object is one of the currently used items
-is_current(THING *obj);
+int is_current(THING *obj);
 
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
-get_dir();
+int get_dir();
 
-find_dir(byte ch, coord *cp);
+bool find_dir(byte ch, coord *cp);
 
 //sign: Return the sign of the number
-sign(int nm);
+int sign(int nm);
 
 //spread: Give a spread around a given number (+/- 10%)
-spread(int nm);
+int spread(int nm);
 
 //call_it: Call an object something after use.
-call_it(bool know, char **guess);
+void call_it(bool know, char **guess);
 
 //step_ok: Returns true if it is ok to step on ch
-step_ok(ch);
+int step_ok(ch);
 
 //goodch: Decide how good an object is and return the correct character for printing.
-goodch(THING *obj);
+int goodch(THING *obj);
 
 //help: prints out help screens
-help(char **helpscr);
+void help(char **helpscr);
 
-DISTANCE(int y1, int x1, int y2, int x2);
+int DISTANCE(int y1, int x1, int y2, int x2);
 
-_ce(coord *a, coord *b);
+int _ce(coord *a, coord *b);
 
-INDEX(y,x);
+int INDEX(y,x);
 
-offmap(y,x);
+int offmap(y,x);
 
-winat(int y, int x);
+int winat(int y, int x);
 
 //search: Player gropes about him to find hidden things.
 void search();
 
 
 //d_level: He wants to go down a level
-d_level();
+void d_level();
 
 //u_level: He wants to go up a level
-u_level();
+void u_level();
 
 //call: Allow a user to call a potion, scroll, or ring something
 void call();
 
 //prompt player for definition of macro
-do_macro(char *buf, int sz);
+void do_macro(char *buf, int sz);
 
-me();
+void me();
 
-istest();
+void istest();

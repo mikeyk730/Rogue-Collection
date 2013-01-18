@@ -20,7 +20,7 @@
 #include "list.h"
 
 //fix_stick: Set up a new stick
-fix_stick(THING *cur)
+void fix_stick(THING *cur)
 {
   if (strcmp(ws_type[cur->o_which], "staff")==0) cur->o_damage = "2d3";
   else cur->o_damage = "1d1";
@@ -239,7 +239,7 @@ void drain()
 }
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
-fire_bolt(coord *start, coord *dir, char *name)
+void fire_bolt(coord *start, coord *dir, char *name)
 {
   byte dirch, ch;
   THING *tp;

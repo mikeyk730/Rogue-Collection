@@ -9,7 +9,7 @@ extern THING *_things;
 extern int *_t_alloc;
 
 //_detach: Takes an item out of whatever linked list it might be in
-_detach(THING **list, THING *item)
+void _detach(THING **list, THING *item)
 {
   if (*list==item) *list = next(item);
   if (prev(item)!=NULL) item->l_prev->l_next = next(item);
@@ -19,7 +19,7 @@ _detach(THING **list, THING *item)
 }
 
 //_attach: add an item to the head of a list
-_attach(THING **list, THING *item)
+void _attach(THING **list, THING *item)
 {
   if (*list!=NULL) {item->l_next = *list; (*list)->l_prev = item; item->l_prev = NULL;}
   else {item->l_next = NULL; item->l_prev = NULL;}
@@ -27,7 +27,7 @@ _attach(THING **list, THING *item)
 }
 
 //_free_list: Throw the whole blamed thing away
-_free_list(THING **ptr)
+void _free_list(THING **ptr)
 {
   THING *item;
 

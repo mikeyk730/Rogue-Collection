@@ -14,7 +14,7 @@
 static char *store;
 static int blksize = 0x4000, lfd;
 
-epyx_yuck()
+void epyx_yuck()
 {
 //  extern unsigned int tick;
 //  int type = get_mode();
@@ -35,7 +35,7 @@ epyx_yuck()
 //  tick = 0;
 }
 
-scr_load()
+void scr_load()
 {
   //int palette, background;
   //int mode, burst;
@@ -58,7 +58,7 @@ scr_load()
   //out(MODEREG, mode);
 }
 
-bload(unsigned int segment)
+void bload(unsigned int segment)
 {
   //unsigned int offset = 0, rdcnt;
 
@@ -70,7 +70,7 @@ bload(unsigned int segment)
   //}
 }
 
-find_drive()
+int find_drive()
 {
   //int drive = bdos(0x19);
   //char spec = s_drive[0];
@@ -85,4 +85,5 @@ find_drive()
   //filename[0] += (char)drive;
   //access(filename);
   //return drive;
+   return 0;
 }

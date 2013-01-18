@@ -2,4 +2,4 @@
 void whatis();
 
 //teleport: Bamf the hero someplace else
-teleport();
+int teleport();

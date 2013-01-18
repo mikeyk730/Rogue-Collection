@@ -124,7 +124,7 @@ move_stuff:
 }
 
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
-door_open(struct room *rp)
+void door_open(struct room *rp)
 {
   int j, k;
   byte ch;
@@ -144,7 +144,7 @@ door_open(struct room *rp)
 }
 
 //be_trapped: The guy stepped on a trap.... Make him pay.
-be_trapped(coord *tc)
+int be_trapped(coord *tc)
 {
   byte tr;
   int index;
@@ -216,7 +216,7 @@ be_trapped(coord *tc)
   return tr;
 }
 
-descend(char *mesg)
+void descend(char *mesg)
 {
   level++;
   if (*mesg==0) msg(" ");

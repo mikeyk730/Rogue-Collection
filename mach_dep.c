@@ -49,7 +49,7 @@ static struct xlate
 };
 
 //setup: Get starting setup for all games
-setup()
+void setup()
 {
   terse = FALSE;
   maxrow = 23;
@@ -60,7 +60,7 @@ setup()
   ocb = set_ctrlb(0);
 }
 
-clock_on()
+void clock_on()
 {
   //extern int _csval, clock(), (*cls_)(), no_clock();
   //int new_vec[2];
@@ -72,13 +72,13 @@ clock_on()
   //cls_ = no_clock;
 }
 
-no_clock()
+void no_clock()
 {
   //dmaout(clk_vec, 2, 0, TICK_ADDR);
 }
 
 //flush_type: Flush typeahead for traps, etc.
-flush_type()
+void flush_type()
 {
 #ifdef CRASH_MACHINE
   regs->ax = 0xc06; //clear keyboard input
@@ -88,7 +88,7 @@ flush_type()
   typeahead = "";
 }
 
-credits()
+void credits()
 {
   int i;
   char tname[25];
@@ -150,7 +150,7 @@ credits()
 }
 
 //readchar: Return the next input character, from the macro or from the keyboard.
-readchar()
+int readchar()
 {
   struct xlate *x;
   byte ch;
@@ -168,7 +168,7 @@ readchar()
   return ch;
 }
 
-bdos(int fnum, int dxval)
+int bdos(int fnum, int dxval)
 {
   struct sw_regs *saveptr;
 
@@ -181,7 +181,7 @@ bdos(int fnum, int dxval)
   return (0xff&regs->ax);
 }
 
-isjr()
+int isjr()
 {
   //static int machine = 0;
 
@@ -190,16 +190,17 @@ isjr()
    return 0;
 }
 
-swint(int intno, struct sw_regs *rp)
+int swint(int intno, struct sw_regs *rp)
 {
   //extern int _dsval;
 
   //rp->ds = rp->es = _dsval;
   //sysint(intno, rp, rp);
   //return rp->ax;
+   return 0;
 }
 
-set_ctrlb(state)
+int set_ctrlb(state)
 {
   struct sw_regs rg;
   int retcode;
@@ -213,7 +214,7 @@ set_ctrlb(state)
   return retcode;
 }
 
-unsetup()
+void unsetup()
 {
   set_ctrlb(ocb);
 }

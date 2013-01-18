@@ -1,14 +1,14 @@
-draw_maze(struct room *rp);
+void draw_maze(struct room *rp);
 
-new_frontier(int y, int x);
+void new_frontier(int y, int x);
 
-add_frnt(int y, int x);
+void add_frnt(int y, int x);
 
 //Connect randomly to one of the adjacent points in the spanning tree
-con_frnt();
+void con_frnt();
 
-maze_at(int y, int x);
+int maze_at(int y, int x);
 
-splat(int y, int x);
+void splat(int y, int x);
 
-inrange(int y, int x);
+int inrange(int y, int x);

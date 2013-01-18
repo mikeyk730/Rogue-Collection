@@ -132,7 +132,7 @@ create_obj()
 #endif
 
 //teleport: Bamf the hero someplace else
-teleport()
+int teleport()
 {
   int rm;
   coord c;

@@ -9,4 +9,4 @@ char* stpbrk(char *str, char *brk);
 char* endblk(char *str);
 
 //lcase: convert a string to lower case
-lcase(char *str);
+void lcase(char *str);

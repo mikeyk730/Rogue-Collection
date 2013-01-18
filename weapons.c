@@ -157,7 +157,7 @@ void init_weapon(THING *weap, byte type)
 }
 
 //hit_monster: Does the missile hit the monster?
-hit_monster(int y, int x, THING *obj)
+int hit_monster(int y, int x, THING *obj)
 {
   static coord mp;
   THING *mo;
@@ -199,7 +199,7 @@ bad:
 }
 
 //fallpos: Pick a random position around the given (y, x) coordinates
-fallpos(THING *obj, coord *newpos)
+int fallpos(THING *obj, coord *newpos)
 {
   int y, x, cnt = 0, ch;
   THING *onfloor;
@@ -223,7 +223,7 @@ fallpos(THING *obj, coord *newpos)
   return (cnt!=0);
 }
 
-tick_pause()
+void tick_pause()
 {
   int otick;
   extern int tick;
