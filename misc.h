@@ -8,10 +8,10 @@ look(bool wakeup);
 THING *find_obj(int y, int x);
 
 //eat: She wants to eat something, so let her try
-eat();
+void eat();
 
 //chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
-chg_str(int amt);
+void chg_str(int amt);
 
 //add_str: Perform the actual add, checking upper and lower bound
 add_str(str_t *sp, int amt);
@@ -63,7 +63,7 @@ offmap(y,x);
 winat(int y, int x);
 
 //search: Player gropes about him to find hidden things.
-search();
+void search();
 
 
 //d_level: He wants to go down a level
@@ -73,7 +73,7 @@ d_level();
 u_level();
 
 //call: Allow a user to call a potion, scroll, or ring something
-call();
+void call();
 
 //prompt player for definition of macro
 do_macro(char *buf, int sz);

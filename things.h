@@ -5,7 +5,7 @@ char *inv_name(THING *obj, bool drop);
 chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 
 //drop: Put something down
-drop();
+void drop();
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
 

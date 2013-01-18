@@ -2,10 +2,10 @@
 fix_stick(THING *cur);
 
 //do_zap: Perform a zap with a wand
-do_zap();
+void do_zap();
 
 //drain: Do drain hit points from player schtick
-drain();
+void drain();
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
 fire_bolt(coord *start, coord *dir, char *name);

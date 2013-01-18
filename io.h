@@ -1,10 +1,10 @@
 //msg: Display a message at the top of the screen.
-ifterse(char *tfmt, char *fmt, int a1, int a2, int a3, int a4, int a5);
+ifterse(char *tfmt, char *fmt, ...);
 
-msg(char *fmt, ...);
+void msg(char *fmt, ...);
 
 //addmsg: Add things to the current message
-addmsg(char *fmt, int a1, int a2, int a3, int a4, int a5);
+addmsg(char *fmt, ...);
 
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
 endmsg();
@@ -59,14 +59,12 @@ backspace();
 str_attr(char *str);
 
 //key_state:
-SIG2();
+void SIG2();
 
 //Replacement printf
 //Michael Toy, AI Design, January 1984
 
-char *my_stccpy(a, b, c);
-
-char *sprintf(char *buf, char *fmt, int arg);
+char *my_stccpy(char* a, char* b, int c);
 
 scan_num(char *cp);
 
@@ -82,4 +80,4 @@ pf_uint(unsigned int *ip);
 
 pf_per(ip);
 
-noterse(char *str);
+char *noterse(char *str);

@@ -7,7 +7,7 @@
 
 //copy protection
 
-#define PROTECTED
+//#define PROTECTED
 #define CSUM  -1632
 #ifdef PROTECTED
 #define P_DAMAGE  6
@@ -47,6 +47,7 @@
 #define setmem(a,b,c) memset(a,c,b)
 #define wsetmem(a,b,c) memset(a,c,b)
 #define putchr putchar
+#define newmem malloc
 typedef unsigned char byte;
 typedef unsigned char bool;
 
@@ -95,7 +96,6 @@ void dmaout(char*, int, int, int);
 #define attach(a,b)     _attach(&a,b)
 #define detach(a,b)     _detach(&a,b)
 #define free_list(a)    _free_list(&a)
-#define max(a,b)        ((a)>(b)?(a):(b))
 #define on(thing,flag)  (((thing).t_flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
 #define GOLDCALC        (rnd(50+10*level)+2)
@@ -600,14 +600,13 @@ extern int captains_log;
 //Cursor motion header for Monochrome display
 
 #define abs(x)              ((x)<0?-(x):(x))
-#define NULL                0
 #define TRUE                1
 #define FALSE               0
 #define refresh             stub
 #define curscr              NULL
 #define stdscr              NULL
 #define hw                  NULL
-#define BUFSIZ              128
+#define BUFSIZE              128
 #define wmove(a,b,c)        move(b,c)
 #define wclear              clear
 #define fputs(a,b)          addstr(a)

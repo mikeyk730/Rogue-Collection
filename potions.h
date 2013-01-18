@@ -1,5 +1,5 @@
 //quaff: Quaff a potion from the pack
-quaff();
+void quaff();
 
 //invis_on: Turn on the ability to see invisible
 invis_on();
