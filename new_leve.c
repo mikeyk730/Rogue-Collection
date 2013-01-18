@@ -1,6 +1,8 @@
 //new_level: Dig and draw a new level
 //new_level.c 1.4 (A.I. Design) 12/13/84
 
+#include <wchar.h>
+
 #include "rogue.h"
 #include "new_leve.h"
 #include "monsters.h"
@@ -38,7 +40,7 @@ void new_level()
 #endif
 
   //Clean things off from last level
-  wsetmem(_level, ((MAXLINES-3)*MAXCOLS)>>1, '  ');
+  wsetmem((wchar_t*)_level, ((MAXLINES-3)*MAXCOLS)>>1, L'\x2020');
   setmem(_flags, (MAXLINES-3)*MAXCOLS, F_REAL);
   //Free up the monsters on the last level
   for (tp = mlist; tp!=NULL; tp = next(tp)) free_list(tp->t_pack);
