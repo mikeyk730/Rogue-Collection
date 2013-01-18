@@ -2,9 +2,18 @@
 //rings.c     1.4 (AI Design) 12/13/84
 
 #include "rogue.h"
+#include "rings.h"
+#include "pack.h"
+#include "misc.h"
+#include "potions.h"
+#include "main.h"
+#include "io.h"
+#include "things.h"
+#include "mach_dep.h"
+#include "weapons.h"
 
 //ring_on: Put a ring on a hand
-ring_on()
+void ring_on()
 {
   THING *obj;
   int ring = -1;
@@ -34,7 +43,7 @@ no_ring:
 }
 
 //ring_off: Take off a ring
-ring_off()
+void ring_off()
 {
   int ring;
   THING *obj;
@@ -52,7 +61,7 @@ ring_off()
 }
 
 //gethand: Which hand is the hero interested in?
-gethand()
+int gethand()
 {
   int c;
 
@@ -68,7 +77,7 @@ gethand()
 }
 
 //ring_eat: How much food does this ring use up?
-ring_eat(int hand)
+int ring_eat(int hand)
 {
   if (cur_ring[hand]==NULL) return 0;
   switch (cur_ring[hand]->o_which)

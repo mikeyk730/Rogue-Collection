@@ -6,6 +6,16 @@
 #include "daemons.h"
 #include "misc.h"
 #include "monsters.h"
+#include "pack.h"
+#include "curses.h"
+#include "chase.h"
+#include "rip.h"
+#include "new_leve.h"
+#include "list.h"
+#include "mach_dep.h"
+#include "main.h"
+#include "fight.h"
+#include "daemon.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)
@@ -149,18 +159,14 @@ THING *find_obj(int y, int x)
 #ifdef DEBUG
 
   debug(sprintf(prbuf, "Non-object %c %d,%d", chat(y, x), y, x));
-  return NULL;
-
-#else
-
-  //NOTREACHED
 
 #endif
 
+  return NULL; //NOTREACHED
 }
 
 //eat: She wants to eat something, so let her try
-eat()
+void eat()
 {
   THING *obj;
 
@@ -180,7 +186,7 @@ eat()
 }
 
 //chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
-chg_str(int amt)
+void chg_str(int amt)
 {
   str_t comp;
 
@@ -253,8 +259,6 @@ is_current(THING *obj)
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
 get_dir()
 {
-  char *prompt;
-  bool gotit;
   int ch;
 
   if (again) return TRUE;
@@ -306,8 +310,8 @@ spread(int nm)
 //call_it: Call an object something after use.
 call_it(bool know, char **guess)
 {
-  if (know && **guess) **guess = NULL;
-  else if (!know && **guess==NULL)
+  if (know && **guess) **guess = 0;
+  else if (!know && **guess==0)
   {
     msg("%scall it? ", noterse("what do you want to "));
     getinfo(prbuf, MAXNAME);
@@ -369,7 +373,7 @@ help(char **helpscr)
   int hcount = 0;
   int hrow, hcol;
   int isfull;
-  byte answer;
+  byte answer = 0;
 
   wdump();
   while (*helpscr && answer!=ESCAPE)
@@ -448,7 +452,7 @@ winat(int y, int x)
 #endif
 
 //search: Player gropes about him to find hidden things.
-search()
+void search()
 {
   int y, x;
   byte *fp;
@@ -496,7 +500,7 @@ u_level()
 }
 
 //call: Allow a user to call a potion, scroll, or ring something
-call()
+void call()
 {
   THING *obj;
   char **guess, *elsewise;
@@ -508,10 +512,10 @@ call()
   if (obj==NULL) return;
   switch (obj->o_type)
   {
-    case RING: guess = (char **)r_guess; know = r_know; elsewise = (*guess[obj->o_which]!=NULL?guess[obj->o_which]:r_stones[obj->o_which]); break;
-    case POTION: guess = (char **)p_guess; know = p_know; elsewise = (*guess[obj->o_which]!=NULL?guess[obj->o_which]:p_colors[obj->o_which]); break;
-    case SCROLL: guess = (char **)s_guess; know = s_know; elsewise = (*guess[obj->o_which]!=NULL?guess[obj->o_which]:(char *)(&s_names[obj->o_which])); break;
-    case STICK: guess = (char **)ws_guess; know = ws_know; elsewise = (*guess[obj->o_which]!=NULL?guess[obj->o_which]:ws_made[obj->o_which]); break;
+    case RING: guess = (char **)r_guess; know = r_know; elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:r_stones[obj->o_which]); break;
+    case POTION: guess = (char **)p_guess; know = p_know; elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:p_colors[obj->o_which]); break;
+    case SCROLL: guess = (char **)s_guess; know = s_know; elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:(char *)(&s_names[obj->o_which])); break;
+    case STICK: guess = (char **)ws_guess; know = ws_know; elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:ws_made[obj->o_which]); break;
     default: msg("you can't call that anything"); return;
   }
   if (know[obj->o_which]) {msg("that has already been identified"); return;}

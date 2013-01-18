@@ -1,8 +1,19 @@
 //File for the fun ends. Death or a total win
 //rip.c        1.4 (A.I. Design)       12/14/84
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <io.h>
+#include <sys/stat.h>
+
 #include "rogue.h"
 #include "rip.h"
+#include "curses.h"
+#include "io.h"
+#include "mach_dep.h"
+#include "things.h"
+#include "misc.h"
 
 static int sc_fd;
 
@@ -12,7 +23,7 @@ extern int scr_type;
 
 //score: Figure score and post it.
 
-score(int amount, int flags, char monst)
+void score(int amount, int flags, char monst)
 {
 #ifndef DEMO
 #ifndef WIZARD
@@ -31,7 +42,7 @@ score(int amount, int flags, char monst)
     wait_for('\r');
     move(LINES-1, 0);
   }
-  while ((sc_fd = open(s_score, 0))<0)
+  while ((sc_fd = _open(s_score, 0))<0)
   {
     printw("\n");
     if (noscore || (amount==0)) return;
@@ -39,14 +50,14 @@ score(int amount, int flags, char monst)
 reread:
     switch (response = readchar())
     {
-      case 'c': case 'C': close(creat(s_score, 0666));
+      case 'c': case 'C': _close(_creat(s_score, _S_IREAD | _S_IWRITE));
       case 'r': case 'R': break;
       case 'a': case 'A': return;
       default: goto reread;
     }
   }
   printw("\n");
-  get_scores(&top_ten);
+  get_scores(&top_ten[0]);
   if (noscore!=TRUE)
   {
     strcpy(his_score.sc_name, whoami);
@@ -54,14 +65,14 @@ reread:
     his_score.sc_fate = flags?flags:monst;
     his_score.sc_level = max_level;
     his_score.sc_rank = pstats.s_lvl;
-    rank = add_scores(&his_score, &top_ten);
+    rank = add_scores(&his_score, &top_ten[0]);
   }
-  close(sc_fd);
+  _close(sc_fd);
   if (rank>0)
   {
-    if ((sc_fd = creat(s_score, 0666))>=0) {put_scores(&top_ten); close(sc_fd);}
+    if ((sc_fd = _creat(s_score, _S_IREAD | _S_IWRITE))>=0) {put_scores(&top_ten[0]); _close(sc_fd);}
   }
-  pr_scores(rank, &top_ten);
+  pr_scores(rank, &top_ten[0]);
 
 #endif WIZARD
 #endif DEMO
@@ -70,31 +81,30 @@ reread:
 #ifndef DEMO
 #ifndef WIZARD
 
-get_scores(struct sc_ent *top10)
+void get_scores(struct sc_ent *top10)
 {
   int i, retcode = 1;
 
   for (i = 0; i<TOPSCORES; i++, top10++)
   {
-    if (retcode>0) retcode = read(sc_fd, top10, sizeof(struct sc_ent));
+    if (retcode>0) retcode = _read(sc_fd, top10, sizeof(struct sc_ent));
     if (retcode<=0) top10->sc_gold = 0;
   }
 }
 
-put_scores(struct sc_ent *top10)
+void put_scores(struct sc_ent *top10)
 {
   int i;
 
   for (i = 0; (i<TOPSCORES) && top10->sc_gold; i++, top10++)
   {
-    if (write(sc_fd, top10, sizeof(struct sc_ent))<=0) return;
+    if (_write(sc_fd, top10, sizeof(struct sc_ent))<=0) return;
   }
 }
 
-pr_scores(int newrank, struct sc_ent *top10)
+void pr_scores(int newrank, struct sc_ent *top10)
 {
   int i;
-  char *ki;
   int curl;
   char dthstr[30];
   char *altmsg;
@@ -135,7 +145,7 @@ pr_scores(int newrank, struct sc_ent *top10)
       case 1: strcpy(dthstr, " quit"); break;
       default: strcpy(dthstr, " weirded out");
     }
-    if ((strlen(top10->sc_name)+10+strlen(he_man[top10->sc_rank-1]))<COLS)
+    if ((strlen(top10->sc_name)+10+strlen(he_man[top10->sc_rank-1])) < (size_t)COLS)
     {
       if (top10->sc_rank>1 && (strlen(top10->sc_name))) printw(" \"%s\"", he_man[top10->sc_rank-1]);
     }
@@ -147,7 +157,7 @@ pr_scores(int newrank, struct sc_ent *top10)
   if (COLS==80) addstr("\n\n\n\n");
 }
 
-add_scores(struct sc_ent *newscore, struct sc_ent *oldlist)
+int add_scores(struct sc_ent *newscore, struct sc_ent *oldlist)
 {
   struct sc_ent *sentry, *insert;
   int retcode = TOPSCORES+1;
@@ -171,7 +181,7 @@ add_scores(struct sc_ent *newscore, struct sc_ent *oldlist)
 #endif DEMO
 
 //death: Do something really fun when he dies
-death(char monst)
+void death(char monst)
 {
   char *killer;
   char buf[MAXSTR];
@@ -226,11 +236,11 @@ death(char monst)
 #endif DEMO
 
   wclose(0);
-  exit();
+  exit(0);
 }
 
 //total_winner: Code for a winner
-total_winner()
+void total_winner()
 {
 #ifndef DEMO
 
@@ -399,7 +409,7 @@ char *killname(char monst, bool doart)
 #ifdef DEMO
 
 //For the demonstration version of rogue we really want to Print out a message when the game ends telling them how to order the game.
-demo(int endtype)
+void demo(int endtype)
 {
   int i;
   char demobuf[81];

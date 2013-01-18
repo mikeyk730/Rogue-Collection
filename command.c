@@ -3,12 +3,32 @@
 
 #include "rogue.h"
 #include "daemons.h"
+#include "daemon.h"
 #include "command.h"
+#include "main.h"
+#include "io.h"
+#include "wizard.h"
+#include "misc.h"
+#include "fakedos.h"
+#include "save.h"
+#include "armor.h"
+#include "weapons.h"
+#include "sticks.h"
+#include "curses.h"
+#include "mach_dep.h"
+#include "move.h"
+#include "rings.h"
+#include "things.h"
+#include "potions.h"
+#include "pack.h"
+#include "scrolls.h"
+
+#include <ctype.h>
 
 static int lastcount;
 static byte lastch, do_take, lasttake;
 
-command()
+void command()
 {
   int ntimes;
 
@@ -36,7 +56,7 @@ command()
   }
 }
 
-com_char()
+int com_char()
 {
   int same, ch;
 
@@ -119,14 +139,14 @@ get_prefix()
   return retch;
 }
 
-show_count()
+void show_count()
 {
   move(LINES-2, COLS-4);
   if (count) printw("%-4d", count);
   else addstr("    ");
 }
 
-execcom()
+void execcom()
 {
   coord mv;
   int ch;

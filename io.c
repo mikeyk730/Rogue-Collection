@@ -1,8 +1,17 @@
 //Various input/output functions
 //io.c         1.4             (A.I. Design) 12/10/84
 
+#include <stdio.h>
+#include <conio.h>
+#include <ctype.h>
+
 #include "rogue.h"
 #include "io.h"
+#include "curses.h"
+#include "misc.h"
+#include "mach_dep.h"
+#include "strings.h"
+#include "command.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)
@@ -26,7 +35,7 @@ ifterse(char *tfmt, char *fmt, int a1, int a2, int a3, int a4, int a5)
   else msg(fmt, a1, a2, a3, a4, a5);
 }
 
-msg(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void msg(char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   //if the string is "", just clear the line
   if (*fmt=='\0') {move(0, 0); clrtoeol(); mpos = 0; return;}
@@ -113,7 +122,7 @@ putmsg(int msgline, char *msg)
         tmpmsg = stpbrk(curmsg, " ");
         //If there are no blanks in line
         if ((tmpmsg==0 || tmpmsg>=&lastmsg[COLS]) && lastmsg==curmsg) {curmsg = &lastmsg[COLS]; break;}
-        if ((tmpmsg>=(lastmsg+COLS)) || (strlen(curmsg)<COLS)) break;
+        if ((tmpmsg>=(lastmsg+COLS)) || (strlen(curmsg)< (size_t)COLS)) break;
         curmsg = tmpmsg+1;
       } while (1);
     }
@@ -124,27 +133,26 @@ putmsg(int msgline, char *msg)
 scrl(int msgline, char *str1, char *str2)
 {
   char *fmt;
-  int x,y;
 
   if (COLS>40) fmt = "%.80s"; else fmt = "%.40s";
   if (str1==0)
   {
     move(msgline, 0);
-    if (strlen(str2)<COLS) clrtoeol();
+    if (strlen(str2)<(size_t)COLS) clrtoeol();
     printw(fmt, str2);
   }
   else while (str1<=str2)
   {
     move(msgline, 0);
     printw(fmt, str1++);
-    if (strlen(str1)<(COLS-1)) clrtoeol();
+    if (strlen(str1)<(size_t)(COLS-1)) clrtoeol();
   }
 }
 
 //unctrl: Print a readable version of a certain character
 char *unctrl(unsigned char ch)
 {
-  static chstr[9]; //Defined in curses library
+  static char chstr[9]; //Defined in curses library
 
   if (isspace(ch)) strcpy(chstr, " ");
   else if (!isprint(ch)) if (ch<' ') sprintf(chstr, "^%c", ch+'@'); else sprintf(chstr, "\\x%x", ch);
@@ -253,7 +261,7 @@ getinfo(char *str, int size)
   retstr = str;
   *str = 0;
   wason = cursor(TRUE);
-  while (ret==1) switch (ch = getch())
+  while (ret==1) switch (ch = _getch())
   {
     case ESCAPE:
       while (str!=retstr) {backspace(); readcnt--; str--;}
@@ -362,7 +370,7 @@ str_attr(char *str)
 }
 
 //key_state:
-SIG2()
+void SIG2()
 {
   static unsigned icnt = 0, ntick = 0;
   static int key_init = TRUE;
@@ -372,8 +380,7 @@ SIG2()
   static int bighand, littlehand;
   int showtime = FALSE, spare;
   int x, y;
-  char wbuf[10];
-
+  
 #ifdef DEMO
 
   static tot_time = 0;
@@ -471,44 +478,10 @@ SIG2()
 //Replacement printf
 //Michael Toy, AI Design, January 1984
 
-char *my_stccpy(a, b, c)
+char *my_stccpy(char* a, char* b, int c)
 {
   stccpy(a, b, c);
   return a+strlen(a);
-}
-
-char *sprintf(char *buf, char *fmt, int arg)
-{
-  char *cp, *init;
-  int *ap = &arg, pad;
-  char tbuf[128];
-
-  init = buf;
-  while (*fmt)
-  {
-    if (*fmt!='%') *buf++ = *fmt++;
-    else
-    {
-      left_justify = max_width = 0;
-      if (*++fmt=='-') left_justify++, fmt++;
-      min_width = scan_num(fmt);
-      if (*bp=='.') max_width = scan_num(++bp);
-      fmt = bp;
-      bp = tbuf;
-      if (cp = stpchr(formats, *fmt)) ap += (*(pfuncs[cp-formats]))(ap);
-      *bp = 0;
-      if (max_width && strlen(tbuf)>max_width) tbuf[max_width] = 0;
-      pad = min_width-strlen(tbuf);
-      bp = buf;
-      if (!left_justify) blanks(pad);
-      bp = my_stccpy(bp, tbuf, 200);
-      if (left_justify) blanks(pad);
-      buf = bp;
-      if (*fmt) fmt++;
-    }
-  }
-  *buf = 0;
-  return init;
 }
 
 scan_num(char *cp)
@@ -570,7 +543,7 @@ pf_per(ip)
   return 0;
 }
 
-noterse(char *str)
+char *noterse(char *str)
 {
   return (terse || expert?nullstr:str);
 }

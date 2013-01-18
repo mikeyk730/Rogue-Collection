@@ -1,7 +1,16 @@
 //Routines to deal with the pack
 //pack.c      1.4 (A.I. Design)       12/14/84
 
+#include <stdio.h>
+
 #include "rogue.h"
+#include "pack.h"
+#include "io.h"
+#include "misc.h"
+#include "curses.h"
+#include "list.h"
+#include "things.h"
+#include "mach_dep.h"
 
 THING *pack_obj(byte ch, byte *chp)
 {
@@ -14,7 +23,7 @@ THING *pack_obj(byte ch, byte *chp)
 }
 
 //add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-add_pack(THING *obj, bool silent)
+void add_pack(THING *obj, bool silent)
 {
   THING *op, *lp;
   bool exact, from_floor;
@@ -140,7 +149,7 @@ inventory(THING *list, int type, char *lstr)
 }
 
 //pick_up: Add something to characters pack.
-pick_up(byte ch)
+void pick_up(byte ch)
 {
   THING *obj;
 

@@ -12,10 +12,26 @@
 //All rights reserved
 //main.c      1.4 (A.I. Design) 11/28/84
 
+#include <stdlib.h>
+#include <time.h>
+
 #include "rogue.h"
 #include "main.h"
 #include "daemons.h"
+#include "daemon.h"
 #include "chase.h"
+#include "mach_dep.h"
+#include "curses.h"
+#include "io.h"
+#include "init.h"
+#include "load.h"
+#include "new_leve.h"
+#include "misc.h"
+#include "rip.h"
+#include "save.h"
+#include "env.h"
+#include "command.h"
+
 
 #define is_key(s)  ((*s=='-')||(*s=='/'))
 #define is_char(c1,c2)  ((c1==c2)||((c1+'a'-'A')==c2))
@@ -40,7 +56,7 @@ main(int argc, char **argv)
   int sl;
 
   regs = &_treg;
-  dmaout(&junk, 2, 0, 4);
+  dmaout((char*)&junk, 2, 0, 4);
   clock_on();
   epyx_yuck();
   init_ds();
@@ -78,7 +94,7 @@ main(int argc, char **argv)
     if (bwflag) forcebw();
     if (no_check==0) no_check = do_force;
     credits();
-    if (dnum==0) dnum = srand();
+    if (dnum==0) dnum = srand2();
     seed = dnum;
     init_player(); //Set up initial player stats
     init_things(); //Set up probabilities of things
@@ -120,6 +136,13 @@ rnd(int range)
   return range<1?0:((ran()+ran())&0x7fffffffl)%range;
 }
 
+int srand2()
+{
+   int t = (int)time(0);
+   srand(t);
+   return t;
+}
+
 //roll: Roll a number of dice
 roll(int number, int sides)
 {
@@ -135,7 +158,6 @@ playit(char *sname)
   if (sname)
   {
     extern int iscuron;
-    int ov, oc;
 
     restore(sname);
     if (bwflag) forcebw();

@@ -1,7 +1,15 @@
 //global variable initializaton
 //init.c      1.4 (A.I. Design) 12/14/84
 
+#include <stdlib.h>
+
 #include "rogue.h"
+#include "list.h"
+#include "init.h"
+#include "weapons.h"
+#include "misc.h"
+#include "pack.h"
+#include "main.h"
 
 THING *_things;
 int *_t_alloc;
@@ -275,13 +283,13 @@ init_names()
     prbuf[MAXNAME] = 0;
     s_know[i] = FALSE;
     s_guess[i] = (char *)&_guesses[iguess++];
-    strcpy(&s_names[i], prbuf);
+    strcpy((char*)&s_names[i], prbuf);
     if (i>0) s_magic[i].mi_prob += s_magic[i-1].mi_prob;
   }
 }
 
 //getsyl(): generate a random syllable
-getsyl()
+char* getsyl()
 {
   static char _tsyl[4];
 
@@ -346,7 +354,7 @@ init_materials()
 }
 
 //init_ds(): Allocate things data space
-init_ds(int clrflag)
+init_ds()
 {
   long *ep;
 
@@ -355,7 +363,7 @@ init_ds(int clrflag)
   _things = (THING *)newmem(sizeof(THING)*MAXITEMS);
   _t_alloc = (int *)newmem(MAXITEMS*sizeof(int));
   startmem = tbuf = newmem(MAXSTR);
-  msgbuf = newmem(BUFSIZ);
+  msgbuf = newmem(BUFSIZE);
   prbuf = newmem(MAXSTR);
   ring_buf = newmem(6);
   e_levels = (long *)newmem(20*sizeof(long));

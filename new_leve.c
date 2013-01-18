@@ -2,20 +2,29 @@
 //new_level.c 1.4 (A.I. Design) 12/13/84
 
 #include "rogue.h"
+#include "new_leve.h"
 #include "monsters.h"
 #include "potions.h"
+#include "main.h"
+#include "list.h"
+#include "curses.h"
+#include "mach_dep.h"
+#include "rooms.h"
+#include "things.h"
+#include "io.h"
+#include "passages.h"
+#include "misc.h"
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room
 #define MINTREAS  2 //minimum number of treasures in a treasure room
 #define MAXTRIES  10 //max number of tries to put down a monster
 
-new_level()
+void new_level()
 {
   int rm, i;
   THING *tp;
   byte *fp;
-  THING **mp;
   int index;
   coord stairs;
 
@@ -60,7 +69,7 @@ new_level()
     rm = rnd_room();
     rnd_pos(&rooms[rm], &stairs);
     index = INDEX(stairs.y, stairs.x);
-    if (i++>100) {i = 0; seed = srand();}
+    if (i++>100) {i = 0; seed = srand2();}
   } while (!isfloor(_level[index]));
   _level[index] = STAIRS;
   //Place the traps
@@ -97,7 +106,7 @@ new_level()
 }
 
 //rnd_room: Pick a room that is really there
-rnd_room()
+int rnd_room()
 {
   int rm;
 
@@ -106,7 +115,7 @@ rnd_room()
 }
 
 //put_things: Put potions and scrolls on this level
-put_things()
+void put_things()
 {
   int i = 0;
   THING *cur;
@@ -152,7 +161,7 @@ put_things()
 }
 
 //treas_room: Add a treasure room
-treas_room()
+void treas_room()
 {
   int nm, index;
   THING *tp;

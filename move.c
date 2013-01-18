@@ -3,12 +3,28 @@
 
 #include "rogue.h"
 #include "move.h"
+#include "list.h"
+#include "weapons.h"
+#include "curses.h"
+#include "io.h"
+#include "rip.h"
+#include "wizard.h"
+#include "monsters.h"
+#include "rooms.h"
+#include "misc.h"
+#include "main.h"
+#include "fight.h"
+#include "new_leve.h"
+#include "chase.h"
+#include "mach_dep.h"
+
+#include <ctype.h>
 
 //Used to hold the new hero position
 coord nh;
 
 //do_run: Start the hero running
-do_run(byte ch)
+void do_run(byte ch)
 {
   running = TRUE;
   after = FALSE;
@@ -16,7 +32,7 @@ do_run(byte ch)
 }
 
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
-do_move(int dy, int dx)
+void do_move(int dy, int dx)
 {
   byte ch;
   int fl;
@@ -215,7 +231,7 @@ descend(char *mesg)
 }
 
 //rndmove: Move in a random direction if the monster/person is confused
-rndmove(THING *who, coord *newmv)
+void rndmove(THING *who, coord *newmv)
 {
   int x, y;
   byte ch;

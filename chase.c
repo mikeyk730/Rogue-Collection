@@ -3,6 +3,15 @@
 
 #include "rogue.h"
 #include "chase.h"
+#include "fight.h"
+#include "move.h"
+#include "io.h"
+#include "sticks.h"
+#include "misc.h"
+#include "curses.h"
+#include "main.h"
+#include "monsters.h"
+#include "list.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -32,7 +41,6 @@ void runners()
 void do_chase(THING *th)
 {
   int mindist = 32767, i, dist;
-  byte sch;
   bool door;
   THING *obj;
   struct room *oroom;

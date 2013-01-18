@@ -1,6 +1,9 @@
-#include "rogue.h"
+#include <ctype.h>
 
-stccpy(char *s1, char *s2, int count)
+#include "rogue.h"
+#include "strings.h"
+
+char* stccpy(char *s1, char *s2, int count)
 {
   while (count-->0 && *s2) *s1++ = *s2++;
   *s1 = 0;
@@ -15,14 +18,14 @@ char *stpblk(char *str)
   return (str);
 }
 
-stpbrk(char *str, char *brk)
+char* stpbrk(char *str, char *brk)
 {
   while (*str && !stpchr(brk,*str)) str++;
   return (*str?str:0);
 }
 
 //remove trailing whitespace from the end of a line
-endblk(char *str)
+char* endblk(char *str)
 {
   char *backup;
 

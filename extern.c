@@ -334,7 +334,7 @@ char *p_colors[MAXPOTIONS];        //Colors of the potions
 char *r_stones[MAXRINGS];          //Stone settings of the rings
 char *ws_made[MAXSTICKS];          //What sticks are made of
 //char *release;                   //Release number of rogue
-char huh[BUFSIZ];                  //The last message printed
+char huh[BUFSIZE];                  //The last message printed
 char *s_guess[MAXSCROLLS];         //Players guess at what scroll is
 char *p_guess[MAXPOTIONS];         //Players guess at what potion is
 char *r_guess[MAXRINGS];           //Players guess at what ring is

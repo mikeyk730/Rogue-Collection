@@ -5,6 +5,7 @@
 //The two basic functions here will be "save" and "restor".
 
 #include "rogue.h"
+#include "save.h"
 
 #define MIDSIZE  10
 //BLKSZ: size of block read/written on each io operation. Has to be less than 4096 and a factor of 4096 so the screen can be read in exactly.
@@ -158,7 +159,7 @@ restore(char *savefile)
 //  no_check = old_check;
 //  mpos = 0;
 //  ifterse1("%s, Welcome back!", "Hello %s, Welcome back to the Dungeons of Doom!", whoami);
-//  dnum = srand(); //make it a little tougher on cheaters
+//  dnum = srand2(); //make it a little tougher on cheaters
 //  unlink(save_name);
 
 #endif DEMO

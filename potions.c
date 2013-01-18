@@ -3,10 +3,19 @@
 
 #include "rogue.h"
 #include "daemons.h"
+#include "daemon.h"
 #include "potions.h"
+#include "pack.h"
+#include "curses.h"
+#include "io.h"
+#include "list.h"
+#include "chase.h"
+#include "misc.h"
+#include "main.h"
+#include "fight.h"
 
 //quaff: Quaff a potion from the pack
-quaff()
+void quaff()
 {
   THING *obj, *th;
   bool discardit = FALSE;

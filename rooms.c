@@ -5,12 +5,20 @@
 #include "main.h"
 #include "rooms.h"
 #include "monsters.h"
+#include "list.h"
+#include "curses.h"
+#include "new_leve.h"
+#include "maze.h"
+#include "move.h"
+#include "chase.h"
+#include "misc.h"
+
 #include <ctype.h>
 
 #define GOLDGRP  1
 
 //do_rooms: Create rooms and corridors with a connectivity graph
-do_rooms()
+void do_rooms()
 {
   int i, rm;
   struct room *rp;
@@ -115,7 +123,7 @@ do_rooms()
 }
 
 //draw_room: Draw a box around a room and lay down the floor
-draw_room(struct room *rp)
+void draw_room(struct room *rp)
 {
   int y, x;
 
@@ -135,7 +143,7 @@ draw_room(struct room *rp)
 }
 
 //vert: Draw a vertical line
-vert(struct room *rp, int startx)
+void vert(struct room *rp, int startx)
 {
   int y;
 
@@ -143,7 +151,7 @@ vert(struct room *rp, int startx)
 }
 
 //horiz: Draw a horizontal line
-horiz(struct room *rp, int starty)
+void horiz(struct room *rp, int starty)
 {
   int x;
 
@@ -151,14 +159,14 @@ horiz(struct room *rp, int starty)
 }
 
 //rnd_pos: Pick a random spot in a room
-rnd_pos(struct room *rp, coord *cp)
+void rnd_pos(struct room *rp, coord *cp)
 {
   cp->x = rp->r_pos.x+rnd(rp->r_max.x-2)+1;
   cp->y = rp->r_pos.y+rnd(rp->r_max.y-2)+1;
 }
 
 //enter_room: Code that is executed whenever you appear in a room
-enter_room(coord *cp)
+void enter_room(coord *cp)
 {
   struct room *rp;
   int y, x;
@@ -188,7 +196,7 @@ enter_room(coord *cp)
 }
 
 //leave_room: Code for when we exit a room
-leave_room(coord *cp)
+void leave_room(coord *cp)
 {
   int y, x;
   struct room *rp;

@@ -1,7 +1,13 @@
 //Various installation dependent routines
 //mach_dep.c  1.4 (A.I. Design) 12/1/84
 
+#include <stdio.h>
+#include <conio.h>
+
 #include "rogue.h"
+#include "curses.h"
+#include "mach_dep.h"
+#include "io.h"
 
 #define ULINE()  if (is_color) lmagenta(); else uline();
 #define TICK_ADDR  0x70
@@ -69,18 +75,6 @@ clock_on()
 no_clock()
 {
   //dmaout(clk_vec, 2, 0, TICK_ADDR);
-}
-
-//returns a seed for a random number generator
-srand()
-{
-#ifdef DEBUG
-  return ++dnum;
-#else
-  //Get Time
-  bdos(0x2C);
-  return (regs->cx+regs->dx);
-#endif
 }
 
 //flush_type: Flush typeahead for traps, etc.
@@ -165,7 +159,7 @@ readchar()
   //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
   do SIG2(); while (no_char()); //Rogue spends a lot of time here
   //Now read a character and translate it if it appears in the translation table
-  for (ch = getch(), x = xtab; x<xtab+(sizeof xtab)/sizeof *xtab; x++) if (ch==x->keycode)
+  for (ch = _getch(), x = xtab; x<xtab+(sizeof xtab)/sizeof *xtab; x++) if (ch==x->keycode)
   {
     ch = x->keyis;
     break;
@@ -185,19 +179,6 @@ bdos(int fnum, int dxval)
   swint(SW_DOS, regs);
   regs = saveptr;
   return (0xff&regs->ax);
-}
-
-//newmem - memory allocater - motto: allocate or die trying
-newmem(unsigned int nbytes, int clrflag)
-{
-  return malloc(nbytes);
-  //char *newaddr;
-
-  //newaddr = sbrk(nbytes);
-  //if (newaddr==-1) fatal("No Memory");
-  //end_mem = newaddr+nbytes;
-  //if ((unsigned)end_mem&1) end_mem = sbrk(1);
-  //return (newaddr);
 }
 
 isjr()
@@ -237,7 +218,7 @@ unsetup()
   set_ctrlb(ocb);
 }
 
-one_tick()
+void one_tick()
 {
   extern int tick;
   int otick = tick;

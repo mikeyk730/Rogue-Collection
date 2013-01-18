@@ -1,9 +1,23 @@
 //Functions to implement the various sticks one might find while wandering around the dungeon.
 //@(#)sticks.c1.2 (AI Design) 2/12/84
 
+#include <stdio.h>
+
 #include "rogue.h"
 #include "sticks.h"
 #include "monsters.h"
+#include "pack.h"
+#include "io.h"
+#include "curses.h"
+#include "main.h"
+#include "chase.h"
+#include "fight.h"
+#include "new_leve.h"
+#include "rooms.h"
+#include "misc.h"
+#include "weapons.h"
+#include "rip.h"
+#include "list.h"
 
 //fix_stick: Set up a new stick
 fix_stick(THING *cur)
@@ -20,7 +34,7 @@ fix_stick(THING *cur)
 }
 
 //do_zap: Perform a zap with a wand
-do_zap()
+void do_zap()
 {
   THING *obj;
   THING *tp;
@@ -195,7 +209,7 @@ do_zap()
 }
 
 //drain: Do drain hit points from player schtick
-drain()
+void drain()
 {
   THING *mp;
   int cnt;

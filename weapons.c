@@ -1,8 +1,20 @@
 //Functions for dealing with problems brought about by weapons
 //weapons.c   1.4 (AI Design) 12/22/84
 
+#include <stdio.h>
+
 #include "rogue.h"
 #include "monsters.h"
+#include "pack.h"
+#include "list.h"
+#include "weapons.h"
+#include "curses.h"
+#include "io.h"
+#include "things.h"
+#include "fight.h"
+#include "chase.h"
+#include "misc.h"
+#include "main.h"
 
 #define NONE 100
 
@@ -27,7 +39,7 @@ static struct init_weps
 };
 
 //missile: Fire a missile in a given direction
-missile(int ydelta, int xdelta)
+void missile(int ydelta, int xdelta)
 {
   THING *obj, *nitem;
 
@@ -58,7 +70,7 @@ hack:
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
-do_motion(THING *obj, int ydelta, int xdelta)
+void do_motion(THING *obj, int ydelta, int xdelta)
 {
   byte under = '@';
 
@@ -102,7 +114,7 @@ char *short_name(THING *obj)
 }
 
 //fall: Drop an item someplace around here.
-fall(THING *obj, bool pr)
+void fall(THING *obj, bool pr)
 {
   static coord fpos;
   int index;
@@ -131,7 +143,7 @@ fall(THING *obj, bool pr)
 }
 
 //init_weapon: Set up the initial goodies for a weapon
-init_weapon(THING *weap, byte type)
+void init_weapon(THING *weap, byte type)
 {
   struct init_weps *iwp;
 
@@ -165,7 +177,7 @@ char *num(int n1, int n2, char type)
 }
 
 //wield: Pull out a certain weapon
-wield()
+void wield()
 {
   THING *obj, *oweapon;
   char *sp;
@@ -217,5 +229,5 @@ tick_pause()
   extern int tick;
 
   otick = tick;
-  while (otick==tick) ;
+  //while (otick==tick) ; //TODO: tick needs to inc in bg
 }

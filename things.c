@@ -1,8 +1,24 @@
 //Contains functions for dealing with things like potions, scrolls, and other items.
 //things.c     1.4 (AI Design) 12/14/84
 
+#include <stdio.h>
+#include <ctype.h>
+
 #include "rogue.h"
 #include "things.h"
+#include "pack.h"
+#include "list.h"
+#include "sticks.h"
+#include "io.h"
+#include "misc.h"
+#include "daemons.h"
+#include "rings.h"
+#include "weapons.h"
+#include "curses.h"
+#include "main.h"
+#include "armor.h"
+#include "daemon.h"
+#include "mach_dep.h"
 
 #define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
 
@@ -109,7 +125,7 @@ chopmsg(char *s, char *shmsg, char *lnmsg, int arg1, int arg2, int arg3)
 }
 
 //drop: Put something down
-drop()
+void drop()
 {
   byte ch;
   THING *nobj, *op;

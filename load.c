@@ -2,6 +2,7 @@
 //load.c      1.42    (A.I. Design)   2/12/84
 
 #include "rogue.h"
+#include "load.h"
 
 #define MODESAVE  0x65
 #define MODEREG  0x3d8
@@ -59,29 +60,29 @@ scr_load()
 
 bload(unsigned int segment)
 {
-  unsigned int offset = 0, rdcnt;
+  //unsigned int offset = 0, rdcnt;
 
-  if (read(lfd, store, 7)<=0) lseek(lfd, 7L, 0); //Ignore first seven bytes
-  while ((rdcnt = read(lfd, store, blksize))>0)
-  {
-    dmaout(store, rdcnt/2, segment, offset);
-    if ((offset += rdcnt)>=16384) break;
-  }
+  //if (read(lfd, store, 7)<=0) lseek(lfd, 7L, 0); //Ignore first seven bytes
+  //while ((rdcnt = read(lfd, store, blksize))>0)
+  //{
+  //  dmaout(store, rdcnt/2, segment, offset);
+  //  if ((offset += rdcnt)>=16384) break;
+  //}
 }
 
 find_drive()
 {
-  int drive = bdos(0x19);
-  char spec = s_drive[0];
-  char filename[30];
+  //int drive = bdos(0x19);
+  //char spec = s_drive[0];
+  //char filename[30];
 
-  if (isalpha(spec))
-  {
-    if (isupper(spec)) drive = spec-'A';
-    else drive = spec-'a';
-  }
-  strcpy(filename, "a:jatgnas.8ys");
-  filename[0] += (char)drive;
-  access(filename);
-  return drive;
+  //if (isalpha(spec))
+  //{
+  //  if (isupper(spec)) drive = spec-'A';
+  //  else drive = spec-'a';
+  //}
+  //strcpy(filename, "a:jatgnas.8ys");
+  //filename[0] += (char)drive;
+  //access(filename);
+  //return drive;
 }

@@ -2,6 +2,11 @@
 //passages.c  1.4 (A.I. Design)       12/14/84
 
 #include "rogue.h"
+#include "maze.h"
+#include "main.h"
+#include "curses.h"
+#include "misc.h"
+#include "passages.h"
 
 static int pnum;
 static byte newpnum;
@@ -11,7 +16,7 @@ conn(int r1, int r2)
 {
   struct room *rpf, *rpt;
   int rmt, rm;
-  int distance, turn_spot, turn_distance, index;
+  int distance, turn_spot, turn_distance;
   int direc;
   coord del, curr, turn_delta, spos, epos;
 
@@ -228,7 +233,7 @@ passnum()
 }
 
 //numpass: Number a passageway square and its brethren
-numpass(int y, int x)
+void numpass(int y, int x)
 {
   byte *fp;
   struct room *rp;
@@ -254,7 +259,7 @@ numpass(int y, int x)
   numpass(y, x-1);
 }
 
-psplat(shint y, shint x)
+void psplat(shint y, shint x)
 {
   int idx;
 

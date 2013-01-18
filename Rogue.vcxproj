@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -50,7 +50,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -65,7 +66,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,21 +133,41 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="armor.h" />
     <ClInclude Include="chase.h" />
     <ClInclude Include="command.h" />
+    <ClInclude Include="curses.h" />
+    <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />
+    <ClInclude Include="env.h" />
+    <ClInclude Include="fakedos.h" />
+    <ClInclude Include="fight.h" />
+    <ClInclude Include="init.h" />
     <ClInclude Include="io.h" />
+    <ClInclude Include="list.h" />
+    <ClInclude Include="load.h" />
+    <ClInclude Include="mach_dep.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="maze.h" />
     <ClInclude Include="misc.h" />
     <ClInclude Include="monsters.h" />
     <ClInclude Include="move.h" />
+    <ClInclude Include="new_leve.h" />
+    <ClInclude Include="pack.h" />
+    <ClInclude Include="passages.h" />
     <ClInclude Include="potions.h" />
+    <ClInclude Include="rings.h" />
     <ClInclude Include="rip.h" />
     <ClInclude Include="rogue.h" />
     <ClInclude Include="rooms.h" />
+    <ClInclude Include="save.h" />
+    <ClInclude Include="scrolls.h" />
     <ClInclude Include="slime.h" />
     <ClInclude Include="sticks.h" />
+    <ClInclude Include="strings.h" />
     <ClInclude Include="things.h" />
+    <ClInclude Include="weapons.h" />
+    <ClInclude Include="wizard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

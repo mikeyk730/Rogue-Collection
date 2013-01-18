@@ -1,10 +1,29 @@
 //All the fighting gets done here
 //@(#)fight.c          1.43 (AI Design)                1/19/85
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+
 #include "rogue.h"
+#include "fight.h"
+#include "list.h"
+#include "weapons.h"
+#include "monsters.h"
+#include "io.h"
+#include "rip.h"
+#include "things.h"
+#include "main.h"
+#include "curses.h"
+#include "slime.h"
+#include "chase.h"
+#include "potions.h"
+#include "misc.h"
+#include "mach_dep.h"
+
 
 //fight: The player attacks the monster.
-fight(coord *mp, char mn, THING *weap, bool thrown)
+int fight(coord *mp, char mn, THING *weap, bool thrown)
 {
   THING *tp;
   char *mname;
@@ -57,7 +76,7 @@ fight(coord *mp, char mn, THING *weap, bool thrown)
 }
 
 //attack: The monster attacks the player
-attack(THING *mp)
+void attack(THING *mp)
 {
   char *mname;
 
@@ -124,7 +143,7 @@ attack(THING *mp)
         purse -= GOLDCALC;
         if (!save(VS_MAGIC)) purse -= GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
         if (purse<0) purse = 0;
-        remove(&mp->t_pos, mp, FALSE);
+        remove_mons(&mp->t_pos, mp, FALSE);
         if (purse!=lastpurse) msg("your purse feels lighter");
 
         break;
@@ -141,7 +160,7 @@ attack(THING *mp)
         if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
         if (steal!=NULL)
         {
-          remove(&mp->t_pos, mp, FALSE);
+          remove_mons(&mp->t_pos, mp, FALSE);
           inpack--;
           if (steal->o_count>1 && steal->o_group==0)
           {
@@ -176,7 +195,7 @@ attack(THING *mp)
 }
 
 //swing: Returns true if the swing hits
-swing(int at_lvl, int op_arm, int wplus)
+bool swing(int at_lvl, int op_arm, int wplus)
 {
   int res = rnd(20);
   int need = (20-at_lvl)-op_arm;
@@ -185,7 +204,7 @@ swing(int at_lvl, int op_arm, int wplus)
 }
 
 //check_level: Check to see if the guy has gone up a level.
-check_level()
+void check_level()
 {
   int i, add, olevel;
 
@@ -203,7 +222,7 @@ check_level()
 }
 
 //roll_em: Roll several attacks
-roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
+bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
 {
   struct stats *att, *def;
   char *cp;
@@ -291,7 +310,7 @@ char *prname(char *who, bool upper)
 }
 
 //hit: Print a message to indicate a successful hit
-hit(char *er, char *ee)
+void hit(char *er, char *ee)
 {
   char *s;
 
@@ -307,7 +326,7 @@ hit(char *er, char *ee)
 }
 
 //miss: Print a message to indicate a poor swing
-miss(char *er, char *ee)
+void miss(char *er, char *ee)
 {
   char *s;
 
@@ -343,7 +362,7 @@ save(int which)
 }
 
 //str_plus: Compute bonus/penalties for strength on the "to hit" roll
-str_plus(str_t str)
+int str_plus(str_t str)
 {
   int add = 4;
 
@@ -387,7 +406,7 @@ thunk(THING *weap, char *mname, char *does, char *did)
 }
 
 //remove: Remove a monster from the screen
-remove(coord *mp, THING *tp, bool waskill)
+void remove_mons(coord *mp, THING *tp, bool waskill)
 {
   THING *obj, *nexti;
 
@@ -420,7 +439,7 @@ is_magic(THING *obj)
 }
 
 //killed: Called to put a monster to death
-killed(THING *tp, bool pr)
+void killed(THING *tp, bool pr)
 {
   pstats.s_exp += tp->t_stats.s_exp;
   //If the monster was a violet fungi, un-hold him
@@ -447,7 +466,7 @@ killed(THING *tp, bool pr)
 
   }
   //Get rid of the monster.
-  remove(&tp->t_pos, tp, TRUE);
+  remove_mons(&tp->t_pos, tp, TRUE);
   if (pr)
   {
     addmsg("you have defeated ");

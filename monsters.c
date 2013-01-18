@@ -4,13 +4,23 @@
 #include "rogue.h"
 #include "monsters.h"
 #include "daemons.h"
+#include "list.h"
+#include "main.h"
+#include "chase.h"
+#include "new_leve.h"
+#include "rooms.h"
+#include "things.h"
+#include "io.h"
+#include "misc.h"
+#include "daemon.h"
+#include "fight.h"
 
 //List of monsters in rough order of vorpalness
 static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
-randmonster(bool wander)
+char randmonster(bool wander)
 {
   int d;
   char *mons;
@@ -28,7 +38,7 @@ randmonster(bool wander)
 }
 
 //new_monster: Pick a new monster and add it to the list
-new_monster(THING *tp, byte type, coord *cp)
+void new_monster(THING *tp, byte type, coord *cp)
 {
   struct monster *mp;
   int lev_add;
@@ -67,7 +77,7 @@ new_monster(THING *tp, byte type, coord *cp)
 }
 
 //f_restor(): restor initial damage string for flytraps
-f_restor()
+void f_restor()
 {
   struct monster *mp = &monsters['F'-'A'];
 
@@ -76,7 +86,7 @@ f_restor()
 }
 
 //expadd: Experience to add for this monster's level/hit points
-exp_add(THING *tp)
+int exp_add(THING *tp)
 {
   int mod;
 
@@ -88,7 +98,7 @@ exp_add(THING *tp)
 }
 
 //wanderer: Create a new wandering monster and aim it at the player
-wanderer()
+void wanderer()
 {
   int i;
   struct room *rp;
@@ -156,14 +166,14 @@ THING *wake_monster(int y, int x)
 }
 
 //give_pack: Give a pack to a monster if it deserves one
-give_pack(THING *tp)
+void give_pack(THING *tp)
 {
   //check if we can allocate a new item
   if (total<MAXITEMS && rnd(100)<monsters[tp->t_type-'A'].m_carry) attach(tp->t_pack, new_thing());
 }
 
 //pick_mons: Choose a sort of monster for the enemy of a vorpally enchanted weapon
-pick_mons()
+char pick_mons()
 {
   char *cp = lvl_mons+strlen(lvl_mons);
 

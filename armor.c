@@ -2,9 +2,14 @@
 //@(#)armor.c 1.2 (AI Design) 2/12/84
 
 #include "rogue.h"
+#include "armor.h"
+#include "io.h"
+#include "pack.h"
+#include "things.h"
+#include "daemon.h"
 
 //wear: The player wants to wear something, so let him/her put it on.
-wear()
+void wear()
 {
   THING *obj;
   char *sp;
@@ -25,7 +30,7 @@ wear()
 }
 
 //take_off: Get the armor off of the player's back
-take_off()
+void take_off()
 {
   THING *obj;
 
@@ -41,7 +46,7 @@ take_off()
 }
 
 //waste_time: Do nothing but let other things happen
-waste_time()
+void waste_time()
 {
   do_daemons();
   do_fuses();

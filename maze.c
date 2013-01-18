@@ -2,6 +2,10 @@
 //maze.c      1.4     (A.I. Design)   12/14/84
 
 #include "rogue.h"
+#include "maze.h"
+#include "main.h"
+#include "misc.h"
+#include "rooms.h"
 
 #define MAXFRNT  100
 #define FRONTIER  'F'

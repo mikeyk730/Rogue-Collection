@@ -1,6 +1,11 @@
 //Cursor motion stuff to simulate a "no refresh" version of curses
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "rogue.h"
+#include "curses.h"
+#include "mach_dep.h"
 
 //Globals for curses
 
@@ -87,7 +92,6 @@ clear()
 cursor(bool ison)
 {
   int oldstate;
-  int w_state;
 
   if (iscuron==ison) return ison;
   oldstate = iscuron;
@@ -156,7 +160,6 @@ mvinch(int r, int c)
 addch(byte chr)
 {
   int r, c;
-  int newc, newr;
   byte old_attr;
 
   old_attr = ch_attr;
@@ -248,7 +251,7 @@ set_cursor()
 }
 
 //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
-winit(char drive)
+winit()
 {
   int i, cnt;
   //extern int _dsval;
@@ -311,7 +314,6 @@ wdump()
 sav_win()
 {
   if (savewin==_flags) dmaout(savewin, LINES*COLS, 0xb800, 8192);
-  return (savewin);
 }
 
 res_win()
@@ -456,7 +458,7 @@ implode()
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
 drop_curtain()
 {
-  int r, c, j, delay;
+  int r, j, delay;
 
   //if (svwin_ds==-1) return;
   old_ds = scr_ds;
@@ -491,7 +493,7 @@ raise_curtain()
   }
 }
 
-switch_page(pn)
+void switch_page(pn)
 {
   int pgsize;
 

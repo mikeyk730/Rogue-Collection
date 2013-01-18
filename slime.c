@@ -4,12 +4,18 @@
 #include "rogue.h"
 #include "slime.h"
 #include "misc.h"
+#include "list.h"
+#include "curses.h"
+#include "io.h"
+#include "monsters.h"
+#include "chase.h"
+#include "main.h"
 
 static coord slimy;
 
 //Slime_split: Called when it has been decided that A slime should divide itself
 
-slime_split(THING *tp)
+void slime_split(THING *tp)
 {
   THING *nslime;
 

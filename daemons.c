@@ -3,6 +3,16 @@
 
 #include "rogue.h"
 #include "daemons.h"
+#include "daemon.h"
+#include "main.h"
+#include "monsters.h"
+#include "rooms.h"
+#include "io.h"
+#include "misc.h"
+#include "rip.h"
+#include "curses.h"
+#include "rings.h"
+#include "chase.h"
 
 //doctor: A healing daemon that restores hit points after rest
 void doctor()

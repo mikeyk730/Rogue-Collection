@@ -3,6 +3,7 @@
 //list.c      1.4 (A.I. Design) 12/5/85
 
 #include "rogue.h"
+#include "list.h"
 
 extern THING *_things;
 extern int *_t_alloc;
@@ -49,7 +50,7 @@ THING *new_item()
 }
 
 //talloc: simple allocation of a THING
-talloc()
+THING *talloc()
 {
   int i;
 
@@ -67,7 +68,7 @@ talloc()
 }
 
 //discard: Free up an item
-discard(THING *item)
+int discard(THING *item)
 {
   int i;
 
@@ -75,5 +76,5 @@ discard(THING *item)
   {
     if (item==&_things[i]) {--total; _t_alloc[i] = 0; return 1;}
   }
-  return NULL;
+  return 0;
 }

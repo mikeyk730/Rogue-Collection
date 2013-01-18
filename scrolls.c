@@ -2,13 +2,22 @@
 //scrolls.c   1.4 (AI Design) 12/14/84
 
 #include "rogue.h"
+#include "scrolls.h"
 #include "monsters.h"
+#include "pack.h"
+#include "list.h"
+#include "curses.h"
+#include "io.h"
+#include "main.h"
+#include "misc.h"
+#include "wizard.h"
+#include "slime.h"
 
 char *laugh = "you hear maniacal laughter%s.";
 char *in_dist = " in the distance";
 
 //read_scroll: Read a scroll from the pack and do the appropriate thing
-read_scroll()
+void read_scroll()
 {
   THING *obj;
   int y, x;

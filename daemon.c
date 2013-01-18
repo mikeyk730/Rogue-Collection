@@ -2,6 +2,7 @@
 //@(#)daemon.c5.2 (Berkeley) 6/18/82
 
 #include "rogue.h"
+#include "daemon.h"
 
 #define EMPTY  0
 #define FULL  1
@@ -10,7 +11,7 @@
 
 struct delayed_action
 {
-  int (*d_func)();
+  void (*d_func)();
   int d_arg;
   int d_time;
 } d_list[MAXDAEMONS];
@@ -28,7 +29,7 @@ struct delayed_action *d_slot()
 }
 
 //find_slot: Find a particular slot in the table
-struct delayed_action *find_slot(int (*func)())
+struct delayed_action *find_slot(void (*func)())
 {
   struct delayed_action *dev;
 
@@ -37,7 +38,7 @@ struct delayed_action *find_slot(int (*func)())
 }
 
 //daemon: Start a daemon, takes a function.
-daemon(int (*func)(), int arg)
+void daemon(void (*func)(), int arg)
 {
   struct delayed_action *dev;
 
@@ -48,7 +49,7 @@ daemon(int (*func)(), int arg)
 }
 
 //do_daemons: Run all the daemons, passing the argument to the function.
-do_daemons()
+void do_daemons()
 {
   struct delayed_action *dev;
 
@@ -58,7 +59,7 @@ do_daemons()
 }
 
 //fuse: Start a fuse to go off in a certain number of turns
-fuse(int (*func)(), int arg, int time)
+void fuse(void (*func)(), int arg, int time)
 {
   struct delayed_action *wire;
 
@@ -69,7 +70,7 @@ fuse(int (*func)(), int arg, int time)
 }
 
 //lengthen: Increase the time until a fuse goes off
-lengthen(int (*func)(), int xtime)
+void lengthen(void (*func)(), int xtime)
 {
   struct delayed_action *wire;
 
@@ -78,7 +79,7 @@ lengthen(int (*func)(), int xtime)
 }
 
 //extinguish: Put out a fuse
-extinguish(int (*func)())
+void extinguish(void (*func)())
 {
   struct delayed_action *wire;
 
@@ -87,7 +88,7 @@ extinguish(int (*func)())
 }
 
 //do_fuses: Decrement counters and start needed fuses
-do_fuses()
+void do_fuses()
 {
   struct delayed_action *wire;
 

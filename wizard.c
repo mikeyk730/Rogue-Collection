@@ -3,9 +3,22 @@
 
 #include "rogue.h"
 #include "daemons.h"
+#include "pack.h"
+#include "list.h"
+#include "curses.h"
+#include "io.h"
+#include "wizard.h"
+#include "daemon.h"
+#include "main.h"
+#include "things.h"
+#include "rooms.h"
+#include "misc.h"
+#include "new_leve.h"
+#include "monsters.h"
+#include "mach_dep.h"
 
 //whatis: What a certain object is
-whatis()
+void whatis()
 {
   THING *obj;
 
@@ -21,18 +34,18 @@ whatis()
   {
     case SCROLL:
       s_know[obj->o_which] = TRUE;
-      *s_guess[obj->o_which] = NULL;
+      *s_guess[obj->o_which] = 0;
     break;
 
     case POTION:
       p_know[obj->o_which] = TRUE;
-      *p_guess[obj->o_which] = NULL;
+      *p_guess[obj->o_which] = 0;
     break;
 
     case STICK:
       ws_know[obj->o_which] = TRUE;
       obj->o_flags |= ISKNOW;
-      *ws_guess[obj->o_which] = NULL;
+      *ws_guess[obj->o_which] = 0;
     break;
 
     case WEAPON: case ARMOR:
@@ -42,7 +55,7 @@ whatis()
     case RING:
       r_know[obj->o_which] = TRUE;
       obj->o_flags |= ISKNOW;
-      *r_guess[obj->o_which] = NULL;
+      *r_guess[obj->o_which] = 0;
     break;
   }
   //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against

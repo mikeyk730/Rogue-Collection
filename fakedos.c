@@ -1,8 +1,15 @@
 //routines for writing a fake dos
 
-#include "rogue.h"
+#include <ctype.h>
 
-fakedos()
+#include "rogue.h"
+#include "curses.h"
+#include "fakedos.h"
+#include "mach_dep.h"
+#include "io.h"
+#include "strings.h"
+
+void fakedos()
 {
   char comline[132];
   char *savedir = "a:", *comhead;
@@ -26,7 +33,7 @@ fakedos()
 }
 
 //execute a dos like command
-dodos(char *com)
+int dodos(char *com)
 {
   if ((*com&0x80) || (strcmp(com, "rogue")==0)) return 0;
   if (com[1]==':' && com[2]==0)
