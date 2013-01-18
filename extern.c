@@ -356,7 +356,6 @@ int quiet = 0;         //Number of quiet turns
 int food_left;         //Amount of food in hero's stomach
 int group = 2;         //Current group number
 int hungry_state = 0;  //How hungry is he
-int cksum = CSUM;
 long seed;             //Random number seed
 
 int hit_mul = P_DAMAGE;

@@ -94,9 +94,7 @@ void putchr(int c, int attr)
 //clear screen
 void clear()
 {
-  //if (scr_ds==svwin_ds) wsetmem(savewin, LINES*COLS, 0x0720);
-  //else
-     blot_out(0, 0, LINES-1, COLS-1);
+  blot_out(0, 0, LINES-1, COLS-1);
 }
 
 //Turn cursor on and off

@@ -185,8 +185,7 @@ void execcom()
 
       case 'v':
         after = FALSE;
-        if (strcmp(whoami, "The Grand Beeking")==0) addmsg("(%d)", csum());
-        msg("Rogue version %d.%d (Mr. Mctesq was here)", revno, verno);
+        msg("Rogue version %d.%d", revno, verno);
       break;
 
       case 'S': after = FALSE; save_game(); break;

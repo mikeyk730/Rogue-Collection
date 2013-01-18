@@ -5,11 +5,6 @@ int tick = 0;
 void beep()
 {}
 
-int csum()
-{
-   return CSUM;
-}
-
 //TODO: return char at position
 char curch()
 {

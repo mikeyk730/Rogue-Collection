@@ -7,26 +7,14 @@
 
 //copy protection
 
-//#define PROTECTED
-#define CSUM  -1632
-#ifdef PROTECTED
-#define P_DAMAGE  6
-#else
 #define P_DAMAGE  1
-#endif PROTECTED
-
-//if DEBUG or WIZARD is changed might as well recompile everything
 
 #define HELP
 #undef DEMO
 #define DEMOTIME  10
 
-//DEMO recompile: save.c rip.c io.c main.c
-
 #define REV  1
 #define VER  48
-
-//If CODECSUM is changed recompile extern.c
 
 #define SCOREFILE  "rogue.scr"
 #define SAVEFILE   "rogue.sav"
@@ -52,7 +40,6 @@ typedef unsigned char bool;
 
 void move(int x, int y);
 void beep();
-int csum();
 char curch(); //TODO
 void _halt(); //TODO
 int no_char(); //TODO

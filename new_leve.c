@@ -34,11 +34,6 @@ void new_level()
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
   if (level>max_level) max_level = level;
 
-#ifdef PROTECTED
-  one_tick();
-  if (level>1 && csum()!=cksum) _halt();
-#endif
-
   //Clean things off from last level
   wsetmem((wchar_t*)_level, ((MAXLINES-3)*MAXCOLS)>>1, L'\x2020');
   setmem(_flags, (MAXLINES-3)*MAXCOLS, F_REAL);
