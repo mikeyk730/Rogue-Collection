@@ -158,12 +158,7 @@ THING *find_obj(int y, int x)
 
   for (op = lvl_obj; op!=NULL; op = next(op)) if (op->o_pos.y==y && op->o_pos.x==x) return op;
 
-#ifdef DEBUG
-
   debug("Non-object %c %d,%d", chat(y, x), y, x);
-
-#endif
-
   return NULL; //NOTREACHED
 }
 
@@ -429,13 +424,7 @@ int _ce(coord *a, coord *b)
 
 int INDEX(int y, int x)
 {
-
-#ifdef DEBUG
-
-  if (offmap(y, x) && me()) fatal("BAD INDEX");
-
-#endif DEBUG
-
+  //if (offmap(y, x)) debug("BAD INDEX");
   return ((x*(maxrow-1))+y-1);
 }
 
@@ -534,15 +523,6 @@ void do_macro(char *buf, int sz)
   msg("");
   flush_type();
 }
-
-#ifdef ME
-
-int me()
-{
-  return is_me;
-}
-
-#endif ME
 
 #ifdef TEST
 

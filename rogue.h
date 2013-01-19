@@ -54,10 +54,12 @@ typedef unsigned char bool;
 #define flat(y,x)       (_flags[INDEX(y,x)])
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
 #define isgone(rp)      (((rp)->r_flags&ISGONE) && ((rp)->r_flags&ISMAZE)==0)
-#ifdef WIZARD
-#define debug           if (wizard) msg
-#endif
 
+#ifdef DEBUG
+#define debug           msg
+#else
+#define debug           if(0) msg
+#endif
 //Things that appear on the screens
 
 #define PASSAGE   (0xb1)
@@ -448,7 +450,6 @@ extern int maxitems;
 extern int maxrow;
 extern char *_top, *_base;
 extern int LINES, COLS;
-extern int is_me;
 extern int iguess;
 extern int bailout;
 

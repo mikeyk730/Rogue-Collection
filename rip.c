@@ -23,8 +23,6 @@ static int sc_fd;
 
 void score(int amount, int flags, char monst)
 {
-#ifndef WIZARD
-
   struct sc_ent his_score, top_ten[TOPSCORES];
   int rank = 0;
   char response = ' ';
@@ -70,10 +68,7 @@ reread:
   }
   pr_scores(rank, &top_ten[0]);
 
-#endif WIZARD
 }
-
-#ifndef WIZARD
 
 void get_scores(struct sc_ent *top10)
 {
@@ -168,8 +163,6 @@ int add_scores(struct sc_ent *newscore, struct sc_ent *oldlist)
   *insert = *newscore;
   return retcode;
 }
-
-#endif WIZARD
 
 //death: Do something really fun when he dies
 void death(char monst)

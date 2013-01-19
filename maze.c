@@ -69,9 +69,8 @@ void new_frontier(int y, int x)
 
 void add_frnt(int y, int x)
 {
-#ifdef DEBUG
   if (frcnt==MAXFRNT-1) debug("MAZE DRAWING ERROR #3\n");
-#endif
+
   if (inrange(y, x) && chat(y, x)==NOTHING)
   {
     chat(y, x) = FRONTIER;

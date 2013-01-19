@@ -23,9 +23,8 @@ struct delayed_action *d_slot()
   struct delayed_action *dev;
 
   for (dev = d_list; dev<&d_list[MAXDAEMONS]; dev++) if (dev->d_func==EMPTY) return dev;
-#ifdef DEBUG
+
   debug("Ran out of fuse slots");
-#endif
   return NULL;
 }
 

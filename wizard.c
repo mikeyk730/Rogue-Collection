@@ -68,8 +68,6 @@ void whatis()
   msg(inv_name(obj, FALSE));
 }
 
-#ifdef WIZARD
-
 //create_obj: Wizard command for getting anything he wants
 void create_obj()
 {
@@ -135,8 +133,6 @@ void create_obj()
   add_pack(obj, FALSE);
 }
 
-#endif
-
 //teleport: Bamf the hero someplace else
 int teleport()
 {
@@ -155,23 +151,17 @@ int teleport()
   running = FALSE;
   flush_type();
   //Teleportation can be a confusing experience (unless you really are a wizard)
-#ifdef WIZARD
   if (!wizard)
   {
-#endif WIZARD
     if (on(player, ISHUH)) lengthen(unconfuse, rnd(4)+2);
     else fuse(unconfuse, 0, rnd(4)+2);
     player.t_flags |= ISHUH;
-#ifdef WIZARD
   }
-#endif WIZARD
   return rm;
 }
 
-#ifdef WIZARD
-
 //show_map: Print out the map for the wizard
-show_map()
+void show_map()
 {
   int y, x, real;
 
@@ -195,5 +185,3 @@ int get_num(short *place)
   *place = atoi(numbuf);
   return (*place);
 }
-
-#endif

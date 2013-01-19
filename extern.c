@@ -294,14 +294,12 @@ bool save_msg = TRUE;       //Remember last msg
 bool terse = FALSE;
 bool expert = FALSE;
 
-#ifdef ME
-int is_me;
-#endif
-
 bool was_trapped = FALSE;   //Was a trap sprung
 
 #ifdef WIZARD
 bool wizard = TRUE;        //True if allows wizard commands
+#else
+bool wizard = FALSE;
 #endif
 
 int bailout = FALSE;

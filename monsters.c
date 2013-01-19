@@ -117,8 +117,8 @@ void wanderer()
 #ifdef TEST
   if (bailout && me()) msg("wanderer bailout");
 #endif TEST
-#ifdef WIZARD
-  if (wizard) msg("started a wandering %s", monsters[tp->t_type-'A'].m_name);
+#ifdef ME
+  debug("started a wandering %s", monsters[tp->t_type-'A'].m_name);
 #endif
   start_run(&tp->t_pos);
 }

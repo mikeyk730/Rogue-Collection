@@ -131,9 +131,6 @@ void playit(char *sname)
     cursor(FALSE);
   }
   else {oldpos.x = hero.x; oldpos.y = hero.y; oldrp = roomin(&hero);}
-#ifdef ME
-  is_me = (strcmp("wizard", whoami)==0);
-#endif
   while (playing) command(); //Command execution
   endit();
 }

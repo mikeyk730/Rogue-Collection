@@ -8,3 +8,7 @@ void create_obj();
 
 int get_num(short *place);
 
+//show_map: Print out the map for the wizard
+void show_map();
+
+

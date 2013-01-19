@@ -15,6 +15,7 @@
 #include "weapons.h"
 #include "sticks.h"
 #include "curses.h"
+#include "passages.h"
 #include "mach_dep.h"
 #include "move.h"
 #include "rings.h"
@@ -39,9 +40,7 @@ void command()
   {
     status();
     SIG2();
-#ifdef WIZARD
     if (wizard) noscore = TRUE;
-#endif
     if (no_command)
     {
       if (--no_command<=0) {msg("you can move again"); no_command = 0;}
@@ -125,9 +124,7 @@ int get_prefix()
 
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N': case 'q': case 'r': case 's': case 'z': case 't': case '.':
 
-#ifdef WIZARD
     case CTRL('D'): case 'C':
-#endif WIZARD
 
     break;
 
@@ -206,11 +203,12 @@ void execcom()
       break;
 
       case 'o': after = FALSE; msg("i don't have any options, oh my!"); break;
-      case CTRL('L'): after = FALSE; msg("the screen looks fine to me (jll was here)"); break;
+      case CTRL('L'): after = FALSE; msg("the screen looks fine to me"); break;
 
-#ifdef WIZARD
-      case 'C': after = FALSE; create_obj(); break;
-#endif
+      //Wizard commands
+      case 'C': after = FALSE; if (wizard) create_obj(); break;
+      case 'X': after = FALSE; if (wizard) show_map(); break;
+      case 'Z': after = FALSE; if (wizard) add_pass(); break;
 
       default: after = FALSE; save_msg = FALSE; msg("illegal command '%s'", unctrl(ch)); count = 0; save_msg = TRUE; break;
     }

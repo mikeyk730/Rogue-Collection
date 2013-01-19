@@ -39,7 +39,7 @@ char *inv_name(THING *obj, bool drop)
     case SCROLL:
       if (obj->o_count==1) {strcpy(pb, "A scroll "); pb = &prbuf[9];}
       else {sprintf(pb, "%d scrolls ", obj->o_count); pb = &prbuf[strlen(prbuf)];}
-      if (s_know[which]) sprintf(pb, "of %s", s_magic[which].mi_name);
+      if (s_know[which] || wizard) sprintf(pb, "of %s", s_magic[which].mi_name);
       else if (*s_guess[which]) sprintf(pb, "called %s", s_guess[which]);
       else chopmsg(pb, "titled '%.17s'", "titled '%s'", &s_names[which]);
     break;
@@ -47,7 +47,7 @@ char *inv_name(THING *obj, bool drop)
     case POTION:
       if (obj->o_count==1) {strcpy(pb, "A potion "); pb = &prbuf[9];}
       else {sprintf(pb, "%d potions ", obj->o_count); pb = &pb[strlen(prbuf)];}
-      if (p_know[which]) {chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].mi_name, p_colors[which]);}
+      if (p_know[which] || wizard) {chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].mi_name, p_colors[which]);}
       else if (*p_guess[which]) {chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], p_colors[which]);}
       else if (obj->o_count==1) sprintf(prbuf, "A%s %s potion", vowelstr(p_colors[which]), p_colors[which]);
       else sprintf(prbuf, "%d %s potions", obj->o_count, p_colors[which]);
@@ -62,7 +62,7 @@ char *inv_name(THING *obj, bool drop)
       if (obj->o_count>1) sprintf(pb, "%d ", obj->o_count);
       else sprintf(pb, "A%s ", vowelstr(w_names[which]));
       pb = &prbuf[strlen(prbuf)];
-      if (obj->o_flags&ISKNOW) sprintf(pb, "%s %s", num(obj->o_hplus, obj->o_dplus, WEAPON), w_names[which]);
+      if (obj->o_flags&ISKNOW || wizard) sprintf(pb, "%s %s", num(obj->o_hplus, obj->o_dplus, WEAPON), w_names[which]);
       else sprintf(pb, "%s", w_names[which]);
       if (obj->o_count>1) strcat(pb, "s");
       if (obj->o_enemy && obj->o_flags&ISREVEAL)
@@ -74,7 +74,7 @@ char *inv_name(THING *obj, bool drop)
     break;
 
     case ARMOR:
-      if (obj->o_flags&ISKNOW) chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->o_ac, 0, ARMOR), a_names[which], -(obj->o_ac-11));
+      if (obj->o_flags&ISKNOW || wizard) chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->o_ac, 0, ARMOR), a_names[which], -(obj->o_ac-11));
       else sprintf(pb, "%s", a_names[which]);
     break;
 
@@ -85,13 +85,13 @@ char *inv_name(THING *obj, bool drop)
     case STICK:
       sprintf(pb, "A%s %s ", vowelstr(ws_type[which]), ws_type[which]);
       pb = &prbuf[strlen(prbuf)];
-      if (ws_know[which]) chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].mi_name, charge_str(obj), ws_made[which]);
+      if (ws_know[which] || wizard) chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].mi_name, charge_str(obj), ws_made[which]);
       else if (*ws_guess[which]) chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], ws_made[which]);
       else sprintf(pb = &prbuf[2], "%s %s", ws_made[which], ws_type[which]);
     break;
 
     case RING:
-      if (r_know[which]) chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].mi_name, r_stones[which]);
+      if (r_know[which] || wizard) chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].mi_name, r_stones[which]);
       else if (*r_guess[which]) chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], r_stones[which]);
       else sprintf(pb, "A%s %s ring", vowelstr(r_stones[which]), r_stones[which]);
     break;
@@ -169,11 +169,7 @@ int can_drop(THING *op)
 
     if (op!=cur_ring[hand = LEFT]) if (op!=cur_ring[hand = RIGHT])
     {
-
-#ifdef DEBUG
       debug("Candrop called with funny thing");
-#endif
-
       return TRUE;
     }
     cur_ring[hand] = NULL;
@@ -230,9 +226,7 @@ THING *new_thing()
     case 4:
       cur->o_type = ARMOR;
       for (j = 0, k = rnd(100); j<MAXARMORS; j++) if (k<a_chances[j]) break;
-#ifdef DEBUG
       if (j==MAXARMORS) {debug("Picked a bad armor %d", k); j = 0;}
-#endif
       cur->o_which = j;
       cur->o_ac = a_class[j];
       if ((k = rnd(100))<20) {cur->o_flags |= ISCURSED; cur->o_ac += rnd(3)+1;}
@@ -260,12 +254,10 @@ THING *new_thing()
       fix_stick(cur);
     break;
 
-#ifdef DEBUG
     default:
       debug("Picked a bad kind of object");
       wait_for(' ');
     break;
-#endif
 
   }
   return cur;
@@ -283,13 +275,11 @@ int pick_one(struct magic_item *magic, int nitems)
   if (magic==end)
   {
 
-#ifdef DEBUG
     if (wizard)
     {
       msg("bad pick_one: %d from %d items", i, nitems);
       for (magic = start; magic<end; magic++) msg("%s: %d%%", magic->mi_name, magic->mi_prob);
     }
-#endif
 
     magic = start;
   }

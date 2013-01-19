@@ -176,9 +176,7 @@ void enter_room(coord *cp)
   rp = proom = roomin(cp);
   if (bailout || (rp->r_flags&ISGONE && (rp->r_flags&ISMAZE)==0))
   {
-#ifdef DEBUG
     debug("in a gone room");
-#endif DEBUG
     return;
   }
   door_open(rp);

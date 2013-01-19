@@ -11,3 +11,7 @@ void passnum();
 
 //numpass: Number a passageway square and its brethren
 void numpass(int y, int x);
+
+//add_pass: Add the passages to the current window (wizard command)
+void add_pass();
+

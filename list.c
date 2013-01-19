@@ -41,13 +41,11 @@ THING *new_item()
 {
   THING *item;
 
-#ifdef DEBUG
-  if ((item = (THING *)talloc())==NULL) if (me()) { debug("no more things!"); } else
-#else
-  if ((item = (THING *)talloc())!=NULL)
-#endif DEBUG
-
-  item->l_next = item->l_prev = NULL;
+  if ((item = (THING *)talloc())==NULL) {
+    debug("no more things!");
+  }
+  else
+    item->l_next = item->l_prev = NULL;
   return item;
 }
 

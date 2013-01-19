@@ -200,10 +200,7 @@ void do_zap()
       ws_know[which_one] = TRUE;
     break;
 
-#ifdef DEBUG
     default: debug("what a bizarre schtick!"); break;
-#endif
-
   }
   if (--obj->o_charges<0) obj->o_charges = 0;
 }

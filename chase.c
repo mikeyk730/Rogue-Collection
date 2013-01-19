@@ -167,9 +167,7 @@ void start_run(coord *runner)
     tp->t_flags &= ~ISHELD;
     tp->t_dest = find_dest(tp);
   }
-#ifdef DEBUG
   else debug("start_run: moat == NULL ???");
-#endif DEBUG
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
@@ -243,10 +241,7 @@ struct room *roomin(coord *cp)
   fp = &flat(cp->y, cp->x);
   if (*fp&F_PASS) return &passages[*fp&F_PNUM];
 
-#ifdef DEBUG
   debug("in some bizarre place (%d, %d)", cp->y, cp->x);
-#endif DEBUG
-
   bailout++;
   return NULL;
 }

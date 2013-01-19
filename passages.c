@@ -83,9 +83,8 @@ void conn(int r1, int r2)
     turn_delta.x = 0;
     turn_distance = abs(spos.y-epos.y);
   }
-#ifdef DEBUG
   else debug("error in connection tables");
-#endif
+
   turn_spot = rnd(distance-1)+1;
   //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
   if (!(rpf->r_flags&ISGONE)) door(rpf, &spos);
@@ -207,17 +206,13 @@ void door(struct room *rm, coord *cp)
   rm->r_exit[xit].x = cp->x;
 }
 
-#ifdef WIZARD
-
 //add_pass: Add the passages to the current window (wizard command)
-add_pass()
+void add_pass()
 {
   int y, x, ch;
 
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++) if ((ch = chat(y, x))==DOOR || ch==PASSAGE) mvaddch(y, x, ch);
 }
-
-#endif
 
 //passnum: Assign a number to each passageway
 void passnum()
