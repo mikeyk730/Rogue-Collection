@@ -20,7 +20,7 @@ char *stpblk(char *str)
 
 char* stpbrk(char *str, char *brk)
 {
-  while (*str && !stpchr(brk,*str)) str++;
+  while (*str && !strchr(brk,*str)) str++;
   return (*str?str:0);
 }
 

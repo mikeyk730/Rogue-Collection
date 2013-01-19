@@ -10,17 +10,11 @@
 #define REV  1
 #define VER  48
 
-#define SCOREFILE  "rogue.scr"
-#define SAVEFILE   "rogue.sav"
-#define ENVFILE    "rogue.opt"
-
 //MANX C compiler funnies
 
 #define bcopy(a,b)  memcpy(&(a),&(b),sizeof(b))
-#define stpchr  strchr
 #define setmem(a,b,c) memset(a,c,b)
 #define wsetmem(a,b,c) wmemset(a,c,b)
-#define newmem malloc
 typedef unsigned char byte;
 typedef unsigned char bool;
 

@@ -276,7 +276,7 @@ bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
   for (;;)
   {
     ndice = atoi(cp);
-    if ((cp = stpchr(cp, 'd'))==NULL) break;
+    if ((cp = strchr(cp, 'd'))==NULL) break;
     nsides = atoi(++cp);
     if (swing(att->s_lvl, def_arm, hplus+str_plus(att->s_str)))
     {
@@ -290,7 +290,7 @@ bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
       def->s_hpt -= max(0, damage);
       did_hit = TRUE;
     }
-    if ((cp = stpchr(cp, '/'))==NULL) break;
+    if ((cp = strchr(cp, '/'))==NULL) break;
     cp++;
   }
   return did_hit;

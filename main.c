@@ -40,10 +40,6 @@
 int bwflag = FALSE;
 char do_force = FALSE;
 
-#ifdef LOGFILE
-int log_read, log_write;
-#endif
-
 //Permanent stack data
 struct sw_regs *regs;
 
@@ -62,7 +58,7 @@ int main(int argc, char **argv)
   clock_on();
   epyx_yuck();
   init_ds();
-  setenv(ENVFILE);
+  setenv("rogue.opt");
   //protect(find_drive());
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.  If it ends with "fast" then we disable retrace checking
   if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;
@@ -77,10 +73,6 @@ int main(int argc, char **argv)
       {
         case 'R': case 'r': savfile = s_save; break;
         case 's': case 'S': winit(); noscore = TRUE; is_saved = TRUE; score(0, 0, 0); fatal(""); break;
-#ifdef LOGFILE
-        case 'l': log_write = -1; dnum = 100; break;
-        case 'k': log_read = -1; dnum = 100; break;
-#endif LOGFILE
       }
     }
     else if (savfile==0) savfile = curarg;

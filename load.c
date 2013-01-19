@@ -24,12 +24,8 @@ void epyx_yuck()
 //  video_mode(4);
 //  scr_load();
 //  tick = 0;
-//#ifdef LOGFILE
-//  while (tick<18*10) ;
-//#else
 //  while (no_char() && tick<18*60*5) ;
 //  if (!no_char()) readchar();
-//#endif
 //  video_mode(type);
 //  brk(store);
 //  tick = 0;

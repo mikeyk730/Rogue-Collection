@@ -355,15 +355,15 @@ void init_ds()
 {
   long *ep;
 
-  _flags = newmem((MAXLINES-3)*MAXCOLS);
-  _level = newmem((MAXLINES-3)*MAXCOLS);
-  _things = (THING *)newmem(sizeof(THING)*MAXITEMS);
-  _t_alloc = (int *)newmem(MAXITEMS*sizeof(int));
-  tbuf = newmem(MAXSTR);
-  msgbuf = newmem(BUFSIZE);
-  prbuf = newmem(MAXSTR);
-  ring_buf = newmem(6);
-  e_levels = (long *)newmem(20*sizeof(long));
+  _flags = malloc((MAXLINES-3)*MAXCOLS);
+  _level = malloc((MAXLINES-3)*MAXCOLS);
+  _things = (THING *)malloc(sizeof(THING)*MAXITEMS);
+  _t_alloc = (int *)malloc(MAXITEMS*sizeof(int));
+  tbuf = malloc(MAXSTR);
+  msgbuf = malloc(BUFSIZE);
+  prbuf = malloc(MAXSTR);
+  ring_buf = malloc(6);
+  e_levels = (long *)malloc(20*sizeof(long));
   for (ep = e_levels+1, *e_levels = 10L; ep<e_levels+19; ep++) *ep = *(ep-1)<<1;
   *ep = 0L;
 }
