@@ -5,12 +5,6 @@ int tick = 0;
 void beep()
 {}
 
-//TODO: return char at position
-char curch()
-{
-   return 'a';
-}
-
 void _halt(){}
 
 int no_char(){ return 0; }

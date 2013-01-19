@@ -168,7 +168,7 @@ void status()
 
   SIG2();
   getyx(stdscr, oy, ox);
-  if (is_color) yellow();
+  yellow();
   //Level:
   if (s_lvl!=level)
   {
@@ -224,7 +224,7 @@ void status()
     move(24, PT(28, 58));
     if (hungry_state) {bold(); addstr(state_name[hungry_state]); standend();}
   }
-  if (is_color) standend();
+  standend();
   move(oy, ox);
 }
 
@@ -287,11 +287,11 @@ int getinfo(char *str, int size)
 void backspace()
 {
   int x, y;
-
   getxy(&x, &y);
   if (--y<0) y = 0;
   move(x, y);
   putchar(' ');
+  move(x, y);
 }
 
 //str_attr: format a string with attributes.

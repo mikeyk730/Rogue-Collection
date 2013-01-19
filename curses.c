@@ -6,6 +6,7 @@
 #include "curses.h"
 #include "mach_dep.h"
 #include "main.h"
+#include "misc.h"
 
 #include <Windows.h>
 
@@ -474,5 +475,10 @@ void move(int y, int x)
    SetConsoleCursorPosition( hStdout, position ) ;
    c_row = y;
    c_col = x;
+}
+
+char curch()
+{
+   return chat(c_row, c_col);
 }
 

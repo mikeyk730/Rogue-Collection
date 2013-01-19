@@ -66,7 +66,7 @@ hack:
   }
   do_motion(obj, ydelta, xdelta);
   //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-  if (moat(obj->o_pos.y, obj->o_pos.x)==NULL || !hit_monster(unc(obj->o_pos), obj)) fall(obj, TRUE);
+  if (moat(obj->o_pos.y, obj->o_pos.x)==NULL || !hit_monster(obj->o_pos.y, obj->o_pos.x, obj)) fall(obj, TRUE);
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
@@ -81,14 +81,14 @@ void do_motion(THING *obj, int ydelta, int xdelta)
     int ch;
 
     //Erase the old one
-    if (under!='@' && !ce(obj->o_pos, hero) && cansee(unc(obj->o_pos))) mvaddch(obj->o_pos.y, obj->o_pos.x, under);
+    if (under!='@' && !ce(obj->o_pos, hero) && cansee(obj->o_pos.y, obj->o_pos.x)) mvaddch(obj->o_pos.y, obj->o_pos.x, under);
     //Get the new position
     obj->o_pos.y += ydelta;
     obj->o_pos.x += xdelta;
     if (step_ok(ch = winat(obj->o_pos.y, obj->o_pos.x)) && ch!=DOOR)
     {
       //It hasn't hit anything yet, so display it if alright.
-      if (cansee(unc(obj->o_pos)))
+      if (cansee(obj->o_pos.y, obj->o_pos.x))
       {
         under = chat(obj->o_pos.y, obj->o_pos.x);
         mvaddch(obj->o_pos.y, obj->o_pos.x, obj->o_type);

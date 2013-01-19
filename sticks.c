@@ -152,7 +152,7 @@ void do_zap()
       bolt.o_flags = ISMISL;
       if (cur_weapon!=NULL) bolt.o_launch = cur_weapon->o_which;
       do_motion(&bolt, delta.y, delta.x);
-      if ((tp = moat(bolt.o_pos.y, bolt.o_pos.x))!=NULL && !save_throw(VS_MAGIC, tp)) hit_monster(unc(bolt.o_pos), &bolt);
+      if ((tp = moat(bolt.o_pos.y, bolt.o_pos.x))!=NULL && !save_throw(VS_MAGIC, tp)) hit_monster(bolt.o_pos.y, bolt.o_pos.x, &bolt);
       else msg("the missile vanishes with a puff of smoke");
 
       break;
@@ -298,8 +298,8 @@ void fire_bolt(coord *start, coord *dir, char *name)
             if (tp->t_type=='D' && strcmp(name, "flame")==0) msg("the flame bounces off the dragon");
             else
             {
-              hit_monster(unc(pos), &bolt);
-              if (mvinch(unc(pos))!=dirch) spotpos[i].s_under = mvinch(unc(pos));
+              hit_monster(pos.y, pos.x, &bolt);
+              if (mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = mvinch(pos.y, pos.x);
             }
           }
           else if (ch!='X' || tp->t_disguise=='X')

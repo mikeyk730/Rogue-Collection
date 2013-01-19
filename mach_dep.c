@@ -9,7 +9,6 @@
 #include "mach_dep.h"
 #include "io.h"
 
-#define ULINE()  if (is_color) lmagenta(); else uline();
 #define TICK_ADDR  0x70
 #define PC  0xff
 #define XT  0xfe
@@ -116,31 +115,31 @@ void credits()
 
   cursor(FALSE);
   clear();
-  if (is_color) brown();
+  brown();
   box(0, 0, LINES-1, COLS-1);
   bold();
   center(2, "ROGUE:  The Adventure Game");
-  ULINE();
+  lmagenta();
   center(4, "The game of Rogue was designed by:");
   high();
   center(6, "Michael Toy and Glenn Wichman");
-  ULINE();
+  lmagenta();
   center(9, "Various implementations by:");
   high();
   center(11, "Ken Arnold, Jon Lane and Michael Toy");
-  ULINE();
+  lmagenta();
   center(14, "Adapted for the IBM PC by:");
   high();
   center(16, "A.I. Design");
-  ULINE();
-  if (is_color) yellow();
+  lmagenta();
+  yellow();
   center(19, "(C)Copyright 1985");
   high();
   center(20, "Epyx Incorporated");
   standend();
-  if (is_color) yellow();
+  yellow();
   center(21, "All Rights Reserved");
-  if (is_color) brown();
+  brown();
   for (i = 1; i<(COLS-1); i++) {move(22, i); putchr(205, 6);}
   mvaddch(22, 0, 204);
   mvaddch(22, COLS-1, 185);
@@ -152,7 +151,7 @@ void credits()
   if (*tname && *tname!=ESCAPE) strcpy(whoami, tname);
   is_saved = FALSE;
   blot_out(23, 0, 24, COLS-1);
-  if (is_color) brown();
+  brown();
   mvaddch(22, 0, 0xc8);
   mvaddch(22, COLS-1, 0xbc);
   standend();

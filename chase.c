@@ -242,7 +242,7 @@ struct room *roomin(coord *cp)
   if (*fp&F_PASS) return &passages[*fp&F_PNUM];
 
 #ifdef DEBUG
-  debug("in some bizarre place (%d, %d)", unc(*cp));
+  debug("in some bizarre place (%d, %d)", cp->y, cp->x);
 #endif DEBUG
 
   bailout++;

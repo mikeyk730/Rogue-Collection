@@ -41,7 +41,6 @@ void dmaout(char*, int, int, int);
 
 //All the fun defines
 
-#define until(expr)     while(!(expr))
 #define next(ptr)       (*ptr).l_next
 #define prev(ptr)       (*ptr).l_prev
 #define ce(a,b)         _ce(&(a),&(b))
@@ -61,7 +60,6 @@ void dmaout(char*, int, int, int);
 #define ISMULT(type)    (type==POTION || type==SCROLL || type==FOOD || type==GOLD)
 #define chat(y,x)       (_level[INDEX(y,x)])
 #define flat(y,x)       (_flags[INDEX(y,x)])
-#define unc(cp)         (cp).y,(cp).x
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
 #define isgone(rp)      (((rp)->r_flags&ISGONE) && ((rp)->r_flags&ISMAZE)==0)
 #ifdef WIZARD
@@ -509,8 +507,6 @@ extern char *_whoami;
 #define getyx(a,b,c)        getxy(&b,&c)
 #define getxy               getrc
 #define inch()              (0xff&curch())
-#define is_color            (scr_type!=7)
-#define is_bw               (scr_type==0 || scr_type==2)
 #define standend()          set_attr(0)
 #define green()             set_attr(1)
 #define cyan()              set_attr(2)

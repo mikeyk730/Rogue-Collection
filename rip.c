@@ -188,7 +188,7 @@ void death(char monst)
   clear();
   drop_curtain();
   clear();
-  if (is_color) brown();
+  brown();
   box((COLS==40)?1:7, (COLS-28)/2, 22, (COLS+28)/2);
   standend();
   center(10, "REST");
@@ -199,7 +199,6 @@ void death(char monst)
   green();
   center(22, "___\\/(\\/)/(\\/ \\\\(//)\\)\\/(//)\\\\)//(\\__");
   standend();
-  if (scr_type==7) uline();
   center(14, whoami);
   standend();
   killer = killname(monst, TRUE);
