@@ -5,10 +5,8 @@ void putchr(int c, int attr);
 //Turn cursor on and off
 int cursor(bool ison);
 
-//get curent cursor position
+//get current cursor position
 void getrc(int *rp, int *cp);
-
-void real_rc(int pn, int *rp, int *cp);
 
 void clrtoeol();
 

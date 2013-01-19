@@ -213,9 +213,7 @@ void death(char monst)
   center(16, killer);
   sprintf(buf, "%u Au", purse);
   center(18, buf);
-  regs->ax = 0x2a<<8;
-  swint(SW_DOS, regs);
-  year = regs->cx;
+  year = 2012; //TODO
   sprintf(buf, "%u", year);
   center(19, buf);
   raise_curtain();

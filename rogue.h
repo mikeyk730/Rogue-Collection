@@ -5,10 +5,6 @@
 
 //Options set for PC rogue
 
-//copy protection
-
-#define P_DAMAGE  1
-
 #define HELP
 #undef DEMO
 #define DEMOTIME  10
@@ -19,14 +15,6 @@
 #define SCOREFILE  "rogue.scr"
 #define SAVEFILE   "rogue.sav"
 #define ENVFILE    "rogue.opt"
-#define IBM
-#define MACROSZ  41
-
-#define ifterse0  ifterse
-#define ifterse1  ifterse
-#define ifterse2  ifterse
-#define ifterse3  ifterse
-#define ifterse4  ifterse
 
 //MANX C compiler funnies
 
@@ -61,19 +49,10 @@ void dmaout(char*, int, int, int);
 
 //All the fun defines
 
-#define shint           int
 #define until(expr)     while(!(expr))
 #define next(ptr)       (*ptr).l_next
 #define prev(ptr)       (*ptr).l_prev
-#ifdef UNIX
-#define winat(y,x)             (moat(y,x)!=NULL?moat(y,x)->t_disguise:chat(y,x))
-#define DISTANCE(y1,x1,y2,x2)  (((x2)-(x1))*((x2)-(x1))+((y2)-(y1))*((y2)-(y1)))
-#endif
-#ifdef UNIX
-#define ce(a,b)         ((a).x==(b).x && (a).y==(b).y)
-#else
 #define ce(a,b)         _ce(&(a),&(b))
-#endif
 #define hero            player.t_pos
 #define pstats          player.t_stats
 #define ppack            player.t_pack
@@ -322,8 +301,8 @@ struct h_list
 
 typedef struct
 {
-  shint x;
-  shint y;
+  int x;
+  int y;
 } coord;
 
 typedef unsigned int str_t;
@@ -333,7 +312,7 @@ typedef unsigned int str_t;
 struct magic_item
 {
   char *mi_name;
-  shint mi_prob;
+  int mi_prob;
   short mi_worth;
 };
 
@@ -351,7 +330,7 @@ struct room
   coord r_gold;     //Where the gold is
   int r_goldval;    //How much the gold is worth
   short r_flags;    //Info about the room
-  shint r_nexits;   //Number of exits
+  int r_nexits;   //Number of exits
   coord r_exit[12]; //Where the exits are
 };
 
@@ -361,11 +340,11 @@ struct stats
 {
   str_t s_str;   //Strength
   long s_exp;    //Experience
-  shint s_lvl;   //Level of mastery
-  shint s_arm;   //Armor class
-  shint s_hpt;   //Hit points
+  int s_lvl;   //Level of mastery
+  int s_arm;   //Armor class
+  int s_hpt;   //Hit points
   char *s_dmg;   //String describing damage done
-  shint s_maxhp; //Max hit points
+  int s_maxhp; //Max hit points
 };
 
 //Structure for monsters and player
@@ -389,20 +368,20 @@ union thing
   struct
   {
     union thing *_l_next, *_l_prev; //Next pointer in link
-    shint _o_type;                  //What kind of object it is
+    int _o_type;                  //What kind of object it is
     coord _o_pos;                   //Where it lives on the screen
     char *_o_text;                  //What it says if you read it
     char _o_launch;                 //What you need to launch it
     char *_o_damage;                //Damage if used like sword
     char *_o_hurldmg;               //Damage if thrown
-    shint _o_count;                 //Count for plural objects
-    shint _o_which;                 //Which object of a type it is
-    shint _o_hplus;                 //Plusses to hit
-    shint _o_dplus;                 //Plusses to damage
+    int _o_count;                 //Count for plural objects
+    int _o_which;                 //Which object of a type it is
+    int _o_hplus;                 //Plusses to hit
+    int _o_dplus;                 //Plusses to damage
     short _o_ac;                    //Armor class
     short _o_flags;                 //Information about objects
     char _o_enemy;                  //If it is enchanted, who it hates
-    shint _o_group;                 //Group number for this object
+    int _o_group;                 //Group number for this object
   } _o;
 };
 
@@ -442,7 +421,7 @@ typedef union thing THING;
 struct monster
 {
   char *m_name;         //What to call the monster
-  shint m_carry;        //Probability of carrying something
+  int m_carry;        //Probability of carrying something
   short m_flags;        //Things about the monster
   struct stats m_stats; //Initial stats
 };
@@ -473,11 +452,6 @@ extern struct magic_item p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 
 struct sw_regs {int ax; int bx; int cx; int dx; int si; int di; int ds; int es;};
 
-#define SW_DOS  0x21
-#define SW_KEY  0x16
-#define SW_SCR  0x10
-#define SW_DSK  0x13
-
 #define LOW(x) ((x)&0xff)
 #define HI(x)  ((x)>>8)
 
@@ -504,7 +478,6 @@ extern int LINES, COLS;
 extern int is_saved;
 extern int scr_type;
 extern int reinit;
-extern int revno, verno;
 extern int is_me;
 extern int iguess;
 extern int bailout;
@@ -533,28 +506,13 @@ extern long seed, *e_levels;
 extern int hit_mul;
 extern int goodchk;
 extern char *_whoami;
-extern int cksum;
 
 //Cursor motion header for Monochrome display
 
 #define abs(x)              ((x)<0?-(x):(x))
 #define TRUE                1
 #define FALSE               0
-#define refresh             stub
-#define curscr              NULL
-#define stdscr              NULL
-#define hw                  NULL
 #define BUFSIZE              128
-#define wmove(a,b,c)        move(b,c)
-#define wclear              clear
-#define fputs(a,b)          addstr(a)
-#define puts(s)             addstr(s)
-#define wrefresh            stub
-#define clearok             stub
-#define leaveok             stub
-#define endwin              wclose
-#define touchwin            stub
-#define gets                cgets
 #define waddstr(w,s)        addstr(s)
 #define mvwaddstr(w,a,b,c)  mvaddstr(a,b,c)
 #define mvwaddch(w,a,b,c)   mvaddch(a,b,c)
@@ -580,13 +538,6 @@ extern int cksum;
 #define standout()          set_attr(14)
 #define high()              set_attr(15)
 #define bold()              set_attr(16)
-#define BX_UL               0
-#define BX_UR               1
-#define BX_LL               2
-#define BX_LR               3
-#define BX_VW               4
-#define BX_HT               5
-#define BX_HB               6
 #define BX_SIZE             7
 
 extern int scr_ds, old_page_no, no_check;

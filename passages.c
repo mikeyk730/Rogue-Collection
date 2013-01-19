@@ -260,7 +260,7 @@ void numpass(int y, int x)
   numpass(y, x-1);
 }
 
-void psplat(shint y, shint x)
+void psplat(int y, int x)
 {
   int idx;
 

@@ -230,7 +230,7 @@ void leave()
 //fatal: exit with a message
 void fatal(char *msg, int arg)
 {
-  endwin();
+  wclose();
   printw(msg, arg);
   exit(0);
 }

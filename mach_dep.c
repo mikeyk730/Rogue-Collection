@@ -79,9 +79,6 @@ void setup()
   maxrow = 23;
   if (COLS==40) {maxrow = 22; terse = TRUE;}
   expert = terse;
-  //Vector CTRL-BREAK to call quit()
-  //COFF();
-  ocb = set_ctrlb(0);
 }
 
 void clock_on()
@@ -132,26 +129,14 @@ void credits()
   high();
   center(11, "Ken Arnold, Jon Lane and Michael Toy");
   ULINE();
-#ifdef INTL
-  center(14, "International Versions by:");
-#else
   center(14, "Adapted for the IBM PC by:");
-#endif
   high();
-#ifdef INTL
-  center(16, "Mel Sibony");
-#else
   center(16, "A.I. Design");
-#endif
   ULINE();
   if (is_color) yellow();
   center(19, "(C)Copyright 1985");
   high();
-#ifdef INTL
-  center(20, "AI Design");
-#else
   center(20, "Epyx Incorporated");
-#endif
   standend();
   if (is_color) yellow();
   center(21, "All Rights Reserved");
@@ -234,25 +219,6 @@ int swint(int intno, struct sw_regs *rp)
   //sysint(intno, rp, rp);
   //return rp->ax;
    return 0;
-}
-
-int set_ctrlb(int state)
-{
-  struct sw_regs rg;
-  int retcode;
-
-  rg.ax = 0x3300;
-  swint(SW_DOS, &rg);
-  retcode = rg.dx&0xFF;
-  rg.ax = 0x3300;
-  rg.dx = (state)?1:0;
-  swint(SW_DOS, &rg);
-  return retcode;
-}
-
-void unsetup()
-{
-  set_ctrlb(ocb);
 }
 
 void one_tick()

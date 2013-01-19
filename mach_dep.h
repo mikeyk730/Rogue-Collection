@@ -20,8 +20,4 @@ int isjr();
 
 int swint(int intno, struct sw_regs *rp);
 
-int set_ctrlb(int state);
-
-void unsetup();
-
 void one_tick();

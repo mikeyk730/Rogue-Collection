@@ -25,6 +25,7 @@
 
 #include <ctype.h>
 
+#define MACROSZ  41
 static int lastcount;
 static byte lastch, do_take, lasttake;
 
@@ -185,7 +186,7 @@ void execcom()
 
       case 'v':
         after = FALSE;
-        msg("Rogue version %d.%d", revno, verno);
+        msg("Rogue version %d.%d", REV, VER);
       break;
 
       case 'S': after = FALSE; save_game(); break;

@@ -16,14 +16,14 @@
 
 extern int maxrow;
 
-static shint frcnt, ny, nx, topy, topx;
-static shint maxx, maxy;
-static shint *fr_y, *fr_x;
+static int frcnt, ny, nx, topy, topx;
+static int maxx, maxy;
+static int *fr_y, *fr_x;
 
 void draw_maze(struct room *rp)
 {
   int y, x;
-  shint fy[MAXFRNT], fx[MAXFRNT];
+  int fy[MAXFRNT], fx[MAXFRNT];
   int psgcnt;
   coord spos;
 

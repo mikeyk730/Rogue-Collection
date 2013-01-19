@@ -238,7 +238,7 @@ void wait_for(char ch)
 }
 
 //show_win: Function used to display a window and wait before returning
-void show_win(int *scr, char *message)
+void show_win(char *message)
 {
   mvaddstr(0, 0, message);
   move(hero.y, hero.x);
@@ -372,55 +372,17 @@ void SIG2()
   static int key_init = TRUE;
   static int numl, capsl;
   static int nspot, cspot, tspot;
-  int new_numl, new_capsl, new_fmode;
+  int new_numl=0, new_capsl=0, new_fmode=0;
   static int bighand, littlehand;
   int showtime = FALSE, spare;
   int x, y;
   
-#ifdef DEMO
-
-  static tot_time = 0;
-
-#endif DEMO
-
-  if (tick<ntick) return;
-  ntick = tick+6;
-  if (is_saved || scr_type<0) return;
-  regs->ax = 0x200;
-  swint(SW_KEY, regs);
-  new_numl = regs->ax;
-  new_capsl = new_numl&0x40;
-  new_fmode = new_numl&0x10;
-  new_numl &= 0x20;
-  //set up the clock the first time here
-  if (key_init)
-  {
-    regs->ax = 0x2c<<8;
-    swint(SW_DOS, regs);
-    bighand = (regs->cx>>8)%12;
-    littlehand = regs->cx&0xFF;
-    showtime++;
-  }
-  if (tick>1092)
-  {
-    //time os call kills jr and others we keep track of it ourselves
-    littlehand = (littlehand+1)%60;
-    if (littlehand==0) bighand = (bighand+1)%12;
-    tick = tick-1092;
-    ntick = tick+6;
-    showtime++;
-  }
   //this is built for speed so set up once first time this is executed
   if (key_init || reinit)
   {
     reinit = key_init = FALSE;
     if (COLS==40) {nspot = 10; cspot = 19; tspot = 35;}
     else {nspot = 20; cspot = 39; tspot = 75;}
-    //this will force all fields to be updated first time through
-    numl = !new_numl;
-    capsl = !new_capsl;
-    showtime++;
-    faststate = !new_fmode;
   }
   getxy(&x, &y);
   if (faststate!=new_fmode)
@@ -453,14 +415,6 @@ void SIG2()
   if (showtime)
   {
     showtime = FALSE;
-
-#ifdef DEMO
-
-    //Don't let them get by level 10 because they might do something nasty like disable the clock
-    if (((tot_time++ -max_level)>DEMOTIME) || max_level>10) demo(DEMOTIME);
-
-#endif DEMO
-
     //work around the compiler buggie boos
     spare = littlehand%10;
     move(24, tspot);

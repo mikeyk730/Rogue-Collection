@@ -413,8 +413,6 @@ void help(char **helpscr)
 
 }
 
-#ifndef UNIX
-
 int DISTANCE(int y1, int x1, int y2, int x2)
 {
   int dx, dy;
@@ -450,8 +448,6 @@ int winat(int y, int x)
 {
   return (moat(y, x)!=NULL?moat(y, x)->t_disguise:chat(y, x));
 }
-
-#endif
 
 //search: Player gropes about him to find hidden things.
 void search()

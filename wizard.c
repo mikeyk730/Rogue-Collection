@@ -176,14 +176,14 @@ show_map()
   int y, x, real;
 
   wdump(0);
-  wclear(hw);
+  clear();
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
     if (!(real = flat(y, x)&F_REAL)) standout();
     mvaddch(y, x, chat(y, x));
     if (!real) standend();
   }
-  show_win(hw, "---More (level map)---");
+  show_win("---More (level map)---");
   wrestor(0);
 }
 

@@ -209,7 +209,7 @@ skip:
       if (ch==ESCAPE) {after = FALSE; msg(""); return NULL;}
       if ((obj = pack_obj(ch, &och))==NULL)
       {
-        ifterse1("range is 'a' to '%c'","please specify a letter between 'a' and '%c'", och-1);
+        ifterse("range is 'a' to '%c'","please specify a letter between 'a' and '%c'", och-1);
         continue;
       }
       else

@@ -31,7 +31,7 @@ void status();
 void wait_for(char ch);
 
 //show_win: Function used to display a window and wait before returning
-void show_win(int *scr, char *message);
+void show_win(char *message);
 
 //This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
 int getinfo(char *str, int size);

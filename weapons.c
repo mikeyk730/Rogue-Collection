@@ -195,7 +195,7 @@ bad:
   if (is_current(obj)) goto bad;
   sp = inv_name(obj, TRUE);
   cur_weapon = obj;
-  ifterse2("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
+  ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
 }
 
 //fallpos: Pick a random position around the given (y, x) coordinates

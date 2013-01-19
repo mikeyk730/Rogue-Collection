@@ -3,12 +3,6 @@
 
 #include "rogue.h"
 
-//revno: current revision level
-//verno: current version of a particular rev
-
-int revno = REV;
-int verno = VER;
-
 //All this should be low as possible in memory so that we can save the min
 
 //Names of the various weapons
@@ -358,7 +352,7 @@ int group = 2;         //Current group number
 int hungry_state = 0;  //How hungry is he
 long seed;             //Random number seed
 
-int hit_mul = P_DAMAGE;
+int hit_mul = 1;
 int goodchk = 1;
 char *_whoami;
 

@@ -1,7 +1,4 @@
 //Cursor motion stuff to simulate a "no refresh" version of curses
-
-
-
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -13,6 +10,14 @@
 #include <Windows.h>
 
 //Globals for curses
+#define BX_UL               0
+#define BX_UR               1
+#define BX_LL               2
+#define BX_LR               3
+#define BX_VW               4
+#define BX_HT               5
+#define BX_HB               6
+
 int LINES = 25, COLS = 80;
 int is_saved = FALSE;
 int iscuron = TRUE;
@@ -117,16 +122,6 @@ void getrc(int *rp, int *cp)
 {
   *rp = c_row;
   *cp = c_col;
-}
-
-void real_rc(int pn, int *rp, int *cp)
-{
-  //pc bios: read current cursor position
-  regs->ax = 0x300;
-  regs->bx = pn<<8;
-  swint(SW_SCR, regs);
-  *rp = regs->dx>>8;
-  *cp = regs->dx&0xff;
 }
 
 //clrtoeol
@@ -243,14 +238,6 @@ void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
   move(row, col);
 }
 
-//Called when rogue runs to move our cursor to be where DOS thinks the cursor is
-void set_cursor()
-{
-  regs->ax = 15 << 8;
-  swint(SW_SCR, regs);
-  real_rc(regs->bx >> 8, &c_row, &c_col);
-}
-
 //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
 void winit()
 {
@@ -280,7 +267,6 @@ void winit()
     default: move(24, 0); fatal("Unknown screen type (%d)", regs->ax);
   }
   //Read current cursor position
-  real_rc(old_page_no, &c_row, &c_col);
   if ((savewin = 0)) //sbrk(4096))==-1) //TODO: hook up savewin and wrestor to redraw screen
   {
     svwin_ds = -1;
@@ -383,21 +369,11 @@ void printw(char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, i
 
 void scroll_up(int start_row, int end_row, int nlines)
 {
-  regs->ax = 0x600+nlines;
-  regs->bx = 0x700;
-  regs->cx = start_row<<8;
-  regs->dx = (end_row<<8)+COLS-1;
-  swint(SW_SCR, regs);
   move(end_row, c_col);
 }
 
 void scroll_dn(int start_row, int end_row, int nlines)
 {
-  regs->ax = 0x700+nlines;
-  regs->bx = 0x700;
-  regs->cx = start_row<<8;
-  regs->dx = (end_row<<8)+COLS-1;
-  swint(SW_SCR, regs);
   move(start_row, c_col);
 }
 

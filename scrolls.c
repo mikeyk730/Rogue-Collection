@@ -29,7 +29,7 @@ void read_scroll()
   obj = get_item("read", SCROLL);
   if (obj==NULL) return;
   if (obj->o_type!=SCROLL) {msg("there is nothing on it to read"); return;}
-  ifterse0("the scroll vanishes", "as you read the scroll, it vanishes");
+  ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
   //Calculate the effect it has on the poor guy.
   if (obj==cur_weapon) cur_weapon = NULL;
   switch (obj->o_which)
@@ -44,7 +44,7 @@ void read_scroll()
       {
         cur_armor->o_ac--;
         cur_armor->o_flags &= ~ISCURSED;
-        ifterse0("your armor glows faintly", "your armor glows faintly for a moment");
+        ifterse("your armor glows faintly", "your armor glows faintly for a moment");
       }
     break;
 
@@ -71,7 +71,7 @@ void read_scroll()
       coord mp;
 
       if (plop_monster(hero.y, hero.x, &mp) && (op = new_item())!=NULL) new_monster(op, randmonster(FALSE), &mp);
-      else ifterse0("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
+      else ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 
       break;
     }
@@ -130,7 +130,7 @@ void read_scroll()
         }
       }
       if (ch) {s_know[S_GFIND] = TRUE; msg("your nose tingles as you sense food");}
-      else ifterse0("you hear a growling noise close by", "you hear a growling noise very close to you");
+      else ifterse("you hear a growling noise close by", "you hear a growling noise very close to you");
     break;
 
     case S_TELEP: //Scroll of teleportation: Make him disappear and reappear
@@ -151,7 +151,7 @@ void read_scroll()
         cur_weapon->o_flags &= ~ISCURSED;
         if (rnd(2)==0) cur_weapon->o_hplus++;
         else cur_weapon->o_dplus++;
-        ifterse1("your %s glows blue", "your %s glows blue for a moment", w_names[cur_weapon->o_which]);
+        ifterse("your %s glows blue", "your %s glows blue for a moment", w_names[cur_weapon->o_which]);
       }
     break;
 
@@ -164,7 +164,7 @@ void read_scroll()
       if (cur_weapon!=NULL) cur_weapon->o_flags &= ~ISCURSED;
       if (cur_ring[LEFT]!=NULL) cur_ring[LEFT]->o_flags &= ~ISCURSED;
       if (cur_ring[RIGHT]!=NULL) cur_ring[RIGHT]->o_flags &= ~ISCURSED;
-      ifterse0("somebody is watching over you", "you feel as if somebody is watching over you");
+      ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
     break;
 
     case S_AGGR: //This scroll aggravates all the monsters on the current level and sets them running towards the hero
