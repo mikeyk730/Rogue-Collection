@@ -146,7 +146,7 @@ void quit()
   if (qstate==TRUE) leave();
   qstate = TRUE;
   mpos = 0;
-  getyx(eatme, oy, ox);
+  getrc(&oy, &ox);
   move(0, 0);
   clrtoeol();
   move(0, 0);

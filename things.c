@@ -366,7 +366,7 @@ int add_line(char *use, char *fmt, char *arg)
   {
     move(line_cnt, 0);
     printw(fmt, arg);
-    getxy(&x, &y);
+    getrc(&x, &y);
     //if the line wrapped but nothing was printed on this line you might as well use it for the next item
     if (y!=0) line_cnt = x+1;
     lastfmt = fmt;

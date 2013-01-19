@@ -133,8 +133,6 @@ struct magic_item ws_magic[MAXSTICKS] =
   {"cancellation",    5, 280}
 };
 
-#ifdef HELP
-
 #define MAXHELPC  65
 char *helpcoms[MAXHELPC] =
 {
@@ -236,8 +234,6 @@ char *helpobjs[MAXHELPO] =
   "A-Z: 26 different monsters",
   0
 };
-
-#endif HELP
 
 //Names of the various experience levels
 

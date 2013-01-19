@@ -61,9 +61,4 @@ void str_attr(char *str);
 //key_state:
 void SIG2();
 
-//Replacement printf
-//Michael Toy, AI Design, January 1984
-
-char *my_stccpy(char* a, char* b, int c);
-
 char *noterse(char *str);

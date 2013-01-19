@@ -364,9 +364,6 @@ int goodch(THING *obj)
 //help: prints out help screens
 void help(char **helpscr)
 {
-
-#ifdef HELP
-
   int hcount = 0;
   int hrow, hcol;
   int isfull;
@@ -403,9 +400,6 @@ void help(char **helpscr)
     hcount++;
   }
   wrestor();
-
-#endif HELP
-
 }
 
 int DISTANCE(int y1, int x1, int y2, int x2)

@@ -67,7 +67,7 @@ void more(char *msg)
   int covered = FALSE;
 
   msz = strlen(msg);
-  getxy(&x,&y);
+  getrc(&x,&y);
   //it is reasonable to assume that if the you are no longer on line 0, you must have wrapped.
   if (x!=0) {x = 0; y = COLS;}
   if ((y+msz)>COLS) {move(x, y = COLS-msz); covered = TRUE;}
@@ -166,7 +166,7 @@ void status()
   static char *state_name[] = {"      ", "Hungry", "Weak", "Faint","?"};
 
   SIG2();
-  getyx(stdscr, oy, ox);
+  getrc(&oy, &ox);
   yellow();
   //Level:
   if (s_lvl!=level)
@@ -286,7 +286,7 @@ int getinfo(char *str, int size)
 void backspace()
 {
   int x, y;
-  getxy(&x, &y);
+  getrc(&x, &y);
   if (--y<0) y = 0;
   move(x, y);
   putchar(' ');
@@ -377,7 +377,7 @@ void SIG2()
   if (COLS==40) {nspot = 10; cspot = 19; tspot = 35;}
   else {nspot = 20; cspot = 39; tspot = 75;}
   
-  getxy(&x, &y);
+  getrc(&x, &y);
   if (faststate!=new_fmode)
   {
     faststate = new_fmode;
@@ -416,15 +416,6 @@ void SIG2()
     standend();
   }
   move(x, y);
-}
-
-//Replacement printf
-//Michael Toy, AI Design, January 1984
-
-char *my_stccpy(char* a, char* b, int c)
-{
-  stccpy(a, b, c);
-  return a+strlen(a);
 }
 
 char *noterse(char *str)

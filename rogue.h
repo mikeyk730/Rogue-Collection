@@ -5,12 +5,8 @@
 
 //Options set for PC rogue
 
-#define HELP
-
 #define REV  1
 #define VER  48
-
-//MANX C compiler funnies
 
 #define bcopy(a,b)  memcpy(&(a),&(b),sizeof(b))
 #define setmem(a,b,c) memset(a,c,b)
@@ -60,6 +56,7 @@ typedef unsigned char bool;
 #else
 #define debug           if(0) msg
 #endif
+
 //Things that appear on the screens
 
 #define PASSAGE   (0xb1)
@@ -480,12 +477,9 @@ extern char *_whoami;
 
 #define TRUE                1
 #define FALSE               0
-#define BUFSIZE              128
-#define waddstr(w,s)        addstr(s)
+#define BUFSIZE             128
 #define mvwaddstr(w,a,b,c)  mvaddstr(a,b,c)
 #define mvwaddch(w,a,b,c)   mvaddch(a,b,c)
-#define getyx(a,b,c)        getxy(&b,&c)
-#define getxy               getrc
 #define inch()              (0xff&curch())
 #define standend()          set_attr(0)
 #define green()             set_attr(1)
