@@ -298,14 +298,28 @@ void wdump()
   is_saved = TRUE;
 }
 
+CHAR_INFO buffer[MAXLINES][MAXCOLS]; 
+
 void sav_win()
 {
-  if (savewin==_flags) dmaout(savewin, LINES*COLS, 0xb800, 8192);
+   HANDLE hOutput = GetStdHandle( STD_OUTPUT_HANDLE );
+   COORD dwBufferSize = { COLS,LINES }; 
+   COORD dwBufferCoord = { 0, 0 }; 
+   SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
+   ReadConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
+      dwBufferCoord, &rcRegion ); 
+  //if (savewin==_flags) dmaout(savewin, LINES*COLS, 0xb800, 8192);
 }
 
 void res_win()
 {
-  if (savewin==_flags) dmain(savewin, LINES*COLS, 0xb800, 8192);
+   HANDLE hOutput = (HANDLE)GetStdHandle( STD_OUTPUT_HANDLE ); 
+   COORD dwBufferSize = { COLS,LINES }; 
+   COORD dwBufferCoord = { 0, 0 }; 
+   SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
+   WriteConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
+      dwBufferCoord, &rcRegion ); 
+  //if (savewin==_flags) dmain(savewin, LINES*COLS, 0xb800, 8192);
 }
 
 //wrestor(windex): restore the window saved on disk
