@@ -131,21 +131,6 @@
     <None Include="csav.asm">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="fio.asm">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="begin.asm">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="oprotec.asm">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="sbrk.asm">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="zoom.asm">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rogue.h">
@@ -253,10 +238,5 @@
     <ClInclude Include="scrolls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="dos.asm">
-      <Filter>Resource Files</Filter>
-    </MASM>
   </ItemGroup>
 </Project>

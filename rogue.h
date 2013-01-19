@@ -492,7 +492,6 @@ extern int a_chances[], a_class[], count, dnum, food_left, fung_hit, fd, group, 
 
 extern long seed, *e_levels;
 
-extern int goodchk;
 extern char *_whoami;
 
 //Cursor motion header for Monochrome display

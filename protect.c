@@ -6,13 +6,6 @@
 #define DONTCARE   0
 #define CRC        0x10
 
-extern int goodchk;
-int no_step;
-
-static struct sw_regs rom_read = {0x206, 0, 0x2701, UNDEFINED, DONTCARE, DONTCARE, DONTCARE, 0xF800};
-static struct sw_regs sig1_read = {0x201, UNDEFINED, 0x2707, UNDEFINED, DONTCARE, DONTCARE, DONTCARE, UNDEFINED};
-static struct sw_regs sig2_read = {0x201, UNDEFINED, 0x27F1, UNDEFINED, DONTCARE, DONTCARE, DONTCARE, UNDEFINED};
-
 //protect(drive)
 //{
 //  int i, flags;

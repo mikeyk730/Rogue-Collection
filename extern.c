@@ -348,10 +348,7 @@ int group = 2;         //Current group number
 int hungry_state = 0;  //How hungry is he
 long seed;             //Random number seed
 
-int goodchk = 1;
 char *_whoami;
-
-//WINDOW *hw; //Used as a scratch window
 
 coord oldpos; //Position before last look() call
 coord delta;  //Change indicated to get_dir()
