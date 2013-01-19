@@ -87,11 +87,7 @@ struct magic_item p_magic[MAXPOTIONS] =
   {"gain strength",     15, 150},
   {"see invisible",      2, 100},
   {"healing",           15, 130},
-#ifdef DEMO
-  {"advertisement",      6, 130},
-#else
   {"monster detection",  6, 130},
-#endif DEMO
   {"magic detection",    6, 105},
   {"raise level",        2, 250},
   {"extra healing",      5, 200},
@@ -352,7 +348,6 @@ int group = 2;         //Current group number
 int hungry_state = 0;  //How hungry is he
 long seed;             //Random number seed
 
-int hit_mul = 1;
 int goodchk = 1;
 char *_whoami;
 

@@ -25,7 +25,6 @@ extern int scr_type;
 
 void score(int amount, int flags, char monst)
 {
-#ifndef DEMO
 #ifndef WIZARD
 
   struct sc_ent his_score, top_ten[TOPSCORES];
@@ -75,10 +74,8 @@ reread:
   pr_scores(rank, &top_ten[0]);
 
 #endif WIZARD
-#endif DEMO
 }
 
-#ifndef DEMO
 #ifndef WIZARD
 
 void get_scores(struct sc_ent *top10)
@@ -177,7 +174,6 @@ int add_scores(struct sc_ent *newscore, struct sc_ent *oldlist)
 }
 
 #endif WIZARD
-#endif DEMO
 
 //death: Do something really fun when he dies
 void death(char monst)
@@ -186,7 +182,6 @@ void death(char monst)
   char buf[MAXSTR];
   int year;
 
-#ifndef DEMO
 
   purse -= purse/10;
 
@@ -220,18 +215,6 @@ void death(char monst)
   move(LINES-1, 0);
   score(purse, 0, monst);
 
-#else DEMO
-
-  demo(0);
-  killer = killname(monst, TRUE);
-  strcpy(buf, "This time you were killed by");
-  strcat(buf, " ");
-  strcat(buf, killer);
-  if (strlen(buf)>(COLS-2)) center(6, "This time you were killed");
-  else center(6, buf);
-  move(LINES-2, 0);
-
-#endif DEMO
 
   wclose(0);
   exit(0);
@@ -240,7 +223,6 @@ void death(char monst)
 //total_winner: Code for a winner
 void total_winner()
 {
-#ifndef DEMO
 
   THING *obj;
   int worth;
@@ -372,7 +354,6 @@ void total_winner()
   printw("   %5u  Gold Pieces          ", oldpurse);
   score(purse, 2, 0);
 
-#endif DEMO
 
   exit(0);
 }
@@ -402,58 +383,3 @@ char *killname(char monst, bool doart)
   strcat(prbuf, sp);
   return prbuf;
 }
-
-#ifdef DEMO
-
-//For the demonstration version of rogue we really want to Print out a message when the game ends telling them how to order the game.
-void demo(int endtype)
-{
-  int i;
-  char demobuf[81];
-
-  switch_page(old_page_no);
-  clear();
-  if (is_color) brown();
-  box(0, 0, LINES-2, COLS-1);
-  bold();
-  center(2, "ROGUE:  The Adventure Game");
-  standend();
-  if (is_color) lmagenta();
-  sprintf(demobuf, "Sorry, %s but this is just a demonstration", whoami);
-  if (terse) sprintf(demobuf, "Sorry, this is just a demonstration");
-  center(4, demobuf);
-  //quitter
-  if (endtype==1)
-  {
-    sprintf(demobuf, "You quit with %u pieces of Gold", purse);
-    center(6, demobuf);
-  }
-  else if (endtype==DEMOTIME)
-  {
-    sprintf(demobuf, "You ended with %u gold pieces", purse);
-    center(6, demobuf);
-  }
-  if (terse) center(8, "If you're interested in doing some");
-  else center(8, "But, if you're interested in doing some");
-  center(9, "more exploring in the Dungeons of Doom");
-  if (is_color) red();
-  center(11, "Please Contact:                      ");
-  if (!is_color) uline(); else standend();
-  center(13, "A. I. Design");
-  center(14, "P.O. Box  3685");
-  center(15, "Santa Clara, California 95055");
-  if (is_color) red();
-  center(17, "(408) 296-1634");
-  if (is_color) yellow(); else standend();
-  center(19, "(C) Copyright 1983");
-  high();
-  center(20, "Artificial Intelligence Design");
-  if (is_color) yellow(); else standend();
-  center(21, "All Rights Reserved");
-  if (endtype==0) return;
-  move(LINES-2, 0);
-  wclose(0);
-  exit(0);
-}
-
-#endif DEMO

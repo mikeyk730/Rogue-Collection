@@ -6,8 +6,6 @@
 //Options set for PC rogue
 
 #define HELP
-#undef DEMO
-#define DEMOTIME  10
 
 #define REV  1
 #define VER  48
@@ -472,7 +470,6 @@ extern struct sw_regs *regs;
 
 extern int maxitems;
 extern int maxrow;
-extern char *end_sb, *end_mem, *startmem;
 extern char *_top, *_base;
 extern int LINES, COLS;
 extern int is_saved;
@@ -503,7 +500,6 @@ extern int a_chances[], a_class[], count, dnum, food_left, fung_hit, fd, group, 
 
 extern long seed, *e_levels;
 
-extern int hit_mul;
 extern int goodchk;
 extern char *_whoami;
 

@@ -193,9 +193,6 @@ void quit()
   answer = readchar();
   if (answer=='y' || answer=='Y')
   {
-#ifdef DEMO
-    demo(1);
-#else
     clear();
     move(0, 0);
     printw("You quit with %u gold pieces\n", purse);
@@ -210,7 +207,6 @@ void quit()
     move(oy, ox);
     mpos = 0;
     count = 0;
-#endif DEMO
   }
   qstate = FALSE;
 }

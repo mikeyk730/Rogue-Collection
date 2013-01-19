@@ -16,7 +16,6 @@ int getkey();
 int readchar();
 
 int bdos(int fnum, int dxval);
-int isjr();
 
 int swint(int intno, struct sw_regs *rp);
 

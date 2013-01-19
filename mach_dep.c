@@ -202,15 +202,6 @@ int bdos(int fnum, int dxval)
    return 0;
 }
 
-int isjr()
-{
-  //static int machine = 0;
-
-  //if (machine==0) {dmain(&machine, 1, 0xf000, 0xfffe); machine &= 0xff;}
-  //return machine==JR;
-   return 0;
-}
-
 int swint(int intno, struct sw_regs *rp)
 {
   //extern int _dsval;

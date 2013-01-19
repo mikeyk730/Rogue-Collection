@@ -282,7 +282,6 @@ void winit()
   
   if (old_page_no!=page_no) clear();
   move(c_row, c_col);
-  if (isjr()) no_check = TRUE;
 }
 
 void forcebw()

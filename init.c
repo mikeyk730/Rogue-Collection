@@ -157,9 +157,6 @@ long *e_levels; //Pointer to array of experience level
 char *tbuf;     //Temp buffer used in fighting
 char *msgbuf;   //Message buffer for msg()
 char *prbuf;    //Printing buffer used everywhere
-char *end_mem;  //Pointer to end of memory
-char *startmem; //Pointer to the start of static memory
-char *end_sb;   //Pointer to the end of static base
 char *ring_buf; //Buffer used by ring code
 
 //Declarations for data space that must be saved and restored exactly
@@ -358,11 +355,11 @@ void init_ds()
 {
   long *ep;
 
-  end_sb = _flags = newmem((MAXLINES-3)*MAXCOLS);
+  _flags = newmem((MAXLINES-3)*MAXCOLS);
   _level = newmem((MAXLINES-3)*MAXCOLS);
   _things = (THING *)newmem(sizeof(THING)*MAXITEMS);
   _t_alloc = (int *)newmem(MAXITEMS*sizeof(int));
-  startmem = tbuf = newmem(MAXSTR);
+  tbuf = newmem(MAXSTR);
   msgbuf = newmem(BUFSIZE);
   prbuf = newmem(MAXSTR);
   ring_buf = newmem(6);

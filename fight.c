@@ -287,8 +287,6 @@ bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
       //special goodies for the commercial version of rogue
       //make it easier on level one
       if (thdef==&player && max_level==1) damage = (damage+1)/2;
-      //copy protection goodies
-      if (thdef==&player) damage *= hit_mul;
       def->s_hpt -= max(0, damage);
       did_hit = TRUE;
     }

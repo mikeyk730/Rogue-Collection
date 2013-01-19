@@ -63,19 +63,9 @@ void quaff()
     break;
 
     case P_MFIND:
-#ifndef DEMO
       fuse(turn_see, TRUE, HUHDURATION);
       if (mlist==NULL) msg("you have a strange feeling%s.", noterse(" for a moment"));
       else {p_know[P_MFIND] |= turn_see(FALSE); msg("");}
-#else
-      msg("you can't move");
-      msg(" and are forced to watch this advertisement");
-      msg("rogue: The ULTIMATE Adventure Game");
-      msg("the most popular game on UNIX ever!");
-      msg("now runs on YOUR IBM PC");
-      msg("UNIX is a trademark of Bell Labs");
-      p_know[P_MFIND] = TRUE;
-#endif
     break;
 
     case P_TFIND:
