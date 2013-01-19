@@ -24,7 +24,6 @@
 #include "curses.h"
 #include "io.h"
 #include "init.h"
-#include "load.h"
 #include "new_leve.h"
 #include "misc.h"
 #include "rip.h"
@@ -56,7 +55,6 @@ int main(int argc, char **argv)
   regs = &_treg;
   dmaout((char*)&junk, 2, 0, 4);
   clock_on();
-  epyx_yuck();
   init_ds();
   setenv("rogue.opt");
   //protect(find_drive());

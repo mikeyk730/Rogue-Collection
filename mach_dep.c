@@ -238,3 +238,6 @@ int is_num_lock_on()
 {
    return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
 }
+
+int no_char(){ return !_kbhit(); }
+
