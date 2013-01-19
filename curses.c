@@ -20,19 +20,7 @@
 #define BX_HB               6
 
 int LINES = 25, COLS = 80;
-int is_saved = FALSE;
-int iscuron = TRUE;
 int ch_attr = 0x7;
-int old_page_no;
-int no_check = FALSE;
-int scr_ds = 0xB800;
-int svwin_ds;
-char *savewin;
-int scr_type = -1;
-int tab_size = 8;
-int page_no = 0;
-
-static int old_ds;
 
 #define MAXATTR  17
 
@@ -83,7 +71,6 @@ byte monoc_attr[] =
 byte *at_table;
 
 int c_row, c_col; //Save cursor positions so we don't ask dos
-int scr_row[25];
 
 byte dbl_box[BX_SIZE] = {0xc9, 0xbb, 0xc8, 0xbc, 0xba, 0xcd, 0xcd};
 byte sng_box[BX_SIZE] = {0xda, 0xbf, 0xc0, 0xd9, 0xb3, 0xc4, 0xc4};
@@ -239,49 +226,12 @@ void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
   move(row, col);
 }
 
-//winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
+//winit(win_name): initialize window
 void winit()
 {
-  int i, cnt;
-  //extern int _dsval;
-  int _dsval=0;
-
-  ////Get monitor type
-  //regs->ax = 15<<8;
-  //swint(SW_SCR, regs);
-  //old_page_no = regs->bx>>8;
-  scr_type = 3; //regs->ax = 0xff&regs->ax;
-  //initialization is any good because restarting game has old values!!! So reassign defaults
   LINES = 25;
   COLS = 80;
-  scr_ds = 0xB800;
-  at_table = monoc_attr;
-  switch (scr_type)
-  {
-    //It is a TV
-    case 1: at_table = color_attr;
-    case 0: COLS = 40; break;
-    //It's a high resolution monitor
-    case 3: at_table = color_attr;
-    case 2: break;
-    case 7: scr_ds = 0xB000; no_check = TRUE; break;
-    default: move(24, 0); fatal("Unknown screen type (%d)", regs->ax);
-  }
-  //Read current cursor position
-  if ((savewin = 0)) //sbrk(4096))==-1) //TODO: hook up savewin and wrestor to redraw screen
-  {
-    svwin_ds = -1;
-    savewin = (char *)_flags;
-    if (scr_type==7) fatal(no_mem);
-  }
-  else
-  {
-    savewin = (char *)(((int)savewin+0xf)&0xfff0);
-    svwin_ds = (((int)savewin>>4)&0xfff)+_dsval;
-  }
-  for (i = 0, cnt = 0; i<25; cnt += 2*COLS, i++) scr_row[i] = cnt;
-  
-  if (old_page_no!=page_no) clear();
+  at_table = color_attr;
   move(c_row, c_col);
 }
 
@@ -294,8 +244,6 @@ void forcebw()
 void wdump()
 {
   sav_win();
-  dmain(savewin, LINES*COLS, scr_ds, 0);
-  is_saved = TRUE;
 }
 
 CHAR_INFO buffer[MAXLINES][MAXCOLS]; 
@@ -308,7 +256,6 @@ void sav_win()
    SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
    ReadConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
       dwBufferCoord, &rcRegion ); 
-  //if (savewin==_flags) dmaout(savewin, LINES*COLS, 0xb800, 8192);
 }
 
 void res_win()
@@ -319,21 +266,12 @@ void res_win()
    SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
    WriteConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
       dwBufferCoord, &rcRegion ); 
-  //if (savewin==_flags) dmain(savewin, LINES*COLS, 0xb800, 8192);
 }
 
 //wrestor(windex): restore the window saved on disk
 void wrestor()
 {
-  dmaout(savewin, LINES*COLS, scr_ds, 0);
   res_win();
-  is_saved = FALSE;
-}
-
-//wclose(): close the window file
-void wclose()
-{
-
 }
 
 //Some general drawing routines
@@ -429,8 +367,7 @@ void implode()
 
   er = (COLS==80?LINES-3:LINES-4);
   //If the curtain is down, just clear the memory
-  //if (scr_ds==svwin_ds) {wsetmem(savewin, (er+1)*COLS, 0x0720); return;}
-  delay = scr_type==7?500:10;
+  delay = 500;
   for (r = 0, c = 0, ec = COLS-1; r<10; r++, c += cinc, er--, ec -= cinc)
   {
     vbox(sng_box, r, c, er, ec);
@@ -447,13 +384,8 @@ void implode()
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
 void drop_curtain()
 {
-  int r, j, delay;
-
-  //if (svwin_ds==-1) return;
-  old_ds = scr_ds;
-  dmain(savewin, LINES*COLS, scr_ds, 0);
+  int r, j, delay=3000;
   cursor(FALSE);
-  delay = (scr_type==7?3000:2000);
   green();
   vbox(sng_box, 0, 0, LINES-1, COLS-1);
   yellow();
@@ -463,21 +395,15 @@ void drop_curtain()
     repchr(0xb1, COLS-2);
     for (j = delay; j--;) ;
   }
-  //scr_ds = svwin_ds;
   move(0, 0);
   standend();
 }
 
 void raise_curtain()
 {
-  int i, j, o, delay;
-
-  //if (svwin_ds==-1) return;
-  scr_ds = old_ds;
-  delay = (scr_type==7?3000:2000);
+  int i, j, o, delay=3000;
   for (i = 0, o = (LINES-1)*COLS*2; i<LINES; i++, o -= COLS*2)
   {
-    dmaout(savewin+o, COLS, scr_ds, o);
     for (j = delay; j--;) ;
   }
 }

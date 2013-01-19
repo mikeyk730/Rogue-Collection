@@ -18,14 +18,6 @@
 typedef unsigned char byte;
 typedef unsigned char bool;
 
-void move(int x, int y);
-void beep();
-char curch(); //TODO
-void _halt(); //TODO
-int no_char(); //TODO
-void dmain(char*, int, int, int);
-void dmaout(char*, int, int, int);
-
 //Maximum number of different things
 
 #define MAXROOMS     9
@@ -464,8 +456,6 @@ extern int maxitems;
 extern int maxrow;
 extern char *_top, *_base;
 extern int LINES, COLS;
-extern int is_saved;
-extern int scr_type;
 extern int is_me;
 extern int iguess;
 extern int bailout;
@@ -522,6 +512,3 @@ extern char *_whoami;
 #define high()              set_attr(15)
 #define bold()              set_attr(16)
 #define BX_SIZE             7
-
-extern int scr_ds, old_page_no, no_check;
-extern byte dbl_box[BX_SIZE], sng_box[BX_SIZE], fat_box[BX_SIZE];

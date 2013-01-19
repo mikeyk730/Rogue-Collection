@@ -19,8 +19,6 @@ static int sc_fd;
 
 //external curses IBM (jll)
 
-extern int scr_type;
-
 //score: Figure score and post it.
 
 void score(int amount, int flags, char monst)
@@ -31,7 +29,6 @@ void score(int amount, int flags, char monst)
   int rank = 0;
   char response = ' ';
 
-  is_saved = TRUE;
   if (amount || flags || monst)
   {
     move(LINES-1, 0);
@@ -108,7 +105,6 @@ void pr_scores(int newrank, struct sc_ent *top10)
 
   clear();
   high();
-  if (scr_type==7) standout();
   mvaddstr(0, 0, "Guildmaster's Hall Of Fame:");
   standend();
   yellow();
@@ -119,7 +115,7 @@ void pr_scores(int newrank, struct sc_ent *top10)
     brown();
     if (newrank-1==i)
     {
-      if (scr_type==7) standout(); else yellow();
+      yellow();
     }
     if (top10->sc_gold<=0) break;
     curl = 4+((COLS==40)?(i*2):i);
@@ -214,8 +210,6 @@ void death(char monst)
   move(LINES-1, 0);
   score(purse, 0, monst);
 
-
-  wclose(0);
   exit(0);
 }
 

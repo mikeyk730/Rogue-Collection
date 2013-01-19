@@ -50,17 +50,13 @@ int main(int argc, char **argv)
   char *curarg, *savfile = 0;
   struct sw_regs _treg;
   long junk = 0L;
-  int sl;
-
+  
   regs = &_treg;
-  dmaout((char*)&junk, 2, 0, 4);
-  clock_on();
   init_ds();
   setenv("rogue.opt");
   //protect(find_drive());
-  //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.  If it ends with "fast" then we disable retrace checking
+  //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.
   if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;
-  if ((sl = strlen(s_screen))>=4 && strncmp(&s_screen[sl-4], "fast", 4)==0) do_force = TRUE;
   dnum = 0;
   while (--argc)
   {
@@ -70,7 +66,7 @@ int main(int argc, char **argv)
       switch (curarg[1])
       {
         case 'R': case 'r': savfile = s_save; break;
-        case 's': case 'S': winit(); noscore = TRUE; is_saved = TRUE; score(0, 0, 0); fatal(""); break;
+        case 's': case 'S': winit(); noscore = TRUE; score(0, 0, 0); fatal(""); break;
       }
     }
     else if (savfile==0) savfile = curarg;
@@ -80,7 +76,6 @@ int main(int argc, char **argv)
     savfile = 0;
     winit();
     if (bwflag) forcebw();
-    if (no_check==0) no_check = do_force;
     credits();
     if (dnum==0) dnum = srand2();
     seed = dnum;
@@ -145,13 +140,9 @@ void playit(char *sname)
 {
   if (sname)
   {
-    extern int iscuron;
-
     restore(sname);
     if (bwflag) forcebw();
-    if (no_check==0) no_check = do_force;
     setup();
-    iscuron = TRUE;
     cursor(FALSE);
   }
   else {oldpos.x = hero.x; oldpos.y = hero.y; oldrp = roomin(&hero);}
@@ -216,7 +207,6 @@ void leave()
 //fatal: exit with a message
 void fatal(char *msg, int arg)
 {
-  wclose();
   printw(msg, arg);
   exit(0);
 }

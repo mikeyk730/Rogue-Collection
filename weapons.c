@@ -225,9 +225,4 @@ int fallpos(THING *obj, coord *newpos)
 
 void tick_pause()
 {
-  int otick;
-  extern int tick;
-
-  otick = tick;
-  //while (otick==tick) ; //TODO: tick needs to inc in bg
 }

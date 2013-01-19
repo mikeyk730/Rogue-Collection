@@ -42,9 +42,6 @@ void res_win();
 //wrestor(windex): restore the window saved on disk
 void wrestor();
 
-//wclose(): close the window file
-void wclose();
-
 //Some general drawing routines
 void box(int ul_r, int ul_c, int lr_r, int lr_c);
 
@@ -78,3 +75,7 @@ void implode();
 void drop_curtain();
 
 void raise_curtain();
+
+void move(int x, int y);
+
+char curch();

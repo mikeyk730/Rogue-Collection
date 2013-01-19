@@ -15,7 +15,6 @@
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)
 
-extern int scr_type;
 extern unsigned tick;
 extern char *msgbuf;
 
@@ -251,9 +250,7 @@ int getinfo(char *str, int size)
   char *retstr, ch;
   int readcnt = 0;
   int wason, ret = 1;
-  char buf[160];
 
-  dmain(buf, 80, scr_ds, 0);
   retstr = str;
   *str = 0;
   wason = cursor(TRUE);
@@ -280,7 +277,6 @@ int getinfo(char *str, int size)
       ret = ch;
     break;
   }
-  dmaout(buf, 80, scr_ds, 0);
   return ret;
 }
 
