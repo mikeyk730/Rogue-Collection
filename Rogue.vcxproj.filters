@@ -87,9 +87,6 @@
     <ClCompile Include="potions.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="protect.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="rings.c">
       <Filter>Source Files</Filter>
     </ClCompile>

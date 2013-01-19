@@ -101,7 +101,6 @@
     <ClCompile Include="pack.c" />
     <ClCompile Include="passages.c" />
     <ClCompile Include="potions.c" />
-    <ClCompile Include="protect.c" />
     <ClCompile Include="rings.c" />
     <ClCompile Include="rip.c" />
     <ClCompile Include="rogue.c" />
