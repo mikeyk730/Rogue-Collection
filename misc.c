@@ -424,7 +424,7 @@ int _ce(coord *a, coord *b)
 
 int INDEX(int y, int x)
 {
-  //if (offmap(y, x)) debug("BAD INDEX");
+  //TODO: if (offmap(y, x)) debug("BAD INDEX");
   return ((x*(maxrow-1))+y-1);
 }
 

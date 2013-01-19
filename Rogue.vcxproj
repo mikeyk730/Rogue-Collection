@@ -113,9 +113,6 @@
     <ClCompile Include="wizard.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="csav.asm" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="armor.h" />
     <ClInclude Include="chase.h" />
     <ClInclude Include="command.h" />

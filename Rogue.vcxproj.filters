@@ -119,11 +119,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="csav.asm">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="rogue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
