@@ -428,18 +428,10 @@ extern struct stats max_stats;
 extern struct monster monsters[];
 extern struct magic_item p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 
-
-
-//Structure and defines for the swint call
-
-struct sw_regs {int ax; int bx; int cx; int dx; int si; int di; int ds; int es;};
-
 #define LOW(x) ((x)&0xff)
 #define HI(x)  ((x)>>8)
 
 #define SETHILO(reg,hi,lo)  (reg)=((hi)<<8)|lo)
-
-extern struct sw_regs *regs;
 
 //Defines for things used in mach_dep.c
 //@(#)extern.h5.1 (Berkeley) 5/11/82

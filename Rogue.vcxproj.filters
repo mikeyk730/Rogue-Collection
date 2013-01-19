@@ -117,9 +117,6 @@
     <ClCompile Include="wizard.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rogue.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="csav.asm">

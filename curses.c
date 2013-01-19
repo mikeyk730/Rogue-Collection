@@ -240,15 +240,10 @@ void forcebw()
   at_table = monoc_attr;
 }
 
-//wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
-void wdump()
-{
-  sav_win();
-}
-
 CHAR_INFO buffer[MAXLINES][MAXCOLS]; 
 
-void sav_win()
+//wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
+void wdump()
 {
    HANDLE hOutput = GetStdHandle( STD_OUTPUT_HANDLE );
    COORD dwBufferSize = { COLS,LINES }; 
@@ -258,7 +253,8 @@ void sav_win()
       dwBufferCoord, &rcRegion ); 
 }
 
-void res_win()
+//wrestor(windex): restore the window saved on disk
+void wrestor()
 {
    HANDLE hOutput = (HANDLE)GetStdHandle( STD_OUTPUT_HANDLE ); 
    COORD dwBufferSize = { COLS,LINES }; 
@@ -266,12 +262,6 @@ void res_win()
    SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
    WriteConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
       dwBufferCoord, &rcRegion ); 
-}
-
-//wrestor(windex): restore the window saved on disk
-void wrestor()
-{
-  res_win();
 }
 
 //Some general drawing routines

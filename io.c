@@ -173,30 +173,33 @@ void status()
   {
     s_lvl = level;
     move(PT(22, 23), 0);
-    printw("Level:%-4.4d", level);
+    printw("Level:%-4d", level);
   }
   //Hits:
   if (s_hp!=pstats.s_hpt)
   {
     s_hp = pstats.s_hpt;
     move(PT(22, 23), 12);
-    printw("Hits:%.3d(%.3d) ", pstats.s_hpt, max_hp);
-    //just in case they get wraithed with 3 digit max hits
-    if (pstats.s_hpt<100) addch(' ');
+    if (pstats.s_hpt<100) {
+       printw("Hits:%2d(%2d) ", pstats.s_hpt, max_hp);
+       //just in case they get wraithed with 3 digit max hits
+       addstr("  ");
+    }
+    else printw("Hits:%3d(%3d) ", pstats.s_hpt, max_hp);
   }
   //Str:
   if (pstats.s_str!=s_str)
   {
     s_str = pstats.s_str;
     move(PT(22, 23), 26);
-    printw("Str:%.3d(%.3d) ", pstats.s_str, max_stats.s_str);
+    printw("Str:%2d(%2d) ", pstats.s_str, max_stats.s_str);
   }
   //Gold
   if(s_pur!=purse)
   {
     s_pur = purse;
     move(23, PT(0, 40));
-    printw("Gold:%-5.5u", purse);
+    printw("Gold:%-5u", purse);
   }
   //Armor:
   if(s_ac!=(cur_armor!=NULL?cur_armor->o_ac:pstats.s_arm))
@@ -205,7 +208,7 @@ void status()
     if (ISRING(LEFT, R_PROTECT)) s_ac -= cur_ring[LEFT]->o_ac;
     if (ISRING(RIGHT, R_PROTECT)) s_ac -= cur_ring[RIGHT]->o_ac;
     move(23, PT(12, 52));
-    printw("Armor:%-2.2d", AC(cur_armor!=NULL?cur_armor->o_ac:pstats.s_arm));
+    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->o_ac:pstats.s_arm));
   }
   //Exp:
   if (s_elvl!=pstats.s_lvl)
@@ -364,14 +367,15 @@ void str_attr(char *str)
 //key_state:
 void SIG2()
 {
-  static unsigned icnt = 0, ntick = 0;
-  static int key_init = TRUE;
   static int numl, capsl;
   static int nspot, cspot, tspot;
   int new_numl=is_num_lock_on(), new_capsl=is_caps_lock_on(), new_fmode=is_scroll_lock_on();
   static int bighand, littlehand;
   int showtime = FALSE, spare;
   int x, y;
+
+  if (COLS==40) {nspot = 10; cspot = 19; tspot = 35;}
+  else {nspot = 20; cspot = 39; tspot = 75;}
   
   getxy(&x, &y);
   if (faststate!=new_fmode)
@@ -390,14 +394,14 @@ void SIG2()
     count = 0;
     show_count();
     running = FALSE;
-    move(24, nspot);
+    move(LINES-1, nspot);
     if (numl) {bold(); addstr("NUM LOCK"); standend();}
     else addstr("        ");
   }
   if (capsl!=new_capsl)
   {
     capsl = new_capsl;
-    move(24, cspot);
+    move(LINES-1, cspot);
     if (capsl) {bold(); addstr("CAP LOCK"); standend();}
     else addstr("        ");
   }

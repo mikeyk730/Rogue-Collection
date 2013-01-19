@@ -35,10 +35,6 @@ void forcebw();
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void wdump();
 
-void sav_win();
-
-void res_win();
-
 //wrestor(windex): restore the window saved on disk
 void wrestor();
 

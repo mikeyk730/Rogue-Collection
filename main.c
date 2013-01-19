@@ -31,30 +31,15 @@
 #include "env.h"
 #include "command.h"
 
-
-#define is_key(s)  ((*s=='-')||(*s=='/'))
-#define is_char(c1,c2)  ((c1==c2)||((c1+'a'-'A')==c2))
-#define RN  (((seed=seed*11109L+13849L)>>16)&0xffff)
-
 int bwflag = FALSE;
-char do_force = FALSE;
-
-//Permanent stack data
-struct sw_regs *regs;
-
-
 
 //main: The main program, of course
 int main(int argc, char **argv)
 {
   char *curarg, *savfile = 0;
-  struct sw_regs _treg;
-  long junk = 0L;
   
-  regs = &_treg;
   init_ds();
   setenv("rogue.opt");
-  //protect(find_drive());
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.
   if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;
   dnum = 0;

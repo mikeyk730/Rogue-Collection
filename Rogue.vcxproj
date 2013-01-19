@@ -102,7 +102,6 @@
     <ClCompile Include="potions.c" />
     <ClCompile Include="rings.c" />
     <ClCompile Include="rip.c" />
-    <ClCompile Include="rogue.c" />
     <ClCompile Include="rooms.c" />
     <ClCompile Include="save.c" />
     <ClCompile Include="scrolls.c" />
