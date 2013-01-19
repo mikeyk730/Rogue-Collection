@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 #include "rogue.h"
 #include "io.h"
@@ -24,25 +25,42 @@ static int min_width, max_width;
 static char ibuf[6];
 
 //msg: Display a message at the top of the screen.
-void ifterse(char *tfmt, char *fmt, int a1, int a2, int a3, int a4, int a5)
+void ifterse(char *tfmt, char *format, ...)
 {
-  if (expert) msg(tfmt, a1, a2, a3, a4, a5);
-  else msg(fmt, a1, a2, a3, a4, a5);
+   char dest[1024 * 16];
+   va_list argptr;
+   va_start(argptr, format);
+   vsprintf(dest, expert ? tfmt : format, argptr);
+   va_end(argptr);
+   msg(dest);
 }
 
-void msg(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void msg(char *format, ...)
 {
   //if the string is "", just clear the line
-  if (*fmt=='\0') {move(0, 0); clrtoeol(); mpos = 0; return;}
+  if (*format=='\0') {move(0, 0); clrtoeol(); mpos = 0; return;}
+
+  char dest[1024 * 16];
+  va_list argptr;
+  va_start(argptr, format);
+  vsprintf(dest, format, argptr);
+  va_end(argptr);
+
   //otherwise add to the message and flush it out
-  doadd(fmt, a1,a2,a3,a4,a5);
+  doadd(dest);
   endmsg();
 }
 
 //addmsg: Add things to the current message
-void addmsg(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void addmsg(char *format, ...)
 {
-  doadd(fmt, a1, a2, a3, a4, a5);
+  char dest[1024 * 16];
+  va_list argptr;
+  va_start(argptr, format);
+  vsprintf(dest, format, argptr);
+  va_end(argptr);
+
+  doadd(dest);
 }
 
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
@@ -91,9 +109,13 @@ void more(char *msg)
 }
 
 //doadd: Perform an add onto the message buffer
-void doadd(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void doadd(char *format, ...)
 {
-  sprintf(&msgbuf[newpos], fmt, a1, a2, a3, a4, a5);
+   va_list argptr;
+   va_start(argptr, format);
+   vsprintf(&msgbuf[newpos], format, argptr);
+   va_end(argptr);
+
   newpos = strlen(msgbuf);
 }
 
@@ -252,7 +274,8 @@ int getinfo(char *str, int size)
 {
   char *retstr, ch;
   int readcnt = 0;
-  int wason, ret = 1;
+  bool wason;
+  int ret = 1;
 
   retstr = str;
   *str = 0;
@@ -367,9 +390,9 @@ void str_attr(char *str)
 //key_state:
 void SIG2()
 {
-  static int numl, capsl;
+  static bool numl, capsl;
   static int nspot, cspot, tspot;
-  int new_numl=is_num_lock_on(), new_capsl=is_caps_lock_on(), new_fmode=is_scroll_lock_on();
+  bool new_numl=is_num_lock_on(), new_capsl=is_caps_lock_on(), new_fmode=is_scroll_lock_on();
   static int bighand, littlehand;
   int showtime = FALSE, spare;
   int x, y;

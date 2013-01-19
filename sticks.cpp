@@ -212,7 +212,7 @@ void drain()
   int cnt;
   struct room *corp;
   THING **dp;
-  bool inpass;
+  int inpass;
   THING *drainee[40];
 
   //First count how many things we need to spread the hit points among

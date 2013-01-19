@@ -112,8 +112,8 @@ void credits()
   center(21, "All Rights Reserved");
   brown();
   for (i = 1; i<(COLS-1); i++) {move(22, i); putchr(205, 6);}
-  mvaddch(22, 0, 204);
-  mvaddch(22, COLS-1, 185);
+  mvaddch(22, 0, (char)204);
+  mvaddch(22, COLS-1, (char)185);
   standend();
   mvaddstr(23, 2, "Rogue's Name? ");
 
@@ -123,8 +123,8 @@ void credits()
   
   blot_out(23, 0, 24, COLS-1);
   brown();
-  mvaddch(22, 0, 0xc8);
-  mvaddch(22, COLS-1, 0xbc);
+  mvaddch(22, 0, (char)0xc8);
+  mvaddch(22, COLS-1, (char)0xbc);
   standend();
 }
 
@@ -171,17 +171,17 @@ void _halt()
 
 #include <Windows.h>
 
-int is_caps_lock_on()
+bool is_caps_lock_on()
 {
    return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
 }
 
-int is_scroll_lock_on()
+bool is_scroll_lock_on()
 {
    return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
 }
 
-int is_num_lock_on()
+bool is_num_lock_on()
 {
    return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
 }

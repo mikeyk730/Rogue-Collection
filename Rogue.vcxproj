@@ -77,42 +77,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="armor.c" />
-    <ClCompile Include="chase.c" />
-    <ClCompile Include="command.c" />
-    <ClCompile Include="curses.c" />
-    <ClCompile Include="daemon.c" />
-    <ClCompile Include="daemons.c" />
-    <ClCompile Include="env.c" />
-    <ClCompile Include="extern.c" />
-    <ClCompile Include="fakedos.c" />
-    <ClCompile Include="fight.c" />
-    <ClCompile Include="init.c" />
-    <ClCompile Include="io.c" />
-    <ClCompile Include="list.c" />
-    <ClCompile Include="mach_dep.c" />
-    <ClCompile Include="main.c" />
-    <ClCompile Include="maze.c" />
-    <ClCompile Include="misc.c" />
-    <ClCompile Include="monsters.c" />
-    <ClCompile Include="move.c" />
-    <ClCompile Include="new_leve.c" />
-    <ClCompile Include="pack.c" />
-    <ClCompile Include="passages.c" />
-    <ClCompile Include="potions.c" />
-    <ClCompile Include="rings.c" />
-    <ClCompile Include="rip.c" />
-    <ClCompile Include="rooms.c" />
-    <ClCompile Include="save.c" />
-    <ClCompile Include="scrolls.c" />
-    <ClCompile Include="slime.c" />
-    <ClCompile Include="sticks.c" />
-    <ClCompile Include="strings.c" />
-    <ClCompile Include="things.c" />
-    <ClCompile Include="weapons.c" />
-    <ClCompile Include="wizard.c" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="armor.h" />
     <ClInclude Include="chase.h" />
     <ClInclude Include="command.h" />
@@ -147,6 +111,43 @@
     <ClInclude Include="things.h" />
     <ClInclude Include="weapons.h" />
     <ClInclude Include="wizard.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="armor.cpp" />
+    <ClCompile Include="chase.cpp" />
+    <ClCompile Include="command.cpp" />
+    <ClCompile Include="croot.cpp" />
+    <ClCompile Include="curses.cpp" />
+    <ClCompile Include="daemon.cpp" />
+    <ClCompile Include="daemons.cpp" />
+    <ClCompile Include="env.cpp" />
+    <ClCompile Include="extern.cpp" />
+    <ClCompile Include="fakedos.cpp" />
+    <ClCompile Include="fight.cpp" />
+    <ClCompile Include="init.cpp" />
+    <ClCompile Include="io.cpp" />
+    <ClCompile Include="list.cpp" />
+    <ClCompile Include="mach_dep.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="maze.cpp" />
+    <ClCompile Include="misc.cpp" />
+    <ClCompile Include="monsters.cpp" />
+    <ClCompile Include="move.cpp" />
+    <ClCompile Include="new_leve.cpp" />
+    <ClCompile Include="pack.cpp" />
+    <ClCompile Include="passages.cpp" />
+    <ClCompile Include="potions.cpp" />
+    <ClCompile Include="rings.cpp" />
+    <ClCompile Include="rip.cpp" />
+    <ClCompile Include="rooms.cpp" />
+    <ClCompile Include="save.cpp" />
+    <ClCompile Include="scrolls.cpp" />
+    <ClCompile Include="slime.cpp" />
+    <ClCompile Include="sticks.cpp" />
+    <ClCompile Include="strings.cpp" />
+    <ClCompile Include="things.cpp" />
+    <ClCompile Include="weapons.cpp" />
+    <ClCompile Include="wizard.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

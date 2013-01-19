@@ -12,7 +12,6 @@
 #define setmem(a,b,c) memset(a,c,b)
 #define wsetmem(a,b,c) wmemset(a,c,b)
 typedef unsigned char byte;
-typedef unsigned char bool;
 
 //Maximum number of different things
 
@@ -403,7 +402,7 @@ struct monster
 {
   char *m_name;         //What to call the monster
   int m_carry;        //Probability of carrying something
-  short m_flags;        //Things about the monster
+  int m_flags;        //Things about the monster
   struct stats m_stats; //Initial stats
 };
 
@@ -459,7 +458,8 @@ extern struct array s_names[], _guesses[];
 extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
 extern char f_damage[];
 
-extern bool amulet, after, again, askme, door_stop, expert, fastmode, faststate, fight_flush, firstmove, in_shell, jump, noscore, passgo, playing, running, save_msg, saw_amulet, slow_invent, terse, was_trapped, wizard;
+extern bool amulet, after, again, askme, door_stop, expert, fastmode, faststate, fight_flush, firstmove, in_shell, jump, noscore, passgo, playing, running, save_msg, saw_amulet, slow_invent, terse, wizard;
+extern int was_trapped;
 
 extern bool p_know[], r_know[], s_know[], ws_know[];
 

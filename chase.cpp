@@ -47,7 +47,7 @@ void do_chase(THING *th)
   THING *obj;
   struct room *oroom;
   struct room *rer, *ree; //room of chaser, room of chasee
-  coord this; //Temporary destination for chaser
+  coord tempdest; //Temporary destination for chaser
 
   rer = th->t_room; //Find room of chaser
   if (on(*th, ISGREED) && rer->r_goldval==0) th->t_dest = &hero; //If gold has been taken, run after hero
@@ -66,7 +66,7 @@ over:
     for (i = 0; i<rer->r_nexits; i++)
     {
       dist = DISTANCE(th->t_dest->y, th->t_dest->x, rer->r_exit[i].y, rer->r_exit[i].x);
-      if (dist<mindist) {this = rer->r_exit[i]; mindist = dist;}
+      if (dist<mindist) {tempdest = rer->r_exit[i]; mindist = dist;}
     }
     if (door)
     {
@@ -77,7 +77,7 @@ over:
   }
   else
   {
-    this = *th->t_dest;
+    tempdest = *th->t_dest;
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
     if ((th->t_type=='D' || th->t_type=='I') && (th->t_pos.y==hero.y || th->t_pos.x==hero.x || abs(th->t_pos.y-hero.y)==abs(th->t_pos.x-hero.x)) && ((dist = DISTANCE(th->t_pos.y, th->t_pos.x, hero.y, hero.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !on(*th, ISCANC) && rnd(DRAGONSHOT)==0)
     {
@@ -89,7 +89,7 @@ over:
     }
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
-  chase(th, &this);
+  chase(th, &tempdest);
   if (ce(ch_ret, hero)) {attack(th); return;}
   else if (ce(ch_ret, *th->t_dest))
   {
@@ -109,7 +109,7 @@ over:
   //If the chasing thing moved, update the screen
   if (th->t_oldch!='@')
   {
-    if (th->t_oldch==' ' && cansee(th->t_pos.y, th->t_pos.x) && _level[INDEX(th->t_pos.y, th->t_pos.x)]==FLOOR) mvaddch(th->t_pos.y, th->t_pos.x, FLOOR);
+    if (th->t_oldch==' ' && cansee(th->t_pos.y, th->t_pos.x) && _level[INDEX(th->t_pos.y, th->t_pos.x)]==FLOOR) mvaddch(th->t_pos.y, th->t_pos.x, (char)FLOOR);
     else if (th->t_oldch==FLOOR && !cansee(th->t_pos.y, th->t_pos.x) && !on(player, SEEMONST)) mvaddch(th->t_pos.y, th->t_pos.x, ' ');
     else mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
   }
@@ -139,10 +139,10 @@ over:
 
 //see_monst: Return TRUE if the hero can see the monster
 
-int see_monst(THING *mp)
+bool see_monst(THING *mp)
 {
-  if (on(player, ISBLIND)) return FALSE;
-  if (on(*mp, ISINVIS) && !on(player, CANSEE)) return FALSE;
+  if (on(player, ISBLIND)) return false;
+  if (on(*mp, ISINVIS) && !on(player, CANSEE)) return false;
   if (DISTANCE(mp->t_pos.y, mp->t_pos.x, hero.y, hero.x)>=LAMPDIST && ((mp->t_room!=proom || (mp->t_room->r_flags&ISDARK) || (mp->t_room->r_flags&ISMAZE)))) return FALSE;
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, give the player a hint as to what that weapon is good for.
   if (cur_weapon!=NULL && mp->t_type==cur_weapon->o_enemy && ((cur_weapon->o_flags&DIDFLASH)==0))
@@ -150,7 +150,7 @@ int see_monst(THING *mp)
     cur_weapon->o_flags |= DIDFLASH;
     msg(flash, w_names[cur_weapon->o_which], terse || expert?"":intense);
   }
-  return TRUE;
+  return true;
 }
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)

@@ -3,7 +3,7 @@ void clear();
 void putchr(int c, int attr);
 
 //Turn cursor on and off
-int cursor(bool ison);
+bool cursor(bool ison);
 
 //get current cursor position
 void getrc(int *rp, int *cp);

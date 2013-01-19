@@ -165,7 +165,7 @@ void show_map()
 {
   int y, x, real;
 
-  wdump(0);
+  wdump();
   clear();
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
@@ -174,7 +174,7 @@ void show_map()
     if (!real) standend();
   }
   show_win("---More (level map)---");
-  wrestor(0);
+  wrestor();
 }
 
 int get_num(short *place)

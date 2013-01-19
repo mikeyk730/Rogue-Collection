@@ -13,7 +13,7 @@ void endmsg();
 void more(char *msg);
 
 //doadd: Perform an add onto the message buffer
-void doadd(char *fmt, int a1, int a2, int a3, int a4, int a5);
+void doadd(char *fmt, ...);
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
 void putmsg(int msgline, char *msg);

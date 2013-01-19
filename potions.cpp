@@ -63,7 +63,7 @@ void quaff()
     break;
 
     case P_MFIND:
-      fuse(turn_see, TRUE, HUHDURATION);
+      fuse((void(*)(int))turn_see, TRUE, HUHDURATION);
       if (mlist==NULL) msg("you have a strange feeling%s.", noterse(" for a moment"));
       else {p_know[P_MFIND] |= turn_see(FALSE); msg("");}
     break;

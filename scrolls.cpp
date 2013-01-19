@@ -80,7 +80,7 @@ void read_scroll()
       s_know[S_IDENT] = TRUE;
       msg("this scroll is an identify scroll");
       if (!strcmp(s_menu, "on") || !strcmp(s_menu, "sel")) more(" More ");
-      whatis(TRUE);
+      whatis();
     break;
 
     case S_MAP: //Scroll of magic mapping.

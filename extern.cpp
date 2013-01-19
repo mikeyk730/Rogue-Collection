@@ -3,8 +3,6 @@
 
 #include "rogue.h"
 
-//All this should be low as possible in memory so that we can save the min
-
 //Names of the various weapons
 char *w_names[MAXWEAPONS+1] =
 {
@@ -290,7 +288,7 @@ bool save_msg = TRUE;       //Remember last msg
 bool terse = FALSE;
 bool expert = FALSE;
 
-bool was_trapped = FALSE;   //Was a trap sprung
+int was_trapped = FALSE;   //Was a trap sprung
 
 #ifdef WIZARD
 bool wizard = TRUE;        //True if allows wizard commands

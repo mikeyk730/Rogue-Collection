@@ -15,110 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="armor.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="chase.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="command.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="curses.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="daemon.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="daemons.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="env.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="extern.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fakedos.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="fight.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="init.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="io.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="list.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mach_dep.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="maze.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="misc.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="monsters.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="move.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="new_leve.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pack.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="passages.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="potions.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rings.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rip.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rooms.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="save.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="slime.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sticks.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="strings.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="things.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="weapons.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="wizard.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="rogue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -221,5 +117,112 @@
     <ClInclude Include="scrolls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="armor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="chase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="croot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="curses.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="daemon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="daemons.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="env.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="extern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fakedos.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="init.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="io.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="list.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mach_dep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="maze.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="monsters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="move.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="new_leve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="passages.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="potions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rip.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rooms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="save.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scrolls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="slime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sticks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="strings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="things.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="weapons.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="wizard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -355,14 +355,14 @@ void init_ds()
 {
   long *ep;
 
-  _flags = malloc((MAXLINES-3)*MAXCOLS);
-  _level = malloc((MAXLINES-3)*MAXCOLS);
+  _flags = (byte*)malloc((MAXLINES-3)*MAXCOLS);
+  _level = (byte*)malloc((MAXLINES-3)*MAXCOLS);
   _things = (THING *)malloc(sizeof(THING)*MAXITEMS);
   _t_alloc = (int *)malloc(MAXITEMS*sizeof(int));
-  tbuf = malloc(MAXSTR);
-  msgbuf = malloc(BUFSIZE);
-  prbuf = malloc(MAXSTR);
-  ring_buf = malloc(6);
+  tbuf = (char*)malloc(MAXSTR);
+  msgbuf = (char*)malloc(BUFSIZE);
+  prbuf = (char*)malloc(MAXSTR);
+  ring_buf = (char*)malloc(6);
   e_levels = (long *)malloc(20*sizeof(long));
   for (ep = e_levels+1, *e_levels = 10L; ep<e_levels+19; ep++) *ep = *(ep-1)<<1;
   *ep = 0L;

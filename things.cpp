@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 #include "rogue.h"
 #include "things.h"
@@ -74,7 +75,7 @@ char *inv_name(THING *obj, bool drop)
     break;
 
     case ARMOR:
-      if (obj->o_flags&ISKNOW || wizard) chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->o_ac, 0, ARMOR), a_names[which], -(obj->o_ac-11));
+      if (obj->o_flags&ISKNOW || wizard) chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->o_ac, 0, (char)ARMOR), a_names[which], -(obj->o_ac-11));
       else sprintf(pb, "%s", a_names[which]);
     break;
 
@@ -118,10 +119,12 @@ char *inv_name(THING *obj, bool drop)
   return prbuf;
 }
 
-void chopmsg(char *s, char *shmsg, char *lnmsg, int arg1, int arg2, int arg3)
+void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
 {
-  sprintf(s, lnmsg, arg1, arg2, arg3);
-  if (terse || expert) sprintf(s, shmsg, arg1, arg2, arg3);
+   va_list argptr;
+   va_start(argptr, lnmsg);
+   vsprintf(s, (terse || expert) ? shmsg : lnmsg, argptr);
+   va_end(argptr);
 }
 
 //drop: Put something down
@@ -351,7 +354,7 @@ int add_line(char *use, char *fmt, char *arg)
   int x, y;
   int retchar = ' ';
 
-  if (line_cnt==0) {wdump(0); clear();}
+  if (line_cnt==0) {wdump(); clear();}
   if (line_cnt>=LINES-1 || fmt==NULL)
   {
     move(LINES-1, 0);
@@ -381,7 +384,7 @@ int end_line(char *use)
   int retchar;
 
   retchar = add_line(use, 0, 0);
-  wrestor(0);
+  wrestor();
   line_cnt = 0;
   newpage = FALSE;
   return (retchar);

@@ -1,6 +1,8 @@
 //Cursor motion stuff to simulate a "no refresh" version of curses
+
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "rogue.h"
 #include "curses.h"
@@ -91,15 +93,15 @@ void clear()
 }
 
 //Turn cursor on and off
-int cursor(bool ison)
+bool cursor(bool ison)
 {
-  int oldstate;
+  bool oldstate;
   CONSOLE_CURSOR_INFO info;
   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
   
   GetConsoleCursorInfo(hConsole, &info);
-  if (info.bVisible == ison) return ison;
-  oldstate = info.bVisible;
+  //if (info.bVisible ? true : false == ison) return ison;
+  oldstate = info.bVisible ? true : false;
   info.bVisible = ison;
   SetConsoleCursorInfo(hConsole, &info);
   return (oldstate);
@@ -273,7 +275,8 @@ void box(int ul_r, int ul_c, int lr_r, int lr_c)
 //box: draw a box given the upper left coordinate and the lower right
 void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
-  int i, wason;
+  int i;
+  bool wason;
   int r, c;
 
   wason = cursor(FALSE);
@@ -301,12 +304,15 @@ void center(int row, char *string)
 }
 
 //printw(Ieeeee)
-void printw(char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
+void printw(char *format, ...)
 {
-  char pwbuf[132];
+  char dest[1024 * 16];
+  va_list argptr;
+  va_start(argptr, format);
+  vsprintf(dest, format, argptr);
+  va_end(argptr);
 
-  sprintf(pwbuf, msg, a1, a2, a3, a4, a5, a6, a7, a8);
-  addstr(pwbuf);
+  addstr(dest);
 }
 
 void scroll_up(int start_row, int end_row, int nlines)

@@ -44,7 +44,7 @@ void thunk(THING *weap, char *mname, char *does, char *did);
 void remove_mons(coord *mp, THING *tp, bool waskill);
 
 //is_magic: Returns true if an object radiates magic
-int is_magic(THING *obj);
+bool is_magic(THING *obj);
 
 //killed: Called to put a monster to death
 void killed(THING *tp, bool pr);
