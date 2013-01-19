@@ -372,18 +372,11 @@ void SIG2()
   static int key_init = TRUE;
   static int numl, capsl;
   static int nspot, cspot, tspot;
-  int new_numl=0, new_capsl=0, new_fmode=0;
+  int new_numl=is_num_lock_on(), new_capsl=is_caps_lock_on(), new_fmode=is_scroll_lock_on();
   static int bighand, littlehand;
   int showtime = FALSE, spare;
   int x, y;
   
-  //this is built for speed so set up once first time this is executed
-  if (key_init || reinit)
-  {
-    reinit = key_init = FALSE;
-    if (COLS==40) {nspot = 10; cspot = 19; tspot = 35;}
-    else {nspot = 20; cspot = 39; tspot = 75;}
-  }
   getxy(&x, &y);
   if (faststate!=new_fmode)
   {

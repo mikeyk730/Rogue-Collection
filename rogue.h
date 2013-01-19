@@ -466,7 +466,6 @@ extern char *_top, *_base;
 extern int LINES, COLS;
 extern int is_saved;
 extern int scr_type;
-extern int reinit;
 extern int is_me;
 extern int iguess;
 extern int bailout;
@@ -496,7 +495,6 @@ extern char *_whoami;
 
 //Cursor motion header for Monochrome display
 
-#define abs(x)              ((x)<0?-(x):(x))
 #define TRUE                1
 #define FALSE               0
 #define BUFSIZE              128

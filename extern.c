@@ -269,7 +269,6 @@ char *he_man[] =
 //Lattice C compiler funnies
 
 int maxitems = 0;
-int reinit = FALSE;
 
 bool after;                 //True if we want after daemons
 bool noscore;               //Was a wizard sometime
@@ -376,9 +375,7 @@ struct room passages[MAXPASS] =
   { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 }
 };
 
-#define INIT_STATS {16, 0, 1, 10, 12, "1d4", 12}
-
-struct stats max_stats = INIT_STATS; //The maximum for the player
+struct stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the player
 
 THING player; //The rogue
 THING *lvl_obj = NULL; //List of objects on this level

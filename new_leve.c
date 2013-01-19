@@ -47,11 +47,6 @@ void new_level()
   do_rooms(); //Draw rooms
   if (max_level==1)
   {
-    extern int svwin_ds;
-
-    reinit = TRUE;
-    //if (svwin_ds==-1) {move(maxrow, 0); clrtoeol();}
-    //else 
        clear();
   }
   implode();

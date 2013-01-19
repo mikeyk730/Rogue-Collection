@@ -1,6 +1,8 @@
 //Code for one creature to chase another
 //chase.c     1.32    (A.I. Design) 12/12/84
 
+#include <stdlib.h>
+
 #include "rogue.h"
 #include "chase.h"
 #include "fight.h"

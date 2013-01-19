@@ -20,3 +20,7 @@ int bdos(int fnum, int dxval);
 int swint(int intno, struct sw_regs *rp);
 
 void one_tick();
+
+int is_caps_lock_on();
+int is_scroll_lock_on();
+int is_num_lock_on();

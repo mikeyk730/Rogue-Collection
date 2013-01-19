@@ -1,6 +1,8 @@
 //Draw the connecting passages
 //passages.c  1.4 (A.I. Design)       12/14/84
 
+#include <stdlib.h>
+
 #include "rogue.h"
 #include "maze.h"
 #include "main.h"

@@ -221,3 +221,20 @@ void one_tick()
   if (otick!=tick) return;
   else if (i>2) _halt();
 }
+
+#include <Windows.h>
+
+int is_caps_lock_on()
+{
+   return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
+}
+
+int is_scroll_lock_on()
+{
+   return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
+}
+
+int is_num_lock_on()
+{
+   return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
+}
