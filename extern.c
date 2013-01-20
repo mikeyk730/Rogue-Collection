@@ -292,11 +292,7 @@ bool expert = FALSE;
 
 bool was_trapped = FALSE;   //Was a trap sprung
 
-#ifdef WIZARD
-bool wizard = TRUE;        //True if allows wizard commands
-#else
-bool wizard = FALSE;
-#endif
+bool wizard = FALSE;        //True if allows wizard commands
 
 int bailout = FALSE;
 char take;  //Thing the rogue is taking

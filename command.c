@@ -205,12 +205,28 @@ void execcom()
       case 'o': after = FALSE; msg("i don't have any options, oh my!"); break;
       case CTRL('L'): after = FALSE; msg("the screen looks fine to me"); break;
 
-      //Wizard commands
-      case 'C': after = FALSE; if (wizard) create_obj(); break;
-      case 'X': after = FALSE; if (wizard) show_map(); break;
-      case 'Z': after = FALSE; if (wizard) add_pass(); break;
+      case CTRL('Z'): after = FALSE; wizard = !wizard; msg(wizard ? "You are now a wizard!" : "You feel your magic powers fade away"); break; 
 
-      default: after = FALSE; save_msg = FALSE; msg("illegal command '%s'", unctrl(ch)); count = 0; save_msg = TRUE; break;
+      default:
+         if (wizard) {
+            switch(ch){
+               //Wizard commands
+            case 'C': 
+               after = FALSE; create_obj(); break;
+            case 'X': 
+               after = FALSE; show_map(); break;
+            case 'Z': 
+               after = FALSE; add_pass(); break;
+            default:
+               after = FALSE; save_msg = FALSE; 
+               msg("illegal command '%s'", unctrl(ch)); 
+               count = 0; 
+               save_msg = TRUE;
+            }
+         }
+         else{
+            after = FALSE; save_msg = FALSE; msg("illegal command '%s'", unctrl(ch)); count = 0; save_msg = TRUE; break;
+         }
     }
     if (take && do_take) pick_up(take);
     take = 0;
