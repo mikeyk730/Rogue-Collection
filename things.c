@@ -65,7 +65,7 @@ char *inv_name(THING *obj, bool drop)
       if (obj->o_flags&ISKNOW || wizard) sprintf(pb, "%s %s", num(obj->o_hplus, obj->o_dplus, WEAPON), w_names[which]);
       else sprintf(pb, "%s", w_names[which]);
       if (obj->o_count>1) strcat(pb, "s");
-      if (obj->o_enemy && obj->o_flags&ISREVEAL)
+      if (obj->o_enemy && (obj->o_flags&ISREVEAL || wizard))
       {
         strcat(pb, " of ");
         strcat(pb, monsters[obj->o_enemy-'A'].m_name);

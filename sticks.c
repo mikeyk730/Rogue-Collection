@@ -340,7 +340,7 @@ char *charge_str(THING *obj)
 {
   static char buf[20];
 
-  if (!(obj->o_flags&ISKNOW)) buf[0] = '\0';
+  if (!(obj->o_flags&ISKNOW) && !wizard) buf[0] = '\0';
   else sprintf(buf, " [%d charges]", obj->o_charges);
   return buf;
 }

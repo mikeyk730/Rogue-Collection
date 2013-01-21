@@ -97,7 +97,7 @@ char *ring_num(THING *obj)
 {
   extern char *ring_buf;
 
-  if (!(obj->o_flags&ISKNOW)) return "";
+  if (!(obj->o_flags&ISKNOW) && !wizard) return "";
   switch (obj->o_which)
   {
     case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:

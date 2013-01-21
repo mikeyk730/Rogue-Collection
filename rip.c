@@ -17,10 +17,7 @@
 
 static int sc_fd;
 
-//external curses IBM (jll)
-
 //score: Figure score and post it.
-
 void score(int amount, int flags, char monst)
 {
   struct sc_ent his_score, top_ten[TOPSCORES];
@@ -141,6 +138,7 @@ void pr_scores(int newrank, struct sc_ent *top10)
     else addstr(altmsg);
   }
   standend();
+  addstr(" ");
   if (COLS==80) addstr("\n\n\n\n");
 }
 
@@ -202,7 +200,6 @@ void death(char monst)
   raise_curtain();
   move(LINES-1, 0);
   score(purse, 0, monst);
-
   exit(0);
 }
 
