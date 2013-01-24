@@ -64,6 +64,18 @@ static struct xlate
   ALT_F9,  'F'
 };
 
+int is_direction_key(int key)
+{
+   return key == C_HOME
+      || key == C_UP
+      || key == C_PGUP
+      || key == C_LEFT
+      || key == C_RIGHT
+      || key ==  C_END
+      || key ==  C_DOWN
+      || key ==  C_PGDN;
+}
+
 //setup: Get starting setup for all games
 void setup()
 {
@@ -134,7 +146,11 @@ int getkey()
   int key = _getch();
   if (key != 0 && key != 0xE0) return key;
    
-  for (key = _getch(), x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
+  key = _getch();
+  if (is_shift_pressed() && is_direction_key(key))
+     fastmode = !fastmode;
+
+  for (x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
   {
     if (key == x->keycode)
     {
@@ -184,4 +200,10 @@ int is_scroll_lock_on()
 int is_num_lock_on()
 {
    return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
+}
+
+int is_shift_pressed()
+{
+   return (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+      || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);
 }

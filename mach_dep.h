@@ -14,6 +14,7 @@ int readchar();
 int is_caps_lock_on();
 int is_scroll_lock_on();
 int is_num_lock_on();
+int is_shift_pressed();
 
 void beep();
 void _halt();

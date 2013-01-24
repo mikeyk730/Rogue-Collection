@@ -59,9 +59,8 @@ void command()
 int com_char()
 {
   int same, ch;
-
-  same = (fastmode==faststate);
   ch = readchar();
+  same = (fastmode==faststate);
   if (same) fastmode = faststate;
   else fastmode = !faststate;
   switch (ch)

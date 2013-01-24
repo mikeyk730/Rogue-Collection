@@ -125,7 +125,7 @@ void playit(char *sname)
 {
   if (sname)
   {
-    restore(sname);
+    restore_game(sname);
     if (bwflag) forcebw();
     setup();
     cursor(FALSE);

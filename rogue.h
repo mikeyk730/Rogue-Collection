@@ -443,7 +443,6 @@ extern struct magic_item p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 
 //Now all the global variables
 
-extern int maxitems;
 extern int maxrow;
 extern char *_top, *_base;
 extern int LINES, COLS;

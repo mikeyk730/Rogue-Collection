@@ -3,8 +3,6 @@
 
 #include "rogue.h"
 
-//All this should be low as possible in memory so that we can save the min
-
 //Names of the various weapons
 char *w_names[MAXWEAPONS+1] =
 {
@@ -261,10 +259,6 @@ char *he_man[] =
   "Time Waster",
   "Bug Chaser"
 };
-
-//Lattice C compiler funnies
-
-int maxitems = 0;
 
 bool after;                 //True if we want after daemons
 bool noscore;               //Was a wizard sometime
