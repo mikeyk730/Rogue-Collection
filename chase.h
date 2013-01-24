@@ -5,7 +5,6 @@ void runners();
 void do_chase(THING *th);
 
 //see_monst: Return TRUE if the hero can see the monster
-
 int see_monst(THING *mp);
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)

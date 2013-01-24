@@ -23,7 +23,6 @@ int add_haste(bool potion);
 void aggravate();
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
-
 char *vowelstr(char *str);
 
 //is_current: See if the object is one of the currently used items
@@ -65,7 +64,6 @@ int winat(int y, int x);
 //search: Player gropes about him to find hidden things.
 void search();
 
-
 //d_level: He wants to go down a level
 void d_level();
 
@@ -77,5 +75,3 @@ void call();
 
 //prompt player for definition of macro
 void do_macro(char *buf, int sz);
-
-int istest();

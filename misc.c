@@ -517,12 +517,3 @@ void do_macro(char *buf, int sz)
   msg("");
   flush_type();
 }
-
-#ifdef TEST
-
-int istest()
-{
-  return (!strcmp("debug",fruit));
-}
-
-#endif TEST

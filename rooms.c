@@ -44,12 +44,8 @@ void do_rooms()
   {
     do rp = &rooms[(rm = rnd_room())]; while (rp->r_flags&ISMAZE);
     rp->r_flags |= ISGONE;
-#ifdef TEST
-    if (rm>2 && ((level>10 && rnd(20)<level-9) || istest()))
-#else TEST
     if (rm>2 && level>10 && rnd(20)<level-9)
-#endif TEST
-    rp->r_flags |= ISMAZE;
+       rp->r_flags |= ISMAZE;
   }
   //dig and populate all the rooms on the level
   for (i = 0, rp = rooms; i<MAXROOMS; rp++, i++)

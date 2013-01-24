@@ -191,9 +191,7 @@ void treas_room()
       if ((tp = new_item())!=NULL)
       {
         new_monster(tp, randmonster(FALSE), &mp);
-#ifdef TEST
-        if (bailout && me()) msg("treasure rm bailout");
-#endif TEST
+        if (bailout) debug("treasure rm bailout");
         tp->t_flags |= ISMEAN; //no sloughers in THIS room
         give_pack(tp);
       }
