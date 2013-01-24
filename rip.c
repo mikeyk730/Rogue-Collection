@@ -214,8 +214,6 @@ void total_winner()
 
   clear();
 
-#ifdef MINROG
-
   if (!terse)
   {
     standout();
@@ -234,15 +232,6 @@ void total_winner()
   printw("\nYou have joined the elite ranks of those who have escaped the\n");
   printw("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
   printw("a great profit and are admitted to the fighters guild.\n");
-
-#else
-
-  printw("Congratulations!\n\nYou have made it to the light of day!\n\n\n\n");
-  printw("You journey home and sell all your\n");
-  printw("loot at a great profit and are\n");
-  printw("admitted to the fighters guild.\n\n\n");
-
-#endif MINROG
 
   mvaddstr(LINES-1, 0, "--Press space to continue--");
   wait_for(' ');
