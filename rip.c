@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <io.h>
+#include <time.h>
 #include <sys/stat.h>
 
 #include "rogue.h"
@@ -16,6 +17,17 @@
 #include "misc.h"
 
 static int sc_fd;
+
+int get_year()
+{
+   time_t rawtime;
+   struct tm* timeinfo;
+
+   time(&rawtime);
+   timeinfo = localtime(&rawtime);
+   
+   return timeinfo->tm_year + 1900;
+}
 
 //score: Figure score and post it.
 void score(int amount, int flags, char monst)
@@ -167,8 +179,6 @@ void death(char monst)
 {
   char *killer;
   char buf[MAXSTR];
-  int year;
-
 
   purse -= purse/10;
 
@@ -194,8 +204,7 @@ void death(char monst)
   center(16, killer);
   sprintf(buf, "%u Au", purse);
   center(18, buf);
-  year = 2012; //TODO
-  sprintf(buf, "%u", year);
+  sprintf(buf, "%u", get_year());
   center(19, buf);
   raise_curtain();
   move(LINES-1, 0);
