@@ -179,12 +179,6 @@ int no_char()
    return !_kbhit(); 
 }
 
-void beep()
-{}
-
-void _halt()
-{}
-
 #include <Windows.h>
 
 int is_caps_lock_on()
@@ -206,4 +200,9 @@ int is_shift_pressed()
 {
    return (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
       || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);
+}
+
+void beep()
+{
+   Beep(750, 300);
 }

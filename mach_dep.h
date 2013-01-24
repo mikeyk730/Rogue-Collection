@@ -17,5 +17,4 @@ int is_num_lock_on();
 int is_shift_pressed();
 
 void beep();
-void _halt();
 int no_char();
