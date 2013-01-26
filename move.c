@@ -177,10 +177,10 @@ int be_trapped(Coord *tc)
     break;
 
   case T_ARROW:
-    if (swing(player.stats.s_lvl-1, player.stats.s_arm, 1))
+    if (swing(player.stats.level-1, player.stats.armor_class, 1))
     {
-      player.stats.s_hpt -= roll(1, 6);
-      if (player.stats.s_hpt<=0) {msg("an arrow killed you"); death('a');}
+      player.stats.hp -= roll(1, 6);
+      if (player.stats.hp<=0) {msg("an arrow killed you"); death('a');}
       else msg("oh no! An arrow shot you");
     }
     else
@@ -207,10 +207,10 @@ int be_trapped(Coord *tc)
     break;
 
   case T_DART:
-    if (swing(player.stats.s_lvl+1, player.stats.s_arm, 1))
+    if (swing(player.stats.level+1, player.stats.armor_class, 1))
     {
-      player.stats.s_hpt -= roll(1, 4);
-      if (player.stats.s_hpt<=0) {msg("a poisoned dart killed you"); death('d');}
+      player.stats.hp -= roll(1, 4);
+      if (player.stats.hp<=0) {msg("a poisoned dart killed you"); death('d');}
       if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) chg_str(-1);
       msg("a dart just hit you in the shoulder");
     }
@@ -231,7 +231,7 @@ void descend(char *mesg)
   if (!save(VS_LUCK))
   {
     msg("you are damaged by the fall");
-    if ((player.stats.s_hpt -= roll(1,8))<=0) death('f');
+    if ((player.stats.hp -= roll(1,8))<=0) death('f');
   }
 }
 

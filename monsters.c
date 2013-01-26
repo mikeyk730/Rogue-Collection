@@ -53,17 +53,17 @@ void new_monster(AGENT *tp, byte type, Coord *cp)
   tp->oldch = '@';
   tp->room = roomin(cp);
   mp = &monsters[tp->type-'A'];
-  tp->stats.s_lvl = mp->m_stats.s_lvl+lev_add;
-  tp->stats.s_maxhp = tp->stats.s_hpt = roll(tp->stats.s_lvl, 8);
-  tp->stats.s_arm = mp->m_stats.s_arm-lev_add;
-  tp->stats.s_dmg = mp->m_stats.s_dmg;
-  tp->stats.s_str = mp->m_stats.s_str;
-  tp->stats.s_exp = mp->m_stats.s_exp+lev_add*10+exp_add(tp);
+  tp->stats.level = mp->m_stats.level+lev_add;
+  tp->stats.max_hp = tp->stats.hp = roll(tp->stats.level, 8);
+  tp->stats.armor_class = mp->m_stats.armor_class-lev_add;
+  tp->stats.damage = mp->m_stats.damage;
+  tp->stats.str = mp->m_stats.str;
+  tp->stats.exp = mp->m_stats.exp+lev_add*10+exp_add(tp);
   tp->flags = mp->m_flags;
   tp->turn = TRUE;
   tp->pack = NULL;
   if (is_wearing_ring(R_AGGR)) start_run(cp);
-  if (type=='F') tp->stats.s_dmg = f_damage;
+  if (type=='F') tp->stats.damage = f_damage;
   if (type=='X') switch (rnd(level>25?9:8))
   {
   case 0: tp->disguise = GOLD; break;
@@ -84,7 +84,7 @@ void f_restor()
   struct Monster *mp = &monsters['F'-'A'];
 
   flytrap_hit = 0;
-  strcpy(f_damage, mp->m_stats.s_dmg);
+  strcpy(f_damage, mp->m_stats.damage);
 }
 
 //expadd: Experience to add for this monster's level/hit points
@@ -92,10 +92,10 @@ int exp_add(AGENT *tp)
 {
   int mod;
 
-  if (tp->stats.s_lvl==1) mod = tp->stats.s_maxhp/8;
-  else mod = tp->stats.s_maxhp/6;
-  if (tp->stats.s_lvl>9) mod *= 20;
-  else if (tp->stats.s_lvl>6) mod *= 4;
+  if (tp->stats.level==1) mod = tp->stats.max_hp/8;
+  else mod = tp->stats.max_hp/6;
+  if (tp->stats.level>9) mod *= 20;
+  else if (tp->stats.level>6) mod *= 4;
   return mod;
 }
 

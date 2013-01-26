@@ -54,7 +54,7 @@ void quaff()
 
   case P_HEALING:
     p_know[P_HEALING] = TRUE;
-    if ((player.stats.s_hpt += roll(player.stats.s_lvl, 4))>player.stats.s_maxhp) player.stats.s_hpt = ++player.stats.s_maxhp;
+    if ((player.stats.hp += roll(player.stats.level, 4))>player.stats.max_hp) player.stats.hp = ++player.stats.max_hp;
     sight();
     msg("you begin to feel better");
     break;
@@ -126,10 +126,10 @@ void quaff()
 
   case P_XHEAL:
     p_know[P_XHEAL] = TRUE;
-    if ((player.stats.s_hpt += roll(player.stats.s_lvl, 8))>player.stats.s_maxhp)
+    if ((player.stats.hp += roll(player.stats.level, 8))>player.stats.max_hp)
     {
-      if (player.stats.s_hpt>player.stats.s_maxhp+player.stats.s_lvl+1) ++player.stats.s_maxhp;
-      player.stats.s_hpt = ++player.stats.s_maxhp;
+      if (player.stats.hp>player.stats.max_hp+player.stats.level+1) ++player.stats.max_hp;
+      player.stats.hp = ++player.stats.max_hp;
     }
     sight();
     msg("you begin to feel much better");
@@ -141,11 +141,16 @@ void quaff()
     break;
 
   case P_RESTORE:
-    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.stats.s_str, -cur_ring[LEFT]->armor_class);
-    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.stats.s_str, -cur_ring[RIGHT]->armor_class);
-    if (player.stats.s_str<max_stats.s_str) player.stats.s_str = max_stats.s_str;
-    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.stats.s_str, cur_ring[LEFT]->armor_class);
-    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.stats.s_str, cur_ring[RIGHT]->armor_class);
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) 
+      add_str(&player.stats.str, -cur_ring[LEFT]->armor_class);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
+      add_str(&player.stats.str, -cur_ring[RIGHT]->armor_class);
+    if (player.stats.str < max_stats.str) 
+      player.stats.str = max_stats.str;
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) 
+      add_str(&player.stats.str, cur_ring[LEFT]->armor_class);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
+      add_str(&player.stats.str, cur_ring[RIGHT]->armor_class);
     msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
     break;
 
@@ -235,13 +240,13 @@ void th_effect(ITEM *obj, AGENT *tp)
     break;
 
   case P_HEALING: case P_XHEAL:
-    if ((tp->stats.s_hpt += rnd(8))>tp->stats.s_maxhp) tp->stats.s_hpt = ++tp->stats.s_maxhp;
+    if ((tp->stats.hp += rnd(8))>tp->stats.max_hp) tp->stats.hp = ++tp->stats.max_hp;
     break;
 
   case P_RAISE:
-    tp->stats.s_hpt += 8;
-    tp->stats.s_maxhp += 8;
-    tp->stats.s_lvl++;
+    tp->stats.hp += 8;
+    tp->stats.max_hp += 8;
+    tp->stats.level++;
     break;
 
   case P_HASTE:

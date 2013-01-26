@@ -247,9 +247,9 @@ typedef struct
 //Stuff about magic items
 struct MagicItem
 {
-  char *mi_name;
-  int mi_prob;
-  short mi_worth;
+  char *name;
+  int prob;
+  short worth;
 };
 
 struct Array
@@ -272,13 +272,13 @@ struct Room
 //Structure describing a fighting being
 struct Stats
 {
-  unsigned int s_str;   //Strength
-  long s_exp;    //Experience
-  int s_lvl;   //Level of mastery
-  int s_arm;   //Armor class
-  int s_hpt;   //Hit points
-  char *s_dmg;   //String describing damage done
-  int s_maxhp; //Max hit points
+  unsigned int str;   //Strength
+  long exp;           //Experience
+  int level;          //Level of mastery
+  int armor_class;    //Armor class
+  int hp;             //Hit points
+  char *damage;       //String describing damage done
+  int max_hp;         //Max hit points
 };
 
 struct Item

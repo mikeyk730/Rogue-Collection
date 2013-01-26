@@ -191,7 +191,7 @@ void eat()
   if (obj->which==1)
     msg("my, that was a yummy %s", fruit);
   else if (rnd(100)>70) {
-    player.stats.s_exp++; 
+    player.stats.exp++; 
     msg("yuk, this food tastes awful");
     check_level();
   }
@@ -207,14 +207,14 @@ void chg_str(int amt)
   unsigned int comp;
 
   if (amt==0) return;
-  add_str(&player.stats.s_str, amt);
-  comp = player.stats.s_str;
+  add_str(&player.stats.str, amt);
+  comp = player.stats.str;
   if (is_ring_on_hand(LEFT, R_ADDSTR)) 
     add_str(&comp, -cur_ring[LEFT]->armor_class);
   if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
     add_str(&comp, -cur_ring[RIGHT]->armor_class);
-  if (comp>max_stats.s_str) 
-    max_stats.s_str = comp;
+  if (comp>max_stats.str) 
+    max_stats.str = comp;
 }
 
 //add_str: Perform the actual add, checking upper and lower bound

@@ -67,7 +67,7 @@ int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
       player.flags &= ~CANHUH;
       msg("your hands stop glowing red");
     }
-    if (tp->stats.s_hpt<=0) killed(tp, TRUE);
+    if (tp->stats.hp<=0) killed(tp, TRUE);
     else if (did_huh && !on(player, ISBLIND)) msg("the %s appears confused", mname);
     return TRUE;
   }
@@ -91,7 +91,7 @@ void attack(AGENT *mp)
   if (roll_em(mp, &player, NULL, FALSE))
   {
     hit(mname, NULL);
-    if (player.stats.s_hpt<=0) death(mp->type); //Bye bye life ...
+    if (player.stats.hp<=0) death(mp->type); //Bye bye life ...
     if (!on(*mp, ISCANC)) switch (mp->type)
     {
 
@@ -118,23 +118,23 @@ void attack(AGENT *mp)
 
         if (mp->type=='W')
         {
-          if (player.stats.s_exp==0) death('W'); //All levels gone
-          if (--player.stats.s_lvl==0) {player.stats.s_exp = 0; player.stats.s_lvl = 1;}
-          else player.stats.s_exp = e_levels[player.stats.s_lvl-1]+1;
+          if (player.stats.exp==0) death('W'); //All levels gone
+          if (--player.stats.level==0) {player.stats.exp = 0; player.stats.level = 1;}
+          else player.stats.exp = e_levels[player.stats.level-1]+1;
           fewer = roll(1, 10);
         }
         else fewer = roll(1, 5);
-        player.stats.s_hpt -= fewer;
-        player.stats.s_maxhp -= fewer;
-        if (player.stats.s_hpt<1) player.stats.s_hpt = 1;
-        if (player.stats.s_maxhp<1) death(mp->type);
+        player.stats.hp -= fewer;
+        player.stats.max_hp -= fewer;
+        if (player.stats.hp<1) player.stats.hp = 1;
+        if (player.stats.max_hp<1) death(mp->type);
         msg("you suddenly feel weaker");
       }
       break;
 
     case 'F': //Flytrap stops the poor guy from moving
       player.flags |= ISHELD;
-      sprintf(mp->stats.s_dmg, "%dd1", ++flytrap_hit);
+      sprintf(mp->stats.damage, "%dd1", ++flytrap_hit);
       break;
 
     case 'L': //Leprechaun steals some gold
@@ -186,8 +186,8 @@ void attack(AGENT *mp)
   {
     if (mp->type=='F')
     {
-      player.stats.s_hpt -= flytrap_hit;
-      if (player.stats.s_hpt<=0) death(mp->type); //Bye bye life ...
+      player.stats.hp -= flytrap_hit;
+      if (player.stats.hp<=0) death(mp->type); //Bye bye life ...
     }
     miss(mname, NULL);
   }
@@ -210,15 +210,15 @@ void check_level()
 {
   int i, add, olevel;
 
-  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>player.stats.s_exp) break;
+  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>player.stats.exp) break;
   i++;
-  olevel = player.stats.s_lvl;
-  player.stats.s_lvl = i;
+  olevel = player.stats.level;
+  player.stats.level = i;
   if (i>olevel)
   {
     add = roll(i-olevel, 10);
-    player.stats.s_maxhp += add;
-    if ((player.stats.s_hpt += add)>player.stats.s_maxhp) player.stats.s_hpt = player.stats.s_maxhp;
+    player.stats.max_hp += add;
+    if ((player.stats.hp += add)>player.stats.max_hp) player.stats.hp = player.stats.max_hp;
     msg("and achieve the rank of \"%s\"", he_man[i-1]);
   }
 }
@@ -236,7 +236,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 
   att = &thatt->stats;
   def = &thdef->stats;
-  if (weap==NULL) {cp = att->s_dmg; dplus = 0; hplus = 0;}
+  if (weap==NULL) {cp = att->damage; dplus = 0; hplus = 0;}
   else
   {
     hplus = weap->hit_plus;
@@ -268,7 +268,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
   if (!on(*thdef, ISRUN)) hplus += 4;
-  def_arm = def->s_arm;
+  def_arm = def->armor_class;
   if (def==&player.stats)
   {
     if (cur_armor!=NULL) def_arm = cur_armor->armor_class;
@@ -280,16 +280,16 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
     ndice = atoi(cp);
     if ((cp = strchr(cp, 'd'))==NULL) break;
     nsides = atoi(++cp);
-    if (swing(att->s_lvl, def_arm, hplus+str_plus(att->s_str)))
+    if (swing(att->level, def_arm, hplus+str_plus(att->str)))
     {
       int proll;
 
       proll = roll(ndice, nsides);
-      damage = dplus+proll+add_dam(att->s_str);
+      damage = dplus+proll+add_dam(att->str);
       //special goodies for the commercial version of rogue
       //make it easier on level one
       if (thdef==&player && max_level==1) damage = (damage+1)/2;
-      def->s_hpt -= max(0, damage);
+      def->hp -= max(0, damage);
       did_hit = TRUE;
     }
     if ((cp = strchr(cp, '/'))==NULL) break;
@@ -346,7 +346,7 @@ int save_throw(int which, AGENT *tp)
 {
   int need;
 
-  need = 14+which-tp->stats.s_lvl/2;
+  need = 14+which-tp->stats.level/2;
   return (roll(1, 20)>=need);
 }
 
@@ -392,7 +392,7 @@ int add_dam(unsigned int str)
 //raise_level: The guy just magically went up a level.
 void raise_level()
 {
-  player.stats.s_exp = e_levels[player.stats.s_lvl-1]+1L;
+  player.stats.exp = e_levels[player.stats.level-1]+1L;
   check_level();
 }
 
@@ -444,7 +444,7 @@ is_magic(ITEM *obj)
 //killed: Called to put a monster to death
 void killed(AGENT *tp, bool pr)
 {
-  player.stats.s_exp += tp->stats.s_exp;
+  player.stats.exp += tp->stats.exp;
   //If the monster was a flytrap, un-hold him
   switch (tp->type)
   {

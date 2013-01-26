@@ -161,8 +161,8 @@ void status()
 {
   int oy, ox;
   static int s_hungry;
-  static int s_lvl, s_pur = -1, s_hp, s_ac = 0;
-  static unsigned int s_str;
+  static int level, s_pur = -1, s_hp, s_ac = 0;
+  static unsigned int strength;
   static int s_elvl = 0;
   static char *state_name[] = {"      ", "Hungry", "Weak", "Faint","?"};
 
@@ -170,30 +170,30 @@ void status()
   getrc(&oy, &ox);
   yellow();
   //Level:
-  if (s_lvl!=level)
+  if (level!=level)
   {
-    s_lvl = level;
+    level = level;
     move(PT(22, 23), 0);
     printw("Level:%-4d", level);
   }
   //Hits:
-  if (s_hp!=player.stats.s_hpt)
+  if (s_hp!=player.stats.hp)
   {
-    s_hp = player.stats.s_hpt;
+    s_hp = player.stats.hp;
     move(PT(22, 23), 12);
-    if (player.stats.s_hpt<100) {
-      printw("Hits:%2d(%2d) ", player.stats.s_hpt, player.stats.s_maxhp);
+    if (player.stats.hp<100) {
+      printw("Hits:%2d(%2d) ", player.stats.hp, player.stats.max_hp);
       //just in case they get wraithed with 3 digit max hits
       addstr("  ");
     }
-    else printw("Hits:%3d(%3d) ", player.stats.s_hpt, player.stats.s_maxhp);
+    else printw("Hits:%3d(%3d) ", player.stats.hp, player.stats.max_hp);
   }
   //Str:
-  if (player.stats.s_str!=s_str)
+  if (player.stats.str!=strength)
   {
-    s_str = player.stats.s_str;
+    strength = player.stats.str;
     move(PT(22, 23), 26);
-    printw("Str:%2d(%2d) ", player.stats.s_str, max_stats.s_str);
+    printw("Str:%2d(%2d) ", player.stats.str, max_stats.str);
   }
   //Gold
   if(s_pur!=purse)
@@ -203,18 +203,18 @@ void status()
     printw("Gold:%-5u", purse);
   }
   //Armor:
-  if(s_ac!=(cur_armor!=NULL?cur_armor->armor_class:player.stats.s_arm))
+  if(s_ac!=(cur_armor!=NULL?cur_armor->armor_class:player.stats.armor_class))
   {
-    s_ac = (cur_armor!=NULL?cur_armor->armor_class:player.stats.s_arm);
+    s_ac = (cur_armor!=NULL?cur_armor->armor_class:player.stats.armor_class);
     if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= cur_ring[LEFT]->armor_class;
     if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= cur_ring[RIGHT]->armor_class;
     move(23, PT(12, 52));
-    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->armor_class:player.stats.s_arm));
+    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->armor_class:player.stats.armor_class));
   }
   //Exp:
-  if (s_elvl!=player.stats.s_lvl)
+  if (s_elvl!=player.stats.level)
   {
-    s_elvl = player.stats.s_lvl;
+    s_elvl = player.stats.level;
     move(23, PT(22, 62));
     printw("%-12s", he_man[s_elvl-1]);
   }

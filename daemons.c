@@ -19,19 +19,19 @@ void doctor()
 {
   int lv, ohp;
 
-  lv = player.stats.s_lvl;
-  ohp = player.stats.s_hpt;
+  lv = player.stats.level;
+  ohp = player.stats.hp;
   quiet++;
   if (lv<8)
   {
-    if (quiet+(lv<<1)>20) player.stats.s_hpt++;
+    if (quiet+(lv<<1)>20) player.stats.hp++;
   }
-  else if (quiet>=3) player.stats.s_hpt += rnd(lv-7)+1;
-  if (is_ring_on_hand(LEFT, R_REGEN)) player.stats.s_hpt++;
-  if (is_ring_on_hand(RIGHT, R_REGEN)) player.stats.s_hpt++;
-  if (ohp!=player.stats.s_hpt)
+  else if (quiet>=3) player.stats.hp += rnd(lv-7)+1;
+  if (is_ring_on_hand(LEFT, R_REGEN)) player.stats.hp++;
+  if (is_ring_on_hand(RIGHT, R_REGEN)) player.stats.hp++;
+  if (ohp!=player.stats.hp)
   {
-    if (player.stats.s_hpt>player.stats.s_maxhp) player.stats.s_hpt = player.stats.s_maxhp;
+    if (player.stats.hp>player.stats.max_hp) player.stats.hp = player.stats.max_hp;
     quiet = 0;
   }
 }

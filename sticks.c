@@ -71,7 +71,7 @@ void do_zap()
     break;
 
   case WS_DRAIN: //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
-    if (player.stats.s_hpt<2) {msg("you are too weak to use it"); return;}
+    if (player.stats.hp<2) {msg("you are too weak to use it"); return;}
     else drain();
     break;
 
@@ -248,13 +248,13 @@ void drain()
     return;
   }
   *dp = NULL;
-  player.stats.s_hpt /= 2;
-  cnt = player.stats.s_hpt/cnt+1;
+  player.stats.hp /= 2;
+  cnt = player.stats.hp/cnt+1;
   //Now zot all of the monsters
   for (dp = drainee; *dp; dp++)
   {
     mp = *dp;
-    if ((mp->stats.s_hpt -= cnt)<=0) killed(mp, can_see_monst(mp));
+    if ((mp->stats.hp -= cnt)<=0) killed(mp, can_see_monst(mp));
     else start_run(&mp->pos);
   }
 }
@@ -340,7 +340,7 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
             msg("You are frozen by a blast of frost%s.", noterse(" from the Ice Monster"));
             if (no_command<20) no_command += spread(7);
           }
-          else if ((player.stats.s_hpt -= roll(6, 6))<=0) if (start==&player.pos) death('b'); else death(monster_at(start->y, start->x)->type);
+          else if ((player.stats.hp -= roll(6, 6))<=0) if (start==&player.pos) death('b'); else death(monster_at(start->y, start->x)->type);
           used = TRUE;
           if (!is_frost) msg("you are hit by the %s", name);
         }

@@ -41,7 +41,7 @@ char *inv_name(ITEM *obj, bool drop)
   case SCROLL:
     if (obj->count==1) {strcpy(pb, "A scroll "); pb = &prbuf[9];}
     else {sprintf(pb, "%d scrolls ", obj->count); pb = &prbuf[strlen(prbuf)];}
-    if (s_know[which] || wizard) sprintf(pb, "of %s", s_magic[which].mi_name);
+    if (s_know[which] || wizard) sprintf(pb, "of %s", s_magic[which].name);
     else if (*s_guess[which]) sprintf(pb, "called %s", s_guess[which]);
     else chopmsg(pb, "titled '%.17s'", "titled '%s'", &s_names[which]);
     break;
@@ -49,7 +49,7 @@ char *inv_name(ITEM *obj, bool drop)
   case POTION:
     if (obj->count==1) {strcpy(pb, "A potion "); pb = &prbuf[9];}
     else {sprintf(pb, "%d potions ", obj->count); pb = &pb[strlen(prbuf)];}
-    if (p_know[which] || wizard) {chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].mi_name, p_colors[which]);}
+    if (p_know[which] || wizard) {chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].name, p_colors[which]);}
     else if (*p_guess[which]) {chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], p_colors[which]);}
     else if (obj->count==1) sprintf(prbuf, "A%s %s potion", vowelstr(p_colors[which]), p_colors[which]);
     else sprintf(prbuf, "%d %s potions", obj->count, p_colors[which]);
@@ -87,13 +87,13 @@ char *inv_name(ITEM *obj, bool drop)
   case STICK:
     sprintf(pb, "A%s %s ", vowelstr(ws_type[which]), ws_type[which]);
     pb = &prbuf[strlen(prbuf)];
-    if (ws_know[which] || wizard) chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].mi_name, charge_str(obj), ws_made[which]);
+    if (ws_know[which] || wizard) chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, charge_str(obj), ws_made[which]);
     else if (*ws_guess[which]) chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], ws_made[which]);
     else sprintf(pb = &prbuf[2], "%s %s", ws_made[which], ws_type[which]);
     break;
 
   case RING:
-    if (r_know[which] || wizard) chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].mi_name, r_stones[which]);
+    if (r_know[which] || wizard) chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].name, r_stones[which]);
     else if (*r_guess[which]) chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], r_stones[which]);
     else sprintf(pb, "A%s %s ring", vowelstr(r_stones[which]), r_stones[which]);
     break;
@@ -273,14 +273,14 @@ int pick_one(struct MagicItem *magic, int nitems)
   struct MagicItem *start;
 
   start = magic;
-  for (end = &magic[nitems], i = rnd(100); magic<end; magic++) if (i<magic->mi_prob) break;
+  for (end = &magic[nitems], i = rnd(100); magic<end; magic++) if (i<magic->prob) break;
   if (magic==end)
   {
 
     if (wizard)
     {
       msg("bad pick_one: %d from %d items", i, nitems);
-      for (magic = start; magic<end; magic++) msg("%s: %d%%", magic->mi_name, magic->mi_prob);
+      for (magic = start; magic<end; magic++) msg("%s: %d%%", magic->name, magic->prob);
     }
 
     magic = start;

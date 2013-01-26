@@ -224,7 +224,7 @@ void init_things()
 {
   struct MagicItem *mp;
   for (mp = &things[1]; mp<=&things[NUMTHINGS-1]; mp++) 
-    mp->mi_prob += (mp-1)->mi_prob;
+    mp->prob += (mp-1)->prob;
 }
 
 //init_colors: Initialize the potion color scheme for this time
@@ -241,7 +241,8 @@ void init_colors()
     p_colors[i] = rainbow[j];
     p_know[i] = FALSE;
     p_guess[i] = (char *)&_guesses[iguess++];
-    if (i>0) p_magic[i].mi_prob += p_magic[i-1].mi_prob;
+    if (i>0) 
+      p_magic[i].prob += p_magic[i-1].prob;
   }
 }
 
@@ -273,7 +274,7 @@ void init_names()
     s_know[i] = FALSE;
     s_guess[i] = (char *)&_guesses[iguess++];
     strcpy((char*)&s_names[i], prbuf);
-    if (i>0) s_magic[i].mi_prob += s_magic[i-1].mi_prob;
+    if (i>0) s_magic[i].prob += s_magic[i-1].prob;
   }
 }
 
@@ -309,8 +310,8 @@ void init_stones()
     r_stones[i] = stones[j].st_name;
     r_know[i] = FALSE;
     r_guess[i] = (char *)&_guesses[iguess++];
-    if (i>0) r_magic[i].mi_prob += r_magic[i-1].mi_prob;
-    r_magic[i].mi_worth += stones[j].st_value;
+    if (i>0) r_magic[i].prob += r_magic[i-1].prob;
+    r_magic[i].worth += stones[j].st_value;
   }
 }
 
@@ -338,7 +339,7 @@ void init_materials()
     ws_made[i] = str;
     ws_know[i] = FALSE;
     ws_guess[i] = (char *)&_guesses[iguess++];
-    if (i>0) ws_magic[i].mi_prob += ws_magic[i-1].mi_prob;
+    if (i>0) ws_magic[i].prob += ws_magic[i-1].prob;
   }
 }
 

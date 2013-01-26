@@ -83,7 +83,7 @@ reread:
     his_score.gold = amount;
     his_score.fate = flags?flags:monst;
     his_score.level = max_level;
-    his_score.rank = player.stats.s_lvl;
+    his_score.rank = player.stats.level;
     rank = add_scores(&his_score, &top_ten[0]);
   }
   _close(sc_fd);
@@ -306,21 +306,21 @@ void total_winner()
       break;
 
     case SCROLL:
-      worth = s_magic[obj->which].mi_worth;
+      worth = s_magic[obj->which].worth;
       worth *= obj->count;
       if (!s_know[obj->which]) worth /= 2;
       s_know[obj->which] = TRUE;
       break;
 
     case POTION:
-      worth = p_magic[obj->which].mi_worth;
+      worth = p_magic[obj->which].worth;
       worth *= obj->count;
       if (!p_know[obj->which]) worth /= 2;
       p_know[obj->which] = TRUE;
       break;
 
     case RING:
-      worth = r_magic[obj->which].mi_worth;
+      worth = r_magic[obj->which].worth;
       if (obj->which==R_ADDSTR || obj->which==R_ADDDAM || obj->which==R_PROTECT || obj->which==R_ADDHIT)
         if (obj->armor_class>0) worth += obj->armor_class*100;
         else worth = 10;
@@ -330,7 +330,7 @@ void total_winner()
         break;
 
     case STICK:
-      worth = ws_magic[obj->which].mi_worth;
+      worth = ws_magic[obj->which].worth;
       worth += 20*obj->charges;
       if (!(obj->flags&ISKNOW)) worth /= 2;
       obj->flags |= ISKNOW;
