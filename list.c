@@ -6,9 +6,7 @@
 #include "list.h"
 #include "io.h"
 #include "misc.h"
-
-extern THING *_things;
-extern int *_t_alloc;
+#include "thing.h"
 
 //_detach: Takes an item out of whatever linked list it might be in
 void _detach(THING **list, THING *item)
@@ -34,50 +32,4 @@ void _free_list(THING **ptr)
   THING *item;
 
   while (*ptr!=NULL) {item = *ptr; *ptr = next(item); discard(item);}
-}
-
-//new_item: Get a new item with a specified size
-THING *new_item()
-{
-  THING *item;
-
-  if ((item = (THING *)talloc())==NULL) {
-    debug("no more things!");
-  }
-  else
-    item->l_next = item->l_prev = NULL;
-  return item;
-}
-
-//talloc: simple allocation of a THING
-THING *talloc()
-{
-  int i;
-
-  for (i = 0; i<MAXITEMS; i++)
-  {
-    if (_t_alloc[i]==0)
-    {
-      _t_alloc[i]++;
-      memset(&_things[i], 0, sizeof(THING));
-      return &_things[i];
-    }
-  }
-  return NULL;
-}
-
-//discard: Free up an item
-int discard(THING *item)
-{
-  int i;
-
-  for (i = 0; i<MAXITEMS; i++)
-  {
-    if (item==&_things[i]) {
-      --total; 
-      _t_alloc[i] = 0; 
-      return 1;
-    }
-  }
-  return 0;
 }

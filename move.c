@@ -3,7 +3,7 @@
 
 #include "rogue.h"
 #include "move.h"
-#include "list.h"
+#include "thing.h"
 #include "weapons.h"
 #include "curses.h"
 #include "io.h"
@@ -187,7 +187,7 @@ int be_trapped(coord *tc)
     {
       THING *arrow;
 
-      if ((arrow = new_item())!=NULL)
+      if ((arrow = create_thing())!=NULL)
       {
         arrow->o_type = WEAPON;
         arrow->o_which = ARROW;

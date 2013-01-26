@@ -15,6 +15,7 @@
 #include "daemon.h"
 #include "fight.h"
 #include "rings.h"
+#include "thing.h"
 
 //List of monsters in rough order of vorpalness
 static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
@@ -107,7 +108,7 @@ void wanderer()
   coord cp;
 
   //can we allocate a new monster
-  if ((tp = new_item())==NULL) return;
+  if ((tp = create_thing())==NULL) return;
   do
   {
     i = rnd_room();

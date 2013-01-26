@@ -17,8 +17,9 @@
 #include "misc.h"
 #include "weapons.h"
 #include "rip.h"
-#include "list.h"
+#include "thing.h"
 #include "level.h"
+#include "list.h"
 
 //fix_stick: Set up a new stick
 void fix_stick(THING *cur)

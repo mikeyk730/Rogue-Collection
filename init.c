@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "rogue.h"
-#include "list.h"
+#include "thing.h"
 #include "init.h"
 #include "weapons.h"
 #include "misc.h"
@@ -13,9 +13,6 @@
 #include "level.h"
 
 int iguess = 0;
-
-THING *_things;
-int *_t_alloc;
 
 static char *rainbow[] =
 {
@@ -169,11 +166,8 @@ void init_player()
 
   bcopy(pstats, max_stats);
   food_left = HUNGER_TIME;
-  //initialize things
-  memset(_things, 0, MAXITEMS*sizeof(THING));
-  memset(_t_alloc, 0, MAXITEMS*sizeof(int));
   //Give the rogue his weaponry.  First a mace.
-  obj = new_item();
+  obj = create_thing();
   obj->o_type = WEAPON;
   obj->o_which = MACE;
   init_weapon(obj, MACE);
@@ -185,7 +179,7 @@ void init_player()
   add_pack(obj, TRUE);
   cur_weapon = obj;
   //Now a +1 bow
-  obj = new_item();
+  obj = create_thing();
   obj->o_type = WEAPON;
   obj->o_which = BOW;
   init_weapon(obj, BOW);
@@ -196,7 +190,7 @@ void init_player()
   obj->o_flags |= ISKNOW;
   add_pack(obj, TRUE);
   //Now some arrows
-  obj = new_item();
+  obj = create_thing();
   obj->o_type = WEAPON;
   obj->o_which = ARROW;
   init_weapon(obj, ARROW);
@@ -205,7 +199,7 @@ void init_player()
   obj->o_flags |= ISKNOW;
   add_pack(obj, TRUE);
   //And his suit of armor
-  obj = new_item();
+  obj = create_thing();
   obj->o_type = ARMOR;
   obj->o_which = RING_MAIL;
   obj->o_ac = a_class[RING_MAIL]-1;
@@ -215,7 +209,7 @@ void init_player()
   cur_armor = obj;
   add_pack(obj, TRUE);
   //Give him some food too
-  obj = new_item();
+  obj = create_thing();
   obj->o_type = FOOD;
   obj->o_count = 1;
   obj->o_which = 0;
@@ -353,8 +347,7 @@ void init_ds()
 {
   long *ep;
   alloc_level();
-  _things = (THING *)malloc(sizeof(THING)*MAXITEMS);
-  _t_alloc = (int *)malloc(MAXITEMS*sizeof(int));
+  alloc_things();
   tbuf = malloc(MAXSTR);
   msgbuf = malloc(BUFSIZE);
   prbuf = malloc(MAXSTR);

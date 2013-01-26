@@ -20,6 +20,7 @@
 #include "daemon.h"
 #include "mach_dep.h"
 #include "level.h"
+#include "thing.h"
 
 #define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
 
@@ -138,7 +139,7 @@ void drop()
   //Take it out of the pack
   if (op->o_count>=2 && op->o_type!=WEAPON)
   {
-    if ((nobj = new_item())==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
+    if ((nobj = create_thing())==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
     op->o_count--;
     bcopy(*nobj, *op);
     nobj->o_count = 1;
@@ -189,7 +190,7 @@ THING *new_thing()
   THING *cur;
   int j, k;
 
-  if ((cur = new_item())==NULL) return NULL;
+  if ((cur = create_thing())==NULL) return NULL;
   cur->o_hplus = cur->o_dplus = 0;
   cur->o_damage = cur->o_hurldmg = "0d0";
   cur->o_ac = 11;

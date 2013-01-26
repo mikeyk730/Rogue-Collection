@@ -22,6 +22,7 @@
 #include "mach_dep.h"
 #include "level.h"
 #include "rings.h"
+#include "thing.h"
 
 //fight: The player attacks the monster.
 int fight(coord *mp, char mn, THING *weap, bool thrown)
@@ -454,7 +455,7 @@ void killed(THING *tp, bool pr)
     {
       THING *gold;
 
-      if ((gold = new_item())==NULL) return;
+      if ((gold = create_thing())==NULL) return;
       gold->o_type = GOLD;
       gold->o_goldval = GOLDCALC;
       if (save(VS_MAGIC)) gold->o_goldval += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;

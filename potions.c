@@ -14,6 +14,7 @@
 #include "main.h"
 #include "fight.h"
 #include "rings.h"
+#include "thing.h"
 
 //quaff: Quaff a potion from the pack
 void quaff()

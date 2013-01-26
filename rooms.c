@@ -16,6 +16,7 @@
 #include "misc.h"
 #include "io.h"
 #include "level.h"
+#include "thing.h"
 
 #define GOLDGRP  1
 
@@ -86,7 +87,7 @@ void do_rooms()
     {
       THING *gold;
 
-      if ((gold = new_item())!=NULL)
+      if ((gold = create_thing())!=NULL)
       {
         gold->o_goldval = rp->r_goldval = GOLDCALC;
         while (1)
@@ -108,7 +109,7 @@ void do_rooms()
     //Put the monster in
     if (rnd(100)<(rp->r_goldval>0?80:25))
     {
-      if ((tp = new_item())!=NULL)
+      if ((tp = create_thing())!=NULL)
       {
         byte mch;
 

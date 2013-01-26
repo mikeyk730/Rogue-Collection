@@ -13,6 +13,7 @@
 #include "wizard.h"
 #include "slime.h"
 #include "level.h"
+#include "thing.h"
 
 char *laugh = "you hear maniacal laughter%s.";
 char *in_dist = " in the distance";
@@ -70,7 +71,7 @@ void read_scroll()
     {
       coord mp;
 
-      if (plop_monster(hero.y, hero.x, &mp) && (op = new_item())!=NULL) new_monster(op, randmonster(FALSE), &mp);
+      if (plop_monster(hero.y, hero.x, &mp) && (op = create_thing())!=NULL) new_monster(op, randmonster(FALSE), &mp);
       else ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 
       break;

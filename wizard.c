@@ -7,7 +7,7 @@
 #include "rogue.h"
 #include "daemons.h"
 #include "pack.h"
-#include "list.h"
+#include "thing.h"
 #include "curses.h"
 #include "io.h"
 #include "wizard.h"
@@ -76,7 +76,7 @@ void create_obj()
   byte ch, bless;
   int limit;
 
-  if ((obj = new_item())==NULL) {msg("can't create anything now"); return;}
+  if ((obj = create_thing())==NULL) {msg("can't create anything now"); return;}
   msg("type of item: ");
   switch (readchar())
   {

@@ -109,6 +109,7 @@
     <ClCompile Include="slime.c" />
     <ClCompile Include="sticks.c" />
     <ClCompile Include="strings.c" />
+    <ClCompile Include="thing.c" />
     <ClCompile Include="things.c" />
     <ClCompile Include="weapons.c" />
     <ClCompile Include="wizard.c" />
@@ -146,6 +147,7 @@
     <ClInclude Include="slime.h" />
     <ClInclude Include="sticks.h" />
     <ClInclude Include="strings.h" />
+    <ClInclude Include="thing.h" />
     <ClInclude Include="things.h" />
     <ClInclude Include="weapons.h" />
     <ClInclude Include="wizard.h" />

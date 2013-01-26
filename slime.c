@@ -4,7 +4,7 @@
 #include "rogue.h"
 #include "slime.h"
 #include "misc.h"
-#include "list.h"
+#include "thing.h"
 #include "curses.h"
 #include "io.h"
 #include "monsters.h"
@@ -20,7 +20,7 @@ void slime_split(THING *tp)
 {
   THING *nslime;
 
-  if (new_slime(tp)==0 || (nslime = new_item())==NULL) return;
+  if (new_slime(tp)==0 || (nslime = create_thing())==NULL) return;
   msg("The slime divides.  Ick!");
   new_monster(nslime, 'S', &slimy);
   if (cansee(slimy.y, slimy.x))

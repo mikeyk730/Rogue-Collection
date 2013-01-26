@@ -15,6 +15,7 @@
 #include "passages.h"
 #include "misc.h"
 #include "level.h"
+#include "thing.h"
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room
@@ -115,7 +116,7 @@ void put_things()
     //Check this first so if we are out of memory the guy has a hope of getting the amulet
     if (level>=AMULETLEVEL && !saw_amulet)
     {
-      if ((cur = new_item())!=NULL)
+      if ((cur = create_thing())!=NULL)
       {
         attach(lvl_obj, cur);
         cur->o_hplus = cur->o_dplus = 0;
@@ -181,7 +182,7 @@ void treas_room()
     }
     if (spots!=MAXTRIES)
     {
-      if ((tp = new_item())!=NULL)
+      if ((tp = create_thing())!=NULL)
       {
         new_monster(tp, randmonster(FALSE), &mp);
         if (bailout) debug("treasure rm bailout");

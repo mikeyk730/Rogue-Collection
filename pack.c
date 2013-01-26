@@ -12,6 +12,7 @@
 #include "things.h"
 #include "mach_dep.h"
 #include "level.h"
+#include "thing.h"
 
 int group_in_inventory(type) {
   return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);

@@ -16,6 +16,7 @@
 #include "misc.h"
 #include "main.h"
 #include "level.h"
+#include "thing.h"
 
 #define NONE 100
 
@@ -53,7 +54,7 @@ hack:
   else
   {
     //here is a quick hack to check if we can get a new item
-    if ((nitem = new_item())==NULL)
+    if ((nitem = create_thing())==NULL)
     {
       obj->o_count = 1;
       msg("something in your pack explodes!!!");
