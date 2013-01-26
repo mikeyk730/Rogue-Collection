@@ -11,6 +11,7 @@
 #include "mach_dep.h"
 #include "strings.h"
 #include "command.h"
+#include "rings.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)

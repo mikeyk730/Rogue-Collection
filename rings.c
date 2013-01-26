@@ -109,3 +109,13 @@ char *ring_num(THING *obj)
   }
   return ring_buf;
 }
+
+int ISRING(int h, int r)
+{
+  return (cur_ring[h] != NULL && cur_ring[h]->o_which == r);
+}
+
+int ISWEARING(int r)
+{
+  return (ISRING(LEFT,r) || ISRING(RIGHT,r));
+}

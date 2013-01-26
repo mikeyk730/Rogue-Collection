@@ -14,6 +14,7 @@
 #include "misc.h"
 #include "daemon.h"
 #include "fight.h"
+#include "rings.h"
 
 //List of monsters in rough order of vorpalness
 static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";

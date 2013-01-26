@@ -12,3 +12,6 @@ int ring_eat(int hand);
 
 //ring_num: Print ring bonuses
 char *ring_num(THING *obj);
+
+int ISRING(int h, int r);
+int ISWEARING(int r);

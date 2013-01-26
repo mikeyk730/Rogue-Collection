@@ -41,8 +41,6 @@ typedef unsigned char bool;
 #define on(thing,flag)  (((thing).t_flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
 #define GOLDCALC        (rnd(50+10*level)+2)
-#define ISRING(h,r)     (cur_ring[h]!=NULL && cur_ring[h]->o_which==r)
-#define ISWEARING(r)    (ISRING(LEFT,r) || ISRING(RIGHT,r))
 #define ISMULT(type)    (type==POTION || type==SCROLL || type==FOOD || type==GOLD)
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
 #define isgone(rp)      (((rp)->r_flags&ISGONE) && ((rp)->r_flags&ISMAZE)==0)
@@ -82,7 +80,6 @@ typedef unsigned char bool;
 #define LRWALL  (0xbc)
 
 //Various constants
-
 #define BEAR_TIME    spread(3)
 #define SLEEP_TIME   spread(5)
 #define HEAL_TIME    spread(30)
@@ -101,24 +98,18 @@ typedef unsigned char bool;
 #define LAMP_DIST    3
 
 //Save against things
-
 #define VS_POISON        00
-#define VS_PARALYZATION  00
 #define VS_LUCK          01
-#define VS_DEATH         00
-#define VS_BREATH        02
 #define VS_MAGIC         03
 
 //Various flag bits
 
 //flags for rooms
-
 #define ISDARK  0x0001 //room is dark
 #define ISGONE  0x0002 //room is gone (a corridor)
 #define ISMAZE  0x0004 //room is a maze
 
 //flags for objects
-
 #define ISCURSED  0x0001 //object is cursed
 #define ISKNOW    0x0002 //player knows details about the object
 #define DIDFLASH  0x0004 //has the vorpal weapon flashed
@@ -128,7 +119,6 @@ typedef unsigned char bool;
 #define ISREVEAL  0x0040 //Do you know who the enemy of the object is
 
 //flags for creatures
-
 #define ISBLIND   0x0001 //creature is blind
 #define SEEMONST  0x0002 //hero can detect unseen monsters
 #define ISRUN     0x0004 //creature is running at the player
@@ -147,7 +137,6 @@ typedef unsigned char bool;
 #define ISFLY     0x8000 //creature is of the flying type
 
 //Flags for level map
-
 #define F_PASS   0x040 //is a passageway
 #define F_MAZE   0x020 //have seen this corridor before
 #define F_REAL   0x010 //what you see is what you get
@@ -155,7 +144,6 @@ typedef unsigned char bool;
 #define F_TMASK  0x007 //trap number mask
 
 //Trap types
-
 #define T_DOOR   00
 #define T_ARROW  01
 #define T_SLEEP  02
@@ -165,7 +153,6 @@ typedef unsigned char bool;
 #define NTRAPS   6
 
 //Potion types
-
 #define P_CONFUSE   0
 #define P_PARALYZE  1
 #define P_POISON    2
@@ -183,7 +170,6 @@ typedef unsigned char bool;
 #define MAXPOTIONS  14
 
 //Scroll types
-
 #define S_CONFUSE   0
 #define S_MAP       1
 #define S_HOLD      2
@@ -202,7 +188,6 @@ typedef unsigned char bool;
 #define MAXSCROLLS  15
 
 //Weapon types
-
 #define MACE        0
 #define SWORD       1
 #define BOW         2
@@ -217,7 +202,6 @@ typedef unsigned char bool;
 #define MAXWEAPONS  10 //this should equal FLAME
 
 //Armor types
-
 #define LEATHER          0
 #define RING_MAIL        1
 #define STUDDED_LEATHER  2
@@ -229,7 +213,6 @@ typedef unsigned char bool;
 #define MAXARMORS        8
 
 //Ring types
-
 #define R_PROTECT   0
 #define R_ADDSTR    1
 #define R_SUSTSTR   2
@@ -247,7 +230,6 @@ typedef unsigned char bool;
 #define MAXRINGS    14
 
 //Rod/Wand/Staff types
-
 #define WS_LIGHT      0
 #define WS_HIT        1
 #define WS_ELECT      2
@@ -403,8 +385,6 @@ struct monster
   struct stats m_stats; //Initial stats
 };
 
-#define TOPSCORES  10
-
 struct sc_ent
 {
   char sc_name[38];
@@ -459,26 +439,6 @@ extern long seed, *e_levels;
 
 extern char *_whoami;
 
-//Cursor motion header for Monochrome display
-
 #define TRUE                1
 #define FALSE               0
 #define BUFSIZE             128
-#define standend()          set_attr(0)
-#define green()             set_attr(1)
-#define cyan()              set_attr(2)
-#define red()               set_attr(3)
-#define magenta()           set_attr(4)
-#define brown()             set_attr(5)
-#define dgrey()             set_attr(6)
-#define lblue()             set_attr(7)
-#define lgrey()             set_attr(8)
-#define lred()              set_attr(9)
-#define lmagenta()          set_attr(10)
-#define yellow()            set_attr(11)
-#define uline()             set_attr(12)
-#define blue()              set_attr(13)
-#define standout()          set_attr(14)
-#define high()              set_attr(15)
-#define bold()              set_attr(16)
-#define BX_SIZE             7

@@ -18,6 +18,7 @@
 #include "chase.h"
 #include "mach_dep.h"
 #include "level.h"
+#include "rings.h"
 
 #include <ctype.h>
 

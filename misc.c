@@ -19,6 +19,7 @@
 #include "fight.h"
 #include "daemon.h"
 #include "level.h"
+#include "rings.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)

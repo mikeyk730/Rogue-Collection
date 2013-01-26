@@ -16,6 +16,8 @@
 #include "things.h"
 #include "misc.h"
 
+#define TOPSCORES 10
+
 static int sc_fd;
 
 int get_year()

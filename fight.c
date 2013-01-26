@@ -21,6 +21,7 @@
 #include "misc.h"
 #include "mach_dep.h"
 #include "level.h"
+#include "rings.h"
 
 //fight: The player attacks the monster.
 int fight(coord *mp, char mn, THING *weap, bool thrown)
