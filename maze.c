@@ -7,6 +7,7 @@
 #include "misc.h"
 #include "rooms.h"
 #include "io.h"
+#include "level.h"
 
 #define MAXFRNT  100
 #define FRONTIER  'F'
@@ -73,7 +74,7 @@ void add_frnt(int y, int x)
 
   if (inrange(y, x) && chat(y, x)==NOTHING)
   {
-    chat(y, x) = FRONTIER;
+    set_chat(y, x, FRONTIER);
     fr_y[frcnt] = y;
     fr_x[frcnt++] = x;
   }
@@ -120,7 +121,7 @@ int maze_at(int y, int x)
 
 void splat(int y, int x)
 {
-  chat(y, x) = PASSAGE;
+  set_chat(y, x, PASSAGE);
   flat(y, x) = F_MAZE|F_REAL;
   if (x>maxx) maxx = x;
   if (y>maxy) maxy = y;

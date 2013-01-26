@@ -15,6 +15,7 @@
 #include "chase.h"
 #include "misc.h"
 #include "io.h"
+#include "level.h"
 
 #define GOLDGRP  1
 
@@ -101,7 +102,7 @@ void do_rooms()
         gold->o_group = GOLDGRP;
         gold->o_type = GOLD;
         attach(lvl_obj, gold);
-        chat(rp->r_gold.y, rp->r_gold.x) = GOLD;
+        set_chat(rp->r_gold.y, rp->r_gold.x, GOLD);
       }
     }
     //Put the monster in
@@ -129,14 +130,14 @@ void draw_room(struct room *rp)
   vert(rp, rp->r_pos.x+rp->r_max.x-1); //Draw right side
   horiz(rp, rp->r_pos.y); //Draw top
   horiz(rp, rp->r_pos.y+rp->r_max.y-1); //Draw bottom
-  chat(rp->r_pos.y, rp->r_pos.x) = ULWALL;
-  chat(rp->r_pos.y, rp->r_pos.x+rp->r_max.x-1) = URWALL;
-  chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x) = LLWALL;
-  chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x+rp->r_max.x-1) = LRWALL;
+  set_chat(rp->r_pos.y, rp->r_pos.x, ULWALL);
+  set_chat(rp->r_pos.y, rp->r_pos.x+rp->r_max.x-1, URWALL);
+  set_chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x, LLWALL);
+  set_chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x+rp->r_max.x-1, LRWALL);
   //Put the floor down
   for (y = rp->r_pos.y+1; y<rp->r_pos.y+rp->r_max.y-1; y++)
     for (x = rp->r_pos.x+1; x<rp->r_pos.x+rp->r_max.x-1; x++)
-      chat(y, x) = FLOOR;
+      set_chat(y, x, FLOOR);
 }
 
 //vert: Draw a vertical line
@@ -144,7 +145,7 @@ void vert(struct room *rp, int startx)
 {
   int y;
 
-  for (y = rp->r_pos.y+1; y<=rp->r_max.y+rp->r_pos.y-1; y++) chat(y, startx) = VWALL;
+  for (y = rp->r_pos.y+1; y<=rp->r_max.y+rp->r_pos.y-1; y++) set_chat(y, startx, VWALL);
 }
 
 //horiz: Draw a horizontal line
@@ -152,7 +153,7 @@ void horiz(struct room *rp, int starty)
 {
   int x;
 
-  for (x = rp->r_pos.x; x<=rp->r_pos.x+rp->r_max.x-1; x++) chat(starty, x) = HWALL;
+  for (x = rp->r_pos.x; x<=rp->r_pos.x+rp->r_max.x-1; x++) set_chat(starty, x, HWALL);
 }
 
 //rnd_pos: Pick a random spot in a room

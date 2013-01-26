@@ -1,8 +1,6 @@
 //new_level: Dig and draw a new level
 //new_level.c 1.4 (A.I. Design) 12/13/84
 
-#include <wchar.h>
-
 #include "rogue.h"
 #include "new_leve.h"
 #include "monsters.h"
@@ -16,6 +14,7 @@
 #include "io.h"
 #include "passages.h"
 #include "misc.h"
+#include "level.h"
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room
@@ -27,7 +26,6 @@ void new_level()
   int rm, i;
   THING *tp;
   byte *fp;
-  int index;
   coord stairs;
 
   player.t_flags &= ~ISHELD; //unhold when you go down just in case
@@ -35,7 +33,7 @@ void new_level()
   if (level>max_level) max_level = level;
 
   //Clean things off from last level
-  wsetmem((wchar_t*)_level, ((MAXLINES-3)*MAXCOLS)>>1, L'\x2020');
+  clear_level();
   setmem(_flags, (MAXLINES-3)*MAXCOLS, F_REAL);
   //Free up the monsters on the last level
   for (tp = mlist; tp!=NULL; tp = next(tp)) free_list(tp->t_pack);
@@ -60,10 +58,9 @@ void new_level()
   {
     rm = rnd_room();
     rnd_pos(&rooms[rm], &stairs);
-    index = INDEX(stairs.y, stairs.x);
     if (i++>100) {i = 0; seed = srand2();}
-  } while (!isfloor(_level[index]));
-  _level[index] = STAIRS;
+  } while (!isfloor(chat(stairs.y, stairs.x)));
+  set_chat(stairs.y, stairs.x, STAIRS);
   //Place the traps
   if (rnd(10)<level)
   {
@@ -76,9 +73,8 @@ void new_level()
       {
         rm = rnd_room();
         rnd_pos(&rooms[rm], &stairs);
-        index = INDEX(stairs.y, stairs.x);
-      } while (!isfloor(_level[index]));
-      fp = &_flags[index];
+      } while (!isfloor(chat(stairs.y, stairs.x)));
+      fp = &_flags[INDEX(stairs.y, stairs.x)];
       *fp &= ~F_REAL;
       *fp |= rnd(NTRAPS);
     }
@@ -87,8 +83,7 @@ void new_level()
   {
     rm = rnd_room();
     rnd_pos(&rooms[rm], &hero);
-    index = INDEX(hero.y, hero.x);
-  } while (!(isfloor(_level[index]) && (_flags[index]&F_REAL) && moat(hero.y, hero.x)==NULL));
+  } while (!(isfloor(chat(hero.y, hero.x)) && (_flags[INDEX(hero.y, hero.x)]&F_REAL) && moat(hero.y, hero.x)==NULL));
   mpos = 0;
   enter_room(&hero);
   mvaddch(hero.y, hero.x, PLAYER);
@@ -132,7 +127,7 @@ void put_things()
         cur->o_type = AMULET;
         //Put it somewhere
         do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(winat(tp.y, tp.x)));
-        chat(tp.y, tp.x) = AMULET;
+        set_chat(tp.y, tp.x, AMULET);
         bcopy(cur->o_pos, tp);
       }
     }
@@ -147,7 +142,7 @@ void put_things()
     attach(lvl_obj, cur);
     //Put it somewhere
     do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(chat(tp.y, tp.x)));
-    chat(tp.y, tp.x) = cur->o_type;
+    set_chat(tp.y, tp.x, cur->o_type);
     bcopy(cur->o_pos, tp);
   }
 }
@@ -155,7 +150,7 @@ void put_things()
 //treas_room: Add a treasure room
 void treas_room()
 {
-  int nm, index;
+  int nm;
   THING *tp;
   struct room *rp;
   int spots, num_monst;
@@ -167,11 +162,13 @@ void treas_room()
   num_monst = nm = rnd(spots)+MINTREAS;
   while (nm-- && total<MAXITEMS)
   {
-    do {rnd_pos(rp, &mp); index = INDEX(mp.y, mp.x);} while (!isfloor(_level[index]));
+    do {
+      rnd_pos(rp, &mp);
+    } while (!isfloor(chat(mp.y, mp.x)));
     tp = new_thing();
     bcopy(tp->o_pos, mp);
     attach(lvl_obj, tp);
-    _level[index] = tp->o_type;
+    set_chat(mp.y, mp.x, tp->o_type);
   }
   //fill up room with monsters from the next level down
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;
@@ -183,8 +180,7 @@ void treas_room()
     for (spots = 0; spots<MAXTRIES; spots++)
     {
       rnd_pos(rp, &mp);
-      index = INDEX(mp.y, mp.x);
-      if (isfloor(_level[index]) && moat(mp.y, mp.x)==NULL) break;
+      if (isfloor(chat(mp.y, mp.x)) && moat(mp.y, mp.x)==NULL) break;
     }
     if (spots!=MAXTRIES)
     {

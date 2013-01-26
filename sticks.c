@@ -18,6 +18,7 @@
 #include "weapons.h"
 #include "rip.h"
 #include "list.h"
+#include "level.h"
 
 //fix_stick: Set up a new stick
 void fix_stick(THING *cur)

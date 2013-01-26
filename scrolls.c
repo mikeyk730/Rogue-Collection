@@ -12,6 +12,7 @@
 #include "misc.h"
 #include "wizard.h"
 #include "slime.h"
+#include "level.h"
 
 char *laugh = "you hear maniacal laughter%s.";
 char *in_dist = " in the distance";
@@ -23,7 +24,6 @@ void read_scroll()
   int y, x;
   byte ch;
   THING *op;
-  int index;
   bool discardit = FALSE;
 
   obj = get_item("read", SCROLL);
@@ -89,11 +89,14 @@ void read_scroll()
     //Take all the things we want to keep hidden out of the window
     for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
     {
-      index = INDEX(y, x);
-      switch (ch = _level[index])
+      switch (ch = chat(y, x))
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-        if (!(_flags[index]&F_REAL)) {ch = _level[index] = DOOR; _flags[index] &= ~F_REAL;}
+        if (!(_flags[INDEX(y, x)]&F_REAL)) {
+          ch = DOOR; 
+          set_chat(y, x, DOOR);
+          _flags[INDEX(y, x)] &= ~F_REAL;
+        }
       case DOOR: case PASSAGE: case STAIRS:
         if ((op = moat(y, x))!=NULL) if (op->t_oldch==' ') op->t_oldch = ch;
         break;

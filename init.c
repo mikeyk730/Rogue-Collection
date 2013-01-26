@@ -10,6 +10,7 @@
 #include "misc.h"
 #include "pack.h"
 #include "main.h"
+#include "level.h"
 
 THING *_things;
 int *_t_alloc;
@@ -160,8 +161,6 @@ char *prbuf;    //Printing buffer used everywhere
 char *ring_buf; //Buffer used by ring code
 
 //Declarations for data space that must be saved and restored exactly
-
-byte *_level;
 byte *_flags;
 
 //init_player: Roll up the rogue
@@ -354,9 +353,8 @@ void init_materials()
 void init_ds()
 {
   long *ep;
-
+  alloc_level();
   _flags = malloc((MAXLINES-3)*MAXCOLS);
-  _level = malloc((MAXLINES-3)*MAXCOLS);
   _things = (THING *)malloc(sizeof(THING)*MAXITEMS);
   _t_alloc = (int *)malloc(MAXITEMS*sizeof(int));
   tbuf = malloc(MAXSTR);

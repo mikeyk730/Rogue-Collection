@@ -10,6 +10,7 @@
 #include "misc.h"
 #include "passages.h"
 #include "io.h"
+#include "level.h"
 
 static int pnum;
 static byte newpnum;
@@ -192,15 +193,14 @@ void do_passages()
 //door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
 void door(struct room *rm, coord *cp)
 {
-  int index, xit;
+  int xit;
 
-  index = INDEX(cp->y, cp->x);
   if (rnd(10)+1<level && rnd(5)==0)
   {
-    _level[index] = (cp->y==rm->r_pos.y || cp->y==rm->r_pos.y+rm->r_max.y-1)?HWALL:VWALL;
-    _flags[index] &= ~F_REAL;
+    set_chat(cp->y, cp->x, (cp->y==rm->r_pos.y || cp->y==rm->r_pos.y+rm->r_max.y-1)?HWALL:VWALL);
+    _flags[INDEX(cp->y, cp->x)] &= ~F_REAL;
   }
-  else _level[index] = DOOR;
+  else set_chat(cp->y, cp->x, DOOR);
   xit = rm->r_nexits++;
   rm->r_exit[xit].y = cp->y;
   rm->r_exit[xit].x = cp->x;
@@ -259,8 +259,6 @@ void numpass(int y, int x)
 
 void psplat(int y, int x)
 {
-  int idx;
-
-  _level[idx = INDEX(y, x)] = PASSAGE;
-  _flags[idx] |= F_PASS;
+  set_chat(y, x, PASSAGE);
+  _flags[INDEX(y, x)] |= F_PASS;
 }

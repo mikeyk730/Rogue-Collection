@@ -17,6 +17,7 @@
 #include "new_leve.h"
 #include "chase.h"
 #include "mach_dep.h"
+#include "level.h"
 
 #include <ctype.h>
 
@@ -57,7 +58,11 @@ over:
   ch = winat(nh.y, nh.x);
   //When the hero is on the door do not allow him to run until he enters the room all the way
   if ((chat(hero.y, hero.x)==DOOR) && (ch==FLOOR)) running = FALSE;
-  if (!(fl&F_REAL) && ch==FLOOR) {chat(nh.y, nh.x) = ch = TRAP; flat(nh.y, nh.x) |= F_REAL;}
+  if (!(fl&F_REAL) && ch==FLOOR) {
+    ch = TRAP;
+    set_chat(nh.y, nh.x, TRAP); 
+    flat(nh.y, nh.x) |= F_REAL;
+  }
   else if (on(player, ISHELD) && ch!='F') {msg("you are being held"); return;}
   switch (ch)
   {
@@ -148,12 +153,10 @@ void door_open(struct room *rp)
 int be_trapped(coord *tc)
 {
   byte tr;
-  int index;
 
   count = running = FALSE;
-  index = INDEX(tc->y, tc->x);
-  _level[index] = TRAP;
-  tr = _flags[index]&F_TMASK;
+  set_chat(tc->y, tc->x, TRAP);
+  tr = _flags[INDEX(tc->y, tc->x)]&F_TMASK;
   was_trapped = TRUE;
   switch (tr)
   {

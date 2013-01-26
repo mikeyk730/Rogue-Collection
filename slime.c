@@ -10,6 +10,7 @@
 #include "monsters.h"
 #include "chase.h"
 #include "main.h"
+#include "level.h"
 
 static coord slimy;
 

@@ -18,6 +18,7 @@
 #include "main.h"
 #include "fight.h"
 #include "daemon.h"
+#include "level.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)
@@ -40,7 +41,6 @@ void look(bool wakeup)
 {
   int x, y;
   byte ch, pch;
-  int index;
   THING *tp;
   struct room *rp;
   int ey, ex;
@@ -49,9 +49,8 @@ void look(bool wakeup)
   int sy, sx, sumhero, diffhero;
 
   rp = proom;
-  index = INDEX(hero.y, hero.x);
-  pfl = _flags[index];
-  pch = _level[index];
+  pfl = _flags[INDEX(hero.y, hero.x)];
+  pch = chat(hero.y, hero.x);
   //if the hero has moved
   if (!ce(oldpos, hero))
   {
@@ -92,10 +91,9 @@ void look(bool wakeup)
       if (y==hero.y && x==hero.x) continue;
     }
     else if (y!=hero.y || x!=hero.x) continue;
-    index = INDEX(y, x);
     //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
-    fp = &_flags[index];
-    ch = _level[index];
+    fp = &_flags[INDEX(y, x)];
+    ch = chat(y, x);
     //No Doors
     if (pch!=DOOR && ch!=DOOR)
       //Either hero or other in a passage
@@ -114,7 +112,7 @@ void look(bool wakeup)
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (tp->t_oldch != ' ' || (!(rp->r_flags&ISDARK) && !on(player, ISBLIND))) tp->t_oldch = _level[index];
+        if (tp->t_oldch != ' ' || (!(rp->r_flags&ISDARK) && !on(player, ISBLIND))) tp->t_oldch = chat(y, x);
         if (see_monst(tp)) ch = tp->t_disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
@@ -481,13 +479,13 @@ void search()
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
         if (rnd(5)!=0) break;
-        chat(y, x) = DOOR;
+        set_chat(y, x, DOOR);
         *fp |= F_REAL;
         count = running = FALSE;
         break;
       case FLOOR:
         if (rnd(2)!=0) break;
-        chat(y, x) = TRAP;
+        set_chat(y, x, TRAP);
         *fp |= F_REAL;
         count = running = FALSE;
         msg("you found %s", tr_name(*fp&F_TMASK));

@@ -15,6 +15,7 @@
 #include "chase.h"
 #include "misc.h"
 #include "main.h"
+#include "level.h"
 
 #define NONE 100
 
@@ -117,13 +118,11 @@ char *short_name(THING *obj)
 void fall(THING *obj, bool pr)
 {
   static coord fpos;
-  int index;
 
   switch (fallpos(obj, &fpos))
   {
   case 1:
-    index = INDEX(fpos.y, fpos.x);
-    _level[index] = obj->o_type;
+    set_chat(fpos.y, fpos.x, obj->o_type);
     bcopy(obj->o_pos, fpos);
     if (cansee(fpos.y, fpos.x))
     {

@@ -46,7 +46,6 @@ typedef unsigned char bool;
 #define ISRING(h,r)     (cur_ring[h]!=NULL && cur_ring[h]->o_which==r)
 #define ISWEARING(r)    (ISRING(LEFT,r) || ISRING(RIGHT,r))
 #define ISMULT(type)    (type==POTION || type==SCROLL || type==FOOD || type==GOLD)
-#define chat(y,x)       (_level[INDEX(y,x)])
 #define flat(y,x)       (_flags[INDEX(y,x)])
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
 #define isgone(rp)      (((rp)->r_flags&ISGONE) && ((rp)->r_flags&ISMAZE)==0)
@@ -464,7 +463,7 @@ extern bool p_know[], r_know[], s_know[], ws_know[];
 
 extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[], huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, *typeahead, take, *w_names[], whoami[], *ws_made[], *ws_type[];
 
-extern byte *_level, *_flags;
+extern byte *_flags;
 
 extern int a_chances[], a_class[], count, dnum, food_left, fung_hit, fd, group, hungry_state, inpack, lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total;
 

@@ -89,6 +89,7 @@
     <ClCompile Include="fight.c" />
     <ClCompile Include="init.c" />
     <ClCompile Include="io.c" />
+    <ClCompile Include="level.c" />
     <ClCompile Include="list.c" />
     <ClCompile Include="mach_dep.c" />
     <ClCompile Include="main.c" />
@@ -124,6 +125,7 @@
     <ClInclude Include="fight.h" />
     <ClInclude Include="init.h" />
     <ClInclude Include="io.h" />
+    <ClInclude Include="level.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="mach_dep.h" />
     <ClInclude Include="main.h" />

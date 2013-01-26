@@ -19,6 +19,7 @@
 #include "armor.h"
 #include "daemon.h"
 #include "mach_dep.h"
+#include "level.h"
 
 #define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
 
@@ -148,7 +149,7 @@ void drop()
   inpack--;
   //Link it into the level object list
   attach(lvl_obj, op);
-  chat(hero.y, hero.x) = op->o_type;
+  set_chat(hero.y, hero.x, op->o_type);
   bcopy(op->o_pos, hero);
   if (op->o_type==AMULET) amulet = FALSE;
   msg("dropped %s", inv_name(op, TRUE));

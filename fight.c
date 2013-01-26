@@ -20,7 +20,7 @@
 #include "potions.h"
 #include "misc.h"
 #include "mach_dep.h"
-
+#include "level.h"
 
 //fight: The player attacks the monster.
 int fight(coord *mp, char mn, THING *weap, bool thrown)
@@ -416,7 +416,7 @@ void remove_mons(coord *mp, THING *tp, bool waskill)
     detach(tp->t_pack, obj);
     if (waskill) fall(obj, FALSE); else discard(obj);
   }
-  if (_level[INDEX(mp->y, mp->x)]==PASSAGE) standout();
+  if (chat(mp->y, mp->x)==PASSAGE) standout();
   if (tp->t_oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
   else if (tp->t_oldch!='@') mvaddch(mp->y, mp->x, tp->t_oldch);
   standend();

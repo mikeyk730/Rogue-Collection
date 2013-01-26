@@ -11,6 +11,7 @@
 #include "list.h"
 #include "things.h"
 #include "mach_dep.h"
+#include "level.h"
 
 THING *pack_obj(byte ch, byte *chp)
 {
@@ -52,7 +53,7 @@ void add_pack(THING *obj, bool silent)
       {
         //Put it in the pack and notify the user
         op->o_count += obj->o_count;
-        if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); chat(hero.y, hero.x) = floor;}
+        if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); set_chat(hero.y, hero.x, floor);}
         discard(obj);
         obj = op;
         goto picked_up;
@@ -66,13 +67,13 @@ void add_pack(THING *obj, bool silent)
   {
     detach(lvl_obj, obj);
     mvaddch(hero.y, hero.x, floor);
-    chat(hero.y, hero.x) = floor;
+    set_chat(hero.y, hero.x, floor);
     msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
     return;
   }
   else obj->o_flags |= ISFOUND;
   inpack++;
-  if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); chat(hero.y, hero.x) = floor;}
+  if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); set_chat(hero.y, hero.x, floor);}
   //Search for an object of the same type
   exact = FALSE;
   for (op = ppack; op!=NULL; op = next(op)) if (obj->o_type==op->o_type) break;
@@ -244,6 +245,6 @@ void money(int value)
   floor = (proom->r_flags&ISGONE)?PASSAGE:FLOOR;
   purse += value;
   mvaddch(hero.y, hero.x, floor);
-  chat(hero.y, hero.x) = floor;
+  set_chat(hero.y, hero.x, floor);
   if (value>0) msg("you found %d gold pieces", value);
 }

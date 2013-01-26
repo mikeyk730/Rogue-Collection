@@ -23,6 +23,7 @@
 #include "potions.h"
 #include "pack.h"
 #include "scrolls.h"
+#include "level.h"
 
 #include <ctype.h>
 

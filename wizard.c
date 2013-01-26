@@ -21,6 +21,7 @@
 #include "mach_dep.h"
 #include "sticks.h"
 #include "weapons.h"
+#include "level.h"
 
 //whatis: What a certain object is
 void whatis()

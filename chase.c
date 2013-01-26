@@ -14,6 +14,7 @@
 #include "main.h"
 #include "monsters.h"
 #include "list.h"
+#include "level.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -99,7 +100,8 @@ over:
 
       detach(lvl_obj, obj);
       attach(th->t_pack, obj);
-      oldchar = chat(obj->o_pos.y, obj->o_pos.x) = (th->t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
+      oldchar = (th->t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
+      set_chat(obj->o_pos.y, obj->o_pos.x, oldchar);
       if (cansee(obj->o_pos.y, obj->o_pos.x)) mvaddch(obj->o_pos.y, obj->o_pos.x, oldchar);
       th->t_dest = find_dest(th);
       break;
@@ -109,7 +111,7 @@ over:
   //If the chasing thing moved, update the screen
   if (th->t_oldch!='@')
   {
-    if (th->t_oldch==' ' && cansee(th->t_pos.y, th->t_pos.x) && _level[INDEX(th->t_pos.y, th->t_pos.x)]==FLOOR) mvaddch(th->t_pos.y, th->t_pos.x, FLOOR);
+    if (th->t_oldch==' ' && cansee(th->t_pos.y, th->t_pos.x) && chat(th->t_pos.y, th->t_pos.x)==FLOOR) mvaddch(th->t_pos.y, th->t_pos.x, FLOOR);
     else if (th->t_oldch==FLOOR && !cansee(th->t_pos.y, th->t_pos.x) && !on(player, SEEMONST)) mvaddch(th->t_pos.y, th->t_pos.x, ' ');
     else mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
   }
