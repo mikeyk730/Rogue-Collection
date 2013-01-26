@@ -47,9 +47,13 @@ void rollwand()
 {
   static int between = 0;
 
-  if (++between>=3+rnd(3))
+  if (++between >= 3 + rnd(3))
   {
-    if (roll(1, 6)==4) {wanderer(); extinguish(rollwand); fuse(swander, 0, WANDER_TIME);}
+    if (roll(1, 6) == 4) {
+      wanderer(); 
+      extinguish(rollwand); 
+      fuse(swander, 0, WANDER_TIME);
+    }
     between = 0;
   }
 }
@@ -66,7 +70,9 @@ void unsee()
 {
   AGENT *th;
 
-  for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && can_see_monst(th) && th->t_oldch!='@') mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
+  for (th = mlist; th!=NULL; th = next(th))
+    if (on(*th, ISINVIS) && can_see_monst(th) && th->t_oldch!='@')
+      mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
   player.t_flags &= ~CANSEE;
 }
 

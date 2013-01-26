@@ -330,15 +330,6 @@ struct Monster
   struct Stats m_stats; //Initial stats
 };
 
-struct LeaderboardEntry
-{
-  char sc_name[38];
-  int sc_rank;
-  int sc_gold;
-  int sc_fate;
-  int sc_level;
-};
-
 //External variables
 
 extern ITEM *cur_armor, *cur_ring[2], *cur_weapon, *lvl_obj;

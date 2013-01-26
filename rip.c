@@ -20,6 +20,20 @@
 
 static int sc_fd;
 
+struct LeaderboardEntry
+{
+  char name[38];
+  int rank;
+  int gold;
+  int fate;
+  int level;
+};
+
+void get_scores(struct LeaderboardEntry *top10);
+void put_scores(struct LeaderboardEntry *top10);
+void pr_scores(int newrank, struct LeaderboardEntry *top10);
+int add_scores(struct LeaderboardEntry *newscore, struct LeaderboardEntry *oldlist);
+
 int get_year()
 {
   time_t rawtime;
@@ -65,11 +79,11 @@ reread:
   get_scores(&top_ten[0]);
   if (noscore!=TRUE)
   {
-    strcpy(his_score.sc_name, whoami);
-    his_score.sc_gold = amount;
-    his_score.sc_fate = flags?flags:monst;
-    his_score.sc_level = max_level;
-    his_score.sc_rank = player.t_stats.s_lvl;
+    strcpy(his_score.name, whoami);
+    his_score.gold = amount;
+    his_score.fate = flags?flags:monst;
+    his_score.level = max_level;
+    his_score.rank = player.t_stats.s_lvl;
     rank = add_scores(&his_score, &top_ten[0]);
   }
   _close(sc_fd);
@@ -88,7 +102,7 @@ void get_scores(struct LeaderboardEntry *top10)
   for (i = 0; i<TOPSCORES; i++, top10++)
   {
     if (retcode>0) retcode = _read(sc_fd, top10, sizeof(struct LeaderboardEntry));
-    if (retcode<=0) top10->sc_gold = 0;
+    if (retcode<=0) top10->gold = 0;
   }
 }
 
@@ -96,7 +110,7 @@ void put_scores(struct LeaderboardEntry *top10)
 {
   int i;
 
-  for (i = 0; (i<TOPSCORES) && top10->sc_gold; i++, top10++)
+  for (i = 0; (i<TOPSCORES) && top10->gold; i++, top10++)
   {
     if (_write(sc_fd, top10, sizeof(struct LeaderboardEntry))<=0) return;
   }
@@ -123,32 +137,32 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
     {
       yellow();
     }
-    if (top10->sc_gold<=0) break;
+    if (top10->gold<=0) break;
     curl = 4+((COLS==40)?(i*2):i);
     move(curl, 0);
-    printw("%d ", top10->sc_gold);
+    printw("%d ", top10->gold);
     move(curl, 6);
     if (newrank-1!=i) red();
-    printw("%s", top10->sc_name);
+    printw("%s", top10->name);
     if ((newrank)-1!=i) brown();
-    if (top10->sc_level>=26) altmsg = " Honored by the Guild";
-    if (isalpha(top10->sc_fate))
+    if (top10->level>=26) altmsg = " Honored by the Guild";
+    if (isalpha(top10->fate))
     {
-      sprintf(dthstr, " killed by %s", killname((0xff&top10->sc_fate), TRUE));
+      sprintf(dthstr, " killed by %s", killname((0xff&top10->fate), TRUE));
       if (COLS==40 && strlen(dthstr)>23) strcpy(dthstr, " killed");
     }
-    else switch(top10->sc_fate)
+    else switch(top10->fate)
     {
     case 2: altmsg = " A total winner!"; break;
     case 1: strcpy(dthstr, " quit"); break;
     default: strcpy(dthstr, " weirded out");
     }
-    if ((strlen(top10->sc_name)+10+strlen(he_man[top10->sc_rank-1])) < (size_t)COLS)
+    if ((strlen(top10->name)+10+strlen(he_man[top10->rank-1])) < (size_t)COLS)
     {
-      if (top10->sc_rank>1 && (strlen(top10->sc_name))) printw(" \"%s\"", he_man[top10->sc_rank-1]);
+      if (top10->rank>1 && (strlen(top10->name))) printw(" \"%s\"", he_man[top10->rank-1]);
     }
     if (COLS==40) move(curl+1, 6);
-    if (altmsg==NULL) printw("%s on level %d", dthstr, top10->sc_level);
+    if (altmsg==NULL) printw("%s on level %d", dthstr, top10->level);
     else addstr(altmsg);
   }
   standend();
@@ -163,11 +177,11 @@ int add_scores(struct LeaderboardEntry *newscore, struct LeaderboardEntry *oldli
 
   for (sentry = &oldlist[TOPSCORES-1]; sentry>=oldlist; sentry--)
   {
-    if ((unsigned)newscore->sc_gold>(unsigned)sentry->sc_gold)
+    if ((unsigned)newscore->gold>(unsigned)sentry->gold)
     {
       insert = sentry;
       retcode--;
-      if ((insert<&oldlist[TOPSCORES-1]) && sentry->sc_gold) sentry[1] = *sentry;
+      if ((insert<&oldlist[TOPSCORES-1]) && sentry->gold) sentry[1] = *sentry;
     }
     else break;
   }

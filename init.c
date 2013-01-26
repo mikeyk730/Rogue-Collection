@@ -223,8 +223,8 @@ void init_player()
 void init_things()
 {
   struct MagicItem *mp;
-
-  for (mp = &things[1]; mp<=&things[NUMTHINGS-1]; mp++) mp->mi_prob += (mp-1)->mi_prob;
+  for (mp = &things[1]; mp<=&things[NUMTHINGS-1]; mp++) 
+    mp->mi_prob += (mp-1)->mi_prob;
 }
 
 //init_colors: Initialize the potion color scheme for this time
