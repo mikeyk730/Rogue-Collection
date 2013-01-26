@@ -12,6 +12,8 @@
 #include "main.h"
 #include "level.h"
 
+int iguess = 0;
+
 THING *_things;
 int *_t_alloc;
 

@@ -73,7 +73,11 @@ int discard(THING *item)
 
   for (i = 0; i<MAXITEMS; i++)
   {
-    if (item==&_things[i]) {--total; _t_alloc[i] = 0; return 1;}
+    if (item==&_things[i]) {
+      --total; 
+      _t_alloc[i] = 0; 
+      return 1;
+    }
   }
   return 0;
 }

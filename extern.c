@@ -307,7 +307,6 @@ char *ws_guess[MAXSTICKS];         //Players guess at what wand is
 //storage array for guesses
 
 struct array _guesses[MAXSCROLLS+MAXPOTIONS+MAXRINGS+MAXSTICKS];
-int iguess = 0;
 char *ws_type[MAXSTICKS]; //Is it a wand or a staff
 
 int maxrow;            //Last Line used for map

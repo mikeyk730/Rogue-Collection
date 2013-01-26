@@ -423,11 +423,6 @@ extern struct stats max_stats;
 extern struct monster monsters[];
 extern struct magic_item p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 
-#define LOW(x) ((x)&0xff)
-#define HI(x)  ((x)>>8)
-
-#define SETHILO(reg,hi,lo)  (reg)=((hi)<<8)|lo)
-
 //Defines for things used in mach_dep.c
 //@(#)extern.h5.1 (Berkeley) 5/11/82
 
@@ -440,9 +435,7 @@ extern struct magic_item p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 //Now all the global variables
 
 extern int maxrow;
-extern char *_top, *_base;
 extern int LINES, COLS;
-extern int iguess;
 extern int bailout;
 
 extern char *l_menu, *l_name, *l_fruit, *l_score, *l_save, *l_macro, *l_drive;
