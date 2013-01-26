@@ -51,14 +51,14 @@ void add_pack(ITEM *obj, bool silent)
   //to see if there is something in the same group and if there is then
   //increment the count.
 
-  if (obj->o_group)
+  if (obj->group)
   {
     for (op = player.t_pack; op!=NULL; op = next(op))
     {
-      if (op->o_group==obj->o_group)
+      if (op->group==obj->group)
       {
         //Put it in the pack and notify the user
-        op->o_count += obj->o_count;
+        op->count += obj->count;
         if (from_floor) {
           detach_item(&lvl_obj, obj);
           mvaddch(player.t_pos.y, player.t_pos.x, floor);
@@ -73,7 +73,7 @@ void add_pack(ITEM *obj, bool silent)
   //Check if there is room
   if (inpack>=MAXPACK-1) {msg("you can't carry anything else"); return;}
   //Check for and deal with scare monster scrolls
-  if (obj->o_type==SCROLL && obj->o_which==S_SCARE) if (obj->o_flags&ISFOUND)
+  if (obj->type==SCROLL && obj->which==S_SCARE) if (obj->flags&ISFOUND)
   {
     detach_item(&lvl_obj, obj);
     mvaddch(player.t_pos.y, player.t_pos.x, floor);
@@ -81,7 +81,7 @@ void add_pack(ITEM *obj, bool silent)
     msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
     return;
   }
-  else obj->o_flags |= ISFOUND;
+  else obj->flags |= ISFOUND;
   inpack++;
   if (from_floor) {
     detach_item(&lvl_obj, obj);
@@ -90,22 +90,22 @@ void add_pack(ITEM *obj, bool silent)
   }
   //Search for an object of the same type
   exact = FALSE;
-  for (op = player.t_pack; op!=NULL; op = next(op)) if (obj->o_type==op->o_type) break;
+  for (op = player.t_pack; op!=NULL; op = next(op)) if (obj->type==op->type) break;
   if (op==NULL)
   {
     //Put it at the end of the pack since it is a new type
     for (op = player.t_pack; op!=NULL; op = next(op))
     {
-      if (op->o_type!=FOOD) break;
+      if (op->type!=FOOD) break;
       lp = op;
     }
   }
   else
   {
     //Search for an object which is exactly the same
-    while (op->o_type==obj->o_type)
+    while (op->type==obj->type)
     {
-      if (op->o_which==obj->o_which) {exact = TRUE; break;}
+      if (op->which==obj->which) {exact = TRUE; break;}
       lp = op;
       if ((op = next(op))==NULL) break;
     }
@@ -119,9 +119,9 @@ void add_pack(ITEM *obj, bool silent)
   else
   {
     //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
-    if (exact && group_in_inventory(obj->o_type))
+    if (exact && group_in_inventory(obj->type))
     {
-      op->o_count++;
+      op->count++;
       discard_item(obj);
       obj = op;
       goto picked_up;
@@ -134,9 +134,9 @@ void add_pack(ITEM *obj, bool silent)
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
   for (mp = mlist; mp!=NULL; mp = next(mp))
-    if (mp->t_dest && (mp->t_dest->x==obj->o_pos.x) && (mp->t_dest->y==obj->o_pos.y))
+    if (mp->t_dest && (mp->t_dest->x==obj->pos.x) && (mp->t_dest->y==obj->pos.y))
       mp->t_dest = &player.t_pos;
-  if (obj->o_type==AMULET) {amulet = TRUE; saw_amulet = TRUE;}
+  if (obj->type==AMULET) {amulet = TRUE; saw_amulet = TRUE;}
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));
 }
@@ -152,7 +152,7 @@ int inventory(ITEM *list, int type, char *lstr)
   for (ch = 'a'; list!=NULL; ch++, list = next(list))
   {
     //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
-    if (type && type!=list->o_type && !(type==CALLABLE && (list->o_type==SCROLL || list->o_type==POTION || list->o_type==RING || list->o_type==STICK)) && !(type==WEAPON && list->o_type==POTION) && !(type==STICK && list->o_enemy && list->o_charges)) continue;
+    if (type && type!=list->type && !(type==CALLABLE && (list->type==SCROLL || list->type==POTION || list->type==RING || list->type==STICK)) && !(type==WEAPON && list->type==POTION) && !(type==STICK && list->enemy && list->charges)) continue;
     n_objs++;
     sprintf(inv_temp, "%c) %%s", ch);
     add_line(lstr, inv_temp, inv_name(list, FALSE));
@@ -174,7 +174,7 @@ void pick_up(byte ch)
   {
   case GOLD:
     if ((obj = find_obj(player.t_pos.y, player.t_pos.x))==NULL) return;
-    money(obj->o_goldval);
+    money(obj->gold_value);
     detach_item(&lvl_obj, obj);
     discard_item(obj);
     player.t_room->r_goldval = 0;

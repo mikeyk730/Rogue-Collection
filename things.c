@@ -32,51 +32,51 @@ static char *lastfmt, *lastarg;
 
 char *inv_name(ITEM *obj, bool drop)
 {
-  int which = obj->o_which;
+  int which = obj->which;
   char *pb;
 
   pb = prbuf;
-  switch (obj->o_type)
+  switch (obj->type)
   {
   case SCROLL:
-    if (obj->o_count==1) {strcpy(pb, "A scroll "); pb = &prbuf[9];}
-    else {sprintf(pb, "%d scrolls ", obj->o_count); pb = &prbuf[strlen(prbuf)];}
+    if (obj->count==1) {strcpy(pb, "A scroll "); pb = &prbuf[9];}
+    else {sprintf(pb, "%d scrolls ", obj->count); pb = &prbuf[strlen(prbuf)];}
     if (s_know[which] || wizard) sprintf(pb, "of %s", s_magic[which].mi_name);
     else if (*s_guess[which]) sprintf(pb, "called %s", s_guess[which]);
     else chopmsg(pb, "titled '%.17s'", "titled '%s'", &s_names[which]);
     break;
 
   case POTION:
-    if (obj->o_count==1) {strcpy(pb, "A potion "); pb = &prbuf[9];}
-    else {sprintf(pb, "%d potions ", obj->o_count); pb = &pb[strlen(prbuf)];}
+    if (obj->count==1) {strcpy(pb, "A potion "); pb = &prbuf[9];}
+    else {sprintf(pb, "%d potions ", obj->count); pb = &pb[strlen(prbuf)];}
     if (p_know[which] || wizard) {chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].mi_name, p_colors[which]);}
     else if (*p_guess[which]) {chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], p_colors[which]);}
-    else if (obj->o_count==1) sprintf(prbuf, "A%s %s potion", vowelstr(p_colors[which]), p_colors[which]);
-    else sprintf(prbuf, "%d %s potions", obj->o_count, p_colors[which]);
+    else if (obj->count==1) sprintf(prbuf, "A%s %s potion", vowelstr(p_colors[which]), p_colors[which]);
+    else sprintf(prbuf, "%d %s potions", obj->count, p_colors[which]);
     break;
 
   case FOOD:
-    if (which==1) if (obj->o_count==1) sprintf(pb, "A%s %s", vowelstr(fruit), fruit); else sprintf(pb, "%d %ss", obj->o_count, fruit);
-    else if (obj->o_count==1) strcpy(pb, "Some food"); else sprintf(pb, "%d rations of food", obj->o_count);
+    if (which==1) if (obj->count==1) sprintf(pb, "A%s %s", vowelstr(fruit), fruit); else sprintf(pb, "%d %ss", obj->count, fruit);
+    else if (obj->count==1) strcpy(pb, "Some food"); else sprintf(pb, "%d rations of food", obj->count);
     break;
 
   case WEAPON:
-    if (obj->o_count>1) sprintf(pb, "%d ", obj->o_count);
+    if (obj->count>1) sprintf(pb, "%d ", obj->count);
     else sprintf(pb, "A%s ", vowelstr(w_names[which]));
     pb = &prbuf[strlen(prbuf)];
-    if (obj->o_flags&ISKNOW || wizard) sprintf(pb, "%s %s", num(obj->o_hplus, obj->o_dplus, WEAPON), w_names[which]);
+    if (obj->flags&ISKNOW || wizard) sprintf(pb, "%s %s", num(obj->hit_plus, obj->damage_plus, WEAPON), w_names[which]);
     else sprintf(pb, "%s", w_names[which]);
-    if (obj->o_count>1) strcat(pb, "s");
-    if (obj->o_enemy && (obj->o_flags&ISREVEAL || wizard))
+    if (obj->count>1) strcat(pb, "s");
+    if (obj->enemy && (obj->flags&ISREVEAL || wizard))
     {
       strcat(pb, " of ");
-      strcat(pb, monsters[obj->o_enemy-'A'].m_name);
+      strcat(pb, monsters[obj->enemy-'A'].m_name);
       strcat(pb, " slaying");
     }
     break;
 
   case ARMOR:
-    if (obj->o_flags&ISKNOW || wizard) chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->o_ac, 0, ARMOR), a_names[which], -(obj->o_ac-11));
+    if (obj->flags&ISKNOW || wizard) chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->armor_class, 0, ARMOR), a_names[which], -(obj->armor_class-11));
     else sprintf(pb, "%s", a_names[which]);
     break;
 
@@ -101,12 +101,12 @@ char *inv_name(ITEM *obj, bool drop)
 #ifdef DEBUG
 
   case GOLD:
-    sprintf(pb, "Gold at %d,%d", obj->o_pos.y, obj->o_pos.x);
+    sprintf(pb, "Gold at %d,%d", obj->pos.y, obj->pos.x);
     break;
 
   default:
-    debug("Picked up someting bizarre %s", unctrl(obj->o_type));
-    sprintf(pb, "Something bizarre %c(%d)", obj->o_type, obj->o_type);
+    debug("Picked up someting bizarre %s", unctrl(obj->type));
+    sprintf(pb, "Something bizarre %c(%d)", obj->type, obj->type);
     break;
 
 #endif
@@ -137,22 +137,22 @@ void drop()
   if ((op = get_item("drop", 0))==NULL) return;
   if (!can_drop(op)) return;
   //Take it out of the pack
-  if (op->o_count>=2 && op->o_type!=WEAPON)
+  if (op->count>=2 && op->type!=WEAPON)
   {
     if ((nobj = create_item())==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
-    op->o_count--;
+    op->count--;
     bcopy(*nobj, *op);
-    nobj->o_count = 1;
+    nobj->count = 1;
     op = nobj;
-    if (op->o_group!=0) inpack++;
+    if (op->group!=0) inpack++;
   }
   else detach_item(&player.t_pack, op);
   inpack--;
   //Link it into the level object list
   attach_item(&lvl_obj, op);
-  set_tile(player.t_pos.y, player.t_pos.x, op->o_type);
-  bcopy(op->o_pos, player.t_pos);
-  if (op->o_type==AMULET) amulet = FALSE;
+  set_tile(player.t_pos.y, player.t_pos.x, op->type);
+  bcopy(op->pos, player.t_pos);
+  if (op->type==AMULET) amulet = FALSE;
   msg("dropped %s", inv_name(op, TRUE));
 }
 
@@ -162,7 +162,7 @@ int can_drop(ITEM *op)
 {
   if (op==NULL) return TRUE;
   if (op!=cur_armor && op!=cur_weapon && op!=cur_ring[LEFT] && op!=cur_ring[RIGHT]) return TRUE;
-  if (op->o_flags&ISCURSED) {msg("you can't.  It appears to be cursed"); return FALSE;}
+  if (op->flags&ISCURSED) {msg("you can't.  It appears to be cursed"); return FALSE;}
   if (op==cur_weapon) cur_weapon = NULL;
   else if (op==cur_armor) {waste_time(); cur_armor = NULL;}
   else
@@ -175,9 +175,9 @@ int can_drop(ITEM *op)
       return TRUE;
     }
     cur_ring[hand] = NULL;
-    switch (op->o_which)
+    switch (op->which)
     {
-    case R_ADDSTR: chg_str(-op->o_ac); break;
+    case R_ADDSTR: chg_str(-op->armor_class); break;
     case R_SEEINVIS: unsee(); extinguish(unsee); break;
     }
   }
@@ -191,68 +191,68 @@ ITEM *new_item()
   int j, k;
 
   if ((cur = create_item())==NULL) return NULL;
-  cur->o_hplus = cur->o_dplus = 0;
-  cur->o_damage = cur->o_hurldmg = "0d0";
-  cur->o_ac = 11;
-  cur->o_count = 1;
-  cur->o_group = 0;
-  cur->o_flags = 0;
-  cur->o_enemy = 0;
+  cur->hit_plus = cur->damage_plus = 0;
+  cur->damage = cur->throw_damage = "0d0";
+  cur->armor_class = 11;
+  cur->count = 1;
+  cur->group = 0;
+  cur->flags = 0;
+  cur->enemy = 0;
   //Decide what kind of object it will be. If we haven't had food for a while, let it be food.
   switch (no_food>3?2:pick_one(things, NUMTHINGS))
   {
   case 0:
-    cur->o_type = POTION;
-    cur->o_which = pick_one(p_magic, MAXPOTIONS);
+    cur->type = POTION;
+    cur->which = pick_one(p_magic, MAXPOTIONS);
     break;
 
   case 1:
-    cur->o_type = SCROLL;
-    cur->o_which = pick_one(s_magic, MAXSCROLLS);
+    cur->type = SCROLL;
+    cur->which = pick_one(s_magic, MAXSCROLLS);
     break;
 
   case 2:
     no_food = 0;
-    cur->o_type = FOOD;
-    if (rnd(10)!=0) cur->o_which = 0; else cur->o_which = 1;
+    cur->type = FOOD;
+    if (rnd(10)!=0) cur->which = 0; else cur->which = 1;
     break;
 
   case 3:
-    cur->o_type = WEAPON;
-    cur->o_which = rnd(MAXWEAPONS);
-    init_weapon(cur, cur->o_which);
-    if ((k = rnd(100))<10) {cur->o_flags |= ISCURSED; cur->o_hplus -= rnd(3)+1;}
-    else if (k<15) cur->o_hplus += rnd(3)+1;
+    cur->type = WEAPON;
+    cur->which = rnd(MAXWEAPONS);
+    init_weapon(cur, cur->which);
+    if ((k = rnd(100))<10) {cur->flags |= ISCURSED; cur->hit_plus -= rnd(3)+1;}
+    else if (k<15) cur->hit_plus += rnd(3)+1;
     break;
 
   case 4:
-    cur->o_type = ARMOR;
+    cur->type = ARMOR;
     for (j = 0, k = rnd(100); j<MAXARMORS; j++) if (k<a_chances[j]) break;
     if (j==MAXARMORS) {debug("Picked a bad armor %d", k); j = 0;}
-    cur->o_which = j;
-    cur->o_ac = a_class[j];
-    if ((k = rnd(100))<20) {cur->o_flags |= ISCURSED; cur->o_ac += rnd(3)+1;}
-    else if (k<28) cur->o_ac -= rnd(3)+1;
+    cur->which = j;
+    cur->armor_class = a_class[j];
+    if ((k = rnd(100))<20) {cur->flags |= ISCURSED; cur->armor_class += rnd(3)+1;}
+    else if (k<28) cur->armor_class -= rnd(3)+1;
     break;
 
   case 5:
-    cur->o_type = RING;
-    cur->o_which = pick_one(r_magic, MAXRINGS);
-    switch (cur->o_which)
+    cur->type = RING;
+    cur->which = pick_one(r_magic, MAXRINGS);
+    switch (cur->which)
     {
     case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
-      if ((cur->o_ac = rnd(3))==0) {cur->o_ac = -1; cur->o_flags |= ISCURSED;}
+      if ((cur->armor_class = rnd(3))==0) {cur->armor_class = -1; cur->flags |= ISCURSED;}
       break;
 
     case R_AGGR: case R_TELEPORT:
-      cur->o_flags |= ISCURSED;
+      cur->flags |= ISCURSED;
       break;
     }
     break;
 
   case 6:
-    cur->o_type = STICK;
-    cur->o_which = pick_one(ws_magic, MAXSTICKS);
+    cur->type = STICK;
+    cur->which = pick_one(ws_magic, MAXSTICKS);
     fix_stick(cur);
     break;
 
@@ -318,13 +318,13 @@ void print_disc(byte type)
   case STICK: maxnum = MAXSTICKS; know = ws_know; guess = ws_guess; break;
   }
   set_order(order, maxnum);
-  obj.o_count = 1;
-  obj.o_flags = 0;
+  obj.count = 1;
+  obj.flags = 0;
   num_found = 0;
   for (i = 0; i<maxnum; i++) if (know[order[i]] || *guess[order[i]])
   {
-    obj.o_type = type;
-    obj.o_which = order[i];
+    obj.type = type;
+    obj.which = order[i];
     add_line(nullstr, "%s", inv_name(&obj, FALSE));
     num_found++;
   }

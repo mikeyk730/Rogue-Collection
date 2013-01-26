@@ -250,14 +250,14 @@ void total_winner()
   oldpurse = purse;
   for (c = 'a', obj = player.t_pack; obj!=NULL; c++, obj = next(obj))
   {
-    switch (obj->o_type)
+    switch (obj->type)
     {
     case FOOD:
-      worth = 2*obj->o_count;
+      worth = 2*obj->count;
       break;
 
     case WEAPON:
-      switch (obj->o_which)
+      switch (obj->which)
       {
       case MACE: worth = 8; break;
       case SWORD: worth = 15; break;
@@ -270,12 +270,12 @@ void total_winner()
       case BOLT: worth = 1; break;
       case SPEAR: worth = 5; break;
       }
-      worth *= 3*(obj->o_hplus+obj->o_dplus)+obj->o_count;
-      obj->o_flags |= ISKNOW;
+      worth *= 3*(obj->hit_plus+obj->damage_plus)+obj->count;
+      obj->flags |= ISKNOW;
       break;
 
     case ARMOR:
-      switch (obj->o_which)
+      switch (obj->which)
       {
       case LEATHER: worth = 20; break;
       case RING_MAIL: worth = 25; break;
@@ -286,41 +286,41 @@ void total_winner()
       case BANDED_MAIL: worth = 90; break;
       case PLATE_MAIL: worth = 150; break;
       }
-      worth += (9-obj->o_ac)*100;
-      worth += (10*(a_class[obj->o_which]-obj->o_ac));
-      obj->o_flags |= ISKNOW;
+      worth += (9-obj->armor_class)*100;
+      worth += (10*(a_class[obj->which]-obj->armor_class));
+      obj->flags |= ISKNOW;
       break;
 
     case SCROLL:
-      worth = s_magic[obj->o_which].mi_worth;
-      worth *= obj->o_count;
-      if (!s_know[obj->o_which]) worth /= 2;
-      s_know[obj->o_which] = TRUE;
+      worth = s_magic[obj->which].mi_worth;
+      worth *= obj->count;
+      if (!s_know[obj->which]) worth /= 2;
+      s_know[obj->which] = TRUE;
       break;
 
     case POTION:
-      worth = p_magic[obj->o_which].mi_worth;
-      worth *= obj->o_count;
-      if (!p_know[obj->o_which]) worth /= 2;
-      p_know[obj->o_which] = TRUE;
+      worth = p_magic[obj->which].mi_worth;
+      worth *= obj->count;
+      if (!p_know[obj->which]) worth /= 2;
+      p_know[obj->which] = TRUE;
       break;
 
     case RING:
-      worth = r_magic[obj->o_which].mi_worth;
-      if (obj->o_which==R_ADDSTR || obj->o_which==R_ADDDAM || obj->o_which==R_PROTECT || obj->o_which==R_ADDHIT)
-        if (obj->o_ac>0) worth += obj->o_ac*100;
+      worth = r_magic[obj->which].mi_worth;
+      if (obj->which==R_ADDSTR || obj->which==R_ADDDAM || obj->which==R_PROTECT || obj->which==R_ADDHIT)
+        if (obj->armor_class>0) worth += obj->armor_class*100;
         else worth = 10;
-        if (!(obj->o_flags&ISKNOW)) worth /= 2;
-        obj->o_flags |= ISKNOW;
-        r_know[obj->o_which] = TRUE;
+        if (!(obj->flags&ISKNOW)) worth /= 2;
+        obj->flags |= ISKNOW;
+        r_know[obj->which] = TRUE;
         break;
 
     case STICK:
-      worth = ws_magic[obj->o_which].mi_worth;
-      worth += 20*obj->o_charges;
-      if (!(obj->o_flags&ISKNOW)) worth /= 2;
-      obj->o_flags |= ISKNOW;
-      ws_know[obj->o_which] = TRUE;
+      worth = ws_magic[obj->which].mi_worth;
+      worth += 20*obj->charges;
+      if (!(obj->flags&ISKNOW)) worth /= 2;
+      obj->flags |= ISKNOW;
+      ws_know[obj->which] = TRUE;
       break;
 
     case AMULET:

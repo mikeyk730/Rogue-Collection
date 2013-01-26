@@ -25,10 +25,10 @@ void quaff()
 
   if ((obj = get_item("quaff", POTION))==NULL) return;
   //Make certain that it is something that we want to drink
-  if (obj->o_type!=POTION) {msg("yuk! Why would you want to drink that?"); return;}
+  if (obj->type!=POTION) {msg("yuk! Why would you want to drink that?"); return;}
   if (obj==cur_weapon) cur_weapon = NULL;
   //Calculate the effect it has on the poor guy.
-  switch (obj->o_which)
+  switch (obj->which)
   {
   case P_CONFUSE:
     p_know[P_CONFUSE] = TRUE;
@@ -84,7 +84,7 @@ void quaff()
         if (is_magic(tp))
         {
           show = TRUE;
-          mvaddch(tp->o_pos.y, tp->o_pos.x, goodch(tp));
+          mvaddch(tp->pos.y, tp->pos.x, goodch(tp));
           p_know[P_TFIND] = TRUE;
         }
       }
@@ -141,11 +141,11 @@ void quaff()
     break;
 
   case P_RESTORE:
-    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.t_stats.s_str, -cur_ring[LEFT]->o_ac);
-    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.t_stats.s_str, -cur_ring[RIGHT]->o_ac);
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.t_stats.s_str, -cur_ring[LEFT]->armor_class);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.t_stats.s_str, -cur_ring[RIGHT]->armor_class);
     if (player.t_stats.s_str<max_stats.s_str) player.t_stats.s_str = max_stats.s_str;
-    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.t_stats.s_str, cur_ring[LEFT]->o_ac);
-    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.t_stats.s_str, cur_ring[RIGHT]->o_ac);
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.t_stats.s_str, cur_ring[LEFT]->armor_class);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.t_stats.s_str, cur_ring[RIGHT]->armor_class);
     msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
     break;
 
@@ -169,12 +169,12 @@ void quaff()
   status();
   //Throw the item away
   inpack--;
-  if (obj->o_count>1) obj->o_count--;
+  if (obj->count>1) obj->count--;
   else {
     detach_item(&player.t_pack, obj); 
     discardit = TRUE;
   }
-  call_it(p_know[obj->o_which], &p_guess[obj->o_which]);
+  call_it(p_know[obj->which], &p_guess[obj->which]);
   if (discardit)
     discard_item(obj);
 }
@@ -222,7 +222,7 @@ bool turn_see(bool turn_off)
 //th_effect: Compute the effect of this potion hitting a monster.
 void th_effect(ITEM *obj, AGENT *tp)
 {
-  switch (obj->o_which)
+  switch (obj->which)
   {
   case P_CONFUSE: case P_BLIND:
     tp->t_flags |= ISHUH;

@@ -189,11 +189,11 @@ int be_trapped(coord *tc)
 
       if ((arrow = create_item())!=NULL)
       {
-        arrow->o_type = WEAPON;
-        arrow->o_which = ARROW;
+        arrow->type = WEAPON;
+        arrow->which = ARROW;
         init_weapon(arrow, ARROW);
-        arrow->o_count = 1;
-        bcopy(arrow->o_pos, player.t_pos);
+        arrow->count = 1;
+        bcopy(arrow->pos, player.t_pos);
         fall(arrow, FALSE);
       }
       msg("an arrow shoots past you");
@@ -254,8 +254,8 @@ void rndmove(AGENT *who, coord *newmv)
     if (!step_ok(ch)) goto bad;
     if (ch==SCROLL)
     {
-      for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (y==obj->o_pos.y && x==obj->o_pos.x) break;
-      if (obj!=NULL && obj->o_which==S_SCARE) goto bad;
+      for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (y==obj->pos.y && x==obj->pos.x) break;
+      if (obj!=NULL && obj->which==S_SCARE) goto bad;
     }
   }
   return;

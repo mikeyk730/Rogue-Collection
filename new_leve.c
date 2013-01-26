@@ -120,14 +120,14 @@ void put_things()
       if ((cur = create_item())!=NULL)
       {
         attach_item(&lvl_obj, cur);
-        cur->o_hplus = cur->o_dplus = 0;
-        cur->o_damage = cur->o_hurldmg = "0d0";
-        cur->o_ac = 11;
-        cur->o_type = AMULET;
+        cur->hit_plus = cur->damage_plus = 0;
+        cur->damage = cur->throw_damage = "0d0";
+        cur->armor_class = 11;
+        cur->type = AMULET;
         //Put it somewhere
         do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(display_character(tp.y, tp.x)));
         set_tile(tp.y, tp.x, AMULET);
-        bcopy(cur->o_pos, tp);
+        bcopy(cur->pos, tp);
       }
     }
     //check for treasure rooms, and if so, put it in.
@@ -142,8 +142,8 @@ void put_things()
       attach_item(&lvl_obj, cur);
       //Put it somewhere
       do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(get_tile(tp.y, tp.x)));
-      set_tile(tp.y, tp.x, cur->o_type);
-      bcopy(cur->o_pos, tp);
+      set_tile(tp.y, tp.x, cur->type);
+      bcopy(cur->pos, tp);
     }
   }
 }
@@ -168,9 +168,9 @@ void treas_room()
       rnd_pos(rp, &mp);
     } while (!isfloor(get_tile(mp.y, mp.x)));
     tp = new_item();
-    bcopy(tp->o_pos, mp);
+    bcopy(tp->pos, mp);
     attach_item(&lvl_obj, tp);
-    set_tile(mp.y, mp.x, tp->o_type);
+    set_tile(mp.y, mp.x, tp->type);
   }
   //fill up room with monsters from the next level down
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;

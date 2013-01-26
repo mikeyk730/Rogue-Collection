@@ -21,9 +21,9 @@ void wear()
     return;
   }
   if ((obj = get_item("wear", ARMOR))==NULL) return;
-  if (obj->o_type!=ARMOR) {msg("you can't wear that"); return;}
+  if (obj->type!=ARMOR) {msg("you can't wear that"); return;}
   waste_time();
-  obj->o_flags |= ISKNOW ;
+  obj->flags |= ISKNOW ;
   sp = inv_name(obj, TRUE);
   cur_armor = obj;
   msg("you are now wearing %s", sp);

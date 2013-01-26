@@ -94,15 +94,15 @@ over:
   if (ce(ch_ret, player.t_pos)) {attack(th); return;}
   else if (ce(ch_ret, *th->t_dest))
   {
-    for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (th->t_dest==&obj->o_pos)
+    for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (th->t_dest==&obj->pos)
     {
       byte oldchar;
 
       detach_item(&lvl_obj, obj);
       attach_item(&th->t_pack, obj);
       oldchar = (th->t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
-      set_tile(obj->o_pos.y, obj->o_pos.x, oldchar);
-      if (cansee(obj->o_pos.y, obj->o_pos.x)) mvaddch(obj->o_pos.y, obj->o_pos.x, oldchar);
+      set_tile(obj->pos.y, obj->pos.x, oldchar);
+      if (cansee(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, oldchar);
       th->t_dest = find_dest(th);
       break;
     }
@@ -147,10 +147,10 @@ int can_see_monst(AGENT *mp)
   if (on(*mp, ISINVIS) && !on(player, CANSEE)) return FALSE;
   if (DISTANCE(mp->t_pos.y, mp->t_pos.x, player.t_pos.y, player.t_pos.x)>=LAMP_DIST && ((mp->t_room!=player.t_room || (mp->t_room->r_flags&ISDARK) || (mp->t_room->r_flags&ISMAZE)))) return FALSE;
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, give the player a hint as to what that weapon is good for.
-  if (cur_weapon!=NULL && mp->t_type==cur_weapon->o_enemy && ((cur_weapon->o_flags&DIDFLASH)==0))
+  if (cur_weapon!=NULL && mp->t_type==cur_weapon->enemy && ((cur_weapon->flags&DIDFLASH)==0))
   {
-    cur_weapon->o_flags |= DIDFLASH;
-    msg(flash, w_names[cur_weapon->o_which], terse || expert?"":intense);
+    cur_weapon->flags |= DIDFLASH;
+    msg(flash, w_names[cur_weapon->which], terse || expert?"":intense);
   }
   return TRUE;
 }
@@ -219,9 +219,9 @@ void chase(AGENT *tp, coord *ee)
           {
             for (obj = lvl_obj; obj!=NULL; obj = next(obj))
             {
-              if (y==obj->o_pos.y && x==obj->o_pos.x) break;
+              if (y==obj->pos.y && x==obj->pos.x) break;
             }
-            if (obj!=NULL && obj->o_which==S_SCARE) continue;
+            if (obj!=NULL && obj->which==S_SCARE) continue;
           }
           //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
           thisdist = DISTANCE(y, x, ee->y, ee->x);
@@ -285,11 +285,11 @@ coord *find_dest(AGENT *tp)
   rp = tp->t_room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))
   {
-    if (obj->o_type==SCROLL && obj->o_which==S_SCARE) continue;
-    if (roomin(&obj->o_pos)==rp && rnd(100)<prob)
+    if (obj->type==SCROLL && obj->which==S_SCARE) continue;
+    if (roomin(&obj->pos)==rp && rnd(100)<prob)
     {
-      for (tp = mlist; tp!=NULL; tp = next(tp)) if (tp->t_dest==&obj->o_pos) break;
-      if (tp==NULL) return &obj->o_pos;
+      for (tp = mlist; tp!=NULL; tp = next(tp)) if (tp->t_dest==&obj->pos) break;
+      if (tp==NULL) return &obj->pos;
     }
   }
   return &player.t_pos;

@@ -157,7 +157,7 @@ ITEM *find_obj(int y, int x)
 {
   ITEM *op;
 
-  for (op = lvl_obj; op!=NULL; op = next(op)) if (op->o_pos.y==y && op->o_pos.x==x) return op;
+  for (op = lvl_obj; op!=NULL; op = next(op)) if (op->pos.y==y && op->pos.x==x) return op;
 
   debug("Non-object %c %d,%d", get_tile(y, x), y, x);
   return NULL; //NOTREACHED
@@ -170,12 +170,12 @@ void eat()
 
   if ((obj = get_item("eat", FOOD))==NULL) 
     return;
-  if (obj->o_type!=FOOD) {
+  if (obj->type!=FOOD) {
     msg("ugh, you would get ill if you ate that"); 
     return;
   }
   inpack--;
-  if (--obj->o_count<1) {
+  if (--obj->count<1) {
     detach_item(&player.t_pack, obj); 
     discard_item(obj);
   }
@@ -188,7 +188,7 @@ void eat()
   hungry_state = 0;
   if (obj==cur_weapon) 
     cur_weapon = NULL;
-  if (obj->o_which==1)
+  if (obj->which==1)
     msg("my, that was a yummy %s", fruit);
   else if (rnd(100)>70) {
     player.t_stats.s_exp++; 
@@ -210,9 +210,9 @@ void chg_str(int amt)
   add_str(&player.t_stats.s_str, amt);
   comp = player.t_stats.s_str;
   if (is_ring_on_hand(LEFT, R_ADDSTR)) 
-    add_str(&comp, -cur_ring[LEFT]->o_ac);
+    add_str(&comp, -cur_ring[LEFT]->armor_class);
   if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
-    add_str(&comp, -cur_ring[RIGHT]->o_ac);
+    add_str(&comp, -cur_ring[RIGHT]->armor_class);
   if (comp>max_stats.s_str) 
     max_stats.s_str = comp;
 }
@@ -358,28 +358,28 @@ int goodch(ITEM *obj)
 {
   int ch = MAGIC;
 
-  if (obj->o_flags&ISCURSED) ch = BMAGIC;
-  switch (obj->o_type)
+  if (obj->flags&ISCURSED) ch = BMAGIC;
+  switch (obj->type)
   {
   case ARMOR:
-    if (obj->o_ac>a_class[obj->o_which]) ch = BMAGIC;
+    if (obj->armor_class>a_class[obj->which]) ch = BMAGIC;
     break;
   case WEAPON:
-    if (obj->o_hplus<0 || obj->o_dplus<0) ch = BMAGIC;
+    if (obj->hit_plus<0 || obj->damage_plus<0) ch = BMAGIC;
     break;
   case SCROLL:
-    switch (obj->o_which) {case S_SLEEP: case S_CREATE: case S_AGGR: ch = BMAGIC; break;}
+    switch (obj->which) {case S_SLEEP: case S_CREATE: case S_AGGR: ch = BMAGIC; break;}
     break;
   case POTION:
-    switch (obj->o_which) {case P_CONFUSE: case P_PARALYZE: case P_POISON: case P_BLIND: ch = BMAGIC; break;}
+    switch (obj->which) {case P_CONFUSE: case P_PARALYZE: case P_POISON: case P_BLIND: ch = BMAGIC; break;}
     break;
   case STICK:
-    switch (obj->o_which) {case WS_HASTE_M: case WS_TELTO: ch = BMAGIC; break;}
+    switch (obj->which) {case WS_HASTE_M: case WS_TELTO: ch = BMAGIC; break;}
     break;
   case RING:
-    switch (obj->o_which)
+    switch (obj->which)
     {
-    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->o_ac<0) ch = BMAGIC; break;
+    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->armor_class<0) ch = BMAGIC; break;
     case R_AGGR: case R_TELEPORT: ch = BMAGIC; break;
     }
     break;
@@ -532,27 +532,27 @@ void call()
 
   //Make certain that it is something that we want to wear
   if (obj==NULL) return;
-  switch (obj->o_type)
+  switch (obj->type)
   {
   case RING: guess = (char **)r_guess; 
     know = r_know;
-    elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:r_stones[obj->o_which]);
+    elsewise = (*guess[obj->which]!=0?guess[obj->which]:r_stones[obj->which]);
     break;
   case POTION: guess = (char **)p_guess;
     know = p_know;
-    elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:p_colors[obj->o_which]);
+    elsewise = (*guess[obj->which]!=0?guess[obj->which]:p_colors[obj->which]);
     break;
   case SCROLL: guess = (char **)s_guess;
     know = s_know;
-    elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:(char *)(&s_names[obj->o_which])); 
+    elsewise = (*guess[obj->which]!=0?guess[obj->which]:(char *)(&s_names[obj->which])); 
     break;
   case STICK: guess = (char **)ws_guess;
     know = ws_know;
-    elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:ws_made[obj->o_which]);
+    elsewise = (*guess[obj->which]!=0?guess[obj->which]:ws_made[obj->which]);
     break;
   default: msg("you can't call that anything"); return;
   }
-  if (know[obj->o_which]) {
+  if (know[obj->which]) {
     msg("that has already been identified"); 
     return;
   }
@@ -560,7 +560,7 @@ void call()
   msg("what do you want to call it? ");
   getinfo(prbuf,MAXNAME);
   if (*prbuf && *prbuf!=ESCAPE) 
-    strcpy(guess[obj->o_which], prbuf);
+    strcpy(guess[obj->which], prbuf);
   msg("");
 }
 

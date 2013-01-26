@@ -168,52 +168,52 @@ void init_player()
   food_left = HUNGER_TIME;
   //Give the rogue his weaponry.  First a mace.
   obj = create_item();
-  obj->o_type = WEAPON;
-  obj->o_which = MACE;
+  obj->type = WEAPON;
+  obj->which = MACE;
   init_weapon(obj, MACE);
-  obj->o_hplus = 1;
-  obj->o_dplus = 1;
-  obj->o_flags |= ISKNOW;
-  obj->o_count = 1;
-  obj->o_group = 0;
+  obj->hit_plus = 1;
+  obj->damage_plus = 1;
+  obj->flags |= ISKNOW;
+  obj->count = 1;
+  obj->group = 0;
   add_pack(obj, TRUE);
   cur_weapon = obj;
   //Now a +1 bow
   obj = create_item();
-  obj->o_type = WEAPON;
-  obj->o_which = BOW;
+  obj->type = WEAPON;
+  obj->which = BOW;
   init_weapon(obj, BOW);
-  obj->o_hplus = 1;
-  obj->o_dplus = 0;
-  obj->o_count = 1;
-  obj->o_group = 0;
-  obj->o_flags |= ISKNOW;
+  obj->hit_plus = 1;
+  obj->damage_plus = 0;
+  obj->count = 1;
+  obj->group = 0;
+  obj->flags |= ISKNOW;
   add_pack(obj, TRUE);
   //Now some arrows
   obj = create_item();
-  obj->o_type = WEAPON;
-  obj->o_which = ARROW;
+  obj->type = WEAPON;
+  obj->which = ARROW;
   init_weapon(obj, ARROW);
-  obj->o_count = rnd(15)+25;
-  obj->o_hplus = obj->o_dplus = 0;
-  obj->o_flags |= ISKNOW;
+  obj->count = rnd(15)+25;
+  obj->hit_plus = obj->damage_plus = 0;
+  obj->flags |= ISKNOW;
   add_pack(obj, TRUE);
   //And his suit of armor
   obj = create_item();
-  obj->o_type = ARMOR;
-  obj->o_which = RING_MAIL;
-  obj->o_ac = a_class[RING_MAIL]-1;
-  obj->o_flags |= ISKNOW;
-  obj->o_count = 1;
-  obj->o_group = 0;
+  obj->type = ARMOR;
+  obj->which = RING_MAIL;
+  obj->armor_class = a_class[RING_MAIL]-1;
+  obj->flags |= ISKNOW;
+  obj->count = 1;
+  obj->group = 0;
   cur_armor = obj;
   add_pack(obj, TRUE);
   //Give him some food too
   obj = create_item();
-  obj->o_type = FOOD;
-  obj->o_count = 1;
-  obj->o_which = 0;
-  obj->o_group = 0;
+  obj->type = FOOD;
+  obj->count = 1;
+  obj->which = 0;
+  obj->group = 0;
   add_pack(obj, TRUE);
 }
 

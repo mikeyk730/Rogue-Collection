@@ -20,7 +20,7 @@ void ring_on()
 
   if ((obj = get_item("put on", RING))==NULL) goto no_ring;
   //Make certain that it is something that we want to wear
-  if (obj->o_type!=RING) {msg("you can't put that on your finger"); goto no_ring;}
+  if (obj->type!=RING) {msg("you can't put that on your finger"); goto no_ring;}
   //find out which hand to put it on
   if (is_current(obj)) goto no_ring;
   if (cur_ring[LEFT]==NULL) ring = LEFT;
@@ -29,9 +29,9 @@ void ring_on()
   if (ring<0) {msg("you already have a ring on each hand"); goto no_ring;}
   cur_ring[ring] = obj;
   //Calculate the effect it has on the poor guy.
-  switch (obj->o_which)
+  switch (obj->which)
   {
-  case R_ADDSTR: chg_str(obj->o_ac); break;
+  case R_ADDSTR: chg_str(obj->armor_class); break;
   case R_SEEINVIS: invis_on(); break;
   case R_AGGR: aggravate(); break;
   }
@@ -80,7 +80,7 @@ int gethand()
 int ring_eat(int hand)
 {
   if (cur_ring[hand]==NULL) return 0;
-  switch (cur_ring[hand]->o_which)
+  switch (cur_ring[hand]->which)
   {
   case R_REGEN: return 2;
   case R_SUSTSTR: case R_SUSTARM: case R_PROTECT: case R_ADDSTR: case R_STEALTH: return 1;
@@ -97,12 +97,12 @@ char *ring_num(ITEM *obj)
 {
   extern char *ring_buf;
 
-  if (!(obj->o_flags&ISKNOW) && !wizard) return "";
-  switch (obj->o_which)
+  if (!(obj->flags&ISKNOW) && !wizard) return "";
+  switch (obj->which)
   {
   case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
     ring_buf[0] = ' ';
-    strcpy(&ring_buf[1], num(obj->o_ac, 0, RING));
+    strcpy(&ring_buf[1], num(obj->armor_class, 0, RING));
     break;
 
   default: return "";
@@ -112,7 +112,7 @@ char *ring_num(ITEM *obj)
 
 int is_ring_on_hand(int hand, int ring)
 {
-  return (cur_ring[hand] != NULL && cur_ring[hand]->o_which == ring);
+  return (cur_ring[hand] != NULL && cur_ring[hand]->which == ring);
 }
 
 int is_wearing_ring(int ring)

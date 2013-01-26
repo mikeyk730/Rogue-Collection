@@ -89,7 +89,7 @@ void do_rooms()
 
       if ((gold = create_item())!=NULL)
       {
-        gold->o_goldval = rp->r_goldval = GOLDCALC;
+        gold->gold_value = rp->r_goldval = GOLDCALC;
         while (1)
         {
           byte gch;
@@ -98,10 +98,10 @@ void do_rooms()
           gch = get_tile(rp->r_gold.y, rp->r_gold.x);
           if (isfloor(gch)) break;
         }
-        bcopy(gold->o_pos, rp->r_gold);
-        gold->o_flags = ISMANY;
-        gold->o_group = GOLDGRP;
-        gold->o_type = GOLD;
+        bcopy(gold->pos, rp->r_gold);
+        gold->flags = ISMANY;
+        gold->group = GOLDGRP;
+        gold->type = GOLD;
         attach_item(&lvl_obj, gold);
         set_tile(rp->r_gold.y, rp->r_gold.x, GOLD);
       }

@@ -30,11 +30,11 @@ void read_scroll()
 
   obj = get_item("read", SCROLL);
   if (obj==NULL) return;
-  if (obj->o_type!=SCROLL) {msg("there is nothing on it to read"); return;}
+  if (obj->type!=SCROLL) {msg("there is nothing on it to read"); return;}
   ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
   //Calculate the effect it has on the poor guy.
   if (obj==cur_weapon) cur_weapon = NULL;
-  switch (obj->o_which)
+  switch (obj->which)
   {
   case S_CONFUSE: //Scroll of monster confusion.  Give him that power.
     player.t_flags |= CANHUH;
@@ -44,8 +44,8 @@ void read_scroll()
   case S_ARMOR:
     if (cur_armor!=NULL)
     {
-      cur_armor->o_ac--;
-      cur_armor->o_flags &= ~ISCURSED;
+      cur_armor->armor_class--;
+      cur_armor->flags &= ~ISCURSED;
       ifterse("your armor glows faintly", "your armor glows faintly for a moment");
     }
     break;
@@ -118,19 +118,19 @@ void read_scroll()
     ch = FALSE;
     for (ip = lvl_obj; ip!=NULL; ip = next(ip))
     {
-      if (ip->o_type==FOOD)
+      if (ip->type==FOOD)
       {
         ch = TRUE;
         standout();
-        mvaddch(ip->o_pos.y, ip->o_pos.x, FOOD);
+        mvaddch(ip->pos.y, ip->pos.x, FOOD);
         standend();
       }
       //as a bonus this will detect amulets as well
-      else if (ip->o_type==AMULET)
+      else if (ip->type==AMULET)
       {
         ch = TRUE;
         standout();
-        mvaddch(ip->o_pos.y, ip->o_pos.x, AMULET);
+        mvaddch(ip->pos.y, ip->pos.x, AMULET);
         standend();
       }
     }
@@ -150,13 +150,13 @@ void read_scroll()
     }
 
   case S_ENCH:
-    if (cur_weapon==NULL || cur_weapon->o_type!=WEAPON) msg("you feel a strange sense of loss");
+    if (cur_weapon==NULL || cur_weapon->type!=WEAPON) msg("you feel a strange sense of loss");
     else
     {
-      cur_weapon->o_flags &= ~ISCURSED;
-      if (rnd(2)==0) cur_weapon->o_hplus++;
-      else cur_weapon->o_dplus++;
-      ifterse("your %s glows blue", "your %s glows blue for a moment", w_names[cur_weapon->o_which]);
+      cur_weapon->flags &= ~ISCURSED;
+      if (rnd(2)==0) cur_weapon->hit_plus++;
+      else cur_weapon->damage_plus++;
+      ifterse("your %s glows blue", "your %s glows blue for a moment", w_names[cur_weapon->which]);
     }
     break;
 
@@ -165,10 +165,10 @@ void read_scroll()
     break;
 
   case S_REMOVE:
-    if (cur_armor!=NULL) cur_armor->o_flags &= ~ISCURSED;
-    if (cur_weapon!=NULL) cur_weapon->o_flags &= ~ISCURSED;
-    if (cur_ring[LEFT]!=NULL) cur_ring[LEFT]->o_flags &= ~ISCURSED;
-    if (cur_ring[RIGHT]!=NULL) cur_ring[RIGHT]->o_flags &= ~ISCURSED;
+    if (cur_armor!=NULL) cur_armor->flags &= ~ISCURSED;
+    if (cur_weapon!=NULL) cur_weapon->flags &= ~ISCURSED;
+    if (cur_ring[LEFT]!=NULL) cur_ring[LEFT]->flags &= ~ISCURSED;
+    if (cur_ring[RIGHT]!=NULL) cur_ring[RIGHT]->flags &= ~ISCURSED;
     ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
     break;
 
@@ -194,24 +194,24 @@ void read_scroll()
     //    whenever she sees one (not yet implemented)
     //
     //If he doesn't have a weapon I get to chortle again!
-    if (cur_weapon==NULL || cur_weapon->o_type!=WEAPON) msg(laugh, terse || expert?"":in_dist);
+    if (cur_weapon==NULL || cur_weapon->type!=WEAPON) msg(laugh, terse || expert?"":in_dist);
     else
     {
       //You aren't allowed to doubly vorpalize a weapon.
-      if (cur_weapon->o_enemy!=0)
+      if (cur_weapon->enemy!=0)
       {
-        msg("your %s vanishes in a puff of smoke", w_names[cur_weapon->o_which]);
+        msg("your %s vanishes in a puff of smoke", w_names[cur_weapon->which]);
         detach_item(&player.t_pack, cur_weapon);
         discard_item(cur_weapon);
         cur_weapon = NULL;
       }
       else
       {
-        cur_weapon->o_enemy = pick_monster();
-        cur_weapon->o_hplus++;
-        cur_weapon->o_dplus++;
-        cur_weapon->o_charges = 1;
-        msg(flash, w_names[cur_weapon->o_which], terse || expert?"":intense);
+        cur_weapon->enemy = pick_monster();
+        cur_weapon->hit_plus++;
+        cur_weapon->damage_plus++;
+        cur_weapon->charges = 1;
+        msg(flash, w_names[cur_weapon->which], terse || expert?"":intense);
       }
     }
     break;
@@ -222,12 +222,12 @@ void read_scroll()
   status();
   //Get rid of the thing
   inpack--;
-  if (obj->o_count>1) obj->o_count--;
+  if (obj->count>1) obj->count--;
   else {
     detach_item(&player.t_pack, obj); 
     discardit = TRUE;
   }
-  call_it(s_know[obj->o_which], &s_guess[obj->o_which]);
+  call_it(s_know[obj->which], &s_guess[obj->which]);
   if (discardit) 
     discard_item(obj);
 }

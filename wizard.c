@@ -36,36 +36,36 @@ void whatis()
     mpos = 0;
   }
   else break;
-  switch (obj->o_type)
+  switch (obj->type)
   {
   case SCROLL:
-    s_know[obj->o_which] = TRUE;
-    *s_guess[obj->o_which] = 0;
+    s_know[obj->which] = TRUE;
+    *s_guess[obj->which] = 0;
     break;
 
   case POTION:
-    p_know[obj->o_which] = TRUE;
-    *p_guess[obj->o_which] = 0;
+    p_know[obj->which] = TRUE;
+    *p_guess[obj->which] = 0;
     break;
 
   case STICK:
-    ws_know[obj->o_which] = TRUE;
-    obj->o_flags |= ISKNOW;
-    *ws_guess[obj->o_which] = 0;
+    ws_know[obj->which] = TRUE;
+    obj->flags |= ISKNOW;
+    *ws_guess[obj->which] = 0;
     break;
 
   case WEAPON: case ARMOR:
-    obj->o_flags |= ISKNOW;
+    obj->flags |= ISKNOW;
     break;
 
   case RING:
-    r_know[obj->o_which] = TRUE;
-    obj->o_flags |= ISKNOW;
-    *r_guess[obj->o_which] = 0;
+    r_know[obj->which] = TRUE;
+    obj->flags |= ISKNOW;
+    *r_guess[obj->which] = 0;
     break;
   }
   //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
-  if (obj->o_enemy) obj->o_flags |= ISREVEAL;
+  if (obj->enemy) obj->flags |= ISREVEAL;
   msg(inv_name(obj, FALSE));
 }
 
@@ -80,57 +80,57 @@ void create_obj()
   msg("type of item: ");
   switch (readchar())
   {
-  case '!': obj->o_type = POTION; limit=MAXPOTIONS-1; break;
-  case '?': obj->o_type = SCROLL; limit=MAXSCROLLS-1; break;
-  case '/': obj->o_type = STICK; limit=MAXSTICKS-1; break;
-  case '=': obj->o_type = RING; limit=MAXRINGS-1; break;
-  case ')': obj->o_type = WEAPON; limit=MAXWEAPONS-1; break;
-  case ']': obj->o_type = ARMOR; limit=MAXARMORS-1; break;
-  case ',': obj->o_type = AMULET; limit=0; break;
-  default: obj->o_type = FOOD; limit=1; break;
+  case '!': obj->type = POTION; limit=MAXPOTIONS-1; break;
+  case '?': obj->type = SCROLL; limit=MAXSCROLLS-1; break;
+  case '/': obj->type = STICK; limit=MAXSTICKS-1; break;
+  case '=': obj->type = RING; limit=MAXRINGS-1; break;
+  case ')': obj->type = WEAPON; limit=MAXWEAPONS-1; break;
+  case ']': obj->type = ARMOR; limit=MAXARMORS-1; break;
+  case ',': obj->type = AMULET; limit=0; break;
+  default: obj->type = FOOD; limit=1; break;
   }
   mpos = 0;
-  msg("which %c do you want? (0-%x)", obj->o_type, limit);
-  obj->o_which = (isdigit((ch = readchar()))?ch-'0':ch-'a'+10);
-  obj->o_group = 0;
-  obj->o_count = 1;
-  obj->o_damage = obj->o_hurldmg = "0d0";
+  msg("which %c do you want? (0-%x)", obj->type, limit);
+  obj->which = (isdigit((ch = readchar()))?ch-'0':ch-'a'+10);
+  obj->group = 0;
+  obj->count = 1;
+  obj->damage = obj->throw_damage = "0d0";
   mpos = 0;
-  if (obj->o_type==WEAPON || obj->o_type==ARMOR)
+  if (obj->type==WEAPON || obj->type==ARMOR)
   {
     msg("blessing? (+,-,n)");
     bless = readchar();
     mpos = 0;
-    if (bless=='-') obj->o_flags |= ISCURSED;
-    if (obj->o_type==WEAPON)
+    if (bless=='-') obj->flags |= ISCURSED;
+    if (obj->type==WEAPON)
     {
-      init_weapon(obj, obj->o_which);
-      if (bless=='-') obj->o_hplus -= rnd(3)+1;
-      if (bless=='+') obj->o_hplus += rnd(3)+1;
+      init_weapon(obj, obj->which);
+      if (bless=='-') obj->hit_plus -= rnd(3)+1;
+      if (bless=='+') obj->hit_plus += rnd(3)+1;
     }
     else
     {
-      obj->o_ac = a_class[obj->o_which];
-      if (bless=='-') obj->o_ac += rnd(3)+1;
-      if (bless=='+') obj->o_ac -= rnd(3)+1;
+      obj->armor_class = a_class[obj->which];
+      if (bless=='-') obj->armor_class += rnd(3)+1;
+      if (bless=='+') obj->armor_class -= rnd(3)+1;
     }
   }
-  else if (obj->o_type==RING) switch (obj->o_which)
+  else if (obj->type==RING) switch (obj->which)
   {
   case R_PROTECT: case R_ADDSTR: case R_ADDHIT: case R_ADDDAM:
     msg("blessing? (+,-,n)");
     bless = readchar();
     mpos = 0;
-    if (bless=='-') obj->o_flags |= ISCURSED;
-    obj->o_ac = (bless=='-'?-1:rnd(2)+1);
+    if (bless=='-') obj->flags |= ISCURSED;
+    obj->armor_class = (bless=='-'?-1:rnd(2)+1);
     break;
 
   case R_AGGR: case R_TELEPORT:
-    obj->o_flags |= ISCURSED;
+    obj->flags |= ISCURSED;
     break;
   }
-  else if (obj->o_type==STICK) fix_stick(obj);
-  else if (obj->o_type==GOLD) {msg("how much?"); get_num(&obj->o_goldval);}
+  else if (obj->type==STICK) fix_stick(obj);
+  else if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
   add_pack(obj, FALSE);
 }
 

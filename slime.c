@@ -69,7 +69,7 @@ bool plop_monster(int r, int c, coord *cp)
       //Or anything else nasty
       if (step_ok(ch = display_character(y, x)))
       {
-        if (ch==SCROLL && find_obj(y, x)->o_which==S_SCARE) continue;
+        if (ch==SCROLL && find_obj(y, x)->which==S_SCARE) continue;
         if (rnd(++appear)==0) {cp->y = y; cp->x = x;}
       }
     }

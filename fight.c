@@ -44,18 +44,18 @@ int fight(coord *mp, char mn, ITEM *weap, bool thrown)
   }
   mname = monsters[mn-'A'].m_name;
   if (on(player, ISBLIND)) mname = it;
-  if (roll_em(&player, tp, weap, thrown) || (weap && weap->o_type==POTION))
+  if (roll_em(&player, tp, weap, thrown) || (weap && weap->type==POTION))
   {
     bool did_huh = FALSE;
 
     if (thrown) thunk(weap, mname, "hits", "hit");
     else hit(NULL, mname);
-    if (weap && weap->o_type==POTION)
+    if (weap && weap->type==POTION)
     {
       th_effect(weap, tp);
       if (!thrown)
       {
-        if (weap->o_count>1) weap->o_count--;
+        if (weap->count>1) weap->count--;
         else {detach_item(&player.t_pack, weap); discard_item(weap);}
         cur_weapon = NULL;
       }
@@ -96,9 +96,9 @@ void attack(AGENT *mp)
     {
 
     case 'A': //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-      if (cur_armor!=NULL && cur_armor->o_ac<9 && cur_armor->o_which!=LEATHER)
+      if (cur_armor!=NULL && cur_armor->armor_class<9 && cur_armor->which!=LEATHER)
         if (is_wearing_ring(R_SUSTARM)) msg("the rust vanishes instantly");
-        else {msg("your armor weakens, oh my!"); cur_armor->o_ac++;}
+        else {msg("your armor weakens, oh my!"); cur_armor->armor_class++;}
         break;
 
     case 'I': //When an Ice Monster hits you, you get unfrozen faster
@@ -164,14 +164,14 @@ void attack(AGENT *mp)
         {
           remove_mons(&mp->t_pos, mp, FALSE);
           inpack--;
-          if (steal->o_count>1 && steal->o_group==0)
+          if (steal->count>1 && steal->group==0)
           {
             int oc;
 
-            oc = steal->o_count--;
-            steal->o_count = 1;
+            oc = steal->count--;
+            steal->count = 1;
             msg(she_stole, inv_name(steal, TRUE));
-            steal->o_count = oc;
+            steal->count = oc;
           }
           else {detach_item(&player.t_pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
         }
@@ -239,31 +239,31 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   if (weap==NULL) {cp = att->s_dmg; dplus = 0; hplus = 0;}
   else
   {
-    hplus = weap->o_hplus;
-    dplus = weap->o_dplus;
+    hplus = weap->hit_plus;
+    dplus = weap->damage_plus;
     //Check for vorpally enchanted weapon
-    if (thdef->t_type==weap->o_enemy) {hplus += 4; dplus += 4;}
+    if (thdef->t_type==weap->enemy) {hplus += 4; dplus += 4;}
     if (weap==cur_weapon)
     {
-      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->o_ac;
-      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->o_ac;
-      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->o_ac;
+      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->armor_class;
+      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->armor_class;
+      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->armor_class;
       else if (is_ring_on_hand(RIGHT, R_ADDHIT))
-        hplus += cur_ring[RIGHT]->o_ac;
+        hplus += cur_ring[RIGHT]->armor_class;
     }
-    cp = weap->o_damage;
-    if (hurl && (weap->o_flags&ISMISL) && cur_weapon!=NULL && cur_weapon->o_which==weap->o_launch)
+    cp = weap->damage;
+    if (hurl && (weap->flags&ISMISL) && cur_weapon!=NULL && cur_weapon->which==weap->launcher)
     {
-      cp = weap->o_hurldmg;
-      hplus += cur_weapon->o_hplus;
-      dplus += cur_weapon->o_dplus;
+      cp = weap->throw_damage;
+      hplus += cur_weapon->hit_plus;
+      dplus += cur_weapon->damage_plus;
     }
     //Drain a staff of striking
-    if (weap->o_type==STICK && weap->o_which==WS_HIT && --weap->o_charges<0)
+    if (weap->type==STICK && weap->which==WS_HIT && --weap->charges<0)
     {
-      cp = weap->o_damage = "0d0";
-      weap->o_hplus = weap->o_dplus = 0;
-      weap->o_charges = 0;
+      cp = weap->damage = "0d0";
+      weap->hit_plus = weap->damage_plus = 0;
+      weap->charges = 0;
     }
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
@@ -271,9 +271,9 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   def_arm = def->s_arm;
   if (def==&player.t_stats)
   {
-    if (cur_armor!=NULL) def_arm = cur_armor->o_ac;
-    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->o_ac;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->o_ac;
+    if (cur_armor!=NULL) def_arm = cur_armor->armor_class;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->armor_class;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->armor_class;
   }
   for (;;)
   {
@@ -355,8 +355,8 @@ int save(int which)
 {
   if (which==VS_MAGIC)
   {
-    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= cur_ring[LEFT]->o_ac;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= cur_ring[RIGHT]->o_ac;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= cur_ring[LEFT]->armor_class;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= cur_ring[RIGHT]->armor_class;
   }
   return save_throw(which, &player);
 }
@@ -399,7 +399,7 @@ void raise_level()
 //thunk: A missile hit or missed a monster
 void thunk(ITEM *weap, char *mname, char *does, char *did)
 {
-  if (weap->o_type==WEAPON) addmsg("the %s %s ", w_names[weap->o_which], does);
+  if (weap->type==WEAPON) addmsg("the %s %s ", w_names[weap->which], does);
   else addmsg("you %s ", did);
   if (on(player, ISBLIND)) msg(it);
   else msg("the %s", mname);
@@ -414,7 +414,7 @@ void remove_mons(coord *mp, AGENT *tp, bool waskill)
   for (obj = tp->t_pack; obj!=NULL; obj = nexti)
   {
     nexti = next(obj);
-    bcopy(obj->o_pos, tp->t_pos);
+    bcopy(obj->pos, tp->t_pos);
     detach_item(&tp->t_pack, obj);
     if (waskill)
       fall(obj, FALSE);
@@ -432,10 +432,10 @@ void remove_mons(coord *mp, AGENT *tp, bool waskill)
 //is_magic: Returns true if an object radiates magic
 is_magic(ITEM *obj)
 {
-  switch (obj->o_type)
+  switch (obj->type)
   {
-  case ARMOR: return obj->o_ac!=a_class[obj->o_which];
-  case WEAPON: return obj->o_hplus!=0 || obj->o_dplus!=0;
+  case ARMOR: return obj->armor_class!=a_class[obj->which];
+  case WEAPON: return obj->hit_plus!=0 || obj->damage_plus!=0;
   case POTION: case SCROLL: case STICK: case RING: case AMULET: return TRUE;
   }
   return FALSE;
@@ -459,9 +459,9 @@ void killed(AGENT *tp, bool pr)
       ITEM *gold;
 
       if ((gold = create_item())==NULL) return;
-      gold->o_type = GOLD;
-      gold->o_goldval = GOLDCALC;
-      if (save(VS_MAGIC)) gold->o_goldval += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
+      gold->type = GOLD;
+      gold->gold_value = GOLDCALC;
+      if (save(VS_MAGIC)) gold->gold_value += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
       attach_item(&tp->t_pack, gold);
 
       break;

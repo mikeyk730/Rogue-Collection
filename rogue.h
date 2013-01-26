@@ -301,22 +301,24 @@ struct stats
 struct _item
 {
   struct _item *l_next, *l_prev; //Next pointer in link
-  int o_type;                    //What kind of object it is
-  coord o_pos;                   //Where it lives on the screen
-  char *o_text;                  //What it says if you read it
-  char o_launch;                 //What you need to launch it
-  char *o_damage;                //Damage if used like sword
-  char *o_hurldmg;               //Damage if thrown
-  int o_count;                   //Count for plural objects
-  int o_which;                   //Which object of a type it is
-  int o_hplus;                   //Plusses to hit
-  int o_dplus;                   //Plusses to damage
-  short o_ac;                    //Armor class
-  short o_flags;                 //Information about objects
-  char o_enemy;                  //If it is enchanted, who it hates
-  int o_group;                   //Group number for this object
+  int type;                      //What kind of object it is
+  coord pos;                     //Where it lives on the screen
+  char launcher;                 //What you need to launch it
+  char *damage;                  //Damage if used like sword
+  char *throw_damage;            //Damage if thrown
+  int count;                     //Count for plural objects
+  int which;                     //Which object of a type it is
+  int hit_plus;                  //Plusses to hit
+  int damage_plus;               //Plusses to damage
+  short armor_class;             //Armor class
+  short flags;                   //Information about objects
+  char enemy;                    //If it is enchanted, who it hates
+  int group;                     //Group number for this object
 };
 typedef struct _item ITEM;
+
+#define charges      armor_class
+#define gold_value   armor_class
 
 //Structure for monsters and player
 struct _agent
@@ -335,9 +337,6 @@ struct _agent
 };
 
 typedef struct _agent AGENT;
-
-#define o_charges   o_ac
-#define o_goldval   o_ac
 
 //Array containing information on all the various types of monsters
 struct monster

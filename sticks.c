@@ -24,14 +24,14 @@
 //fix_stick: Set up a new stick
 void fix_stick(ITEM *cur)
 {
-  if (strcmp(ws_type[cur->o_which], "staff")==0) cur->o_damage = "2d3";
-  else cur->o_damage = "1d1";
-  cur->o_hurldmg = "1d1";
-  cur->o_charges = 3+rnd(5);
-  switch (cur->o_which)
+  if (strcmp(ws_type[cur->which], "staff")==0) cur->damage = "2d3";
+  else cur->damage = "1d1";
+  cur->throw_damage = "1d1";
+  cur->charges = 3+rnd(5);
+  switch (cur->which)
   {
-  case WS_HIT: cur->o_hplus = 100; cur->o_dplus = 3; cur->o_damage = "1d8"; break;
-  case WS_LIGHT: cur->o_charges = 10+rnd(10); break;
+  case WS_HIT: cur->hit_plus = 100; cur->damage_plus = 3; cur->damage = "1d8"; break;
+  case WS_LIGHT: cur->charges = 10+rnd(10); break;
   }
 }
 
@@ -45,13 +45,13 @@ void do_zap()
   int which_one;
 
   if ((obj = get_item("zap with", STICK))==NULL) return;
-  which_one = obj->o_which;
-  if (obj->o_type!=STICK)
+  which_one = obj->which;
+  if (obj->type!=STICK)
   {
-    if (obj->o_enemy && obj->o_charges) which_one = MAXSTICKS;
+    if (obj->enemy && obj->charges) which_one = MAXSTICKS;
     else {msg("you can't zap with that!"); after = FALSE; return;}
   }
-  if (obj->o_charges==0) {msg("nothing happens"); return;}
+  if (obj->charges==0) {msg("nothing happens"); return;}
   switch (which_one)
   {
   case WS_LIGHT: //Ready Kilowat wand.  Light up the room
@@ -92,7 +92,7 @@ void do_zap()
         if (monster=='F') player.t_flags &= ~ISHELD;
         if (which_one==MAXSTICKS)
         {
-          if (monster==obj->o_enemy)
+          if (monster==obj->enemy)
           {
             msg("the %s vanishes in a puff of smoke", monsters[monster-'A'].m_name);
             killed(tp, FALSE);
@@ -161,15 +161,15 @@ void do_zap()
       ITEM bolt;
 
       ws_know[WS_MISSILE] = TRUE;
-      bolt.o_type = '*';
-      bolt.o_hurldmg = "1d8";
-      bolt.o_hplus = 1000;
-      bolt.o_dplus = 1;
-      bolt.o_flags = ISMISL;
-      if (cur_weapon!=NULL) bolt.o_launch = cur_weapon->o_which;
+      bolt.type = '*';
+      bolt.throw_damage = "1d8";
+      bolt.hit_plus = 1000;
+      bolt.damage_plus = 1;
+      bolt.flags = ISMISL;
+      if (cur_weapon!=NULL) bolt.launcher = cur_weapon->which;
       do_motion(&bolt, delta.y, delta.x);
-      if ((tp = monster_at(bolt.o_pos.y, bolt.o_pos.x))!=NULL && !save_throw(VS_MAGIC, tp))
-        hit_monster(bolt.o_pos.y, bolt.o_pos.x, &bolt);
+      if ((tp = monster_at(bolt.pos.y, bolt.pos.x))!=NULL && !save_throw(VS_MAGIC, tp))
+        hit_monster(bolt.pos.y, bolt.pos.x, &bolt);
       else msg("the missile vanishes with a puff of smoke");
 
       break;
@@ -180,8 +180,8 @@ void do_zap()
     delta.x += player.t_pos.x;
     if ((tp = monster_at(delta.y, delta.x))!=NULL)
     {
-      if (rnd(20)==0) {obj->o_damage = "3d8"; obj->o_dplus = 9;}
-      else {obj->o_damage = "2d8"; obj->o_dplus = 4;}
+      if (rnd(20)==0) {obj->damage = "3d8"; obj->damage_plus = 9;}
+      else {obj->damage = "2d8"; obj->damage_plus = 4;}
       fight(&delta, tp->t_type, obj, FALSE);
     }
     break;
@@ -219,7 +219,7 @@ void do_zap()
 
   default: debug("what a bizarre schtick!"); break;
   }
-  if (--obj->o_charges<0) obj->o_charges = 0;
+  if (--obj->charges<0) obj->charges = 0;
 }
 
 //drain: Do drain hit points from player schtick
@@ -272,11 +272,11 @@ void fire_bolt(coord *start, coord *dir, char *name)
   bool is_frost;
 
   is_frost = (strcmp(name, "frost")==0);
-  bolt.o_type = WEAPON;
-  bolt.o_which = FLAME;
-  bolt.o_damage = bolt.o_hurldmg = "6d6";
-  bolt.o_hplus = 30;
-  bolt.o_dplus = 0;
+  bolt.type = WEAPON;
+  bolt.which = FLAME;
+  bolt.damage = bolt.throw_damage = "6d6";
+  bolt.hit_plus = 30;
+  bolt.damage_plus = 0;
   w_names[FLAME] = name;
   switch (dir->y+dir->x)
   {
@@ -314,7 +314,7 @@ void fire_bolt(coord *start, coord *dir, char *name)
         if (tp->t_oldch!='@') tp->t_oldch = get_tile(pos.y, pos.x);
         if (!save_throw(VS_MAGIC, tp) || is_frost)
         {
-          bolt.o_pos = pos;
+          bolt.pos = pos;
           used = TRUE;
           if (tp->t_type=='D' && strcmp(name, "flame")==0) msg("the flame bounces off the dragon");
           else
@@ -364,7 +364,7 @@ char *charge_str(ITEM *obj)
 {
   static char buf[20];
 
-  if (!(obj->o_flags&ISKNOW) && !wizard) buf[0] = '\0';
-  else sprintf(buf, " [%d charges]", obj->o_charges);
+  if (!(obj->flags&ISKNOW) && !wizard) buf[0] = '\0';
+  else sprintf(buf, " [%d charges]", obj->charges);
   return buf;
 }
