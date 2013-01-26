@@ -27,8 +27,8 @@ void doctor()
     if (quiet+(lv<<1)>20) pstats.s_hpt++;
   }
   else if (quiet>=3) pstats.s_hpt += rnd(lv-7)+1;
-  if (ISRING(LEFT, R_REGEN)) pstats.s_hpt++;
-  if (ISRING(RIGHT, R_REGEN)) pstats.s_hpt++;
+  if (is_ring_on_hand(LEFT, R_REGEN)) pstats.s_hpt++;
+  if (is_ring_on_hand(RIGHT, R_REGEN)) pstats.s_hpt++;
   if (ohp!=pstats.s_hpt)
   {
     if (pstats.s_hpt>max_hp) pstats.s_hpt = max_hp;
@@ -66,7 +66,7 @@ void unsee()
 {
   THING *th;
 
-  for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && see_monst(th) && th->t_oldch!='@') mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
+  for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && can_see_monst(th) && th->t_oldch!='@') mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
   player.t_flags &= ~CANSEE;
 }
 

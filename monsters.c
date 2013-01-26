@@ -61,7 +61,7 @@ void new_monster(THING *tp, byte type, coord *cp)
   tp->t_flags = mp->m_flags;
   tp->t_turn = TRUE;
   tp->t_pack = NULL;
-  if (ISWEARING(R_AGGR)) start_run(cp);
+  if (is_wearing_ring(R_AGGR)) start_run(cp);
   if (type=='F') tp->t_stats.s_dmg = f_damage;
   if (type=='X') switch (rnd(level>25?9:8))
   {
@@ -82,7 +82,7 @@ void f_restor()
 {
   struct monster *mp = &monsters['F'-'A'];
 
-  fung_hit = 0;
+  flytrap_hit = 0;
   strcpy(f_damage, mp->m_stats.s_dmg);
 }
 
@@ -113,7 +113,7 @@ void wanderer()
     i = rnd_room();
     if ((rp = &rooms[i])==proom) continue;
     rnd_pos(rp, &cp);
-  } while (!(rp!=proom && step_ok(winat(cp.y, cp.x))));
+  } while (!(rp!=proom && step_ok(display_character(cp.y, cp.x))));
   new_monster(tp, randmonster(TRUE), &cp);
   if (bailout) debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->t_type-'A'].m_name);
@@ -131,7 +131,7 @@ THING *wake_monster(int y, int x)
   if ((tp = monster_at(y, x))==NULL) return tp;
   ch = tp->t_type;
   //Every time he sees mean monster, it might start chasing him
-  if (!on(*tp, ISRUN) && rnd(3)!=0 && on(*tp, ISMEAN) && !on(*tp, ISHELD) && !ISWEARING(R_STEALTH))
+  if (!on(*tp, ISRUN) && rnd(3)!=0 && on(*tp, ISMEAN) && !on(*tp, ISHELD) && !is_wearing_ring(R_STEALTH))
   {
     tp->t_dest = &hero;
     tp->t_flags |= ISRUN;

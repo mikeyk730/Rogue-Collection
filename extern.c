@@ -321,7 +321,7 @@ int inpack = 0;        //Number of things in pack
 int total = 0;         //Total dynamic memory bytes
 int no_food = 0;       //Number of levels without food
 int count = 0;         //Number of times to repeat command
-int fung_hit = 0;      //Number of time fungi has hit
+int flytrap_hit = 0;   //Number of time flytrap has hit
 int quiet = 0;         //Number of quiet turns
 int food_left;         //Amount of food in hero's stomach
 int group = 2;         //Current group number

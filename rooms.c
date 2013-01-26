@@ -112,7 +112,10 @@ void do_rooms()
       {
         byte mch;
 
-        do {rnd_pos(rp, &mp); mch = winat(mp.y, mp.x);} while (!isfloor(mch));
+        do {
+          rnd_pos(rp, &mp); 
+          mch = display_character(mp.y, mp.x);
+        } while (!isfloor(mch));
         new_monster(tp, randmonster(FALSE), &mp);
         give_pack(tp);
       }
@@ -145,7 +148,8 @@ void vert(struct room *rp, int startx)
 {
   int y;
 
-  for (y = rp->r_pos.y+1; y<=rp->r_max.y+rp->r_pos.y-1; y++) set_tile(y, startx, VWALL);
+  for (y = rp->r_pos.y+1; y<=rp->r_max.y+rp->r_pos.y-1; y++)
+    set_tile(y, startx, VWALL);
 }
 
 //horiz: Draw a horizontal line
@@ -153,7 +157,8 @@ void horiz(struct room *rp, int starty)
 {
   int x;
 
-  for (x = rp->r_pos.x; x<=rp->r_pos.x+rp->r_max.x-1; x++) set_tile(starty, x, HWALL);
+  for (x = rp->r_pos.x; x<=rp->r_pos.x+rp->r_max.x-1; x++) 
+    set_tile(starty, x, HWALL);
 }
 
 //rnd_pos: Pick a random spot in a room
@@ -185,7 +190,7 @@ void enter_room(coord *cp)
       {
         //Displaying monsters is all handled in the chase code now
         tp = monster_at(y, x);
-        if (tp==NULL || !see_monst(tp)) 
+        if (tp==NULL || !can_see_monst(tp)) 
           addch(get_tile(y, x));
         else {
           tp->t_oldch = get_tile(y,x); 

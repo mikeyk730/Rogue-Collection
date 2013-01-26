@@ -82,7 +82,7 @@ void do_zap()
 
       y = hero.y;
       x = hero.x;
-      while (step_ok(winat(y, x))) {y += delta.y; x += delta.x;}
+      while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
       if ((tp = monster_at(y, x))!=NULL)
       {
         byte omonst;
@@ -104,12 +104,12 @@ void do_zap()
 
           pp = tp->t_pack;
           detach(mlist, tp);
-          if (see_monst(tp)) mvaddch(y, x, get_tile(y, x));
+          if (can_see_monst(tp)) mvaddch(y, x, get_tile(y, x));
           oldch = tp->t_oldch;
           delta.y = y;
           delta.x = x;
           new_monster(tp, monster = rnd(26)+'A', &delta);
-          if (see_monst(tp)) mvaddch(y, x, monster);
+          if (can_see_monst(tp)) mvaddch(y, x, monster);
           tp->t_oldch = oldch;
           tp->t_pack = pp;
           ws_know[WS_POLYMORPH] |= (monster!=omonst);
@@ -122,18 +122,32 @@ void do_zap()
         }
         else
         {
-          if (see_monst(tp)) mvaddch(y, x, tp->t_oldch);
+          if (can_see_monst(tp)) mvaddch(y, x, tp->t_oldch);
           if (which_one==WS_TELAWAY)
           {
             tp->t_oldch = '@';
-            do {rm = rnd_room(); new_yx = tp->t_pos; rnd_pos(&rooms[rm], &new_yx);} while (!(isfloor(winat(new_yx.y, new_yx.x))));
+            do {
+              rm = rnd_room(); 
+              new_yx = tp->t_pos; 
+              rnd_pos(&rooms[rm], &new_yx);
+            } while (!(isfloor(display_character(new_yx.y, new_yx.x))));
             tp->t_pos = new_yx;
-            if (see_monst(tp)) mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
-            else if (on(player, SEEMONST)) {standout(); mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise); standend();}
+            if (can_see_monst(tp)) 
+              mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
+            else if (on(player, SEEMONST)) {
+              standout(); 
+              mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise); 
+              standend();
+            }
           }
-          else {tp->t_pos.y = hero.y+delta.y; tp->t_pos.x = hero.x+delta.x;} //it MUST BE at WS_TELTO
-          if (tp->t_type=='F') player.t_flags &= ~ISHELD;
-          if (tp->t_pos.y!=y || tp->t_pos.x!=x) tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
+          else {
+            tp->t_pos.y = hero.y+delta.y; 
+            tp->t_pos.x = hero.x+delta.x;
+          } //it MUST BE at WS_TELTO
+          if (tp->t_type=='F') 
+            player.t_flags &= ~ISHELD;
+          if (tp->t_pos.y!=y || tp->t_pos.x!=x)
+            tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
         }
         tp->t_dest = &hero;
         tp->t_flags |= ISRUN;
@@ -153,7 +167,8 @@ void do_zap()
       bolt.o_flags = ISMISL;
       if (cur_weapon!=NULL) bolt.o_launch = cur_weapon->o_which;
       do_motion(&bolt, delta.y, delta.x);
-      if ((tp = monster_at(bolt.o_pos.y, bolt.o_pos.x))!=NULL && !save_throw(VS_MAGIC, tp)) hit_monster(bolt.o_pos.y, bolt.o_pos.x, &bolt);
+      if ((tp = monster_at(bolt.o_pos.y, bolt.o_pos.x))!=NULL && !save_throw(VS_MAGIC, tp))
+        hit_monster(bolt.o_pos.y, bolt.o_pos.x, &bolt);
       else msg("the missile vanishes with a puff of smoke");
 
       break;
@@ -173,7 +188,7 @@ void do_zap()
   case WS_HASTE_M: case WS_SLOW_M:
     y = hero.y;
     x = hero.x;
-    while (step_ok(winat(y, x))) {y += delta.y; x += delta.x;}
+    while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
     if ((tp = monster_at(y, x))!=NULL)
     {
       if (which_one==WS_HASTE_M)
@@ -222,8 +237,15 @@ void drain()
   else corp = NULL;
   inpass = (proom->r_flags&ISGONE);
   dp = drainee;
-  for (mp = mlist; mp!=NULL; mp = next(mp)) if (mp->t_room==proom || mp->t_room==corp || (inpass && get_tile(mp->t_pos.y, mp->t_pos.x)==DOOR && &passages[get_flags(mp->t_pos.y, mp->t_pos.x)&F_PNUM]==proom)) *dp++ = mp;
-  if ((cnt = dp-drainee)==0) {msg("you have a tingling feeling"); return;}
+  for (mp = mlist; mp!=NULL; mp = next(mp)){
+    if (mp->t_room==proom || mp->t_room==corp || (inpass && get_tile(mp->t_pos.y, mp->t_pos.x)==DOOR && &passages[get_flags(mp->t_pos.y, mp->t_pos.x)&F_PNUM]==proom)) {
+      *dp++ = mp;
+    }
+  }
+  if ((cnt = dp-drainee)==0) {
+    msg("you have a tingling feeling"); 
+    return;
+  }
   *dp = NULL;
   pstats.s_hpt /= 2;
   cnt = pstats.s_hpt/cnt+1;
@@ -231,7 +253,7 @@ void drain()
   for (dp = drainee; *dp; dp++)
   {
     mp = *dp;
-    if ((mp->t_stats.s_hpt -= cnt)<=0) killed(mp, see_monst(mp));
+    if ((mp->t_stats.s_hpt -= cnt)<=0) killed(mp, can_see_monst(mp));
     else start_run(&mp->t_pos);
   }
 }
@@ -269,7 +291,7 @@ void fire_bolt(coord *start, coord *dir, char *name)
   {
     pos.y += dir->y;
     pos.x += dir->x;
-    ch = winat(pos.y, pos.x);
+    ch = display_character(pos.y, pos.x);
     spotpos[i].s_pos = pos;
     if ((spotpos[i].s_under = mvinch(pos.y, pos.x))==dirch) spotpos[i].s_under = 0;
     switch (ch)

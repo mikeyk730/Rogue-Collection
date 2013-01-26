@@ -55,11 +55,9 @@ int DISTANCE(int y1, int x1, int y2, int x2);
 
 int _ce(coord *a, coord *b);
 
-int INDEX(int y, int x);
-
 int offmap(int y, int x);
 
-int winat(int y, int x);
+int display_character(int y, int x);
 
 //search: Player gropes about him to find hidden things.
 void search();

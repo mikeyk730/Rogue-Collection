@@ -123,7 +123,7 @@ void put_things()
         cur->o_ac = 11;
         cur->o_type = AMULET;
         //Put it somewhere
-        do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(winat(tp.y, tp.x)));
+        do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(display_character(tp.y, tp.x)));
         set_tile(tp.y, tp.x, AMULET);
         bcopy(cur->o_pos, tp);
       }

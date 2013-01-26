@@ -44,7 +44,7 @@ void quaff()
       char *sick = "you feel %s sick.";
 
       p_know[P_POISON] = TRUE;
-      if (!ISWEARING(R_SUSTSTR)) {chg_str(-(rnd(3)+1)); msg(sick, "very");}
+      if (!is_wearing_ring(R_SUSTSTR)) {chg_str(-(rnd(3)+1)); msg(sick, "very");}
       else msg(sick, "momentarily");
 
       break;
@@ -139,11 +139,11 @@ void quaff()
     break;
 
   case P_RESTORE:
-    if (ISRING(LEFT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[LEFT]->o_ac);
-    if (ISRING(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[RIGHT]->o_ac);
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[LEFT]->o_ac);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[RIGHT]->o_ac);
     if (pstats.s_str<max_stats.s_str) pstats.s_str = max_stats.s_str;
-    if (ISRING(LEFT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[LEFT]->o_ac);
-    if (ISRING(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[RIGHT]->o_ac);
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[LEFT]->o_ac);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[RIGHT]->o_ac);
     msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
     break;
 
@@ -179,7 +179,7 @@ void invis_on()
   THING *th;
 
   player.t_flags |= CANSEE;
-  for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && see_monst(th))
+  for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && can_see_monst(th))
   {
     mvaddch(th->t_pos.y, th->t_pos.x, th->t_disguise);
   }
@@ -196,10 +196,10 @@ bool turn_see(bool turn_off)
   for (mp = mlist; mp!=NULL; mp = next(mp))
   {
     move(mp->t_pos.y, mp->t_pos.x);
-    can_see = (see_monst(mp) || (was_there = curch())==mp->t_type);
+    can_see = (can_see_monst(mp) || (was_there = curch())==mp->t_type);
     if (turn_off)
     {
-      if (!see_monst(mp) && mp->t_oldch!='@') addch(mp->t_oldch);
+      if (!can_see_monst(mp) && mp->t_oldch!='@') addch(mp->t_oldch);
     }
     else
     {

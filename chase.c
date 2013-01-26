@@ -122,7 +122,7 @@ over:
     if (oroom!=th->t_room) th->t_dest = find_dest(th);
     th->t_pos = ch_ret;
   }
-  if (see_monst(th))
+  if (can_see_monst(th))
   {
     if (get_flags(ch_ret.y, ch_ret.x)&F_PASS) standout();
     th->t_oldch = mvinch(ch_ret.y, ch_ret.x);
@@ -141,7 +141,7 @@ over:
 
 //see_monst: Return TRUE if the hero can see the monster
 
-int see_monst(THING *mp)
+int can_see_monst(THING *mp)
 {
   if (on(player, ISBLIND)) return FALSE;
   if (on(*mp, ISINVIS) && !on(player, CANSEE)) return FALSE;
@@ -211,7 +211,7 @@ void chase(THING *tp, coord *ee)
         tryp.x = x;
         tryp.y = y;
         if (offmap(y, x) || !diag_ok(er, &tryp)) continue;
-        ch = winat(y, x);
+        ch = display_character(y, x);
         if (step_ok(ch))
         {
           //If it is a scroll, it might be a scare monster scroll so we need to look it up to see what type it is.
@@ -281,7 +281,7 @@ coord *find_dest(THING *tp)
   int prob;
   struct room *rp;
 
-  if ((prob = monsters[tp->t_type-'A'].m_carry)<=0 || tp->t_room==proom || see_monst(tp)) return &hero;
+  if ((prob = monsters[tp->t_type-'A'].m_carry)<=0 || tp->t_room==proom || can_see_monst(tp)) return &hero;
   rp = tp->t_room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))
   {

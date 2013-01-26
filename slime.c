@@ -44,7 +44,7 @@ int new_slime(THING *tp)
     //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.
     for (y = ty-1; y<=ty+1; y++)
       for (x = tx-1; x<=tx+1; x++)
-        if (winat(y, x)=='S' && (ntp = monster_at(y, x)))
+        if (display_character(y, x)=='S' && (ntp = monster_at(y, x)))
         {
           if (ntp->t_flags&ISFLY) continue; //Already done this one
           if (new_slime(ntp)) {y = ty+2; x = tx+2;}
@@ -67,7 +67,7 @@ bool plop_monster(int r, int c, coord *cp)
       //Don't put a monster on top of the player.
       if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
       //Or anything else nasty
-      if (step_ok(ch = winat(y, x)))
+      if (step_ok(ch = display_character(y, x)))
       {
         if (ch==SCROLL && find_obj(y, x)->o_which==S_SCARE) continue;
         if (rnd(++appear)==0) {cp->y = y; cp->x = x;}

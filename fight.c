@@ -96,7 +96,7 @@ void attack(THING *mp)
 
     case 'A': //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
       if (cur_armor!=NULL && cur_armor->o_ac<9 && cur_armor->o_which!=LEATHER)
-        if (ISWEARING(R_SUSTARM)) msg("the rust vanishes instantly");
+        if (is_wearing_ring(R_SUSTARM)) msg("the rust vanishes instantly");
         else {msg("your armor weakens, oh my!"); cur_armor->o_ac++;}
         break;
 
@@ -106,7 +106,7 @@ void attack(THING *mp)
 
     case 'R': //Rattlesnakes have poisonous bites
       if (!save(VS_POISON))
-        if (!ISWEARING(R_SUSTSTR)) {chg_str(-1); msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));}
+        if (!is_wearing_ring(R_SUSTSTR)) {chg_str(-1); msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));}
         else msg("a bite momentarily weakens you");
         break;
 
@@ -131,9 +131,9 @@ void attack(THING *mp)
       }
       break;
 
-    case 'F': //Violet fungi stops the poor guy from moving
+    case 'F': //Flytrap stops the poor guy from moving
       player.t_flags |= ISHELD;
-      sprintf(mp->t_stats.s_dmg, "%dd1", ++fung_hit);
+      sprintf(mp->t_stats.s_dmg, "%dd1", ++flytrap_hit);
       break;
 
     case 'L': //Leprechaun steals some gold
@@ -185,7 +185,7 @@ void attack(THING *mp)
   {
     if (mp->t_type=='F')
     {
-      pstats.s_hpt -= fung_hit;
+      pstats.s_hpt -= flytrap_hit;
       if (pstats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
     }
     miss(mname, NULL);
@@ -244,10 +244,10 @@ bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
     if (thdef->t_type==weap->o_enemy) {hplus += 4; dplus += 4;}
     if (weap==cur_weapon)
     {
-      if (ISRING(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->o_ac;
-      else if (ISRING(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->o_ac;
-      if (ISRING(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->o_ac;
-      else if (ISRING(RIGHT, R_ADDHIT))
+      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->o_ac;
+      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->o_ac;
+      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->o_ac;
+      else if (is_ring_on_hand(RIGHT, R_ADDHIT))
         hplus += cur_ring[RIGHT]->o_ac;
     }
     cp = weap->o_damage;
@@ -271,8 +271,8 @@ bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
   if (def==&pstats)
   {
     if (cur_armor!=NULL) def_arm = cur_armor->o_ac;
-    if (ISRING(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->o_ac;
-    if (ISRING(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->o_ac;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->o_ac;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->o_ac;
   }
   for (;;)
   {
@@ -354,8 +354,8 @@ int save(int which)
 {
   if (which==VS_MAGIC)
   {
-    if (ISRING(LEFT, R_PROTECT)) which -= cur_ring[LEFT]->o_ac;
-    if (ISRING(RIGHT, R_PROTECT)) which -= cur_ring[RIGHT]->o_ac;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= cur_ring[LEFT]->o_ac;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= cur_ring[RIGHT]->o_ac;
   }
   return save_throw(which, &player);
 }
@@ -441,7 +441,7 @@ is_magic(THING *obj)
 void killed(THING *tp, bool pr)
 {
   pstats.s_exp += tp->t_stats.s_exp;
-  //If the monster was a violet fungi, un-hold him
+  //If the monster was a flytrap, un-hold him
   switch (tp->t_type)
   {
 

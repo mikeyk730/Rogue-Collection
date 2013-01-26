@@ -86,7 +86,7 @@ void do_motion(THING *obj, int ydelta, int xdelta)
     //Get the new position
     obj->o_pos.y += ydelta;
     obj->o_pos.x += xdelta;
-    if (step_ok(ch = winat(obj->o_pos.y, obj->o_pos.x)) && ch!=DOOR)
+    if (step_ok(ch = display_character(obj->o_pos.y, obj->o_pos.x)) && ch!=DOOR)
     {
       //It hasn't hit anything yet, so display it if alright.
       if (cansee(obj->o_pos.y, obj->o_pos.x))

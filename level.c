@@ -7,6 +7,11 @@
 byte *the_level = NULL;
 byte *the_flags = NULL;
 
+int INDEX(int y, int x)
+{
+  return ((x*(maxrow-1))+y-1);
+}
+
 void alloc_level()
 {
   the_level = malloc((MAXLINES-3)*MAXCOLS);

@@ -141,11 +141,11 @@ int teleport()
   coord c;
 
   mvaddch(hero.y, hero.x, get_tile(hero.y, hero.x));
-  do {rm = rnd_room(); rnd_pos(&rooms[rm], &c);} while (!(step_ok(winat(c.y, c.x))));
+  do {rm = rnd_room(); rnd_pos(&rooms[rm], &c);} while (!(step_ok(display_character(c.y, c.x))));
   if (&rooms[rm]!=proom) {leave_room(&hero); bcopy(hero, c); enter_room(&hero);}
   else {bcopy(hero, c); look(TRUE);}
   mvaddch(hero.y, hero.x, PLAYER);
-  //turn off ISHELD in case teleportation was done while fighting a Fungi
+  //turn off ISHELD in case teleportation was done while fighting a Flytrap
   if (on(player, ISHELD)) {player.t_flags &= ~ISHELD; f_restor();}
   no_move = 0;
   count = 0;

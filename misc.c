@@ -114,7 +114,7 @@ void look(bool wakeup)
       {
         if (wakeup) wake_monster(y, x);
         if (tp->t_oldch != ' ' || (!(rp->r_flags&ISDARK) && !on(player, ISBLIND))) tp->t_oldch = get_tile(y, x);
-        if (see_monst(tp)) ch = tp->t_disguise;
+        if (can_see_monst(tp)) ch = tp->t_disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
       if ((ch!=PASSAGE) && (fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();
@@ -208,9 +208,12 @@ void chg_str(int amt)
   if (amt==0) return;
   add_str(&pstats.s_str, amt);
   comp = pstats.s_str;
-  if (ISRING(LEFT, R_ADDSTR)) add_str(&comp, -cur_ring[LEFT]->o_ac);
-  if (ISRING(RIGHT, R_ADDSTR)) add_str(&comp, -cur_ring[RIGHT]->o_ac);
-  if (comp>max_stats.s_str) max_stats.s_str = comp;
+  if (is_ring_on_hand(LEFT, R_ADDSTR)) 
+    add_str(&comp, -cur_ring[LEFT]->o_ac);
+  if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
+    add_str(&comp, -cur_ring[RIGHT]->o_ac);
+  if (comp>max_stats.s_str) 
+    max_stats.s_str = comp;
 }
 
 //add_str: Perform the actual add, checking upper and lower bound
@@ -444,17 +447,12 @@ int _ce(coord *a, coord *b)
   return (a->x==b->x && a->y==b->y);
 }
 
-int INDEX(int y, int x)
-{
-  return ((x*(maxrow-1))+y-1);
-}
-
 int offmap(int y, int x)
 {
   return (y<1 || y>=maxrow || x<0 || x>=COLS);
 }
 
-int winat(int y, int x)
+int display_character(int y, int x)
 {
   return (monster_at(y, x) !=NULL ? monster_at(y, x)->t_disguise : get_tile(y, x));
 }

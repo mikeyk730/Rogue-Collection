@@ -56,7 +56,7 @@ over:
   //If you are running and the move does not get you anywhere stop running
   if (running && ce(hero, nh)) after = running = FALSE;
   fl = get_flags(nh.y, nh.x);
-  ch = winat(nh.y, nh.x);
+  ch = display_character(nh.y, nh.x);
   //When the hero is on the door do not allow him to run until he enters the room all the way
   if ((get_tile(hero.y, hero.x)==DOOR) && (ch==FLOOR)) running = FALSE;
   if (!(fl&F_REAL) && ch==FLOOR) {
@@ -141,7 +141,7 @@ void door_open(struct room *rp)
     for (j = rp->r_pos.y; j<rp->r_pos.y+rp->r_max.y; j++)
       for (k = rp->r_pos.x; k<rp->r_pos.x+rp->r_max.x; k++)
       {
-        ch = winat(j, k);
+        ch = display_character(j, k);
         if (isupper(ch))
         {
           item = wake_monster(j, k);
@@ -211,7 +211,7 @@ int be_trapped(coord *tc)
     {
       pstats.s_hpt -= roll(1, 4);
       if (pstats.s_hpt<=0) {msg("a poisoned dart killed you"); death('d');}
-      if (!ISWEARING(R_SUSTSTR) && !save(VS_POISON)) chg_str(-1);
+      if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) chg_str(-1);
       msg("a dart just hit you in the shoulder");
     }
     else msg("a dart whizzes by your ear and vanishes");
@@ -250,7 +250,7 @@ void rndmove(THING *who, coord *newmv)
   else if (!diag_ok(&who->t_pos, newmv)) goto bad;
   else
   {
-    ch = winat(y, x);
+    ch = display_character(y, x);
     if (!step_ok(ch)) goto bad;
     if (ch==SCROLL)
     {

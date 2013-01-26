@@ -110,12 +110,12 @@ char *ring_num(THING *obj)
   return ring_buf;
 }
 
-int ISRING(int h, int r)
+int is_ring_on_hand(int hand, int ring)
 {
-  return (cur_ring[h] != NULL && cur_ring[h]->o_which == r);
+  return (cur_ring[hand] != NULL && cur_ring[hand]->o_which == ring);
 }
 
-int ISWEARING(int r)
+int is_wearing_ring(int ring)
 {
-  return (ISRING(LEFT,r) || ISRING(RIGHT,r));
+  return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
 }
