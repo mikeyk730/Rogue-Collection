@@ -81,7 +81,7 @@ void quaff()
         if (is_magic(tp))
         {
           show = TRUE;
-          mvwaddch(hw, tp->o_pos.y, tp->o_pos.x, goodch(tp));
+          mvaddch(tp->o_pos.y, tp->o_pos.x, goodch(tp));
           p_know[P_TFIND] = TRUE;
         }
       }
@@ -92,7 +92,7 @@ void quaff()
           if (is_magic(tp))
           {
             show = TRUE;
-            mvwaddch(hw, th->t_pos.y, th->t_pos.x, MAGIC);
+            mvaddch(th->t_pos.y, th->t_pos.x, MAGIC);
             p_know[P_TFIND] = TRUE;
           }
         }

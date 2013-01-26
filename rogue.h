@@ -473,8 +473,6 @@ extern char *_whoami;
 #define TRUE                1
 #define FALSE               0
 #define BUFSIZE             128
-#define mvwaddstr(w,a,b,c)  mvaddstr(a,b,c)
-#define mvwaddch(w,a,b,c)   mvaddch(a,b,c)
 #define inch()              (0xff&curch())
 #define standend()          set_attr(0)
 #define green()             set_attr(1)

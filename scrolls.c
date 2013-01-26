@@ -120,7 +120,7 @@ void read_scroll()
       {
         ch = TRUE;
         standout();
-        mvwaddch(hw, op->o_pos.y, op->o_pos.x, FOOD);
+        mvaddch(op->o_pos.y, op->o_pos.x, FOOD);
         standend();
       }
       //as a bonus this will detect amulets as well
@@ -128,7 +128,7 @@ void read_scroll()
       {
         ch = TRUE;
         standout();
-        mvwaddch(hw, op->o_pos.y, op->o_pos.x, AMULET);
+        mvaddch(op->o_pos.y, op->o_pos.x, AMULET);
         standend();
       }
     }
