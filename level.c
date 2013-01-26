@@ -19,17 +19,17 @@ void clear_level()
   memset(the_flags, F_REAL, (MAXLINES-3)*MAXCOLS);
 }
 
-byte chat(int y, int x)
+byte get_tile(int y, int x)
 {
   return the_level[INDEX(y,x)];
 }
 
-void set_chat(int y, int x, byte c)
+void set_tile(int y, int x, byte c)
 {
   the_level[INDEX(y,x)] = c;
 }
 
-byte flags_at(int y, int x)
+byte get_flags(int y, int x)
 {
   return the_flags[INDEX(y,x)];
 }

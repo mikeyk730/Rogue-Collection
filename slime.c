@@ -25,7 +25,7 @@ void slime_split(THING *tp)
   new_monster(nslime, 'S', &slimy);
   if (cansee(slimy.y, slimy.x))
   {
-    nslime->t_oldch = chat(slimy.y, slimy.x);
+    nslime->t_oldch = get_tile(slimy.y, slimy.x);
     mvaddch(slimy.y, slimy.x, 'S');
   }
   start_run(&slimy);
@@ -44,7 +44,7 @@ int new_slime(THING *tp)
     //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.
     for (y = ty-1; y<=ty+1; y++)
       for (x = tx-1; x<=tx+1; x++)
-        if (winat(y, x)=='S' && (ntp = moat(y, x)))
+        if (winat(y, x)=='S' && (ntp = monster_at(y, x)))
         {
           if (ntp->t_flags&ISFLY) continue; //Already done this one
           if (new_slime(ntp)) {y = ty+2; x = tx+2;}

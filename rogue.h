@@ -35,13 +35,9 @@ typedef unsigned char bool;
 #define ppack            player.t_pack
 #define proom           player.t_room
 #define max_hp          player.t_stats.s_maxhp
-#define attach(a,b)     _attach(&a,b)
-#define detach(a,b)     _detach(&a,b)
-#define free_list(a)    _free_list(&a)
 #define on(thing,flag)  (((thing).t_flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
 #define GOLDCALC        (rnd(50+10*level)+2)
-#define ISMULT(type)    (type==POTION || type==SCROLL || type==FOOD || type==GOLD)
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
 #define isgone(rp)      (((rp)->r_flags&ISGONE) && ((rp)->r_flags&ISMAZE)==0)
 

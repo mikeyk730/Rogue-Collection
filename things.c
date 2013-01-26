@@ -131,7 +131,7 @@ void drop()
   byte ch;
   THING *nobj, *op;
 
-  ch = chat(hero.y, hero.x);
+  ch = get_tile(hero.y, hero.x);
   if (ch!=FLOOR && ch!=PASSAGE) {msg("there is something there already"); return;}
   if ((op = get_item("drop", 0))==NULL) return;
   if (!can_drop(op)) return;
@@ -149,7 +149,7 @@ void drop()
   inpack--;
   //Link it into the level object list
   attach(lvl_obj, op);
-  set_chat(hero.y, hero.x, op->o_type);
+  set_tile(hero.y, hero.x, op->o_type);
   bcopy(op->o_pos, hero);
   if (op->o_type==AMULET) amulet = FALSE;
   msg("dropped %s", inv_name(op, TRUE));

@@ -67,7 +67,7 @@ hack:
   }
   do_motion(obj, ydelta, xdelta);
   //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-  if (moat(obj->o_pos.y, obj->o_pos.x)==NULL || !hit_monster(obj->o_pos.y, obj->o_pos.x, obj)) fall(obj, TRUE);
+  if (monster_at(obj->o_pos.y, obj->o_pos.x)==NULL || !hit_monster(obj->o_pos.y, obj->o_pos.x, obj)) fall(obj, TRUE);
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
@@ -91,7 +91,7 @@ void do_motion(THING *obj, int ydelta, int xdelta)
       //It hasn't hit anything yet, so display it if alright.
       if (cansee(obj->o_pos.y, obj->o_pos.x))
       {
-        under = chat(obj->o_pos.y, obj->o_pos.x);
+        under = get_tile(obj->o_pos.y, obj->o_pos.x);
         mvaddch(obj->o_pos.y, obj->o_pos.x, obj->o_type);
         tick_pause();
       }
@@ -122,14 +122,14 @@ void fall(THING *obj, bool pr)
   switch (fallpos(obj, &fpos))
   {
   case 1:
-    set_chat(fpos.y, fpos.x, obj->o_type);
+    set_tile(fpos.y, fpos.x, obj->o_type);
     bcopy(obj->o_pos, fpos);
     if (cansee(fpos.y, fpos.x))
     {
-      if ((flags_at(obj->o_pos.y, obj->o_pos.x)&F_PASS) || (flags_at(obj->o_pos.y, obj->o_pos.x)&F_MAZE)) standout();
+      if ((get_flags(obj->o_pos.y, obj->o_pos.x)&F_PASS) || (get_flags(obj->o_pos.y, obj->o_pos.x)&F_MAZE)) standout();
       mvaddch(fpos.y, fpos.x, obj->o_type);
       standend();
-      if (moat(fpos.y, fpos.x)!=NULL) moat(fpos.y, fpos.x)->t_oldch = obj->o_type;
+      if (monster_at(fpos.y, fpos.x)!=NULL) monster_at(fpos.y, fpos.x)->t_oldch = obj->o_type;
     }
     attach(lvl_obj, obj);
     return;
@@ -161,7 +161,7 @@ int hit_monster(int y, int x, THING *obj)
   static coord mp;
   THING *mo;
 
-  if (mo = moat(y, x)) {mp.y = y; mp.x = x; return fight(&mp, mo->t_type, obj, TRUE);}
+  if (mo = monster_at(y, x)) {mp.y = y; mp.x = x; return fight(&mp, mo->t_type, obj, TRUE);}
   return FALSE;
 }
 
@@ -208,7 +208,7 @@ int fallpos(THING *obj, coord *newpos)
     {
       //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
       if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
-      if ((ch = chat(y, x))==FLOOR || ch==PASSAGE)
+      if ((ch = get_tile(y, x))==FLOOR || ch==PASSAGE)
       {
         if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}
         continue;

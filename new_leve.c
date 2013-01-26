@@ -57,8 +57,8 @@ void new_level()
     rm = rnd_room();
     rnd_pos(&rooms[rm], &stairs);
     if (i++>100) {i = 0; seed = srand2();}
-  } while (!isfloor(chat(stairs.y, stairs.x)));
-  set_chat(stairs.y, stairs.x, STAIRS);
+  } while (!isfloor(get_tile(stairs.y, stairs.x)));
+  set_tile(stairs.y, stairs.x, STAIRS);
   //Place the traps
   if (rnd(10)<level)
   {
@@ -71,7 +71,7 @@ void new_level()
       {
         rm = rnd_room();
         rnd_pos(&rooms[rm], &stairs);
-      } while (!isfloor(chat(stairs.y, stairs.x)));
+      } while (!isfloor(get_tile(stairs.y, stairs.x)));
       unset_flag(stairs.y, stairs.x, F_REAL);
       set_flag(stairs.y, stairs.x, rnd(NTRAPS));
     }
@@ -80,7 +80,7 @@ void new_level()
   {
     rm = rnd_room();
     rnd_pos(&rooms[rm], &hero);
-  } while (!(isfloor(chat(hero.y, hero.x)) && (flags_at(hero.y, hero.x)&F_REAL) && moat(hero.y, hero.x)==NULL));
+  } while (!(isfloor(get_tile(hero.y, hero.x)) && (get_flags(hero.y, hero.x)&F_REAL) && monster_at(hero.y, hero.x)==NULL));
   mpos = 0;
   enter_room(&hero);
   mvaddch(hero.y, hero.x, PLAYER);
@@ -124,7 +124,7 @@ void put_things()
         cur->o_type = AMULET;
         //Put it somewhere
         do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(winat(tp.y, tp.x)));
-        set_chat(tp.y, tp.x, AMULET);
+        set_tile(tp.y, tp.x, AMULET);
         bcopy(cur->o_pos, tp);
       }
     }
@@ -138,8 +138,8 @@ void put_things()
     cur = new_thing();
     attach(lvl_obj, cur);
     //Put it somewhere
-    do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(chat(tp.y, tp.x)));
-    set_chat(tp.y, tp.x, cur->o_type);
+    do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(get_tile(tp.y, tp.x)));
+    set_tile(tp.y, tp.x, cur->o_type);
     bcopy(cur->o_pos, tp);
   }
 }
@@ -161,11 +161,11 @@ void treas_room()
   {
     do {
       rnd_pos(rp, &mp);
-    } while (!isfloor(chat(mp.y, mp.x)));
+    } while (!isfloor(get_tile(mp.y, mp.x)));
     tp = new_thing();
     bcopy(tp->o_pos, mp);
     attach(lvl_obj, tp);
-    set_chat(mp.y, mp.x, tp->o_type);
+    set_tile(mp.y, mp.x, tp->o_type);
   }
   //fill up room with monsters from the next level down
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;
@@ -177,7 +177,7 @@ void treas_room()
     for (spots = 0; spots<MAXTRIES; spots++)
     {
       rnd_pos(rp, &mp);
-      if (isfloor(chat(mp.y, mp.x)) && moat(mp.y, mp.x)==NULL) break;
+      if (isfloor(get_tile(mp.y, mp.x)) && monster_at(mp.y, mp.x)==NULL) break;
     }
     if (spots!=MAXTRIES)
     {

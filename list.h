@@ -15,3 +15,7 @@ THING *talloc();
 
 //discard: Free up an item
 int discard(THING *item);
+
+#define attach(a,b)     _attach(&a,b)
+#define detach(a,b)     _detach(&a,b)
+#define free_list(a)    _free_list(&a)

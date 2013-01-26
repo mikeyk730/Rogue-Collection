@@ -20,7 +20,7 @@ THING *wake_monster(int y, int x);
 void give_pack(THING *tp);
 
 //pick_mons: Choose a sort of monster for the enemy of a vorpally enchanted weapon
-char pick_mons();
+char pick_monster();
 
 //moat(x,y): returns pointer to monster at coordinate. if no monster there return NULL
-THING *moat(int my, int mx);
+THING *monster_at(int my, int mx);

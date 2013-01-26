@@ -46,13 +46,13 @@ void conn(int r1, int r2)
     if ((rpf->r_flags&ISGONE)==0 || (rpf->r_flags&ISMAZE))
     {
       spos.y = rpf->r_pos.y+rpf->r_max.y-1;
-      do {spos.x = rpf->r_pos.x+rnd(rpf->r_max.x-2)+1;} while (chat(spos.y,spos.x)==' ');
+      do {spos.x = rpf->r_pos.x+rnd(rpf->r_max.x-2)+1;} while (get_tile(spos.y,spos.x)==' ');
     }
     else {spos.x = rpf->r_pos.x; spos.y = rpf->r_pos.y;}
     epos.y = rpt->r_pos.y;
     if ((rpt->r_flags&ISGONE)==0 || (rpt->r_flags&ISMAZE))
     {
-      do {epos.x = rpt->r_pos.x+rnd(rpt->r_max.x-2)+1;} while (chat(epos.y,epos.x)==' ');
+      do {epos.x = rpt->r_pos.x+rnd(rpt->r_max.x-2)+1;} while (get_tile(epos.y,epos.x)==' ');
     }
     else epos.x = rpt->r_pos.x;
     distance = abs(spos.y-epos.y)-1; //distance to move
@@ -70,13 +70,13 @@ void conn(int r1, int r2)
     if ((rpf->r_flags&ISGONE)==0 || (rpf->r_flags&ISMAZE))
     {
       spos.x = rpf->r_pos.x+rpf->r_max.x-1;
-      do {spos.y = rpf->r_pos.y+rnd(rpf->r_max.y-2)+1;} while (chat(spos.y,spos.x)==' ');
+      do {spos.y = rpf->r_pos.y+rnd(rpf->r_max.y-2)+1;} while (get_tile(spos.y,spos.x)==' ');
     }
     else {spos.x = rpf->r_pos.x; spos.y = rpf->r_pos.y;}
     epos.x = rpt->r_pos.x;
     if ((rpt->r_flags&ISGONE)==0 || (rpt->r_flags&ISMAZE))
     {
-      do {epos.y = rpt->r_pos.y+rnd(rpt->r_max.y-2)+1;} while (chat(epos.y, epos.x)==' ');
+      do {epos.y = rpt->r_pos.y+rnd(rpt->r_max.y-2)+1;} while (get_tile(epos.y, epos.x)==' ');
     }
     else epos.y = rpt->r_pos.y;
     distance = abs(spos.x-epos.x)-1;
@@ -197,10 +197,10 @@ void door(struct room *rm, coord *cp)
 
   if (rnd(10)+1<level && rnd(5)==0)
   {
-    set_chat(cp->y, cp->x, (cp->y==rm->r_pos.y || cp->y==rm->r_pos.y+rm->r_max.y-1)?HWALL:VWALL);
+    set_tile(cp->y, cp->x, (cp->y==rm->r_pos.y || cp->y==rm->r_pos.y+rm->r_max.y-1)?HWALL:VWALL);
     unset_flag(cp->y, cp->x, F_REAL);
   }
-  else set_chat(cp->y, cp->x, DOOR);
+  else set_tile(cp->y, cp->x, DOOR);
   xit = rm->r_nexits++;
   rm->r_exit[xit].y = cp->y;
   rm->r_exit[xit].x = cp->x;
@@ -211,7 +211,7 @@ void add_pass()
 {
   int y, x, ch;
 
-  for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++) if ((ch = chat(y, x))==DOOR || ch==PASSAGE) mvaddch(y, x, ch);
+  for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++) if ((ch = get_tile(y, x))==DOOR || ch==PASSAGE) mvaddch(y, x, ch);
 }
 
 //passnum: Assign a number to each passageway
@@ -238,11 +238,11 @@ void numpass(int y, int x)
   byte ch;
 
   if (offmap(y, x)) return;
-  fp = flags_at(y, x);
+  fp = get_flags(y, x);
   if (fp&F_PNUM) return;
   if (newpnum) {pnum++; newpnum = FALSE;}
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
-  if ((ch = chat(y, x))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
+  if ((ch = get_tile(y, x))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
   {
     rp = &passages[pnum];
     rp->r_exit[rp->r_nexits].y = y;
@@ -259,6 +259,6 @@ void numpass(int y, int x)
 
 void psplat(int y, int x)
 {
-  set_chat(y, x, PASSAGE);
+  set_tile(y, x, PASSAGE);
   set_flag(y, x, F_PASS);
 }

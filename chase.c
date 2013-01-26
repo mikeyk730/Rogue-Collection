@@ -56,7 +56,7 @@ void do_chase(THING *th)
   if (th->t_dest!=&hero) ree = roomin(th->t_dest); //Find room of chasee
   if (ree==NULL) return;
   //We don't count doors as inside rooms for this routine
-  door = (chat(th->t_pos.y, th->t_pos.x)==DOOR);
+  door = (get_tile(th->t_pos.y, th->t_pos.x)==DOOR);
   //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
 
 over:
@@ -71,7 +71,7 @@ over:
     }
     if (door)
     {
-      rer = &passages[flags_at(th->t_pos.y, th->t_pos.x)&F_PNUM];
+      rer = &passages[get_flags(th->t_pos.y, th->t_pos.x)&F_PNUM];
       door = FALSE;
       goto over;
     }
@@ -101,7 +101,7 @@ over:
       detach(lvl_obj, obj);
       attach(th->t_pack, obj);
       oldchar = (th->t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
-      set_chat(obj->o_pos.y, obj->o_pos.x, oldchar);
+      set_tile(obj->o_pos.y, obj->o_pos.x, oldchar);
       if (cansee(obj->o_pos.y, obj->o_pos.x)) mvaddch(obj->o_pos.y, obj->o_pos.x, oldchar);
       th->t_dest = find_dest(th);
       break;
@@ -111,7 +111,7 @@ over:
   //If the chasing thing moved, update the screen
   if (th->t_oldch!='@')
   {
-    if (th->t_oldch==' ' && cansee(th->t_pos.y, th->t_pos.x) && chat(th->t_pos.y, th->t_pos.x)==FLOOR) mvaddch(th->t_pos.y, th->t_pos.x, FLOOR);
+    if (th->t_oldch==' ' && cansee(th->t_pos.y, th->t_pos.x) && get_tile(th->t_pos.y, th->t_pos.x)==FLOOR) mvaddch(th->t_pos.y, th->t_pos.x, FLOOR);
     else if (th->t_oldch==FLOOR && !cansee(th->t_pos.y, th->t_pos.x) && !on(player, SEEMONST)) mvaddch(th->t_pos.y, th->t_pos.x, ' ');
     else mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
   }
@@ -124,7 +124,7 @@ over:
   }
   if (see_monst(th))
   {
-    if (flags_at(ch_ret.y, ch_ret.x)&F_PASS) standout();
+    if (get_flags(ch_ret.y, ch_ret.x)&F_PASS) standout();
     th->t_oldch = mvinch(ch_ret.y, ch_ret.x);
     mvaddch(ch_ret.y, ch_ret.x, th->t_disguise);
   }
@@ -161,7 +161,7 @@ void start_run(coord *runner)
   THING *tp;
 
   //If we couldn't find him, something is funny
-  tp = moat(runner->y, runner->x);
+  tp = monster_at(runner->y, runner->x);
   if (tp!=NULL)
   {
     //Start the beastie running
@@ -243,7 +243,7 @@ struct room *roomin(coord *cp)
     if (cp->x<rp->r_pos.x+rp->r_max.x && rp->r_pos.x<=cp->x && cp->y<rp->r_pos.y+rp->r_max.y && rp->r_pos.y<=cp->y) 
       return rp;
 
-  fp = flags_at(cp->y, cp->x);
+  fp = get_flags(cp->y, cp->x);
   if (fp&F_PASS)
     return &passages[fp&F_PNUM];
 
@@ -256,7 +256,7 @@ struct room *roomin(coord *cp)
 int diag_ok( coord *sp, coord *ep )
 {
   if (ep->x==sp->x || ep->y==sp->y) return TRUE;
-  return (step_ok(chat(ep->y, sp->x)) && step_ok(chat(sp->y, ep->x)));
+  return (step_ok(get_tile(ep->y, sp->x)) && step_ok(get_tile(sp->y, ep->x)));
 }
 
 //cansee: Returns true if the hero can see a certain coordinate.

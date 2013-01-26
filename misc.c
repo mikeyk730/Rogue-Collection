@@ -50,8 +50,8 @@ void look(bool wakeup)
   int sy, sx, sumhero, diffhero;
 
   rp = proom;
-  pfl = flags_at(hero.y, hero.x);
-  pch = chat(hero.y, hero.x);
+  pfl = get_flags(hero.y, hero.x);
+  pch = get_tile(hero.y, hero.x);
   //if the hero has moved
   if (!ce(oldpos, hero))
   {
@@ -69,7 +69,7 @@ void look(bool wakeup)
           }
           else
           {
-            fp = flags_at(y, x);
+            fp = get_flags(y, x);
             //if the maze or passage (that the hero is in!!) needs to be redrawn (passages once drawn always stay on) do it now.
             if (((fp&F_MAZE) || (fp&F_PASS)) && (ch!=PASSAGE) && (ch!=STAIRS) && ((fp&F_PNUM)==(pfl & F_PNUM))) 
               addch(PASSAGE);
@@ -93,8 +93,8 @@ void look(bool wakeup)
     }
     else if (y!=hero.y || x!=hero.x) continue;
     //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
-    fp = flags_at(y, x);
-    ch = chat(y, x);
+    fp = get_flags(y, x);
+    ch = get_tile(y, x);
     //No Doors
     if (pch!=DOOR && ch!=DOOR)
       //Either hero or other in a passage
@@ -105,7 +105,7 @@ void look(bool wakeup)
       }
       //Not in same passage
       else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
-      if ((tp = moat(y, x))!=NULL) if (on(player, SEEMONST) && on(*tp, ISINVIS))
+      if ((tp = monster_at(y, x))!=NULL) if (on(player, SEEMONST) && on(*tp, ISINVIS))
       {
         if (door_stop && !firstmove) running = FALSE;
         continue;
@@ -113,7 +113,7 @@ void look(bool wakeup)
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (tp->t_oldch != ' ' || (!(rp->r_flags&ISDARK) && !on(player, ISBLIND))) tp->t_oldch = chat(y, x);
+        if (tp->t_oldch != ' ' || (!(rp->r_flags&ISDARK) && !on(player, ISBLIND))) tp->t_oldch = get_tile(y, x);
         if (see_monst(tp)) ch = tp->t_disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
@@ -145,7 +145,7 @@ void look(bool wakeup)
   }
   if (door_stop && !firstmove && passcount>1) running = FALSE;
   move(hero.y, hero.x);
-  if ((flags_at(hero.y, hero.x)&F_PASS) || (was_trapped>TRUE) || (flags_at(hero.y, hero.x)&F_MAZE)) standout();
+  if ((get_flags(hero.y, hero.x)&F_PASS) || (was_trapped>TRUE) || (get_flags(hero.y, hero.x)&F_MAZE)) standout();
   addch(PLAYER);
   standend();
   if (was_trapped) {beep(); was_trapped = FALSE;}
@@ -158,7 +158,7 @@ THING *find_obj(int y, int x)
 
   for (op = lvl_obj; op!=NULL; op = next(op)) if (op->o_pos.y==y && op->o_pos.x==x) return op;
 
-  debug("Non-object %c %d,%d", chat(y, x), y, x);
+  debug("Non-object %c %d,%d", get_tile(y, x), y, x);
   return NULL; //NOTREACHED
 }
 
@@ -456,7 +456,7 @@ int offmap(int y, int x)
 
 int winat(int y, int x)
 {
-  return (moat(y, x)!=NULL?moat(y, x)->t_disguise:chat(y, x));
+  return (monster_at(y, x) !=NULL ? monster_at(y, x)->t_disguise : get_tile(y, x));
 }
 
 //search: Player gropes about him to find hidden things.
@@ -474,19 +474,19 @@ void search()
   {
     if ((y==hero.y && x==hero.x) || offmap(y, x)) 
       continue;
-    fp = flags_at(y, x);
+    fp = get_flags(y, x);
     if (!(fp&F_REAL)) {
-      switch (chat(y, x))
+      switch (get_tile(y, x))
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
         if (rnd(5)!=0) break;
-        set_chat(y, x, DOOR);
+        set_tile(y, x, DOOR);
         set_flag(y, x, F_REAL);
         count = running = FALSE;
         break;
       case FLOOR:
         if (rnd(2)!=0) break;
-        set_chat(y, x, TRAP);
+        set_tile(y, x, TRAP);
         set_flag(y, x, F_REAL);
         count = running = FALSE;
         msg("you found %s", tr_name(fp&F_TMASK));
@@ -500,7 +500,7 @@ void search()
 //d_level: He wants to go down a level
 void d_level()
 {
-  if (chat(hero.y, hero.x)!=STAIRS && wizard == FALSE)
+  if (get_tile(hero.y, hero.x)!=STAIRS && wizard == FALSE)
     msg("I see no way down");
   else {
     level++; 
@@ -511,7 +511,7 @@ void d_level()
 //u_level: He wants to go up a level
 void u_level()
 {
-  if (chat(hero.y, hero.x)==STAIRS || wizard == TRUE) 
+  if (get_tile(hero.y, hero.x)==STAIRS || wizard == TRUE) 
     if (amulet) {
       level--; 
       if (level==0) 

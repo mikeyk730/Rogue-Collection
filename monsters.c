@@ -128,7 +128,7 @@ THING *wake_monster(int y, int x)
   byte ch;
   int dst;
 
-  if ((tp = moat(y, x))==NULL) return tp;
+  if ((tp = monster_at(y, x))==NULL) return tp;
   ch = tp->t_type;
   //Every time he sees mean monster, it might start chasing him
   if (!on(*tp, ISRUN) && rnd(3)!=0 && on(*tp, ISMEAN) && !on(*tp, ISHELD) && !ISWEARING(R_STEALTH))
@@ -170,7 +170,7 @@ void give_pack(THING *tp)
 }
 
 //pick_mons: Choose a sort of monster for the enemy of a vorpally enchanted weapon
-char pick_mons()
+char pick_monster()
 {
   char *cp = lvl_mons+strlen(lvl_mons);
 
@@ -180,7 +180,7 @@ char pick_mons()
 }
 
 //moat(x,y): returns pointer to monster at coordinate. if no monster there return NULL
-THING *moat(int my, int mx)
+THING *monster_at(int my, int mx)
 {
   THING *tp;
 

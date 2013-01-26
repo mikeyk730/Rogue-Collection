@@ -30,7 +30,7 @@ int fight(coord *mp, char mn, THING *weap, bool thrown)
   char *mname;
 
   //Find the monster we want to fight
-  if ((tp = moat(mp->y, mp->x))==0) return FALSE;
+  if ((tp = monster_at(mp->y, mp->x))==0) return FALSE;
   //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
   count = quiet = 0;
   start_run(mp);
@@ -417,7 +417,7 @@ void remove_mons(coord *mp, THING *tp, bool waskill)
     detach(tp->t_pack, obj);
     if (waskill) fall(obj, FALSE); else discard(obj);
   }
-  if (chat(mp->y, mp->x)==PASSAGE) standout();
+  if (get_tile(mp->y, mp->x)==PASSAGE) standout();
   if (tp->t_oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
   else if (tp->t_oldch!='@') mvaddch(mp->y, mp->x, tp->t_oldch);
   standend();

@@ -94,7 +94,7 @@ void do_rooms()
           byte gch;
 
           rnd_pos(rp, &rp->r_gold);
-          gch = chat(rp->r_gold.y, rp->r_gold.x);
+          gch = get_tile(rp->r_gold.y, rp->r_gold.x);
           if (isfloor(gch)) break;
         }
         bcopy(gold->o_pos, rp->r_gold);
@@ -102,7 +102,7 @@ void do_rooms()
         gold->o_group = GOLDGRP;
         gold->o_type = GOLD;
         attach(lvl_obj, gold);
-        set_chat(rp->r_gold.y, rp->r_gold.x, GOLD);
+        set_tile(rp->r_gold.y, rp->r_gold.x, GOLD);
       }
     }
     //Put the monster in
@@ -130,14 +130,14 @@ void draw_room(struct room *rp)
   vert(rp, rp->r_pos.x+rp->r_max.x-1); //Draw right side
   horiz(rp, rp->r_pos.y); //Draw top
   horiz(rp, rp->r_pos.y+rp->r_max.y-1); //Draw bottom
-  set_chat(rp->r_pos.y, rp->r_pos.x, ULWALL);
-  set_chat(rp->r_pos.y, rp->r_pos.x+rp->r_max.x-1, URWALL);
-  set_chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x, LLWALL);
-  set_chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x+rp->r_max.x-1, LRWALL);
+  set_tile(rp->r_pos.y, rp->r_pos.x, ULWALL);
+  set_tile(rp->r_pos.y, rp->r_pos.x+rp->r_max.x-1, URWALL);
+  set_tile(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x, LLWALL);
+  set_tile(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x+rp->r_max.x-1, LRWALL);
   //Put the floor down
   for (y = rp->r_pos.y+1; y<rp->r_pos.y+rp->r_max.y-1; y++)
     for (x = rp->r_pos.x+1; x<rp->r_pos.x+rp->r_max.x-1; x++)
-      set_chat(y, x, FLOOR);
+      set_tile(y, x, FLOOR);
 }
 
 //vert: Draw a vertical line
@@ -145,7 +145,7 @@ void vert(struct room *rp, int startx)
 {
   int y;
 
-  for (y = rp->r_pos.y+1; y<=rp->r_max.y+rp->r_pos.y-1; y++) set_chat(y, startx, VWALL);
+  for (y = rp->r_pos.y+1; y<=rp->r_max.y+rp->r_pos.y-1; y++) set_tile(y, startx, VWALL);
 }
 
 //horiz: Draw a horizontal line
@@ -153,7 +153,7 @@ void horiz(struct room *rp, int starty)
 {
   int x;
 
-  for (x = rp->r_pos.x; x<=rp->r_pos.x+rp->r_max.x-1; x++) set_chat(starty, x, HWALL);
+  for (x = rp->r_pos.x; x<=rp->r_pos.x+rp->r_max.x-1; x++) set_tile(starty, x, HWALL);
 }
 
 //rnd_pos: Pick a random spot in a room
@@ -184,11 +184,11 @@ void enter_room(coord *cp)
       for (x = rp->r_pos.x; x<rp->r_max.x+rp->r_pos.x; x++)
       {
         //Displaying monsters is all handled in the chase code now
-        tp = moat(y, x);
+        tp = monster_at(y, x);
         if (tp==NULL || !see_monst(tp)) 
-          addch(chat(y, x));
+          addch(get_tile(y, x));
         else {
-          tp->t_oldch = chat(y,x); 
+          tp->t_oldch = get_tile(y,x); 
           addch(tp->t_disguise);
         }
       }
@@ -204,7 +204,7 @@ void leave_room(coord *cp)
   byte ch;
 
   rp = proom;
-  proom = &passages[flags_at(cp->y, cp->x)&F_PNUM];
+  proom = &passages[get_flags(cp->y, cp->x)&F_PNUM];
   floor = ((rp->r_flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
   if (rp->r_flags&ISMAZE) floor = PASSAGE;
   for (y = rp->r_pos.y+1; y<rp->r_max.y+rp->r_pos.y-1; y++) {
@@ -228,7 +228,7 @@ void leave_room(coord *cp)
             break;
           }
           else 
-            moat(y, x)->t_oldch = '@';
+            monster_at(y, x)->t_oldch = '@';
           addch(floor);
       }
     }

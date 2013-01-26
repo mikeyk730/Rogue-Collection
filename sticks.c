@@ -83,7 +83,7 @@ void do_zap()
       y = hero.y;
       x = hero.x;
       while (step_ok(winat(y, x))) {y += delta.y; x += delta.x;}
-      if ((tp = moat(y, x))!=NULL)
+      if ((tp = monster_at(y, x))!=NULL)
       {
         byte omonst;
 
@@ -104,7 +104,7 @@ void do_zap()
 
           pp = tp->t_pack;
           detach(mlist, tp);
-          if (see_monst(tp)) mvaddch(y, x, chat(y, x));
+          if (see_monst(tp)) mvaddch(y, x, get_tile(y, x));
           oldch = tp->t_oldch;
           delta.y = y;
           delta.x = x;
@@ -153,7 +153,7 @@ void do_zap()
       bolt.o_flags = ISMISL;
       if (cur_weapon!=NULL) bolt.o_launch = cur_weapon->o_which;
       do_motion(&bolt, delta.y, delta.x);
-      if ((tp = moat(bolt.o_pos.y, bolt.o_pos.x))!=NULL && !save_throw(VS_MAGIC, tp)) hit_monster(bolt.o_pos.y, bolt.o_pos.x, &bolt);
+      if ((tp = monster_at(bolt.o_pos.y, bolt.o_pos.x))!=NULL && !save_throw(VS_MAGIC, tp)) hit_monster(bolt.o_pos.y, bolt.o_pos.x, &bolt);
       else msg("the missile vanishes with a puff of smoke");
 
       break;
@@ -162,7 +162,7 @@ void do_zap()
   case WS_HIT:
     delta.y += hero.y;
     delta.x += hero.x;
-    if ((tp = moat(delta.y, delta.x))!=NULL)
+    if ((tp = monster_at(delta.y, delta.x))!=NULL)
     {
       if (rnd(20)==0) {obj->o_damage = "3d8"; obj->o_dplus = 9;}
       else {obj->o_damage = "2d8"; obj->o_dplus = 4;}
@@ -174,7 +174,7 @@ void do_zap()
     y = hero.y;
     x = hero.x;
     while (step_ok(winat(y, x))) {y += delta.y; x += delta.x;}
-    if ((tp = moat(y, x))!=NULL)
+    if ((tp = monster_at(y, x))!=NULL)
     {
       if (which_one==WS_HASTE_M)
       {
@@ -218,11 +218,11 @@ void drain()
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
-  if (chat(hero.y, hero.x)==DOOR) corp = &passages[flags_at(hero.y, hero.x)&F_PNUM];
+  if (get_tile(hero.y, hero.x)==DOOR) corp = &passages[get_flags(hero.y, hero.x)&F_PNUM];
   else corp = NULL;
   inpass = (proom->r_flags&ISGONE);
   dp = drainee;
-  for (mp = mlist; mp!=NULL; mp = next(mp)) if (mp->t_room==proom || mp->t_room==corp || (inpass && chat(mp->t_pos.y, mp->t_pos.x)==DOOR && &passages[flags_at(mp->t_pos.y, mp->t_pos.x)&F_PNUM]==proom)) *dp++ = mp;
+  for (mp = mlist; mp!=NULL; mp = next(mp)) if (mp->t_room==proom || mp->t_room==corp || (inpass && get_tile(mp->t_pos.y, mp->t_pos.x)==DOOR && &passages[get_flags(mp->t_pos.y, mp->t_pos.x)&F_PNUM]==proom)) *dp++ = mp;
   if ((cnt = dp-drainee)==0) {msg("you have a tingling feeling"); return;}
   *dp = NULL;
   pstats.s_hpt /= 2;
@@ -284,11 +284,11 @@ void fire_bolt(coord *start, coord *dir, char *name)
       break;
 
     default:
-      if (!hit_hero && (tp = moat(pos.y, pos.x))!=NULL)
+      if (!hit_hero && (tp = monster_at(pos.y, pos.x))!=NULL)
       {
         hit_hero = TRUE;
         changed = !changed;
-        if (tp->t_oldch!='@') tp->t_oldch = chat(pos.y, pos.x);
+        if (tp->t_oldch!='@') tp->t_oldch = get_tile(pos.y, pos.x);
         if (!save_throw(VS_MAGIC, tp) || is_frost)
         {
           bolt.o_pos = pos;
@@ -317,7 +317,7 @@ void fire_bolt(coord *start, coord *dir, char *name)
             msg("You are frozen by a blast of frost%s.", noterse(" from the Ice Monster"));
             if (no_command<20) no_command += spread(7);
           }
-          else if ((pstats.s_hpt -= roll(6, 6))<=0) if (start==&hero) death('b'); else death(moat(start->y, start->x)->t_type);
+          else if ((pstats.s_hpt -= roll(6, 6))<=0) if (start==&hero) death('b'); else death(monster_at(start->y, start->x)->t_type);
           used = TRUE;
           if (!is_frost) msg("you are hit by the %s", name);
         }

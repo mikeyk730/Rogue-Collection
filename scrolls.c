@@ -52,7 +52,7 @@ void read_scroll()
     for (x = hero.x-3; x<=hero.x+3; x++)
       if (x>=0 && x<COLS)
         for (y = hero.y-3; y<=hero.y+3; y++)
-          if ((y>0 && y<maxrow) && ((op = moat(y, x))!=NULL))
+          if ((y>0 && y<maxrow) && ((op = monster_at(y, x))!=NULL))
           {
             op->t_flags &= ~ISRUN;
             op->t_flags |= ISHELD;
@@ -89,16 +89,16 @@ void read_scroll()
     //Take all the things we want to keep hidden out of the window
     for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
     {
-      switch (ch = chat(y, x))
+      switch (ch = get_tile(y, x))
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-        if (!(flags_at(y, x)&F_REAL)) {
+        if (!(get_flags(y, x)&F_REAL)) {
           ch = DOOR; 
-          set_chat(y, x, DOOR);
+          set_tile(y, x, DOOR);
           unset_flag(y, x, F_REAL);
         }
       case DOOR: case PASSAGE: case STAIRS:
-        if ((op = moat(y, x))!=NULL) if (op->t_oldch==' ') op->t_oldch = ch;
+        if ((op = monster_at(y, x))!=NULL) if (op->t_oldch==' ') op->t_oldch = ch;
         break;
       default: ch = ' ';
       }
@@ -205,7 +205,7 @@ void read_scroll()
       }
       else
       {
-        cur_weapon->o_enemy = pick_mons();
+        cur_weapon->o_enemy = pick_monster();
         cur_weapon->o_hplus++;
         cur_weapon->o_dplus++;
         cur_weapon->o_charges = 1;
