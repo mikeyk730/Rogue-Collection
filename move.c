@@ -109,7 +109,8 @@ hit_bound:
 
   default:
     running = FALSE;
-    if (isupper(ch) || moat(nh.y, nh.x)) fight(&nh, ch, cur_weapon, FALSE);
+    if (isupper(ch) || moat(nh.y, nh.x))
+      fight(&nh, ch, cur_weapon, FALSE);
     else
     {
       running = FALSE;

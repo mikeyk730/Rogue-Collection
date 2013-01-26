@@ -116,8 +116,6 @@ void getrc(int *rp, int *cp)
 void clrtoeol()
 {
   int r, c;
-
-  //if (scr_ds==svwin_ds) return;
   getrc(&r, &c);
   blot_out(r, c, r, COLS-1);
 }
