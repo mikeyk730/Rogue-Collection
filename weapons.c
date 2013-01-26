@@ -51,7 +51,7 @@ void missile(int ydelta, int xdelta)
   //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
 hack:
   if (obj->o_count<2) {
-    detach_item(&ppack, obj); 
+    detach_item(&player.t_pack, obj); 
     inpack--;
   }
   else
@@ -80,13 +80,13 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
   byte under = '@';
 
   //Come fly with us ...
-  bcopy(obj->o_pos, hero);
+  bcopy(obj->o_pos, player.t_pos);
   for (;;)
   {
     int ch;
 
     //Erase the old one
-    if (under!='@' && !ce(obj->o_pos, hero) && cansee(obj->o_pos.y, obj->o_pos.x)) mvaddch(obj->o_pos.y, obj->o_pos.x, under);
+    if (under!='@' && !ce(obj->o_pos, player.t_pos) && cansee(obj->o_pos.y, obj->o_pos.x)) mvaddch(obj->o_pos.y, obj->o_pos.x, under);
     //Get the new position
     obj->o_pos.y += ydelta;
     obj->o_pos.x += xdelta;
@@ -211,7 +211,7 @@ int fallpos(ITEM *obj, coord *newpos)
     for (x = obj->o_pos.x-1; x<=obj->o_pos.x+1; x++)
     {
       //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
-      if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
+      if ((y==player.t_pos.y && x==player.t_pos.x) || offmap(y,x)) continue;
       if ((ch = get_tile(y, x))==FLOOR || ch==PASSAGE)
       {
         if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}

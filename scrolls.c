@@ -51,9 +51,9 @@ void read_scroll()
     break;
 
   case S_HOLD: //Hold monster scroll.  Stop all monsters within two spaces from chasing after the hero.
-    for (x = hero.x-3; x<=hero.x+3; x++)
+    for (x = player.t_pos.x-3; x<=player.t_pos.x+3; x++)
       if (x>=0 && x<COLS)
-        for (y = hero.y-3; y<=hero.y+3; y++)
+        for (y = player.t_pos.y-3; y<=player.t_pos.y+3; y++)
           if ((y>0 && y<maxrow) && ((op = monster_at(y, x))!=NULL))
           {
             op->t_flags &= ~ISRUN;
@@ -72,7 +72,7 @@ void read_scroll()
     {
       coord mp;
 
-      if (plop_monster(hero.y, hero.x, &mp) && (op = create_agent())!=NULL) new_monster(op, randmonster(FALSE), &mp);
+      if (plop_monster(player.t_pos.y, player.t_pos.x, &mp) && (op = create_agent())!=NULL) new_monster(op, randmonster(FALSE), &mp);
       else ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 
       break;
@@ -142,9 +142,9 @@ void read_scroll()
     {
       struct room *cur_room;
 
-      cur_room = proom;
+      cur_room = player.t_room;
       teleport();
-      if (cur_room!=proom) s_know[S_TELEP] = TRUE;
+      if (cur_room!=player.t_room) s_know[S_TELEP] = TRUE;
 
       break;
     }
@@ -201,7 +201,7 @@ void read_scroll()
       if (cur_weapon->o_enemy!=0)
       {
         msg("your %s vanishes in a puff of smoke", w_names[cur_weapon->o_which]);
-        detach_item(&ppack, cur_weapon);
+        detach_item(&player.t_pack, cur_weapon);
         discard_item(cur_weapon);
         cur_weapon = NULL;
       }
@@ -224,7 +224,7 @@ void read_scroll()
   inpack--;
   if (obj->o_count>1) obj->o_count--;
   else {
-    detach_item(&ppack, obj); 
+    detach_item(&player.t_pack, obj); 
     discardit = TRUE;
   }
   call_it(s_know[obj->o_which], &s_guess[obj->o_which]);

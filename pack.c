@@ -23,7 +23,7 @@ ITEM *pack_obj(byte ch, byte *chp)
   ITEM *obj;
   byte och;
 
-  for (obj = ppack, och = 'a'; obj!=NULL; obj = next(obj), och++) if (ch==och) return obj;
+  for (obj = player.t_pack, och = 'a'; obj!=NULL; obj = next(obj), och++) if (ch==och) return obj;
   *chp = och;
   return NULL;
 }
@@ -39,8 +39,8 @@ void add_pack(ITEM *obj, bool silent)
   if (obj==NULL)
   {
     from_floor = TRUE;
-    if ((obj = find_obj(hero.y, hero.x))==NULL) return;
-    floor = (proom->r_flags&ISGONE)?PASSAGE:FLOOR;
+    if ((obj = find_obj(player.t_pos.y, player.t_pos.x))==NULL) return;
+    floor = (player.t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
   }
   else from_floor = FALSE;
   //Link it into the pack.  Search the pack for a object of similar type
@@ -53,7 +53,7 @@ void add_pack(ITEM *obj, bool silent)
 
   if (obj->o_group)
   {
-    for (op = ppack; op!=NULL; op = next(op))
+    for (op = player.t_pack; op!=NULL; op = next(op))
     {
       if (op->o_group==obj->o_group)
       {
@@ -61,8 +61,8 @@ void add_pack(ITEM *obj, bool silent)
         op->o_count += obj->o_count;
         if (from_floor) {
           detach_item(&lvl_obj, obj);
-          mvaddch(hero.y, hero.x, floor);
-          set_tile(hero.y, hero.x, floor);
+          mvaddch(player.t_pos.y, player.t_pos.x, floor);
+          set_tile(player.t_pos.y, player.t_pos.x, floor);
         }
         discard_item(obj);
         obj = op;
@@ -76,8 +76,8 @@ void add_pack(ITEM *obj, bool silent)
   if (obj->o_type==SCROLL && obj->o_which==S_SCARE) if (obj->o_flags&ISFOUND)
   {
     detach_item(&lvl_obj, obj);
-    mvaddch(hero.y, hero.x, floor);
-    set_tile(hero.y, hero.x, floor);
+    mvaddch(player.t_pos.y, player.t_pos.x, floor);
+    set_tile(player.t_pos.y, player.t_pos.x, floor);
     msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
     return;
   }
@@ -85,16 +85,16 @@ void add_pack(ITEM *obj, bool silent)
   inpack++;
   if (from_floor) {
     detach_item(&lvl_obj, obj);
-    mvaddch(hero.y, hero.x, floor); 
-    set_tile(hero.y, hero.x, floor);
+    mvaddch(player.t_pos.y, player.t_pos.x, floor); 
+    set_tile(player.t_pos.y, player.t_pos.x, floor);
   }
   //Search for an object of the same type
   exact = FALSE;
-  for (op = ppack; op!=NULL; op = next(op)) if (obj->o_type==op->o_type) break;
+  for (op = player.t_pack; op!=NULL; op = next(op)) if (obj->o_type==op->o_type) break;
   if (op==NULL)
   {
     //Put it at the end of the pack since it is a new type
-    for (op = ppack; op!=NULL; op = next(op))
+    for (op = player.t_pack; op!=NULL; op = next(op))
     {
       if (op->o_type!=FOOD) break;
       lp = op;
@@ -113,7 +113,7 @@ void add_pack(ITEM *obj, bool silent)
   if (op==NULL)
   {
     //Didn't find an exact match, just stick it here
-    if (ppack==NULL) ppack = obj;
+    if (player.t_pack==NULL) player.t_pack = obj;
     else {lp->l_next = obj; obj->l_prev = lp; obj->l_next = NULL;}
   }
   else
@@ -127,7 +127,7 @@ void add_pack(ITEM *obj, bool silent)
       goto picked_up;
     }
     if ((obj->l_prev = prev(op))!=NULL) obj->l_prev->l_next = obj;
-    else ppack = obj;
+    else player.t_pack = obj;
     obj->l_next = op;
     op->l_prev = obj;
   }
@@ -135,7 +135,7 @@ picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
   for (mp = mlist; mp!=NULL; mp = next(mp))
     if (mp->t_dest && (mp->t_dest->x==obj->o_pos.x) && (mp->t_dest->y==obj->o_pos.y))
-      mp->t_dest = &hero;
+      mp->t_dest = &player.t_pos;
   if (obj->o_type==AMULET) {amulet = TRUE; saw_amulet = TRUE;}
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));
@@ -173,11 +173,11 @@ void pick_up(byte ch)
   switch (ch)
   {
   case GOLD:
-    if ((obj = find_obj(hero.y, hero.x))==NULL) return;
+    if ((obj = find_obj(player.t_pos.y, player.t_pos.x))==NULL) return;
     money(obj->o_goldval);
     detach_item(&lvl_obj, obj);
     discard_item(obj);
-    proom->r_goldval = 0;
+    player.t_room->r_goldval = 0;
     break;
   default:
   case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
@@ -199,7 +199,7 @@ ITEM *get_item(char *purpose, int type)
 
   if (((!strncmp(s_menu, "sel", 3) && strcmp(purpose, "eat") && strcmp(purpose, "drop"))) || !strcmp(s_menu, "on")) once_only = TRUE;
   gi_state = again;
-  if (ppack==NULL) msg("you aren't carrying anything");
+  if (player.t_pack==NULL) msg("you aren't carrying anything");
   else
   {
     ch = lch;
@@ -218,7 +218,7 @@ skip:
       once_only = FALSE;
       if (ch=='*')
       {
-        if ((ch = inventory(ppack, type, purpose))==0) {after = FALSE; return NULL;}
+        if ((ch = inventory(player.t_pack, type, purpose))==0) {after = FALSE; return NULL;}
         if (ch==' ') continue;
         lch = ch;
       }
@@ -247,7 +247,7 @@ int pack_char(ITEM *obj)
   byte c;
 
   c = 'a';
-  for (item = ppack; item!=NULL; item = next(item)) if (item==obj) return c; else c++;
+  for (item = player.t_pack; item!=NULL; item = next(item)) if (item==obj) return c; else c++;
   return '?';
 }
 
@@ -256,9 +256,9 @@ void money(int value)
 {
   byte floor;
 
-  floor = (proom->r_flags&ISGONE)?PASSAGE:FLOOR;
+  floor = (player.t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
   purse += value;
-  mvaddch(hero.y, hero.x, floor);
-  set_tile(hero.y, hero.x, floor);
+  mvaddch(player.t_pos.y, player.t_pos.x, floor);
+  set_tile(player.t_pos.y, player.t_pos.x, floor);
   if (value>0) msg("you found %d gold pieces", value);
 }

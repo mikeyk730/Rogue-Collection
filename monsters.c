@@ -112,9 +112,9 @@ void wanderer()
   do
   {
     i = rnd_room();
-    if ((rp = &rooms[i])==proom) continue;
+    if ((rp = &rooms[i])==player.t_room) continue;
     rnd_pos(rp, &cp);
-  } while (!(rp!=proom && step_ok(display_character(cp.y, cp.x))));
+  } while (!(rp!=player.t_room && step_ok(display_character(cp.y, cp.x))));
   new_monster(tp, randmonster(TRUE), &cp);
   if (bailout) debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->t_type-'A'].m_name);
@@ -134,13 +134,13 @@ AGENT *wake_monster(int y, int x)
   //Every time he sees mean monster, it might start chasing him
   if (!on(*tp, ISRUN) && rnd(3)!=0 && on(*tp, ISMEAN) && !on(*tp, ISHELD) && !is_wearing_ring(R_STEALTH))
   {
-    tp->t_dest = &hero;
+    tp->t_dest = &player.t_pos;
     tp->t_flags |= ISRUN;
   }
   if (ch=='M' && !on(player, ISBLIND) && !on(*tp, ISFOUND) && !on(*tp, ISCANC) && on(*tp, ISRUN))
   {
-    rp = proom;
-    dst = DISTANCE(y, x, hero.y, hero.x);
+    rp = player.t_room;
+    dst = DISTANCE(y, x, player.t_pos.y, player.t_pos.x);
     if ((rp!=NULL && !(rp->r_flags&ISDARK)) || dst<LAMP_DIST)
     {
       tp->t_flags |= ISFOUND;
@@ -157,8 +157,8 @@ AGENT *wake_monster(int y, int x)
   if (on(*tp, ISGREED) && !on(*tp, ISRUN))
   {
     tp->t_flags = tp->t_flags|ISRUN;
-    if (proom->r_goldval) tp->t_dest = &proom->r_gold;
-    else tp->t_dest = &hero;
+    if (player.t_room->r_goldval) tp->t_dest = &player.t_room->r_gold;
+    else tp->t_dest = &player.t_pos;
   }
   return tp;
 }

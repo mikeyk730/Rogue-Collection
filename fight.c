@@ -56,7 +56,7 @@ int fight(coord *mp, char mn, ITEM *weap, bool thrown)
       if (!thrown)
       {
         if (weap->o_count>1) weap->o_count--;
-        else {detach_item(&ppack, weap); discard_item(weap);}
+        else {detach_item(&player.t_pack, weap); discard_item(weap);}
         cur_weapon = NULL;
       }
     }
@@ -91,7 +91,7 @@ void attack(AGENT *mp)
   if (roll_em(mp, &player, NULL, FALSE))
   {
     hit(mname, NULL);
-    if (pstats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
+    if (player.t_stats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
     if (!on(*mp, ISCANC)) switch (mp->t_type)
     {
 
@@ -118,16 +118,16 @@ void attack(AGENT *mp)
 
         if (mp->t_type=='W')
         {
-          if (pstats.s_exp==0) death('W'); //All levels gone
-          if (--pstats.s_lvl==0) {pstats.s_exp = 0; pstats.s_lvl = 1;}
-          else pstats.s_exp = e_levels[pstats.s_lvl-1]+1;
+          if (player.t_stats.s_exp==0) death('W'); //All levels gone
+          if (--player.t_stats.s_lvl==0) {player.t_stats.s_exp = 0; player.t_stats.s_lvl = 1;}
+          else player.t_stats.s_exp = e_levels[player.t_stats.s_lvl-1]+1;
           fewer = roll(1, 10);
         }
         else fewer = roll(1, 5);
-        pstats.s_hpt -= fewer;
-        max_hp -= fewer;
-        if (pstats.s_hpt<1) pstats.s_hpt = 1;
-        if (max_hp<1) death(mp->t_type);
+        player.t_stats.s_hpt -= fewer;
+        player.t_stats.s_maxhp -= fewer;
+        if (player.t_stats.s_hpt<1) player.t_stats.s_hpt = 1;
+        if (player.t_stats.s_maxhp<1) death(mp->t_type);
         msg("you suddenly feel weaker");
       }
       break;
@@ -158,7 +158,7 @@ void attack(AGENT *mp)
         char *she_stole = "she stole %s!";
 
         steal = NULL;
-        for (nobj = 0, obj = ppack; obj!=NULL; obj = next(obj))
+        for (nobj = 0, obj = player.t_pack; obj!=NULL; obj = next(obj))
           if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
         if (steal!=NULL)
         {
@@ -173,7 +173,7 @@ void attack(AGENT *mp)
             msg(she_stole, inv_name(steal, TRUE));
             steal->o_count = oc;
           }
-          else {detach_item(&ppack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
+          else {detach_item(&player.t_pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
         }
 
         break;
@@ -186,8 +186,8 @@ void attack(AGENT *mp)
   {
     if (mp->t_type=='F')
     {
-      pstats.s_hpt -= flytrap_hit;
-      if (pstats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
+      player.t_stats.s_hpt -= flytrap_hit;
+      if (player.t_stats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
     }
     miss(mname, NULL);
   }
@@ -210,15 +210,15 @@ void check_level()
 {
   int i, add, olevel;
 
-  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>pstats.s_exp) break;
+  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>player.t_stats.s_exp) break;
   i++;
-  olevel = pstats.s_lvl;
-  pstats.s_lvl = i;
+  olevel = player.t_stats.s_lvl;
+  player.t_stats.s_lvl = i;
   if (i>olevel)
   {
     add = roll(i-olevel, 10);
-    max_hp += add;
-    if ((pstats.s_hpt += add)>max_hp) pstats.s_hpt = max_hp;
+    player.t_stats.s_maxhp += add;
+    if ((player.t_stats.s_hpt += add)>player.t_stats.s_maxhp) player.t_stats.s_hpt = player.t_stats.s_maxhp;
     msg("and achieve the rank of \"%s\"", he_man[i-1]);
   }
 }
@@ -269,7 +269,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
   if (!on(*thdef, ISRUN)) hplus += 4;
   def_arm = def->s_arm;
-  if (def==&pstats)
+  if (def==&player.t_stats)
   {
     if (cur_armor!=NULL) def_arm = cur_armor->o_ac;
     if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->o_ac;
@@ -392,7 +392,7 @@ int add_dam(str_t str)
 //raise_level: The guy just magically went up a level.
 void raise_level()
 {
-  pstats.s_exp = e_levels[pstats.s_lvl-1]+1L;
+  player.t_stats.s_exp = e_levels[player.t_stats.s_lvl-1]+1L;
   check_level();
 }
 
@@ -444,7 +444,7 @@ is_magic(ITEM *obj)
 //killed: Called to put a monster to death
 void killed(AGENT *tp, bool pr)
 {
-  pstats.s_exp += tp->t_stats.s_exp;
+  player.t_stats.s_exp += tp->t_stats.s_exp;
   //If the monster was a flytrap, un-hold him
   switch (tp->t_type)
   {

@@ -129,7 +129,7 @@ void playit(char *sname)
     setup();
     cursor(FALSE);
   }
-  else {oldpos.x = hero.x; oldpos.y = hero.y; oldrp = roomin(&hero);}
+  else {oldpos.x = player.t_pos.x; oldpos.y = player.t_pos.y; oldrp = roomin(&player.t_pos);}
   while (playing) command(); //Command execution
   endit();
 }

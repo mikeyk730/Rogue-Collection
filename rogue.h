@@ -30,11 +30,6 @@ typedef unsigned char bool;
 #define next(ptr)       (*ptr).l_next
 #define prev(ptr)       (*ptr).l_prev
 #define ce(a,b)         _ce(&(a),&(b))
-#define hero            player.t_pos
-#define pstats          player.t_stats
-#define ppack            player.t_pack
-#define proom           player.t_room
-#define max_hp          player.t_stats.s_maxhp
 #define on(thing,flag)  (((thing).t_flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
 #define GOLDCALC        (rnd(50+10*level)+2)

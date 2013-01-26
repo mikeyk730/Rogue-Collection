@@ -19,19 +19,19 @@ void doctor()
 {
   int lv, ohp;
 
-  lv = pstats.s_lvl;
-  ohp = pstats.s_hpt;
+  lv = player.t_stats.s_lvl;
+  ohp = player.t_stats.s_hpt;
   quiet++;
   if (lv<8)
   {
-    if (quiet+(lv<<1)>20) pstats.s_hpt++;
+    if (quiet+(lv<<1)>20) player.t_stats.s_hpt++;
   }
-  else if (quiet>=3) pstats.s_hpt += rnd(lv-7)+1;
-  if (is_ring_on_hand(LEFT, R_REGEN)) pstats.s_hpt++;
-  if (is_ring_on_hand(RIGHT, R_REGEN)) pstats.s_hpt++;
-  if (ohp!=pstats.s_hpt)
+  else if (quiet>=3) player.t_stats.s_hpt += rnd(lv-7)+1;
+  if (is_ring_on_hand(LEFT, R_REGEN)) player.t_stats.s_hpt++;
+  if (is_ring_on_hand(RIGHT, R_REGEN)) player.t_stats.s_hpt++;
+  if (ohp!=player.t_stats.s_hpt)
   {
-    if (pstats.s_hpt>max_hp) pstats.s_hpt = max_hp;
+    if (player.t_stats.s_hpt>player.t_stats.s_maxhp) player.t_stats.s_hpt = player.t_stats.s_maxhp;
     quiet = 0;
   }
 }
@@ -77,7 +77,7 @@ void sight()
   {
     extinguish(sight);
     player.t_flags &= ~ISBLIND;
-    if (!(proom->r_flags&ISGONE)) enter_room(&hero);
+    if (!(player.t_room->r_flags&ISGONE)) enter_room(&player.t_pos);
     msg("the veil of darkness lifts");
   }
 }

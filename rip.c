@@ -69,7 +69,7 @@ reread:
     his_score.sc_gold = amount;
     his_score.sc_fate = flags?flags:monst;
     his_score.sc_level = max_level;
-    his_score.sc_rank = pstats.s_lvl;
+    his_score.sc_rank = player.t_stats.s_lvl;
     rank = add_scores(&his_score, &top_ten[0]);
   }
   _close(sc_fd);
@@ -248,7 +248,7 @@ void total_winner()
   clear();
   mvaddstr(0, 0, "   Worth  Item");
   oldpurse = purse;
-  for (c = 'a', obj = ppack; obj!=NULL; c++, obj = next(obj))
+  for (c = 'a', obj = player.t_pack; obj!=NULL; c++, obj = next(obj))
   {
     switch (obj->o_type)
     {

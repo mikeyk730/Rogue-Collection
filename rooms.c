@@ -176,7 +176,7 @@ void enter_room(coord *cp)
   int y, x;
   AGENT *tp;
 
-  rp = proom = roomin(cp);
+  rp = player.t_room = roomin(cp);
   if (bailout || (rp->r_flags&ISGONE && (rp->r_flags&ISMAZE)==0))
   {
     debug("in a gone room");
@@ -209,8 +209,8 @@ void leave_room(coord *cp)
   byte floor;
   byte ch;
 
-  rp = proom;
-  proom = &passages[get_flags(cp->y, cp->x)&F_PNUM];
+  rp = player.t_room;
+  player.t_room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
   floor = ((rp->r_flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
   if (rp->r_flags&ISMAZE) floor = PASSAGE;
   for (y = rp->r_pos.y+1; y<rp->r_max.y+rp->r_pos.y-1; y++) {

@@ -65,7 +65,7 @@ bool plop_monster(int r, int c, coord *cp)
     for (x = c-1; x<=c+1; x++)
     {
       //Don't put a monster on top of the player.
-      if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
+      if ((y==player.t_pos.y && x==player.t_pos.x) || offmap(y,x)) continue;
       //Or anything else nasty
       if (step_ok(ch = display_character(y, x)))
       {

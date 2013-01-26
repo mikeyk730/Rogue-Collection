@@ -54,7 +54,7 @@ void quaff()
 
   case P_HEALING:
     p_know[P_HEALING] = TRUE;
-    if ((pstats.s_hpt += roll(pstats.s_lvl, 4))>max_hp) pstats.s_hpt = ++max_hp;
+    if ((player.t_stats.s_hpt += roll(player.t_stats.s_lvl, 4))>player.t_stats.s_maxhp) player.t_stats.s_hpt = ++player.t_stats.s_maxhp;
     sight();
     msg("you begin to feel better");
     break;
@@ -126,10 +126,10 @@ void quaff()
 
   case P_XHEAL:
     p_know[P_XHEAL] = TRUE;
-    if ((pstats.s_hpt += roll(pstats.s_lvl, 8))>max_hp)
+    if ((player.t_stats.s_hpt += roll(player.t_stats.s_lvl, 8))>player.t_stats.s_maxhp)
     {
-      if (pstats.s_hpt>max_hp+pstats.s_lvl+1) ++max_hp;
-      pstats.s_hpt = ++max_hp;
+      if (player.t_stats.s_hpt>player.t_stats.s_maxhp+player.t_stats.s_lvl+1) ++player.t_stats.s_maxhp;
+      player.t_stats.s_hpt = ++player.t_stats.s_maxhp;
     }
     sight();
     msg("you begin to feel much better");
@@ -141,11 +141,11 @@ void quaff()
     break;
 
   case P_RESTORE:
-    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[LEFT]->o_ac);
-    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[RIGHT]->o_ac);
-    if (pstats.s_str<max_stats.s_str) pstats.s_str = max_stats.s_str;
-    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[LEFT]->o_ac);
-    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[RIGHT]->o_ac);
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.t_stats.s_str, -cur_ring[LEFT]->o_ac);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.t_stats.s_str, -cur_ring[RIGHT]->o_ac);
+    if (player.t_stats.s_str<max_stats.s_str) player.t_stats.s_str = max_stats.s_str;
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.t_stats.s_str, cur_ring[LEFT]->o_ac);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.t_stats.s_str, cur_ring[RIGHT]->o_ac);
     msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
     break;
 
@@ -171,7 +171,7 @@ void quaff()
   inpack--;
   if (obj->o_count>1) obj->o_count--;
   else {
-    detach_item(&ppack, obj); 
+    detach_item(&player.t_pack, obj); 
     discardit = TRUE;
   }
   call_it(p_know[obj->o_which], &p_guess[obj->o_which]);

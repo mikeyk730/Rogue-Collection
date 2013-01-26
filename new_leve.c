@@ -81,13 +81,13 @@ void new_level()
   do
   {
     rm = rnd_room();
-    rnd_pos(&rooms[rm], &hero);
-  } while (!(isfloor(get_tile(hero.y, hero.x)) && (get_flags(hero.y, hero.x)&F_REAL) && monster_at(hero.y, hero.x)==NULL));
+    rnd_pos(&rooms[rm], &player.t_pos);
+  } while (!(isfloor(get_tile(player.t_pos.y, player.t_pos.x)) && (get_flags(player.t_pos.y, player.t_pos.x)&F_REAL) && monster_at(player.t_pos.y, player.t_pos.x)==NULL));
   mpos = 0;
-  enter_room(&hero);
-  mvaddch(hero.y, hero.x, PLAYER);
-  bcopy(oldpos, hero);
-  oldrp = proom;
+  enter_room(&player.t_pos);
+  mvaddch(player.t_pos.y, player.t_pos.x, PLAYER);
+  bcopy(oldpos, player.t_pos);
+  oldrp = player.t_room;
   if (on(player, SEEMONST)) turn_see(FALSE);
 }
 
