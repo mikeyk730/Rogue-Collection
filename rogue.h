@@ -302,81 +302,53 @@ struct stats
   int s_maxhp; //Max hit points
 };
 
-//Structure for monsters and player
 
-union thing
+struct _item
 {
-  struct
-  {
-    union thing *_l_next, *_l_prev; //Next pointer in link
-    coord _t_pos;                   //Position
-    char _t_turn;                   //If slowed, is it a turn to move
-    char _t_type;                   //What it is
-    byte _t_disguise;               //What mimic looks like
-    byte _t_oldch;                  //Character that was where it was
-    coord *_t_dest;                 //Where it is running to
-    short _t_flags;                 //State word
-    struct stats _t_stats;          //Physical description
-    struct room *_t_room;           //Current room for thing
-    union thing *_t_pack;           //What the thing is carrying
-  } _t;
-  struct
-  {
-    union thing *_l_next, *_l_prev; //Next pointer in link
-    int _o_type;                  //What kind of object it is
-    coord _o_pos;                   //Where it lives on the screen
-    char *_o_text;                  //What it says if you read it
-    char _o_launch;                 //What you need to launch it
-    char *_o_damage;                //Damage if used like sword
-    char *_o_hurldmg;               //Damage if thrown
-    int _o_count;                 //Count for plural objects
-    int _o_which;                 //Which object of a type it is
-    int _o_hplus;                 //Plusses to hit
-    int _o_dplus;                 //Plusses to damage
-    short _o_ac;                    //Armor class
-    short _o_flags;                 //Information about objects
-    char _o_enemy;                  //If it is enchanted, who it hates
-    int _o_group;                 //Group number for this object
-  } _o;
+  struct _item *l_next, *l_prev; //Next pointer in link
+  int o_type;                    //What kind of object it is
+  coord o_pos;                   //Where it lives on the screen
+  char *o_text;                  //What it says if you read it
+  char o_launch;                 //What you need to launch it
+  char *o_damage;                //Damage if used like sword
+  char *o_hurldmg;               //Damage if thrown
+  int o_count;                   //Count for plural objects
+  int o_which;                   //Which object of a type it is
+  int o_hplus;                   //Plusses to hit
+  int o_dplus;                   //Plusses to damage
+  short o_ac;                    //Armor class
+  short o_flags;                 //Information about objects
+  char o_enemy;                  //If it is enchanted, who it hates
+  int o_group;                   //Group number for this object
+};
+typedef struct _item ITEM;
+
+//Structure for monsters and player
+struct _agent
+{
+  struct _agent *l_next, *l_prev; //Next pointer in link
+  coord t_pos;                    //Position
+  char t_turn;                    //If slowed, is it a turn to move
+  char t_type;                    //What it is
+  byte t_disguise;                //What mimic looks like
+  byte t_oldch;                   //Character that was where it was
+  coord *t_dest;                  //Where it is running to
+  short t_flags;                  //State word
+  struct stats t_stats;           //Physical description
+  struct room *t_room;            //Current room for thing
+  struct _item *t_pack;           //What the thing is carrying
 };
 
-typedef union thing THING;
+typedef struct _agent AGENT;
 
-#define l_next      _t._l_next
-#define l_prev      _t._l_prev
-#define t_pos       _t._t_pos
-#define t_turn      _t._t_turn
-#define t_type      _t._t_type
-#define t_disguise  _t._t_disguise
-#define t_oldch     _t._t_oldch
-#define t_dest      _t._t_dest
-#define t_flags     _t._t_flags
-#define t_stats     _t._t_stats
-#define t_pack      _t._t_pack
-#define t_room      _t._t_room
-#define o_type      _o._o_type
-#define o_pos       _o._o_pos
-#define o_text      _o._o_text
-#define o_launch    _o._o_launch
-#define o_damage    _o._o_damage
-#define o_hurldmg   _o._o_hurldmg
-#define o_count     _o._o_count
-#define o_which     _o._o_which
-#define o_hplus     _o._o_hplus
-#define o_dplus     _o._o_dplus
-#define o_ac        _o._o_ac
 #define o_charges   o_ac
 #define o_goldval   o_ac
-#define o_flags     _o._o_flags
-#define o_group     _o._o_group
-#define o_enemy     _o._o_enemy
 
 //Array containing information on all the various types of monsters
-
 struct monster
 {
   char *m_name;         //What to call the monster
-  int m_carry;        //Probability of carrying something
+  int m_carry;          //Probability of carrying something
   short m_flags;        //Things about the monster
   struct stats m_stats; //Initial stats
 };
@@ -392,7 +364,8 @@ struct sc_ent
 
 //External variables
 
-extern THING *cur_armor, *cur_ring[2], *cur_weapon, *lvl_obj, *mlist, player;
+extern ITEM *cur_armor, *cur_ring[2], *cur_weapon, *lvl_obj;
+extern AGENT *mlist, player;
 extern coord delta, oldpos;
 extern struct room *oldrp, passages[], rooms[];
 extern struct stats max_stats;
@@ -429,7 +402,7 @@ extern bool p_know[], r_know[], s_know[], ws_know[];
 
 extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[], huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, *typeahead, take, *w_names[], whoami[], *ws_made[], *ws_type[];
 
-extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, group, hungry_state, inpack, lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total;
+extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, group, hungry_state, inpack, lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total_items;
 
 extern long seed, *e_levels;
 

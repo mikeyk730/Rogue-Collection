@@ -43,18 +43,21 @@ static struct init_weps
 //missile: Fire a missile in a given direction
 void missile(int ydelta, int xdelta)
 {
-  THING *obj, *nitem;
+  ITEM *obj, *nitem;
 
   //Get which thing we are hurling
   if ((obj = get_item("throw", WEAPON))==NULL) return;
   if (!can_drop(obj) || is_current(obj)) return;
   //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
 hack:
-  if (obj->o_count<2) {detach(ppack, obj); inpack--;}
+  if (obj->o_count<2) {
+    detach_item(&ppack, obj); 
+    inpack--;
+  }
   else
   {
     //here is a quick hack to check if we can get a new item
-    if ((nitem = create_thing())==NULL)
+    if ((nitem = create_item())==NULL)
     {
       obj->o_count = 1;
       msg("something in your pack explodes!!!");
@@ -72,7 +75,7 @@ hack:
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
-void do_motion(THING *obj, int ydelta, int xdelta)
+void do_motion(ITEM *obj, int ydelta, int xdelta)
 {
   byte under = '@';
 
@@ -103,7 +106,7 @@ void do_motion(THING *obj, int ydelta, int xdelta)
   }
 }
 
-char *short_name(THING *obj)
+char *short_name(ITEM *obj)
 {
   switch (obj->o_type)
   {
@@ -116,7 +119,7 @@ char *short_name(THING *obj)
 }
 
 //fall: Drop an item someplace around here.
-void fall(THING *obj, bool pr)
+void fall(ITEM *obj, bool pr)
 {
   static coord fpos;
 
@@ -132,18 +135,18 @@ void fall(THING *obj, bool pr)
       standend();
       if (monster_at(fpos.y, fpos.x)!=NULL) monster_at(fpos.y, fpos.x)->t_oldch = obj->o_type;
     }
-    attach(lvl_obj, obj);
+    attach_item(&lvl_obj, obj);
     return;
 
   case 2:
     pr = 0;
   }
   if (pr) msg("the %s vanishes%s.", short_name(obj), noterse(" as it hits the ground"));
-  discard(obj);
+  discard_item(obj);
 }
 
 //init_weapon: Set up the initial goodies for a weapon
-void init_weapon(THING *weap, byte type)
+void init_weapon(ITEM *weap, byte type)
 {
   struct init_weps *iwp;
 
@@ -157,10 +160,10 @@ void init_weapon(THING *weap, byte type)
 }
 
 //hit_monster: Does the missile hit the monster?
-int hit_monster(int y, int x, THING *obj)
+int hit_monster(int y, int x, ITEM *obj)
 {
   static coord mp;
-  THING *mo;
+  AGENT *mo;
 
   if (mo = monster_at(y, x)) {mp.y = y; mp.x = x; return fight(&mp, mo->t_type, obj, TRUE);}
   return FALSE;
@@ -179,7 +182,7 @@ char *num(int n1, int n2, char type)
 //wield: Pull out a certain weapon
 void wield()
 {
-  THING *obj, *oweapon;
+  ITEM *obj, *oweapon;
   char *sp;
 
   oweapon = cur_weapon;
@@ -199,10 +202,10 @@ bad:
 }
 
 //fallpos: Pick a random position around the given (y, x) coordinates
-int fallpos(THING *obj, coord *newpos)
+int fallpos(ITEM *obj, coord *newpos)
 {
   int y, x, cnt = 0, ch;
-  THING *onfloor;
+  ITEM *onfloor;
 
   for (y = obj->o_pos.y-1; y<=obj->o_pos.y+1; y++)
     for (x = obj->o_pos.x-1; x<=obj->o_pos.x+1; x++)

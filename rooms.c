@@ -25,7 +25,7 @@ void do_rooms()
 {
   int i, rm;
   struct room *rp;
-  THING *tp;
+  AGENT *tp;
   int left_out;
   coord top;
   coord bsze;
@@ -85,9 +85,9 @@ void do_rooms()
     //Put the gold in
     if ((rnd(2)==0) && (!saw_amulet || (level>=max_level)))
     {
-      THING *gold;
+      ITEM *gold;
 
-      if ((gold = create_thing())!=NULL)
+      if ((gold = create_item())!=NULL)
       {
         gold->o_goldval = rp->r_goldval = GOLDCALC;
         while (1)
@@ -102,14 +102,14 @@ void do_rooms()
         gold->o_flags = ISMANY;
         gold->o_group = GOLDGRP;
         gold->o_type = GOLD;
-        attach(lvl_obj, gold);
+        attach_item(&lvl_obj, gold);
         set_tile(rp->r_gold.y, rp->r_gold.x, GOLD);
       }
     }
     //Put the monster in
     if (rnd(100)<(rp->r_goldval>0?80:25))
     {
-      if ((tp = create_thing())!=NULL)
+      if ((tp = create_agent())!=NULL)
       {
         byte mch;
 
@@ -174,7 +174,7 @@ void enter_room(coord *cp)
 {
   struct room *rp;
   int y, x;
-  THING *tp;
+  AGENT *tp;
 
   rp = proom = roomin(cp);
   if (bailout || (rp->r_flags&ISGONE && (rp->r_flags&ISMAZE)==0))

@@ -19,7 +19,8 @@
 //quaff: Quaff a potion from the pack
 void quaff()
 {
-  THING *obj, *th;
+  ITEM *obj;
+  AGENT *th;
   bool discardit = FALSE;
 
   if ((obj = get_item("quaff", POTION))==NULL) return;
@@ -74,7 +75,7 @@ void quaff()
     //Potion of magic detection.  Find everything interesting on the level and show him where they are.  Also give hints as to whether he would want to use the object.
     if (lvl_obj!=NULL)
     {
-      THING *tp;
+      ITEM *tp;
       bool show;
 
       show = FALSE;
@@ -169,15 +170,19 @@ void quaff()
   //Throw the item away
   inpack--;
   if (obj->o_count>1) obj->o_count--;
-  else {detach(ppack, obj); discardit = TRUE;}
+  else {
+    detach_item(&ppack, obj); 
+    discardit = TRUE;
+  }
   call_it(p_know[obj->o_which], &p_guess[obj->o_which]);
-  if (discardit) discard(obj);
+  if (discardit)
+    discard_item(obj);
 }
 
 //invis_on: Turn on the ability to see invisible
 void invis_on()
 {
-  THING *th;
+  AGENT *th;
 
   player.t_flags |= CANSEE;
   for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && can_see_monst(th))
@@ -189,7 +194,7 @@ void invis_on()
 //turn_see: Put on or off seeing monsters on this level
 bool turn_see(bool turn_off)
 {
-  THING *mp;
+  AGENT *mp;
   bool can_see, add_new;
   byte was_there;
 
@@ -215,7 +220,7 @@ bool turn_see(bool turn_off)
 }
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void th_effect(THING *obj, THING *tp)
+void th_effect(ITEM *obj, AGENT *tp)
 {
   switch (obj->o_which)
   {

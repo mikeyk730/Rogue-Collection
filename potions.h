@@ -8,4 +8,4 @@ void invis_on();
 bool turn_see(bool turn_off);
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void th_effect(THING *obj, THING *tp);
+void th_effect(ITEM *obj, AGENT *tp);

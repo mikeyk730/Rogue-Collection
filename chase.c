@@ -23,7 +23,7 @@ coord ch_ret; //Where chasing takes you
 //runners: Make all the running monsters move.
 void runners()
 {
-  THING *tp;
+  AGENT *tp;
   int dist;
 
   for (tp = mlist; tp!=NULL; tp = next(tp))
@@ -41,11 +41,11 @@ void runners()
 }
 
 //do_chase: Make one thing chase another.
-void do_chase(THING *th)
+void do_chase(AGENT *th)
 {
   int mindist = 32767, i, dist;
   bool door;
-  THING *obj;
+  ITEM *obj;
   struct room *oroom;
   struct room *rer, *ree; //room of chaser, room of chasee
   coord this; //Temporary destination for chaser
@@ -98,8 +98,8 @@ over:
     {
       byte oldchar;
 
-      detach(lvl_obj, obj);
-      attach(th->t_pack, obj);
+      detach_item(&lvl_obj, obj);
+      attach_item(&th->t_pack, obj);
       oldchar = (th->t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
       set_tile(obj->o_pos.y, obj->o_pos.x, oldchar);
       if (cansee(obj->o_pos.y, obj->o_pos.x)) mvaddch(obj->o_pos.y, obj->o_pos.x, oldchar);
@@ -141,7 +141,7 @@ over:
 
 //see_monst: Return TRUE if the hero can see the monster
 
-int can_see_monst(THING *mp)
+int can_see_monst(AGENT *mp)
 {
   if (on(player, ISBLIND)) return FALSE;
   if (on(*mp, ISINVIS) && !on(player, CANSEE)) return FALSE;
@@ -158,7 +158,7 @@ int can_see_monst(THING *mp)
 //start_run: Set a monster running after something or stop it from running (for when it dies)
 void start_run(coord *runner)
 {
-  THING *tp;
+  AGENT *tp;
 
   //If we couldn't find him, something is funny
   tp = monster_at(runner->y, runner->x);
@@ -173,11 +173,11 @@ void start_run(coord *runner)
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
-void chase(THING *tp, coord *ee)
+void chase(AGENT *tp, coord *ee)
 {
   int x, y;
   int dist, thisdist;
-  THING *obj;
+  ITEM *obj;
   coord *er;
   byte ch;
   int plcnt = 1;
@@ -275,9 +275,9 @@ int cansee(int y, int x)
 }
 
 //find_dest: find the proper destination for the monster
-coord *find_dest(THING *tp)
+coord *find_dest(AGENT *tp)
 {
-  THING *obj;
+  ITEM *obj;
   int prob;
   struct room *rp;
 

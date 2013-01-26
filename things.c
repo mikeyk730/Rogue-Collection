@@ -30,7 +30,7 @@ static char *lastfmt, *lastarg;
 
 //inv_name: Return the name of something as it would appear in an inventory.
 
-char *inv_name(THING *obj, bool drop)
+char *inv_name(ITEM *obj, bool drop)
 {
   int which = obj->o_which;
   char *pb;
@@ -130,7 +130,7 @@ void chopmsg(char *s, char *shmsg, char *lnmsg, int arg1, int arg2, int arg3)
 void drop()
 {
   byte ch;
-  THING *nobj, *op;
+  ITEM *nobj, *op;
 
   ch = get_tile(hero.y, hero.x);
   if (ch!=FLOOR && ch!=PASSAGE) {msg("there is something there already"); return;}
@@ -139,17 +139,17 @@ void drop()
   //Take it out of the pack
   if (op->o_count>=2 && op->o_type!=WEAPON)
   {
-    if ((nobj = create_thing())==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
+    if ((nobj = create_item())==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
     op->o_count--;
     bcopy(*nobj, *op);
     nobj->o_count = 1;
     op = nobj;
     if (op->o_group!=0) inpack++;
   }
-  else detach(ppack, op);
+  else detach_item(&ppack, op);
   inpack--;
   //Link it into the level object list
-  attach(lvl_obj, op);
+  attach_item(&lvl_obj, op);
   set_tile(hero.y, hero.x, op->o_type);
   bcopy(op->o_pos, hero);
   if (op->o_type==AMULET) amulet = FALSE;
@@ -158,7 +158,7 @@ void drop()
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
 
-int can_drop(THING *op)
+int can_drop(ITEM *op)
 {
   if (op==NULL) return TRUE;
   if (op!=cur_armor && op!=cur_weapon && op!=cur_ring[LEFT] && op!=cur_ring[RIGHT]) return TRUE;
@@ -185,12 +185,12 @@ int can_drop(THING *op)
 }
 
 //new_thing: Return a new thing
-THING *new_thing()
+ITEM *new_item()
 {
-  THING *cur;
+  ITEM *cur;
   int j, k;
 
-  if ((cur = create_thing())==NULL) return NULL;
+  if ((cur = create_item())==NULL) return NULL;
   cur->o_hplus = cur->o_dplus = 0;
   cur->o_damage = cur->o_hurldmg = "0d0";
   cur->o_ac = 11;
@@ -307,7 +307,7 @@ void print_disc(byte type)
   bool *know;
   char **guess;
   int i, maxnum, num_found;
-  static THING obj;
+  static ITEM obj;
   static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
   switch (type)

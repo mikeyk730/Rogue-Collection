@@ -5,7 +5,7 @@ char *tr_name(byte type);
 void look(bool wakeup);
 
 //find_obj: Find the unclaimed object at y, x
-THING *find_obj(int y, int x);
+ITEM *find_obj(int y, int x);
 
 //eat: She wants to eat something, so let her try
 void eat();
@@ -26,7 +26,7 @@ void aggravate();
 char *vowelstr(char *str);
 
 //is_current: See if the object is one of the currently used items
-int is_current(THING *obj);
+int is_current(ITEM *obj);
 
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
 int get_dir();
@@ -46,7 +46,7 @@ void call_it(bool know, char **guess);
 int step_ok(int ch);
 
 //goodch: Decide how good an object is and return the correct character for printing.
-int goodch(THING *obj);
+int goodch(ITEM *obj);
 
 //help: prints out help screens
 void help(char **helpscr);

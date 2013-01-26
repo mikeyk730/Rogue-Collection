@@ -11,7 +11,7 @@ int gethand();
 int ring_eat(int hand);
 
 //ring_num: Print ring bonuses
-char *ring_num(THING *obj);
+char *ring_num(ITEM *obj);
 
 int is_ring_on_hand(int h, int r);
 int is_wearing_ring(int r);

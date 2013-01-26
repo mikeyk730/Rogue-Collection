@@ -1,12 +1,17 @@
 //_detach: Takes an item out of whatever linked list it might be in
-void _detach(THING **list, THING *item);
+void detach_item(ITEM **list, ITEM *item);
 
 //_attach: add an item to the head of a list
-void _attach(THING **list, THING *item);
+void attach_item(ITEM **list, ITEM *item);
 
 //_free_list: Throw the whole blamed thing away
-void _free_list(THING **ptr);
+void free_item_list(ITEM **ptr);
 
-#define attach(a,b)     _attach(&a,b)
-#define detach(a,b)     _detach(&a,b)
-#define free_list(a)    _free_list(&a)
+//_detach: Takes an item out of whatever linked list it might be in
+void detach_agent(AGENT **list, AGENT *item);
+
+//_attach: add an item to the head of a list
+void attach_agent(AGENT **list, AGENT *item);
+
+//_free_list: Throw the whole blamed thing away
+void free_agent_list(AGENT **ptr);

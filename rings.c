@@ -15,7 +15,7 @@
 //ring_on: Put a ring on a hand
 void ring_on()
 {
-  THING *obj;
+  ITEM *obj;
   int ring = -1;
 
   if ((obj = get_item("put on", RING))==NULL) goto no_ring;
@@ -46,7 +46,7 @@ no_ring:
 void ring_off()
 {
   int ring;
-  THING *obj;
+  ITEM *obj;
   char packchar;
 
   if (cur_ring[LEFT]==NULL && cur_ring[RIGHT]==NULL) {msg("you aren't wearing any rings"); after = FALSE; return;}
@@ -93,7 +93,7 @@ int ring_eat(int hand)
 }
 
 //ring_num: Print ring bonuses
-char *ring_num(THING *obj)
+char *ring_num(ITEM *obj)
 {
   extern char *ring_buf;
 

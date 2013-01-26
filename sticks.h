@@ -1,5 +1,5 @@
 //fix_stick: Set up a new stick
-void fix_stick(THING *cur);
+void fix_stick(ITEM *cur);
 
 //do_zap: Perform a zap with a wand
 void do_zap();
@@ -11,4 +11,4 @@ void drain();
 void fire_bolt(coord *start, coord *dir, char *name);
 
 //charge_str: Return an appropriate string for a wand charge
-char *charge_str(THING *obj);
+char *charge_str(ITEM *obj);

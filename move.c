@@ -135,7 +135,7 @@ void door_open(struct room *rp)
 {
   int j, k;
   byte ch;
-  THING *item;
+  AGENT *item;
 
   if (!(rp->r_flags&ISGONE) && !on(player, ISBLIND))
     for (j = rp->r_pos.y; j<rp->r_pos.y+rp->r_max.y; j++)
@@ -185,9 +185,9 @@ int be_trapped(coord *tc)
     }
     else
     {
-      THING *arrow;
+      ITEM *arrow;
 
-      if ((arrow = create_thing())!=NULL)
+      if ((arrow = create_item())!=NULL)
       {
         arrow->o_type = WEAPON;
         arrow->o_which = ARROW;
@@ -236,11 +236,11 @@ void descend(char *mesg)
 }
 
 //rndmove: Move in a random direction if the monster/person is confused
-void rndmove(THING *who, coord *newmv)
+void rndmove(AGENT *who, coord *newmv)
 {
   int x, y;
   byte ch;
-  THING *obj;
+  ITEM *obj;
 
   y = newmv->y = who->t_pos.y+rnd(3)-1;
   x = newmv->x = who->t_pos.x+rnd(3)-1;

@@ -162,12 +162,12 @@ char *ring_buf; //Buffer used by ring code
 //init_player: Roll up the rogue
 void init_player()
 {
-  THING *obj;
+  ITEM *obj;
 
   bcopy(pstats, max_stats);
   food_left = HUNGER_TIME;
   //Give the rogue his weaponry.  First a mace.
-  obj = create_thing();
+  obj = create_item();
   obj->o_type = WEAPON;
   obj->o_which = MACE;
   init_weapon(obj, MACE);
@@ -179,7 +179,7 @@ void init_player()
   add_pack(obj, TRUE);
   cur_weapon = obj;
   //Now a +1 bow
-  obj = create_thing();
+  obj = create_item();
   obj->o_type = WEAPON;
   obj->o_which = BOW;
   init_weapon(obj, BOW);
@@ -190,7 +190,7 @@ void init_player()
   obj->o_flags |= ISKNOW;
   add_pack(obj, TRUE);
   //Now some arrows
-  obj = create_thing();
+  obj = create_item();
   obj->o_type = WEAPON;
   obj->o_which = ARROW;
   init_weapon(obj, ARROW);
@@ -199,7 +199,7 @@ void init_player()
   obj->o_flags |= ISKNOW;
   add_pack(obj, TRUE);
   //And his suit of armor
-  obj = create_thing();
+  obj = create_item();
   obj->o_type = ARMOR;
   obj->o_which = RING_MAIL;
   obj->o_ac = a_class[RING_MAIL]-1;
@@ -209,7 +209,7 @@ void init_player()
   cur_armor = obj;
   add_pack(obj, TRUE);
   //Give him some food too
-  obj = create_thing();
+  obj = create_item();
   obj->o_type = FOOD;
   obj->o_count = 1;
   obj->o_which = 0;
@@ -347,7 +347,6 @@ void init_ds()
 {
   long *ep;
   alloc_level();
-  alloc_things();
   tbuf = malloc(MAXSTR);
   msgbuf = malloc(BUFSIZE);
   prbuf = malloc(MAXSTR);

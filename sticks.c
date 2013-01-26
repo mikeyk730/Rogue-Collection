@@ -22,7 +22,7 @@
 #include "list.h"
 
 //fix_stick: Set up a new stick
-void fix_stick(THING *cur)
+void fix_stick(ITEM *cur)
 {
   if (strcmp(ws_type[cur->o_which], "staff")==0) cur->o_damage = "2d3";
   else cur->o_damage = "1d1";
@@ -38,8 +38,8 @@ void fix_stick(THING *cur)
 //do_zap: Perform a zap with a wand
 void do_zap()
 {
-  THING *obj;
-  THING *tp;
+  ITEM *obj;
+  AGENT *tp;
   int y, x;
   char *name;
   int which_one;
@@ -101,10 +101,10 @@ void do_zap()
         }
         else if (which_one==WS_POLYMORPH)
         {
-          THING *pp;
+          ITEM *pp;
 
           pp = tp->t_pack;
-          detach(mlist, tp);
+          detach_agent(&mlist, tp);
           if (can_see_monst(tp)) mvaddch(y, x, get_tile(y, x));
           oldch = tp->t_oldch;
           delta.y = y;
@@ -158,7 +158,7 @@ void do_zap()
 
   case WS_MISSILE:
     {
-      THING bolt;
+      ITEM bolt;
 
       ws_know[WS_MISSILE] = TRUE;
       bolt.o_type = '*';
@@ -225,12 +225,12 @@ void do_zap()
 //drain: Do drain hit points from player schtick
 void drain()
 {
-  THING *mp;
+  AGENT *mp;
   int cnt;
   struct room *corp;
-  THING **dp;
+  AGENT **dp;
   bool inpass;
-  THING *drainee[40];
+  AGENT *drainee[40];
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
@@ -263,12 +263,12 @@ void drain()
 void fire_bolt(coord *start, coord *dir, char *name)
 {
   byte dirch, ch;
-  THING *tp;
+  AGENT *tp;
   bool hit_hero, used, changed;
   int i, j;
   coord pos;
   struct {coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
-  THING bolt;
+  ITEM bolt;
   bool is_frost;
 
   is_frost = (strcmp(name, "frost")==0);
@@ -360,7 +360,7 @@ void fire_bolt(coord *start, coord *dir, char *name)
 }
 
 //charge_str: Return an appropriate string for a wand charge
-char *charge_str(THING *obj)
+char *charge_str(ITEM *obj)
 {
   static char buf[20];
 

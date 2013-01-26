@@ -1,8 +1,8 @@
 //fight: The player attacks the monster.
-int fight(coord *mp, char mn, THING *weap, bool thrown);
+int fight(coord *mp, char mn, ITEM *weap, bool thrown);
 
 //attack: The monster attacks the player
-void attack(THING *mp);
+void attack(AGENT *mp);
 
 //swing: Returns true if the swing hits
 bool swing(int at_lvl, int op_arm, int wplus);
@@ -11,7 +11,7 @@ bool swing(int at_lvl, int op_arm, int wplus);
 void check_level();
 
 //roll_em: Roll several attacks
-bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl);
+bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl);
 
 //prname: The print name of a combatant
 char *prname(char *who, bool upper);
@@ -23,7 +23,7 @@ void hit(char *er, char *ee);
 void miss(char *er, char *ee);
 
 //save_throw: See if a creature save against something
-int save_throw(int which, THING *tp);
+int save_throw(int which, AGENT *tp);
 
 //save: See if he saves against various nasty things
 int save(int which);
@@ -38,13 +38,13 @@ int add_dam(str_t str);
 void raise_level();
 
 //thunk: A missile hit or missed a monster
-void thunk(THING *weap, char *mname, char *does, char *did);
+void thunk(ITEM *weap, char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen
-void remove_mons(coord *mp, THING *tp, bool waskill);
+void remove_mons(coord *mp, AGENT *tp, bool waskill);
 
 //is_magic: Returns true if an object radiates magic
-int is_magic(THING *obj);
+int is_magic(ITEM *obj);
 
 //killed: Called to put a monster to death
-void killed(THING *tp, bool pr);
+void killed(AGENT *tp, bool pr);

@@ -43,7 +43,7 @@ void look(bool wakeup)
 {
   int x, y;
   byte ch, pch;
-  THING *tp;
+  AGENT *tp;
   struct room *rp;
   int ey, ex;
   int passcount = 0;
@@ -153,9 +153,9 @@ void look(bool wakeup)
 }
 
 //find_obj: Find the unclaimed object at y, x
-THING *find_obj(int y, int x)
+ITEM *find_obj(int y, int x)
 {
-  THING *op;
+  ITEM *op;
 
   for (op = lvl_obj; op!=NULL; op = next(op)) if (op->o_pos.y==y && op->o_pos.x==x) return op;
 
@@ -166,7 +166,7 @@ THING *find_obj(int y, int x)
 //eat: She wants to eat something, so let her try
 void eat()
 {
-  THING *obj;
+  ITEM *obj;
 
   if ((obj = get_item("eat", FOOD))==NULL) 
     return;
@@ -176,8 +176,8 @@ void eat()
   }
   inpack--;
   if (--obj->o_count<1) {
-    detach(ppack, obj); 
-    discard(obj);
+    detach_item(&ppack, obj); 
+    discard_item(obj);
   }
   if (food_left<0)
     food_left = 0;
@@ -247,8 +247,7 @@ int add_haste(bool potion)
 //aggravate: Aggravate all the monsters on this level
 void aggravate()
 {
-  THING *mi;
-
+  AGENT *mi;
   for (mi = mlist; mi!=NULL; mi = next(mi)) start_run(&mi->t_pos);
 }
 
@@ -264,7 +263,7 @@ char *vowelstr(char *str)
 }
 
 //is_current: See if the object is one of the currently used items
-int is_current(THING *obj)
+int is_current(ITEM *obj)
 {
   if (obj==NULL) return FALSE;
   if (obj==cur_armor || obj==cur_weapon || obj==cur_ring[LEFT] || obj==cur_ring[RIGHT])
@@ -355,7 +354,7 @@ int step_ok(int ch)
 }
 
 //goodch: Decide how good an object is and return the correct character for printing.
-int goodch(THING *obj)
+int goodch(ITEM *obj)
 {
   int ch = MAGIC;
 
@@ -525,7 +524,7 @@ void u_level()
 //call: Allow a user to call a potion, scroll, or ring something
 void call()
 {
-  THING *obj;
+  ITEM *obj;
   char **guess, *elsewise;
   bool *know;
 

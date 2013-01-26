@@ -25,9 +25,9 @@
 #include "thing.h"
 
 //fight: The player attacks the monster.
-int fight(coord *mp, char mn, THING *weap, bool thrown)
+int fight(coord *mp, char mn, ITEM *weap, bool thrown)
 {
-  THING *tp;
+  AGENT *tp;
   char *mname;
 
   //Find the monster we want to fight
@@ -56,7 +56,7 @@ int fight(coord *mp, char mn, THING *weap, bool thrown)
       if (!thrown)
       {
         if (weap->o_count>1) weap->o_count--;
-        else {detach(ppack, weap); discard(weap);}
+        else {detach_item(&ppack, weap); discard_item(weap);}
         cur_weapon = NULL;
       }
     }
@@ -78,7 +78,7 @@ int fight(coord *mp, char mn, THING *weap, bool thrown)
 }
 
 //attack: The monster attacks the player
-void attack(THING *mp)
+void attack(AGENT *mp)
 {
   char *mname;
 
@@ -153,7 +153,7 @@ void attack(THING *mp)
 
     case 'N': //Nymphs steal a magic item, look through the pack and pick out one we like.
       {
-        THING *obj, *steal;
+        ITEM *obj, *steal;
         int nobj;
         char *she_stole = "she stole %s!";
 
@@ -173,7 +173,7 @@ void attack(THING *mp)
             msg(she_stole, inv_name(steal, TRUE));
             steal->o_count = oc;
           }
-          else {detach(ppack, steal); discard(steal); msg(she_stole, inv_name(steal, TRUE));}
+          else {detach_item(&ppack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
         }
 
         break;
@@ -224,7 +224,7 @@ void check_level()
 }
 
 //roll_em: Roll several attacks
-bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
+bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 {
   struct stats *att, *def;
   char *cp;
@@ -342,7 +342,7 @@ void miss(char *er, char *ee)
 }
 
 //save_throw: See if a creature save against something
-int save_throw(int which, THING *tp)
+int save_throw(int which, AGENT *tp)
 {
   int need;
 
@@ -397,7 +397,7 @@ void raise_level()
 }
 
 //thunk: A missile hit or missed a monster
-void thunk(THING *weap, char *mname, char *does, char *did)
+void thunk(ITEM *weap, char *mname, char *does, char *did)
 {
   if (weap->o_type==WEAPON) addmsg("the %s %s ", w_names[weap->o_which], does);
   else addmsg("you %s ", did);
@@ -406,28 +406,31 @@ void thunk(THING *weap, char *mname, char *does, char *did)
 }
 
 //remove: Remove a monster from the screen
-void remove_mons(coord *mp, THING *tp, bool waskill)
+void remove_mons(coord *mp, AGENT *tp, bool waskill)
 {
-  THING *obj, *nexti;
+  ITEM *obj, *nexti;
 
   if (tp==NULL) return;
   for (obj = tp->t_pack; obj!=NULL; obj = nexti)
   {
     nexti = next(obj);
     bcopy(obj->o_pos, tp->t_pos);
-    detach(tp->t_pack, obj);
-    if (waskill) fall(obj, FALSE); else discard(obj);
+    detach_item(&tp->t_pack, obj);
+    if (waskill)
+      fall(obj, FALSE);
+    else 
+      discard_item(obj);
   }
   if (get_tile(mp->y, mp->x)==PASSAGE) standout();
   if (tp->t_oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
   else if (tp->t_oldch!='@') mvaddch(mp->y, mp->x, tp->t_oldch);
   standend();
-  detach(mlist, tp);
-  discard(tp);
+  detach_agent(&mlist, tp);
+  discard_agent(tp);
 }
 
 //is_magic: Returns true if an object radiates magic
-is_magic(THING *obj)
+is_magic(ITEM *obj)
 {
   switch (obj->o_type)
   {
@@ -439,7 +442,7 @@ is_magic(THING *obj)
 }
 
 //killed: Called to put a monster to death
-void killed(THING *tp, bool pr)
+void killed(AGENT *tp, bool pr)
 {
   pstats.s_exp += tp->t_stats.s_exp;
   //If the monster was a flytrap, un-hold him
@@ -453,20 +456,18 @@ void killed(THING *tp, bool pr)
 
   case 'L':
     {
-      THING *gold;
+      ITEM *gold;
 
-      if ((gold = create_thing())==NULL) return;
+      if ((gold = create_item())==NULL) return;
       gold->o_type = GOLD;
       gold->o_goldval = GOLDCALC;
       if (save(VS_MAGIC)) gold->o_goldval += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
-      attach(tp->t_pack, gold);
+      attach_item(&tp->t_pack, gold);
 
       break;
     }
 
   }
-  //Get rid of the monster.
-  remove_mons(&tp->t_pos, tp, TRUE);
   if (pr)
   {
     addmsg("you have defeated ");
@@ -475,4 +476,6 @@ void killed(THING *tp, bool pr)
   }
   //Do adjustments if he went up a level
   check_level();
+  //Get rid of the monster.
+  remove_mons(&tp->t_pos, tp, TRUE);
 }

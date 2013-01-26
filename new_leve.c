@@ -25,7 +25,7 @@
 void new_level()
 {
   int rm, i;
-  THING *tp;
+  AGENT *tp;
   coord stairs;
 
   player.t_flags &= ~ISHELD; //unhold when you go down just in case
@@ -35,12 +35,13 @@ void new_level()
   //Clean things off from last level
   clear_level();
   //Free up the monsters on the last level
-  for (tp = mlist; tp!=NULL; tp = next(tp)) free_list(tp->t_pack);
-  free_list(mlist);
+  for (tp = mlist; tp!=NULL; tp = next(tp)) 
+    free_item_list(&tp->t_pack);
+  free_agent_list(&mlist);
   //just in case we left some flytraps behind
   f_restor();
   //Throw away stuff left on the previous level (if anything)
-  free_list(lvl_obj);
+  free_item_list(&lvl_obj);
   do_rooms(); //Draw rooms
   if (max_level==1)
   {
@@ -103,7 +104,7 @@ int rnd_room()
 void put_things()
 {
   int i = 0;
-  THING *cur;
+  ITEM *cur;
   int rm;
   coord tp;
 
@@ -116,9 +117,9 @@ void put_things()
     //Check this first so if we are out of memory the guy has a hope of getting the amulet
     if (level>=AMULETLEVEL && !saw_amulet)
     {
-      if ((cur = create_thing())!=NULL)
+      if ((cur = create_item())!=NULL)
       {
-        attach(lvl_obj, cur);
+        attach_item(&lvl_obj, cur);
         cur->o_hplus = cur->o_dplus = 0;
         cur->o_damage = cur->o_hurldmg = "0d0";
         cur->o_ac = 11;
@@ -133,15 +134,17 @@ void put_things()
     if (rnd(TREAS_ROOM)==0) treas_room();
   }
   //Do MAXOBJ attempts to put things on a level
-  for (; i<MAXOBJ; i++) if (total<MAXITEMS && rnd(100)<35)
-  {
-    //Pick a new object and link it in the list
-    cur = new_thing();
-    attach(lvl_obj, cur);
-    //Put it somewhere
-    do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(get_tile(tp.y, tp.x)));
-    set_tile(tp.y, tp.x, cur->o_type);
-    bcopy(cur->o_pos, tp);
+  for (; i<MAXOBJ; i++) {
+    if (total_items<MAXITEMS && rnd(100)<35)
+    {
+      //Pick a new object and link it in the list
+      cur = new_item();
+      attach_item(&lvl_obj, cur);
+      //Put it somewhere
+      do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(get_tile(tp.y, tp.x)));
+      set_tile(tp.y, tp.x, cur->o_type);
+      bcopy(cur->o_pos, tp);
+    }
   }
 }
 
@@ -149,7 +152,8 @@ void put_things()
 void treas_room()
 {
   int nm;
-  THING *tp;
+  ITEM *tp;
+  AGENT *ap;
   struct room *rp;
   int spots, num_monst;
   coord mp;
@@ -158,14 +162,14 @@ void treas_room()
   spots = (rp->r_max.y-2)*(rp->r_max.x-2)-MINTREAS;
   if (spots>(MAXTREAS-MINTREAS)) spots = (MAXTREAS-MINTREAS);
   num_monst = nm = rnd(spots)+MINTREAS;
-  while (nm-- && total<MAXITEMS)
+  while (nm-- && total_items<MAXITEMS)
   {
     do {
       rnd_pos(rp, &mp);
     } while (!isfloor(get_tile(mp.y, mp.x)));
-    tp = new_thing();
+    tp = new_item();
     bcopy(tp->o_pos, mp);
-    attach(lvl_obj, tp);
+    attach_item(&lvl_obj, tp);
     set_tile(mp.y, mp.x, tp->o_type);
   }
   //fill up room with monsters from the next level down
@@ -182,12 +186,12 @@ void treas_room()
     }
     if (spots!=MAXTRIES)
     {
-      if ((tp = create_thing())!=NULL)
+      if ((ap = create_agent())!=NULL)
       {
-        new_monster(tp, randmonster(FALSE), &mp);
+        new_monster(ap, randmonster(FALSE), &mp);
         if (bailout) debug("treasure rm bailout");
-        tp->t_flags |= ISMEAN; //no sloughers in THIS room
-        give_pack(tp);
+        ap->t_flags |= ISMEAN; //no sloughers in THIS room
+        give_pack(ap);
       }
     }
   }

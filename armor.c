@@ -11,7 +11,7 @@
 //wear: The player wants to wear something, so let him/her put it on.
 void wear()
 {
-  THING *obj;
+  ITEM *obj;
   char *sp;
 
   if (cur_armor!=NULL)
@@ -32,7 +32,7 @@ void wear()
 //take_off: Get the armor off of the player's back
 void take_off()
 {
-  THING *obj;
+  ITEM *obj;
 
   if ((obj = cur_armor)==NULL)
   {

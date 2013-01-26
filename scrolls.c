@@ -21,10 +21,11 @@ char *in_dist = " in the distance";
 //read_scroll: Read a scroll from the pack and do the appropriate thing
 void read_scroll()
 {
-  THING *obj;
+  ITEM *obj;
   int y, x;
   byte ch;
-  THING *op;
+  AGENT *op;
+  ITEM *ip;
   bool discardit = FALSE;
 
   obj = get_item("read", SCROLL);
@@ -71,7 +72,7 @@ void read_scroll()
     {
       coord mp;
 
-      if (plop_monster(hero.y, hero.x, &mp) && (op = create_thing())!=NULL) new_monster(op, randmonster(FALSE), &mp);
+      if (plop_monster(hero.y, hero.x, &mp) && (op = create_agent())!=NULL) new_monster(op, randmonster(FALSE), &mp);
       else ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 
       break;
@@ -115,21 +116,21 @@ void read_scroll()
 
   case S_GFIND: //Scroll of food detection
     ch = FALSE;
-    for (op = lvl_obj; op!=NULL; op = next(op))
+    for (ip = lvl_obj; ip!=NULL; ip = next(ip))
     {
-      if (op->o_type==FOOD)
+      if (ip->o_type==FOOD)
       {
         ch = TRUE;
         standout();
-        mvaddch(op->o_pos.y, op->o_pos.x, FOOD);
+        mvaddch(ip->o_pos.y, ip->o_pos.x, FOOD);
         standend();
       }
       //as a bonus this will detect amulets as well
-      else if (op->o_type==AMULET)
+      else if (ip->o_type==AMULET)
       {
         ch = TRUE;
         standout();
-        mvaddch(op->o_pos.y, op->o_pos.x, AMULET);
+        mvaddch(ip->o_pos.y, ip->o_pos.x, AMULET);
         standend();
       }
     }
@@ -200,8 +201,8 @@ void read_scroll()
       if (cur_weapon->o_enemy!=0)
       {
         msg("your %s vanishes in a puff of smoke", w_names[cur_weapon->o_which]);
-        detach(ppack, cur_weapon);
-        discard(cur_weapon);
+        detach_item(&ppack, cur_weapon);
+        discard_item(cur_weapon);
         cur_weapon = NULL;
       }
       else
@@ -222,7 +223,11 @@ void read_scroll()
   //Get rid of the thing
   inpack--;
   if (obj->o_count>1) obj->o_count--;
-  else {detach(ppack, obj); discardit = TRUE;}
+  else {
+    detach_item(&ppack, obj); 
+    discardit = TRUE;
+  }
   call_it(s_know[obj->o_which], &s_guess[obj->o_which]);
-  if (discardit) discard(obj);
+  if (discardit) 
+    discard_item(obj);
 }

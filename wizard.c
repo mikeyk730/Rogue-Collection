@@ -26,7 +26,7 @@
 //whatis: What a certain object is
 void whatis()
 {
-  THING *obj;
+  ITEM *obj;
 
   if (ppack==NULL) {msg("You don't have anything in your pack to identify"); return;}
   for (;;) if ((obj = get_item("identify", 0))==NULL)
@@ -72,11 +72,11 @@ void whatis()
 //create_obj: Wizard command for getting anything he wants
 void create_obj()
 {
-  THING *obj;
+  ITEM *obj;
   byte ch, bless;
   int limit;
 
-  if ((obj = create_thing())==NULL) {msg("can't create anything now"); return;}
+  if ((obj = create_item())==NULL) {msg("can't create anything now"); return;}
   msg("type of item: ");
   switch (readchar())
   {

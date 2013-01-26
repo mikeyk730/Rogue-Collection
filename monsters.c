@@ -40,13 +40,13 @@ char randmonster(bool wander)
 }
 
 //new_monster: Pick a new monster and add it to the list
-void new_monster(THING *tp, byte type, coord *cp)
+void new_monster(AGENT *tp, byte type, coord *cp)
 {
   struct monster *mp;
   int lev_add;
 
   if ((lev_add = level-AMULETLEVEL)<0) lev_add = 0;
-  attach(mlist, tp);
+  attach_agent(&mlist, tp);
   tp->t_type = type;
   tp->t_disguise = type;
   bcopy(tp->t_pos, *cp);
@@ -88,7 +88,7 @@ void f_restor()
 }
 
 //expadd: Experience to add for this monster's level/hit points
-int exp_add(THING *tp)
+int exp_add(AGENT *tp)
 {
   int mod;
 
@@ -104,11 +104,11 @@ void wanderer()
 {
   int i;
   struct room *rp;
-  THING *tp;
+  AGENT *tp;
   coord cp;
 
   //can we allocate a new monster
-  if ((tp = create_thing())==NULL) return;
+  if ((tp = create_agent())==NULL) return;
   do
   {
     i = rnd_room();
@@ -122,9 +122,9 @@ void wanderer()
 }
 
 //wake_monster: What to do when the hero steps next to a monster
-THING *wake_monster(int y, int x)
+AGENT *wake_monster(int y, int x)
 {
-  THING *tp;
+  AGENT *tp;
   struct room *rp;
   byte ch;
   int dst;
@@ -164,10 +164,11 @@ THING *wake_monster(int y, int x)
 }
 
 //give_pack: Give a pack to a monster if it deserves one
-void give_pack(THING *tp)
+void give_pack(AGENT *tp)
 {
   //check if we can allocate a new item
-  if (total<MAXITEMS && rnd(100)<monsters[tp->t_type-'A'].m_carry) attach(tp->t_pack, new_thing());
+  if (total_items<MAXITEMS && rnd(100)<monsters[tp->t_type-'A'].m_carry) 
+    attach_item(&tp->t_pack, new_item());
 }
 
 //pick_mons: Choose a sort of monster for the enemy of a vorpally enchanted weapon
@@ -181,9 +182,9 @@ char pick_monster()
 }
 
 //moat(x,y): returns pointer to monster at coordinate. if no monster there return NULL
-THING *monster_at(int my, int mx)
+AGENT *monster_at(int my, int mx)
 {
-  THING *tp;
+  AGENT *tp;
 
   for (tp = mlist; tp!=NULL; tp = next(tp)) if (tp->t_pos.x==mx && tp->t_pos.y==my) return (tp);
   return (NULL);

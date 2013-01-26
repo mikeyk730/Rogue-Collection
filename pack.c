@@ -18,9 +18,9 @@ int group_in_inventory(type) {
   return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
 }
 
-THING *pack_obj(byte ch, byte *chp)
+ITEM *pack_obj(byte ch, byte *chp)
 {
-  THING *obj;
+  ITEM *obj;
   byte och;
 
   for (obj = ppack, och = 'a'; obj!=NULL; obj = next(obj), och++) if (ch==och) return obj;
@@ -29,9 +29,10 @@ THING *pack_obj(byte ch, byte *chp)
 }
 
 //add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void add_pack(THING *obj, bool silent)
+void add_pack(ITEM *obj, bool silent)
 {
-  THING *op, *lp;
+  ITEM *op, *lp;
+  AGENT *mp;
   bool exact, from_floor;
   byte floor;
 
@@ -58,8 +59,12 @@ void add_pack(THING *obj, bool silent)
       {
         //Put it in the pack and notify the user
         op->o_count += obj->o_count;
-        if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); set_tile(hero.y, hero.x, floor);}
-        discard(obj);
+        if (from_floor) {
+          detach_item(&lvl_obj, obj);
+          mvaddch(hero.y, hero.x, floor);
+          set_tile(hero.y, hero.x, floor);
+        }
+        discard_item(obj);
         obj = op;
         goto picked_up;
       }
@@ -70,7 +75,7 @@ void add_pack(THING *obj, bool silent)
   //Check for and deal with scare monster scrolls
   if (obj->o_type==SCROLL && obj->o_which==S_SCARE) if (obj->o_flags&ISFOUND)
   {
-    detach(lvl_obj, obj);
+    detach_item(&lvl_obj, obj);
     mvaddch(hero.y, hero.x, floor);
     set_tile(hero.y, hero.x, floor);
     msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
@@ -78,7 +83,11 @@ void add_pack(THING *obj, bool silent)
   }
   else obj->o_flags |= ISFOUND;
   inpack++;
-  if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); set_tile(hero.y, hero.x, floor);}
+  if (from_floor) {
+    detach_item(&lvl_obj, obj);
+    mvaddch(hero.y, hero.x, floor); 
+    set_tile(hero.y, hero.x, floor);
+  }
   //Search for an object of the same type
   exact = FALSE;
   for (op = ppack; op!=NULL; op = next(op)) if (obj->o_type==op->o_type) break;
@@ -113,7 +122,7 @@ void add_pack(THING *obj, bool silent)
     if (exact && group_in_inventory(obj->o_type))
     {
       op->o_count++;
-      discard(obj);
+      discard_item(obj);
       obj = op;
       goto picked_up;
     }
@@ -124,16 +133,16 @@ void add_pack(THING *obj, bool silent)
   }
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
-  for (op = mlist; op!=NULL; op = next(op))
-    if (op->t_dest && (op->t_dest->x==obj->o_pos.x) && (op->t_dest->y==obj->o_pos.y))
-      op->t_dest = &hero;
+  for (mp = mlist; mp!=NULL; mp = next(mp))
+    if (mp->t_dest && (mp->t_dest->x==obj->o_pos.x) && (mp->t_dest->y==obj->o_pos.y))
+      mp->t_dest = &hero;
   if (obj->o_type==AMULET) {amulet = TRUE; saw_amulet = TRUE;}
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));
 }
 
 //inventory: List what is in the pack
-int inventory(THING *list, int type, char *lstr)
+int inventory(ITEM *list, int type, char *lstr)
 {
   byte ch;
   int n_objs;
@@ -159,15 +168,15 @@ int inventory(THING *list, int type, char *lstr)
 //pick_up: Add something to characters pack.
 void pick_up(byte ch)
 {
-  THING *obj;
+  ITEM *obj;
 
   switch (ch)
   {
   case GOLD:
     if ((obj = find_obj(hero.y, hero.x))==NULL) return;
     money(obj->o_goldval);
-    detach(lvl_obj, obj);
-    discard(obj);
+    detach_item(&lvl_obj, obj);
+    discard_item(obj);
     proom->r_goldval = 0;
     break;
   default:
@@ -178,13 +187,13 @@ void pick_up(byte ch)
 }
 
 //get_item: Pick something out of a pack for a purpose
-THING *get_item(char *purpose, int type)
+ITEM *get_item(char *purpose, int type)
 {
-  THING *obj;
+  ITEM *obj;
   byte ch;
   byte och;
   static byte lch;
-  static THING *wasthing = NULL;
+  static ITEM *wasthing = NULL;
   byte gi_state; //get item sub state
   int once_only = FALSE;
 
@@ -232,9 +241,9 @@ skip:
 }
 
 //pack_char: Return which character would address a pack object
-int pack_char(THING *obj)
+int pack_char(ITEM *obj)
 {
-  THING *item;
+  ITEM *item;
   byte c;
 
   c = 'a';

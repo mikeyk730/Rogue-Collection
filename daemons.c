@@ -64,7 +64,7 @@ void unconfuse()
 //unsee: Turn off the ability to see invisible
 void unsee()
 {
-  THING *th;
+  AGENT *th;
 
   for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && can_see_monst(th) && th->t_oldch!='@') mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
   player.t_flags &= ~CANSEE;

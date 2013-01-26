@@ -2,16 +2,16 @@
 void runners();
 
 //do_chase: Make one thing chase another.
-void do_chase(THING *th);
+void do_chase(AGENT *th);
 
 //see_monst: Return TRUE if the hero can see the monster
-int can_see_monst(THING *mp);
+int can_see_monst(AGENT *mp);
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)
 void start_run(coord *runner);
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
-void chase(THING *tp, coord *ee);
+void chase(AGENT *tp, coord *ee);
 
 //roomin: Find what room some coordinates are in. NULL means they aren't in any room.
 struct room *roomin(coord *cp);
@@ -23,4 +23,4 @@ int diag_ok(coord *sp, coord *ep);
 int cansee(int y, int x);
 
 //find_dest: find the proper destination for the monster
-coord *find_dest(THING *tp);
+coord *find_dest(AGENT *tp);

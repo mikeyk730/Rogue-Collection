@@ -318,7 +318,7 @@ int mpos = 0;          //Where cursor is on top line
 int no_move = 0;       //Number of turns held in place
 int no_command = 0;    //Number of turns asleep
 int inpack = 0;        //Number of things in pack
-int total = 0;         //Total dynamic memory bytes
+int total_items = 0;         //Total dynamic memory bytes
 int no_food = 0;       //Number of levels without food
 int count = 0;         //Number of times to repeat command
 int flytrap_hit = 0;   //Number of time flytrap has hit
@@ -333,9 +333,9 @@ char *_whoami;
 coord oldpos; //Position before last look() call
 coord delta;  //Change indicated to get_dir()
 
-THING *cur_armor;   //What a well dresssed rogue wears
-THING *cur_ring[2]; //Which rings are being worn
-THING *cur_weapon;  //Which weapon he is wielding
+ITEM *cur_armor;   //What a well dresssed rogue wears
+ITEM *cur_ring[2]; //Which rings are being worn
+ITEM *cur_weapon;  //Which weapon he is wielding
 
 struct room *oldrp; //Roomin(&oldpos)
 struct room rooms[MAXROOMS]; //One for each room -- A level
@@ -358,9 +358,9 @@ struct room passages[MAXPASS] =
 
 struct stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the player
 
-THING player; //The rogue
-THING *lvl_obj = NULL; //List of objects on this level
-THING *mlist = NULL; //List of monsters on the level
+AGENT player; //The rogue
+ITEM *lvl_obj = NULL; //List of objects on this level
+AGENT *mlist = NULL; //List of monsters on the level
 
 #define ___  1
 #define XX  10
