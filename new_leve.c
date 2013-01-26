@@ -25,7 +25,6 @@ void new_level()
 {
   int rm, i;
   THING *tp;
-  byte *fp;
   coord stairs;
 
   player.t_flags &= ~ISHELD; //unhold when you go down just in case
@@ -34,7 +33,6 @@ void new_level()
 
   //Clean things off from last level
   clear_level();
-  setmem(_flags, (MAXLINES-3)*MAXCOLS, F_REAL);
   //Free up the monsters on the last level
   for (tp = mlist; tp!=NULL; tp = next(tp)) free_list(tp->t_pack);
   free_list(mlist);
@@ -74,16 +72,15 @@ void new_level()
         rm = rnd_room();
         rnd_pos(&rooms[rm], &stairs);
       } while (!isfloor(chat(stairs.y, stairs.x)));
-      fp = &_flags[INDEX(stairs.y, stairs.x)];
-      *fp &= ~F_REAL;
-      *fp |= rnd(NTRAPS);
+      unset_flag(stairs.y, stairs.x, F_REAL);
+      set_flag(stairs.y, stairs.x, rnd(NTRAPS));
     }
   }
   do
   {
     rm = rnd_room();
     rnd_pos(&rooms[rm], &hero);
-  } while (!(isfloor(chat(hero.y, hero.x)) && (_flags[INDEX(hero.y, hero.x)]&F_REAL) && moat(hero.y, hero.x)==NULL));
+  } while (!(isfloor(chat(hero.y, hero.x)) && (flat(hero.y, hero.x)&F_REAL) && moat(hero.y, hero.x)==NULL));
   mpos = 0;
   enter_room(&hero);
   mvaddch(hero.y, hero.x, PLAYER);

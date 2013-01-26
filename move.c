@@ -61,7 +61,7 @@ over:
   if (!(fl&F_REAL) && ch==FLOOR) {
     ch = TRAP;
     set_chat(nh.y, nh.x, TRAP); 
-    flat(nh.y, nh.x) |= F_REAL;
+    set_flag(nh.y, nh.x, F_REAL);
   }
   else if (on(player, ISHELD) && ch!='F') {msg("you are being held"); return;}
   switch (ch)
@@ -156,7 +156,7 @@ int be_trapped(coord *tc)
 
   count = running = FALSE;
   set_chat(tc->y, tc->x, TRAP);
-  tr = _flags[INDEX(tc->y, tc->x)]&F_TMASK;
+  tr = flat(tc->y, tc->x)&F_TMASK;
   was_trapped = TRUE;
   switch (tr)
   {

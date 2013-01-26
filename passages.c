@@ -198,7 +198,7 @@ void door(struct room *rm, coord *cp)
   if (rnd(10)+1<level && rnd(5)==0)
   {
     set_chat(cp->y, cp->x, (cp->y==rm->r_pos.y || cp->y==rm->r_pos.y+rm->r_max.y-1)?HWALL:VWALL);
-    _flags[INDEX(cp->y, cp->x)] &= ~F_REAL;
+    unset_flag(cp->y, cp->x, F_REAL);
   }
   else set_chat(cp->y, cp->x, DOOR);
   xit = rm->r_nexits++;
@@ -233,23 +233,23 @@ void passnum()
 //numpass: Number a passageway square and its brethren
 void numpass(int y, int x)
 {
-  byte *fp;
+  byte fp;
   struct room *rp;
   byte ch;
 
   if (offmap(y, x)) return;
-  fp = &flat(y, x);
-  if (*fp&F_PNUM) return;
+  fp = flat(y, x);
+  if (fp&F_PNUM) return;
   if (newpnum) {pnum++; newpnum = FALSE;}
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
-  if ((ch = chat(y, x))==DOOR || (!(*fp&F_REAL) && ch!=FLOOR))
+  if ((ch = chat(y, x))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
   {
     rp = &passages[pnum];
     rp->r_exit[rp->r_nexits].y = y;
     rp->r_exit[rp->r_nexits++].x = x;
   }
-  else if (!(*fp&F_PASS)) return;
-  *fp |= pnum;
+  else if (!(fp&F_PASS)) return;
+  set_flag(y, x, pnum);
   //recurse on the surrounding places
   numpass(y+1, x);
   numpass(y-1, x);
@@ -260,5 +260,5 @@ void numpass(int y, int x)
 void psplat(int y, int x)
 {
   set_chat(y, x, PASSAGE);
-  _flags[INDEX(y, x)] |= F_PASS;
+  set_flag(y, x, F_PASS);
 }

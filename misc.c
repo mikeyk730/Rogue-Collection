@@ -45,11 +45,11 @@ void look(bool wakeup)
   struct room *rp;
   int ey, ex;
   int passcount = 0;
-  byte pfl, *fp;
+  byte pfl, fp;
   int sy, sx, sumhero, diffhero;
 
   rp = proom;
-  pfl = _flags[INDEX(hero.y, hero.x)];
+  pfl = flat(hero.y, hero.x);
   pch = chat(hero.y, hero.x);
   //if the hero has moved
   if (!ce(oldpos, hero))
@@ -68,9 +68,9 @@ void look(bool wakeup)
           }
           else
           {
-            fp = &_flags[INDEX(y, x)];
+            fp = flat(y, x);
             //if the maze or passage (that the hero is in!!) needs to be redrawn (passages once drawn always stay on) do it now.
-            if (((*fp&F_MAZE) || (*fp&F_PASS)) && (ch!=PASSAGE) && (ch!=STAIRS) && ((*fp&F_PNUM)==(pfl & F_PNUM))) 
+            if (((fp&F_MAZE) || (fp&F_PASS)) && (ch!=PASSAGE) && (ch!=STAIRS) && ((fp&F_PNUM)==(pfl & F_PNUM))) 
               addch(PASSAGE);
           }
         }
@@ -92,18 +92,18 @@ void look(bool wakeup)
     }
     else if (y!=hero.y || x!=hero.x) continue;
     //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
-    fp = &_flags[INDEX(y, x)];
+    fp = flat(y, x);
     ch = chat(y, x);
     //No Doors
     if (pch!=DOOR && ch!=DOOR)
       //Either hero or other in a passage
-      if ((pfl&F_PASS)!=(*fp & F_PASS))
+      if ((pfl&F_PASS)!=(fp & F_PASS))
       {
         //Neither is in a maze
-        if (!(pfl&F_MAZE) && !(*fp&F_MAZE)) continue;
+        if (!(pfl&F_MAZE) && !(fp&F_MAZE)) continue;
       }
       //Not in same passage
-      else if ((*fp&F_PASS) && (*fp&F_PNUM)!=(pfl & F_PNUM)) continue;
+      else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
       if ((tp = moat(y, x))!=NULL) if (on(player, SEEMONST) && on(*tp, ISINVIS))
       {
         if (door_stop && !firstmove) running = FALSE;
@@ -116,7 +116,7 @@ void look(bool wakeup)
         if (see_monst(tp)) ch = tp->t_disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
-      if ((ch!=PASSAGE) && (*fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();
+      if ((ch!=PASSAGE) && (fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();
       move(y, x);
       addch(ch);
       standend();
@@ -462,7 +462,7 @@ int winat(int y, int x)
 void search()
 {
   int y, x;
-  byte *fp;
+  byte fp;
   int ey, ex;
 
   if (on(player, ISBLIND)) 
@@ -473,22 +473,22 @@ void search()
   {
     if ((y==hero.y && x==hero.x) || offmap(y, x)) 
       continue;
-    fp = &flat(y, x);
-    if (!(*fp&F_REAL)) {
+    fp = flat(y, x);
+    if (!(fp&F_REAL)) {
       switch (chat(y, x))
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
         if (rnd(5)!=0) break;
         set_chat(y, x, DOOR);
-        *fp |= F_REAL;
+        set_flag(y, x, F_REAL);
         count = running = FALSE;
         break;
       case FLOOR:
         if (rnd(2)!=0) break;
         set_chat(y, x, TRAP);
-        *fp |= F_REAL;
+        set_flag(y, x, F_REAL);
         count = running = FALSE;
-        msg("you found %s", tr_name(*fp&F_TMASK));
+        msg("you found %s", tr_name(fp&F_TMASK));
         break;
       }
     }

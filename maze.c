@@ -122,7 +122,7 @@ int maze_at(int y, int x)
 void splat(int y, int x)
 {
   set_chat(y, x, PASSAGE);
-  flat(y, x) = F_MAZE|F_REAL;
+  copy_flags(y, x, F_MAZE|F_REAL);
   if (x>maxx) maxx = x;
   if (y>maxy) maxy = y;
 }

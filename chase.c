@@ -237,11 +237,15 @@ void chase(THING *tp, coord *ee)
 struct room *roomin(coord *cp)
 {
   struct room *rp;
-  byte *fp;
+  byte fp;
 
-  for (rp = rooms; rp<=&rooms[MAXROOMS-1]; rp++) if (cp->x<rp->r_pos.x+rp->r_max.x && rp->r_pos.x<=cp->x && cp->y<rp->r_pos.y+rp->r_max.y && rp->r_pos.y<=cp->y) return rp;
-  fp = &flat(cp->y, cp->x);
-  if (*fp&F_PASS) return &passages[*fp&F_PNUM];
+  for (rp = rooms; rp<=&rooms[MAXROOMS-1]; rp++) 
+    if (cp->x<rp->r_pos.x+rp->r_max.x && rp->r_pos.x<=cp->x && cp->y<rp->r_pos.y+rp->r_max.y && rp->r_pos.y<=cp->y) 
+      return rp;
+
+  fp = flat(cp->y, cp->x);
+  if (fp&F_PASS)
+    return &passages[fp&F_PNUM];
 
   debug("in some bizarre place (%d, %d)", cp->y, cp->x);
   bailout++;

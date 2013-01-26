@@ -160,9 +160,6 @@ char *msgbuf;   //Message buffer for msg()
 char *prbuf;    //Printing buffer used everywhere
 char *ring_buf; //Buffer used by ring code
 
-//Declarations for data space that must be saved and restored exactly
-byte *_flags;
-
 //init_player: Roll up the rogue
 void init_player()
 {
@@ -354,7 +351,6 @@ void init_ds()
 {
   long *ep;
   alloc_level();
-  _flags = malloc((MAXLINES-3)*MAXCOLS);
   _things = (THING *)malloc(sizeof(THING)*MAXITEMS);
   _t_alloc = (int *)malloc(MAXITEMS*sizeof(int));
   tbuf = malloc(MAXSTR);
