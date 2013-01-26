@@ -49,7 +49,7 @@ void rollwand()
 
   if (++between>=3+rnd(3))
   {
-    if (roll(1, 6)==4) {wanderer(); extinguish(rollwand); fuse(swander, 0, WANDERTIME);}
+    if (roll(1, 6)==4) {wanderer(); extinguish(rollwand); fuse(swander, 0, WANDER_TIME);}
     between = 0;
   }
 }
@@ -96,7 +96,7 @@ void stomach()
 
   if (food_left<=0)
   {
-    if (food_left--<-STARVETIME) death('s');
+    if (food_left--<-STARVE_TIME) death('s');
     //the hero is fainting
     if (no_command || rnd(5)!=0) return;
     no_command += rnd(8)+4;
@@ -113,7 +113,7 @@ void stomach()
     deltafood = ring_eat(LEFT)+ring_eat(RIGHT)+1;
     if (terse) deltafood *= 2;
     food_left -= deltafood;
-    if (food_left<MORETIME && oldfood>=MORETIME) {hungry_state = 2; msg("you are starting to feel weak");}
-    else if (food_left<2*MORETIME && oldfood>=2*MORETIME) {hungry_state = 1; msg("you are starting to get hungry");}
+    if (food_left<MORE_TIME && oldfood>=MORE_TIME) {hungry_state = 2; msg("you are starting to feel weak");}
+    else if (food_left<2*MORE_TIME && oldfood>=2*MORE_TIME) {hungry_state = 1; msg("you are starting to get hungry");}
   }
 }

@@ -83,22 +83,22 @@ typedef unsigned char bool;
 
 //Various constants
 
-#define BEARTIME     spread(3)
-#define SLEEPTIME    spread(5)
-#define HEALTIME     spread(30)
-#define HOLDTIME     spread(2)
-#define WANDERTIME   spread(70)
-#define HUHDURATION  spread(20)
-#define SEEDURATION  spread(300)
-#define HUNGERTIME   spread(1300)
-#define MORETIME     150
-#define STOMACHSIZE  2000
-#define STARVETIME   850
+#define BEAR_TIME    spread(3)
+#define SLEEP_TIME   spread(5)
+#define HEAL_TIME    spread(30)
+#define HOLD_TIME    spread(2)
+#define WANDER_TIME  spread(70)
+#define HUH_DURATION spread(20)
+#define SEE_DURATION spread(300)
+#define HUNGER_TIME  spread(1300)
+#define MORE_TIME    150
+#define STOMACH_SIZE 2000
+#define STARVE_TIME  850
 #define ESCAPE       27
 #define LEFT         0
 #define RIGHT        1
 #define BOLT_LENGTH  6
-#define LAMPDIST     3
+#define LAMP_DIST    3
 
 //Save against things
 
@@ -453,7 +453,7 @@ extern bool p_know[], r_know[], s_know[], ws_know[];
 
 extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[], huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, *typeahead, take, *w_names[], whoami[], *ws_made[], *ws_type[];
 
-extern int a_chances[], a_class[], count, dnum, food_left, fung_hit, fd, group, hungry_state, inpack, lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total;
+extern int a_chances[], a_class[], count, food_left, fung_hit, fd, group, hungry_state, inpack, lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total;
 
 extern long seed, *e_levels;
 

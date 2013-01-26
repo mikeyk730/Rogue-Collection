@@ -168,7 +168,7 @@ void init_player()
   THING *obj;
 
   bcopy(pstats, max_stats);
-  food_left = HUNGERTIME;
+  food_left = HUNGER_TIME;
   //initialize things
   memset(_things, 0, MAXITEMS*sizeof(THING));
   memset(_t_alloc, 0, MAXITEMS*sizeof(int));

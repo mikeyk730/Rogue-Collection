@@ -145,7 +145,7 @@ int see_monst(THING *mp)
 {
   if (on(player, ISBLIND)) return FALSE;
   if (on(*mp, ISINVIS) && !on(player, CANSEE)) return FALSE;
-  if (DISTANCE(mp->t_pos.y, mp->t_pos.x, hero.y, hero.x)>=LAMPDIST && ((mp->t_room!=proom || (mp->t_room->r_flags&ISDARK) || (mp->t_room->r_flags&ISMAZE)))) return FALSE;
+  if (DISTANCE(mp->t_pos.y, mp->t_pos.x, hero.y, hero.x)>=LAMP_DIST && ((mp->t_room!=proom || (mp->t_room->r_flags&ISDARK) || (mp->t_room->r_flags&ISMAZE)))) return FALSE;
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, give the player a hint as to what that weapon is good for.
   if (cur_weapon!=NULL && mp->t_type==cur_weapon->o_enemy && ((cur_weapon->o_flags&DIDFLASH)==0))
   {
@@ -266,7 +266,7 @@ int cansee(int y, int x)
   coord tp;
 
   if (on(player, ISBLIND)) return FALSE;
-  if (DISTANCE(y, x, hero.y, hero.x)<LAMPDIST) return TRUE;
+  if (DISTANCE(y, x, hero.y, hero.x)<LAMP_DIST) return TRUE;
   //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
   tp.y = y;
   tp.x = x;

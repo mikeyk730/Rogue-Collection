@@ -31,8 +31,8 @@ void quaff()
     p_know[P_CONFUSE] = TRUE;
     if (!on(player, ISHUH))
     {
-      if (on(player, ISHUH)) lengthen(unconfuse, rnd(8)+HUHDURATION);
-      else fuse(unconfuse, 0, rnd(8)+HUHDURATION);
+      if (on(player, ISHUH)) lengthen(unconfuse, rnd(8)+HUH_DURATION);
+      else fuse(unconfuse, 0, rnd(8)+HUH_DURATION);
       player.t_flags |= ISHUH;
       msg("wait, what's going on? Huh? What? Who?");
     }
@@ -63,7 +63,7 @@ void quaff()
     break;
 
   case P_MFIND:
-    fuse(turn_see, TRUE, HUHDURATION);
+    fuse(turn_see, TRUE, HUH_DURATION);
     if (mlist==NULL) msg("you have a strange feeling%s.", noterse(" for a moment"));
     else {p_know[P_MFIND] |= turn_see(FALSE); msg("");}
     break;
@@ -104,13 +104,13 @@ void quaff()
 
   case P_PARALYZE:
     p_know[P_PARALYZE] = TRUE;
-    no_command = HOLDTIME;
+    no_command = HOLD_TIME;
     player.t_flags &= ~ISRUN;
     msg("you can't move");
     break;
 
   case P_SEEINVIS:
-    if (!on(player, CANSEE)) {fuse(unsee, 0, SEEDURATION); look(FALSE); invis_on();}
+    if (!on(player, CANSEE)) {fuse(unsee, 0, SEE_DURATION); look(FALSE); invis_on();}
     sight();
     msg("this potion tastes like %s juice", fruit);
     break;
@@ -151,7 +151,7 @@ void quaff()
     if (!on(player, ISBLIND))
     {
       player.t_flags |= ISBLIND;
-      fuse(sight, 0, SEEDURATION);
+      fuse(sight, 0, SEE_DURATION);
       look(FALSE);
     }
     msg("a cloak of darkness falls around you");

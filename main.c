@@ -42,7 +42,6 @@ int main(int argc, char **argv)
   setenv("rogue.opt");
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.
   if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;
-  dnum = 0;
   while (--argc)
   {
     curarg = *(++argv);
@@ -62,8 +61,8 @@ int main(int argc, char **argv)
     winit();
     if (bwflag) forcebw();
     credits();
-    if (dnum==0) dnum = srand2();
-    seed = dnum;
+    if (seed == 0) 
+      seed = srand2();
     init_player(); //Set up initial player stats
     init_things(); //Set up probabilities of things
     init_names(); //Set up names of scrolls
@@ -75,7 +74,7 @@ int main(int argc, char **argv)
     new_level(); //Draw current level
     //Start up daemons and fuses
     daemon(doctor, 0);
-    fuse(swander, 0, WANDERTIME);
+    fuse(swander, 0, WANDER_TIME);
     daemon(stomach, 0);
     daemon(runners, 0);
     msg("Hello %s%s.", whoami, noterse(".  Welcome to the Dungeons of Doom"));

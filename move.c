@@ -165,12 +165,12 @@ int be_trapped(coord *tc)
     break;
 
   case T_BEAR:
-    no_move += BEARTIME;
+    no_move += BEAR_TIME;
     msg("you are caught in a bear trap");
     break;
 
   case T_SLEEP:
-    no_command += SLEEPTIME;
+    no_command += SLEEP_TIME;
     player.t_flags &= ~ISRUN;
     msg("a %smist envelops you and you fall asleep", noterse("strange white "));
     break;

@@ -179,10 +179,10 @@ void eat()
   }
   if (food_left<0)
     food_left = 0;
-  if (food_left>(STOMACHSIZE-20))
+  if (food_left>(STOMACH_SIZE-20))
     no_command += 2+rnd(5);
-  if ((food_left += HUNGERTIME-200+rnd(400))>STOMACHSIZE)
-    food_left = STOMACHSIZE;
+  if ((food_left += HUNGER_TIME-200+rnd(400))>STOMACH_SIZE)
+    food_left = STOMACH_SIZE;
   hungry_state = 0;
   if (obj==cur_weapon) 
     cur_weapon = NULL;

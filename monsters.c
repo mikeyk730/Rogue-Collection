@@ -139,13 +139,13 @@ THING *wake_monster(int y, int x)
   {
     rp = proom;
     dst = DISTANCE(y, x, hero.y, hero.x);
-    if ((rp!=NULL && !(rp->r_flags&ISDARK)) || dst<LAMPDIST)
+    if ((rp!=NULL && !(rp->r_flags&ISDARK)) || dst<LAMP_DIST)
     {
       tp->t_flags |= ISFOUND;
       if (!save(VS_MAGIC))
       {
-        if (on(player, ISHUH)) lengthen(unconfuse, rnd(20)+HUHDURATION);
-        else fuse(unconfuse, 0, rnd(20)+HUHDURATION);
+        if (on(player, ISHUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
+        else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
         player.t_flags |= ISHUH;
         msg("the medusa's gaze has confused you");
       }

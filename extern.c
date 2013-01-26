@@ -312,7 +312,6 @@ char *ws_type[MAXSTICKS]; //Is it a wand or a staff
 int maxrow;            //Last Line used for map
 int max_level;         //Deepest player has gone
 int ntraps;            //Number of traps on this level
-int dnum;              //Dungeon number
 int level = 1;         //What level rogue is on
 int purse = 0;         //How much gold the rogue has
 int mpos = 0;          //Where cursor is on top line
@@ -327,7 +326,7 @@ int quiet = 0;         //Number of quiet turns
 int food_left;         //Amount of food in hero's stomach
 int group = 2;         //Current group number
 int hungry_state = 0;  //How hungry is he
-long seed;             //Random number seed
+long seed = 0;         //Random number seed
 
 char *_whoami;
 

@@ -61,7 +61,7 @@ void read_scroll()
 
   case S_SLEEP: //Scroll which makes you fall asleep
     s_know[S_SLEEP] = TRUE;
-    no_command += rnd(SLEEPTIME)+4;
+    no_command += rnd(SLEEP_TIME)+4;
     player.t_flags &= ~ISRUN;
     msg("you fall asleep");
     break;
