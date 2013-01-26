@@ -55,7 +55,7 @@ void do_daemons()
 
   //Loop through the devil list, Executing each one, giving it the proper arguments
   for (dev = d_list; dev<&d_list[MAXDAEMONS]; dev++)
-  if (dev->d_time==DAEMON && dev->d_func!=EMPTY) (*dev->d_func)(dev->d_arg);
+    if (dev->d_time==DAEMON && dev->d_func!=EMPTY) (*dev->d_func)(dev->d_arg);
 }
 
 //fuse: Start a fuse to go off in a certain number of turns

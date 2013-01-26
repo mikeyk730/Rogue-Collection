@@ -37,7 +37,7 @@ int bwflag = FALSE;
 int main(int argc, char **argv)
 {
   char *curarg, *savfile = 0;
-  
+
   init_ds();
   setenv("rogue.opt");
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.
@@ -50,8 +50,8 @@ int main(int argc, char **argv)
     {
       switch (curarg[1])
       {
-        case 'R': case 'r': savfile = s_save; break;
-        case 's': case 'S': winit(); noscore = TRUE; score(0, 0, 0); fatal(""); break;
+      case 'R': case 'r': savfile = s_save; break;
+      case 's': case 'S': winit(); noscore = TRUE; score(0, 0, 0); fatal(""); break;
       }
     }
     else if (savfile==0) savfile = curarg;
@@ -106,9 +106,9 @@ int rnd(int range)
 
 int srand2()
 {
-   int t = (int)time(0);
-   srand(t);
-   return t;
+  int t = (int)time(0);
+  srand(t);
+  return t;
 }
 
 //roll: Roll a number of dice

@@ -47,7 +47,7 @@ void new_level()
   do_rooms(); //Draw rooms
   if (max_level==1)
   {
-       clear();
+    clear();
   }
   implode();
   status();

@@ -102,10 +102,10 @@ void con_frnt()
   splat(ny, nx);
   switch (which)
   {
-    case 0: which = 1; ydelt = -1; break;
-    case 1: which = 0; ydelt = 1; break;
-    case 2: which = 3; xdelt = -1; break;
-    case 3: which = 2; xdelt = 1; break;
+  case 0: which = 1; ydelt = -1; break;
+  case 1: which = 0; ydelt = 1; break;
+  case 2: which = 3; xdelt = -1; break;
+  case 3: which = 2; xdelt = 1; break;
   }
   y = ny+ydelt;
   x = nx+xdelt;

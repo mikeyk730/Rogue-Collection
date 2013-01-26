@@ -119,8 +119,8 @@ void add_pack(THING *obj, bool silent)
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
   for (op = mlist; op!=NULL; op = next(op))
-     if (op->t_dest && (op->t_dest->x==obj->o_pos.x) && (op->t_dest->y==obj->o_pos.y))
-        op->t_dest = &hero;
+    if (op->t_dest && (op->t_dest->x==obj->o_pos.x) && (op->t_dest->y==obj->o_pos.y))
+      op->t_dest = &hero;
   if (obj->o_type==AMULET) {amulet = TRUE; saw_amulet = TRUE;}
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));
@@ -157,16 +157,16 @@ void pick_up(byte ch)
 
   switch (ch)
   {
-    case GOLD:
-      if ((obj = find_obj(hero.y, hero.x))==NULL) return;
-      money(obj->o_goldval);
-      detach(lvl_obj, obj);
-      discard(obj);
-      proom->r_goldval = 0;
+  case GOLD:
+    if ((obj = find_obj(hero.y, hero.x))==NULL) return;
+    money(obj->o_goldval);
+    detach(lvl_obj, obj);
+    discard(obj);
+    proom->r_goldval = 0;
     break;
-    default:
-    case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
-      add_pack(NULL, FALSE);
+  default:
+  case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
+    add_pack(NULL, FALSE);
     break;
   }
 }

@@ -66,14 +66,14 @@ static struct xlate
 
 int is_direction_key(int key)
 {
-   return key == C_HOME
-      || key == C_UP
-      || key == C_PGUP
-      || key == C_LEFT
-      || key == C_RIGHT
-      || key ==  C_END
-      || key ==  C_DOWN
-      || key ==  C_PGDN;
+  return key == C_HOME
+    || key == C_UP
+    || key == C_PGUP
+    || key == C_LEFT
+    || key == C_RIGHT
+    || key ==  C_END
+    || key ==  C_DOWN
+    || key ==  C_PGDN;
 }
 
 //setup: Get starting setup for all games
@@ -132,7 +132,7 @@ void credits()
   high();
   getinfo(tname, 23);
   if (*tname && *tname!=ESCAPE) strcpy(whoami, tname);
-  
+
   blot_out(23, 0, 24, COLS-1);
   brown();
   mvaddch(22, 0, 0xc8);
@@ -145,10 +145,10 @@ int getkey()
   struct xlate *x;
   int key = _getch();
   if (key != 0 && key != 0xE0) return key;
-   
+
   key = _getch();
   if (is_shift_pressed() && is_direction_key(key))
-     fastmode = !fastmode;
+    fastmode = !fastmode;
 
   for (x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
   {
@@ -176,33 +176,33 @@ int readchar()
 
 int no_char()
 { 
-   return !_kbhit(); 
+  return !_kbhit(); 
 }
 
 #include <Windows.h>
 
 int is_caps_lock_on()
 {
-   return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
+  return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
 }
 
 int is_scroll_lock_on()
 {
-   return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
+  return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
 }
 
 int is_num_lock_on()
 {
-   return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
+  return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
 }
 
 int is_shift_pressed()
 {
-   return (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
-      || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);
+  return (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+    || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);
 }
 
 void beep()
 {
-   Beep(750, 300);
+  Beep(750, 300);
 }

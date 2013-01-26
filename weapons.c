@@ -105,11 +105,11 @@ char *short_name(THING *obj)
 {
   switch (obj->o_type)
   {
-    case WEAPON: return w_names[obj->o_which];
-    case ARMOR: return a_names[obj->o_which];
-    case FOOD: return "food";
-    case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(inv_name(obj, TRUE), ' ')+1;
-    default: return "bizzare thing";
+  case WEAPON: return w_names[obj->o_which];
+  case ARMOR: return a_names[obj->o_which];
+  case FOOD: return "food";
+  case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(inv_name(obj, TRUE), ' ')+1;
+  default: return "bizzare thing";
   }
 }
 
@@ -121,22 +121,22 @@ void fall(THING *obj, bool pr)
 
   switch (fallpos(obj, &fpos))
   {
-    case 1:
-      index = INDEX(fpos.y, fpos.x);
-      _level[index] = obj->o_type;
-      bcopy(obj->o_pos, fpos);
-      if (cansee(fpos.y, fpos.x))
-      {
-        if ((flat(obj->o_pos.y, obj->o_pos.x)&F_PASS) || (flat(obj->o_pos.y, obj->o_pos.x)&F_MAZE)) standout();
-        mvaddch(fpos.y, fpos.x, obj->o_type);
-        standend();
-        if (moat(fpos.y, fpos.x)!=NULL) moat(fpos.y, fpos.x)->t_oldch = obj->o_type;
-      }
-      attach(lvl_obj, obj);
-      return;
+  case 1:
+    index = INDEX(fpos.y, fpos.x);
+    _level[index] = obj->o_type;
+    bcopy(obj->o_pos, fpos);
+    if (cansee(fpos.y, fpos.x))
+    {
+      if ((flat(obj->o_pos.y, obj->o_pos.x)&F_PASS) || (flat(obj->o_pos.y, obj->o_pos.x)&F_MAZE)) standout();
+      mvaddch(fpos.y, fpos.x, obj->o_type);
+      standend();
+      if (moat(fpos.y, fpos.x)!=NULL) moat(fpos.y, fpos.x)->t_oldch = obj->o_type;
+    }
+    attach(lvl_obj, obj);
+    return;
 
-    case 2:
-      pr = 0;
+  case 2:
+    pr = 0;
   }
   if (pr) msg("the %s vanishes%s.", short_name(obj), noterse(" as it hits the ground"));
   discard(obj);
@@ -205,22 +205,22 @@ int fallpos(THING *obj, coord *newpos)
   THING *onfloor;
 
   for (y = obj->o_pos.y-1; y<=obj->o_pos.y+1; y++)
-  for (x = obj->o_pos.x-1; x<=obj->o_pos.x+1; x++)
-  {
-    //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
-    if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
-    if ((ch = chat(y, x))==FLOOR || ch==PASSAGE)
+    for (x = obj->o_pos.x-1; x<=obj->o_pos.x+1; x++)
     {
-      if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}
-      continue;
+      //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
+      if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
+      if ((ch = chat(y, x))==FLOOR || ch==PASSAGE)
+      {
+        if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}
+        continue;
+      }
+      if (step_ok(ch) && (onfloor = find_obj(y, x)) && onfloor->o_type==obj->o_type && onfloor->o_group && onfloor->o_group==obj->o_group)
+      {
+        onfloor->o_count += obj->o_count;
+        return 2;
+      }
     }
-    if (step_ok(ch) && (onfloor = find_obj(y, x)) && onfloor->o_type==obj->o_type && onfloor->o_group && onfloor->o_group==obj->o_group)
-    {
-      onfloor->o_count += obj->o_count;
-      return 2;
-    }
-  }
-  return (cnt!=0);
+    return (cnt!=0);
 }
 
 void tick_pause()

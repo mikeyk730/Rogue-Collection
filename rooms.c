@@ -1,6 +1,8 @@
 //Create the layout for the new level
 //rooms.c     1.4 (A.I. Design)       12/16/84
 
+#include <ctype.h>
+
 #include "rogue.h"
 #include "main.h"
 #include "rooms.h"
@@ -13,8 +15,6 @@
 #include "chase.h"
 #include "misc.h"
 #include "io.h"
-
-#include <ctype.h>
 
 #define GOLDGRP  1
 
@@ -45,7 +45,7 @@ void do_rooms()
     do rp = &rooms[(rm = rnd_room())]; while (rp->r_flags&ISMAZE);
     rp->r_flags |= ISGONE;
     if (rm>2 && level>10 && rnd(20)<level-9)
-       rp->r_flags |= ISMAZE;
+      rp->r_flags |= ISMAZE;
   }
   //dig and populate all the rooms on the level
   for (i = 0, rp = rooms; i<MAXROOMS; rp++, i++)
@@ -135,8 +135,8 @@ void draw_room(struct room *rp)
   chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x+rp->r_max.x-1) = LRWALL;
   //Put the floor down
   for (y = rp->r_pos.y+1; y<rp->r_pos.y+rp->r_max.y-1; y++)
-  for (x = rp->r_pos.x+1; x<rp->r_pos.x+rp->r_max.x-1; x++)
-  chat(y, x) = FLOOR;
+    for (x = rp->r_pos.x+1; x<rp->r_pos.x+rp->r_max.x-1; x++)
+      chat(y, x) = FLOOR;
 }
 
 //vert: Draw a vertical line
@@ -177,17 +177,21 @@ void enter_room(coord *cp)
   }
   door_open(rp);
   if (!(rp->r_flags&ISDARK) && !on(player, ISBLIND) && !(rp->r_flags&ISMAZE))
-  for (y = rp->r_pos.y; y<rp->r_max.y+rp->r_pos.y; y++)
-  {
-    move(y, rp->r_pos.x);
-    for (x = rp->r_pos.x; x<rp->r_max.x+rp->r_pos.x; x++)
+    for (y = rp->r_pos.y; y<rp->r_max.y+rp->r_pos.y; y++)
     {
-      //Displaying monsters is all handled in the chase code now
-      tp = moat(y, x);
-      if (tp==NULL || !see_monst(tp)) addch(chat(y, x));
-      else {tp->t_oldch = chat(y,x); addch(tp->t_disguise);}
+      move(y, rp->r_pos.x);
+      for (x = rp->r_pos.x; x<rp->r_max.x+rp->r_pos.x; x++)
+      {
+        //Displaying monsters is all handled in the chase code now
+        tp = moat(y, x);
+        if (tp==NULL || !see_monst(tp)) 
+          addch(chat(y, x));
+        else {
+          tp->t_oldch = chat(y,x); 
+          addch(tp->t_disguise);
+        }
+      }
     }
-  }
 }
 
 //leave_room: Code for when we exit a room
@@ -202,23 +206,31 @@ void leave_room(coord *cp)
   proom = &passages[flat(cp->y, cp->x)&F_PNUM];
   floor = ((rp->r_flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
   if (rp->r_flags&ISMAZE) floor = PASSAGE;
-  for (y = rp->r_pos.y+1; y<rp->r_max.y+rp->r_pos.y-1; y++)
-  for (x = rp->r_pos.x+1; x<rp->r_max.x+rp->r_pos.x-1; x++)
-  switch (ch = mvinch(y, x))
-  {
-    case ' ': case PASSAGE: case TRAP: case STAIRS:
-    break;
+  for (y = rp->r_pos.y+1; y<rp->r_max.y+rp->r_pos.y-1; y++) {
+    for (x = rp->r_pos.x+1; x<rp->r_max.x+rp->r_pos.x-1; x++) {
+      switch (ch = mvinch(y, x))
+      {
+      case ' ': case PASSAGE: case TRAP: case STAIRS:
+        break;
 
-    case FLOOR:
-      if (floor==' ') addch(' ');
-    break;
+      case FLOOR:
+        if (floor==' ') addch(' ');
+        break;
 
-    default:
-      //to check for monster, we have to strip out standout bit
-      if (isupper(toascii(ch)))
-      if (on(player, SEEMONST)) {standout(); addch(ch); standend(); break;}
-      else moat(y, x)->t_oldch = '@';
-      addch(floor);
+      default:
+        //to check for monster, we have to strip out standout bit
+        if (isupper(toascii(ch)))
+          if (on(player, SEEMONST)) {
+            standout(); 
+            addch(ch); 
+            standend(); 
+            break;
+          }
+          else 
+            moat(y, x)->t_oldch = '@';
+          addch(floor);
+      }
+    }
   }
   door_open(rp);
 }

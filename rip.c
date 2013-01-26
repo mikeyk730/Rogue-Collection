@@ -20,13 +20,13 @@ static int sc_fd;
 
 int get_year()
 {
-   time_t rawtime;
-   struct tm* timeinfo;
+  time_t rawtime;
+  struct tm* timeinfo;
 
-   time(&rawtime);
-   timeinfo = localtime(&rawtime);
-   
-   return timeinfo->tm_year + 1900;
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+
+  return timeinfo->tm_year + 1900;
 }
 
 //score: Figure score and post it.
@@ -53,10 +53,10 @@ void score(int amount, int flags, char monst)
 reread:
     switch (response = readchar())
     {
-      case 'c': case 'C': _close(_creat(s_score, _S_IREAD | _S_IWRITE));
-      case 'r': case 'R': break;
-      case 'a': case 'A': return;
-      default: goto reread;
+    case 'c': case 'C': _close(_creat(s_score, _S_IREAD | _S_IWRITE));
+    case 'r': case 'R': break;
+    case 'a': case 'A': return;
+    default: goto reread;
     }
   }
   printw("\n");
@@ -137,9 +137,9 @@ void pr_scores(int newrank, struct sc_ent *top10)
     }
     else switch(top10->sc_fate)
     {
-      case 2: altmsg = " A total winner!"; break;
-      case 1: strcpy(dthstr, " quit"); break;
-      default: strcpy(dthstr, " weirded out");
+    case 2: altmsg = " A total winner!"; break;
+    case 1: strcpy(dthstr, " quit"); break;
+    default: strcpy(dthstr, " weirded out");
     }
     if ((strlen(top10->sc_name)+10+strlen(he_man[top10->sc_rank-1])) < (size_t)COLS)
     {
@@ -251,79 +251,79 @@ void total_winner()
   {
     switch (obj->o_type)
     {
-      case FOOD:
-        worth = 2*obj->o_count;
+    case FOOD:
+      worth = 2*obj->o_count;
       break;
 
-      case WEAPON:
-        switch (obj->o_which)
-        {
-          case MACE: worth = 8; break;
-          case SWORD: worth = 15; break;
-          case CROSSBOW: worth = 30; break;
-          case ARROW: worth = 1; break;
-          case DAGGER: worth = 2; break;
-          case TWOSWORD: worth = 75; break;
-          case DART: worth = 1; break;
-          case BOW: worth = 15; break;
-          case BOLT: worth = 1; break;
-          case SPEAR: worth = 5; break;
-        }
-        worth *= 3*(obj->o_hplus+obj->o_dplus)+obj->o_count;
-        obj->o_flags |= ISKNOW;
+    case WEAPON:
+      switch (obj->o_which)
+      {
+      case MACE: worth = 8; break;
+      case SWORD: worth = 15; break;
+      case CROSSBOW: worth = 30; break;
+      case ARROW: worth = 1; break;
+      case DAGGER: worth = 2; break;
+      case TWOSWORD: worth = 75; break;
+      case DART: worth = 1; break;
+      case BOW: worth = 15; break;
+      case BOLT: worth = 1; break;
+      case SPEAR: worth = 5; break;
+      }
+      worth *= 3*(obj->o_hplus+obj->o_dplus)+obj->o_count;
+      obj->o_flags |= ISKNOW;
       break;
 
-      case ARMOR:
-        switch (obj->o_which)
-        {
-          case LEATHER: worth = 20; break;
-          case RING_MAIL: worth = 25; break;
-          case STUDDED_LEATHER: worth = 20; break;
-          case SCALE_MAIL: worth = 30; break;
-          case CHAIN_MAIL: worth = 75; break;
-          case SPLINT_MAIL: worth = 80; break;
-          case BANDED_MAIL: worth = 90; break;
-          case PLATE_MAIL: worth = 150; break;
-        }
-        worth += (9-obj->o_ac)*100;
-        worth += (10*(a_class[obj->o_which]-obj->o_ac));
-        obj->o_flags |= ISKNOW;
+    case ARMOR:
+      switch (obj->o_which)
+      {
+      case LEATHER: worth = 20; break;
+      case RING_MAIL: worth = 25; break;
+      case STUDDED_LEATHER: worth = 20; break;
+      case SCALE_MAIL: worth = 30; break;
+      case CHAIN_MAIL: worth = 75; break;
+      case SPLINT_MAIL: worth = 80; break;
+      case BANDED_MAIL: worth = 90; break;
+      case PLATE_MAIL: worth = 150; break;
+      }
+      worth += (9-obj->o_ac)*100;
+      worth += (10*(a_class[obj->o_which]-obj->o_ac));
+      obj->o_flags |= ISKNOW;
       break;
 
-      case SCROLL:
-        worth = s_magic[obj->o_which].mi_worth;
-        worth *= obj->o_count;
-        if (!s_know[obj->o_which]) worth /= 2;
-        s_know[obj->o_which] = TRUE;
+    case SCROLL:
+      worth = s_magic[obj->o_which].mi_worth;
+      worth *= obj->o_count;
+      if (!s_know[obj->o_which]) worth /= 2;
+      s_know[obj->o_which] = TRUE;
       break;
 
-      case POTION:
-        worth = p_magic[obj->o_which].mi_worth;
-        worth *= obj->o_count;
-        if (!p_know[obj->o_which]) worth /= 2;
-        p_know[obj->o_which] = TRUE;
+    case POTION:
+      worth = p_magic[obj->o_which].mi_worth;
+      worth *= obj->o_count;
+      if (!p_know[obj->o_which]) worth /= 2;
+      p_know[obj->o_which] = TRUE;
       break;
 
-      case RING:
-        worth = r_magic[obj->o_which].mi_worth;
-        if (obj->o_which==R_ADDSTR || obj->o_which==R_ADDDAM || obj->o_which==R_PROTECT || obj->o_which==R_ADDHIT)
+    case RING:
+      worth = r_magic[obj->o_which].mi_worth;
+      if (obj->o_which==R_ADDSTR || obj->o_which==R_ADDDAM || obj->o_which==R_PROTECT || obj->o_which==R_ADDHIT)
         if (obj->o_ac>0) worth += obj->o_ac*100;
         else worth = 10;
         if (!(obj->o_flags&ISKNOW)) worth /= 2;
         obj->o_flags |= ISKNOW;
         r_know[obj->o_which] = TRUE;
+        break;
+
+    case STICK:
+      worth = ws_magic[obj->o_which].mi_worth;
+      worth += 20*obj->o_charges;
+      if (!(obj->o_flags&ISKNOW)) worth /= 2;
+      obj->o_flags |= ISKNOW;
+      ws_know[obj->o_which] = TRUE;
       break;
 
-      case STICK:
-        worth = ws_magic[obj->o_which].mi_worth;
-        worth += 20*obj->o_charges;
-        if (!(obj->o_flags&ISKNOW)) worth /= 2;
-        obj->o_flags |= ISKNOW;
-        ws_know[obj->o_which] = TRUE;
-      break;
-
-      case AMULET:
-        worth = 1000;
+    case AMULET:
+      worth = 1000;
       break;
     }
     if (worth<0) worth = 0;
@@ -349,14 +349,14 @@ char *killname(char monst, bool doart)
   article = TRUE;
   switch (monst)
   {
-    case 'a': sp = "arrow"; break;
-    case 'b': sp = "bolt"; break;
-    case 'd': sp = "dart"; break;
-    case 's': sp = "starvation"; article = FALSE; break;
-    case 'f': sp = "fall"; break;
-    default:
-      if (monst>='A' && monst<='Z') sp = monsters[monst-'A'].m_name;
-      else {sp = "God"; article = FALSE;}
+  case 'a': sp = "arrow"; break;
+  case 'b': sp = "bolt"; break;
+  case 'd': sp = "dart"; break;
+  case 's': sp = "starvation"; article = FALSE; break;
+  case 'f': sp = "fall"; break;
+  default:
+    if (monst>='A' && monst<='Z') sp = monsters[monst-'A'].m_name;
+    else {sp = "God"; article = FALSE;}
     break;
   }
   if (doart && article) sprintf(prbuf, "a%s ", vowelstr(sp));

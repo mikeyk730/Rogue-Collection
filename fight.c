@@ -93,49 +93,49 @@ void attack(THING *mp)
     if (!on(*mp, ISCANC)) switch (mp->t_type)
     {
 
-      case 'A': //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-        if (cur_armor!=NULL && cur_armor->o_ac<9 && cur_armor->o_which!=LEATHER)
+    case 'A': //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
+      if (cur_armor!=NULL && cur_armor->o_ac<9 && cur_armor->o_which!=LEATHER)
         if (ISWEARING(R_SUSTARM)) msg("the rust vanishes instantly");
         else {msg("your armor weakens, oh my!"); cur_armor->o_ac++;}
+        break;
+
+    case 'I': //When an Ice Monster hits you, you get unfrozen faster
+      if (no_command>1) no_command--;
       break;
 
-      case 'I': //When an Ice Monster hits you, you get unfrozen faster
-        if (no_command>1) no_command--;
-      break;
-
-      case 'R': //Rattlesnakes have poisonous bites
-        if (!save(VS_POISON))
+    case 'R': //Rattlesnakes have poisonous bites
+      if (!save(VS_POISON))
         if (!ISWEARING(R_SUSTSTR)) {chg_str(-1); msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));}
         else msg("a bite momentarily weakens you");
-      break;
+        break;
 
-      case 'W': case 'V': //Wraiths might drain energy levels, and Vampires can steal max_hp
-        if (rnd(100)<(mp->t_type=='W'?15:30))
+    case 'W': case 'V': //Wraiths might drain energy levels, and Vampires can steal max_hp
+      if (rnd(100)<(mp->t_type=='W'?15:30))
+      {
+        int fewer;
+
+        if (mp->t_type=='W')
         {
-          int fewer;
-
-          if (mp->t_type=='W')
-          {
-            if (pstats.s_exp==0) death('W'); //All levels gone
-            if (--pstats.s_lvl==0) {pstats.s_exp = 0; pstats.s_lvl = 1;}
-            else pstats.s_exp = e_levels[pstats.s_lvl-1]+1;
-            fewer = roll(1, 10);
-          }
-          else fewer = roll(1, 5);
-          pstats.s_hpt -= fewer;
-          max_hp -= fewer;
-          if (pstats.s_hpt<1) pstats.s_hpt = 1;
-          if (max_hp<1) death(mp->t_type);
-          msg("you suddenly feel weaker");
+          if (pstats.s_exp==0) death('W'); //All levels gone
+          if (--pstats.s_lvl==0) {pstats.s_exp = 0; pstats.s_lvl = 1;}
+          else pstats.s_exp = e_levels[pstats.s_lvl-1]+1;
+          fewer = roll(1, 10);
         }
+        else fewer = roll(1, 5);
+        pstats.s_hpt -= fewer;
+        max_hp -= fewer;
+        if (pstats.s_hpt<1) pstats.s_hpt = 1;
+        if (max_hp<1) death(mp->t_type);
+        msg("you suddenly feel weaker");
+      }
       break;
 
-      case 'F': //Violet fungi stops the poor guy from moving
-        player.t_flags |= ISHELD;
-        sprintf(mp->t_stats.s_dmg, "%dd1", ++fung_hit);
+    case 'F': //Violet fungi stops the poor guy from moving
+      player.t_flags |= ISHELD;
+      sprintf(mp->t_stats.s_dmg, "%dd1", ++fung_hit);
       break;
 
-      case 'L': //Leprechaun steals some gold
+    case 'L': //Leprechaun steals some gold
       {
         long lastpurse;
 
@@ -149,7 +149,7 @@ void attack(THING *mp)
         break;
       }
 
-      case 'N': //Nymphs steal a magic item, look through the pack and pick out one we like.
+    case 'N': //Nymphs steal a magic item, look through the pack and pick out one we like.
       {
         THING *obj, *steal;
         int nobj;
@@ -157,7 +157,7 @@ void attack(THING *mp)
 
         steal = NULL;
         for (nobj = 0, obj = ppack; obj!=NULL; obj = next(obj))
-        if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
+          if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
         if (steal!=NULL)
         {
           remove_mons(&mp->t_pos, mp, FALSE);
@@ -177,7 +177,7 @@ void attack(THING *mp)
         break;
       }
 
-      default: break;
+    default: break;
     }
   }
   else if (mp->t_type!='I')
@@ -247,7 +247,7 @@ bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
       else if (ISRING(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->o_ac;
       if (ISRING(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->o_ac;
       else if (ISRING(RIGHT, R_ADDHIT))
-      hplus += cur_ring[RIGHT]->o_ac;
+        hplus += cur_ring[RIGHT]->o_ac;
     }
     cp = weap->o_damage;
     if (hurl && (weap->o_flags&ISMISL) && cur_weapon!=NULL && cur_weapon->o_which==weap->o_launch)
@@ -315,10 +315,10 @@ void hit(char *er, char *ee)
   addmsg(prname(er, TRUE));
   switch ((terse || expert)?1:rnd(4))
   {
-    case 0: s = " scored an excellent hit on "; break;
-    case 1: s = " hit "; break;
-    case 2: s = (er==0?" have injured ":" has injured "); break;
-    case 3: s = (er==0?" swing and hit ":" swings and hits "); break;
+  case 0: s = " scored an excellent hit on "; break;
+  case 1: s = " hit "; break;
+  case 2: s = (er==0?" have injured ":" has injured "); break;
+  case 3: s = (er==0?" swing and hit ":" swings and hits "); break;
   }
   msg("%s%s", s, prname(ee, FALSE));
 }
@@ -331,10 +331,10 @@ void miss(char *er, char *ee)
   addmsg(prname(er, TRUE));
   switch ((terse || expert)?1:rnd(4))
   {
-    case 0: s = (er==0?" swing and miss":" swings and misses"); break;
-    case 1: s = (er==0?" miss":" misses"); break;
-    case 2: s = (er==0?" barely miss":" barely misses"); break;
-    case 3: s = (er==0?" don't hit":" doesn't hit"); break;
+  case 0: s = (er==0?" swing and miss":" swings and misses"); break;
+  case 1: s = (er==0?" miss":" misses"); break;
+  case 2: s = (er==0?" barely miss":" barely misses"); break;
+  case 3: s = (er==0?" don't hit":" doesn't hit"); break;
   }
   msg("%s %s", s, prname(ee, FALSE));
 }
@@ -429,9 +429,9 @@ is_magic(THING *obj)
 {
   switch (obj->o_type)
   {
-    case ARMOR: return obj->o_ac!=a_class[obj->o_which];
-    case WEAPON: return obj->o_hplus!=0 || obj->o_dplus!=0;
-    case POTION: case SCROLL: case STICK: case RING: case AMULET: return TRUE;
+  case ARMOR: return obj->o_ac!=a_class[obj->o_which];
+  case WEAPON: return obj->o_hplus!=0 || obj->o_dplus!=0;
+  case POTION: case SCROLL: case STICK: case RING: case AMULET: return TRUE;
   }
   return FALSE;
 }
@@ -444,12 +444,12 @@ void killed(THING *tp, bool pr)
   switch (tp->t_type)
   {
 
-    case 'F':
-      player.t_flags &= ~ISHELD;
-      f_restor();
+  case 'F':
+    player.t_flags &= ~ISHELD;
+    f_restor();
     break;
 
-    case 'L':
+  case 'L':
     {
       THING *gold;
 

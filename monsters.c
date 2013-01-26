@@ -64,15 +64,15 @@ void new_monster(THING *tp, byte type, coord *cp)
   if (type=='F') tp->t_stats.s_dmg = f_damage;
   if (type=='X') switch (rnd(level>25?9:8))
   {
-    case 0: tp->t_disguise = GOLD; break;
-    case 1: tp->t_disguise = POTION; break;
-    case 2: tp->t_disguise = SCROLL; break;
-    case 3: tp->t_disguise = STAIRS; break;
-    case 4: tp->t_disguise = WEAPON; break;
-    case 5: tp->t_disguise = ARMOR; break;
-    case 6: tp->t_disguise = RING; break;
-    case 7: tp->t_disguise = STICK; break;
-    case 8: tp->t_disguise = AMULET; break;
+  case 0: tp->t_disguise = GOLD; break;
+  case 1: tp->t_disguise = POTION; break;
+  case 2: tp->t_disguise = SCROLL; break;
+  case 3: tp->t_disguise = STAIRS; break;
+  case 4: tp->t_disguise = WEAPON; break;
+  case 5: tp->t_disguise = ARMOR; break;
+  case 6: tp->t_disguise = RING; break;
+  case 7: tp->t_disguise = STICK; break;
+  case 8: tp->t_disguise = AMULET; break;
   }
 }
 

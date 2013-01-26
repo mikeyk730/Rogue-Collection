@@ -24,12 +24,12 @@ char *tr_name(byte type)
 {
   switch (type)
   {
-    case T_DOOR: return "a trapdoor";
-    case T_BEAR: return "a beartrap";
-    case T_SLEEP: return "a sleeping gas trap";
-    case T_ARROW: return "an arrow trap";
-    case T_TELEP: return "a teleport trap";
-    case T_DART: return "a poison dart trap";
+  case T_DOOR: return "a trapdoor";
+  case T_BEAR: return "a beartrap";
+  case T_SLEEP: return "a sleeping gas trap";
+  case T_ARROW: return "an arrow trap";
+  case T_TELEP: return "a teleport trap";
+  case T_DART: return "a poison dart trap";
   }
   msg("weird trap: %d", type);
   return NULL;
@@ -58,22 +58,23 @@ void look(bool wakeup)
     if (!on(player, ISBLIND))
     {
       for (x = oldpos.x-1; x<=(oldpos.x+1); x++)
-      for (y = oldpos.y-1; y<=(oldpos.y+1); y++)
-      {
-        if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
-        move(y, x);
-        ch = inch();
-        if (ch==FLOOR)
+        for (y = oldpos.y-1; y<=(oldpos.y+1); y++)
         {
-          if ((oldrp->r_flags & (ISGONE|ISDARK))==ISDARK) addch(' ');
+          if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
+          move(y, x);
+          ch = inch();
+          if (ch==FLOOR)
+          {
+            if ((oldrp->r_flags & (ISGONE|ISDARK))==ISDARK) addch(' ');
+          }
+          else
+          {
+            fp = &_flags[INDEX(y, x)];
+            //if the maze or passage (that the hero is in!!) needs to be redrawn (passages once drawn always stay on) do it now.
+            if (((*fp&F_MAZE) || (*fp&F_PASS)) && (ch!=PASSAGE) && (ch!=STAIRS) && ((*fp&F_PNUM)==(pfl & F_PNUM))) 
+              addch(PASSAGE);
+          }
         }
-        else
-        {
-          fp = &_flags[INDEX(y, x)];
-          //if the maze or passage (that the hero is in!!) needs to be redrawn (passages once drawn always stay on) do it now.
-          if (((*fp&F_MAZE) || (*fp&F_PASS)) && (ch!=PASSAGE) && (ch!=STAIRS) && ((*fp&F_PNUM)==(pfl & F_PNUM))) addch(PASSAGE);
-        }
-      }
     }
     oldpos = hero;
     oldrp = rp;
@@ -97,34 +98,34 @@ void look(bool wakeup)
     ch = _level[index];
     //No Doors
     if (pch!=DOOR && ch!=DOOR)
-    //Either hero or other in a passage
-    if ((pfl&F_PASS)!=(*fp & F_PASS))
-    {
-      //Neither is in a maze
-      if (!(pfl&F_MAZE) && !(*fp&F_MAZE)) continue;
-    }
-    //Not in same passage
-    else if ((*fp&F_PASS) && (*fp&F_PNUM)!=(pfl & F_PNUM)) continue;
-    if ((tp = moat(y, x))!=NULL) if (on(player, SEEMONST) && on(*tp, ISINVIS))
-    {
-      if (door_stop && !firstmove) running = FALSE;
-      continue;
-    }
-    else
-    {
-      if (wakeup) wake_monster(y, x);
-      if (tp->t_oldch != ' ' || (!(rp->r_flags&ISDARK) && !on(player, ISBLIND))) tp->t_oldch = _level[index];
-      if (see_monst(tp)) ch = tp->t_disguise;
-    }
-    //The current character used for IBM ARMOR doesn't look right in Inverse
-    if ((ch!=PASSAGE) && (*fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();
-    move(y, x);
-    addch(ch);
-    standend();
-    if (door_stop && !firstmove && running)
-    {
-      switch (runch)
+      //Either hero or other in a passage
+      if ((pfl&F_PASS)!=(*fp & F_PASS))
       {
+        //Neither is in a maze
+        if (!(pfl&F_MAZE) && !(*fp&F_MAZE)) continue;
+      }
+      //Not in same passage
+      else if ((*fp&F_PASS) && (*fp&F_PNUM)!=(pfl & F_PNUM)) continue;
+      if ((tp = moat(y, x))!=NULL) if (on(player, SEEMONST) && on(*tp, ISINVIS))
+      {
+        if (door_stop && !firstmove) running = FALSE;
+        continue;
+      }
+      else
+      {
+        if (wakeup) wake_monster(y, x);
+        if (tp->t_oldch != ' ' || (!(rp->r_flags&ISDARK) && !on(player, ISBLIND))) tp->t_oldch = _level[index];
+        if (see_monst(tp)) ch = tp->t_disguise;
+      }
+      //The current character used for IBM ARMOR doesn't look right in Inverse
+      if ((ch!=PASSAGE) && (*fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();
+      move(y, x);
+      addch(ch);
+      standend();
+      if (door_stop && !firstmove && running)
+      {
+        switch (runch)
+        {
         case 'h': if (x==ex) continue; break;
         case 'j': if (y==sy) continue; break;
         case 'k': if (y==ey) continue; break;
@@ -133,22 +134,22 @@ void look(bool wakeup)
         case 'u': if ((y-x)-diffhero>=1) continue; break;
         case 'n': if ((y+x)-sumhero<=-1) continue; break;
         case 'b': if ((y-x)-diffhero<=-1) continue; break;
-       }
-       switch (ch)
-       {
-         case DOOR: if (x==hero.x || y==hero.y) running = FALSE; break;
-         case PASSAGE: if (x==hero.x || y==hero.y) passcount++; break;
-         case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ': break;
-         default: running = FALSE; break;
-       }
-     }
-   }
-   if (door_stop && !firstmove && passcount>1) running = FALSE;
-   move(hero.y, hero.x);
-   if ((flat(hero.y, hero.x)&F_PASS) || (was_trapped>TRUE) || (flat(hero.y, hero.x)&F_MAZE)) standout();
-   addch(PLAYER);
-   standend();
-   if (was_trapped) {beep(); was_trapped = FALSE;}
+        }
+        switch (ch)
+        {
+        case DOOR: if (x==hero.x || y==hero.y) running = FALSE; break;
+        case PASSAGE: if (x==hero.x || y==hero.y) passcount++; break;
+        case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ': break;
+        default: running = FALSE; break;
+        }
+      }
+  }
+  if (door_stop && !firstmove && passcount>1) running = FALSE;
+  move(hero.y, hero.x);
+  if ((flat(hero.y, hero.x)&F_PASS) || (was_trapped>TRUE) || (flat(hero.y, hero.x)&F_MAZE)) standout();
+  addch(PLAYER);
+  standend();
+  if (was_trapped) {beep(); was_trapped = FALSE;}
 }
 
 //find_obj: Find the unclaimed object at y, x
@@ -167,19 +168,37 @@ void eat()
 {
   THING *obj;
 
-  if ((obj = get_item("eat", FOOD))==NULL) return;
-  if (obj->o_type!=FOOD) {msg("ugh, you would get ill if you ate that"); return;}
+  if ((obj = get_item("eat", FOOD))==NULL) 
+    return;
+  if (obj->o_type!=FOOD) {
+    msg("ugh, you would get ill if you ate that"); 
+    return;
+  }
   inpack--;
-  if (--obj->o_count<1) {detach(ppack, obj); discard(obj);}
-  if (food_left<0) food_left = 0;
-  if (food_left>(STOMACHSIZE-20)) no_command += 2+rnd(5);
-  if ((food_left += HUNGERTIME-200+rnd(400))>STOMACHSIZE) food_left = STOMACHSIZE;
+  if (--obj->o_count<1) {
+    detach(ppack, obj); 
+    discard(obj);
+  }
+  if (food_left<0)
+    food_left = 0;
+  if (food_left>(STOMACHSIZE-20))
+    no_command += 2+rnd(5);
+  if ((food_left += HUNGERTIME-200+rnd(400))>STOMACHSIZE)
+    food_left = STOMACHSIZE;
   hungry_state = 0;
-  if (obj==cur_weapon) cur_weapon = NULL;
-  if (obj->o_which==1) msg("my, that was a yummy %s", fruit);
-  else if (rnd(100)>70) {pstats.s_exp++; msg("yuk, this food tastes awful"); check_level();}
-  else msg("yum, that tasted good");
-  if (no_command) msg("You feel bloated and fall asleep");
+  if (obj==cur_weapon) 
+    cur_weapon = NULL;
+  if (obj->o_which==1)
+    msg("my, that was a yummy %s", fruit);
+  else if (rnd(100)>70) {
+    pstats.s_exp++; 
+    msg("yuk, this food tastes awful");
+    check_level();
+  }
+  else 
+    msg("yum, that tasted good");
+  if (no_command) 
+    msg("You feel bloated and fall asleep");
 }
 
 //chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
@@ -236,8 +255,8 @@ char *vowelstr(char *str)
 {
   switch (*str)
   {
-    case 'a': case 'A': case 'e': case 'E': case 'i': case 'I': case 'o': case 'O': case 'u': case 'U': return "n";
-    default: return "";
+  case 'a': case 'A': case 'e': case 'E': case 'i': case 'I': case 'o': case 'O': case 'u': case 'U': return "n";
+  default: return "";
   }
 }
 
@@ -260,7 +279,12 @@ int get_dir()
 
   if (again) return TRUE;
   msg("which direction? ");
-  do if ((ch = readchar())==ESCAPE) {msg(""); return FALSE;} while (find_dir(ch, &delta)==0);
+  do {
+    if ((ch = readchar())==ESCAPE) {
+      msg(""); 
+      return FALSE;
+    }
+  } while (find_dir(ch, &delta)==0);
   msg("");
   if (on(player, ISHUH) && rnd(5)==0) do
   {
@@ -277,15 +301,15 @@ bool find_dir(byte ch, coord *cp)
   gotit = TRUE;
   switch (ch)
   {
-    case 'h': case'H': cp->y = 0; cp->x = -1; break;
-    case 'j': case'J': cp->y = 1; cp->x = 0; break;
-    case 'k': case'K': cp->y = -1; cp->x = 0; break;
-    case 'l': case'L': cp->y = 0; cp->x = 1; break;
-    case 'y': case'Y': cp->y = -1; cp->x = -1; break;
-    case 'u': case'U': cp->y = -1; cp->x = 1; break;
-    case 'b': case'B': cp->y = 1; cp->x = -1; break;
-    case 'n': case'N': cp->y = 1; cp->x = 1; break;
-    default: gotit = FALSE; break;
+  case 'h': case'H': cp->y = 0; cp->x = -1; break;
+  case 'j': case'J': cp->y = 1; cp->x = 0; break;
+  case 'k': case'K': cp->y = -1; cp->x = 0; break;
+  case 'l': case'L': cp->y = 0; cp->x = 1; break;
+  case 'y': case'Y': cp->y = -1; cp->x = -1; break;
+  case 'u': case'U': cp->y = -1; cp->x = 1; break;
+  case 'b': case'B': cp->y = 1; cp->x = -1; break;
+  case 'n': case'N': cp->y = 1; cp->x = 1; break;
+  default: gotit = FALSE; break;
   }
   return gotit;
 }
@@ -322,8 +346,8 @@ int step_ok(int ch)
 {
   switch (ch)
   {
-    case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: return FALSE;
-    default: return ((ch<'A') || (ch>'Z'));
+  case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: return FALSE;
+  default: return ((ch<'A') || (ch>'Z'));
   }
 }
 
@@ -335,27 +359,27 @@ int goodch(THING *obj)
   if (obj->o_flags&ISCURSED) ch = BMAGIC;
   switch (obj->o_type)
   {
-    case ARMOR:
-      if (obj->o_ac>a_class[obj->o_which]) ch = BMAGIC;
+  case ARMOR:
+    if (obj->o_ac>a_class[obj->o_which]) ch = BMAGIC;
     break;
-    case WEAPON:
-      if (obj->o_hplus<0 || obj->o_dplus<0) ch = BMAGIC;
+  case WEAPON:
+    if (obj->o_hplus<0 || obj->o_dplus<0) ch = BMAGIC;
     break;
-    case SCROLL:
-      switch (obj->o_which) {case S_SLEEP: case S_CREATE: case S_AGGR: ch = BMAGIC; break;}
+  case SCROLL:
+    switch (obj->o_which) {case S_SLEEP: case S_CREATE: case S_AGGR: ch = BMAGIC; break;}
     break;
-    case POTION:
-      switch (obj->o_which) {case P_CONFUSE: case P_PARALYZE: case P_POISON: case P_BLIND: ch = BMAGIC; break;}
+  case POTION:
+    switch (obj->o_which) {case P_CONFUSE: case P_PARALYZE: case P_POISON: case P_BLIND: ch = BMAGIC; break;}
     break;
-    case STICK:
-      switch (obj->o_which) {case WS_HASTE_M: case WS_TELTO: ch = BMAGIC; break;}
+  case STICK:
+    switch (obj->o_which) {case WS_HASTE_M: case WS_TELTO: ch = BMAGIC; break;}
     break;
-    case RING:
-      switch (obj->o_which)
-      {
-        case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->o_ac<0) ch = BMAGIC; break;
-        case R_AGGR: case R_TELEPORT: ch = BMAGIC; break;
-      }
+  case RING:
+    switch (obj->o_which)
+    {
+    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->o_ac<0) ch = BMAGIC; break;
+    case R_AGGR: case R_TELEPORT: ch = BMAGIC; break;
+    }
     break;
   }
   return ch;
@@ -392,10 +416,15 @@ void help(char **helpscr)
     //decide if we need print a continue type message
     if ((*helpscr==0) || isfull)
     {
-      if (*helpscr==0) mvaddstr(24, 0, "--press space to continue--");
-      else if (terse) mvaddstr(24, 0, "--Space for more, Esc to continue--");
-      else mvaddstr(24, 0, "--Press space for more, Esc to continue--");
-      do answer = readchar(); while (answer!=' ' && answer!=ESCAPE);
+      if (*helpscr==0) 
+        mvaddstr(24, 0, "--press space to continue--");
+      else if (terse) 
+        mvaddstr(24, 0, "--Space for more, Esc to continue--");
+      else 
+        mvaddstr(24, 0, "--Press space for more, Esc to continue--");
+      do {
+        answer = readchar();
+      } while (answer!=' ' && answer!=ESCAPE);
     }
     hcount++;
   }
@@ -438,28 +467,32 @@ void search()
   byte *fp;
   int ey, ex;
 
-  if (on(player, ISBLIND)) return;
+  if (on(player, ISBLIND)) 
+    return;
   ey = hero.y+1;
   ex = hero.x+1;
   for (y = hero.y-1; y<=ey; y++) for (x = hero.x-1; x<=ex; x++)
   {
-    if ((y==hero.y && x==hero.x) || offmap(y, x)) continue;
+    if ((y==hero.y && x==hero.x) || offmap(y, x)) 
+      continue;
     fp = &flat(y, x);
-    if (!(*fp&F_REAL)) switch (chat(y, x))
-    {
+    if (!(*fp&F_REAL)) {
+      switch (chat(y, x))
+      {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
         if (rnd(5)!=0) break;
         chat(y, x) = DOOR;
         *fp |= F_REAL;
         count = running = FALSE;
-      break;
+        break;
       case FLOOR:
         if (rnd(2)!=0) break;
         chat(y, x) = TRAP;
         *fp |= F_REAL;
         count = running = FALSE;
         msg("you found %s", tr_name(*fp&F_TMASK));
-      break;
+        break;
+      }
     }
   }
 }
@@ -468,14 +501,26 @@ void search()
 //d_level: He wants to go down a level
 void d_level()
 {
-  if (chat(hero.y, hero.x)!=STAIRS && wizard == FALSE) msg("I see no way down");
-  else {level++; new_level();}
+  if (chat(hero.y, hero.x)!=STAIRS && wizard == FALSE)
+    msg("I see no way down");
+  else {
+    level++; 
+    new_level();
+  }
 }
 
 //u_level: He wants to go up a level
 void u_level()
 {
-  if (chat(hero.y, hero.x)==STAIRS || wizard == TRUE) if (amulet) {level--; if (level==0) total_winner(); new_level(); msg("you feel a wrenching sensation in your gut");} else msg("your way is magically blocked");
+  if (chat(hero.y, hero.x)==STAIRS || wizard == TRUE) 
+    if (amulet) {
+      level--; 
+      if (level==0) 
+        total_winner(); 
+      new_level(); 
+      msg("you feel a wrenching sensation in your gut");
+    } 
+    else msg("your way is magically blocked");
   else msg("I see no way up");
 }
 
@@ -492,17 +537,33 @@ void call()
   if (obj==NULL) return;
   switch (obj->o_type)
   {
-    case RING: guess = (char **)r_guess; know = r_know; elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:r_stones[obj->o_which]); break;
-    case POTION: guess = (char **)p_guess; know = p_know; elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:p_colors[obj->o_which]); break;
-    case SCROLL: guess = (char **)s_guess; know = s_know; elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:(char *)(&s_names[obj->o_which])); break;
-    case STICK: guess = (char **)ws_guess; know = ws_know; elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:ws_made[obj->o_which]); break;
-    default: msg("you can't call that anything"); return;
+  case RING: guess = (char **)r_guess; 
+    know = r_know;
+    elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:r_stones[obj->o_which]);
+    break;
+  case POTION: guess = (char **)p_guess;
+    know = p_know;
+    elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:p_colors[obj->o_which]);
+    break;
+  case SCROLL: guess = (char **)s_guess;
+    know = s_know;
+    elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:(char *)(&s_names[obj->o_which])); 
+    break;
+  case STICK: guess = (char **)ws_guess;
+    know = ws_know;
+    elsewise = (*guess[obj->o_which]!=0?guess[obj->o_which]:ws_made[obj->o_which]);
+    break;
+  default: msg("you can't call that anything"); return;
   }
-  if (know[obj->o_which]) {msg("that has already been identified"); return;}
+  if (know[obj->o_which]) {
+    msg("that has already been identified"); 
+    return;
+  }
   msg("Was called \"%s\"", elsewise);
   msg("what do you want to call it? ");
   getinfo(prbuf,MAXNAME);
-  if (*prbuf && *prbuf!=ESCAPE) strcpy(guess[obj->o_which], prbuf);
+  if (*prbuf && *prbuf!=ESCAPE) 
+    strcpy(guess[obj->o_which], prbuf);
   msg("");
 }
 
@@ -512,7 +573,11 @@ void do_macro(char *buf, int sz)
   char *cp = prbuf;
 
   msg("F9 was %s, enter new macro: ", buf);
-  if (getinfo(prbuf, sz-1)!=ESCAPE) do {if (*cp!=CTRL('F')) *buf++ = *cp;} while (*cp++);
+  if (getinfo(prbuf, sz-1)!=ESCAPE) 
+    do {
+      if (*cp!=CTRL('F')) 
+        *buf++ = *cp;
+    } while (*cp++);
   msg("");
   flush_type();
 }

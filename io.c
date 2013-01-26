@@ -181,9 +181,9 @@ void status()
     s_hp = pstats.s_hpt;
     move(PT(22, 23), 12);
     if (pstats.s_hpt<100) {
-       printw("Hits:%2d(%2d) ", pstats.s_hpt, max_hp);
-       //just in case they get wraithed with 3 digit max hits
-       addstr("  ");
+      printw("Hits:%2d(%2d) ", pstats.s_hpt, max_hp);
+      //just in case they get wraithed with 3 digit max hits
+      addstr("  ");
     }
     else printw("Hits:%3d(%3d) ", pstats.s_hpt, max_hp);
   }
@@ -259,25 +259,25 @@ int getinfo(char *str, int size)
   wason = cursor(TRUE);
   while (ret==1) switch (ch = getkey())
   {
-    case ESCAPE:
-      while (str!=retstr) {backspace(); readcnt--; str--;}
-      ret = *str = ESCAPE;
-      cursor(wason);
+  case ESCAPE:
+    while (str!=retstr) {backspace(); readcnt--; str--;}
+    ret = *str = ESCAPE;
+    cursor(wason);
     break;
-    case '\b':
-      if (str!=retstr) {backspace(); readcnt--; str--;}
+  case '\b':
+    if (str!=retstr) {backspace(); readcnt--; str--;}
     break;
-    default:
-      if (readcnt>=size) {beep(); break;}
-      readcnt++;
-      addch(ch);
-      *str++ = ch;
-      if ((ch&0x80)==0) break;
-    case '\n':
-    case '\r':
-      *str = 0;
-      cursor(wason);
-      ret = ch;
+  default:
+    if (readcnt>=size) {beep(); break;}
+    readcnt++;
+    addch(ch);
+    *str++ = ch;
+    if ((ch&0x80)==0) break;
+  case '\n':
+  case '\r':
+    *str = 0;
+    cursor(wason);
+    ret = ch;
     break;
   }
   return ret;
@@ -333,7 +333,7 @@ void SIG2()
 
   if (COLS==40) {nspot = 10; cspot = 19; tspot = 35;}
   else {nspot = 20; cspot = 39; tspot = 75;}
-  
+
   getrc(&x, &y);
   if (faststate!=new_fmode)
   {

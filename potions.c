@@ -27,18 +27,18 @@ void quaff()
   //Calculate the effect it has on the poor guy.
   switch (obj->o_which)
   {
-    case P_CONFUSE:
-      p_know[P_CONFUSE] = TRUE;
-      if (!on(player, ISHUH))
-      {
-        if (on(player, ISHUH)) lengthen(unconfuse, rnd(8)+HUHDURATION);
-        else fuse(unconfuse, 0, rnd(8)+HUHDURATION);
-        player.t_flags |= ISHUH;
-        msg("wait, what's going on? Huh? What? Who?");
-      }
+  case P_CONFUSE:
+    p_know[P_CONFUSE] = TRUE;
+    if (!on(player, ISHUH))
+    {
+      if (on(player, ISHUH)) lengthen(unconfuse, rnd(8)+HUHDURATION);
+      else fuse(unconfuse, 0, rnd(8)+HUHDURATION);
+      player.t_flags |= ISHUH;
+      msg("wait, what's going on? Huh? What? Who?");
+    }
     break;
 
-    case P_POISON:
+  case P_POISON:
     {
       char *sick = "you feel %s sick.";
 
@@ -49,119 +49,119 @@ void quaff()
       break;
     }
 
-    case P_HEALING:
-      p_know[P_HEALING] = TRUE;
-      if ((pstats.s_hpt += roll(pstats.s_lvl, 4))>max_hp) pstats.s_hpt = ++max_hp;
-      sight();
-      msg("you begin to feel better");
+  case P_HEALING:
+    p_know[P_HEALING] = TRUE;
+    if ((pstats.s_hpt += roll(pstats.s_lvl, 4))>max_hp) pstats.s_hpt = ++max_hp;
+    sight();
+    msg("you begin to feel better");
     break;
 
-    case P_STRENGTH:
-      p_know[P_STRENGTH] = TRUE;
-      chg_str(1);
-      msg("you feel stronger. What bulging muscles!");
+  case P_STRENGTH:
+    p_know[P_STRENGTH] = TRUE;
+    chg_str(1);
+    msg("you feel stronger. What bulging muscles!");
     break;
 
-    case P_MFIND:
-      fuse(turn_see, TRUE, HUHDURATION);
-      if (mlist==NULL) msg("you have a strange feeling%s.", noterse(" for a moment"));
-      else {p_know[P_MFIND] |= turn_see(FALSE); msg("");}
+  case P_MFIND:
+    fuse(turn_see, TRUE, HUHDURATION);
+    if (mlist==NULL) msg("you have a strange feeling%s.", noterse(" for a moment"));
+    else {p_know[P_MFIND] |= turn_see(FALSE); msg("");}
     break;
 
-    case P_TFIND:
-      //Potion of magic detection.  Find everything interesting on the level and show him where they are.  Also give hints as to whether he would want to use the object.
-      if (lvl_obj!=NULL)
+  case P_TFIND:
+    //Potion of magic detection.  Find everything interesting on the level and show him where they are.  Also give hints as to whether he would want to use the object.
+    if (lvl_obj!=NULL)
+    {
+      THING *tp;
+      bool show;
+
+      show = FALSE;
+      for (tp = lvl_obj; tp!=NULL; tp = next(tp))
       {
-        THING *tp;
-        bool show;
-
-        show = FALSE;
-        for (tp = lvl_obj; tp!=NULL; tp = next(tp))
+        if (is_magic(tp))
+        {
+          show = TRUE;
+          mvwaddch(hw, tp->o_pos.y, tp->o_pos.x, goodch(tp));
+          p_know[P_TFIND] = TRUE;
+        }
+      }
+      for (th = mlist; th!=NULL; th = next(th))
+      {
+        for (tp = th->t_pack; tp!=NULL; tp = next(tp))
         {
           if (is_magic(tp))
           {
             show = TRUE;
-            mvwaddch(hw, tp->o_pos.y, tp->o_pos.x, goodch(tp));
+            mvwaddch(hw, th->t_pos.y, th->t_pos.x, MAGIC);
             p_know[P_TFIND] = TRUE;
           }
         }
-        for (th = mlist; th!=NULL; th = next(th))
-        {
-          for (tp = th->t_pack; tp!=NULL; tp = next(tp))
-          {
-            if (is_magic(tp))
-            {
-              show = TRUE;
-              mvwaddch(hw, th->t_pos.y, th->t_pos.x, MAGIC);
-              p_know[P_TFIND] = TRUE;
-            }
-          }
-        }
-        if (show) {msg("You sense the presence of magic."); break;}
       }
-      msg("you have a strange feeling for a moment%s.", noterse(", then it passes"));
+      if (show) {msg("You sense the presence of magic."); break;}
+    }
+    msg("you have a strange feeling for a moment%s.", noterse(", then it passes"));
     break;
 
-    case P_PARALYZE:
-      p_know[P_PARALYZE] = TRUE;
-      no_command = HOLDTIME;
-      player.t_flags &= ~ISRUN;
-      msg("you can't move");
+  case P_PARALYZE:
+    p_know[P_PARALYZE] = TRUE;
+    no_command = HOLDTIME;
+    player.t_flags &= ~ISRUN;
+    msg("you can't move");
     break;
 
-    case P_SEEINVIS:
-      if (!on(player, CANSEE)) {fuse(unsee, 0, SEEDURATION); look(FALSE); invis_on();}
-      sight();
-      msg("this potion tastes like %s juice", fruit);
+  case P_SEEINVIS:
+    if (!on(player, CANSEE)) {fuse(unsee, 0, SEEDURATION); look(FALSE); invis_on();}
+    sight();
+    msg("this potion tastes like %s juice", fruit);
     break;
 
-    case P_RAISE:
-      p_know[P_RAISE] = TRUE;
-      msg("you suddenly feel much more skillful");
-      raise_level();
+  case P_RAISE:
+    p_know[P_RAISE] = TRUE;
+    msg("you suddenly feel much more skillful");
+    raise_level();
     break;
 
-    case P_XHEAL:
-      p_know[P_XHEAL] = TRUE;
-      if ((pstats.s_hpt += roll(pstats.s_lvl, 8))>max_hp)
-      {
-        if (pstats.s_hpt>max_hp+pstats.s_lvl+1) ++max_hp;
-        pstats.s_hpt = ++max_hp;
-      }
-      sight();
-      msg("you begin to feel much better");
+  case P_XHEAL:
+    p_know[P_XHEAL] = TRUE;
+    if ((pstats.s_hpt += roll(pstats.s_lvl, 8))>max_hp)
+    {
+      if (pstats.s_hpt>max_hp+pstats.s_lvl+1) ++max_hp;
+      pstats.s_hpt = ++max_hp;
+    }
+    sight();
+    msg("you begin to feel much better");
     break;
 
-    case P_HASTE:
-      p_know[P_HASTE] = TRUE;
-      if (add_haste(TRUE)) msg("you feel yourself moving much faster");
+  case P_HASTE:
+    p_know[P_HASTE] = TRUE;
+    if (add_haste(TRUE)) msg("you feel yourself moving much faster");
     break;
 
-    case P_RESTORE:
-      if (ISRING(LEFT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[LEFT]->o_ac);
-      if (ISRING(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[RIGHT]->o_ac);
-      if (pstats.s_str<max_stats.s_str) pstats.s_str = max_stats.s_str;
-      if (ISRING(LEFT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[LEFT]->o_ac);
-      if (ISRING(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[RIGHT]->o_ac);
-      msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
+  case P_RESTORE:
+    if (ISRING(LEFT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[LEFT]->o_ac);
+    if (ISRING(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, -cur_ring[RIGHT]->o_ac);
+    if (pstats.s_str<max_stats.s_str) pstats.s_str = max_stats.s_str;
+    if (ISRING(LEFT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[LEFT]->o_ac);
+    if (ISRING(RIGHT, R_ADDSTR)) add_str(&pstats.s_str, cur_ring[RIGHT]->o_ac);
+    msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
     break;
 
-    case P_BLIND:
-      p_know[P_BLIND] = TRUE;
-      if (!on(player, ISBLIND))
-      {
-        player.t_flags |= ISBLIND;
-        fuse(sight, 0, SEEDURATION);
-        look(FALSE);
-      }
-      msg("a cloak of darkness falls around you");
+  case P_BLIND:
+    p_know[P_BLIND] = TRUE;
+    if (!on(player, ISBLIND))
+    {
+      player.t_flags |= ISBLIND;
+      fuse(sight, 0, SEEDURATION);
+      look(FALSE);
+    }
+    msg("a cloak of darkness falls around you");
     break;
 
-    case P_NOP:
-      msg("this potion tastes extremely dull");
+  case P_NOP:
+    msg("this potion tastes extremely dull");
     break;
 
-    default: msg("what an odd tasting potion!"); return;
+  default: msg("what an odd tasting potion!"); return;
   }
   status();
   //Throw the item away
@@ -217,28 +217,28 @@ void th_effect(THING *obj, THING *tp)
 {
   switch (obj->o_which)
   {
-    case P_CONFUSE: case P_BLIND:
-      tp->t_flags |= ISHUH;
-      msg("the %s appears confused", monsters[tp->t_type-'A'].m_name);
+  case P_CONFUSE: case P_BLIND:
+    tp->t_flags |= ISHUH;
+    msg("the %s appears confused", monsters[tp->t_type-'A'].m_name);
     break;
 
-    case P_PARALYZE:
-      tp->t_flags &= ~ISRUN;
-      tp->t_flags |= ISHELD;
+  case P_PARALYZE:
+    tp->t_flags &= ~ISRUN;
+    tp->t_flags |= ISHELD;
     break;
 
-    case P_HEALING: case P_XHEAL:
-      if ((tp->t_stats.s_hpt += rnd(8))>tp->t_stats.s_maxhp) tp->t_stats.s_hpt = ++tp->t_stats.s_maxhp;
+  case P_HEALING: case P_XHEAL:
+    if ((tp->t_stats.s_hpt += rnd(8))>tp->t_stats.s_maxhp) tp->t_stats.s_hpt = ++tp->t_stats.s_maxhp;
     break;
 
-    case P_RAISE:
-      tp->t_stats.s_hpt += 8;
-      tp->t_stats.s_maxhp += 8;
-      tp->t_stats.s_lvl++;
+  case P_RAISE:
+    tp->t_stats.s_hpt += 8;
+    tp->t_stats.s_maxhp += 8;
+    tp->t_stats.s_lvl++;
     break;
 
-    case P_HASTE:
-      tp->t_flags |= ISHASTE;
+  case P_HASTE:
+    tp->t_flags |= ISHASTE;
     break;
   }
   msg("the flask shatters.");

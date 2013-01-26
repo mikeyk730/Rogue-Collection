@@ -22,7 +22,7 @@ void save_game()
   else printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", s_save);
   getinfo(savename, 19);
   if (*savename==0) 
-     strcpy(savename, s_save);
+    strcpy(savename, s_save);
   do_save(savename);
 }
 
