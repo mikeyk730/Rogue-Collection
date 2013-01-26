@@ -25,7 +25,7 @@
 #include "thing.h"
 
 //fight: The player attacks the monster.
-int fight(coord *mp, char mn, ITEM *weap, bool thrown)
+int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
 {
   AGENT *tp;
   char *mname;
@@ -226,7 +226,7 @@ void check_level()
 //roll_em: Roll several attacks
 bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 {
-  struct stats *att, *def;
+  struct Stats *att, *def;
   char *cp;
   int ndice, nsides, def_arm;
   bool did_hit = FALSE;
@@ -362,7 +362,7 @@ int save(int which)
 }
 
 //str_plus: Compute bonus/penalties for strength on the "to hit" roll
-int str_plus(str_t str)
+int str_plus(unsigned int str)
 {
   int add = 4;
 
@@ -375,7 +375,7 @@ int str_plus(str_t str)
 }
 
 //add_dam: Compute additional damage done for exceptionally high or low strength
-int add_dam(str_t str)
+int add_dam(unsigned int str)
 {
   int add = 6;
 
@@ -406,7 +406,7 @@ void thunk(ITEM *weap, char *mname, char *does, char *did)
 }
 
 //remove: Remove a monster from the screen
-void remove_mons(coord *mp, AGENT *tp, bool waskill)
+void remove_mons(Coord *mp, AGENT *tp, bool waskill)
 {
   ITEM *obj, *nexti;
 

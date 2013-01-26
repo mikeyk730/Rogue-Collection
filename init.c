@@ -222,7 +222,7 @@ void init_player()
 //init_things: Initialize the probabilities for types of things
 void init_things()
 {
-  struct magic_item *mp;
+  struct MagicItem *mp;
 
   for (mp = &things[1]; mp<=&things[NUMTHINGS-1]; mp++) mp->mi_prob += (mp-1)->mi_prob;
 }

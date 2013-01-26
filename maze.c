@@ -21,12 +21,12 @@ static int frcnt, ny, nx, topy, topx;
 static int maxx, maxy;
 static int *fr_y, *fr_x;
 
-void draw_maze(struct room *rp)
+void draw_maze(struct Room *rp)
 {
   int y, x;
   int fy[MAXFRNT], fx[MAXFRNT];
   int psgcnt;
-  coord spos;
+  Coord spos;
 
   fr_y = fy;
   fr_x = fx;
@@ -46,8 +46,8 @@ void draw_maze(struct room *rp)
   rp->r_max.y = maxy-rp->r_pos.y+1;
   do
   {
-    static coord ld[4] = {-1, 0, 0, 1, 1, 0, 0, -1};
-    coord *cp;
+    static Coord ld[4] = {-1, 0, 0, 1, 1, 0, 0, -1};
+    Coord *cp;
     int sh;
 
     rnd_pos(rp, &spos);

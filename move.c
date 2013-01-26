@@ -23,7 +23,7 @@
 #include <ctype.h>
 
 //Used to hold the new hero position
-coord nh;
+Coord nh;
 
 //do_run: Start the hero running
 void do_run(byte ch)
@@ -131,7 +131,7 @@ move_stuff:
 }
 
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
-void door_open(struct room *rp)
+void door_open(struct Room *rp)
 {
   int j, k;
   byte ch;
@@ -151,7 +151,7 @@ void door_open(struct room *rp)
 }
 
 //be_trapped: The guy stepped on a trap.... Make him pay.
-int be_trapped(coord *tc)
+int be_trapped(Coord *tc)
 {
   byte tr;
 
@@ -236,7 +236,7 @@ void descend(char *mesg)
 }
 
 //rndmove: Move in a random direction if the monster/person is confused
-void rndmove(AGENT *who, coord *newmv)
+void rndmove(AGENT *who, Coord *newmv)
 {
   int x, y;
   byte ch;

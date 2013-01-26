@@ -22,6 +22,6 @@ char *num(int n1, int n2, char type);
 void wield();
 
 //fallpos: Pick a random position around the given (y, x) coordinates
-int fallpos(ITEM *obj, coord *newpos);
+int fallpos(ITEM *obj, Coord *newpos);
 
 void tick_pause();

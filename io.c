@@ -162,7 +162,7 @@ void status()
   int oy, ox;
   static int s_hungry;
   static int s_lvl, s_pur = -1, s_hp, s_ac = 0;
-  static str_t s_str;
+  static unsigned int s_str;
   static int s_elvl = 0;
   static char *state_name[] = {"      ", "Hungry", "Weak", "Faint","?"};
 

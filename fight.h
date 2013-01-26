@@ -1,5 +1,5 @@
 //fight: The player attacks the monster.
-int fight(coord *mp, char mn, ITEM *weap, bool thrown);
+int fight(Coord *mp, char mn, ITEM *weap, bool thrown);
 
 //attack: The monster attacks the player
 void attack(AGENT *mp);
@@ -29,10 +29,10 @@ int save_throw(int which, AGENT *tp);
 int save(int which);
 
 //str_plus: Compute bonus/penalties for strength on the "to hit" roll
-int str_plus(str_t str);
+int str_plus(unsigned int str);
 
 //add_dam: Compute additional damage done for exceptionally high or low strength
-int add_dam(str_t str);
+int add_dam(unsigned int str);
 
 //raise_level: The guy just magically went up a level.
 void raise_level();
@@ -41,7 +41,7 @@ void raise_level();
 void thunk(ITEM *weap, char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen
-void remove_mons(coord *mp, AGENT *tp, bool waskill);
+void remove_mons(Coord *mp, AGENT *tp, bool waskill);
 
 //is_magic: Returns true if an object radiates magic
 int is_magic(ITEM *obj);

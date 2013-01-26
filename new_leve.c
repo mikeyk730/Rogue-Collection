@@ -26,7 +26,7 @@ void new_level()
 {
   int rm, i;
   AGENT *tp;
-  coord stairs;
+  Coord stairs;
 
   player.t_flags &= ~ISHELD; //unhold when you go down just in case
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
@@ -106,7 +106,7 @@ void put_things()
   int i = 0;
   ITEM *cur;
   int rm;
-  coord tp;
+  Coord tp;
 
   //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
   //This is real unfair - I'm going to allow one thing, that way the poor guy will get some food.
@@ -154,9 +154,9 @@ void treas_room()
   int nm;
   ITEM *tp;
   AGENT *ap;
-  struct room *rp;
+  struct Room *rp;
   int spots, num_monst;
-  coord mp;
+  Coord mp;
 
   rp = &rooms[rnd_room()];
   spots = (rp->r_max.y-2)*(rp->r_max.x-2)-MINTREAS;

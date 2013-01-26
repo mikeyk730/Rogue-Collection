@@ -12,7 +12,7 @@
 #include "main.h"
 #include "level.h"
 
-static coord slimy;
+static Coord slimy;
 
 //Slime_split: Called when it has been decided that A slime should divide itself
 
@@ -35,7 +35,7 @@ int new_slime(AGENT *tp)
 {
   int y, x, ty, tx, ret;
   AGENT *ntp;
-  coord sp;
+  Coord sp;
 
   ret = 0;
   tp->t_flags |= ISFLY;
@@ -55,7 +55,7 @@ int new_slime(AGENT *tp)
   return ret;
 }
 
-bool plop_monster(int r, int c, coord *cp)
+bool plop_monster(int r, int c, Coord *cp)
 {
   int y, x;
   bool appear = 0;

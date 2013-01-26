@@ -138,7 +138,7 @@ void create_obj()
 int teleport()
 {
   int rm;
-  coord c;
+  Coord c;
 
   mvaddch(player.t_pos.y, player.t_pos.x, get_tile(player.t_pos.y, player.t_pos.x));
   do {rm = rnd_room(); rnd_pos(&rooms[rm], &c);} while (!(step_ok(display_character(c.y, c.x))));

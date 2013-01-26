@@ -266,11 +266,11 @@ ITEM *new_item()
 }
 
 //pick_one: Pick an item out of a list of nitems possible magic items
-int pick_one(struct magic_item *magic, int nitems)
+int pick_one(struct MagicItem *magic, int nitems)
 {
-  struct magic_item *end;
+  struct MagicItem *end;
   int i;
-  struct magic_item *start;
+  struct MagicItem *start;
 
   start = magic;
   for (end = &magic[nitems], i = rnd(100); magic<end; magic++) if (i<magic->mi_prob) break;

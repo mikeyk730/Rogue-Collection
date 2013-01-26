@@ -79,7 +79,7 @@ void do_zap()
     {
       byte monster, oldch;
       int rm;
-      coord new_yx;
+      Coord new_yx;
 
       y = player.t_pos.y;
       x = player.t_pos.x;
@@ -227,7 +227,7 @@ void drain()
 {
   AGENT *mp;
   int cnt;
-  struct room *corp;
+  struct Room *corp;
   AGENT **dp;
   bool inpass;
   AGENT *drainee[40];
@@ -260,14 +260,14 @@ void drain()
 }
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
-void fire_bolt(coord *start, coord *dir, char *name)
+void fire_bolt(Coord *start, Coord *dir, char *name)
 {
   byte dirch, ch;
   AGENT *tp;
   bool hit_hero, used, changed;
   int i, j;
-  coord pos;
-  struct {coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
+  Coord pos;
+  struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
   ITEM bolt;
   bool is_frost;
 

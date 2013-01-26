@@ -44,7 +44,7 @@ void look(bool wakeup)
   int x, y;
   byte ch, pch;
   AGENT *tp;
-  struct room *rp;
+  struct Room *rp;
   int ey, ex;
   int passcount = 0;
   byte pfl, fp;
@@ -204,7 +204,7 @@ void eat()
 //chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
 void chg_str(int amt)
 {
-  str_t comp;
+  unsigned int comp;
 
   if (amt==0) return;
   add_str(&player.t_stats.s_str, amt);
@@ -218,7 +218,7 @@ void chg_str(int amt)
 }
 
 //add_str: Perform the actual add, checking upper and lower bound
-void add_str(str_t *sp, int amt)
+void add_str(unsigned int *sp, int amt)
 {
   if ((*sp += amt)<3) *sp = 3;
   else if (*sp>31) *sp = 31;
@@ -296,7 +296,7 @@ int get_dir()
   return TRUE;
 }
 
-bool find_dir(byte ch, coord *cp)
+bool find_dir(byte ch, Coord *cp)
 {
   bool gotit;
 
@@ -442,7 +442,7 @@ int DISTANCE(int y1, int x1, int y2, int x2)
   return dx*dx+dy*dy;
 }
 
-int _ce(coord *a, coord *b)
+int _ce(Coord *a, Coord *b)
 {
   return (a->x==b->x && a->y==b->y);
 }

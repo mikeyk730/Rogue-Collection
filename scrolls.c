@@ -70,7 +70,7 @@ void read_scroll()
 
   case S_CREATE:
     {
-      coord mp;
+      Coord mp;
 
       if (plop_monster(player.t_pos.y, player.t_pos.x, &mp) && (op = create_agent())!=NULL) new_monster(op, randmonster(FALSE), &mp);
       else ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
@@ -140,7 +140,7 @@ void read_scroll()
 
   case S_TELEP: //Scroll of teleportation: Make him disappear and reappear
     {
-      struct room *cur_room;
+      struct Room *cur_room;
 
       cur_room = player.t_room;
       teleport();

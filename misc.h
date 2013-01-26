@@ -14,7 +14,7 @@ void eat();
 void chg_str(int amt);
 
 //add_str: Perform the actual add, checking upper and lower bound
-void add_str(str_t *sp, int amt);
+void add_str(unsigned int *sp, int amt);
 
 //add_haste: Add a haste to the player
 int add_haste(bool potion);
@@ -31,7 +31,7 @@ int is_current(ITEM *obj);
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
 int get_dir();
 
-bool find_dir(byte ch, coord *cp);
+bool find_dir(byte ch, Coord *cp);
 
 //sign: Return the sign of the number
 int sign(int nm);
@@ -53,7 +53,7 @@ void help(char **helpscr);
 
 int DISTANCE(int y1, int x1, int y2, int x2);
 
-int _ce(coord *a, coord *b);
+int _ce(Coord *a, Coord *b);
 
 int offmap(int y, int x);
 

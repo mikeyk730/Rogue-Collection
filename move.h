@@ -5,12 +5,12 @@ void do_run(byte ch);
 void do_move(int dy, int dx);
 
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
-void door_open(struct room *rp);
+void door_open(struct Room *rp);
 
 //be_trapped: The guy stepped on a trap.... Make him pay.
-int be_trapped(coord *tc);
+int be_trapped(Coord *tc);
 
 void descend(char *mesg);
 
 //rndmove: Move in a random direction if the monster/person is confused
-void rndmove(AGENT *who, coord *newmv);
+void rndmove(AGENT *who, Coord *newmv);

@@ -18,7 +18,7 @@
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
-coord ch_ret; //Where chasing takes you
+Coord ch_ret; //Where chasing takes you
 
 //runners: Make all the running monsters move.
 void runners()
@@ -46,9 +46,9 @@ void do_chase(AGENT *th)
   int mindist = 32767, i, dist;
   bool door;
   ITEM *obj;
-  struct room *oroom;
-  struct room *rer, *ree; //room of chaser, room of chasee
-  coord this; //Temporary destination for chaser
+  struct Room *oroom;
+  struct Room *rer, *ree; //room of chaser, room of chasee
+  Coord this; //Temporary destination for chaser
 
   rer = th->t_room; //Find room of chaser
   if (on(*th, ISGREED) && rer->r_goldval==0) th->t_dest = &player.t_pos; //If gold has been taken, run after hero
@@ -156,7 +156,7 @@ int can_see_monst(AGENT *mp)
 }
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)
-void start_run(coord *runner)
+void start_run(Coord *runner)
 {
   AGENT *tp;
 
@@ -173,12 +173,12 @@ void start_run(coord *runner)
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
-void chase(AGENT *tp, coord *ee)
+void chase(AGENT *tp, Coord *ee)
 {
   int x, y;
   int dist, thisdist;
   ITEM *obj;
-  coord *er;
+  Coord *er;
   byte ch;
   int plcnt = 1;
 
@@ -206,7 +206,7 @@ void chase(AGENT *tp, coord *ee)
     {
       for (y = er->y-1; y<=ey; y++)
       {
-        coord tryp;
+        Coord tryp;
 
         tryp.x = x;
         tryp.y = y;
@@ -234,9 +234,9 @@ void chase(AGENT *tp, coord *ee)
 }
 
 //roomin: Find what room some coordinates are in. NULL means they aren't in any room.
-struct room *roomin(coord *cp)
+struct Room *roomin(Coord *cp)
 {
-  struct room *rp;
+  struct Room *rp;
   byte fp;
 
   for (rp = rooms; rp<=&rooms[MAXROOMS-1]; rp++) 
@@ -253,7 +253,7 @@ struct room *roomin(coord *cp)
 }
 
 //diag_ok: Check to see if the move is legal if it is diagonal
-int diag_ok( coord *sp, coord *ep )
+int diag_ok( Coord *sp, Coord *ep )
 {
   if (ep->x==sp->x || ep->y==sp->y) return TRUE;
   return (step_ok(get_tile(ep->y, sp->x)) && step_ok(get_tile(sp->y, ep->x)));
@@ -262,8 +262,8 @@ int diag_ok( coord *sp, coord *ep )
 //cansee: Returns true if the hero can see a certain coordinate.
 int cansee(int y, int x)
 {
-  struct room *rer;
-  coord tp;
+  struct Room *rer;
+  Coord tp;
 
   if (on(player, ISBLIND)) return FALSE;
   if (DISTANCE(y, x, player.t_pos.y, player.t_pos.x)<LAMP_DIST) return TRUE;
@@ -275,11 +275,11 @@ int cansee(int y, int x)
 }
 
 //find_dest: find the proper destination for the monster
-coord *find_dest(AGENT *tp)
+Coord *find_dest(AGENT *tp)
 {
   ITEM *obj;
   int prob;
-  struct room *rp;
+  struct Room *rp;
 
   if ((prob = monsters[tp->t_type-'A'].m_carry)<=0 || tp->t_room==player.t_room || can_see_monst(tp)) return &player.t_pos;
   rp = tp->t_room;

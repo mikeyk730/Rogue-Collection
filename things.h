@@ -14,7 +14,7 @@ int can_drop(ITEM *op);
 ITEM* new_item();
 
 //pick_one: Pick an item out of a list of nitems possible magic items
-int pick_one(struct magic_item *magic, int nitems);
+int pick_one(struct MagicItem *magic, int nitems);
 
 //discovered: list what the player has discovered in this game of a certain type
 void discovered();

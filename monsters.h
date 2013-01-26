@@ -2,7 +2,7 @@
 char randmonster(bool wander);
 
 //new_monster: Pick a new monster and add it to the list
-void new_monster(AGENT *tp, byte type, coord *cp);
+void new_monster(AGENT *tp, byte type, Coord *cp);
 
 //f_restor(): restor initial damage string for flytraps
 void f_restor();

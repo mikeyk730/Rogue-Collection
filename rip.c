@@ -34,7 +34,7 @@ int get_year()
 //score: Figure score and post it.
 void score(int amount, int flags, char monst)
 {
-  struct sc_ent his_score, top_ten[TOPSCORES];
+  struct LeaderboardEntry his_score, top_ten[TOPSCORES];
   int rank = 0;
   char response = ' ';
 
@@ -81,28 +81,28 @@ reread:
 
 }
 
-void get_scores(struct sc_ent *top10)
+void get_scores(struct LeaderboardEntry *top10)
 {
   int i, retcode = 1;
 
   for (i = 0; i<TOPSCORES; i++, top10++)
   {
-    if (retcode>0) retcode = _read(sc_fd, top10, sizeof(struct sc_ent));
+    if (retcode>0) retcode = _read(sc_fd, top10, sizeof(struct LeaderboardEntry));
     if (retcode<=0) top10->sc_gold = 0;
   }
 }
 
-void put_scores(struct sc_ent *top10)
+void put_scores(struct LeaderboardEntry *top10)
 {
   int i;
 
   for (i = 0; (i<TOPSCORES) && top10->sc_gold; i++, top10++)
   {
-    if (_write(sc_fd, top10, sizeof(struct sc_ent))<=0) return;
+    if (_write(sc_fd, top10, sizeof(struct LeaderboardEntry))<=0) return;
   }
 }
 
-void pr_scores(int newrank, struct sc_ent *top10)
+void pr_scores(int newrank, struct LeaderboardEntry *top10)
 {
   int i;
   int curl;
@@ -156,9 +156,9 @@ void pr_scores(int newrank, struct sc_ent *top10)
   if (COLS==80) addstr("\n\n\n\n");
 }
 
-int add_scores(struct sc_ent *newscore, struct sc_ent *oldlist)
+int add_scores(struct LeaderboardEntry *newscore, struct LeaderboardEntry *oldlist)
 {
-  struct sc_ent *sentry, *insert;
+  struct LeaderboardEntry *sentry, *insert;
   int retcode = TOPSCORES+1;
 
   for (sentry = &oldlist[TOPSCORES-1]; sentry>=oldlist; sentry--)

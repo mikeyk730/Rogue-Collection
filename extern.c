@@ -58,7 +58,7 @@ int a_class[MAXARMORS] =
   3
 };
 
-struct magic_item s_magic[MAXSCROLLS] =
+struct MagicItem s_magic[MAXSCROLLS] =
 {
   {"monster confusion",   8, 140},
   {"magic mapping",       5, 150},
@@ -77,7 +77,7 @@ struct magic_item s_magic[MAXSCROLLS] =
   {"vorpalize weapon",    1, 300}
 };
 
-struct magic_item p_magic[MAXPOTIONS] =
+struct MagicItem p_magic[MAXPOTIONS] =
 {
   {"confusion",          8,   5},
   {"paralysis",         10,   5},
@@ -95,7 +95,7 @@ struct magic_item p_magic[MAXPOTIONS] =
   {"thirst quenching",   1,   5}
 };
 
-struct magic_item r_magic[MAXRINGS] =
+struct MagicItem r_magic[MAXRINGS] =
 {
   {"protection",          9, 400},
   {"add strength",        9, 400},
@@ -113,7 +113,7 @@ struct magic_item r_magic[MAXRINGS] =
   {"maintain armor",      5, 380}
 };
 
-struct magic_item ws_magic[MAXSTICKS] =
+struct MagicItem ws_magic[MAXSTICKS] =
 {
   {"light",          12, 250},
   {"striking",        9,  75},
@@ -294,7 +294,7 @@ char runch; //Direction player is running
 
 //now names are associated with fixed pointers
 
-struct array s_names[MAXSCROLLS];  //Names of the scrolls
+struct Array s_names[MAXSCROLLS];  //Names of the scrolls
 char *p_colors[MAXPOTIONS];        //Colors of the potions
 char *r_stones[MAXRINGS];          //Stone settings of the rings
 char *ws_made[MAXSTICKS];          //What sticks are made of
@@ -306,7 +306,7 @@ char *ws_guess[MAXSTICKS];         //Players guess at what wand is
 
 //storage array for guesses
 
-struct array _guesses[MAXSCROLLS+MAXPOTIONS+MAXRINGS+MAXSTICKS];
+struct Array _guesses[MAXSCROLLS+MAXPOTIONS+MAXRINGS+MAXSTICKS];
 char *ws_type[MAXSTICKS]; //Is it a wand or a staff
 
 int maxrow;            //Last Line used for map
@@ -330,17 +330,17 @@ long seed = 0;         //Random number seed
 
 char *_whoami;
 
-coord oldpos; //Position before last look() call
-coord delta;  //Change indicated to get_dir()
+Coord oldpos; //Position before last look() call
+Coord delta;  //Change indicated to get_dir()
 
 ITEM *cur_armor;   //What a well dresssed rogue wears
 ITEM *cur_ring[2]; //Which rings are being worn
 ITEM *cur_weapon;  //Which weapon he is wielding
 
-struct room *oldrp; //Roomin(&oldpos)
-struct room rooms[MAXROOMS]; //One for each room -- A level
+struct Room *oldrp; //Roomin(&oldpos)
+struct Room rooms[MAXROOMS]; //One for each room -- A level
 //One for each passage
-struct room passages[MAXPASS] =
+struct Room passages[MAXPASS] =
 {
   { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
   { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
@@ -356,7 +356,7 @@ struct room passages[MAXPASS] =
   { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 }
 };
 
-struct stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the player
+struct Stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the player
 
 AGENT player; //The rogue
 ITEM *lvl_obj = NULL; //List of objects on this level
@@ -365,7 +365,7 @@ AGENT *mlist = NULL; //List of monsters on the level
 #define ___  1
 #define XX  10
 
-struct monster monsters[26] =
+struct Monster monsters[26] =
 {
   // Name           CARRY                  FLAG   str,  exp,lvl,amr, hpt, dmg
   { "aquator",          0,               ISMEAN, { XX,   20,  5,  2, ___, "0d0/0d0"         } },
@@ -402,7 +402,7 @@ char f_damage[10];
 #undef ___
 #undef XX
 
-struct magic_item things[NUMTHINGS] =
+struct MagicItem things[NUMTHINGS] =
 {
   {0, 27 }, //potion
   {0, 30 }, //scroll

@@ -237,58 +237,42 @@ typedef unsigned char bool;
 #define WS_CANCEL     13
 #define MAXSTICKS     14
 
-//Now we define the structures and types
-
-//Help list
-
-struct h_list
-{
-  char h_ch;
-  char *h_desc;
-};
-
 //Coordinate data type
-
 typedef struct
 {
   int x;
   int y;
-} coord;
-
-typedef unsigned int str_t;
+} Coord;
 
 //Stuff about magic items
-
-struct magic_item
+struct MagicItem
 {
   char *mi_name;
   int mi_prob;
   short mi_worth;
 };
 
-struct array
+struct Array
 {
   char storage[MAXNAME+1];
 };
 
 //Room structure
-
-struct room
+struct Room
 {
-  coord r_pos;      //Upper left corner
-  coord r_max;      //Size of room
-  coord r_gold;     //Where the gold is
+  Coord r_pos;      //Upper left corner
+  Coord r_max;      //Size of room
+  Coord r_gold;     //Where the gold is
   int r_goldval;    //How much the gold is worth
   short r_flags;    //Info about the room
-  int r_nexits;   //Number of exits
-  coord r_exit[12]; //Where the exits are
+  int r_nexits;     //Number of exits
+  Coord r_exit[12]; //Where the exits are
 };
 
 //Structure describing a fighting being
-
-struct stats
+struct Stats
 {
-  str_t s_str;   //Strength
+  unsigned int s_str;   //Strength
   long s_exp;    //Experience
   int s_lvl;   //Level of mastery
   int s_arm;   //Armor class
@@ -297,12 +281,11 @@ struct stats
   int s_maxhp; //Max hit points
 };
 
-
-struct _item
+struct Item
 {
-  struct _item *l_next, *l_prev; //Next pointer in link
+  struct Item *l_next, *l_prev; //Next pointer in link
   int type;                      //What kind of object it is
-  coord pos;                     //Where it lives on the screen
+  Coord pos;                     //Where it lives on the screen
   char launcher;                 //What you need to launch it
   char *damage;                  //Damage if used like sword
   char *throw_damage;            //Damage if thrown
@@ -315,39 +298,39 @@ struct _item
   char enemy;                    //If it is enchanted, who it hates
   int group;                     //Group number for this object
 };
-typedef struct _item ITEM;
+typedef struct Item ITEM;
 
 #define charges      armor_class
 #define gold_value   armor_class
 
 //Structure for monsters and player
-struct _agent
+struct Agent
 {
-  struct _agent *l_next, *l_prev; //Next pointer in link
-  coord t_pos;                    //Position
+  struct Agent *l_next, *l_prev; //Next pointer in link
+  Coord t_pos;                    //Position
   char t_turn;                    //If slowed, is it a turn to move
   char t_type;                    //What it is
   byte t_disguise;                //What mimic looks like
   byte t_oldch;                   //Character that was where it was
-  coord *t_dest;                  //Where it is running to
+  Coord *t_dest;                  //Where it is running to
   short t_flags;                  //State word
-  struct stats t_stats;           //Physical description
-  struct room *t_room;            //Current room for thing
-  struct _item *t_pack;           //What the thing is carrying
+  struct Stats t_stats;           //Physical description
+  struct Room *t_room;            //Current room for thing
+  struct Item *t_pack;           //What the thing is carrying
 };
 
-typedef struct _agent AGENT;
+typedef struct Agent AGENT;
 
 //Array containing information on all the various types of monsters
-struct monster
+struct Monster
 {
   char *m_name;         //What to call the monster
   int m_carry;          //Probability of carrying something
   short m_flags;        //Things about the monster
-  struct stats m_stats; //Initial stats
+  struct Stats m_stats; //Initial stats
 };
 
-struct sc_ent
+struct LeaderboardEntry
 {
   char sc_name[38];
   int sc_rank;
@@ -360,11 +343,11 @@ struct sc_ent
 
 extern ITEM *cur_armor, *cur_ring[2], *cur_weapon, *lvl_obj;
 extern AGENT *mlist, player;
-extern coord delta, oldpos;
-extern struct room *oldrp, passages[], rooms[];
-extern struct stats max_stats;
-extern struct monster monsters[];
-extern struct magic_item p_magic[], r_magic[], s_magic[], things[], ws_magic[];
+extern Coord delta, oldpos;
+extern struct Room *oldrp, passages[], rooms[];
+extern struct Stats max_stats;
+extern struct Monster monsters[];
+extern struct MagicItem p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 
 //Defines for things used in mach_dep.c
 //@(#)extern.h5.1 (Berkeley) 5/11/82
@@ -386,7 +369,7 @@ extern char s_menu[], s_name[], s_fruit[], s_score[], s_save[], s_macro[];
 extern char s_drive[], s_screen[];
 extern char nullstr[], *it, *tbuf, *you, *no_mem;
 
-extern struct array s_names[], _guesses[];
+extern struct Array s_names[], _guesses[];
 extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
 extern char f_damage[];
 

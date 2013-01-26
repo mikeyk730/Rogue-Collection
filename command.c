@@ -146,7 +146,7 @@ void show_count()
 
 void execcom()
 {
-  coord mv;
+  Coord mv;
   int ch;
 
   do
@@ -193,7 +193,7 @@ void execcom()
       after = FALSE;
       if (get_dir())
       {
-        coord lookat;
+        Coord lookat;
 
         lookat.y = player.t_pos.y+delta.y;
         lookat.x = player.t_pos.x+delta.x;

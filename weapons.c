@@ -121,7 +121,7 @@ char *short_name(ITEM *obj)
 //fall: Drop an item someplace around here.
 void fall(ITEM *obj, bool pr)
 {
-  static coord fpos;
+  static Coord fpos;
 
   switch (fallpos(obj, &fpos))
   {
@@ -162,7 +162,7 @@ void init_weapon(ITEM *weap, byte type)
 //hit_monster: Does the missile hit the monster?
 int hit_monster(int y, int x, ITEM *obj)
 {
-  static coord mp;
+  static Coord mp;
   AGENT *mo;
 
   if (mo = monster_at(y, x)) {mp.y = y; mp.x = x; return fight(&mp, mo->t_type, obj, TRUE);}
@@ -202,7 +202,7 @@ bad:
 }
 
 //fallpos: Pick a random position around the given (y, x) coordinates
-int fallpos(ITEM *obj, coord *newpos)
+int fallpos(ITEM *obj, Coord *newpos)
 {
   int y, x, cnt = 0, ch;
   ITEM *onfloor;

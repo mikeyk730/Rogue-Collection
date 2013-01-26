@@ -24,12 +24,12 @@
 void do_rooms()
 {
   int i, rm;
-  struct room *rp;
+  struct Room *rp;
   AGENT *tp;
   int left_out;
-  coord top;
-  coord bsze;
-  coord mp;
+  Coord top;
+  Coord bsze;
+  Coord mp;
   int old_lev;
   int endline;
 
@@ -125,7 +125,7 @@ void do_rooms()
 }
 
 //draw_room: Draw a box around a room and lay down the floor
-void draw_room(struct room *rp)
+void draw_room(struct Room *rp)
 {
   int y, x;
 
@@ -145,7 +145,7 @@ void draw_room(struct room *rp)
 }
 
 //vert: Draw a vertical line
-void vert(struct room *rp, int startx)
+void vert(struct Room *rp, int startx)
 {
   int y;
 
@@ -154,7 +154,7 @@ void vert(struct room *rp, int startx)
 }
 
 //horiz: Draw a horizontal line
-void horiz(struct room *rp, int starty)
+void horiz(struct Room *rp, int starty)
 {
   int x;
 
@@ -163,16 +163,16 @@ void horiz(struct room *rp, int starty)
 }
 
 //rnd_pos: Pick a random spot in a room
-void rnd_pos(struct room *rp, coord *cp)
+void rnd_pos(struct Room *rp, Coord *cp)
 {
   cp->x = rp->r_pos.x+rnd(rp->r_max.x-2)+1;
   cp->y = rp->r_pos.y+rnd(rp->r_max.y-2)+1;
 }
 
 //enter_room: Code that is executed whenever you appear in a room
-void enter_room(coord *cp)
+void enter_room(Coord *cp)
 {
-  struct room *rp;
+  struct Room *rp;
   int y, x;
   AGENT *tp;
 
@@ -202,10 +202,10 @@ void enter_room(coord *cp)
 }
 
 //leave_room: Code for when we exit a room
-void leave_room(coord *cp)
+void leave_room(Coord *cp)
 {
   int y, x;
-  struct room *rp;
+  struct Room *rp;
   byte floor;
   byte ch;
 

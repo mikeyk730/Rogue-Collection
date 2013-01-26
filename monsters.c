@@ -40,9 +40,9 @@ char randmonster(bool wander)
 }
 
 //new_monster: Pick a new monster and add it to the list
-void new_monster(AGENT *tp, byte type, coord *cp)
+void new_monster(AGENT *tp, byte type, Coord *cp)
 {
-  struct monster *mp;
+  struct Monster *mp;
   int lev_add;
 
   if ((lev_add = level-AMULETLEVEL)<0) lev_add = 0;
@@ -81,7 +81,7 @@ void new_monster(AGENT *tp, byte type, coord *cp)
 //f_restor(): restor initial damage string for flytraps
 void f_restor()
 {
-  struct monster *mp = &monsters['F'-'A'];
+  struct Monster *mp = &monsters['F'-'A'];
 
   flytrap_hit = 0;
   strcpy(f_damage, mp->m_stats.s_dmg);
@@ -103,9 +103,9 @@ int exp_add(AGENT *tp)
 void wanderer()
 {
   int i;
-  struct room *rp;
+  struct Room *rp;
   AGENT *tp;
-  coord cp;
+  Coord cp;
 
   //can we allocate a new monster
   if ((tp = create_agent())==NULL) return;
@@ -125,7 +125,7 @@ void wanderer()
 AGENT *wake_monster(int y, int x)
 {
   AGENT *tp;
-  struct room *rp;
+  struct Room *rp;
   byte ch;
   int dst;
 
