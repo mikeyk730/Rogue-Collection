@@ -204,7 +204,7 @@ void leave_room(coord *cp)
   byte ch;
 
   rp = proom;
-  proom = &passages[flat(cp->y, cp->x)&F_PNUM];
+  proom = &passages[flags_at(cp->y, cp->x)&F_PNUM];
   floor = ((rp->r_flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
   if (rp->r_flags&ISMAZE) floor = PASSAGE;
   for (y = rp->r_pos.y+1; y<rp->r_max.y+rp->r_pos.y-1; y++) {

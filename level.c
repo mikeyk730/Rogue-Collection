@@ -30,7 +30,7 @@ void set_chat(int y, int x, byte c)
   the_level[INDEX(y,x)] = c;
 }
 
-byte flat(int y, int x)
+byte flags_at(int y, int x)
 {
   return the_flags[INDEX(y,x)];
 }

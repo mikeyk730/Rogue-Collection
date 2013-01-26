@@ -92,7 +92,7 @@ void read_scroll()
       switch (ch = chat(y, x))
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-        if (!(flat(y, x)&F_REAL)) {
+        if (!(flags_at(y, x)&F_REAL)) {
           ch = DOOR; 
           set_chat(y, x, DOOR);
           unset_flag(y, x, F_REAL);

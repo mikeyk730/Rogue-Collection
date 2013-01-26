@@ -80,7 +80,7 @@ void new_level()
   {
     rm = rnd_room();
     rnd_pos(&rooms[rm], &hero);
-  } while (!(isfloor(chat(hero.y, hero.x)) && (flat(hero.y, hero.x)&F_REAL) && moat(hero.y, hero.x)==NULL));
+  } while (!(isfloor(chat(hero.y, hero.x)) && (flags_at(hero.y, hero.x)&F_REAL) && moat(hero.y, hero.x)==NULL));
   mpos = 0;
   enter_room(&hero);
   mvaddch(hero.y, hero.x, PLAYER);

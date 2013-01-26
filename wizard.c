@@ -170,7 +170,7 @@ void show_map()
   clear();
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
-    if (!(real = flat(y, x)&F_REAL)) standout();
+    if (!(real = flags_at(y, x)&F_REAL)) standout();
     mvaddch(y, x, chat(y, x));
     if (!real) standend();
   }

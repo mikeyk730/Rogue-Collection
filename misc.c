@@ -49,7 +49,7 @@ void look(bool wakeup)
   int sy, sx, sumhero, diffhero;
 
   rp = proom;
-  pfl = flat(hero.y, hero.x);
+  pfl = flags_at(hero.y, hero.x);
   pch = chat(hero.y, hero.x);
   //if the hero has moved
   if (!ce(oldpos, hero))
@@ -68,7 +68,7 @@ void look(bool wakeup)
           }
           else
           {
-            fp = flat(y, x);
+            fp = flags_at(y, x);
             //if the maze or passage (that the hero is in!!) needs to be redrawn (passages once drawn always stay on) do it now.
             if (((fp&F_MAZE) || (fp&F_PASS)) && (ch!=PASSAGE) && (ch!=STAIRS) && ((fp&F_PNUM)==(pfl & F_PNUM))) 
               addch(PASSAGE);
@@ -92,7 +92,7 @@ void look(bool wakeup)
     }
     else if (y!=hero.y || x!=hero.x) continue;
     //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
-    fp = flat(y, x);
+    fp = flags_at(y, x);
     ch = chat(y, x);
     //No Doors
     if (pch!=DOOR && ch!=DOOR)
@@ -144,7 +144,7 @@ void look(bool wakeup)
   }
   if (door_stop && !firstmove && passcount>1) running = FALSE;
   move(hero.y, hero.x);
-  if ((flat(hero.y, hero.x)&F_PASS) || (was_trapped>TRUE) || (flat(hero.y, hero.x)&F_MAZE)) standout();
+  if ((flags_at(hero.y, hero.x)&F_PASS) || (was_trapped>TRUE) || (flags_at(hero.y, hero.x)&F_MAZE)) standout();
   addch(PLAYER);
   standend();
   if (was_trapped) {beep(); was_trapped = FALSE;}
@@ -473,7 +473,7 @@ void search()
   {
     if ((y==hero.y && x==hero.x) || offmap(y, x)) 
       continue;
-    fp = flat(y, x);
+    fp = flags_at(y, x);
     if (!(fp&F_REAL)) {
       switch (chat(y, x))
       {

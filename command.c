@@ -198,7 +198,7 @@ void execcom()
         lookat.y = hero.y+delta.y;
         lookat.x = hero.x+delta.x;
         if (chat(lookat.y, lookat.x)!=TRAP) msg("no trap there.");
-        else msg("you found %s", tr_name(flat(lookat.y, lookat.x)&F_TMASK));
+        else msg("you found %s", tr_name(flags_at(lookat.y, lookat.x)&F_TMASK));
       }
       break;
 

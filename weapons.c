@@ -126,7 +126,7 @@ void fall(THING *obj, bool pr)
     bcopy(obj->o_pos, fpos);
     if (cansee(fpos.y, fpos.x))
     {
-      if ((flat(obj->o_pos.y, obj->o_pos.x)&F_PASS) || (flat(obj->o_pos.y, obj->o_pos.x)&F_MAZE)) standout();
+      if ((flags_at(obj->o_pos.y, obj->o_pos.x)&F_PASS) || (flags_at(obj->o_pos.y, obj->o_pos.x)&F_MAZE)) standout();
       mvaddch(fpos.y, fpos.x, obj->o_type);
       standend();
       if (moat(fpos.y, fpos.x)!=NULL) moat(fpos.y, fpos.x)->t_oldch = obj->o_type;

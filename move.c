@@ -54,7 +54,7 @@ over:
   if (!diag_ok(&hero, &nh)) {after = FALSE; running = FALSE; return;}
   //If you are running and the move does not get you anywhere stop running
   if (running && ce(hero, nh)) after = running = FALSE;
-  fl = flat(nh.y, nh.x);
+  fl = flags_at(nh.y, nh.x);
   ch = winat(nh.y, nh.x);
   //When the hero is on the door do not allow him to run until he enters the room all the way
   if ((chat(hero.y, hero.x)==DOOR) && (ch==FLOOR)) running = FALSE;
@@ -75,8 +75,8 @@ hit_bound:
       switch (runch)
       {
       case 'h': case 'l':
-        b1 = (hero.y>1 && ((flat(hero.y-1, hero.x)&F_PASS) || chat(hero.y-1, hero.x)==DOOR));
-        b2 = (hero.y<maxrow-1 && ((flat(hero.y+1, hero.x)&F_PASS) || chat(hero.y+1, hero.x)==DOOR));
+        b1 = (hero.y>1 && ((flags_at(hero.y-1, hero.x)&F_PASS) || chat(hero.y-1, hero.x)==DOOR));
+        b2 = (hero.y<maxrow-1 && ((flags_at(hero.y+1, hero.x)&F_PASS) || chat(hero.y+1, hero.x)==DOOR));
         if (!(b1^b2)) break;
         if (b1) {runch = 'k'; dy = -1;}
         else {runch = 'j'; dy = 1;}
@@ -84,8 +84,8 @@ hit_bound:
         goto over;
 
       case 'j': case 'k':
-        b1 = (hero.x>1 && ((flat(hero.y, hero.x-1)&F_PASS) || chat(hero.y, hero.x-1)==DOOR));
-        b2 = (hero.x<COLS-2 && ((flat(hero.y, hero.x+1)&F_PASS) || chat(hero.y, hero.x+1)==DOOR));
+        b1 = (hero.x>1 && ((flags_at(hero.y, hero.x-1)&F_PASS) || chat(hero.y, hero.x-1)==DOOR));
+        b2 = (hero.x<COLS-2 && ((flags_at(hero.y, hero.x+1)&F_PASS) || chat(hero.y, hero.x+1)==DOOR));
         if (!(b1^b2)) break;
         if (b1) {runch = 'h'; dx = -1;}
         else {runch = 'l'; dx = 1;}
@@ -98,7 +98,7 @@ hit_bound:
 
   case DOOR:
     running = FALSE;
-    if (flat(hero.y, hero.x)&F_PASS) enter_room(&nh);
+    if (flags_at(hero.y, hero.x)&F_PASS) enter_room(&nh);
     goto move_stuff;
 
   case TRAP:
@@ -122,8 +122,8 @@ hit_bound:
       if (ch!=STAIRS) take = ch;
 move_stuff:
       mvaddch(hero.y, hero.x, chat(hero.y, hero.x));
-      if ((fl&F_PASS) && (chat(oldpos.y, oldpos.x)==DOOR || (flat(oldpos.y, oldpos.x)&F_MAZE))) leave_room(&nh);
-      if ((fl&F_MAZE) && (flat(oldpos.y, oldpos.x)&F_MAZE)==0) enter_room(&nh);
+      if ((fl&F_PASS) && (chat(oldpos.y, oldpos.x)==DOOR || (flags_at(oldpos.y, oldpos.x)&F_MAZE))) leave_room(&nh);
+      if ((fl&F_MAZE) && (flags_at(oldpos.y, oldpos.x)&F_MAZE)==0) enter_room(&nh);
       bcopy(hero, nh);
     }
   }
@@ -156,7 +156,7 @@ int be_trapped(coord *tc)
 
   count = running = FALSE;
   set_chat(tc->y, tc->x, TRAP);
-  tr = flat(tc->y, tc->x)&F_TMASK;
+  tr = flags_at(tc->y, tc->x)&F_TMASK;
   was_trapped = TRUE;
   switch (tr)
   {

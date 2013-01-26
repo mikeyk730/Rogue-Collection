@@ -71,7 +71,7 @@ over:
     }
     if (door)
     {
-      rer = &passages[flat(th->t_pos.y, th->t_pos.x)&F_PNUM];
+      rer = &passages[flags_at(th->t_pos.y, th->t_pos.x)&F_PNUM];
       door = FALSE;
       goto over;
     }
@@ -124,7 +124,7 @@ over:
   }
   if (see_monst(th))
   {
-    if (flat(ch_ret.y, ch_ret.x)&F_PASS) standout();
+    if (flags_at(ch_ret.y, ch_ret.x)&F_PASS) standout();
     th->t_oldch = mvinch(ch_ret.y, ch_ret.x);
     mvaddch(ch_ret.y, ch_ret.x, th->t_disguise);
   }
@@ -243,7 +243,7 @@ struct room *roomin(coord *cp)
     if (cp->x<rp->r_pos.x+rp->r_max.x && rp->r_pos.x<=cp->x && cp->y<rp->r_pos.y+rp->r_max.y && rp->r_pos.y<=cp->y) 
       return rp;
 
-  fp = flat(cp->y, cp->x);
+  fp = flags_at(cp->y, cp->x);
   if (fp&F_PASS)
     return &passages[fp&F_PNUM];
 

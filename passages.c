@@ -238,7 +238,7 @@ void numpass(int y, int x)
   byte ch;
 
   if (offmap(y, x)) return;
-  fp = flat(y, x);
+  fp = flags_at(y, x);
   if (fp&F_PNUM) return;
   if (newpnum) {pnum++; newpnum = FALSE;}
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place

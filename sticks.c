@@ -218,11 +218,11 @@ void drain()
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
-  if (chat(hero.y, hero.x)==DOOR) corp = &passages[flat(hero.y, hero.x)&F_PNUM];
+  if (chat(hero.y, hero.x)==DOOR) corp = &passages[flags_at(hero.y, hero.x)&F_PNUM];
   else corp = NULL;
   inpass = (proom->r_flags&ISGONE);
   dp = drainee;
-  for (mp = mlist; mp!=NULL; mp = next(mp)) if (mp->t_room==proom || mp->t_room==corp || (inpass && chat(mp->t_pos.y, mp->t_pos.x)==DOOR && &passages[flat(mp->t_pos.y, mp->t_pos.x)&F_PNUM]==proom)) *dp++ = mp;
+  for (mp = mlist; mp!=NULL; mp = next(mp)) if (mp->t_room==proom || mp->t_room==corp || (inpass && chat(mp->t_pos.y, mp->t_pos.x)==DOOR && &passages[flags_at(mp->t_pos.y, mp->t_pos.x)&F_PNUM]==proom)) *dp++ = mp;
   if ((cnt = dp-drainee)==0) {msg("you have a tingling feeling"); return;}
   *dp = NULL;
   pstats.s_hpt /= 2;
