@@ -195,7 +195,7 @@ bool turn_see(bool turn_off)
   for (mp = mlist; mp!=NULL; mp = next(mp))
   {
     move(mp->t_pos.y, mp->t_pos.x);
-    can_see = (see_monst(mp) || (was_there = inch())==mp->t_type);
+    can_see = (see_monst(mp) || (was_there = curch())==mp->t_type);
     if (turn_off)
     {
       if (!see_monst(mp) && mp->t_oldch!='@') addch(mp->t_oldch);

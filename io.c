@@ -73,7 +73,7 @@ void more(char *msg)
   if ((y+msz)>COLS) {move(x, y = COLS-msz); covered = TRUE;}
   for (i=0; i<msz; i++)
   {
-    mbuf[i] = inch();
+    mbuf[i] = curch();
     if ((i+y)<(COLS-2)) move(x, y+i+1);
     mbuf[i+1] = 0;
   }

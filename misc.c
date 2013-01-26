@@ -61,7 +61,7 @@ void look(bool wakeup)
         {
           if ((y==hero.y && x==hero.x) || offmap(y,x)) continue;
           move(y, x);
-          ch = inch();
+          ch = curch();
           if (ch==FLOOR)
           {
             if ((oldrp->r_flags & (ISGONE|ISDARK))==ISDARK) addch(' ');

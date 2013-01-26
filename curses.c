@@ -135,7 +135,7 @@ void mvaddch(int r, int c, char chr)
 int mvinch(int r, int c)
 {
   move(r, c);
-  return (inch());
+  return (curch());
 }
 
 //put the character on the screen and update the character position

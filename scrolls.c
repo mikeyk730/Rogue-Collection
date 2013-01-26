@@ -105,7 +105,7 @@ void read_scroll()
       if (ch==DOOR)
       {
         move(y, x);
-        if (inch()!=DOOR) standout();
+        if (curch()!=DOOR) standout();
       }
       if (ch!=' ') mvaddch(y, x, ch);
       standend();
