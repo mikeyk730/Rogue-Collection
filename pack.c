@@ -14,7 +14,7 @@
 #include "level.h"
 #include "thing.h"
 
-int group_in_inventory(type) {
+int does_item_group(type) {
   return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
 }
 
@@ -113,13 +113,18 @@ void add_pack(ITEM *obj, bool silent)
   if (op==NULL)
   {
     //Didn't find an exact match, just stick it here
-    if (player.pack==NULL) player.pack = obj;
-    else {lp->l_next = obj; obj->l_prev = lp; obj->l_next = NULL;}
+    if (player.pack==NULL) 
+      player.pack = obj;
+    else {
+      lp->l_next = obj;
+      obj->l_prev = lp;
+      obj->l_next = NULL;
+    }
   }
   else
   {
     //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
-    if (exact && group_in_inventory(obj->type))
+    if (exact && does_item_group(obj->type))
     {
       op->count++;
       discard_item(obj);
