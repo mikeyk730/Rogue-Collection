@@ -409,6 +409,8 @@ void move(int y, int x)
 
 char curch()
 {
-   return chat(c_row, c_col);
+   wdump();
+
+   return buffer[c_row][c_col].Char.AsciiChar;
 }
 

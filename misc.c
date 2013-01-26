@@ -468,14 +468,14 @@ void search()
 //d_level: He wants to go down a level
 void d_level()
 {
-  if (chat(hero.y, hero.x)!=STAIRS) msg("I see no way down");
+  if (chat(hero.y, hero.x)!=STAIRS && wizard == FALSE) msg("I see no way down");
   else {level++; new_level();}
 }
 
 //u_level: He wants to go up a level
 void u_level()
 {
-  if (chat(hero.y, hero.x)==STAIRS) if (amulet) {level--; if (level==0) total_winner(); new_level(); msg("you feel a wrenching sensation in your gut");} else msg("your way is magically blocked");
+  if (chat(hero.y, hero.x)==STAIRS || wizard == TRUE) if (amulet) {level--; if (level==0) total_winner(); new_level(); msg("you feel a wrenching sensation in your gut");} else msg("your way is magically blocked");
   else msg("I see no way up");
 }
 

@@ -115,7 +115,7 @@ void wanderer()
   } while (!(rp!=proom && step_ok(winat(cp.y, cp.x))));
   new_monster(tp, randmonster(TRUE), &cp);
   if (bailout) debug("wanderer bailout");
-  debug("started a wandering %s", monsters[tp->t_type-'A'].m_name);
+  //debug("started a wandering %s", monsters[tp->t_type-'A'].m_name);
   start_run(&tp->t_pos);
 }
 
