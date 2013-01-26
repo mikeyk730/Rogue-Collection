@@ -157,7 +157,7 @@ void execcom()
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N': do_run(tolower(ch)); break;
     case 't': if (get_dir()) missile(delta.y, delta.x); else after = FALSE; break;
     case 'Q': after = FALSE; quit(); break;
-    case 'i': after = FALSE; inventory(player.t_pack, 0, ""); break;
+    case 'i': after = FALSE; inventory(player.pack, 0, ""); break;
     case 'd': drop(); break;
     case 'q': quaff(); break;
     case 'r': read_scroll(); break;
@@ -195,8 +195,8 @@ void execcom()
       {
         Coord lookat;
 
-        lookat.y = player.t_pos.y+delta.y;
-        lookat.x = player.t_pos.x+delta.x;
+        lookat.y = player.pos.y+delta.y;
+        lookat.x = player.pos.x+delta.x;
         if (get_tile(lookat.y, lookat.x)!=TRAP) msg("no trap there.");
         else msg("you found %s", tr_name(get_flags(lookat.y, lookat.x)&F_TMASK));
       }

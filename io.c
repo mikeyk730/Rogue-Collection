@@ -177,23 +177,23 @@ void status()
     printw("Level:%-4d", level);
   }
   //Hits:
-  if (s_hp!=player.t_stats.s_hpt)
+  if (s_hp!=player.stats.s_hpt)
   {
-    s_hp = player.t_stats.s_hpt;
+    s_hp = player.stats.s_hpt;
     move(PT(22, 23), 12);
-    if (player.t_stats.s_hpt<100) {
-      printw("Hits:%2d(%2d) ", player.t_stats.s_hpt, player.t_stats.s_maxhp);
+    if (player.stats.s_hpt<100) {
+      printw("Hits:%2d(%2d) ", player.stats.s_hpt, player.stats.s_maxhp);
       //just in case they get wraithed with 3 digit max hits
       addstr("  ");
     }
-    else printw("Hits:%3d(%3d) ", player.t_stats.s_hpt, player.t_stats.s_maxhp);
+    else printw("Hits:%3d(%3d) ", player.stats.s_hpt, player.stats.s_maxhp);
   }
   //Str:
-  if (player.t_stats.s_str!=s_str)
+  if (player.stats.s_str!=s_str)
   {
-    s_str = player.t_stats.s_str;
+    s_str = player.stats.s_str;
     move(PT(22, 23), 26);
-    printw("Str:%2d(%2d) ", player.t_stats.s_str, max_stats.s_str);
+    printw("Str:%2d(%2d) ", player.stats.s_str, max_stats.s_str);
   }
   //Gold
   if(s_pur!=purse)
@@ -203,18 +203,18 @@ void status()
     printw("Gold:%-5u", purse);
   }
   //Armor:
-  if(s_ac!=(cur_armor!=NULL?cur_armor->armor_class:player.t_stats.s_arm))
+  if(s_ac!=(cur_armor!=NULL?cur_armor->armor_class:player.stats.s_arm))
   {
-    s_ac = (cur_armor!=NULL?cur_armor->armor_class:player.t_stats.s_arm);
+    s_ac = (cur_armor!=NULL?cur_armor->armor_class:player.stats.s_arm);
     if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= cur_ring[LEFT]->armor_class;
     if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= cur_ring[RIGHT]->armor_class;
     move(23, PT(12, 52));
-    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->armor_class:player.t_stats.s_arm));
+    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->armor_class:player.stats.s_arm));
   }
   //Exp:
-  if (s_elvl!=player.t_stats.s_lvl)
+  if (s_elvl!=player.stats.s_lvl)
   {
-    s_elvl = player.t_stats.s_lvl;
+    s_elvl = player.stats.s_lvl;
     move(23, PT(22, 62));
     printw("%-12s", he_man[s_elvl-1]);
   }
@@ -244,7 +244,7 @@ void wait_for(char ch)
 void show_win(char *message)
 {
   mvaddstr(0, 0, message);
-  move(player.t_pos.y, player.t_pos.x);
+  move(player.pos.y, player.pos.x);
   wait_for(' ');
 }
 

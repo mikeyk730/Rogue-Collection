@@ -36,9 +36,9 @@ int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
   count = quiet = 0;
   start_run(mp);
   //Let him know it was really a mimic (if it was one).
-  if (tp->t_type=='X' && tp->t_disguise!='X' && !on(player, ISBLIND))
+  if (tp->type=='X' && tp->disguise!='X' && !on(player, ISBLIND))
   {
-    mn = tp->t_disguise = 'X';
+    mn = tp->disguise = 'X';
     if (thrown) return FALSE;
     msg("wait! That's a Xeroc!");
   }
@@ -56,24 +56,24 @@ int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
       if (!thrown)
       {
         if (weap->count>1) weap->count--;
-        else {detach_item(&player.t_pack, weap); discard_item(weap);}
+        else {detach_item(&player.pack, weap); discard_item(weap);}
         cur_weapon = NULL;
       }
     }
     if (on(player, CANHUH))
     {
       did_huh = TRUE;
-      tp->t_flags |= ISHUH;
-      player.t_flags &= ~CANHUH;
+      tp->flags |= ISHUH;
+      player.flags &= ~CANHUH;
       msg("your hands stop glowing red");
     }
-    if (tp->t_stats.s_hpt<=0) killed(tp, TRUE);
+    if (tp->stats.s_hpt<=0) killed(tp, TRUE);
     else if (did_huh && !on(player, ISBLIND)) msg("the %s appears confused", mname);
     return TRUE;
   }
   if (thrown) thunk(weap, mname, "misses", "missed");
   else miss(NULL, mname);
-  if (tp->t_type=='S' && rnd(100)>25) slime_split(tp);
+  if (tp->type=='S' && rnd(100)>25) slime_split(tp);
   return FALSE;
 }
 
@@ -85,14 +85,14 @@ void attack(AGENT *mp)
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = FALSE;
   count = quiet = 0;
-  if (mp->t_type=='X' && !on(player, ISBLIND)) mp->t_disguise = 'X';
-  mname = monsters[mp->t_type-'A'].m_name;
+  if (mp->type=='X' && !on(player, ISBLIND)) mp->disguise = 'X';
+  mname = monsters[mp->type-'A'].m_name;
   if (on(player, ISBLIND)) mname = it;
   if (roll_em(mp, &player, NULL, FALSE))
   {
     hit(mname, NULL);
-    if (player.t_stats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
-    if (!on(*mp, ISCANC)) switch (mp->t_type)
+    if (player.stats.s_hpt<=0) death(mp->type); //Bye bye life ...
+    if (!on(*mp, ISCANC)) switch (mp->type)
     {
 
     case 'A': //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
@@ -112,29 +112,29 @@ void attack(AGENT *mp)
         break;
 
     case 'W': case 'V': //Wraiths might drain energy levels, and Vampires can steal max_hp
-      if (rnd(100)<(mp->t_type=='W'?15:30))
+      if (rnd(100)<(mp->type=='W'?15:30))
       {
         int fewer;
 
-        if (mp->t_type=='W')
+        if (mp->type=='W')
         {
-          if (player.t_stats.s_exp==0) death('W'); //All levels gone
-          if (--player.t_stats.s_lvl==0) {player.t_stats.s_exp = 0; player.t_stats.s_lvl = 1;}
-          else player.t_stats.s_exp = e_levels[player.t_stats.s_lvl-1]+1;
+          if (player.stats.s_exp==0) death('W'); //All levels gone
+          if (--player.stats.s_lvl==0) {player.stats.s_exp = 0; player.stats.s_lvl = 1;}
+          else player.stats.s_exp = e_levels[player.stats.s_lvl-1]+1;
           fewer = roll(1, 10);
         }
         else fewer = roll(1, 5);
-        player.t_stats.s_hpt -= fewer;
-        player.t_stats.s_maxhp -= fewer;
-        if (player.t_stats.s_hpt<1) player.t_stats.s_hpt = 1;
-        if (player.t_stats.s_maxhp<1) death(mp->t_type);
+        player.stats.s_hpt -= fewer;
+        player.stats.s_maxhp -= fewer;
+        if (player.stats.s_hpt<1) player.stats.s_hpt = 1;
+        if (player.stats.s_maxhp<1) death(mp->type);
         msg("you suddenly feel weaker");
       }
       break;
 
     case 'F': //Flytrap stops the poor guy from moving
-      player.t_flags |= ISHELD;
-      sprintf(mp->t_stats.s_dmg, "%dd1", ++flytrap_hit);
+      player.flags |= ISHELD;
+      sprintf(mp->stats.s_dmg, "%dd1", ++flytrap_hit);
       break;
 
     case 'L': //Leprechaun steals some gold
@@ -145,7 +145,7 @@ void attack(AGENT *mp)
         purse -= GOLDCALC;
         if (!save(VS_MAGIC)) purse -= GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
         if (purse<0) purse = 0;
-        remove_mons(&mp->t_pos, mp, FALSE);
+        remove_mons(&mp->pos, mp, FALSE);
         if (purse!=lastpurse) msg("your purse feels lighter");
 
         break;
@@ -158,11 +158,11 @@ void attack(AGENT *mp)
         char *she_stole = "she stole %s!";
 
         steal = NULL;
-        for (nobj = 0, obj = player.t_pack; obj!=NULL; obj = next(obj))
+        for (nobj = 0, obj = player.pack; obj!=NULL; obj = next(obj))
           if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
         if (steal!=NULL)
         {
-          remove_mons(&mp->t_pos, mp, FALSE);
+          remove_mons(&mp->pos, mp, FALSE);
           inpack--;
           if (steal->count>1 && steal->group==0)
           {
@@ -173,7 +173,7 @@ void attack(AGENT *mp)
             msg(she_stole, inv_name(steal, TRUE));
             steal->count = oc;
           }
-          else {detach_item(&player.t_pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
+          else {detach_item(&player.pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
         }
 
         break;
@@ -182,12 +182,12 @@ void attack(AGENT *mp)
     default: break;
     }
   }
-  else if (mp->t_type!='I')
+  else if (mp->type!='I')
   {
-    if (mp->t_type=='F')
+    if (mp->type=='F')
     {
-      player.t_stats.s_hpt -= flytrap_hit;
-      if (player.t_stats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
+      player.stats.s_hpt -= flytrap_hit;
+      if (player.stats.s_hpt<=0) death(mp->type); //Bye bye life ...
     }
     miss(mname, NULL);
   }
@@ -210,15 +210,15 @@ void check_level()
 {
   int i, add, olevel;
 
-  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>player.t_stats.s_exp) break;
+  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>player.stats.s_exp) break;
   i++;
-  olevel = player.t_stats.s_lvl;
-  player.t_stats.s_lvl = i;
+  olevel = player.stats.s_lvl;
+  player.stats.s_lvl = i;
   if (i>olevel)
   {
     add = roll(i-olevel, 10);
-    player.t_stats.s_maxhp += add;
-    if ((player.t_stats.s_hpt += add)>player.t_stats.s_maxhp) player.t_stats.s_hpt = player.t_stats.s_maxhp;
+    player.stats.s_maxhp += add;
+    if ((player.stats.s_hpt += add)>player.stats.s_maxhp) player.stats.s_hpt = player.stats.s_maxhp;
     msg("and achieve the rank of \"%s\"", he_man[i-1]);
   }
 }
@@ -234,15 +234,15 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   int dplus;
   int damage;
 
-  att = &thatt->t_stats;
-  def = &thdef->t_stats;
+  att = &thatt->stats;
+  def = &thdef->stats;
   if (weap==NULL) {cp = att->s_dmg; dplus = 0; hplus = 0;}
   else
   {
     hplus = weap->hit_plus;
     dplus = weap->damage_plus;
     //Check for vorpally enchanted weapon
-    if (thdef->t_type==weap->enemy) {hplus += 4; dplus += 4;}
+    if (thdef->type==weap->enemy) {hplus += 4; dplus += 4;}
     if (weap==cur_weapon)
     {
       if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->armor_class;
@@ -269,7 +269,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
   if (!on(*thdef, ISRUN)) hplus += 4;
   def_arm = def->s_arm;
-  if (def==&player.t_stats)
+  if (def==&player.stats)
   {
     if (cur_armor!=NULL) def_arm = cur_armor->armor_class;
     if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->armor_class;
@@ -346,7 +346,7 @@ int save_throw(int which, AGENT *tp)
 {
   int need;
 
-  need = 14+which-tp->t_stats.s_lvl/2;
+  need = 14+which-tp->stats.s_lvl/2;
   return (roll(1, 20)>=need);
 }
 
@@ -392,7 +392,7 @@ int add_dam(unsigned int str)
 //raise_level: The guy just magically went up a level.
 void raise_level()
 {
-  player.t_stats.s_exp = e_levels[player.t_stats.s_lvl-1]+1L;
+  player.stats.s_exp = e_levels[player.stats.s_lvl-1]+1L;
   check_level();
 }
 
@@ -411,19 +411,19 @@ void remove_mons(Coord *mp, AGENT *tp, bool waskill)
   ITEM *obj, *nexti;
 
   if (tp==NULL) return;
-  for (obj = tp->t_pack; obj!=NULL; obj = nexti)
+  for (obj = tp->pack; obj!=NULL; obj = nexti)
   {
     nexti = next(obj);
-    bcopy(obj->pos, tp->t_pos);
-    detach_item(&tp->t_pack, obj);
+    bcopy(obj->pos, tp->pos);
+    detach_item(&tp->pack, obj);
     if (waskill)
       fall(obj, FALSE);
     else 
       discard_item(obj);
   }
   if (get_tile(mp->y, mp->x)==PASSAGE) standout();
-  if (tp->t_oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
-  else if (tp->t_oldch!='@') mvaddch(mp->y, mp->x, tp->t_oldch);
+  if (tp->oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
+  else if (tp->oldch!='@') mvaddch(mp->y, mp->x, tp->oldch);
   standend();
   detach_agent(&mlist, tp);
   discard_agent(tp);
@@ -444,13 +444,13 @@ is_magic(ITEM *obj)
 //killed: Called to put a monster to death
 void killed(AGENT *tp, bool pr)
 {
-  player.t_stats.s_exp += tp->t_stats.s_exp;
+  player.stats.s_exp += tp->stats.s_exp;
   //If the monster was a flytrap, un-hold him
-  switch (tp->t_type)
+  switch (tp->type)
   {
 
   case 'F':
-    player.t_flags &= ~ISHELD;
+    player.flags &= ~ISHELD;
     f_restor();
     break;
 
@@ -462,7 +462,7 @@ void killed(AGENT *tp, bool pr)
       gold->type = GOLD;
       gold->gold_value = GOLDCALC;
       if (save(VS_MAGIC)) gold->gold_value += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
-      attach_item(&tp->t_pack, gold);
+      attach_item(&tp->pack, gold);
 
       break;
     }
@@ -472,10 +472,10 @@ void killed(AGENT *tp, bool pr)
   {
     addmsg("you have defeated ");
     if (on(player, ISBLIND)) msg(it);
-    else msg("the %s", monsters[tp->t_type-'A'].m_name);
+    else msg("the %s", monsters[tp->type-'A'].m_name);
   }
   //Do adjustments if he went up a level
   check_level();
   //Get rid of the monster.
-  remove_mons(&tp->t_pos, tp, TRUE);
+  remove_mons(&tp->pos, tp, TRUE);
 }

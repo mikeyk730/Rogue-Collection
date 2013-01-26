@@ -51,7 +51,7 @@ void missile(int ydelta, int xdelta)
   //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
 hack:
   if (obj->count<2) {
-    detach_item(&player.t_pack, obj); 
+    detach_item(&player.pack, obj); 
     inpack--;
   }
   else
@@ -80,13 +80,13 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
   byte under = '@';
 
   //Come fly with us ...
-  bcopy(obj->pos, player.t_pos);
+  bcopy(obj->pos, player.pos);
   for (;;)
   {
     int ch;
 
     //Erase the old one
-    if (under!='@' && !ce(obj->pos, player.t_pos) && cansee(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, under);
+    if (under!='@' && !ce(obj->pos, player.pos) && cansee(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, under);
     //Get the new position
     obj->pos.y += ydelta;
     obj->pos.x += xdelta;
@@ -133,7 +133,7 @@ void fall(ITEM *obj, bool pr)
       if ((get_flags(obj->pos.y, obj->pos.x)&F_PASS) || (get_flags(obj->pos.y, obj->pos.x)&F_MAZE)) standout();
       mvaddch(fpos.y, fpos.x, obj->type);
       standend();
-      if (monster_at(fpos.y, fpos.x)!=NULL) monster_at(fpos.y, fpos.x)->t_oldch = obj->type;
+      if (monster_at(fpos.y, fpos.x)!=NULL) monster_at(fpos.y, fpos.x)->oldch = obj->type;
     }
     attach_item(&lvl_obj, obj);
     return;
@@ -165,7 +165,7 @@ int hit_monster(int y, int x, ITEM *obj)
   static Coord mp;
   AGENT *mo;
 
-  if (mo = monster_at(y, x)) {mp.y = y; mp.x = x; return fight(&mp, mo->t_type, obj, TRUE);}
+  if (mo = monster_at(y, x)) {mp.y = y; mp.x = x; return fight(&mp, mo->type, obj, TRUE);}
   return FALSE;
 }
 
@@ -211,7 +211,7 @@ int fallpos(ITEM *obj, Coord *newpos)
     for (x = obj->pos.x-1; x<=obj->pos.x+1; x++)
     {
       //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
-      if ((y==player.t_pos.y && x==player.t_pos.x) || offmap(y,x)) continue;
+      if ((y==player.pos.y && x==player.pos.x) || offmap(y,x)) continue;
       if ((ch = get_tile(y, x))==FLOOR || ch==PASSAGE)
       {
         if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}

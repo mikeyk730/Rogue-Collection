@@ -36,7 +36,7 @@ void quaff()
     {
       if (on(player, ISHUH)) lengthen(unconfuse, rnd(8)+HUH_DURATION);
       else fuse(unconfuse, 0, rnd(8)+HUH_DURATION);
-      player.t_flags |= ISHUH;
+      player.flags |= ISHUH;
       msg("wait, what's going on? Huh? What? Who?");
     }
     break;
@@ -54,7 +54,7 @@ void quaff()
 
   case P_HEALING:
     p_know[P_HEALING] = TRUE;
-    if ((player.t_stats.s_hpt += roll(player.t_stats.s_lvl, 4))>player.t_stats.s_maxhp) player.t_stats.s_hpt = ++player.t_stats.s_maxhp;
+    if ((player.stats.s_hpt += roll(player.stats.s_lvl, 4))>player.stats.s_maxhp) player.stats.s_hpt = ++player.stats.s_maxhp;
     sight();
     msg("you begin to feel better");
     break;
@@ -90,12 +90,12 @@ void quaff()
       }
       for (th = mlist; th!=NULL; th = next(th))
       {
-        for (tp = th->t_pack; tp!=NULL; tp = next(tp))
+        for (tp = th->pack; tp!=NULL; tp = next(tp))
         {
           if (is_magic(tp))
           {
             show = TRUE;
-            mvaddch(th->t_pos.y, th->t_pos.x, MAGIC);
+            mvaddch(th->pos.y, th->pos.x, MAGIC);
             p_know[P_TFIND] = TRUE;
           }
         }
@@ -108,7 +108,7 @@ void quaff()
   case P_PARALYZE:
     p_know[P_PARALYZE] = TRUE;
     no_command = HOLD_TIME;
-    player.t_flags &= ~ISRUN;
+    player.flags &= ~ISRUN;
     msg("you can't move");
     break;
 
@@ -126,10 +126,10 @@ void quaff()
 
   case P_XHEAL:
     p_know[P_XHEAL] = TRUE;
-    if ((player.t_stats.s_hpt += roll(player.t_stats.s_lvl, 8))>player.t_stats.s_maxhp)
+    if ((player.stats.s_hpt += roll(player.stats.s_lvl, 8))>player.stats.s_maxhp)
     {
-      if (player.t_stats.s_hpt>player.t_stats.s_maxhp+player.t_stats.s_lvl+1) ++player.t_stats.s_maxhp;
-      player.t_stats.s_hpt = ++player.t_stats.s_maxhp;
+      if (player.stats.s_hpt>player.stats.s_maxhp+player.stats.s_lvl+1) ++player.stats.s_maxhp;
+      player.stats.s_hpt = ++player.stats.s_maxhp;
     }
     sight();
     msg("you begin to feel much better");
@@ -141,11 +141,11 @@ void quaff()
     break;
 
   case P_RESTORE:
-    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.t_stats.s_str, -cur_ring[LEFT]->armor_class);
-    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.t_stats.s_str, -cur_ring[RIGHT]->armor_class);
-    if (player.t_stats.s_str<max_stats.s_str) player.t_stats.s_str = max_stats.s_str;
-    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.t_stats.s_str, cur_ring[LEFT]->armor_class);
-    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.t_stats.s_str, cur_ring[RIGHT]->armor_class);
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.stats.s_str, -cur_ring[LEFT]->armor_class);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.stats.s_str, -cur_ring[RIGHT]->armor_class);
+    if (player.stats.s_str<max_stats.s_str) player.stats.s_str = max_stats.s_str;
+    if (is_ring_on_hand(LEFT, R_ADDSTR)) add_str(&player.stats.s_str, cur_ring[LEFT]->armor_class);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR)) add_str(&player.stats.s_str, cur_ring[RIGHT]->armor_class);
     msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
     break;
 
@@ -153,7 +153,7 @@ void quaff()
     p_know[P_BLIND] = TRUE;
     if (!on(player, ISBLIND))
     {
-      player.t_flags |= ISBLIND;
+      player.flags |= ISBLIND;
       fuse(sight, 0, SEE_DURATION);
       look(FALSE);
     }
@@ -171,7 +171,7 @@ void quaff()
   inpack--;
   if (obj->count>1) obj->count--;
   else {
-    detach_item(&player.t_pack, obj); 
+    detach_item(&player.pack, obj); 
     discardit = TRUE;
   }
   call_it(p_know[obj->which], &p_guess[obj->which]);
@@ -184,10 +184,10 @@ void invis_on()
 {
   AGENT *th;
 
-  player.t_flags |= CANSEE;
+  player.flags |= CANSEE;
   for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && can_see_monst(th))
   {
-    mvaddch(th->t_pos.y, th->t_pos.x, th->t_disguise);
+    mvaddch(th->pos.y, th->pos.x, th->disguise);
   }
 }
 
@@ -201,21 +201,21 @@ bool turn_see(bool turn_off)
   add_new = FALSE;
   for (mp = mlist; mp!=NULL; mp = next(mp))
   {
-    move(mp->t_pos.y, mp->t_pos.x);
-    can_see = (can_see_monst(mp) || (was_there = curch())==mp->t_type);
+    move(mp->pos.y, mp->pos.x);
+    can_see = (can_see_monst(mp) || (was_there = curch())==mp->type);
     if (turn_off)
     {
-      if (!can_see_monst(mp) && mp->t_oldch!='@') addch(mp->t_oldch);
+      if (!can_see_monst(mp) && mp->oldch!='@') addch(mp->oldch);
     }
     else
     {
-      if (!can_see) {standout(); mp->t_oldch = was_there;}
-      addch(mp->t_type);
+      if (!can_see) {standout(); mp->oldch = was_there;}
+      addch(mp->type);
       if (!can_see) {standend(); add_new++;}
     }
   }
-  player.t_flags |= SEEMONST;
-  if (turn_off) player.t_flags &= ~SEEMONST;
+  player.flags |= SEEMONST;
+  if (turn_off) player.flags &= ~SEEMONST;
   return add_new;
 }
 
@@ -225,27 +225,27 @@ void th_effect(ITEM *obj, AGENT *tp)
   switch (obj->which)
   {
   case P_CONFUSE: case P_BLIND:
-    tp->t_flags |= ISHUH;
-    msg("the %s appears confused", monsters[tp->t_type-'A'].m_name);
+    tp->flags |= ISHUH;
+    msg("the %s appears confused", monsters[tp->type-'A'].m_name);
     break;
 
   case P_PARALYZE:
-    tp->t_flags &= ~ISRUN;
-    tp->t_flags |= ISHELD;
+    tp->flags &= ~ISRUN;
+    tp->flags |= ISHELD;
     break;
 
   case P_HEALING: case P_XHEAL:
-    if ((tp->t_stats.s_hpt += rnd(8))>tp->t_stats.s_maxhp) tp->t_stats.s_hpt = ++tp->t_stats.s_maxhp;
+    if ((tp->stats.s_hpt += rnd(8))>tp->stats.s_maxhp) tp->stats.s_hpt = ++tp->stats.s_maxhp;
     break;
 
   case P_RAISE:
-    tp->t_stats.s_hpt += 8;
-    tp->t_stats.s_maxhp += 8;
-    tp->t_stats.s_lvl++;
+    tp->stats.s_hpt += 8;
+    tp->stats.s_maxhp += 8;
+    tp->stats.s_lvl++;
     break;
 
   case P_HASTE:
-    tp->t_flags |= ISHASTE;
+    tp->flags |= ISHASTE;
     break;
   }
   msg("the flask shatters.");

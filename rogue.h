@@ -30,7 +30,7 @@ typedef unsigned char bool;
 #define next(ptr)       (*ptr).l_next
 #define prev(ptr)       (*ptr).l_prev
 #define ce(a,b)         _ce(&(a),&(b))
-#define on(thing,flag)  (((thing).t_flags&(flag))!=0)
+#define on(thing,flag)  (((thing).flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
 #define GOLDCALC        (rnd(50+10*level)+2)
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
@@ -307,16 +307,16 @@ typedef struct Item ITEM;
 struct Agent
 {
   struct Agent *l_next, *l_prev; //Next pointer in link
-  Coord t_pos;                    //Position
-  char t_turn;                    //If slowed, is it a turn to move
-  char t_type;                    //What it is
-  byte t_disguise;                //What mimic looks like
-  byte t_oldch;                   //Character that was where it was
-  Coord *t_dest;                  //Where it is running to
-  short t_flags;                  //State word
-  struct Stats t_stats;           //Physical description
-  struct Room *t_room;            //Current room for thing
-  struct Item *t_pack;           //What the thing is carrying
+  Coord pos;                    //Position
+  char turn;                    //If slowed, is it a turn to move
+  char type;                    //What it is
+  byte disguise;                //What mimic looks like
+  byte oldch;                   //Character that was where it was
+  Coord *dest;                  //Where it is running to
+  short flags;                  //State word
+  struct Stats stats;           //Physical description
+  struct Room *room;            //Current room for thing
+  struct Item *pack;            //What the thing is carrying
 };
 
 typedef struct Agent AGENT;

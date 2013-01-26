@@ -59,19 +59,19 @@ void do_zap()
     else
     {
       ws_know[WS_LIGHT] = TRUE;
-      if (player.t_room->flags&ISGONE) msg("the corridor glows and then fades");
+      if (player.room->flags&ISGONE) msg("the corridor glows and then fades");
       else msg("the room is lit by a shimmering blue light");
     }
-    if (!(player.t_room->flags&ISGONE))
+    if (!(player.room->flags&ISGONE))
     {
-      player.t_room->flags &= ~ISDARK;
+      player.room->flags &= ~ISDARK;
       //Light the room and put the player back up
-      enter_room(&player.t_pos);
+      enter_room(&player.pos);
     }
     break;
 
   case WS_DRAIN: //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
-    if (player.t_stats.s_hpt<2) {msg("you are too weak to use it"); return;}
+    if (player.stats.s_hpt<2) {msg("you are too weak to use it"); return;}
     else drain();
     break;
 
@@ -81,15 +81,15 @@ void do_zap()
       int rm;
       Coord new_yx;
 
-      y = player.t_pos.y;
-      x = player.t_pos.x;
+      y = player.pos.y;
+      x = player.pos.x;
       while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
       if ((tp = monster_at(y, x))!=NULL)
       {
         byte omonst;
 
-        omonst = monster = tp->t_type;
-        if (monster=='F') player.t_flags &= ~ISHELD;
+        omonst = monster = tp->type;
+        if (monster=='F') player.flags &= ~ISHELD;
         if (which_one==MAXSTICKS)
         {
           if (monster==obj->enemy)
@@ -103,55 +103,55 @@ void do_zap()
         {
           ITEM *pp;
 
-          pp = tp->t_pack;
+          pp = tp->pack;
           detach_agent(&mlist, tp);
           if (can_see_monst(tp)) mvaddch(y, x, get_tile(y, x));
-          oldch = tp->t_oldch;
+          oldch = tp->oldch;
           delta.y = y;
           delta.x = x;
           new_monster(tp, monster = rnd(26)+'A', &delta);
           if (can_see_monst(tp)) mvaddch(y, x, monster);
-          tp->t_oldch = oldch;
-          tp->t_pack = pp;
+          tp->oldch = oldch;
+          tp->pack = pp;
           ws_know[WS_POLYMORPH] |= (monster!=omonst);
         }
         else if (which_one==WS_CANCEL)
         {
-          tp->t_flags |= ISCANC;
-          tp->t_flags &= ~(ISINVIS|CANHUH);
-          tp->t_disguise = tp->t_type;
+          tp->flags |= ISCANC;
+          tp->flags &= ~(ISINVIS|CANHUH);
+          tp->disguise = tp->type;
         }
         else
         {
-          if (can_see_monst(tp)) mvaddch(y, x, tp->t_oldch);
+          if (can_see_monst(tp)) mvaddch(y, x, tp->oldch);
           if (which_one==WS_TELAWAY)
           {
-            tp->t_oldch = '@';
+            tp->oldch = '@';
             do {
               rm = rnd_room(); 
-              new_yx = tp->t_pos; 
+              new_yx = tp->pos; 
               rnd_pos(&rooms[rm], &new_yx);
             } while (!(isfloor(display_character(new_yx.y, new_yx.x))));
-            tp->t_pos = new_yx;
+            tp->pos = new_yx;
             if (can_see_monst(tp)) 
-              mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
+              mvaddch(tp->pos.y, tp->pos.x, tp->disguise);
             else if (on(player, SEEMONST)) {
               standout(); 
-              mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise); 
+              mvaddch(tp->pos.y, tp->pos.x, tp->disguise); 
               standend();
             }
           }
           else {
-            tp->t_pos.y = player.t_pos.y+delta.y; 
-            tp->t_pos.x = player.t_pos.x+delta.x;
+            tp->pos.y = player.pos.y+delta.y; 
+            tp->pos.x = player.pos.x+delta.x;
           } //it MUST BE at WS_TELTO
-          if (tp->t_type=='F') 
-            player.t_flags &= ~ISHELD;
-          if (tp->t_pos.y!=y || tp->t_pos.x!=x)
-            tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
+          if (tp->type=='F') 
+            player.flags &= ~ISHELD;
+          if (tp->pos.y!=y || tp->pos.x!=x)
+            tp->oldch = mvinch(tp->pos.y, tp->pos.x);
         }
-        tp->t_dest = &player.t_pos;
-        tp->t_flags |= ISRUN;
+        tp->dest = &player.pos;
+        tp->flags |= ISRUN;
       }
       break;
     }
@@ -176,32 +176,32 @@ void do_zap()
     }
 
   case WS_HIT:
-    delta.y += player.t_pos.y;
-    delta.x += player.t_pos.x;
+    delta.y += player.pos.y;
+    delta.x += player.pos.x;
     if ((tp = monster_at(delta.y, delta.x))!=NULL)
     {
       if (rnd(20)==0) {obj->damage = "3d8"; obj->damage_plus = 9;}
       else {obj->damage = "2d8"; obj->damage_plus = 4;}
-      fight(&delta, tp->t_type, obj, FALSE);
+      fight(&delta, tp->type, obj, FALSE);
     }
     break;
 
   case WS_HASTE_M: case WS_SLOW_M:
-    y = player.t_pos.y;
-    x = player.t_pos.x;
+    y = player.pos.y;
+    x = player.pos.x;
     while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
     if ((tp = monster_at(y, x))!=NULL)
     {
       if (which_one==WS_HASTE_M)
       {
-        if (on(*tp, ISSLOW)) tp->t_flags &= ~ISSLOW;
-        else tp->t_flags |= ISHASTE;
+        if (on(*tp, ISSLOW)) tp->flags &= ~ISSLOW;
+        else tp->flags |= ISHASTE;
       }
       else
       {
-        if (on(*tp, ISHASTE)) tp->t_flags &= ~ISHASTE;
-        else tp->t_flags |= ISSLOW;
-        tp->t_turn = TRUE;
+        if (on(*tp, ISHASTE)) tp->flags &= ~ISHASTE;
+        else tp->flags |= ISSLOW;
+        tp->turn = TRUE;
       }
       delta.y = y;
       delta.x = x;
@@ -213,7 +213,7 @@ void do_zap()
     if (which_one==WS_ELECT) name = "bolt";
     else if (which_one==WS_FIRE) name = "flame";
     else name = "ice";
-    fire_bolt(&player.t_pos, &delta, name);
+    fire_bolt(&player.pos, &delta, name);
     ws_know[which_one] = TRUE;
     break;
 
@@ -234,12 +234,12 @@ void drain()
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
-  if (get_tile(player.t_pos.y, player.t_pos.x)==DOOR) corp = &passages[get_flags(player.t_pos.y, player.t_pos.x)&F_PNUM];
+  if (get_tile(player.pos.y, player.pos.x)==DOOR) corp = &passages[get_flags(player.pos.y, player.pos.x)&F_PNUM];
   else corp = NULL;
-  inpass = (player.t_room->flags&ISGONE);
+  inpass = (player.room->flags&ISGONE);
   dp = drainee;
   for (mp = mlist; mp!=NULL; mp = next(mp)){
-    if (mp->t_room==player.t_room || mp->t_room==corp || (inpass && get_tile(mp->t_pos.y, mp->t_pos.x)==DOOR && &passages[get_flags(mp->t_pos.y, mp->t_pos.x)&F_PNUM]==player.t_room)) {
+    if (mp->room==player.room || mp->room==corp || (inpass && get_tile(mp->pos.y, mp->pos.x)==DOOR && &passages[get_flags(mp->pos.y, mp->pos.x)&F_PNUM]==player.room)) {
       *dp++ = mp;
     }
   }
@@ -248,14 +248,14 @@ void drain()
     return;
   }
   *dp = NULL;
-  player.t_stats.s_hpt /= 2;
-  cnt = player.t_stats.s_hpt/cnt+1;
+  player.stats.s_hpt /= 2;
+  cnt = player.stats.s_hpt/cnt+1;
   //Now zot all of the monsters
   for (dp = drainee; *dp; dp++)
   {
     mp = *dp;
-    if ((mp->t_stats.s_hpt -= cnt)<=0) killed(mp, can_see_monst(mp));
-    else start_run(&mp->t_pos);
+    if ((mp->stats.s_hpt -= cnt)<=0) killed(mp, can_see_monst(mp));
+    else start_run(&mp->pos);
   }
 }
 
@@ -285,7 +285,7 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
   case 2: case -2: dirch = '\\'; break;
   }
   pos = *start;
-  hit_hero = (start!=&player.t_pos);
+  hit_hero = (start!=&player.pos);
   used = FALSE;
   changed = FALSE;
   for (i = 0; i<BOLT_LENGTH && !used; i++)
@@ -311,25 +311,25 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
       {
         hit_hero = TRUE;
         changed = !changed;
-        if (tp->t_oldch!='@') tp->t_oldch = get_tile(pos.y, pos.x);
+        if (tp->oldch!='@') tp->oldch = get_tile(pos.y, pos.x);
         if (!save_throw(VS_MAGIC, tp) || is_frost)
         {
           bolt.pos = pos;
           used = TRUE;
-          if (tp->t_type=='D' && strcmp(name, "flame")==0) msg("the flame bounces off the dragon");
+          if (tp->type=='D' && strcmp(name, "flame")==0) msg("the flame bounces off the dragon");
           else
           {
             hit_monster(pos.y, pos.x, &bolt);
             if (mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = mvinch(pos.y, pos.x);
           }
         }
-        else if (ch!='X' || tp->t_disguise=='X')
+        else if (ch!='X' || tp->disguise=='X')
         {
-          if (start==&player.t_pos) start_run(&pos);
+          if (start==&player.pos) start_run(&pos);
           msg("the %s whizzes past the %s", name, monsters[ch-'A'].m_name);
         }
       }
-      else if (hit_hero && ce(pos, player.t_pos))
+      else if (hit_hero && ce(pos, player.pos))
       {
         hit_hero = FALSE;
         changed = !changed;
@@ -340,7 +340,7 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
             msg("You are frozen by a blast of frost%s.", noterse(" from the Ice Monster"));
             if (no_command<20) no_command += spread(7);
           }
-          else if ((player.t_stats.s_hpt -= roll(6, 6))<=0) if (start==&player.t_pos) death('b'); else death(monster_at(start->y, start->x)->t_type);
+          else if ((player.stats.s_hpt -= roll(6, 6))<=0) if (start==&player.pos) death('b'); else death(monster_at(start->y, start->x)->type);
           used = TRUE;
           if (!is_frost) msg("you are hit by the %s", name);
         }

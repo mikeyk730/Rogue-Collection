@@ -28,7 +28,7 @@ void whatis()
 {
   ITEM *obj;
 
-  if (player.t_pack==NULL) {msg("You don't have anything in your pack to identify"); return;}
+  if (player.pack==NULL) {msg("You don't have anything in your pack to identify"); return;}
   for (;;) if ((obj = get_item("identify", 0))==NULL)
   {
     msg("You must identify something");
@@ -140,13 +140,13 @@ int teleport()
   int rm;
   Coord c;
 
-  mvaddch(player.t_pos.y, player.t_pos.x, get_tile(player.t_pos.y, player.t_pos.x));
+  mvaddch(player.pos.y, player.pos.x, get_tile(player.pos.y, player.pos.x));
   do {rm = rnd_room(); rnd_pos(&rooms[rm], &c);} while (!(step_ok(display_character(c.y, c.x))));
-  if (&rooms[rm]!=player.t_room) {leave_room(&player.t_pos); bcopy(player.t_pos, c); enter_room(&player.t_pos);}
-  else {bcopy(player.t_pos, c); look(TRUE);}
-  mvaddch(player.t_pos.y, player.t_pos.x, PLAYER);
+  if (&rooms[rm]!=player.room) {leave_room(&player.pos); bcopy(player.pos, c); enter_room(&player.pos);}
+  else {bcopy(player.pos, c); look(TRUE);}
+  mvaddch(player.pos.y, player.pos.x, PLAYER);
   //turn off ISHELD in case teleportation was done while fighting a Flytrap
-  if (on(player, ISHELD)) {player.t_flags &= ~ISHELD; f_restor();}
+  if (on(player, ISHELD)) {player.flags &= ~ISHELD; f_restor();}
   no_move = 0;
   count = 0;
   running = FALSE;
@@ -156,7 +156,7 @@ int teleport()
   {
     if (on(player, ISHUH)) lengthen(unconfuse, rnd(4)+2);
     else fuse(unconfuse, 0, rnd(4)+2);
-    player.t_flags |= ISHUH;
+    player.flags |= ISHUH;
   }
   return rm;
 }

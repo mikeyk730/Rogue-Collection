@@ -37,7 +37,7 @@ void read_scroll()
   switch (obj->which)
   {
   case S_CONFUSE: //Scroll of monster confusion.  Give him that power.
-    player.t_flags |= CANHUH;
+    player.flags |= CANHUH;
     msg("your hands begin to glow red");
     break;
 
@@ -51,20 +51,20 @@ void read_scroll()
     break;
 
   case S_HOLD: //Hold monster scroll.  Stop all monsters within two spaces from chasing after the hero.
-    for (x = player.t_pos.x-3; x<=player.t_pos.x+3; x++)
+    for (x = player.pos.x-3; x<=player.pos.x+3; x++)
       if (x>=0 && x<COLS)
-        for (y = player.t_pos.y-3; y<=player.t_pos.y+3; y++)
+        for (y = player.pos.y-3; y<=player.pos.y+3; y++)
           if ((y>0 && y<maxrow) && ((op = monster_at(y, x))!=NULL))
           {
-            op->t_flags &= ~ISRUN;
-            op->t_flags |= ISHELD;
+            op->flags &= ~ISRUN;
+            op->flags |= ISHELD;
           }
           break;
 
   case S_SLEEP: //Scroll which makes you fall asleep
     s_know[S_SLEEP] = TRUE;
     no_command += rnd(SLEEP_TIME)+4;
-    player.t_flags &= ~ISRUN;
+    player.flags &= ~ISRUN;
     msg("you fall asleep");
     break;
 
@@ -72,7 +72,7 @@ void read_scroll()
     {
       Coord mp;
 
-      if (plop_monster(player.t_pos.y, player.t_pos.x, &mp) && (op = create_agent())!=NULL) new_monster(op, randmonster(FALSE), &mp);
+      if (plop_monster(player.pos.y, player.pos.x, &mp) && (op = create_agent())!=NULL) new_monster(op, randmonster(FALSE), &mp);
       else ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 
       break;
@@ -100,7 +100,7 @@ void read_scroll()
           unset_flag(y, x, F_REAL);
         }
       case DOOR: case PASSAGE: case STAIRS:
-        if ((op = monster_at(y, x))!=NULL) if (op->t_oldch==' ') op->t_oldch = ch;
+        if ((op = monster_at(y, x))!=NULL) if (op->oldch==' ') op->oldch = ch;
         break;
       default: ch = ' ';
       }
@@ -142,9 +142,9 @@ void read_scroll()
     {
       struct Room *cur_room;
 
-      cur_room = player.t_room;
+      cur_room = player.room;
       teleport();
-      if (cur_room!=player.t_room) s_know[S_TELEP] = TRUE;
+      if (cur_room!=player.room) s_know[S_TELEP] = TRUE;
 
       break;
     }
@@ -201,7 +201,7 @@ void read_scroll()
       if (cur_weapon->enemy!=0)
       {
         msg("your %s vanishes in a puff of smoke", w_names[cur_weapon->which]);
-        detach_item(&player.t_pack, cur_weapon);
+        detach_item(&player.pack, cur_weapon);
         discard_item(cur_weapon);
         cur_weapon = NULL;
       }
@@ -224,7 +224,7 @@ void read_scroll()
   inpack--;
   if (obj->count>1) obj->count--;
   else {
-    detach_item(&player.t_pack, obj); 
+    detach_item(&player.pack, obj); 
     discardit = TRUE;
   }
   call_it(s_know[obj->which], &s_guess[obj->which]);

@@ -50,18 +50,18 @@ void look(bool wakeup)
   byte pfl, fp;
   int sy, sx, sumhero, diffhero;
 
-  rp = player.t_room;
-  pfl = get_flags(player.t_pos.y, player.t_pos.x);
-  pch = get_tile(player.t_pos.y, player.t_pos.x);
+  rp = player.room;
+  pfl = get_flags(player.pos.y, player.pos.x);
+  pch = get_tile(player.pos.y, player.pos.x);
   //if the hero has moved
-  if (!ce(oldpos, player.t_pos))
+  if (!ce(oldpos, player.pos))
   {
     if (!on(player, ISBLIND))
     {
       for (x = oldpos.x-1; x<=(oldpos.x+1); x++)
         for (y = oldpos.y-1; y<=(oldpos.y+1); y++)
         {
-          if ((y==player.t_pos.y && x==player.t_pos.x) || offmap(y,x)) continue;
+          if ((y==player.pos.y && x==player.pos.x) || offmap(y,x)) continue;
           move(y, x);
           ch = curch();
           if (ch==FLOOR)
@@ -77,22 +77,22 @@ void look(bool wakeup)
           }
         }
     }
-    oldpos = player.t_pos;
+    oldpos = player.pos;
     oldrp = rp;
   }
-  ey = player.t_pos.y+1;
-  ex = player.t_pos.x+1;
-  sx = player.t_pos.x-1;
-  sy = player.t_pos.y-1;
-  if (door_stop && !firstmove && running) {sumhero = player.t_pos.y+player.t_pos.x; diffhero = player.t_pos.y-player.t_pos.x;}
+  ey = player.pos.y+1;
+  ex = player.pos.x+1;
+  sx = player.pos.x-1;
+  sy = player.pos.y-1;
+  if (door_stop && !firstmove && running) {sumhero = player.pos.y+player.pos.x; diffhero = player.pos.y-player.pos.x;}
   for (y = sy; y<=ey; y++) if (y>0 && y<maxrow) for (x = sx; x<=ex; x++)
   {
     if (x<=0 || x>=COLS) continue;
     if (!on(player, ISBLIND))
     {
-      if (y==player.t_pos.y && x==player.t_pos.x) continue;
+      if (y==player.pos.y && x==player.pos.x) continue;
     }
-    else if (y!=player.t_pos.y || x!=player.t_pos.x) continue;
+    else if (y!=player.pos.y || x!=player.pos.x) continue;
     //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
     fp = get_flags(y, x);
     ch = get_tile(y, x);
@@ -114,8 +114,8 @@ void look(bool wakeup)
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (tp->t_oldch != ' ' || (!(rp->flags&ISDARK) && !on(player, ISBLIND))) tp->t_oldch = get_tile(y, x);
-        if (can_see_monst(tp)) ch = tp->t_disguise;
+        if (tp->oldch != ' ' || (!(rp->flags&ISDARK) && !on(player, ISBLIND))) tp->oldch = get_tile(y, x);
+        if (can_see_monst(tp)) ch = tp->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
       if ((ch!=PASSAGE) && (fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();
@@ -137,16 +137,16 @@ void look(bool wakeup)
         }
         switch (ch)
         {
-        case DOOR: if (x==player.t_pos.x || y==player.t_pos.y) running = FALSE; break;
-        case PASSAGE: if (x==player.t_pos.x || y==player.t_pos.y) passcount++; break;
+        case DOOR: if (x==player.pos.x || y==player.pos.y) running = FALSE; break;
+        case PASSAGE: if (x==player.pos.x || y==player.pos.y) passcount++; break;
         case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ': break;
         default: running = FALSE; break;
         }
       }
   }
   if (door_stop && !firstmove && passcount>1) running = FALSE;
-  move(player.t_pos.y, player.t_pos.x);
-  if ((get_flags(player.t_pos.y, player.t_pos.x)&F_PASS) || (was_trapped>TRUE) || (get_flags(player.t_pos.y, player.t_pos.x)&F_MAZE)) standout();
+  move(player.pos.y, player.pos.x);
+  if ((get_flags(player.pos.y, player.pos.x)&F_PASS) || (was_trapped>TRUE) || (get_flags(player.pos.y, player.pos.x)&F_MAZE)) standout();
   addch(PLAYER);
   standend();
   if (was_trapped) {beep(); was_trapped = FALSE;}
@@ -176,7 +176,7 @@ void eat()
   }
   inpack--;
   if (--obj->count<1) {
-    detach_item(&player.t_pack, obj); 
+    detach_item(&player.pack, obj); 
     discard_item(obj);
   }
   if (food_left<0)
@@ -191,7 +191,7 @@ void eat()
   if (obj->which==1)
     msg("my, that was a yummy %s", fruit);
   else if (rnd(100)>70) {
-    player.t_stats.s_exp++; 
+    player.stats.s_exp++; 
     msg("yuk, this food tastes awful");
     check_level();
   }
@@ -207,8 +207,8 @@ void chg_str(int amt)
   unsigned int comp;
 
   if (amt==0) return;
-  add_str(&player.t_stats.s_str, amt);
-  comp = player.t_stats.s_str;
+  add_str(&player.stats.s_str, amt);
+  comp = player.stats.s_str;
   if (is_ring_on_hand(LEFT, R_ADDSTR)) 
     add_str(&comp, -cur_ring[LEFT]->armor_class);
   if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
@@ -230,15 +230,15 @@ int add_haste(bool potion)
   if (on(player, ISHASTE))
   {
     no_command += rnd(8);
-    player.t_flags &= ~ISRUN;
+    player.flags &= ~ISRUN;
     extinguish(nohaste);
-    player.t_flags &= ~ISHASTE;
+    player.flags &= ~ISHASTE;
     msg("you faint from exhaustion");
     return FALSE;
   }
   else
   {
-    player.t_flags |= ISHASTE;
+    player.flags |= ISHASTE;
     if (potion) fuse(nohaste, 0, rnd(4)+10);
     return TRUE;
   }
@@ -248,7 +248,7 @@ int add_haste(bool potion)
 void aggravate()
 {
   AGENT *mi;
-  for (mi = mlist; mi!=NULL; mi = next(mi)) start_run(&mi->t_pos);
+  for (mi = mlist; mi!=NULL; mi = next(mi)) start_run(&mi->pos);
 }
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
@@ -454,7 +454,7 @@ int offmap(int y, int x)
 
 int display_character(int y, int x)
 {
-  return (monster_at(y, x) !=NULL ? monster_at(y, x)->t_disguise : get_tile(y, x));
+  return (monster_at(y, x) !=NULL ? monster_at(y, x)->disguise : get_tile(y, x));
 }
 
 //search: Player gropes about him to find hidden things.
@@ -466,11 +466,11 @@ void search()
 
   if (on(player, ISBLIND)) 
     return;
-  ey = player.t_pos.y+1;
-  ex = player.t_pos.x+1;
-  for (y = player.t_pos.y-1; y<=ey; y++) for (x = player.t_pos.x-1; x<=ex; x++)
+  ey = player.pos.y+1;
+  ex = player.pos.x+1;
+  for (y = player.pos.y-1; y<=ey; y++) for (x = player.pos.x-1; x<=ex; x++)
   {
-    if ((y==player.t_pos.y && x==player.t_pos.x) || offmap(y, x)) 
+    if ((y==player.pos.y && x==player.pos.x) || offmap(y, x)) 
       continue;
     fp = get_flags(y, x);
     if (!(fp&F_REAL)) {
@@ -498,7 +498,7 @@ void search()
 //d_level: He wants to go down a level
 void d_level()
 {
-  if (get_tile(player.t_pos.y, player.t_pos.x)!=STAIRS && wizard == FALSE)
+  if (get_tile(player.pos.y, player.pos.x)!=STAIRS && wizard == FALSE)
     msg("I see no way down");
   else {
     level++; 
@@ -509,7 +509,7 @@ void d_level()
 //u_level: He wants to go up a level
 void u_level()
 {
-  if (get_tile(player.t_pos.y, player.t_pos.x)==STAIRS || wizard == TRUE) 
+  if (get_tile(player.pos.y, player.pos.x)==STAIRS || wizard == TRUE) 
     if (amulet) {
       level--; 
       if (level==0) 

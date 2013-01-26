@@ -164,7 +164,7 @@ void init_player()
 {
   ITEM *obj;
 
-  bcopy(player.t_stats, max_stats);
+  bcopy(player.stats, max_stats);
   food_left = HUNGER_TIME;
   //Give the rogue his weaponry.  First a mace.
   obj = create_item();

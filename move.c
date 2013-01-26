@@ -47,18 +47,18 @@ void do_move(int dy, int dx)
   else
   {
 over:
-    nh.y = player.t_pos.y+dy;
-    nh.x = player.t_pos.x+dx;
+    nh.y = player.pos.y+dy;
+    nh.x = player.pos.x+dx;
   }
   //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
   if (offmap(nh.y, nh.x)) goto hit_bound;
-  if (!diag_ok(&player.t_pos, &nh)) {after = FALSE; running = FALSE; return;}
+  if (!diag_ok(&player.pos, &nh)) {after = FALSE; running = FALSE; return;}
   //If you are running and the move does not get you anywhere stop running
-  if (running && ce(player.t_pos, nh)) after = running = FALSE;
+  if (running && ce(player.pos, nh)) after = running = FALSE;
   fl = get_flags(nh.y, nh.x);
   ch = display_character(nh.y, nh.x);
   //When the hero is on the door do not allow him to run until he enters the room all the way
-  if ((get_tile(player.t_pos.y, player.t_pos.x)==DOOR) && (ch==FLOOR)) running = FALSE;
+  if ((get_tile(player.pos.y, player.pos.x)==DOOR) && (ch==FLOOR)) running = FALSE;
   if (!(fl&F_REAL) && ch==FLOOR) {
     ch = TRAP;
     set_tile(nh.y, nh.x, TRAP); 
@@ -69,15 +69,15 @@ over:
   {
   case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
 hit_bound:
-    if (running && isgone(player.t_room) && !on(player, ISBLIND))
+    if (running && isgone(player.room) && !on(player, ISBLIND))
     {
       bool b1, b2;
 
       switch (runch)
       {
       case 'h': case 'l':
-        b1 = (player.t_pos.y>1 && ((get_flags(player.t_pos.y-1, player.t_pos.x)&F_PASS) || get_tile(player.t_pos.y-1, player.t_pos.x)==DOOR));
-        b2 = (player.t_pos.y<maxrow-1 && ((get_flags(player.t_pos.y+1, player.t_pos.x)&F_PASS) || get_tile(player.t_pos.y+1, player.t_pos.x)==DOOR));
+        b1 = (player.pos.y>1 && ((get_flags(player.pos.y-1, player.pos.x)&F_PASS) || get_tile(player.pos.y-1, player.pos.x)==DOOR));
+        b2 = (player.pos.y<maxrow-1 && ((get_flags(player.pos.y+1, player.pos.x)&F_PASS) || get_tile(player.pos.y+1, player.pos.x)==DOOR));
         if (!(b1^b2)) break;
         if (b1) {runch = 'k'; dy = -1;}
         else {runch = 'j'; dy = 1;}
@@ -85,8 +85,8 @@ hit_bound:
         goto over;
 
       case 'j': case 'k':
-        b1 = (player.t_pos.x>1 && ((get_flags(player.t_pos.y, player.t_pos.x-1)&F_PASS) || get_tile(player.t_pos.y, player.t_pos.x-1)==DOOR));
-        b2 = (player.t_pos.x<COLS-2 && ((get_flags(player.t_pos.y, player.t_pos.x+1)&F_PASS) || get_tile(player.t_pos.y, player.t_pos.x+1)==DOOR));
+        b1 = (player.pos.x>1 && ((get_flags(player.pos.y, player.pos.x-1)&F_PASS) || get_tile(player.pos.y, player.pos.x-1)==DOOR));
+        b2 = (player.pos.x<COLS-2 && ((get_flags(player.pos.y, player.pos.x+1)&F_PASS) || get_tile(player.pos.y, player.pos.x+1)==DOOR));
         if (!(b1^b2)) break;
         if (b1) {runch = 'h'; dx = -1;}
         else {runch = 'l'; dx = 1;}
@@ -99,7 +99,7 @@ hit_bound:
 
   case DOOR:
     running = FALSE;
-    if (get_flags(player.t_pos.y, player.t_pos.x)&F_PASS) enter_room(&nh);
+    if (get_flags(player.pos.y, player.pos.x)&F_PASS) enter_room(&nh);
     goto move_stuff;
 
   case TRAP:
@@ -110,7 +110,7 @@ hit_bound:
     goto move_stuff;
 
   case FLOOR:
-    if (!(fl&F_REAL)) be_trapped(&player.t_pos);
+    if (!(fl&F_REAL)) be_trapped(&player.pos);
     goto move_stuff;
 
   default:
@@ -122,10 +122,10 @@ hit_bound:
       running = FALSE;
       if (ch!=STAIRS) take = ch;
 move_stuff:
-      mvaddch(player.t_pos.y, player.t_pos.x, get_tile(player.t_pos.y, player.t_pos.x));
+      mvaddch(player.pos.y, player.pos.x, get_tile(player.pos.y, player.pos.x));
       if ((fl&F_PASS) && (get_tile(oldpos.y, oldpos.x)==DOOR || (get_flags(oldpos.y, oldpos.x)&F_MAZE))) leave_room(&nh);
       if ((fl&F_MAZE) && (get_flags(oldpos.y, oldpos.x)&F_MAZE)==0) enter_room(&nh);
-      bcopy(player.t_pos, nh);
+      bcopy(player.pos, nh);
     }
   }
 }
@@ -145,7 +145,7 @@ void door_open(struct Room *rp)
         if (isupper(ch))
         {
           item = wake_monster(j, k);
-          if (item->t_oldch==' ' && !(rp->flags&ISDARK) && !on(player, ISBLIND)) item->t_oldch = get_tile(j, k);
+          if (item->oldch==' ' && !(rp->flags&ISDARK) && !on(player, ISBLIND)) item->oldch = get_tile(j, k);
         }
       }
 }
@@ -172,15 +172,15 @@ int be_trapped(Coord *tc)
 
   case T_SLEEP:
     no_command += SLEEP_TIME;
-    player.t_flags &= ~ISRUN;
+    player.flags &= ~ISRUN;
     msg("a %smist envelops you and you fall asleep", noterse("strange white "));
     break;
 
   case T_ARROW:
-    if (swing(player.t_stats.s_lvl-1, player.t_stats.s_arm, 1))
+    if (swing(player.stats.s_lvl-1, player.stats.s_arm, 1))
     {
-      player.t_stats.s_hpt -= roll(1, 6);
-      if (player.t_stats.s_hpt<=0) {msg("an arrow killed you"); death('a');}
+      player.stats.s_hpt -= roll(1, 6);
+      if (player.stats.s_hpt<=0) {msg("an arrow killed you"); death('a');}
       else msg("oh no! An arrow shot you");
     }
     else
@@ -193,7 +193,7 @@ int be_trapped(Coord *tc)
         arrow->which = ARROW;
         init_weapon(arrow, ARROW);
         arrow->count = 1;
-        bcopy(arrow->pos, player.t_pos);
+        bcopy(arrow->pos, player.pos);
         fall(arrow, FALSE);
       }
       msg("an arrow shoots past you");
@@ -207,10 +207,10 @@ int be_trapped(Coord *tc)
     break;
 
   case T_DART:
-    if (swing(player.t_stats.s_lvl+1, player.t_stats.s_arm, 1))
+    if (swing(player.stats.s_lvl+1, player.stats.s_arm, 1))
     {
-      player.t_stats.s_hpt -= roll(1, 4);
-      if (player.t_stats.s_hpt<=0) {msg("a poisoned dart killed you"); death('d');}
+      player.stats.s_hpt -= roll(1, 4);
+      if (player.stats.s_hpt<=0) {msg("a poisoned dart killed you"); death('d');}
       if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) chg_str(-1);
       msg("a dart just hit you in the shoulder");
     }
@@ -231,7 +231,7 @@ void descend(char *mesg)
   if (!save(VS_LUCK))
   {
     msg("you are damaged by the fall");
-    if ((player.t_stats.s_hpt -= roll(1,8))<=0) death('f');
+    if ((player.stats.s_hpt -= roll(1,8))<=0) death('f');
   }
 }
 
@@ -242,12 +242,12 @@ void rndmove(AGENT *who, Coord *newmv)
   byte ch;
   ITEM *obj;
 
-  y = newmv->y = who->t_pos.y+rnd(3)-1;
-  x = newmv->x = who->t_pos.x+rnd(3)-1;
+  y = newmv->y = who->pos.y+rnd(3)-1;
+  x = newmv->x = who->pos.x+rnd(3)-1;
   //Now check to see if that's a legal move.  If not, don't move. (I.e., bump into the wall or whatever)
-  if (y==who->t_pos.y && x==who->t_pos.x) return;
+  if (y==who->pos.y && x==who->pos.x) return;
   if ((y<1 || y>=maxrow) || (x<0 || x>=COLS)) goto bad;
-  else if (!diag_ok(&who->t_pos, newmv)) goto bad;
+  else if (!diag_ok(&who->pos, newmv)) goto bad;
   else
   {
     ch = display_character(y, x);
@@ -262,6 +262,6 @@ void rndmove(AGENT *who, Coord *newmv)
 
 bad:
 
-  bcopy((*newmv), who->t_pos);
+  bcopy((*newmv), who->pos);
   return;
 }

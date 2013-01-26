@@ -28,7 +28,7 @@ void new_level()
   AGENT *tp;
   Coord stairs;
 
-  player.t_flags &= ~ISHELD; //unhold when you go down just in case
+  player.flags &= ~ISHELD; //unhold when you go down just in case
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
   if (level>max_level) max_level = level;
 
@@ -36,7 +36,7 @@ void new_level()
   clear_level();
   //Free up the monsters on the last level
   for (tp = mlist; tp!=NULL; tp = next(tp)) 
-    free_item_list(&tp->t_pack);
+    free_item_list(&tp->pack);
   free_agent_list(&mlist);
   //just in case we left some flytraps behind
   f_restor();
@@ -81,13 +81,13 @@ void new_level()
   do
   {
     rm = rnd_room();
-    rnd_pos(&rooms[rm], &player.t_pos);
-  } while (!(isfloor(get_tile(player.t_pos.y, player.t_pos.x)) && (get_flags(player.t_pos.y, player.t_pos.x)&F_REAL) && monster_at(player.t_pos.y, player.t_pos.x)==NULL));
+    rnd_pos(&rooms[rm], &player.pos);
+  } while (!(isfloor(get_tile(player.pos.y, player.pos.x)) && (get_flags(player.pos.y, player.pos.x)&F_REAL) && monster_at(player.pos.y, player.pos.x)==NULL));
   mpos = 0;
-  enter_room(&player.t_pos);
-  mvaddch(player.t_pos.y, player.t_pos.x, PLAYER);
-  bcopy(oldpos, player.t_pos);
-  oldrp = player.t_room;
+  enter_room(&player.pos);
+  mvaddch(player.pos.y, player.pos.x, PLAYER);
+  bcopy(oldpos, player.pos);
+  oldrp = player.room;
   if (on(player, SEEMONST)) turn_see(FALSE);
 }
 
@@ -190,7 +190,7 @@ void treas_room()
       {
         new_monster(ap, randmonster(FALSE), &mp);
         if (bailout) debug("treasure rm bailout");
-        ap->t_flags |= ISMEAN; //no sloughers in THIS room
+        ap->flags |= ISMEAN; //no sloughers in THIS room
         give_pack(ap);
       }
     }

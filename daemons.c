@@ -19,19 +19,19 @@ void doctor()
 {
   int lv, ohp;
 
-  lv = player.t_stats.s_lvl;
-  ohp = player.t_stats.s_hpt;
+  lv = player.stats.s_lvl;
+  ohp = player.stats.s_hpt;
   quiet++;
   if (lv<8)
   {
-    if (quiet+(lv<<1)>20) player.t_stats.s_hpt++;
+    if (quiet+(lv<<1)>20) player.stats.s_hpt++;
   }
-  else if (quiet>=3) player.t_stats.s_hpt += rnd(lv-7)+1;
-  if (is_ring_on_hand(LEFT, R_REGEN)) player.t_stats.s_hpt++;
-  if (is_ring_on_hand(RIGHT, R_REGEN)) player.t_stats.s_hpt++;
-  if (ohp!=player.t_stats.s_hpt)
+  else if (quiet>=3) player.stats.s_hpt += rnd(lv-7)+1;
+  if (is_ring_on_hand(LEFT, R_REGEN)) player.stats.s_hpt++;
+  if (is_ring_on_hand(RIGHT, R_REGEN)) player.stats.s_hpt++;
+  if (ohp!=player.stats.s_hpt)
   {
-    if (player.t_stats.s_hpt>player.t_stats.s_maxhp) player.t_stats.s_hpt = player.t_stats.s_maxhp;
+    if (player.stats.s_hpt>player.stats.s_maxhp) player.stats.s_hpt = player.stats.s_maxhp;
     quiet = 0;
   }
 }
@@ -61,7 +61,7 @@ void rollwand()
 //unconfuse: Release the poor player from his confusion
 void unconfuse()
 {
-  player.t_flags &= ~ISHUH;
+  player.flags &= ~ISHUH;
   msg("you feel less confused now");
 }
 
@@ -71,9 +71,9 @@ void unsee()
   AGENT *th;
 
   for (th = mlist; th!=NULL; th = next(th))
-    if (on(*th, ISINVIS) && can_see_monst(th) && th->t_oldch!='@')
-      mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
-  player.t_flags &= ~CANSEE;
+    if (on(*th, ISINVIS) && can_see_monst(th) && th->oldch!='@')
+      mvaddch(th->pos.y, th->pos.x, th->oldch);
+  player.flags &= ~CANSEE;
 }
 
 //sight: He gets his sight back
@@ -82,9 +82,9 @@ void sight()
   if (on(player, ISBLIND))
   {
     extinguish(sight);
-    player.t_flags &= ~ISBLIND;
-    if (!(player.t_room->flags & ISGONE)) 
-      enter_room(&player.t_pos);
+    player.flags &= ~ISBLIND;
+    if (!(player.room->flags & ISGONE)) 
+      enter_room(&player.pos);
     msg("the veil of darkness lifts");
   }
 }
@@ -92,7 +92,7 @@ void sight()
 //nohaste: End the hasting
 void nohaste()
 {
-  player.t_flags &= ~ISHASTE;
+  player.flags &= ~ISHASTE;
   msg("you feel yourself slowing down");
 }
 
@@ -107,7 +107,7 @@ void stomach()
     //the hero is fainting
     if (no_command || rnd(5)!=0) return;
     no_command += rnd(8)+4;
-    player.t_flags &= ~ISRUN;
+    player.flags &= ~ISRUN;
     running = FALSE;
     count = 0;
     hungry_state = 3;

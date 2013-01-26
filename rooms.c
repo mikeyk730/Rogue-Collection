@@ -176,7 +176,7 @@ void enter_room(Coord *cp)
   int y, x;
   AGENT *tp;
 
-  rp = player.t_room = roomin(cp);
+  rp = player.room = roomin(cp);
   if (bailout || (rp->flags&ISGONE && (rp->flags&ISMAZE)==0))
   {
     debug("in a gone room");
@@ -194,8 +194,8 @@ void enter_room(Coord *cp)
         if (tp==NULL || !can_see_monst(tp)) 
           addch(get_tile(y, x));
         else {
-          tp->t_oldch = get_tile(y,x); 
-          addch(tp->t_disguise);
+          tp->oldch = get_tile(y,x); 
+          addch(tp->disguise);
         }
       }
     }
@@ -209,8 +209,8 @@ void leave_room(Coord *cp)
   byte floor;
   byte ch;
 
-  rp = player.t_room;
-  player.t_room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
+  rp = player.room;
+  player.room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
   floor = ((rp->flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
   if (rp->flags&ISMAZE) floor = PASSAGE;
   for (y = rp->pos.y+1; y<rp->size.y+rp->pos.y-1; y++) {
@@ -234,7 +234,7 @@ void leave_room(Coord *cp)
             break;
           }
           else 
-            monster_at(y, x)->t_oldch = '@';
+            monster_at(y, x)->oldch = '@';
           addch(floor);
       }
     }

@@ -132,7 +132,7 @@ void drop()
   byte ch;
   ITEM *nobj, *op;
 
-  ch = get_tile(player.t_pos.y, player.t_pos.x);
+  ch = get_tile(player.pos.y, player.pos.x);
   if (ch!=FLOOR && ch!=PASSAGE) {msg("there is something there already"); return;}
   if ((op = get_item("drop", 0))==NULL) return;
   if (!can_drop(op)) return;
@@ -146,12 +146,12 @@ void drop()
     op = nobj;
     if (op->group!=0) inpack++;
   }
-  else detach_item(&player.t_pack, op);
+  else detach_item(&player.pack, op);
   inpack--;
   //Link it into the level object list
   attach_item(&lvl_obj, op);
-  set_tile(player.t_pos.y, player.t_pos.x, op->type);
-  bcopy(op->pos, player.t_pos);
+  set_tile(player.pos.y, player.pos.x, op->type);
+  bcopy(op->pos, player.pos);
   if (op->type==AMULET) amulet = FALSE;
   msg("dropped %s", inv_name(op, TRUE));
 }
