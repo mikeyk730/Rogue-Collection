@@ -137,15 +137,15 @@ void door_open(struct Room *rp)
   byte ch;
   AGENT *item;
 
-  if (!(rp->r_flags&ISGONE) && !on(player, ISBLIND))
-    for (j = rp->r_pos.y; j<rp->r_pos.y+rp->r_max.y; j++)
-      for (k = rp->r_pos.x; k<rp->r_pos.x+rp->r_max.x; k++)
+  if (!(rp->flags&ISGONE) && !on(player, ISBLIND))
+    for (j = rp->pos.y; j<rp->pos.y+rp->size.y; j++)
+      for (k = rp->pos.x; k<rp->pos.x+rp->size.x; k++)
       {
         ch = display_character(j, k);
         if (isupper(ch))
         {
           item = wake_monster(j, k);
-          if (item->t_oldch==' ' && !(rp->r_flags&ISDARK) && !on(player, ISBLIND)) item->t_oldch = get_tile(j, k);
+          if (item->t_oldch==' ' && !(rp->flags&ISDARK) && !on(player, ISBLIND)) item->t_oldch = get_tile(j, k);
         }
       }
 }

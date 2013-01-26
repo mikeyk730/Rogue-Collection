@@ -141,7 +141,7 @@ AGENT *wake_monster(int y, int x)
   {
     rp = player.t_room;
     dst = DISTANCE(y, x, player.t_pos.y, player.t_pos.x);
-    if ((rp!=NULL && !(rp->r_flags&ISDARK)) || dst<LAMP_DIST)
+    if ((rp!=NULL && !(rp->flags&ISDARK)) || dst<LAMP_DIST)
     {
       tp->t_flags |= ISFOUND;
       if (!save(VS_MAGIC))
@@ -157,7 +157,7 @@ AGENT *wake_monster(int y, int x)
   if (on(*tp, ISGREED) && !on(*tp, ISRUN))
   {
     tp->t_flags = tp->t_flags|ISRUN;
-    if (player.t_room->r_goldval) tp->t_dest = &player.t_room->r_gold;
+    if (player.t_room->goldval) tp->t_dest = &player.t_room->gold;
     else tp->t_dest = &player.t_pos;
   }
   return tp;

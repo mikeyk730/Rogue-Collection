@@ -40,7 +40,7 @@ void add_pack(ITEM *obj, bool silent)
   {
     from_floor = TRUE;
     if ((obj = find_obj(player.t_pos.y, player.t_pos.x))==NULL) return;
-    floor = (player.t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
+    floor = (player.t_room->flags&ISGONE)?PASSAGE:FLOOR;
   }
   else from_floor = FALSE;
   //Link it into the pack.  Search the pack for a object of similar type
@@ -177,7 +177,7 @@ void pick_up(byte ch)
     money(obj->gold_value);
     detach_item(&lvl_obj, obj);
     discard_item(obj);
-    player.t_room->r_goldval = 0;
+    player.t_room->goldval = 0;
     break;
   default:
   case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
@@ -256,7 +256,7 @@ void money(int value)
 {
   byte floor;
 
-  floor = (player.t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
+  floor = (player.t_room->flags&ISGONE)?PASSAGE:FLOOR;
   purse += value;
   mvaddch(player.t_pos.y, player.t_pos.x, floor);
   set_tile(player.t_pos.y, player.t_pos.x, floor);

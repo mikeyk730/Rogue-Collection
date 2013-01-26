@@ -51,7 +51,7 @@ void do_chase(AGENT *th)
   Coord this; //Temporary destination for chaser
 
   rer = th->t_room; //Find room of chaser
-  if (on(*th, ISGREED) && rer->r_goldval==0) th->t_dest = &player.t_pos; //If gold has been taken, run after hero
+  if (on(*th, ISGREED) && rer->goldval==0) th->t_dest = &player.t_pos; //If gold has been taken, run after hero
   ree = player.t_room;
   if (th->t_dest!=&player.t_pos) ree = roomin(th->t_dest); //Find room of chasee
   if (ree==NULL) return;
@@ -61,13 +61,13 @@ void do_chase(AGENT *th)
 
 over:
 
-  if (rer!=ree && (rer->r_flags&ISMAZE)==0)
+  if (rer!=ree && (rer->flags&ISMAZE)==0)
   {
     //loop through doors
-    for (i = 0; i<rer->r_nexits; i++)
+    for (i = 0; i<rer->num_exits; i++)
     {
-      dist = DISTANCE(th->t_dest->y, th->t_dest->x, rer->r_exit[i].y, rer->r_exit[i].x);
-      if (dist<mindist) {this = rer->r_exit[i]; mindist = dist;}
+      dist = DISTANCE(th->t_dest->y, th->t_dest->x, rer->exits[i].y, rer->exits[i].x);
+      if (dist<mindist) {this = rer->exits[i]; mindist = dist;}
     }
     if (door)
     {
@@ -100,7 +100,7 @@ over:
 
       detach_item(&lvl_obj, obj);
       attach_item(&th->t_pack, obj);
-      oldchar = (th->t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
+      oldchar = (th->t_room->flags&ISGONE)?PASSAGE:FLOOR;
       set_tile(obj->pos.y, obj->pos.x, oldchar);
       if (cansee(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, oldchar);
       th->t_dest = find_dest(th);
@@ -135,7 +135,7 @@ over:
     mvaddch(ch_ret.y, ch_ret.x, th->t_type);
   }
   else th->t_oldch = '@';
-  if (th->t_oldch==FLOOR && oroom->r_flags&ISDARK) th->t_oldch = ' ';
+  if (th->t_oldch==FLOOR && oroom->flags&ISDARK) th->t_oldch = ' ';
   standend();
 }
 
@@ -145,7 +145,7 @@ int can_see_monst(AGENT *mp)
 {
   if (on(player, ISBLIND)) return FALSE;
   if (on(*mp, ISINVIS) && !on(player, CANSEE)) return FALSE;
-  if (DISTANCE(mp->t_pos.y, mp->t_pos.x, player.t_pos.y, player.t_pos.x)>=LAMP_DIST && ((mp->t_room!=player.t_room || (mp->t_room->r_flags&ISDARK) || (mp->t_room->r_flags&ISMAZE)))) return FALSE;
+  if (DISTANCE(mp->t_pos.y, mp->t_pos.x, player.t_pos.y, player.t_pos.x)>=LAMP_DIST && ((mp->t_room!=player.t_room || (mp->t_room->flags&ISDARK) || (mp->t_room->flags&ISMAZE)))) return FALSE;
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, give the player a hint as to what that weapon is good for.
   if (cur_weapon!=NULL && mp->t_type==cur_weapon->enemy && ((cur_weapon->flags&DIDFLASH)==0))
   {
@@ -240,7 +240,7 @@ struct Room *roomin(Coord *cp)
   byte fp;
 
   for (rp = rooms; rp<=&rooms[MAXROOMS-1]; rp++) 
-    if (cp->x<rp->r_pos.x+rp->r_max.x && rp->r_pos.x<=cp->x && cp->y<rp->r_pos.y+rp->r_max.y && rp->r_pos.y<=cp->y) 
+    if (cp->x<rp->pos.x+rp->size.x && rp->pos.x<=cp->x && cp->y<rp->pos.y+rp->size.y && rp->pos.y<=cp->y) 
       return rp;
 
   fp = get_flags(cp->y, cp->x);
@@ -271,7 +271,7 @@ int cansee(int y, int x)
   tp.y = y;
   tp.x = x;
   rer = roomin(&tp);
-  return (rer==player.t_room && !(rer->r_flags&ISDARK));
+  return (rer==player.t_room && !(rer->flags&ISDARK));
 }
 
 //find_dest: find the proper destination for the monster

@@ -43,18 +43,18 @@ void conn(int r1, int r2)
     del.x = 0; //direction of move
     del.y = 1;
     //If we are drawing from/to regular or maze rooms, we have to pick the spot we draw from/to
-    if ((rpf->r_flags&ISGONE)==0 || (rpf->r_flags&ISMAZE))
+    if ((rpf->flags&ISGONE)==0 || (rpf->flags&ISMAZE))
     {
-      spos.y = rpf->r_pos.y+rpf->r_max.y-1;
-      do {spos.x = rpf->r_pos.x+rnd(rpf->r_max.x-2)+1;} while (get_tile(spos.y,spos.x)==' ');
+      spos.y = rpf->pos.y+rpf->size.y-1;
+      do {spos.x = rpf->pos.x+rnd(rpf->size.x-2)+1;} while (get_tile(spos.y,spos.x)==' ');
     }
-    else {spos.x = rpf->r_pos.x; spos.y = rpf->r_pos.y;}
-    epos.y = rpt->r_pos.y;
-    if ((rpt->r_flags&ISGONE)==0 || (rpt->r_flags&ISMAZE))
+    else {spos.x = rpf->pos.x; spos.y = rpf->pos.y;}
+    epos.y = rpt->pos.y;
+    if ((rpt->flags&ISGONE)==0 || (rpt->flags&ISMAZE))
     {
-      do {epos.x = rpt->r_pos.x+rnd(rpt->r_max.x-2)+1;} while (get_tile(epos.y,epos.x)==' ');
+      do {epos.x = rpt->pos.x+rnd(rpt->size.x-2)+1;} while (get_tile(epos.y,epos.x)==' ');
     }
-    else epos.x = rpt->r_pos.x;
+    else epos.x = rpt->pos.x;
     distance = abs(spos.y-epos.y)-1; //distance to move
     turn_delta.y = 0; //direction to turn
     turn_delta.x = (spos.x<epos.x?1:-1);
@@ -67,18 +67,18 @@ void conn(int r1, int r2)
     rpt = &rooms[rmt];
     del.x = 1;
     del.y = 0;
-    if ((rpf->r_flags&ISGONE)==0 || (rpf->r_flags&ISMAZE))
+    if ((rpf->flags&ISGONE)==0 || (rpf->flags&ISMAZE))
     {
-      spos.x = rpf->r_pos.x+rpf->r_max.x-1;
-      do {spos.y = rpf->r_pos.y+rnd(rpf->r_max.y-2)+1;} while (get_tile(spos.y,spos.x)==' ');
+      spos.x = rpf->pos.x+rpf->size.x-1;
+      do {spos.y = rpf->pos.y+rnd(rpf->size.y-2)+1;} while (get_tile(spos.y,spos.x)==' ');
     }
-    else {spos.x = rpf->r_pos.x; spos.y = rpf->r_pos.y;}
-    epos.x = rpt->r_pos.x;
-    if ((rpt->r_flags&ISGONE)==0 || (rpt->r_flags&ISMAZE))
+    else {spos.x = rpf->pos.x; spos.y = rpf->pos.y;}
+    epos.x = rpt->pos.x;
+    if ((rpt->flags&ISGONE)==0 || (rpt->flags&ISMAZE))
     {
-      do {epos.y = rpt->r_pos.y+rnd(rpt->r_max.y-2)+1;} while (get_tile(epos.y, epos.x)==' ');
+      do {epos.y = rpt->pos.y+rnd(rpt->size.y-2)+1;} while (get_tile(epos.y, epos.x)==' ');
     }
-    else epos.y = rpt->r_pos.y;
+    else epos.y = rpt->pos.y;
     distance = abs(spos.x-epos.x)-1;
     turn_delta.y = (spos.y<epos.y?1:-1);
     turn_delta.x = 0;
@@ -88,9 +88,9 @@ void conn(int r1, int r2)
 
   turn_spot = rnd(distance-1)+1;
   //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
-  if (!(rpf->r_flags&ISGONE)) door(rpf, &spos);
+  if (!(rpf->flags&ISGONE)) door(rpf, &spos);
   else psplat(spos.y, spos.x);
-  if (!(rpt->r_flags&ISGONE)) door(rpt, &epos);
+  if (!(rpt->flags&ISGONE)) door(rpt, &epos);
   else psplat(epos.y, epos.x);
   //Get ready to move...
   curr.x = spos.x;
@@ -197,13 +197,13 @@ void door(struct Room *rm, Coord *cp)
 
   if (rnd(10)+1<level && rnd(5)==0)
   {
-    set_tile(cp->y, cp->x, (cp->y==rm->r_pos.y || cp->y==rm->r_pos.y+rm->r_max.y-1)?HWALL:VWALL);
+    set_tile(cp->y, cp->x, (cp->y==rm->pos.y || cp->y==rm->pos.y+rm->size.y-1)?HWALL:VWALL);
     unset_flag(cp->y, cp->x, F_REAL);
   }
   else set_tile(cp->y, cp->x, DOOR);
-  xit = rm->r_nexits++;
-  rm->r_exit[xit].y = cp->y;
-  rm->r_exit[xit].x = cp->x;
+  xit = rm->num_exits++;
+  rm->exits[xit].y = cp->y;
+  rm->exits[xit].x = cp->x;
 }
 
 //add_pass: Add the passages to the current window (wizard command)
@@ -222,11 +222,11 @@ void passnum()
 
   pnum = 0;
   newpnum = FALSE;
-  for (rp = passages; rp<&passages[MAXPASS]; rp++) rp->r_nexits = 0;
-  for (rp = rooms; rp<&rooms[MAXROOMS]; rp++) for (i = 0; i<rp->r_nexits; i++)
+  for (rp = passages; rp<&passages[MAXPASS]; rp++) rp->num_exits = 0;
+  for (rp = rooms; rp<&rooms[MAXROOMS]; rp++) for (i = 0; i<rp->num_exits; i++)
   {
     newpnum++;
-    numpass(rp->r_exit[i].y, rp->r_exit[i].x);
+    numpass(rp->exits[i].y, rp->exits[i].x);
   }
 }
 
@@ -245,8 +245,8 @@ void numpass(int y, int x)
   if ((ch = get_tile(y, x))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
   {
     rp = &passages[pnum];
-    rp->r_exit[rp->r_nexits].y = y;
-    rp->r_exit[rp->r_nexits++].x = x;
+    rp->exits[rp->num_exits].y = y;
+    rp->exits[rp->num_exits++].x = x;
   }
   else if (!(fp&F_PASS)) return;
   set_flag(y, x, pnum);

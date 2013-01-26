@@ -96,7 +96,7 @@ int rnd_room()
 {
   int rm;
 
-  do rm = rnd(MAXROOMS); while (!((rooms[rm].r_flags&ISGONE)==0 || (rooms[rm].r_flags&ISMAZE)));
+  do rm = rnd(MAXROOMS); while (!((rooms[rm].flags&ISGONE)==0 || (rooms[rm].flags&ISMAZE)));
   return rm;
 }
 
@@ -159,7 +159,7 @@ void treas_room()
   Coord mp;
 
   rp = &rooms[rnd_room()];
-  spots = (rp->r_max.y-2)*(rp->r_max.x-2)-MINTREAS;
+  spots = (rp->size.y-2)*(rp->size.x-2)-MINTREAS;
   if (spots>(MAXTREAS-MINTREAS)) spots = (MAXTREAS-MINTREAS);
   num_monst = nm = rnd(spots)+MINTREAS;
   while (nm-- && total_items<MAXITEMS)
@@ -174,7 +174,7 @@ void treas_room()
   }
   //fill up room with monsters from the next level down
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;
-  spots = (rp->r_max.y-2)*(rp->r_max.x-2);
+  spots = (rp->size.y-2)*(rp->size.x-2);
   if (nm>spots) nm = spots;
   level++;
   while (nm--)
