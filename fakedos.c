@@ -20,7 +20,7 @@ void fakedos()
   cursor(TRUE);
   do
   {
-    setmem(comline, sizeof(comline), 0);
+    memset(comline, 0, sizeof(comline));
     printw("\nC:\\>");
     getinfo(comline, 130);
     comhead = stpblk(comline);

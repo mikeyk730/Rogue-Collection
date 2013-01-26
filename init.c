@@ -168,8 +168,8 @@ void init_player()
   bcopy(pstats, max_stats);
   food_left = HUNGERTIME;
   //initialize things
-  setmem(_things, MAXITEMS*sizeof(THING), 0);
-  setmem(_t_alloc, MAXITEMS*sizeof(int), 0);
+  memset(_things, 0, MAXITEMS*sizeof(THING));
+  memset(_t_alloc, 0, MAXITEMS*sizeof(int));
   //Give the rogue his weaponry.  First a mace.
   obj = new_item();
   obj->o_type = WEAPON;

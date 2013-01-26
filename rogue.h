@@ -9,8 +9,6 @@
 #define VER  48
 
 #define bcopy(a,b)  memcpy(&(a),&(b),sizeof(b))
-#define setmem(a,b,c) memset(a,c,b)
-#define wsetmem(a,b,c) wmemset(a,c,b)
 typedef unsigned char byte;
 typedef unsigned char bool;
 

@@ -59,7 +59,7 @@ THING *talloc()
     if (_t_alloc[i]==0)
     {
       _t_alloc[i]++;
-      setmem(&_things[i], sizeof(THING), 0);
+      memset(&_things[i], 0, sizeof(THING));
       return &_things[i];
     }
   }

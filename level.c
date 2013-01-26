@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <wchar.h>
 
 #include "rogue.h"
 #include "level.h"
@@ -16,8 +15,8 @@ void alloc_level()
 
 void clear_level()
 {
-  wsetmem((wchar_t*)the_level, ((MAXLINES-3)*MAXCOLS)>>1, L'\x2020');
-  setmem(the_flags, (MAXLINES-3)*MAXCOLS, F_REAL);
+  memset(the_level, ' ', (MAXLINES-3)*MAXCOLS);
+  memset(the_flags, F_REAL, (MAXLINES-3)*MAXCOLS);
 }
 
 byte chat(int y, int x)
