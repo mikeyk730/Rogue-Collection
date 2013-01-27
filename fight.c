@@ -190,62 +190,65 @@ void vampire_wraith_attack(int type)
 }
 
 //attack: The monster attacks the player
-void attack(AGENT *mp)
+void attack(AGENT *monster)
 {
-  const char *mname;
+  const char *name;
 
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = FALSE;
   count = quiet = 0;
-  if (mp->type=='X' && !on(player, ISBLIND)) mp->disguise = 'X';
-  mname = get_monster_name(mp->type);
-  if (on(player, ISBLIND)) mname = it;
-  if (roll_em(mp, &player, NULL, FALSE))
+  if (monster->type=='X' && !on(player, ISBLIND)) 
+    monster->disguise = 'X';
+  name = on(player, ISBLIND) ? it : get_monster_name(monster->type);
+  if (roll_em(monster, &player, NULL, FALSE))
   {
-    hit(mname, NULL);
-    if (player.stats.hp<=0) death(mp->type); //Bye bye life ...
-    if (!on(*mp, ISCANC)) switch (mp->type)
-    {
-
-    case 'A': 
-      aquator_attack();
-      break;
-
-    case 'I': 
-      ice_monster_attack();
-      break;
-
-    case 'R': 
-      rattlesnake_attack();
-      break;
-
-    case 'W': case 'V':
-      vampire_wraith_attack(mp->type);
-      break;
-
-    case 'F': 
-      flytrap_attack(mp);
-      break;
-
-    case 'L': 
-      leprechaun_attack(mp);
-      break;
-
-    case 'N': 
-      nymph_attack(mp);
-      break;
+    hit(name, NULL);
+    if (player.stats.hp <= 0) 
+      death(monster->type); //Bye bye life ...
    
-    default: break;
+    if (!on(*monster, ISCANC)) {
+      switch (monster->type)
+      {
+      case 'A': 
+        aquator_attack();
+        break;
+
+      case 'I': 
+        ice_monster_attack();
+        break;
+
+      case 'R': 
+        rattlesnake_attack();
+        break;
+
+      case 'W': case 'V':
+        vampire_wraith_attack(monster->type);
+        break;
+
+      case 'F': 
+        flytrap_attack(monster);
+        break;
+
+      case 'L': 
+        leprechaun_attack(monster);
+        break;
+
+      case 'N': 
+        nymph_attack(monster);
+        break;
+
+      default: break;
+      }
     }
   }
-  else if (mp->type!='I')
+  else if (monster->type!='I')
   {
-    if (mp->type=='F')
+    if (monster->type=='F')
     {
       player.stats.hp -= flytrap_hit;
-      if (player.stats.hp<=0) death(mp->type); //Bye bye life ...
+      if (player.stats.hp<=0) death(monster->type); //Bye bye life ...
     }
-    miss(mname, NULL);
+    miss(name, NULL);
   }
   flush_type();
   count = 0;

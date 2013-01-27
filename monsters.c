@@ -18,7 +18,7 @@
 #include "thing.h"
 
 //List of monsters in rough order of vorpalness
-static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
+static char *lvl_mons =  "K BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
 #define ___  1
@@ -123,7 +123,7 @@ void new_monster(AGENT *tp, byte type, Coord *cp)
   tp->pack = NULL;
   if (is_wearing_ring(R_AGGR)) start_run(cp);
   if (type=='F') tp->stats.damage = f_damage;
-  if (type=='X') switch (rnd(level>25?9:8))
+  if (type=='X') switch (rnd(level >= AMULETLEVEL ? 9 : 8))
   {
   case 0: tp->disguise = GOLD; break;
   case 1: tp->disguise = POTION; break;
@@ -182,26 +182,26 @@ void wanderer()
 //wake_monster: What to do when the hero steps next to a monster
 AGENT *wake_monster(int y, int x)
 {
-  AGENT *tp;
+  AGENT *monster;
   struct Room *rp;
   byte ch;
   int dst;
 
-  if ((tp = monster_at(y, x))==NULL) return tp;
-  ch = tp->type;
+  if ((monster = monster_at(y, x))==NULL) return monster;
+  ch = monster->type;
   //Every time he sees mean monster, it might start chasing him
-  if (!on(*tp, ISRUN) && rnd(3)!=0 && on(*tp, ISMEAN) && !on(*tp, ISHELD) && !is_wearing_ring(R_STEALTH))
+  if (!on(*monster, ISRUN) && rnd(3)!=0 && on(*monster, ISMEAN) && !on(*monster, ISHELD) && !is_wearing_ring(R_STEALTH))
   {
-    tp->dest = &player.pos;
-    tp->flags |= ISRUN;
+    monster->dest = &player.pos;
+    monster->flags |= ISRUN;
   }
-  if (ch=='M' && !on(player, ISBLIND) && !on(*tp, ISFOUND) && !on(*tp, ISCANC) && on(*tp, ISRUN))
+  if (ch=='M' && !on(player, ISBLIND) && !on(*monster, ISFOUND) && !on(*monster, ISCANC) && on(*monster, ISRUN))
   {
     rp = player.room;
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
     if ((rp!=NULL && !(rp->flags&ISDARK)) || dst<LAMP_DIST)
     {
-      tp->flags |= ISFOUND;
+      monster->flags |= ISFOUND;
       if (!save(VS_MAGIC))
       {
         if (on(player, ISHUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
@@ -212,13 +212,13 @@ AGENT *wake_monster(int y, int x)
     }
   }
   //Let greedy ones guard gold
-  if (on(*tp, ISGREED) && !on(*tp, ISRUN))
+  if (on(*monster, ISGREED) && !on(*monster, ISRUN))
   {
-    tp->flags = tp->flags|ISRUN;
-    if (player.room->goldval) tp->dest = &player.room->gold;
-    else tp->dest = &player.pos;
+    monster->flags = monster->flags|ISRUN;
+    if (player.room->goldval) monster->dest = &player.room->gold;
+    else monster->dest = &player.pos;
   }
-  return tp;
+  return monster;
 }
 
 //give_pack: Give a pack to a monster if it deserves one
@@ -232,10 +232,14 @@ void give_pack(AGENT *tp)
 //pick_mons: Choose a sort of monster for the enemy of a vorpally enchanted weapon
 char pick_monster()
 {
-  char *cp = lvl_mons+strlen(lvl_mons);
+  char *cp;
+  
+  do {
+    cp = lvl_mons+strlen(lvl_mons);
+    while (--cp>=lvl_mons && rnd(10));
+    if (cp<lvl_mons) return 'M';
+  } while (*cp == ' ');
 
-  while (--cp>=lvl_mons && rnd(10)) ;
-  if (cp<lvl_mons) return 'M';
   return *cp;
 }
 
