@@ -328,11 +328,6 @@ extern struct Room *oldrp, passages[], rooms[];
 extern struct Stats max_stats;
 extern struct MagicItem p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 
-//Defines for things used in mach_dep.c
-//@(#)extern.h5.1 (Berkeley) 5/11/82
-
-//Don't change the constants, since they are used for sizes in many places in the program.
-
 #define MAXSTR    80 //maximum length of strings
 #define MAXLINES  25 //maximum number of screen lines used
 #define MAXCOLS   80 //maximum number of screen columns used

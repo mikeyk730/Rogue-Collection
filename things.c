@@ -40,33 +40,62 @@ char *inv_name(ITEM *obj, bool drop)
   switch (obj->type)
   {
   case SCROLL:
-    if (obj->count==1) {strcpy(pb, "A scroll "); pb = &prbuf[9];}
-    else {sprintf(pb, "%d scrolls ", obj->count); pb = &prbuf[strlen(prbuf)];}
-    if (s_know[which] || wizard) sprintf(pb, "of %s", s_magic[which].name);
-    else if (*s_guess[which]) sprintf(pb, "called %s", s_guess[which]);
-    else chopmsg(pb, "titled '%.17s'", "titled '%s'", &s_names[which]);
+    if (obj->count==1) {
+      strcpy(pb, "A scroll ");
+      pb = &prbuf[9];
+    }
+    else {
+      sprintf(pb, "%d scrolls ", obj->count); 
+      pb = &prbuf[strlen(prbuf)];
+    }
+    if (s_know[which] || wizard) 
+      sprintf(pb, "of %s", s_magic[which].name);
+    else if (*s_guess[which]) 
+      sprintf(pb, "called %s", s_guess[which]);
+    else
+      chopmsg(pb, "titled '%.17s'", "titled '%s'", &s_names[which]);
     break;
 
   case POTION:
-    if (obj->count==1) {strcpy(pb, "A potion "); pb = &prbuf[9];}
-    else {sprintf(pb, "%d potions ", obj->count); pb = &pb[strlen(prbuf)];}
-    if (p_know[which] || wizard) {chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].name, p_colors[which]);}
-    else if (*p_guess[which]) {chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], p_colors[which]);}
-    else if (obj->count==1) sprintf(prbuf, "A%s %s potion", vowelstr(p_colors[which]), p_colors[which]);
+    if (obj->count==1) {
+      strcpy(pb, "A potion ");
+      pb = &prbuf[9];
+    }
+    else {
+      sprintf(pb, "%d potions ", obj->count); 
+      pb = &pb[strlen(prbuf)];
+    }
+    if (p_know[which] || wizard) {
+      chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].name, p_colors[which]);
+    }
+    else if (*p_guess[which]) {
+      chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], p_colors[which]);
+    }
+    else if (obj->count==1) 
+      sprintf(prbuf, "A%s %s potion", vowelstr(p_colors[which]), p_colors[which]);
     else sprintf(prbuf, "%d %s potions", obj->count, p_colors[which]);
     break;
 
   case FOOD:
-    if (which==1) if (obj->count==1) sprintf(pb, "A%s %s", vowelstr(fruit), fruit); else sprintf(pb, "%d %ss", obj->count, fruit);
-    else if (obj->count==1) strcpy(pb, "Some food"); else sprintf(pb, "%d rations of food", obj->count);
+    if (which==1) 
+      if (obj->count==1)
+        sprintf(pb, "A%s %s", vowelstr(fruit), fruit); 
+      else sprintf(pb, "%d %ss", obj->count, fruit);
+    else if (obj->count==1) 
+      strcpy(pb, "Some food");
+    else sprintf(pb, "%d rations of food", obj->count);
     break;
 
   case WEAPON:
-    if (obj->count>1) sprintf(pb, "%d ", obj->count);
-    else sprintf(pb, "A%s ", vowelstr(w_names[which]));
+    if (obj->count>1) 
+      sprintf(pb, "%d ", obj->count);
+    else
+      sprintf(pb, "A%s ", vowelstr(w_names[which]));
     pb = &prbuf[strlen(prbuf)];
-    if (obj->flags&ISKNOW || wizard) sprintf(pb, "%s %s", num(obj->hit_plus, obj->damage_plus, WEAPON), w_names[which]);
-    else sprintf(pb, "%s", w_names[which]);
+    if (obj->flags&ISKNOW || wizard) 
+      sprintf(pb, "%s %s", num(obj->hit_plus, obj->damage_plus, WEAPON), w_names[which]);
+    else
+      sprintf(pb, "%s", w_names[which]);
     if (obj->count>1) strcat(pb, "s");
     if (obj->enemy && (obj->flags&ISREVEAL || wizard))
     {
@@ -77,8 +106,10 @@ char *inv_name(ITEM *obj, bool drop)
     break;
 
   case ARMOR:
-    if (obj->flags&ISKNOW || wizard) chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->armor_class, 0, ARMOR), a_names[which], -(obj->armor_class-11));
-    else sprintf(pb, "%s", a_names[which]);
+    if (obj->flags&ISKNOW || wizard)
+      chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->armor_class, 0, ARMOR), a_names[which], -(obj->armor_class-11));
+    else
+      sprintf(pb, "%s", a_names[which]);
     break;
 
   case AMULET:
@@ -88,15 +119,21 @@ char *inv_name(ITEM *obj, bool drop)
   case STICK:
     sprintf(pb, "A%s %s ", vowelstr(ws_type[which]), ws_type[which]);
     pb = &prbuf[strlen(prbuf)];
-    if (ws_know[which] || wizard) chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, charge_str(obj), ws_made[which]);
-    else if (*ws_guess[which]) chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], ws_made[which]);
-    else sprintf(pb = &prbuf[2], "%s %s", ws_made[which], ws_type[which]);
+    if (ws_know[which] || wizard)
+      chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, charge_str(obj), ws_made[which]);
+    else if (*ws_guess[which])
+      chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], ws_made[which]);
+    else
+      sprintf(pb = &prbuf[2], "%s %s", ws_made[which], ws_type[which]);
     break;
 
   case RING:
-    if (r_know[which] || wizard) chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].name, r_stones[which]);
-    else if (*r_guess[which]) chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], r_stones[which]);
-    else sprintf(pb, "A%s %s ring", vowelstr(r_stones[which]), r_stones[which]);
+    if (r_know[which] || wizard)
+      chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].name, r_stones[which]);
+    else if (*r_guess[which]) 
+      chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], r_stones[which]);
+    else 
+      sprintf(pb, "A%s %s ring", vowelstr(r_stones[which]), r_stones[which]);
     break;
 
 #ifdef DEBUG
@@ -112,12 +149,18 @@ char *inv_name(ITEM *obj, bool drop)
 
 #endif
   }
-  if (obj==cur_armor) strcat(pb, " (being worn)");
-  if (obj==cur_weapon) strcat(pb, " (weapon in hand)");
-  if (obj==cur_ring[LEFT]) strcat(pb, " (on left hand)");
-  else if (obj==cur_ring[RIGHT]) strcat(pb, " (on right hand)");
-  if (drop && isupper(prbuf[0])) prbuf[0] = tolower(prbuf[0]);
-  else if (!drop && islower(*prbuf)) *prbuf = toupper(*prbuf);
+  if (obj==cur_armor) 
+    strcat(pb, " (being worn)");
+  if (obj==cur_weapon) 
+    strcat(pb, " (weapon in hand)");
+  if (obj==cur_ring[LEFT]) 
+    strcat(pb, " (on left hand)");
+  else if (obj==cur_ring[RIGHT])
+    strcat(pb, " (on right hand)");
+  if (drop && isupper(prbuf[0])) 
+    prbuf[0] = tolower(prbuf[0]);
+  else if (!drop && islower(*prbuf)) 
+    *prbuf = toupper(*prbuf);
   return prbuf;
 }
 
@@ -313,10 +356,26 @@ void print_disc(byte type)
 
   switch (type)
   {
-  case SCROLL: maxnum = MAXSCROLLS; know = s_know; guess = s_guess; break;
-  case POTION: maxnum = MAXPOTIONS; know = p_know; guess = p_guess; break;
-  case RING: maxnum = MAXRINGS; know = r_know; guess = r_guess; break;
-  case STICK: maxnum = MAXSTICKS; know = ws_know; guess = ws_guess; break;
+  case SCROLL:
+    maxnum = MAXSCROLLS; 
+    know = s_know;
+    guess = s_guess;
+    break;
+  case POTION:
+    maxnum = MAXPOTIONS;
+    know = p_know;
+    guess = p_guess; 
+    break;
+  case RING:
+    maxnum = MAXRINGS;
+    know = r_know;
+    guess = r_guess;
+    break;
+  case STICK:
+    maxnum = MAXSTICKS;
+    know = ws_know;
+    guess = ws_guess;
+    break;
   }
   set_order(order, maxnum);
   obj.count = 1;
@@ -333,7 +392,6 @@ void print_disc(byte type)
 }
 
 //set_order: Set up order for list
-
 void set_order(short *order, int numthings)
 {
   int i, r, t;
