@@ -171,6 +171,7 @@ void fall(ITEM *obj, bool pr)
 //init_weapon: Set up the initial goodies for a weapon
 void init_weapon(ITEM *weap, byte type)
 {
+  static int group = 2;
   struct init_weps *iwp;
 
   iwp = &init_dam[type];
