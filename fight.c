@@ -152,7 +152,6 @@ void nymph_attack(AGENT* mp)
   if (steal!=NULL)
   {
     remove_mons(&mp->pos, mp, FALSE);
-    inpack--;
     if (steal->count>1 && steal->group==0)
     {
       int oc;

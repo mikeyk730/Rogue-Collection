@@ -29,6 +29,15 @@ ITEM *pack_obj(byte ch, byte *chp)
   return NULL;
 }
 
+int get_pack_size()
+{
+  ITEM* item;
+  int count = 0;
+  for (item = player.pack; item; item = next(item))
+    count += item->group ? 1 : item->count;
+  return count;
+}
+
 //add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
 void add_pack(ITEM *obj, bool silent)
 {
@@ -72,7 +81,7 @@ void add_pack(ITEM *obj, bool silent)
     }
   }
   //Check if there is room
-  if (inpack>=MAXPACK-1) {msg("you can't carry anything else"); return;}
+  if (get_pack_size() >= MAXPACK-1) {msg("you can't carry anything else"); return;}
   //Check for and deal with scare monster scrolls
   if (is_scare_monster_scroll(obj)) if (obj->flags&ISFOUND)
   {
@@ -83,7 +92,6 @@ void add_pack(ITEM *obj, bool silent)
     return;
   }
   else obj->flags |= ISFOUND;
-  inpack++;
   if (from_floor) {
     detach_item(&lvl_obj, obj);
     mvaddch(player.pos.y, player.pos.x, floor); 

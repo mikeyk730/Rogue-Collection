@@ -308,7 +308,6 @@ void read_scroll()
   call_it(s_know[scroll->which], &s_guess[scroll->which]);
 
   //Get rid of the thing
-  inpack--;
   if (scroll->count > 1)
     scroll->count--;
   else {

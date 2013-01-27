@@ -204,10 +204,8 @@ void drop()
     bcopy(*nobj, *op);
     nobj->count = 1;
     op = nobj;
-    if (op->group!=0) inpack++;
   }
   else detach_item(&player.pack, op);
-  inpack--;
   //Link it into the level object list
   attach_item(&lvl_obj, op);
   set_tile(player.pos.y, player.pos.x, op->type);

@@ -218,7 +218,6 @@ void quaff()
   call_it(p_know[obj->which], &p_guess[obj->which]);
 
   //Throw the item away
-  inpack--;
   if (obj->count>1) obj->count--;
   else {
     detach_item(&player.pack, obj); 

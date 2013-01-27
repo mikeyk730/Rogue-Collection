@@ -295,7 +295,6 @@ int purse = 0;         //How much gold the rogue has
 int mpos = 0;          //Where cursor is on top line
 int no_move = 0;       //Number of turns held in place
 int no_command = 0;    //Number of turns asleep
-int inpack = 0;        //Number of things in pack
 int total_items = 0;         //Total dynamic memory bytes
 int no_food = 0;       //Number of levels without food
 int count = 0;         //Number of times to repeat command

@@ -75,7 +75,6 @@ void missile(int ydelta, int xdelta)
 hack:
   if (obj->count<2) {
     detach_item(&player.pack, obj); 
-    inpack--;
   }
   else
   {
@@ -87,7 +86,6 @@ hack:
       goto hack;
     }
     obj->count--;
-    if (obj->group==0) inpack--;
     bcopy(*nitem, *obj);
     nitem->count = 1;
     obj = nitem;

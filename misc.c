@@ -176,7 +176,6 @@ void eat()
     msg("ugh, you would get ill if you ate that"); 
     return;
   }
-  inpack--;
   if (--obj->count<1) {
     detach_item(&player.pack, obj); 
     discard_item(obj);
