@@ -30,7 +30,6 @@ static bool newpage = FALSE;
 static char *lastfmt, *lastarg;
 
 //inv_name: Return the name of something as it would appear in an inventory.
-
 char *inv_name(ITEM *obj, bool drop)
 {
   int which = obj->which;
@@ -90,12 +89,12 @@ char *inv_name(ITEM *obj, bool drop)
     if (obj->count>1) 
       sprintf(pb, "%d ", obj->count);
     else
-      sprintf(pb, "A%s ", vowelstr(w_names[which]));
+      sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
     pb = &prbuf[strlen(prbuf)];
     if (obj->flags&ISKNOW || wizard) 
-      sprintf(pb, "%s %s", num(obj->hit_plus, obj->damage_plus, WEAPON), w_names[which]);
+      sprintf(pb, "%s %s", num(obj->hit_plus, obj->damage_plus, WEAPON), get_weapon_name(which));
     else
-      sprintf(pb, "%s", w_names[which]);
+      sprintf(pb, "%s", get_weapon_name(which));
     if (obj->count>1) strcat(pb, "s");
     if (obj->enemy && (obj->flags&ISREVEAL || wizard))
     {

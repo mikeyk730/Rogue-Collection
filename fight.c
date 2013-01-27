@@ -402,7 +402,8 @@ void raise_level()
 //thunk: A missile hit or missed a monster
 void thunk(ITEM *weap, const char *mname, char *does, char *did)
 {
-  if (weap->type==WEAPON) addmsg("the %s %s ", w_names[weap->which], does);
+  if (weap->type==WEAPON)
+    addmsg("the %s %s ", get_weapon_name(weap->which), does);
   else addmsg("you %s ", did);
   if (on(player, ISBLIND)) msg(it);
   else msg("the %s", mname);

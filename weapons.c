@@ -17,6 +17,7 @@
 #include "main.h"
 #include "level.h"
 #include "thing.h"
+#include "mach_dep.h"
 
 #define NONE 100
 
@@ -39,6 +40,28 @@ static struct init_weps
   "1d2", "2d5", CROSSBOW, ISMANY|ISMISL, //Crossbow bolt
   "2d3", "1d6", NONE,     ISMISL         //Spear
 };
+
+
+//Names of the various weapons
+const char *weapon_names[MAXWEAPONS+1] =
+{
+  "mace",
+  "long sword",
+  "short bow",
+  "arrow",
+  "dagger",
+  "two handed sword",
+  "dart",
+  "crossbow",
+  "crossbow bolt",
+  "spear",
+  "beam" //fake entry for dragon's breath
+};
+
+const char* get_weapon_name(int which)
+{
+  return weapon_names[which];
+}
 
 //missile: Fire a missile in a given direction
 void missile(int ydelta, int xdelta)
@@ -108,11 +131,11 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
   }
 }
 
-char *short_name(ITEM *obj)
+const char *short_name(ITEM *obj)
 {
   switch (obj->type)
   {
-  case WEAPON: return w_names[obj->which];
+  case WEAPON: return get_weapon_name(obj->which);
   case ARMOR: return a_names[obj->which];
   case FOOD: return "food";
   case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(inv_name(obj, TRUE), ' ')+1;
@@ -226,8 +249,4 @@ int fallpos(ITEM *obj, Coord *newpos)
       }
     }
     return (cnt!=0);
-}
-
-void tick_pause()
-{
 }

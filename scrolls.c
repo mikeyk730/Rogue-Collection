@@ -14,6 +14,7 @@
 #include "slime.h"
 #include "level.h"
 #include "thing.h"
+#include "weapons.h"
 
 char *laugh = "you hear maniacal laughter%s.";
 char *in_dist = " in the distance";
@@ -156,7 +157,7 @@ void read_scroll()
       cur_weapon->flags &= ~ISCURSED;
       if (rnd(2)==0) cur_weapon->hit_plus++;
       else cur_weapon->damage_plus++;
-      ifterse("your %s glows blue", "your %s glows blue for a moment", w_names[cur_weapon->which]);
+      ifterse("your %s glows blue", "your %s glows blue for a moment", get_weapon_name(cur_weapon->which));
     }
     break;
 
@@ -200,7 +201,7 @@ void read_scroll()
       //You aren't allowed to doubly vorpalize a weapon.
       if (cur_weapon->enemy!=0)
       {
-        msg("your %s vanishes in a puff of smoke", w_names[cur_weapon->which]);
+        msg("your %s vanishes in a puff of smoke", get_weapon_name(cur_weapon->which));
         detach_item(&player.pack, cur_weapon);
         discard_item(cur_weapon);
         cur_weapon = NULL;
@@ -211,7 +212,7 @@ void read_scroll()
         cur_weapon->hit_plus++;
         cur_weapon->damage_plus++;
         cur_weapon->charges = 1;
-        msg(flash, w_names[cur_weapon->which], terse || expert?"":intense);
+        msg(flash, get_weapon_name(cur_weapon->which), terse || expert?"":intense);
       }
     }
     break;

@@ -1,10 +1,12 @@
+const char* get_weapon_name(int which);
+
 //missile: Fire a missile in a given direction
 void missile(int ydelta, int xdelta);
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(ITEM *obj, int ydelta, int xdelta);
 
-char *short_name(ITEM *obj);
+const char *short_name(ITEM *obj);
 
 //fall: Drop an item someplace around here.
 void fall(ITEM *obj, bool pr);
@@ -23,5 +25,3 @@ void wield();
 
 //fallpos: Pick a random position around the given (y, x) coordinates
 int fallpos(ITEM *obj, Coord *newpos);
-
-void tick_pause();

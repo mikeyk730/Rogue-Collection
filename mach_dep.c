@@ -9,8 +9,6 @@
 #include "mach_dep.h"
 #include "io.h"
 
-static int clk_vec[2];
-
 #define C_LEFT    0x4b
 #define C_RIGHT   0x4d
 #define C_UP      0x48
@@ -33,7 +31,6 @@ static int clk_vec[2];
 #define C_F9      0x43
 #define C_F10     0x44
 #define ALT_F9    0x70
-
 
 //Table for IBM extended key translation
 static struct xlate
@@ -205,4 +202,9 @@ int is_shift_pressed()
 void beep()
 {
   Beep(750, 300);
+}
+
+void tick_pause()
+{
+  Sleep(50);
 }

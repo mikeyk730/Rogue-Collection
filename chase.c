@@ -15,6 +15,7 @@
 #include "monsters.h"
 #include "list.h"
 #include "level.h"
+#include "weapons.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -153,7 +154,7 @@ int can_see_monst(AGENT *mp)
   if (cur_weapon!=NULL && mp->type==cur_weapon->enemy && ((cur_weapon->flags&DIDFLASH)==0))
   {
     cur_weapon->flags |= DIDFLASH;
-    msg(flash, w_names[cur_weapon->which], terse || expert?"":intense);
+    msg(flash, get_weapon_name(cur_weapon->which), terse || expert?"":intense);
   }
   return TRUE;
 }

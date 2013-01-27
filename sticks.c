@@ -20,6 +20,7 @@
 #include "thing.h"
 #include "level.h"
 #include "list.h"
+#include "mach_dep.h"
 
 //fix_stick: Set up a new stick
 void fix_stick(ITEM *cur)
@@ -269,15 +270,16 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
   Coord pos;
   struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
   ITEM bolt;
-  bool is_frost;
+  bool is_frost, is_bolt;
 
-  is_frost = (strcmp(name, "frost")==0);
+  is_frost = (strcmp(name, "frost")==0 || strcmp(name, "ice")==0);
+  is_bolt = strcmp(name, "bolt")==0;
   bolt.type = WEAPON;
   bolt.which = FLAME;
   bolt.damage = bolt.throw_damage = "6d6";
   bolt.hit_plus = 30;
   bolt.damage_plus = 0;
-  w_names[FLAME] = name;
+  //TODO:weapon_names[FLAME] = name;
   switch (dir->y+dir->x)
   {
   case 0: dirch = '/'; break;
@@ -346,7 +348,12 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
         }
         else msg("the %s whizzes by you", name);
       }
-      if (is_frost) blue(); else red();
+      if (is_frost) 
+        blue(); 
+      else if (is_bolt) 
+        yellow(); 
+      else 
+        red();
       tick_pause();
       mvaddch(pos.y, pos.x, dirch);
       standend();

@@ -354,7 +354,7 @@ extern bool p_know[], r_know[], s_know[], ws_know[];
 
 extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[],
   huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, 
-  *typeahead, take, *w_names[], whoami[], *ws_made[], *ws_type[];
+  *typeahead, take, whoami[], *ws_made[], *ws_type[];
 
 extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, group, hungry_state, inpack,
   lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total_items;

@@ -18,3 +18,5 @@ int is_shift_pressed();
 
 void beep();
 int no_char();
+void tick_pause();
+

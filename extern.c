@@ -3,22 +3,6 @@
 
 #include "rogue.h"
 
-//Names of the various weapons
-char *w_names[MAXWEAPONS+1] =
-{
-  "mace",
-  "long sword",
-  "short bow",
-  "arrow",
-  "dagger",
-  "two handed sword",
-  "dart",
-  "crossbow",
-  "crossbow bolt",
-  "spear",
-  NULL //fake entry for dragon's breath
-};
-
 //Names of armor types
 char *a_names[MAXARMORS] =
 {
