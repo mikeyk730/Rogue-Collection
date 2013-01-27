@@ -214,7 +214,6 @@ void drop()
 }
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
-
 int can_drop(ITEM *op)
 {
   if (op==NULL) return TRUE;

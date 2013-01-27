@@ -125,7 +125,7 @@ void read_identify()
   //Identify, let the rogue figure something out
   s_know[S_IDENT] = TRUE;
   msg("this scroll is an identify scroll");
-  if (!strcmp(s_menu, "on") || !strcmp(s_menu, "sel")) 
+  if (strcmp(s_menu, "on") == 0) 
     more(" More ");
   whatis(TRUE);
 }

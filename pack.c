@@ -211,7 +211,7 @@ ITEM *get_item(char *purpose, int type)
   byte gi_state; //get item sub state
   int once_only = FALSE;
 
-  if (((!strncmp(s_menu, "sel", 3) && strcmp(purpose, "eat") && strcmp(purpose, "drop"))) || !strcmp(s_menu, "on")) once_only = TRUE;
+  if (strcmp(s_menu, "on") == 0) once_only = TRUE;
   gi_state = again;
   if (player.pack==NULL) msg("you aren't carrying anything");
   else
