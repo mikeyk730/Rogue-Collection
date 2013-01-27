@@ -25,13 +25,13 @@ static int min_width, max_width;
 static char ibuf[6];
 
 //msg: Display a message at the top of the screen.
-void ifterse(char *tfmt, char *fmt, int a1, int a2, int a3, int a4, int a5)
+void ifterse(const char *tfmt, const char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   if (expert) msg(tfmt, a1, a2, a3, a4, a5);
   else msg(fmt, a1, a2, a3, a4, a5);
 }
 
-void msg(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void msg(const char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   //if the string is "", just clear the line
   if (*fmt=='\0') {move(0, 0); clrtoeol(); mpos = 0; return;}
@@ -41,7 +41,7 @@ void msg(char *fmt, int a1, int a2, int a3, int a4, int a5)
 }
 
 //addmsg: Add things to the current message
-void addmsg(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void addmsg(const char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   doadd(fmt, a1, a2, a3, a4, a5);
 }
@@ -59,7 +59,7 @@ void endmsg()
 }
 
 //More: tag the end of a line and wait for a space
-void more(char *msg)
+void more(const char *msg)
 {
   int x, y;
   int i, msz;
@@ -92,16 +92,16 @@ void more(char *msg)
 }
 
 //doadd: Perform an add onto the message buffer
-void doadd(char *fmt, int a1, int a2, int a3, int a4, int a5)
+void doadd(const char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   sprintf(&msgbuf[newpos], fmt, a1, a2, a3, a4, a5);
   newpos = strlen(msgbuf);
 }
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
-void putmsg(int msgline, char *msg)
+void putmsg(int msgline, const char *msg)
 {
-  char *curmsg, *lastmsg=0, *tmpmsg;
+  const char *curmsg, *lastmsg=0, *tmpmsg;
   int curlen;
 
   curmsg = msg;
@@ -126,7 +126,7 @@ void putmsg(int msgline, char *msg)
 }
 
 //scrl: scroll a message across the line
-void scrl(int msgline, char *str1, char *str2)
+void scrl(int msgline, const char *str1, const char *str2)
 {
   char *fmt;
 
@@ -161,7 +161,7 @@ void status()
 {
   int oy, ox;
   static int s_hungry;
-  static int level, s_pur = -1, s_hp, s_ac = 0;
+  static int s_level, s_pur = -1, s_hp, s_ac = 0;
   static unsigned int strength;
   static int s_elvl = 0;
   static char *state_name[] = {"      ", "Hungry", "Weak", "Faint","?"};
@@ -170,9 +170,9 @@ void status()
   getrc(&oy, &ox);
   yellow();
   //Level:
-  if (level!=level)
+  if (s_level!=level)
   {
-    level = level;
+    s_level = level;
     move(PT(22, 23), 0);
     printw("Level:%-4d", level);
   }

@@ -1,25 +1,25 @@
 //msg: Display a message at the top of the screen.
-void ifterse(char *tfmt, char *fmt, ...);
+void ifterse(const char *tfmt, const char *fmt, ...);
 
-void msg(char *fmt, ...);
+void msg(const char *fmt, ...);
 
 //addmsg: Add things to the current message
-void addmsg(char *fmt, ...);
+void addmsg(const char *fmt, ...);
 
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
 void endmsg();
 
 //More: tag the end of a line and wait for a space
-void more(char *msg);
+void more(const char *msg);
 
 //doadd: Perform an add onto the message buffer
-void doadd(char *fmt, int a1, int a2, int a3, int a4, int a5);
+void doadd(const char *fmt, int a1, int a2, int a3, int a4, int a5);
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
-void putmsg(int msgline, char *msg);
+void putmsg(int msgline, const char *msg);
 
 //scrl: scroll a message across the line
-void scrl(int msgline, char *str1, char *str2);
+void scrl(int msgline, const char *str1, const char *str2);
 
 //unctrl: Print a readable version of a certain character
 char *unctrl(unsigned char ch);

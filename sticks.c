@@ -94,7 +94,7 @@ void do_zap()
         {
           if (monster==obj->enemy)
           {
-            msg("the %s vanishes in a puff of smoke", monsters[monster-'A'].m_name);
+            msg("the %s vanishes in a puff of smoke", get_monster_name(monster));
             killed(tp, FALSE);
           }
           else msg("you hear a maniacal chuckle in the distance.");
@@ -326,7 +326,7 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
         else if (ch!='X' || tp->disguise=='X')
         {
           if (start==&player.pos) start_run(&pos);
-          msg("the %s whizzes past the %s", name, monsters[ch-'A'].m_name);
+          msg("the %s whizzes past the %s", name, get_monster_name(ch));
         }
       }
       else if (hit_hero && ce(pos, player.pos))

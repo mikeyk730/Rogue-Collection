@@ -1,3 +1,6 @@
+const char* get_monster_name(char monster);
+int get_monster_carry_prob(char monster);
+
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
 char randmonster(bool wander);
 

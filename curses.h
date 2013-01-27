@@ -30,7 +30,7 @@ void getrc(int *rp, int *cp);
 
 void clrtoeol();
 
-void mvaddstr(int r, int c, char *s);
+void mvaddstr(int r, int c, const char *s);
 
 void mvaddch(int r, int c, char chr);
 
@@ -38,7 +38,7 @@ int mvinch(int r, int c);
 
 int addch(byte chr);
 
-void addstr(char *s);
+void addstr(const char *s);
 
 void set_attr(int bute);
 

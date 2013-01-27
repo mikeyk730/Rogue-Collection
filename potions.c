@@ -15,6 +15,7 @@
 #include "fight.h"
 #include "rings.h"
 #include "thing.h"
+#include "monsters.h"
 
 //quaff: Quaff a potion from the pack
 void quaff()
@@ -231,7 +232,7 @@ void th_effect(ITEM *obj, AGENT *tp)
   {
   case P_CONFUSE: case P_BLIND:
     tp->flags |= ISHUH;
-    msg("the %s appears confused", monsters[tp->type-'A'].m_name);
+    msg("the %s appears confused", get_monster_name(tp->type));
     break;
 
   case P_PARALYZE:

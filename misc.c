@@ -253,7 +253,7 @@ void aggravate()
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
 
-char *vowelstr(char *str)
+char *vowelstr(const char *str)
 {
   switch (*str)
   {

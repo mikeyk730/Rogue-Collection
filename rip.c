@@ -15,6 +15,7 @@
 #include "mach_dep.h"
 #include "things.h"
 #include "misc.h"
+#include "monsters.h"
 
 #define TOPSCORES 10
 
@@ -357,7 +358,7 @@ void total_winner()
 //killname: Convert a code to a monster name
 char *killname(char monst, bool doart)
 {
-  char *sp;
+  const char *sp;
   bool article;
 
   sp = prbuf;
@@ -370,8 +371,12 @@ char *killname(char monst, bool doart)
   case 's': sp = "starvation"; article = FALSE; break;
   case 'f': sp = "fall"; break;
   default:
-    if (monst>='A' && monst<='Z') sp = monsters[monst-'A'].m_name;
-    else {sp = "God"; article = FALSE;}
+    if (monst>='A' && monst<='Z') 
+      sp = get_monster_name(monst);
+    else {
+      sp = "God"; 
+      article = FALSE;
+    }
     break;
   }
   if (doart && article) sprintf(prbuf, "a%s ", vowelstr(sp));

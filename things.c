@@ -21,6 +21,7 @@
 #include "mach_dep.h"
 #include "level.h"
 #include "thing.h"
+#include "monsters.h"
 
 #define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
 
@@ -70,7 +71,7 @@ char *inv_name(ITEM *obj, bool drop)
     if (obj->enemy && (obj->flags&ISREVEAL || wizard))
     {
       strcat(pb, " of ");
-      strcat(pb, monsters[obj->enemy-'A'].m_name);
+      strcat(pb, get_monster_name(obj->enemy));
       strcat(pb, " slaying");
     }
     break;

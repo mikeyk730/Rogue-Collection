@@ -18,7 +18,7 @@ char *stpblk(char *str)
   return (str);
 }
 
-char* stpbrk(char *str, char *brk)
+const char* stpbrk(const char *str, const char *brk)
 {
   while (*str && !strchr(brk,*str)) str++;
   return (*str?str:0);

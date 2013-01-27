@@ -28,7 +28,7 @@
 int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
 {
   AGENT *tp;
-  char *mname;
+  const char *mname;
 
   //Find the monster we want to fight
   if ((tp = monster_at(mp->y, mp->x))==0) return FALSE;
@@ -42,7 +42,7 @@ int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
     if (thrown) return FALSE;
     msg("wait! That's a Xeroc!");
   }
-  mname = monsters[mn-'A'].m_name;
+  mname = get_monster_name(mn);
   if (on(player, ISBLIND)) mname = it;
   if (roll_em(&player, tp, weap, thrown) || (weap && weap->type==POTION))
   {
@@ -80,13 +80,13 @@ int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
 //attack: The monster attacks the player
 void attack(AGENT *mp)
 {
-  char *mname;
+  const char *mname;
 
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = FALSE;
   count = quiet = 0;
   if (mp->type=='X' && !on(player, ISBLIND)) mp->disguise = 'X';
-  mname = monsters[mp->type-'A'].m_name;
+  mname = get_monster_name(mp->type);
   if (on(player, ISBLIND)) mname = it;
   if (roll_em(mp, &player, NULL, FALSE))
   {
@@ -299,7 +299,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 }
 
 //prname: The print name of a combatant
-char *prname(char *who, bool upper)
+char *prname(const char *who, bool upper)
 {
   *tbuf = '\0';
   if (who==0) strcpy(tbuf, you);
@@ -310,7 +310,7 @@ char *prname(char *who, bool upper)
 }
 
 //hit: Print a message to indicate a successful hit
-void hit(char *er, char *ee)
+void hit(const char *er, const char *ee)
 {
   char *s;
 
@@ -326,7 +326,7 @@ void hit(char *er, char *ee)
 }
 
 //miss: Print a message to indicate a poor swing
-void miss(char *er, char *ee)
+void miss(const char *er, const char *ee)
 {
   char *s;
 
@@ -397,7 +397,7 @@ void raise_level()
 }
 
 //thunk: A missile hit or missed a monster
-void thunk(ITEM *weap, char *mname, char *does, char *did)
+void thunk(ITEM *weap, const char *mname, char *does, char *did)
 {
   if (weap->type==WEAPON) addmsg("the %s %s ", w_names[weap->which], does);
   else addmsg("you %s ", did);
@@ -472,7 +472,7 @@ void killed(AGENT *tp, bool pr)
   {
     addmsg("you have defeated ");
     if (on(player, ISBLIND)) msg(it);
-    else msg("the %s", monsters[tp->type-'A'].m_name);
+    else msg("the %s", get_monster_name(tp->type));
   }
   //Do adjustments if he went up a level
   check_level();

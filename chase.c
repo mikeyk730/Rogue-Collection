@@ -284,7 +284,8 @@ Coord *find_dest(AGENT *tp)
   int prob;
   struct Room *rp;
 
-  if ((prob = monsters[tp->type-'A'].m_carry)<=0 || tp->room==player.room || can_see_monst(tp)) return &player.pos;
+  if ((prob = get_monster_carry_prob(tp->type)) <= 0 || tp->room == player.room || can_see_monst(tp)) 
+    return &player.pos;
   rp = tp->room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))
   {

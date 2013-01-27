@@ -321,15 +321,6 @@ struct Agent
 
 typedef struct Agent AGENT;
 
-//Array containing information on all the various types of monsters
-struct Monster
-{
-  char *m_name;         //What to call the monster
-  int m_carry;          //Probability of carrying something
-  short m_flags;        //Things about the monster
-  struct Stats m_stats; //Initial stats
-};
-
 //External variables
 
 extern ITEM *cur_armor, *cur_ring[2], *cur_weapon, *lvl_obj;
@@ -337,7 +328,6 @@ extern AGENT *mlist, player;
 extern Coord delta, oldpos;
 extern struct Room *oldrp, passages[], rooms[];
 extern struct Stats max_stats;
-extern struct Monster monsters[];
 extern struct MagicItem p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 
 //Defines for things used in mach_dep.c

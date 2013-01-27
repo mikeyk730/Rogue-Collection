@@ -120,7 +120,7 @@ void clrtoeol()
   blot_out(r, c, r, COLS-1);
 }
 
-void mvaddstr(int r, int c, char *s)
+void mvaddstr(int r, int c, const char *s)
 {
   move(r, c);
   addstr(s);
@@ -202,7 +202,7 @@ int addch(byte chr)
   return (c_row);
 }
 
-void addstr(char *s)
+void addstr(const char *s)
 {
   while (*s) addch(*s++);
 }

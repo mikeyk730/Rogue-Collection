@@ -23,7 +23,7 @@ int add_haste(bool potion);
 void aggravate();
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
-char *vowelstr(char *str);
+char *vowelstr(const char *str);
 
 //is_current: See if the object is one of the currently used items
 int is_current(ITEM *obj);

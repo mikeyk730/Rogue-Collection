@@ -362,46 +362,6 @@ AGENT player; //The rogue
 ITEM *lvl_obj = NULL; //List of objects on this level
 AGENT *mlist = NULL; //List of monsters on the level
 
-#define ___  1
-#define XX  10
-
-struct Monster monsters[26] =
-{
-  // Name           CARRY                  FLAG   str,  exp,lvl,amr, hpt, dmg
-  { "aquator",          0,               ISMEAN, { XX,   20,  5,  2, ___, "0d0/0d0"         } },
-  { "bat",              0,                ISFLY, { XX,    1,  1,  3, ___, "1d2"             } },
-  { "centaur",         15,                    0, { XX,   25,  4,  4, ___, "1d6/1d6"         } },
-  { "dragon",         100,               ISMEAN, { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    } },
-  { "emu",              0,               ISMEAN, { XX,    2,  1,  7, ___, "1d2"             } },
-  //NOTE: the damage is %%% so that xstr won't merge this string with others, since it is written on in the program
-  { "venus flytrap",    0,               ISMEAN, { XX,   80,  8,  3, ___, "%%%d0"           } },
-  { "griffin",         20, ISMEAN|ISFLY|ISREGEN, { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     } },
-  { "hobgoblin",        0,               ISMEAN, { XX,    3,  1,  5, ___, "1d8"             } },
-  { "ice monster",      0,               ISMEAN, { XX,   15,  1,  9, ___, "1d2"             } },
-  { "jabberwock",      70,                    0, { XX, 4000, 15,  6, ___, "2d12/2d4"        } },
-  { "kestral",          0,         ISMEAN|ISFLY, { XX,    1,  1,  7, ___, "1d4"             } },
-  { "leprechaun", ISGREED,                    0, { XX,   10,  3,  8, ___, "1d2"             } },
-  { "medusa",          40,               ISMEAN, { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     } },
-  { "nymph",          100,                    0, { XX,   37,  3,  9, ___, "0d0"             } },
-  { "orc",             15,              ISGREED, { XX,    5,  1,  6, ___, "1d8"             } },
-  { "phantom",          0,              ISINVIS, { XX,  120,  8,  3, ___, "4d4"             } },
-  { "quagga",          30,               ISMEAN, { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     } },
-  { "rattlesnake",      0,               ISMEAN, { XX,    9,  2,  3, ___, "1d6"             } },
-  { "slime",            0,               ISMEAN, { XX,    1,  2,  8, ___, "1d3"             } },
-  { "troll",           50,       ISREGEN|ISMEAN, { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     } },
-  { "ur-vile",          0,               ISMEAN, { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" } },
-  { "vampire",         20,       ISREGEN|ISMEAN, { XX,  350,  8,  1, ___, "1d10"            } },
-  { "wraith",           0,                    0, { XX,   55,  5,  4, ___, "1d6"             } },
-  { "xeroc",           30,                    0, { XX,  100,  7,  7, ___, "3d4"             } },
-  { "yeti",            30,                    0, { XX,   50,  4,  6, ___, "1d6/1d6"         } },
-  { "zombie",           0,               ISMEAN, { XX,    6,  2,  8, ___, "1d8"             } }
-};
-
-char f_damage[10];
-
-#undef ___
-#undef XX
-
 struct MagicItem things[NUMTHINGS] =
 {
   {0, 27 }, //potion

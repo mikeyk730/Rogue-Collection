@@ -14,13 +14,13 @@ void check_level();
 bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl);
 
 //prname: The print name of a combatant
-char *prname(char *who, bool upper);
+char *prname(const char *who, bool upper);
 
 //hit: Print a message to indicate a successful hit
-void hit(char *er, char *ee);
+void hit(const char *er, const char *ee);
 
 //miss: Print a message to indicate a poor swing
-void miss(char *er, char *ee);
+void miss(const char *er, const char *ee);
 
 //save_throw: See if a creature save against something
 int save_throw(int which, AGENT *tp);
@@ -38,7 +38,7 @@ int add_dam(unsigned int str);
 void raise_level();
 
 //thunk: A missile hit or missed a monster
-void thunk(ITEM *weap, char *mname, char *does, char *did);
+void thunk(ITEM *weap, const char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen
 void remove_mons(Coord *mp, AGENT *tp, bool waskill);
