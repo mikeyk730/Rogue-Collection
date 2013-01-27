@@ -19,6 +19,7 @@
 #include "mach_dep.h"
 #include "level.h"
 #include "rings.h"
+#include "scrolls.h"
 
 #include <ctype.h>
 
@@ -253,7 +254,7 @@ void rndmove(AGENT *who, Coord *newmv)
     if (ch==SCROLL)
     {
       for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (y==obj->pos.y && x==obj->pos.x) break;
-      if (obj!=NULL && obj->which==S_SCARE) goto bad;
+      if (is_scare_monster_scroll(obj)) goto bad;
     }
   }
   return;

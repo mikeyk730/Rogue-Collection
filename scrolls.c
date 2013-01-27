@@ -16,6 +16,23 @@
 #include "thing.h"
 #include "weapons.h"
 
+//Scroll types
+#define S_CONFUSE   0
+#define S_MAP       1
+#define S_HOLD      2
+#define S_SLEEP     3
+#define S_ARMOR     4
+#define S_IDENT     5
+#define S_SCARE     6
+#define S_GFIND     7
+#define S_TELEP     8
+#define S_ENCH      9
+#define S_CREATE    10
+#define S_REMOVE    11
+#define S_AGGR      12
+#define S_NOP       13
+#define S_VORPAL    14
+
 char *laugh = "you hear maniacal laughter%s.";
 char *in_dist = " in the distance";
 
@@ -298,4 +315,16 @@ void read_scroll()
     detach_item(&player.pack, scroll); 
     discard_item(scroll);
   }
+}
+
+int is_scare_monster_scroll(ITEM* item)
+{
+  return item && item->type == SCROLL && 
+    item->which == S_SCARE;
+}
+
+int is_bad_scroll(ITEM* item)
+{
+  return item && item->type == SCROLL &&
+    (item->which == S_SLEEP || item->which == S_CREATE || item->which == S_AGGR);
 }

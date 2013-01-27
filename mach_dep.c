@@ -1,6 +1,7 @@
 //Various installation dependent routines
 //mach_dep.c  1.4 (A.I. Design) 12/1/84
 
+#include <Windows.h>
 #include <stdio.h>
 #include <conio.h>
 
@@ -88,10 +89,17 @@ void flush_type()
   typeahead = "";
 }
 
+BOOL CtrlHandler(DWORD fdwCtrlType) 
+{
+  return TRUE;
+}
+
 void credits()
 {
   int i;
   char tname[25];
+
+  SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
 
   cursor(FALSE);
   clear();
@@ -175,8 +183,6 @@ int no_char()
 { 
   return !_kbhit(); 
 }
-
-#include <Windows.h>
 
 int is_caps_lock_on()
 {

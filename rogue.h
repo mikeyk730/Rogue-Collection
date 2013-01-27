@@ -142,38 +142,8 @@ typedef unsigned char bool;
 #define NTRAPS   6
 
 //Potion types
-#define P_CONFUSE   0
-#define P_PARALYZE  1
-#define P_POISON    2
-#define P_STRENGTH  3
-#define P_SEEINVIS  4
-#define P_HEALING   5
-#define P_MFIND     6
-#define P_TFIND     7
-#define P_RAISE     8
-#define P_XHEAL     9
-#define P_HASTE     10
-#define P_RESTORE   11
-#define P_BLIND     12
-#define P_NOP       13
 #define MAXPOTIONS  14
 
-//Scroll types
-#define S_CONFUSE   0
-#define S_MAP       1
-#define S_HOLD      2
-#define S_SLEEP     3
-#define S_ARMOR     4
-#define S_IDENT     5
-#define S_SCARE     6
-#define S_GFIND     7
-#define S_TELEP     8
-#define S_ENCH      9
-#define S_CREATE    10
-#define S_REMOVE    11
-#define S_AGGR      12
-#define S_NOP       13
-#define S_VORPAL    14
 #define MAXSCROLLS  15
 
 //Weapon types

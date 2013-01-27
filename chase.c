@@ -16,6 +16,7 @@
 #include "list.h"
 #include "level.h"
 #include "weapons.h"
+#include "scrolls.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -225,7 +226,7 @@ void chase(AGENT *tp, Coord *ee)
             {
               if (y==obj->pos.y && x==obj->pos.x) break;
             }
-            if (obj!=NULL && obj->which==S_SCARE) continue;
+            if (is_scare_monster_scroll(obj)) continue;
           }
           //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
           thisdist = DISTANCE(y, x, ee->y, ee->x);
@@ -290,7 +291,7 @@ Coord *find_dest(AGENT *tp)
   rp = tp->room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))
   {
-    if (obj->type==SCROLL && obj->which==S_SCARE) continue;
+    if (is_scare_monster_scroll(obj)) continue;
     if (roomin(&obj->pos)==rp && rnd(100)<prob)
     {
       for (tp = mlist; tp!=NULL; tp = next(tp)) if (tp->dest==&obj->pos) break;

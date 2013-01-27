@@ -21,6 +21,8 @@
 #include "level.h"
 #include "rings.h"
 #include "thing.h"
+#include "scrolls.h"
+#include "potions.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)
@@ -368,10 +370,10 @@ int goodch(ITEM *obj)
     if (obj->hit_plus<0 || obj->damage_plus<0) ch = BMAGIC;
     break;
   case SCROLL:
-    switch (obj->which) {case S_SLEEP: case S_CREATE: case S_AGGR: ch = BMAGIC; break;}
+    if (is_bad_scroll(obj)) ch = BMAGIC;
     break;
   case POTION:
-    switch (obj->which) {case P_CONFUSE: case P_PARALYZE: case P_POISON: case P_BLIND: ch = BMAGIC; break;}
+    if (is_bad_potion(obj)) ch = BMAGIC;
     break;
   case STICK:
     switch (obj->which) {case WS_HASTE_M: case WS_TELTO: ch = BMAGIC; break;}

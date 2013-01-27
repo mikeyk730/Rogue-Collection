@@ -13,6 +13,7 @@
 #include "mach_dep.h"
 #include "level.h"
 #include "thing.h"
+#include "scrolls.h"
 
 int does_item_group(type) {
   return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
@@ -73,7 +74,7 @@ void add_pack(ITEM *obj, bool silent)
   //Check if there is room
   if (inpack>=MAXPACK-1) {msg("you can't carry anything else"); return;}
   //Check for and deal with scare monster scrolls
-  if (obj->type==SCROLL && obj->which==S_SCARE) if (obj->flags&ISFOUND)
+  if (is_scare_monster_scroll(obj)) if (obj->flags&ISFOUND)
   {
     detach_item(&lvl_obj, obj);
     mvaddch(player.pos.y, player.pos.x, floor);

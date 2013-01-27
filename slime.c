@@ -11,6 +11,7 @@
 #include "chase.h"
 #include "main.h"
 #include "level.h"
+#include "scrolls.h"
 
 static Coord slimy;
 
@@ -69,7 +70,7 @@ bool plop_monster(int r, int c, Coord *cp)
       //Or anything else nasty
       if (step_ok(ch = display_character(y, x)))
       {
-        if (ch==SCROLL && find_obj(y, x)->which==S_SCARE) continue;
+        if (ch==SCROLL && is_scare_monster_scroll(find_obj(y, x))) continue;
         if (rnd(++appear)==0) {cp->y = y; cp->x = x;}
       }
     }
