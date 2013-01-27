@@ -37,8 +37,6 @@ struct MagicItem things[NUMTHINGS] =
 #define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
 
 static int line_cnt = 0;
-static bool newpage = FALSE;
-static char *lastfmt, *lastarg;
 
 //init_things: Initialize the probabilities for types of things
 void init_things()
@@ -438,7 +436,6 @@ int add_line(char *use, char *fmt, char *arg)
     else addstr("-Press space to continue-");
     do retchar = readchar(); while (retchar!=ESCAPE && retchar!=' ' && (!islower(retchar)));
     clear();
-    newpage = TRUE;
     line_cnt = 0;
   }
   if (fmt!=NULL && !(line_cnt==0 && *fmt=='\0'))
@@ -448,8 +445,6 @@ int add_line(char *use, char *fmt, char *arg)
     getrc(&x, &y);
     //if the line wrapped but nothing was printed on this line you might as well use it for the next item
     if (y!=0) line_cnt = x+1;
-    lastfmt = fmt;
-    lastarg = arg;
   }
   return (retchar);
 }
@@ -462,7 +457,6 @@ int end_line(char *use)
   retchar = add_line(use, 0, 0);
   wrestor(0);
   line_cnt = 0;
-  newpage = FALSE;
   return (retchar);
 }
 

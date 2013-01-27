@@ -9,6 +9,8 @@
 #include "io.h"
 #include "strings.h"
 
+int dodos(char *com);
+
 void fakedos()
 {
   char comline[132];
