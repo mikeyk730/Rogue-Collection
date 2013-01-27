@@ -378,5 +378,5 @@ void SIG2()
 
 char *noterse(char *str)
 {
-  return (terse || expert?nullstr:str);
+  return (terse || expert ? "" : str);
 }

@@ -24,6 +24,9 @@
 #include "rings.h"
 #include "thing.h"
 
+const char* it = "it";
+const char* you = "you";
+
 //fight: The player attacks the monster.
 int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
 {

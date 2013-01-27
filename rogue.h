@@ -347,8 +347,8 @@ extern int bailout;
 
 extern char *l_menu, *l_name, *l_fruit, *l_score, *l_save, *l_macro, *l_drive;
 extern char s_menu[], s_name[], s_fruit[], s_score[], s_save[], s_macro[];
-extern char s_drive[], s_screen[];
-extern char nullstr[], *it, *tbuf, *you, *no_mem;
+extern char s_screen[];
+extern char *tbuf;
 
 extern struct Array s_names[], _guesses[];
 extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];

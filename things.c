@@ -293,13 +293,13 @@ int pick_one(struct MagicItem *magic, int nitems)
 void discovered()
 {
   print_disc(POTION);
-  add_line(nullstr, " ", 0);
+  add_line("", " ", 0);
   print_disc(SCROLL);
-  add_line(nullstr, " ", 0);
+  add_line("", " ", 0);
   print_disc(RING);
-  add_line(nullstr, " ", 0);
+  add_line("", " ", 0);
   print_disc(STICK);
-  end_line(nullstr);
+  end_line("");
 }
 
 //print_disc: Print what we've discovered of type 'type'
@@ -326,10 +326,10 @@ void print_disc(byte type)
   {
     obj.type = type;
     obj.which = order[i];
-    add_line(nullstr, "%s", inv_name(&obj, FALSE));
+    add_line("", "%s", inv_name(&obj, FALSE));
     num_found++;
   }
-  if (num_found==0) add_line(nullstr, nothing(type), 0);
+  if (num_found==0) add_line("", nothing(type), 0);
 }
 
 //set_order: Set up order for list
