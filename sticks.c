@@ -43,14 +43,15 @@ void zap_light()
 void zap_striking(ITEM* obj)
 {
   AGENT* monster;
+  Coord coord = delta;
 
-  delta.y += player.pos.y;
-  delta.x += player.pos.x;
-  if ((monster = monster_at(delta.y, delta.x))!=NULL)
+  coord.y += player.pos.y;
+  coord.x += player.pos.x;
+  if ((monster = monster_at(coord.y, coord.x))!=NULL)
   {
     if (rnd(20)==0) {obj->damage = "3d8"; obj->damage_plus = 9;}
     else {obj->damage = "2d8"; obj->damage_plus = 4;}
-    fight(&delta, monster->type, obj, FALSE);
+    fight(&coord, monster->type, obj, FALSE);
   }
 }
 
@@ -75,6 +76,7 @@ void zap_polymorph(AGENT* monster, int y, int x)
 {
   ITEM *pack;
   byte ch, old_type;
+  Coord coord = delta;
 
   pack = monster->pack;
   ch = monster->oldch;
@@ -83,9 +85,9 @@ void zap_polymorph(AGENT* monster, int y, int x)
   if (can_see_monst(monster)) 
     mvaddch(y, x, get_tile(y, x));
 
-  delta.y = y;
-  delta.x = x;
-  new_monster(monster, rnd(26)+'A', &delta);
+  coord.y = y;
+  coord.x = x;
+  new_monster(monster, rnd(26)+'A', &coord);
   monster->oldch = ch;
   monster->pack = pack;
   if (can_see_monst(monster)) 
@@ -182,10 +184,11 @@ void zap_speed_monster(int which)
 {
   int x, y;
   AGENT* monster;
+  Coord coord = delta;
 
   y = player.pos.y;
   x = player.pos.x;
-  while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
+  while (step_ok(display_character(y, x))) {y += coord.y; x += coord.x;}
   if (monster = monster_at(y, x))
   {
     if (which==WS_HASTE_M)
@@ -199,9 +202,9 @@ void zap_speed_monster(int which)
       else monster->flags |= ISSLOW;
       monster->turn = TRUE;
     }
-    delta.y = y;
-    delta.x = x;
-    start_run(&delta);
+    coord.y = y;
+    coord.x = x;
+    start_run(&coord);
   }
 }
 

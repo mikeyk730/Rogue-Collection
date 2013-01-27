@@ -102,9 +102,18 @@ int get_prefix()
           show_count();
           break;
 
-        case 'f': fastmode = !fastmode; break;
-        case 'g': do_take = FALSE; break;
-        case 'a': retch = lastch; count = lastcount; do_take = lasttake; again = TRUE; break;
+        case 'f':
+          fastmode = !fastmode; 
+          break;
+        case 'g': 
+          do_take = FALSE; 
+          break;
+        case 'a': 
+          retch = lastch; 
+          count = lastcount; 
+          do_take = lasttake; 
+          again = TRUE; 
+          break;
         case ' ': break;
         case ESCAPE: door_stop = FALSE; count = 0; show_count(); break;
         default: retch = ch; break;
@@ -176,7 +185,10 @@ void execcom()
     case 's': search(); break;
     case 'z': if (get_dir()) do_zap(); else after = FALSE; break;
     case 'D': after = FALSE; discovered(); break;
-    case CTRL('T'): after = FALSE; msg((expert ^= 1)?"Ok, I'll be brief":"Goodie, I can use big words again!"); break;
+    case CTRL('T'): 
+      after = FALSE;
+      msg((expert ^= 1)?"Ok, I'll be brief":"Goodie, I can use big words again!"); 
+      break;
     case 'F': after = FALSE; do_macro(macro, MACROSZ); break;
     case CTRL('F'): after = FALSE; typeahead = macro; break;
     case CTRL('R'): after = FALSE; msg(huh); break;
