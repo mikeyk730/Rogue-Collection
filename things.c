@@ -136,7 +136,7 @@ char *inv_name(ITEM *obj, bool drop)
     sprintf(pb, "A%s %s ", vowelstr(ws_type[which]), ws_type[which]);
     pb = &prbuf[strlen(prbuf)];
     if (ws_know[which] || wizard)
-      chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, charge_str(obj), ws_made[which]);
+      chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, get_charge_string(obj), ws_made[which]);
     else if (*ws_guess[which])
       chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], ws_made[which]);
     else

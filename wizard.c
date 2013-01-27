@@ -74,7 +74,7 @@ void create_obj()
 {
   ITEM *obj;
   byte ch, bless;
-  int limit;
+  int limit, option;
 
   if ((obj = create_item(0,0))==NULL) {msg("can't create anything now"); return;}
   msg("type of item: ");
@@ -91,7 +91,8 @@ void create_obj()
   }
   mpos = 0;
   msg("which %c do you want? (0-%x)", obj->type, limit);
-  obj->which = (isdigit((ch = readchar()))?ch-'0':ch-'a'+10);
+  option = (isdigit((ch = readchar()))?ch-'0':ch-'a'+10);
+  obj->which = (option >= 0 && option <= limit) ? option : 0;
   obj->group = 0;
   obj->count = 1;
   obj->damage = obj->throw_damage = "0d0";

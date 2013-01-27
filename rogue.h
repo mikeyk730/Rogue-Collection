@@ -141,9 +141,7 @@ typedef unsigned char bool;
 #define T_DART   05
 #define NTRAPS   6
 
-//Potion types
 #define MAXPOTIONS  14
-
 #define MAXSCROLLS  15
 
 //Weapon types

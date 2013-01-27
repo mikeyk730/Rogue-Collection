@@ -55,7 +55,7 @@ const char *weapon_names[MAXWEAPONS+1] =
   "crossbow",
   "crossbow bolt",
   "spear",
-  "beam" //fake entry for dragon's breath
+  "charge" //fake entry for dragon's breath
 };
 
 const char* get_weapon_name(int which)

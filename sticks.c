@@ -22,6 +22,182 @@
 #include "list.h"
 #include "mach_dep.h"
 
+void zap_light()
+{
+  //Ready Kilowat wand.  Light up the room
+  if (on(player,ISBLIND)) msg("you feel a warm glow around you");
+  else
+  {
+    ws_know[WS_LIGHT] = TRUE;
+    if (player.room->flags&ISGONE) msg("the corridor glows and then fades");
+    else msg("the room is lit by a shimmering blue light");
+  }
+  if (!(player.room->flags&ISGONE))
+  {
+    player.room->flags &= ~ISDARK;
+    //Light the room and put the player back up
+    enter_room(&player.pos);
+  }
+}
+
+void zap_striking(ITEM* obj)
+{
+  AGENT* monster;
+
+  delta.y += player.pos.y;
+  delta.x += player.pos.x;
+  if ((monster = monster_at(delta.y, delta.x))!=NULL)
+  {
+    if (rnd(20)==0) {obj->damage = "3d8"; obj->damage_plus = 9;}
+    else {obj->damage = "2d8"; obj->damage_plus = 4;}
+    fight(&delta, monster->type, obj, FALSE);
+  }
+}
+
+void zap_bolt(int which, const char* name)
+{
+  fire_bolt(&player.pos, &delta, name);
+  ws_know[which] = TRUE;
+}
+
+void zap_generic(ITEM* obj, int which_one)
+{
+  int x, y;
+  byte monster, oldch;
+  int rm;
+  Coord new_yx;
+  AGENT* tp;
+
+  y = player.pos.y;
+  x = player.pos.x;
+  while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
+  if ((tp = monster_at(y, x))!=NULL)
+  {
+    byte omonst;
+
+    omonst = monster = tp->type;
+    if (monster=='F') player.flags &= ~ISHELD;
+    if (which_one==MAXSTICKS)
+    {
+      if (monster==obj->enemy)
+      {
+        msg("the %s vanishes in a puff of smoke", get_monster_name(monster));
+        killed(tp, FALSE);
+      }
+      else msg("you hear a maniacal chuckle in the distance.");
+    }
+    else if (which_one==WS_POLYMORPH)
+    {
+      ITEM *pp;
+
+      pp = tp->pack;
+      detach_agent(&mlist, tp);
+      if (can_see_monst(tp)) mvaddch(y, x, get_tile(y, x));
+      oldch = tp->oldch;
+      delta.y = y;
+      delta.x = x;
+      new_monster(tp, monster = rnd(26)+'A', &delta);
+      if (can_see_monst(tp)) mvaddch(y, x, monster);
+      tp->oldch = oldch;
+      tp->pack = pp;
+      ws_know[WS_POLYMORPH] |= (monster!=omonst);
+    }
+    else if (which_one==WS_CANCEL)
+    {
+      tp->flags |= ISCANC;
+      tp->flags &= ~(ISINVIS|CANHUH);
+      tp->disguise = tp->type;
+    }
+    else
+    {
+      if (can_see_monst(tp)) mvaddch(y, x, tp->oldch);
+      if (which_one==WS_TELAWAY)
+      {
+        tp->oldch = '@';
+        do {
+          rm = rnd_room(); 
+          new_yx = tp->pos; 
+          rnd_pos(&rooms[rm], &new_yx);
+        } while (!(isfloor(display_character(new_yx.y, new_yx.x))));
+        tp->pos = new_yx;
+        if (can_see_monst(tp)) 
+          mvaddch(tp->pos.y, tp->pos.x, tp->disguise);
+        else if (on(player, SEEMONST)) {
+          standout(); 
+          mvaddch(tp->pos.y, tp->pos.x, tp->disguise); 
+          standend();
+        }
+      }
+      else {
+        tp->pos.y = player.pos.y+delta.y; 
+        tp->pos.x = player.pos.x+delta.x;
+      } //it MUST BE at WS_TELTO
+      if (tp->type=='F') 
+        player.flags &= ~ISHELD;
+      if (tp->pos.y!=y || tp->pos.x!=x)
+        tp->oldch = mvinch(tp->pos.y, tp->pos.x);
+    }
+    tp->dest = &player.pos;
+    tp->flags |= ISRUN;
+  }
+}
+
+void zap_magic_missile()
+{
+  AGENT* monster;
+  ITEM bolt;
+
+  ws_know[WS_MISSILE] = TRUE;
+  bolt.type = '*';
+  bolt.throw_damage = "1d8";
+  bolt.hit_plus = 1000;
+  bolt.damage_plus = 1;
+  bolt.flags = ISMISL;
+  if (cur_weapon!=NULL) bolt.launcher = cur_weapon->which;
+  do_motion(&bolt, delta.y, delta.x);
+  if ((monster = monster_at(bolt.pos.y, bolt.pos.x))!=NULL && !save_throw(VS_MAGIC, monster))
+    hit_monster(bolt.pos.y, bolt.pos.x, &bolt);
+  else msg("the missile vanishes with a puff of smoke");
+}
+
+void zap_speed_monster(int which)
+{
+  int x, y;
+  AGENT* monster;
+
+  y = player.pos.y;
+  x = player.pos.x;
+  while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
+  if (monster = monster_at(y, x))
+  {
+    if (which==WS_HASTE_M)
+    {
+      if (on(*monster, ISSLOW)) monster->flags &= ~ISSLOW;
+      else monster->flags |= ISHASTE;
+    }
+    else
+    {
+      if (on(*monster, ISHASTE)) monster->flags &= ~ISHASTE;
+      else monster->flags |= ISSLOW;
+      monster->turn = TRUE;
+    }
+    delta.y = y;
+    delta.x = x;
+    start_run(&delta);
+  }
+}
+
+int zap_drain_life()
+{
+  //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
+  if (player.stats.hp < 2) {
+    msg("you are too weak to use it"); 
+    return FALSE;
+  }  
+  drain();
+  return TRUE;
+}
+
 //fix_stick: Set up a new stick
 void fix_stick(ITEM *cur)
 {
@@ -40,187 +216,73 @@ void fix_stick(ITEM *cur)
 void do_zap()
 {
   ITEM *obj;
-  AGENT *tp;
-  int y, x;
-  char *name;
   int which_one;
 
-  if ((obj = get_item("zap with", STICK))==NULL) return;
+  if ((obj = get_item("zap with", STICK)) == NULL) 
+    return;
   which_one = obj->which;
-  if (obj->type!=STICK)
+  
+  if (obj->type != STICK)
   {
-    if (obj->enemy && obj->charges) which_one = MAXSTICKS;
-    else {msg("you can't zap with that!"); after = FALSE; return;}
+    if (obj->enemy && obj->charges) 
+      which_one = MAXSTICKS;
+    else {
+      msg("you can't zap with that!"); 
+      after = FALSE; 
+      return;
+    }
   }
-  if (obj->charges==0) {msg("nothing happens"); return;}
+  
+  if (obj->charges==0) {
+    msg("nothing happens"); 
+    return;
+  }
+
   switch (which_one)
   {
-  case WS_LIGHT: //Ready Kilowat wand.  Light up the room
-    if (on(player,ISBLIND)) msg("you feel a warm glow around you");
-    else
-    {
-      ws_know[WS_LIGHT] = TRUE;
-      if (player.room->flags&ISGONE) msg("the corridor glows and then fades");
-      else msg("the room is lit by a shimmering blue light");
-    }
-    if (!(player.room->flags&ISGONE))
-    {
-      player.room->flags &= ~ISDARK;
-      //Light the room and put the player back up
-      enter_room(&player.pos);
-    }
+  case WS_LIGHT: 
+    zap_light();
     break;
 
-  case WS_DRAIN: //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
-    if (player.stats.hp<2) {msg("you are too weak to use it"); return;}
-    else drain();
+  case WS_DRAIN: 
+    if (!zap_drain_life()) return;
     break;
 
   case WS_POLYMORPH: case WS_TELAWAY: case WS_TELTO: case WS_CANCEL: case MAXSTICKS: //Special case for vorpal weapon
-    {
-      byte monster, oldch;
-      int rm;
-      Coord new_yx;
-
-      y = player.pos.y;
-      x = player.pos.x;
-      while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
-      if ((tp = monster_at(y, x))!=NULL)
-      {
-        byte omonst;
-
-        omonst = monster = tp->type;
-        if (monster=='F') player.flags &= ~ISHELD;
-        if (which_one==MAXSTICKS)
-        {
-          if (monster==obj->enemy)
-          {
-            msg("the %s vanishes in a puff of smoke", get_monster_name(monster));
-            killed(tp, FALSE);
-          }
-          else msg("you hear a maniacal chuckle in the distance.");
-        }
-        else if (which_one==WS_POLYMORPH)
-        {
-          ITEM *pp;
-
-          pp = tp->pack;
-          detach_agent(&mlist, tp);
-          if (can_see_monst(tp)) mvaddch(y, x, get_tile(y, x));
-          oldch = tp->oldch;
-          delta.y = y;
-          delta.x = x;
-          new_monster(tp, monster = rnd(26)+'A', &delta);
-          if (can_see_monst(tp)) mvaddch(y, x, monster);
-          tp->oldch = oldch;
-          tp->pack = pp;
-          ws_know[WS_POLYMORPH] |= (monster!=omonst);
-        }
-        else if (which_one==WS_CANCEL)
-        {
-          tp->flags |= ISCANC;
-          tp->flags &= ~(ISINVIS|CANHUH);
-          tp->disguise = tp->type;
-        }
-        else
-        {
-          if (can_see_monst(tp)) mvaddch(y, x, tp->oldch);
-          if (which_one==WS_TELAWAY)
-          {
-            tp->oldch = '@';
-            do {
-              rm = rnd_room(); 
-              new_yx = tp->pos; 
-              rnd_pos(&rooms[rm], &new_yx);
-            } while (!(isfloor(display_character(new_yx.y, new_yx.x))));
-            tp->pos = new_yx;
-            if (can_see_monst(tp)) 
-              mvaddch(tp->pos.y, tp->pos.x, tp->disguise);
-            else if (on(player, SEEMONST)) {
-              standout(); 
-              mvaddch(tp->pos.y, tp->pos.x, tp->disguise); 
-              standend();
-            }
-          }
-          else {
-            tp->pos.y = player.pos.y+delta.y; 
-            tp->pos.x = player.pos.x+delta.x;
-          } //it MUST BE at WS_TELTO
-          if (tp->type=='F') 
-            player.flags &= ~ISHELD;
-          if (tp->pos.y!=y || tp->pos.x!=x)
-            tp->oldch = mvinch(tp->pos.y, tp->pos.x);
-        }
-        tp->dest = &player.pos;
-        tp->flags |= ISRUN;
-      }
-      break;
-    }
-
+    zap_generic(obj, which_one);
+    break;
+ 
   case WS_MISSILE:
-    {
-      ITEM bolt;
-
-      ws_know[WS_MISSILE] = TRUE;
-      bolt.type = '*';
-      bolt.throw_damage = "1d8";
-      bolt.hit_plus = 1000;
-      bolt.damage_plus = 1;
-      bolt.flags = ISMISL;
-      if (cur_weapon!=NULL) bolt.launcher = cur_weapon->which;
-      do_motion(&bolt, delta.y, delta.x);
-      if ((tp = monster_at(bolt.pos.y, bolt.pos.x))!=NULL && !save_throw(VS_MAGIC, tp))
-        hit_monster(bolt.pos.y, bolt.pos.x, &bolt);
-      else msg("the missile vanishes with a puff of smoke");
-
-      break;
-    }
+    zap_magic_missile();
+    break;
 
   case WS_HIT:
-    delta.y += player.pos.y;
-    delta.x += player.pos.x;
-    if ((tp = monster_at(delta.y, delta.x))!=NULL)
-    {
-      if (rnd(20)==0) {obj->damage = "3d8"; obj->damage_plus = 9;}
-      else {obj->damage = "2d8"; obj->damage_plus = 4;}
-      fight(&delta, tp->type, obj, FALSE);
-    }
+    zap_striking(obj);
     break;
 
   case WS_HASTE_M: case WS_SLOW_M:
-    y = player.pos.y;
-    x = player.pos.x;
-    while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
-    if ((tp = monster_at(y, x))!=NULL)
-    {
-      if (which_one==WS_HASTE_M)
-      {
-        if (on(*tp, ISSLOW)) tp->flags &= ~ISSLOW;
-        else tp->flags |= ISHASTE;
-      }
-      else
-      {
-        if (on(*tp, ISHASTE)) tp->flags &= ~ISHASTE;
-        else tp->flags |= ISSLOW;
-        tp->turn = TRUE;
-      }
-      delta.y = y;
-      delta.x = x;
-      start_run(&delta);
-    }
+    zap_speed_monster(which_one);
     break;
 
-  case WS_ELECT: case WS_FIRE: case WS_COLD:
-    if (which_one==WS_ELECT) name = "bolt";
-    else if (which_one==WS_FIRE) name = "flame";
-    else name = "ice";
-    fire_bolt(&player.pos, &delta, name);
-    ws_know[which_one] = TRUE;
+  case WS_ELECT: 
+    zap_bolt(which_one, "bolt");
     break;
 
-  default: debug("what a bizarre schtick!"); break;
+  case WS_FIRE: 
+    zap_bolt(which_one, "flame");
+    break;
+
+  case WS_COLD:
+    zap_bolt(which_one, "ice");
+    break;
+
+  default: 
+    debug("what a bizarre schtick!"); 
+    break;
   }
-  if (--obj->charges<0) obj->charges = 0;
+
+  if (--obj->charges < 0) 
+    obj->charges = 0;
 }
 
 //drain: Do drain hit points from player schtick
@@ -261,7 +323,7 @@ void drain()
 }
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
-void fire_bolt(Coord *start, Coord *dir, char *name)
+void fire_bolt(Coord *start, Coord *dir, const char *name)
 {
   byte dirch, ch;
   AGENT *tp;
@@ -367,7 +429,7 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
 }
 
 //charge_str: Return an appropriate string for a wand charge
-char *charge_str(ITEM *obj)
+const char *get_charge_string(ITEM *obj)
 {
   static char buf[20];
 
