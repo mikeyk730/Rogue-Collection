@@ -323,8 +323,6 @@ int group = 2;         //Current group number
 int hungry_state = 0;  //How hungry is he
 long seed = 0;         //Random number seed
 
-char *_whoami;
-
 Coord oldpos; //Position before last look() call
 Coord delta;  //Change indicated to get_dir()
 

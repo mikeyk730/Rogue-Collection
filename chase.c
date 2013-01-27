@@ -91,8 +91,8 @@ over:
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
   chase(th, &this);
-  if (ce(ch_ret, player.pos)) {attack(th); return;}
-  else if (ce(ch_ret, *th->dest))
+  if (equal(ch_ret, player.pos)) {attack(th); return;}
+  else if (equal(ch_ret, *th->dest))
   {
     for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (th->dest==&obj->pos)
     {
@@ -119,7 +119,7 @@ over:
       mvaddch(th->pos.y, th->pos.x, th->oldch);
   }
   oroom = th->room;
-  if (!ce(ch_ret, th->pos))
+  if (!equal(ch_ret, th->pos))
   {
     if ((th->room = roomin(&ch_ret))==NULL) {th->room = oroom; return;}
     if (oroom!=th->room) th->dest = find_dest(th);

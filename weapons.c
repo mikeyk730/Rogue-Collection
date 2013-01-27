@@ -71,7 +71,8 @@ hack:
   }
   do_motion(obj, ydelta, xdelta);
   //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-  if (monster_at(obj->pos.y, obj->pos.x)==NULL || !hit_monster(obj->pos.y, obj->pos.x, obj)) fall(obj, TRUE);
+  if (monster_at(obj->pos.y, obj->pos.x)==NULL || !hit_monster(obj->pos.y, obj->pos.x, obj))
+    fall(obj, TRUE);
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
@@ -86,7 +87,8 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
     int ch;
 
     //Erase the old one
-    if (under!='@' && !ce(obj->pos, player.pos) && cansee(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, under);
+    if (under!='@' && !equal(obj->pos, player.pos) && cansee(obj->pos.y, obj->pos.x))
+      mvaddch(obj->pos.y, obj->pos.x, under);
     //Get the new position
     obj->pos.y += ydelta;
     obj->pos.x += xdelta;

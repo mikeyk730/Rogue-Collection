@@ -111,7 +111,7 @@ void conn(int r1, int r2)
   }
   curr.x += del.x;
   curr.y += del.y;
-  if (!ce(curr, epos)) {epos.x -= del.x; epos.y -= del.y; psplat(epos.y, epos.x);}
+  if (!equal(curr, epos)) {epos.x -= del.x; epos.y -= del.y; psplat(epos.y, epos.x);}
 }
 
 //do_passages: Draw all the passages on a level.

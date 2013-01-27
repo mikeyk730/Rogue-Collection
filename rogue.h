@@ -29,7 +29,6 @@ typedef unsigned char bool;
 
 #define next(ptr)       (*ptr).l_next
 #define prev(ptr)       (*ptr).l_prev
-#define ce(a,b)         _ce(&(a),&(b))
 #define on(thing,flag)  (((thing).flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
 #define GOLDCALC        (rnd(50+10*level)+2)
@@ -73,7 +72,6 @@ typedef unsigned char bool;
 //Various constants
 #define BEAR_TIME    spread(3)
 #define SLEEP_TIME   spread(5)
-#define HEAL_TIME    spread(30)
 #define HOLD_TIME    spread(2)
 #define WANDER_TIME  spread(70)
 #define HUH_DURATION spread(20)
@@ -354,17 +352,19 @@ extern struct Array s_names[], _guesses[];
 extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
 extern char f_damage[];
 
-extern bool amulet, after, again, door_stop, expert, fastmode, faststate, firstmove, in_shell, noscore, playing, running, save_msg, saw_amulet, terse, was_trapped, wizard;
+extern bool amulet, after, again, door_stop, expert, fastmode, faststate, firstmove, in_shell, 
+  noscore, playing, running, save_msg, saw_amulet, terse, was_trapped, wizard;
 
 extern bool p_know[], r_know[], s_know[], ws_know[];
 
-extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[], huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, *typeahead, take, *w_names[], whoami[], *ws_made[], *ws_type[];
+extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[],
+  huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, 
+  *typeahead, take, *w_names[], whoami[], *ws_made[], *ws_type[];
 
-extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, group, hungry_state, inpack, lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total_items;
+extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, group, hungry_state, inpack,
+  lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total_items;
 
 extern long seed, *e_levels;
-
-extern char *_whoami;
 
 #define TRUE                1
 #define FALSE               0

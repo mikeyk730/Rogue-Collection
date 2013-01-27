@@ -54,7 +54,7 @@ void look(bool wakeup)
   pfl = get_flags(player.pos.y, player.pos.x);
   pch = get_tile(player.pos.y, player.pos.x);
   //if the hero has moved
-  if (!ce(oldpos, player.pos))
+  if (!equal(oldpos, player.pos))
   {
     if (!on(player, ISBLIND))
     {
@@ -442,9 +442,9 @@ int DISTANCE(int y1, int x1, int y2, int x2)
   return dx*dx+dy*dy;
 }
 
-int _ce(Coord *a, Coord *b)
+int equal(Coord a, Coord b)
 {
-  return (a->x==b->x && a->y==b->y);
+  return (a.x == b.x && a.y == b.y);
 }
 
 int offmap(int y, int x)

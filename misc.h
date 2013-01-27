@@ -53,7 +53,7 @@ void help(char **helpscr);
 
 int DISTANCE(int y1, int x1, int y2, int x2);
 
-int _ce(Coord *a, Coord *b);
+int equal(Coord a, Coord b);
 
 int offmap(int y, int x);
 

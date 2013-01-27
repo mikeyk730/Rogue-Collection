@@ -329,7 +329,7 @@ void fire_bolt(Coord *start, Coord *dir, char *name)
           msg("the %s whizzes past the %s", name, get_monster_name(ch));
         }
       }
-      else if (hit_hero && ce(pos, player.pos))
+      else if (hit_hero && equal(pos, player.pos))
       {
         hit_hero = FALSE;
         changed = !changed;

@@ -54,7 +54,7 @@ over:
   if (offmap(nh.y, nh.x)) goto hit_bound;
   if (!diag_ok(&player.pos, &nh)) {after = FALSE; running = FALSE; return;}
   //If you are running and the move does not get you anywhere stop running
-  if (running && ce(player.pos, nh)) after = running = FALSE;
+  if (running && equal(player.pos, nh)) after = running = FALSE;
   fl = get_flags(nh.y, nh.x);
   ch = display_character(nh.y, nh.x);
   //When the hero is on the door do not allow him to run until he enters the room all the way
