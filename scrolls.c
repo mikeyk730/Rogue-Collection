@@ -248,6 +248,25 @@ void read_vorpalize_weapon()
   }
 }
 
+void(*scroll_functions[MAXSCROLLS])() =
+{
+  read_monster_confusion,
+  read_magic_mapping,
+  read_hold_monster,
+  read_sleep,
+  read_enchant_armor,
+  read_identify,
+  read_scare_monster,
+  read_food_detection,
+  read_teleportation,
+  read_enchant_weapon,
+  read_create_monster,
+  read_remove_curse,
+  read_aggravate_monsters,
+  read_blank_paper,
+  read_vorpalize_weapon
+};
+
 //read_scroll: Read a scroll from the pack and do the appropriate thing
 void read_scroll()
 {
@@ -259,70 +278,10 @@ void read_scroll()
   ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
   if (scroll==cur_weapon) cur_weapon = NULL;
 
-  //Calculate the effect it has on the poor guy.
-  switch (scroll->which)
-  {
-  case S_CONFUSE:
-    read_monster_confusion();
-    break;
-
-  case S_ARMOR:
-    read_enchant_armor();
-    break;
-
-  case S_HOLD:
-    read_hold_monster();
-    break;
-
-  case S_SLEEP:
-    read_sleep();
-    break;
-
-  case S_CREATE:
-    read_create_monster();
-    break;
-
-  case S_IDENT: 
-    read_identify();
-    break;
-
-  case S_MAP:
-    read_magic_mapping();
-    break;
-
-  case S_GFIND:
-    read_food_detection();
-    break;
-
-  case S_TELEP:
-    read_teleportation();
-    break;
-
-  case S_ENCH:
-    read_enchant_weapon();
-    break;
-
-  case S_SCARE:
-    read_scare_monster();
-    break;
-
-  case S_REMOVE:
-    read_remove_curse();
-    break;
-
-  case S_AGGR: 
-    read_aggravate_monsters();
-    break;
-
-  case S_NOP:
-    read_blank_paper();
-    break;
-
-  case S_VORPAL:
-    read_vorpalize_weapon();
-    break;
-
-  default:
+  //Call the function for this scroll
+  if (scroll->which >= 0 && scroll->which < MAXSCROLLS)
+    scroll_functions[scroll->which]();
+  else {
     msg("what a puzzling scroll!");
     return;
   }
