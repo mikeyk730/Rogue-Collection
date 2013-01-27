@@ -86,6 +86,109 @@ int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
   return FALSE;
 }
 
+void aquator_attack()
+{
+  //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
+  if (cur_armor && cur_armor->armor_class < 9 && cur_armor->which != LEATHER)
+    if (is_wearing_ring(R_SUSTARM))
+      msg("the rust vanishes instantly");
+    else {
+      msg("your armor weakens, oh my!"); 
+      cur_armor->armor_class++;
+    }
+}
+
+void ice_monster_attack()
+{
+  //When an Ice Monster hits you, you get unfrozen faster
+  if (no_command>1) no_command--;
+}
+
+void rattlesnake_attack()
+{
+  //Rattlesnakes have poisonous bites
+  if (!save(VS_POISON))
+    if (!is_wearing_ring(R_SUSTSTR)) {
+      chg_str(-1); 
+      msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
+    }
+    else 
+      msg("a bite momentarily weakens you");
+}
+
+void flytrap_attack(AGENT* mp)
+{
+  //Flytrap stops the poor guy from moving
+  player.flags |= ISHELD;
+  sprintf(mp->stats.damage, "%dd1", ++flytrap_hit);
+}
+
+void leprechaun_attack(AGENT* mp)
+{
+  //Leprechaun steals some gold
+  long lastpurse;
+
+  lastpurse = purse;
+  purse -= GOLDCALC;
+  if (!save(VS_MAGIC)) 
+    purse -= GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
+  if (purse<0) 
+    purse = 0;
+  remove_mons(&mp->pos, mp, FALSE);
+  if (purse!=lastpurse) 
+    msg("your purse feels lighter");
+}
+
+void nymph_attack(AGENT* mp)
+{
+  //Nymphs steal a magic item, look through the pack and pick out one we like.
+  ITEM *obj, *steal;
+  int nobj;
+  char *she_stole = "she stole %s!";
+
+  steal = NULL;
+  for (nobj = 0, obj = player.pack; obj!=NULL; obj = next(obj))
+    if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
+  if (steal!=NULL)
+  {
+    remove_mons(&mp->pos, mp, FALSE);
+    inpack--;
+    if (steal->count>1 && steal->group==0)
+    {
+      int oc;
+
+      oc = steal->count--;
+      steal->count = 1;
+      msg(she_stole, inv_name(steal, TRUE));
+      steal->count = oc;
+    }
+    else {detach_item(&player.pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
+  }
+}
+
+void vampire_wraith_attack(int type)
+{
+  //Wraiths might drain energy levels, and Vampires can steal max_hp
+  if (rnd(100)<(type=='W'?15:30))
+  {
+    int fewer;
+
+    if (type=='W')
+    {
+      if (player.stats.exp==0) death('W'); //All levels gone
+      if (--player.stats.level==0) {player.stats.exp = 0; player.stats.level = 1;}
+      else player.stats.exp = e_levels[player.stats.level-1]+1;
+      fewer = roll(1, 10);
+    }
+    else fewer = roll(1, 5);
+    player.stats.hp -= fewer;
+    player.stats.max_hp -= fewer;
+    if (player.stats.hp<1) player.stats.hp = 1;
+    if (player.stats.max_hp<1) death(type);
+    msg("you suddenly feel weaker");
+  }
+}
+
 //attack: The monster attacks the player
 void attack(AGENT *mp)
 {
@@ -104,90 +207,34 @@ void attack(AGENT *mp)
     if (!on(*mp, ISCANC)) switch (mp->type)
     {
 
-    case 'A': //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-      if (cur_armor!=NULL && cur_armor->armor_class<9 && cur_armor->which!=LEATHER)
-        if (is_wearing_ring(R_SUSTARM)) msg("the rust vanishes instantly");
-        else {msg("your armor weakens, oh my!"); cur_armor->armor_class++;}
-        break;
-
-    case 'I': //When an Ice Monster hits you, you get unfrozen faster
-      if (no_command>1) no_command--;
+    case 'A': 
+      aquator_attack();
       break;
 
-    case 'R': //Rattlesnakes have poisonous bites
-      if (!save(VS_POISON))
-        if (!is_wearing_ring(R_SUSTSTR)) {chg_str(-1); msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));}
-        else msg("a bite momentarily weakens you");
-        break;
-
-    case 'W': case 'V': //Wraiths might drain energy levels, and Vampires can steal max_hp
-      if (rnd(100)<(mp->type=='W'?15:30))
-      {
-        int fewer;
-
-        if (mp->type=='W')
-        {
-          if (player.stats.exp==0) death('W'); //All levels gone
-          if (--player.stats.level==0) {player.stats.exp = 0; player.stats.level = 1;}
-          else player.stats.exp = e_levels[player.stats.level-1]+1;
-          fewer = roll(1, 10);
-        }
-        else fewer = roll(1, 5);
-        player.stats.hp -= fewer;
-        player.stats.max_hp -= fewer;
-        if (player.stats.hp<1) player.stats.hp = 1;
-        if (player.stats.max_hp<1) death(mp->type);
-        msg("you suddenly feel weaker");
-      }
+    case 'I': 
+      ice_monster_attack();
       break;
 
-    case 'F': //Flytrap stops the poor guy from moving
-      player.flags |= ISHELD;
-      sprintf(mp->stats.damage, "%dd1", ++flytrap_hit);
+    case 'R': 
+      rattlesnake_attack();
       break;
 
-    case 'L': //Leprechaun steals some gold
-      {
-        long lastpurse;
+    case 'W': case 'V':
+      vampire_wraith_attack(mp->type);
+      break;
 
-        lastpurse = purse;
-        purse -= GOLDCALC;
-        if (!save(VS_MAGIC)) purse -= GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
-        if (purse<0) purse = 0;
-        remove_mons(&mp->pos, mp, FALSE);
-        if (purse!=lastpurse) msg("your purse feels lighter");
+    case 'F': 
+      flytrap_attack(mp);
+      break;
 
-        break;
-      }
+    case 'L': 
+      leprechaun_attack(mp);
+      break;
 
-    case 'N': //Nymphs steal a magic item, look through the pack and pick out one we like.
-      {
-        ITEM *obj, *steal;
-        int nobj;
-        char *she_stole = "she stole %s!";
-
-        steal = NULL;
-        for (nobj = 0, obj = player.pack; obj!=NULL; obj = next(obj))
-          if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
-        if (steal!=NULL)
-        {
-          remove_mons(&mp->pos, mp, FALSE);
-          inpack--;
-          if (steal->count>1 && steal->group==0)
-          {
-            int oc;
-
-            oc = steal->count--;
-            steal->count = 1;
-            msg(she_stole, inv_name(steal, TRUE));
-            steal->count = oc;
-          }
-          else {detach_item(&player.pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
-        }
-
-        break;
-      }
-
+    case 'N': 
+      nymph_attack(mp);
+      break;
+   
     default: break;
     }
   }
