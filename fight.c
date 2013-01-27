@@ -24,8 +24,14 @@
 #include "rings.h"
 #include "thing.h"
 
+char tbuf[MAXSTR];
+
 const char* it = "it";
 const char* you = "you";
+
+// Each level is twice the previous
+long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 
+  20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
 
 //fight: The player attacks the monster.
 int fight(Coord *mp, char mn, ITEM *weap, bool thrown)

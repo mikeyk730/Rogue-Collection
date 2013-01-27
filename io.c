@@ -17,7 +17,7 @@
 #define PT(i,j)  ((COLS==40)?i:j)
 
 extern unsigned tick;
-extern char *msgbuf;
+char msgbuf[BUFSIZE];
 
 static int newpos = 0;
 static char *formats = "scud%", *bp, left_justify;

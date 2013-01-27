@@ -341,7 +341,6 @@ extern int bailout;
 extern char *l_menu, *l_name, *l_fruit, *l_score, *l_save, *l_macro, *l_drive;
 extern char s_menu[], s_name[], s_fruit[], s_score[], s_save[], s_macro[];
 extern char s_screen[];
-extern char *tbuf;
 
 extern struct Array s_names[], _guesses[];
 extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
@@ -353,13 +352,13 @@ extern bool amulet, after, again, door_stop, expert, fastmode, faststate, firstm
 extern bool p_know[], r_know[], s_know[], ws_know[];
 
 extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[],
-  huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, 
+  huh[], macro[], *intense, outbuf[], *p_colors[], prbuf[], *r_stones[], *release, runch, 
   *typeahead, take, whoami[], *ws_made[], *ws_type[];
 
 extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, group, hungry_state, inpack,
   lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total_items;
 
-extern long seed, *e_levels;
+extern long seed;
 
 #define TRUE                1
 #define FALSE               0

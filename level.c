@@ -4,18 +4,12 @@
 #include "level.h"
 #include "misc.h"
 
-byte *the_level = NULL;
-byte *the_flags = NULL;
+byte the_level[(MAXLINES-3)*MAXCOLS];
+byte the_flags[(MAXLINES-3)*MAXCOLS];
 
 int INDEX(int y, int x)
 {
   return ((x*(maxrow-1))+y-1);
-}
-
-void alloc_level()
-{
-  the_level = malloc((MAXLINES-3)*MAXCOLS);
-  the_flags = malloc((MAXLINES-3)*MAXCOLS);
 }
 
 void clear_level()

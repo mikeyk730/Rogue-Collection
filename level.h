@@ -1,4 +1,3 @@
-void alloc_level();
 void clear_level();
 
 byte get_tile(int y, int x);

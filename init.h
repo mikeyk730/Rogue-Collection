@@ -18,6 +18,3 @@ void init_stones();
 
 //init_materials: Initialize the construction materials for wands and staffs
 void init_materials();
-
-//init_ds(): Allocate things data space
-void init_ds();

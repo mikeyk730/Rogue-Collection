@@ -39,7 +39,6 @@ int main(int argc, char **argv)
 {
   char *curarg, *savfile = 0;
 
-  init_ds();
   setenv("rogue.opt");
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.
   if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;

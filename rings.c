@@ -12,6 +12,8 @@
 #include "mach_dep.h"
 #include "weapons.h"
 
+char ring_buf[6];
+
 //ring_on: Put a ring on a hand
 void ring_on()
 {
@@ -95,9 +97,9 @@ int ring_eat(int hand)
 //ring_num: Print ring bonuses
 char *ring_num(ITEM *obj)
 {
-  extern char *ring_buf;
+  if (!(obj->flags&ISKNOW) && !wizard) 
+    return "";
 
-  if (!(obj->flags&ISKNOW) && !wizard) return "";
   switch (obj->which)
   {
   case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
@@ -105,7 +107,8 @@ char *ring_num(ITEM *obj)
     strcpy(&ring_buf[1], num(obj->armor_class, 0, RING));
     break;
 
-  default: return "";
+  default: 
+    return "";
   }
   return ring_buf;
 }

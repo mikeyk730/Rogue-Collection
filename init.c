@@ -152,12 +152,7 @@ static char *metal[] =
 #define NMETAL (sizeof(metal)/sizeof(char *))
 
 //Declarations for allocated things
-
-long *e_levels; //Pointer to array of experience level
-char *tbuf;     //Temp buffer used in fighting
-char *msgbuf;   //Message buffer for msg()
-char *prbuf;    //Printing buffer used everywhere
-char *ring_buf; //Buffer used by ring code
+char prbuf[MAXSTR];    //Printing buffer used everywhere
 
 //init_player: Roll up the rogue
 void init_player()
@@ -323,18 +318,4 @@ void init_materials()
     ws_guess[i] = (char *)&_guesses[iguess++];
     if (i>0) ws_magic[i].prob += ws_magic[i-1].prob;
   }
-}
-
-//init_ds(): Allocate things data space
-void init_ds()
-{
-  long *ep;
-  alloc_level();
-  tbuf = malloc(MAXSTR);
-  msgbuf = malloc(BUFSIZE);
-  prbuf = malloc(MAXSTR);
-  ring_buf = malloc(6);
-  e_levels = (long *)malloc(20*sizeof(long));
-  for (ep = e_levels+1, *e_levels = 10L; ep<e_levels+19; ep++) *ep = *(ep-1)<<1;
-  *ep = 0L;
 }
