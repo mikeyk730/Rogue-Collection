@@ -354,7 +354,7 @@ extern struct Array s_names[], _guesses[];
 extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
 extern char f_damage[];
 
-extern bool amulet, after, again, askme, door_stop, expert, fastmode, faststate, fight_flush, firstmove, in_shell, jump, noscore, passgo, playing, running, save_msg, saw_amulet, slow_invent, terse, was_trapped, wizard;
+extern bool amulet, after, again, door_stop, expert, fastmode, faststate, firstmove, in_shell, noscore, playing, running, save_msg, saw_amulet, terse, was_trapped, wizard;
 
 extern bool p_know[], r_know[], s_know[], ws_know[];
 

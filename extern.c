@@ -269,18 +269,13 @@ bool r_know[MAXRINGS];      //Does he know what a ring does
 bool ws_know[MAXSTICKS];    //Does he know what a stick does
 bool amulet = FALSE;        //He has the amulet
 bool saw_amulet = FALSE;    //He has seen the amulet
-//bool askme = TRUE;        //Ask about unidentified things
 bool door_stop = FALSE;     //Stop running when we pass a door
 bool fastmode = FALSE;      //Run until you see something
 bool faststate = FALSE;     //Toggle for find (see above)
-//bool fight_flush = TRUE;  //True if toilet input
 bool firstmove = FALSE;     //First move after setting door_stop
-//bool jump = FALSE;        //Show running as series of jumps
-//bool passgo = TRUE;       //Follow passages
 bool playing = TRUE;        //True until he quits
 bool running = FALSE;       //True if player is running
 bool save_msg = TRUE;       //Remember last msg
-//bool slow_invent = FALSE; //Inventory one line at a time
 bool terse = FALSE;
 bool expert = FALSE;
 
