@@ -24,7 +24,7 @@
 
 void zap_light()
 {
-  //Ready Kilowat wand.  Light up the room
+  //Ready Kilowatt wand.  Light up the room
   if (on(player,ISBLIND)) msg("you feel a warm glow around you");
   else
   {
@@ -60,85 +60,113 @@ void zap_bolt(int which, const char* name)
   ws_know[which] = TRUE;
 }
 
-void zap_generic(ITEM* obj, int which_one)
+void zap_vorpalized_weapon(ITEM* weapon, AGENT* monster)
+{
+  if (monster->type == weapon->enemy)
+  {
+    msg("the %s vanishes in a puff of smoke", get_monster_name(monster->type));
+    killed(monster, FALSE);
+  }
+  else 
+    msg("you hear a maniacal chuckle in the distance.");
+}
+
+void zap_polymorph(AGENT* monster, int y, int x)
+{
+  ITEM *pack;
+  byte ch, old_type;
+
+  pack = monster->pack;
+  ch = monster->oldch;
+  old_type = monster->type;
+  detach_agent(&mlist, monster);
+  if (can_see_monst(monster)) 
+    mvaddch(y, x, get_tile(y, x));
+
+  delta.y = y;
+  delta.x = x;
+  new_monster(monster, rnd(26)+'A', &delta);
+  monster->oldch = ch;
+  monster->pack = pack;
+  if (can_see_monst(monster)) 
+    mvaddch(y, x, monster->type);
+
+  ws_know[WS_POLYMORPH] |= (monster->type != old_type);
+}
+
+void zap_cancellation(AGENT* monster)
+{
+  monster->flags |= ISCANC;
+  monster->flags &= ~(ISINVIS|CANHUH);
+  monster->disguise = monster->type;
+}
+
+void zap_teleport(AGENT* monster, int y, int x, int which)
+{
+  int room;
+  Coord new_yx;
+
+  if (can_see_monst(monster)) 
+    mvaddch(y, x, monster->oldch);
+
+  if (which==WS_TELAWAY)
+  {
+    monster->oldch = '@';
+    do {
+      room = rnd_room(); 
+      new_yx = monster->pos; 
+      rnd_pos(&rooms[room], &new_yx);
+    } while (!(isfloor(display_character(new_yx.y, new_yx.x))));
+    monster->pos = new_yx;
+    //if (can_see_monst(monster)) 
+      //mvaddch(monster->pos.y, monster->pos.x, monster->disguise);
+    //else 
+    if (on(player, SEEMONST)) {
+      standout(); 
+      mvaddch(monster->pos.y, monster->pos.x, monster->disguise); 
+      standend();
+    }
+  }
+  else { //it MUST BE at WS_TELTO
+    monster->pos.y = player.pos.y+delta.y; 
+    monster->pos.x = player.pos.x+delta.x;
+  } 
+
+  if (monster->type=='F') 
+    player.flags &= ~ISHELD;
+  if (monster->pos.y!=y || monster->pos.x!=x)
+    monster->oldch = mvinch(monster->pos.y, monster->pos.x);
+}
+
+void zap_generic(ITEM* wand, int which)
 {
   int x, y;
-  byte monster, oldch;
-  int rm;
-  Coord new_yx;
-  AGENT* tp;
+  AGENT* monster;
 
   y = player.pos.y;
   x = player.pos.x;
   while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
-  if ((tp = monster_at(y, x))!=NULL)
+  if ((monster = monster_at(y, x))!=NULL)
   {
-    byte omonst;
-
-    omonst = monster = tp->type;
-    if (monster=='F') player.flags &= ~ISHELD;
-    if (which_one==MAXSTICKS)
+    if (monster->type == 'F') player.flags &= ~ISHELD;
+    if (which==MAXSTICKS)
     {
-      if (monster==obj->enemy)
-      {
-        msg("the %s vanishes in a puff of smoke", get_monster_name(monster));
-        killed(tp, FALSE);
-      }
-      else msg("you hear a maniacal chuckle in the distance.");
+      zap_vorpalized_weapon(wand, monster);
     }
-    else if (which_one==WS_POLYMORPH)
+    else if (which==WS_POLYMORPH)
     {
-      ITEM *pp;
-
-      pp = tp->pack;
-      detach_agent(&mlist, tp);
-      if (can_see_monst(tp)) mvaddch(y, x, get_tile(y, x));
-      oldch = tp->oldch;
-      delta.y = y;
-      delta.x = x;
-      new_monster(tp, monster = rnd(26)+'A', &delta);
-      if (can_see_monst(tp)) mvaddch(y, x, monster);
-      tp->oldch = oldch;
-      tp->pack = pp;
-      ws_know[WS_POLYMORPH] |= (monster!=omonst);
+      zap_polymorph(monster, y, x);
     }
-    else if (which_one==WS_CANCEL)
+    else if (which==WS_CANCEL)
     {
-      tp->flags |= ISCANC;
-      tp->flags &= ~(ISINVIS|CANHUH);
-      tp->disguise = tp->type;
+      zap_cancellation(monster);
     }
     else
     {
-      if (can_see_monst(tp)) mvaddch(y, x, tp->oldch);
-      if (which_one==WS_TELAWAY)
-      {
-        tp->oldch = '@';
-        do {
-          rm = rnd_room(); 
-          new_yx = tp->pos; 
-          rnd_pos(&rooms[rm], &new_yx);
-        } while (!(isfloor(display_character(new_yx.y, new_yx.x))));
-        tp->pos = new_yx;
-        if (can_see_monst(tp)) 
-          mvaddch(tp->pos.y, tp->pos.x, tp->disguise);
-        else if (on(player, SEEMONST)) {
-          standout(); 
-          mvaddch(tp->pos.y, tp->pos.x, tp->disguise); 
-          standend();
-        }
-      }
-      else {
-        tp->pos.y = player.pos.y+delta.y; 
-        tp->pos.x = player.pos.x+delta.x;
-      } //it MUST BE at WS_TELTO
-      if (tp->type=='F') 
-        player.flags &= ~ISHELD;
-      if (tp->pos.y!=y || tp->pos.x!=x)
-        tp->oldch = mvinch(tp->pos.y, tp->pos.x);
+      zap_teleport(monster, y, x, which);      
     }
-    tp->dest = &player.pos;
-    tp->flags |= ISRUN;
+    monster->dest = &player.pos;
+    monster->flags |= ISRUN;
   }
 }
 
