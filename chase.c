@@ -124,7 +124,7 @@ over:
     if (monster->oldch==' ' && cansee(monster->pos.y, monster->pos.x) && get_tile(monster->pos.y, monster->pos.x)==FLOOR)
       mvaddch(monster->pos.y, monster->pos.x, FLOOR);
     else if (monster->oldch==FLOOR && !cansee(monster->pos.y, monster->pos.x) && !on(player, SEEMONST))
-      mvaddch(monster->pos.y, monster->pos.x, '~'); //TODO: teleport space comes from here
+      mvaddch(monster->pos.y, monster->pos.x, ' ');
     else
       mvaddch(monster->pos.y, monster->pos.x, monster->oldch);
   }

@@ -118,14 +118,6 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
       rnd_pos(&rooms[room], &new_yx);
     } while (!(isfloor(display_character(new_yx.y, new_yx.x))));
     monster->pos = new_yx;
-    //if (can_see_monst(monster)) 
-      //mvaddch(monster->pos.y, monster->pos.x, monster->disguise);
-    //else 
-    if (on(player, SEEMONST)) {
-      standout(); 
-      mvaddch(monster->pos.y, monster->pos.x, monster->disguise); 
-      standend();
-    }
   }
   else { //it MUST BE at WS_TELTO
     monster->pos.y = player.pos.y+delta.y; 
@@ -134,8 +126,6 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
 
   if (monster->type=='F') 
     player.flags &= ~ISHELD;
-  if (monster->pos.y!=y || monster->pos.x!=x)
-    monster->oldch = mvinch(monster->pos.y, monster->pos.x);
 }
 
 void zap_generic(ITEM* wand, int which)

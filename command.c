@@ -205,7 +205,7 @@ void execcom()
     case 'o': after = FALSE; msg("i don't have any options, oh my!"); break;
     case CTRL('L'): after = FALSE; msg("the screen looks fine to me"); break;
 
-    case CTRL('Z'): after = FALSE; wizard = !wizard; msg(wizard ? "You are now a wizard!" : "You feel your magic powers fade away"); break; 
+    case CTRL('W'): after = FALSE; wizard = !wizard; msg(wizard ? "You are now a wizard!" : "You feel your magic powers fade away"); break; 
 
     default:
       if (wizard) {
