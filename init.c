@@ -261,14 +261,14 @@ char* getsyl()
   static char _tsyl[4];
 
   _tsyl[3] = 0;
-  _tsyl[2] = rchr(c_set);
-  _tsyl[1] = rchr(v_set);
-  _tsyl[0] = rchr(c_set);
+  _tsyl[2] = random_char_in(c_set);
+  _tsyl[1] = random_char_in(v_set);
+  _tsyl[0] = random_char_in(c_set);
   return (_tsyl);
 }
 
-//rchr(): return random character in given string
-char rchr(char *string)
+//random_char_in(): return random character in given string
+char random_char_in(char *string)
 {
   return (string[rnd(strlen(string))]);
 }

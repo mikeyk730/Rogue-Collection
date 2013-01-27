@@ -10,8 +10,8 @@ void init_names();
 //getsyl(): generate a random syllable
 char* getsyl();
 
-//rchr(): return random character in given string
-char rchr(char *string);
+//random_char_in(): return random character in given string
+char random_char_in(char *string);
 
 //init_stones: Initialize the ring stone setting scheme for this time
 void init_stones();
