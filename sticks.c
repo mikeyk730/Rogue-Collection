@@ -351,7 +351,7 @@ void drain()
 }
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
-void fire_bolt(Coord *start, Coord *dir, const char *name)
+int fire_bolt(Coord *start, Coord *dir, const char *name)
 {
   byte dirch, ch;
   AGENT *tp;
@@ -413,6 +413,7 @@ void fire_bolt(Coord *start, Coord *dir, const char *name)
           {
             hit_monster(pos.y, pos.x, &bolt);
             if (mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = mvinch(pos.y, pos.x);
+            return FALSE; //zapping monster may have killed self, not safe to go on
           }
         }
         else if (ch!='X' || tp->disguise=='X')
@@ -454,6 +455,7 @@ void fire_bolt(Coord *start, Coord *dir, const char *name)
     tick_pause();
     if (spotpos[j].s_under) mvaddch(spotpos[j].s_pos.y, spotpos[j].s_pos.x, spotpos[j].s_under);
   }
+  return TRUE;
 }
 
 //charge_str: Return an appropriate string for a wand charge

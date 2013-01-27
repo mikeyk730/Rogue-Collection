@@ -25,123 +25,133 @@ Coord ch_ret; //Where chasing takes you
 //runners: Make all the running monsters move.
 void runners()
 {
-  AGENT *tp;
+  AGENT *monster, *next = NULL;
   int dist;
 
-  for (tp = mlist; tp!=NULL; tp = next(tp))
+  for (monster = mlist; monster!=NULL; monster = next)
   {
-    if (!on(*tp, ISHELD) && on(*tp, ISRUN))
+    next = next(monster); //monster may be invalidated during iteration
+    if (!on(*monster, ISHELD) && on(*monster, ISRUN))
     {
-      dist = DISTANCE(player.pos.y, player.pos.x, tp->pos.y, tp->pos.x);
-      if (!(on(*tp, ISSLOW) || (tp->type=='S' && dist>3)) || tp->turn) do_chase(tp);
-      if (on(*tp, ISHASTE)) do_chase(tp);
-      dist = DISTANCE(player.pos.y, player.pos.x, tp->pos.y, tp->pos.x);
-      if (on(*tp, ISFLY) && dist>3) do_chase(tp);
-      tp->turn ^= TRUE;
+      dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
+      if (!(on(*monster, ISSLOW) || (monster->type=='S' && dist>3)) || monster->turn) 
+        if(!do_chase(monster)) continue;
+      if (on(*monster, ISHASTE)) 
+        if(!do_chase(monster)) continue;
+      dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
+      if (on(*monster, ISFLY) && dist>3) 
+        if(!do_chase(monster)) continue;
+      monster->turn ^= TRUE;
     }
   }
 }
 
 //do_chase: Make one thing chase another.
-void do_chase(AGENT *th)
+int do_chase(AGENT *monster)
 {
   int mindist = 32767, i, dist;
   bool door;
   ITEM *obj;
   struct Room *oroom;
-  struct Room *rer, *ree; //room of chaser, room of chasee
+  struct Room *monster_room, *dest_room; //room of chaser, room of chasee
   Coord this; //Temporary destination for chaser
 
-  rer = th->room; //Find room of chaser
-  if (on(*th, ISGREED) && rer->goldval==0) th->dest = &player.pos; //If gold has been taken, run after hero
-  ree = player.room;
-  if (th->dest!=&player.pos) ree = roomin(th->dest); //Find room of chasee
-  if (ree==NULL) return;
+  monster_room = monster->room; //Find room of chaser
+  if (on(*monster, ISGREED) && monster_room->goldval == 0) 
+    monster->dest = &player.pos; //If gold has been taken, run after hero
+
+  dest_room = player.room;
+  if (monster->dest != &player.pos) 
+    dest_room = roomin(monster->dest); //Find room of chasee
+  if (dest_room==NULL) 
+    return TRUE;
+
   //We don't count doors as inside rooms for this routine
-  door = (get_tile(th->pos.y, th->pos.x)==DOOR);
+  door = (get_tile(monster->pos.y, monster->pos.x)==DOOR);
   //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
 
 over:
 
-  if (rer!=ree && (rer->flags&ISMAZE)==0)
+  if (monster_room!=dest_room && (monster_room->flags&ISMAZE)==0)
   {
     //loop through doors
-    for (i = 0; i<rer->num_exits; i++)
+    for (i = 0; i<monster_room->num_exits; i++)
     {
-      dist = DISTANCE(th->dest->y, th->dest->x, rer->exits[i].y, rer->exits[i].x);
-      if (dist<mindist) {this = rer->exits[i]; mindist = dist;}
+      dist = DISTANCE(monster->dest->y, monster->dest->x, monster_room->exits[i].y, monster_room->exits[i].x);
+      if (dist<mindist) {this = monster_room->exits[i]; mindist = dist;}
     }
     if (door)
     {
-      rer = &passages[get_flags(th->pos.y, th->pos.x)&F_PNUM];
+      monster_room = &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM];
       door = FALSE;
       goto over;
     }
   }
   else
   {
-    this = *th->dest;
+    this = *monster->dest;
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
-    if ((th->type=='D' || th->type=='I') && (th->pos.y==player.pos.y || th->pos.x==player.pos.x || abs(th->pos.y-player.pos.y)==abs(th->pos.x-player.pos.x)) && ((dist = DISTANCE(th->pos.y, th->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !on(*th, ISCANC) && rnd(DRAGONSHOT)==0)
+    if ((monster->type=='D' || monster->type=='I') && (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) && ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !on(*monster, ISCANC) && rnd(DRAGONSHOT)==0)
     {
       running = FALSE;
-      delta.y = sign(player.pos.y-th->pos.y);
-      delta.x = sign(player.pos.x-th->pos.x);
-      fire_bolt(&th->pos, &delta, th->type=='D'?"flame":"frost");
-      return;
+      delta.y = sign(player.pos.y-monster->pos.y);
+      delta.x = sign(player.pos.x-monster->pos.x);
+      return fire_bolt(&monster->pos, &delta, monster->type=='D'?"flame":"frost");
     }
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
-  chase(th, &this);
-  if (equal(ch_ret, player.pos)) {attack(th); return;}
-  else if (equal(ch_ret, *th->dest))
+  chase(monster, &this);
+  if (equal(ch_ret, player.pos)) {attack(monster); return TRUE;}
+  else if (equal(ch_ret, *monster->dest))
   {
-    for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (th->dest==&obj->pos)
+    for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (monster->dest==&obj->pos)
     {
       byte oldchar;
 
       detach_item(&lvl_obj, obj);
-      attach_item(&th->pack, obj);
-      oldchar = (th->room->flags&ISGONE)?PASSAGE:FLOOR;
+      attach_item(&monster->pack, obj);
+      oldchar = (monster->room->flags&ISGONE)?PASSAGE:FLOOR;
       set_tile(obj->pos.y, obj->pos.x, oldchar);
       if (cansee(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, oldchar);
-      th->dest = find_dest(th);
+      monster->dest = find_dest(monster);
       break;
     }
   }
-  if (th->type=='F') return;
+  if (monster->type=='F') return TRUE;
   //If the chasing thing moved, update the screen
-  if (th->oldch!='@')
+  if (monster->oldch!='@')
   {
-    if (th->oldch==' ' && cansee(th->pos.y, th->pos.x) && get_tile(th->pos.y, th->pos.x)==FLOOR)
-      mvaddch(th->pos.y, th->pos.x, FLOOR);
-    else if (th->oldch==FLOOR && !cansee(th->pos.y, th->pos.x) && !on(player, SEEMONST))
-      mvaddch(th->pos.y, th->pos.x, ' ');
+    if (monster->oldch==' ' && cansee(monster->pos.y, monster->pos.x) && get_tile(monster->pos.y, monster->pos.x)==FLOOR)
+      mvaddch(monster->pos.y, monster->pos.x, FLOOR);
+    else if (monster->oldch==FLOOR && !cansee(monster->pos.y, monster->pos.x) && !on(player, SEEMONST))
+      mvaddch(monster->pos.y, monster->pos.x, '~'); //TODO: teleport space comes from here
     else
-      mvaddch(th->pos.y, th->pos.x, th->oldch);
+      mvaddch(monster->pos.y, monster->pos.x, monster->oldch);
   }
-  oroom = th->room;
-  if (!equal(ch_ret, th->pos))
+  oroom = monster->room;
+  if (!equal(ch_ret, monster->pos))
   {
-    if ((th->room = roomin(&ch_ret))==NULL) {th->room = oroom; return;}
-    if (oroom!=th->room) th->dest = find_dest(th);
-    th->pos = ch_ret;
+    if ((monster->room = roomin(&ch_ret))==NULL) {monster->room = oroom; return TRUE;}
+    if (oroom!=monster->room) monster->dest = find_dest(monster);
+    monster->pos = ch_ret;
   }
-  if (can_see_monst(th))
+  if (can_see_monst(monster))
   {
     if (get_flags(ch_ret.y, ch_ret.x)&F_PASS) standout();
-    th->oldch = mvinch(ch_ret.y, ch_ret.x);
-    mvaddch(ch_ret.y, ch_ret.x, th->disguise);
+    monster->oldch = mvinch(ch_ret.y, ch_ret.x);
+    mvaddch(ch_ret.y, ch_ret.x, monster->disguise);
   }
   else if (on(player, SEEMONST))
   {
     standout();
-    th->oldch = mvinch(ch_ret.y, ch_ret.x);
-    mvaddch(ch_ret.y, ch_ret.x, th->type);
+    monster->oldch = mvinch(ch_ret.y, ch_ret.x);
+    mvaddch(ch_ret.y, ch_ret.x, monster->type);
   }
-  else th->oldch = '@';
-  if (th->oldch==FLOOR && oroom->flags&ISDARK) th->oldch = ' ';
+  else 
+    monster->oldch = '@';
+  if (monster->oldch==FLOOR && oroom->flags&ISDARK) monster->oldch = ' ';
   standend();
+  return TRUE;
 }
 
 //see_monst: Return TRUE if the hero can see the monster
@@ -267,7 +277,7 @@ int diag_ok( Coord *sp, Coord *ep )
 //cansee: Returns true if the hero can see a certain coordinate.
 int cansee(int y, int x)
 {
-  struct Room *rer;
+  struct Room *room;
   Coord tp;
 
   if (on(player, ISBLIND)) return FALSE;
@@ -275,8 +285,8 @@ int cansee(int y, int x)
   //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
   tp.y = y;
   tp.x = x;
-  rer = roomin(&tp);
-  return (rer==player.room && !(rer->flags&ISDARK));
+  room = roomin(&tp);
+  return (room==player.room && !(room->flags&ISDARK));
 }
 
 //find_dest: find the proper destination for the monster

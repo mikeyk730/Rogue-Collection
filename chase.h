@@ -1,8 +1,8 @@
 //runners: Make all the running monsters move.
 void runners();
 
-//do_chase: Make one thing chase another.
-void do_chase(AGENT *th);
+//do_chase: Make one thing chase another.  Returns FALSE if monster has been invalidated
+int do_chase(AGENT *monster);
 
 //see_monst: Return TRUE if the hero can see the monster
 int can_see_monst(AGENT *mp);

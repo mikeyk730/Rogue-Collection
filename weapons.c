@@ -188,11 +188,13 @@ void init_weapon(ITEM *weap, byte type)
 int hit_monster(int y, int x, ITEM *obj)
 {
   static Coord mp;
-  AGENT *mo;
+  AGENT *monster = monster_at(y, x);
+  if (!monster)  return FALSE;
 
-  if (mo = monster_at(y, x)) {mp.y = y; mp.x = x; return fight(&mp, mo->type, obj, TRUE);}
-  return FALSE;
-}
+  mp.y = y;
+  mp.x = x; 
+  return fight(&mp, monster->type, obj, TRUE);
+ }
 
 //num: Figure out the plus number for armor/weapons
 char *num(int n1, int n2, char type)
