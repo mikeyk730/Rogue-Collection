@@ -96,8 +96,6 @@ hack:
   //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
   if (monster_at(obj->pos.y, obj->pos.x)==NULL || !hit_monster(obj->pos.y, obj->pos.x, obj))
     fall(obj, TRUE);
-  if (obj->type==AMULET) 
-    amulet = FALSE;
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room

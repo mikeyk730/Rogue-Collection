@@ -17,3 +17,5 @@ int pack_char(ITEM *obj);
 
 //money: Add or subtract gold from the pack
 void money(int value);
+
+int has_amulet();

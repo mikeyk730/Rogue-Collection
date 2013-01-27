@@ -251,7 +251,6 @@ bool s_know[MAXSCROLLS];    //Does he know what a scroll does
 bool p_know[MAXPOTIONS];    //Does he know what a potion does
 bool r_know[MAXRINGS];      //Does he know what a ring does
 bool ws_know[MAXSTICKS];    //Does he know what a stick does
-bool amulet = FALSE;        //He has the amulet
 bool saw_amulet = FALSE;    //He has seen the amulet
 bool door_stop = FALSE;     //Stop running when we pass a door
 bool fastmode = FALSE;      //Run until you see something

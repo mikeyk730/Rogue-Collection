@@ -512,7 +512,7 @@ void d_level()
 void u_level()
 {
   if (get_tile(player.pos.y, player.pos.x)==STAIRS || wizard == TRUE) 
-    if (amulet) {
+    if (has_amulet()) {
       level--; 
       if (level==0) 
         total_winner(); 

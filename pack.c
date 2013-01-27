@@ -142,7 +142,7 @@ picked_up:
   for (mp = mlist; mp!=NULL; mp = next(mp))
     if (mp->dest && (mp->dest->x==obj->pos.x) && (mp->dest->y==obj->pos.y))
       mp->dest = &player.pos;
-  if (obj->type==AMULET) {amulet = TRUE; saw_amulet = TRUE;}
+  if (obj->type==AMULET) { saw_amulet = TRUE;}
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));
 }
@@ -267,4 +267,14 @@ void money(int value)
   mvaddch(player.pos.y, player.pos.x, floor);
   set_tile(player.pos.y, player.pos.x, floor);
   if (value>0) msg("you found %d gold pieces", value);
+}
+
+int has_amulet()
+{
+  ITEM* item;
+  for(item = player.pack; item != NULL; item = next(item))
+    if (item->type == AMULET)
+      return TRUE;
+
+  return FALSE;
 }

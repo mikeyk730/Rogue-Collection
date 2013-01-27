@@ -212,7 +212,6 @@ void drop()
   attach_item(&lvl_obj, op);
   set_tile(player.pos.y, player.pos.x, op->type);
   bcopy(op->pos, player.pos);
-  if (op->type==AMULET) amulet = FALSE;
   msg("dropped %s", inv_name(op, TRUE));
 }
 
