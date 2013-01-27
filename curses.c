@@ -351,15 +351,14 @@ void fixup()
 //Clear the screen in an interesting fashion
 void implode()
 {
-  int j, delay, r, c, cinc = COLS/10/2, er, ec;
+  int j, r, c, cinc = COLS/10/2, er, ec;
 
   er = (COLS==80?LINES-3:LINES-4);
   //If the curtain is down, just clear the memory
-  delay = 500;
   for (r = 0, c = 0, ec = COLS-1; r<10; r++, c += cinc, er--, ec -= cinc)
   {
     vbox(sng_box, r, c, er, ec);
-    for (j = delay; j--;) ;
+    Sleep(25);
     for (j = r+1; j<=er-1; j++)
     {
       move(j, c+1); repchr(' ', cinc-1);
@@ -372,7 +371,7 @@ void implode()
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
 void drop_curtain()
 {
-  int r, j, delay=3000;
+  int r;
   cursor(FALSE);
   green();
   vbox(sng_box, 0, 0, LINES-1, COLS-1);
@@ -381,7 +380,7 @@ void drop_curtain()
   {
     move(r, 1);
     repchr(0xb1, COLS-2);
-    for (j = delay; j--;) ;
+    Sleep(20);
   }
   move(0, 0);
   standend();
@@ -389,11 +388,10 @@ void drop_curtain()
 
 void raise_curtain()
 {
-  int i, j, o, delay=3000;
-  for (i = 0, o = (LINES-1)*COLS*2; i<LINES; i++, o -= COLS*2)
-  {
-    for (j = delay; j--;) ;
-  }
+//  int i, o;
+//  for (i = 0, o = (LINES-1)*COLS*2; i<LINES; i++, o -= COLS*2)
+//  {
+//  }
 }
 
 void move(int y, int x) 

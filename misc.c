@@ -502,7 +502,7 @@ void d_level()
     msg("I see no way down");
   else {
     level++; 
-    new_level();
+    new_level(TRUE);
   }
 }
 
@@ -514,7 +514,7 @@ void u_level()
       level--; 
       if (level==0) 
         total_winner(); 
-      new_level(); 
+      new_level(TRUE); 
       msg("you feel a wrenching sensation in your gut");
     } 
     else msg("your way is magically blocked");

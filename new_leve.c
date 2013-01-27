@@ -22,7 +22,7 @@
 #define MINTREAS  2 //minimum number of treasures in a treasure room
 #define MAXTRIES  10 //max number of tries to put down a monster
 
-void new_level()
+void new_level(int do_implode)
 {
   int rm, i;
   AGENT *tp;
@@ -47,7 +47,7 @@ void new_level()
   {
     clear();
   }
-  implode();
+  if(do_implode) implode();
   status();
   do_passages(); //Draw passages
   no_food++;

@@ -225,7 +225,7 @@ void descend(char *mesg)
 {
   level++;
   if (*mesg==0) msg(" ");
-  new_level();
+  new_level(TRUE);
   msg("");
   msg(mesg);
   if (!save(VS_LUCK))

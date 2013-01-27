@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     init_materials(); //Set up materials of wands
     setup();
     drop_curtain();
-    new_level(); //Draw current level
+    new_level(FALSE); //Draw current level
     //Start up daemons and fuses
     daemon(doctor, 0);
     fuse(swander, 0, WANDER_TIME);
