@@ -199,7 +199,7 @@ void drop()
   //Take it out of the pack
   if (op->count>=2 && op->type!=WEAPON)
   {
-    if ((nobj = create_item())==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
+    if ((nobj = create_item(0,0))==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
     op->count--;
     bcopy(*nobj, *op);
     nobj->count = 1;
@@ -250,7 +250,7 @@ ITEM *new_item()
   ITEM *cur;
   int j, k;
 
-  if ((cur = create_item())==NULL) return NULL;
+  if ((cur = create_item(0,0))==NULL) return NULL;
   cur->hit_plus = cur->damage_plus = 0;
   cur->damage = cur->throw_damage = "0d0";
   cur->armor_class = 11;

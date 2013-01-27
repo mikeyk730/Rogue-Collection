@@ -1,5 +1,5 @@
 //create_thing: Get a new item with a specified size
-ITEM *create_item();
+ITEM *create_item(int type, int which);
 AGENT *create_agent();
 
 //discard: Free up an item

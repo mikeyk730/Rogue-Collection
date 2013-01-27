@@ -462,8 +462,7 @@ void killed(AGENT *tp, bool pr)
     {
       ITEM *gold;
 
-      if ((gold = create_item())==NULL) return;
-      gold->type = GOLD;
+      if ((gold = create_item(GOLD, 0))==NULL) return;
       gold->gold_value = GOLDCALC;
       if (save(VS_MAGIC)) gold->gold_value += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
       attach_item(&tp->pack, gold);

@@ -80,7 +80,7 @@ hack:
   else
   {
     //here is a quick hack to check if we can get a new item
-    if ((nitem = create_item())==NULL)
+    if ((nitem = create_item(0,0))==NULL)
     {
       obj->count = 1;
       msg("something in your pack explodes!!!");

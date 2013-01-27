@@ -187,10 +187,8 @@ int be_trapped(Coord *tc)
     {
       ITEM *arrow;
 
-      if ((arrow = create_item())!=NULL)
+      if ((arrow = create_item(WEAPON, ARROW))!=NULL)
       {
-        arrow->type = WEAPON;
-        arrow->which = ARROW;
         init_weapon(arrow, ARROW);
         arrow->count = 1;
         bcopy(arrow->pos, player.pos);

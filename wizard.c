@@ -76,7 +76,7 @@ void create_obj()
   byte ch, bless;
   int limit;
 
-  if ((obj = create_item())==NULL) {msg("can't create anything now"); return;}
+  if ((obj = create_item(0,0))==NULL) {msg("can't create anything now"); return;}
   msg("type of item: ");
   switch (readchar())
   {

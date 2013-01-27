@@ -117,13 +117,12 @@ void put_things()
     //Check this first so if we are out of memory the guy has a hope of getting the amulet
     if (level>=AMULETLEVEL && !saw_amulet)
     {
-      if ((cur = create_item())!=NULL)
+      if ((cur = create_item(AMULET, 0))!=NULL)
       {
         attach_item(&lvl_obj, cur);
         cur->hit_plus = cur->damage_plus = 0;
         cur->damage = cur->throw_damage = "0d0";
         cur->armor_class = 11;
-        cur->type = AMULET;
         //Put it somewhere
         do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(display_character(tp.y, tp.x)));
         set_tile(tp.y, tp.x, AMULET);

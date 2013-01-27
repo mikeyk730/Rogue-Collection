@@ -3,16 +3,18 @@
 #include "rogue.h"
 #include "thing.h"
 
-ITEM *create_item()
+ITEM *create_item(int type, int which)
 {
   ITEM* item;
 
   if (total_items >= MAXITEMS)
     return NULL;
+  ++total_items;
 
   item = malloc(sizeof(ITEM));
   memset(item, 0, sizeof(ITEM));
-  ++total_items;
+  item->type = type;
+  item->which = which;
 
   return item;
 }
