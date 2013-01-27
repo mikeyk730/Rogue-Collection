@@ -30,6 +30,7 @@
 #include "save.h"
 #include "env.h"
 #include "command.h"
+#include "things.h"
 
 int bwflag = FALSE;
 

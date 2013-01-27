@@ -219,14 +219,6 @@ void init_player()
 
 //Contains functions for dealing with things like potions and scrolls
 
-//init_things: Initialize the probabilities for types of things
-void init_things()
-{
-  struct MagicItem *mp;
-  for (mp = &things[1]; mp<=&things[NUMTHINGS-1]; mp++) 
-    mp->prob += (mp-1)->prob;
-}
-
 //init_colors: Initialize the potion color scheme for this time
 void init_colors()
 {

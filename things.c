@@ -23,11 +23,30 @@
 #include "thing.h"
 #include "monsters.h"
 
+struct MagicItem things[NUMTHINGS] =
+{
+  {0, 27 }, //potion
+  {0, 30 }, //scroll
+  {0, 17 }, //food
+  {0,  8 }, //weapon
+  {0,  8 }, //armor
+  {0,  5 }, //ring
+  {0,  5 }  //stick
+};
+
 #define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
 
 static int line_cnt = 0;
 static bool newpage = FALSE;
 static char *lastfmt, *lastarg;
+
+//init_things: Initialize the probabilities for types of things
+void init_things()
+{
+  struct MagicItem *mp;
+  for (mp = &things[1]; mp<=&things[NUMTHINGS-1]; mp++) 
+    mp->prob += (mp-1)->prob;
+}
 
 //inv_name: Return the name of something as it would appear in an inventory.
 char *inv_name(ITEM *obj, bool drop)

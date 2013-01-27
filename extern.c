@@ -339,17 +339,6 @@ AGENT player; //The rogue
 ITEM *lvl_obj = NULL; //List of objects on this level
 AGENT *mlist = NULL; //List of monsters on the level
 
-struct MagicItem things[NUMTHINGS] =
-{
-  {0, 27 }, //potion
-  {0, 30 }, //scroll
-  {0, 17 }, //food
-  {0,  8 }, //weapon
-  {0,  8 }, //armor
-  {0,  5 }, //ring
-  {0,  5 }  //stick
-};
-
 //Common strings
 char *typeahead = "";
 char *intense = " of intense white light";

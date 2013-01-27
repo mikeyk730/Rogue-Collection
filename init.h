@@ -1,9 +1,6 @@
 //init_player: Roll up the rogue
 void init_player();
 
-//init_things: Initialize the probabilities for types of things
-void init_things();
-
 //init_colors: Initialize the potion color scheme for this time
 void init_colors();
 

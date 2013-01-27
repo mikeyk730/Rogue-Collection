@@ -1,5 +1,7 @@
-//inv_name: Return the name of something as it would appear in an inventory.
+//init_things: Initialize the probabilities for types of things
+void init_things();
 
+//inv_name: Return the name of something as it would appear in an inventory.
 char *inv_name(ITEM *obj, bool drop);
 
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
