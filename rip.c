@@ -205,7 +205,6 @@ void death(char monst)
 
   adjust_purse(-(get_purse()/10));
 
-  clear();
   drop_curtain();
   clear();
   brown();
