@@ -21,6 +21,7 @@
 #include "level.h"
 #include "list.h"
 #include "mach_dep.h"
+#include "things.h"
 
 bool ws_know[MAXSTICKS];    //Does he know what a stick does
 const char *ws_made[MAXSTICKS]; //What sticks are made of
@@ -101,6 +102,13 @@ int does_know_stick(int type)
 void discover_stick(int type)
 {
   ws_know[type] = TRUE;
+}
+
+void init_new_stick(ITEM* stick)
+{
+  stick->type = STICK;
+  stick->which = pick_one(ws_magic, MAXSTICKS);
+  fix_stick(stick);
 }
 
 //init_materials: Initialize the construction materials for wands and staffs

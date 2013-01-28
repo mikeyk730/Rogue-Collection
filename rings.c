@@ -79,6 +79,25 @@ void init_stones()
   }
 }
 
+void init_new_ring(ITEM* ring)
+{
+  ring->type = RING;
+  ring->which = pick_one(r_magic, MAXRINGS);
+  switch (ring->which)
+  {
+  case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
+    if ((ring->armor_class = rnd(3))==0) {
+      ring->armor_class = -1; 
+      ring->flags |= ISCURSED;
+    }
+    break;
+
+  case R_AGGR: case R_TELEPORT:
+    ring->flags |= ISCURSED;
+    break;
+  }
+}
+
 const char* get_stone(int type)
 {
   return r_stones[type];

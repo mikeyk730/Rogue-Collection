@@ -16,6 +16,7 @@
 #include "rings.h"
 #include "thing.h"
 #include "monsters.h"
+#include "things.h"
 
 #define P_CONFUSE   0
 #define P_PARALYZE  1
@@ -100,6 +101,12 @@ void init_colors()
 const char* get_color(int type)
 {
   return p_colors[type];
+}
+
+void init_new_potion(ITEM* potion)
+{
+  potion->type = POTION;
+  potion->which = pick_one(p_magic, MAXPOTIONS);
 }
 
 void quaff_confusion()

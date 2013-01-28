@@ -15,6 +15,7 @@
 #include "level.h"
 #include "thing.h"
 #include "weapons.h"
+#include "things.h"
 
 //Scroll types
 #define S_CONFUSE   0
@@ -105,6 +106,12 @@ void init_names()
 const char* get_name(int type)
 {
   return s_names[type].storage;
+}
+
+void init_new_scroll(ITEM* scroll)
+{
+  scroll->type = SCROLL;
+  scroll->which = pick_one(s_magic, MAXSCROLLS);
 }
 
 void read_monster_confusion()

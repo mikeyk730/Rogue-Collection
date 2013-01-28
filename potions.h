@@ -1,6 +1,7 @@
 //init_colors: Initialize the potion color scheme for this time
 void init_colors();
 const char* get_color(int type);
+void init_new_potion(ITEM* potion);
 
 //quaff: Quaff a potion from the pack
 void quaff();

@@ -242,79 +242,57 @@ int can_drop(ITEM *op)
   return TRUE;
 }
 
+void init_new_food(ITEM* food)
+{
+  no_food = 0;
+  food->type = FOOD;
+  if (rnd(10)!=0) food->which = 0; else food->which = 1;
+}
+
 //new_thing: Return a new thing
 ITEM *new_item()
 {
-  ITEM *cur;
-  int k;
+  ITEM *item = create_item(0, 0);
+  if (!item)
+    return NULL; 
 
-  if ((cur = create_item(0,0))==NULL) return NULL;
-  cur->hit_plus = cur->damage_plus = 0;
-  cur->damage = cur->throw_damage = "0d0";
-  cur->armor_class = 11;
-  cur->count = 1;
-  cur->group = 0;
-  cur->flags = 0;
-  cur->enemy = 0;
   //Decide what kind of object it will be. If we haven't had food for a while, let it be food.
-  switch (no_food>3?2:pick_one(things, NUMTHINGS))
+  switch (no_food > 3 ? 2 : pick_one(things, NUMTHINGS))
   {
   case 0:
-    cur->type = POTION;
-    cur->which = pick_one(p_magic, MAXPOTIONS);
+    init_new_potion(item);
     break;
 
   case 1:
-    cur->type = SCROLL;
-    cur->which = pick_one(s_magic, MAXSCROLLS);
+    init_new_scroll(item);
     break;
 
   case 2:
-    no_food = 0;
-    cur->type = FOOD;
-    if (rnd(10)!=0) cur->which = 0; else cur->which = 1;
+    init_new_food(item);
     break;
 
   case 3:
-    cur->type = WEAPON;
-    cur->which = rnd(MAXWEAPONS);
-    init_weapon(cur, cur->which);
-    if ((k = rnd(100))<10) {cur->flags |= ISCURSED; cur->hit_plus -= rnd(3)+1;}
-    else if (k<15) cur->hit_plus += rnd(3)+1;
+    init_new_weapon(item);
     break;
 
   case 4:
-    init_new_armor(cur);
+    init_new_armor(item);
     break;
 
   case 5:
-    cur->type = RING;
-    cur->which = pick_one(r_magic, MAXRINGS);
-    switch (cur->which)
-    {
-    case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
-      if ((cur->armor_class = rnd(3))==0) {cur->armor_class = -1; cur->flags |= ISCURSED;}
-      break;
-
-    case R_AGGR: case R_TELEPORT:
-      cur->flags |= ISCURSED;
-      break;
-    }
+    init_new_ring(item);
     break;
 
   case 6:
-    cur->type = STICK;
-    cur->which = pick_one(ws_magic, MAXSTICKS);
-    fix_stick(cur);
+    init_new_stick(item);
     break;
 
   default:
     debug("Picked a bad kind of object");
     wait_for(' ');
     break;
-
   }
-  return cur;
+  return item;
 }
 
 //pick_one: Pick an item out of a list of nitems possible magic items

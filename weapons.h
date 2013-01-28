@@ -1,4 +1,5 @@
 const char* get_weapon_name(int which);
+void init_new_weapon(ITEM* weapon);
 
 //missile: Fire a missile in a given direction
 void missile(int ydelta, int xdelta);

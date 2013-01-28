@@ -64,6 +64,16 @@ const char* get_weapon_name(int which)
   return weapon_names[which];
 }
 
+void init_new_weapon(ITEM* weapon)
+{
+  int k;
+  weapon->type = WEAPON;
+  weapon->which = rnd(MAXWEAPONS);
+  init_weapon(weapon, weapon->which);
+  if ((k = rnd(100))<10) {weapon->flags |= ISCURSED; weapon->hit_plus -= rnd(3)+1;}
+  else if (k<15) weapon->hit_plus += rnd(3)+1;
+}
+
 //missile: Fire a missile in a given direction
 void missile(int ydelta, int xdelta)
 {
