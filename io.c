@@ -220,13 +220,13 @@ void status()
     printw("%-12s", he_man[s_elvl-1]);
   }
   //Hungry state
-  if (s_hungry!=hungry_state)
+  if (s_hungry!=get_hungry_state())
   {
-    s_hungry = hungry_state;
+    s_hungry = get_hungry_state();
     move(24, PT(28, 58));
     addstr(state_name[0]);
     move(24, PT(28, 58));
-    if (hungry_state) {bold(); addstr(state_name[hungry_state]); standend();}
+    if (get_hungry_state()) {bold(); addstr(state_name[get_hungry_state()]); standend();}
   }
   standend();
   move(oy, ox);

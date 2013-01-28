@@ -89,7 +89,6 @@
     <ClCompile Include="fight.c" />
     <ClCompile Include="food.c" />
     <ClCompile Include="hero.c" />
-    <ClCompile Include="init.c" />
     <ClCompile Include="io.c" />
     <ClCompile Include="level.c" />
     <ClCompile Include="list.c" />
@@ -128,7 +127,6 @@
     <ClInclude Include="fight.h" />
     <ClInclude Include="food.h" />
     <ClInclude Include="hero.h" />
-    <ClInclude Include="init.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="list.h" />

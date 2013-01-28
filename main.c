@@ -23,7 +23,6 @@
 #include "mach_dep.h"
 #include "curses.h"
 #include "io.h"
-#include "init.h"
 #include "new_leve.h"
 #include "misc.h"
 #include "rip.h"

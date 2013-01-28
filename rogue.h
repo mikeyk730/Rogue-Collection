@@ -318,7 +318,7 @@ extern char file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
   huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 
   *typeahead, take, whoami[];
 
-extern int count, food_left, flytrap_hit, fd, hungry_state, iguess,
+extern int count, flytrap_hit, fd, iguess,
   lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, quiet, total_items;
 
 extern long seed;

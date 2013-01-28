@@ -150,8 +150,9 @@ int bailout = FALSE;
 char take;  //Thing the rogue is taking
 char runch; //Direction player is running
 
-//now names are associated with fixed pointers
+int iguess = 0;
 
+char prbuf[MAXSTR];    //Printing buffer used everywhere
 char huh[BUFSIZE];                  //The last message printed
 
 //storage array for guesses
@@ -164,13 +165,12 @@ int level = 1;         //What level rogue is on
 int mpos = 0;          //Where cursor is on top line
 int no_move = 0;       //Number of turns held in place
 int no_command = 0;    //Number of turns asleep
-int total_items = 0;         //Total dynamic memory bytes
+int total_items = 0;   //Total dynamic memory bytes
 int no_food = 0;       //Number of levels without food
 int count = 0;         //Number of times to repeat command
 int flytrap_hit = 0;   //Number of time flytrap has hit
 int quiet = 0;         //Number of quiet turns
-int food_left;         //Amount of food in hero's stomach
-int hungry_state = 0;  //How hungry is he
+
 long seed = 0;         //Random number seed
 
 Coord oldpos; //Position before last look() call

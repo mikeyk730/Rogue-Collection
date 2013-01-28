@@ -9,6 +9,7 @@
 #include "io.h"
 #include "thing.h"
 #include "list.h"
+#include "hero.h"
 
 void init_new_food(ITEM* food)
 {
@@ -32,13 +33,7 @@ void eat()
     detach_item(&player.pack, obj); 
     discard_item(obj);
   }
-  if (food_left<0)
-    food_left = 0;
-  if (food_left>(STOMACH_SIZE-20))
-    no_command += 2+rnd(5);
-  if ((food_left += HUNGER_TIME-200+rnd(400))>STOMACH_SIZE)
-    food_left = STOMACH_SIZE;
-  hungry_state = 0;
+  ingest();
   if (obj==cur_weapon) 
     cur_weapon = NULL;
   if (obj->which==1)
