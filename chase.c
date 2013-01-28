@@ -157,14 +157,23 @@ over:
 }
 
 //see_monst: Return TRUE if the hero can see the monster
-
 int can_see_monst(AGENT *monster)
 {
-  if (on(player, ISBLIND)) return FALSE;
-  if (on(*monster, ISINVIS) && !on(player, CANSEE)) return FALSE;
-  if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x)>=LAMP_DIST && ((monster->room!=player.room || (monster->room->flags&ISDARK) || (monster->room->flags&ISMAZE)))) return FALSE;
-  //If we are seeing the enemy of a vorpally enchanted weapon for the first time, give the player a hint as to what that weapon is good for.
-  if (cur_weapon!=NULL && monster->type==cur_weapon->enemy && ((cur_weapon->flags&DIDFLASH)==0))
+  // player is blind
+  if (on(player, ISBLIND))
+    return FALSE;
+
+  //monster is invisible, and can't see invisible
+  if (on(*monster, ISINVIS) && !on(player, CANSEE))
+    return FALSE;
+  
+  if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x) >= LAMP_DIST &&
+    ((monster->room != player.room || (monster->room->flags & ISDARK) || (monster->room->flags & ISMAZE)))) 
+    return FALSE;
+  
+  //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
+  //give the player a hint as to what that weapon is good for.
+  if (cur_weapon && cur_weapon->enemy == monster->type && !(cur_weapon->flags & DIDFLASH))
   {
     cur_weapon->flags |= DIDFLASH;
     msg(flash, get_weapon_name(cur_weapon->which), terse || expert?"":intense);
