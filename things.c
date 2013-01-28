@@ -233,12 +233,9 @@ int pick_one(struct MagicItem *magic, int nitems)
   for (end = &magic[nitems], i = rnd(100); magic<end; magic++) if (i<magic->prob) break;
   if (magic==end)
   {
-
-    if (is_wizard())
-    {
-      msg("bad pick_one: %d from %d items", i, nitems);
-      for (magic = start; magic<end; magic++) msg("%s: %d%%", magic->name, magic->prob);
-    }
+    debug("bad pick_one: %d from %d items", i, nitems);
+    for (magic = start; magic<end; magic++)
+      debug("%s: %d%%", magic->name, magic->prob);
 
     magic = start;
   }
