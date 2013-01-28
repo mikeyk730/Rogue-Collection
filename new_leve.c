@@ -25,7 +25,7 @@
 
 void new_level(int do_implode)
 {
-  int room, i;
+  int room, i, ntraps;
   AGENT *monster;
   Coord stairs;
 
