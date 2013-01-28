@@ -93,7 +93,7 @@ int fight(Coord *location, char mn, ITEM *weap, bool thrown)
   //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
   count = quiet = 0;
   
-  start_run(location);
+  start_run(monster);
   //Let him know it was really a mimic (if it was one).
   if (monster->type=='X' && monster->disguise!='X' && !on(player, ISBLIND))
   {

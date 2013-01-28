@@ -351,11 +351,13 @@ void zap_speed_monster(int which)
 {
   int x, y;
   AGENT* monster;
-  Coord coord = delta;
 
   y = player.pos.y;
   x = player.pos.x;
-  while (step_ok(display_character(y, x))) {y += coord.y; x += coord.x;}
+  while (step_ok(display_character(y, x))) {
+    y += delta.y; 
+    x += delta.x;
+  }
   if (monster = monster_at(y, x))
   {
     if (which==WS_HASTE_M)
@@ -369,9 +371,7 @@ void zap_speed_monster(int which)
       else monster->flags |= ISSLOW;
       monster->turn = TRUE;
     }
-    coord.y = y;
-    coord.x = x;
-    start_run(&coord);
+    start_run(monster);
   }
 }
 
@@ -506,7 +506,7 @@ void drain()
   {
     mp = *dp;
     if ((mp->stats.hp -= cnt)<=0) killed(mp, can_see_monst(mp));
-    else start_run(&mp->pos);
+    else start_run(mp);
   }
 }
 
@@ -578,7 +578,7 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
         }
         else if (ch!='X' || tp->disguise=='X')
         {
-          if (start==&player.pos) start_run(&pos);
+          if (start==&player.pos) start_run(tp);
           msg("the %s whizzes past the %s", name, get_monster_name(ch));
         }
       }

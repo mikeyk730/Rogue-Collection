@@ -214,8 +214,9 @@ int add_haste(bool potion)
 //aggravate: Aggravate all the monsters on this level
 void aggravate()
 {
-  AGENT *mi;
-  for (mi = mlist; mi!=NULL; mi = next(mi)) start_run(&mi->pos);
+  AGENT *monster;
+  for (monster = mlist; monster!=NULL; monster = next(monster))
+    start_run(monster);
 }
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".

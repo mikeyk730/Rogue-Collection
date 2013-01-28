@@ -171,20 +171,12 @@ int can_see_monst(AGENT *mp)
 }
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)
-void start_run(Coord *runner)
+void start_run(AGENT* monster)
 {
-  AGENT *monster;
-
-  //If we couldn't find him, something is funny
-  monster = monster_at(runner->y, runner->x);
-  if (monster!=NULL)
-  {
-    //Start the beastie running
-    monster->flags |= ISRUN;
-    monster->flags &= ~ISHELD;
-    monster->dest = find_dest(monster);
-  }
-  else debug("start_run: moat == NULL ???");
+  //Start the beastie running
+  monster->flags |= ISRUN;
+  monster->flags &= ~ISHELD;
+  monster->dest = find_dest(monster);
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.

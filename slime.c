@@ -29,7 +29,7 @@ void slime_split(AGENT *tp)
     nslime->oldch = get_tile(slimy.y, slimy.x);
     mvaddch(slimy.y, slimy.x, 'S');
   }
-  start_run(&slimy);
+  start_run(nslime);
 }
 
 int new_slime(AGENT *tp)

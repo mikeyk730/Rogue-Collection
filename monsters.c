@@ -142,7 +142,7 @@ void new_monster(AGENT *monster, byte type, Coord *position)
     set_xeroc_disguise(monster);
 
   if (is_wearing_ring(R_AGGR)) 
-    start_run(position);
+    start_run(monster);
 }
 
 //f_restor(): restor initial damage string for flytraps
@@ -186,7 +186,7 @@ void wanderer()
   new_monster(tp, randmonster(TRUE), &cp);
   if (bailout) debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
-  start_run(&tp->pos);
+  start_run(tp);
 }
 
 //wake_monster: What to do when the hero steps next to a monster

@@ -8,7 +8,7 @@ int do_chase(AGENT *monster);
 int can_see_monst(AGENT *mp);
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)
-void start_run(Coord *runner);
+void start_run(AGENT *monster);
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
 void chase(AGENT *tp, Coord *ee);
