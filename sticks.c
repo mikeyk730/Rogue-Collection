@@ -520,10 +520,9 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
   Coord pos;
   struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
   ITEM bolt;
-  bool is_frost, is_bolt;
+  bool is_frost;
 
-  is_frost = (strcmp(name, "frost")==0 || strcmp(name, "ice")==0);
-  is_bolt = strcmp(name, "bolt")==0;
+  is_frost = (strcmp(name, "frost")==0);
   bolt.type = WEAPON;
   bolt.which = FLAME;
   bolt.damage = bolt.throw_damage = "6d6";
@@ -599,9 +598,9 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
         }
         else msg("the %s whizzes by you", name);
       }
-      if (is_frost) 
+      if (is_frost || strcmp(name, "ice")==0) 
         blue(); 
-      else if (is_bolt) 
+      else if (strcmp(name, "bolt")==0) 
         yellow(); 
       else 
         red();

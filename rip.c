@@ -99,7 +99,9 @@ reread:
     if ((sc_fd = _creat(s_score, _S_IREAD | _S_IWRITE))>=0) {put_scores(&top_ten[0]); _close(sc_fd);}
   }
   pr_scores(rank, &top_ten[0]);
-
+  printw("[Press Enter to quit]");
+  flush_type();
+  wait_for('\r');
 }
 
 void get_scores(struct LeaderboardEntry *top10)
@@ -231,9 +233,6 @@ void death(char monst)
   raise_curtain();
   move(LINES-1, 0);
   score(get_purse(), 0, monst);
-  printw("[Press Enter to quit]");
-  flush_type();
-  wait_for('\r');
   exit(0);
 }
 
