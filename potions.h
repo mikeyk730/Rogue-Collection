@@ -18,7 +18,7 @@ void invis_on();
 bool turn_see(bool turn_off);
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void th_effect(ITEM *obj, AGENT *tp);
+void affect_monster(ITEM *obj, AGENT *tp);
 
 int is_bad_potion(ITEM* obj);
 int does_know_potion(int type);

@@ -385,35 +385,37 @@ bool turn_see(bool turn_off)
 }
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void th_effect(ITEM *obj, AGENT *tp)
+void affect_monster(ITEM *potion, AGENT *monster)
 {
-  switch (obj->which)
+  msg("the flask shatters.");
+
+  switch (potion->which)
   {
   case P_CONFUSE: case P_BLIND:
-    tp->flags |= ISHUH;
-    msg("the %s appears confused", get_monster_name(tp->type));
+    monster->flags |= ISHUH;
+    msg("the %s appears confused", get_monster_name(monster->type));
     break;
 
   case P_PARALYZE:
-    tp->flags &= ~ISRUN;
-    tp->flags |= ISHELD;
+    monster->flags &= ~ISRUN;
+    monster->flags |= ISHELD;
     break;
 
   case P_HEALING: case P_XHEAL:
-    if ((tp->stats.hp += rnd(8))>tp->stats.max_hp) tp->stats.hp = ++tp->stats.max_hp;
+    if ((monster->stats.hp += rnd(8)) > monster->stats.max_hp) 
+      monster->stats.hp = ++monster->stats.max_hp;
     break;
 
   case P_RAISE:
-    tp->stats.hp += 8;
-    tp->stats.max_hp += 8;
-    tp->stats.level++;
+    monster->stats.hp += 8;
+    monster->stats.max_hp += 8;
+    monster->stats.level++;
     break;
 
   case P_HASTE:
-    tp->flags |= ISHASTE;
+    monster->flags |= ISHASTE;
     break;
   }
-  msg("the flask shatters.");
 }
 
 int is_bad_potion(ITEM* obj)

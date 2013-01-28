@@ -35,56 +35,82 @@ const char* you = "you";
 long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 
   20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
 
-//fight: The player attacks the monster.
-int fight(Coord *mp, char mn, ITEM *weap, bool thrown)
+void do_hit(ITEM* weap, int thrown, AGENT* monster, const char* name)
 {
-  AGENT *tp;
-  const char *mname;
+  bool did_huh = FALSE;
 
+  if (thrown) 
+    display_throw_msg(weap, name, "hits", "hit");
+  else 
+    display_hit_msg(NULL, name);
+
+  if (weap && weap->type==POTION)
+  {
+    affect_monster(weap, monster);
+    if (!thrown)
+    {
+      if (--weap->count == 0) {
+        detach_item(&player.pack, weap); 
+        discard_item(weap);
+      }
+      cur_weapon = NULL;
+    }
+  }
+
+  if (on(player, CANHUH))
+  {
+    did_huh = TRUE;
+    monster->flags |= ISHUH;
+    player.flags &= ~CANHUH;
+    msg("your hands stop glowing red");
+  }
+
+  if (monster->stats.hp <= 0)
+    killed(monster, TRUE);
+  else if (did_huh && !on(player, ISBLIND)) 
+    msg("the %s appears confused", name);
+}
+
+void do_miss(ITEM* weap, int thrown, AGENT* monster, const char* name)
+{
+  if (thrown)
+    display_throw_msg(weap, name, "misses", "missed");
+  else
+    miss(NULL, name);
+  if (monster->type=='S' && rnd(100)>25)
+    slime_split(monster);
+}
+
+//fight: The player attacks the monster.
+int fight(Coord *location, char mn, ITEM *weap, bool thrown)
+{
+  const char *name;
   //Find the monster we want to fight
-  if ((tp = monster_at(mp->y, mp->x))==0) return FALSE;
+  AGENT *monster = monster_at(location->y, location->x);
+  if (!monster) 
+    return FALSE;
+
   //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
   count = quiet = 0;
-  start_run(mp);
+  
+  start_run(location);
   //Let him know it was really a mimic (if it was one).
-  if (tp->type=='X' && tp->disguise!='X' && !on(player, ISBLIND))
+  if (monster->type=='X' && monster->disguise!='X' && !on(player, ISBLIND))
   {
-    mn = tp->disguise = 'X';
-    if (thrown) return FALSE;
+    mn = monster->disguise = 'X';
+    if (thrown) 
+      return FALSE;
     msg("wait! That's a Xeroc!");
   }
-  mname = get_monster_name(mn);
-  if (on(player, ISBLIND)) mname = it;
-  if (roll_em(&player, tp, weap, thrown) || (weap && weap->type==POTION))
-  {
-    bool did_huh = FALSE;
+  name = on(player, ISBLIND) ? it : get_monster_name(mn);
 
-    if (thrown) thunk(weap, mname, "hits", "hit");
-    else hit(NULL, mname);
-    if (weap && weap->type==POTION)
-    {
-      th_effect(weap, tp);
-      if (!thrown)
-      {
-        if (weap->count>1) weap->count--;
-        else {detach_item(&player.pack, weap); discard_item(weap);}
-        cur_weapon = NULL;
-      }
-    }
-    if (on(player, CANHUH))
-    {
-      did_huh = TRUE;
-      tp->flags |= ISHUH;
-      player.flags &= ~CANHUH;
-      msg("your hands stop glowing red");
-    }
-    if (tp->stats.hp<=0) killed(tp, TRUE);
-    else if (did_huh && !on(player, ISBLIND)) msg("the %s appears confused", mname);
+  if (roll_em(&player, monster, weap, thrown) || (weap && weap->type==POTION))
+  {
+    do_hit(weap, thrown, monster, name);    
     return TRUE;
   }
-  if (thrown) thunk(weap, mname, "misses", "missed");
-  else miss(NULL, mname);
-  if (tp->type=='S' && rnd(100)>25) slime_split(tp);
+
+  do_miss(weap, thrown, monster, name);
   return FALSE;
 }
 
@@ -201,7 +227,7 @@ void attack(AGENT *monster)
   name = on(player, ISBLIND) ? it : get_monster_name(monster->type);
   if (roll_em(monster, &player, NULL, FALSE))
   {
-    hit(name, NULL);
+    display_hit_msg(name, NULL);
     if (player.stats.hp <= 0) 
       death(monster->type); //Bye bye life ...
    
@@ -368,7 +394,7 @@ char *prname(const char *who, bool upper)
 }
 
 //hit: Print a message to indicate a successful hit
-void hit(const char *er, const char *ee)
+void display_hit_msg(const char *er, const char *ee)
 {
   char *s;
 
@@ -455,13 +481,13 @@ void raise_level()
 }
 
 //thunk: A missile hit or missed a monster
-void thunk(ITEM *weap, const char *mname, char *does, char *did)
+void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
 {
-  if (weap->type==WEAPON)
-    addmsg("the %s %s ", get_weapon_name(weap->which), does);
-  else addmsg("you %s ", did);
-  if (on(player, ISBLIND)) msg(it);
-  else msg("the %s", mname);
+  if (item->type == WEAPON)
+    addmsg("the %s %s ", get_weapon_name(item->which), does);
+  else 
+    addmsg("you %s ", did);
+  on(player, ISBLIND) ? msg(it) : msg("the %s", name);
 }
 
 //remove: Remove a monster from the screen
