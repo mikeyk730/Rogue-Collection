@@ -31,6 +31,10 @@
 #include "env.h"
 #include "command.h"
 #include "things.h"
+#include "rings.h"
+#include "sticks.h"
+#include "potions.h"
+#include "scrolls.h"
 
 int bwflag = FALSE;
 

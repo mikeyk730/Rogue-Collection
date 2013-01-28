@@ -34,6 +34,10 @@
 #define S_VORPAL    14
 
 bool s_know[MAXSCROLLS];    //Does he know what a scroll does
+struct Array s_names[MAXSCROLLS];  //Names of the scrolls
+
+static char *c_set = "bcdfghjklmnpqrstvwxyz";
+static char *v_set = "aeiou";
 
 const char *laugh = "you hear maniacal laughter%s.";
 const char *in_dist = " in the distance";
@@ -47,6 +51,62 @@ void discover_scroll(int type)
 {
   s_know[type] = TRUE;
 }
+
+//random_char_in(): return random character in given string
+char random_char_in(char *string)
+{
+  return (string[rnd(strlen(string))]);
+}
+
+//getsyl(): generate a random syllable
+char* getsyl()
+{
+  static char _tsyl[4];
+
+  _tsyl[3] = 0;
+  _tsyl[2] = random_char_in(c_set);
+  _tsyl[1] = random_char_in(v_set);
+  _tsyl[0] = random_char_in(c_set);
+  return (_tsyl);
+}
+
+//init_names: Generate the names of the various scrolls
+void init_names()
+{
+  int nsyl;
+  char *cp, *sp;
+  int i, nwords;
+
+  for (i = 0; i<MAXSCROLLS; i++)
+  {
+    cp = prbuf;
+    nwords = rnd(terse?3:4)+2;
+    while (nwords--)
+    {
+      nsyl = rnd(2)+1;
+      while (nsyl--)
+      {
+        sp = getsyl();
+        if (&cp[strlen(sp)]>&prbuf[MAXNAME-1]) {nwords = 0; break;}
+        while (*sp) *cp++ = *sp++;
+      }
+      *cp++ = ' ';
+    }
+    *--cp = '\0';
+    //I'm tired of thinking about this one so just in case .....
+    prbuf[MAXNAME] = 0;
+    s_know[i] = FALSE;
+    s_guess[i] = (char *)&_guesses[iguess++];
+    strcpy((char*)&s_names[i], prbuf);
+    if (i>0) s_magic[i].prob += s_magic[i-1].prob;
+  }
+}
+
+const char* get_name(int type)
+{
+  return s_names[type].storage;
+}
+
 void read_monster_confusion()
 {
   //Scroll of monster confusion.  Give him that power.

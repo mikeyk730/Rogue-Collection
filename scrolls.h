@@ -1,3 +1,7 @@
+//init_names: Generate the names of the various scrolls
+void init_names();
+const char* get_name(int type);
+
 void read_scroll();
 
 int is_scare_monster_scroll(ITEM* item);

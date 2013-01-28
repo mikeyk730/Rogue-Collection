@@ -14,6 +14,41 @@
 
 char ring_buf[6];
 bool r_know[MAXRINGS];      //Does he know what a ring does
+const char *r_stones[MAXRINGS];   //Stone settings of the rings
+
+typedef struct {char *st_name; int st_value;} STONE;
+
+static STONE stones[] =
+{
+  {"agate",           25},
+  {"alexandrite",     40},
+  {"amethyst",        50},
+  {"carnelian",       40},
+  {"diamond",        300},
+  {"emerald",        300},
+  {"germanium",      225},
+  {"granite",          5},
+  {"garnet",          50},
+  {"jade",           150},
+  {"kryptonite",     300},
+  {"lapis lazuli",    50},
+  {"moonstone",       50},
+  {"obsidian",        15},
+  {"onyx",            60},
+  {"opal",           200},
+  {"pearl",          220},
+  {"peridot",         63},
+  {"ruby",           350},
+  {"sapphire",       285},
+  {"stibotantalite", 200},
+  {"tiger eye",       50},
+  {"topaz",           60},
+  {"turquoise",       70},
+  {"taaffeite",      300},
+  {"zircon",          80}
+};
+
+#define NSTONES (sizeof(stones)/sizeof(STONE))
 
 int does_know_ring(int type)
 {
@@ -23,6 +58,30 @@ int does_know_ring(int type)
 void discover_ring(int type)
 {
   r_know[type] = TRUE;
+}
+
+//init_stones: Initialize the ring stone setting scheme for this time
+void init_stones()
+{
+  int i, j;
+  bool used[NSTONES];
+
+  for (i = 0; i<NSTONES; i++) used[i] = FALSE;
+  for (i = 0; i<MAXRINGS; i++)
+  {
+    do j = rnd(NSTONES); while (used[j]);
+    used[j] = TRUE;
+    r_stones[i] = stones[j].st_name;
+    r_know[i] = FALSE;
+    r_guess[i] = (char *)&_guesses[iguess++];
+    if (i>0) r_magic[i].prob += r_magic[i-1].prob;
+    r_magic[i].worth += stones[j].st_value;
+  }
+}
+
+const char* get_stone(int type)
+{
+  return r_stones[type];
 }
 
 //ring_on: Put a ring on a hand

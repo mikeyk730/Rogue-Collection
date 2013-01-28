@@ -310,18 +310,17 @@ extern char *l_menu, *l_name, *l_fruit, *l_score, *l_save, *l_macro, *l_drive;
 extern char s_menu[], s_name[], s_fruit[], s_score[], s_save[], s_macro[];
 extern char s_screen[];
 
-extern struct Array s_names[], _guesses[];
+extern struct Array _guesses[];
 extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
-extern char f_damage[];
 
 extern bool after, again, door_stop, expert, fastmode, faststate, firstmove, in_shell, 
   noscore, playing, running, save_msg, terse, was_trapped, wizard;
 
 extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
-  huh[], macro[], *intense, outbuf[], *p_colors[], prbuf[], *r_stones[], *release, runch, 
-  *typeahead, take, whoami[], *ws_made[], *ws_type[];
+  huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 
+  *typeahead, take, whoami[];
 
-extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, hungry_state,
+extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, hungry_state, iguess,
   lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total_items;
 
 extern long seed;

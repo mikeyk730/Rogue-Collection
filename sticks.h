@@ -1,3 +1,7 @@
+//init_materials: Initialize the construction materials for wands and staffs
+void init_materials();
+const char* get_material(int type);
+
 //fix_stick: Set up a new stick
 void fix_stick(ITEM *cur);
 

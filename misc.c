@@ -538,19 +538,19 @@ void call()
   {
   case RING: guess = (char **)r_guess; 
     know = does_know_ring;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which]:r_stones[obj->which]);
+    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_stone(obj->which));
     break;
   case POTION: guess = (char **)p_guess;
     know = does_know_potion;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which]:p_colors[obj->which]);
+    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_color(obj->which));
     break;
   case SCROLL: guess = (char **)s_guess;
     know = does_know_scroll;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which]:(char *)(&s_names[obj->which])); 
+    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_name(obj->which)); 
     break;
   case STICK: guess = (char **)ws_guess;
     know = does_know_stick;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which]:ws_made[obj->which]);
+    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_material(obj->which));
     break;
   default: msg("you can't call that anything"); return;
   }

@@ -23,6 +23,75 @@
 #include "mach_dep.h"
 
 bool ws_know[MAXSTICKS];    //Does he know what a stick does
+const char *ws_made[MAXSTICKS]; //What sticks are made of
+const char *ws_type[MAXSTICKS]; //Is it a wand or a staff
+
+static char *wood[] =
+{
+  "avocado wood",
+  "balsa",
+  "bamboo",
+  "banyan",
+  "birch",
+  "cedar",
+  "cherry",
+  "cinnibar",
+  "cypress",
+  "dogwood",
+  "driftwood",
+  "ebony",
+  "elm",
+  "eucalyptus",
+  "fall",
+  "hemlock",
+  "holly",
+  "ironwood",
+  "kukui wood",
+  "mahogany",
+  "manzanita",
+  "maple",
+  "oaken",
+  "persimmon wood",
+  "pecan",
+  "pine",
+  "poplar",
+  "redwood",
+  "rosewood",
+  "spruce",
+  "teak",
+  "walnut",
+  "zebrawood"
+};
+
+#define NWOOD (sizeof(wood)/sizeof(char *))
+
+static char *metal[] =
+{
+  "aluminum",
+  "beryllium",
+  "bone",
+  "brass",
+  "bronze",
+  "copper",
+  "electrum",
+  "gold",
+  "iron",
+  "lead",
+  "magnesium",
+  "mercury",
+  "nickel",
+  "pewter",
+  "platinum",
+  "steel",
+  "silver",
+  "silicon",
+  "tin",
+  "titanium",
+  "tungsten",
+  "zinc"
+};
+
+#define NMETAL (sizeof(metal)/sizeof(char *))
 
 int does_know_stick(int type)
 {
@@ -32,6 +101,39 @@ int does_know_stick(int type)
 void discover_stick(int type)
 {
   ws_know[type] = TRUE;
+}
+
+//init_materials: Initialize the construction materials for wands and staffs
+void init_materials()
+{
+  int i, j;
+  char *str;
+  bool metused[NMETAL], woodused[NWOOD];
+
+  for (i = 0; i<NWOOD; i++) woodused[i] = FALSE;
+  for (i = 0; i<NMETAL; i++) metused[i] = FALSE;
+  for (i = 0; i<MAXSTICKS; i++)
+  {
+    for (;;) if (rnd(2)==0)
+    {
+      j = rnd(NMETAL);
+      if (!metused[j]) {ws_type[i] = "wand"; str = metal[j]; metused[j] = TRUE; break;}
+    }
+    else
+    {
+      j = rnd(NWOOD);
+      if (!woodused[j]) {ws_type[i] = "staff"; str = wood[j]; woodused[j] = TRUE; break;}
+    }
+    ws_made[i] = str;
+    ws_know[i] = FALSE;
+    ws_guess[i] = (char *)&_guesses[iguess++];
+    if (i>0) ws_magic[i].prob += ws_magic[i-1].prob;
+  }
+}
+
+const char* get_material(int type)
+{
+  return ws_made[type];
 }
 
 void zap_light()

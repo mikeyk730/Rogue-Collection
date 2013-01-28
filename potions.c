@@ -33,6 +33,40 @@
 #define P_NOP       13
 
 bool p_know[MAXPOTIONS];    //Does he know what a potion does
+const char *p_colors[MAXPOTIONS];  //Colors of the potions
+
+static char *rainbow[] =
+{
+  "amber",
+  "aquamarine",
+  "black",
+  "blue",
+  "brown",
+  "clear",
+  "crimson",
+  "cyan",
+  "ecru",
+  "gold",
+  "green",
+  "grey",
+  "magenta",
+  "orange",
+  "pink",
+  "plaid",
+  "purple",
+  "red",
+  "silver",
+  "tan",
+  "tangerine",
+  "topaz",
+  "turquoise",
+  "vermilion",
+  "violet",
+  "white",
+  "yellow"
+};
+
+#define NCOLORS (sizeof(rainbow)/sizeof(char *))
 
 int does_know_potion(int type)
 {
@@ -42,6 +76,30 @@ int does_know_potion(int type)
 void discover_potion(int type)
 {
   p_know[type] = TRUE;
+}
+
+//init_colors: Initialize the potion color scheme for this time
+void init_colors()
+{
+  int i, j;
+  bool used[NCOLORS];
+
+  for (i = 0; i<NCOLORS; i++) used[i] = FALSE;
+  for (i = 0; i<MAXPOTIONS; i++)
+  {
+    do j = rnd(NCOLORS); while (used[j]);
+    used[j] = TRUE;
+    p_colors[i] = rainbow[j];
+    p_know[i] = FALSE;
+    p_guess[i] = (char *)&_guesses[iguess++];
+    if (i>0) 
+      p_magic[i].prob += p_magic[i-1].prob;
+  }
+}
+
+const char* get_color(int type)
+{
+  return p_colors[type];
 }
 
 void quaff_confusion()

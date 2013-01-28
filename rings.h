@@ -1,3 +1,7 @@
+//init_stones: Initialize the ring stone setting scheme for this time
+void init_stones();
+const char* get_stone(int type);
+
 //ring_on: Put a ring on a hand
 void ring_on();
 

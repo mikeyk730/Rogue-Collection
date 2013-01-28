@@ -267,10 +267,6 @@ char runch; //Direction player is running
 
 //now names are associated with fixed pointers
 
-struct Array s_names[MAXSCROLLS];  //Names of the scrolls
-char *p_colors[MAXPOTIONS];        //Colors of the potions
-char *r_stones[MAXRINGS];          //Stone settings of the rings
-char *ws_made[MAXSTICKS];          //What sticks are made of
 char huh[BUFSIZE];                  //The last message printed
 char *s_guess[MAXSCROLLS];         //Players guess at what scroll is
 char *p_guess[MAXPOTIONS];         //Players guess at what potion is
@@ -280,7 +276,6 @@ char *ws_guess[MAXSTICKS];         //Players guess at what wand is
 //storage array for guesses
 
 struct Array _guesses[MAXSCROLLS+MAXPOTIONS+MAXRINGS+MAXSTICKS];
-char *ws_type[MAXSTICKS]; //Is it a wand or a staff
 
 int maxrow;            //Last Line used for map
 int max_level;         //Deepest player has gone

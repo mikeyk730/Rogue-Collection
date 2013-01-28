@@ -71,7 +71,7 @@ char *inv_name(ITEM *obj, bool drop)
     else if (*s_guess[which]) 
       sprintf(pb, "called %s", s_guess[which]);
     else
-      chopmsg(pb, "titled '%.17s'", "titled '%s'", &s_names[which]);
+      chopmsg(pb, "titled '%.17s'", "titled '%s'", get_name(which));
     break;
 
   case POTION:
@@ -84,14 +84,14 @@ char *inv_name(ITEM *obj, bool drop)
       pb = &pb[strlen(prbuf)];
     }
     if (does_know_potion(which) || wizard) {
-      chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].name, p_colors[which]);
+      chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].name, get_color(which));
     }
     else if (*p_guess[which]) {
-      chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], p_colors[which]);
+      chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], get_color(which));
     }
     else if (obj->count==1) 
-      sprintf(prbuf, "A%s %s potion", vowelstr(p_colors[which]), p_colors[which]);
-    else sprintf(prbuf, "%d %s potions", obj->count, p_colors[which]);
+      sprintf(prbuf, "A%s %s potion", vowelstr(get_color(which)), get_color(which));
+    else sprintf(prbuf, "%d %s potions", obj->count, get_color(which));
     break;
 
   case FOOD:
@@ -135,23 +135,23 @@ char *inv_name(ITEM *obj, bool drop)
     break;
 
   case STICK:
-    sprintf(pb, "A%s %s ", vowelstr(ws_type[which]), ws_type[which]);
+    sprintf(pb, "A%s %s ", vowelstr(get_material(which)), get_material(which));
     pb = &prbuf[strlen(prbuf)];
     if (does_know_stick(which) || wizard)
-      chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, get_charge_string(obj), ws_made[which]);
+      chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, get_charge_string(obj), get_material(which));
     else if (*ws_guess[which])
-      chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], ws_made[which]);
+      chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], get_material(which));
     else
-      sprintf(pb = &prbuf[2], "%s %s", ws_made[which], ws_type[which]);
+      sprintf(pb = &prbuf[2], "%s %s", get_material(which), get_material(which));
     break;
 
   case RING:
     if (does_know_ring(which) || wizard)
-      chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].name, r_stones[which]);
+      chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].name, get_stone(which));
     else if (*r_guess[which]) 
-      chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], r_stones[which]);
+      chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], get_stone(which));
     else 
-      sprintf(pb, "A%s %s ring", vowelstr(r_stones[which]), r_stones[which]);
+      sprintf(pb, "A%s %s ring", vowelstr(get_stone(which)), get_stone(which));
     break;
 
 #ifdef DEBUG
