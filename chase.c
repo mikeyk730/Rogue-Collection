@@ -158,13 +158,13 @@ over:
 
 //see_monst: Return TRUE if the hero can see the monster
 
-int can_see_monst(AGENT *mp)
+int can_see_monst(AGENT *monster)
 {
   if (on(player, ISBLIND)) return FALSE;
-  if (on(*mp, ISINVIS) && !on(player, CANSEE)) return FALSE;
-  if (DISTANCE(mp->pos.y, mp->pos.x, player.pos.y, player.pos.x)>=LAMP_DIST && ((mp->room!=player.room || (mp->room->flags&ISDARK) || (mp->room->flags&ISMAZE)))) return FALSE;
+  if (on(*monster, ISINVIS) && !on(player, CANSEE)) return FALSE;
+  if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x)>=LAMP_DIST && ((monster->room!=player.room || (monster->room->flags&ISDARK) || (monster->room->flags&ISMAZE)))) return FALSE;
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, give the player a hint as to what that weapon is good for.
-  if (cur_weapon!=NULL && mp->type==cur_weapon->enemy && ((cur_weapon->flags&DIDFLASH)==0))
+  if (cur_weapon!=NULL && monster->type==cur_weapon->enemy && ((cur_weapon->flags&DIDFLASH)==0))
   {
     cur_weapon->flags |= DIDFLASH;
     msg(flash, get_weapon_name(cur_weapon->which), terse || expert?"":intense);
@@ -288,15 +288,15 @@ Coord *find_dest(AGENT *monster)
 {
   ITEM *obj;
   int prob;
-  struct Room *rp;
+  struct Room *room;
 
   if ((prob = get_monster_carry_prob(monster->type)) <= 0 || monster->room == player.room || can_see_monst(monster)) 
     return &player.pos;
-  rp = monster->room;
+  room = monster->room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))
   {
     if (is_scare_monster_scroll(obj)) continue;
-    if (roomin(&obj->pos)==rp && rnd(100)<prob)
+    if (roomin(&obj->pos)==room && rnd(100)<prob)
     {
       for (monster = mlist; monster!=NULL; monster = next(monster)) if (monster->dest==&obj->pos) break;
       if (monster==NULL) return &obj->pos;

@@ -476,22 +476,22 @@ void do_zap()
 //drain: Do drain hit points from player schtick
 void drain()
 {
-  AGENT *mp;
+  AGENT *monster;
   int cnt;
-  struct Room *corp;
+  struct Room *room;
   AGENT **dp;
   bool inpass;
   AGENT *drainee[40];
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
-  if (get_tile(player.pos.y, player.pos.x)==DOOR) corp = &passages[get_flags(player.pos.y, player.pos.x)&F_PNUM];
-  else corp = NULL;
+  if (get_tile(player.pos.y, player.pos.x)==DOOR) room = &passages[get_flags(player.pos.y, player.pos.x)&F_PNUM];
+  else room = NULL;
   inpass = (player.room->flags&ISGONE);
   dp = drainee;
-  for (mp = mlist; mp!=NULL; mp = next(mp)){
-    if (mp->room==player.room || mp->room==corp || (inpass && get_tile(mp->pos.y, mp->pos.x)==DOOR && &passages[get_flags(mp->pos.y, mp->pos.x)&F_PNUM]==player.room)) {
-      *dp++ = mp;
+  for (monster = mlist; monster!=NULL; monster = next(monster)){
+    if (monster->room==player.room || monster->room==room || (inpass && get_tile(monster->pos.y, monster->pos.x)==DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM]==player.room)) {
+      *dp++ = monster;
     }
   }
   if ((cnt = dp-drainee)==0) {
@@ -504,9 +504,9 @@ void drain()
   //Now zot all of the monsters
   for (dp = drainee; *dp; dp++)
   {
-    mp = *dp;
-    if ((mp->stats.hp -= cnt)<=0) killed(mp, can_see_monst(mp));
-    else start_run(mp);
+    monster = *dp;
+    if ((monster->stats.hp -= cnt)<=0) killed(monster, can_see_monst(monster));
+    else start_run(monster);
   }
 }
 

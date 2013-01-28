@@ -1,8 +1,8 @@
 //fight: The player attacks the monster.
-int fight(Coord *mp, char mn, ITEM *weap, bool thrown);
+int fight(Coord *monster, char mn, ITEM *weap, bool thrown);
 
 //attack: The monster attacks the player
-int attack(AGENT *mp);
+int attack(AGENT *monster);
 
 //swing: Returns true if the swing hits
 bool swing(int at_lvl, int op_arm, int wplus);
@@ -41,7 +41,7 @@ void raise_level();
 void display_throw_msg(ITEM *weap, const char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen
-void remove_monster(Coord *mp, AGENT *monster, bool waskill);
+void remove_monster(AGENT *monster, bool waskill);
 
 //is_magic: Returns true if an object radiates magic
 int is_magic(ITEM *obj);

@@ -26,7 +26,7 @@ void putchr(int c, int attr);
 int cursor(bool ison);
 
 //get current cursor position
-void getrc(int *rp, int *cp);
+void getrc(int *r, int *c);
 
 void clrtoeol();
 

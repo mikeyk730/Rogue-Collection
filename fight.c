@@ -160,7 +160,7 @@ void leprechaun_attack(AGENT* mp)
   adjust_purse(-GOLDCALC);
   if (!save(VS_MAGIC)) 
     adjust_purse(-(GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC));
-  remove_monster(&mp->pos, mp, FALSE);
+  remove_monster(mp, FALSE);
   if (get_purse() != lastpurse) 
     msg("your purse feels lighter");
 }
@@ -177,7 +177,7 @@ int nymph_attack(AGENT* mp)
     if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
   if (steal!=NULL)
   {
-    remove_monster(&mp->pos, mp, FALSE);
+    remove_monster(mp, FALSE);
     if (steal->count>1 && steal->group==0)
     {
       int oc;
@@ -495,9 +495,10 @@ void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
 }
 
 //remove: Remove a monster from the screen
-void remove_monster(Coord *mp, AGENT *monster, bool waskill)
+void remove_monster(AGENT *monster, bool waskill)
 {
   ITEM *obj, *nexti;
+  Coord* monster_pos = &monster->pos;
 
   if (monster==NULL) return;
   for (obj = monster->pack; obj!=NULL; obj = nexti)
@@ -510,10 +511,14 @@ void remove_monster(Coord *mp, AGENT *monster, bool waskill)
     else 
       discard_item(obj);
   }
-  if (get_tile(mp->y, mp->x)==PASSAGE) standout();
-  if (monster->oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
-  else if (monster->oldch!='@') mvaddch(mp->y, mp->x, monster->oldch);
+  if (get_tile(monster_pos->y, monster_pos->x)==PASSAGE) 
+    standout();
+  if (monster->oldch==FLOOR && !cansee(monster_pos->y, monster_pos->x))
+    mvaddch(monster_pos->y, monster_pos->x, ' ');
+  else if (monster->oldch!='@') 
+    mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
   standend();
+
   detach_agent(&mlist, monster);
   discard_agent(monster);
 }
@@ -565,5 +570,5 @@ void killed(AGENT *monster, bool print)
   //Do adjustments if he went up a level
   check_level();
   //Get rid of the monster.
-  remove_monster(&monster->pos, monster, TRUE);
+  remove_monster(monster, TRUE);
 }

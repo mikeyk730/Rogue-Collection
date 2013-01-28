@@ -45,7 +45,7 @@ int get_pack_size()
 void add_pack(ITEM *obj, bool silent)
 {
   ITEM *op, *lp;
-  AGENT *mp;
+  AGENT *monster;
   bool exact, from_floor;
   byte floor;
 
@@ -150,9 +150,9 @@ void add_pack(ITEM *obj, bool silent)
   }
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
-  for (mp = mlist; mp!=NULL; mp = next(mp))
-    if (mp->dest && (mp->dest->x==obj->pos.x) && (mp->dest->y==obj->pos.y))
-      mp->dest = &player.pos;
+  for (monster = mlist; monster!=NULL; monster = next(monster))
+    if (monster->dest && (monster->dest->x==obj->pos.x) && (monster->dest->y==obj->pos.y))
+      monster->dest = &player.pos;
   if (obj->type==AMULET) { s_had_amulet = TRUE; }
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));

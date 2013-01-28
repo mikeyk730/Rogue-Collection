@@ -359,23 +359,23 @@ void invis_on()
 //turn_see: Put on or off seeing monsters on this level
 bool turn_see(bool turn_off)
 {
-  AGENT *mp;
+  AGENT *monster;
   bool can_see, add_new;
   byte was_there;
 
   add_new = FALSE;
-  for (mp = mlist; mp!=NULL; mp = next(mp))
+  for (monster = mlist; monster!=NULL; monster = next(monster))
   {
-    move(mp->pos.y, mp->pos.x);
-    can_see = (can_see_monst(mp) || (was_there = curch())==mp->type);
+    move(monster->pos.y, monster->pos.x);
+    can_see = (can_see_monst(monster) || (was_there = curch())==monster->type);
     if (turn_off)
     {
-      if (!can_see_monst(mp) && mp->oldch!='@') addch(mp->oldch);
+      if (!can_see_monst(monster) && monster->oldch!='@') addch(monster->oldch);
     }
     else
     {
-      if (!can_see) {standout(); mp->oldch = was_there;}
-      addch(mp->type);
+      if (!can_see) {standout(); monster->oldch = was_there;}
+      addch(monster->type);
       if (!can_see) {standend(); add_new++;}
     }
   }

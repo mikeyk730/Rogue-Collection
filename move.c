@@ -132,21 +132,21 @@ move_stuff:
 }
 
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
-void door_open(struct Room *rp)
+void door_open(struct Room *room)
 {
   int j, k;
   byte ch;
   AGENT *item;
 
-  if (!(rp->flags&ISGONE) && !on(player, ISBLIND))
-    for (j = rp->pos.y; j<rp->pos.y+rp->size.y; j++)
-      for (k = rp->pos.x; k<rp->pos.x+rp->size.x; k++)
+  if (!(room->flags&ISGONE) && !on(player, ISBLIND))
+    for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
+      for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
       {
         ch = display_character(j, k);
         if (isupper(ch))
         {
           item = wake_monster(j, k);
-          if (item->oldch==' ' && !(rp->flags&ISDARK) && !on(player, ISBLIND)) item->oldch = get_tile(j, k);
+          if (item->oldch==' ' && !(room->flags&ISDARK) && !on(player, ISBLIND)) item->oldch = get_tile(j, k);
         }
       }
 }

@@ -149,9 +149,9 @@ void new_monster(AGENT *monster, byte type, Coord *position)
 //f_restor(): restor initial damage string for flytraps
 void f_restor()
 {
-  const struct Monster *mp = &monsters['F'-'A'];
+  const struct Monster *monster = &monsters['F'-'A'];
   flytrap_hit = 0;
-  strcpy(f_damage, mp->stats.damage);
+  strcpy(f_damage, monster->stats.damage);
 }
 
 //expadd: Experience to add for this monster's level/hit points
@@ -194,7 +194,7 @@ void wanderer()
 AGENT *wake_monster(int y, int x)
 {
   AGENT *monster;
-  struct Room *rp;
+  struct Room *room;
   byte ch;
   int dst;
 
@@ -208,9 +208,9 @@ AGENT *wake_monster(int y, int x)
   }
   if (ch=='M' && !on(player, ISBLIND) && !on(*monster, ISFOUND) && !on(*monster, ISCANC) && on(*monster, ISRUN))
   {
-    rp = player.room;
+    room = player.room;
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
-    if ((rp!=NULL && !(rp->flags&ISDARK)) || dst<LAMP_DIST)
+    if ((room!=NULL && !(room->flags&ISDARK)) || dst<LAMP_DIST)
     {
       monster->flags |= ISFOUND;
       if (!save(VS_MAGIC))

@@ -18,7 +18,7 @@ static byte newpnum;
 //conn: Draw a corridor from a room in a certain direction.
 void conn(int r1, int r2)
 {
-  struct Room *rpf, *rpt;
+  struct Room *room_from, *room_to;
   int rmt, rm;
   int distance, turn_spot, turn_distance;
   int direc;
@@ -34,27 +34,27 @@ void conn(int r1, int r2)
     rm = r2;
     if (r2+1==r1) direc = 'r'; else direc = 'd';
   }
-  rpf = &rooms[rm];
+  room_from = &rooms[rm];
   //Set up the movement variables, in two cases: first drawing one down.
   if (direc=='d')
   {
     rmt = rm+3; //room # of dest
-    rpt = &rooms[rmt]; //room pointer of dest
+    room_to = &rooms[rmt]; //room pointer of dest
     del.x = 0; //direction of move
     del.y = 1;
     //If we are drawing from/to regular or maze rooms, we have to pick the spot we draw from/to
-    if ((rpf->flags&ISGONE)==0 || (rpf->flags&ISMAZE))
+    if ((room_from->flags&ISGONE)==0 || (room_from->flags&ISMAZE))
     {
-      spos.y = rpf->pos.y+rpf->size.y-1;
-      do {spos.x = rpf->pos.x+rnd(rpf->size.x-2)+1;} while (get_tile(spos.y,spos.x)==' ');
+      spos.y = room_from->pos.y+room_from->size.y-1;
+      do {spos.x = room_from->pos.x+rnd(room_from->size.x-2)+1;} while (get_tile(spos.y,spos.x)==' ');
     }
-    else {spos.x = rpf->pos.x; spos.y = rpf->pos.y;}
-    epos.y = rpt->pos.y;
-    if ((rpt->flags&ISGONE)==0 || (rpt->flags&ISMAZE))
+    else {spos.x = room_from->pos.x; spos.y = room_from->pos.y;}
+    epos.y = room_to->pos.y;
+    if ((room_to->flags&ISGONE)==0 || (room_to->flags&ISMAZE))
     {
-      do {epos.x = rpt->pos.x+rnd(rpt->size.x-2)+1;} while (get_tile(epos.y,epos.x)==' ');
+      do {epos.x = room_to->pos.x+rnd(room_to->size.x-2)+1;} while (get_tile(epos.y,epos.x)==' ');
     }
-    else epos.x = rpt->pos.x;
+    else epos.x = room_to->pos.x;
     distance = abs(spos.y-epos.y)-1; //distance to move
     turn_delta.y = 0; //direction to turn
     turn_delta.x = (spos.x<epos.x?1:-1);
@@ -64,21 +64,21 @@ void conn(int r1, int r2)
   {
     //setup for moving right
     rmt = rm+1;
-    rpt = &rooms[rmt];
+    room_to = &rooms[rmt];
     del.x = 1;
     del.y = 0;
-    if ((rpf->flags&ISGONE)==0 || (rpf->flags&ISMAZE))
+    if ((room_from->flags&ISGONE)==0 || (room_from->flags&ISMAZE))
     {
-      spos.x = rpf->pos.x+rpf->size.x-1;
-      do {spos.y = rpf->pos.y+rnd(rpf->size.y-2)+1;} while (get_tile(spos.y,spos.x)==' ');
+      spos.x = room_from->pos.x+room_from->size.x-1;
+      do {spos.y = room_from->pos.y+rnd(room_from->size.y-2)+1;} while (get_tile(spos.y,spos.x)==' ');
     }
-    else {spos.x = rpf->pos.x; spos.y = rpf->pos.y;}
-    epos.x = rpt->pos.x;
-    if ((rpt->flags&ISGONE)==0 || (rpt->flags&ISMAZE))
+    else {spos.x = room_from->pos.x; spos.y = room_from->pos.y;}
+    epos.x = room_to->pos.x;
+    if ((room_to->flags&ISGONE)==0 || (room_to->flags&ISMAZE))
     {
-      do {epos.y = rpt->pos.y+rnd(rpt->size.y-2)+1;} while (get_tile(epos.y, epos.x)==' ');
+      do {epos.y = room_to->pos.y+rnd(room_to->size.y-2)+1;} while (get_tile(epos.y,epos.x)==' ');
     }
-    else epos.y = rpt->pos.y;
+    else epos.y = room_to->pos.y;
     distance = abs(spos.x-epos.x)-1;
     turn_delta.y = (spos.y<epos.y?1:-1);
     turn_delta.x = 0;
@@ -88,9 +88,9 @@ void conn(int r1, int r2)
 
   turn_spot = rnd(distance-1)+1;
   //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
-  if (!(rpf->flags&ISGONE)) door(rpf, &spos);
+  if (!(room_from->flags&ISGONE)) door(room_from, &spos);
   else psplat(spos.y, spos.x);
-  if (!(rpt->flags&ISGONE)) door(rpt, &epos);
+  if (!(room_to->flags&ISGONE)) door(room_to, &epos);
   else psplat(epos.y, epos.x);
   //Get ready to move...
   curr.x = spos.x;
@@ -217,16 +217,16 @@ void add_pass()
 //passnum: Assign a number to each passageway
 void passnum()
 {
-  struct Room *rp;
+  struct Room *room;
   int i;
 
   pnum = 0;
   newpnum = FALSE;
-  for (rp = passages; rp<&passages[MAXPASS]; rp++) rp->num_exits = 0;
-  for (rp = rooms; rp<&rooms[MAXROOMS]; rp++) for (i = 0; i<rp->num_exits; i++)
+  for (room = passages; room<&passages[MAXPASS]; room++) room->num_exits = 0;
+  for (room = rooms; room<&rooms[MAXROOMS]; room++) for (i = 0; i<room->num_exits; i++)
   {
     newpnum++;
-    numpass(rp->exits[i].y, rp->exits[i].x);
+    numpass(room->exits[i].y, room->exits[i].x);
   }
 }
 
@@ -234,7 +234,7 @@ void passnum()
 void numpass(int y, int x)
 {
   byte fp;
-  struct Room *rp;
+  struct Room *room;
   byte ch;
 
   if (offmap(y, x)) return;
@@ -244,9 +244,9 @@ void numpass(int y, int x)
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
   if ((ch = get_tile(y, x))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
   {
-    rp = &passages[pnum];
-    rp->exits[rp->num_exits].y = y;
-    rp->exits[rp->num_exits++].x = x;
+    room = &passages[pnum];
+    room->exits[room->num_exits].y = y;
+    room->exits[room->num_exits++].x = x;
   }
   else if (!(fp&F_PASS)) return;
   set_flag(y, x, pnum);

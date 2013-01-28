@@ -127,48 +127,48 @@ void do_rooms()
 }
 
 //draw_room: Draw a box around a room and lay down the floor
-void draw_room(struct Room *rp)
+void draw_room(struct Room *room)
 {
   int y, x;
 
   //Here we draw normal rooms, one side at a time
-  vert(rp, rp->pos.x); //Draw left side
-  vert(rp, rp->pos.x+rp->size.x-1); //Draw right side
-  horiz(rp, rp->pos.y); //Draw top
-  horiz(rp, rp->pos.y+rp->size.y-1); //Draw bottom
-  set_tile(rp->pos.y, rp->pos.x, ULWALL);
-  set_tile(rp->pos.y, rp->pos.x+rp->size.x-1, URWALL);
-  set_tile(rp->pos.y+rp->size.y-1, rp->pos.x, LLWALL);
-  set_tile(rp->pos.y+rp->size.y-1, rp->pos.x+rp->size.x-1, LRWALL);
+  vert(room, room->pos.x); //Draw left side
+  vert(room, room->pos.x+room->size.x-1); //Draw right side
+  horiz(room, room->pos.y); //Draw top
+  horiz(room, room->pos.y+room->size.y-1); //Draw bottom
+  set_tile(room->pos.y, room->pos.x, ULWALL);
+  set_tile(room->pos.y, room->pos.x+room->size.x-1, URWALL);
+  set_tile(room->pos.y+room->size.y-1, room->pos.x, LLWALL);
+  set_tile(room->pos.y+room->size.y-1, room->pos.x+room->size.x-1, LRWALL);
   //Put the floor down
-  for (y = rp->pos.y+1; y<rp->pos.y+rp->size.y-1; y++)
-    for (x = rp->pos.x+1; x<rp->pos.x+rp->size.x-1; x++)
+  for (y = room->pos.y+1; y<room->pos.y+room->size.y-1; y++)
+    for (x = room->pos.x+1; x<room->pos.x+room->size.x-1; x++)
       set_tile(y, x, FLOOR);
 }
 
 //vert: Draw a vertical line
-void vert(struct Room *rp, int startx)
+void vert(struct Room *room, int startx)
 {
   int y;
 
-  for (y = rp->pos.y+1; y<=rp->size.y+rp->pos.y-1; y++)
+  for (y = room->pos.y+1; y<=room->size.y+room->pos.y-1; y++)
     set_tile(y, startx, VWALL);
 }
 
 //horiz: Draw a horizontal line
-void horiz(struct Room *rp, int starty)
+void horiz(struct Room *room, int starty)
 {
   int x;
 
-  for (x = rp->pos.x; x<=rp->pos.x+rp->size.x-1; x++) 
+  for (x = room->pos.x; x<=room->pos.x+room->size.x-1; x++) 
     set_tile(starty, x, HWALL);
 }
 
 //rnd_pos: Pick a random spot in a room
-void rnd_pos(struct Room *rp, Coord *cp)
+void rnd_pos(struct Room *room, Coord *cp)
 {
-  cp->x = rp->pos.x+rnd(rp->size.x-2)+1;
-  cp->y = rp->pos.y+rnd(rp->size.y-2)+1;
+  cp->x = room->pos.x + rnd(room->size.x-2) + 1;
+  cp->y = room->pos.y + rnd(room->size.y-2) + 1;
 }
 
 //enter_room: Code that is executed whenever you appear in a room
@@ -207,16 +207,16 @@ void enter_room(Coord *cp)
 void leave_room(Coord *cp)
 {
   int y, x;
-  struct Room *rp;
+  struct Room *room;
   byte floor;
   byte ch;
 
-  rp = player.room;
+  room = player.room;
   player.room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
-  floor = ((rp->flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
-  if (rp->flags&ISMAZE) floor = PASSAGE;
-  for (y = rp->pos.y+1; y<rp->size.y+rp->pos.y-1; y++) {
-    for (x = rp->pos.x+1; x<rp->size.x+rp->pos.x-1; x++) {
+  floor = ((room->flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
+  if (room->flags&ISMAZE) floor = PASSAGE;
+  for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
+    for (x = room->pos.x+1; x<room->size.x+room->pos.x-1; x++) {
       switch (ch = mvinch(y, x))
       {
       case ' ': case PASSAGE: case TRAP: case STAIRS:
@@ -241,5 +241,5 @@ void leave_room(Coord *cp)
       }
     }
   }
-  door_open(rp);
+  door_open(room);
 }
