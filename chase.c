@@ -101,7 +101,9 @@ over:
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
   chase(monster, &this);
-  if (equal(ch_ret, player.pos)) {attack(monster); return TRUE;}
+  if (equal(ch_ret, player.pos)) {
+    return attack(monster); 
+  }
   else if (equal(ch_ret, *monster->dest))
   {
     for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (monster->dest==&obj->pos)
@@ -180,24 +182,24 @@ void start_run(AGENT* monster)
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
-void chase(AGENT *tp, Coord *ee)
+void chase(AGENT *monster, Coord *chasee_pos)
 {
   int x, y;
   int dist, thisdist;
   ITEM *obj;
-  Coord *er;
+  Coord *chaser_pos;
   byte ch;
   int plcnt = 1;
 
-  er = &tp->pos;
+  chaser_pos = &monster->pos;
   //If the thing is confused, let it move randomly. Phantoms are slightly confused all of the time, and bats are quite confused all the time
-  if ((on(*tp, ISHUH) && rnd(5)!=0) || (tp->type=='P' && rnd(5)==0) || (tp->type=='B' && rnd(2)==0))
+  if ((on(*monster, ISHUH) && rnd(5)!=0) || (monster->type=='P' && rnd(5)==0) || (monster->type=='B' && rnd(2)==0))
   {
     //get a valid random move
-    rndmove(tp, &ch_ret);
-    dist = DISTANCE(ch_ret.y, ch_ret.x, ee->y, ee->x);
+    rndmove(monster, &ch_ret);
+    dist = DISTANCE(ch_ret.y, ch_ret.x, chasee_pos->y, chasee_pos->x);
     //Small chance that it will become un-confused
-    if (rnd(30)==17) tp->flags &= ~ISHUH;
+    if (rnd(30)==17) monster->flags &= ~ISHUH;
   }
   //Otherwise, find the empty spot next to the chaser that is closest to the chasee.
   else
@@ -205,19 +207,19 @@ void chase(AGENT *tp, Coord *ee)
     int ey, ex;
 
     //This will eventually hold where we move to get closer. If we can't find an empty spot, we stay where we are.
-    dist = DISTANCE(er->y, er->x, ee->y, ee->x);
-    ch_ret = *er;
-    ey = er->y+1;
-    ex = er->x+1;
-    for (x = er->x-1; x<=ex; x++)
+    dist = DISTANCE(chaser_pos->y, chaser_pos->x, chasee_pos->y, chasee_pos->x);
+    ch_ret = *chaser_pos;
+    ey = chaser_pos->y+1;
+    ex = chaser_pos->x+1;
+    for (x = chaser_pos->x-1; x<=ex; x++)
     {
-      for (y = er->y-1; y<=ey; y++)
+      for (y = chaser_pos->y-1; y<=ey; y++)
       {
         Coord tryp;
 
         tryp.x = x;
         tryp.y = y;
-        if (offmap(y, x) || !diag_ok(er, &tryp)) continue;
+        if (offmap(y, x) || !diag_ok(chaser_pos, &tryp)) continue;
         ch = display_character(y, x);
         if (step_ok(ch))
         {
@@ -231,7 +233,7 @@ void chase(AGENT *tp, Coord *ee)
             if (is_scare_monster_scroll(obj)) continue;
           }
           //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
-          thisdist = DISTANCE(y, x, ee->y, ee->x);
+          thisdist = DISTANCE(y, x, chasee_pos->y, chasee_pos->x);
           if (thisdist<dist) {plcnt = 1; ch_ret = tryp; dist = thisdist;}
           else if (thisdist==dist && rnd(++plcnt)==0) {ch_ret = tryp; dist = thisdist;}
         }
@@ -241,20 +243,20 @@ void chase(AGENT *tp, Coord *ee)
 }
 
 //roomin: Find what room some coordinates are in. NULL means they aren't in any room.
-struct Room *roomin(Coord *cp)
+struct Room *roomin(Coord *pos)
 {
-  struct Room *rp;
+  struct Room *room;
   byte fp;
 
-  for (rp = rooms; rp<=&rooms[MAXROOMS-1]; rp++) 
-    if (cp->x<rp->pos.x+rp->size.x && rp->pos.x<=cp->x && cp->y<rp->pos.y+rp->size.y && rp->pos.y<=cp->y) 
-      return rp;
+  for (room = rooms; room<=&rooms[MAXROOMS-1]; room++) 
+    if (pos->x<room->pos.x+room->size.x && room->pos.x<=pos->x && pos->y<room->pos.y+room->size.y && room->pos.y<=pos->y) 
+      return room;
 
-  fp = get_flags(cp->y, cp->x);
+  fp = get_flags(pos->y, pos->x);
   if (fp&F_PASS)
     return &passages[fp&F_PNUM];
 
-  debug("in some bizarre place (%d, %d)", cp->y, cp->x);
+  debug("in some bizarre place (%d, %d)", pos->y, pos->x);
   bailout++;
   return NULL;
 }
@@ -282,22 +284,22 @@ int cansee(int y, int x)
 }
 
 //find_dest: find the proper destination for the monster
-Coord *find_dest(AGENT *tp)
+Coord *find_dest(AGENT *monster)
 {
   ITEM *obj;
   int prob;
   struct Room *rp;
 
-  if ((prob = get_monster_carry_prob(tp->type)) <= 0 || tp->room == player.room || can_see_monst(tp)) 
+  if ((prob = get_monster_carry_prob(monster->type)) <= 0 || monster->room == player.room || can_see_monst(monster)) 
     return &player.pos;
-  rp = tp->room;
+  rp = monster->room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))
   {
     if (is_scare_monster_scroll(obj)) continue;
     if (roomin(&obj->pos)==rp && rnd(100)<prob)
     {
-      for (tp = mlist; tp!=NULL; tp = next(tp)) if (tp->dest==&obj->pos) break;
-      if (tp==NULL) return &obj->pos;
+      for (monster = mlist; monster!=NULL; monster = next(monster)) if (monster->dest==&obj->pos) break;
+      if (monster==NULL) return &obj->pos;
     }
   }
   return &player.pos;

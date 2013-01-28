@@ -118,8 +118,9 @@ void set_xeroc_disguise(AGENT* X)
 void new_monster(AGENT *monster, byte type, Coord *position)
 {
   int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
-  const struct Monster* defaults = &monsters[type-'A'];
-
+  const struct Monster* defaults;
+  
+  defaults = &monsters[type-'A'];
   attach_agent(&mlist, monster);
 
   monster->type = type;
@@ -171,22 +172,22 @@ int exp_add(AGENT *monster)
 void wanderer()
 {
   int i;
-  struct Room *rp;
-  AGENT *tp;
+  struct Room *room;
+  AGENT *monster;
   Coord cp;
 
   //can we allocate a new monster
-  if ((tp = create_agent())==NULL) return;
+  if ((monster = create_agent())==NULL) return;
   do
   {
     i = rnd_room();
-    if ((rp = &rooms[i])==player.room) continue;
-    rnd_pos(rp, &cp);
-  } while (!(rp!=player.room && step_ok(display_character(cp.y, cp.x))));
-  new_monster(tp, randmonster(TRUE), &cp);
+    if ((room = &rooms[i])==player.room) continue;
+    rnd_pos(room, &cp);
+  } while (!(room!=player.room && step_ok(display_character(cp.y, cp.x))));
+  new_monster(monster, randmonster(TRUE), &cp);
   if (bailout) debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
-  start_run(tp);
+  start_run(monster);
 }
 
 //wake_monster: What to do when the hero steps next to a monster
@@ -232,11 +233,11 @@ AGENT *wake_monster(int y, int x)
 }
 
 //give_pack: Give a pack to a monster if it deserves one
-void give_pack(AGENT *tp)
+void give_pack(AGENT *monster)
 {
   //check if we can allocate a new item
-  if (total_items<MAXITEMS && rnd(100)<monsters[tp->type-'A'].carry) 
-    attach_item(&tp->pack, new_item());
+  if (total_items<MAXITEMS && rnd(100)<monsters[monster->type-'A'].carry) 
+    attach_item(&monster->pack, new_item());
 }
 
 //pick_mons: Choose a sort of monster for the enemy of a vorpally enchanted weapon

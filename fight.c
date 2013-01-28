@@ -160,12 +160,12 @@ void leprechaun_attack(AGENT* mp)
   adjust_purse(-GOLDCALC);
   if (!save(VS_MAGIC)) 
     adjust_purse(-(GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC));
-  remove_mons(&mp->pos, mp, FALSE);
+  remove_monster(&mp->pos, mp, FALSE);
   if (get_purse() != lastpurse) 
     msg("your purse feels lighter");
 }
 
-void nymph_attack(AGENT* mp)
+int nymph_attack(AGENT* mp)
 {
   //Nymphs steal a magic item, look through the pack and pick out one we like.
   ITEM *obj, *steal;
@@ -177,7 +177,7 @@ void nymph_attack(AGENT* mp)
     if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
   if (steal!=NULL)
   {
-    remove_mons(&mp->pos, mp, FALSE);
+    remove_monster(&mp->pos, mp, FALSE);
     if (steal->count>1 && steal->group==0)
     {
       int oc;
@@ -188,7 +188,9 @@ void nymph_attack(AGENT* mp)
       steal->count = oc;
     }
     else {detach_item(&player.pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
+    return TRUE;
   }
+  return FALSE;
 }
 
 void vampire_wraith_attack(int type)
@@ -215,9 +217,10 @@ void vampire_wraith_attack(int type)
 }
 
 //attack: The monster attacks the player
-void attack(AGENT *monster)
+int attack(AGENT *monster)
 {
   const char *name;
+  int monster_died = FALSE;
 
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = FALSE;
@@ -256,10 +259,11 @@ void attack(AGENT *monster)
 
       case 'L': 
         leprechaun_attack(monster);
+        monster_died = TRUE;
         break;
 
       case 'N': 
-        nymph_attack(monster);
+        monster_died = nymph_attack(monster);
         break;
 
       default: break;
@@ -278,6 +282,8 @@ void attack(AGENT *monster)
   flush_type();
   count = 0;
   status();
+
+  return !monster_died;
 }
 
 //swing: Returns true if the swing hits
@@ -426,12 +432,10 @@ void miss(const char *er, const char *ee)
 }
 
 //save_throw: See if a creature save against something
-int save_throw(int which, AGENT *tp)
+int save_throw(int which, AGENT *monster)
 {
-  int need;
-
-  need = 14+which-tp->stats.level/2;
-  return (roll(1, 20)>=need);
+  int need = 14 + which - monster->stats.level/2;
+  return (roll(1, 20) >= need);
 }
 
 //save: See if he saves against various nasty things
@@ -491,27 +495,27 @@ void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
 }
 
 //remove: Remove a monster from the screen
-void remove_mons(Coord *mp, AGENT *tp, bool waskill)
+void remove_monster(Coord *mp, AGENT *monster, bool waskill)
 {
   ITEM *obj, *nexti;
 
-  if (tp==NULL) return;
-  for (obj = tp->pack; obj!=NULL; obj = nexti)
+  if (monster==NULL) return;
+  for (obj = monster->pack; obj!=NULL; obj = nexti)
   {
     nexti = next(obj);
-    obj->pos = tp->pos;
-    detach_item(&tp->pack, obj);
+    obj->pos = monster->pos;
+    detach_item(&monster->pack, obj);
     if (waskill)
       fall(obj, FALSE);
     else 
       discard_item(obj);
   }
   if (get_tile(mp->y, mp->x)==PASSAGE) standout();
-  if (tp->oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
-  else if (tp->oldch!='@') mvaddch(mp->y, mp->x, tp->oldch);
+  if (monster->oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
+  else if (monster->oldch!='@') mvaddch(mp->y, mp->x, monster->oldch);
   standend();
-  detach_agent(&mlist, tp);
-  discard_agent(tp);
+  detach_agent(&mlist, monster);
+  discard_agent(monster);
 }
 
 //is_magic: Returns true if an object radiates magic
@@ -527,11 +531,11 @@ is_magic(ITEM *obj)
 }
 
 //killed: Called to put a monster to death
-void killed(AGENT *tp, bool pr)
+void killed(AGENT *monster, bool print)
 {
-  player.stats.exp += tp->stats.exp;
+  player.stats.exp += monster->stats.exp;
   //If the monster was a flytrap, un-hold him
-  switch (tp->type)
+  switch (monster->type)
   {
 
   case 'F':
@@ -546,20 +550,20 @@ void killed(AGENT *tp, bool pr)
       if ((gold = create_item(GOLD, 0))==NULL) return;
       gold->gold_value = GOLDCALC;
       if (save(VS_MAGIC)) gold->gold_value += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
-      attach_item(&tp->pack, gold);
+      attach_item(&monster->pack, gold);
 
       break;
     }
 
   }
-  if (pr)
+  if (print)
   {
     addmsg("you have defeated ");
     if (on(player, ISBLIND)) msg(it);
-    else msg("the %s", get_monster_name(tp->type));
+    else msg("the %s", get_monster_name(monster->type));
   }
   //Do adjustments if he went up a level
   check_level();
   //Get rid of the monster.
-  remove_mons(&tp->pos, tp, TRUE);
+  remove_monster(&monster->pos, monster, TRUE);
 }

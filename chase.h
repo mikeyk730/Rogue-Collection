@@ -11,7 +11,7 @@ int can_see_monst(AGENT *mp);
 void start_run(AGENT *monster);
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
-void chase(AGENT *tp, Coord *ee);
+void chase(AGENT *monster, Coord *chasee_pos);
 
 //roomin: Find what room some coordinates are in. NULL means they aren't in any room.
 struct Room *roomin(Coord *cp);
@@ -23,4 +23,4 @@ int diag_ok(Coord *sp, Coord *ep);
 int cansee(int y, int x);
 
 //find_dest: find the proper destination for the monster
-Coord *find_dest(AGENT *tp);
+Coord *find_dest(AGENT *monster);

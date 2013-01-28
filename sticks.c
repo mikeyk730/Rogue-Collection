@@ -514,7 +514,7 @@ void drain()
 int fire_bolt(Coord *start, Coord *dir, const char *name)
 {
   byte dirch, ch;
-  AGENT *tp;
+  AGENT *monster;
   bool hit_hero, used, changed;
   int i, j;
   Coord pos;
@@ -559,16 +559,16 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
       break;
 
     default:
-      if (!hit_hero && (tp = monster_at(pos.y, pos.x))!=NULL)
+      if (!hit_hero && (monster = monster_at(pos.y, pos.x))!=NULL)
       {
         hit_hero = TRUE;
         changed = !changed;
-        if (tp->oldch!='@') tp->oldch = get_tile(pos.y, pos.x);
-        if (!save_throw(VS_MAGIC, tp) || is_frost)
+        if (monster->oldch!='@') monster->oldch = get_tile(pos.y, pos.x);
+        if (!save_throw(VS_MAGIC, monster) || is_frost)
         {
           bolt.pos = pos;
           used = TRUE;
-          if (tp->type=='D' && strcmp(name, "flame")==0) msg("the flame bounces off the dragon");
+          if (monster->type=='D' && strcmp(name, "flame")==0) msg("the flame bounces off the dragon");
           else
           {
             hit_monster(pos.y, pos.x, &bolt);
@@ -576,9 +576,9 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
             return FALSE; //zapping monster may have killed self, not safe to go on
           }
         }
-        else if (ch!='X' || tp->disguise=='X')
+        else if (ch!='X' || monster->disguise=='X')
         {
-          if (start==&player.pos) start_run(tp);
+          if (start==&player.pos) start_run(monster);
           msg("the %s whizzes past the %s", name, get_monster_name(ch));
         }
       }

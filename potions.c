@@ -211,32 +211,32 @@ void quaff_monster_detection()
 
 void quaff_magic_detection()
 {
-  AGENT *th;
-
-  //Potion of magic detection.  Find everything interesting on the level and show him where they are.  Also give hints as to whether he would want to use the object.
-  if (lvl_obj!=NULL)
+  //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
+  //Also give hints as to whether he would want to use the object.
+  if (lvl_obj)
   {
-    ITEM *tp;
+    ITEM *item;
+    AGENT *monster;
     bool show;
 
     show = FALSE;
-    for (tp = lvl_obj; tp!=NULL; tp = next(tp))
+    for (item = lvl_obj; item!=NULL; item = next(item))
     {
-      if (is_magic(tp))
+      if (is_magic(item))
       {
         show = TRUE;
-        mvaddch(tp->pos.y, tp->pos.x, goodch(tp));
+        mvaddch(item->pos.y, item->pos.x, goodch(item));
         p_know[P_TFIND] = TRUE;
       }
     }
-    for (th = mlist; th!=NULL; th = next(th))
+    for (monster = mlist; monster!=NULL; monster = next(monster))
     {
-      for (tp = th->pack; tp!=NULL; tp = next(tp))
+      for (item = monster->pack; item!=NULL; item = next(item))
       {
-        if (is_magic(tp))
+        if (is_magic(item))
         {
           show = TRUE;
-          mvaddch(th->pos.y, th->pos.x, MAGIC);
+          mvaddch(monster->pos.y, monster->pos.x, MAGIC);
           p_know[P_TFIND] = TRUE;
         }
       }

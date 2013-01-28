@@ -25,8 +25,8 @@
 
 void new_level(int do_implode)
 {
-  int rm, i;
-  AGENT *tp;
+  int room, i;
+  AGENT *monster;
   Coord stairs;
 
   player.flags &= ~ISHELD; //unhold when you go down just in case
@@ -36,8 +36,8 @@ void new_level(int do_implode)
   //Clean things off from last level
   clear_level();
   //Free up the monsters on the last level
-  for (tp = mlist; tp!=NULL; tp = next(tp)) 
-    free_item_list(&tp->pack);
+  for (monster = mlist; monster!=NULL; monster = next(monster)) 
+    free_item_list(&monster->pack);
   free_agent_list(&mlist);
   //just in case we left some flytraps behind
   f_restor();
@@ -57,8 +57,8 @@ void new_level(int do_implode)
   i = 0;
   do
   {
-    rm = rnd_room();
-    rnd_pos(&rooms[rm], &stairs);
+    room = rnd_room();
+    rnd_pos(&rooms[room], &stairs);
     if (i++>100) {i = 0; seed = srand2();}
   } while (!isfloor(get_tile(stairs.y, stairs.x)));
   set_tile(stairs.y, stairs.x, STAIRS);
@@ -72,8 +72,8 @@ void new_level(int do_implode)
     {
       do
       {
-        rm = rnd_room();
-        rnd_pos(&rooms[rm], &stairs);
+        room = rnd_room();
+        rnd_pos(&rooms[room], &stairs);
       } while (!isfloor(get_tile(stairs.y, stairs.x)));
       unset_flag(stairs.y, stairs.x, F_REAL);
       set_flag(stairs.y, stairs.x, rnd(NTRAPS));
@@ -81,8 +81,8 @@ void new_level(int do_implode)
   }
   do
   {
-    rm = rnd_room();
-    rnd_pos(&rooms[rm], &player.pos);
+    room = rnd_room();
+    rnd_pos(&rooms[room], &player.pos);
   } while (!(isfloor(get_tile(player.pos.y, player.pos.x)) && (get_flags(player.pos.y, player.pos.x)&F_REAL) && monster_at(player.pos.y, player.pos.x)==NULL));
   mpos = 0;
   enter_room(&player.pos);
@@ -152,46 +152,46 @@ void put_things()
 void treas_room()
 {
   int nm;
-  ITEM *tp;
-  AGENT *ap;
-  struct Room *rp;
+  ITEM *item;
+  AGENT *monster;
+  struct Room *room;
   int spots, num_monst;
-  Coord mp;
+  Coord monster_pos;
 
-  rp = &rooms[rnd_room()];
-  spots = (rp->size.y-2)*(rp->size.x-2)-MINTREAS;
+  room = &rooms[rnd_room()];
+  spots = (room->size.y-2)*(room->size.x-2)-MINTREAS;
   if (spots>(MAXTREAS-MINTREAS)) spots = (MAXTREAS-MINTREAS);
   num_monst = nm = rnd(spots)+MINTREAS;
   while (nm-- && total_items<MAXITEMS)
   {
     do {
-      rnd_pos(rp, &mp);
-    } while (!isfloor(get_tile(mp.y, mp.x)));
-    tp = new_item();
-    tp->pos = mp;
-    attach_item(&lvl_obj, tp);
-    set_tile(mp.y, mp.x, tp->type);
+      rnd_pos(room, &monster_pos);
+    } while (!isfloor(get_tile(monster_pos.y, monster_pos.x)));
+    item = new_item();
+    item->pos = monster_pos;
+    attach_item(&lvl_obj, item);
+    set_tile(monster_pos.y, monster_pos.x, item->type);
   }
   //fill up room with monsters from the next level down
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;
-  spots = (rp->size.y-2)*(rp->size.x-2);
+  spots = (room->size.y-2)*(room->size.x-2);
   if (nm>spots) nm = spots;
   level++;
   while (nm--)
   {
     for (spots = 0; spots<MAXTRIES; spots++)
     {
-      rnd_pos(rp, &mp);
-      if (isfloor(get_tile(mp.y, mp.x)) && monster_at(mp.y, mp.x)==NULL) break;
+      rnd_pos(room, &monster_pos);
+      if (isfloor(get_tile(monster_pos.y, monster_pos.x)) && monster_at(monster_pos.y, monster_pos.x)==NULL) break;
     }
     if (spots!=MAXTRIES)
     {
-      if ((ap = create_agent())!=NULL)
+      if ((monster = create_agent())!=NULL)
       {
-        new_monster(ap, randmonster(FALSE), &mp);
+        new_monster(monster, randmonster(FALSE), &monster_pos);
         if (bailout) debug("treasure rm bailout");
-        ap->flags |= ISMEAN; //no sloughers in THIS room
-        give_pack(ap);
+        monster->flags |= ISMEAN; //no sloughers in THIS room
+        give_pack(monster);
       }
     }
   }

@@ -17,11 +17,11 @@ static Coord slimy;
 
 //Slime_split: Called when it has been decided that A slime should divide itself
 
-void slime_split(AGENT *tp)
+void slime_split(AGENT *monster)
 {
   AGENT *nslime;
 
-  if (new_slime(tp)==0 || (nslime = create_agent())==NULL) return;
+  if (new_slime(monster)==0 || (nslime = create_agent())==NULL) return;
   msg("The slime divides.  Ick!");
   new_monster(nslime, 'S', &slimy);
   if (cansee(slimy.y, slimy.x))
@@ -32,15 +32,15 @@ void slime_split(AGENT *tp)
   start_run(nslime);
 }
 
-int new_slime(AGENT *tp)
+int new_slime(AGENT *slime)
 {
   int y, x, ty, tx, ret;
   AGENT *ntp;
   Coord sp;
 
   ret = 0;
-  tp->flags |= ISFLY;
-  if (plop_monster((ty = tp->pos.y), (tx = tp->pos.x), &sp)==0)
+  slime->flags |= ISFLY;
+  if (plop_monster((ty = slime->pos.y), (tx = slime->pos.x), &sp)==0)
   {
     //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.
     for (y = ty-1; y<=ty+1; y++)
@@ -52,7 +52,7 @@ int new_slime(AGENT *tp)
         }
   }
   else {ret = 1; slimy = sp;}
-  tp->flags &= ~ISFLY;
+  slime->flags &= ~ISFLY;
   return ret;
 }
 

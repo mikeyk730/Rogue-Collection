@@ -21,7 +21,7 @@ static int frcnt, ny, nx, topy, topx;
 static int maxx, maxy;
 static int *fr_y, *fr_x;
 
-void draw_maze(struct Room *rp)
+void draw_maze(struct Room *room)
 {
   int y, x;
   int fy[MAXFRNT], fx[MAXFRNT];
@@ -31,9 +31,9 @@ void draw_maze(struct Room *rp)
   fr_y = fy;
   fr_x = fx;
   maxx = maxy = 0;
-  topy = rp->pos.y;
-  if (topy==0) topy = ++rp->pos.y;
-  topx = rp->pos.x;
+  topy = room->pos.y;
+  if (topy==0) topy = ++room->pos.y;
+  topx = room->pos.x;
   //Choose a random spot in the maze and initialize the frontier to be the immediate neighbors of this random spot.
   y = topy;
   x = topx;
@@ -42,15 +42,15 @@ void draw_maze(struct Room *rp)
   //While there are new frontiers, connect them to the path and possibly expand the frontier even more.
   while (frcnt) {con_frnt(); new_frontier(ny, nx);}
   //According to the Grand Beeking, every maze should have a loop. Don't worry if you don't understand this.
-  rp->size.x = maxx-rp->pos.x+1;
-  rp->size.y = maxy-rp->pos.y+1;
+  room->size.x = maxx-room->pos.x+1;
+  room->size.y = maxy-room->pos.y+1;
   do
   {
     static Coord ld[4] = {-1, 0, 0, 1, 1, 0, 0, -1};
     Coord *cp;
     int sh;
 
-    rnd_pos(rp, &spos);
+    rnd_pos(room, &spos);
     for (psgcnt = 0, cp = ld, sh = 1; cp<&ld[4]; sh <<= 1, cp++)
     {
       y = cp->y+spos.y; x = cp->x+spos.x;

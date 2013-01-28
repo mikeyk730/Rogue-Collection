@@ -48,14 +48,14 @@ void look(bool wakeup)
 {
   int x, y;
   byte ch, pch;
-  AGENT *tp;
-  struct Room *rp;
+  AGENT *monster;
+  struct Room *room;
   int ey, ex;
   int passcount = 0;
   byte pfl, fp;
   int sy, sx, sumhero, diffhero;
 
-  rp = player.room;
+  room = player.room;
   pfl = get_flags(player.pos.y, player.pos.x);
   pch = get_tile(player.pos.y, player.pos.x);
   //if the hero has moved
@@ -83,7 +83,7 @@ void look(bool wakeup)
         }
     }
     oldpos = player.pos;
-    oldrp = rp;
+    oldrp = room;
   }
   ey = player.pos.y+1;
   ex = player.pos.x+1;
@@ -111,7 +111,7 @@ void look(bool wakeup)
       }
       //Not in same passage
       else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
-      if ((tp = monster_at(y, x))!=NULL) if (on(player, SEEMONST) && on(*tp, ISINVIS))
+      if ((monster = monster_at(y, x))!=NULL) if (on(player, SEEMONST) && on(*monster, ISINVIS))
       {
         if (door_stop && !firstmove) running = FALSE;
         continue;
@@ -119,8 +119,8 @@ void look(bool wakeup)
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (tp->oldch != ' ' || (!(rp->flags&ISDARK) && !on(player, ISBLIND))) tp->oldch = get_tile(y, x);
-        if (can_see_monst(tp)) ch = tp->disguise;
+        if (monster->oldch != ' ' || (!(room->flags&ISDARK) && !on(player, ISBLIND))) monster->oldch = get_tile(y, x);
+        if (can_see_monst(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
       if ((ch!=PASSAGE) && (fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();

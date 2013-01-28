@@ -106,10 +106,10 @@ int cursor(bool ison)
 }
 
 //get curent cursor position
-void getrc(int *rp, int *cp)
+void getrc(int *r, int *c)
 {
-  *rp = c_row;
-  *cp = c_col;
+  *r = c_row;
+  *c = c_col;
 }
 
 //clrtoeol
