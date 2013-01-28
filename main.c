@@ -35,6 +35,7 @@
 #include "sticks.h"
 #include "potions.h"
 #include "scrolls.h"
+#include "hero.h"
 
 int bwflag = FALSE;
 
@@ -81,7 +82,7 @@ int main(int argc, char **argv)
     fuse(swander, 0, WANDER_TIME);
     daemon(stomach, 0);
     daemon(runners, 0);
-    msg("Hello %s%s.", whoami, noterse(".  Welcome to the Dungeons of Doom"));
+    msg("Hello %s%s.", get_name(), noterse(".  Welcome to the Dungeons of Doom"));
     raise_curtain();
   }
   playit(savfile);
@@ -161,8 +162,8 @@ void quit()
   {
     clear();
     move(0, 0);
-    printw("You quit with %u gold pieces\n", purse);
-    score(purse, 1, 0);
+    printw("You quit with %u gold pieces\n", get_purse());
+    score(get_purse(), 1, 0);
     fatal("");
   }
   else

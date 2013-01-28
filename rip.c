@@ -21,6 +21,7 @@
 #include "scrolls.h"
 #include "rings.h"
 #include "armor.h"
+#include "hero.h"
 
 #define TOPSCORES 10
 
@@ -85,7 +86,7 @@ reread:
   get_scores(&top_ten[0]);
   if (noscore!=TRUE)
   {
-    strcpy(his_score.name, whoami);
+    strcpy(his_score.name, get_name());
     his_score.gold = amount;
     his_score.fate = flags?flags:monst;
     his_score.level = max_level;
@@ -202,7 +203,7 @@ void death(char monst)
   char *killer;
   char buf[MAXSTR];
 
-  purse -= purse/10;
+  adjust_purse(-(get_purse()/10));
 
   clear();
   drop_curtain();
@@ -218,19 +219,19 @@ void death(char monst)
   green();
   center(22, "___\\/(\\/)/(\\/ \\\\(//)\\)\\/(//)\\\\)//(\\__");
   standend();
-  center(14, whoami);
+  center(14, get_name());
   standend();
   killer = killname(monst, TRUE);
   strcpy(buf, "killed by");
   center(15, buf);
   center(16, killer);
-  sprintf(buf, "%u Au", purse);
+  sprintf(buf, "%u Au", get_purse());
   center(18, buf);
   sprintf(buf, "%u", get_year());
   center(19, buf);
   raise_curtain();
   move(LINES-1, 0);
-  score(purse, 0, monst);
+  score(get_purse(), 0, monst);
   exit(0);
 }
 
@@ -267,7 +268,7 @@ void total_winner()
   wait_for(' ');
   clear();
   mvaddstr(0, 0, "   Worth  Item");
-  oldpurse = purse;
+  oldpurse = get_purse();
   for (c = 'a', obj = player.pack; obj!=NULL; c++, obj = next(obj))
   {
     switch (obj->type)
@@ -350,11 +351,11 @@ void total_winner()
     if (worth<0) worth = 0;
     move(c-'a'+1, 0);
     printw("%c) %5d  %s", c, worth, inv_name(obj, FALSE));
-    purse += worth;
+    adjust_purse(worth);
   }
   move(c-'a'+1, 0);
   printw("   %5u  Gold Pieces          ", oldpurse);
-  score(purse, 2, 0);
+  score(get_purse(), 2, 0);
 
 
   exit(0);

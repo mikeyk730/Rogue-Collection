@@ -65,10 +65,10 @@ void box(int ul_r, int ul_c, int lr_r, int lr_c);
 void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
 //center a string according to how many columns there really are
-void center(int row, char *string);
+void center(int row, const char *string);
 
 //printw(Ieeeee)
-void printw(char *msg, ...);
+void printw(const char *msg, ...);
 
 void scroll_up(int start_row, int end_row, int nlines);
 

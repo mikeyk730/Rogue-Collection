@@ -6,6 +6,7 @@
 #include <ctype.h>
 
 #include "rogue.h"
+#include "hero.h"
 #include "fight.h"
 #include "list.h"
 #include "weapons.h"
@@ -129,14 +130,12 @@ void leprechaun_attack(AGENT* mp)
   //Leprechaun steals some gold
   long lastpurse;
 
-  lastpurse = purse;
-  purse -= GOLDCALC;
+  lastpurse = get_purse();
+  adjust_purse(-GOLDCALC);
   if (!save(VS_MAGIC)) 
-    purse -= GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
-  if (purse<0) 
-    purse = 0;
+    adjust_purse(-(GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC));
   remove_mons(&mp->pos, mp, FALSE);
-  if (purse!=lastpurse) 
+  if (get_purse() != lastpurse) 
     msg("your purse feels lighter");
 }
 

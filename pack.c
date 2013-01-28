@@ -14,6 +14,7 @@
 #include "level.h"
 #include "thing.h"
 #include "scrolls.h"
+#include "hero.h"
 
 static int s_had_amulet = FALSE;
 
@@ -273,7 +274,7 @@ void money(int value)
   byte floor;
 
   floor = (player.room->flags&ISGONE)?PASSAGE:FLOOR;
-  purse += value;
+  adjust_purse(value);
   mvaddch(player.pos.y, player.pos.x, floor);
   set_tile(player.pos.y, player.pos.x, floor);
   if (value>0) msg("you found %d gold pieces", value);

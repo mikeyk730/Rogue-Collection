@@ -293,13 +293,13 @@ void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 }
 
 //center a string according to how many columns there really are
-void center(int row, char *string)
+void center(int row, const char *string)
 {
   mvaddstr(row, (COLS-strlen(string))/2, string);
 }
 
 //printw(Ieeeee)
-void printw(char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
+void printw(const char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
 {
   char pwbuf[132];
 

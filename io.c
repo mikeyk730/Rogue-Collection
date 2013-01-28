@@ -12,6 +12,7 @@
 #include "strings.h"
 #include "command.h"
 #include "rings.h"
+#include "hero.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)
@@ -196,11 +197,11 @@ void status()
     printw("Str:%2d(%2d) ", player.stats.str, max_stats.str);
   }
   //Gold
-  if(s_pur!=purse)
+  if(s_pur != get_purse())
   {
-    s_pur = purse;
+    s_pur = get_purse();
     move(23, PT(0, 40));
-    printw("Gold:%-5u", purse);
+    printw("Gold:%-5u", get_purse());
   }
   //Armor:
   if(s_ac!=(cur_armor!=NULL?cur_armor->armor_class:player.stats.ac))

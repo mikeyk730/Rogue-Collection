@@ -9,6 +9,7 @@
 #include "curses.h"
 #include "mach_dep.h"
 #include "io.h"
+#include "hero.h"
 
 #define C_LEFT    0x4b
 #define C_RIGHT   0x4d
@@ -137,6 +138,7 @@ void credits()
   high();
   getinfo(tname, 23);
   if (*tname && *tname!=ESCAPE) strcpy(whoami, tname);
+  set_name(whoami);
 
   blot_out(23, 0, 24, COLS-1);
   brown();

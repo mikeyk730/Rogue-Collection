@@ -125,6 +125,9 @@
     <ClCompile Include="weapons.c">
       <Filter>Items</Filter>
     </ClCompile>
+    <ClCompile Include="hero.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rogue.h">
@@ -237,6 +240,9 @@
     </ClInclude>
     <ClInclude Include="rings.h">
       <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="hero.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

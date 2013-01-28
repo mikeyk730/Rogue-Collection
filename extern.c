@@ -164,7 +164,6 @@ int maxrow;            //Last Line used for map
 int max_level;         //Deepest player has gone
 int ntraps;            //Number of traps on this level
 int level = 1;         //What level rogue is on
-int purse = 0;         //How much gold the rogue has
 int mpos = 0;          //Where cursor is on top line
 int no_move = 0;       //Number of turns held in place
 int no_command = 0;    //Number of turns asleep
