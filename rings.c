@@ -114,8 +114,8 @@ void init_new_ring(ITEM* ring)
   switch (ring->which)
   {
   case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
-    if ((ring->armor_class = rnd(3))==0) {
-      ring->armor_class = -1; 
+    if ((ring->ring_level = rnd(3))==0) {
+      ring->ring_level = -1; 
       ring->flags |= ISCURSED;
     }
     break;
@@ -150,7 +150,7 @@ void ring_on()
   //Calculate the effect it has on the poor guy.
   switch (obj->which)
   {
-  case R_ADDSTR: chg_str(obj->armor_class); break;
+  case R_ADDSTR: chg_str(obj->ring_level); break;
   case R_SEEINVIS: invis_on(); break;
   case R_AGGR: aggravate(); break;
   }
@@ -221,7 +221,7 @@ char *ring_num(ITEM *obj)
   {
   case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
     ring_buf[0] = ' ';
-    strcpy(&ring_buf[1], num(obj->armor_class, 0, RING));
+    strcpy(&ring_buf[1], num(obj->ring_level, 0, RING));
     break;
 
   default: 

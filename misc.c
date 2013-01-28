@@ -176,9 +176,9 @@ void chg_str(int amt)
   add_str(&player.stats.str, amt);
   comp = player.stats.str;
   if (is_ring_on_hand(LEFT, R_ADDSTR)) 
-    add_str(&comp, -cur_ring[LEFT]->armor_class);
+    add_str(&comp, -cur_ring[LEFT]->ring_level);
   if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
-    add_str(&comp, -cur_ring[RIGHT]->armor_class);
+    add_str(&comp, -cur_ring[RIGHT]->ring_level);
   if (comp>max_stats.str) 
     max_stats.str = comp;
 }
@@ -345,7 +345,7 @@ int goodch(ITEM *obj)
   case RING:
     switch (obj->which)
     {
-    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->armor_class<0) ch = BMAGIC; break;
+    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->ring_level<0) ch = BMAGIC; break;
     case R_AGGR: case R_TELEPORT: ch = BMAGIC; break;
     }
     break;

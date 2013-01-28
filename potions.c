@@ -260,15 +260,15 @@ void quaff_haste_self()
 void quaff_restore_strength()
 {
   if (is_ring_on_hand(LEFT, R_ADDSTR)) 
-    add_str(&player.stats.str, -cur_ring[LEFT]->armor_class);
+    add_str(&player.stats.str, -cur_ring[LEFT]->ring_level);
   if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
-    add_str(&player.stats.str, -cur_ring[RIGHT]->armor_class);
+    add_str(&player.stats.str, -cur_ring[RIGHT]->ring_level);
   if (player.stats.str < max_stats.str) 
     player.stats.str = max_stats.str;
   if (is_ring_on_hand(LEFT, R_ADDSTR)) 
-    add_str(&player.stats.str, cur_ring[LEFT]->armor_class);
+    add_str(&player.stats.str, cur_ring[LEFT]->ring_level);
   if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
-    add_str(&player.stats.str, cur_ring[RIGHT]->armor_class);
+    add_str(&player.stats.str, cur_ring[RIGHT]->ring_level);
   msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
 }
 

@@ -241,7 +241,7 @@ struct Stats
   unsigned int str;   //Strength
   long exp;           //Experience
   int level;          //Level of mastery
-  int armor_class;    //Armor class
+  int ac;             //Armor class
   int hp;             //Hit points
   char *damage;       //String describing damage done
   int max_hp;         //Max hit points
@@ -259,15 +259,17 @@ struct Item
   int which;                     //Which object of a type it is
   int hit_plus;                  //Plusses to hit
   int damage_plus;               //Plusses to damage
-  short armor_class;             //Armor class
+  short misc;                    //Armor class
   short flags;                   //Information about objects
   char enemy;                    //If it is enchanted, who it hates
   int group;                     //Group number for this object
 };
 typedef struct Item ITEM;
 
-#define charges      armor_class
-#define gold_value   armor_class
+#define charges      misc
+#define gold_value   misc
+#define armor_class  misc
+#define ring_level   misc
 
 //Structure for monsters and player
 struct Agent

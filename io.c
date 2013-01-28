@@ -203,13 +203,13 @@ void status()
     printw("Gold:%-5u", purse);
   }
   //Armor:
-  if(s_ac!=(cur_armor!=NULL?cur_armor->armor_class:player.stats.armor_class))
+  if(s_ac!=(cur_armor!=NULL?cur_armor->armor_class:player.stats.ac))
   {
-    s_ac = (cur_armor!=NULL?cur_armor->armor_class:player.stats.armor_class);
-    if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= cur_ring[LEFT]->armor_class;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= cur_ring[RIGHT]->armor_class;
+    s_ac = (cur_armor!=NULL?cur_armor->armor_class:player.stats.ac);
+    if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= cur_ring[LEFT]->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= cur_ring[RIGHT]->ring_level;
     move(23, PT(12, 52));
-    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->armor_class:player.stats.armor_class));
+    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->armor_class:player.stats.ac));
   }
   //Exp:
   if (s_elvl!=player.stats.level)

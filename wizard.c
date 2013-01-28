@@ -127,7 +127,7 @@ void create_obj()
     bless = readchar();
     mpos = 0;
     if (bless=='-') obj->flags |= ISCURSED;
-    obj->armor_class = (bless=='-'?-1:rnd(2)+1);
+    obj->ring_level = (bless=='-'?-1:rnd(2)+1);
     break;
 
   case R_AGGR: case R_TELEPORT:

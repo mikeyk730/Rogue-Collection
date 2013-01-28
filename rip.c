@@ -328,7 +328,7 @@ void total_winner()
     case RING:
       worth = get_ring_value(obj->which);
       if (obj->which==R_ADDSTR || obj->which==R_ADDDAM || obj->which==R_PROTECT || obj->which==R_ADDHIT)
-        if (obj->armor_class>0) worth += obj->armor_class*100;
+        if (obj->ring_level>0) worth += obj->ring_level*100;
         else worth = 10;
         if (!(obj->flags&ISKNOW)) worth /= 2;
         obj->flags |= ISKNOW;

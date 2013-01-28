@@ -178,7 +178,7 @@ int be_trapped(Coord *tc)
     break;
 
   case T_ARROW:
-    if (swing(player.stats.level-1, player.stats.armor_class, 1))
+    if (swing(player.stats.level-1, player.stats.ac, 1))
     {
       player.stats.hp -= roll(1, 6);
       if (player.stats.hp<=0) {msg("an arrow killed you"); death('a');}
@@ -206,7 +206,7 @@ int be_trapped(Coord *tc)
     break;
 
   case T_DART:
-    if (swing(player.stats.level+1, player.stats.armor_class, 1))
+    if (swing(player.stats.level+1, player.stats.ac, 1))
     {
       player.stats.hp -= roll(1, 4);
       if (player.stats.hp<=0) {msg("a poisoned dart killed you"); death('d');}

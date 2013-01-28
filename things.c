@@ -236,7 +236,7 @@ int can_drop(ITEM *op)
     cur_ring[hand] = NULL;
     switch (op->which)
     {
-    case R_ADDSTR: chg_str(-op->armor_class); break;
+    case R_ADDSTR: chg_str(-op->ring_level); break;
     case R_SEEINVIS: unsee(); extinguish(unsee); break;
     }
   }

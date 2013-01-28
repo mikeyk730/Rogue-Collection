@@ -304,11 +304,11 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
     if (thdef->type==weap->enemy) {hplus += 4; dplus += 4;}
     if (weap==cur_weapon)
     {
-      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->armor_class;
-      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->armor_class;
-      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->armor_class;
+      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->ring_level;
+      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->ring_level;
+      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->ring_level;
       else if (is_ring_on_hand(RIGHT, R_ADDHIT))
-        hplus += cur_ring[RIGHT]->armor_class;
+        hplus += cur_ring[RIGHT]->ring_level;
     }
     cp = weap->damage;
     if (hurl && (weap->flags&ISMISL) && cur_weapon!=NULL && cur_weapon->which==weap->launcher)
@@ -327,12 +327,12 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
   if (!on(*thdef, ISRUN)) hplus += 4;
-  def_arm = def->armor_class;
+  def_arm = def->ac;
   if (def==&player.stats)
   {
     if (cur_armor!=NULL) def_arm = cur_armor->armor_class;
-    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->armor_class;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->armor_class;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->ring_level;
   }
   for (;;)
   {
@@ -414,8 +414,8 @@ int save(int which)
 {
   if (which==VS_MAGIC)
   {
-    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= cur_ring[LEFT]->armor_class;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= cur_ring[RIGHT]->armor_class;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= cur_ring[LEFT]->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= cur_ring[RIGHT]->ring_level;
   }
   return save_throw(which, &player);
 }

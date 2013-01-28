@@ -114,7 +114,7 @@ void new_monster(AGENT *tp, byte type, Coord *cp)
   mp = &monsters[tp->type-'A'];
   tp->stats.level = mp->stats.level+lev_add;
   tp->stats.max_hp = tp->stats.hp = roll(tp->stats.level, 8);
-  tp->stats.armor_class = mp->stats.armor_class-lev_add;
+  tp->stats.ac = mp->stats.ac-lev_add;
   tp->stats.damage = mp->stats.damage;
   tp->stats.str = mp->stats.str;
   tp->stats.exp = mp->stats.exp+lev_add*10+exp_add(tp);
