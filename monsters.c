@@ -118,7 +118,7 @@ void set_xeroc_disguise(AGENT* X)
 void new_monster(AGENT *monster, byte type, Coord *position)
 {
   int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
-  struct Stats default_stats = monsters[type-'A'].stats;
+  const struct Monster* defaults = &monsters[type-'A'];
 
   attach_agent(&mlist, monster);
 
@@ -127,7 +127,8 @@ void new_monster(AGENT *monster, byte type, Coord *position)
   monster->pos = *position;
   monster->oldch = '@';
   monster->room = roomin(position);
-  monster->stats = default_stats;
+  monster->flags = defaults->flags;
+  monster->stats = defaults->stats;
   monster->stats.level += level_add;
   monster->stats.hp = monster->stats.max_hp = roll(monster->stats.level, 8);
   monster->stats.ac -= level_add;
