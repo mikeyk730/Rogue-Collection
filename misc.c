@@ -24,6 +24,7 @@
 #include "scrolls.h"
 #include "potions.h"
 #include "sticks.h"
+#include "armor.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)
@@ -364,7 +365,7 @@ int goodch(ITEM *obj)
   switch (obj->type)
   {
   case ARMOR:
-    if (obj->armor_class>a_class[obj->which]) ch = BMAGIC;
+    if (obj->armor_class>get_default_class(obj->which)) ch = BMAGIC;
     break;
   case WEAPON:
     if (obj->hit_plus<0 || obj->damage_plus<0) ch = BMAGIC;

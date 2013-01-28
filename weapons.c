@@ -18,6 +18,7 @@
 #include "level.h"
 #include "thing.h"
 #include "mach_dep.h"
+#include "armor.h"
 
 #define NONE 100
 
@@ -134,7 +135,7 @@ const char *short_name(ITEM *obj)
   switch (obj->type)
   {
   case WEAPON: return get_weapon_name(obj->which);
-  case ARMOR: return a_names[obj->which];
+  case ARMOR: return get_armor_name(obj->which);
   case FOOD: return "food";
   case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(inv_name(obj, TRUE), ' ')+1;
   default: return "bizzare thing";

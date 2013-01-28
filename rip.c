@@ -20,6 +20,7 @@
 #include "potions.h"
 #include "scrolls.h"
 #include "rings.h"
+#include "armor.h"
 
 #define TOPSCORES 10
 
@@ -306,7 +307,7 @@ void total_winner()
       case PLATE_MAIL: worth = 150; break;
       }
       worth += (9-obj->armor_class)*100;
-      worth += (10*(a_class[obj->which]-obj->armor_class));
+      worth += (10*(get_default_class(obj->which)-obj->armor_class));
       obj->flags |= ISKNOW;
       break;
 

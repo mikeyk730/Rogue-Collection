@@ -11,6 +11,7 @@
 #include "pack.h"
 #include "main.h"
 #include "level.h"
+#include "armor.h"
 
 int iguess = 0;
 
@@ -52,7 +53,7 @@ void init_player()
   add_pack(obj, TRUE);
   //And his suit of armor
   obj = create_item(ARMOR, RING_MAIL);
-  obj->armor_class = a_class[RING_MAIL]-1;
+  obj->armor_class = get_default_class(RING_MAIL)-1;
   obj->flags |= ISKNOW;
   obj->count = 1;
   obj->group = 0;

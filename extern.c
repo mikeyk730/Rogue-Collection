@@ -3,45 +3,6 @@
 
 #include "rogue.h"
 
-//Names of armor types
-char *a_names[MAXARMORS] =
-{
-  "leather armor",
-  "ring mail",
-  "studded leather armor",
-  "scale mail",
-  "chain mail",
-  "splint mail",
-  "banded mail",
-  "plate mail"
-};
-
-//Chance for each armor type
-int a_chances[MAXARMORS] =
-{
-  20,
-  35,
-  50,
-  63,
-  75,
-  85,
-  95,
-  100
-};
-
-//Armor class for each armor type
-int a_class[MAXARMORS] =
-{
-  8,
-  7,
-  7,
-  6,
-  5,
-  4,
-  4,
-  3
-};
-
 struct MagicItem s_magic[MAXSCROLLS] =
 {
   {"monster confusion",   8, 140},

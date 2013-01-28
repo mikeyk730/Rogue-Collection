@@ -23,6 +23,7 @@
 #include "level.h"
 #include "rings.h"
 #include "thing.h"
+#include "armor.h"
 
 char tbuf[MAXSTR];
 
@@ -493,7 +494,7 @@ is_magic(ITEM *obj)
 {
   switch (obj->type)
   {
-  case ARMOR: return obj->armor_class!=a_class[obj->which];
+  case ARMOR: return obj->armor_class!=get_default_class(obj->which);
   case WEAPON: return obj->hit_plus!=0 || obj->damage_plus!=0;
   case POTION: case SCROLL: case STICK: case RING: case AMULET: return TRUE;
   }

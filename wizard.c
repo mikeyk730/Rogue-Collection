@@ -25,6 +25,7 @@
 #include "potions.h"
 #include "weapons.h"
 #include "level.h"
+#include "armor.h"
 
 //whatis: What a certain object is
 void whatis()
@@ -114,7 +115,7 @@ void create_obj()
     }
     else
     {
-      obj->armor_class = a_class[obj->which];
+      obj->armor_class = get_default_class(obj->which);
       if (bless=='-') obj->armor_class += rnd(3)+1;
       if (bless=='+') obj->armor_class -= rnd(3)+1;
     }

@@ -7,6 +7,69 @@
 #include "pack.h"
 #include "things.h"
 #include "daemon.h"
+#include "main.h"
+
+//Names of armor types
+const char *a_names[MAXARMORS] =
+{
+  "leather armor",
+  "ring mail",
+  "studded leather armor",
+  "scale mail",
+  "chain mail",
+  "splint mail",
+  "banded mail",
+  "plate mail"
+};
+
+//Chance for each armor type
+int a_chances[MAXARMORS] =
+{
+  20,
+  35,
+  50,
+  63,
+  75,
+  85,
+  95,
+  100
+};
+
+//Armor class for each armor type
+int a_class[MAXARMORS] =
+{
+  8,
+  7,
+  7,
+  6,
+  5,
+  4,
+  4,
+  3
+};
+
+int get_default_class(int type)
+{
+  return a_class[type];
+}
+
+const char* get_armor_name(int type)
+{
+  return a_names[type];
+}
+
+void init_new_armor(ITEM* armor)
+{
+  int j, k;
+
+  armor->type = ARMOR;
+  for (j = 0, k = rnd(100); j<MAXARMORS; j++) if (k<a_chances[j]) break;
+  if (j==MAXARMORS) {debug("Picked a bad armor %d", k); j = 0;}
+  armor->which = j;
+  armor->armor_class = get_default_class(j);
+  if ((k = rnd(100))<20) {armor->flags |= ISCURSED; armor->armor_class += rnd(3)+1;}
+  else if (k<28) armor->armor_class -= rnd(3)+1;
+}
 
 //wear: The player wants to wear something, so let him/her put it on.
 void wear()

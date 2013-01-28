@@ -316,11 +316,11 @@ extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
 extern bool after, again, door_stop, expert, fastmode, faststate, firstmove, in_shell, 
   noscore, playing, running, save_msg, terse, was_trapped, wizard;
 
-extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
+extern char file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
   huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 
   *typeahead, take, whoami[];
 
-extern int a_chances[], a_class[], count, food_left, flytrap_hit, fd, hungry_state, iguess,
+extern int count, food_left, flytrap_hit, fd, hungry_state, iguess,
   lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total_items;
 
 extern long seed;

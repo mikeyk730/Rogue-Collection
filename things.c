@@ -125,9 +125,9 @@ char *inv_name(ITEM *obj, bool drop)
 
   case ARMOR:
     if (obj->flags&ISKNOW || wizard)
-      chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(a_class[which]-obj->armor_class, 0, ARMOR), a_names[which], -(obj->armor_class-11));
+      chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->armor_class, 0, ARMOR), get_armor_name(which), -(obj->armor_class-11));
     else
-      sprintf(pb, "%s", a_names[which]);
+      sprintf(pb, "%s", get_armor_name(which));
     break;
 
   case AMULET:
@@ -246,7 +246,7 @@ int can_drop(ITEM *op)
 ITEM *new_item()
 {
   ITEM *cur;
-  int j, k;
+  int k;
 
   if ((cur = create_item(0,0))==NULL) return NULL;
   cur->hit_plus = cur->damage_plus = 0;
@@ -284,13 +284,7 @@ ITEM *new_item()
     break;
 
   case 4:
-    cur->type = ARMOR;
-    for (j = 0, k = rnd(100); j<MAXARMORS; j++) if (k<a_chances[j]) break;
-    if (j==MAXARMORS) {debug("Picked a bad armor %d", k); j = 0;}
-    cur->which = j;
-    cur->armor_class = a_class[j];
-    if ((k = rnd(100))<20) {cur->flags |= ISCURSED; cur->armor_class += rnd(3)+1;}
-    else if (k<28) cur->armor_class -= rnd(3)+1;
+    init_new_armor(cur);
     break;
 
   case 5:
