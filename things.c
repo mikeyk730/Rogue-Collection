@@ -23,7 +23,6 @@
 #include "mach_dep.h"
 #include "level.h"
 #include "thing.h"
-#include "monsters.h"
 #include "food.h"
 #include "hero.h"
 

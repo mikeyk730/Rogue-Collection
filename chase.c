@@ -173,16 +173,16 @@ int can_see_monst(AGENT *mp)
 //start_run: Set a monster running after something or stop it from running (for when it dies)
 void start_run(Coord *runner)
 {
-  AGENT *tp;
+  AGENT *monster;
 
   //If we couldn't find him, something is funny
-  tp = monster_at(runner->y, runner->x);
-  if (tp!=NULL)
+  monster = monster_at(runner->y, runner->x);
+  if (monster!=NULL)
   {
     //Start the beastie running
-    tp->flags |= ISRUN;
-    tp->flags &= ~ISHELD;
-    tp->dest = find_dest(tp);
+    monster->flags |= ISRUN;
+    monster->flags &= ~ISHELD;
+    monster->dest = find_dest(monster);
   }
   else debug("start_run: moat == NULL ???");
 }

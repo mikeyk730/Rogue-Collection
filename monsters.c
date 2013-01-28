@@ -98,43 +98,50 @@ char randmonster(bool wander)
   return mons[d];
 }
 
-//new_monster: Pick a new monster and add it to the list
-void new_monster(AGENT *tp, byte type, Coord *cp)
+void set_xeroc_disguise(AGENT* X)
 {
-  const struct Monster *mp;
-  int lev_add;
-
-  if ((lev_add = level-AMULETLEVEL)<0) lev_add = 0;
-  attach_agent(&mlist, tp);
-  tp->type = type;
-  tp->disguise = type;
-  tp->pos = *cp;
-  tp->oldch = '@';
-  tp->room = roomin(cp);
-  mp = &monsters[tp->type-'A'];
-  tp->stats.level = mp->stats.level+lev_add;
-  tp->stats.max_hp = tp->stats.hp = roll(tp->stats.level, 8);
-  tp->stats.ac = mp->stats.ac-lev_add;
-  tp->stats.damage = mp->stats.damage;
-  tp->stats.str = mp->stats.str;
-  tp->stats.exp = mp->stats.exp+lev_add*10+exp_add(tp);
-  tp->flags = mp->flags;
-  tp->turn = TRUE;
-  tp->pack = NULL;
-  if (is_wearing_ring(R_AGGR)) start_run(cp);
-  if (type=='F') tp->stats.damage = f_damage;
-  if (type=='X') switch (rnd(level >= AMULETLEVEL ? 9 : 8))
+  switch (rnd(level >= AMULETLEVEL ? 9 : 8))
   {
-  case 0: tp->disguise = GOLD; break;
-  case 1: tp->disguise = POTION; break;
-  case 2: tp->disguise = SCROLL; break;
-  case 3: tp->disguise = STAIRS; break;
-  case 4: tp->disguise = WEAPON; break;
-  case 5: tp->disguise = ARMOR; break;
-  case 6: tp->disguise = RING; break;
-  case 7: tp->disguise = STICK; break;
-  case 8: tp->disguise = AMULET; break;
+  case 0: X->disguise = GOLD; break;
+  case 1: X->disguise = POTION; break;
+  case 2: X->disguise = SCROLL; break;
+  case 3: X->disguise = STAIRS; break;
+  case 4: X->disguise = WEAPON; break;
+  case 5: X->disguise = ARMOR; break;
+  case 6: X->disguise = RING; break;
+  case 7: X->disguise = STICK; break;
+  case 8: X->disguise = AMULET; break;
   }
+}
+
+//new_monster: Pick a new monster and add it to the list
+void new_monster(AGENT *monster, byte type, Coord *position)
+{
+  int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
+  struct Stats default_stats = monsters[type-'A'].stats;
+
+  attach_agent(&mlist, monster);
+
+  monster->type = type;
+  monster->disguise = type;
+  monster->pos = *position;
+  monster->oldch = '@';
+  monster->room = roomin(position);
+  monster->stats = default_stats;
+  monster->stats.level += level_add;
+  monster->stats.hp = monster->stats.max_hp = roll(monster->stats.level, 8);
+  monster->stats.ac -= level_add;
+  monster->stats.exp += level_add*10 + exp_add(monster);
+  monster->turn = TRUE;
+  monster->pack = NULL;
+
+  if (type=='F') 
+    monster->stats.damage = f_damage;
+  if (type=='X') 
+    set_xeroc_disguise(monster);
+
+  if (is_wearing_ring(R_AGGR)) 
+    start_run(position);
 }
 
 //f_restor(): restor initial damage string for flytraps
@@ -146,15 +153,17 @@ void f_restor()
 }
 
 //expadd: Experience to add for this monster's level/hit points
-int exp_add(AGENT *tp)
+int exp_add(AGENT *monster)
 {
-  int mod;
+  int divisor = (monster->stats.level == 1) ? 8 : 6;
+  int value = monster->stats.max_hp / divisor;
 
-  if (tp->stats.level==1) mod = tp->stats.max_hp/8;
-  else mod = tp->stats.max_hp/6;
-  if (tp->stats.level>9) mod *= 20;
-  else if (tp->stats.level>6) mod *= 4;
-  return mod;
+  if (monster->stats.level>9) 
+    value *= 20;
+  else if (monster->stats.level>6) 
+    value *= 4;
+  
+  return value;
 }
 
 //wanderer: Create a new wandering monster and aim it at the player
