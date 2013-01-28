@@ -164,7 +164,7 @@ int teleport()
 }
 
 //show_map: Print out the map for the wizard
-void show_map()
+void show_map(bool show_monsters)
 {
   int y, x, real;
 
@@ -173,7 +173,7 @@ void show_map()
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
     if (!(real = get_flags(y, x)&F_REAL)) standout();
-    mvaddch(y, x, get_tile(y, x));
+    mvaddch(y, x, show_monsters ? display_character(y, x) : get_tile(y, x));
     if (!real) standend();
   }
   show_win("---More (level map)---");

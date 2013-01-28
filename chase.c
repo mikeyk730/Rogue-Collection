@@ -30,7 +30,7 @@ void runners()
 
   for (monster = mlist; monster!=NULL; monster = next)
   {
-    next = next(monster); //monster may be invalidated during iteration
+    next = next(monster); //monster may be invalidated during iteration, save next here in case continue is hit
     if (!on(*monster, ISHELD) && on(*monster, ISRUN))
     {
       dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
@@ -43,6 +43,7 @@ void runners()
         if(!do_chase(monster)) continue;
       monster->turn ^= TRUE;
     }
+    next = next(monster);
   }
 }
 

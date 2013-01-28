@@ -22,7 +22,6 @@ typedef unsigned char bool;
 #define NUMTHINGS    7  //number of types of things
 #define MAXPASS      13 //upper limit on number of passages
 #define MAXNAME      20 //Maximum Length of a scroll
-#define MAXITEMS     83 //Maximum number of randomly generated things
 
 //All the fun defines
 

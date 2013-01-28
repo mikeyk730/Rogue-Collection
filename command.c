@@ -231,9 +231,9 @@ void execcom()
         case 'C': 
           after = FALSE; create_obj(); break;
         case 'X': 
-          after = FALSE; show_map(); break;
+          after = FALSE; show_map(TRUE); break;
         case 'Z': 
-          after = FALSE; add_pass(); break;
+          after = FALSE;  show_map(FALSE); break;
         default:
           after = FALSE; save_msg = FALSE; 
           msg("illegal command '%s'", unctrl(ch)); 
