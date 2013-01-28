@@ -5,13 +5,7 @@
 
 ITEM *create_item(int type, int which)
 {
-  ITEM* item;
-
-  if (total_items >= MAXITEMS)
-    return NULL;
-  ++total_items;
-
-  item = malloc(sizeof(ITEM));
+  ITEM* item = malloc(sizeof(ITEM));
   memset(item, 0, sizeof(ITEM));
 
   item->type = type;
@@ -32,19 +26,12 @@ ITEM *create_item(int type, int which)
 void discard_item(ITEM *item)
 {
   free(item);
-  --total_items;
 }
 
 AGENT *create_agent()
 {
-  AGENT* agent;
-  
-  if (total_items >= MAXITEMS)
-    return NULL;
-
-  agent = malloc(sizeof(AGENT));
+  AGENT* agent = malloc(sizeof(AGENT));
   memset(agent, 0, sizeof(AGENT));
-  ++total_items;
 
   return agent;
 }
@@ -52,5 +39,4 @@ AGENT *create_agent()
 void discard_agent(AGENT *agent)
 {
   free(agent);
-  --total_items;
 }

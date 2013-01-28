@@ -235,8 +235,7 @@ AGENT *wake_monster(int y, int x)
 //give_pack: Give a pack to a monster if it deserves one
 void give_pack(AGENT *monster)
 {
-  //check if we can allocate a new item
-  if (total_items<MAXITEMS && rnd(100)<monsters[monster->type-'A'].carry) 
+  if (rnd(100) < monsters[monster->type-'A'].carry) 
     attach_item(&monster->pack, new_item());
 }
 

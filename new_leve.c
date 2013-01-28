@@ -135,7 +135,7 @@ void put_things()
   }
   //Do MAXOBJ attempts to put things on a level
   for (; i<MAXOBJ; i++) {
-    if (total_items<MAXITEMS && rnd(100)<35)
+    if (rnd(100)<35)
     {
       //Pick a new object and link it in the list
       cur = new_item();
@@ -162,7 +162,7 @@ void treas_room()
   spots = (room->size.y-2)*(room->size.x-2)-MINTREAS;
   if (spots>(MAXTREAS-MINTREAS)) spots = (MAXTREAS-MINTREAS);
   num_monst = nm = rnd(spots)+MINTREAS;
-  while (nm-- && total_items<MAXITEMS)
+  while (nm--)
   {
     do {
       rnd_pos(room, &monster_pos);
