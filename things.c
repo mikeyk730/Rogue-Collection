@@ -24,6 +24,7 @@
 #include "level.h"
 #include "thing.h"
 #include "monsters.h"
+#include "food.h"
 
 struct MagicItem things[NUMTHINGS] =
 {
@@ -240,13 +241,6 @@ int can_drop(ITEM *op)
     }
   }
   return TRUE;
-}
-
-void init_new_food(ITEM* food)
-{
-  no_food = 0;
-  food->type = FOOD;
-  if (rnd(10)!=0) food->which = 0; else food->which = 1;
 }
 
 //new_thing: Return a new thing

@@ -24,6 +24,7 @@
 #include "pack.h"
 #include "scrolls.h"
 #include "level.h"
+#include "food.h"
 
 #include <ctype.h>
 

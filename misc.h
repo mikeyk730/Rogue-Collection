@@ -7,9 +7,6 @@ void look(bool wakeup);
 //find_obj: Find the unclaimed object at y, x
 ITEM *find_obj(int y, int x);
 
-//eat: She wants to eat something, so let her try
-void eat();
-
 //chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
 void chg_str(int amt);
 

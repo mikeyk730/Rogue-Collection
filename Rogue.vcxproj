@@ -87,6 +87,7 @@
     <ClCompile Include="extern.c" />
     <ClCompile Include="fakedos.c" />
     <ClCompile Include="fight.c" />
+    <ClCompile Include="food.c" />
     <ClCompile Include="init.c" />
     <ClCompile Include="io.c" />
     <ClCompile Include="level.c" />
@@ -124,6 +125,7 @@
     <ClInclude Include="env.h" />
     <ClInclude Include="fakedos.h" />
     <ClInclude Include="fight.h" />
+    <ClInclude Include="food.h" />
     <ClInclude Include="init.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="level.h" />
