@@ -87,7 +87,7 @@ void new_level(int do_implode)
   mpos = 0;
   enter_room(&player.pos);
   mvaddch(player.pos.y, player.pos.x, PLAYER);
-  bcopy(oldpos, player.pos);
+  oldpos = player.pos;
   oldrp = player.room;
   if (on(player, SEEMONST)) turn_see(FALSE);
 }
@@ -127,7 +127,7 @@ void put_things()
         //Put it somewhere
         do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(display_character(tp.y, tp.x)));
         set_tile(tp.y, tp.x, AMULET);
-        bcopy(cur->pos, tp);
+        cur->pos = tp;
       }
     }
     //check for treasure rooms, and if so, put it in.
@@ -143,7 +143,7 @@ void put_things()
       //Put it somewhere
       do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(get_tile(tp.y, tp.x)));
       set_tile(tp.y, tp.x, cur->type);
-      bcopy(cur->pos, tp);
+      cur->pos = tp;
     }
   }
 }
@@ -168,7 +168,7 @@ void treas_room()
       rnd_pos(rp, &mp);
     } while (!isfloor(get_tile(mp.y, mp.x)));
     tp = new_item();
-    bcopy(tp->pos, mp);
+    tp->pos = mp;
     attach_item(&lvl_obj, tp);
     set_tile(mp.y, mp.x, tp->type);
   }

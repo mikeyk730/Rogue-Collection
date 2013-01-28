@@ -108,7 +108,7 @@ void new_monster(AGENT *tp, byte type, Coord *cp)
   attach_agent(&mlist, tp);
   tp->type = type;
   tp->disguise = type;
-  bcopy(tp->pos, *cp);
+  tp->pos = *cp;
   tp->oldch = '@';
   tp->room = roomin(cp);
   mp = &monsters[tp->type-'A'];

@@ -8,7 +8,6 @@
 #define REV  1
 #define VER  48
 
-#define bcopy(a,b)  memcpy(&(a),&(b),sizeof(b))
 typedef unsigned char byte;
 typedef unsigned char bool;
 
@@ -307,7 +306,7 @@ extern int maxrow;
 extern int LINES, COLS;
 extern int bailout;
 
-extern char s_menu[], s_name[], s_score[], s_save[], s_screen[];
+extern char s_menu[], s_score[], s_save[], s_screen[];
 
 extern struct Array _guesses[];
 

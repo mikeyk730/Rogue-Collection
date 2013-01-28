@@ -98,7 +98,7 @@ hack:
       goto hack;
     }
     obj->count--;
-    bcopy(*nitem, *obj);
+    *nitem = *obj;
     nitem->count = 1;
     obj = nitem;
   }
@@ -114,7 +114,7 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
   byte under = '@';
 
   //Come fly with us ...
-  bcopy(obj->pos, player.pos);
+  obj->pos = player.pos;
   for (;;)
   {
     int ch;
@@ -162,7 +162,7 @@ void fall(ITEM *obj, bool pr)
   {
   case 1:
     set_tile(fpos.y, fpos.x, obj->type);
-    bcopy(obj->pos, fpos);
+    obj->pos = fpos;
     if (cansee(fpos.y, fpos.x))
     {
       if ((get_flags(obj->pos.y, obj->pos.x)&F_PASS) || (get_flags(obj->pos.y, obj->pos.x)&F_MAZE)) standout();

@@ -144,8 +144,8 @@ int teleport()
 
   mvaddch(player.pos.y, player.pos.x, get_tile(player.pos.y, player.pos.x));
   do {rm = rnd_room(); rnd_pos(&rooms[rm], &c);} while (!(step_ok(display_character(c.y, c.x))));
-  if (&rooms[rm]!=player.room) {leave_room(&player.pos); bcopy(player.pos, c); enter_room(&player.pos);}
-  else {bcopy(player.pos, c); look(TRUE);}
+  if (&rooms[rm]!=player.room) {leave_room(&player.pos); player.pos = c; enter_room(&player.pos);}
+  else { player.pos = c; look(TRUE);}
   mvaddch(player.pos.y, player.pos.x, PLAYER);
   //turn off ISHELD in case teleportation was done while fighting a Flytrap
   if (on(player, ISHELD)) {player.flags &= ~ISHELD; f_restor();}

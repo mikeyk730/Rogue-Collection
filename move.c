@@ -126,7 +126,7 @@ move_stuff:
       mvaddch(player.pos.y, player.pos.x, get_tile(player.pos.y, player.pos.x));
       if ((fl&F_PASS) && (get_tile(oldpos.y, oldpos.x)==DOOR || (get_flags(oldpos.y, oldpos.x)&F_MAZE))) leave_room(&nh);
       if ((fl&F_MAZE) && (get_flags(oldpos.y, oldpos.x)&F_MAZE)==0) enter_room(&nh);
-      bcopy(player.pos, nh);
+      player.pos = nh;
     }
   }
 }
@@ -192,7 +192,7 @@ int be_trapped(Coord *tc)
       {
         init_weapon(arrow, ARROW);
         arrow->count = 1;
-        bcopy(arrow->pos, player.pos);
+        arrow->pos = player.pos;
         fall(arrow, FALSE);
       }
       msg("an arrow shoots past you");
@@ -261,6 +261,6 @@ void rndmove(AGENT *who, Coord *newmv)
 
 bad:
 
-  bcopy((*newmv), who->pos);
+  (*newmv) = who->pos;
   return;
 }

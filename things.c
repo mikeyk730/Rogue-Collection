@@ -137,7 +137,7 @@ void drop()
   {
     if ((nobj = create_item(0,0))==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
     op->count--;
-    bcopy(*nobj, *op);
+    *nobj = *op;
     nobj->count = 1;
     op = nobj;
   }
@@ -145,7 +145,7 @@ void drop()
   //Link it into the level object list
   attach_item(&lvl_obj, op);
   set_tile(player.pos.y, player.pos.x, op->type);
-  bcopy(op->pos, player.pos);
+  op->pos = player.pos;
   msg("dropped %s", inv_name(op, TRUE));
 }
 

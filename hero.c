@@ -102,7 +102,7 @@ void init_player()
 {
   ITEM *obj;
 
-  bcopy(player.stats, max_stats);
+  player.stats = max_stats;
   food_left = HUNGER_TIME;
 
   //Give the rogue his weaponry.  First a mace.

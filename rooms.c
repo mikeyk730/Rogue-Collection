@@ -99,7 +99,7 @@ void do_rooms()
           gch = get_tile(rp->gold.y, rp->gold.x);
           if (isfloor(gch)) break;
         }
-        bcopy(gold->pos, rp->gold);
+        gold->pos = rp->gold;
         gold->flags = ISMANY;
         gold->group = GOLDGRP;
         attach_item(&lvl_obj, gold);

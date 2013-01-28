@@ -473,7 +473,7 @@ void remove_mons(Coord *mp, AGENT *tp, bool waskill)
   for (obj = tp->pack; obj!=NULL; obj = nexti)
   {
     nexti = next(obj);
-    bcopy(obj->pos, tp->pos);
+    obj->pos = tp->pos;
     detach_item(&tp->pack, obj);
     if (waskill)
       fall(obj, FALSE);
