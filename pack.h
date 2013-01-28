@@ -18,4 +18,8 @@ int pack_char(ITEM *obj);
 //money: Add or subtract gold from the pack
 void money(int value);
 
+//true if player currently has amulet
 int has_amulet();
+
+//true if player ever had amulet
+int had_amulet();

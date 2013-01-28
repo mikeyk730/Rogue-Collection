@@ -315,7 +315,7 @@ extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
 extern char f_damage[];
 
 extern bool after, again, door_stop, expert, fastmode, faststate, firstmove, in_shell, 
-  noscore, playing, running, save_msg, saw_amulet, terse, was_trapped, wizard;
+  noscore, playing, running, save_msg, terse, was_trapped, wizard;
 
 extern bool p_know[], r_know[], s_know[], ws_know[];
 

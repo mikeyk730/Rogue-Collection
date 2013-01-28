@@ -17,6 +17,7 @@
 #include "io.h"
 #include "level.h"
 #include "thing.h"
+#include "pack.h"
 
 #define GOLDGRP  1
 
@@ -83,7 +84,7 @@ void do_rooms()
     } while (rp->pos.y==0);
     draw_room(rp);
     //Put the gold in
-    if ((rnd(2)==0) && (!saw_amulet || (level>=max_level)))
+    if ((rnd(2)==0) && (!had_amulet() || (level>=max_level)))
     {
       ITEM *gold;
 

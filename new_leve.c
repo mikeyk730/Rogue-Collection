@@ -16,6 +16,7 @@
 #include "misc.h"
 #include "level.h"
 #include "thing.h"
+#include "pack.h"
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room
@@ -110,12 +111,12 @@ void put_things()
 
   //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
   //This is real unfair - I'm going to allow one thing, that way the poor guy will get some food.
-  if (saw_amulet && level<max_level) i = MAXOBJ-1;
+  if (had_amulet() && level<max_level) i = MAXOBJ-1;
   else
   {
     //If he is really deep in the dungeon and he hasn't found the amulet yet, put it somewhere on the ground
     //Check this first so if we are out of memory the guy has a hope of getting the amulet
-    if (level>=AMULETLEVEL && !saw_amulet)
+    if (level>=AMULETLEVEL && !had_amulet())
     {
       if ((cur = create_item(AMULET, 0))!=NULL)
       {

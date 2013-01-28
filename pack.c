@@ -15,6 +15,8 @@
 #include "thing.h"
 #include "scrolls.h"
 
+static int s_had_amulet = FALSE;
+
 int does_item_group(type) {
   return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
 }
@@ -150,7 +152,7 @@ picked_up:
   for (mp = mlist; mp!=NULL; mp = next(mp))
     if (mp->dest && (mp->dest->x==obj->pos.x) && (mp->dest->y==obj->pos.y))
       mp->dest = &player.pos;
-  if (obj->type==AMULET) { saw_amulet = TRUE;}
+  if (obj->type==AMULET) { s_had_amulet = TRUE; }
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));
 }
@@ -285,4 +287,10 @@ int has_amulet()
       return TRUE;
 
   return FALSE;
+}
+
+//true if player ever had amulet
+int had_amulet()
+{
+  return s_had_amulet;
 }
