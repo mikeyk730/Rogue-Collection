@@ -253,10 +253,11 @@ char pick_monster()
 }
 
 //moat(x,y): returns pointer to monster at coordinate. if no monster there return NULL
-AGENT *monster_at(int my, int mx)
+AGENT *monster_at(int y, int x)
 {
-  AGENT *tp;
-
-  for (tp = mlist; tp!=NULL; tp = next(tp)) if (tp->pos.x==mx && tp->pos.y==my) return (tp);
-  return (NULL);
+  AGENT *monster;
+  for (monster = mlist; monster!=NULL; monster = next(monster)) 
+    if (monster->pos.x == x && monster->pos.y == y) 
+      return monster;
+  return NULL;
 }

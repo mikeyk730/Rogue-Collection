@@ -232,6 +232,9 @@ void death(char monst)
   raise_curtain();
   move(LINES-1, 0);
   score(get_purse(), 0, monst);
+  printw("[Press Enter to quit]");
+  flush_type();
+  wait_for('\r');
   exit(0);
 }
 
