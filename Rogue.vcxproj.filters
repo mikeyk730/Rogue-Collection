@@ -9,11 +9,11 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Items">
+      <UniqueIdentifier>{89fb4091-dad3-4601-a760-bdd731069ad3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="armor.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="chase.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -77,12 +77,6 @@
     <ClCompile Include="passages.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="potions.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rings.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="rip.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -92,22 +86,13 @@
     <ClCompile Include="save.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scrolls.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="slime.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sticks.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="strings.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="things.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="weapons.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="wizard.c">
@@ -119,8 +104,26 @@
     <ClCompile Include="thing.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="armor.c">
+      <Filter>Items</Filter>
+    </ClCompile>
     <ClCompile Include="food.c">
-      <Filter>Source Files</Filter>
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="potions.c">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="rings.c">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="sticks.c">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="scrolls.c">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="weapons.c">
+      <Filter>Items</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -148,13 +151,7 @@
     <ClInclude Include="rooms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="sticks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="monsters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="potions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="misc.h">
@@ -172,9 +169,6 @@
     <ClInclude Include="pack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="armor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="daemon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -184,9 +178,6 @@
     <ClInclude Include="list.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="weapons.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="maze.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -194,9 +185,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mach_dep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="new_leve.h">
@@ -223,17 +211,32 @@
     <ClInclude Include="strings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scrolls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="level.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="thing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="weapons.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="armor.h">
+      <Filter>Items</Filter>
+    </ClInclude>
     <ClInclude Include="food.h">
-      <Filter>Header Files</Filter>
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="scrolls.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="potions.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="sticks.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="rings.h">
+      <Filter>Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

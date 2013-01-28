@@ -626,3 +626,20 @@ const char *get_charge_string(ITEM *obj)
   else sprintf(buf, " [%d charges]", obj->charges);
   return buf;
 }
+
+const char* get_inv_name_stick(ITEM* stick)
+{
+  char *pb = prbuf;
+  int which = stick->which;
+
+  sprintf(pb, "A%s %s ", vowelstr(get_stick_type(which)), get_stick_type(which));
+  pb = &prbuf[strlen(prbuf)];
+  if (does_know_stick(which) || wizard)
+    chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which), get_charge_string(stick), get_material(which));
+  else if (*get_stick_guess(which))
+    chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which), get_material(which));
+  else
+    sprintf(pb = &prbuf[2], "%s %s", get_material(which), get_stick_type(which));
+
+  return prbuf;
+}

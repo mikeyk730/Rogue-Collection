@@ -1,12 +1,15 @@
 //This file contains misc functions for dealing with armor
 //@(#)armor.c 1.2 (AI Design) 2/12/84
 
+#include <stdio.h>
+
 #include "rogue.h"
 #include "armor.h"
 #include "io.h"
 #include "pack.h"
 #include "things.h"
 #include "daemon.h"
+#include "weapons.h"
 #include "main.h"
 
 //Names of armor types
@@ -113,4 +116,17 @@ void waste_time()
 {
   do_daemons();
   do_fuses();
+}
+
+const char* get_inv_name_armor(ITEM* obj)
+{
+  char *pb = prbuf;
+  int which = obj->which;
+
+  if (obj->flags&ISKNOW || wizard)
+    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->armor_class, 0, ARMOR), get_armor_name(which), -(obj->armor_class-11));
+  else
+    sprintf(pb, "%s", get_armor_name(which));
+
+  return prbuf;
 }

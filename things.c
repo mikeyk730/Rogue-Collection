@@ -52,83 +52,27 @@ void init_things()
 //inv_name: Return the name of something as it would appear in an inventory.
 char *inv_name(ITEM *obj, bool drop)
 {
-  int which = obj->which;
-  char *pb;
-
-  pb = prbuf;
+  char *pb = prbuf;
   switch (obj->type)
   {
   case SCROLL:
-    if (obj->count==1) {
-      strcpy(pb, "A scroll ");
-      pb = &prbuf[9];
-    }
-    else {
-      sprintf(pb, "%d scrolls ", obj->count); 
-      pb = &prbuf[strlen(prbuf)];
-    }
-    if (does_know_scroll(which) || wizard) 
-      sprintf(pb, "of %s", get_scroll_name(which));
-    else if (*get_scroll_guess(which)) 
-      sprintf(pb, "called %s", get_scroll_guess(which));
-    else
-      chopmsg(pb, "titled '%.17s'", "titled '%s'", get_title(which));
+    get_inv_name_scroll(obj);
     break;
 
   case POTION:
-    if (obj->count==1) {
-      strcpy(pb, "A potion ");
-      pb = &prbuf[9];
-    }
-    else {
-      sprintf(pb, "%d potions ", obj->count); 
-      pb = &pb[strlen(prbuf)];
-    }
-    if (does_know_potion(which) || wizard) {
-      chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which), get_color(which));
-    }
-    else if (*get_potion_guess(which)) {
-      chopmsg(pb, "called %s", "called %s(%s)", get_potion_guess(which), get_color(which));
-    }
-    else if (obj->count==1) 
-      sprintf(prbuf, "A%s %s potion", vowelstr(get_color(which)), get_color(which));
-    else sprintf(prbuf, "%d %s potions", obj->count, get_color(which));
+    get_inv_name_potion(obj);
     break;
 
   case FOOD:
-    if (which==1) 
-      if (obj->count==1)
-        sprintf(pb, "A%s %s", vowelstr(fruit), fruit); 
-      else sprintf(pb, "%d %ss", obj->count, fruit);
-    else if (obj->count==1) 
-      strcpy(pb, "Some food");
-    else sprintf(pb, "%d rations of food", obj->count);
+    get_inv_name_food(obj);
     break;
 
   case WEAPON:
-    if (obj->count>1) 
-      sprintf(pb, "%d ", obj->count);
-    else
-      sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
-    pb = &prbuf[strlen(prbuf)];
-    if (obj->flags&ISKNOW || wizard) 
-      sprintf(pb, "%s %s", num(obj->hit_plus, obj->damage_plus, WEAPON), get_weapon_name(which));
-    else
-      sprintf(pb, "%s", get_weapon_name(which));
-    if (obj->count>1) strcat(pb, "s");
-    if (obj->enemy && (obj->flags&ISREVEAL || wizard))
-    {
-      strcat(pb, " of ");
-      strcat(pb, get_monster_name(obj->enemy));
-      strcat(pb, " slaying");
-    }
+    get_inv_name_weapon(obj);
     break;
 
   case ARMOR:
-    if (obj->flags&ISKNOW || wizard)
-      chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->armor_class, 0, ARMOR), get_armor_name(which), -(obj->armor_class-11));
-    else
-      sprintf(pb, "%s", get_armor_name(which));
+    get_inv_name_armor(obj);
     break;
 
   case AMULET:
@@ -136,23 +80,11 @@ char *inv_name(ITEM *obj, bool drop)
     break;
 
   case STICK:
-    sprintf(pb, "A%s %s ", vowelstr(get_stick_type(which)), get_stick_type(which));
-    pb = &prbuf[strlen(prbuf)];
-    if (does_know_stick(which) || wizard)
-      chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which), get_charge_string(obj), get_material(which));
-    else if (*get_stick_guess(which))
-      chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which), get_material(which));
-    else
-      sprintf(pb = &prbuf[2], "%s %s", get_material(which), get_stick_type(which));
+    get_inv_name_stick(obj);
     break;
 
   case RING:
-    if (does_know_ring(which) || wizard)
-      chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which), get_stone(which));
-    else if (*get_ring_guess(which)) 
-      chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which), get_stone(which));
-    else 
-      sprintf(pb, "A%s %s ring", vowelstr(get_stone(which)), get_stone(which));
+    get_inv_name_ring(obj);
     break;
 
 #ifdef DEBUG

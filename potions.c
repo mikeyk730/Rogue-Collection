@@ -1,6 +1,8 @@
 //Function(s) for dealing with potions
 //potions.c   1.4 (AI Design) 2/12/84
 
+#include <stdio.h>
+
 #include "rogue.h"
 #include "daemons.h"
 #include "daemon.h"
@@ -417,4 +419,30 @@ int is_bad_potion(ITEM* obj)
 {
   return obj && obj->type == POTION &&
     (obj->which == P_CONFUSE || obj->which == P_PARALYZE || obj->which == P_POISON || obj->which == P_BLIND);
+}
+
+const char* get_inv_name_potion(ITEM* obj)
+{
+  char *pb = prbuf;
+  int which = obj->which;
+
+  if (obj->count==1) {
+    strcpy(pb, "A potion ");
+    pb = &prbuf[9];
+  }
+  else {
+    sprintf(pb, "%d potions ", obj->count); 
+    pb = &pb[strlen(prbuf)];
+  }
+  if (does_know_potion(which) || wizard) {
+    chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which), get_color(which));
+  }
+  else if (*get_potion_guess(which)) {
+    chopmsg(pb, "called %s", "called %s(%s)", get_potion_guess(which), get_color(which));
+  }
+  else if (obj->count==1) 
+    sprintf(prbuf, "A%s %s potion", vowelstr(get_color(which)), get_color(which));
+  else sprintf(prbuf, "%d %s potions", obj->count, get_color(which));
+
+  return prbuf;
 }

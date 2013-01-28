@@ -1,6 +1,8 @@
 //Read a scroll and let it happen
 //scrolls.c   1.4 (AI Design) 12/14/84
 
+#include <stdio.h>
+
 #include "rogue.h"
 #include "scrolls.h"
 #include "monsters.h"
@@ -444,4 +446,27 @@ int is_bad_scroll(ITEM* item)
 {
   return item && item->type == SCROLL &&
     (item->which == S_SLEEP || item->which == S_CREATE || item->which == S_AGGR);
+}
+
+const char* get_inv_name_scroll(ITEM* obj)
+{
+  char *pb = prbuf;
+  int which = obj->which;
+
+  if (obj->count==1) {
+    strcpy(pb, "A scroll ");
+    pb = &prbuf[9];
+  }
+  else {
+    sprintf(pb, "%d scrolls ", obj->count); 
+    pb = &prbuf[strlen(prbuf)];
+  }
+  if (does_know_scroll(which) || wizard) 
+    sprintf(pb, "of %s", get_scroll_name(which));
+  else if (*get_scroll_guess(which)) 
+    sprintf(pb, "called %s", get_scroll_guess(which));
+  else
+    chopmsg(pb, "titled '%.17s'", "titled '%s'", get_title(which));
+
+  return prbuf;
 }

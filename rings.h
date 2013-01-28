@@ -6,6 +6,7 @@ int get_ring_value(int type);
 const char* get_ring_name(int type);
 const char* get_ring_guess(int type);
 void set_ring_guess(int type, const char* value);
+const char* get_inv_name_ring(ITEM* ring);
 
 //ring_on: Put a ring on a hand
 void ring_on();

@@ -262,3 +262,28 @@ int fallpos(ITEM *obj, Coord *newpos)
     }
     return (cnt!=0);
 }
+
+const char* get_inv_name_weapon(ITEM* weapon)
+{
+  char *pb = prbuf;
+  int which = weapon->which;
+
+  if (weapon->count>1) 
+    sprintf(pb, "%d ", weapon->count);
+  else
+    sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
+  pb = &prbuf[strlen(prbuf)];
+  if (weapon->flags&ISKNOW || wizard) 
+    sprintf(pb, "%s %s", num(weapon->hit_plus, weapon->damage_plus, WEAPON), get_weapon_name(which));
+  else
+    sprintf(pb, "%s", get_weapon_name(which));
+  if (weapon->count>1) strcat(pb, "s");
+  if (weapon->enemy && (weapon->flags&ISREVEAL || wizard))
+  {
+    strcat(pb, " of ");
+    strcat(pb, get_monster_name(weapon->enemy));
+    strcat(pb, " slaying");
+  }
+
+  return prbuf;
+}

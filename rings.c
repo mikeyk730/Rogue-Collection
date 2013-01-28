@@ -1,6 +1,8 @@
 //Routines dealing specifically with rings
 //rings.c     1.4 (AI Design) 12/13/84
 
+#include <stdio.h>
+
 #include "rogue.h"
 #include "rings.h"
 #include "pack.h"
@@ -249,4 +251,19 @@ int is_ring_on_hand(int hand, int ring)
 int is_wearing_ring(int ring)
 {
   return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
+}
+
+const char* get_inv_name_ring(ITEM* obj)
+{
+  char *pb = prbuf;
+  int which = obj->which;
+
+  if (does_know_ring(which) || wizard)
+    chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which), get_stone(which));
+  else if (*get_ring_guess(which)) 
+    chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which), get_stone(which));
+  else 
+    sprintf(pb, "A%s %s ring", vowelstr(get_stone(which)), get_stone(which));
+
+  return prbuf;
 }

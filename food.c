@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "rogue.h"
 #include "food.h"
 #include "pack.h"
@@ -50,4 +52,20 @@ void eat()
     msg("yum, that tasted good");
   if (no_command) 
     msg("You feel bloated and fall asleep");
+}
+
+const char* get_inv_name_food(ITEM* obj)
+{
+  char *pb = prbuf;
+  int which = obj->which;
+
+  if (which==1) 
+    if (obj->count==1)
+      sprintf(pb, "A%s %s", vowelstr(fruit), fruit); 
+    else sprintf(pb, "%d %ss", obj->count, fruit);
+  else if (obj->count==1) 
+    strcpy(pb, "Some food");
+  else sprintf(pb, "%d rations of food", obj->count);
+
+  return prbuf;
 }
