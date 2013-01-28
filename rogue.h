@@ -294,7 +294,6 @@ extern AGENT *mlist, player;
 extern Coord delta, oldpos;
 extern struct Room *oldrp, passages[], rooms[];
 extern struct Stats max_stats;
-extern struct MagicItem p_magic[], r_magic[], s_magic[], ws_magic[];
 
 #define MAXSTR    80 //maximum length of strings
 #define MAXLINES  25 //maximum number of screen lines used

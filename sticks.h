@@ -2,6 +2,8 @@
 void init_materials();
 const char* get_material(int type);
 void init_new_stick(ITEM* stick);
+int get_stick_value(int type);
+const char* get_stick_name(int type);
 
 //fix_stick: Set up a new stick
 void fix_stick(ITEM *cur);

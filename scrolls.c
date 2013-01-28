@@ -43,6 +43,25 @@ static char *v_set = "aeiou";
 const char *laugh = "you hear maniacal laughter%s.";
 const char *in_dist = " in the distance";
 
+struct MagicItem s_magic[MAXSCROLLS] =
+{
+  {"monster confusion",   8, 140},
+  {"magic mapping",       5, 150},
+  {"hold monster",        3, 180},
+  {"sleep",               5,   5},
+  {"enchant armor",       8, 160},
+  {"identify",           27, 100},
+  {"scare monster",       4, 200},
+  {"food detection",      4,  50},
+  {"teleportation",       7, 165},
+  {"enchant weapon",     10, 150},
+  {"create monster",      5,  75},
+  {"remove curse",        8, 105},
+  {"aggravate monsters",  4,  20},
+  {"blank paper",         1,   5},
+  {"vorpalize weapon",    1, 300}
+};
+
 int does_know_scroll(int type)
 {
   return s_know[type];
@@ -51,6 +70,16 @@ int does_know_scroll(int type)
 void discover_scroll(int type)
 {
   s_know[type] = TRUE;
+}
+
+int get_scroll_value(int type)
+{
+  return s_magic[type].worth;
+}
+
+const char* get_scroll_name(int type)
+{
+  return s_magic[type].name;
 }
 
 //random_char_in(): return random character in given string
@@ -103,7 +132,7 @@ void init_names()
   }
 }
 
-const char* get_name(int type)
+const char* get_title(int type)
 {
   return s_names[type].storage;
 }

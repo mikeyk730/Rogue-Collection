@@ -69,6 +69,24 @@ static char *rainbow[] =
 
 #define NCOLORS (sizeof(rainbow)/sizeof(char *))
 
+struct MagicItem p_magic[MAXPOTIONS] =
+{
+  {"confusion",          8,   5},
+  {"paralysis",         10,   5},
+  {"poison",             8,   5},
+  {"gain strength",     15, 150},
+  {"see invisible",      2, 100},
+  {"healing",           15, 130},
+  {"monster detection",  6, 130},
+  {"magic detection",    6, 105},
+  {"raise level",        2, 250},
+  {"extra healing",      5, 200},
+  {"haste self",         4, 190},
+  {"restore strength",  14, 130},
+  {"blindness",          4,   5},
+  {"thirst quenching",   1,   5}
+};
+
 int does_know_potion(int type)
 {
   return p_know[type];
@@ -77,6 +95,16 @@ int does_know_potion(int type)
 void discover_potion(int type)
 {
   p_know[type] = TRUE;
+}
+
+int get_potion_value(int type)
+{
+  return p_magic[type].worth;
+}
+
+const char* get_potion_name(int type)
+{
+  return p_magic[type].name;
 }
 
 //init_colors: Initialize the potion color scheme for this time

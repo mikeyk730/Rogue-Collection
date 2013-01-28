@@ -1,7 +1,9 @@
 //init_names: Generate the names of the various scrolls
 void init_names();
-const char* get_name(int type);
+const char* get_title(int type);
 void init_new_scroll(ITEM* scroll);
+int get_scroll_value(int type);
+const char* get_scroll_name(int type);
 
 void read_scroll();
 

@@ -50,6 +50,24 @@ static STONE stones[] =
 
 #define NSTONES (sizeof(stones)/sizeof(STONE))
 
+struct MagicItem r_magic[MAXRINGS] =
+{
+  {"protection",          9, 400},
+  {"add strength",        9, 400},
+  {"sustain strength",    5, 280},
+  {"searching",          10, 420},
+  {"see invisible",      10, 310},
+  {"adornment",           1,  10},
+  {"aggravate monster",  10,  10},
+  {"dexterity",           8, 440},
+  {"increase damage",     8, 400},
+  {"regeneration",        4, 460},
+  {"slow digestion",      9, 240},
+  {"teleportation",       5,  30},
+  {"stealth",             7, 470},
+  {"maintain armor",      5, 380}
+};
+
 int does_know_ring(int type)
 {
   return r_know[type];
@@ -58,6 +76,16 @@ int does_know_ring(int type)
 void discover_ring(int type)
 {
   r_know[type] = TRUE;
+}
+
+int get_ring_value(int type)
+{
+  return r_magic[type].worth;
+}
+
+const char* get_ring_name(int type)
+{
+  return r_magic[type].name;
 }
 
 //init_stones: Initialize the ring stone setting scheme for this time

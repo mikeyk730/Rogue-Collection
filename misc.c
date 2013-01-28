@@ -510,7 +510,7 @@ void call()
     break;
   case SCROLL: guess = (char **)s_guess;
     know = does_know_scroll;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_name(obj->which)); 
+    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_title(obj->which)); 
     break;
   case STICK: guess = (char **)ws_guess;
     know = does_know_stick;

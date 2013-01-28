@@ -68,11 +68,11 @@ char *inv_name(ITEM *obj, bool drop)
       pb = &prbuf[strlen(prbuf)];
     }
     if (does_know_scroll(which) || wizard) 
-      sprintf(pb, "of %s", s_magic[which].name);
+      sprintf(pb, "of %s", get_scroll_name(which));
     else if (*s_guess[which]) 
       sprintf(pb, "called %s", s_guess[which]);
     else
-      chopmsg(pb, "titled '%.17s'", "titled '%s'", get_name(which));
+      chopmsg(pb, "titled '%.17s'", "titled '%s'", get_title(which));
     break;
 
   case POTION:
@@ -85,7 +85,7 @@ char *inv_name(ITEM *obj, bool drop)
       pb = &pb[strlen(prbuf)];
     }
     if (does_know_potion(which) || wizard) {
-      chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].name, get_color(which));
+      chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which), get_color(which));
     }
     else if (*p_guess[which]) {
       chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], get_color(which));
@@ -139,7 +139,7 @@ char *inv_name(ITEM *obj, bool drop)
     sprintf(pb, "A%s %s ", vowelstr(get_material(which)), get_material(which));
     pb = &prbuf[strlen(prbuf)];
     if (does_know_stick(which) || wizard)
-      chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, get_charge_string(obj), get_material(which));
+      chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which), get_charge_string(obj), get_material(which));
     else if (*ws_guess[which])
       chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], get_material(which));
     else
@@ -148,7 +148,7 @@ char *inv_name(ITEM *obj, bool drop)
 
   case RING:
     if (does_know_ring(which) || wizard)
-      chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].name, get_stone(which));
+      chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which), get_stone(which));
     else if (*r_guess[which]) 
       chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], get_stone(which));
     else 

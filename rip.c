@@ -312,21 +312,21 @@ void total_winner()
       break;
 
     case SCROLL:
-      worth = s_magic[obj->which].worth;
+      worth = get_scroll_value(obj->which);
       worth *= obj->count;
       if (!does_know_scroll(obj->which)) worth /= 2;
       discover_scroll(obj->which);
       break;
 
     case POTION:
-      worth = p_magic[obj->which].worth;
+      worth = get_potion_value(obj->which);
       worth *= obj->count;
       if (!does_know_potion(obj->which)) worth /= 2;
       discover_potion(obj->which);
       break;
 
     case RING:
-      worth = r_magic[obj->which].worth;
+      worth = get_ring_value(obj->which);
       if (obj->which==R_ADDSTR || obj->which==R_ADDDAM || obj->which==R_PROTECT || obj->which==R_ADDHIT)
         if (obj->armor_class>0) worth += obj->armor_class*100;
         else worth = 10;
@@ -336,7 +336,7 @@ void total_winner()
         break;
 
     case STICK:
-      worth = ws_magic[obj->which].worth;
+      worth = get_stick_value(obj->which);
       worth += 20*obj->charges;
       if (!(obj->flags&ISKNOW)) worth /= 2;
       obj->flags |= ISKNOW;

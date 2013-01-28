@@ -94,6 +94,24 @@ static char *metal[] =
 
 #define NMETAL (sizeof(metal)/sizeof(char *))
 
+struct MagicItem ws_magic[MAXSTICKS] =
+{
+  {"light",          12, 250},
+  {"striking",        9,  75},
+  {"lightning",       3, 330},
+  {"fire",            3, 330},
+  {"cold",            3, 330},
+  {"polymorph",      15, 310},
+  {"magic missile",  10, 170},
+  {"haste monster",   9,   5},
+  {"slow monster",   11, 350},
+  {"drain life",      9, 300},
+  {"nothing",         1,   5},
+  {"teleport away",   5, 340},
+  {"teleport to",     5,  50},
+  {"cancellation",    5, 280}
+};
+
 int does_know_stick(int type)
 {
   return ws_know[type];
@@ -102,6 +120,16 @@ int does_know_stick(int type)
 void discover_stick(int type)
 {
   ws_know[type] = TRUE;
+}
+
+int get_stick_value(int type)
+{
+  return ws_magic[type].worth;
+}
+
+const char* get_stick_name(int type)
+{
+  return ws_magic[type].name;
 }
 
 void init_new_stick(ITEM* stick)
