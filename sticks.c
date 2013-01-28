@@ -24,6 +24,7 @@
 #include "things.h"
 
 bool ws_know[MAXSTICKS];    //Does he know what a stick does
+char *ws_guess[MAXSTICKS];         //Players guess at what wand is
 const char *ws_made[MAXSTICKS]; //What sticks are made of
 const char *ws_type[MAXSTICKS]; //Is it a wand or a staff
 
@@ -122,6 +123,16 @@ void discover_stick(int type)
   ws_know[type] = TRUE;
 }
 
+const char* get_stick_guess(int type)
+{
+  return ws_guess[type];
+}
+
+void set_stick_guess(int type, const char* value)
+{
+  strcpy(ws_guess[type], value);
+}
+
 int get_stick_value(int type)
 {
   return ws_magic[type].worth;
@@ -170,6 +181,11 @@ void init_materials()
 const char* get_material(int type)
 {
   return ws_made[type];
+}
+
+const char* get_stick_type(int type)
+{
+  return ws_type[type];
 }
 
 void zap_light()

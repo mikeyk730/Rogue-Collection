@@ -35,6 +35,7 @@
 #define S_VORPAL    14
 
 bool s_know[MAXSCROLLS];    //Does he know what a scroll does
+char *s_guess[MAXSCROLLS];         //Players guess at what scroll is
 struct Array s_names[MAXSCROLLS];  //Names of the scrolls
 
 static char *c_set = "bcdfghjklmnpqrstvwxyz";
@@ -80,6 +81,16 @@ int get_scroll_value(int type)
 const char* get_scroll_name(int type)
 {
   return s_magic[type].name;
+}
+
+const char* get_scroll_guess(int type)
+{
+  return s_guess[type];
+}
+
+void set_scroll_guess(int type, const char* value)
+{
+  strcpy(s_guess[type], value);
 }
 
 //random_char_in(): return random character in given string

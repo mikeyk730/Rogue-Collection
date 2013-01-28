@@ -4,6 +4,8 @@ const char* get_title(int type);
 void init_new_scroll(ITEM* scroll);
 int get_scroll_value(int type);
 const char* get_scroll_name(int type);
+const char* get_scroll_guess(int type);
+void set_scroll_guess(int type, const char* value);
 
 void read_scroll();
 

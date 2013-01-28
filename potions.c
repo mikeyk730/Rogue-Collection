@@ -34,6 +34,7 @@
 #define P_NOP       13
 
 bool p_know[MAXPOTIONS];    //Does he know what a potion does
+char *p_guess[MAXPOTIONS];         //Players guess at what potion is
 const char *p_colors[MAXPOTIONS];  //Colors of the potions
 
 static char *rainbow[] =
@@ -95,6 +96,16 @@ int does_know_potion(int type)
 void discover_potion(int type)
 {
   p_know[type] = TRUE;
+}
+
+const char* get_potion_guess(int type)
+{
+  return p_guess[type];
+}
+
+void set_potion_guess(int type, const char* value)
+{
+  strcpy(p_guess[type], value);
 }
 
 int get_potion_value(int type)

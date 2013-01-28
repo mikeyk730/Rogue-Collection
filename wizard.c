@@ -44,18 +44,15 @@ void whatis()
   {
   case SCROLL:
     discover_scroll(obj->which);
-    *s_guess[obj->which] = 0;
     break;
 
   case POTION:
     discover_potion(obj->which);
-    *p_guess[obj->which] = 0;
     break;
 
   case STICK:
     discover_stick(obj->which);
     obj->flags |= ISKNOW;
-    *ws_guess[obj->which] = 0;
     break;
 
   case WEAPON: case ARMOR:
@@ -65,7 +62,6 @@ void whatis()
   case RING:
     discover_ring(obj->which);
     obj->flags |= ISKNOW;
-    *r_guess[obj->which] = 0;
     break;
   }
   //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against

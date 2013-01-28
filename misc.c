@@ -491,8 +491,9 @@ void u_level()
 void call()
 {
   ITEM *obj;
-  char **guess, *elsewise;
+  const char *guess, *elsewise;
   int(*know)(int);
+  void(*setter)(int, const char*);
 
   obj = get_item("call", CALLABLE);
 
@@ -500,21 +501,29 @@ void call()
   if (obj==NULL) return;
   switch (obj->type)
   {
-  case RING: guess = (char **)r_guess; 
+  case RING: 
+    setter = set_ring_guess;
+    guess = get_ring_guess(obj->which);
     know = does_know_ring;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_stone(obj->which));
+    elsewise = (guess ? guess : get_stone(obj->which));
     break;
-  case POTION: guess = (char **)p_guess;
+  case POTION: 
+    setter = set_potion_guess;
+    guess = get_potion_guess(obj->which);
     know = does_know_potion;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_color(obj->which));
+    elsewise = (guess ? guess : get_color(obj->which));
     break;
-  case SCROLL: guess = (char **)s_guess;
+  case SCROLL: 
+    setter = set_scroll_guess;
+    guess = get_scroll_guess(obj->which);
     know = does_know_scroll;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_title(obj->which)); 
+    elsewise = (guess ? guess : get_title(obj->which)); 
     break;
-  case STICK: guess = (char **)ws_guess;
+  case STICK: 
+    setter = set_stick_guess;
+    guess = get_stick_guess(obj->which);
     know = does_know_stick;
-    elsewise = (*guess[obj->which]!=0?guess[obj->which] : get_material(obj->which));
+    elsewise = (guess ? guess : get_material(obj->which));
     break;
   default: msg("you can't call that anything"); return;
   }
@@ -526,7 +535,7 @@ void call()
   msg("what do you want to call it? ");
   getinfo(prbuf,MAXNAME);
   if (*prbuf && *prbuf!=ESCAPE) 
-    strcpy(guess[obj->which], prbuf);
+    setter(obj->which, prbuf);
   msg("");
 }
 

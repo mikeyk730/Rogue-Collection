@@ -14,6 +14,7 @@
 
 char ring_buf[6];
 bool r_know[MAXRINGS];      //Does he know what a ring does
+char *r_guess[MAXRINGS];           //Players guess at what ring is
 const char *r_stones[MAXRINGS];   //Stone settings of the rings
 
 typedef struct {char *st_name; int st_value;} STONE;
@@ -76,6 +77,16 @@ int does_know_ring(int type)
 void discover_ring(int type)
 {
   r_know[type] = TRUE;
+}
+
+const char* get_ring_guess(int type)
+{
+  return r_guess[type];
+}
+
+void set_ring_guess(int type, const char* value)
+{
+  strcpy(r_guess[type], value);
 }
 
 int get_ring_value(int type)

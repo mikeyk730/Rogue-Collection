@@ -4,6 +4,8 @@ const char* get_color(int type);
 void init_new_potion(ITEM* potion);
 int get_potion_value(int type);
 const char* get_potion_name(int type);
+const char* get_potion_guess(int type);
+void set_potion_guess(int type, const char* value);
 
 //quaff: Quaff a potion from the pack
 void quaff();

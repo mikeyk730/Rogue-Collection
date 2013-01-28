@@ -312,7 +312,6 @@ extern char s_menu[], s_name[], s_fruit[], s_score[], s_save[], s_macro[];
 extern char s_screen[];
 
 extern struct Array _guesses[];
-extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
 
 extern bool after, again, door_stop, expert, fastmode, faststate, firstmove, in_shell, 
   noscore, playing, running, save_msg, terse, was_trapped, wizard;

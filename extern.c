@@ -156,13 +156,8 @@ char runch; //Direction player is running
 //now names are associated with fixed pointers
 
 char huh[BUFSIZE];                  //The last message printed
-char *s_guess[MAXSCROLLS];         //Players guess at what scroll is
-char *p_guess[MAXPOTIONS];         //Players guess at what potion is
-char *r_guess[MAXRINGS];           //Players guess at what ring is
-char *ws_guess[MAXSTICKS];         //Players guess at what wand is
 
 //storage array for guesses
-
 struct Array _guesses[MAXSCROLLS+MAXPOTIONS+MAXRINGS+MAXSTICKS];
 
 int maxrow;            //Last Line used for map

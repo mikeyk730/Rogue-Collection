@@ -69,8 +69,8 @@ char *inv_name(ITEM *obj, bool drop)
     }
     if (does_know_scroll(which) || wizard) 
       sprintf(pb, "of %s", get_scroll_name(which));
-    else if (*s_guess[which]) 
-      sprintf(pb, "called %s", s_guess[which]);
+    else if (*get_scroll_guess(which)) 
+      sprintf(pb, "called %s", get_scroll_guess(which));
     else
       chopmsg(pb, "titled '%.17s'", "titled '%s'", get_title(which));
     break;
@@ -87,8 +87,8 @@ char *inv_name(ITEM *obj, bool drop)
     if (does_know_potion(which) || wizard) {
       chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which), get_color(which));
     }
-    else if (*p_guess[which]) {
-      chopmsg(pb, "called %s", "called %s(%s)", p_guess[which], get_color(which));
+    else if (*get_potion_guess(which)) {
+      chopmsg(pb, "called %s", "called %s(%s)", get_potion_guess(which), get_color(which));
     }
     else if (obj->count==1) 
       sprintf(prbuf, "A%s %s potion", vowelstr(get_color(which)), get_color(which));
@@ -136,21 +136,21 @@ char *inv_name(ITEM *obj, bool drop)
     break;
 
   case STICK:
-    sprintf(pb, "A%s %s ", vowelstr(get_material(which)), get_material(which));
+    sprintf(pb, "A%s %s ", vowelstr(get_stick_type(which)), get_stick_type(which));
     pb = &prbuf[strlen(prbuf)];
     if (does_know_stick(which) || wizard)
       chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which), get_charge_string(obj), get_material(which));
-    else if (*ws_guess[which])
-      chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], get_material(which));
+    else if (*get_stick_guess(which))
+      chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which), get_material(which));
     else
-      sprintf(pb = &prbuf[2], "%s %s", get_material(which), get_material(which));
+      sprintf(pb = &prbuf[2], "%s %s", get_material(which), get_stick_type(which));
     break;
 
   case RING:
     if (does_know_ring(which) || wizard)
       chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which), get_stone(which));
-    else if (*r_guess[which]) 
-      chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], get_stone(which));
+    else if (*get_ring_guess(which)) 
+      chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which), get_stone(which));
     else 
       sprintf(pb, "A%s %s ring", vowelstr(get_stone(which)), get_stone(which));
     break;
@@ -328,8 +328,8 @@ void discovered()
 //print_disc: Print what we've discovered of type 'type'
 void print_disc(byte type)
 {
-  int(*know)(int);
-  char **guess;
+  int (*know)(int);
+  const char* (*guess)(int);
   int i, maxnum, num_found;
   static ITEM obj;
   static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
@@ -339,29 +339,29 @@ void print_disc(byte type)
   case SCROLL:
     maxnum = MAXSCROLLS; 
     know = does_know_scroll;
-    guess = s_guess;
+    guess = get_scroll_guess;
     break;
   case POTION:
     maxnum = MAXPOTIONS;
     know = does_know_potion;
-    guess = p_guess; 
+    guess = get_potion_guess; 
     break;
   case RING:
     maxnum = MAXRINGS;
     know = does_know_ring;
-    guess = r_guess;
+    guess = get_ring_guess;
     break;
   case STICK:
     maxnum = MAXSTICKS;
     know = does_know_stick;
-    guess = ws_guess;
+    guess = get_stick_guess;
     break;
   }
   set_order(order, maxnum);
   obj.count = 1;
   obj.flags = 0;
   num_found = 0;
-  for (i = 0; i<maxnum; i++) if (know(order[i]) || *guess[order[i]])
+  for (i = 0; i<maxnum; i++) if (know(order[i]) || *guess(order[i]))
   {
     obj.type = type;
     obj.which = order[i];

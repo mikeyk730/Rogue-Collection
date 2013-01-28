@@ -4,6 +4,8 @@ const char* get_stone(int type);
 void init_new_ring(ITEM* ring);
 int get_ring_value(int type);
 const char* get_ring_name(int type);
+const char* get_ring_guess(int type);
+void set_ring_guess(int type, const char* value);
 
 //ring_on: Put a ring on a hand
 void ring_on();
