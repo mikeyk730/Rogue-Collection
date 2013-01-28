@@ -312,7 +312,7 @@ extern char s_menu[], s_name[], s_score[], s_save[], s_screen[];
 extern struct Array _guesses[];
 
 extern bool after, again, door_stop, expert, fastmode, faststate, firstmove, 
-  noscore, playing, running, save_msg, terse, was_trapped, wizard;
+  playing, running, save_msg, terse, was_trapped;
 
 extern char file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
   huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 

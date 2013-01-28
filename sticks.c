@@ -22,6 +22,7 @@
 #include "list.h"
 #include "mach_dep.h"
 #include "things.h"
+#include "hero.h"
 
 bool ws_know[MAXSTICKS];    //Does he know what a stick does
 char *ws_guess[MAXSTICKS];         //Players guess at what wand is
@@ -622,7 +623,7 @@ const char *get_charge_string(ITEM *obj)
 {
   static char buf[20];
 
-  if (!(obj->flags&ISKNOW) && !wizard) buf[0] = '\0';
+  if (!(obj->flags&ISKNOW) && !is_wizard()) buf[0] = '\0';
   else sprintf(buf, " [%d charges]", obj->charges);
   return buf;
 }
@@ -634,7 +635,7 @@ const char* get_inv_name_stick(ITEM* stick)
 
   sprintf(pb, "A%s %s ", vowelstr(get_stick_type(which)), get_stick_type(which));
   pb = &prbuf[strlen(prbuf)];
-  if (does_know_stick(which) || wizard)
+  if (does_know_stick(which) || is_wizard())
     chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which), get_charge_string(stick), get_material(which));
   else if (*get_stick_guess(which))
     chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which), get_material(which));

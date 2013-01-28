@@ -55,7 +55,6 @@ int main(int argc, char **argv)
       switch (curarg[1])
       {
       case 'R': case 'r': savfile = s_save; break;
-      case 's': case 'S': winit(); noscore = TRUE; score(0, 0, 0); fatal(""); break;
       }
     }
     else if (savfile==0) savfile = curarg;

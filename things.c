@@ -25,6 +25,7 @@
 #include "thing.h"
 #include "monsters.h"
 #include "food.h"
+#include "hero.h"
 
 struct MagicItem things[NUMTHINGS] =
 {
@@ -233,7 +234,7 @@ int pick_one(struct MagicItem *magic, int nitems)
   if (magic==end)
   {
 
-    if (wizard)
+    if (is_wizard())
     {
       msg("bad pick_one: %d from %d items", i, nitems);
       for (magic = start; magic<end; magic++) msg("%s: %d%%", magic->name, magic->prob);

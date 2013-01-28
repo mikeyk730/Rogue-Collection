@@ -19,6 +19,7 @@
 #include "thing.h"
 #include "mach_dep.h"
 #include "armor.h"
+#include "hero.h"
 
 #define NONE 100
 
@@ -273,12 +274,12 @@ const char* get_inv_name_weapon(ITEM* weapon)
   else
     sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
   pb = &prbuf[strlen(prbuf)];
-  if (weapon->flags&ISKNOW || wizard) 
+  if (weapon->flags&ISKNOW || is_wizard()) 
     sprintf(pb, "%s %s", num(weapon->hit_plus, weapon->damage_plus, WEAPON), get_weapon_name(which));
   else
     sprintf(pb, "%s", get_weapon_name(which));
   if (weapon->count>1) strcat(pb, "s");
-  if (weapon->enemy && (weapon->flags&ISREVEAL || wizard))
+  if (weapon->enemy && (weapon->flags&ISREVEAL || is_wizard()))
   {
     strcat(pb, " of ");
     strcat(pb, get_monster_name(weapon->enemy));

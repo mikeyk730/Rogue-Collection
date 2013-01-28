@@ -133,7 +133,6 @@ char *he_man[] =
 };
 
 bool after;                 //True if we want after daemons
-bool noscore;               //Was a wizard sometime
 bool again;                 //The last command is repeated
 bool door_stop = FALSE;     //Stop running when we pass a door
 bool fastmode = FALSE;      //Run until you see something
@@ -146,8 +145,6 @@ bool terse = FALSE;
 bool expert = FALSE;
 
 bool was_trapped = FALSE;   //Was a trap sprung
-
-bool wizard = FALSE;        //True if allows wizard commands
 
 int bailout = FALSE;
 char take;  //Thing the rogue is taking

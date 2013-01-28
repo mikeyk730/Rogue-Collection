@@ -13,6 +13,7 @@
 #include "things.h"
 #include "mach_dep.h"
 #include "weapons.h"
+#include "hero.h"
 
 char ring_buf[6];
 bool r_know[MAXRINGS];      //Does he know what a ring does
@@ -227,7 +228,7 @@ int ring_eat(int hand)
 //ring_num: Print ring bonuses
 char *ring_num(ITEM *obj)
 {
-  if (!(obj->flags&ISKNOW) && !wizard) 
+  if (!(obj->flags&ISKNOW) && !is_wizard()) 
     return "";
 
   switch (obj->which)
@@ -258,7 +259,7 @@ const char* get_inv_name_ring(ITEM* obj)
   char *pb = prbuf;
   int which = obj->which;
 
-  if (does_know_ring(which) || wizard)
+  if (does_know_ring(which) || is_wizard())
     chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which), get_stone(which));
   else if (*get_ring_guess(which)) 
     chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which), get_stone(which));

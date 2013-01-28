@@ -19,6 +19,7 @@
 #include "thing.h"
 #include "monsters.h"
 #include "things.h"
+#include "hero.h"
 
 #define P_CONFUSE   0
 #define P_PARALYZE  1
@@ -434,7 +435,7 @@ const char* get_inv_name_potion(ITEM* obj)
     sprintf(pb, "%d potions ", obj->count); 
     pb = &pb[strlen(prbuf)];
   }
-  if (does_know_potion(which) || wizard) {
+  if (does_know_potion(which) || is_wizard()) {
     chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which), get_color(which));
   }
   else if (*get_potion_guess(which)) {

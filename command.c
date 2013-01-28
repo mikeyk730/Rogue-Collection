@@ -25,6 +25,7 @@
 #include "scrolls.h"
 #include "level.h"
 #include "food.h"
+#include "hero.h"
 
 #include <ctype.h>
 
@@ -42,7 +43,6 @@ void command()
   {
     status();
     SIG2();
-    if (wizard) noscore = TRUE;
     if (no_command)
     {
       if (--no_command<=0) {msg("you can move again"); no_command = 0;}
@@ -218,10 +218,14 @@ void execcom()
     case 'o': after = FALSE; msg("i don't have any options, oh my!"); break;
     case CTRL('L'): after = FALSE; msg("the screen looks fine to me"); break;
 
-    case CTRL('W'): after = FALSE; wizard = !wizard; msg(wizard ? "You are now a wizard!" : "You feel your magic powers fade away"); break; 
+    case CTRL('W'):
+      after = FALSE; 
+      set_wizard(!is_wizard());
+      msg(is_wizard() ? "You are now a wizard!" : "You feel your magic powers fade away"); 
+      break; 
 
     default:
-      if (wizard) {
+      if (is_wizard()) {
         switch(ch){
           //Wizard commands
         case 'C': 

@@ -26,6 +26,7 @@
 #include "weapons.h"
 #include "level.h"
 #include "armor.h"
+#include "hero.h"
 
 //whatis: What a certain object is
 void whatis()
@@ -153,7 +154,7 @@ int teleport()
   running = FALSE;
   flush_type();
   //Teleportation can be a confusing experience (unless you really are a wizard)
-  if (!wizard)
+  if (!is_wizard())
   {
     if (on(player, ISHUH)) lengthen(unconfuse, rnd(4)+2);
     else fuse(unconfuse, 0, rnd(4)+2);

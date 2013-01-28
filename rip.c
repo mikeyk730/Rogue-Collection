@@ -71,7 +71,7 @@ void score(int amount, int flags, char monst)
   while ((sc_fd = _open(s_score, 0))<0)
   {
     printw("\n");
-    if (noscore || (amount==0)) return;
+    if (did_cheat() || (amount==0)) return;
     str_attr("No scorefile: %Create %Retry %Abort");
 reread:
     switch (response = readchar())
@@ -84,7 +84,7 @@ reread:
   }
   printw("\n");
   get_scores(&top_ten[0]);
-  if (noscore!=TRUE)
+  if (!did_cheat())
   {
     strcpy(his_score.name, get_name());
     his_score.gold = amount;

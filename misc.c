@@ -25,6 +25,7 @@
 #include "potions.h"
 #include "sticks.h"
 #include "armor.h"
+#include "hero.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)
@@ -464,7 +465,7 @@ void search()
 //d_level: He wants to go down a level
 void d_level()
 {
-  if (get_tile(player.pos.y, player.pos.x)!=STAIRS && wizard == FALSE)
+  if (get_tile(player.pos.y, player.pos.x)!=STAIRS && !is_wizard())
     msg("I see no way down");
   else {
     level++; 
@@ -475,7 +476,7 @@ void d_level()
 //u_level: He wants to go up a level
 void u_level()
 {
-  if (get_tile(player.pos.y, player.pos.x)==STAIRS || wizard == TRUE) 
+  if (get_tile(player.pos.y, player.pos.x)==STAIRS || is_wizard()) 
     if (has_amulet()) {
       level--; 
       if (level==0) 
