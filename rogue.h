@@ -317,8 +317,6 @@ extern char f_damage[];
 extern bool after, again, door_stop, expert, fastmode, faststate, firstmove, in_shell, 
   noscore, playing, running, save_msg, terse, was_trapped, wizard;
 
-extern bool p_know[], r_know[], s_know[], ws_know[];
-
 extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
   huh[], macro[], *intense, outbuf[], *p_colors[], prbuf[], *r_stones[], *release, runch, 
   *typeahead, take, whoami[], *ws_made[], *ws_type[];

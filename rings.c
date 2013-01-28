@@ -13,6 +13,17 @@
 #include "weapons.h"
 
 char ring_buf[6];
+bool r_know[MAXRINGS];      //Does he know what a ring does
+
+int does_know_ring(int type)
+{
+  return r_know[type];
+}
+
+void discover_ring(int type)
+{
+  r_know[type] = TRUE;
+}
 
 //ring_on: Put a ring on a hand
 void ring_on()

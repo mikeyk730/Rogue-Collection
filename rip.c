@@ -16,6 +16,10 @@
 #include "things.h"
 #include "misc.h"
 #include "monsters.h"
+#include "sticks.h"
+#include "potions.h"
+#include "scrolls.h"
+#include "rings.h"
 
 #define TOPSCORES 10
 
@@ -309,15 +313,15 @@ void total_winner()
     case SCROLL:
       worth = s_magic[obj->which].worth;
       worth *= obj->count;
-      if (!s_know[obj->which]) worth /= 2;
-      s_know[obj->which] = TRUE;
+      if (!does_know_scroll(obj->which)) worth /= 2;
+      discover_scroll(obj->which);
       break;
 
     case POTION:
       worth = p_magic[obj->which].worth;
       worth *= obj->count;
-      if (!p_know[obj->which]) worth /= 2;
-      p_know[obj->which] = TRUE;
+      if (!does_know_potion(obj->which)) worth /= 2;
+      discover_potion(obj->which);
       break;
 
     case RING:
@@ -327,7 +331,7 @@ void total_winner()
         else worth = 10;
         if (!(obj->flags&ISKNOW)) worth /= 2;
         obj->flags |= ISKNOW;
-        r_know[obj->which] = TRUE;
+        discover_ring(obj->which);
         break;
 
     case STICK:
@@ -335,7 +339,7 @@ void total_winner()
       worth += 20*obj->charges;
       if (!(obj->flags&ISKNOW)) worth /= 2;
       obj->flags |= ISKNOW;
-      ws_know[obj->which] = TRUE;
+      discover_stick(obj->which);
       break;
 
     case AMULET:

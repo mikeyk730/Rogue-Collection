@@ -23,6 +23,7 @@
 #include "thing.h"
 #include "scrolls.h"
 #include "potions.h"
+#include "sticks.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)
@@ -527,7 +528,7 @@ void call()
 {
   ITEM *obj;
   char **guess, *elsewise;
-  bool *know;
+  int(*know)(int);
 
   obj = get_item("call", CALLABLE);
 
@@ -536,24 +537,24 @@ void call()
   switch (obj->type)
   {
   case RING: guess = (char **)r_guess; 
-    know = r_know;
+    know = does_know_ring;
     elsewise = (*guess[obj->which]!=0?guess[obj->which]:r_stones[obj->which]);
     break;
   case POTION: guess = (char **)p_guess;
-    know = p_know;
+    know = does_know_potion;
     elsewise = (*guess[obj->which]!=0?guess[obj->which]:p_colors[obj->which]);
     break;
   case SCROLL: guess = (char **)s_guess;
-    know = s_know;
+    know = does_know_scroll;
     elsewise = (*guess[obj->which]!=0?guess[obj->which]:(char *)(&s_names[obj->which])); 
     break;
   case STICK: guess = (char **)ws_guess;
-    know = ws_know;
+    know = does_know_stick;
     elsewise = (*guess[obj->which]!=0?guess[obj->which]:ws_made[obj->which]);
     break;
   default: msg("you can't call that anything"); return;
   }
-  if (know[obj->which]) {
+  if (know(obj->which)) {
     msg("that has already been identified"); 
     return;
   }

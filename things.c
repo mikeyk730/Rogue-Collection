@@ -13,6 +13,8 @@
 #include "misc.h"
 #include "daemons.h"
 #include "rings.h"
+#include "scrolls.h"
+#include "potions.h"
 #include "weapons.h"
 #include "curses.h"
 #include "main.h"
@@ -64,7 +66,7 @@ char *inv_name(ITEM *obj, bool drop)
       sprintf(pb, "%d scrolls ", obj->count); 
       pb = &prbuf[strlen(prbuf)];
     }
-    if (s_know[which] || wizard) 
+    if (does_know_scroll(which) || wizard) 
       sprintf(pb, "of %s", s_magic[which].name);
     else if (*s_guess[which]) 
       sprintf(pb, "called %s", s_guess[which]);
@@ -81,7 +83,7 @@ char *inv_name(ITEM *obj, bool drop)
       sprintf(pb, "%d potions ", obj->count); 
       pb = &pb[strlen(prbuf)];
     }
-    if (p_know[which] || wizard) {
+    if (does_know_potion(which) || wizard) {
       chopmsg(pb, "of %s", "of %s(%s)", p_magic[which].name, p_colors[which]);
     }
     else if (*p_guess[which]) {
@@ -135,7 +137,7 @@ char *inv_name(ITEM *obj, bool drop)
   case STICK:
     sprintf(pb, "A%s %s ", vowelstr(ws_type[which]), ws_type[which]);
     pb = &prbuf[strlen(prbuf)];
-    if (ws_know[which] || wizard)
+    if (does_know_stick(which) || wizard)
       chopmsg(pb, "of %s%s", "of %s%s(%s)", ws_magic[which].name, get_charge_string(obj), ws_made[which]);
     else if (*ws_guess[which])
       chopmsg(pb, "called %s", "called %s(%s)", ws_guess[which], ws_made[which]);
@@ -144,7 +146,7 @@ char *inv_name(ITEM *obj, bool drop)
     break;
 
   case RING:
-    if (r_know[which] || wizard)
+    if (does_know_ring(which) || wizard)
       chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), r_magic[which].name, r_stones[which]);
     else if (*r_guess[which]) 
       chopmsg(pb, "A ring called %s", "A ring called %s(%s)", r_guess[which], r_stones[which]);
@@ -360,7 +362,7 @@ void discovered()
 //print_disc: Print what we've discovered of type 'type'
 void print_disc(byte type)
 {
-  bool *know;
+  int(*know)(int);
   char **guess;
   int i, maxnum, num_found;
   static ITEM obj;
@@ -370,22 +372,22 @@ void print_disc(byte type)
   {
   case SCROLL:
     maxnum = MAXSCROLLS; 
-    know = s_know;
+    know = does_know_scroll;
     guess = s_guess;
     break;
   case POTION:
     maxnum = MAXPOTIONS;
-    know = p_know;
+    know = does_know_potion;
     guess = p_guess; 
     break;
   case RING:
     maxnum = MAXRINGS;
-    know = r_know;
+    know = does_know_ring;
     guess = r_guess;
     break;
   case STICK:
     maxnum = MAXSTICKS;
-    know = ws_know;
+    know = does_know_stick;
     guess = ws_guess;
     break;
   }
@@ -393,7 +395,7 @@ void print_disc(byte type)
   obj.count = 1;
   obj.flags = 0;
   num_found = 0;
-  for (i = 0; i<maxnum; i++) if (know[order[i]] || *guess[order[i]])
+  for (i = 0; i<maxnum; i++) if (know(order[i]) || *guess[order[i]])
   {
     obj.type = type;
     obj.which = order[i];

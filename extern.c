@@ -247,10 +247,6 @@ char *he_man[] =
 bool after;                 //True if we want after daemons
 bool noscore;               //Was a wizard sometime
 bool again;                 //The last command is repeated
-bool s_know[MAXSCROLLS];    //Does he know what a scroll does
-bool p_know[MAXPOTIONS];    //Does he know what a potion does
-bool r_know[MAXRINGS];      //Does he know what a ring does
-bool ws_know[MAXSTICKS];    //Does he know what a stick does
 bool door_stop = FALSE;     //Stop running when we pass a door
 bool fastmode = FALSE;      //Run until you see something
 bool faststate = FALSE;     //Toggle for find (see above)

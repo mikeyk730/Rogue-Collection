@@ -216,8 +216,6 @@ void init_colors()
     do j = rnd(NCOLORS); while (used[j]);
     used[j] = TRUE;
     p_colors[i] = rainbow[j];
-    p_know[i] = FALSE;
-    p_guess[i] = (char *)&_guesses[iguess++];
     if (i>0) 
       p_magic[i].prob += p_magic[i-1].prob;
   }
@@ -248,8 +246,6 @@ void init_names()
     *--cp = '\0';
     //I'm tired of thinking about this one so just in case .....
     prbuf[MAXNAME] = 0;
-    s_know[i] = FALSE;
-    s_guess[i] = (char *)&_guesses[iguess++];
     strcpy((char*)&s_names[i], prbuf);
     if (i>0) s_magic[i].prob += s_magic[i-1].prob;
   }
@@ -285,8 +281,6 @@ void init_stones()
     do j = rnd(NSTONES); while (used[j]);
     used[j] = TRUE;
     r_stones[i] = stones[j].st_name;
-    r_know[i] = FALSE;
-    r_guess[i] = (char *)&_guesses[iguess++];
     if (i>0) r_magic[i].prob += r_magic[i-1].prob;
     r_magic[i].worth += stones[j].st_value;
   }
@@ -314,8 +308,6 @@ void init_materials()
       if (!woodused[j]) {ws_type[i] = "staff"; str = wood[j]; woodused[j] = TRUE; break;}
     }
     ws_made[i] = str;
-    ws_know[i] = FALSE;
-    ws_guess[i] = (char *)&_guesses[iguess++];
     if (i>0) ws_magic[i].prob += ws_magic[i-1].prob;
   }
 }

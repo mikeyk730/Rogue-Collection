@@ -12,3 +12,6 @@ int fire_bolt(Coord *start, Coord *dir, const char *name);
 
 //charge_str: Return an appropriate string for a wand charge
 const char *get_charge_string(ITEM *obj);
+
+int does_know_stick(int type);
+void discover_stick(int type);

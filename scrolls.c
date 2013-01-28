@@ -33,9 +33,20 @@
 #define S_NOP       13
 #define S_VORPAL    14
 
-char *laugh = "you hear maniacal laughter%s.";
-char *in_dist = " in the distance";
+bool s_know[MAXSCROLLS];    //Does he know what a scroll does
 
+const char *laugh = "you hear maniacal laughter%s.";
+const char *in_dist = " in the distance";
+
+int does_know_scroll(int type)
+{
+  return s_know[type];
+}
+
+void discover_scroll(int type)
+{
+  s_know[type] = TRUE;
+}
 void read_monster_confusion()
 {
   //Scroll of monster confusion.  Give him that power.

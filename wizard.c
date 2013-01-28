@@ -20,6 +20,9 @@
 #include "monsters.h"
 #include "mach_dep.h"
 #include "sticks.h"
+#include "rings.h"
+#include "scrolls.h"
+#include "potions.h"
 #include "weapons.h"
 #include "level.h"
 
@@ -39,17 +42,17 @@ void whatis()
   switch (obj->type)
   {
   case SCROLL:
-    s_know[obj->which] = TRUE;
+    discover_scroll(obj->which);
     *s_guess[obj->which] = 0;
     break;
 
   case POTION:
-    p_know[obj->which] = TRUE;
+    discover_potion(obj->which);
     *p_guess[obj->which] = 0;
     break;
 
   case STICK:
-    ws_know[obj->which] = TRUE;
+    discover_stick(obj->which);
     obj->flags |= ISKNOW;
     *ws_guess[obj->which] = 0;
     break;
@@ -59,7 +62,7 @@ void whatis()
     break;
 
   case RING:
-    r_know[obj->which] = TRUE;
+    discover_ring(obj->which);
     obj->flags |= ISKNOW;
     *r_guess[obj->which] = 0;
     break;

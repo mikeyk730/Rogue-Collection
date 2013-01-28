@@ -11,3 +11,5 @@ bool turn_see(bool turn_off);
 void th_effect(ITEM *obj, AGENT *tp);
 
 int is_bad_potion(ITEM* obj);
+int does_know_potion(int type);
+void discover_potion(int type);

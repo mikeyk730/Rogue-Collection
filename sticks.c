@@ -22,6 +22,18 @@
 #include "list.h"
 #include "mach_dep.h"
 
+bool ws_know[MAXSTICKS];    //Does he know what a stick does
+
+int does_know_stick(int type)
+{
+  return ws_know[type];
+}
+
+void discover_stick(int type)
+{
+  ws_know[type] = TRUE;
+}
+
 void zap_light()
 {
   //Ready Kilowatt wand.  Light up the room

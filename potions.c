@@ -32,6 +32,18 @@
 #define P_BLIND     12
 #define P_NOP       13
 
+bool p_know[MAXPOTIONS];    //Does he know what a potion does
+
+int does_know_potion(int type)
+{
+  return p_know[type];
+}
+
+void discover_potion(int type)
+{
+  p_know[type] = TRUE;
+}
+
 void quaff_confusion()
 {
   p_know[P_CONFUSE] = TRUE;

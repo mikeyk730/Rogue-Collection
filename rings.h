@@ -15,3 +15,5 @@ char *ring_num(ITEM *obj);
 
 int is_ring_on_hand(int h, int r);
 int is_wearing_ring(int r);
+int does_know_ring(int type);
+void discover_ring(int type);
