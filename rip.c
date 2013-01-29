@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <io.h>
+#include <fcntl.h>
 #include <time.h>
 #include <sys/stat.h>
 
@@ -96,7 +97,11 @@ reread:
   _close(sc_fd);
   if (rank>0)
   {
-    if ((sc_fd = _creat(s_score, _S_IREAD | _S_IWRITE))>=0) {put_scores(&top_ten[0]); _close(sc_fd);}
+    sc_fd = _open(s_score, _O_RDWR | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+    if (sc_fd >= 0) {
+      put_scores(&top_ten[0]); 
+      _close(sc_fd);
+    }
   }
   pr_scores(rank, &top_ten[0]);
   printw("[Press Enter to quit]");
