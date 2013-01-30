@@ -183,7 +183,7 @@ void wanderer()
     room = rnd_room();
     if (room==player.room) continue;
     rnd_pos(room, &cp);
-  } while (!(room!=player.room && step_ok(display_character(cp.y, cp.x))));
+  } while (!(room!=player.room && step_ok(get_tile_or_monster(cp.y, cp.x))));
   new_monster(monster, randmonster(TRUE), &cp);
   if (bailout) debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);

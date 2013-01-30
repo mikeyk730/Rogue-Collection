@@ -20,3 +20,5 @@ void enter_room(Coord *cp);
 void leave_room(Coord *cp);
 
 struct Room* rnd_room();
+
+void find_empty_location(Coord* c, int consider_monsters);

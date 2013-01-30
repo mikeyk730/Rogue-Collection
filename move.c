@@ -57,7 +57,7 @@ over:
   //If you are running and the move does not get you anywhere stop running
   if (running && equal(player.pos, nh)) after = running = FALSE;
   fl = get_flags(nh.y, nh.x);
-  ch = display_character(nh.y, nh.x);
+  ch = get_tile_or_monster(nh.y, nh.x);
   //When the hero is on the door do not allow him to run until he enters the room all the way
   if ((get_tile(player.pos.y, player.pos.x)==DOOR) && (ch==FLOOR)) running = FALSE;
   if (!(fl&F_REAL) && ch==FLOOR) {
@@ -142,7 +142,7 @@ void door_open(struct Room *room)
     for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
       for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
       {
-        ch = display_character(j, k);
+        ch = get_tile_or_monster(j, k);
         if (isupper(ch))
         {
           item = wake_monster(j, k);
@@ -249,7 +249,7 @@ void rndmove(AGENT *who, Coord *newmv)
   else if (!diag_ok(&who->pos, newmv)) goto bad;
   else
   {
-    ch = display_character(y, x);
+    ch = get_tile_or_monster(y, x);
     if (!step_ok(ch)) goto bad;
     if (ch==SCROLL)
     {

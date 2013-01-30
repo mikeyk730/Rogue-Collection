@@ -230,7 +230,7 @@ void chase(AGENT *monster, Coord *chasee_pos)
         tryp.x = x;
         tryp.y = y;
         if (offmap(y, x) || !diag_ok(chaser_pos, &tryp)) continue;
-        ch = display_character(y, x);
+        ch = get_tile_or_monster(y, x);
         if (step_ok(ch))
         {
           //If it is a scroll, it might be a scare monster scroll so we need to look it up to see what type it is.

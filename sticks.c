@@ -280,9 +280,7 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
   if (which==WS_TELAWAY)
   {
     monster->oldch = '@';
-    do {
-      rnd_pos(rnd_room(), &new_pos);
-    } while (!(isfloor(display_character(new_pos.y, new_pos.x))));
+    find_empty_location(&new_pos, TRUE);
     monster->pos = new_pos;
   }
   else { //it MUST BE at WS_TELTO
@@ -301,7 +299,7 @@ void zap_generic(ITEM* wand, int which)
 
   y = player.pos.y;
   x = player.pos.x;
-  while (step_ok(display_character(y, x))) {y += delta.y; x += delta.x;}
+  while (step_ok(get_tile_or_monster(y, x))) {y += delta.y; x += delta.x;}
   if ((monster = monster_at(y, x))!=NULL)
   {
     if (monster->type == 'F') player.flags &= ~ISHELD;
@@ -351,7 +349,7 @@ void zap_speed_monster(int which)
 
   y = player.pos.y;
   x = player.pos.x;
-  while (step_ok(display_character(y, x))) {
+  while (step_ok(get_tile_or_monster(y, x))) {
     y += delta.y; 
     x += delta.x;
   }
@@ -540,7 +538,7 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
   {
     pos.y += dir->y;
     pos.x += dir->x;
-    ch = display_character(pos.y, pos.x);
+    ch = get_tile_or_monster(pos.y, pos.x);
     spotpos[i].s_pos = pos;
     if ((spotpos[i].s_under = mvinch(pos.y, pos.x))==dirch) spotpos[i].s_under = 0;
     switch (ch)

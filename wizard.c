@@ -146,7 +146,7 @@ void teleport()
   do {
     rm = rnd_room(); 
     rnd_pos(rm, &c);
-  } while (!(step_ok(display_character(c.y, c.x))));
+  } while (!(step_ok(get_tile_or_monster(c.y, c.x))));
   if (rm != player.room) {
     leave_room(&player.pos); 
     player.pos = c; 
@@ -179,7 +179,7 @@ void show_map(bool show_monsters)
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
     if (!(real = get_flags(y, x)&F_REAL)) standout();
-    mvaddch(y, x, show_monsters ? display_character(y, x) : get_tile(y, x));
+    mvaddch(y, x, show_monsters ? get_tile_or_monster(y, x) : get_tile(y, x));
     if (!real) standend();
   }
   show_win("---More (level map)---");

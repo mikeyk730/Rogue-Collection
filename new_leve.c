@@ -25,10 +25,9 @@
 
 void new_level(int do_implode)
 {
-  struct Room* room;
   int i, ntraps;
   AGENT *monster;
-  Coord stairs;
+  Coord pos;
 
   player.flags &= ~ISHELD; //unhold when you go down just in case
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
@@ -55,14 +54,8 @@ void new_level(int do_implode)
   no_food++;
   put_things(); //Place objects (if any)
   //Place the staircase down.
-  i = 0;
-  do
-  {
-    room = rnd_room();
-    rnd_pos(room, &stairs);
-    if (i++>100) {i = 0; seed = srand2();}
-  } while (!isfloor(get_tile(stairs.y, stairs.x)));
-  set_tile(stairs.y, stairs.x, STAIRS);
+  find_empty_location(&pos, FALSE); //TODO: seed used to change after 100 failed attempts
+  set_tile(pos.y, pos.x, STAIRS);
   //Place the traps
   if (rnd(10)<level)
   {
@@ -71,20 +64,15 @@ void new_level(int do_implode)
     i = ntraps;
     while (i--)
     {
-      do
-      {
-        room = rnd_room();
-        rnd_pos(room, &stairs);
-      } while (!isfloor(get_tile(stairs.y, stairs.x)));
-      unset_flag(stairs.y, stairs.x, F_REAL);
-      set_flag(stairs.y, stairs.x, rnd(NTRAPS));
+      find_empty_location(&pos, FALSE);
+      unset_flag(pos.y, pos.x, F_REAL);
+      set_flag(pos.y, pos.x, rnd(NTRAPS));
     }
   }
   do
   {
-    room = rnd_room();
-    rnd_pos(room, &player.pos);
-  } while (!(isfloor(get_tile(player.pos.y, player.pos.x)) && (get_flags(player.pos.y, player.pos.x)&F_REAL) && monster_at(player.pos.y, player.pos.x)==NULL));
+    find_empty_location(&player.pos, TRUE);
+  } while (!(get_flags(player.pos.y, player.pos.x) & F_REAL));  //don't place hero on a trap
   mpos = 0;
   enter_room(&player.pos);
   mvaddch(player.pos.y, player.pos.x, PLAYER);
@@ -98,7 +86,6 @@ void put_things()
 {
   int i = 0;
   ITEM *cur;
-  struct Room* rm;
   Coord tp;
 
   //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
@@ -117,11 +104,7 @@ void put_things()
         cur->damage = cur->throw_damage = "0d0";
         cur->armor_class = 11;
         //Put it somewhere
-        do {
-          rm = rnd_room(); 
-          rnd_pos(rm, &tp);
-        } 
-        while (!isfloor(display_character(tp.y, tp.x)));
+        find_empty_location(&tp, TRUE);
         set_tile(tp.y, tp.x, AMULET);
         cur->pos = tp;
       }
@@ -137,10 +120,7 @@ void put_things()
       cur = new_item();
       attach_item(&lvl_obj, cur);
       //Put it somewhere
-      do {
-        rm = rnd_room(); 
-        rnd_pos(rm, &tp);
-      } while (!isfloor(get_tile(tp.y, tp.x)));
+      find_empty_location(&tp, FALSE);
       set_tile(tp.y, tp.x, cur->type);
       cur->pos = tp;
     }
@@ -155,7 +135,7 @@ void treas_room()
   AGENT *monster;
   struct Room *room;
   int spots, num_monst;
-  Coord monster_pos;
+  Coord pos;
 
   room = rnd_room();
   spots = (room->size.y-2)*(room->size.x-2)-MINTREAS;
@@ -164,12 +144,12 @@ void treas_room()
   while (nm--)
   {
     do {
-      rnd_pos(room, &monster_pos);
-    } while (!isfloor(get_tile(monster_pos.y, monster_pos.x)));
+      rnd_pos(room, &pos);
+    } while (!isfloor(get_tile(pos.y, pos.x)));
     item = new_item();
-    item->pos = monster_pos;
+    item->pos = pos;
     attach_item(&lvl_obj, item);
-    set_tile(monster_pos.y, monster_pos.x, item->type);
+    set_tile(pos.y, pos.x, item->type);
   }
   //fill up room with monsters from the next level down
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;
@@ -180,14 +160,14 @@ void treas_room()
   {
     for (spots = 0; spots<MAXTRIES; spots++)
     {
-      rnd_pos(room, &monster_pos);
-      if (isfloor(get_tile(monster_pos.y, monster_pos.x)) && monster_at(monster_pos.y, monster_pos.x)==NULL) break;
+      rnd_pos(room, &pos);
+      if (isfloor(get_tile(pos.y, pos.x)) && monster_at(pos.y, pos.x)==NULL) break;
     }
     if (spots!=MAXTRIES)
     {
       if ((monster = create_agent())!=NULL)
       {
-        new_monster(monster, randmonster(FALSE), &monster_pos);
+        new_monster(monster, randmonster(FALSE), &pos);
         if (bailout) debug("treasure rm bailout");
         monster->flags |= ISMEAN; //no sloughers in THIS room
         give_pack(monster);

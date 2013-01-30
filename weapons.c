@@ -125,7 +125,7 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
     //Get the new position
     obj->pos.y += ydelta;
     obj->pos.x += xdelta;
-    if (step_ok(ch = display_character(obj->pos.y, obj->pos.x)) && ch!=DOOR)
+    if (step_ok(ch = get_tile_or_monster(obj->pos.y, obj->pos.x)) && ch!=DOOR)
     {
       //It hasn't hit anything yet, so display it if alright.
       if (cansee(obj->pos.y, obj->pos.x))

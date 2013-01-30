@@ -123,7 +123,7 @@ void do_rooms()
 
         do {
           rnd_pos(room, &mp); 
-          mch = display_character(mp.y, mp.x);
+          mch = get_tile_or_monster(mp.y, mp.x);
         } while (!isfloor(mch));
         new_monster(monster, randmonster(FALSE), &mp);
         give_pack(monster);
@@ -278,4 +278,14 @@ struct Room* rnd_room()
   } while (!((rooms[rm].flags&ISGONE)==0 || (rooms[rm].flags&ISMAZE)));
 
   return &rooms[rm];
+}
+
+void find_empty_location(Coord* c, int consider_monsters)
+{
+  byte (*tile_getter)(int, int) = consider_monsters ? get_tile_or_monster : get_tile;
+
+  do
+  {
+    rnd_pos(rnd_room(), c);
+  } while (!isfloor(tile_getter(c->y, c->x)));
 }

@@ -420,9 +420,10 @@ int offmap(int y, int x)
   return (y<1 || y>=maxrow || x<0 || x>=COLS);
 }
 
-int display_character(int y, int x)
+byte get_tile_or_monster(int y, int x)
 {
-  return (monster_at(y, x) !=NULL ? monster_at(y, x)->disguise : get_tile(y, x));
+  AGENT* monster = monster_at(y, x);
+  return (monster ? monster->disguise : get_tile(y, x));
 }
 
 //search: Player gropes about him to find hidden things.
