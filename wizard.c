@@ -137,14 +137,21 @@ void create_obj()
 }
 
 //teleport: Bamf the hero someplace else
-int teleport()
+void teleport()
 {
-  int rm;
+  struct Room* rm;
   Coord c;
 
   mvaddch(player.pos.y, player.pos.x, get_tile(player.pos.y, player.pos.x));
-  do {rm = rnd_room(); rnd_pos(&rooms[rm], &c);} while (!(step_ok(display_character(c.y, c.x))));
-  if (&rooms[rm]!=player.room) {leave_room(&player.pos); player.pos = c; enter_room(&player.pos);}
+  do {
+    rm = rnd_room(); 
+    rnd_pos(rm, &c);
+  } while (!(step_ok(display_character(c.y, c.x))));
+  if (rm != player.room) {
+    leave_room(&player.pos); 
+    player.pos = c; 
+    enter_room(&player.pos);
+  }
   else { player.pos = c; look(TRUE);}
   mvaddch(player.pos.y, player.pos.x, PLAYER);
   //turn off ISHELD in case teleportation was done while fighting a Flytrap
@@ -160,7 +167,6 @@ int teleport()
     else fuse(unconfuse, 0, rnd(4)+2);
     player.flags |= ISHUH;
   }
-  return rm;
 }
 
 //show_map: Print out the map for the wizard

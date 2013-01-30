@@ -252,25 +252,6 @@ void chase(AGENT *monster, Coord *chasee_pos)
   }
 }
 
-//roomin: Find what room some coordinates are in. NULL means they aren't in any room.
-struct Room *roomin(Coord *pos)
-{
-  struct Room *room;
-  byte fp;
-
-  for (room = rooms; room<=&rooms[MAXROOMS-1]; room++) 
-    if (pos->x<room->pos.x+room->size.x && room->pos.x<=pos->x && pos->y<room->pos.y+room->size.y && room->pos.y<=pos->y) 
-      return room;
-
-  fp = get_flags(pos->y, pos->x);
-  if (fp&F_PASS)
-    return &passages[fp&F_PNUM];
-
-  debug("in some bizarre place (%d, %d)", pos->y, pos->x);
-  bailout++;
-  return NULL;
-}
-
 //diag_ok: Check to see if the move is legal if it is diagonal
 int diag_ok( Coord *sp, Coord *ep )
 {

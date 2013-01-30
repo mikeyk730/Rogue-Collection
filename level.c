@@ -3,9 +3,28 @@
 #include "rogue.h"
 #include "level.h"
 #include "misc.h"
+#include "io.h"
+#include "main.h"
 
 byte the_level[(MAXLINES-3)*MAXCOLS];
 byte the_flags[(MAXLINES-3)*MAXCOLS];
+
+//One for each passage
+struct Room passages[MAXPASS] =
+{
+  { 0, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 1, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 2, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 3, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 4, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 5, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 6, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 7, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 8, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 9, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 10, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
+  { 11, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 }
+};
 
 int INDEX(int y, int x)
 {

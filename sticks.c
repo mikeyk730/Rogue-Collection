@@ -272,8 +272,7 @@ void zap_cancellation(AGENT* monster)
 
 void zap_teleport(AGENT* monster, int y, int x, int which)
 {
-  int room;
-  Coord new_yx;
+  Coord new_pos;
 
   if (can_see_monst(monster)) 
     mvaddch(y, x, monster->oldch);
@@ -282,11 +281,9 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
   {
     monster->oldch = '@';
     do {
-      room = rnd_room(); 
-      new_yx = monster->pos; 
-      rnd_pos(&rooms[room], &new_yx);
-    } while (!(isfloor(display_character(new_yx.y, new_yx.x))));
-    monster->pos = new_yx;
+      rnd_pos(rnd_room(), &new_pos);
+    } while (!(isfloor(display_character(new_pos.y, new_pos.x))));
+    monster->pos = new_pos;
   }
   else { //it MUST BE at WS_TELTO
     monster->pos.y = player.pos.y+delta.y; 

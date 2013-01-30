@@ -16,6 +16,7 @@
 #include "fight.h"
 #include "rings.h"
 #include "thing.h"
+#include "rooms.h"
 
 //List of monsters in rough order of vorpalness
 static char *lvl_mons =  "K BHISOR LCA NYTWFP GMXVJD";
@@ -171,7 +172,6 @@ int exp_add(AGENT *monster)
 //wanderer: Create a new wandering monster and aim it at the player
 void wanderer()
 {
-  int i;
   struct Room *room;
   AGENT *monster;
   Coord cp;
@@ -180,8 +180,8 @@ void wanderer()
   if ((monster = create_agent())==NULL) return;
   do
   {
-    i = rnd_room();
-    if ((room = &rooms[i])==player.room) continue;
+    room = rnd_room();
+    if (room==player.room) continue;
     rnd_pos(room, &cp);
   } while (!(room!=player.room && step_ok(display_character(cp.y, cp.x))));
   new_monster(monster, randmonster(TRUE), &cp);

@@ -21,10 +21,12 @@
 
 #define GOLDGRP  1
 
+struct Room rooms[MAXROOMS]; //One for each room -- A level
+
 //do_rooms: Create rooms and corridors with a connectivity graph
 void do_rooms()
 {
-  int i, room_index;
+  int i;
   struct Room *room;
   AGENT *monster;
   int left_out;
@@ -40,16 +42,20 @@ void do_rooms()
   bsze.x = COLS/3;
   bsze.y = endline/3;
   //Clear things for a new level
-  for (room = rooms; room<&rooms[MAXROOMS]; room++) room->goldval = room->num_exits = room->flags = 0;
+  for (i = 0; i < MAXROOMS; i++) {
+    room = &rooms[i];
+    room->index = i;
+    room->goldval = room->num_exits = room->flags = 0;
+  }
   //Put the gone rooms, if any, on the level
   left_out = rnd(4);
   for (i = 0; i<left_out; i++)
   {
     do { 
-      room = &rooms[(room_index = rnd_room())];
+      room = rnd_room();
     } while (room->flags&ISMAZE);
     room->flags |= ISGONE;
-    if (room_index>2 && level>10 && rnd(20)<level-9)
+    if (room->index>2 && level>10 && rnd(20)<level-9)
       room->flags |= ISMAZE;
   }
   //dig and populate all the rooms on the level
@@ -242,4 +248,34 @@ void leave_room(Coord *cp)
     }
   }
   door_open(room);
+}
+
+//roomin: Find what room some coordinates are in. NULL means they aren't in any room.
+struct Room *roomin(Coord *pos)
+{
+  struct Room *room;
+  byte fp;
+
+  for (room = rooms; room<=&rooms[MAXROOMS-1]; room++) 
+    if (pos->x<room->pos.x+room->size.x && room->pos.x<=pos->x && pos->y<room->pos.y+room->size.y && room->pos.y<=pos->y) 
+      return room;
+
+  fp = get_flags(pos->y, pos->x);
+  if (fp&F_PASS)
+    return &passages[fp&F_PNUM];
+
+  debug("in some bizarre place (%d, %d)", pos->y, pos->x);
+  bailout++;
+  return NULL;
+}
+
+//rnd_room: Pick a room that is really there
+struct Room* rnd_room()
+{
+  int rm;
+  do { 
+    rm = rnd(MAXROOMS); 
+  } while (!((rooms[rm].flags&ISGONE)==0 || (rooms[rm].flags&ISMAZE)));
+
+  return &rooms[rm];
 }

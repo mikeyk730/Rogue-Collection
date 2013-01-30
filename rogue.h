@@ -224,6 +224,7 @@ struct Array
 //Room structure
 struct Room
 {
+  int index;
   Coord pos;       //Upper left corner
   Coord size;      //Size of room
   Coord gold;      //Where the gold is
@@ -292,7 +293,7 @@ typedef struct Agent AGENT;
 extern ITEM *cur_armor, *cur_ring[2], *cur_weapon, *lvl_obj;
 extern AGENT *mlist, player;
 extern Coord delta, oldpos;
-extern struct Room *oldrp, passages[], rooms[];
+extern struct Room *oldrp, passages[];
 extern struct Stats max_stats;
 
 #define MAXSTR    80 //maximum length of strings

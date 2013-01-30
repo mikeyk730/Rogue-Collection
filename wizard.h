@@ -2,7 +2,7 @@
 void whatis();
 
 //teleport: Bamf the hero someplace else
-int teleport();
+void teleport();
 
 void create_obj();
 

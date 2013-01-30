@@ -25,7 +25,8 @@
 
 void new_level(int do_implode)
 {
-  int room, i, ntraps;
+  struct Room* room;
+  int i, ntraps;
   AGENT *monster;
   Coord stairs;
 
@@ -58,7 +59,7 @@ void new_level(int do_implode)
   do
   {
     room = rnd_room();
-    rnd_pos(&rooms[room], &stairs);
+    rnd_pos(room, &stairs);
     if (i++>100) {i = 0; seed = srand2();}
   } while (!isfloor(get_tile(stairs.y, stairs.x)));
   set_tile(stairs.y, stairs.x, STAIRS);
@@ -73,7 +74,7 @@ void new_level(int do_implode)
       do
       {
         room = rnd_room();
-        rnd_pos(&rooms[room], &stairs);
+        rnd_pos(room, &stairs);
       } while (!isfloor(get_tile(stairs.y, stairs.x)));
       unset_flag(stairs.y, stairs.x, F_REAL);
       set_flag(stairs.y, stairs.x, rnd(NTRAPS));
@@ -82,7 +83,7 @@ void new_level(int do_implode)
   do
   {
     room = rnd_room();
-    rnd_pos(&rooms[room], &player.pos);
+    rnd_pos(room, &player.pos);
   } while (!(isfloor(get_tile(player.pos.y, player.pos.x)) && (get_flags(player.pos.y, player.pos.x)&F_REAL) && monster_at(player.pos.y, player.pos.x)==NULL));
   mpos = 0;
   enter_room(&player.pos);
@@ -92,21 +93,12 @@ void new_level(int do_implode)
   if (on(player, SEEMONST)) turn_see(FALSE);
 }
 
-//rnd_room: Pick a room that is really there
-int rnd_room()
-{
-  int rm;
-
-  do rm = rnd(MAXROOMS); while (!((rooms[rm].flags&ISGONE)==0 || (rooms[rm].flags&ISMAZE)));
-  return rm;
-}
-
 //put_things: Put potions and scrolls on this level
 void put_things()
 {
   int i = 0;
   ITEM *cur;
-  int rm;
+  struct Room* rm;
   Coord tp;
 
   //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
@@ -125,7 +117,11 @@ void put_things()
         cur->damage = cur->throw_damage = "0d0";
         cur->armor_class = 11;
         //Put it somewhere
-        do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(display_character(tp.y, tp.x)));
+        do {
+          rm = rnd_room(); 
+          rnd_pos(rm, &tp);
+        } 
+        while (!isfloor(display_character(tp.y, tp.x)));
         set_tile(tp.y, tp.x, AMULET);
         cur->pos = tp;
       }
@@ -141,7 +137,10 @@ void put_things()
       cur = new_item();
       attach_item(&lvl_obj, cur);
       //Put it somewhere
-      do {rm = rnd_room(); rnd_pos(&rooms[rm], &tp);} while (!isfloor(get_tile(tp.y, tp.x)));
+      do {
+        rm = rnd_room(); 
+        rnd_pos(rm, &tp);
+      } while (!isfloor(get_tile(tp.y, tp.x)));
       set_tile(tp.y, tp.x, cur->type);
       cur->pos = tp;
     }
@@ -158,7 +157,7 @@ void treas_room()
   int spots, num_monst;
   Coord monster_pos;
 
-  room = &rooms[rnd_room()];
+  room = rnd_room();
   spots = (room->size.y-2)*(room->size.x-2)-MINTREAS;
   if (spots>(MAXTREAS-MINTREAS)) spots = (MAXTREAS-MINTREAS);
   num_monst = nm = rnd(spots)+MINTREAS;

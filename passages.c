@@ -12,6 +12,8 @@
 #include "io.h"
 #include "level.h"
 
+extern struct Room rooms[];
+
 static int pnum;
 static byte newpnum;
 
