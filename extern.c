@@ -170,9 +170,7 @@ long seed = 0;         //Random number seed
 Coord oldpos; //Position before last look() call
 Coord delta;  //Change indicated to get_dir()
 
-ITEM *cur_armor;   //What a well dresssed rogue wears
 ITEM *cur_ring[2]; //Which rings are being worn
-ITEM *cur_weapon;  //Which weapon he is wielding
 
 struct Room *oldrp; //Roomin(&oldpos)
 

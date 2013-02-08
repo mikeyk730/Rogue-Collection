@@ -20,6 +20,7 @@
 #include "mach_dep.h"
 #include "armor.h"
 #include "hero.h"
+#include "pack.h"
 
 #define NONE 100
 
@@ -220,22 +221,23 @@ char *num(int n1, int n2, char type)
 //wield: Pull out a certain weapon
 void wield()
 {
-  ITEM *obj, *oweapon;
+  ITEM *obj;
   char *sp;
 
-  oweapon = cur_weapon;
-  if (!can_drop(cur_weapon)) {cur_weapon = oweapon; return;}
-  cur_weapon = oweapon;
-  if ((obj = get_item("wield", WEAPON))==NULL)
+  if (!can_drop(get_current_weapon())) {
+    return;
+  }
+  obj = get_item("wield", WEAPON);
+  if (!obj || is_current(obj) || obj->type==ARMOR)
   {
-bad:
+    if (obj->type==ARMOR) 
+      msg("you can't wield armor"); 
     after = FALSE;
     return;
   }
-  if (obj->type==ARMOR) {msg("you can't wield armor"); goto bad;}
-  if (is_current(obj)) goto bad;
+
   sp = inv_name(obj, TRUE);
-  cur_weapon = obj;
+  set_current_weapon(obj);
   ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
 }
 

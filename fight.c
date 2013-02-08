@@ -25,6 +25,7 @@
 #include "rings.h"
 #include "thing.h"
 #include "armor.h"
+#include "pack.h"
 
 char tbuf[MAXSTR];
 
@@ -53,7 +54,7 @@ void do_hit(ITEM* weap, int thrown, AGENT* monster, const char* name)
         detach_item(&player.pack, weap); 
         discard_item(weap);
       }
-      cur_weapon = NULL;
+      set_current_weapon(NULL);
     }
   }
 
@@ -117,12 +118,12 @@ int fight(Coord *location, char mn, ITEM *weap, bool thrown)
 void aquator_attack()
 {
   //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-  if (cur_armor && cur_armor->armor_class < 9 && cur_armor->which != LEATHER)
+  if (get_current_armor() && get_current_armor()->armor_class < 9 && get_current_armor()->which != LEATHER)
     if (is_wearing_ring(R_SUSTARM))
       msg("the rust vanishes instantly");
     else {
       msg("your armor weakens, oh my!"); 
-      cur_armor->armor_class++;
+      get_current_armor()->armor_class++;
     }
 }
 
@@ -174,7 +175,7 @@ int nymph_attack(AGENT* mp)
 
   steal = NULL;
   for (nobj = 0, obj = player.pack; obj!=NULL; obj = next(obj))
-    if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
+    if (obj!=get_current_armor() && obj!=get_current_weapon() && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
   if (steal!=NULL)
   {
     remove_monster(mp, FALSE);
@@ -333,7 +334,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
     dplus = weap->damage_plus;
     //Check for vorpally enchanted weapon
     if (thdef->type==weap->enemy) {hplus += 4; dplus += 4;}
-    if (weap==cur_weapon)
+    if (weap==get_current_weapon())
     {
       if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->ring_level;
       else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->ring_level;
@@ -342,11 +343,11 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
         hplus += cur_ring[RIGHT]->ring_level;
     }
     cp = weap->damage;
-    if (hurl && (weap->flags&ISMISL) && cur_weapon!=NULL && cur_weapon->which==weap->launcher)
+    if (hurl && (weap->flags&ISMISL) && get_current_weapon()!=NULL && get_current_weapon()->which==weap->launcher)
     {
       cp = weap->throw_damage;
-      hplus += cur_weapon->hit_plus;
-      dplus += cur_weapon->damage_plus;
+      hplus += get_current_weapon()->hit_plus;
+      dplus += get_current_weapon()->damage_plus;
     }
     //Drain a staff of striking
     if (weap->type==STICK && weap->which==WS_HIT && --weap->charges<0)
@@ -361,7 +362,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   def_arm = def->ac;
   if (def==&player.stats)
   {
-    if (cur_armor!=NULL) def_arm = cur_armor->armor_class;
+    if (get_current_armor()!=NULL) def_arm = get_current_armor()->armor_class;
     if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->ring_level;
     if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->ring_level;
   }

@@ -234,7 +234,7 @@ char *vowelstr(const char *str)
 int is_current(ITEM *obj)
 {
   if (obj==NULL) return FALSE;
-  if (obj==cur_armor || obj==cur_weapon || obj==cur_ring[LEFT] || obj==cur_ring[RIGHT])
+  if (obj==get_current_armor() || obj==get_current_weapon() || obj==cur_ring[LEFT] || obj==cur_ring[RIGHT])
   {
     msg("That's already in use");
     return TRUE;

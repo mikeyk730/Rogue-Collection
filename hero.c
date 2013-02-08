@@ -112,7 +112,7 @@ void init_player()
   obj->damage_plus = 1;
   obj->flags |= ISKNOW;
   add_pack(obj, TRUE);
-  cur_weapon = obj;
+  set_current_weapon(obj);
 
   //Now a +1 bow
   obj = create_item(WEAPON, BOW);
@@ -134,7 +134,7 @@ void init_player()
   obj = create_item(ARMOR, RING_MAIL);
   obj->armor_class = get_default_class(RING_MAIL)-1;
   obj->flags |= ISKNOW;
-  cur_armor = obj;
+  set_current_armor(obj);
   add_pack(obj, TRUE);
 
   //Give him some food too

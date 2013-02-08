@@ -18,6 +18,29 @@
 
 static int s_had_amulet = FALSE;
 
+ITEM *cur_armor;   //What a well dresssed rogue wears
+ITEM *cur_weapon;  //Which weapon he is wielding
+
+ITEM* get_current_weapon()
+{
+  return cur_weapon;
+}
+
+void set_current_weapon(ITEM* item)
+{
+  cur_weapon = item;
+}
+
+ITEM* get_current_armor()
+{
+  return cur_armor;
+}
+
+void set_current_armor(ITEM* item)
+{
+  cur_armor = item;
+}
+
 int does_item_group(type) {
   return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
 }

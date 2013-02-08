@@ -233,10 +233,10 @@ void read_sleep()
 
 void read_enchant_armor()
 {
-  if (cur_armor!=NULL)
+  if (get_current_armor()!=NULL)
   {
-    cur_armor->armor_class--;
-    cur_armor->flags &= ~ISCURSED;
+    get_current_armor()->armor_class--;
+    get_current_armor()->flags &= ~ISCURSED;
     ifterse("your armor glows faintly", "your armor glows faintly for a moment");
   }
 }
@@ -301,14 +301,14 @@ void read_teleportation()
 
 void read_enchant_weapon()
 {
-  if (cur_weapon == NULL || cur_weapon->type != WEAPON)
+  if (get_current_weapon() == NULL || get_current_weapon()->type != WEAPON)
     msg("you feel a strange sense of loss");
   else
   {
-    cur_weapon->flags &= ~ISCURSED;
-    if (rnd(2)==0) cur_weapon->hit_plus++;
-    else cur_weapon->damage_plus++;
-    ifterse("your %s glows blue", "your %s glows blue for a moment", get_weapon_name(cur_weapon->which));
+    get_current_weapon()->flags &= ~ISCURSED;
+    if (rnd(2)==0) get_current_weapon()->hit_plus++;
+    else get_current_weapon()->damage_plus++;
+    ifterse("your %s glows blue", "your %s glows blue for a moment", get_weapon_name(get_current_weapon()->which));
   }
 }
 
@@ -325,10 +325,10 @@ void read_create_monster()
 
 void read_remove_curse()
 {
-  if (cur_armor) 
-    cur_armor->flags &= ~ISCURSED;
-  if (cur_weapon) 
-    cur_weapon->flags &= ~ISCURSED;
+  if (get_current_armor()) 
+    get_current_armor()->flags &= ~ISCURSED;
+  if (get_current_weapon()) 
+    get_current_weapon()->flags &= ~ISCURSED;
   if (cur_ring[LEFT]) 
     cur_ring[LEFT]->flags &= ~ISCURSED;
   if (cur_ring[RIGHT])
@@ -363,25 +363,25 @@ void read_vorpalize_weapon()
   //    whenever she sees one (not yet implemented)
   //
   //If he doesn't have a weapon I get to chortle again!
-  if (cur_weapon==NULL || cur_weapon->type!=WEAPON) 
+  if (get_current_weapon()==NULL || get_current_weapon()->type!=WEAPON) 
     msg(laugh, short_msgs()?"":in_dist);
   else
   {
     //You aren't allowed to doubly vorpalize a weapon.
-    if (cur_weapon->enemy!=0)
+    if (get_current_weapon()->enemy!=0)
     {
-      msg("your %s vanishes in a puff of smoke", get_weapon_name(cur_weapon->which));
-      detach_item(&player.pack, cur_weapon);
-      discard_item(cur_weapon);
-      cur_weapon = NULL;
+      msg("your %s vanishes in a puff of smoke", get_weapon_name(get_current_weapon()->which));
+      detach_item(&player.pack, get_current_weapon());
+      discard_item(get_current_weapon());
+      set_current_weapon(NULL);
     }
     else
     {
-      cur_weapon->enemy = pick_monster();
-      cur_weapon->hit_plus++;
-      cur_weapon->damage_plus++;
-      cur_weapon->charges = 1;
-      msg(flash, get_weapon_name(cur_weapon->which), short_msgs()?"":intense);
+      get_current_weapon()->enemy = pick_monster();
+      get_current_weapon()->hit_plus++;
+      get_current_weapon()->damage_plus++;
+      get_current_weapon()->charges = 1;
+      msg(flash, get_weapon_name(get_current_weapon()->which), short_msgs()?"":intense);
     }
   }
 }
@@ -414,7 +414,7 @@ void read_scroll()
   if (scroll==NULL) return;
   if (scroll->type!=SCROLL) {msg("there is nothing on it to read"); return;}
   ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
-  if (scroll==cur_weapon) cur_weapon = NULL;
+  if (scroll==get_current_weapon()) set_current_weapon(NULL);
 
   //Call the function for this scroll
   if (scroll->which >= 0 && scroll->which < MAXSCROLLS)

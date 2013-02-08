@@ -335,7 +335,7 @@ void zap_magic_missile()
   bolt.hit_plus = 1000;
   bolt.damage_plus = 1;
   bolt.flags = ISMISL;
-  if (cur_weapon!=NULL) bolt.launcher = cur_weapon->which;
+  if (get_current_weapon()!=NULL) bolt.launcher = get_current_weapon()->which;
   do_motion(&bolt, delta.y, delta.x);
   if ((monster = monster_at(bolt.pos.y, bolt.pos.x))!=NULL && !save_throw(VS_MAGIC, monster))
     hit_monster(bolt.pos.y, bolt.pos.x, &bolt);

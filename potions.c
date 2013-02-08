@@ -328,7 +328,8 @@ void quaff()
   if ((obj = get_item("quaff", POTION))==NULL) return;
   //Make certain that it is something that we want to drink
   if (obj->type!=POTION) {msg("yuk! Why would you want to drink that?"); return;}
-  if (obj==cur_weapon) cur_weapon = NULL;
+  if (obj==get_current_weapon()) 
+    set_current_weapon(NULL);
 
   //Calculate the effect it has on the poor guy.
   potion_functions[obj->which]();

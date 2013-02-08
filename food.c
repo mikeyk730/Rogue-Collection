@@ -34,8 +34,8 @@ void eat()
     discard_item(obj);
   }
   ingest();
-  if (obj==cur_weapon) 
-    cur_weapon = NULL;
+  if (obj==get_current_weapon()) 
+    set_current_weapon(NULL);
   if (obj->which==1)
     msg("my, that was a yummy %s", fruit);
   else if (rnd(100)>70) {

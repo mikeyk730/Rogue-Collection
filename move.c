@@ -20,6 +20,7 @@
 #include "level.h"
 #include "rings.h"
 #include "scrolls.h"
+#include "pack.h"
 
 #include <ctype.h>
 
@@ -117,7 +118,7 @@ hit_bound:
   default:
     running = FALSE;
     if (isupper(ch) || monster_at(nh.y, nh.x))
-      fight(&nh, ch, cur_weapon, FALSE);
+      fight(&nh, ch, get_current_weapon(), FALSE);
     else
     {
       running = FALSE;

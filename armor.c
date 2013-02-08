@@ -81,7 +81,7 @@ void wear()
   ITEM *obj;
   char *sp;
 
-  if (cur_armor!=NULL)
+  if (get_current_armor()!=NULL)
   {
     msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
     after = FALSE;
@@ -92,7 +92,7 @@ void wear()
   waste_time();
   obj->flags |= ISKNOW ;
   sp = inv_name(obj, TRUE);
-  cur_armor = obj;
+  set_current_armor(obj);
   msg("you are now wearing %s", sp);
 }
 
@@ -101,14 +101,14 @@ void take_off()
 {
   ITEM *obj;
 
-  if ((obj = cur_armor)==NULL)
+  if ((obj = get_current_armor())==NULL)
   {
     after = FALSE;
     msg("you aren't wearing any armor");
     return;
   }
-  if (!can_drop(cur_armor)) return;
-  cur_armor = NULL;
+  if (!can_drop(get_current_armor())) return;
+  set_current_armor(NULL);
   msg("you used to be wearing %c) %s", pack_char(obj), inv_name(obj, TRUE));
 }
 

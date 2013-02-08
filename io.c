@@ -14,6 +14,7 @@
 #include "rings.h"
 #include "hero.h"
 #include "level.h"
+#include "pack.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)
@@ -241,13 +242,13 @@ void status()
     printw("Gold:%-5u", get_purse());
   }
   //Armor:
-  if(s_ac!=(cur_armor!=NULL?cur_armor->armor_class:player.stats.ac))
+  if(s_ac!=(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac))
   {
-    s_ac = (cur_armor!=NULL?cur_armor->armor_class:player.stats.ac);
+    s_ac = (get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac);
     if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= cur_ring[LEFT]->ring_level;
     if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= cur_ring[RIGHT]->ring_level;
     move(23, PT(12, 52));
-    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->armor_class:player.stats.ac));
+    printw("Armor:%-2d", AC(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac));
   }
   //Exp:
   if (s_elvl!=player.stats.level)

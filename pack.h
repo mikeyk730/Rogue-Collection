@@ -23,3 +23,13 @@ int has_amulet();
 
 //true if player ever had amulet
 int had_amulet();
+
+ITEM* get_current_weapon();
+ITEM* get_current_armor();
+ITEM* get_left_ring();
+ITEM* get_right_ring();
+
+void set_current_weapon(ITEM* item);
+void set_current_armor(ITEM* item);
+void set_left_ring(ITEM* item);
+void set_right_ring(ITEM* item);

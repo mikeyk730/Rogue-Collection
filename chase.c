@@ -17,6 +17,7 @@
 #include "level.h"
 #include "weapons.h"
 #include "scrolls.h"
+#include "pack.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -174,10 +175,10 @@ int can_see_monst(AGENT *monster)
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
   //give the player a hint as to what that weapon is good for.
-  if (cur_weapon && cur_weapon->enemy == monster->type && !(cur_weapon->flags & DIDFLASH))
+  if (get_current_weapon() && get_current_weapon()->enemy == monster->type && !(get_current_weapon()->flags & DIDFLASH))
   {
-    cur_weapon->flags |= DIDFLASH;
-    msg(flash, get_weapon_name(cur_weapon->which), short_msgs()?"":intense);
+    get_current_weapon()->flags |= DIDFLASH;
+    msg(flash, get_weapon_name(get_current_weapon()->which), short_msgs()?"":intense);
   }
   return TRUE;
 }

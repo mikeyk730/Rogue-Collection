@@ -100,9 +100,9 @@ char *inv_name(ITEM *obj, bool drop)
 
 #endif
   }
-  if (obj==cur_armor) 
+  if (obj==get_current_armor()) 
     strcat(pb, " (being worn)");
-  if (obj==cur_weapon) 
+  if (obj==get_current_weapon()) 
     strcat(pb, " (weapon in hand)");
   if (obj==cur_ring[LEFT]) 
     strcat(pb, " (on left hand)");
@@ -152,10 +152,13 @@ void drop()
 int can_drop(ITEM *op)
 {
   if (op==NULL) return TRUE;
-  if (op!=cur_armor && op!=cur_weapon && op!=cur_ring[LEFT] && op!=cur_ring[RIGHT]) return TRUE;
+  if (op!=get_current_armor() && op!=get_current_weapon() && op!=cur_ring[LEFT] && op!=cur_ring[RIGHT]) return TRUE;
   if (op->flags&ISCURSED) {msg("you can't.  It appears to be cursed"); return FALSE;}
-  if (op==cur_weapon) cur_weapon = NULL;
-  else if (op==cur_armor) {waste_time(); cur_armor = NULL;}
+  if (op==get_current_weapon()) set_current_weapon(NULL);
+  else if (op==get_current_armor()) {
+    waste_time(); 
+    set_current_armor(NULL);
+  }
   else
   {
     int hand;

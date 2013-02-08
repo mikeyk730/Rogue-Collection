@@ -289,7 +289,7 @@ typedef struct Agent AGENT;
 
 //External variables
 
-extern ITEM *cur_armor, *cur_ring[2], *cur_weapon, *lvl_obj;
+extern ITEM *cur_ring[2], *lvl_obj;
 extern AGENT *mlist, player;
 extern Coord delta, oldpos;
 extern struct Room *oldrp, passages[];
