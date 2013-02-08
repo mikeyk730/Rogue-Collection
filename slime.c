@@ -23,7 +23,7 @@ void slime_split(AGENT *monster)
 
   if (new_slime(monster)==0 || (nslime = create_agent())==NULL) return;
   msg("The slime divides.  Ick!");
-  new_monster(nslime, 'S', &slimy);
+  new_monster(nslime, 'S', &slimy, get_level());
   if (cansee(slimy.y, slimy.x))
   {
     nslime->oldch = get_tile(slimy.y, slimy.x);

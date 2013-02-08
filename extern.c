@@ -160,7 +160,6 @@ struct Array _guesses[MAXSCROLLS+MAXPOTIONS+MAXRINGS+MAXSTICKS];
 
 int maxrow;            //Last Line used for map
 int max_level;         //Deepest player has gone
-int level = 1;         //What level rogue is on
 int mpos = 0;          //Where cursor is on top line
 int no_move = 0;       //Number of turns held in place
 int no_command = 0;    //Number of turns asleep

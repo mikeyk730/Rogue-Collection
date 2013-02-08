@@ -222,7 +222,7 @@ int be_trapped(Coord *tc)
 
 void descend(char *mesg)
 {
-  level++;
+  next_level();
   if (*mesg==0) msg(" ");
   new_level(TRUE);
   msg("");

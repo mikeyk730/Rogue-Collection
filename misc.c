@@ -470,7 +470,7 @@ void d_level()
   if (get_tile(player.pos.y, player.pos.x)!=STAIRS && !is_wizard())
     msg("I see no way down");
   else {
-    level++; 
+    next_level(); 
     new_level(TRUE);
   }
 }
@@ -480,8 +480,7 @@ void u_level()
 {
   if (get_tile(player.pos.y, player.pos.x)==STAIRS || is_wizard()) 
     if (has_amulet()) {
-      level--; 
-      if (level==0) 
+      if (prev_level()==0) 
         total_winner(); 
       new_level(TRUE); 
       msg("you feel a wrenching sensation in your gut");

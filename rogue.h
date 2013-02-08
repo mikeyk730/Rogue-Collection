@@ -29,7 +29,6 @@ typedef unsigned char bool;
 #define prev(ptr)       (*ptr).l_prev
 #define on(thing,flag)  (((thing).flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
-#define GOLDCALC        (rnd(50+10*level)+2)
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
 #define isgone(rp)      (((rp)->flags&ISGONE) && ((rp)->flags&ISMAZE)==0)
 
@@ -317,7 +316,7 @@ extern char file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
   huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 
   *typeahead, take, whoami[];
 
-extern int count, flytrap_hit, iguess, level, max_level, mpos, no_command, no_food, no_move, quiet;
+extern int count, flytrap_hit, iguess, max_level, mpos, no_command, no_food, no_move, quiet;
 
 extern long seed;
 

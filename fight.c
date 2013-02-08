@@ -157,9 +157,9 @@ void leprechaun_attack(AGENT* mp)
   long lastpurse;
 
   lastpurse = get_purse();
-  adjust_purse(-GOLDCALC);
+  adjust_purse(-rnd_gold());
   if (!save(VS_MAGIC)) 
-    adjust_purse(-(GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC));
+    adjust_purse(-(rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold()));
   remove_monster(mp, FALSE);
   if (get_purse() != lastpurse) 
     msg("your purse feels lighter");
@@ -553,8 +553,8 @@ void killed(AGENT *monster, bool print)
       ITEM *gold;
 
       if ((gold = create_item(GOLD, 0))==NULL) return;
-      gold->gold_value = GOLDCALC;
-      if (save(VS_MAGIC)) gold->gold_value += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
+      gold->gold_value = rnd_gold();
+      if (save(VS_MAGIC)) gold->gold_value += rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold();
       attach_item(&monster->pack, gold);
 
       break;

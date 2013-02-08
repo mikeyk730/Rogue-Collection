@@ -17,6 +17,7 @@
 #include "rings.h"
 #include "thing.h"
 #include "rooms.h"
+#include "level.h"
 
 //List of monsters in rough order of vorpalness
 static char *lvl_mons =  "K BHISOR LCA NYTWFP GMXVJD";
@@ -82,7 +83,7 @@ int get_monster_carry_prob(char monster)
 }
 
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
-char randmonster(bool wander)
+char randmonster(bool wander, int level)
 {
   int d;
   char *mons;
@@ -101,7 +102,7 @@ char randmonster(bool wander)
 
 void set_xeroc_disguise(AGENT* X)
 {
-  switch (rnd(level >= AMULETLEVEL ? 9 : 8))
+  switch (rnd(get_level() >= AMULETLEVEL ? 9 : 8))
   {
   case 0: X->disguise = GOLD; break;
   case 1: X->disguise = POTION; break;
@@ -116,7 +117,7 @@ void set_xeroc_disguise(AGENT* X)
 }
 
 //new_monster: Pick a new monster and add it to the list
-void new_monster(AGENT *monster, byte type, Coord *position)
+void new_monster(AGENT *monster, byte type, Coord *position, int level)
 {
   int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
   const struct Monster* defaults;
@@ -184,7 +185,7 @@ void wanderer()
     if (room==player.room) continue;
     rnd_pos(room, &cp);
   } while (!(room!=player.room && step_ok(get_tile_or_monster(cp.y, cp.x))));
-  new_monster(monster, randmonster(TRUE), &cp);
+  new_monster(monster, randmonster(TRUE, get_level()), &cp, get_level());
   if (bailout) debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
   start_run(monster);

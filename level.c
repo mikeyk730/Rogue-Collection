@@ -26,6 +26,8 @@ struct Room passages[MAXPASS] =
   { 11, {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 }
 };
 
+int s_level = 1;
+
 int INDEX(int y, int x)
 {
   return ((x*(maxrow-1))+y-1);
@@ -65,4 +67,24 @@ void unset_flag(int y, int x, byte f)
 void copy_flags(int y, int x, byte f)
 {
   the_flags[INDEX(y,x)] = f;
+}
+
+int get_level()
+{
+  return s_level;
+}
+
+int next_level()
+{
+  return ++s_level;
+}
+
+int prev_level()
+{
+  return --s_level;
+}
+
+int rnd_gold()
+{
+  return (rnd(50+10*s_level)+2);
 }

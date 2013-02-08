@@ -31,7 +31,7 @@ void new_level(int do_implode)
 
   player.flags &= ~ISHELD; //unhold when you go down just in case
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
-  if (level>max_level) max_level = level;
+  if (get_level()>max_level) max_level = get_level();
 
   //Clean things off from last level
   clear_level();
@@ -57,9 +57,9 @@ void new_level(int do_implode)
   find_empty_location(&pos, FALSE); //TODO: seed used to change after 100 failed attempts
   set_tile(pos.y, pos.x, STAIRS);
   //Place the traps
-  if (rnd(10)<level)
+  if (rnd(10)<get_level())
   {
-    ntraps = rnd(level/4)+1;
+    ntraps = rnd(get_level()/4)+1;
     if (ntraps>MAXTRAPS) ntraps = MAXTRAPS;
     i = ntraps;
     while (i--)
@@ -90,12 +90,12 @@ void put_things()
 
   //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
   //This is real unfair - I'm going to allow one thing, that way the poor guy will get some food.
-  if (had_amulet() && level<max_level) i = MAXOBJ-1;
+  if (had_amulet() && get_level()<max_level) i = MAXOBJ-1;
   else
   {
     //If he is really deep in the dungeon and he hasn't found the amulet yet, put it somewhere on the ground
     //Check this first so if we are out of memory the guy has a hope of getting the amulet
-    if (level>=AMULETLEVEL && !had_amulet())
+    if (get_level()>=AMULETLEVEL && !had_amulet())
     {
       if ((cur = create_item(AMULET, 0))!=NULL)
       {
@@ -155,7 +155,6 @@ void treas_room()
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;
   spots = (room->size.y-2)*(room->size.x-2);
   if (nm>spots) nm = spots;
-  level++;
   while (nm--)
   {
     for (spots = 0; spots<MAXTRIES; spots++)
@@ -167,12 +166,11 @@ void treas_room()
     {
       if ((monster = create_agent())!=NULL)
       {
-        new_monster(monster, randmonster(FALSE), &pos);
+        new_monster(monster, randmonster(FALSE, get_level()+1), &pos, get_level()+1);
         if (bailout) debug("treasure rm bailout");
         monster->flags |= ISMEAN; //no sloughers in THIS room
         give_pack(monster);
       }
     }
   }
-  level--;
 }

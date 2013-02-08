@@ -254,7 +254,7 @@ void zap_polymorph(AGENT* monster, int y, int x)
 
   coord.y = y;
   coord.x = x;
-  new_monster(monster, rnd(26)+'A', &coord);
+  new_monster(monster, rnd(26)+'A', &coord, get_level());
   monster->oldch = ch;
   monster->pack = pack;
   if (can_see_monst(monster)) 

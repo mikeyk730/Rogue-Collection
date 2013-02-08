@@ -13,6 +13,7 @@
 #include "command.h"
 #include "rings.h"
 #include "hero.h"
+#include "level.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)
@@ -171,11 +172,11 @@ void status()
   getrc(&oy, &ox);
   yellow();
   //Level:
-  if (s_level!=level)
+  if (s_level!=get_level())
   {
-    s_level = level;
+    s_level = get_level();
     move(PT(22, 23), 0);
-    printw("Level:%-4d", level);
+    printw("Level:%-4d", get_level());
   }
   //Hits:
   if (s_hp!=player.stats.hp)

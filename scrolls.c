@@ -318,7 +318,7 @@ void read_create_monster()
   Coord position;
 
   if (plop_monster(player.pos.y, player.pos.x, &position) && (monster = create_agent()) != NULL)
-    new_monster(monster, randmonster(FALSE), &position);
+    new_monster(monster, randmonster(FALSE, get_level()), &position, get_level());
   else 
     ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 }

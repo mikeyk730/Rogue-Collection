@@ -37,7 +37,7 @@ void do_rooms()
   int endline;
 
   endline = maxrow+1;
-  old_lev = level;
+  old_lev = get_level();
   //bsze is the maximum room size
   bsze.x = COLS/3;
   bsze.y = endline/3;
@@ -55,7 +55,7 @@ void do_rooms()
       room = rnd_room();
     } while (room->flags&ISMAZE);
     room->flags |= ISGONE;
-    if (room->index>2 && level>10 && rnd(20)<level-9)
+    if (room->index>2 && get_level()>10 && rnd(20)<get_level()-9)
       room->flags |= ISMAZE;
   }
   //dig and populate all the rooms on the level
@@ -81,7 +81,7 @@ void do_rooms()
       }
       continue;
     }
-    if (rnd(10)<(level-1)) room->flags |= ISDARK;
+    if (rnd(10)<(get_level()-1)) room->flags |= ISDARK;
     //Find a place and size for a random room
     do
     {
@@ -92,13 +92,13 @@ void do_rooms()
     } while (room->pos.y==0);
     draw_room(room);
     //Put the gold in
-    if ((rnd(2)==0) && (!had_amulet() || (level>=max_level)))
+    if ((rnd(2)==0) && (!had_amulet() || (get_level()>=max_level)))
     {
       ITEM *gold;
 
       if ((gold = create_item(GOLD, 0))!=NULL)
       {
-        gold->gold_value = room->goldval = GOLDCALC;
+        gold->gold_value = room->goldval = rnd_gold();
         while (1)
         {
           byte gch;
@@ -125,7 +125,7 @@ void do_rooms()
           rnd_pos(room, &mp); 
           mch = get_tile_or_monster(mp.y, mp.x);
         } while (!isfloor(mch));
-        new_monster(monster, randmonster(FALSE), &mp);
+        new_monster(monster, randmonster(FALSE, get_level()), &mp, get_level());
         give_pack(monster);
       }
     }

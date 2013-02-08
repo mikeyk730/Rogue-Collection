@@ -2,10 +2,10 @@ const char* get_monster_name(char monster);
 int get_monster_carry_prob(char monster);
 
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
-char randmonster(bool wander);
+char randmonster(bool wander, int level);
 
 //new_monster: Pick a new monster and add it to the list
-void new_monster(AGENT *monster, byte type, Coord *cp);
+void new_monster(AGENT *monster, byte type, Coord *cp, int level);
 
 //f_restor(): restor initial damage string for flytraps
 void f_restor();

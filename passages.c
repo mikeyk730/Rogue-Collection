@@ -197,7 +197,7 @@ void door(struct Room *rm, Coord *cp)
 {
   int xit;
 
-  if (rnd(10)+1<level && rnd(5)==0)
+  if (rnd(10)+1<get_level() && rnd(5)==0)
   {
     set_tile(cp->y, cp->x, (cp->y==rm->pos.y || cp->y==rm->pos.y+rm->size.y-1)?HWALL:VWALL);
     unset_flag(cp->y, cp->x, F_REAL);
