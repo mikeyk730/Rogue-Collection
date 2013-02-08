@@ -177,9 +177,9 @@ void chg_str(int amt)
   add_str(&player.stats.str, amt);
   comp = player.stats.str;
   if (is_ring_on_hand(LEFT, R_ADDSTR)) 
-    add_str(&comp, -cur_ring[LEFT]->ring_level);
+    add_str(&comp, -get_ring(LEFT)->ring_level);
   if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
-    add_str(&comp, -cur_ring[RIGHT]->ring_level);
+    add_str(&comp, -get_ring(RIGHT)->ring_level);
   if (comp>max_stats.str) 
     max_stats.str = comp;
 }
@@ -234,7 +234,7 @@ char *vowelstr(const char *str)
 int is_current(ITEM *obj)
 {
   if (obj==NULL) return FALSE;
-  if (obj==get_current_armor() || obj==get_current_weapon() || obj==cur_ring[LEFT] || obj==cur_ring[RIGHT])
+  if (obj==get_current_armor() || obj==get_current_weapon() || obj==get_ring(LEFT) || obj==get_ring(RIGHT))
   {
     msg("That's already in use");
     return TRUE;

@@ -170,8 +170,6 @@ long seed = 0;         //Random number seed
 Coord oldpos; //Position before last look() call
 Coord delta;  //Change indicated to get_dir()
 
-ITEM *cur_ring[2]; //Which rings are being worn
-
 struct Room *oldrp; //Roomin(&oldpos)
 
 struct Stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the player

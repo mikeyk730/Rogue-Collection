@@ -156,11 +156,11 @@ void ring_on()
   if (obj->type!=RING) {msg("you can't put that on your finger"); goto no_ring;}
   //find out which hand to put it on
   if (is_current(obj)) goto no_ring;
-  if (cur_ring[LEFT]==NULL) ring = LEFT;
-  if (cur_ring[RIGHT]==NULL) ring = RIGHT;
-  if (cur_ring[LEFT]==NULL && cur_ring[RIGHT]==NULL) if ((ring = gethand())<0) goto no_ring;
+  if (get_ring(LEFT)==NULL) ring = LEFT;
+  if (get_ring(RIGHT)==NULL) ring = RIGHT;
+  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) if ((ring = gethand())<0) goto no_ring;
   if (ring<0) {msg("you already have a ring on each hand"); goto no_ring;}
-  cur_ring[ring] = obj;
+  set_ring(ring, obj);
   //Calculate the effect it has on the poor guy.
   switch (obj->which)
   {
@@ -182,12 +182,12 @@ void ring_off()
   ITEM *obj;
   char packchar;
 
-  if (cur_ring[LEFT]==NULL && cur_ring[RIGHT]==NULL) {msg("you aren't wearing any rings"); after = FALSE; return;}
-  else if (cur_ring[LEFT]==NULL) ring = RIGHT;
-  else if (cur_ring[RIGHT]==NULL) ring = LEFT;
+  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {msg("you aren't wearing any rings"); after = FALSE; return;}
+  else if (get_ring(LEFT)==NULL) ring = RIGHT;
+  else if (get_ring(RIGHT)==NULL) ring = LEFT;
   else if ((ring = gethand())<0) return;
   mpos = 0;
-  obj = cur_ring[ring];
+  obj = get_ring(ring);
   if (obj==NULL) {msg("not wearing such a ring"); after = FALSE; return;}
   packchar = pack_char(obj);
   if (can_drop(obj)) msg("was wearing %s(%c)", inv_name(obj, TRUE), packchar);
@@ -212,8 +212,8 @@ int gethand()
 //ring_eat: How much food does this ring use up?
 int ring_eat(int hand)
 {
-  if (cur_ring[hand]==NULL) return 0;
-  switch (cur_ring[hand]->which)
+  if (get_ring(hand)==NULL) return 0;
+  switch (get_ring(hand)->which)
   {
   case R_REGEN: return 2;
   case R_SUSTSTR: case R_SUSTARM: case R_PROTECT: case R_ADDSTR: case R_STEALTH: return 1;
@@ -246,7 +246,7 @@ char *ring_num(ITEM *obj)
 
 int is_ring_on_hand(int hand, int ring)
 {
-  return (cur_ring[hand] != NULL && cur_ring[hand]->which == ring);
+  return (get_ring(hand) != NULL && get_ring(hand)->which == ring);
 }
 
 int is_wearing_ring(int ring)

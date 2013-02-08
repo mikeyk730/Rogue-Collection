@@ -50,7 +50,7 @@ void command()
     else execcom();
     do_fuses();
     do_daemons();
-    for (ntimes = LEFT; ntimes<=RIGHT; ntimes++) if (cur_ring[ntimes]) switch (cur_ring[ntimes]->which)
+    for (ntimes = LEFT; ntimes<=RIGHT; ntimes++) if (get_ring(ntimes)) switch (get_ring(ntimes)->which)
     {
     case R_SEARCH: search(); break;
     case R_TELEPORT: if (rnd(50)==17) teleport(); break;

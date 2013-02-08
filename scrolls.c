@@ -329,10 +329,10 @@ void read_remove_curse()
     get_current_armor()->flags &= ~ISCURSED;
   if (get_current_weapon()) 
     get_current_weapon()->flags &= ~ISCURSED;
-  if (cur_ring[LEFT]) 
-    cur_ring[LEFT]->flags &= ~ISCURSED;
-  if (cur_ring[RIGHT])
-    cur_ring[RIGHT]->flags &= ~ISCURSED;
+  if (get_ring(LEFT)) 
+    get_ring(LEFT)->flags &= ~ISCURSED;
+  if (get_ring(RIGHT))
+    get_ring(RIGHT)->flags &= ~ISCURSED;
 
   ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
 }

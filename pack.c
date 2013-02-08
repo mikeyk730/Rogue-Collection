@@ -20,6 +20,17 @@ static int s_had_amulet = FALSE;
 
 ITEM *cur_armor;   //What a well dresssed rogue wears
 ITEM *cur_weapon;  //Which weapon he is wielding
+ITEM *cur_ring[2]; //Which rings are being worn
+
+ITEM* get_ring(int hand)
+{
+  return cur_ring[hand];
+}
+
+void set_ring(int hand, ITEM* item)
+{
+  cur_ring[hand] = item;
+}
 
 ITEM* get_current_weapon()
 {

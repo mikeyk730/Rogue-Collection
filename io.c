@@ -245,8 +245,8 @@ void status()
   if(s_ac!=(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac))
   {
     s_ac = (get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac);
-    if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= cur_ring[LEFT]->ring_level;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= cur_ring[RIGHT]->ring_level;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= get_ring(LEFT)->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= get_ring(RIGHT)->ring_level;
     move(23, PT(12, 52));
     printw("Armor:%-2d", AC(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac));
   }

@@ -175,7 +175,7 @@ int nymph_attack(AGENT* mp)
 
   steal = NULL;
   for (nobj = 0, obj = player.pack; obj!=NULL; obj = next(obj))
-    if (obj!=get_current_armor() && obj!=get_current_weapon() && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
+    if (obj!=get_current_armor() && obj!=get_current_weapon() && obj!=get_ring(LEFT) && obj!=get_ring(RIGHT) && is_magic(obj) && rnd(++nobj)==0) steal = obj;
   if (steal!=NULL)
   {
     remove_monster(mp, FALSE);
@@ -336,11 +336,11 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
     if (thdef->type==weap->enemy) {hplus += 4; dplus += 4;}
     if (weap==get_current_weapon())
     {
-      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->ring_level;
-      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->ring_level;
-      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->ring_level;
+      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += get_ring(LEFT)->ring_level;
+      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += get_ring(LEFT)->ring_level;
+      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += get_ring(RIGHT)->ring_level;
       else if (is_ring_on_hand(RIGHT, R_ADDHIT))
-        hplus += cur_ring[RIGHT]->ring_level;
+        hplus += get_ring(RIGHT)->ring_level;
     }
     cp = weap->damage;
     if (hurl && (weap->flags&ISMISL) && get_current_weapon()!=NULL && get_current_weapon()->which==weap->launcher)
@@ -363,8 +363,8 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
   if (def==&player.stats)
   {
     if (get_current_armor()!=NULL) def_arm = get_current_armor()->armor_class;
-    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->ring_level;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->ring_level;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= get_ring(LEFT)->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= get_ring(RIGHT)->ring_level;
   }
   for (;;)
   {
@@ -444,8 +444,8 @@ int save(int which)
 {
   if (which==VS_MAGIC)
   {
-    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= cur_ring[LEFT]->ring_level;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= cur_ring[RIGHT]->ring_level;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= get_ring(LEFT)->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= get_ring(RIGHT)->ring_level;
   }
   return save_throw(which, &player);
 }

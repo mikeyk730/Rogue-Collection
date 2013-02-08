@@ -104,9 +104,9 @@ char *inv_name(ITEM *obj, bool drop)
     strcat(pb, " (being worn)");
   if (obj==get_current_weapon()) 
     strcat(pb, " (weapon in hand)");
-  if (obj==cur_ring[LEFT]) 
+  if (obj==get_ring(LEFT)) 
     strcat(pb, " (on left hand)");
-  else if (obj==cur_ring[RIGHT])
+  else if (obj==get_ring(RIGHT))
     strcat(pb, " (on right hand)");
   if (drop && isupper(prbuf[0])) 
     prbuf[0] = tolower(prbuf[0]);
@@ -152,7 +152,7 @@ void drop()
 int can_drop(ITEM *op)
 {
   if (op==NULL) return TRUE;
-  if (op!=get_current_armor() && op!=get_current_weapon() && op!=cur_ring[LEFT] && op!=cur_ring[RIGHT]) return TRUE;
+  if (op!=get_current_armor() && op!=get_current_weapon() && op!=get_ring(LEFT) && op!=get_ring(RIGHT)) return TRUE;
   if (op->flags&ISCURSED) {msg("you can't.  It appears to be cursed"); return FALSE;}
   if (op==get_current_weapon()) set_current_weapon(NULL);
   else if (op==get_current_armor()) {
@@ -163,12 +163,12 @@ int can_drop(ITEM *op)
   {
     int hand;
 
-    if (op!=cur_ring[hand = LEFT]) if (op!=cur_ring[hand = RIGHT])
+    if (op!=get_ring(hand = LEFT)) if (op!=get_ring(hand = RIGHT))
     {
       debug("Candrop called with funny thing");
       return TRUE;
     }
-    cur_ring[hand] = NULL;
+    set_ring(hand, NULL);
     switch (op->which)
     {
     case R_ADDSTR: chg_str(-op->ring_level); break;
