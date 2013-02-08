@@ -11,5 +11,6 @@ void copy_flags(int y, int x, byte f);
 int get_level();
 int next_level();
 int prev_level();
+int max_level();
 
 int rnd_gold();

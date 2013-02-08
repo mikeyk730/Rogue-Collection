@@ -23,6 +23,7 @@
 #include "rings.h"
 #include "armor.h"
 #include "hero.h"
+#include "level.h"
 
 #define TOPSCORES 10
 
@@ -90,7 +91,7 @@ reread:
     strcpy(his_score.name, get_name());
     his_score.gold = amount;
     his_score.fate = flags?flags:monst;
-    his_score.level = max_level;
+    his_score.level = max_level();
     his_score.rank = player.stats.level;
     rank = add_scores(&his_score, &top_ten[0]);
   }

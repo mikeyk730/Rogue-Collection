@@ -31,7 +31,6 @@ void new_level(int do_implode)
 
   player.flags &= ~ISHELD; //unhold when you go down just in case
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
-  if (get_level()>max_level) max_level = get_level();
 
   //Clean things off from last level
   clear_level();
@@ -44,7 +43,7 @@ void new_level(int do_implode)
   //Throw away stuff left on the previous level (if anything)
   free_item_list(&lvl_obj);
   do_rooms(); //Draw rooms
-  if (max_level==1)
+  if (max_level()==1)
   {
     clear();
   }
@@ -90,7 +89,7 @@ void put_things()
 
   //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
   //This is real unfair - I'm going to allow one thing, that way the poor guy will get some food.
-  if (had_amulet() && get_level()<max_level) i = MAXOBJ-1;
+  if (had_amulet() && get_level()<max_level()) i = MAXOBJ-1;
   else
   {
     //If he is really deep in the dungeon and he hasn't found the amulet yet, put it somewhere on the ground

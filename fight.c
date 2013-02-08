@@ -378,7 +378,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
       damage = dplus+proll+add_dam(att->str);
       //special goodies for the commercial version of rogue
       //make it easier on level one
-      if (thdef==&player && max_level==1) damage = (damage+1)/2;
+      if (thdef==&player && max_level()==1) damage = (damage+1)/2;
       def->hp -= max(0, damage);
       did_hit = TRUE;
     }

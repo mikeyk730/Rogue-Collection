@@ -27,6 +27,7 @@ struct Room passages[MAXPASS] =
 };
 
 int s_level = 1;
+int s_max_level = 1;
 
 int INDEX(int y, int x)
 {
@@ -76,12 +77,20 @@ int get_level()
 
 int next_level()
 {
-  return ++s_level;
+  ++s_level;
+  if (s_level > s_max_level) 
+    s_max_level = s_level;
+  return s_level;
 }
 
 int prev_level()
 {
   return --s_level;
+}
+
+int max_level()
+{
+  return s_max_level;
 }
 
 int rnd_gold()
