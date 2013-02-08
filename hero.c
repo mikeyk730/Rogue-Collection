@@ -90,7 +90,7 @@ void digest()
     oldfood = food_left;
     //If you are in 40 column mode use food twice as fast (e.g. 3-(80/40) = 1, 3-(40/40) = 2 : pretty gross huh?)
     deltafood = ring_eat(LEFT)+ring_eat(RIGHT)+1;
-    if (terse) deltafood *= 2;
+    if (in_small_screen_mode()) deltafood *= 2;
     food_left -= deltafood;
     if (food_left<MORE_TIME && oldfood>=MORE_TIME) {hungry_state = 2; msg("you are starting to feel weak");}
     else if (food_left<2*MORE_TIME && oldfood>=2*MORE_TIME) {hungry_state = 1; msg("you are starting to get hungry");}

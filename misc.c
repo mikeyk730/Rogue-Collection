@@ -367,10 +367,10 @@ void help(char **helpscr)
   while (*helpscr && answer!=ESCAPE)
   {
     isfull = FALSE;
-    if ((hcount%(terse?23:46))==0) clear();
+    if ((hcount%(in_small_screen_mode()?23:46))==0) clear();
     //determine row and column
     hcol = 0;
-    if (terse)
+    if (in_small_screen_mode())
     {
       hrow = hcount%23;
       if (hrow==22) isfull = TRUE;
@@ -388,7 +388,7 @@ void help(char **helpscr)
     {
       if (*helpscr==0) 
         mvaddstr(24, 0, "--press space to continue--");
-      else if (terse) 
+      else if (in_small_screen_mode()) 
         mvaddstr(24, 0, "--Space for more, Esc to continue--");
       else 
         mvaddstr(24, 0, "--Press space for more, Esc to continue--");

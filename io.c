@@ -26,11 +26,47 @@ static char *formats = "scud%", *bp, left_justify;
 static int min_width, max_width;
 static char ibuf[6];
 
+bool save_msg = TRUE;       //Remember last msg
+bool terse = FALSE;
+bool expert = FALSE;
+
+int short_msgs()
+{
+  return in_small_screen_mode() || in_brief_mode();
+}
+
+void set_small_screen_mode(int enable)
+{
+  terse = enable;
+}
+
+int in_small_screen_mode()
+{
+  return terse;
+}
+
+void set_brief_mode(int enable)
+{
+  expert = enable;
+}
+
+int in_brief_mode()
+{
+  return expert;
+}
+
 //msg: Display a message at the top of the screen.
 void ifterse(const char *tfmt, const char *fmt, int a1, int a2, int a3, int a4, int a5)
 {
   if (expert) msg(tfmt, a1, a2, a3, a4, a5);
   else msg(fmt, a1, a2, a3, a4, a5);
+}
+
+void unsaved_msg(const char *fmt, int a1, int a2, int a3, int a4, int a5)
+{
+    save_msg = FALSE;
+    msg(fmt, a1, a2, a3, a4, a5);
+    save_msg = TRUE;
 }
 
 void msg(const char *fmt, int a1, int a2, int a3, int a4, int a5)
@@ -380,5 +416,5 @@ void SIG2()
 
 char *noterse(char *str)
 {
-  return (terse || expert ? "" : str);
+  return (short_msgs() ? "" : str);
 }

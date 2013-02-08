@@ -186,10 +186,14 @@ void execcom()
     case 's': search(); break;
     case 'z': if (get_dir()) do_zap(); else after = FALSE; break;
     case 'D': after = FALSE; discovered(); break;
-    case CTRL('T'): 
-      after = FALSE;
-      msg((expert ^= 1)?"Ok, I'll be brief":"Goodie, I can use big words again!"); 
-      break;
+    case CTRL('T'):
+      {
+        int new_value = !in_brief_mode();
+        set_brief_mode(new_value);
+        msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!"); 
+        after = FALSE;
+        break;
+      }
     case 'F': after = FALSE; do_macro(macro, MACROSZ); break;
     case CTRL('F'): after = FALSE; typeahead = macro; break;
     case CTRL('R'): after = FALSE; msg(huh); break;
@@ -235,14 +239,16 @@ void execcom()
         case 'Z': 
           after = FALSE;  show_map(FALSE); break;
         default:
-          after = FALSE; save_msg = FALSE; 
-          msg("illegal command '%s'", unctrl(ch)); 
+          after = FALSE; 
+          unsaved_msg("illegal command '%s'", unctrl(ch)); 
           count = 0; 
-          save_msg = TRUE;
         }
       }
       else{
-        after = FALSE; save_msg = FALSE; msg("illegal command '%s'", unctrl(ch)); count = 0; save_msg = TRUE; break;
+        after = FALSE; 
+        unsaved_msg("illegal command '%s'", unctrl(ch)); 
+        count = 0; 
+        break;
       }
     }
     if (take && do_take) pick_up(take);

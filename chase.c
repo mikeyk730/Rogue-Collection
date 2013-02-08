@@ -177,7 +177,7 @@ int can_see_monst(AGENT *monster)
   if (cur_weapon && cur_weapon->enemy == monster->type && !(cur_weapon->flags & DIDFLASH))
   {
     cur_weapon->flags |= DIDFLASH;
-    msg(flash, get_weapon_name(cur_weapon->which), terse || expert?"":intense);
+    msg(flash, get_weapon_name(cur_weapon->which), short_msgs()?"":intense);
   }
   return TRUE;
 }

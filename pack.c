@@ -225,7 +225,7 @@ ITEM *get_item(char *purpose, int type)
       //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
       if (gi_state && wasthing==pack_obj(ch, &och)) goto skip;
       if (once_only) {ch = '*'; goto skip;}
-      if (!terse && !expert) addmsg("which object do you want to ");
+      if (!short_msgs()) addmsg("which object do you want to ");
       msg("%s? (* for list): ", purpose);
       //ignore any alt characters that may be typed
       ch = readchar();

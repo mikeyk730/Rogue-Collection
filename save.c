@@ -18,7 +18,7 @@ void save_game()
 
   msg("");
   mpos = 0;
-  if (terse) addstr("Save file ? ");
+  if (in_small_screen_mode()) addstr("Save file ? ");
   else printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", s_save);
   getinfo(savename, 19);
   if (*savename==0) 

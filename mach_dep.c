@@ -78,10 +78,13 @@ int is_direction_key(int key)
 //setup: Get starting setup for all games
 void setup()
 {
-  terse = FALSE;
+  set_small_screen_mode(FALSE);
   maxrow = 23;
-  if (COLS==40) {maxrow = 22; terse = TRUE;}
-  expert = terse;
+  if (COLS==40) {
+    maxrow = 22; 
+    set_small_screen_mode(TRUE);
+  }
+  set_brief_mode(in_small_screen_mode());
 }
 
 //flush_type: Flush typeahead for traps, etc.

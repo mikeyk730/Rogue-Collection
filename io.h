@@ -1,7 +1,16 @@
+int short_msgs();
+
+void set_small_screen_mode(int enable);
+int in_small_screen_mode();
+
+void set_brief_mode(int enable);
+int in_brief_mode();
+
 //msg: Display a message at the top of the screen.
 void ifterse(const char *tfmt, const char *fmt, ...);
 
 void msg(const char *fmt, ...);
+void unsaved_msg(const char *fmt, ...);
 
 //addmsg: Add things to the current message
 void addmsg(const char *fmt, ...);

@@ -118,7 +118,7 @@ char *inv_name(ITEM *obj, bool drop)
 void chopmsg(char *s, char *shmsg, char *lnmsg, int arg1, int arg2, int arg3)
 {
   sprintf(s, lnmsg, arg1, arg2, arg3);
-  if (terse || expert) sprintf(s, shmsg, arg1, arg2, arg3);
+  if (short_msgs()) sprintf(s, shmsg, arg1, arg2, arg3);
 }
 
 //drop: Put something down
@@ -359,7 +359,7 @@ char *nothing(byte type)
   char *sp, *tystr;
 
   sprintf(prbuf, "Haven't discovered anything");
-  if (terse) sprintf(prbuf, "Nothing");
+  if (in_small_screen_mode()) sprintf(prbuf, "Nothing");
   sp = &prbuf[strlen(prbuf)];
   switch (type)
   {

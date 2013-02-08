@@ -152,7 +152,7 @@ void quit()
   move(0, 0);
   clrtoeol();
   move(0, 0);
-  if (!terse) addstr("Do you wish to ");
+  if (!in_small_screen_mode()) addstr("Do you wish to ");
   str_attr("end your quest now (%Yes/%No) ?");
   look(FALSE);
   answer = readchar();

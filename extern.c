@@ -140,9 +140,6 @@ bool faststate = FALSE;     //Toggle for find (see above)
 bool firstmove = FALSE;     //First move after setting door_stop
 bool playing = TRUE;        //True until he quits
 bool running = FALSE;       //True if player is running
-bool save_msg = TRUE;       //Remember last msg
-bool terse = FALSE;
-bool expert = FALSE;
 
 bool was_trapped = FALSE;   //Was a trap sprung
 

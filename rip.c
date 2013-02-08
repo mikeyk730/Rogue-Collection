@@ -252,7 +252,7 @@ void total_winner()
 
   clear();
 
-  if (!terse)
+  if (!in_small_screen_mode())
   {
     standout();
     printw("                                                               \n");

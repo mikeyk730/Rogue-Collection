@@ -405,7 +405,7 @@ void display_hit_msg(const char *er, const char *ee)
   char *s;
 
   addmsg(prname(er, TRUE));
-  switch ((terse || expert)?1:rnd(4))
+  switch ((short_msgs())?1:rnd(4))
   {
   case 0: s = " scored an excellent hit on "; break;
   case 1: s = " hit "; break;
@@ -421,7 +421,7 @@ void miss(const char *er, const char *ee)
   char *s;
 
   addmsg(prname(er, TRUE));
-  switch ((terse || expert)?1:rnd(4))
+  switch ((short_msgs())?1:rnd(4))
   {
   case 0: s = (er==0?" swing and miss":" swings and misses"); break;
   case 1: s = (er==0?" miss":" misses"); break;

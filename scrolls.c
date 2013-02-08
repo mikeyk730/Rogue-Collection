@@ -124,7 +124,7 @@ void init_names()
   for (i = 0; i<MAXSCROLLS; i++)
   {
     cp = prbuf;
-    nwords = rnd(terse?3:4)+2;
+    nwords = rnd(in_small_screen_mode()?3:4)+2;
     while (nwords--)
     {
       nsyl = rnd(2)+1;
@@ -254,7 +254,7 @@ void read_identify()
 void read_scare_monster()
 {
   //Reading it is a mistake and produces laughter at the poor rogue's boo boo.
-  msg(laugh, terse || expert ? "" : in_dist);
+  msg(laugh, short_msgs() ? "" : in_dist);
 }
 
 void read_food_detection()
@@ -364,7 +364,7 @@ void read_vorpalize_weapon()
   //
   //If he doesn't have a weapon I get to chortle again!
   if (cur_weapon==NULL || cur_weapon->type!=WEAPON) 
-    msg(laugh, terse || expert?"":in_dist);
+    msg(laugh, short_msgs()?"":in_dist);
   else
   {
     //You aren't allowed to doubly vorpalize a weapon.
@@ -381,7 +381,7 @@ void read_vorpalize_weapon()
       cur_weapon->hit_plus++;
       cur_weapon->damage_plus++;
       cur_weapon->charges = 1;
-      msg(flash, get_weapon_name(cur_weapon->which), terse || expert?"":intense);
+      msg(flash, get_weapon_name(cur_weapon->which), short_msgs()?"":intense);
     }
   }
 }
