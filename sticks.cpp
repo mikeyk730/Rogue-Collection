@@ -218,7 +218,7 @@ void zap_striking(ITEM* obj)
   {
     if (rnd(20)==0) {obj->damage = "3d8"; obj->damage_plus = 9;}
     else {obj->damage = "2d8"; obj->damage_plus = 4;}
-    fight(&coord, monster->type, obj, FALSE);
+    fight(&coord, obj, FALSE);
   }
 }
 
@@ -569,7 +569,7 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
           bolt.pos = pos;
           used = TRUE;
           if (monster->immune_to_fire() && strcmp(name, "flame")==0) 
-              msg("the flame bounces off the %s", get_monster_name(ch));
+              msg("the flame bounces off the %s", monster->get_monster_name());
           else
           {
             hit_monster(pos.y, pos.x, &bolt);

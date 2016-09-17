@@ -205,7 +205,7 @@ int hit_monster(int y, int x, ITEM *obj)
 
   mp.y = y;
   mp.x = x; 
-  return fight(&mp, monster->type, obj, TRUE);
+  return fight(&mp, obj, TRUE);
  }
 
 //num: Figure out the plus number for armor/weapons

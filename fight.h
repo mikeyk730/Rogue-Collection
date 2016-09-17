@@ -1,5 +1,5 @@
 //fight: The player attacks the monster.
-int fight(Coord *monster, char mn, ITEM *weap, bool thrown);
+int fight(Coord *monster, ITEM *weapon, bool thrown);
 
 //attack: The monster attacks the player
 int attack(AGENT *monster);

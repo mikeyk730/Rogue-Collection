@@ -121,7 +121,7 @@ hit_bound:
   default:
     running = FALSE;
     if (isupper(ch) || monster_at(nh.y, nh.x))
-      fight(&nh, ch, get_current_weapon(), FALSE);
+      fight(&nh, get_current_weapon(), FALSE);
     else
     {
       running = FALSE;

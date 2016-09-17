@@ -88,7 +88,7 @@ void do_miss(ITEM* weap, int thrown, AGENT* monster, const char* name)
 }
 
 //fight: The player attacks the monster.
-int fight(Coord *location, char mn, ITEM *weap, bool thrown)
+int fight(Coord *location, ITEM *weap, bool thrown)
 {
   const char *name;
   //Find the monster we want to fight
@@ -104,12 +104,12 @@ int fight(Coord *location, char mn, ITEM *weap, bool thrown)
   //todo: handle in general way
   if (monster->is_disguised() && !player.is_flag_set(IS_BLIND))
   {
-    mn = monster->disguise = monster->type;
+    monster->disguise = monster->type;
     if (thrown) 
       return FALSE;
     msg("wait! That's a %s!", monster->get_monster_name());
   }
-  name = player.is_flag_set(IS_BLIND) ? it : get_monster_name(mn);
+  name = player.is_flag_set(IS_BLIND) ? it : monster->get_monster_name();
 
   if (roll_em(&player, monster, weap, thrown) || (weap && weap->type==POTION))
   {
