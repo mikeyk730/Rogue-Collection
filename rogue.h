@@ -280,6 +280,7 @@ struct Agent
   byte oldch;                   //Character that was where it was
   Coord *dest;                  //Where it is running to
   short flags;                  //State word
+  int exflags;                  //More state;
   struct Stats stats;           //Physical description
   struct Room *room;            //Current room for thing
   struct Item *pack;            //What the thing is carrying
@@ -304,9 +305,7 @@ struct Agent
   bool can_hold() const {
       return type == 'F';
   }
-  bool can_split() const {
-      return type == 'S';
-  }
+  bool can_divide() const;
   bool shoots_fire() const {
       return type == 'D';
   }

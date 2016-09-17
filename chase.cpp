@@ -35,7 +35,7 @@ void runners()
     if (!monster->is_flag_set(IS_HELD) && monster->is_flag_set(IS_RUN))
     {
       dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
-      if (!(monster->is_flag_set(IS_SLOW) || (monster->can_split() && dist>3)) || monster->turn) //TODO: remove S check
+      if (!(monster->is_flag_set(IS_SLOW) || (monster->can_divide() && dist>3)) || monster->turn)
         if(!do_chase(monster)) 
             continue;
       if (monster->is_flag_set(IS_HASTE)) 

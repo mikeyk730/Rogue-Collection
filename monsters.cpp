@@ -32,14 +32,21 @@ static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 #define ___  1
 #define XX  10
 
+const int EX_CAN_DIVIDE = 0x0001;
+
+bool Agent::can_divide() const
+{
+    return (exflags & EX_CAN_DIVIDE) != 0;
+}
+
 //Array containing information on all the various types of monsters
 struct Monster
 {
-  std::string name;         //What to call the monster
+  std::string name;   //What to call the monster
   int carry;          //Probability of carrying something
   short flags;        //Things about the monster
   struct Stats stats; //Initial stats
-  short exflags; //todo, populate elsewhere?
+  int exflags;        //todo, populate elsewhere?
 };
 
 struct Monster monsters[26] =
@@ -64,7 +71,7 @@ struct Monster monsters[26] =
   { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 0 },
   { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0 },
   { "rattlesnake",      0,                 IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             }, 0 },
-  { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, 0 },
+  { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, EX_CAN_DIVIDE },
   { "troll",           50,        IS_REGEN|IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     }, 0 },
   { "ur-vile",          0,                 IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" }, 0 },
   { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, 0 },
@@ -174,6 +181,7 @@ void new_monster(AGENT *monster, byte type, Coord *position, int level)
   monster->oldch = '@';
   monster->room = roomin(position);
   monster->flags = defaults->flags;
+  monster->exflags = defaults->exflags;
   monster->stats = defaults->stats;
   monster->stats.level += level_add;
   monster->stats.hp = monster->stats.max_hp = roll(monster->stats.level, 8);

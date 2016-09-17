@@ -82,7 +82,7 @@ void do_miss(ITEM* weap, int thrown, AGENT* monster, const char* name)
     display_throw_msg(weap, name, "misses", "missed");
   else
     miss(NULL, name);
-  if (monster->can_split() && rnd(100)>25)
+  if (monster->can_divide() && rnd(100)>25)
     slime_split(monster);
 }
 
