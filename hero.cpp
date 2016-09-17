@@ -146,3 +146,8 @@ int get_hungry_state()
 {
   return hungry_state;
 }
+
+int get_food_left()
+{
+    return food_left;
+}

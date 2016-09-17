@@ -10,6 +10,7 @@ void adjust_purse(int delta);
 void ingest();
 void digest();
 int get_hungry_state();
+int get_food_left();
 
 void set_wizard(int enable);
 int is_wizard();

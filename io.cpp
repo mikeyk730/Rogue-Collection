@@ -1,6 +1,7 @@
 //Various input/output functions
 //io.c         1.4             (A.I. Design) 12/10/84
 
+#include <sstream>
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
@@ -272,14 +273,28 @@ void status()
     move(23, PT(22, 62));
     printw("%-12s", he_man[s_elvl-1]);
   }
+  //Show raw food counter in wizard mode
+  if (is_wizard()) {
+      s_hungry = get_food_left();
+      bold();
+      std::ostringstream ss;
+      ss << s_hungry;
+      move(24, PT(28, 58));
+      addstr(ss.str().c_str());
+      standend();
+  }
   //Hungry state
-  if (s_hungry!=get_hungry_state())
+  else if (s_hungry!=get_hungry_state())
   {
     s_hungry = get_hungry_state();
     move(24, PT(28, 58));
     addstr(state_name[0]);
     move(24, PT(28, 58));
-    if (get_hungry_state()) {bold(); addstr(state_name[get_hungry_state()]); standend();}
+    if (get_hungry_state()) {
+        bold(); 
+        addstr(state_name[get_hungry_state()]); 
+        standend();
+    }
   }
   standend();
   move(oy, ox);
