@@ -191,7 +191,7 @@ void enter_room(Coord *cp)
     return;
   }
   door_open(room);
-  if (!(room->flags&ISDARK) && !on(player, ISBLIND) && !(room->flags&ISMAZE))
+  if (!(room->flags&ISDARK) && !player.is_flag_set(ISBLIND) && !(room->flags&ISMAZE))
     for (y = room->pos.y; y<room->size.y+room->pos.y; y++)
     {
       move(y, room->pos.x);
@@ -219,7 +219,7 @@ void leave_room(Coord *cp)
 
   room = player.room;
   player.room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
-  floor = ((room->flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
+  floor = ((room->flags&ISDARK) && !player.is_flag_set(ISBLIND)) ? ' ' : FLOOR;
   if (room->flags&ISMAZE) floor = PASSAGE;
   for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
     for (x = room->pos.x+1; x<room->size.x+room->pos.x-1; x++) {
@@ -235,7 +235,7 @@ void leave_room(Coord *cp)
       default:
         //to check for monster, we have to strip out standout bit
         if (isupper(toascii(ch)))
-          if (on(player, SEEMONST)) {
+        if (player.is_flag_set(SEEMONST)) {
             standout(); 
             addch(ch); 
             standend(); 

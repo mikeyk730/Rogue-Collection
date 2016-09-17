@@ -202,12 +202,12 @@ AGENT *wake_monster(int y, int x)
   if ((monster = monster_at(y, x))==NULL) return monster;
   ch = monster->type;
   //Every time he sees mean monster, it might start chasing him
-  if (!on(*monster, ISRUN) && rnd(3)!=0 && on(*monster, ISMEAN) && !on(*monster, ISHELD) && !is_wearing_ring(R_STEALTH))
+  if (!monster->is_flag_set(ISRUN) && rnd(3)!=0 && monster->is_flag_set(ISMEAN) && !monster->is_flag_set(ISHELD) && !is_wearing_ring(R_STEALTH))
   {
     monster->dest = &player.pos;
     monster->flags |= ISRUN;
   }
-  if (ch=='M' && !on(player, ISBLIND) && !on(*monster, ISFOUND) && !on(*monster, ISCANC) && on(*monster, ISRUN))
+  if (ch=='M' && !player.is_flag_set(ISBLIND) && !monster->is_flag_set(ISFOUND) && !monster->is_flag_set(ISCANC) && monster->is_flag_set(ISRUN))
   {
     room = player.room;
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
@@ -216,7 +216,7 @@ AGENT *wake_monster(int y, int x)
       monster->flags |= ISFOUND;
       if (!save(VS_MAGIC))
       {
-        if (on(player, ISHUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
+        if (player.is_flag_set(ISHUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
         player.flags |= ISHUH;
         msg("the medusa's gaze has confused you");
@@ -224,7 +224,7 @@ AGENT *wake_monster(int y, int x)
     }
   }
   //Let greedy ones guard gold
-  if (on(*monster, ISGREED) && !on(*monster, ISRUN))
+  if (monster->is_flag_set(ISGREED) && !monster->is_flag_set(ISRUN))
   {
     monster->flags = monster->flags|ISRUN;
     if (player.room->goldval) monster->dest = &player.room->gold;

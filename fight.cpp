@@ -61,7 +61,7 @@ void do_hit(ITEM* weap, int thrown, AGENT* monster, const char* name)
     }
   }
 
-  if (on(player, CANHUH))
+  if (player.is_flag_set(CANHUH))
   {
     did_huh = TRUE;
     monster->flags |= ISHUH;
@@ -71,7 +71,7 @@ void do_hit(ITEM* weap, int thrown, AGENT* monster, const char* name)
 
   if (monster->stats.hp <= 0)
     killed(monster, TRUE);
-  else if (did_huh && !on(player, ISBLIND)) 
+  else if (did_huh && !player.is_flag_set(ISBLIND)) 
     msg("the %s appears confused", name);
 }
 
@@ -99,14 +99,14 @@ int fight(Coord *location, char mn, ITEM *weap, bool thrown)
   
   start_run(monster);
   //Let him know it was really a mimic (if it was one).
-  if (monster->type=='X' && monster->disguise!='X' && !on(player, ISBLIND))
+  if (monster->type=='X' && monster->disguise!='X' && !player.is_flag_set(ISBLIND))
   {
     mn = monster->disguise = 'X';
     if (thrown) 
       return FALSE;
     msg("wait! That's a Xeroc!");
   }
-  name = on(player, ISBLIND) ? it : get_monster_name(mn);
+  name = player.is_flag_set(ISBLIND) ? it : get_monster_name(mn);
 
   if (roll_em(&player, monster, weap, thrown) || (weap && weap->type==POTION))
   {
@@ -229,16 +229,16 @@ int attack(AGENT *monster)
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = FALSE;
   count = quiet = 0;
-  if (monster->type=='X' && !on(player, ISBLIND)) 
+  if (monster->type=='X' && !player.is_flag_set(ISBLIND)) 
     monster->disguise = 'X';
-  name = on(player, ISBLIND) ? it : get_monster_name(monster->type);
+  name = player.is_flag_set(ISBLIND) ? it : get_monster_name(monster->type);
   if (roll_em(monster, &player, NULL, FALSE))
   {
     display_hit_msg(name, NULL);
     if (player.stats.hp <= 0) 
       death(monster->type); //Bye bye life ...
    
-    if (!on(*monster, ISCANC)) {
+    if (!monster->is_flag_set(ISCANC)) {
       switch (monster->type)
       {
       case 'A': 
@@ -361,7 +361,8 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
     }
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
-  if (!on(*thdef, ISRUN)) hplus += 4;
+  if (!thdef->is_flag_set(ISRUN)) 
+      hplus += 4;
   def_arm = def->ac;
   if (def==&player.stats)
   {
@@ -397,7 +398,7 @@ char *prname(const char *who, bool upper)
 {
   *tbuf = '\0';
   if (who==0) strcpy(tbuf, you);
-  else if (on(player, ISBLIND)) strcpy(tbuf, it);
+  else if (player.is_flag_set(ISBLIND)) strcpy(tbuf, it);
   else {strcpy(tbuf, "the "); strcat(tbuf, who);}
   if (upper) *tbuf = toupper(*tbuf);
   return tbuf;
@@ -495,7 +496,7 @@ void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
     addmsg("the %s %s ", get_weapon_name(item->which), does);
   else 
     addmsg("you %s ", did);
-  on(player, ISBLIND) ? msg(it) : msg("the %s", name);
+  player.is_flag_set(ISBLIND) ? msg(it) : msg("the %s", name);
 }
 
 //remove: Remove a monster from the screen
@@ -568,7 +569,8 @@ void killed(AGENT *monster, bool print)
   if (print)
   {
     addmsg("you have defeated ");
-    if (on(player, ISBLIND)) msg(it);
+    if (player.is_flag_set(ISBLIND)) 
+        msg(it);
     else msg("the %s", get_monster_name(monster->type));
   }
   //Do adjustments if he went up a level

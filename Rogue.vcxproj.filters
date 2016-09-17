@@ -214,28 +214,28 @@
     <ClInclude Include="thing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="weapons.h">
-      <Filter>Items</Filter>
+    <ClInclude Include="hero.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="armor.h">
-      <Filter>Items</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="food.h">
-      <Filter>Items</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls.h">
-      <Filter>Items</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="potions.h">
-      <Filter>Items</Filter>
-    </ClInclude>
-    <ClInclude Include="sticks.h">
-      <Filter>Items</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rings.h">
-      <Filter>Items</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="hero.h">
+    <ClInclude Include="scrolls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sticks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="weapons.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

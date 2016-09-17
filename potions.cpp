@@ -154,10 +154,12 @@ void init_new_potion(ITEM* potion)
 void quaff_confusion()
 {
   p_know[P_CONFUSE] = TRUE;
-  if (!on(player, ISHUH))
+  if (!player.is_flag_set(ISHUH))
   {
-    if (on(player, ISHUH)) lengthen(unconfuse, rnd(8)+HUH_DURATION);
-    else fuse(unconfuse, 0, rnd(8)+HUH_DURATION);
+    if (player.is_flag_set(ISHUH)) 
+        lengthen(unconfuse, rnd(8)+HUH_DURATION);
+    else 
+        fuse(unconfuse, 0, rnd(8)+HUH_DURATION);
     player.flags |= ISHUH;
     msg("wait, what's going on? Huh? What? Who?");
   }
@@ -189,7 +191,11 @@ void quaff_gain_strength()
 
 void quaff_see_invisible()
 {
-  if (!on(player, CANSEE)) {fuse(unsee, 0, SEE_DURATION); look(FALSE); invis_on();}
+  if (!player.is_flag_set(CANSEE)) {
+      fuse(unsee, 0, SEE_DURATION); 
+      look(FALSE);
+      invis_on();
+  }
   sight();
   msg("this potion tastes like %s juice", fruit);
 }
@@ -205,8 +211,12 @@ void quaff_healing()
 void quaff_monster_detection()
 {
   fuse(turn_see_wrapper, TRUE, HUH_DURATION);
-  if (mlist==NULL) msg("you have a strange feeling%s.", noterse(" for a moment"));
-  else {p_know[P_MFIND] |= turn_see(FALSE); msg("");}
+  if (mlist==NULL) 
+      msg("you have a strange feeling%s.", noterse(" for a moment"));
+  else {
+      p_know[P_MFIND] |= turn_see(FALSE);
+      msg("");
+  }
 }
 
 void quaff_magic_detection()
@@ -289,7 +299,7 @@ void quaff_restore_strength()
 void quaff_blindness()
 {
   p_know[P_BLIND] = TRUE;
-  if (!on(player, ISBLIND))
+  if (!player.is_flag_set(ISBLIND))
   {
     player.flags |= ISBLIND;
     fuse(sight, 0, SEE_DURATION);
@@ -351,7 +361,7 @@ void invis_on()
   AGENT *th;
 
   player.flags |= CANSEE;
-  for (th = mlist; th!=NULL; th = next(th)) if (on(*th, ISINVIS) && can_see_monst(th))
+  for (th = mlist; th!=NULL; th = next(th)) if (th->is_flag_set(ISINVIS) && can_see_monst(th))
   {
     mvaddch(th->pos.y, th->pos.x, th->disguise);
   }

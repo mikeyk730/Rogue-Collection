@@ -72,7 +72,7 @@ void unsee()
   AGENT *th;
 
   for (th = mlist; th!=NULL; th = next(th))
-    if (on(*th, ISINVIS) && can_see_monst(th) && th->oldch!='@')
+    if (th->is_flag_set(ISINVIS) && can_see_monst(th) && th->oldch!='@')
       mvaddch(th->pos.y, th->pos.x, th->oldch);
   player.flags &= ~CANSEE;
 }
@@ -80,7 +80,7 @@ void unsee()
 //sight: He gets his sight back
 void sight()
 {
-  if (on(player, ISBLIND))
+  if (player.is_flag_set(ISBLIND))
   {
     extinguish(sight);
     player.flags &= ~ISBLIND;

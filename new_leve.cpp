@@ -77,7 +77,8 @@ void new_level(int do_implode)
   mvaddch(player.pos.y, player.pos.x, PLAYER);
   oldpos = player.pos;
   oldrp = player.room;
-  if (on(player, SEEMONST)) turn_see(FALSE);
+  if (player.is_flag_set(SEEMONST))
+      turn_see(FALSE);
 }
 
 //put_things: Put potions and scrolls on this level

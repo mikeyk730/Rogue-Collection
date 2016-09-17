@@ -26,7 +26,6 @@ typedef unsigned char byte;
 
 #define next(ptr)       (*ptr).l_next
 #define prev(ptr)       (*ptr).l_prev
-#define on(thing,flag)  (((thing).flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
 #define isgone(rp)      (((rp)->flags&ISGONE) && ((rp)->flags&ISMAZE)==0)
@@ -282,9 +281,14 @@ struct Agent
   struct Stats stats;           //Physical description
   struct Room *room;            //Current room for thing
   struct Item *pack;            //What the thing is carrying
+
+  bool is_flag_set(int flag) { 
+      return ((flags & flag) != 0);
+  }
 };
 
 typedef struct Agent AGENT;
+bool is_flag_set(AGENT& thing, int flag);
 
 //External variables
 

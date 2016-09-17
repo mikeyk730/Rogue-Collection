@@ -45,7 +45,7 @@ void do_move(int dy, int dx)
   if (bailout) {bailout = 0; msg("the crack widens ... "); descend(""); return;}
   if (no_move) {no_move--; msg("you are still stuck in the bear trap"); return;}
   //Do a confused move (maybe)
-  if (on(player, ISHUH) && rnd(5)!=0) rndmove(&player, &nh);
+  if (player.is_flag_set(ISHUH) && rnd(5) != 0) rndmove(&player, &nh);
   else
   {
 over:
@@ -66,12 +66,15 @@ over:
     set_tile(nh.y, nh.x, TRAP); 
     set_flag(nh.y, nh.x, F_REAL);
   }
-  else if (on(player, ISHELD) && ch!='F') {msg("you are being held"); return;}
+  else if (player.is_flag_set(ISHELD) && ch != 'F') { //TODO: remove direct check for F
+      msg("you are being held"); 
+      return; 
+  }
   switch (ch)
   {
   case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
 hit_bound:
-    if (running && isgone(player.room) && !on(player, ISBLIND))
+    if (running && isgone(player.room) && !player.is_flag_set(ISBLIND))
     {
       bool b1, b2;
 
@@ -139,7 +142,7 @@ void door_open(struct Room *room)
   byte ch;
   AGENT *item;
 
-  if (!(room->flags&ISGONE) && !on(player, ISBLIND))
+  if (!(room->flags&ISGONE) && !player.is_flag_set(ISBLIND))
     for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
       for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
       {
@@ -147,7 +150,8 @@ void door_open(struct Room *room)
         if (isupper(ch))
         {
           item = wake_monster(j, k);
-          if (item->oldch==' ' && !(room->flags&ISDARK) && !on(player, ISBLIND)) item->oldch = get_tile(j, k);
+          if (item->oldch==' ' && !(room->flags&ISDARK) && !player.is_flag_set(ISBLIND))
+              item->oldch = get_tile(j, k);
         }
       }
 }

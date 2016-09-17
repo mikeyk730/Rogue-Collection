@@ -192,7 +192,7 @@ const char* get_stick_type(int type)
 void zap_light()
 {
   //Ready Kilowatt wand.  Light up the room
-  if (on(player,ISBLIND)) msg("you feel a warm glow around you");
+  if (player.is_flag_set(ISBLIND)) msg("you feel a warm glow around you");
   else
   {
     ws_know[WS_LIGHT] = TRUE;
@@ -357,13 +357,17 @@ void zap_speed_monster(int which)
   {
     if (which==WS_HASTE_M)
     {
-      if (on(*monster, ISSLOW)) monster->flags &= ~ISSLOW;
-      else monster->flags |= ISHASTE;
+      if (monster->is_flag_set(ISSLOW))
+          monster->flags &= ~ISSLOW;
+      else 
+          monster->flags |= ISHASTE;
     }
     else
     {
-      if (on(*monster, ISHASTE)) monster->flags &= ~ISHASTE;
-      else monster->flags |= ISSLOW;
+      if (monster->is_flag_set(ISHASTE)) 
+          monster->flags &= ~ISHASTE;
+      else 
+          monster->flags |= ISSLOW;
       monster->turn = TRUE;
     }
     start_run(monster);

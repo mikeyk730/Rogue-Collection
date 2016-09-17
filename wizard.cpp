@@ -155,7 +155,10 @@ void teleport()
   else { player.pos = c; look(TRUE);}
   mvaddch(player.pos.y, player.pos.x, PLAYER);
   //turn off ISHELD in case teleportation was done while fighting a Flytrap
-  if (on(player, ISHELD)) {player.flags &= ~ISHELD; f_restor();}
+  if (player.is_flag_set(ISHELD)) { 
+      player.flags &= ~ISHELD; 
+      f_restor();
+  }
   no_move = 0;
   count = 0;
   running = FALSE;
@@ -163,8 +166,10 @@ void teleport()
   //Teleportation can be a confusing experience (unless you really are a wizard)
   if (!is_wizard())
   {
-    if (on(player, ISHUH)) lengthen(unconfuse, rnd(4)+2);
-    else fuse(unconfuse, 0, rnd(4)+2);
+    if (player.is_flag_set(ISHUH))
+        lengthen(unconfuse, rnd(4)+2);
+    else 
+        fuse(unconfuse, 0, rnd(4)+2);
     player.flags |= ISHUH;
   }
 }

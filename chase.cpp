@@ -32,15 +32,15 @@ void runners()
   for (monster = mlist; monster!=NULL; monster = next)
   {
     next = next(monster); //monster may be invalidated during iteration, save next here in case continue is hit
-    if (!on(*monster, ISHELD) && on(*monster, ISRUN))
+    if (!monster->is_flag_set(ISHELD) && monster->is_flag_set(ISRUN))
     {
       dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
-      if (!(on(*monster, ISSLOW) || (monster->type=='S' && dist>3)) || monster->turn) 
+      if (!(monster->is_flag_set(ISSLOW) || (monster->type == 'S' && dist>3)) || monster->turn) //TODO: remove S check
         if(!do_chase(monster)) continue;
-      if (on(*monster, ISHASTE)) 
+      if (monster->is_flag_set(ISHASTE)) 
         if(!do_chase(monster)) continue;
       dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
-      if (on(*monster, ISFLY) && dist>3) 
+      if (monster->is_flag_set(ISFLY) && dist>3)
         if(!do_chase(monster)) continue;
       monster->turn ^= TRUE;
     }
@@ -59,7 +59,7 @@ int do_chase(AGENT *monster)
   Coord tempdest; //Temporary destination for chaser
 
   monster_room = monster->room; //Find room of chaser
-  if (on(*monster, ISGREED) && monster_room->goldval == 0) 
+  if (monster->is_flag_set(ISGREED) && monster_room->goldval == 0) 
     monster->dest = &player.pos; //If gold has been taken, run after hero
 
   dest_room = player.room;
@@ -92,13 +92,16 @@ over:
   else
   {
     tempdest = *monster->dest;
+    //todo: remove direct D,I checks
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
-    if ((monster->type=='D' || monster->type=='I') && (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) && ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !on(*monster, ISCANC) && rnd(DRAGONSHOT)==0)
+    if ((monster->type=='D' || monster->type=='I') && 
+        (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) &&
+        ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->is_flag_set(ISCANC) && rnd(DRAGONSHOT)==0)
     {
       running = FALSE;
       delta.y = sign(player.pos.y-monster->pos.y);
       delta.x = sign(player.pos.x-monster->pos.x);
-      return fire_bolt(&monster->pos, &delta, monster->type=='D'?"flame":"frost");
+      return fire_bolt(&monster->pos, &delta, monster->type=='D'?"flame":"frost"); //todo: remove D
     }
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
@@ -127,7 +130,7 @@ over:
   {
     if (monster->oldch==' ' && cansee(monster->pos.y, monster->pos.x) && get_tile(monster->pos.y, monster->pos.x)==FLOOR)
       mvaddch(monster->pos.y, monster->pos.x, (char)FLOOR);
-    else if (monster->oldch==FLOOR && !cansee(monster->pos.y, monster->pos.x) && !on(player, SEEMONST))
+    else if (monster->oldch==FLOOR && !cansee(monster->pos.y, monster->pos.x) && !player.is_flag_set(SEEMONST))
       mvaddch(monster->pos.y, monster->pos.x, ' ');
     else
       mvaddch(monster->pos.y, monster->pos.x, monster->oldch);
@@ -145,7 +148,7 @@ over:
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
     mvaddch(ch_ret.y, ch_ret.x, monster->disguise);
   }
-  else if (on(player, SEEMONST))
+  else if (player.is_flag_set(SEEMONST))
   {
     standout();
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
@@ -162,11 +165,11 @@ over:
 int can_see_monst(AGENT *monster)
 {
   // player is blind
-  if (on(player, ISBLIND))
+  if (player.is_flag_set(ISBLIND))
     return FALSE;
 
   //monster is invisible, and can't see invisible
-  if (on(*monster, ISINVIS) && !on(player, CANSEE))
+  if (monster->is_flag_set(ISINVIS) && !player.is_flag_set(CANSEE))
     return FALSE;
   
   if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x) >= LAMP_DIST &&
@@ -204,7 +207,7 @@ void chase(AGENT *monster, Coord *chasee_pos)
 
   chaser_pos = &monster->pos;
   //If the thing is confused, let it move randomly. Phantoms are slightly confused all of the time, and bats are quite confused all the time
-  if ((on(*monster, ISHUH) && rnd(5)!=0) || (monster->type=='P' && rnd(5)==0) || (monster->type=='B' && rnd(2)==0))
+  if ((monster->is_flag_set(ISHUH) && rnd(5)!=0) || (monster->type=='P' && rnd(5)==0) || (monster->type=='B' && rnd(2)==0))
   {
     //get a valid random move
     rndmove(monster, &ch_ret);
@@ -266,7 +269,7 @@ int cansee(int y, int x)
   struct Room *room;
   Coord tp;
 
-  if (on(player, ISBLIND)) return FALSE;
+  if (player.is_flag_set(ISBLIND)) return FALSE;
   if (DISTANCE(y, x, player.pos.y, player.pos.x)<LAMP_DIST) return TRUE;
   //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
   tp.y = y;
