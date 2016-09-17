@@ -390,7 +390,7 @@ struct monster monsters[26] =
   { "ice monster",      0,               ISMEAN, { XX,   15,  1,  9, ___, "1d2"             } },
   { "jabberwock",      70,                    0, { XX, 4000, 15,  6, ___, "2d12/2d4"        } },
   { "kestral",          0,         ISMEAN|ISFLY, { XX,    1,  1,  7, ___, "1d4"             } },
-  { "leprechaun", ISGREED,                    0, { XX,   10,  3,  8, ___, "1d2"             } },
+  { "leprechaun",       0,                    0, { XX,   10,  3,  8, ___, "1d2"             } },
   { "medusa",          40,               ISMEAN, { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     } },
   { "nymph",          100,                    0, { XX,   37,  3,  9, ___, "0d0"             } },
   { "orc",             15,              ISGREED, { XX,    5,  1,  6, ___, "1d8"             } },
