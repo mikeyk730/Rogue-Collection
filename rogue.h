@@ -316,10 +316,16 @@ struct Agent
   bool shoots_ice() const {
       return type == 'I';
   }
-  bool causes_confusion() const
-  {
+  bool causes_confusion() const {
       return type == 'M';
   }
+  bool is_mimic() const {
+      return type == 'X';
+  }
+  bool is_disguised() const {
+      return is_mimic() && type != disguise;
+  }
+
 
   /* todo:
   

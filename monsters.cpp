@@ -153,7 +153,7 @@ void new_monster(AGENT *monster, byte type, Coord *position, int level)
   //todo: remove F,X checks
   if (type=='F') 
     monster->stats.damage = f_damage;
-  if (type=='X') 
+  if (monster->is_mimic()) 
     set_xeroc_disguise(monster);
 
   if (is_wearing_ring(R_AGGR)) 
@@ -229,7 +229,7 @@ AGENT *wake_monster(int y, int x)
         if (player.is_flag_set(IS_HUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
         player.flags |= IS_HUH;
-        msg("the %s's gaze has confused you", monster->get_monster_name());//todo: remove hardcoded name
+        msg("the %s's gaze has confused you", monster->get_monster_name());
       }
     }
   }

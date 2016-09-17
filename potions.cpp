@@ -361,9 +361,11 @@ void invis_on()
   AGENT *th;
 
   player.flags |= CAN_SEE;
-  for (th = mlist; th!=NULL; th = next(th)) if (th->is_flag_set(IS_INVIS) && can_see_monst(th))
-  {
-    mvaddch(th->pos.y, th->pos.x, th->disguise);
+  for (th = mlist; th != NULL; th = next(th)) {
+      if (th->is_flag_set(IS_INVIS) && can_see_monst(th))
+      {
+          mvaddch(th->pos.y, th->pos.x, th->disguise);
+      }
   }
 }
 

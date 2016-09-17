@@ -100,12 +100,12 @@ int fight(Coord *location, char mn, ITEM *weap, bool thrown)
   start_run(monster);
   //Let him know it was really a mimic (if it was one).
   //todo: handle in general way
-  if (monster->type=='X' && monster->disguise!='X' && !player.is_flag_set(IS_BLIND))
+  if (monster->is_disguised() && !player.is_flag_set(IS_BLIND))
   {
-    mn = monster->disguise = 'X';
+    mn = monster->disguise = monster->type;
     if (thrown) 
       return FALSE;
-    msg("wait! That's a Xeroc!");
+    msg("wait! That's a %s!", monster->get_monster_name());
   }
   name = player.is_flag_set(IS_BLIND) ? it : get_monster_name(mn);
 
@@ -230,9 +230,8 @@ int attack(AGENT *monster)
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = FALSE;
   count = quiet = 0;
-  //todo: handle X in more general case
-  if (monster->type=='X' && !player.is_flag_set(IS_BLIND)) 
-    monster->disguise = 'X';
+  if (monster->is_disguised() && !player.is_flag_set(IS_BLIND)) 
+    monster->disguise = monster->type;
   name = player.is_flag_set(IS_BLIND) ? it : monster->get_monster_name();
   if (roll_em(monster, &player, NULL, FALSE))
   {

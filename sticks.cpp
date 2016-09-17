@@ -577,9 +577,10 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
             return FALSE; //zapping monster may have killed self, not safe to go on
           }
         }
-        else if (ch!='X' || monster->disguise=='X')
+        else if (!monster->is_disguised())
         {
-          if (start==&player.pos) start_run(monster);
+          if (start==&player.pos) 
+              start_run(monster);
           msg("the %s whizzes past the %s", name, get_monster_name(ch));
         }
       }
