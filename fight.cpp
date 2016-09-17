@@ -41,23 +41,23 @@ const char* you = "you";
 long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 
   20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
 
-void do_hit(ITEM* weap, int thrown, AGENT* monster, const char* name)
+void do_hit(ITEM* weapon, int thrown, AGENT* monster, const char* name)
 {
   bool did_huh = FALSE;
 
   if (thrown) 
-    display_throw_msg(weap, name, "hits", "hit");
+    display_throw_msg(weapon, name, "hits", "hit");
   else 
     display_hit_msg(NULL, name);
 
-  if (weap && weap->type==POTION)
+  if (weapon && weapon->type==POTION)
   {
-    affect_monster(weap, monster);
+    affect_monster(weapon, monster);
     if (!thrown)
     {
-      if (--weap->count == 0) {
-        detach_item(&player.pack, weap); 
-        discard_item(weap);
+      if (--weapon->count == 0) {
+        detach_item(&player.pack, weapon); 
+        discard_item(weapon);
       }
       set_current_weapon(NULL);
     }
@@ -77,10 +77,10 @@ void do_hit(ITEM* weap, int thrown, AGENT* monster, const char* name)
     msg("the %s appears confused", name);
 }
 
-void do_miss(ITEM* weap, int thrown, AGENT* monster, const char* name)
+void do_miss(ITEM* weapon, int thrown, AGENT* monster, const char* name)
 {
   if (thrown)
-    display_throw_msg(weap, name, "misses", "missed");
+    display_throw_msg(weapon, name, "misses", "missed");
   else
     miss(NULL, name);
   if (monster->can_divide() && rnd(100)>25)
@@ -88,7 +88,7 @@ void do_miss(ITEM* weap, int thrown, AGENT* monster, const char* name)
 }
 
 //fight: The player attacks the monster.
-int fight(Coord *location, ITEM *weap, bool thrown)
+int fight(Coord *location, ITEM *weapon, bool thrown)
 {
   const char *name;
   //Find the monster we want to fight
@@ -111,13 +111,13 @@ int fight(Coord *location, ITEM *weap, bool thrown)
   }
   name = player.is_flag_set(IS_BLIND) ? it : monster->get_monster_name();
 
-  if (roll_em(&player, monster, weap, thrown) || (weap && weap->type==POTION))
+  if (roll_em(&player, monster, weapon, thrown) || (weapon && weapon->type==POTION))
   {
-    do_hit(weap, thrown, monster, name);    
+    do_hit(weapon, thrown, monster, name);    
     return TRUE;
   }
 
-  do_miss(weap, thrown, monster, name);
+  do_miss(weapon, thrown, monster, name);
   return FALSE;
 }
 
@@ -322,7 +322,7 @@ void check_level()
 }
 
 //roll_em: Roll several attacks
-bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
+bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
 {
   struct Stats *att, *def;
   const char *cp;
@@ -334,21 +334,21 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 
   att = &thatt->stats;
   def = &thdef->stats;
-  if (weap==NULL) {
+  if (weapon==NULL) {
       cp = att->damage.c_str();
       dplus = 0; 
       hplus = 0;
   }
   else
   {
-    hplus = weap->hit_plus;
-    dplus = weap->damage_plus;
+    hplus = weapon->hit_plus;
+    dplus = weapon->damage_plus;
     //Check for vorpally enchanted weapon
-    if (is_vorpalized(weap, thdef)) {
+    if (is_vorpalized(weapon, thdef)) {
         hplus += 4; 
         dplus += 4;
     }
-    if (weap==get_current_weapon())
+    if (weapon==get_current_weapon())
     {
       if (is_ring_on_hand(LEFT, R_ADDDAM))
           dplus += get_ring(LEFT)->ring_level;
@@ -359,19 +359,19 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
       else if (is_ring_on_hand(RIGHT, R_ADDHIT))
         hplus += get_ring(RIGHT)->ring_level;
     }
-    cp = weap->damage;
-    if (hurl && (weap->flags&IS_MISL) && get_current_weapon()!=NULL && get_current_weapon()->which==weap->launcher)
+    cp = weapon->damage;
+    if (hurl && (weapon->flags&IS_MISL) && get_current_weapon()!=NULL && get_current_weapon()->which==weapon->launcher)
     {
-      cp = weap->throw_damage;
+      cp = weapon->throw_damage;
       hplus += get_current_weapon()->hit_plus;
       dplus += get_current_weapon()->damage_plus;
     }
     //Drain a staff of striking
-    if (weap->type==STICK && weap->which==WS_HIT && --weap->charges<0)
+    if (weapon->type==STICK && weapon->which==WS_HIT && --weapon->charges<0)
     {
-      cp = weap->damage = "0d0";
-      weap->hit_plus = weap->damage_plus = 0;
-      weap->charges = 0;
+      cp = weapon->damage = "0d0";
+      weapon->hit_plus = weapon->damage_plus = 0;
+      weapon->charges = 0;
     }
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.

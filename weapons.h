@@ -14,7 +14,7 @@ const char *short_name(ITEM *obj);
 void fall(ITEM *obj, bool pr);
 
 //init_weapon: Set up the initial goodies for a weapon
-void init_weapon(ITEM *weap, byte type);
+void init_weapon(ITEM *weapon, byte type);
 
 //hit_monster: Does the missile hit the monster?
 int hit_monster(int y, int x, ITEM *obj);

@@ -32,16 +32,16 @@ static struct init_weps
   int iw_flags;   //Miscellaneous flags
 } init_dam[MAXWEAPONS] =
 {
-  "2d4", "1d3", NONE,     0,             //Mace
-  "3d4", "1d2", NONE,     0,             //Long sword
-  "1d1", "1d1", NONE,     0,             //Bow
+  "2d4", "1d3", NONE,     0,               //Mace
+  "3d4", "1d2", NONE,     0,               //Long sword
+  "1d1", "1d1", NONE,     0,               //Bow
   "1d1", "2d3", BOW,      IS_MANY|IS_MISL, //Arrow
-  "1d6", "1d4", NONE,     IS_MISL,        //Dagger
-  "4d4", "1d2", NONE,     0,             //2h sword
+  "1d6", "1d4", NONE,     IS_MISL,         //Dagger
+  "4d4", "1d2", NONE,     0,               //2h sword
   "1d1", "1d3", NONE,     IS_MANY|IS_MISL, //Dart
-  "1d1", "1d1", NONE,     0,             //Crossbow
+  "1d1", "1d1", NONE,     0,               //Crossbow
   "1d2", "2d5", CROSSBOW, IS_MANY|IS_MISL, //Crossbow bolt
-  "2d3", "1d6", NONE,     IS_MISL         //Spear
+  "2d3", "1d6", NONE,     IS_MISL          //Spear
 };
 
 
@@ -182,18 +182,18 @@ void fall(ITEM *obj, bool pr)
 }
 
 //init_weapon: Set up the initial goodies for a weapon
-void init_weapon(ITEM *weap, byte type)
+void init_weapon(ITEM *weapon, byte type)
 {
   static int group = 2;
   struct init_weps *iwp;
 
   iwp = &init_dam[type];
-  weap->damage = iwp->iw_dam;
-  weap->throw_damage = iwp->iw_hrl;
-  weap->launcher = iwp->iw_launch;
-  weap->flags = iwp->iw_flags;
-  if (weap->flags&IS_MANY) {weap->count = rnd(8)+8; weap->group = group++;}
-  else weap->count = 1;
+  weapon->damage = iwp->iw_dam;
+  weapon->throw_damage = iwp->iw_hrl;
+  weapon->launcher = iwp->iw_launch;
+  weapon->flags = iwp->iw_flags;
+  if (weapon->flags&IS_MANY) {weapon->count = rnd(8)+8; weapon->group = group++;}
+  else weapon->count = 1;
 }
 
 //hit_monster: Does the missile hit the monster?
