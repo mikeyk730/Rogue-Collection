@@ -208,7 +208,7 @@ void vampire_wraith_attack(int type)
 
     if (type=='W')
     {
-      if (player.stats.exp==0) death('W'); //All levels gone
+      if (player.stats.exp==0) death(type); //All levels gone
       if (--player.stats.level==0) {player.stats.exp = 0; player.stats.level = 1;}
       else player.stats.exp = e_levels[player.stats.level-1]+1;
       fewer = roll(1, 10);

@@ -32,12 +32,90 @@ static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 #define ___  1
 #define XX  10
 
-const int EX_CAN_DIVIDE = 0x0001;
+const int EX_DIVIDES      = 0x0001;
+const int EX_SHOOTS_ICE   = 0x0002;
+const int EX_SHOOTS_FIRE  = 0x0004;
+const int EX_RUSTS_ARMOR  = 0x0008;
+const int EX_HOLDS        = 0x0010;
+const int EX_STATIONARY   = 0x0020;
+const int EX_MIMICS       = 0x0040;
+const int EX_CONFUSES     = 0x0080;
+const int EX_STEALS_GOLD  = 0x0100;
+const int EX_STEALS_ITEMS = 0x0200;
+const int EX_DRAINS_STR   = 0x0400;
+const int EX_DRAINS_EXP   = 0x0800;
+const int EX_DRAINS_MAXHP = 0x1000;
+
 
 bool Agent::can_divide() const
 {
-    return (exflags & EX_CAN_DIVIDE) != 0;
+    return (exflags & EX_DIVIDES) != 0;
 }
+
+bool Agent::is_stationary() const {
+    return (exflags & EX_STATIONARY) != 0;
+}
+
+bool Agent::can_hold() const {
+    return (exflags & EX_HOLDS) != 0;
+}
+
+bool Agent::shoots_fire() const {
+    return (exflags & EX_SHOOTS_FIRE) != 0;
+}
+
+bool Agent::immune_to_fire() const {
+    return shoots_fire();
+}
+
+bool Agent::shoots_ice() const {
+    return (exflags & EX_SHOOTS_ICE) != 0;
+}
+
+bool Agent::causes_confusion() const {
+    return (exflags & EX_CONFUSES) != 0;
+}
+
+bool Agent::is_mimic() const {
+    return (exflags & EX_MIMICS) != 0;
+}
+
+bool Agent::is_disguised() const {
+    return is_mimic() && type != disguise;
+}
+
+bool Agent::steals_gold() const {
+    return (exflags & EX_STEALS_GOLD) != 0;
+}
+
+bool Agent::steals_items() const {
+    return (exflags & EX_STEALS_ITEMS) != 0;
+}
+
+bool Agent::drains_life() const {
+    return (exflags & EX_DRAINS_MAXHP) != 0;
+}
+
+bool Agent::drops_level() const {
+    return (exflags & EX_DRAINS_EXP) != 0;
+}
+
+bool Agent::drains_strength() const {
+    return (exflags & EX_DRAINS_STR) != 0;
+}
+
+bool Agent::rusts_armor() const {
+    return (exflags & EX_RUSTS_ARMOR) != 0;
+}
+
+//todo: make configurable
+bool Agent::is_monster_confused_this_turn() const {
+    return ((is_flag_set(IS_HUH) && rnd(5) != 0) ||
+        // Phantoms are slightly confused all of the time, and bats are quite confused all the time
+        type == 'P' && rnd(5) == 0 ||
+        type == 'B' && rnd(2) == 0);
+}
+
 
 //Array containing information on all the various types of monsters
 struct Monster
@@ -52,31 +130,30 @@ struct Monster
 struct Monster monsters[26] =
 {
   // Name           CARRY                  FLAG       str,  exp,lvl,amr, hpt, dmg
-  { "aquator",          0,                 IS_MEAN,  { XX,   20,  5,  2, ___, "0d0/0d0"         }, 0 },
+  { "aquator",          0,                 IS_MEAN,  { XX,   20,  5,  2, ___, "0d0/0d0"         }, EX_RUSTS_ARMOR },
   { "bat",              0,                  IS_FLY,  { XX,    1,  1,  3, ___, "1d2"             }, 0 },
   { "centaur",         15,                       0,  { XX,   25,  4,  4, ___, "1d6/1d6"         }, 0 },
-  { "dragon",         100,                 IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    }, 0 },
+  { "dragon",         100,                 IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    }, EX_SHOOTS_FIRE },
   { "emu",              0,                 IS_MEAN,  { XX,    2,  1,  7, ___, "1d2"             }, 0 },
-  //NOTE: the damage is %%% so that xstr won't merge this string with others, since it is written on in the program
-  { "venus flytrap",    0,                 IS_MEAN,  { XX,   80,  8,  3, ___, "%%%d0"           }, 0 },
+  { "venus flytrap",    0,                 IS_MEAN,  { XX,   80,  8,  3, ___, "%%%d0"           }, EX_HOLDS|EX_STATIONARY },
   { "griffin",         20, IS_MEAN|IS_FLY|IS_REGEN,  { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     }, 0 },
   { "hobgoblin",        0,                 IS_MEAN,  { XX,    3,  1,  5, ___, "1d8"             }, 0 },
-  { "ice monster",      0,                 IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, 0 },
+  { "ice monster",      0,                 IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, EX_SHOOTS_ICE },
   { "jabberwock",      70,                       0,  { XX, 4000, 15,  6, ___, "2d12/2d4"        }, 0 },
   { "kestral",          0,          IS_MEAN|IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             }, 0 },
-  { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             }, 0 },
-  { "medusa",          40,                 IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     }, 0 },
-  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             }, 0 },
+  { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             }, EX_STEALS_GOLD },
+  { "medusa",          40,                 IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     }, EX_CONFUSES },
+  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             }, EX_STEALS_ITEMS },
   { "orc",             15,                IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             }, 0 },
   { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 0 },
   { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0 },
-  { "rattlesnake",      0,                 IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             }, 0 },
+  { "rattlesnake",      0,                 IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             }, EX_DRAINS_STR },
   { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, EX_CAN_DIVIDE },
   { "troll",           50,        IS_REGEN|IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     }, 0 },
   { "ur-vile",          0,                 IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" }, 0 },
-  { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, 0 },
-  { "wraith",           0,                       0,  { XX,   55,  5,  4, ___, "1d6"             }, 0 },
-  { "xeroc",           30,                       0,  { XX,  100,  7,  7, ___, "3d4"             }, 0 },
+  { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, EX_DRAINS_MAXHP }, //todo: confirm these two
+  { "wraith",           0,                       0,  { XX,   55,  5,  4, ___, "1d6"             }, EX_DRAINS_EXP },   //todo
+  { "xeroc",           30,                       0,  { XX,  100,  7,  7, ___, "3d4"             }, EX_MIMICS },
   { "yeti",            30,                       0,  { XX,   50,  4,  6, ___, "1d6/1d6"         }, 0 },
   { "zombie",           0,                 IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             }, 0 }
 };
