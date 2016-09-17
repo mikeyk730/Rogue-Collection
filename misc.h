@@ -5,16 +5,13 @@ char *tr_name(byte type);
 void look(bool wakeup);
 
 //find_obj: Find the unclaimed object at y, x
-THING *find_obj(int y, int x);
-
-//eat: She wants to eat something, so let her try
-void eat();
+ITEM *find_obj(int y, int x);
 
 //chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
 void chg_str(int amt);
 
 //add_str: Perform the actual add, checking upper and lower bound
-void add_str(str_t *sp, int amt);
+void add_str(unsigned int *sp, int amt);
 
 //add_haste: Add a haste to the player
 int add_haste(bool potion);
@@ -23,16 +20,15 @@ int add_haste(bool potion);
 void aggravate();
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
-
-char *vowelstr(char *str);
+char *vowelstr(const char *str);
 
 //is_current: See if the object is one of the currently used items
-int is_current(THING *obj);
+int is_current(ITEM *obj);
 
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
 int get_dir();
 
-bool find_dir(byte ch, coord *cp);
+bool find_dir(byte ch, Coord *cp);
 
 //sign: Return the sign of the number
 int sign(int nm);
@@ -47,24 +43,21 @@ void call_it(bool know, char **guess);
 int step_ok(int ch);
 
 //goodch: Decide how good an object is and return the correct character for printing.
-int goodch(THING *obj);
+int goodch(ITEM *obj);
 
 //help: prints out help screens
 void help(char **helpscr);
 
 int DISTANCE(int y1, int x1, int y2, int x2);
 
-int _ce(coord *a, coord *b);
-
-int INDEX(int y, int x);
+int equal(Coord a, Coord b);
 
 int offmap(int y, int x);
 
-int winat(int y, int x);
+byte get_tile_or_monster(int y, int x);
 
 //search: Player gropes about him to find hidden things.
 void search();
-
 
 //d_level: He wants to go down a level
 void d_level();
@@ -77,5 +70,3 @@ void call();
 
 //prompt player for definition of macro
 void do_macro(char *buf, int sz);
-
-int istest();

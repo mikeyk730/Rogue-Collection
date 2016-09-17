@@ -28,46 +28,46 @@ int ch_attr = 0x7;
 
 byte color_attr[] =
 {
-    7, // 0 normal
-    2, // 1 green
-    3, // 2 cyan
-    4, // 3 red
-    5, // 4 magenta
-    6, // 5 brown
-    8, // 6 dark grey
-    9, // 7 light blue
-   10, // 8 light green
-   12, // 9 light red
-   13, //10 light magenta
-   14, //11 yellow
-   15, //12 uline
-    1, //13 blue
+  7, // 0 normal
+  2, // 1 green
+  3, // 2 cyan
+  4, // 3 red
+  5, // 4 magenta
+  6, // 5 brown
+  8, // 6 dark grey
+  9, // 7 light blue
+  10, // 8 light green
+  12, // 9 light red
+  13, //10 light magenta
+  14, //11 yellow
+  15, //12 uline
+  1, //13 blue
   112, //14 reverse
-   15, //15 high intensity
+  15, //15 high intensity
   112, //16 bold
-    0  //no more
+  0  //no more
 };
 
 byte monoc_attr[] =
 {
-    7, // 0 normal
-    7, // 1 green
-    7, // 2 cyan
-    7, // 3 red
-    7, // 4 magenta
-    7, // 5 brown
-    7, // 6 dark grey
-    7, // 7 light blue
-    7, // 8 light green
-    7, // 9 light red
-    7, //10 light magenta
-    7, //11 yellow
-   17, //12 uline
-    7, //13 blue
+  7, // 0 normal
+  7, // 1 green
+  7, // 2 cyan
+  7, // 3 red
+  7, // 4 magenta
+  7, // 5 brown
+  7, // 6 dark grey
+  7, // 7 light blue
+  7, // 8 light green
+  7, // 9 light red
+  7, //10 light magenta
+  7, //11 yellow
+  17, //12 uline
+  7, //13 blue
   120, //14 reverse
-    7, //15 white/hight
+  7, //15 white/hight
   120, //16 bold
-    0  //no more
+  0  //no more
 } ;
 
 byte *at_table;
@@ -81,9 +81,9 @@ byte spc_box[BX_SIZE] = {0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
 
 void putchr(int c, int attr)
 {
-   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-   SetConsoleTextAttribute(hConsole, attr);
-   putchar(c);
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleTextAttribute(hConsole, attr);
+  putchar(c);
 }
 
 //clear screen
@@ -97,34 +97,33 @@ bool cursor(bool ison)
 {
   bool oldstate;
   CONSOLE_CURSOR_INFO info;
-  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-  
-  GetConsoleCursorInfo(hConsole, &info);
-  //if (info.bVisible ? true : false == ison) return ison;
-  oldstate = info.bVisible ? true : false;
+  HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+  GetConsoleCursorInfo(h, &info);
+  if (info.bVisible == (ison ? TRUE : FALSE))
+      return ison;
+  oldstate = info.bVisible == TRUE;
   info.bVisible = ison;
-  SetConsoleCursorInfo(hConsole, &info);
+  SetConsoleCursorInfo(h, &info);
   return (oldstate);
 }
 
 //get curent cursor position
-void getrc(int *rp, int *cp)
+void getrc(int *r, int *c)
 {
-  *rp = c_row;
-  *cp = c_col;
+  *r = c_row;
+  *c = c_col;
 }
 
 //clrtoeol
 void clrtoeol()
 {
   int r, c;
-
-  //if (scr_ds==svwin_ds) return;
   getrc(&r, &c);
   blot_out(r, c, r, COLS-1);
 }
 
-void mvaddstr(int r, int c, char *s)
+void mvaddstr(int r, int c, const char *s)
 {
   move(r, c);
   addstr(s);
@@ -139,7 +138,7 @@ void mvaddch(int r, int c, char chr)
 int mvinch(int r, int c)
 {
   move(r, c);
-  return (inch());
+  return (curch());
 }
 
 //put the character on the screen and update the character position
@@ -154,39 +153,39 @@ int addch(byte chr)
     //if it is inside a room
     if (ch_attr==7) switch(chr)
     {
-      case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-        ch_attr = 6; //brown
+    case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+      ch_attr = 6; //brown
       break;
-      case FLOOR:
-        ch_attr = 10; //light green
+    case FLOOR:
+      ch_attr = 10; //light green
       break;
-      case STAIRS:
-        ch_attr = 160; //black on green
+    case STAIRS:
+      ch_attr = 160; //black on green
       break;
-      case TRAP:
-        ch_attr = 5; //magenta
+    case TRAP:
+      ch_attr = 5; //magenta
       break;
-      case GOLD: case PLAYER:
-        ch_attr = 14; //yellow
+    case GOLD: case PLAYER:
+      ch_attr = 14; //yellow
       break;
-      case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-        ch_attr = 9;
+    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+      ch_attr = 9;
       break;
-      case FOOD:
-        ch_attr = 4;
+    case FOOD:
+      ch_attr = 4;
       break;
     }
     //if inside a passage or a maze
     else if (ch_attr==112) switch(chr)
     {
-      case FOOD:
-        ch_attr = 116; //red
+    case FOOD:
+      ch_attr = 116; //red
       break;
-      case GOLD: case PLAYER:
-        ch_attr = 126; //yellow on white
+    case GOLD: case PLAYER:
+      ch_attr = 126; //yellow on white
       break;
-      case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-        ch_attr = 113; //blue on white
+    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+      ch_attr = 113; //blue on white
       break;
     }
     else if (ch_attr==15 && chr==STAIRS) ch_attr = 160;
@@ -206,7 +205,7 @@ int addch(byte chr)
   return (c_row);
 }
 
-void addstr(char *s)
+void addstr(const char *s)
 {
   while (*s) addch(*s++);
 }
@@ -247,23 +246,23 @@ CHAR_INFO buffer[MAXLINES][MAXCOLS];
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void wdump()
 {
-   HANDLE hOutput = GetStdHandle( STD_OUTPUT_HANDLE );
-   COORD dwBufferSize = { COLS,LINES }; 
-   COORD dwBufferCoord = { 0, 0 }; 
-   SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
-   ReadConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
-      dwBufferCoord, &rcRegion ); 
+  HANDLE hOutput = GetStdHandle( STD_OUTPUT_HANDLE );
+  COORD dwBufferSize = { COLS,LINES }; 
+  COORD dwBufferCoord = { 0, 0 }; 
+  SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
+  ReadConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
+    dwBufferCoord, &rcRegion ); 
 }
 
 //wrestor(windex): restore the window saved on disk
 void wrestor()
 {
-   HANDLE hOutput = (HANDLE)GetStdHandle( STD_OUTPUT_HANDLE ); 
-   COORD dwBufferSize = { COLS,LINES }; 
-   COORD dwBufferCoord = { 0, 0 }; 
-   SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
-   WriteConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
-      dwBufferCoord, &rcRegion ); 
+  HANDLE hOutput = (HANDLE)GetStdHandle( STD_OUTPUT_HANDLE ); 
+  COORD dwBufferSize = { COLS,LINES }; 
+  COORD dwBufferCoord = { 0, 0 }; 
+  SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
+  WriteConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
+    dwBufferCoord, &rcRegion ); 
 }
 
 //Some general drawing routines
@@ -298,13 +297,13 @@ void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 }
 
 //center a string according to how many columns there really are
-void center(int row, char *string)
+void center(int row, const char *string)
 {
   mvaddstr(row, (COLS-strlen(string))/2, string);
 }
 
 //printw(Ieeeee)
-void printw(char *format, ...)
+void printw(const char *format, ...)
 {
   char dest[1024 * 16];
   va_list argptr;
@@ -333,15 +332,15 @@ void scroll()
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
 void blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
-   int r, c;
-   for(r = ul_row; r <= lr_row; ++r)
-   {
-      for(c = ul_col; c <= lr_col; ++c)
-      {
-         move(r,c);
-         putchr(' ', ch_attr);
-      }
-   }
+  int r, c;
+  for(r = ul_row; r <= lr_row; ++r)
+  {
+    for(c = ul_col; c <= lr_col; ++c)
+    {
+      move(r,c);
+      putchr(' ', ch_attr);
+    }
+  }
   move(ul_row, ul_col);
 }
 
@@ -359,15 +358,14 @@ void fixup()
 //Clear the screen in an interesting fashion
 void implode()
 {
-  int j, delay, r, c, cinc = COLS/10/2, er, ec;
+  int j, r, c, cinc = COLS/10/2, er, ec;
 
   er = (COLS==80?LINES-3:LINES-4);
   //If the curtain is down, just clear the memory
-  delay = 500;
   for (r = 0, c = 0, ec = COLS-1; r<10; r++, c += cinc, er--, ec -= cinc)
   {
     vbox(sng_box, r, c, er, ec);
-    for (j = delay; j--;) ;
+    Sleep(25);
     for (j = r+1; j<=er-1; j++)
     {
       move(j, c+1); repchr(' ', cinc-1);
@@ -380,7 +378,7 @@ void implode()
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
 void drop_curtain()
 {
-  int r, j, delay=3000;
+  int r;
   cursor(FALSE);
   green();
   vbox(sng_box, 0, 0, LINES-1, COLS-1);
@@ -389,7 +387,7 @@ void drop_curtain()
   {
     move(r, 1);
     repchr(0xb1, COLS-2);
-    for (j = delay; j--;) ;
+    Sleep(20);
   }
   move(0, 0);
   standend();
@@ -397,24 +395,24 @@ void drop_curtain()
 
 void raise_curtain()
 {
-  int i, j, o, delay=3000;
-  for (i = 0, o = (LINES-1)*COLS*2; i<LINES; i++, o -= COLS*2)
-  {
-    for (j = delay; j--;) ;
-  }
+//  int i, o;
+//  for (i = 0, o = (LINES-1)*COLS*2; i<LINES; i++, o -= COLS*2)
+//  {
+//  }
 }
 
 void move(int y, int x) 
 { 
-   HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE) ; 
-   COORD position = { x, y } ; 
-   SetConsoleCursorPosition( hStdout, position ) ;
-   c_row = y;
-   c_col = x;
+  HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE); 
+  COORD p = {x, y};
+  SetConsoleCursorPosition(h, p);
+  c_row = y;
+  c_col = x;
 }
 
 char curch()
 {
-   return chat(c_row, c_col);
+  wdump(); // very excessive, could just get single char
+  return buffer[c_row][c_col].Char.AsciiChar;
 }
 

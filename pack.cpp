@@ -11,29 +11,83 @@
 #include "list.h"
 #include "things.h"
 #include "mach_dep.h"
+#include "level.h"
+#include "thing.h"
+#include "scrolls.h"
+#include "hero.h"
 
-THING *pack_obj(byte ch, byte *chp)
+static int s_had_amulet = FALSE;
+
+ITEM *cur_armor;   //What a well dresssed rogue wears
+ITEM *cur_weapon;  //Which weapon he is wielding
+ITEM *cur_ring[2]; //Which rings are being worn
+
+ITEM* get_ring(int hand)
 {
-  THING *obj;
+  return cur_ring[hand];
+}
+
+void set_ring(int hand, ITEM* item)
+{
+  cur_ring[hand] = item;
+}
+
+ITEM* get_current_weapon()
+{
+  return cur_weapon;
+}
+
+void set_current_weapon(ITEM* item)
+{
+  cur_weapon = item;
+}
+
+ITEM* get_current_armor()
+{
+  return cur_armor;
+}
+
+void set_current_armor(ITEM* item)
+{
+  cur_armor = item;
+}
+
+int does_item_group(int type) {
+  return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
+}
+
+ITEM *pack_obj(byte ch, byte *chp)
+{
+  ITEM *obj;
   byte och;
 
-  for (obj = ppack, och = 'a'; obj!=NULL; obj = next(obj), och++) if (ch==och) return obj;
+  for (obj = player.pack, och = 'a'; obj!=NULL; obj = next(obj), och++) if (ch==och) return obj;
   *chp = och;
   return NULL;
 }
 
-//add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void add_pack(THING *obj, bool silent)
+int get_pack_size()
 {
-  THING *op, *lp;
+  ITEM* item;
+  int count = 0;
+  for (item = player.pack; item; item = next(item))
+    count += item->group ? 1 : item->count;
+  return count;
+}
+
+//add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+void add_pack(ITEM *obj, bool silent)
+{
+  ITEM *op, *lp;
+  AGENT *monster;
   bool exact, from_floor;
   byte floor;
 
   if (obj==NULL)
   {
     from_floor = TRUE;
-    if ((obj = find_obj(hero.y, hero.x))==NULL) return;
-    floor = (proom->r_flags&ISGONE)?PASSAGE:FLOOR;
+    if ((obj = find_obj(player.pos.y, player.pos.x))==NULL) return;
+    floor = (player.room->flags&ISGONE)?PASSAGE:FLOOR;
   }
   else from_floor = FALSE;
   //Link it into the pack.  Search the pack for a object of similar type
@@ -44,53 +98,60 @@ void add_pack(THING *obj, bool silent)
   //to see if there is something in the same group and if there is then
   //increment the count.
 
-  if (obj->o_group)
+  if (obj->group)
   {
-    for (op = ppack; op!=NULL; op = next(op))
+    for (op = player.pack; op!=NULL; op = next(op))
     {
-      if (op->o_group==obj->o_group)
+      if (op->group==obj->group)
       {
         //Put it in the pack and notify the user
-        op->o_count += obj->o_count;
-        if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); chat(hero.y, hero.x) = floor;}
-        discard(obj);
+        op->count += obj->count;
+        if (from_floor) {
+          detach_item(&lvl_obj, obj);
+          mvaddch(player.pos.y, player.pos.x, floor);
+          set_tile(player.pos.y, player.pos.x, floor);
+        }
+        discard_item(obj);
         obj = op;
         goto picked_up;
       }
     }
   }
   //Check if there is room
-  if (inpack>=MAXPACK-1) {msg("you can't carry anything else"); return;}
+  if (get_pack_size() >= MAXPACK-1) {msg("you can't carry anything else"); return;}
   //Check for and deal with scare monster scrolls
-  if (obj->o_type==SCROLL && obj->o_which==S_SCARE) if (obj->o_flags&ISFOUND)
+  if (is_scare_monster_scroll(obj)) if (obj->flags&ISFOUND)
   {
-    detach(lvl_obj, obj);
-    mvaddch(hero.y, hero.x, floor);
-    chat(hero.y, hero.x) = floor;
+    detach_item(&lvl_obj, obj);
+    mvaddch(player.pos.y, player.pos.x, floor);
+    set_tile(player.pos.y, player.pos.x, floor);
     msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
     return;
   }
-  else obj->o_flags |= ISFOUND;
-  inpack++;
-  if (from_floor) {detach(lvl_obj, obj); mvaddch(hero.y, hero.x, floor); chat(hero.y, hero.x) = floor;}
+  else obj->flags |= ISFOUND;
+  if (from_floor) {
+    detach_item(&lvl_obj, obj);
+    mvaddch(player.pos.y, player.pos.x, floor); 
+    set_tile(player.pos.y, player.pos.x, floor);
+  }
   //Search for an object of the same type
   exact = FALSE;
-  for (op = ppack; op!=NULL; op = next(op)) if (obj->o_type==op->o_type) break;
+  for (op = player.pack; op!=NULL; op = next(op)) if (obj->type==op->type) break;
   if (op==NULL)
   {
     //Put it at the end of the pack since it is a new type
-    for (op = ppack; op!=NULL; op = next(op))
+    for (op = player.pack; op!=NULL; op = next(op))
     {
-      if (op->o_type!=FOOD) break;
+      if (op->type!=FOOD) break;
       lp = op;
     }
   }
   else
   {
     //Search for an object which is exactly the same
-    while (op->o_type==obj->o_type)
+    while (op->type==obj->type)
     {
-      if (op->o_which==obj->o_which) {exact = TRUE; break;}
+      if (op->which==obj->which) {exact = TRUE; break;}
       lp = op;
       if ((op = next(op))==NULL) break;
     }
@@ -98,36 +159,41 @@ void add_pack(THING *obj, bool silent)
   if (op==NULL)
   {
     //Didn't find an exact match, just stick it here
-    if (ppack==NULL) ppack = obj;
-    else {lp->l_next = obj; obj->l_prev = lp; obj->l_next = NULL;}
+    if (player.pack==NULL) 
+      player.pack = obj;
+    else {
+      lp->l_next = obj;
+      obj->l_prev = lp;
+      obj->l_next = NULL;
+    }
   }
   else
   {
     //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
-    if (exact && ISMULT(obj->o_type))
+    if (exact && does_item_group(obj->type))
     {
-      op->o_count++;
-      discard(obj);
+      op->count++;
+      discard_item(obj);
       obj = op;
       goto picked_up;
     }
     if ((obj->l_prev = prev(op))!=NULL) obj->l_prev->l_next = obj;
-    else ppack = obj;
+    else player.pack = obj;
     obj->l_next = op;
     op->l_prev = obj;
   }
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
-  for (op = mlist; op!=NULL; op = next(op))
-     if (op->t_dest && (op->t_dest->x==obj->o_pos.x) && (op->t_dest->y==obj->o_pos.y))
-        op->t_dest = &hero;
-  if (obj->o_type==AMULET) {amulet = TRUE; saw_amulet = TRUE;}
+  for (monster = mlist; monster!=NULL; monster = next(monster))
+    if (monster->dest && (monster->dest->x==obj->pos.x) && (monster->dest->y==obj->pos.y))
+      monster->dest = &player.pos;
+  if (obj->type==AMULET) { s_had_amulet = TRUE; }
   //Notify the user
   if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));
 }
 
 //inventory: List what is in the pack
-int inventory(THING *list, int type, char *lstr)
+int inventory(ITEM *list, int type, char *lstr)
 {
   byte ch;
   int n_objs;
@@ -137,7 +203,7 @@ int inventory(THING *list, int type, char *lstr)
   for (ch = 'a'; list!=NULL; ch++, list = next(list))
   {
     //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
-    if (type && type!=list->o_type && !(type==CALLABLE && (list->o_type==SCROLL || list->o_type==POTION || list->o_type==RING || list->o_type==STICK)) && !(type==WEAPON && list->o_type==POTION) && !(type==STICK && list->o_enemy && list->o_charges)) continue;
+    if (type && type!=list->type && !(type==CALLABLE && (list->type==SCROLL || list->type==POTION || list->type==RING || list->type==STICK)) && !(type==WEAPON && list->type==POTION) && !(type==STICK && list->enemy && list->charges)) continue;
     n_objs++;
     sprintf(inv_temp, "%c) %%s", ch);
     add_line(lstr, inv_temp, inv_name(list, FALSE));
@@ -153,38 +219,38 @@ int inventory(THING *list, int type, char *lstr)
 //pick_up: Add something to characters pack.
 void pick_up(byte ch)
 {
-  THING *obj;
+  ITEM *obj;
 
   switch (ch)
   {
-    case GOLD:
-      if ((obj = find_obj(hero.y, hero.x))==NULL) return;
-      money(obj->o_goldval);
-      detach(lvl_obj, obj);
-      discard(obj);
-      proom->r_goldval = 0;
+  case GOLD:
+    if ((obj = find_obj(player.pos.y, player.pos.x))==NULL) return;
+    money(obj->gold_value);
+    detach_item(&lvl_obj, obj);
+    discard_item(obj);
+    player.room->goldval = 0;
     break;
-    default:
-    case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
-      add_pack(NULL, FALSE);
+  default:
+  case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
+    add_pack(NULL, FALSE);
     break;
   }
 }
 
 //get_item: Pick something out of a pack for a purpose
-THING *get_item(char *purpose, int type)
+ITEM *get_item(char *purpose, int type)
 {
-  THING *obj;
+  ITEM *obj;
   byte ch;
   byte och;
   static byte lch;
-  static THING *wasthing = NULL;
+  static ITEM *wasthing = NULL;
   byte gi_state; //get item sub state
   int once_only = FALSE;
 
-  if (((!strncmp(s_menu, "sel", 3) && strcmp(purpose, "eat") && strcmp(purpose, "drop"))) || !strcmp(s_menu, "on")) once_only = TRUE;
+  if (strcmp(s_menu, "on") == 0) once_only = TRUE;
   gi_state = again;
-  if (ppack==NULL) msg("you aren't carrying anything");
+  if (player.pack==NULL) msg("you aren't carrying anything");
   else
   {
     ch = lch;
@@ -193,7 +259,7 @@ THING *get_item(char *purpose, int type)
       //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
       if (gi_state && wasthing==pack_obj(ch, &och)) goto skip;
       if (once_only) {ch = '*'; goto skip;}
-      if (!terse && !expert) addmsg("which object do you want to ");
+      if (!short_msgs()) addmsg("which object do you want to ");
       msg("%s? (* for list): ", purpose);
       //ignore any alt characters that may be typed
       ch = readchar();
@@ -203,7 +269,7 @@ skip:
       once_only = FALSE;
       if (ch=='*')
       {
-        if ((ch = inventory(ppack, type, purpose))==0) {after = FALSE; return NULL;}
+        if ((ch = inventory(player.pack, type, purpose))==0) {after = FALSE; return NULL;}
         if (ch==' ') continue;
         lch = ch;
       }
@@ -226,13 +292,13 @@ skip:
 }
 
 //pack_char: Return which character would address a pack object
-int pack_char(THING *obj)
+int pack_char(ITEM *obj)
 {
-  THING *item;
+  ITEM *item;
   byte c;
 
   c = 'a';
-  for (item = ppack; item!=NULL; item = next(item)) if (item==obj) return c; else c++;
+  for (item = player.pack; item!=NULL; item = next(item)) if (item==obj) return c; else c++;
   return '?';
 }
 
@@ -241,9 +307,25 @@ void money(int value)
 {
   byte floor;
 
-  floor = (proom->r_flags&ISGONE)?PASSAGE:FLOOR;
-  purse += value;
-  mvaddch(hero.y, hero.x, floor);
-  chat(hero.y, hero.x) = floor;
+  floor = (player.room->flags&ISGONE)?PASSAGE:FLOOR;
+  adjust_purse(value);
+  mvaddch(player.pos.y, player.pos.x, floor);
+  set_tile(player.pos.y, player.pos.x, floor);
   if (value>0) msg("you found %d gold pieces", value);
+}
+
+int has_amulet()
+{
+  ITEM* item;
+  for(item = player.pack; item != NULL; item = next(item))
+    if (item->type == AMULET)
+      return TRUE;
+
+  return FALSE;
+}
+
+//true if player ever had amulet
+int had_amulet()
+{
+  return s_had_amulet;
 }

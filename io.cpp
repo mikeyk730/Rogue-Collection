@@ -12,20 +12,53 @@
 #include "mach_dep.h"
 #include "strings.h"
 #include "command.h"
+#include "rings.h"
+#include "hero.h"
+#include "level.h"
+#include "pack.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)
 
 extern unsigned tick;
-extern char *msgbuf;
+char msgbuf[BUFSIZE];
 
 static int newpos = 0;
 static char *formats = "scud%", *bp, left_justify;
 static int min_width, max_width;
 static char ibuf[6];
 
+bool save_msg = TRUE;       //Remember last msg
+bool terse = FALSE;
+bool expert = FALSE;
+
+bool short_msgs()
+{
+  return in_small_screen_mode() || in_brief_mode();
+}
+
+void set_small_screen_mode(bool enable)
+{
+  terse = enable;
+}
+
+bool in_small_screen_mode()
+{
+  return terse;
+}
+
+void set_brief_mode(bool enable)
+{
+  expert = enable;
+}
+
+bool in_brief_mode()
+{
+  return expert;
+}
+
 //msg: Display a message at the top of the screen.
-void ifterse(char *tfmt, char *format, ...)
+void ifterse(const char *tfmt, const char *format, ...)
 {
    char dest[1024 * 16];
    va_list argptr;
@@ -35,7 +68,7 @@ void ifterse(char *tfmt, char *format, ...)
    msg(dest);
 }
 
-void msg(char *format, ...)
+void msg(const char *format, ...)
 {
   //if the string is "", just clear the line
   if (*format=='\0') {move(0, 0); clrtoeol(); mpos = 0; return;}
@@ -52,7 +85,7 @@ void msg(char *format, ...)
 }
 
 //addmsg: Add things to the current message
-void addmsg(char *format, ...)
+void addmsg(const char *format, ...)
 {
   char dest[1024 * 16];
   va_list argptr;
@@ -76,7 +109,7 @@ void endmsg()
 }
 
 //More: tag the end of a line and wait for a space
-void more(char *msg)
+void more(const char *msg)
 {
   int x, y;
   int i, msz;
@@ -91,7 +124,7 @@ void more(char *msg)
   if ((y+msz)>COLS) {move(x, y = COLS-msz); covered = TRUE;}
   for (i=0; i<msz; i++)
   {
-    mbuf[i] = inch();
+    mbuf[i] = curch();
     if ((i+y)<(COLS-2)) move(x, y+i+1);
     mbuf[i+1] = 0;
   }
@@ -120,9 +153,9 @@ void doadd(char *format, ...)
 }
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
-void putmsg(int msgline, char *msg)
+void putmsg(int msgline, const char *msg)
 {
-  char *curmsg, *lastmsg=0, *tmpmsg;
+  const char *curmsg, *lastmsg=0, *tmpmsg;
   int curlen;
 
   curmsg = msg;
@@ -147,7 +180,7 @@ void putmsg(int msgline, char *msg)
 }
 
 //scrl: scroll a message across the line
-void scrl(int msgline, char *str1, char *str2)
+void scrl(int msgline, const char *str1, const char *str2)
 {
   char *fmt;
 
@@ -182,8 +215,8 @@ void status()
 {
   int oy, ox;
   static int s_hungry;
-  static int s_lvl, s_pur = -1, s_hp, s_ac = 0;
-  static str_t s_str;
+  static int s_level, s_pur = -1, s_hp, s_ac = 0;
+  static unsigned int strength;
   static int s_elvl = 0;
   static char *state_name[] = {"      ", "Hungry", "Weak", "Faint","?"};
 
@@ -191,62 +224,62 @@ void status()
   getrc(&oy, &ox);
   yellow();
   //Level:
-  if (s_lvl!=level)
+  if (s_level!=get_level())
   {
-    s_lvl = level;
+    s_level = get_level();
     move(PT(22, 23), 0);
-    printw("Level:%-4d", level);
+    printw("Level:%-4d", get_level());
   }
   //Hits:
-  if (s_hp!=pstats.s_hpt)
+  if (s_hp!=player.stats.hp)
   {
-    s_hp = pstats.s_hpt;
+    s_hp = player.stats.hp;
     move(PT(22, 23), 12);
-    if (pstats.s_hpt<100) {
-       printw("Hits:%2d(%2d) ", pstats.s_hpt, max_hp);
-       //just in case they get wraithed with 3 digit max hits
-       addstr("  ");
+    if (player.stats.hp<100) {
+      printw("Hits:%2d(%2d) ", player.stats.hp, player.stats.max_hp);
+      //just in case they get wraithed with 3 digit max hits
+      addstr("  ");
     }
-    else printw("Hits:%3d(%3d) ", pstats.s_hpt, max_hp);
+    else printw("Hits:%3d(%3d) ", player.stats.hp, player.stats.max_hp);
   }
   //Str:
-  if (pstats.s_str!=s_str)
+  if (player.stats.str!=strength)
   {
-    s_str = pstats.s_str;
+    strength = player.stats.str;
     move(PT(22, 23), 26);
-    printw("Str:%2d(%2d) ", pstats.s_str, max_stats.s_str);
+    printw("Str:%2d(%2d) ", player.stats.str, max_stats.str);
   }
   //Gold
-  if(s_pur!=purse)
+  if(s_pur != get_purse())
   {
-    s_pur = purse;
+    s_pur = get_purse();
     move(23, PT(0, 40));
-    printw("Gold:%-5u", purse);
+    printw("Gold:%-5u", get_purse());
   }
   //Armor:
-  if(s_ac!=(cur_armor!=NULL?cur_armor->o_ac:pstats.s_arm))
+  if(s_ac!=(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac))
   {
-    s_ac = (cur_armor!=NULL?cur_armor->o_ac:pstats.s_arm);
-    if (ISRING(LEFT, R_PROTECT)) s_ac -= cur_ring[LEFT]->o_ac;
-    if (ISRING(RIGHT, R_PROTECT)) s_ac -= cur_ring[RIGHT]->o_ac;
+    s_ac = (get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac);
+    if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= get_ring(LEFT)->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= get_ring(RIGHT)->ring_level;
     move(23, PT(12, 52));
-    printw("Armor:%-2d", AC(cur_armor!=NULL?cur_armor->o_ac:pstats.s_arm));
+    printw("Armor:%-2d", AC(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac));
   }
   //Exp:
-  if (s_elvl!=pstats.s_lvl)
+  if (s_elvl!=player.stats.level)
   {
-    s_elvl = pstats.s_lvl;
+    s_elvl = player.stats.level;
     move(23, PT(22, 62));
     printw("%-12s", he_man[s_elvl-1]);
   }
   //Hungry state
-  if (s_hungry!=hungry_state)
+  if (s_hungry!=get_hungry_state())
   {
-    s_hungry = hungry_state;
+    s_hungry = get_hungry_state();
     move(24, PT(28, 58));
     addstr(state_name[0]);
     move(24, PT(28, 58));
-    if (hungry_state) {bold(); addstr(state_name[hungry_state]); standend();}
+    if (get_hungry_state()) {bold(); addstr(state_name[get_hungry_state()]); standend();}
   }
   standend();
   move(oy, ox);
@@ -265,7 +298,7 @@ void wait_for(char ch)
 void show_win(char *message)
 {
   mvaddstr(0, 0, message);
-  move(hero.y, hero.x);
+  move(player.pos.y, player.pos.x);
   wait_for(' ');
 }
 
@@ -282,25 +315,25 @@ int getinfo(char *str, int size)
   wason = cursor(TRUE);
   while (ret==1) switch (ch = getkey())
   {
-    case ESCAPE:
-      while (str!=retstr) {backspace(); readcnt--; str--;}
-      ret = *str = ESCAPE;
-      cursor(wason);
+  case ESCAPE:
+    while (str!=retstr) {backspace(); readcnt--; str--;}
+    ret = *str = ESCAPE;
+    cursor(wason);
     break;
-    case '\b':
-      if (str!=retstr) {backspace(); readcnt--; str--;}
+  case '\b':
+    if (str!=retstr) {backspace(); readcnt--; str--;}
     break;
-    default:
-      if (readcnt>=size) {beep(); break;}
-      readcnt++;
-      addch(ch);
-      *str++ = ch;
-      if ((ch&0x80)==0) break;
-    case '\n':
-    case '\r':
-      *str = 0;
-      cursor(wason);
-      ret = ch;
+  default:
+    if (readcnt>=size) {beep(); break;}
+    readcnt++;
+    addch(ch);
+    *str++ = ch;
+    if ((ch&0x80)==0) break;
+  case '\n':
+  case '\r':
+    *str = 0;
+    cursor(wason);
+    ret = ch;
     break;
   }
   return ret;
@@ -336,55 +369,12 @@ void backspace()
 
 void str_attr(char *str)
 {
-
-#ifdef LUXURY
-
-  int is_attr_on = FALSE, was_touched = FALSE;
-
-  while(*str)
-  {
-    if (was_touched==TRUE) {standend(); is_attr_on = FALSE; was_touched = FALSE;}
-    if (*str=='%')
-    {
-      str++;
-      switch(*str)
-      {
-        case 'u':
-          was_touched = TRUE;
-        case 'U':
-          uline();
-          is_attr_on = TRUE;
-          str++;
-        break;
-        case 'i':
-          was_touched = TRUE;
-        case 'I':
-          standout();
-          is_attr_on = TRUE;
-          str++;
-        break;
-        case '$':
-          if (is_attr_on) was_touched = TRUE;
-          str++;
-          continue;
-      }
-    }
-    if ((*str=='\n') || (*str=='\r')) {str++; printw("\n");}
-    else if (*str!=0) addch(*str++);
-  }
-  if (is_attr_on) standend();
-
-#else
-
   while (*str)
   {
     if (*str=='%') {str++; standout();}
     addch(*str++);
     standend();
   }
-
-#endif LUXURY
-
 }
 
 //key_state:
@@ -399,7 +389,7 @@ void SIG2()
 
   if (COLS==40) {nspot = 10; cspot = 19; tspot = 35;}
   else {nspot = 20; cspot = 39; tspot = 75;}
-  
+
   getrc(&x, &y);
   if (faststate!=new_fmode)
   {
@@ -443,5 +433,5 @@ void SIG2()
 
 char *noterse(char *str)
 {
-  return (terse || expert?nullstr:str);
+  return (short_msgs() ? "" : str);
 }

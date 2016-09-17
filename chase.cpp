@@ -14,181 +14,203 @@
 #include "main.h"
 #include "monsters.h"
 #include "list.h"
+#include "level.h"
+#include "weapons.h"
+#include "scrolls.h"
+#include "pack.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
-coord ch_ret; //Where chasing takes you
+Coord ch_ret; //Where chasing takes you
 
 //runners: Make all the running monsters move.
 void runners()
 {
-  THING *tp;
+  AGENT *monster, *next = NULL;
   int dist;
 
-  for (tp = mlist; tp!=NULL; tp = next(tp))
+  for (monster = mlist; monster!=NULL; monster = next)
   {
-    if (!on(*tp, ISHELD) && on(*tp, ISRUN))
+    next = next(monster); //monster may be invalidated during iteration, save next here in case continue is hit
+    if (!on(*monster, ISHELD) && on(*monster, ISRUN))
     {
-      dist = DISTANCE(hero.y, hero.x, tp->t_pos.y, tp->t_pos.x);
-      if (!(on(*tp, ISSLOW) || (tp->t_type=='S' && dist>3)) || tp->t_turn) do_chase(tp);
-      if (on(*tp, ISHASTE)) do_chase(tp);
-      dist = DISTANCE(hero.y, hero.x, tp->t_pos.y, tp->t_pos.x);
-      if (on(*tp, ISFLY) && dist>3) do_chase(tp);
-      tp->t_turn ^= TRUE;
+      dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
+      if (!(on(*monster, ISSLOW) || (monster->type=='S' && dist>3)) || monster->turn) 
+        if(!do_chase(monster)) continue;
+      if (on(*monster, ISHASTE)) 
+        if(!do_chase(monster)) continue;
+      dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
+      if (on(*monster, ISFLY) && dist>3) 
+        if(!do_chase(monster)) continue;
+      monster->turn ^= TRUE;
     }
+    next = next(monster);
   }
 }
 
 //do_chase: Make one thing chase another.
-void do_chase(THING *th)
+int do_chase(AGENT *monster)
 {
   int mindist = 32767, i, dist;
   bool door;
-  THING *obj;
-  struct room *oroom;
-  struct room *rer, *ree; //room of chaser, room of chasee
-  coord tempdest; //Temporary destination for chaser
+  ITEM *obj;
+  struct Room *oroom;
+  struct Room *monster_room, *dest_room; //room of chaser, room of chasee
+  Coord tempdest; //Temporary destination for chaser
 
-  rer = th->t_room; //Find room of chaser
-  if (on(*th, ISGREED) && rer->r_goldval==0) th->t_dest = &hero; //If gold has been taken, run after hero
-  ree = proom;
-  if (th->t_dest!=&hero) ree = roomin(th->t_dest); //Find room of chasee
-  if (ree==NULL) return;
+  monster_room = monster->room; //Find room of chaser
+  if (on(*monster, ISGREED) && monster_room->goldval == 0) 
+    monster->dest = &player.pos; //If gold has been taken, run after hero
+
+  dest_room = player.room;
+  if (monster->dest != &player.pos) 
+    dest_room = roomin(monster->dest); //Find room of chasee
+  if (dest_room==NULL) 
+    return TRUE;
+
   //We don't count doors as inside rooms for this routine
-  door = (chat(th->t_pos.y, th->t_pos.x)==DOOR);
+  door = (get_tile(monster->pos.y, monster->pos.x)==DOOR);
   //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
 
 over:
 
-  if (rer!=ree && (rer->r_flags&ISMAZE)==0)
+  if (monster_room!=dest_room && (monster_room->flags&ISMAZE)==0)
   {
     //loop through doors
-    for (i = 0; i<rer->r_nexits; i++)
+    for (i = 0; i<monster_room->num_exits; i++)
     {
-      dist = DISTANCE(th->t_dest->y, th->t_dest->x, rer->r_exit[i].y, rer->r_exit[i].x);
-      if (dist<mindist) {tempdest = rer->r_exit[i]; mindist = dist;}
+      dist = DISTANCE(monster->dest->y, monster->dest->x, monster_room->exits[i].y, monster_room->exits[i].x);
+      if (dist<mindist) {tempdest = monster_room->exits[i]; mindist = dist;}
     }
     if (door)
     {
-      rer = &passages[flat(th->t_pos.y, th->t_pos.x)&F_PNUM];
+      monster_room = &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM];
       door = FALSE;
       goto over;
     }
   }
   else
   {
-    tempdest = *th->t_dest;
+    tempdest = *monster->dest;
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
-    if ((th->t_type=='D' || th->t_type=='I') && (th->t_pos.y==hero.y || th->t_pos.x==hero.x || abs(th->t_pos.y-hero.y)==abs(th->t_pos.x-hero.x)) && ((dist = DISTANCE(th->t_pos.y, th->t_pos.x, hero.y, hero.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !on(*th, ISCANC) && rnd(DRAGONSHOT)==0)
+    if ((monster->type=='D' || monster->type=='I') && (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) && ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !on(*monster, ISCANC) && rnd(DRAGONSHOT)==0)
     {
       running = FALSE;
-      delta.y = sign(hero.y-th->t_pos.y);
-      delta.x = sign(hero.x-th->t_pos.x);
-      fire_bolt(&th->t_pos, &delta, th->t_type=='D'?"flame":"frost");
-      return;
+      delta.y = sign(player.pos.y-monster->pos.y);
+      delta.x = sign(player.pos.x-monster->pos.x);
+      return fire_bolt(&monster->pos, &delta, monster->type=='D'?"flame":"frost");
     }
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
-  chase(th, &tempdest);
-  if (ce(ch_ret, hero)) {attack(th); return;}
-  else if (ce(ch_ret, *th->t_dest))
+  chase(monster, &tempdest);
+  if (equal(ch_ret, player.pos)) {
+    return attack(monster); 
+  }
+  else if (equal(ch_ret, *monster->dest))
   {
-    for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (th->t_dest==&obj->o_pos)
+    for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (monster->dest==&obj->pos)
     {
       byte oldchar;
 
-      detach(lvl_obj, obj);
-      attach(th->t_pack, obj);
-      oldchar = chat(obj->o_pos.y, obj->o_pos.x) = (th->t_room->r_flags&ISGONE)?PASSAGE:FLOOR;
-      if (cansee(obj->o_pos.y, obj->o_pos.x)) mvaddch(obj->o_pos.y, obj->o_pos.x, oldchar);
-      th->t_dest = find_dest(th);
+      detach_item(&lvl_obj, obj);
+      attach_item(&monster->pack, obj);
+      oldchar = (monster->room->flags&ISGONE)?PASSAGE:FLOOR;
+      set_tile(obj->pos.y, obj->pos.x, oldchar);
+      if (cansee(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, oldchar);
+      monster->dest = find_dest(monster);
       break;
     }
   }
-  if (th->t_type=='F') return;
+  if (monster->type=='F') return TRUE;
   //If the chasing thing moved, update the screen
-  if (th->t_oldch!='@')
+  if (monster->oldch!='@')
   {
-    if (th->t_oldch==' ' && cansee(th->t_pos.y, th->t_pos.x) && _level[INDEX(th->t_pos.y, th->t_pos.x)]==FLOOR) mvaddch(th->t_pos.y, th->t_pos.x, (char)FLOOR);
-    else if (th->t_oldch==FLOOR && !cansee(th->t_pos.y, th->t_pos.x) && !on(player, SEEMONST)) mvaddch(th->t_pos.y, th->t_pos.x, ' ');
-    else mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
+    if (monster->oldch==' ' && cansee(monster->pos.y, monster->pos.x) && get_tile(monster->pos.y, monster->pos.x)==FLOOR)
+      mvaddch(monster->pos.y, monster->pos.x, (char)FLOOR);
+    else if (monster->oldch==FLOOR && !cansee(monster->pos.y, monster->pos.x) && !on(player, SEEMONST))
+      mvaddch(monster->pos.y, monster->pos.x, ' ');
+    else
+      mvaddch(monster->pos.y, monster->pos.x, monster->oldch);
   }
-  oroom = th->t_room;
-  if (!ce(ch_ret, th->t_pos))
+  oroom = monster->room;
+  if (!equal(ch_ret, monster->pos))
   {
-    if ((th->t_room = roomin(&ch_ret))==NULL) {th->t_room = oroom; return;}
-    if (oroom!=th->t_room) th->t_dest = find_dest(th);
-    th->t_pos = ch_ret;
+    if ((monster->room = roomin(&ch_ret))==NULL) {monster->room = oroom; return TRUE;}
+    if (oroom!=monster->room) monster->dest = find_dest(monster);
+    monster->pos = ch_ret;
   }
-  if (see_monst(th))
+  if (can_see_monst(monster))
   {
-    if (flat(ch_ret.y, ch_ret.x)&F_PASS) standout();
-    th->t_oldch = mvinch(ch_ret.y, ch_ret.x);
-    mvaddch(ch_ret.y, ch_ret.x, th->t_disguise);
+    if (get_flags(ch_ret.y, ch_ret.x)&F_PASS) standout();
+    monster->oldch = mvinch(ch_ret.y, ch_ret.x);
+    mvaddch(ch_ret.y, ch_ret.x, monster->disguise);
   }
   else if (on(player, SEEMONST))
   {
     standout();
-    th->t_oldch = mvinch(ch_ret.y, ch_ret.x);
-    mvaddch(ch_ret.y, ch_ret.x, th->t_type);
+    monster->oldch = mvinch(ch_ret.y, ch_ret.x);
+    mvaddch(ch_ret.y, ch_ret.x, monster->type);
   }
-  else th->t_oldch = '@';
-  if (th->t_oldch==FLOOR && oroom->r_flags&ISDARK) th->t_oldch = ' ';
+  else 
+    monster->oldch = '@';
+  if (monster->oldch==FLOOR && oroom->flags&ISDARK) monster->oldch = ' ';
   standend();
+  return TRUE;
 }
 
 //see_monst: Return TRUE if the hero can see the monster
-
-bool see_monst(THING *mp)
+int can_see_monst(AGENT *monster)
 {
-  if (on(player, ISBLIND)) return false;
-  if (on(*mp, ISINVIS) && !on(player, CANSEE)) return false;
-  if (DISTANCE(mp->t_pos.y, mp->t_pos.x, hero.y, hero.x)>=LAMPDIST && ((mp->t_room!=proom || (mp->t_room->r_flags&ISDARK) || (mp->t_room->r_flags&ISMAZE)))) return FALSE;
-  //If we are seeing the enemy of a vorpally enchanted weapon for the first time, give the player a hint as to what that weapon is good for.
-  if (cur_weapon!=NULL && mp->t_type==cur_weapon->o_enemy && ((cur_weapon->o_flags&DIDFLASH)==0))
+  // player is blind
+  if (on(player, ISBLIND))
+    return FALSE;
+
+  //monster is invisible, and can't see invisible
+  if (on(*monster, ISINVIS) && !on(player, CANSEE))
+    return FALSE;
+  
+  if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x) >= LAMP_DIST &&
+    ((monster->room != player.room || (monster->room->flags & ISDARK) || (monster->room->flags & ISMAZE)))) 
+    return FALSE;
+  
+  //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
+  //give the player a hint as to what that weapon is good for.
+  if (get_current_weapon() && get_current_weapon()->enemy == monster->type && !(get_current_weapon()->flags & DIDFLASH))
   {
-    cur_weapon->o_flags |= DIDFLASH;
-    msg(flash, w_names[cur_weapon->o_which], terse || expert?"":intense);
+    get_current_weapon()->flags |= DIDFLASH;
+    msg(flash, get_weapon_name(get_current_weapon()->which), short_msgs()?"":intense);
   }
   return true;
 }
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)
-void start_run(coord *runner)
+void start_run(AGENT* monster)
 {
-  THING *tp;
-
-  //If we couldn't find him, something is funny
-  tp = moat(runner->y, runner->x);
-  if (tp!=NULL)
-  {
-    //Start the beastie running
-    tp->t_flags |= ISRUN;
-    tp->t_flags &= ~ISHELD;
-    tp->t_dest = find_dest(tp);
-  }
-  else debug("start_run: moat == NULL ???");
+  //Start the beastie running
+  monster->flags |= ISRUN;
+  monster->flags &= ~ISHELD;
+  monster->dest = find_dest(monster);
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
-void chase(THING *tp, coord *ee)
+void chase(AGENT *monster, Coord *chasee_pos)
 {
   int x, y;
   int dist, thisdist;
-  THING *obj;
-  coord *er;
+  ITEM *obj;
+  Coord *chaser_pos;
   byte ch;
   int plcnt = 1;
 
-  er = &tp->t_pos;
+  chaser_pos = &monster->pos;
   //If the thing is confused, let it move randomly. Phantoms are slightly confused all of the time, and bats are quite confused all the time
-  if ((on(*tp, ISHUH) && rnd(5)!=0) || (tp->t_type=='P' && rnd(5)==0) || (tp->t_type=='B' && rnd(2)==0))
+  if ((on(*monster, ISHUH) && rnd(5)!=0) || (monster->type=='P' && rnd(5)==0) || (monster->type=='B' && rnd(2)==0))
   {
     //get a valid random move
-    rndmove(tp, &ch_ret);
-    dist = DISTANCE(ch_ret.y, ch_ret.x, ee->y, ee->x);
+    rndmove(monster, &ch_ret);
+    dist = DISTANCE(ch_ret.y, ch_ret.x, chasee_pos->y, chasee_pos->x);
     //Small chance that it will become un-confused
-    if (rnd(30)==17) tp->t_flags &= ~ISHUH;
+    if (rnd(30)==17) monster->flags &= ~ISHUH;
   }
   //Otherwise, find the empty spot next to the chaser that is closest to the chasee.
   else
@@ -196,20 +218,20 @@ void chase(THING *tp, coord *ee)
     int ey, ex;
 
     //This will eventually hold where we move to get closer. If we can't find an empty spot, we stay where we are.
-    dist = DISTANCE(er->y, er->x, ee->y, ee->x);
-    ch_ret = *er;
-    ey = er->y+1;
-    ex = er->x+1;
-    for (x = er->x-1; x<=ex; x++)
+    dist = DISTANCE(chaser_pos->y, chaser_pos->x, chasee_pos->y, chasee_pos->x);
+    ch_ret = *chaser_pos;
+    ey = chaser_pos->y+1;
+    ex = chaser_pos->x+1;
+    for (x = chaser_pos->x-1; x<=ex; x++)
     {
-      for (y = er->y-1; y<=ey; y++)
+      for (y = chaser_pos->y-1; y<=ey; y++)
       {
-        coord tryp;
+        Coord tryp;
 
         tryp.x = x;
         tryp.y = y;
-        if (offmap(y, x) || !diag_ok(er, &tryp)) continue;
-        ch = winat(y, x);
+        if (offmap(y, x) || !diag_ok(chaser_pos, &tryp)) continue;
+        ch = get_tile_or_monster(y, x);
         if (step_ok(ch))
         {
           //If it is a scroll, it might be a scare monster scroll so we need to look it up to see what type it is.
@@ -217,12 +239,12 @@ void chase(THING *tp, coord *ee)
           {
             for (obj = lvl_obj; obj!=NULL; obj = next(obj))
             {
-              if (y==obj->o_pos.y && x==obj->o_pos.x) break;
+              if (y==obj->pos.y && x==obj->pos.x) break;
             }
-            if (obj!=NULL && obj->o_which==S_SCARE) continue;
+            if (is_scare_monster_scroll(obj)) continue;
           }
           //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
-          thisdist = DISTANCE(y, x, ee->y, ee->x);
+          thisdist = DISTANCE(y, x, chasee_pos->y, chasee_pos->x);
           if (thisdist<dist) {plcnt = 1; ch_ret = tryp; dist = thisdist;}
           else if (thisdist==dist && rnd(++plcnt)==0) {ch_ret = tryp; dist = thisdist;}
         }
@@ -231,60 +253,46 @@ void chase(THING *tp, coord *ee)
   }
 }
 
-//roomin: Find what room some coordinates are in. NULL means they aren't in any room.
-struct room *roomin(coord *cp)
-{
-  struct room *rp;
-  byte *fp;
-
-  for (rp = rooms; rp<=&rooms[MAXROOMS-1]; rp++) if (cp->x<rp->r_pos.x+rp->r_max.x && rp->r_pos.x<=cp->x && cp->y<rp->r_pos.y+rp->r_max.y && rp->r_pos.y<=cp->y) return rp;
-  fp = &flat(cp->y, cp->x);
-  if (*fp&F_PASS) return &passages[*fp&F_PNUM];
-
-  debug("in some bizarre place (%d, %d)", cp->y, cp->x);
-  bailout++;
-  return NULL;
-}
-
 //diag_ok: Check to see if the move is legal if it is diagonal
-int diag_ok( coord *sp, coord *ep )
+int diag_ok( Coord *sp, Coord *ep )
 {
   if (ep->x==sp->x || ep->y==sp->y) return TRUE;
-  return (step_ok(chat(ep->y, sp->x)) && step_ok(chat(sp->y, ep->x)));
+  return (step_ok(get_tile(ep->y, sp->x)) && step_ok(get_tile(sp->y, ep->x)));
 }
 
 //cansee: Returns true if the hero can see a certain coordinate.
 int cansee(int y, int x)
 {
-  struct room *rer;
-  coord tp;
+  struct Room *room;
+  Coord tp;
 
   if (on(player, ISBLIND)) return FALSE;
-  if (DISTANCE(y, x, hero.y, hero.x)<LAMPDIST) return TRUE;
+  if (DISTANCE(y, x, player.pos.y, player.pos.x)<LAMP_DIST) return TRUE;
   //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
   tp.y = y;
   tp.x = x;
-  rer = roomin(&tp);
-  return (rer==proom && !(rer->r_flags&ISDARK));
+  room = roomin(&tp);
+  return (room==player.room && !(room->flags&ISDARK));
 }
 
 //find_dest: find the proper destination for the monster
-coord *find_dest(THING *tp)
+Coord *find_dest(AGENT *monster)
 {
-  THING *obj;
+  ITEM *obj;
   int prob;
-  struct room *rp;
+  struct Room *room;
 
-  if ((prob = monsters[tp->t_type-'A'].m_carry)<=0 || tp->t_room==proom || see_monst(tp)) return &hero;
-  rp = tp->t_room;
+  if ((prob = get_monster_carry_prob(monster->type)) <= 0 || monster->room == player.room || can_see_monst(monster)) 
+    return &player.pos;
+  room = monster->room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))
   {
-    if (obj->o_type==SCROLL && obj->o_which==S_SCARE) continue;
-    if (roomin(&obj->o_pos)==rp && rnd(100)<prob)
+    if (is_scare_monster_scroll(obj)) continue;
+    if (roomin(&obj->pos)==room && rnd(100)<prob)
     {
-      for (tp = mlist; tp!=NULL; tp = next(tp)) if (tp->t_dest==&obj->o_pos) break;
-      if (tp==NULL) return &obj->o_pos;
+      for (monster = mlist; monster!=NULL; monster = next(monster)) if (monster->dest==&obj->pos) break;
+      if (monster==NULL) return &obj->pos;
     }
   }
-  return &hero;
+  return &player.pos;
 }

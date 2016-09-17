@@ -1,17 +1,17 @@
 //_detach: Takes an item out of whatever linked list it might be in
-void _detach(THING **list, THING *item);
+void detach_item(ITEM **list, ITEM *item);
 
 //_attach: add an item to the head of a list
-void _attach(THING **list, THING *item);
+void attach_item(ITEM **list, ITEM *item);
 
 //_free_list: Throw the whole blamed thing away
-void _free_list(THING **ptr);
+void free_item_list(ITEM **ptr);
 
-//new_item: Get a new item with a specified size
-THING *new_item();
+//_detach: Takes an item out of whatever linked list it might be in
+void detach_agent(AGENT **list, AGENT *item);
 
-//talloc: simple allocation of a THING
-THING *talloc();
+//_attach: add an item to the head of a list
+void attach_agent(AGENT **list, AGENT *item);
 
-//discard: Free up an item
-int discard(THING *item);
+//_free_list: Throw the whole blamed thing away
+void free_agent_list(AGENT **ptr);

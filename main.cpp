@@ -25,13 +25,18 @@
 #include "mach_dep.h"
 #include "curses.h"
 #include "io.h"
-#include "init.h"
 #include "new_leve.h"
 #include "misc.h"
 #include "rip.h"
 #include "save.h"
 #include "env.h"
 #include "command.h"
+#include "things.h"
+#include "rings.h"
+#include "sticks.h"
+#include "potions.h"
+#include "scrolls.h"
+#include "hero.h"
 
 int bwflag = FALSE;
 
@@ -39,12 +44,10 @@ int bwflag = FALSE;
 int main(int argc, char **argv)
 {
   char *curarg, *savfile = 0;
-  
-  init_ds();
+
   setenv("rogue.opt");
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.
   if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;
-  dnum = 0;
   while (--argc)
   {
     curarg = *(++argv);
@@ -52,8 +55,7 @@ int main(int argc, char **argv)
     {
       switch (curarg[1])
       {
-        case 'R': case 'r': savfile = s_save; break;
-        case 's': case 'S': winit(); noscore = TRUE; score(0, 0, 0); fatal(""); break;
+      case 'R': case 'r': savfile = s_save; break;
       }
     }
     else if (savfile==0) savfile = curarg;
@@ -64,8 +66,8 @@ int main(int argc, char **argv)
     winit();
     if (bwflag) forcebw();
     credits();
-    if (dnum==0) dnum = srand2();
-    seed = dnum;
+    if (seed == 0) 
+      seed = srand2();
     init_player(); //Set up initial player stats
     init_things(); //Set up probabilities of things
     init_names(); //Set up names of scrolls
@@ -74,13 +76,13 @@ int main(int argc, char **argv)
     init_materials(); //Set up materials of wands
     setup();
     drop_curtain();
-    new_level(); //Draw current level
+    new_level(FALSE); //Draw current level
     //Start up daemons and fuses
     daemon(doctor, 0);
-    fuse(swander, 0, WANDERTIME);
+    fuse(swander, 0, WANDER_TIME);
     daemon(stomach, 0);
     daemon(runners, 0);
-    msg("Hello %s%s.", whoami, noterse(".  Welcome to the Dungeons of Doom"));
+    msg("Hello %s%s.", get_name(), noterse(".  Welcome to the Dungeons of Doom"));
     raise_curtain();
   }
   playit(savfile);
@@ -108,9 +110,9 @@ int rnd(int range)
 
 int srand2()
 {
-   int t = (int)time(0);
-   srand(t);
-   return t;
+  int t = (int)time(0);
+  srand(t);
+  return t;
 }
 
 //roll: Roll a number of dice
@@ -127,12 +129,12 @@ void playit(char *sname)
 {
   if (sname)
   {
-    restore(sname);
+    restore_game(sname);
     if (bwflag) forcebw();
     setup();
     cursor(FALSE);
   }
-  else {oldpos.x = hero.x; oldpos.y = hero.y; oldrp = roomin(&hero);}
+  else {oldpos.x = player.pos.x; oldpos.y = player.pos.y; oldrp = roomin(&player.pos);}
   while (playing) command(); //Command execution
   endit();
 }
@@ -152,7 +154,7 @@ void quit()
   move(0, 0);
   clrtoeol();
   move(0, 0);
-  if (!terse) addstr("Do you wish to ");
+  if (!in_small_screen_mode()) addstr("Do you wish to ");
   str_attr("end your quest now (%Yes/%No) ?");
   look(FALSE);
   answer = readchar();
@@ -160,8 +162,8 @@ void quit()
   {
     clear();
     move(0, 0);
-    printw("You quit with %u gold pieces\n", purse);
-    score(purse, 1, 0);
+    printw("You quit with %u gold pieces\n", get_purse());
+    score(get_purse(), 1, 0);
     fatal("");
   }
   else

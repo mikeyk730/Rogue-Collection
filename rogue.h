@@ -8,9 +8,6 @@
 #define REV  1
 #define VER  48
 
-#define bcopy(a,b)  memcpy(&(a),&(b),sizeof(b))
-#define setmem(a,b,c) memset(a,c,b)
-#define wsetmem(a,b,c) wmemset(a,c,b)
 typedef unsigned char byte;
 
 //Maximum number of different things
@@ -24,31 +21,15 @@ typedef unsigned char byte;
 #define NUMTHINGS    7  //number of types of things
 #define MAXPASS      13 //upper limit on number of passages
 #define MAXNAME      20 //Maximum Length of a scroll
-#define MAXITEMS     83 //Maximum number of randomly generated things
 
 //All the fun defines
 
 #define next(ptr)       (*ptr).l_next
 #define prev(ptr)       (*ptr).l_prev
-#define ce(a,b)         _ce(&(a),&(b))
-#define hero            player.t_pos
-#define pstats          player.t_stats
-#define ppack            player.t_pack
-#define proom           player.t_room
-#define max_hp          player.t_stats.s_maxhp
-#define attach(a,b)     _attach(&a,b)
-#define detach(a,b)     _detach(&a,b)
-#define free_list(a)    _free_list(&a)
-#define on(thing,flag)  (((thing).t_flags&(flag))!=0)
+#define on(thing,flag)  (((thing).flags&(flag))!=0)
 #define CTRL(ch)        (ch&037)
-#define GOLDCALC        (rnd(50+10*level)+2)
-#define ISRING(h,r)     (cur_ring[h]!=NULL && cur_ring[h]->o_which==r)
-#define ISWEARING(r)    (ISRING(LEFT,r) || ISRING(RIGHT,r))
-#define ISMULT(type)    (type==POTION || type==SCROLL || type==FOOD || type==GOLD)
-#define chat(y,x)       (_level[INDEX(y,x)])
-#define flat(y,x)       (_flags[INDEX(y,x)])
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
-#define isgone(rp)      (((rp)->r_flags&ISGONE) && ((rp)->r_flags&ISMAZE)==0)
+#define isgone(rp)      (((rp)->flags&ISGONE) && ((rp)->flags&ISMAZE)==0)
 
 #ifdef DEBUG
 #define debug           msg
@@ -85,43 +66,35 @@ typedef unsigned char byte;
 #define LRWALL  (0xbc)
 
 //Various constants
-
-#define BEARTIME     spread(3)
-#define SLEEPTIME    spread(5)
-#define HEALTIME     spread(30)
-#define HOLDTIME     spread(2)
-#define WANDERTIME   spread(70)
-#define HUHDURATION  spread(20)
-#define SEEDURATION  spread(300)
-#define HUNGERTIME   spread(1300)
-#define MORETIME     150
-#define STOMACHSIZE  2000
-#define STARVETIME   850
+#define BEAR_TIME    spread(3)
+#define SLEEP_TIME   spread(5)
+#define HOLD_TIME    spread(2)
+#define WANDER_TIME  spread(70)
+#define HUH_DURATION spread(20)
+#define SEE_DURATION spread(300)
+#define HUNGER_TIME  spread(1300)
+#define MORE_TIME    150
+#define STOMACH_SIZE 2000
+#define STARVE_TIME  850
 #define ESCAPE       27
 #define LEFT         0
 #define RIGHT        1
 #define BOLT_LENGTH  6
-#define LAMPDIST     3
+#define LAMP_DIST    3
 
 //Save against things
-
 #define VS_POISON        00
-#define VS_PARALYZATION  00
 #define VS_LUCK          01
-#define VS_DEATH         00
-#define VS_BREATH        02
 #define VS_MAGIC         03
 
 //Various flag bits
 
 //flags for rooms
-
 #define ISDARK  0x0001 //room is dark
 #define ISGONE  0x0002 //room is gone (a corridor)
 #define ISMAZE  0x0004 //room is a maze
 
 //flags for objects
-
 #define ISCURSED  0x0001 //object is cursed
 #define ISKNOW    0x0002 //player knows details about the object
 #define DIDFLASH  0x0004 //has the vorpal weapon flashed
@@ -131,7 +104,6 @@ typedef unsigned char byte;
 #define ISREVEAL  0x0040 //Do you know who the enemy of the object is
 
 //flags for creatures
-
 #define ISBLIND   0x0001 //creature is blind
 #define SEEMONST  0x0002 //hero can detect unseen monsters
 #define ISRUN     0x0004 //creature is running at the player
@@ -147,10 +119,9 @@ typedef unsigned char byte;
 #define ISCANC    0x1000 //creature has special qualities cancelled
 #define ISSLOW    0x2000 //creature has been slowed
 #define ISHASTE   0x4000 //creature has been hastened
-#define ISFLY     0x8000 //creature is of the flying type
+const short ISFLY = (short)0x8000; //creature is of the flying type
 
 //Flags for level map
-
 #define F_PASS   0x040 //is a passageway
 #define F_MAZE   0x020 //have seen this corridor before
 #define F_REAL   0x010 //what you see is what you get
@@ -158,7 +129,6 @@ typedef unsigned char byte;
 #define F_TMASK  0x007 //trap number mask
 
 //Trap types
-
 #define T_DOOR   00
 #define T_ARROW  01
 #define T_SLEEP  02
@@ -167,45 +137,10 @@ typedef unsigned char byte;
 #define T_DART   05
 #define NTRAPS   6
 
-//Potion types
-
-#define P_CONFUSE   0
-#define P_PARALYZE  1
-#define P_POISON    2
-#define P_STRENGTH  3
-#define P_SEEINVIS  4
-#define P_HEALING   5
-#define P_MFIND     6
-#define P_TFIND     7
-#define P_RAISE     8
-#define P_XHEAL     9
-#define P_HASTE     10
-#define P_RESTORE   11
-#define P_BLIND     12
-#define P_NOP       13
 #define MAXPOTIONS  14
-
-//Scroll types
-
-#define S_CONFUSE   0
-#define S_MAP       1
-#define S_HOLD      2
-#define S_SLEEP     3
-#define S_ARMOR     4
-#define S_IDENT     5
-#define S_SCARE     6
-#define S_GFIND     7
-#define S_TELEP     8
-#define S_ENCH      9
-#define S_CREATE    10
-#define S_REMOVE    11
-#define S_AGGR      12
-#define S_NOP       13
-#define S_VORPAL    14
 #define MAXSCROLLS  15
 
 //Weapon types
-
 #define MACE        0
 #define SWORD       1
 #define BOW         2
@@ -220,7 +155,6 @@ typedef unsigned char byte;
 #define MAXWEAPONS  10 //this should equal FLAME
 
 //Armor types
-
 #define LEATHER          0
 #define RING_MAIL        1
 #define STUDDED_LEATHER  2
@@ -232,7 +166,6 @@ typedef unsigned char byte;
 #define MAXARMORS        8
 
 //Ring types
-
 #define R_PROTECT   0
 #define R_ADDSTR    1
 #define R_SUSTSTR   2
@@ -250,7 +183,6 @@ typedef unsigned char byte;
 #define MAXRINGS    14
 
 //Rod/Wand/Staff types
-
 #define WS_LIGHT      0
 #define WS_HIT        1
 #define WS_ELECT      2
@@ -267,174 +199,100 @@ typedef unsigned char byte;
 #define WS_CANCEL     13
 #define MAXSTICKS     14
 
-//Now we define the structures and types
-
-//Help list
-
-struct h_list
-{
-  char h_ch;
-  char *h_desc;
-};
-
 //Coordinate data type
-
 typedef struct
 {
   int x;
   int y;
-} coord;
-
-typedef unsigned int str_t;
+} Coord;
 
 //Stuff about magic items
-
-struct magic_item
+struct MagicItem
 {
-  char *mi_name;
-  int mi_prob;
-  short mi_worth;
+  char *name;
+  int prob;
+  short worth;
 };
 
-struct array
+struct Array
 {
   char storage[MAXNAME+1];
 };
 
 //Room structure
-
-struct room
+struct Room
 {
-  coord r_pos;      //Upper left corner
-  coord r_max;      //Size of room
-  coord r_gold;     //Where the gold is
-  int r_goldval;    //How much the gold is worth
-  short r_flags;    //Info about the room
-  int r_nexits;   //Number of exits
-  coord r_exit[12]; //Where the exits are
+  int index;
+  Coord pos;       //Upper left corner
+  Coord size;      //Size of room
+  Coord gold;      //Where the gold is
+  int goldval;     //How much the gold is worth
+  short flags;     //Info about the room
+  int num_exits;   //Number of exits
+  Coord exits[12]; //Where the exits are
 };
 
 //Structure describing a fighting being
-
-struct stats
+struct Stats
 {
-  str_t s_str;   //Strength
-  long s_exp;    //Experience
-  int s_lvl;   //Level of mastery
-  int s_arm;   //Armor class
-  int s_hpt;   //Hit points
-  char *s_dmg;   //String describing damage done
-  int s_maxhp; //Max hit points
+  unsigned int str;   //Strength
+  long exp;           //Experience
+  int level;          //Level of mastery
+  int ac;             //Armor class
+  int hp;             //Hit points
+  char *damage;       //String describing damage done
+  int max_hp;         //Max hit points
 };
+
+struct Item
+{
+  struct Item *l_next, *l_prev; //Next pointer in link
+  int type;                      //What kind of object it is
+  Coord pos;                     //Where it lives on the screen
+  char launcher;                 //What you need to launch it
+  char *damage;                  //Damage if used like sword
+  char *throw_damage;            //Damage if thrown
+  int count;                     //Count for plural objects
+  int which;                     //Which object of a type it is
+  int hit_plus;                  //Plusses to hit
+  int damage_plus;               //Plusses to damage
+  short misc;                    //Armor class
+  short flags;                   //Information about objects
+  char enemy;                    //If it is enchanted, who it hates
+  int group;                     //Group number for this object
+};
+typedef struct Item ITEM;
+
+#define charges      misc
+#define gold_value   misc
+#define armor_class  misc
+#define ring_level   misc
 
 //Structure for monsters and player
-
-union thing
+struct Agent
 {
-  struct
-  {
-    union thing *_l_next, *_l_prev; //Next pointer in link
-    coord _t_pos;                   //Position
-    char _t_turn;                   //If slowed, is it a turn to move
-    char _t_type;                   //What it is
-    byte _t_disguise;               //What mimic looks like
-    byte _t_oldch;                  //Character that was where it was
-    coord *_t_dest;                 //Where it is running to
-    short _t_flags;                 //State word
-    struct stats _t_stats;          //Physical description
-    struct room *_t_room;           //Current room for thing
-    union thing *_t_pack;           //What the thing is carrying
-  } _t;
-  struct
-  {
-    union thing *_l_next, *_l_prev; //Next pointer in link
-    int _o_type;                  //What kind of object it is
-    coord _o_pos;                   //Where it lives on the screen
-    char *_o_text;                  //What it says if you read it
-    char _o_launch;                 //What you need to launch it
-    char *_o_damage;                //Damage if used like sword
-    char *_o_hurldmg;               //Damage if thrown
-    int _o_count;                 //Count for plural objects
-    int _o_which;                 //Which object of a type it is
-    int _o_hplus;                 //Plusses to hit
-    int _o_dplus;                 //Plusses to damage
-    short _o_ac;                    //Armor class
-    short _o_flags;                 //Information about objects
-    char _o_enemy;                  //If it is enchanted, who it hates
-    int _o_group;                 //Group number for this object
-  } _o;
+  struct Agent *l_next, *l_prev; //Next pointer in link
+  Coord pos;                    //Position
+  char turn;                    //If slowed, is it a turn to move
+  char type;                    //What it is
+  byte disguise;                //What mimic looks like
+  byte oldch;                   //Character that was where it was
+  Coord *dest;                  //Where it is running to
+  short flags;                  //State word
+  struct Stats stats;           //Physical description
+  struct Room *room;            //Current room for thing
+  struct Item *pack;            //What the thing is carrying
 };
 
-typedef union thing THING;
-
-#define l_next      _t._l_next
-#define l_prev      _t._l_prev
-#define t_pos       _t._t_pos
-#define t_turn      _t._t_turn
-#define t_type      _t._t_type
-#define t_disguise  _t._t_disguise
-#define t_oldch     _t._t_oldch
-#define t_dest      _t._t_dest
-#define t_flags     _t._t_flags
-#define t_stats     _t._t_stats
-#define t_pack      _t._t_pack
-#define t_room      _t._t_room
-#define o_type      _o._o_type
-#define o_pos       _o._o_pos
-#define o_text      _o._o_text
-#define o_launch    _o._o_launch
-#define o_damage    _o._o_damage
-#define o_hurldmg   _o._o_hurldmg
-#define o_count     _o._o_count
-#define o_which     _o._o_which
-#define o_hplus     _o._o_hplus
-#define o_dplus     _o._o_dplus
-#define o_ac        _o._o_ac
-#define o_charges   o_ac
-#define o_goldval   o_ac
-#define o_flags     _o._o_flags
-#define o_group     _o._o_group
-#define o_enemy     _o._o_enemy
-
-//Array containing information on all the various types of monsters
-
-struct monster
-{
-  char *m_name;         //What to call the monster
-  int m_carry;        //Probability of carrying something
-  int m_flags;        //Things about the monster
-  struct stats m_stats; //Initial stats
-};
-
-#define TOPSCORES  10
-
-struct sc_ent
-{
-  char sc_name[38];
-  int sc_rank;
-  int sc_gold;
-  int sc_fate;
-  int sc_level;
-};
+typedef struct Agent AGENT;
 
 //External variables
 
-extern THING *cur_armor, *cur_ring[2], *cur_weapon, *lvl_obj, *mlist, player;
-extern coord delta, oldpos;
-extern struct room *oldrp, passages[], rooms[];
-extern struct stats max_stats;
-extern struct monster monsters[];
-extern struct magic_item p_magic[], r_magic[], s_magic[], things[], ws_magic[];
-
-#define LOW(x) ((x)&0xff)
-#define HI(x)  ((x)>>8)
-
-#define SETHILO(reg,hi,lo)  (reg)=((hi)<<8)|lo)
-
-//Defines for things used in mach_dep.c
-//@(#)extern.h5.1 (Berkeley) 5/11/82
-
-//Don't change the constants, since they are used for sizes in many places in the program.
+extern ITEM *lvl_obj;
+extern AGENT *mlist, player;
+extern Coord delta, oldpos;
+extern struct Room *oldrp, passages[];
+extern struct Stats max_stats;
 
 #define MAXSTR    80 //maximum length of strings
 #define MAXLINES  25 //maximum number of screen lines used
@@ -442,60 +300,26 @@ extern struct magic_item p_magic[], r_magic[], s_magic[], things[], ws_magic[];
 
 //Now all the global variables
 
-extern int maxitems;
 extern int maxrow;
-extern char *_top, *_base;
 extern int LINES, COLS;
-extern int iguess;
 extern int bailout;
 
-extern char *l_menu, *l_name, *l_fruit, *l_score, *l_save, *l_macro, *l_drive;
-extern char s_menu[], s_name[], s_fruit[], s_score[], s_save[], s_macro[];
-extern char s_drive[], s_screen[];
-extern char nullstr[], *it, *tbuf, *you, *no_mem;
+extern char s_menu[], s_score[], s_save[], s_screen[];
 
-extern struct array s_names[], _guesses[];
-extern char *s_guess[], *p_guess[], *r_guess[], *ws_guess[];
-extern char f_damage[];
+extern struct Array _guesses[];
 
-extern bool amulet, after, again, askme, door_stop, expert, fastmode, faststate, fight_flush, firstmove, in_shell, jump, noscore, passgo, playing, running, save_msg, saw_amulet, slow_invent, terse, wizard;
+extern bool after, again, door_stop, fastmode, faststate, firstmove, 
+  playing, running;
 extern int was_trapped;
 
-extern bool p_know[], r_know[], s_know[], ws_know[];
+extern char file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
+  huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 
+  *typeahead, take, whoami[];
 
-extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[], huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, *typeahead, take, *w_names[], whoami[], *ws_made[], *ws_type[];
+extern int count, flytrap_hit, iguess, mpos, no_command, no_food, no_move, quiet;
 
-extern byte *_level, *_flags;
-
-extern int a_chances[], a_class[], count, dnum, food_left, fung_hit, fd, group, hungry_state, inpack, lastscore, level, max_level, mpos, no_command, no_food, no_move, ntraps, purse, quiet, total;
-
-extern long seed, *e_levels;
-
-extern char *_whoami;
-
-//Cursor motion header for Monochrome display
+extern long seed;
 
 #define TRUE                1
 #define FALSE               0
 #define BUFSIZE             128
-#define mvwaddstr(w,a,b,c)  mvaddstr(a,b,c)
-#define mvwaddch(w,a,b,c)   mvaddch(a,b,c)
-#define inch()              (0xff&curch())
-#define standend()          set_attr(0)
-#define green()             set_attr(1)
-#define cyan()              set_attr(2)
-#define red()               set_attr(3)
-#define magenta()           set_attr(4)
-#define brown()             set_attr(5)
-#define dgrey()             set_attr(6)
-#define lblue()             set_attr(7)
-#define lgrey()             set_attr(8)
-#define lred()              set_attr(9)
-#define lmagenta()          set_attr(10)
-#define yellow()            set_attr(11)
-#define uline()             set_attr(12)
-#define blue()              set_attr(13)
-#define standout()          set_attr(14)
-#define high()              set_attr(15)
-#define bold()              set_attr(16)
-#define BX_SIZE             7

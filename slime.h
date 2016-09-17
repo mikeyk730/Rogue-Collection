@@ -1,5 +1,5 @@
-void slime_split(THING *tp);
+void slime_split(AGENT *monster);
 
-int new_slime(THING *tp);
+int new_slime(AGENT *monster);
 
-bool plop_monster(int r, int c, coord *cp);
+bool plop_monster(int r, int c, Coord *cp);

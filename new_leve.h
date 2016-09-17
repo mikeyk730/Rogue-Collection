@@ -1,7 +1,4 @@
-void new_level();
-
-//rnd_room: Pick a room that is really there
-int rnd_room();
+void new_level(int do_implode);
 
 //put_things: Put potions and scrolls on this level
 void put_things();

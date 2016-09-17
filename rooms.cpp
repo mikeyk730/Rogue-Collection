@@ -1,6 +1,8 @@
 //Create the layout for the new level
 //rooms.c     1.4 (A.I. Design)       12/16/84
 
+#include <ctype.h>
+
 #include "rogue.h"
 #include "main.h"
 #include "rooms.h"
@@ -13,216 +15,277 @@
 #include "chase.h"
 #include "misc.h"
 #include "io.h"
-
-#include <ctype.h>
+#include "level.h"
+#include "thing.h"
+#include "pack.h"
 
 #define GOLDGRP  1
+
+struct Room rooms[MAXROOMS]; //One for each room -- A level
 
 //do_rooms: Create rooms and corridors with a connectivity graph
 void do_rooms()
 {
-  int i, rm;
-  struct room *rp;
-  THING *tp;
+  int i;
+  struct Room *room;
+  AGENT *monster;
   int left_out;
-  coord top;
-  coord bsze;
-  coord mp;
+  Coord top;
+  Coord bsze;
+  Coord mp;
   int old_lev;
   int endline;
 
   endline = maxrow+1;
-  old_lev = level;
+  old_lev = get_level();
   //bsze is the maximum room size
   bsze.x = COLS/3;
   bsze.y = endline/3;
   //Clear things for a new level
-  for (rp = rooms; rp<&rooms[MAXROOMS]; rp++) rp->r_goldval = rp->r_nexits = rp->r_flags = 0;
+  for (i = 0; i < MAXROOMS; i++) {
+    room = &rooms[i];
+    room->index = i;
+    room->goldval = room->num_exits = room->flags = 0;
+  }
   //Put the gone rooms, if any, on the level
   left_out = rnd(4);
   for (i = 0; i<left_out; i++)
   {
-    do rp = &rooms[(rm = rnd_room())]; while (rp->r_flags&ISMAZE);
-    rp->r_flags |= ISGONE;
-#ifdef TEST
-    if (rm>2 && ((level>10 && rnd(20)<level-9) || istest()))
-#else TEST
-    if (rm>2 && level>10 && rnd(20)<level-9)
-#endif TEST
-    rp->r_flags |= ISMAZE;
+    do { 
+      room = rnd_room();
+    } while (room->flags&ISMAZE);
+    room->flags |= ISGONE;
+    if (room->index>2 && get_level()>10 && rnd(20)<get_level()-9)
+      room->flags |= ISMAZE;
   }
   //dig and populate all the rooms on the level
-  for (i = 0, rp = rooms; i<MAXROOMS; rp++, i++)
+  for (i = 0, room = rooms; i<MAXROOMS; room++, i++)
   {
     //Find upper left corner of box that this room goes in
     top.x = (i%3)*bsze.x+1;
     top.y = i/3*bsze.y;
-    if (rp->r_flags&ISGONE)
+    if (room->flags&ISGONE)
     {
       //If the gone room is a maze room, draw the maze and set the size equal to the maximum possible.
-      if (rp->r_flags&ISMAZE) {rp->r_pos.x = top.x; rp->r_pos.y = top.y; draw_maze(rp);}
+      if (room->flags&ISMAZE) {room->pos.x = top.x; room->pos.y = top.y; draw_maze(room);}
       else
       {
         //Place a gone room.  Make certain that there is a blank line for passage drawing.
         do
         {
-          rp->r_pos.x = top.x+rnd(bsze.x-2)+1;
-          rp->r_pos.y = top.y+rnd(bsze.y-2)+1;
-          rp->r_max.x = -COLS;
-          rp->r_max.x = -endline;
-        } while (!(rp->r_pos.y>0 && rp->r_pos.y<endline-1));
+          room->pos.x = top.x+rnd(bsze.x-2)+1;
+          room->pos.y = top.y+rnd(bsze.y-2)+1;
+          room->size.x = -COLS;
+          room->size.x = -endline;
+        } while (!(room->pos.y>0 && room->pos.y<endline-1));
       }
       continue;
     }
-    if (rnd(10)<(level-1)) rp->r_flags |= ISDARK;
+    if (rnd(10)<(get_level()-1)) room->flags |= ISDARK;
     //Find a place and size for a random room
     do
     {
-      rp->r_max.x = rnd(bsze.x-4)+4;
-      rp->r_max.y = rnd(bsze.y-4)+4;
-      rp->r_pos.x = top.x+rnd(bsze.x-rp->r_max.x);
-      rp->r_pos.y = top.y+rnd(bsze.y-rp->r_max.y);
-    } while (rp->r_pos.y==0);
-    draw_room(rp);
+      room->size.x = rnd(bsze.x-4)+4;
+      room->size.y = rnd(bsze.y-4)+4;
+      room->pos.x = top.x+rnd(bsze.x-room->size.x);
+      room->pos.y = top.y+rnd(bsze.y-room->size.y);
+    } while (room->pos.y==0);
+    draw_room(room);
     //Put the gold in
-    if ((rnd(2)==0) && (!saw_amulet || (level>=max_level)))
+    if ((rnd(2)==0) && (!had_amulet() || (get_level()>=max_level())))
     {
-      THING *gold;
+      ITEM *gold;
 
-      if ((gold = new_item())!=NULL)
+      if ((gold = create_item(GOLD, 0))!=NULL)
       {
-        gold->o_goldval = rp->r_goldval = GOLDCALC;
+        gold->gold_value = room->goldval = rnd_gold();
         while (1)
         {
           byte gch;
 
-          rnd_pos(rp, &rp->r_gold);
-          gch = chat(rp->r_gold.y, rp->r_gold.x);
+          rnd_pos(room, &room->gold);
+          gch = get_tile(room->gold.y, room->gold.x);
           if (isfloor(gch)) break;
         }
-        bcopy(gold->o_pos, rp->r_gold);
-        gold->o_flags = ISMANY;
-        gold->o_group = GOLDGRP;
-        gold->o_type = GOLD;
-        attach(lvl_obj, gold);
-        chat(rp->r_gold.y, rp->r_gold.x) = GOLD;
+        gold->pos = room->gold;
+        gold->flags = ISMANY;
+        gold->group = GOLDGRP;
+        attach_item(&lvl_obj, gold);
+        set_tile(room->gold.y, room->gold.x, GOLD);
       }
     }
     //Put the monster in
-    if (rnd(100)<(rp->r_goldval>0?80:25))
+    if (rnd(100)<(room->goldval>0?80:25))
     {
-      if ((tp = new_item())!=NULL)
+      if ((monster = create_agent())!=NULL)
       {
         byte mch;
 
-        do {rnd_pos(rp, &mp); mch = winat(mp.y, mp.x);} while (!isfloor(mch));
-        new_monster(tp, randmonster(FALSE), &mp);
-        give_pack(tp);
+        do {
+          rnd_pos(room, &mp); 
+          mch = get_tile_or_monster(mp.y, mp.x);
+        } while (!isfloor(mch));
+        new_monster(monster, randmonster(FALSE, get_level()), &mp, get_level());
+        give_pack(monster);
       }
     }
   }
 }
 
 //draw_room: Draw a box around a room and lay down the floor
-void draw_room(struct room *rp)
+void draw_room(struct Room *room)
 {
   int y, x;
 
   //Here we draw normal rooms, one side at a time
-  vert(rp, rp->r_pos.x); //Draw left side
-  vert(rp, rp->r_pos.x+rp->r_max.x-1); //Draw right side
-  horiz(rp, rp->r_pos.y); //Draw top
-  horiz(rp, rp->r_pos.y+rp->r_max.y-1); //Draw bottom
-  chat(rp->r_pos.y, rp->r_pos.x) = ULWALL;
-  chat(rp->r_pos.y, rp->r_pos.x+rp->r_max.x-1) = URWALL;
-  chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x) = LLWALL;
-  chat(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x+rp->r_max.x-1) = LRWALL;
+  vert(room, room->pos.x); //Draw left side
+  vert(room, room->pos.x+room->size.x-1); //Draw right side
+  horiz(room, room->pos.y); //Draw top
+  horiz(room, room->pos.y+room->size.y-1); //Draw bottom
+  set_tile(room->pos.y, room->pos.x, ULWALL);
+  set_tile(room->pos.y, room->pos.x+room->size.x-1, URWALL);
+  set_tile(room->pos.y+room->size.y-1, room->pos.x, LLWALL);
+  set_tile(room->pos.y+room->size.y-1, room->pos.x+room->size.x-1, LRWALL);
   //Put the floor down
-  for (y = rp->r_pos.y+1; y<rp->r_pos.y+rp->r_max.y-1; y++)
-  for (x = rp->r_pos.x+1; x<rp->r_pos.x+rp->r_max.x-1; x++)
-  chat(y, x) = FLOOR;
+  for (y = room->pos.y+1; y<room->pos.y+room->size.y-1; y++)
+    for (x = room->pos.x+1; x<room->pos.x+room->size.x-1; x++)
+      set_tile(y, x, FLOOR);
 }
 
 //vert: Draw a vertical line
-void vert(struct room *rp, int startx)
+void vert(struct Room *room, int startx)
 {
   int y;
 
-  for (y = rp->r_pos.y+1; y<=rp->r_max.y+rp->r_pos.y-1; y++) chat(y, startx) = VWALL;
+  for (y = room->pos.y+1; y<=room->size.y+room->pos.y-1; y++)
+    set_tile(y, startx, VWALL);
 }
 
 //horiz: Draw a horizontal line
-void horiz(struct room *rp, int starty)
+void horiz(struct Room *room, int starty)
 {
   int x;
 
-  for (x = rp->r_pos.x; x<=rp->r_pos.x+rp->r_max.x-1; x++) chat(starty, x) = HWALL;
+  for (x = room->pos.x; x<=room->pos.x+room->size.x-1; x++) 
+    set_tile(starty, x, HWALL);
 }
 
 //rnd_pos: Pick a random spot in a room
-void rnd_pos(struct room *rp, coord *cp)
+void rnd_pos(struct Room *room, Coord *cp)
 {
-  cp->x = rp->r_pos.x+rnd(rp->r_max.x-2)+1;
-  cp->y = rp->r_pos.y+rnd(rp->r_max.y-2)+1;
+  cp->x = room->pos.x + rnd(room->size.x-2) + 1;
+  cp->y = room->pos.y + rnd(room->size.y-2) + 1;
 }
 
 //enter_room: Code that is executed whenever you appear in a room
-void enter_room(coord *cp)
+void enter_room(Coord *cp)
 {
-  struct room *rp;
+  struct Room *room;
   int y, x;
-  THING *tp;
+  AGENT *monster;
 
-  rp = proom = roomin(cp);
-  if (bailout || (rp->r_flags&ISGONE && (rp->r_flags&ISMAZE)==0))
+  room = player.room = roomin(cp);
+  if (bailout || (room->flags&ISGONE && (room->flags&ISMAZE)==0))
   {
     debug("in a gone room");
     return;
   }
-  door_open(rp);
-  if (!(rp->r_flags&ISDARK) && !on(player, ISBLIND) && !(rp->r_flags&ISMAZE))
-  for (y = rp->r_pos.y; y<rp->r_max.y+rp->r_pos.y; y++)
-  {
-    move(y, rp->r_pos.x);
-    for (x = rp->r_pos.x; x<rp->r_max.x+rp->r_pos.x; x++)
+  door_open(room);
+  if (!(room->flags&ISDARK) && !on(player, ISBLIND) && !(room->flags&ISMAZE))
+    for (y = room->pos.y; y<room->size.y+room->pos.y; y++)
     {
-      //Displaying monsters is all handled in the chase code now
-      tp = moat(y, x);
-      if (tp==NULL || !see_monst(tp)) addch(chat(y, x));
-      else {tp->t_oldch = chat(y,x); addch(tp->t_disguise);}
+      move(y, room->pos.x);
+      for (x = room->pos.x; x<room->size.x+room->pos.x; x++)
+      {
+        //Displaying monsters is all handled in the chase code now
+        monster = monster_at(y, x);
+        if (monster==NULL || !can_see_monst(monster)) 
+          addch(get_tile(y, x));
+        else {
+          monster->oldch = get_tile(y,x); 
+          addch(monster->disguise);
+        }
+      }
     }
-  }
 }
 
 //leave_room: Code for when we exit a room
-void leave_room(coord *cp)
+void leave_room(Coord *cp)
 {
   int y, x;
-  struct room *rp;
+  struct Room *room;
   byte floor;
   byte ch;
 
-  rp = proom;
-  proom = &passages[flat(cp->y, cp->x)&F_PNUM];
-  floor = ((rp->r_flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
-  if (rp->r_flags&ISMAZE) floor = PASSAGE;
-  for (y = rp->r_pos.y+1; y<rp->r_max.y+rp->r_pos.y-1; y++)
-  for (x = rp->r_pos.x+1; x<rp->r_max.x+rp->r_pos.x-1; x++)
-  switch (ch = mvinch(y, x))
-  {
-    case ' ': case PASSAGE: case TRAP: case STAIRS:
-    break;
+  room = player.room;
+  player.room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
+  floor = ((room->flags&ISDARK) && !on(player, ISBLIND))?' ':FLOOR;
+  if (room->flags&ISMAZE) floor = PASSAGE;
+  for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
+    for (x = room->pos.x+1; x<room->size.x+room->pos.x-1; x++) {
+      switch (ch = mvinch(y, x))
+      {
+      case ' ': case PASSAGE: case TRAP: case STAIRS:
+        break;
 
-    case FLOOR:
-      if (floor==' ') addch(' ');
-    break;
+      case FLOOR:
+        if (floor==' ') addch(' ');
+        break;
 
-    default:
-      //to check for monster, we have to strip out standout bit
-      if (isupper(toascii(ch)))
-      if (on(player, SEEMONST)) {standout(); addch(ch); standend(); break;}
-      else moat(y, x)->t_oldch = '@';
-      addch(floor);
+      default:
+        //to check for monster, we have to strip out standout bit
+        if (isupper(toascii(ch)))
+          if (on(player, SEEMONST)) {
+            standout(); 
+            addch(ch); 
+            standend(); 
+            break;
+          }
+          else 
+            monster_at(y, x)->oldch = '@';
+          addch(floor);
+      }
+    }
   }
-  door_open(rp);
+  door_open(room);
+}
+
+//roomin: Find what room some coordinates are in. NULL means they aren't in any room.
+struct Room *roomin(Coord *pos)
+{
+  struct Room *room;
+  byte fp;
+
+  for (room = rooms; room<=&rooms[MAXROOMS-1]; room++) 
+    if (pos->x<room->pos.x+room->size.x && room->pos.x<=pos->x && pos->y<room->pos.y+room->size.y && room->pos.y<=pos->y) 
+      return room;
+
+  fp = get_flags(pos->y, pos->x);
+  if (fp&F_PASS)
+    return &passages[fp&F_PNUM];
+
+  debug("in some bizarre place (%d, %d)", pos->y, pos->x);
+  bailout++;
+  return NULL;
+}
+
+//rnd_room: Pick a room that is really there
+struct Room* rnd_room()
+{
+  int rm;
+  do { 
+    rm = rnd(MAXROOMS); 
+  } while (!((rooms[rm].flags&ISGONE)==0 || (rooms[rm].flags&ISMAZE)));
+
+  return &rooms[rm];
+}
+
+void find_empty_location(Coord* c, int consider_monsters)
+{
+  byte (*tile_getter)(int, int) = consider_monsters ? get_tile_or_monster : get_tile;
+
+  do
+  {
+    rnd_pos(rnd_room(), c);
+  } while (!isfloor(tile_getter(c->y, c->x)));
 }

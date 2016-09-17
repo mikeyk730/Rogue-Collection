@@ -9,6 +9,7 @@
 using std::max;
 
 #include "rogue.h"
+#include "hero.h"
 #include "fight.h"
 #include "list.h"
 #include "weapons.h"
@@ -23,178 +24,270 @@ using std::max;
 #include "potions.h"
 #include "misc.h"
 #include "mach_dep.h"
+#include "level.h"
+#include "rings.h"
+#include "thing.h"
+#include "armor.h"
+#include "pack.h"
 
+char tbuf[MAXSTR];
+
+const char* it = "it";
+const char* you = "you";
+
+// Each level is twice the previous
+long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 
+  20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
+
+void do_hit(ITEM* weap, int thrown, AGENT* monster, const char* name)
+{
+  bool did_huh = FALSE;
+
+  if (thrown) 
+    display_throw_msg(weap, name, "hits", "hit");
+  else 
+    display_hit_msg(NULL, name);
+
+  if (weap && weap->type==POTION)
+  {
+    affect_monster(weap, monster);
+    if (!thrown)
+    {
+      if (--weap->count == 0) {
+        detach_item(&player.pack, weap); 
+        discard_item(weap);
+      }
+      set_current_weapon(NULL);
+    }
+  }
+
+  if (on(player, CANHUH))
+  {
+    did_huh = TRUE;
+    monster->flags |= ISHUH;
+    player.flags &= ~CANHUH;
+    msg("your hands stop glowing red");
+  }
+
+  if (monster->stats.hp <= 0)
+    killed(monster, TRUE);
+  else if (did_huh && !on(player, ISBLIND)) 
+    msg("the %s appears confused", name);
+}
+
+void do_miss(ITEM* weap, int thrown, AGENT* monster, const char* name)
+{
+  if (thrown)
+    display_throw_msg(weap, name, "misses", "missed");
+  else
+    miss(NULL, name);
+  if (monster->type=='S' && rnd(100)>25)
+    slime_split(monster);
+}
 
 //fight: The player attacks the monster.
-int fight(coord *mp, char mn, THING *weap, bool thrown)
+int fight(Coord *location, char mn, ITEM *weap, bool thrown)
 {
-  THING *tp;
-  char *mname;
-
+  const char *name;
   //Find the monster we want to fight
-  if ((tp = moat(mp->y, mp->x))==0) return FALSE;
+  AGENT *monster = monster_at(location->y, location->x);
+  if (!monster) 
+    return FALSE;
+
   //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
   count = quiet = 0;
-  start_run(mp);
+  
+  start_run(monster);
   //Let him know it was really a mimic (if it was one).
-  if (tp->t_type=='X' && tp->t_disguise!='X' && !on(player, ISBLIND))
+  if (monster->type=='X' && monster->disguise!='X' && !on(player, ISBLIND))
   {
-    mn = tp->t_disguise = 'X';
-    if (thrown) return FALSE;
+    mn = monster->disguise = 'X';
+    if (thrown) 
+      return FALSE;
     msg("wait! That's a Xeroc!");
   }
-  mname = monsters[mn-'A'].m_name;
-  if (on(player, ISBLIND)) mname = it;
-  if (roll_em(&player, tp, weap, thrown) || (weap && weap->o_type==POTION))
-  {
-    bool did_huh = FALSE;
+  name = on(player, ISBLIND) ? it : get_monster_name(mn);
 
-    if (thrown) thunk(weap, mname, "hits", "hit");
-    else hit(NULL, mname);
-    if (weap->o_type==POTION)
-    {
-      th_effect(weap, tp);
-      if (!thrown)
-      {
-        if (weap->o_count>1) weap->o_count--;
-        else {detach(ppack, weap); discard(weap);}
-        cur_weapon = NULL;
-      }
-    }
-    if (on(player, CANHUH))
-    {
-      did_huh = TRUE;
-      tp->t_flags |= ISHUH;
-      player.t_flags &= ~CANHUH;
-      msg("your hands stop glowing red");
-    }
-    if (tp->t_stats.s_hpt<=0) killed(tp, TRUE);
-    else if (did_huh && !on(player, ISBLIND)) msg("the %s appears confused", mname);
+  if (roll_em(&player, monster, weap, thrown) || (weap && weap->type==POTION))
+  {
+    do_hit(weap, thrown, monster, name);    
     return TRUE;
   }
-  if (thrown) thunk(weap, mname, "misses", "missed");
-  else miss(NULL, mname);
-  if (tp->t_type=='S' && rnd(100)>25) slime_split(tp);
+
+  do_miss(weap, thrown, monster, name);
   return FALSE;
 }
 
-//attack: The monster attacks the player
-void attack(THING *mp)
+void aquator_attack()
 {
-  char *mname;
+  //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
+  if (get_current_armor() && get_current_armor()->armor_class < 9 && get_current_armor()->which != LEATHER)
+    if (is_wearing_ring(R_SUSTARM))
+      msg("the rust vanishes instantly");
+    else {
+      msg("your armor weakens, oh my!"); 
+      get_current_armor()->armor_class++;
+    }
+}
+
+void ice_monster_attack()
+{
+  //When an Ice Monster hits you, you get unfrozen faster
+  if (no_command>1) no_command--;
+}
+
+void rattlesnake_attack()
+{
+  //Rattlesnakes have poisonous bites
+  if (!save(VS_POISON))
+    if (!is_wearing_ring(R_SUSTSTR)) {
+      chg_str(-1); 
+      msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
+    }
+    else 
+      msg("a bite momentarily weakens you");
+}
+
+void flytrap_attack(AGENT* mp)
+{
+  //Flytrap stops the poor guy from moving
+  player.flags |= ISHELD;
+  sprintf(mp->stats.damage, "%dd1", ++flytrap_hit);
+}
+
+void leprechaun_attack(AGENT* mp)
+{
+  //Leprechaun steals some gold
+  long lastpurse;
+
+  lastpurse = get_purse();
+  adjust_purse(-rnd_gold());
+  if (!save(VS_MAGIC)) 
+    adjust_purse(-(rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold()));
+  remove_monster(mp, FALSE);
+  if (get_purse() != lastpurse) 
+    msg("your purse feels lighter");
+}
+
+int nymph_attack(AGENT* mp)
+{
+  //Nymphs steal a magic item, look through the pack and pick out one we like.
+  ITEM *obj, *steal;
+  int nobj;
+  char *she_stole = "she stole %s!";
+
+  steal = NULL;
+  for (nobj = 0, obj = player.pack; obj!=NULL; obj = next(obj))
+    if (obj!=get_current_armor() && obj!=get_current_weapon() && obj!=get_ring(LEFT) && obj!=get_ring(RIGHT) && is_magic(obj) && rnd(++nobj)==0) steal = obj;
+  if (steal!=NULL)
+  {
+    remove_monster(mp, FALSE);
+    if (steal->count>1 && steal->group==0)
+    {
+      int oc;
+
+      oc = steal->count--;
+      steal->count = 1;
+      msg(she_stole, inv_name(steal, TRUE));
+      steal->count = oc;
+    }
+    else {detach_item(&player.pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
+    return TRUE;
+  }
+  return FALSE;
+}
+
+void vampire_wraith_attack(int type)
+{
+  //Wraiths might drain energy levels, and Vampires can steal max_hp
+  if (rnd(100)<(type=='W'?15:30))
+  {
+    int fewer;
+
+    if (type=='W')
+    {
+      if (player.stats.exp==0) death('W'); //All levels gone
+      if (--player.stats.level==0) {player.stats.exp = 0; player.stats.level = 1;}
+      else player.stats.exp = e_levels[player.stats.level-1]+1;
+      fewer = roll(1, 10);
+    }
+    else fewer = roll(1, 5);
+    player.stats.hp -= fewer;
+    player.stats.max_hp -= fewer;
+    if (player.stats.hp<1) player.stats.hp = 1;
+    if (player.stats.max_hp<1) death(type);
+    msg("you suddenly feel weaker");
+  }
+}
+
+//attack: The monster attacks the player
+int attack(AGENT *monster)
+{
+  const char *name;
+  int monster_died = FALSE;
 
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = FALSE;
   count = quiet = 0;
-  if (mp->t_type=='X' && !on(player, ISBLIND)) mp->t_disguise = 'X';
-  mname = monsters[mp->t_type-'A'].m_name;
-  if (on(player, ISBLIND)) mname = it;
-  if (roll_em(mp, &player, NULL, FALSE))
+  if (monster->type=='X' && !on(player, ISBLIND)) 
+    monster->disguise = 'X';
+  name = on(player, ISBLIND) ? it : get_monster_name(monster->type);
+  if (roll_em(monster, &player, NULL, FALSE))
   {
-    hit(mname, NULL);
-    if (pstats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
-    if (!on(*mp, ISCANC)) switch (mp->t_type)
-    {
-
-      case 'A': //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-        if (cur_armor!=NULL && cur_armor->o_ac<9 && cur_armor->o_which!=LEATHER)
-        if (ISWEARING(R_SUSTARM)) msg("the rust vanishes instantly");
-        else {msg("your armor weakens, oh my!"); cur_armor->o_ac++;}
-      break;
-
-      case 'I': //When an Ice Monster hits you, you get unfrozen faster
-        if (no_command>1) no_command--;
-      break;
-
-      case 'R': //Rattlesnakes have poisonous bites
-        if (!save(VS_POISON))
-        if (!ISWEARING(R_SUSTSTR)) {chg_str(-1); msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));}
-        else msg("a bite momentarily weakens you");
-      break;
-
-      case 'W': case 'V': //Wraiths might drain energy levels, and Vampires can steal max_hp
-        if (rnd(100)<(mp->t_type=='W'?15:30))
-        {
-          int fewer;
-
-          if (mp->t_type=='W')
-          {
-            if (pstats.s_exp==0) death('W'); //All levels gone
-            if (--pstats.s_lvl==0) {pstats.s_exp = 0; pstats.s_lvl = 1;}
-            else pstats.s_exp = e_levels[pstats.s_lvl-1]+1;
-            fewer = roll(1, 10);
-          }
-          else fewer = roll(1, 5);
-          pstats.s_hpt -= fewer;
-          max_hp -= fewer;
-          if (pstats.s_hpt<1) pstats.s_hpt = 1;
-          if (max_hp<1) death(mp->t_type);
-          msg("you suddenly feel weaker");
-        }
-      break;
-
-      case 'F': //Violet fungi stops the poor guy from moving
-        player.t_flags |= ISHELD;
-        sprintf(mp->t_stats.s_dmg, "%dd1", ++fung_hit);
-      break;
-
-      case 'L': //Leprechaun steals some gold
+    display_hit_msg(name, NULL);
+    if (player.stats.hp <= 0) 
+      death(monster->type); //Bye bye life ...
+   
+    if (!on(*monster, ISCANC)) {
+      switch (monster->type)
       {
-        long lastpurse;
-
-        lastpurse = purse;
-        purse -= GOLDCALC;
-        if (!save(VS_MAGIC)) purse -= GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
-        if (purse<0) purse = 0;
-        remove_mons(&mp->t_pos, mp, FALSE);
-        if (purse!=lastpurse) msg("your purse feels lighter");
-
+      case 'A': 
+        aquator_attack();
         break;
-      }
 
-      case 'N': //Nymphs steal a magic item, look through the pack and pick out one we like.
-      {
-        THING *obj, *steal;
-        int nobj;
-        char *she_stole = "she stole %s!";
-
-        steal = NULL;
-        for (nobj = 0, obj = ppack; obj!=NULL; obj = next(obj))
-        if (obj!=cur_armor && obj!=cur_weapon && obj!=cur_ring[LEFT] && obj!=cur_ring[RIGHT] && is_magic(obj) && rnd(++nobj)==0) steal = obj;
-        if (steal!=NULL)
-        {
-          remove_mons(&mp->t_pos, mp, FALSE);
-          inpack--;
-          if (steal->o_count>1 && steal->o_group==0)
-          {
-            int oc;
-
-            oc = steal->o_count--;
-            steal->o_count = 1;
-            msg(she_stole, inv_name(steal, TRUE));
-            steal->o_count = oc;
-          }
-          else {detach(ppack, steal); discard(steal); msg(she_stole, inv_name(steal, TRUE));}
-        }
-
+      case 'I': 
+        ice_monster_attack();
         break;
-      }
+
+      case 'R': 
+        rattlesnake_attack();
+        break;
+
+      case 'W': case 'V':
+        vampire_wraith_attack(monster->type);
+        break;
+
+      case 'F': 
+        flytrap_attack(monster);
+        break;
+
+      case 'L': 
+        leprechaun_attack(monster);
+        monster_died = TRUE;
+        break;
+
+      case 'N': 
+        monster_died = nymph_attack(monster);
+        break;
 
       default: break;
+      }
     }
   }
-  else if (mp->t_type!='I')
+  else if (monster->type!='I')
   {
-    if (mp->t_type=='F')
+    if (monster->type=='F')
     {
-      pstats.s_hpt -= fung_hit;
-      if (pstats.s_hpt<=0) death(mp->t_type); //Bye bye life ...
+      player.stats.hp -= flytrap_hit;
+      if (player.stats.hp<=0) death(monster->type); //Bye bye life ...
     }
-    miss(mname, NULL);
+    miss(name, NULL);
   }
   flush_type();
   count = 0;
   status();
+
+  return !monster_died;
 }
 
 //swing: Returns true if the swing hits
@@ -211,23 +304,23 @@ void check_level()
 {
   int i, add, olevel;
 
-  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>pstats.s_exp) break;
+  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>player.stats.exp) break;
   i++;
-  olevel = pstats.s_lvl;
-  pstats.s_lvl = i;
+  olevel = player.stats.level;
+  player.stats.level = i;
   if (i>olevel)
   {
     add = roll(i-olevel, 10);
-    max_hp += add;
-    if ((pstats.s_hpt += add)>max_hp) pstats.s_hpt = max_hp;
+    player.stats.max_hp += add;
+    if ((player.stats.hp += add)>player.stats.max_hp) player.stats.hp = player.stats.max_hp;
     msg("and achieve the rank of \"%s\"", he_man[i-1]);
   }
 }
 
 //roll_em: Roll several attacks
-bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
+bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 {
-  struct stats *att, *def;
+  struct Stats *att, *def;
   char *cp;
   int ndice, nsides, def_arm;
   bool did_hit = FALSE;
@@ -235,62 +328,62 @@ bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
   int dplus;
   int damage;
 
-  att = &thatt->t_stats;
-  def = &thdef->t_stats;
-  if (weap==NULL) {cp = att->s_dmg; dplus = 0; hplus = 0;}
+  att = &thatt->stats;
+  def = &thdef->stats;
+  if (weap==NULL) {cp = att->damage; dplus = 0; hplus = 0;}
   else
   {
-    hplus = weap->o_hplus;
-    dplus = weap->o_dplus;
+    hplus = weap->hit_plus;
+    dplus = weap->damage_plus;
     //Check for vorpally enchanted weapon
-    if (thdef->t_type==weap->o_enemy) {hplus += 4; dplus += 4;}
-    if (weap==cur_weapon)
+    if (thdef->type==weap->enemy) {hplus += 4; dplus += 4;}
+    if (weap==get_current_weapon())
     {
-      if (ISRING(LEFT, R_ADDDAM)) dplus += cur_ring[LEFT]->o_ac;
-      else if (ISRING(LEFT, R_ADDHIT)) hplus += cur_ring[LEFT]->o_ac;
-      if (ISRING(RIGHT, R_ADDDAM)) dplus += cur_ring[RIGHT]->o_ac;
-      else if (ISRING(RIGHT, R_ADDHIT))
-      hplus += cur_ring[RIGHT]->o_ac;
+      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += get_ring(LEFT)->ring_level;
+      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += get_ring(LEFT)->ring_level;
+      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += get_ring(RIGHT)->ring_level;
+      else if (is_ring_on_hand(RIGHT, R_ADDHIT))
+        hplus += get_ring(RIGHT)->ring_level;
     }
-    cp = weap->o_damage;
-    if (hurl && (weap->o_flags&ISMISL) && cur_weapon!=NULL && cur_weapon->o_which==weap->o_launch)
+    cp = weap->damage;
+    if (hurl && (weap->flags&ISMISL) && get_current_weapon()!=NULL && get_current_weapon()->which==weap->launcher)
     {
-      cp = weap->o_hurldmg;
-      hplus += cur_weapon->o_hplus;
-      dplus += cur_weapon->o_dplus;
+      cp = weap->throw_damage;
+      hplus += get_current_weapon()->hit_plus;
+      dplus += get_current_weapon()->damage_plus;
     }
     //Drain a staff of striking
-    if (weap->o_type==STICK && weap->o_which==WS_HIT && --weap->o_charges<0)
+    if (weap->type==STICK && weap->which==WS_HIT && --weap->charges<0)
     {
-      cp = weap->o_damage = "0d0";
-      weap->o_hplus = weap->o_dplus = 0;
-      weap->o_charges = 0;
+      cp = weap->damage = "0d0";
+      weap->hit_plus = weap->damage_plus = 0;
+      weap->charges = 0;
     }
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
   if (!on(*thdef, ISRUN)) hplus += 4;
-  def_arm = def->s_arm;
-  if (def==&pstats)
+  def_arm = def->ac;
+  if (def==&player.stats)
   {
-    if (cur_armor!=NULL) def_arm = cur_armor->o_ac;
-    if (ISRING(LEFT, R_PROTECT)) def_arm -= cur_ring[LEFT]->o_ac;
-    if (ISRING(RIGHT, R_PROTECT)) def_arm -= cur_ring[RIGHT]->o_ac;
+    if (get_current_armor()!=NULL) def_arm = get_current_armor()->armor_class;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= get_ring(LEFT)->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= get_ring(RIGHT)->ring_level;
   }
   for (;;)
   {
     ndice = atoi(cp);
     if ((cp = strchr(cp, 'd'))==NULL) break;
     nsides = atoi(++cp);
-    if (swing(att->s_lvl, def_arm, hplus+str_plus(att->s_str)))
+    if (swing(att->level, def_arm, hplus+str_plus(att->str)))
     {
       int proll;
 
       proll = roll(ndice, nsides);
-      damage = dplus+proll+add_dam(att->s_str);
+      damage = dplus+proll+add_dam(att->str);
       //special goodies for the commercial version of rogue
       //make it easier on level one
-      if (thdef==&player && max_level==1) damage = (damage+1)/2;
-      def->s_hpt -= max(0, damage);
+      if (thdef==&player && max_level()==1) damage = (damage+1)/2;
+      def->hp -= max(0, damage);
       did_hit = TRUE;
     }
     if ((cp = strchr(cp, '/'))==NULL) break;
@@ -300,7 +393,7 @@ bool roll_em(THING *thatt, THING *thdef, THING *weap, bool hurl)
 }
 
 //prname: The print name of a combatant
-char *prname(char *who, bool upper)
+char *prname(const char *who, bool upper)
 {
   *tbuf = '\0';
   if (who==0) strcpy(tbuf, you);
@@ -311,44 +404,42 @@ char *prname(char *who, bool upper)
 }
 
 //hit: Print a message to indicate a successful hit
-void hit(char *er, char *ee)
+void display_hit_msg(const char *er, const char *ee)
 {
   char *s;
 
   addmsg(prname(er, TRUE));
-  switch ((terse || expert)?1:rnd(4))
+  switch ((short_msgs())?1:rnd(4))
   {
-    case 0: s = " scored an excellent hit on "; break;
-    case 1: s = " hit "; break;
-    case 2: s = (er==0?" have injured ":" has injured "); break;
-    case 3: s = (er==0?" swing and hit ":" swings and hits "); break;
+  case 0: s = " scored an excellent hit on "; break;
+  case 1: s = " hit "; break;
+  case 2: s = (er==0?" have injured ":" has injured "); break;
+  case 3: s = (er==0?" swing and hit ":" swings and hits "); break;
   }
   msg("%s%s", s, prname(ee, FALSE));
 }
 
 //miss: Print a message to indicate a poor swing
-void miss(char *er, char *ee)
+void miss(const char *er, const char *ee)
 {
   char *s;
 
   addmsg(prname(er, TRUE));
-  switch ((terse || expert)?1:rnd(4))
+  switch ((short_msgs())?1:rnd(4))
   {
-    case 0: s = (er==0?" swing and miss":" swings and misses"); break;
-    case 1: s = (er==0?" miss":" misses"); break;
-    case 2: s = (er==0?" barely miss":" barely misses"); break;
-    case 3: s = (er==0?" don't hit":" doesn't hit"); break;
+  case 0: s = (er==0?" swing and miss":" swings and misses"); break;
+  case 1: s = (er==0?" miss":" misses"); break;
+  case 2: s = (er==0?" barely miss":" barely misses"); break;
+  case 3: s = (er==0?" don't hit":" doesn't hit"); break;
   }
   msg("%s %s", s, prname(ee, FALSE));
 }
 
 //save_throw: See if a creature save against something
-int save_throw(int which, THING *tp)
+int save_throw(int which, AGENT *monster)
 {
-  int need;
-
-  need = 14+which-tp->t_stats.s_lvl/2;
-  return (roll(1, 20)>=need);
+  int need = 14 + which - monster->stats.level/2;
+  return (roll(1, 20) >= need);
 }
 
 //save: See if he saves against various nasty things
@@ -356,14 +447,14 @@ int save(int which)
 {
   if (which==VS_MAGIC)
   {
-    if (ISRING(LEFT, R_PROTECT)) which -= cur_ring[LEFT]->o_ac;
-    if (ISRING(RIGHT, R_PROTECT)) which -= cur_ring[RIGHT]->o_ac;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= get_ring(LEFT)->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= get_ring(RIGHT)->ring_level;
   }
   return save_throw(which, &player);
 }
 
 //str_plus: Compute bonus/penalties for strength on the "to hit" roll
-int str_plus(str_t str)
+int str_plus(unsigned int str)
 {
   int add = 4;
 
@@ -376,7 +467,7 @@ int str_plus(str_t str)
 }
 
 //add_dam: Compute additional damage done for exceptionally high or low strength
-int add_dam(str_t str)
+int add_dam(unsigned int str)
 {
   int add = 6;
 
@@ -393,87 +484,95 @@ int add_dam(str_t str)
 //raise_level: The guy just magically went up a level.
 void raise_level()
 {
-  pstats.s_exp = e_levels[pstats.s_lvl-1]+1L;
+  player.stats.exp = e_levels[player.stats.level-1]+1L;
   check_level();
 }
 
 //thunk: A missile hit or missed a monster
-void thunk(THING *weap, char *mname, char *does, char *did)
+void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
 {
-  if (weap->o_type==WEAPON) addmsg("the %s %s ", w_names[weap->o_which], does);
-  else addmsg("you %s ", did);
-  if (on(player, ISBLIND)) msg(it);
-  else msg("the %s", mname);
+  if (item->type == WEAPON)
+    addmsg("the %s %s ", get_weapon_name(item->which), does);
+  else 
+    addmsg("you %s ", did);
+  on(player, ISBLIND) ? msg(it) : msg("the %s", name);
 }
 
 //remove: Remove a monster from the screen
-void remove_mons(coord *mp, THING *tp, bool waskill)
+void remove_monster(AGENT *monster, bool waskill)
 {
-  THING *obj, *nexti;
+  ITEM *obj, *nexti;
+  Coord* monster_pos = &monster->pos;
 
-  if (tp==NULL) return;
-  for (obj = tp->t_pack; obj!=NULL; obj = nexti)
+  if (monster==NULL) return;
+  for (obj = monster->pack; obj!=NULL; obj = nexti)
   {
     nexti = next(obj);
-    bcopy(obj->o_pos, tp->t_pos);
-    detach(tp->t_pack, obj);
-    if (waskill) fall(obj, FALSE); else discard(obj);
+    obj->pos = monster->pos;
+    detach_item(&monster->pack, obj);
+    if (waskill)
+      fall(obj, FALSE);
+    else 
+      discard_item(obj);
   }
-  if (_level[INDEX(mp->y, mp->x)]==PASSAGE) standout();
-  if (tp->t_oldch==FLOOR && !cansee(mp->y, mp->x)) mvaddch(mp->y, mp->x, ' ');
-  else if (tp->t_oldch!='@') mvaddch(mp->y, mp->x, tp->t_oldch);
+  if (get_tile(monster_pos->y, monster_pos->x)==PASSAGE) 
+    standout();
+  if (monster->oldch==FLOOR && !cansee(monster_pos->y, monster_pos->x))
+    mvaddch(monster_pos->y, monster_pos->x, ' ');
+  else if (monster->oldch!='@') 
+    mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
   standend();
-  detach(mlist, tp);
-  discard(tp);
+
+  detach_agent(&mlist, monster);
+  discard_agent(monster);
 }
 
 //is_magic: Returns true if an object radiates magic
-bool is_magic(THING *obj)
+bool is_magic(ITEM *obj)
 {
-  switch (obj->o_type)
+  switch (obj->type)
   {
-    case ARMOR: return obj->o_ac!=a_class[obj->o_which];
-    case WEAPON: return obj->o_hplus!=0 || obj->o_dplus!=0;
-    case POTION: case SCROLL: case STICK: case RING: case AMULET: return true;
+  case ARMOR: return obj->armor_class!=get_default_class(obj->which);
+  case WEAPON: return obj->hit_plus!=0 || obj->damage_plus!=0;
+  case POTION: case SCROLL: case STICK: case RING: case AMULET: return true;
   }
   return false;
 }
 
 //killed: Called to put a monster to death
-void killed(THING *tp, bool pr)
+void killed(AGENT *monster, bool print)
 {
-  pstats.s_exp += tp->t_stats.s_exp;
-  //If the monster was a violet fungi, un-hold him
-  switch (tp->t_type)
+  player.stats.exp += monster->stats.exp;
+  //If the monster was a flytrap, un-hold him
+  switch (monster->type)
   {
 
-    case 'F':
-      player.t_flags &= ~ISHELD;
-      f_restor();
+  case 'F':
+    player.flags &= ~ISHELD;
+    f_restor();
     break;
 
-    case 'L':
+  case 'L':
     {
-      THING *gold;
+      ITEM *gold;
 
-      if ((gold = new_item())==NULL) return;
-      gold->o_type = GOLD;
-      gold->o_goldval = GOLDCALC;
-      if (save(VS_MAGIC)) gold->o_goldval += GOLDCALC+GOLDCALC+GOLDCALC+GOLDCALC;
-      attach(tp->t_pack, gold);
+      if ((gold = create_item(GOLD, 0))==NULL) return;
+      gold->gold_value = rnd_gold();
+      if (save(VS_MAGIC)) gold->gold_value += rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold();
+      attach_item(&monster->pack, gold);
 
       break;
     }
 
   }
-  //Get rid of the monster.
-  remove_mons(&tp->t_pos, tp, TRUE);
-  if (pr)
+  if (print)
   {
     addmsg("you have defeated ");
     if (on(player, ISBLIND)) msg(it);
-    else msg("the %s", monsters[tp->t_type-'A'].m_name);
+    else msg("the %s", get_monster_name(monster->type));
   }
   //Do adjustments if he went up a level
   check_level();
+  //Get rid of the monster.
+  remove_monster(monster, TRUE);
 }

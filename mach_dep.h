@@ -14,7 +14,9 @@ int readchar();
 bool is_caps_lock_on();
 bool is_scroll_lock_on();
 bool is_num_lock_on();
+bool is_shift_pressed();
 
 void beep();
-void _halt();
 int no_char();
+void tick_pause();
+

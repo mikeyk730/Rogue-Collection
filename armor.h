@@ -1,3 +1,9 @@
+int get_default_class(int type);
+void init_new_armor(ITEM* armor);
+const char* get_inv_name_armor(ITEM* armor);
+
+const char* get_armor_name(int type);
+
 //wear: The player wants to wear something, so let him/her put it on.
 void wear();
 

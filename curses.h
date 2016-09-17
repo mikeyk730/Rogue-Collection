@@ -1,3 +1,23 @@
+#define BX_SIZE 7
+
+#define standend()          set_attr(0)
+#define green()             set_attr(1)
+#define cyan()              set_attr(2)
+#define red()               set_attr(3)
+#define magenta()           set_attr(4)
+#define brown()             set_attr(5)
+#define dgrey()             set_attr(6)
+#define lblue()             set_attr(7)
+#define lgrey()             set_attr(8)
+#define lred()              set_attr(9)
+#define lmagenta()          set_attr(10)
+#define yellow()            set_attr(11)
+#define uline()             set_attr(12)
+#define blue()              set_attr(13)
+#define standout()          set_attr(14)
+#define high()              set_attr(15)
+#define bold()              set_attr(16)
+
 void clear();
 
 void putchr(int c, int attr);
@@ -6,11 +26,11 @@ void putchr(int c, int attr);
 bool cursor(bool ison);
 
 //get current cursor position
-void getrc(int *rp, int *cp);
+void getrc(int *r, int *c);
 
 void clrtoeol();
 
-void mvaddstr(int r, int c, char *s);
+void mvaddstr(int r, int c, const char *s);
 
 void mvaddch(int r, int c, char chr);
 
@@ -18,7 +38,7 @@ int mvinch(int r, int c);
 
 int addch(byte chr);
 
-void addstr(char *s);
+void addstr(const char *s);
 
 void set_attr(int bute);
 
@@ -45,10 +65,10 @@ void box(int ul_r, int ul_c, int lr_r, int lr_c);
 void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
 //center a string according to how many columns there really are
-void center(int row, char *string);
+void center(int row, const char *string);
 
 //printw(Ieeeee)
-void printw(char *msg, ...);
+void printw(const char *msg, ...);
 
 void scroll_up(int start_row, int end_row, int nlines);
 

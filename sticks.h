@@ -1,5 +1,16 @@
+//init_materials: Initialize the construction materials for wands and staffs
+void init_materials();
+const char* get_material(int type);
+const char* get_stick_type(int type);
+void init_new_stick(ITEM* stick);
+int get_stick_value(int type);
+const char* get_stick_name(int type);
+const char* get_stick_guess(int type);
+void set_stick_guess(int type, const char* value);
+const char* get_inv_name_stick(ITEM* stick);
+
 //fix_stick: Set up a new stick
-void fix_stick(THING *cur);
+void fix_stick(ITEM *cur);
 
 //do_zap: Perform a zap with a wand
 void do_zap();
@@ -8,7 +19,10 @@ void do_zap();
 void drain();
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
-void fire_bolt(coord *start, coord *dir, char *name);
+int fire_bolt(Coord *start, Coord *dir, const char *name);
 
 //charge_str: Return an appropriate string for a wand charge
-char *charge_str(THING *obj);
+const char *get_charge_string(ITEM *obj);
+
+int does_know_stick(int type);
+void discover_stick(int type);

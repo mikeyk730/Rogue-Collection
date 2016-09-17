@@ -1,6 +1,7 @@
 //Various installation dependent routines
 //mach_dep.c  1.4 (A.I. Design) 12/1/84
 
+#include <Windows.h>
 #include <stdio.h>
 #include <conio.h>
 
@@ -8,8 +9,7 @@
 #include "curses.h"
 #include "mach_dep.h"
 #include "io.h"
-
-static int clk_vec[2];
+#include "hero.h"
 
 #define C_LEFT    0x4b
 #define C_RIGHT   0x4d
@@ -33,7 +33,6 @@ static int clk_vec[2];
 #define C_F9      0x43
 #define C_F10     0x44
 #define ALT_F9    0x70
-
 
 //Table for IBM extended key translation
 static struct xlate
@@ -64,13 +63,28 @@ static struct xlate
   ALT_F9,  'F'
 };
 
+int is_direction_key(int key)
+{
+  return key == C_HOME
+    || key == C_UP
+    || key == C_PGUP
+    || key == C_LEFT
+    || key == C_RIGHT
+    || key ==  C_END
+    || key ==  C_DOWN
+    || key ==  C_PGDN;
+}
+
 //setup: Get starting setup for all games
 void setup()
 {
-  terse = FALSE;
+  set_small_screen_mode(false);
   maxrow = 23;
-  if (COLS==40) {maxrow = 22; terse = TRUE;}
-  expert = terse;
+  if (COLS==40) {
+    maxrow = 22; 
+    set_small_screen_mode(true);
+  }
+  set_brief_mode(in_small_screen_mode());
 }
 
 //flush_type: Flush typeahead for traps, etc.
@@ -79,10 +93,17 @@ void flush_type()
   typeahead = "";
 }
 
+BOOL CtrlHandler(DWORD fdwCtrlType) 
+{
+  return TRUE;
+}
+
 void credits()
 {
   int i;
   char tname[25];
+
+  SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
 
   cursor(FALSE);
   clear();
@@ -120,7 +141,8 @@ void credits()
   high();
   getinfo(tname, 23);
   if (*tname && *tname!=ESCAPE) strcpy(whoami, tname);
-  
+  set_name(whoami);
+
   blot_out(23, 0, 24, COLS-1);
   brown();
   mvaddch(22, 0, (char)0xc8);
@@ -133,8 +155,12 @@ int getkey()
   struct xlate *x;
   int key = _getch();
   if (key != 0 && key != 0xE0) return key;
-   
-  for (key = _getch(), x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
+
+  key = _getch();
+  if (is_shift_pressed() && is_direction_key(key))
+    fastmode = !fastmode;
+
+  for (x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
   {
     if (key == x->keycode)
     {
@@ -160,28 +186,36 @@ int readchar()
 
 int no_char()
 { 
-   return !_kbhit(); 
+  return !_kbhit(); 
 }
-
-void beep()
-{}
-
-void _halt()
-{}
-
-#include <Windows.h>
 
 bool is_caps_lock_on()
 {
-   return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
+  return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
 }
 
 bool is_scroll_lock_on()
 {
-   return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
+  return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
 }
 
 bool is_num_lock_on()
 {
-   return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
+  return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
+}
+
+bool is_shift_pressed()
+{
+  return (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+    || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);
+}
+
+void beep()
+{
+  Beep(750, 300);
+}
+
+void tick_pause()
+{
+  Sleep(50);
 }

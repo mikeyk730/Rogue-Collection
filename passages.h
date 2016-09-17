@@ -2,7 +2,7 @@
 void do_passages();
 
 //door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
-void door(struct room *rm, coord *cp);
+void door(struct Room *rm, Coord *cp);
 
 void psplat(int y, int x);
 

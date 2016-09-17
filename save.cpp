@@ -6,6 +6,11 @@
 #include "io.h"
 #include "curses.h"
 
+void do_save(const char* filename)
+{
+  msg("Save not implemented");
+}
+
 //save_game: Implement the "save game" command
 void save_game()
 {
@@ -13,13 +18,14 @@ void save_game()
 
   msg("");
   mpos = 0;
-  if (terse) addstr("Save file ? ");
+  if (in_small_screen_mode()) addstr("Save file ? ");
   else printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", s_save);
   getinfo(savename, 19);
-  if (*savename==0) strcpy(savename, s_save);
-  msg("Save not implemented");
+  if (*savename==0) 
+    strcpy(savename, s_save);
+  do_save(savename);
 }
 
-void restore(char *savefile)
+void restore_game(const char *filename)
 {
 }

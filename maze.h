@@ -1,4 +1,4 @@
-void draw_maze(struct room *rp);
+void draw_maze(struct Room *room);
 
 void new_frontier(int y, int x);
 

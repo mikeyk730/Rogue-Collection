@@ -1,3 +1,13 @@
+//init_colors: Initialize the potion color scheme for this time
+void init_colors();
+const char* get_color(int type);
+void init_new_potion(ITEM* potion);
+int get_potion_value(int type);
+const char* get_potion_name(int type);
+const char* get_potion_guess(int type);
+void set_potion_guess(int type, const char* value);
+const char* get_inv_name_potion(ITEM* potion);
+
 //quaff: Quaff a potion from the pack
 void quaff();
 
@@ -6,6 +16,11 @@ void invis_on();
 
 //turn_see: Put on or off seeing monsters on this level
 bool turn_see(bool turn_off);
+void turn_see_wrapper(int turn_off);
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void th_effect(THING *obj, THING *tp);
+void affect_monster(ITEM *obj, AGENT *monster);
+
+int is_bad_potion(ITEM* obj);
+int does_know_potion(int type);
+void discover_potion(int type);

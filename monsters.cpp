@@ -14,13 +14,76 @@
 #include "misc.h"
 #include "daemon.h"
 #include "fight.h"
+#include "rings.h"
+#include "thing.h"
+#include "rooms.h"
+#include "level.h"
 
 //List of monsters in rough order of vorpalness
-static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
+static char *lvl_mons =  "K BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
+#define ___  1
+#define XX  10
+
+//Array containing information on all the various types of monsters
+struct Monster
+{
+  char *name;         //What to call the monster
+  int carry;          //Probability of carrying something
+  short flags;        //Things about the monster
+  struct Stats stats; //Initial stats
+};
+
+struct Monster monsters[26] =
+{
+  // Name           CARRY                  FLAG   str,  exp,lvl,amr, hpt, dmg
+  { "aquator",          0,               ISMEAN, { XX,   20,  5,  2, ___, "0d0/0d0"         } },
+  { "bat",              0,                ISFLY, { XX,    1,  1,  3, ___, "1d2"             } },
+  { "centaur",         15,                    0, { XX,   25,  4,  4, ___, "1d6/1d6"         } },
+  { "dragon",         100,               ISMEAN, { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    } },
+  { "emu",              0,               ISMEAN, { XX,    2,  1,  7, ___, "1d2"             } },
+  //NOTE: the damage is %%% so that xstr won't merge this string with others, since it is written on in the program
+  { "venus flytrap",    0,               ISMEAN, { XX,   80,  8,  3, ___, "%%%d0"           } },
+  { "griffin",         20, ISMEAN|ISFLY|ISREGEN, { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     } },
+  { "hobgoblin",        0,               ISMEAN, { XX,    3,  1,  5, ___, "1d8"             } },
+  { "ice monster",      0,               ISMEAN, { XX,   15,  1,  9, ___, "1d2"             } },
+  { "jabberwock",      70,                    0, { XX, 4000, 15,  6, ___, "2d12/2d4"        } },
+  { "kestral",          0,         ISMEAN|ISFLY, { XX,    1,  1,  7, ___, "1d4"             } },
+  { "leprechaun",       0,                    0, { XX,   10,  3,  8, ___, "1d2"             } },
+  { "medusa",          40,               ISMEAN, { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     } },
+  { "nymph",          100,                    0, { XX,   37,  3,  9, ___, "0d0"             } },
+  { "orc",             15,              ISGREED, { XX,    5,  1,  6, ___, "1d8"             } },
+  { "phantom",          0,              ISINVIS, { XX,  120,  8,  3, ___, "4d4"             } },
+  { "quagga",          30,               ISMEAN, { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     } },
+  { "rattlesnake",      0,               ISMEAN, { XX,    9,  2,  3, ___, "1d6"             } },
+  { "slime",            0,               ISMEAN, { XX,    1,  2,  8, ___, "1d3"             } },
+  { "troll",           50,       ISREGEN|ISMEAN, { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     } },
+  { "ur-vile",          0,               ISMEAN, { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" } },
+  { "vampire",         20,       ISREGEN|ISMEAN, { XX,  350,  8,  1, ___, "1d10"            } },
+  { "wraith",           0,                    0, { XX,   55,  5,  4, ___, "1d6"             } },
+  { "xeroc",           30,                    0, { XX,  100,  7,  7, ___, "3d4"             } },
+  { "yeti",            30,                    0, { XX,   50,  4,  6, ___, "1d6/1d6"         } },
+  { "zombie",           0,               ISMEAN, { XX,    6,  2,  8, ___, "1d8"             } }
+};
+
+char f_damage[10];
+
+#undef ___
+#undef XX
+
+const char* get_monster_name(char monster)
+{
+  return monsters[monster-'A'].name;
+}
+
+int get_monster_carry_prob(char monster)
+{
+  return monsters[monster-'A'].carry;
+}
+
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
-char randmonster(bool wander)
+char randmonster(bool wander, int level)
 {
   int d;
   char *mons;
@@ -37,156 +100,166 @@ char randmonster(bool wander)
   return mons[d];
 }
 
-//new_monster: Pick a new monster and add it to the list
-void new_monster(THING *tp, byte type, coord *cp)
+void set_xeroc_disguise(AGENT* X)
 {
-  struct monster *mp;
-  int lev_add;
-
-  if ((lev_add = level-AMULETLEVEL)<0) lev_add = 0;
-  attach(mlist, tp);
-  tp->t_type = type;
-  tp->t_disguise = type;
-  bcopy(tp->t_pos, *cp);
-  tp->t_oldch = '@';
-  tp->t_room = roomin(cp);
-  mp = &monsters[tp->t_type-'A'];
-  tp->t_stats.s_lvl = mp->m_stats.s_lvl+lev_add;
-  tp->t_stats.s_maxhp = tp->t_stats.s_hpt = roll(tp->t_stats.s_lvl, 8);
-  tp->t_stats.s_arm = mp->m_stats.s_arm-lev_add;
-  tp->t_stats.s_dmg = mp->m_stats.s_dmg;
-  tp->t_stats.s_str = mp->m_stats.s_str;
-  tp->t_stats.s_exp = mp->m_stats.s_exp+lev_add*10+exp_add(tp);
-  tp->t_flags = mp->m_flags;
-  tp->t_turn = TRUE;
-  tp->t_pack = NULL;
-  if (ISWEARING(R_AGGR)) start_run(cp);
-  if (type=='F') tp->t_stats.s_dmg = f_damage;
-  if (type=='X') switch (rnd(level>25?9:8))
+  switch (rnd(get_level() >= AMULETLEVEL ? 9 : 8))
   {
-    case 0: tp->t_disguise = GOLD; break;
-    case 1: tp->t_disguise = POTION; break;
-    case 2: tp->t_disguise = SCROLL; break;
-    case 3: tp->t_disguise = STAIRS; break;
-    case 4: tp->t_disguise = WEAPON; break;
-    case 5: tp->t_disguise = ARMOR; break;
-    case 6: tp->t_disguise = RING; break;
-    case 7: tp->t_disguise = STICK; break;
-    case 8: tp->t_disguise = AMULET; break;
+  case 0: X->disguise = GOLD; break;
+  case 1: X->disguise = POTION; break;
+  case 2: X->disguise = SCROLL; break;
+  case 3: X->disguise = STAIRS; break;
+  case 4: X->disguise = WEAPON; break;
+  case 5: X->disguise = ARMOR; break;
+  case 6: X->disguise = RING; break;
+  case 7: X->disguise = STICK; break;
+  case 8: X->disguise = AMULET; break;
   }
+}
+
+//new_monster: Pick a new monster and add it to the list
+void new_monster(AGENT *monster, byte type, Coord *position, int level)
+{
+  int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
+  const struct Monster* defaults;
+  
+  defaults = &monsters[type-'A'];
+  attach_agent(&mlist, monster);
+
+  monster->type = type;
+  monster->disguise = type;
+  monster->pos = *position;
+  monster->oldch = '@';
+  monster->room = roomin(position);
+  monster->flags = defaults->flags;
+  monster->stats = defaults->stats;
+  monster->stats.level += level_add;
+  monster->stats.hp = monster->stats.max_hp = roll(monster->stats.level, 8);
+  monster->stats.ac -= level_add;
+  monster->stats.exp += level_add*10 + exp_add(monster);
+  monster->turn = TRUE;
+  monster->pack = NULL;
+
+  if (type=='F') 
+    monster->stats.damage = f_damage;
+  if (type=='X') 
+    set_xeroc_disguise(monster);
+
+  if (is_wearing_ring(R_AGGR)) 
+    start_run(monster);
 }
 
 //f_restor(): restor initial damage string for flytraps
 void f_restor()
 {
-  struct monster *mp = &monsters['F'-'A'];
-
-  fung_hit = 0;
-  strcpy(f_damage, mp->m_stats.s_dmg);
+  const struct Monster *monster = &monsters['F'-'A'];
+  flytrap_hit = 0;
+  strcpy(f_damage, monster->stats.damage);
 }
 
 //expadd: Experience to add for this monster's level/hit points
-int exp_add(THING *tp)
+int exp_add(AGENT *monster)
 {
-  int mod;
+  int divisor = (monster->stats.level == 1) ? 8 : 6;
+  int value = monster->stats.max_hp / divisor;
 
-  if (tp->t_stats.s_lvl==1) mod = tp->t_stats.s_maxhp/8;
-  else mod = tp->t_stats.s_maxhp/6;
-  if (tp->t_stats.s_lvl>9) mod *= 20;
-  else if (tp->t_stats.s_lvl>6) mod *= 4;
-  return mod;
+  if (monster->stats.level>9) 
+    value *= 20;
+  else if (monster->stats.level>6) 
+    value *= 4;
+  
+  return value;
 }
 
 //wanderer: Create a new wandering monster and aim it at the player
 void wanderer()
 {
-  int i;
-  struct room *rp;
-  THING *tp;
-  coord cp;
+  struct Room *room;
+  AGENT *monster;
+  Coord cp;
 
   //can we allocate a new monster
-  if ((tp = new_item())==NULL) return;
+  if ((monster = create_agent())==NULL) return;
   do
   {
-    i = rnd_room();
-    if ((rp = &rooms[i])==proom) continue;
-    rnd_pos(rp, &cp);
-  } while (!(rp!=proom && step_ok(winat(cp.y, cp.x))));
-  new_monster(tp, randmonster(TRUE), &cp);
-#ifdef TEST
-  if (bailout && me()) msg("wanderer bailout");
-#endif TEST
-#ifdef ME
-  debug("started a wandering %s", monsters[tp->t_type-'A'].m_name);
-#endif
-  start_run(&tp->t_pos);
+    room = rnd_room();
+    if (room==player.room) continue;
+    rnd_pos(room, &cp);
+  } while (!(room!=player.room && step_ok(get_tile_or_monster(cp.y, cp.x))));
+  new_monster(monster, randmonster(TRUE, get_level()), &cp, get_level());
+  if (bailout) debug("wanderer bailout");
+  //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
+  start_run(monster);
 }
 
 //wake_monster: What to do when the hero steps next to a monster
-THING *wake_monster(int y, int x)
+AGENT *wake_monster(int y, int x)
 {
-  THING *tp;
-  struct room *rp;
+  AGENT *monster;
+  struct Room *room;
   byte ch;
   int dst;
 
-  if ((tp = moat(y, x))==NULL) return tp;
-  ch = tp->t_type;
+  if ((monster = monster_at(y, x))==NULL) return monster;
+  ch = monster->type;
   //Every time he sees mean monster, it might start chasing him
-  if (!on(*tp, ISRUN) && rnd(3)!=0 && on(*tp, ISMEAN) && !on(*tp, ISHELD) && !ISWEARING(R_STEALTH))
+  if (!on(*monster, ISRUN) && rnd(3)!=0 && on(*monster, ISMEAN) && !on(*monster, ISHELD) && !is_wearing_ring(R_STEALTH))
   {
-    tp->t_dest = &hero;
-    tp->t_flags |= ISRUN;
+    monster->dest = &player.pos;
+    monster->flags |= ISRUN;
   }
-  if (ch=='M' && !on(player, ISBLIND) && !on(*tp, ISFOUND) && !on(*tp, ISCANC) && on(*tp, ISRUN))
+  if (ch=='M' && !on(player, ISBLIND) && !on(*monster, ISFOUND) && !on(*monster, ISCANC) && on(*monster, ISRUN))
   {
-    rp = proom;
-    dst = DISTANCE(y, x, hero.y, hero.x);
-    if ((rp!=NULL && !(rp->r_flags&ISDARK)) || dst<LAMPDIST)
+    room = player.room;
+    dst = DISTANCE(y, x, player.pos.y, player.pos.x);
+    if ((room!=NULL && !(room->flags&ISDARK)) || dst<LAMP_DIST)
     {
-      tp->t_flags |= ISFOUND;
+      monster->flags |= ISFOUND;
       if (!save(VS_MAGIC))
       {
-        if (on(player, ISHUH)) lengthen(unconfuse, rnd(20)+HUHDURATION);
-        else fuse(unconfuse, 0, rnd(20)+HUHDURATION);
-        player.t_flags |= ISHUH;
+        if (on(player, ISHUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
+        else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
+        player.flags |= ISHUH;
         msg("the medusa's gaze has confused you");
       }
     }
   }
   //Let greedy ones guard gold
-  if (on(*tp, ISGREED) && !on(*tp, ISRUN))
+  if (on(*monster, ISGREED) && !on(*monster, ISRUN))
   {
-    tp->t_flags = tp->t_flags|ISRUN;
-    if (proom->r_goldval) tp->t_dest = &proom->r_gold;
-    else tp->t_dest = &hero;
+    monster->flags = monster->flags|ISRUN;
+    if (player.room->goldval) monster->dest = &player.room->gold;
+    else monster->dest = &player.pos;
   }
-  return tp;
+  return monster;
 }
 
 //give_pack: Give a pack to a monster if it deserves one
-void give_pack(THING *tp)
+void give_pack(AGENT *monster)
 {
-  //check if we can allocate a new item
-  if (total<MAXITEMS && rnd(100)<monsters[tp->t_type-'A'].m_carry) attach(tp->t_pack, new_thing());
+  if (rnd(100) < monsters[monster->type-'A'].carry) 
+    attach_item(&monster->pack, new_item());
 }
 
 //pick_mons: Choose a sort of monster for the enemy of a vorpally enchanted weapon
-char pick_mons()
+char pick_monster()
 {
-  char *cp = lvl_mons+strlen(lvl_mons);
+  char *cp;
+  
+  do {
+    cp = lvl_mons+strlen(lvl_mons);
+    while (--cp>=lvl_mons && rnd(10));
+    if (cp<lvl_mons) return 'M';
+  } while (*cp == ' ');
 
-  while (--cp>=lvl_mons && rnd(10)) ;
-  if (cp<lvl_mons) return 'M';
   return *cp;
 }
 
 //moat(x,y): returns pointer to monster at coordinate. if no monster there return NULL
-THING *moat(int my, int mx)
+AGENT *monster_at(int y, int x)
 {
-  THING *tp;
-
-  for (tp = mlist; tp!=NULL; tp = next(tp)) if (tp->t_pos.x==mx && tp->t_pos.y==my) return (tp);
-  return (NULL);
+  AGENT *monster;
+  for (monster = mlist; monster!=NULL; monster = next(monster)) 
+    if (monster->pos.x == x && monster->pos.y == y) 
+      return monster;
+  return NULL;
 }

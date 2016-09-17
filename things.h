@@ -1,6 +1,8 @@
-//inv_name: Return the name of something as it would appear in an inventory.
+//init_things: Initialize the probabilities for types of things
+void init_things();
 
-char *inv_name(THING *obj, bool drop);
+//inv_name: Return the name of something as it would appear in an inventory.
+char *inv_name(ITEM *obj, bool drop);
 
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 
@@ -8,14 +10,13 @@ void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 void drop();
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
-
-int can_drop(THING *op);
+int can_drop(ITEM *op);
 
 //new_thing: Return a new thing
-THING *new_thing();
+ITEM* new_item();
 
 //pick_one: Pick an item out of a list of nitems possible magic items
-int pick_one(struct magic_item *magic, int nitems);
+int pick_one(struct MagicItem *magic, int nitems);
 
 //discovered: list what the player has discovered in this game of a certain type
 void discovered();

@@ -61,7 +61,8 @@ void do_daemons()
 
   //Loop through the devil list, Executing each one, giving it the proper arguments
   for (dev = d_list; dev<&d_list[MAXDAEMONS]; dev++)
-  if (dev->d_time==DAEMON && dev->d_func!=EMPTY) (*dev->d_func)(dev->d_arg);
+    if (dev->d_time == DAEMON && dev->d_func != 0)
+        (*dev->d_func)(dev->d_arg);
 }
 
 void fuse(void (*func)(), int arg, int time)
