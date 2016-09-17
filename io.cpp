@@ -276,9 +276,11 @@ void status()
   //Show raw food counter in wizard mode
   if (is_wizard()) {
       s_hungry = get_food_left();
-      bold();
       std::ostringstream ss;
       ss << s_hungry;
+      bold();
+      move(24, PT(28, 58));
+      addstr(state_name[0]);
       move(24, PT(28, 58));
       addstr(ss.str().c_str());
       standend();
