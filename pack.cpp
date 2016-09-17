@@ -16,7 +16,7 @@
 #include "scrolls.h"
 #include "hero.h"
 
-static int s_had_amulet = false;
+static bool s_had_amulet = false;
 
 ITEM *cur_armor;   //What a well dresssed rogue wears
 ITEM *cur_weapon;  //Which weapon he is wielding
@@ -190,9 +190,12 @@ picked_up:
   for (monster = mlist; monster!=NULL; monster = next(monster))
     if (monster->dest && (monster->dest->x==obj->pos.x) && (monster->dest->y==obj->pos.y))
       monster->dest = &player.pos;
-  if (obj->type==AMULET) { s_had_amulet = true; }
+  if (obj->type==AMULET) { 
+      s_had_amulet = true;
+  }
   //Notify the user
-  if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, true), pack_char(obj));
+  if (!silent) 
+      msg("%s%s (%c)", noterse("you now have "), inv_name(obj, true), pack_char(obj));
 }
 
 //inventory: List what is in the pack
@@ -337,7 +340,7 @@ void money(int value)
   if (value>0) msg("you found %d gold pieces", value);
 }
 
-int has_amulet()
+bool has_amulet()
 {
   ITEM* item;
   for(item = player.pack; item != NULL; item = next(item))
@@ -348,7 +351,7 @@ int has_amulet()
 }
 
 //true if player ever had amulet
-int had_amulet()
+bool had_amulet()
 {
   return s_had_amulet;
 }

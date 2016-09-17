@@ -59,11 +59,11 @@ byte get_tile_or_monster(int y, int x);
 //search: Player gropes about him to find hidden things.
 void search();
 
-//d_level: He wants to go down a level
-void d_level();
+//go_down_stairs: He wants to go down a level
+void go_down_stairs();
 
-//u_level: He wants to go up a level
-void u_level();
+//go_up_stairs: He wants to go up a level
+void go_up_stairs();
 
 //call: Allow a user to call a potion, scroll, or ring something
 void call();

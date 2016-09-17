@@ -221,11 +221,11 @@ void execcom()
         break;
     case '>':
         counts_as_turn = false; 
-        d_level();
+        go_down_stairs();
         break;
     case '<':
         counts_as_turn = false; 
-        u_level(); 
+        go_up_stairs(); 
         break;
     case '/':
         counts_as_turn = false; 

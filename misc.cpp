@@ -481,29 +481,31 @@ void search()
 }
 
 
-//d_level: He wants to go down a level
-void d_level()
+//go_down_stairs: He wants to go down a level
+void go_down_stairs()
 {
-  if (get_tile(player.pos.y, player.pos.x)!=STAIRS && !is_wizard())
-    msg("I see no way down");
-  else {
-    next_level(); 
-    new_level(true);
-  }
+    if (get_tile(player.pos.y, player.pos.x) != STAIRS && !is_wizard())
+        msg("I see no way down");
+    else {
+        next_level();
+        new_level(true);
+    }
 }
 
-//u_level: He wants to go up a level
-void u_level()
+//go_up_stairs: He wants to go up a level
+void go_up_stairs()
 {
-  if (get_tile(player.pos.y, player.pos.x)==STAIRS || is_wizard()) 
-    if (has_amulet()) {
-      if (prev_level()==0) 
-        total_winner(); 
-      new_level(true); 
-      msg("you feel a wrenching sensation in your gut");
-    } 
-    else msg("your way is magically blocked");
-  else msg("I see no way up");
+    if (get_tile(player.pos.y, player.pos.x) == STAIRS || is_wizard()){
+        if (has_amulet() || is_wizard()) {
+            if (prev_level() == 0)
+                total_winner();
+            new_level(true);
+            msg("you feel a wrenching sensation in your gut");
+        }
+        else
+            msg("your way is magically blocked");
+    }
+    else msg("I see no way up");
 }
 
 //call: Allow a user to call a potion, scroll, or ring something

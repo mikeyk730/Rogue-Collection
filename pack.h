@@ -19,10 +19,10 @@ int pack_char(ITEM *obj);
 void money(int value);
 
 //true if player currently has amulet
-int has_amulet();
+bool has_amulet();
 
 //true if player ever had amulet
-int had_amulet();
+bool had_amulet();
 
 ITEM* get_current_weapon();
 ITEM* get_current_armor();
