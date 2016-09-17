@@ -160,7 +160,8 @@ void flytrap_attack(AGENT* mp)
   mp->stats.damage = ss.str();
 }
 
-void leprechaun_attack(AGENT* mp)
+// return true if attack succeeded
+bool leprechaun_attack(AGENT* mp)
 {
   //Leprechaun steals some gold
   long lastpurse;
@@ -169,9 +170,10 @@ void leprechaun_attack(AGENT* mp)
   adjust_purse(-rnd_gold());
   if (!save(VS_MAGIC)) 
     adjust_purse(-(rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold()));
-  remove_monster(mp, false);
   if (get_purse() != lastpurse) 
     msg("your purse feels lighter");
+
+  return true;
 }
 
 bool nymph_attack(AGENT* mp)
@@ -182,15 +184,15 @@ bool nymph_attack(AGENT* mp)
   char *she_stole = "she stole %s!";
 
   steal = NULL;
-  for (nobj = 0, obj = player.pack; obj!=NULL; obj = next(obj))
-    if (obj!=get_current_armor() && obj!=get_current_weapon() && obj!=get_ring(LEFT) && obj!=get_ring(RIGHT) && is_magic(obj) && rnd(++nobj)==0) steal = obj;
+  for (nobj = 0, obj = player.pack; obj != NULL; obj = next(obj)){
+      if (obj != get_current_armor() && obj != get_current_weapon() && obj != get_ring(LEFT) && obj != get_ring(RIGHT) && is_magic(obj) && rnd(++nobj) == 0)
+          steal = obj;
+  }
   if (steal!=NULL)
   {
-    remove_monster(mp, false);
     if (steal->count>1 && steal->group==0)
     {
       int oc;
-
       oc = steal->count--;
       steal->count = 1;
       msg(she_stole, inv_name(steal, true));
@@ -234,6 +236,7 @@ bool attack(AGENT *monster)
 {
   const char *name;
   int monster_died = false;
+  bool attack_success = false; // todo:set this everywhere
 
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = false;
@@ -261,12 +264,11 @@ bool attack(AGENT *monster)
             ice_monster_attack();
         }
         else if (monster->steals_gold()){
-            leprechaun_attack(monster);
-            monster_died = true;
+            attack_success = leprechaun_attack(monster);
         }
         else if (monster->steals_magic())
         {   
-            monster_died = nymph_attack(monster);
+            attack_success = nymph_attack(monster);
         }
         else if (monster->drains_strength())
         {
@@ -275,6 +277,12 @@ bool attack(AGENT *monster)
         else if (monster->drains_life() || monster->drops_level())
         {
             vampire_wraith_attack(monster->type);
+        }
+
+        if (attack_success && monster->dies_during_attack())
+        {
+            monster_died = true;
+            remove_monster(monster, false);
         }
     }
   }
@@ -466,8 +474,10 @@ int save(int which)
 {
   if (which==VS_MAGIC)
   {
-    if (is_ring_on_hand(LEFT, R_PROTECT)) which -= get_ring(LEFT)->ring_level;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) which -= get_ring(RIGHT)->ring_level;
+    if (is_ring_on_hand(LEFT, R_PROTECT)) 
+        which -= get_ring(LEFT)->ring_level;
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) 
+        which -= get_ring(RIGHT)->ring_level;
   }
   return save_throw(which, &player);
 }
@@ -562,28 +572,21 @@ bool is_magic(ITEM *obj)
 void killed(AGENT *monster, bool print)
 {
   player.stats.exp += monster->stats.exp;
-  //todo: eliminate F,L specific cases
+
   //If the monster was a flytrap, un-hold him
-  switch (monster->type)
-  {
-
-  case 'F':
-    player.flags &= ~IS_HELD;
-    f_restor();
-    break;
-
-  case 'L':
-    {
+  if (monster->can_hold()){
+      player.flags &= ~IS_HELD;
+      f_restor();
+  }
+  else if (monster->drops_gold()){
       ITEM *gold;
 
-      if ((gold = create_item(GOLD, 0))==NULL) return;
+      if ((gold = create_item(GOLD, 0)) == NULL) 
+          return;
       gold->gold_value = rnd_gold();
-      if (save(VS_MAGIC)) gold->gold_value += rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold();
+      if (save(VS_MAGIC))
+          gold->gold_value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();
       attach_item(&monster->pack, gold);
-
-      break;
-    }
-
   }
   if (print)
   {

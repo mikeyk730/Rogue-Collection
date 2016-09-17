@@ -48,7 +48,6 @@ const int EX_DRAINS_MAXHP =  0x1000;
 const int EX_HOLD_ATTACKS =  0x2000;
 const int EX_SUICIDES     =  0x4000;
 const int EX_DROPS_GOLD   =  0x8000;
-const int EX_DROPS_MAGIC  = 0x10000;
 
 bool Agent::can_divide() const
 {
@@ -101,10 +100,6 @@ bool Agent::steals_gold() const {
 
 bool Agent::steals_magic() const {
     return (exflags & EX_STEALS_MAGIC) != 0;
-}
-
-bool Agent::drops_magic() const {
-    return (exflags & EX_DROPS_MAGIC) != 0;
 }
 
 bool Agent::drains_life() const {
@@ -234,7 +229,7 @@ struct Monster monsters[26] =
   { "kestral",          0,          IS_MEAN|IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             }, 0 },
   { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             }, EX_STEALS_GOLD|EX_DROPS_GOLD|EX_SUICIDES },
   { "medusa",          40,                 IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     }, EX_CONFUSES },
-  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             }, EX_STEALS_MAGIC|EX_DROPS_MAGIC|EX_SUICIDES },
+  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             }, EX_STEALS_MAGIC|EX_SUICIDES },
   { "orc",             15,                IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             }, 0 },
   { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 0 },
   { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0 },

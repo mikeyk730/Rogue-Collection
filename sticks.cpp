@@ -355,8 +355,9 @@ void zap_magic_missile()
       bolt.launcher = get_current_weapon()->which;
   do_motion(&bolt, delta.y, delta.x);
   if ((monster = monster_at(bolt.pos.y, bolt.pos.x))!=NULL && !save_throw(VS_MAGIC, monster))
-    hit_monster(bolt.pos.y, bolt.pos.x, &bolt);
-  else msg("the missile vanishes with a puff of smoke");
+      hit_monster(bolt.pos.y, bolt.pos.x, &bolt);
+  else
+      msg("the missile vanishes with a puff of smoke");
 }
 
 void zap_speed_monster(int which)
