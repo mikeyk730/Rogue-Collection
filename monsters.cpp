@@ -229,7 +229,7 @@ AGENT *wake_monster(int y, int x)
         if (player.is_flag_set(IS_HUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
         player.flags |= IS_HUH;
-        msg("the medusa's gaze has confused you");//todo: remove hardcoded name
+        msg("the %s's gaze has confused you", monster->get_monster_name());//todo: remove hardcoded name
       }
     }
   }
