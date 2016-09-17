@@ -82,7 +82,6 @@
     <ClCompile Include="armor.cpp" />
     <ClCompile Include="chase.cpp" />
     <ClCompile Include="command.cpp" />
-    <ClCompile Include="croot.cpp" />
     <ClCompile Include="curses.cpp" />
     <ClCompile Include="daemon.cpp" />
     <ClCompile Include="daemons.cpp" />
