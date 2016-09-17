@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cctype>
 #include <algorithm>
+#include <sstream>
 
 using std::max;
 
@@ -154,7 +155,9 @@ void flytrap_attack(AGENT* mp)
 {
   //Flytrap stops the poor guy from moving
   player.flags |= IS_HELD;
-  sprintf((char*)mp->stats.damage.c_str(), "%dd1", ++flytrap_hit); //todo:fix this
+  std::ostringstream ss;
+  ss << ++flytrap_hit << "d1";
+  mp->stats.damage = ss.str();
 }
 
 void leprechaun_attack(AGENT* mp)
@@ -240,46 +243,40 @@ int attack(AGENT *monster)
     if (player.stats.hp <= 0) 
       death(monster->type); //Bye bye life ...
    
-    //todo: eliminate all special cases
     if (!monster->is_flag_set(IS_CANC)) {
-      switch (monster->type)
-      {
-      case 'A': 
-        aquator_attack();
-        break;
-
-      case 'I': 
-        ice_monster_attack();
-        break;
-
-      case 'R': 
-        rattlesnake_attack();
-        break;
-
-      case 'W': case 'V':
-        vampire_wraith_attack(monster->type);
-        break;
-
-      case 'F': 
-        flytrap_attack(monster);
-        break;
-
-      case 'L': 
-        leprechaun_attack(monster);
-        monster_died = TRUE;
-        break;
-
-      case 'N': 
-        monster_died = nymph_attack(monster);
-        break;
-
-      default: break;
-      }
+        if (monster->rusts_armor())
+        {
+            aquator_attack();
+        }
+        else if (monster->hold_attacks())
+        {
+            flytrap_attack(monster);
+        }
+        else if (monster->shoots_ice())
+        {
+            ice_monster_attack();
+        }
+        else if (monster->steals_gold()){
+            leprechaun_attack(monster);
+            monster_died = TRUE;
+        }
+        else if (monster->steals_items())
+        {   
+            monster_died = nymph_attack(monster);
+        }
+        else if (monster->drains_strength())
+        {
+            rattlesnake_attack();
+        }
+        else if (monster->drains_life() || monster->drops_level())
+        {
+            vampire_wraith_attack(monster->type);
+        }
     }
   }
-  else if (monster->type!='I')
+  else if (!monster->shoots_ice())
   {
-    if (monster->type=='F')
+    if (monster->hold_attacks())
     {
       player.stats.hp -= flytrap_hit;
       if (player.stats.hp<=0)
@@ -337,7 +334,11 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 
   att = &thatt->stats;
   def = &thdef->stats;
-  if (weap==NULL) {cp = att->damage.c_str(); dplus = 0; hplus = 0;}
+  if (weap==NULL) {
+      cp = att->damage.c_str();
+      dplus = 0; 
+      hplus = 0;
+  }
   else
   {
     hplus = weap->hit_plus;
@@ -349,9 +350,12 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
     }
     if (weap==get_current_weapon())
     {
-      if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += get_ring(LEFT)->ring_level;
-      else if (is_ring_on_hand(LEFT, R_ADDHIT)) hplus += get_ring(LEFT)->ring_level;
-      if (is_ring_on_hand(RIGHT, R_ADDDAM)) dplus += get_ring(RIGHT)->ring_level;
+      if (is_ring_on_hand(LEFT, R_ADDDAM))
+          dplus += get_ring(LEFT)->ring_level;
+      else if (is_ring_on_hand(LEFT, R_ADDHIT)) 
+          hplus += get_ring(LEFT)->ring_level;
+      if (is_ring_on_hand(RIGHT, R_ADDDAM)) 
+          dplus += get_ring(RIGHT)->ring_level;
       else if (is_ring_on_hand(RIGHT, R_ADDHIT))
         hplus += get_ring(RIGHT)->ring_level;
     }

@@ -296,6 +296,7 @@ struct Agent
   bool is_monster_confused_this_turn() const;
   bool is_stationary() const;
   bool can_hold() const;
+  bool hold_attacks() const;
   bool can_divide() const;
   bool shoots_fire() const;
   bool immune_to_fire() const;

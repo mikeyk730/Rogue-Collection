@@ -45,6 +45,7 @@ const int EX_STEALS_ITEMS = 0x0200;
 const int EX_DRAINS_STR   = 0x0400;
 const int EX_DRAINS_EXP   = 0x0800;
 const int EX_DRAINS_MAXHP = 0x1000;
+const int EX_HOLD_ATTACKS = 0x2000;
 
 
 bool Agent::can_divide() const
@@ -58,6 +59,10 @@ bool Agent::is_stationary() const {
 
 bool Agent::can_hold() const {
     return (exflags & EX_HOLDS) != 0;
+}
+
+bool Agent::hold_attacks() const {
+    return (exflags & EX_HOLD_ATTACKS) != 0;
 }
 
 bool Agent::shoots_fire() const {
@@ -135,7 +140,7 @@ struct Monster monsters[26] =
   { "centaur",         15,                       0,  { XX,   25,  4,  4, ___, "1d6/1d6"         }, 0 },
   { "dragon",         100,                 IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    }, EX_SHOOTS_FIRE },
   { "emu",              0,                 IS_MEAN,  { XX,    2,  1,  7, ___, "1d2"             }, 0 },
-  { "venus flytrap",    0,                 IS_MEAN,  { XX,   80,  8,  3, ___, "%%%d0"           }, EX_HOLDS|EX_STATIONARY },
+  { "venus flytrap",    0,                 IS_MEAN,  { XX,   80,  8,  3, ___, "0d1"             }, EX_HOLDS|EX_STATIONARY|EX_HOLD_ATTACKS },
   { "griffin",         20, IS_MEAN|IS_FLY|IS_REGEN,  { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     }, 0 },
   { "hobgoblin",        0,                 IS_MEAN,  { XX,    3,  1,  5, ___, "1d8"             }, 0 },
   { "ice monster",      0,                 IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, EX_SHOOTS_ICE },
