@@ -188,7 +188,7 @@ void execcom()
     case 'D': after = FALSE; discovered(); break;
     case CTRL('T'):
       {
-        int new_value = !in_brief_mode();
+        bool new_value = !in_brief_mode();
         set_brief_mode(new_value);
         msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!"); 
         after = FALSE;
@@ -240,13 +240,13 @@ void execcom()
           after = FALSE;  show_map(FALSE); break;
         default:
           after = FALSE; 
-          unsaved_msg("illegal command '%s'", unctrl(ch)); 
+          msg("illegal command '%s'", unctrl(ch)); 
           count = 0; 
         }
       }
       else{
         after = FALSE; 
-        unsaved_msg("illegal command '%s'", unctrl(ch)); 
+        msg("illegal command '%s'", unctrl(ch)); 
         count = 0; 
         break;
       }

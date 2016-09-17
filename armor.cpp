@@ -125,7 +125,7 @@ const char* get_inv_name_armor(ITEM* obj)
   int which = obj->which;
 
   if (obj->flags&ISKNOW || is_wizard())
-    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->armor_class, 0, ARMOR), get_armor_name(which), -(obj->armor_class-11));
+    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->armor_class, 0, (char)ARMOR), get_armor_name(which), -(obj->armor_class-11));
   else
     sprintf(pb, "%s", get_armor_name(which));
 

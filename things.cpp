@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 #include "rogue.h"
 #include "things.h"
@@ -115,10 +116,12 @@ char *inv_name(ITEM *obj, bool drop)
   return prbuf;
 }
 
-void chopmsg(char *s, char *shmsg, char *lnmsg, int arg1, int arg2, int arg3)
+void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
 {
-  sprintf(s, lnmsg, arg1, arg2, arg3);
-  if (short_msgs()) sprintf(s, shmsg, arg1, arg2, arg3);
+   va_list argptr;
+   va_start(argptr, lnmsg);
+   vsprintf(s, short_msgs() ? shmsg : lnmsg, argptr);
+   va_end(argptr);
 }
 
 //drop: Put something down
@@ -324,7 +327,7 @@ int add_line(char *use, char *fmt, char *arg)
   int x, y;
   int retchar = ' ';
 
-  if (line_cnt==0) {wdump(0); clear();}
+  if (line_cnt==0) {wdump(); clear();}
   if (line_cnt>=LINES-1 || fmt==NULL)
   {
     move(LINES-1, 0);
@@ -351,7 +354,7 @@ int end_line(char *use)
   int retchar;
 
   retchar = add_line(use, 0, 0);
-  wrestor(0);
+  wrestor();
   line_cnt = 0;
   return (retchar);
 }

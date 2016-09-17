@@ -56,7 +56,7 @@ int do_chase(AGENT *monster)
   ITEM *obj;
   struct Room *oroom;
   struct Room *monster_room, *dest_room; //room of chaser, room of chasee
-  Coord this; //Temporary destination for chaser
+  Coord tempdest; //Temporary destination for chaser
 
   monster_room = monster->room; //Find room of chaser
   if (on(*monster, ISGREED) && monster_room->goldval == 0) 
@@ -80,7 +80,7 @@ over:
     for (i = 0; i<monster_room->num_exits; i++)
     {
       dist = DISTANCE(monster->dest->y, monster->dest->x, monster_room->exits[i].y, monster_room->exits[i].x);
-      if (dist<mindist) {this = monster_room->exits[i]; mindist = dist;}
+      if (dist<mindist) {tempdest = monster_room->exits[i]; mindist = dist;}
     }
     if (door)
     {
@@ -91,7 +91,7 @@ over:
   }
   else
   {
-    this = *monster->dest;
+    tempdest = *monster->dest;
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
     if ((monster->type=='D' || monster->type=='I') && (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) && ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !on(*monster, ISCANC) && rnd(DRAGONSHOT)==0)
     {
@@ -102,7 +102,7 @@ over:
     }
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
-  chase(monster, &this);
+  chase(monster, &tempdest);
   if (equal(ch_ret, player.pos)) {
     return attack(monster); 
   }
@@ -126,7 +126,7 @@ over:
   if (monster->oldch!='@')
   {
     if (monster->oldch==' ' && cansee(monster->pos.y, monster->pos.x) && get_tile(monster->pos.y, monster->pos.x)==FLOOR)
-      mvaddch(monster->pos.y, monster->pos.x, FLOOR);
+      mvaddch(monster->pos.y, monster->pos.x, (char)FLOOR);
     else if (monster->oldch==FLOOR && !cansee(monster->pos.y, monster->pos.x) && !on(player, SEEMONST))
       mvaddch(monster->pos.y, monster->pos.x, ' ');
     else
@@ -180,7 +180,7 @@ int can_see_monst(AGENT *monster)
     get_current_weapon()->flags |= DIDFLASH;
     msg(flash, get_weapon_name(get_current_weapon()->which), short_msgs()?"":intense);
   }
-  return TRUE;
+  return true;
 }
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)

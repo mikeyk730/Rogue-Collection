@@ -78,11 +78,11 @@ int is_direction_key(int key)
 //setup: Get starting setup for all games
 void setup()
 {
-  set_small_screen_mode(FALSE);
+  set_small_screen_mode(false);
   maxrow = 23;
   if (COLS==40) {
     maxrow = 22; 
-    set_small_screen_mode(TRUE);
+    set_small_screen_mode(true);
   }
   set_brief_mode(in_small_screen_mode());
 }
@@ -133,8 +133,8 @@ void credits()
   center(21, "All Rights Reserved");
   brown();
   for (i = 1; i<(COLS-1); i++) {move(22, i); putchr(205, 6);}
-  mvaddch(22, 0, 204);
-  mvaddch(22, COLS-1, 185);
+  mvaddch(22, 0, (char)204);
+  mvaddch(22, COLS-1, (char)185);
   standend();
   mvaddstr(23, 2, "Rogue's Name? ");
 
@@ -145,8 +145,8 @@ void credits()
 
   blot_out(23, 0, 24, COLS-1);
   brown();
-  mvaddch(22, 0, 0xc8);
-  mvaddch(22, COLS-1, 0xbc);
+  mvaddch(22, 0, (char)0xc8);
+  mvaddch(22, COLS-1, (char)0xbc);
   standend();
 }
 
@@ -189,22 +189,22 @@ int no_char()
   return !_kbhit(); 
 }
 
-int is_caps_lock_on()
+bool is_caps_lock_on()
 {
   return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
 }
 
-int is_scroll_lock_on()
+bool is_scroll_lock_on()
 {
   return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
 }
 
-int is_num_lock_on()
+bool is_num_lock_on()
 {
   return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
 }
 
-int is_shift_pressed()
+bool is_shift_pressed()
 {
   return (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
     || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);

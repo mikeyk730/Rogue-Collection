@@ -1,9 +1,12 @@
 //All the fighting gets done here
 //@(#)fight.c          1.43 (AI Design)                1/19/85
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cctype>
+#include <algorithm>
+
+using std::max;
 
 #include "rogue.h"
 #include "hero.h"
@@ -525,15 +528,15 @@ void remove_monster(AGENT *monster, bool waskill)
 }
 
 //is_magic: Returns true if an object radiates magic
-is_magic(ITEM *obj)
+bool is_magic(ITEM *obj)
 {
   switch (obj->type)
   {
   case ARMOR: return obj->armor_class!=get_default_class(obj->which);
   case WEAPON: return obj->hit_plus!=0 || obj->damage_plus!=0;
-  case POTION: case SCROLL: case STICK: case RING: case AMULET: return TRUE;
+  case POTION: case SCROLL: case STICK: case RING: case AMULET: return true;
   }
-  return FALSE;
+  return false;
 }
 
 //killed: Called to put a monster to death

@@ -482,7 +482,7 @@ void drain()
   cnt = 0;
   if (get_tile(player.pos.y, player.pos.x)==DOOR) room = &passages[get_flags(player.pos.y, player.pos.x)&F_PNUM];
   else room = NULL;
-  inpass = (player.room->flags&ISGONE);
+  inpass = (player.room->flags&ISGONE) != 0;
   dp = drainee;
   for (monster = mlist; monster!=NULL; monster = next(monster)){
     if (monster->room==player.room || monster->room==room || (inpass && get_tile(monster->pos.y, monster->pos.x)==DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM]==player.room)) {
@@ -500,7 +500,8 @@ void drain()
   for (dp = drainee; *dp; dp++)
   {
     monster = *dp;
-    if ((monster->stats.hp -= cnt)<=0) killed(monster, can_see_monst(monster));
+    if ((monster->stats.hp -= cnt)<=0)
+        killed(monster, can_see_monst(monster) == TRUE);
     else start_run(monster);
   }
 }

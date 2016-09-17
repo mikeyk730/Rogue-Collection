@@ -52,7 +52,7 @@ void set_current_armor(ITEM* item)
   cur_armor = item;
 }
 
-int does_item_group(type) {
+int does_item_group(int type) {
   return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
 }
 

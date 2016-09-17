@@ -204,7 +204,7 @@ void quaff_healing()
 
 void quaff_monster_detection()
 {
-  fuse(turn_see, TRUE, HUH_DURATION);
+  fuse(turn_see_wrapper, TRUE, HUH_DURATION);
   if (mlist==NULL) msg("you have a strange feeling%s.", noterse(" for a moment"));
   else {p_know[P_MFIND] |= turn_see(FALSE); msg("");}
 }
@@ -355,6 +355,11 @@ void invis_on()
   {
     mvaddch(th->pos.y, th->pos.x, th->disguise);
   }
+}
+
+void turn_see_wrapper(int turn_off)
+{
+    turn_see(turn_off == TRUE);
 }
 
 //turn_see: Put on or off seeing monsters on this level

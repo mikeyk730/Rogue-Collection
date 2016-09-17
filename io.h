@@ -1,10 +1,10 @@
-int short_msgs();
+bool short_msgs();
 
-void set_small_screen_mode(int enable);
-int in_small_screen_mode();
+void set_small_screen_mode(bool enable);
+bool in_small_screen_mode();
 
-void set_brief_mode(int enable);
-int in_brief_mode();
+void set_brief_mode(bool enable);
+bool in_brief_mode();
 
 //msg: Display a message at the top of the screen.
 void ifterse(const char *tfmt, const char *fmt, ...);
@@ -22,7 +22,7 @@ void endmsg();
 void more(const char *msg);
 
 //doadd: Perform an add onto the message buffer
-void doadd(const char *fmt, int a1, int a2, int a3, int a4, int a5);
+void doadd(char *fmt, ...);
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
 void putmsg(int msgline, const char *msg);

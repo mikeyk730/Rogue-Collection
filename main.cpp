@@ -14,6 +14,8 @@
 
 #include <stdlib.h>
 #include <time.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #include "rogue.h"
 #include "main.h"
@@ -189,8 +191,14 @@ void leave()
 }
 
 //fatal: exit with a message
-void fatal(char *msg, int arg)
+void fatal(char *format, ...)
 {
-  printw(msg, arg);
+  char dest[1024 * 16];
+  va_list argptr;
+  va_start(argptr, format);
+  vsprintf(dest, format, argptr);
+  va_end(argptr);
+
+  printw(dest);
   exit(0);
 }

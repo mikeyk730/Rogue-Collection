@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <stdarg.h>
 
 #include "rogue.h"
 #include "io.h"
@@ -31,58 +32,68 @@ bool save_msg = TRUE;       //Remember last msg
 bool terse = FALSE;
 bool expert = FALSE;
 
-int short_msgs()
+bool short_msgs()
 {
   return in_small_screen_mode() || in_brief_mode();
 }
 
-void set_small_screen_mode(int enable)
+void set_small_screen_mode(bool enable)
 {
   terse = enable;
 }
 
-int in_small_screen_mode()
+bool in_small_screen_mode()
 {
   return terse;
 }
 
-void set_brief_mode(int enable)
+void set_brief_mode(bool enable)
 {
   expert = enable;
 }
 
-int in_brief_mode()
+bool in_brief_mode()
 {
   return expert;
 }
 
 //msg: Display a message at the top of the screen.
-void ifterse(const char *tfmt, const char *fmt, int a1, int a2, int a3, int a4, int a5)
+void ifterse(const char *tfmt, const char *format, ...)
 {
-  if (expert) msg(tfmt, a1, a2, a3, a4, a5);
-  else msg(fmt, a1, a2, a3, a4, a5);
+   char dest[1024 * 16];
+   va_list argptr;
+   va_start(argptr, format);
+   vsprintf(dest, expert ? tfmt : format, argptr);
+   va_end(argptr);
+   msg(dest);
 }
 
-void unsaved_msg(const char *fmt, int a1, int a2, int a3, int a4, int a5)
-{
-    save_msg = FALSE;
-    msg(fmt, a1, a2, a3, a4, a5);
-    save_msg = TRUE;
-}
-
-void msg(const char *fmt, int a1, int a2, int a3, int a4, int a5)
+void msg(const char *format, ...)
 {
   //if the string is "", just clear the line
-  if (*fmt=='\0') {move(0, 0); clrtoeol(); mpos = 0; return;}
+  if (*format=='\0') {move(0, 0); clrtoeol(); mpos = 0; return;}
+
+  char dest[1024 * 16];
+  va_list argptr;
+  va_start(argptr, format);
+  vsprintf(dest, format, argptr);
+  va_end(argptr);
+
   //otherwise add to the message and flush it out
-  doadd(fmt, a1,a2,a3,a4,a5);
+  doadd(dest);
   endmsg();
 }
 
 //addmsg: Add things to the current message
-void addmsg(const char *fmt, int a1, int a2, int a3, int a4, int a5)
+void addmsg(const char *format, ...)
 {
-  doadd(fmt, a1, a2, a3, a4, a5);
+  char dest[1024 * 16];
+  va_list argptr;
+  va_start(argptr, format);
+  vsprintf(dest, format, argptr);
+  va_end(argptr);
+
+  doadd(dest);
 }
 
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
@@ -131,9 +142,13 @@ void more(const char *msg)
 }
 
 //doadd: Perform an add onto the message buffer
-void doadd(const char *fmt, int a1, int a2, int a3, int a4, int a5)
+void doadd(char *format, ...)
 {
-  sprintf(&msgbuf[newpos], fmt, a1, a2, a3, a4, a5);
+   va_list argptr;
+   va_start(argptr, format);
+   vsprintf(&msgbuf[newpos], format, argptr);
+   va_end(argptr);
+
   newpos = strlen(msgbuf);
 }
 
@@ -292,7 +307,8 @@ int getinfo(char *str, int size)
 {
   char *retstr, ch;
   int readcnt = 0;
-  int wason, ret = 1;
+  bool wason;
+  int ret = 1;
 
   retstr = str;
   *str = 0;
@@ -364,9 +380,9 @@ void str_attr(char *str)
 //key_state:
 void SIG2()
 {
-  static int numl, capsl;
+  static bool numl, capsl;
   static int nspot, cspot, tspot;
-  int new_numl=is_num_lock_on(), new_capsl=is_caps_lock_on(), new_fmode=is_scroll_lock_on();
+  bool new_numl=is_num_lock_on(), new_capsl=is_caps_lock_on(), new_fmode=is_scroll_lock_on();
   static int bighand, littlehand;
   int showtime = FALSE, spare;
   int x, y;

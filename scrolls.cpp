@@ -248,7 +248,7 @@ void read_identify()
   msg("this scroll is an identify scroll");
   if (strcmp(s_menu, "on") == 0) 
     more(" More ");
-  whatis(TRUE);
+  whatis();
 }
 
 void read_scare_monster()

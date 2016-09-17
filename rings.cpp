@@ -235,7 +235,7 @@ char *ring_num(ITEM *obj)
   {
   case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
     ring_buf[0] = ' ';
-    strcpy(&ring_buf[1], num(obj->ring_level, 0, RING));
+    strcpy(&ring_buf[1], num(obj->ring_level, 0, (char)RING));
     break;
 
   default: 

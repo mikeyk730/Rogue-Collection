@@ -9,7 +9,6 @@
 #define VER  48
 
 typedef unsigned char byte;
-typedef unsigned char bool;
 
 //Maximum number of different things
 
@@ -120,7 +119,7 @@ typedef unsigned char bool;
 #define ISCANC    0x1000 //creature has special qualities cancelled
 #define ISSLOW    0x2000 //creature has been slowed
 #define ISHASTE   0x4000 //creature has been hastened
-#define ISFLY     0x8000 //creature is of the flying type
+const short ISFLY = (short)0x8000; //creature is of the flying type
 
 //Flags for level map
 #define F_PASS   0x040 //is a passageway
@@ -310,7 +309,8 @@ extern char s_menu[], s_score[], s_save[], s_screen[];
 extern struct Array _guesses[];
 
 extern bool after, again, door_stop, fastmode, faststate, firstmove, 
-  playing, running, was_trapped;
+  playing, running;
+extern int was_trapped;
 
 extern char file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
   huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 

@@ -141,7 +141,7 @@ bool firstmove = FALSE;     //First move after setting door_stop
 bool playing = TRUE;        //True until he quits
 bool running = FALSE;       //True if player is running
 
-bool was_trapped = FALSE;   //Was a trap sprung
+int was_trapped = FALSE;   //Was a trap sprung
 
 int bailout = FALSE;
 char take;  //Thing the rogue is taking

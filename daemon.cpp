@@ -12,7 +12,7 @@
 
 struct delayed_action
 {
-  void (*d_func)();
+  void (*d_func)(int);
   int d_arg;
   int d_time;
 } d_list[MAXDAEMONS];
@@ -29,7 +29,7 @@ struct delayed_action *d_slot()
 }
 
 //find_slot: Find a particular slot in the table
-struct delayed_action *find_slot(void (*func)())
+struct delayed_action *find_slot(void (*func)(int))
 {
   struct delayed_action *dev;
 
@@ -37,8 +37,14 @@ struct delayed_action *find_slot(void (*func)())
   return NULL;
 }
 
-//daemon: Start a daemon, takes a function.
 void daemon(void (*func)(), int arg)
+{
+   daemon((void(*)(int))func, arg);
+}
+
+
+//daemon: Start a daemon, takes a function.
+void daemon(void (*func)(int), int arg)
 {
   struct delayed_action *dev;
 
@@ -55,11 +61,17 @@ void do_daemons()
 
   //Loop through the devil list, Executing each one, giving it the proper arguments
   for (dev = d_list; dev<&d_list[MAXDAEMONS]; dev++)
-    if (dev->d_time==DAEMON && dev->d_func!=EMPTY) (*dev->d_func)(dev->d_arg);
+    if (dev->d_time == DAEMON && dev->d_func != 0)
+        (*dev->d_func)(dev->d_arg);
+}
+
+void fuse(void (*func)(), int arg, int time)
+{
+   fuse((void(*)(int))func, arg, time);
 }
 
 //fuse: Start a fuse to go off in a certain number of turns
-void fuse(void (*func)(), int arg, int time)
+void fuse(void (*func)(int), int arg, int time)
 {
   struct delayed_action *wire;
 
@@ -69,8 +81,13 @@ void fuse(void (*func)(), int arg, int time)
   wire->d_time = time;
 }
 
-//lengthen: Increase the time until a fuse goes off
 void lengthen(void (*func)(), int xtime)
+{
+   lengthen((void (*)(int))func, xtime);
+}
+
+//lengthen: Increase the time until a fuse goes off
+void lengthen(void (*func)(int), int xtime)
 {
   struct delayed_action *wire;
 
@@ -78,8 +95,13 @@ void lengthen(void (*func)(), int xtime)
   wire->d_time += xtime;
 }
 
-//extinguish: Put out a fuse
 void extinguish(void (*func)())
+{
+  extinguish((void(*)(int))func);
+}
+
+//extinguish: Put out a fuse
+void extinguish(void (*func)(int))
 {
   struct delayed_action *wire;
 
