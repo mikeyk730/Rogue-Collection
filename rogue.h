@@ -363,7 +363,7 @@ extern char s_menu[], s_score[], s_save[], s_screen[], s_levels[], s_monstercfg[
 
 extern struct Array _guesses[];
 
-extern bool after, again, door_stop, fastmode, faststate, firstmove, 
+extern bool counts_as_turn, again, door_stop, fastmode, faststate, firstmove, 
   playing, running;
 extern int was_trapped;
 

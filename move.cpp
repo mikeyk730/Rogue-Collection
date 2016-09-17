@@ -31,7 +31,7 @@ Coord nh;
 void do_run(byte ch)
 {
   running = true;
-  after = false;
+  counts_as_turn = false;
   runch = ch;
 }
 
@@ -54,9 +54,9 @@ over:
   }
   //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
   if (offmap(nh.y, nh.x)) goto hit_bound;
-  if (!diag_ok(&player.pos, &nh)) {after = false; running = false; return;}
+  if (!diag_ok(&player.pos, &nh)) {counts_as_turn = false; running = false; return;}
   //If you are running and the move does not get you anywhere stop running
-  if (running && equal(player.pos, nh)) after = running = false;
+  if (running && equal(player.pos, nh)) counts_as_turn = running = false;
   fl = get_flags(nh.y, nh.x);
   ch = get_tile_or_monster(nh.y, nh.x);
   //When the hero is on the door do not allow him to run until he enters the room all the way
@@ -112,7 +112,7 @@ hit_bound:
         goto over;
       }
     }
-    after = running = false;
+    counts_as_turn = running = false;
     break;
 
   case DOOR:

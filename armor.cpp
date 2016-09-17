@@ -84,7 +84,7 @@ void wear()
   if (get_current_armor()!=NULL)
   {
     msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
-    after = false;
+    counts_as_turn = false;
     return;
   }
   if ((obj = get_item("wear", ARMOR))==NULL) return;
@@ -103,7 +103,7 @@ void take_off()
 
   if ((obj = get_current_armor())==NULL)
   {
-    after = false;
+    counts_as_turn = false;
     msg("you aren't wearing any armor");
     return;
   }

@@ -232,7 +232,7 @@ void wield()
   {
     if (obj->type==ARMOR) 
       msg("you can't wield armor"); 
-    after = false;
+    counts_as_turn = false;
     return;
   }
 

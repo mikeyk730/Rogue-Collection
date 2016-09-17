@@ -171,7 +171,7 @@ void ring_on()
   msg("%swearing %s (%c)", noterse("you are now "), inv_name(obj, true), pack_char(obj));
   return;
 no_ring:
-  after = false;
+  counts_as_turn = false;
   return;
 }
 
@@ -182,13 +182,13 @@ void ring_off()
   ITEM *obj;
   char packchar;
 
-  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {msg("you aren't wearing any rings"); after = false; return;}
+  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {msg("you aren't wearing any rings"); counts_as_turn = false; return;}
   else if (get_ring(LEFT)==NULL) ring = RIGHT;
   else if (get_ring(RIGHT)==NULL) ring = LEFT;
   else if ((ring = gethand())<0) return;
   mpos = 0;
   obj = get_ring(ring);
-  if (obj==NULL) {msg("not wearing such a ring"); after = false; return;}
+  if (obj==NULL) {msg("not wearing such a ring"); counts_as_turn = false; return;}
   packchar = pack_char(obj);
   if (can_drop(obj)) msg("was wearing %s(%c)", inv_name(obj, true), packchar);
 }
@@ -201,7 +201,7 @@ int gethand()
   for (;;)
   {
     msg("left hand or right hand? ");
-    if ((c = readchar())==ESCAPE) {after = false; return -1;}
+    if ((c = readchar())==ESCAPE) {counts_as_turn = false; return -1;}
     mpos = 0;
     if (c=='l' || c=='L') return LEFT;
     else if (c=='r' || c=='R') return RIGHT;

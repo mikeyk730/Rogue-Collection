@@ -81,7 +81,7 @@ int get_prefix()
 {
   int retch, ch, junk;
 
-  after = true;
+  counts_as_turn = true;
   fastmode = faststate;
   look(true);
   if (!running) door_stop = false;
@@ -167,67 +167,147 @@ void execcom()
   {
     switch (ch = get_prefix())
     {
-    case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n': find_dir(ch, &mv); do_move(mv.y, mv.x); break;
-    case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N': do_run(tolower(ch)); break;
-    case 't': if (get_dir()) missile(delta.y, delta.x); else after = false; break;
-    case 'Q': after = false; quit(); break;
-    case 'i': after = false; inventory(player.pack, 0, ""); break;
-    case 'd': drop(); break;
-    case 'q': quaff(); break;
-    case 'r': read_scroll(); break;
-    case 'e': eat(); break;
-    case 'w': wield(); break;
-    case 'W': wear(); break;
-    case 'T': take_off(); break;
-    case 'P': ring_on(); break;
-    case 'R': ring_off(); break;
-    case 'c': after = false; call(); break;
-    case '>': after = false; d_level(); break;
-    case '<': after = false; u_level(); break;
-    case '/': after = false; help(helpobjs); break;
-    case '?': after = false; help(helpcoms); break;
-    case '!': after = false; fakedos(); break;
-    case 's': search(); break;
-    case 'z': if (get_dir()) do_zap(); else after = false; break;
-    case 'D': after = false; discovered(); break;
+    case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n': 
+        find_dir(ch, &mv);
+        do_move(mv.y, mv.x);
+        break;
+    case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N': 
+        do_run(tolower(ch));
+        break;
+    case 't':
+        if (get_dir())
+            missile(delta.y, delta.x); 
+        else 
+            counts_as_turn = false; 
+        break;
+    case 'Q':
+        counts_as_turn = false; 
+        quit(); 
+        break;
+    case 'i':
+        counts_as_turn = false;
+        inventory(player.pack, 0, ""); 
+        break;
+    case 'd':
+        drop();
+        break;
+    case 'q':
+        quaff(); 
+        break;
+    case 'r': 
+        read_scroll();
+        break;
+    case 'e':
+        eat();
+        break;
+    case 'w':
+        wield(); 
+        break;
+    case 'W':
+        wear(); 
+        break;
+    case 'T': 
+        take_off();
+        break;
+    case 'P':
+        ring_on();
+        break;
+    case 'R': 
+        ring_off();
+        break;
+    case 'c':
+        counts_as_turn = false; 
+        call();
+        break;
+    case '>':
+        counts_as_turn = false; 
+        d_level();
+        break;
+    case '<':
+        counts_as_turn = false; 
+        u_level(); 
+        break;
+    case '/':
+        counts_as_turn = false; 
+        help(helpobjs);
+        break;
+    case '?':
+        counts_as_turn = false; 
+        help(helpcoms); 
+        break;
+    case '!': 
+        counts_as_turn = false; 
+        fakedos(); 
+        break;
+    case 's':
+        search(); 
+        break;
+    case 'z': 
+        if (get_dir()) 
+            do_zap();
+        else 
+            counts_as_turn = false; 
+        break;
+    case 'D': 
+        counts_as_turn = false; 
+        discovered();
+        break;
     case CTRL('T'):
       {
         bool new_value = !in_brief_mode();
         set_brief_mode(new_value);
         msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!"); 
-        after = false;
+        counts_as_turn = false;
         break;
       }
-    case 'F': after = false; do_macro(macro, MACROSZ); break;
-    case CTRL('F'): after = false; typeahead = macro; break;
-    case CTRL('R'): after = false; msg(huh); break;
-
+    case 'F':
+        counts_as_turn = false; 
+        do_macro(macro, MACROSZ); 
+        break;
+    case CTRL('F'):
+        counts_as_turn = false;
+        typeahead = macro; 
+        break;
+    case CTRL('R'): 
+        counts_as_turn = false;
+        msg(huh);
+        break;
     case 'v':
-      after = false;
+      counts_as_turn = false;
       msg("Rogue version %d.%d", REV, VER);
       break;
-
-    case 'S': after = false; save_game(); break;
-    case '.': doctor(); break;
+    case 'S':
+        counts_as_turn = false;
+        save_game(); 
+        break;
+    case '.':
+        doctor(); break;
 
     case '^':
-      after = false;
+      counts_as_turn = false;
       if (get_dir())
       {
         Coord lookat;
 
         lookat.y = player.pos.y+delta.y;
         lookat.x = player.pos.x+delta.x;
-        if (get_tile(lookat.y, lookat.x)!=TRAP) msg("no trap there.");
+        if (get_tile(lookat.y, lookat.x)!=TRAP) 
+            msg("no trap there.");
         else msg("you found %s", tr_name(get_flags(lookat.y, lookat.x)&F_TMASK));
       }
       break;
 
-    case 'o': after = false; msg("i don't have any options, oh my!"); break;
-    case CTRL('L'): after = false; msg("the screen looks fine to me"); break;
+    case 'o': 
+        counts_as_turn = false; 
+        msg("i don't have any options, oh my!");
+        break;
+    case CTRL('L'): 
+        counts_as_turn = false; 
+        msg("the screen looks fine to me"); 
+        break;
 
     case CTRL('W'):
-      after = false; 
+      counts_as_turn = false; 
       set_wizard(!is_wizard());
       msg(is_wizard() ? "You are now a wizard!" : "You feel your magic powers fade away"); 
       break; 
@@ -237,26 +317,28 @@ void execcom()
         switch(ch){
           //Wizard commands
         case 'C': 
-          after = false; create_obj(); break;
+          counts_as_turn = false; create_obj(); break;
         case 'X': 
-          after = false; show_map(true); break;
+          counts_as_turn = false; show_map(true); break;
         case 'Z': 
-          after = false;  show_map(false); break;
+          counts_as_turn = false;  show_map(false); break;
         default:
-          after = false; 
+          counts_as_turn = false; 
           msg("illegal command '%s'", unctrl(ch)); 
           count = 0; 
         }
       }
       else{
-        after = false; 
+        counts_as_turn = false; 
         msg("illegal command '%s'", unctrl(ch)); 
         count = 0; 
         break;
       }
     }
-    if (take && do_take) pick_up(take);
+    if (take && do_take)
+        pick_up(take);
     take = 0;
-    if (!running) door_stop = false;
-  } while (after==false);
+    if (!running) 
+        door_stop = false;
+  } while (counts_as_turn==false);
 }

@@ -227,7 +227,8 @@ void pick_up(byte ch)
   switch (ch)
   {
   case GOLD:
-    if ((obj = find_obj(player.pos.y, player.pos.x))==NULL) return;
+    if ((obj = find_obj(player.pos.y, player.pos.x))==NULL)
+        return;
     money(obj->gold_value);
     detach_item(&lvl_obj, obj);
     discard_item(obj);
@@ -251,18 +252,25 @@ ITEM *get_item(char *purpose, int type)
   byte gi_state; //get item sub state
   int once_only = false;
 
-  if (strcmp(s_menu, "on") == 0) once_only = true;
+  if (strcmp(s_menu, "on") == 0)
+      once_only = true;
   gi_state = again;
-  if (player.pack==NULL) msg("you aren't carrying anything");
+  if (player.pack==NULL)
+      msg("you aren't carrying anything");
   else
   {
     ch = lch;
     for (;;)
     {
       //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
-      if (gi_state && wasthing==pack_obj(ch, &och)) goto skip;
-      if (once_only) {ch = '*'; goto skip;}
-      if (!short_msgs()) addmsg("which object do you want to ");
+      if (gi_state && wasthing==pack_obj(ch, &och)) 
+          goto skip;
+      if (once_only) {
+          ch = '*'; 
+          goto skip;
+      }
+      if (!short_msgs()) 
+          addmsg("which object do you want to ");
       msg("%s? (* for list): ", purpose);
       //ignore any alt characters that may be typed
       ch = readchar();
@@ -272,12 +280,19 @@ skip:
       once_only = false;
       if (ch=='*')
       {
-        if ((ch = inventory(player.pack, type, purpose))==0) {after = false; return NULL;}
+        if ((ch = inventory(player.pack, type, purpose))==0) {
+            counts_as_turn = false; 
+            return NULL;
+        }
         if (ch==' ') continue;
         lch = ch;
       }
       //Give the poor player a chance to abort the command
-      if (ch==ESCAPE) {after = false; msg(""); return NULL;}
+      if (ch==ESCAPE) {
+          counts_as_turn = false; 
+          msg(""); 
+          return NULL;
+      }
       if ((obj = pack_obj(ch, &och))==NULL)
       {
         ifterse("range is 'a' to '%c'","please specify a letter between 'a' and '%c'", och-1);
@@ -297,12 +312,17 @@ skip:
 //pack_char: Return which character would address a pack object
 int pack_char(ITEM *obj)
 {
-  ITEM *item;
-  byte c;
+    ITEM *item;
+    byte c;
 
-  c = 'a';
-  for (item = player.pack; item!=NULL; item = next(item)) if (item==obj) return c; else c++;
-  return '?';
+    c = 'a';
+    for (item = player.pack; item != NULL; item = next(item)) {
+        if (item == obj)
+            return c; 
+        else
+            c++;
+    }
+    return '?';
 }
 
 //money: Add or subtract gold from the pack
@@ -310,7 +330,7 @@ void money(int value)
 {
   byte floor;
 
-  floor = (player.room->flags&IS_GONE)?PASSAGE:FLOOR;
+  floor = (player.room->flags&IS_GONE) ? PASSAGE : FLOOR;
   adjust_purse(value);
   mvaddch(player.pos.y, player.pos.x, floor);
   set_tile(player.pos.y, player.pos.x, floor);

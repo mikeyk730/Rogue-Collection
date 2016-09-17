@@ -132,7 +132,7 @@ char *he_man[] =
   "Bug Chaser"
 };
 
-bool after;                 //True if we want after daemons
+bool counts_as_turn;        //True if we want after daemons
 bool again;                 //The last command is repeated
 bool door_stop = false;     //Stop running when we pass a door
 bool fastmode = false;      //Run until you see something

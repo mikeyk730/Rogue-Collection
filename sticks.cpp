@@ -441,7 +441,7 @@ void do_zap()
       which_one = MAXSTICKS;
     else {
       msg("you can't zap with that!"); 
-      after = false; 
+      counts_as_turn = false; 
       return;
     }
   }
