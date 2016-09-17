@@ -293,55 +293,22 @@ struct Agent
   int get_monster_carry_prob() const;
 
   //special features
-  bool is_monster_confused_this_turn() const {
-      return ((is_flag_set(IS_HUH) && rnd(5) != 0) ||
-          // Phantoms are slightly confused all of the time, and bats are quite confused all the time
-          type == 'P' && rnd(5) == 0 ||
-          type == 'B' && rnd(2) == 0);
-  }
-  bool is_stationary() const {
-      return type == 'F';
-  }
-  bool can_hold() const {
-      return type == 'F';
-  }
+  bool is_monster_confused_this_turn() const;
+  bool is_stationary() const;
+  bool can_hold() const;
   bool can_divide() const;
-  bool shoots_fire() const {
-      return type == 'D';
-  }
-  bool immune_to_fire() const {
-      return type == 'D';
-  }
-  bool shoots_ice() const {
-      return type == 'I';
-  }
-  bool causes_confusion() const {
-      return type == 'M';
-  }
-  bool is_mimic() const {
-      return type == 'X';
-  }
-  bool is_disguised() const {
-      return is_mimic() && type != disguise;
-  }
-  bool steals_gold() const {
-      return type == 'L';
-  }
-  bool steals_items() const {
-      return type == 'N';
-  }
-  bool drains_life() const {
-      return type == 'V';
-  }
-  bool drops_level() const {
-      return type == 'W';
-  }
-  bool drains_strength() const {
-      return type == 'R';
-  }
-  bool rusts_armor() const {
-      return type == 'A';
-  }
+  bool shoots_fire() const;
+  bool immune_to_fire() const;
+  bool shoots_ice() const;
+  bool causes_confusion() const;
+  bool is_mimic() const;
+  bool is_disguised() const;
+  bool steals_gold() const;
+  bool steals_items() const;
+  bool drains_life() const;
+  bool drops_level() const;
+  bool drains_strength() const;
+  bool rusts_armor() const;
 
 
   /* todo:

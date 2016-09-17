@@ -148,7 +148,7 @@ struct Monster monsters[26] =
   { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 0 },
   { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0 },
   { "rattlesnake",      0,                 IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             }, EX_DRAINS_STR },
-  { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, EX_CAN_DIVIDE },
+  { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, EX_DIVIDES },
   { "troll",           50,        IS_REGEN|IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     }, 0 },
   { "ur-vile",          0,                 IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" }, 0 },
   { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, EX_DRAINS_MAXHP }, //todo: confirm these two
