@@ -311,7 +311,10 @@ void zap_generic(ITEM* wand, int which)
 
   y = player.pos.y;
   x = player.pos.x;
-  while (step_ok(get_tile_or_monster(y, x))) {y += delta.y; x += delta.x;}
+  while (step_ok(get_tile_or_monster(y, x))) {
+      y += delta.y; 
+      x += delta.x;
+  }
   if ((monster = monster_at(y, x))!=NULL)
   {
     if (monster->can_hold())
@@ -348,7 +351,8 @@ void zap_magic_missile()
   bolt.hit_plus = 1000;
   bolt.damage_plus = 1;
   bolt.flags = IS_MISL;
-  if (get_current_weapon()!=NULL) bolt.launcher = get_current_weapon()->which;
+  if (get_current_weapon()!=NULL) 
+      bolt.launcher = get_current_weapon()->which;
   do_motion(&bolt, delta.y, delta.x);
   if ((monster = monster_at(bolt.pos.y, bolt.pos.x))!=NULL && !save_throw(VS_MAGIC, monster))
     hit_monster(bolt.pos.y, bolt.pos.x, &bolt);
@@ -401,14 +405,22 @@ int zap_drain_life()
 //fix_stick: Set up a new stick
 void fix_stick(ITEM *cur)
 {
-  if (strcmp(ws_type[cur->which], "staff")==0) cur->damage = "2d3";
-  else cur->damage = "1d1";
+  if (strcmp(ws_type[cur->which], "staff")==0) 
+      cur->damage = "2d3";
+  else
+      cur->damage = "1d1";
   cur->throw_damage = "1d1";
   cur->charges = 3+rnd(5);
   switch (cur->which)
   {
-  case WS_HIT: cur->hit_plus = 100; cur->damage_plus = 3; cur->damage = "1d8"; break;
-  case WS_LIGHT: cur->charges = 10+rnd(10); break;
+  case WS_HIT: 
+      cur->hit_plus = 100;
+      cur->damage_plus = 3;
+      cur->damage = "1d8"; 
+      break;
+  case WS_LIGHT: 
+      cur->charges = 10+rnd(10); 
+      break;
   }
 }
 
@@ -445,7 +457,8 @@ void do_zap()
     break;
 
   case WS_DRAIN: 
-    if (!zap_drain_life()) return;
+    if (!zap_drain_life()) 
+        return;
     break;
 
   case WS_POLYMORPH: case WS_TELAWAY: case WS_TELTO: case WS_CANCEL: case MAXSTICKS: //Special case for vorpal weapon

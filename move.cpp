@@ -84,17 +84,30 @@ hit_bound:
         b1 = (player.pos.y>1 && ((get_flags(player.pos.y-1, player.pos.x)&F_PASS) || get_tile(player.pos.y-1, player.pos.x)==DOOR));
         b2 = (player.pos.y<maxrow-1 && ((get_flags(player.pos.y+1, player.pos.x)&F_PASS) || get_tile(player.pos.y+1, player.pos.x)==DOOR));
         if (!(b1^b2)) break;
-        if (b1) {runch = 'k'; dy = -1;}
-        else {runch = 'j'; dy = 1;}
+        if (b1) {
+            runch = 'k'; 
+            dy = -1;
+        }
+        else {
+            runch = 'j';
+            dy = 1;
+        }
         dx = 0;
         goto over;
 
       case 'j': case 'k':
         b1 = (player.pos.x>1 && ((get_flags(player.pos.y, player.pos.x-1)&F_PASS) || get_tile(player.pos.y, player.pos.x-1)==DOOR));
         b2 = (player.pos.x<COLS-2 && ((get_flags(player.pos.y, player.pos.x+1)&F_PASS) || get_tile(player.pos.y, player.pos.x+1)==DOOR));
-        if (!(b1^b2)) break;
-        if (b1) {runch = 'h'; dx = -1;}
-        else {runch = 'l'; dx = 1;}
+        if (!(b1^b2))
+            break;
+        if (b1) {
+            runch = 'h'; 
+            dx = -1;
+        }
+        else {
+            runch = 'l';
+            dx = 1;
+        }
         dy = 0;
         goto over;
       }
@@ -104,7 +117,8 @@ hit_bound:
 
   case DOOR:
     running = false;
-    if (get_flags(player.pos.y, player.pos.x)&F_PASS) enter_room(&nh);
+    if (get_flags(player.pos.y, player.pos.x)&F_PASS) 
+        enter_room(&nh);
     goto move_stuff;
 
   case TRAP:
@@ -115,7 +129,8 @@ hit_bound:
     goto move_stuff;
 
   case FLOOR:
-    if (!(fl&F_REAL)) be_trapped(&player.pos);
+    if (!(fl&F_REAL)) 
+        be_trapped(&player.pos);
     goto move_stuff;
 
   default:
@@ -186,7 +201,10 @@ int be_trapped(Coord *tc)
     if (swing(player.stats.level-1, player.stats.ac, 1))
     {
       player.stats.hp -= roll(1, 6);
-      if (player.stats.hp<=0) {msg("an arrow killed you"); death('a');}
+      if (player.stats.hp<=0) {
+          msg("an arrow killed you"); 
+          death('a');
+      }
       else msg("oh no! An arrow shot you");
     }
     else
@@ -250,16 +268,23 @@ void rndmove(AGENT *who, Coord *newmv)
   x = newmv->x = who->pos.x+rnd(3)-1;
   //Now check to see if that's a legal move.  If not, don't move. (I.e., bump into the wall or whatever)
   if (y==who->pos.y && x==who->pos.x) return;
-  if ((y<1 || y>=maxrow) || (x<0 || x>=COLS)) goto bad;
-  else if (!diag_ok(&who->pos, newmv)) goto bad;
+  if ((y<1 || y>=maxrow) || (x<0 || x>=COLS))
+      goto bad;
+  else if (!diag_ok(&who->pos, newmv)) 
+      goto bad;
   else
   {
     ch = get_tile_or_monster(y, x);
-    if (!step_ok(ch)) goto bad;
-    if (ch==SCROLL)
+    if (!step_ok(ch))
+        goto bad;
+    if (ch == SCROLL)
     {
-      for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (y==obj->pos.y && x==obj->pos.x) break;
-      if (is_scare_monster_scroll(obj)) goto bad;
+        for (obj = lvl_obj; obj != NULL; obj = next(obj)){
+            if (y == obj->pos.y && x == obj->pos.x)
+                break;
+        }
+        if (is_scare_monster_scroll(obj)) 
+            goto bad;
     }
   }
   return;

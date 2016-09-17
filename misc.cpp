@@ -89,7 +89,10 @@ void look(bool wakeup)
   ex = player.pos.x+1;
   sx = player.pos.x-1;
   sy = player.pos.y-1;
-  if (door_stop && !firstmove && running) {sumhero = player.pos.y+player.pos.x; diffhero = player.pos.y-player.pos.x;}
+  if (door_stop && !firstmove && running) {
+      sumhero = player.pos.y+player.pos.x; 
+      diffhero = player.pos.y-player.pos.x;
+  }
   for (y = sy; y<=ey; y++) if (y>0 && y<maxrow) for (x = sx; x<=ex; x++)
   {
     if (x<=0 || x>=COLS) continue;
@@ -142,16 +145,28 @@ void look(bool wakeup)
         }
         switch (ch)
         {
-        case DOOR: if (x==player.pos.x || y==player.pos.y) running = false; break;
-        case PASSAGE: if (x==player.pos.x || y==player.pos.y) passcount++; break;
-        case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ': break;
-        default: running = false; break;
+        case DOOR: 
+            if (x==player.pos.x || y==player.pos.y) 
+                running = false;
+            break;
+        case PASSAGE:
+            if (x==player.pos.x || y==player.pos.y) 
+                passcount++; 
+            break;
+        case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ': 
+            break;
+        default:
+            running = false; 
+            break;
         }
       }
   }
-  if (door_stop && !firstmove && passcount>1) running = false;
+  if (door_stop && !firstmove && passcount>1) 
+      running = false;
   move(player.pos.y, player.pos.x);
-  if ((get_flags(player.pos.y, player.pos.x)&F_PASS) || (was_trapped>1) || (get_flags(player.pos.y, player.pos.x)&F_MAZE)) standout();
+  //todo:check logic
+  if ((get_flags(player.pos.y, player.pos.x)&F_PASS) || (was_trapped>1) || (get_flags(player.pos.y, player.pos.x)&F_MAZE)) 
+      standout();
   addch(PLAYER);
   standend();
   if (was_trapped) {beep(); was_trapped = 0;}
@@ -221,12 +236,14 @@ void aggravate()
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
 
-char *vowelstr(const char *str)
+const char *vowelstr(const char *str)
 {
   switch (*str)
   {
-  case 'a': case 'A': case 'e': case 'E': case 'i': case 'I': case 'o': case 'O': case 'u': case 'U': return "n";
-  default: return "";
+  case 'a': case 'A': case 'e': case 'E': case 'i': case 'I': case 'o': case 'O': case 'u': case 'U':
+      return "n";
+  default:
+      return "";
   }
 }
 
