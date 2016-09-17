@@ -9,7 +9,7 @@
 #include "strings.h"
 #include "main.h"
 
-#define MAXEP  7
+#define MAXEP  8
 
 char l_name[] = "name";
 char l_save[] = "savefile";
@@ -18,6 +18,7 @@ char l_macro[] = "macro";
 char l_fruit[] = "fruit";
 char l_menu [] = "menu";
 char l_screen[] = "screen";
+char l_levels[] = "levelnames";
 
 char whoami[] = "Rodney\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 char s_score[] = "rogue.scr\0\0\0\0\0";
@@ -26,6 +27,7 @@ char macro[] = "v\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
 char fruit[] = "Slime Mold\0\0\0\0\0\0\0\0\0\0\0\0\0";
 char s_menu[] = "on\0";
 char s_screen[] = "\0w fast";
+char s_levels[] = "on\0";
 
 struct environment
 {
@@ -41,6 +43,7 @@ struct environment
   l_fruit,  fruit,    23,
   l_menu,   s_menu,   3,
   l_screen, s_screen, 7,
+  l_levels, s_levels, 3,
 };
 
 static int fd;
@@ -123,4 +126,9 @@ int setenv(char *envfile)
   //for all environment strings that have to be in lowercase ....
   lcase(s_menu);
   lcase(s_screen);
+}
+
+bool use_level_names()
+{
+    return (strcmp(s_levels, "on") == 0);
 }

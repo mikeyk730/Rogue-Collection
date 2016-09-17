@@ -17,6 +17,7 @@
 #include "hero.h"
 #include "level.h"
 #include "pack.h"
+#include "env.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)
@@ -267,7 +268,12 @@ void status()
     printw("Armor:%-2d", AC(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac));
   }
   //Exp:
-  if (s_elvl!=player.stats.level)
+  if (!use_level_names())
+  {
+      move(23, PT(22, 62));
+      printw("Exp:%d/%d", player.stats.level, player.stats.exp);
+  }
+  else if (s_elvl!=player.stats.level)
   {
     s_elvl = player.stats.level;
     move(23, PT(22, 62));

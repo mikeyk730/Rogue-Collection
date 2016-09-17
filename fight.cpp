@@ -29,6 +29,7 @@ using std::max;
 #include "thing.h"
 #include "armor.h"
 #include "pack.h"
+#include "env.h"
 
 char tbuf[MAXSTR];
 
@@ -316,7 +317,10 @@ void check_level()
     add = roll(i-olevel, 10);
     player.stats.max_hp += add;
     if ((player.stats.hp += add)>player.stats.max_hp) player.stats.hp = player.stats.max_hp;
-    msg("and achieve the rank of \"%s\"", he_man[i-1]);
+    if (use_level_names())
+        msg("and achieve the rank of \"%s\"", he_man[i - 1]);
+    else
+        msg("Welcome to level %d", i);
   }
 }
 

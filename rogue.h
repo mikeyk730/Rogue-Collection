@@ -98,7 +98,7 @@ const short IS_MAZE  = 0x0004; //room is a maze
 const short IS_CURSED  = 0x0001; //object is cursed
 const short IS_KNOW    = 0x0002; //player knows details about the object
 const short DID_FLASH  = 0x0004; //has the vorpal weapon flashed
-//const short IS_EGO     = 0x0008; //weapon has control of player
+//const short IS_EGO   = 0x0008; //weapon has control of player
 const short IS_MISL    = 0x0010; //object is a missile type
 const short IS_MANY    = 0x0020; //object comes in groups
 const short IS_REVEAL  = 0x0040; //Do you know who the enemy of the object is
@@ -119,7 +119,7 @@ const short CAN_SEE    = 0x0800; //creature can see invisible creatures
 const short IS_CANC    = 0x1000; //creature has special qualities cancelled
 const short IS_SLOW    = 0x2000; //creature has been slowed
 const short IS_HASTE   = 0x4000; //creature has been hastened
-const short IS_FLY = (short)0x8000; //creature is of the flying type
+const short IS_FLY     = (short)0x8000; //creature is of the flying type
 
 //Flags for level map
 #define F_PASS   0x040 //is a passageway
@@ -287,17 +287,16 @@ struct Agent
       return ((flags & flag) != 0);
   }
 
+  const char* get_monster_name() const;
+  int get_monster_carry_prob() const;
+
+  //special features
   bool is_monster_confused_this_turn() const {
       return ((is_flag_set(IS_HUH) && rnd(5) != 0) ||
           // Phantoms are slightly confused all of the time, and bats are quite confused all the time
           type == 'P' && rnd(5) == 0 ||
           type == 'B' && rnd(2) == 0);
   }
-
-  const char* get_monster_name() const;
-  int get_monster_carry_prob() const;
-
-  //special features
   bool is_immobile() const {
       return type == 'F';
   }
@@ -339,12 +338,10 @@ struct Agent
         nymph_attack();
 
         L,F death
-        xerox
         */
 };
 
 typedef struct Agent AGENT;
-bool is_flag_set(AGENT& thing, int flag);
 
 //External variables
 
@@ -364,7 +361,7 @@ extern int maxrow;
 extern int LINES, COLS;
 extern int bailout;
 
-extern char s_menu[], s_score[], s_save[], s_screen[];
+extern char s_menu[], s_score[], s_save[], s_screen[], s_levels[];
 
 extern struct Array _guesses[];
 
