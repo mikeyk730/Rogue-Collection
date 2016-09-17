@@ -10,7 +10,7 @@ void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 void drop();
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
-int can_drop(ITEM *op);
+bool can_drop(ITEM *op);
 
 //new_thing: Return a new thing
 ITEM* new_item();

@@ -121,7 +121,7 @@ int does_know_stick(int type)
 
 void discover_stick(int type)
 {
-  ws_know[type] = TRUE;
+  ws_know[type] = true;
 }
 
 const char* get_stick_guess(int type)
@@ -158,22 +158,34 @@ void init_materials()
   char *str;
   bool metused[NMETAL], woodused[NWOOD];
 
-  for (i = 0; i<NWOOD; i++) woodused[i] = FALSE;
-  for (i = 0; i<NMETAL; i++) metused[i] = FALSE;
+  for (i = 0; i<NWOOD; i++) 
+      woodused[i] = false;
+  for (i = 0; i<NMETAL; i++) 
+      metused[i] = false;
   for (i = 0; i<MAXSTICKS; i++)
   {
     for (;;) if (rnd(2)==0)
     {
       j = rnd(NMETAL);
-      if (!metused[j]) {ws_type[i] = "wand"; str = metal[j]; metused[j] = TRUE; break;}
+      if (!metused[j]) {
+          ws_type[i] = "wand"; 
+          str = metal[j];
+          metused[j] = true;
+          break;
+      }
     }
     else
     {
       j = rnd(NWOOD);
-      if (!woodused[j]) {ws_type[i] = "staff"; str = wood[j]; woodused[j] = TRUE; break;}
+      if (!woodused[j]) {
+          ws_type[i] = "staff"; 
+          str = wood[j]; 
+          woodused[j] = true; 
+          break;
+      }
     }
     ws_made[i] = str;
-    ws_know[i] = FALSE;
+    ws_know[i] = false;
     ws_guess[i] = (char *)&_guesses[iguess++];
     if (i>0) ws_magic[i].prob += ws_magic[i-1].prob;
   }
@@ -192,10 +204,10 @@ const char* get_stick_type(int type)
 void zap_light()
 {
   //Ready Kilowatt wand.  Light up the room
-  if (player.is_flag_set(IS_BLIND)) msg("you feel a warm glow around you");
+  if (player.is_blind()) msg("you feel a warm glow around you");
   else
   {
-    ws_know[WS_LIGHT] = TRUE;
+    ws_know[WS_LIGHT] = true;
     if (player.room->flags&IS_GONE) msg("the corridor glows and then fades");
     else msg("the room is lit by a shimmering blue light");
   }
@@ -218,14 +230,14 @@ void zap_striking(ITEM* obj)
   {
     if (rnd(20)==0) {obj->damage = "3d8"; obj->damage_plus = 9;}
     else {obj->damage = "2d8"; obj->damage_plus = 4;}
-    fight(&coord, obj, FALSE);
+    fight(&coord, obj, false);
   }
 }
 
 void zap_bolt(int which, const char* name)
 {
   fire_bolt(&player.pos, &delta, name);
-  ws_know[which] = TRUE;
+  ws_know[which] = true;
 }
 
 void zap_vorpalized_weapon(ITEM* weapon, AGENT* monster)
@@ -233,7 +245,7 @@ void zap_vorpalized_weapon(ITEM* weapon, AGENT* monster)
   if (monster->type == weapon->enemy)
   {
     msg("the %s vanishes in a puff of smoke", monster->get_monster_name());
-    killed(monster, FALSE);
+    killed(monster, false);
   }
   else 
     msg("you hear a maniacal chuckle in the distance.");
@@ -280,7 +292,7 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
   if (which==WS_TELAWAY)
   {
     monster->oldch = '@';
-    find_empty_location(&new_pos, TRUE);
+    find_empty_location(&new_pos, true);
     monster->pos = new_pos;
   }
   else { //it MUST BE at WS_TELTO
@@ -330,7 +342,7 @@ void zap_magic_missile()
   AGENT* monster;
   ITEM bolt;
 
-  ws_know[WS_MISSILE] = TRUE;
+  ws_know[WS_MISSILE] = true;
   bolt.type = '*';
   bolt.throw_damage = "1d8";
   bolt.hit_plus = 1000;
@@ -358,18 +370,18 @@ void zap_speed_monster(int which)
   {
     if (which==WS_HASTE_M)
     {
-      if (monster->is_flag_set(IS_SLOW))
+      if (monster->is_slow())
           monster->flags &= ~IS_SLOW;
       else 
           monster->flags |= IS_HASTE;
     }
     else
     {
-      if (monster->is_flag_set(IS_HASTE)) 
+      if (monster->is_fast()) 
           monster->flags &= ~IS_HASTE;
       else 
           monster->flags |= IS_SLOW;
-      monster->turn = TRUE;
+      monster->turn = true;
     }
     start_run(monster);
   }
@@ -380,10 +392,10 @@ int zap_drain_life()
   //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
   if (player.stats.hp < 2) {
     msg("you are too weak to use it"); 
-    return FALSE;
+    return false;
   }  
   drain();
-  return TRUE;
+  return true;
 }
 
 //fix_stick: Set up a new stick
@@ -416,7 +428,7 @@ void do_zap()
       which_one = MAXSTICKS;
     else {
       msg("you can't zap with that!"); 
-      after = FALSE; 
+      after = false; 
       return;
     }
   }
@@ -506,13 +518,13 @@ void drain()
   {
     monster = *dp;
     if ((monster->stats.hp -= cnt)<=0)
-        killed(monster, can_see_monst(monster) == TRUE);
+        killed(monster, can_see_monst(monster) == true);
     else start_run(monster);
   }
 }
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
-int fire_bolt(Coord *start, Coord *dir, const char *name)
+bool fire_bolt(Coord *start, Coord *dir, const char *name)
 {
   byte dirch, ch;
   AGENT *monster;
@@ -538,8 +550,8 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
   }
   pos = *start;
   hit_hero = (start!=&player.pos);
-  used = FALSE;
-  changed = FALSE;
+  used = false;
+  changed = false;
   for (i = 0; i<BOLT_LENGTH && !used; i++)
   {
     pos.y += dir->y;
@@ -551,7 +563,7 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
     {
     case DOOR: case HWALL: case VWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
       if (!changed) hit_hero = !hit_hero;
-      changed = FALSE;
+      changed = false;
       dir->y = -dir->y;
       dir->x = -dir->x;
       i--;
@@ -561,20 +573,20 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
     default:
       if (!hit_hero && (monster = monster_at(pos.y, pos.x))!=NULL)
       {
-        hit_hero = TRUE;
+        hit_hero = true;
         changed = !changed;
         if (monster->oldch!='@') monster->oldch = get_tile(pos.y, pos.x);
         if (!save_throw(VS_MAGIC, monster) || is_frost)
         {
           bolt.pos = pos;
-          used = TRUE;
+          used = true;
           if (monster->immune_to_fire() && strcmp(name, "flame")==0) 
               msg("the flame bounces off the %s", monster->get_monster_name());
           else
           {
             hit_monster(pos.y, pos.x, &bolt);
             if (mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = mvinch(pos.y, pos.x);
-            return FALSE; //zapping monster may have killed self, not safe to go on
+            return false; //zapping monster may have killed self, not safe to go on
           }
         }
         else if (!monster->is_disguised())
@@ -586,7 +598,7 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
       }
       else if (hit_hero && equal(pos, player.pos))
       {
-        hit_hero = FALSE;
+        hit_hero = false;
         changed = !changed;
         if (!save(VS_MAGIC))
         {
@@ -602,7 +614,7 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
               else
                   death(monster_at(start->y, start->x)->type);
           }
-          used = TRUE;
+          used = true;
           if (!is_frost)
               msg("you are hit by the %s", name);
         }
@@ -624,7 +636,7 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
     tick_pause();
     if (spotpos[j].s_under) mvaddch(spotpos[j].s_pos.y, spotpos[j].s_pos.x, spotpos[j].s_under);
   }
-  return TRUE;
+  return true;
 }
 
 //charge_str: Return an appropriate string for a wand charge

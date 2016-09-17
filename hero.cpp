@@ -45,7 +45,7 @@ void set_wizard(int enable)
 {
   s_wizard = enable;
   if (enable)
-    s_cheated = TRUE;
+    s_cheated = true;
 }
 
 int is_wizard()
@@ -80,7 +80,7 @@ void digest()
     if (no_command || rnd(5)!=0) return;
     no_command += rnd(8)+4;
     player.flags &= ~IS_RUN;
-    running = FALSE;
+    running = false;
     count = 0;
     hungry_state = 3;
     msg("%syou faint from lack of food", noterse("you feel very weak. "));
@@ -111,7 +111,7 @@ void init_player()
   obj->hit_plus = 1;
   obj->damage_plus = 1;
   obj->flags |= IS_KNOW;
-  add_pack(obj, TRUE);
+  add_pack(obj, true);
   set_current_weapon(obj);
 
   //Now a +1 bow
@@ -120,7 +120,7 @@ void init_player()
   obj->hit_plus = 1;
   obj->damage_plus = 0;
   obj->flags |= IS_KNOW;
-  add_pack(obj, TRUE);
+  add_pack(obj, true);
 
   //Now some arrows
   obj = create_item(WEAPON, ARROW);
@@ -128,18 +128,18 @@ void init_player()
   obj->count = rnd(15)+25;
   obj->hit_plus = obj->damage_plus = 0;
   obj->flags |= IS_KNOW;
-  add_pack(obj, TRUE);
+  add_pack(obj, true);
 
   //And his suit of armor
   obj = create_item(ARMOR, RING_MAIL);
   obj->armor_class = get_default_class(RING_MAIL)-1;
   obj->flags |= IS_KNOW;
   set_current_armor(obj);
-  add_pack(obj, TRUE);
+  add_pack(obj, true);
 
   //Give him some food too
   obj = create_item(FOOD, 0);
-  add_pack(obj, TRUE);
+  add_pack(obj, true);
 }
 
 int get_hungry_state()

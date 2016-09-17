@@ -129,31 +129,82 @@ bool Agent::dies_during_attack() const{
 
 //todo: make configurable
 bool Agent::is_monster_confused_this_turn() const {
-    return ((is_flag_set(IS_HUH) && rnd(5) != 0) ||
+    return ((is_confused() && rnd(5) != 0) ||
         // Phantoms are slightly confused all of the time, and bats are quite confused all the time
         type == 'P' && rnd(5) == 0 ||
         type == 'B' && rnd(2) == 0);
 }
 
+bool Agent::is_flag_set(int flag) const {
+    return ((flags & flag) != 0);
+}
+
 bool Agent::is_flying() const {
-    return (flags & IS_FLY) != 0;
+    return is_flag_set(IS_FLY);
 }
 
 bool Agent::is_mean() const {
-    return (flags & IS_MEAN) != 0;
+    return is_flag_set(IS_MEAN);
 }
 
 bool Agent::regenerates_hp() const {
-    return (flags & IS_REGEN) != 0;
+    return is_flag_set(IS_REGEN);
 }
 
 bool Agent::is_greedy() const {
-    return (flags & IS_GREED) != 0;
+    return is_flag_set(IS_GREED);
 }
 
 bool Agent::is_invisible() const {
-    return (flags & IS_INVIS) != 0;
+    return is_flag_set(IS_INVIS);
 }
+
+bool Agent::is_confused() const {
+    return is_flag_set(IS_HUH);
+}
+
+bool Agent::is_held() const {
+    return is_flag_set(IS_HELD);
+}
+
+bool Agent::is_blind() const {
+    return is_flag_set(IS_BLIND);
+}
+
+bool Agent::is_fast() const
+{
+    return is_flag_set(IS_HASTE);
+}
+
+bool Agent::is_slow() const {
+    return is_flag_set(IS_SLOW);
+}
+
+bool Agent::sees_invisible() const
+{
+    return is_flag_set(CAN_SEE);
+}
+
+bool Agent::detects_others() const {
+    return is_flag_set(SEE_MONST);
+}
+
+bool Agent::is_running() const {
+    return is_flag_set(IS_RUN);
+}
+
+bool Agent::is_found() const {
+    return is_flag_set(IS_FOUND);
+}
+
+bool Agent::can_confuse() const {
+    return is_flag_set(CAN_HUH);
+}
+
+bool Agent::powers_cancelled() const {
+    return is_flag_set(IS_CANC);
+}
+
 
 
 
@@ -299,7 +350,7 @@ void new_monster(AGENT *monster, byte type, Coord *position, int level)
   monster->stats.hp = monster->stats.max_hp = roll(monster->stats.level, 8);
   monster->stats.ac -= level_add;
   monster->stats.exp += level_add*10 + exp_add(monster);
-  monster->turn = TRUE;
+  monster->turn = true;
   monster->pack = NULL;
 
   //todo: remove F,X checks
@@ -350,7 +401,7 @@ void wanderer()
     if (room==player.room) continue;
     rnd_pos(room, &cp);
   } while (!(room!=player.room && step_ok(get_tile_or_monster(cp.y, cp.x))));
-  new_monster(monster, randmonster(TRUE, get_level()), &cp, get_level());
+  new_monster(monster, randmonster(true, get_level()), &cp, get_level());
   if (bailout) debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
   start_run(monster);
@@ -365,12 +416,12 @@ AGENT *wake_monster(int y, int x)
 
   if ((monster = monster_at(y, x))==NULL) return monster;
   //Every time he sees mean monster, it might start chasing him
-  if (!monster->is_flag_set(IS_RUN) && rnd(3)!=0 && monster->is_flag_set(IS_MEAN) && !monster->is_flag_set(IS_HELD) && !is_wearing_ring(R_STEALTH))
+  if (!monster->is_running() && rnd(3)!=0 && monster->is_mean() && !monster->is_held() && !is_wearing_ring(R_STEALTH))
   {
     monster->dest = &player.pos;
     monster->flags |= IS_RUN;
   }
-  if (monster->causes_confusion() && !player.is_flag_set(IS_BLIND) && !monster->is_flag_set(IS_FOUND) && !monster->is_flag_set(IS_CANC) && monster->is_flag_set(IS_RUN))
+  if (monster->causes_confusion() && !player.is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
   {
     room = player.room;
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
@@ -379,7 +430,7 @@ AGENT *wake_monster(int y, int x)
       monster->flags |= IS_FOUND;
       if (!save(VS_MAGIC))
       {
-        if (player.is_flag_set(IS_HUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
+        if (player.is_confused()) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
         player.flags |= IS_HUH;
         msg("the %s's gaze has confused you", monster->get_monster_name());
@@ -387,11 +438,13 @@ AGENT *wake_monster(int y, int x)
     }
   }
   //Let greedy ones guard gold
-  if (monster->is_flag_set(IS_GREED) && !monster->is_flag_set(IS_RUN))
+  if (monster->is_greedy() && !monster->is_running())
   {
     monster->flags = monster->flags|IS_RUN;
-    if (player.room->goldval) monster->dest = &player.room->gold;
-    else monster->dest = &player.pos;
+    if (player.room->goldval) 
+        monster->dest = &player.room->gold;
+    else 
+        monster->dest = &player.pos;
   }
   return monster;
 }

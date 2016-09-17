@@ -231,6 +231,10 @@ struct Room
   short flags;     //Info about the room
   int num_exits;   //Number of exits
   Coord exits[12]; //Where the exits are
+
+  bool is_dark() const{
+      //todo
+  }
 };
 
 //Structure describing a fighting being
@@ -285,10 +289,9 @@ struct Agent
   struct Room *room;            //Current room for thing
   struct Item *pack;            //What the thing is carrying
 
-  bool is_flag_set(int flag) const { 
-      return ((flags & flag) != 0);
-  }
-
+private:
+  bool is_flag_set(int flag) const;
+public:
   const char* get_monster_name() const;
   int get_monster_carry_prob() const;
 
@@ -319,7 +322,17 @@ struct Agent
   bool regenerates_hp() const;
   bool is_greedy() const;
   bool is_invisible() const;
-
+  bool is_confused() const;
+  bool is_held() const;
+  bool is_blind() const;
+  bool is_fast() const;
+  bool is_slow() const;
+  bool sees_invisible() const;
+  bool detects_others() const;
+  bool is_running() const;
+  bool is_found() const;
+  bool can_confuse() const;
+  bool powers_cancelled() const;
 
   /* todo:
         v,W attacks
@@ -363,6 +376,4 @@ extern int count, flytrap_hit, iguess, mpos, no_command, no_food, no_move, quiet
 
 extern long seed;
 
-#define TRUE                1
-#define FALSE               0
 #define BUFSIZE             128

@@ -106,7 +106,7 @@ hack:
   do_motion(obj, ydelta, xdelta);
   //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
   if (monster_at(obj->pos.y, obj->pos.x)==NULL || !hit_monster(obj->pos.y, obj->pos.x, obj))
-    fall(obj, TRUE);
+    fall(obj, true);
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
@@ -149,7 +149,7 @@ const char *short_name(ITEM *obj)
   case WEAPON: return get_weapon_name(obj->which);
   case ARMOR: return get_armor_name(obj->which);
   case FOOD: return "food";
-  case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(inv_name(obj, TRUE), ' ')+1;
+  case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(inv_name(obj, true), ' ')+1;
   default: return "bizzare thing";
   }
 }
@@ -201,11 +201,11 @@ int hit_monster(int y, int x, ITEM *obj)
 {
   static Coord mp;
   AGENT *monster = monster_at(y, x);
-  if (!monster)  return FALSE;
+  if (!monster)  return false;
 
   mp.y = y;
   mp.x = x; 
-  return fight(&mp, obj, TRUE);
+  return fight(&mp, obj, true);
  }
 
 //num: Figure out the plus number for armor/weapons
@@ -232,11 +232,11 @@ void wield()
   {
     if (obj->type==ARMOR) 
       msg("you can't wield armor"); 
-    after = FALSE;
+    after = false;
     return;
   }
 
-  sp = inv_name(obj, TRUE);
+  sp = inv_name(obj, true);
   set_current_weapon(obj);
   ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
 }

@@ -43,7 +43,7 @@ long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240,
 
 void do_hit(ITEM* weapon, int thrown, AGENT* monster, const char* name)
 {
-  bool did_huh = FALSE;
+  bool did_huh = false;
 
   if (thrown) 
     display_throw_msg(weapon, name, "hits", "hit");
@@ -63,17 +63,17 @@ void do_hit(ITEM* weapon, int thrown, AGENT* monster, const char* name)
     }
   }
 
-  if (player.is_flag_set(CAN_HUH))
+  if (player.can_confuse())
   {
-    did_huh = TRUE;
+    did_huh = true;
     monster->flags |= IS_HUH;
     player.flags &= ~CAN_HUH;
     msg("your hands stop glowing red");
   }
 
   if (monster->stats.hp <= 0)
-    killed(monster, TRUE);
-  else if (did_huh && !player.is_flag_set(IS_BLIND)) 
+    killed(monster, true);
+  else if (did_huh && !player.is_blind()) 
     msg("the %s appears confused", name);
 }
 
@@ -94,7 +94,7 @@ int fight(Coord *location, ITEM *weapon, bool thrown)
   //Find the monster we want to fight
   AGENT *monster = monster_at(location->y, location->x);
   if (!monster) 
-    return FALSE;
+    return false;
 
   //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
   count = quiet = 0;
@@ -102,23 +102,23 @@ int fight(Coord *location, ITEM *weapon, bool thrown)
   start_run(monster);
   //Let him know it was really a mimic (if it was one).
   //todo: handle in general way
-  if (monster->is_disguised() && !player.is_flag_set(IS_BLIND))
+  if (monster->is_disguised() && !player.is_blind())
   {
     monster->disguise = monster->type;
     if (thrown) 
-      return FALSE;
+      return false;
     msg("wait! That's a %s!", monster->get_monster_name());
   }
-  name = player.is_flag_set(IS_BLIND) ? it : monster->get_monster_name();
+  name = player.is_blind() ? it : monster->get_monster_name();
 
   if (roll_em(&player, monster, weapon, thrown) || (weapon && weapon->type==POTION))
   {
     do_hit(weapon, thrown, monster, name);    
-    return TRUE;
+    return true;
   }
 
   do_miss(weapon, thrown, monster, name);
-  return FALSE;
+  return false;
 }
 
 void aquator_attack()
@@ -169,12 +169,12 @@ void leprechaun_attack(AGENT* mp)
   adjust_purse(-rnd_gold());
   if (!save(VS_MAGIC)) 
     adjust_purse(-(rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold()));
-  remove_monster(mp, FALSE);
+  remove_monster(mp, false);
   if (get_purse() != lastpurse) 
     msg("your purse feels lighter");
 }
 
-int nymph_attack(AGENT* mp)
+bool nymph_attack(AGENT* mp)
 {
   //Nymphs steal a magic item, look through the pack and pick out one we like.
   ITEM *obj, *steal;
@@ -186,20 +186,24 @@ int nymph_attack(AGENT* mp)
     if (obj!=get_current_armor() && obj!=get_current_weapon() && obj!=get_ring(LEFT) && obj!=get_ring(RIGHT) && is_magic(obj) && rnd(++nobj)==0) steal = obj;
   if (steal!=NULL)
   {
-    remove_monster(mp, FALSE);
+    remove_monster(mp, false);
     if (steal->count>1 && steal->group==0)
     {
       int oc;
 
       oc = steal->count--;
       steal->count = 1;
-      msg(she_stole, inv_name(steal, TRUE));
+      msg(she_stole, inv_name(steal, true));
       steal->count = oc;
     }
-    else {detach_item(&player.pack, steal); discard_item(steal); msg(she_stole, inv_name(steal, TRUE));}
-    return TRUE;
+    else {
+        detach_item(&player.pack, steal); 
+        (steal);
+        msg(she_stole, inv_name(steal, true));
+    }
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 void vampire_wraith_attack(int type)
@@ -226,24 +230,24 @@ void vampire_wraith_attack(int type)
 }
 
 //attack: The monster attacks the player
-int attack(AGENT *monster)
+bool attack(AGENT *monster)
 {
   const char *name;
-  int monster_died = FALSE;
+  int monster_died = false;
 
   //Since this is an attack, stop running and any healing that was going on at the time.
-  running = FALSE;
+  running = false;
   count = quiet = 0;
-  if (monster->is_disguised() && !player.is_flag_set(IS_BLIND)) 
+  if (monster->is_disguised() && !player.is_blind()) 
     monster->disguise = monster->type;
-  name = player.is_flag_set(IS_BLIND) ? it : monster->get_monster_name();
-  if (roll_em(monster, &player, NULL, FALSE))
+  name = player.is_blind() ? it : monster->get_monster_name();
+  if (roll_em(monster, &player, NULL, false))
   {
     display_hit_msg(name, NULL);
     if (player.stats.hp <= 0) 
       death(monster->type); //Bye bye life ...
    
-    if (!monster->is_flag_set(IS_CANC)) {
+    if (!monster->powers_cancelled()) {
         if (monster->rusts_armor())
         {
             aquator_attack();
@@ -258,7 +262,7 @@ int attack(AGENT *monster)
         }
         else if (monster->steals_gold()){
             leprechaun_attack(monster);
-            monster_died = TRUE;
+            monster_died = true;
         }
         else if (monster->steals_magic())
         {   
@@ -327,7 +331,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
   struct Stats *att, *def;
   const char *cp;
   int ndice, nsides, def_arm;
-  bool did_hit = FALSE;
+  bool did_hit = false;
   int hplus;
   int dplus;
   int damage;
@@ -375,7 +379,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
     }
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
-  if (!thdef->is_flag_set(IS_RUN)) 
+  if (!thdef->is_running()) 
       hplus += 4;
   def_arm = def->ac;
   if (def==&player.stats)
@@ -399,7 +403,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
       //make it easier on level one
       if (thdef==&player && max_level()==1) damage = (damage+1)/2;
       def->hp -= max(0, damage);
-      did_hit = TRUE;
+      did_hit = true;
     }
     if ((cp = strchr(cp, '/'))==NULL) break;
     cp++;
@@ -412,7 +416,7 @@ char *prname(const char *who, bool upper)
 {
   *tbuf = '\0';
   if (who==0) strcpy(tbuf, you);
-  else if (player.is_flag_set(IS_BLIND)) strcpy(tbuf, it);
+  else if (player.is_blind()) strcpy(tbuf, it);
   else {strcpy(tbuf, "the "); strcat(tbuf, who);}
   if (upper) *tbuf = toupper(*tbuf);
   return tbuf;
@@ -423,7 +427,7 @@ void display_hit_msg(const char *er, const char *ee)
 {
   char *s;
 
-  addmsg(prname(er, TRUE));
+  addmsg(prname(er, true));
   switch ((short_msgs())?1:rnd(4))
   {
   case 0: s = " scored an excellent hit on "; break;
@@ -431,7 +435,7 @@ void display_hit_msg(const char *er, const char *ee)
   case 2: s = (er==0?" have injured ":" has injured "); break;
   case 3: s = (er==0?" swing and hit ":" swings and hits "); break;
   }
-  msg("%s%s", s, prname(ee, FALSE));
+  msg("%s%s", s, prname(ee, false));
 }
 
 //miss: Print a message to indicate a poor swing
@@ -439,7 +443,7 @@ void miss(const char *er, const char *ee)
 {
   char *s;
 
-  addmsg(prname(er, TRUE));
+  addmsg(prname(er, true));
   switch ((short_msgs())?1:rnd(4))
   {
   case 0: s = (er==0?" swing and miss":" swings and misses"); break;
@@ -447,7 +451,7 @@ void miss(const char *er, const char *ee)
   case 2: s = (er==0?" barely miss":" barely misses"); break;
   case 3: s = (er==0?" don't hit":" doesn't hit"); break;
   }
-  msg("%s %s", s, prname(ee, FALSE));
+  msg("%s %s", s, prname(ee, false));
 }
 
 //save_throw: See if a creature save against something
@@ -510,7 +514,7 @@ void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
     addmsg("the %s %s ", get_weapon_name(item->which), does);
   else 
     addmsg("you %s ", did);
-  player.is_flag_set(IS_BLIND) ? msg(it) : msg("the %s", name);
+  player.is_blind() ? msg(it) : msg("the %s", name);
 }
 
 //remove: Remove a monster from the screen
@@ -526,7 +530,7 @@ void remove_monster(AGENT *monster, bool waskill)
     obj->pos = monster->pos;
     detach_item(&monster->pack, obj);
     if (waskill)
-      fall(obj, FALSE);
+      fall(obj, false);
     else 
       discard_item(obj);
   }
@@ -584,12 +588,12 @@ void killed(AGENT *monster, bool print)
   if (print)
   {
     addmsg("you have defeated ");
-    if (player.is_flag_set(IS_BLIND)) 
+    if (player.is_blind()) 
         msg(it);
     else msg("the %s", monster->get_monster_name());
   }
   //Do adjustments if he went up a level
   check_level();
   //Get rid of the monster.
-  remove_monster(monster, TRUE);
+  remove_monster(monster, true);
 }

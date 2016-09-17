@@ -67,7 +67,7 @@ void whatis()
   }
   //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
   if (obj->enemy) obj->flags |= IS_REVEAL;
-  msg(inv_name(obj, FALSE));
+  msg(inv_name(obj, false));
 }
 
 //create_obj: Wizard command for getting anything he wants
@@ -133,7 +133,7 @@ void create_obj()
   }
   else if (obj->type==STICK) fix_stick(obj);
   else if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
-  add_pack(obj, FALSE);
+  add_pack(obj, false);
 }
 
 //teleport: Bamf the hero someplace else
@@ -152,21 +152,21 @@ void teleport()
     player.pos = c; 
     enter_room(&player.pos);
   }
-  else { player.pos = c; look(TRUE);}
+  else { player.pos = c; look(true);}
   mvaddch(player.pos.y, player.pos.x, PLAYER);
   //turn off IS_HELD in case teleportation was done while fighting a Flytrap
-  if (player.is_flag_set(IS_HELD)) { 
+  if (player.is_held()) { 
       player.flags &= ~IS_HELD; 
       f_restor();
   }
   no_move = 0;
   count = 0;
-  running = FALSE;
+  running = false;
   flush_type();
   //Teleportation can be a confusing experience (unless you really are a wizard)
   if (!is_wizard())
   {
-    if (player.is_flag_set(IS_HUH))
+    if (player.is_confused())
         lengthen(unconfuse, rnd(4)+2);
     else 
         fuse(unconfuse, 0, rnd(4)+2);

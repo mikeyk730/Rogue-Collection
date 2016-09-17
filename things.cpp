@@ -148,15 +148,15 @@ void drop()
   attach_item(&lvl_obj, op);
   set_tile(player.pos.y, player.pos.x, op->type);
   op->pos = player.pos;
-  msg("dropped %s", inv_name(op, TRUE));
+  msg("dropped %s", inv_name(op, true));
 }
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
-int can_drop(ITEM *op)
+bool can_drop(ITEM *op)
 {
-  if (op==NULL) return TRUE;
-  if (op!=get_current_armor() && op!=get_current_weapon() && op!=get_ring(LEFT) && op!=get_ring(RIGHT)) return TRUE;
-  if (op->flags&IS_CURSED) {msg("you can't.  It appears to be cursed"); return FALSE;}
+  if (op==NULL) return true;
+  if (op!=get_current_armor() && op!=get_current_weapon() && op!=get_ring(LEFT) && op!=get_ring(RIGHT)) return true;
+  if (op->flags&IS_CURSED) {msg("you can't.  It appears to be cursed"); return false;}
   if (op==get_current_weapon()) set_current_weapon(NULL);
   else if (op==get_current_armor()) {
     waste_time(); 
@@ -169,7 +169,7 @@ int can_drop(ITEM *op)
     if (op!=get_ring(hand = LEFT)) if (op!=get_ring(hand = RIGHT))
     {
       debug("Candrop called with funny thing");
-      return TRUE;
+      return true;
     }
     set_ring(hand, NULL);
     switch (op->which)
@@ -178,7 +178,7 @@ int can_drop(ITEM *op)
     case R_SEEINVIS: unsee(); extinguish(unsee); break;
     }
   }
-  return TRUE;
+  return true;
 }
 
 //new_thing: Return a new thing
@@ -300,7 +300,7 @@ void print_disc(byte type)
   {
     obj.type = type;
     obj.which = order[i];
-    add_line("", "%s", inv_name(&obj, FALSE));
+    add_line("", "%s", inv_name(&obj, false));
     num_found++;
   }
   if (num_found==0) add_line("", nothing(type), 0);

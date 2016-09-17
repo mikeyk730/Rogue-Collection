@@ -134,16 +134,16 @@ char *he_man[] =
 
 bool after;                 //True if we want after daemons
 bool again;                 //The last command is repeated
-bool door_stop = FALSE;     //Stop running when we pass a door
-bool fastmode = FALSE;      //Run until you see something
-bool faststate = FALSE;     //Toggle for find (see above)
-bool firstmove = FALSE;     //First move after setting door_stop
-bool playing = TRUE;        //True until he quits
-bool running = FALSE;       //True if player is running
+bool door_stop = false;     //Stop running when we pass a door
+bool fastmode = false;      //Run until you see something
+bool faststate = false;     //Toggle for find (see above)
+bool firstmove = false;     //First move after setting door_stop
+bool playing = true;        //True until he quits
+bool running = false;       //True if player is running
 
-int was_trapped = FALSE;   //Was a trap sprung
+int was_trapped = 0;   //Was a trap sprung
 
-int bailout = FALSE;
+int bailout = false;
 char take;  //Thing the rogue is taking
 char runch; //Direction player is running
 

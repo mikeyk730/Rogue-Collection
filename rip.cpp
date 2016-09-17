@@ -64,7 +64,7 @@ void score(int amount, int flags, char monst)
   if (amount || flags || monst)
   {
     move(LINES-1, 0);
-    cursor(TRUE);
+    cursor(true);
     printw("[Press Enter to see rankings]");
     flush_type();
     wait_for('\r');
@@ -163,7 +163,7 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
     if (top10->level>=26) altmsg = " Honored by the Guild";
     if (isalpha(top10->fate))
     {
-      sprintf(dthstr, " killed by %s", killname((0xff&top10->fate), TRUE));
+      sprintf(dthstr, " killed by %s", killname((0xff&top10->fate), true));
       if (COLS==40 && strlen(dthstr)>23) strcpy(dthstr, " killed");
     }
     else switch(top10->fate)
@@ -228,7 +228,7 @@ void death(char monst)
   standend();
   center(14, get_name());
   standend();
-  killer = killname(monst, TRUE);
+  killer = killname(monst, true);
   strcpy(buf, "killed by");
   center(15, buf);
   center(16, killer);
@@ -357,7 +357,7 @@ void total_winner()
     }
     if (worth<0) worth = 0;
     move(c-'a'+1, 0);
-    printw("%c) %5d  %s", c, worth, inv_name(obj, FALSE));
+    printw("%c) %5d  %s", c, worth, inv_name(obj, false));
     adjust_purse(worth);
   }
   move(c-'a'+1, 0);
@@ -375,20 +375,20 @@ char *killname(char monst, bool doart)
   bool article;
 
   sp = prbuf;
-  article = TRUE;
+  article = true;
   switch (monst)
   {
   case 'a': sp = "arrow"; break;
   case 'b': sp = "bolt"; break;
   case 'd': sp = "dart"; break;
-  case 's': sp = "starvation"; article = FALSE; break;
+  case 's': sp = "starvation"; article = false; break;
   case 'f': sp = "fall"; break;
   default:
     if (monst>='A' && monst<='Z') 
       sp = get_monster_name(monst);
     else {
       sp = "God"; 
-      article = FALSE;
+      article = false;
     }
     break;
   }

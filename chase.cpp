@@ -32,27 +32,27 @@ void runners()
   for (monster = mlist; monster!=NULL; monster = next)
   {
     next = next(monster); //monster may be invalidated during iteration, save next here in case continue is hit
-    if (!monster->is_flag_set(IS_HELD) && monster->is_flag_set(IS_RUN))
+    if (!monster->is_held() && monster->is_running())
     {
       dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
-      if (!(monster->is_flag_set(IS_SLOW) || (monster->can_divide() && dist>3)) || monster->turn)
+      if (!(monster->is_slow() || (monster->can_divide() && dist>3)) || monster->turn)
         if(!do_chase(monster)) 
             continue;
-      if (monster->is_flag_set(IS_HASTE)) 
+      if (monster->is_fast()) 
         if(!do_chase(monster)) 
             continue;
       dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
-      if (monster->is_flag_set(IS_FLY) && dist>3)
+      if (monster->is_flying() && dist>3)
         if(!do_chase(monster)) 
             continue;
-      monster->turn ^= TRUE;
+      monster->turn ^= true;
     }
     next = next(monster);
   }
 }
 
 //do_chase: Make one thing chase another.
-int do_chase(AGENT *monster)
+bool do_chase(AGENT *monster)
 {
   int mindist = 32767, i, dist;
   bool door;
@@ -62,14 +62,14 @@ int do_chase(AGENT *monster)
   Coord tempdest; //Temporary destination for chaser
 
   monster_room = monster->room; //Find room of chaser
-  if (monster->is_flag_set(IS_GREED) && monster_room->goldval == 0) 
+  if (monster->is_greedy() && monster_room->goldval == 0) 
     monster->dest = &player.pos; //If gold has been taken, run after hero
 
   dest_room = player.room;
   if (monster->dest != &player.pos) 
     dest_room = roomin(monster->dest); //Find room of chasee
   if (dest_room==NULL) 
-    return TRUE;
+    return true;
 
   //We don't count doors as inside rooms for this routine
   door = (get_tile(monster->pos.y, monster->pos.x)==DOOR);
@@ -88,7 +88,7 @@ over:
     if (door)
     {
       monster_room = &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM];
-      door = FALSE;
+      door = false;
       goto over;
     }
   }
@@ -98,9 +98,9 @@ over:
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
     if ((monster->shoots_fire() || monster->shoots_ice()) && 
         (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) &&
-        ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->is_flag_set(IS_CANC) && rnd(DRAGONSHOT)==0)
+        ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->powers_cancelled() && rnd(DRAGONSHOT)==0)
     {
-      running = FALSE;
+      running = false;
       delta.y = sign(player.pos.y-monster->pos.y);
       delta.x = sign(player.pos.x-monster->pos.x);
       return fire_bolt(&monster->pos, &delta, monster->shoots_fire()?"flame":"frost");
@@ -126,13 +126,14 @@ over:
       break;
     }
   }
-  if (monster->is_stationary()) return TRUE;
+  if (monster->is_stationary()) 
+      return true;
   //If the chasing thing moved, update the screen
   if (monster->oldch!='@')
   {
     if (monster->oldch==' ' && can_see(monster->pos.y, monster->pos.x) && get_tile(monster->pos.y, monster->pos.x)==FLOOR)
       mvaddch(monster->pos.y, monster->pos.x, (char)FLOOR);
-    else if (monster->oldch == FLOOR && !can_see(monster->pos.y, monster->pos.x) && !player.is_flag_set(SEE_MONST))
+    else if (monster->oldch == FLOOR && !can_see(monster->pos.y, monster->pos.x) && !player.detects_others())
       mvaddch(monster->pos.y, monster->pos.x, ' ');
     else
       mvaddch(monster->pos.y, monster->pos.x, monster->oldch);
@@ -140,7 +141,10 @@ over:
   oroom = monster->room;
   if (!equal(ch_ret, monster->pos))
   {
-    if ((monster->room = roomin(&ch_ret))==NULL) {monster->room = oroom; return TRUE;}
+    if ((monster->room = roomin(&ch_ret))==NULL) {
+        monster->room = oroom; 
+        return true;
+    }
     if (oroom!=monster->room) monster->dest = find_dest(monster);
     monster->pos = ch_ret;
   }
@@ -150,7 +154,7 @@ over:
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
     mvaddch(ch_ret.y, ch_ret.x, monster->disguise);
   }
-  else if (player.is_flag_set(SEE_MONST))
+  else if (player.detects_others())
   {
     standout();
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
@@ -160,23 +164,23 @@ over:
     monster->oldch = '@';
   if (monster->oldch==FLOOR && oroom->flags&IS_DARK) monster->oldch = ' ';
   standend();
-  return TRUE;
+  return true;
 }
 
-//see_monst: Return TRUE if the hero can see the monster
-int can_see_monst(AGENT *monster)
+//see_monst: Return true if the hero can see the monster
+bool can_see_monst(AGENT *monster)
 {
   // player is blind
-  if (player.is_flag_set(IS_BLIND))
-    return FALSE;
+  if (player.is_blind())
+    return false;
 
   //monster is invisible, and can't see invisible
-  if (monster->is_flag_set(IS_INVIS) && !player.is_flag_set(CAN_SEE))
-    return FALSE;
+  if (monster->is_invisible() && !player.sees_invisible())
+    return false;
   
   if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x) >= LAMP_DIST &&
     ((monster->room != player.room || (monster->room->flags & IS_DARK) || (monster->room->flags & IS_MAZE)))) 
-    return FALSE;
+    return false;
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
   //give the player a hint as to what that weapon is good for.
@@ -197,7 +201,7 @@ void start_run(AGENT* monster)
   monster->dest = find_dest(monster);
 }
 
-//chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns TRUE if we want to keep on chasing later. FALSE if we reach the goal.
+//chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
 void chase(AGENT *monster, Coord *chasee_pos)
 {
   int x, y;
@@ -261,7 +265,7 @@ void chase(AGENT *monster, Coord *chasee_pos)
 //diag_ok: Check to see if the move is legal if it is diagonal
 int diag_ok( Coord *sp, Coord *ep )
 {
-  if (ep->x==sp->x || ep->y==sp->y) return TRUE;
+  if (ep->x==sp->x || ep->y==sp->y) return true;
   return (step_ok(get_tile(ep->y, sp->x)) && step_ok(get_tile(sp->y, ep->x)));
 }
 
@@ -271,8 +275,8 @@ int can_see(int y, int x)
   struct Room *room;
   Coord tp;
 
-  if (player.is_flag_set(IS_BLIND)) return FALSE;
-  if (DISTANCE(y, x, player.pos.y, player.pos.x)<LAMP_DIST) return TRUE;
+  if (player.is_blind()) return false;
+  if (DISTANCE(y, x, player.pos.y, player.pos.x)<LAMP_DIST) return true;
   //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
   tp.y = y;
   tp.x = x;

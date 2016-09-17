@@ -53,7 +53,7 @@ void new_level(int do_implode)
   no_food++;
   put_things(); //Place objects (if any)
   //Place the staircase down.
-  find_empty_location(&pos, FALSE); //TODO: seed used to change after 100 failed attempts
+  find_empty_location(&pos, false); //TODO: seed used to change after 100 failed attempts
   set_tile(pos.y, pos.x, STAIRS);
   //Place the traps
   if (rnd(10)<get_level())
@@ -63,22 +63,22 @@ void new_level(int do_implode)
     i = ntraps;
     while (i--)
     {
-      find_empty_location(&pos, FALSE);
+      find_empty_location(&pos, false);
       unset_flag(pos.y, pos.x, F_REAL);
       set_flag(pos.y, pos.x, rnd(NTRAPS));
     }
   }
   do
   {
-    find_empty_location(&player.pos, TRUE);
+    find_empty_location(&player.pos, true);
   } while (!(get_flags(player.pos.y, player.pos.x) & F_REAL));  //don't place hero on a trap
   mpos = 0;
   enter_room(&player.pos);
   mvaddch(player.pos.y, player.pos.x, PLAYER);
   oldpos = player.pos;
   oldrp = player.room;
-  if (player.is_flag_set(SEE_MONST))
-      turn_see(FALSE);
+  if (player.detects_others())
+      turn_see(false);
 }
 
 //put_things: Put potions and scrolls on this level
@@ -104,7 +104,7 @@ void put_things()
         cur->damage = cur->throw_damage = "0d0";
         cur->armor_class = 11;
         //Put it somewhere
-        find_empty_location(&tp, TRUE);
+        find_empty_location(&tp, true);
         set_tile(tp.y, tp.x, AMULET);
         cur->pos = tp;
       }
@@ -120,7 +120,7 @@ void put_things()
       cur = new_item();
       attach_item(&lvl_obj, cur);
       //Put it somewhere
-      find_empty_location(&tp, FALSE);
+      find_empty_location(&tp, false);
       set_tile(tp.y, tp.x, cur->type);
       cur->pos = tp;
     }
@@ -166,7 +166,7 @@ void treas_room()
     {
       if ((monster = create_agent())!=NULL)
       {
-        new_monster(monster, randmonster(FALSE, get_level()+1), &pos, get_level()+1);
+        new_monster(monster, randmonster(false, get_level()+1), &pos, get_level()+1);
         if (bailout) debug("treasure rm bailout");
         monster->flags |= IS_MEAN; //no sloughers in THIS room
         give_pack(monster);

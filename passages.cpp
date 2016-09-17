@@ -143,13 +143,13 @@ void do_passages()
   //reinitialize room graph description
   for (r1 = rdes; r1<&rdes[MAXROOMS]; r1++)
   {
-    for (j = 0; j<MAXROOMS; j++) r1->isconn[j] = FALSE;
-    r1->ingraph = FALSE;
+    for (j = 0; j<MAXROOMS; j++) r1->isconn[j] = false;
+    r1->ingraph = false;
   }
   //starting with one room, connect it to a random adjacent room and then pick a new room to start with.
   roomcount = 1;
   r1 = &rdes[rnd(MAXROOMS)];
-  r1->ingraph = TRUE;
+  r1->ingraph = true;
   do
   {
     //find a room to connect with
@@ -163,12 +163,12 @@ void do_passages()
     //otherwise, connect new room to the graph, and draw a tunnel to it
     else
     {
-      r2->ingraph = TRUE;
+      r2->ingraph = true;
       i = r1-rdes;
       j = r2-rdes;
       conn(i, j);
-      r1->isconn[j] = TRUE;
-      r2->isconn[i] = TRUE;
+      r1->isconn[j] = true;
+      r2->isconn[i] = true;
       roomcount++;
     }
   } while (roomcount<MAXROOMS);
@@ -185,8 +185,8 @@ void do_passages()
       i = r1-rdes;
       j = r2-rdes;
       conn(i, j);
-      r1->isconn[j] = TRUE;
-      r2->isconn[i] = TRUE;
+      r1->isconn[j] = true;
+      r2->isconn[i] = true;
     }
   }
   passnum();
@@ -223,7 +223,7 @@ void passnum()
   int i;
 
   pnum = 0;
-  newpnum = FALSE;
+  newpnum = false;
   for (room = passages; room<&passages[MAXPASS]; room++) room->num_exits = 0;
   for (room = rooms; room<&rooms[MAXROOMS]; room++) for (i = 0; i<room->num_exits; i++)
   {
@@ -242,7 +242,7 @@ void numpass(int y, int x)
   if (offmap(y, x)) return;
   fp = get_flags(y, x);
   if (fp&F_PNUM) return;
-  if (newpnum) {pnum++; newpnum = FALSE;}
+  if (newpnum) {pnum++; newpnum = false;}
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
   if ((ch = get_tile(y, x))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
   {

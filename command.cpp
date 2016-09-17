@@ -37,7 +37,7 @@ void command()
 {
   int ntimes;
 
-  if (player.is_flag_set(IS_HASTE))
+  if (player.is_fast())
       ntimes = rnd(2) + 2;
   else ntimes = 1;
   while (ntimes--)
@@ -81,13 +81,13 @@ int get_prefix()
 {
   int retch, ch, junk;
 
-  after = TRUE;
+  after = true;
   fastmode = faststate;
-  look(TRUE);
-  if (!running) door_stop = FALSE;
-  do_take = TRUE;
-  again = FALSE;
-  if (--count>0) {do_take = lasttake; retch = lastch; fastmode = FALSE;}
+  look(true);
+  if (!running) door_stop = false;
+  do_take = true;
+  again = false;
+  if (--count>0) {do_take = lasttake; retch = lastch; fastmode = false;}
   else
   {
     count = 0;
@@ -108,30 +108,30 @@ int get_prefix()
           fastmode = !fastmode; 
           break;
         case 'g': 
-          do_take = FALSE; 
+          do_take = false; 
           break;
         case 'a': 
           retch = lastch; 
           count = lastcount; 
           do_take = lasttake; 
-          again = TRUE; 
+          again = true; 
           break;
         case ' ': break;
-        case ESCAPE: door_stop = FALSE; count = 0; show_count(); break;
+        case ESCAPE: door_stop = false; count = 0; show_count(); break;
         default: retch = ch; break;
         }
       }
     }
   }
-  if (count) fastmode = FALSE;
+  if (count) fastmode = false;
   switch (retch)
   {
   case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
     if (fastmode && !running)
     {
-      if (!player.is_flag_set(IS_BLIND)) {
-          door_stop = TRUE; 
-          firstmove = TRUE;
+      if (!player.is_blind()) {
+          door_stop = true; 
+          firstmove = true;
       }
       retch = toupper(retch);
     }
@@ -169,9 +169,9 @@ void execcom()
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n': find_dir(ch, &mv); do_move(mv.y, mv.x); break;
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N': do_run(tolower(ch)); break;
-    case 't': if (get_dir()) missile(delta.y, delta.x); else after = FALSE; break;
-    case 'Q': after = FALSE; quit(); break;
-    case 'i': after = FALSE; inventory(player.pack, 0, ""); break;
+    case 't': if (get_dir()) missile(delta.y, delta.x); else after = false; break;
+    case 'Q': after = false; quit(); break;
+    case 'i': after = false; inventory(player.pack, 0, ""); break;
     case 'd': drop(); break;
     case 'q': quaff(); break;
     case 'r': read_scroll(); break;
@@ -181,37 +181,37 @@ void execcom()
     case 'T': take_off(); break;
     case 'P': ring_on(); break;
     case 'R': ring_off(); break;
-    case 'c': after = FALSE; call(); break;
-    case '>': after = FALSE; d_level(); break;
-    case '<': after = FALSE; u_level(); break;
-    case '/': after = FALSE; help(helpobjs); break;
-    case '?': after = FALSE; help(helpcoms); break;
-    case '!': after = FALSE; fakedos(); break;
+    case 'c': after = false; call(); break;
+    case '>': after = false; d_level(); break;
+    case '<': after = false; u_level(); break;
+    case '/': after = false; help(helpobjs); break;
+    case '?': after = false; help(helpcoms); break;
+    case '!': after = false; fakedos(); break;
     case 's': search(); break;
-    case 'z': if (get_dir()) do_zap(); else after = FALSE; break;
-    case 'D': after = FALSE; discovered(); break;
+    case 'z': if (get_dir()) do_zap(); else after = false; break;
+    case 'D': after = false; discovered(); break;
     case CTRL('T'):
       {
         bool new_value = !in_brief_mode();
         set_brief_mode(new_value);
         msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!"); 
-        after = FALSE;
+        after = false;
         break;
       }
-    case 'F': after = FALSE; do_macro(macro, MACROSZ); break;
-    case CTRL('F'): after = FALSE; typeahead = macro; break;
-    case CTRL('R'): after = FALSE; msg(huh); break;
+    case 'F': after = false; do_macro(macro, MACROSZ); break;
+    case CTRL('F'): after = false; typeahead = macro; break;
+    case CTRL('R'): after = false; msg(huh); break;
 
     case 'v':
-      after = FALSE;
+      after = false;
       msg("Rogue version %d.%d", REV, VER);
       break;
 
-    case 'S': after = FALSE; save_game(); break;
+    case 'S': after = false; save_game(); break;
     case '.': doctor(); break;
 
     case '^':
-      after = FALSE;
+      after = false;
       if (get_dir())
       {
         Coord lookat;
@@ -223,11 +223,11 @@ void execcom()
       }
       break;
 
-    case 'o': after = FALSE; msg("i don't have any options, oh my!"); break;
-    case CTRL('L'): after = FALSE; msg("the screen looks fine to me"); break;
+    case 'o': after = false; msg("i don't have any options, oh my!"); break;
+    case CTRL('L'): after = false; msg("the screen looks fine to me"); break;
 
     case CTRL('W'):
-      after = FALSE; 
+      after = false; 
       set_wizard(!is_wizard());
       msg(is_wizard() ? "You are now a wizard!" : "You feel your magic powers fade away"); 
       break; 
@@ -237,19 +237,19 @@ void execcom()
         switch(ch){
           //Wizard commands
         case 'C': 
-          after = FALSE; create_obj(); break;
+          after = false; create_obj(); break;
         case 'X': 
-          after = FALSE; show_map(TRUE); break;
+          after = false; show_map(true); break;
         case 'Z': 
-          after = FALSE;  show_map(FALSE); break;
+          after = false;  show_map(false); break;
         default:
-          after = FALSE; 
+          after = false; 
           msg("illegal command '%s'", unctrl(ch)); 
           count = 0; 
         }
       }
       else{
-        after = FALSE; 
+        after = false; 
         msg("illegal command '%s'", unctrl(ch)); 
         count = 0; 
         break;
@@ -257,6 +257,6 @@ void execcom()
     }
     if (take && do_take) pick_up(take);
     take = 0;
-    if (!running) door_stop = FALSE;
-  } while (after==FALSE);
+    if (!running) door_stop = false;
+  } while (after==false);
 }

@@ -125,7 +125,7 @@ void do_rooms()
           rnd_pos(room, &mp); 
           mch = get_tile_or_monster(mp.y, mp.x);
         } while (!isfloor(mch));
-        new_monster(monster, randmonster(FALSE, get_level()), &mp, get_level());
+        new_monster(monster, randmonster(false, get_level()), &mp, get_level());
         give_pack(monster);
       }
     }
@@ -191,7 +191,7 @@ void enter_room(Coord *cp)
     return;
   }
   door_open(room);
-  if (!(room->flags&IS_DARK) && !player.is_flag_set(IS_BLIND) && !(room->flags&IS_MAZE))
+  if (!(room->flags&IS_DARK) && !player.is_blind() && !(room->flags&IS_MAZE))
     for (y = room->pos.y; y<room->size.y+room->pos.y; y++)
     {
       move(y, room->pos.x);
@@ -219,7 +219,7 @@ void leave_room(Coord *cp)
 
   room = player.room;
   player.room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
-  floor = ((room->flags&IS_DARK) && !player.is_flag_set(IS_BLIND)) ? ' ' : FLOOR;
+  floor = ((room->flags&IS_DARK) && !player.is_blind()) ? ' ' : FLOOR;
   if (room->flags&IS_MAZE) floor = PASSAGE;
   for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
     for (x = room->pos.x+1; x<room->size.x+room->pos.x-1; x++) {
@@ -235,7 +235,7 @@ void leave_room(Coord *cp)
       default:
         //to check for monster, we have to strip out standout bit
         if (isupper(toascii(ch)))
-        if (player.is_flag_set(SEE_MONST)) {
+        if (player.detects_others()) {
             standout(); 
             addch(ch); 
             standend(); 

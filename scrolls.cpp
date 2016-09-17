@@ -73,7 +73,7 @@ int does_know_scroll(int type)
 
 void discover_scroll(int type)
 {
-  s_know[type] = TRUE;
+  s_know[type] = true;
 }
 
 int get_scroll_value(int type)
@@ -139,7 +139,7 @@ void init_names()
     *--cp = '\0';
     //I'm tired of thinking about this one so just in case .....
     prbuf[MAXNAME] = 0;
-    s_know[i] = FALSE;
+    s_know[i] = false;
     s_guess[i] = (char *)&_guesses[iguess++];
     strcpy((char*)&s_names[i], prbuf);
     if (i>0) s_magic[i].prob += s_magic[i-1].prob;
@@ -171,7 +171,7 @@ void read_magic_mapping()
   byte ch;
   AGENT* monster;
   
-  s_know[S_MAP] = TRUE;
+  s_know[S_MAP] = true;
   msg("oh, now this scroll has a map on it");
   //Take all the things we want to keep hidden out of the window
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
@@ -225,7 +225,7 @@ void read_hold_monster()
 void read_sleep()
 {
   //Scroll which makes you fall asleep
-  s_know[S_SLEEP] = TRUE;
+  s_know[S_SLEEP] = true;
   no_command += rnd(SLEEP_TIME)+4;
   player.flags &= ~IS_RUN;
   msg("you fall asleep");
@@ -244,7 +244,7 @@ void read_enchant_armor()
 void read_identify()
 {
   //Identify, let the rogue figure something out
-  s_know[S_IDENT] = TRUE;
+  s_know[S_IDENT] = true;
   msg("this scroll is an identify scroll");
   if (strcmp(s_menu, "on") == 0) 
     more(" More ");
@@ -261,13 +261,13 @@ void read_food_detection()
 {
   //Scroll of food detection
   ITEM* item;
-  byte discover = FALSE;
+  byte discover = false;
 
   for (item = lvl_obj; item != NULL; item = next(item))
   {
     if (item->type==FOOD)
     {
-      discover = TRUE;
+      discover = true;
       standout();
       mvaddch(item->pos.y, item->pos.x, FOOD);
       standend();
@@ -275,14 +275,14 @@ void read_food_detection()
     //as a bonus this will detect amulets as well
     else if (item->type==AMULET)
     {
-      discover = TRUE;
+      discover = true;
       standout();
       mvaddch(item->pos.y, item->pos.x, AMULET);
       standend();
     }
   }
   if (discover) {
-    s_know[S_GFIND] = TRUE; 
+    s_know[S_GFIND] = true; 
     msg("your nose tingles as you sense food");
   }
   else 
@@ -296,7 +296,7 @@ void read_teleportation()
   cur_room = player.room;
   teleport();
   if (cur_room != player.room) 
-    s_know[S_TELEP] = TRUE;
+    s_know[S_TELEP] = true;
 }
 
 void read_enchant_weapon()
@@ -318,7 +318,7 @@ void read_create_monster()
   Coord position;
 
   if (plop_monster(player.pos.y, player.pos.x, &position) && (monster = create_agent()) != NULL)
-    new_monster(monster, randmonster(FALSE, get_level()), &position, get_level());
+    new_monster(monster, randmonster(false, get_level()), &position, get_level());
   else 
     ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 }
@@ -424,7 +424,7 @@ void read_scroll()
     return;
   }
 
-  look(TRUE); //put the result of the scroll on the screen
+  look(true); //put the result of the scroll on the screen
   status();
   call_it(s_know[scroll->which], &s_guess[scroll->which]);
 

@@ -39,7 +39,7 @@
 #include "hero.h"
 #include "monsters.h"
 
-int bwflag = FALSE;
+int bwflag = false;
 
 //main: The main program, of course
 int main(int argc, char **argv)
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
   setenv("rogue.opt");
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.
-  if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;
+  if (strncmp(s_screen, "bw", 2)==0) bwflag = true;
   while (--argc)
   {
     curarg = *(++argv);
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     init_materials(); //Set up materials of wands
     setup();
     drop_curtain();
-    new_level(FALSE); //Draw current level
+    new_level(false); //Draw current level
     //Start up daemons and fuses
     daemon(doctor, 0);
     fuse(swander, 0, WANDER_TIME);
@@ -134,7 +134,7 @@ void playit(char *sname)
     restore_game(sname);
     if (bwflag) forcebw();
     setup();
-    cursor(FALSE);
+    cursor(false);
   }
   else {oldpos.x = player.pos.x; oldpos.y = player.pos.y; oldrp = roomin(&player.pos);}
   while (playing) command(); //Command execution
@@ -146,11 +146,12 @@ void quit()
 {
   int oy, ox;
   byte answer;
-  static int qstate = FALSE;
+  static bool should_quit = false;
 
   //if they try to interrupt with a control C while in this routine blow them away!
-  if (qstate==TRUE) leave();
-  qstate = TRUE;
+  if (should_quit) 
+      leave();
+  should_quit = true;
   mpos = 0;
   getrc(&oy, &ox);
   move(0, 0);
@@ -158,7 +159,7 @@ void quit()
   move(0, 0);
   if (!in_small_screen_mode()) addstr("Do you wish to ");
   str_attr("end your quest now (%Yes/%No) ?");
-  look(FALSE);
+  look(false);
   answer = readchar();
   if (answer=='y' || answer=='Y')
   {
@@ -177,13 +178,13 @@ void quit()
     mpos = 0;
     count = 0;
   }
-  qstate = FALSE;
+  should_quit = false;
 }
 
 //leave: Leave quickly, but courteously
 void leave()
 {
-  look(FALSE);
+  look(false);
   move(LINES-1, 0);
   clrtoeol();
   move(LINES-2, 0);

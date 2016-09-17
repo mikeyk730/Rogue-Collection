@@ -61,7 +61,7 @@ void look(bool wakeup)
   //if the hero has moved
   if (!equal(oldpos, player.pos))
   {
-    if (!player.is_flag_set(IS_BLIND))
+    if (!player.is_blind())
     {
       for (x = oldpos.x-1; x<=(oldpos.x+1); x++)
         for (y = oldpos.y-1; y<=(oldpos.y+1); y++)
@@ -93,7 +93,7 @@ void look(bool wakeup)
   for (y = sy; y<=ey; y++) if (y>0 && y<maxrow) for (x = sx; x<=ex; x++)
   {
     if (x<=0 || x>=COLS) continue;
-    if (!player.is_flag_set(IS_BLIND))
+    if (!player.is_blind())
     {
       if (y==player.pos.y && x==player.pos.x) continue;
     }
@@ -111,15 +111,15 @@ void look(bool wakeup)
       }
       //Not in same passage
       else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
-      if ((monster = monster_at(y, x))!=NULL) if (player.is_flag_set(SEE_MONST) && monster->is_flag_set(IS_INVIS))
+      if ((monster = monster_at(y, x))!=NULL) if (player.detects_others() && monster->is_invisible())
       {
-        if (door_stop && !firstmove) running = FALSE;
+        if (door_stop && !firstmove) running = false;
         continue;
       }
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (monster->oldch != ' ' || (!(room->flags&IS_DARK) && !player.is_flag_set(IS_BLIND))) monster->oldch = get_tile(y, x);
+        if (monster->oldch != ' ' || (!(room->flags&IS_DARK) && !player.is_blind())) monster->oldch = get_tile(y, x);
         if (can_see_monst(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
@@ -142,19 +142,19 @@ void look(bool wakeup)
         }
         switch (ch)
         {
-        case DOOR: if (x==player.pos.x || y==player.pos.y) running = FALSE; break;
+        case DOOR: if (x==player.pos.x || y==player.pos.y) running = false; break;
         case PASSAGE: if (x==player.pos.x || y==player.pos.y) passcount++; break;
         case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ': break;
-        default: running = FALSE; break;
+        default: running = false; break;
         }
       }
   }
-  if (door_stop && !firstmove && passcount>1) running = FALSE;
+  if (door_stop && !firstmove && passcount>1) running = false;
   move(player.pos.y, player.pos.x);
-  if ((get_flags(player.pos.y, player.pos.x)&F_PASS) || (was_trapped>TRUE) || (get_flags(player.pos.y, player.pos.x)&F_MAZE)) standout();
+  if ((get_flags(player.pos.y, player.pos.x)&F_PASS) || (was_trapped>1) || (get_flags(player.pos.y, player.pos.x)&F_MAZE)) standout();
   addch(PLAYER);
   standend();
-  if (was_trapped) {beep(); was_trapped = FALSE;}
+  if (was_trapped) {beep(); was_trapped = 0;}
 }
 
 //find_obj: Find the unclaimed object at y, x
@@ -194,20 +194,20 @@ void add_str(unsigned int *sp, int amt)
 //add_haste: Add a haste to the player
 int add_haste(bool potion)
 {
-  if (player.is_flag_set(IS_HASTE))
+  if (player.is_fast())
   {
     no_command += rnd(8);
     player.flags &= ~IS_RUN;
     extinguish(nohaste);
     player.flags &= ~IS_HASTE;
     msg("you faint from exhaustion");
-    return FALSE;
+    return false;
   }
   else
   {
     player.flags |= IS_HASTE;
     if (potion) fuse(nohaste, 0, rnd(4)+10);
-    return TRUE;
+    return true;
   }
 }
 
@@ -233,13 +233,13 @@ char *vowelstr(const char *str)
 //is_current: See if the object is one of the currently used items
 int is_current(ITEM *obj)
 {
-  if (obj==NULL) return FALSE;
+  if (obj==NULL) return false;
   if (obj==get_current_armor() || obj==get_current_weapon() || obj==get_ring(LEFT) || obj==get_ring(RIGHT))
   {
     msg("That's already in use");
-    return TRUE;
+    return true;
   }
-  return FALSE;
+  return false;
 }
 
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
@@ -247,28 +247,28 @@ int get_dir()
 {
   int ch;
 
-  if (again) return TRUE;
+  if (again) return true;
   msg("which direction? ");
   do {
     if ((ch = readchar())==ESCAPE) {
       msg(""); 
-      return FALSE;
+      return false;
     }
   } while (find_dir(ch, &delta)==0);
   msg("");
-  if (player.is_flag_set(IS_HUH) && rnd(5)==0) do
+  if (player.is_confused() && rnd(5)==0) do
   {
     delta.y = rnd(3)-1;
     delta.x = rnd(3)-1;
   } while (delta.y==0 && delta.x==0);
-  return TRUE;
+  return true;
 }
 
 bool find_dir(byte ch, Coord *cp)
 {
   bool gotit;
 
-  gotit = TRUE;
+  gotit = true;
   switch (ch)
   {
   case 'h': case'H': cp->y = 0; cp->x = -1; break;
@@ -279,7 +279,7 @@ bool find_dir(byte ch, Coord *cp)
   case 'u': case'U': cp->y = -1; cp->x = 1; break;
   case 'b': case'B': cp->y = 1; cp->x = -1; break;
   case 'n': case'N': cp->y = 1; cp->x = 1; break;
-  default: gotit = FALSE; break;
+  default: gotit = false; break;
   }
   return gotit;
 }
@@ -316,7 +316,7 @@ int step_ok(int ch)
 {
   switch (ch)
   {
-  case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: return FALSE;
+  case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: return false;
   default: return ((ch<'A') || (ch>'Z'));
   }
 }
@@ -366,20 +366,20 @@ void help(char **helpscr)
   wdump();
   while (*helpscr && answer!=ESCAPE)
   {
-    isfull = FALSE;
+    isfull = false;
     if ((hcount%(in_small_screen_mode()?23:46))==0) clear();
     //determine row and column
     hcol = 0;
     if (in_small_screen_mode())
     {
       hrow = hcount%23;
-      if (hrow==22) isfull = TRUE;
+      if (hrow==22) isfull = true;
     }
     else
     {
       hrow = (hcount%46)/2;
       if (hcount%2) hcol = 40;
-      if (hrow==22 && hcol==40) isfull = TRUE;
+      if (hrow==22 && hcol==40) isfull = true;
     }
     move (hrow, hcol);
     addstr(*helpscr++);
@@ -433,7 +433,7 @@ void search()
   byte fp;
   int ey, ex;
 
-  if (player.is_flag_set(IS_BLIND)) 
+  if (player.is_blind()) 
     return;
   ey = player.pos.y+1;
   ex = player.pos.x+1;
@@ -449,13 +449,13 @@ void search()
         if (rnd(5)!=0) break;
         set_tile(y, x, DOOR);
         set_flag(y, x, F_REAL);
-        count = running = FALSE;
+        count = running = false;
         break;
       case FLOOR:
         if (rnd(2)!=0) break;
         set_tile(y, x, TRAP);
         set_flag(y, x, F_REAL);
-        count = running = FALSE;
+        count = running = false;
         msg("you found %s", tr_name(fp&F_TMASK));
         break;
       }
@@ -471,7 +471,7 @@ void d_level()
     msg("I see no way down");
   else {
     next_level(); 
-    new_level(TRUE);
+    new_level(true);
   }
 }
 
@@ -482,7 +482,7 @@ void u_level()
     if (has_amulet()) {
       if (prev_level()==0) 
         total_winner(); 
-      new_level(TRUE); 
+      new_level(true); 
       msg("you feel a wrenching sensation in your gut");
     } 
     else msg("your way is magically blocked");

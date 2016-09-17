@@ -104,7 +104,7 @@ void credits()
 
   SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
 
-  cursor(FALSE);
+  cursor(false);
   clear();
   brown();
   box(0, 0, LINES-1, COLS-1);

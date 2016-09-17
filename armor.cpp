@@ -84,14 +84,14 @@ void wear()
   if (get_current_armor()!=NULL)
   {
     msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
-    after = FALSE;
+    after = false;
     return;
   }
   if ((obj = get_item("wear", ARMOR))==NULL) return;
   if (obj->type!=ARMOR) {msg("you can't wear that"); return;}
   waste_time();
   obj->flags |= IS_KNOW ;
-  sp = inv_name(obj, TRUE);
+  sp = inv_name(obj, true);
   set_current_armor(obj);
   msg("you are now wearing %s", sp);
 }
@@ -103,13 +103,13 @@ void take_off()
 
   if ((obj = get_current_armor())==NULL)
   {
-    after = FALSE;
+    after = false;
     msg("you aren't wearing any armor");
     return;
   }
   if (!can_drop(get_current_armor())) return;
   set_current_armor(NULL);
-  msg("you used to be wearing %c) %s", pack_char(obj), inv_name(obj, TRUE));
+  msg("you used to be wearing %c) %s", pack_char(obj), inv_name(obj, true));
 }
 
 //waste_time: Do nothing but let other things happen

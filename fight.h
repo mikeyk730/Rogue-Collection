@@ -2,7 +2,7 @@
 int fight(Coord *monster, ITEM *weapon, bool thrown);
 
 //attack: The monster attacks the player
-int attack(AGENT *monster);
+bool attack(AGENT *monster);
 
 //swing: Returns true if the swing hits
 bool swing(int at_lvl, int op_arm, int wplus);

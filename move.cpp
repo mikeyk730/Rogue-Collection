@@ -30,8 +30,8 @@ Coord nh;
 //do_run: Start the hero running
 void do_run(byte ch)
 {
-  running = TRUE;
-  after = FALSE;
+  running = true;
+  after = false;
   runch = ch;
 }
 
@@ -41,11 +41,11 @@ void do_move(int dy, int dx)
   byte ch;
   int fl;
 
-  firstmove = FALSE;
+  firstmove = false;
   if (bailout) {bailout = 0; msg("the crack widens ... "); descend(""); return;}
   if (no_move) {no_move--; msg("you are still stuck in the bear trap"); return;}
   //Do a confused move (maybe)
-  if (player.is_flag_set(IS_HUH) && rnd(5) != 0) rndmove(&player, &nh);
+  if (player.is_confused() && rnd(5) != 0) rndmove(&player, &nh);
   else
   {
 over:
@@ -54,19 +54,19 @@ over:
   }
   //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
   if (offmap(nh.y, nh.x)) goto hit_bound;
-  if (!diag_ok(&player.pos, &nh)) {after = FALSE; running = FALSE; return;}
+  if (!diag_ok(&player.pos, &nh)) {after = false; running = false; return;}
   //If you are running and the move does not get you anywhere stop running
-  if (running && equal(player.pos, nh)) after = running = FALSE;
+  if (running && equal(player.pos, nh)) after = running = false;
   fl = get_flags(nh.y, nh.x);
   ch = get_tile_or_monster(nh.y, nh.x);
   //When the hero is on the door do not allow him to run until he enters the room all the way
-  if ((get_tile(player.pos.y, player.pos.x)==DOOR) && (ch==FLOOR)) running = FALSE;
+  if ((get_tile(player.pos.y, player.pos.x)==DOOR) && (ch==FLOOR)) running = false;
   if (!(fl&F_REAL) && ch==FLOOR) {
     ch = TRAP;
     set_tile(nh.y, nh.x, TRAP); 
     set_flag(nh.y, nh.x, F_REAL);
   }
-  else if (player.is_flag_set(IS_HELD) && ch != 'F') { //TODO: remove direct check for F
+  else if (player.is_held() && ch != 'F') { //TODO: remove direct check for F
       msg("you are being held"); 
       return; 
   }
@@ -74,7 +74,7 @@ over:
   {
   case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
 hit_bound:
-    if (running && IS_GONE(player.room) && !player.is_flag_set(IS_BLIND))
+    if (running && IS_GONE(player.room) && !player.is_blind())
     {
       bool b1, b2;
 
@@ -99,11 +99,11 @@ hit_bound:
         goto over;
       }
     }
-    after = running = FALSE;
+    after = running = false;
     break;
 
   case DOOR:
-    running = FALSE;
+    running = false;
     if (get_flags(player.pos.y, player.pos.x)&F_PASS) enter_room(&nh);
     goto move_stuff;
 
@@ -119,12 +119,12 @@ hit_bound:
     goto move_stuff;
 
   default:
-    running = FALSE;
+    running = false;
     if (isupper(ch) || monster_at(nh.y, nh.x))
-      fight(&nh, get_current_weapon(), FALSE);
+      fight(&nh, get_current_weapon(), false);
     else
     {
-      running = FALSE;
+      running = false;
       if (ch!=STAIRS) take = ch;
 move_stuff:
       mvaddch(player.pos.y, player.pos.x, get_tile(player.pos.y, player.pos.x));
@@ -142,7 +142,7 @@ void door_open(struct Room *room)
   byte ch;
   AGENT *item;
 
-  if (!(room->flags&IS_GONE) && !player.is_flag_set(IS_BLIND))
+  if (!(room->flags&IS_GONE) && !player.is_blind())
     for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
       for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
       {
@@ -150,7 +150,7 @@ void door_open(struct Room *room)
         if (isupper(ch))
         {
           item = wake_monster(j, k);
-          if (item->oldch==' ' && !(room->flags&IS_DARK) && !player.is_flag_set(IS_BLIND))
+          if (item->oldch==' ' && !(room->flags&IS_DARK) && !player.is_blind())
               item->oldch = get_tile(j, k);
         }
       }
@@ -161,10 +161,10 @@ int be_trapped(Coord *tc)
 {
   byte tr;
 
-  count = running = FALSE;
+  count = running = false;
   set_tile(tc->y, tc->x, TRAP);
   tr = get_flags(tc->y, tc->x)&F_TMASK;
-  was_trapped = TRUE;
+  was_trapped = 1;
   switch (tr)
   {
   case T_DOOR:
@@ -198,7 +198,7 @@ int be_trapped(Coord *tc)
         init_weapon(arrow, ARROW);
         arrow->count = 1;
         arrow->pos = player.pos;
-        fall(arrow, FALSE);
+        fall(arrow, false);
       }
       msg("an arrow shoots past you");
     }
@@ -207,7 +207,7 @@ int be_trapped(Coord *tc)
   case T_TELEP:
     teleport();
     mvaddch(tc->y, tc->x, TRAP); //since the hero's leaving, look() won't put it on for us
-    was_trapped++;
+    was_trapped++;//todo:look at this
     break;
 
   case T_DART:
@@ -229,7 +229,7 @@ void descend(char *mesg)
 {
   next_level();
   if (*mesg==0) msg(" ");
-  new_level(TRUE);
+  new_level(true);
   msg("");
   msg(mesg);
   if (!save(VS_LUCK))

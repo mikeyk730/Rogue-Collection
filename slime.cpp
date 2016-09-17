@@ -39,7 +39,7 @@ int new_slime(AGENT *slime)
   Coord sp;
 
   ret = 0;
-  slime->flags |= IS_FLY; //IS_FLY is used as a dirty bit during this recursion
+  slime->flags |= IS_FLY; //todo: remove this hack, IS_FLY is used as a dirty bit during this recursion
   if (plop_monster((ty = slime->pos.y), (tx = slime->pos.x), &sp)==0)
   {
     //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.

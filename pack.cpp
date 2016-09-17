@@ -16,7 +16,7 @@
 #include "scrolls.h"
 #include "hero.h"
 
-static int s_had_amulet = FALSE;
+static int s_had_amulet = false;
 
 ITEM *cur_armor;   //What a well dresssed rogue wears
 ITEM *cur_weapon;  //Which weapon he is wielding
@@ -85,11 +85,11 @@ void add_pack(ITEM *obj, bool silent)
 
   if (obj==NULL)
   {
-    from_floor = TRUE;
+    from_floor = true;
     if ((obj = find_obj(player.pos.y, player.pos.x))==NULL) return;
     floor = (player.room->flags&IS_GONE)?PASSAGE:FLOOR;
   }
-  else from_floor = FALSE;
+  else from_floor = false;
   //Link it into the pack.  Search the pack for a object of similar type
   //if there isn't one, stuff it at the beginning, if there is, look for one
   //that is exactly the same and just increment the count if there is.
@@ -138,7 +138,7 @@ void add_pack(ITEM *obj, bool silent)
     set_tile(player.pos.y, player.pos.x, floor);
   }
   //Search for an object of the same type
-  exact = FALSE;
+  exact = false;
   for (op = player.pack; op!=NULL; op = next(op)) if (obj->type==op->type) break;
   if (op==NULL)
   {
@@ -154,7 +154,7 @@ void add_pack(ITEM *obj, bool silent)
     //Search for an object which is exactly the same
     while (op->type==obj->type)
     {
-      if (op->which==obj->which) {exact = TRUE; break;}
+      if (op->which==obj->which) {exact = true; break;}
       lp = op;
       if ((op = next(op))==NULL) break;
     }
@@ -190,9 +190,9 @@ picked_up:
   for (monster = mlist; monster!=NULL; monster = next(monster))
     if (monster->dest && (monster->dest->x==obj->pos.x) && (monster->dest->y==obj->pos.y))
       monster->dest = &player.pos;
-  if (obj->type==AMULET) { s_had_amulet = TRUE; }
+  if (obj->type==AMULET) { s_had_amulet = true; }
   //Notify the user
-  if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, TRUE), pack_char(obj));
+  if (!silent) msg("%s%s (%c)", noterse("you now have "), inv_name(obj, true), pack_char(obj));
 }
 
 //inventory: List what is in the pack
@@ -209,12 +209,12 @@ int inventory(ITEM *list, int type, char *lstr)
     if (type && type!=list->type && !(type==CALLABLE && (list->type==SCROLL || list->type==POTION || list->type==RING || list->type==STICK)) && !(type==WEAPON && list->type==POTION) && !(type==STICK && list->enemy && list->charges)) continue;
     n_objs++;
     sprintf(inv_temp, "%c) %%s", ch);
-    add_line(lstr, inv_temp, inv_name(list, FALSE));
+    add_line(lstr, inv_temp, inv_name(list, false));
   }
   if (n_objs==0)
   {
     msg(type==0?"you are empty handed":"you don't have anything appropriate");
-    return FALSE;
+    return false;
   }
   return (end_line(lstr));
 }
@@ -235,7 +235,7 @@ void pick_up(byte ch)
     break;
   default:
   case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
-    add_pack(NULL, FALSE);
+    add_pack(NULL, false);
     break;
   }
 }
@@ -249,9 +249,9 @@ ITEM *get_item(char *purpose, int type)
   static byte lch;
   static ITEM *wasthing = NULL;
   byte gi_state; //get item sub state
-  int once_only = FALSE;
+  int once_only = false;
 
-  if (strcmp(s_menu, "on") == 0) once_only = TRUE;
+  if (strcmp(s_menu, "on") == 0) once_only = true;
   gi_state = again;
   if (player.pack==NULL) msg("you aren't carrying anything");
   else
@@ -268,16 +268,16 @@ ITEM *get_item(char *purpose, int type)
       ch = readchar();
 skip:
       mpos = 0;
-      gi_state = FALSE;
-      once_only = FALSE;
+      gi_state = false;
+      once_only = false;
       if (ch=='*')
       {
-        if ((ch = inventory(player.pack, type, purpose))==0) {after = FALSE; return NULL;}
+        if ((ch = inventory(player.pack, type, purpose))==0) {after = false; return NULL;}
         if (ch==' ') continue;
         lch = ch;
       }
       //Give the poor player a chance to abort the command
-      if (ch==ESCAPE) {after = FALSE; msg(""); return NULL;}
+      if (ch==ESCAPE) {after = false; msg(""); return NULL;}
       if ((obj = pack_obj(ch, &och))==NULL)
       {
         ifterse("range is 'a' to '%c'","please specify a letter between 'a' and '%c'", och-1);
@@ -322,9 +322,9 @@ int has_amulet()
   ITEM* item;
   for(item = player.pack; item != NULL; item = next(item))
     if (item->type == AMULET)
-      return TRUE;
+      return true;
 
-  return FALSE;
+  return false;
 }
 
 //true if player ever had amulet

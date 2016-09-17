@@ -278,7 +278,7 @@ void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
   bool wason;
   int r, c;
 
-  wason = cursor(FALSE);
+  wason = cursor(false);
   getrc(&r, &c);
   //draw horizontal boundary
   move(ul_r, ul_c+1);
@@ -379,7 +379,7 @@ void implode()
 void drop_curtain()
 {
   int r;
-  cursor(FALSE);
+  cursor(false);
   green();
   vbox(sng_box, 0, 0, LINES-1, COLS-1);
   yellow();

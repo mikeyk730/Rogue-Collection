@@ -19,7 +19,7 @@ void fakedos()
   wdump();
   clear();
   move(0, 0);
-  cursor(TRUE);
+  cursor(true);
   do
   {
     memset(comline, 0, sizeof(comline));
@@ -28,7 +28,7 @@ void fakedos()
     comhead = stpblk(comline);
     endblk(comhead);
   } while (dodos(comhead));
-  cursor(FALSE);
+  cursor(false);
   wrestor();
 }
 

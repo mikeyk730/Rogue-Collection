@@ -98,7 +98,7 @@ int does_know_potion(int type)
 
 void discover_potion(int type)
 {
-  p_know[type] = TRUE;
+  p_know[type] = true;
 }
 
 const char* get_potion_guess(int type)
@@ -127,13 +127,13 @@ void init_colors()
   int i, j;
   bool used[NCOLORS];
 
-  for (i = 0; i<NCOLORS; i++) used[i] = FALSE;
+  for (i = 0; i<NCOLORS; i++) used[i] = false;
   for (i = 0; i<MAXPOTIONS; i++)
   {
     do j = rnd(NCOLORS); while (used[j]);
-    used[j] = TRUE;
+    used[j] = true;
     p_colors[i] = rainbow[j];
-    p_know[i] = FALSE;
+    p_know[i] = false;
     p_guess[i] = (char *)&_guesses[iguess++];
     if (i>0) 
       p_magic[i].prob += p_magic[i-1].prob;
@@ -153,10 +153,10 @@ void init_new_potion(ITEM* potion)
 
 void quaff_confusion()
 {
-  p_know[P_CONFUSE] = TRUE;
-  if (!player.is_flag_set(IS_HUH))
+  p_know[P_CONFUSE] = true;
+  if (!player.is_confused())
   {
-    if (player.is_flag_set(IS_HUH)) 
+    if (player.is_confused()) 
         lengthen(unconfuse, rnd(8)+HUH_DURATION);
     else 
         fuse(unconfuse, 0, rnd(8)+HUH_DURATION);
@@ -167,7 +167,7 @@ void quaff_confusion()
 
 void quaff_paralysis()
 {
-  p_know[P_PARALYZE] = TRUE;
+  p_know[P_PARALYZE] = true;
   no_command = HOLD_TIME;
   player.flags &= ~IS_RUN;
   msg("you can't move");
@@ -177,23 +177,23 @@ void quaff_poison()
 {
   char *sick = "you feel %s sick.";
 
-  p_know[P_POISON] = TRUE;
+  p_know[P_POISON] = true;
   if (!is_wearing_ring(R_SUSTSTR)) {chg_str(-(rnd(3)+1)); msg(sick, "very");}
   else msg(sick, "momentarily");
 }
 
 void quaff_gain_strength()
 {
-  p_know[P_STRENGTH] = TRUE;
+  p_know[P_STRENGTH] = true;
   chg_str(1);
   msg("you feel stronger. What bulging muscles!");
 }
 
 void quaff_see_invisible()
 {
-  if (!player.is_flag_set(CAN_SEE)) {
+  if (!player.sees_invisible()) {
       fuse(unsee, 0, SEE_DURATION); 
-      look(FALSE);
+      look(false);
       invis_on();
   }
   sight();
@@ -202,7 +202,7 @@ void quaff_see_invisible()
 
 void quaff_healing()
 {
-  p_know[P_HEALING] = TRUE;
+  p_know[P_HEALING] = true;
   if ((player.stats.hp += roll(player.stats.level, 4))>player.stats.max_hp) player.stats.hp = ++player.stats.max_hp;
   sight();
   msg("you begin to feel better");
@@ -210,11 +210,11 @@ void quaff_healing()
 
 void quaff_monster_detection()
 {
-  fuse(turn_see_wrapper, TRUE, HUH_DURATION);
+  fuse(turn_see_wrapper, true, HUH_DURATION);
   if (mlist==NULL) 
       msg("you have a strange feeling%s.", noterse(" for a moment"));
   else {
-      p_know[P_MFIND] |= turn_see(FALSE);
+      p_know[P_MFIND] |= turn_see(false);
       msg("");
   }
 }
@@ -229,14 +229,14 @@ void quaff_magic_detection()
     AGENT *monster;
     bool show;
 
-    show = FALSE;
+    show = false;
     for (item = lvl_obj; item!=NULL; item = next(item))
     {
       if (is_magic(item))
       {
-        show = TRUE;
+        show = true;
         mvaddch(item->pos.y, item->pos.x, goodch(item));
-        p_know[P_TFIND] = TRUE;
+        p_know[P_TFIND] = true;
       }
     }
     for (monster = mlist; monster!=NULL; monster = next(monster))
@@ -245,9 +245,9 @@ void quaff_magic_detection()
       {
         if (is_magic(item))
         {
-          show = TRUE;
+          show = true;
           mvaddch(monster->pos.y, monster->pos.x, MAGIC);
-          p_know[P_TFIND] = TRUE;
+          p_know[P_TFIND] = true;
         }
       }
     }
@@ -258,14 +258,14 @@ void quaff_magic_detection()
 
 void quaff_raise_level()
 {
-  p_know[P_RAISE] = TRUE;
+  p_know[P_RAISE] = true;
   msg("you suddenly feel much more skillful");
   raise_level();
 }
 
 void quaff_extra_healing()
 {
-  p_know[P_XHEAL] = TRUE;
+  p_know[P_XHEAL] = true;
   if ((player.stats.hp += roll(player.stats.level, 8))>player.stats.max_hp)
   {
     if (player.stats.hp>player.stats.max_hp+player.stats.level+1) ++player.stats.max_hp;
@@ -277,8 +277,8 @@ void quaff_extra_healing()
 
 void quaff_haste_self()
 {
-  p_know[P_HASTE] = TRUE;
-  if (add_haste(TRUE)) msg("you feel yourself moving much faster");
+  p_know[P_HASTE] = true;
+  if (add_haste(true)) msg("you feel yourself moving much faster");
 }
 
 void quaff_restore_strength()
@@ -298,12 +298,12 @@ void quaff_restore_strength()
 
 void quaff_blindness()
 {
-  p_know[P_BLIND] = TRUE;
-  if (!player.is_flag_set(IS_BLIND))
+  p_know[P_BLIND] = true;
+  if (!player.is_blind())
   {
     player.flags |= IS_BLIND;
     fuse(sight, 0, SEE_DURATION);
-    look(FALSE);
+    look(false);
   }
   msg("a cloak of darkness falls around you");
 }
@@ -362,7 +362,7 @@ void invis_on()
 
   player.flags |= CAN_SEE;
   for (th = mlist; th != NULL; th = next(th)) {
-      if (th->is_flag_set(IS_INVIS) && can_see_monst(th))
+      if (th->is_invisible() && can_see_monst(th))
       {
           mvaddch(th->pos.y, th->pos.x, th->disguise);
       }
@@ -371,7 +371,7 @@ void invis_on()
 
 void turn_see_wrapper(int turn_off)
 {
-    turn_see(turn_off == TRUE);
+    turn_see(turn_off != 0);
 }
 
 //turn_see: Put on or off seeing monsters on this level
@@ -381,7 +381,7 @@ bool turn_see(bool turn_off)
   bool can_see, add_new;
   byte was_there;
 
-  add_new = FALSE;
+  add_new = false;
   for (monster = mlist; monster!=NULL; monster = next(monster))
   {
     move(monster->pos.y, monster->pos.x);

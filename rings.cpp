@@ -79,7 +79,7 @@ int does_know_ring(int type)
 
 void discover_ring(int type)
 {
-  r_know[type] = TRUE;
+  r_know[type] = true;
 }
 
 const char* get_ring_guess(int type)
@@ -108,13 +108,13 @@ void init_stones()
   int i, j;
   bool used[NSTONES];
 
-  for (i = 0; i<NSTONES; i++) used[i] = FALSE;
+  for (i = 0; i<NSTONES; i++) used[i] = false;
   for (i = 0; i<MAXRINGS; i++)
   {
     do j = rnd(NSTONES); while (used[j]);
-    used[j] = TRUE;
+    used[j] = true;
     r_stones[i] = stones[j].st_name;
-    r_know[i] = FALSE;
+    r_know[i] = false;
     r_guess[i] = (char *)&_guesses[iguess++];
     if (i>0) r_magic[i].prob += r_magic[i-1].prob;
     r_magic[i].worth += stones[j].st_value;
@@ -168,10 +168,10 @@ void ring_on()
   case R_SEEINVIS: invis_on(); break;
   case R_AGGR: aggravate(); break;
   }
-  msg("%swearing %s (%c)", noterse("you are now "), inv_name(obj, TRUE), pack_char(obj));
+  msg("%swearing %s (%c)", noterse("you are now "), inv_name(obj, true), pack_char(obj));
   return;
 no_ring:
-  after = FALSE;
+  after = false;
   return;
 }
 
@@ -182,15 +182,15 @@ void ring_off()
   ITEM *obj;
   char packchar;
 
-  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {msg("you aren't wearing any rings"); after = FALSE; return;}
+  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {msg("you aren't wearing any rings"); after = false; return;}
   else if (get_ring(LEFT)==NULL) ring = RIGHT;
   else if (get_ring(RIGHT)==NULL) ring = LEFT;
   else if ((ring = gethand())<0) return;
   mpos = 0;
   obj = get_ring(ring);
-  if (obj==NULL) {msg("not wearing such a ring"); after = FALSE; return;}
+  if (obj==NULL) {msg("not wearing such a ring"); after = false; return;}
   packchar = pack_char(obj);
-  if (can_drop(obj)) msg("was wearing %s(%c)", inv_name(obj, TRUE), packchar);
+  if (can_drop(obj)) msg("was wearing %s(%c)", inv_name(obj, true), packchar);
 }
 
 //gethand: Which hand is the hero interested in?
@@ -201,7 +201,7 @@ int gethand()
   for (;;)
   {
     msg("left hand or right hand? ");
-    if ((c = readchar())==ESCAPE) {after = FALSE; return -1;}
+    if ((c = readchar())==ESCAPE) {after = false; return -1;}
     mpos = 0;
     if (c=='l' || c=='L') return LEFT;
     else if (c=='r' || c=='R') return RIGHT;

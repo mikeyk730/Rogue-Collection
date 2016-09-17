@@ -30,9 +30,9 @@ static char *formats = "scud%", *bp, left_justify;
 static int min_width, max_width;
 static char ibuf[6];
 
-bool save_msg = TRUE;       //Remember last msg
-bool terse = FALSE;
-bool expert = FALSE;
+bool save_msg = true;       //Remember last msg
+bool terse = false;
+bool expert = false;
 
 bool short_msgs()
 {
@@ -102,7 +102,7 @@ void addmsg(const char *format, ...)
 void endmsg()
 {
   if (save_msg) strcpy(huh, msgbuf);
-  if (mpos) {look(FALSE); move(0, mpos); more(" More ");}
+  if (mpos) {look(false); move(0, mpos); more(" More ");}
   //All messages should start with uppercase, except ones that start with a pack addressing character
   if (islower(msgbuf[0]) && msgbuf[1]!=')') msgbuf[0] = toupper(msgbuf[0]);
   putmsg(0, msgbuf);
@@ -116,14 +116,14 @@ void more(const char *msg)
   int x, y;
   int i, msz;
   char mbuf[80];
-  int morethere = TRUE;
-  int covered = FALSE;
+  int morethere = true;
+  int covered = false;
 
   msz = strlen(msg);
   getrc(&x,&y);
   //it is reasonable to assume that if the you are no longer on line 0, you must have wrapped.
   if (x!=0) {x = 0; y = COLS;}
-  if ((y+msz)>COLS) {move(x, y = COLS-msz); covered = TRUE;}
+  if ((y+msz)>COLS) {move(x, y = COLS-msz); covered = true;}
   for (i=0; i<msz; i++)
   {
     mbuf[i] = curch();
@@ -136,8 +136,8 @@ void more(const char *msg)
   standend();
   while (readchar()!=' ')
   {
-    if (covered && morethere) {move(x, y); addstr(mbuf); morethere = FALSE;}
-    else if (covered) {move(x, y); standout(); addstr(msg); standend(); morethere = TRUE;}
+    if (covered && morethere) {move(x, y); addstr(mbuf); morethere = false;}
+    else if (covered) {move(x, y); standout(); addstr(msg); standend(); morethere = true;}
   }
   move(x, y);
   addstr(mbuf);
@@ -335,7 +335,7 @@ int getinfo(char *str, int size)
 
   retstr = str;
   *str = 0;
-  wason = cursor(TRUE);
+  wason = cursor(true);
   while (ret==1) switch (ch = getkey())
   {
   case ESCAPE:
@@ -407,7 +407,7 @@ void SIG2()
   static int nspot, cspot, tspot;
   bool new_numl=is_num_lock_on(), new_capsl=is_caps_lock_on(), new_fmode=is_scroll_lock_on();
   static int bighand, littlehand;
-  int showtime = FALSE, spare;
+  int showtime = false, spare;
   int x, y;
 
   if (COLS==40) {nspot = 10; cspot = 19; tspot = 35;}
@@ -419,7 +419,7 @@ void SIG2()
     faststate = new_fmode;
     count = 0;
     show_count();
-    running = FALSE;
+    running = false;
     move(LINES-1, 0);
     if (faststate) {bold(); addstr("Fast Play"); standend();}
     else addstr("         ");
@@ -429,7 +429,7 @@ void SIG2()
     numl = new_numl;
     count = 0;
     show_count();
-    running = FALSE;
+    running = false;
     move(LINES-1, nspot);
     if (numl) {bold(); addstr("NUM LOCK"); standend();}
     else addstr("        ");
@@ -443,7 +443,7 @@ void SIG2()
   }
   if (showtime)
   {
-    showtime = FALSE;
+    showtime = false;
     //work around the compiler buggie boos
     spare = littlehand%10;
     move(24, tspot);
