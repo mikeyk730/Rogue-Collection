@@ -592,7 +592,7 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
         {
           if (is_frost)
           {
-            msg("You are frozen by a blast of frost%s.", noterse(" from the Ice Monster"));//todo: remove hardcoded name
+            msg("You are frozen by a blast of frost.");
             if (no_command<20) 
                 no_command += spread(7);
           }

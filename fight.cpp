@@ -260,7 +260,7 @@ int attack(AGENT *monster)
             leprechaun_attack(monster);
             monster_died = TRUE;
         }
-        else if (monster->steals_items())
+        else if (monster->steals_magic())
         {   
             monster_died = nymph_attack(monster);
         }

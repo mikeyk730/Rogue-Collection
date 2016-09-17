@@ -305,24 +305,24 @@ struct Agent
   bool is_mimic() const;
   bool is_disguised() const;
   bool steals_gold() const;
-  bool steals_items() const;
+  bool drops_gold() const;
+  bool steals_magic() const;
+  bool drops_magic() const;
   bool drains_life() const;
   bool drops_level() const;
   bool drains_strength() const;
   bool rusts_armor() const;
+  bool dies_during_attack() const;
+
+  bool is_flying() const;
+  bool is_mean() const;
+  bool regenerates_hp() const;
+  bool is_greedy() const;
+  bool is_invisible() const;
 
 
   /* todo:
-  
-        special attacks:
-        aquator_attack();
-        ice_monster_attack();
-        rattlesnake_attack();
-        vampire_wraith_attack();
-        flytrap_attack();
-        leprechaun_attack();
-        nymph_attack();
-
+        v,W attacks
         L,F death
         */
 };

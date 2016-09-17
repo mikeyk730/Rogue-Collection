@@ -32,21 +32,23 @@ static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 #define ___  1
 #define XX  10
 
-const int EX_DIVIDES      = 0x0001;
-const int EX_SHOOTS_ICE   = 0x0002;
-const int EX_SHOOTS_FIRE  = 0x0004;
-const int EX_RUSTS_ARMOR  = 0x0008;
-const int EX_HOLDS        = 0x0010;
-const int EX_STATIONARY   = 0x0020;
-const int EX_MIMICS       = 0x0040;
-const int EX_CONFUSES     = 0x0080;
-const int EX_STEALS_GOLD  = 0x0100;
-const int EX_STEALS_ITEMS = 0x0200;
-const int EX_DRAINS_STR   = 0x0400;
-const int EX_DRAINS_EXP   = 0x0800;
-const int EX_DRAINS_MAXHP = 0x1000;
-const int EX_HOLD_ATTACKS = 0x2000;
-
+const int EX_DIVIDES      =  0x0001;
+const int EX_SHOOTS_ICE   =  0x0002;
+const int EX_SHOOTS_FIRE  =  0x0004;
+const int EX_RUSTS_ARMOR  =  0x0008;
+const int EX_HOLDS        =  0x0010;
+const int EX_STATIONARY   =  0x0020;
+const int EX_MIMICS       =  0x0040;
+const int EX_CONFUSES     =  0x0080;
+const int EX_STEALS_GOLD  =  0x0100;
+const int EX_STEALS_MAGIC =  0x0200;
+const int EX_DRAINS_STR   =  0x0400;
+const int EX_DRAINS_EXP   =  0x0800;
+const int EX_DRAINS_MAXHP =  0x1000;
+const int EX_HOLD_ATTACKS =  0x2000;
+const int EX_SUICIDES     =  0x4000;
+const int EX_DROPS_GOLD   =  0x8000;
+const int EX_DROPS_MAGIC  = 0x10000;
 
 bool Agent::can_divide() const
 {
@@ -89,12 +91,20 @@ bool Agent::is_disguised() const {
     return is_mimic() && type != disguise;
 }
 
+bool Agent::drops_gold() const {
+    return (exflags & EX_DROPS_GOLD) != 0;
+}
+
 bool Agent::steals_gold() const {
     return (exflags & EX_STEALS_GOLD) != 0;
 }
 
-bool Agent::steals_items() const {
-    return (exflags & EX_STEALS_ITEMS) != 0;
+bool Agent::steals_magic() const {
+    return (exflags & EX_STEALS_MAGIC) != 0;
+}
+
+bool Agent::drops_magic() const {
+    return (exflags & EX_DROPS_MAGIC) != 0;
 }
 
 bool Agent::drains_life() const {
@@ -113,6 +123,10 @@ bool Agent::rusts_armor() const {
     return (exflags & EX_RUSTS_ARMOR) != 0;
 }
 
+bool Agent::dies_during_attack() const{
+    return (exflags & EX_SUICIDES) != 0;
+}
+
 //todo: make configurable
 bool Agent::is_monster_confused_this_turn() const {
     return ((is_flag_set(IS_HUH) && rnd(5) != 0) ||
@@ -120,6 +134,27 @@ bool Agent::is_monster_confused_this_turn() const {
         type == 'P' && rnd(5) == 0 ||
         type == 'B' && rnd(2) == 0);
 }
+
+bool Agent::is_flying() const {
+    return (flags & IS_FLY) != 0;
+}
+
+bool Agent::is_mean() const {
+    return (flags & IS_MEAN) != 0;
+}
+
+bool Agent::regenerates_hp() const {
+    return (flags & IS_REGEN) != 0;
+}
+
+bool Agent::is_greedy() const {
+    return (flags & IS_GREED) != 0;
+}
+
+bool Agent::is_invisible() const {
+    return (flags & IS_INVIS) != 0;
+}
+
 
 
 //Array containing information on all the various types of monsters
@@ -146,9 +181,9 @@ struct Monster monsters[26] =
   { "ice monster",      0,                 IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, EX_SHOOTS_ICE },
   { "jabberwock",      70,                       0,  { XX, 4000, 15,  6, ___, "2d12/2d4"        }, 0 },
   { "kestral",          0,          IS_MEAN|IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             }, 0 },
-  { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             }, EX_STEALS_GOLD },
+  { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             }, EX_STEALS_GOLD|EX_DROPS_GOLD|EX_SUICIDES },
   { "medusa",          40,                 IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     }, EX_CONFUSES },
-  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             }, EX_STEALS_ITEMS },
+  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             }, EX_STEALS_MAGIC|EX_DROPS_MAGIC|EX_SUICIDES },
   { "orc",             15,                IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             }, 0 },
   { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 0 },
   { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0 },
@@ -198,11 +233,6 @@ const char* get_monster_name(char monster)
   return monsters[monster-'A'].name.c_str();
 }
 
-int get_monster_carry_prob(char monster)
-{
-  return monsters[monster-'A'].carry;
-}
-
 const char* Agent::get_monster_name() const
 {
     return ::get_monster_name(type);
@@ -210,7 +240,7 @@ const char* Agent::get_monster_name() const
 
 int Agent::get_monster_carry_prob() const
 {
-    return ::get_monster_carry_prob(type);
+    return monsters[type - 'A'].carry;
 }
 
 
@@ -285,6 +315,7 @@ void new_monster(AGENT *monster, byte type, Coord *position, int level)
 //f_restor(): restor initial damage string for flytraps
 void f_restor()
 {
+    //todo:clean this up
   const struct Monster *monster = &monsters['F'-'A'];
   flytrap_hit = 0;
   strcpy(f_damage, monster->stats.damage.c_str());
