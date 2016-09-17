@@ -9,7 +9,7 @@
 #include "strings.h"
 #include "main.h"
 
-#define MAXEP  8
+#define MAXEP  9
 
 char l_name[] = "name";
 char l_save[] = "savefile";
@@ -19,6 +19,7 @@ char l_fruit[] = "fruit";
 char l_menu [] = "menu";
 char l_screen[] = "screen";
 char l_levels[] = "levelnames";
+char l_monstercfg[] = "monstercfg";
 
 char whoami[] = "Rodney\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 char s_score[] = "rogue.scr\0\0\0\0\0";
@@ -28,6 +29,7 @@ char fruit[] = "Slime Mold\0\0\0\0\0\0\0\0\0\0\0\0\0";
 char s_menu[] = "on\0";
 char s_screen[] = "\0w fast";
 char s_levels[] = "on\0";
+char s_monstercfg[] = "monsters.opt\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
 struct environment
 {
@@ -36,14 +38,15 @@ struct environment
   int strlen;
 } element[MAXEP] =
 {
-  l_name,   whoami,   23,
-  l_score,  s_score,  14,
-  l_save,   s_save,   14,
-  l_macro,  macro,    40,
-  l_fruit,  fruit,    23,
-  l_menu,   s_menu,   3,
-  l_screen, s_screen, 7,
-  l_levels, s_levels, 3,
+  l_name,       whoami,       23,
+  l_score,      s_score,      14,
+  l_save,       s_save,       14,
+  l_macro,      macro,        40,
+  l_fruit,      fruit,        23,
+  l_menu,       s_menu,       3,
+  l_screen,     s_screen,     7,
+  l_levels,     s_levels,     3,
+  l_monstercfg, s_monstercfg, 25,
 };
 
 static int fd;

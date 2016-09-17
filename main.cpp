@@ -37,6 +37,7 @@
 #include "potions.h"
 #include "scrolls.h"
 #include "hero.h"
+#include "monsters.h"
 
 int bwflag = FALSE;
 
@@ -60,6 +61,7 @@ int main(int argc, char **argv)
     }
     else if (savfile==0) savfile = curarg;
   }
+  load_monster_cfg(s_monstercfg);
   if (savfile==0)
   {
     savfile = 0;

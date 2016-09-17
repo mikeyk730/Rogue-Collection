@@ -154,7 +154,7 @@ void flytrap_attack(AGENT* mp)
 {
   //Flytrap stops the poor guy from moving
   player.flags |= IS_HELD;
-  sprintf(mp->stats.damage, "%dd1", ++flytrap_hit);
+  sprintf((char*)mp->stats.damage.c_str(), "%dd1", ++flytrap_hit); //todo:fix this
 }
 
 void leprechaun_attack(AGENT* mp)
@@ -328,7 +328,7 @@ void check_level()
 bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 {
   struct Stats *att, *def;
-  char *cp;
+  const char *cp;
   int ndice, nsides, def_arm;
   bool did_hit = FALSE;
   int hplus;
@@ -337,7 +337,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
 
   att = &thatt->stats;
   def = &thdef->stats;
-  if (weap==NULL) {cp = att->damage; dplus = 0; hplus = 0;}
+  if (weap==NULL) {cp = att->damage.c_str(); dplus = 0; hplus = 0;}
   else
   {
     hplus = weap->hit_plus;

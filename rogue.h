@@ -1,6 +1,7 @@
 //Rogue definitions and variable declarations
 //rogue.h      1.4 (AI Design) 12/14/84
 
+#include <string>
 #include <string.h>
 #include "main.h"
 
@@ -240,7 +241,7 @@ struct Stats
   int level;          //Level of mastery
   int ac;             //Armor class
   int hp;             //Hit points
-  char *damage;       //String describing damage done
+  std::string damage; //String describing damage done
   int max_hp;         //Max hit points
 };
 
@@ -297,7 +298,7 @@ struct Agent
           type == 'P' && rnd(5) == 0 ||
           type == 'B' && rnd(2) == 0);
   }
-  bool is_immobile() const {
+  bool is_stationary() const {
       return type == 'F';
   }
   bool can_hold() const {
@@ -323,6 +324,24 @@ struct Agent
   }
   bool is_disguised() const {
       return is_mimic() && type != disguise;
+  }
+  bool steals_gold() const {
+      return type == 'L';
+  }
+  bool steals_items() const {
+      return type == 'N';
+  }
+  bool drains_life() const {
+      return type == 'V';
+  }
+  bool drops_level() const {
+      return type == 'W';
+  }
+  bool drains_strength() const {
+      return type == 'R';
+  }
+  bool rusts_armor() const {
+      return type == 'A';
   }
 
 
@@ -361,7 +380,7 @@ extern int maxrow;
 extern int LINES, COLS;
 extern int bailout;
 
-extern char s_menu[], s_score[], s_save[], s_screen[], s_levels[];
+extern char s_menu[], s_score[], s_save[], s_screen[], s_levels[], s_monstercfg[];
 
 extern struct Array _guesses[];
 

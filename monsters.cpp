@@ -1,6 +1,11 @@
 //File with various monster functions in it
 //monsters.c  1.4 (A.I. Design)       12/14/84
 
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <algorithm>
+
 #include "rogue.h"
 #include "monsters.h"
 #include "daemons.h"
@@ -19,8 +24,9 @@
 #include "rooms.h"
 #include "level.h"
 
+
 //List of monsters in rough order of vorpalness
-static char *lvl_mons =  "K BHISOR LCA NYTWFP GMXVJD";
+static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
 #define ___  1
@@ -29,42 +35,43 @@ static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 //Array containing information on all the various types of monsters
 struct Monster
 {
-  char *name;         //What to call the monster
+  std::string name;         //What to call the monster
   int carry;          //Probability of carrying something
   short flags;        //Things about the monster
   struct Stats stats; //Initial stats
+  short exflags; //todo, populate elsewhere?
 };
 
 struct Monster monsters[26] =
 {
   // Name           CARRY                  FLAG       str,  exp,lvl,amr, hpt, dmg
-  { "aquator",          0,                 IS_MEAN,  { XX,   20,  5,  2, ___, "0d0/0d0"         } },
-  { "bat",              0,                  IS_FLY,  { XX,    1,  1,  3, ___, "1d2"             } },
-  { "centaur",         15,                       0,  { XX,   25,  4,  4, ___, "1d6/1d6"         } },
-  { "dragon",         100,                 IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    } },
-  { "emu",              0,                 IS_MEAN,  { XX,    2,  1,  7, ___, "1d2"             } },
+  { "aquator",          0,                 IS_MEAN,  { XX,   20,  5,  2, ___, "0d0/0d0"         }, 0 },
+  { "bat",              0,                  IS_FLY,  { XX,    1,  1,  3, ___, "1d2"             }, 0 },
+  { "centaur",         15,                       0,  { XX,   25,  4,  4, ___, "1d6/1d6"         }, 0 },
+  { "dragon",         100,                 IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    }, 0 },
+  { "emu",              0,                 IS_MEAN,  { XX,    2,  1,  7, ___, "1d2"             }, 0 },
   //NOTE: the damage is %%% so that xstr won't merge this string with others, since it is written on in the program
-  { "venus flytrap",    0,                 IS_MEAN,  { XX,   80,  8,  3, ___, "%%%d0"           } },
-  { "griffin",         20, IS_MEAN|IS_FLY|IS_REGEN,  { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     } },
-  { "hobgoblin",        0,                 IS_MEAN,  { XX,    3,  1,  5, ___, "1d8"             } },
-  { "ice monster",      0,                 IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             } },
-  { "jabberwock",      70,                       0,  { XX, 4000, 15,  6, ___, "2d12/2d4"        } },
-  { "kestral",          0,          IS_MEAN|IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             } },
-  { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             } },
-  { "medusa",          40,                 IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     } },
-  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             } },
-  { "orc",             15,                IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             } },
-  { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             } },
-  { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     } },
-  { "rattlesnake",      0,                 IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             } },
-  { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             } },
-  { "troll",           50,        IS_REGEN|IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     } },
-  { "ur-vile",          0,                 IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" } },
-  { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            } },
-  { "wraith",           0,                       0,  { XX,   55,  5,  4, ___, "1d6"             } },
-  { "xeroc",           30,                       0,  { XX,  100,  7,  7, ___, "3d4"             } },
-  { "yeti",            30,                       0,  { XX,   50,  4,  6, ___, "1d6/1d6"         } },
-  { "zombie",           0,                 IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             } }
+  { "venus flytrap",    0,                 IS_MEAN,  { XX,   80,  8,  3, ___, "%%%d0"           }, 0 },
+  { "griffin",         20, IS_MEAN|IS_FLY|IS_REGEN,  { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     }, 0 },
+  { "hobgoblin",        0,                 IS_MEAN,  { XX,    3,  1,  5, ___, "1d8"             }, 0 },
+  { "ice monster",      0,                 IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, 0 },
+  { "jabberwock",      70,                       0,  { XX, 4000, 15,  6, ___, "2d12/2d4"        }, 0 },
+  { "kestral",          0,          IS_MEAN|IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             }, 0 },
+  { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             }, 0 },
+  { "medusa",          40,                 IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     }, 0 },
+  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             }, 0 },
+  { "orc",             15,                IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             }, 0 },
+  { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 0 },
+  { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0 },
+  { "rattlesnake",      0,                 IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             }, 0 },
+  { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, 0 },
+  { "troll",           50,        IS_REGEN|IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     }, 0 },
+  { "ur-vile",          0,                 IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" }, 0 },
+  { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, 0 },
+  { "wraith",           0,                       0,  { XX,   55,  5,  4, ___, "1d6"             }, 0 },
+  { "xeroc",           30,                       0,  { XX,  100,  7,  7, ___, "3d4"             }, 0 },
+  { "yeti",            30,                       0,  { XX,   50,  4,  6, ___, "1d6/1d6"         }, 0 },
+  { "zombie",           0,                 IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             }, 0 }
 };
 
 char f_damage[10];
@@ -72,9 +79,34 @@ char f_damage[10];
 #undef ___
 #undef XX
 
+//todo: validation
+void load_monster_cfg(const char* filename)
+{
+    std::ifstream file(filename, std::ios::in);
+    std::string line;
+    while (std::getline(file, line)){
+        std::istringstream ss(line);
+
+        char type;
+        Monster m;
+        ss >> type;
+        ss >> m.name;
+        ss >> m.carry;
+        ss >> std::hex >> m.flags;
+        ss >> std::dec >> m.stats.str >> m.stats.exp >> m.stats.level >> m.stats.ac >> m.stats.hp;
+        ss >> m.stats.damage;
+        ss >> std::hex >> m.exflags;
+
+        std::replace(m.name.begin(), m.name.end(), '_', ' ');
+
+        monsters[type - 'A'] = m;
+        //printf("%c %s %d %x %d %d %d %d %d %s %x\n", type, m.name.c_str(), m.carry, m.flags, m.stats.str, m.stats.exp, m.stats.level, m.stats.ac, m.stats.hp, m.stats.damage.c_str(), m.exflags);
+    }
+}
+
 const char* get_monster_name(char monster)
 {
-  return monsters[monster-'A'].name;
+  return monsters[monster-'A'].name.c_str();
 }
 
 int get_monster_carry_prob(char monster)
@@ -165,7 +197,7 @@ void f_restor()
 {
   const struct Monster *monster = &monsters['F'-'A'];
   flytrap_hit = 0;
-  strcpy(f_damage, monster->stats.damage);
+  strcpy(f_damage, monster->stats.damage.c_str());
 }
 
 //expadd: Experience to add for this monster's level/hit points
@@ -264,7 +296,7 @@ char pick_monster()
   return *cp;
 }
 
-//moat(x,y): returns pointer to monster at coordinate. if no monster there return NULL
+//monster_at(x,y): returns pointer to monster at coordinate. if no monster there return NULL
 AGENT *monster_at(int y, int x)
 {
   AGENT *monster;

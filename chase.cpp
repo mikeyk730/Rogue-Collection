@@ -126,7 +126,7 @@ over:
       break;
     }
   }
-  if (monster->is_immobile()) return TRUE;
+  if (monster->is_stationary()) return TRUE;
   //If the chasing thing moved, update the screen
   if (monster->oldch!='@')
   {

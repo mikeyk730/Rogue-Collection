@@ -100,7 +100,6 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
 
 void credits()
 {
-  int i;
   char tname[25];
 
   SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
@@ -132,7 +131,8 @@ void credits()
   yellow();
   center(21, "All Rights Reserved");
   brown();
-  for (i = 1; i<(COLS-1); i++) {move(22, i); putchr(205, 6);}
+  move(22, 1);
+  repchr(205, COLS - 2);
   mvaddch(22, 0, (char)204);
   mvaddch(22, COLS-1, (char)185);
   standend();

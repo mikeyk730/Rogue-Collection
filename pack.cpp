@@ -118,7 +118,10 @@ void add_pack(ITEM *obj, bool silent)
     }
   }
   //Check if there is room
-  if (get_pack_size() >= MAXPACK-1) {msg("you can't carry anything else"); return;}
+  if (get_pack_size() >= MAXPACK-1) {
+      msg("you can't carry anything else");
+      return;
+  }
   //Check for and deal with scare monster scrolls
   if (is_scare_monster_scroll(obj)) if (obj->flags&IS_FOUND)
   {
