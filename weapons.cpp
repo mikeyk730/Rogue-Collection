@@ -35,13 +35,13 @@ static struct init_weps
   "2d4", "1d3", NONE,     0,             //Mace
   "3d4", "1d2", NONE,     0,             //Long sword
   "1d1", "1d1", NONE,     0,             //Bow
-  "1d1", "2d3", BOW,      ISMANY|ISMISL, //Arrow
-  "1d6", "1d4", NONE,     ISMISL,        //Dagger
+  "1d1", "2d3", BOW,      IS_MANY|IS_MISL, //Arrow
+  "1d6", "1d4", NONE,     IS_MISL,        //Dagger
   "4d4", "1d2", NONE,     0,             //2h sword
-  "1d1", "1d3", NONE,     ISMANY|ISMISL, //Dart
+  "1d1", "1d3", NONE,     IS_MANY|IS_MISL, //Dart
   "1d1", "1d1", NONE,     0,             //Crossbow
-  "1d2", "2d5", CROSSBOW, ISMANY|ISMISL, //Crossbow bolt
-  "2d3", "1d6", NONE,     ISMISL         //Spear
+  "1d2", "2d5", CROSSBOW, IS_MANY|IS_MISL, //Crossbow bolt
+  "2d3", "1d6", NONE,     IS_MISL         //Spear
 };
 
 
@@ -72,7 +72,7 @@ void init_new_weapon(ITEM* weapon)
   weapon->type = WEAPON;
   weapon->which = rnd(MAXWEAPONS);
   init_weapon(weapon, weapon->which);
-  if ((k = rnd(100))<10) {weapon->flags |= ISCURSED; weapon->hit_plus -= rnd(3)+1;}
+  if ((k = rnd(100))<10) {weapon->flags |= IS_CURSED; weapon->hit_plus -= rnd(3)+1;}
   else if (k<15) weapon->hit_plus += rnd(3)+1;
 }
 
@@ -121,7 +121,7 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
     int ch;
 
     //Erase the old one
-    if (under!='@' && !equal(obj->pos, player.pos) && cansee(obj->pos.y, obj->pos.x))
+    if (under != '@' && !equal(obj->pos, player.pos) && can_see(obj->pos.y, obj->pos.x))
       mvaddch(obj->pos.y, obj->pos.x, under);
     //Get the new position
     obj->pos.y += ydelta;
@@ -129,7 +129,7 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
     if (step_ok(ch = get_tile_or_monster(obj->pos.y, obj->pos.x)) && ch!=DOOR)
     {
       //It hasn't hit anything yet, so display it if alright.
-      if (cansee(obj->pos.y, obj->pos.x))
+        if (can_see(obj->pos.y, obj->pos.x))
       {
         under = get_tile(obj->pos.y, obj->pos.x);
         mvaddch(obj->pos.y, obj->pos.x, obj->type);
@@ -164,7 +164,7 @@ void fall(ITEM *obj, bool pr)
   case 1:
     set_tile(fpos.y, fpos.x, obj->type);
     obj->pos = fpos;
-    if (cansee(fpos.y, fpos.x))
+    if (can_see(fpos.y, fpos.x))
     {
       if ((get_flags(obj->pos.y, obj->pos.x)&F_PASS) || (get_flags(obj->pos.y, obj->pos.x)&F_MAZE)) standout();
       mvaddch(fpos.y, fpos.x, obj->type);
@@ -192,7 +192,7 @@ void init_weapon(ITEM *weap, byte type)
   weap->throw_damage = iwp->iw_hrl;
   weap->launcher = iwp->iw_launch;
   weap->flags = iwp->iw_flags;
-  if (weap->flags&ISMANY) {weap->count = rnd(8)+8; weap->group = group++;}
+  if (weap->flags&IS_MANY) {weap->count = rnd(8)+8; weap->group = group++;}
   else weap->count = 1;
 }
 
@@ -276,12 +276,12 @@ const char* get_inv_name_weapon(ITEM* weapon)
   else
     sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
   pb = &prbuf[strlen(prbuf)];
-  if (weapon->flags&ISKNOW || is_wizard()) 
+  if (weapon->flags&IS_KNOW || is_wizard()) 
     sprintf(pb, "%s %s", num(weapon->hit_plus, weapon->damage_plus, WEAPON), get_weapon_name(which));
   else
     sprintf(pb, "%s", get_weapon_name(which));
   if (weapon->count>1) strcat(pb, "s");
-  if (weapon->enemy && (weapon->flags&ISREVEAL || is_wizard()))
+  if (weapon->enemy && (weapon->flags&IS_REVEAL || is_wizard()))
   {
     strcat(pb, " of ");
     strcat(pb, get_monster_name(weapon->enemy));

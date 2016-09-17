@@ -19,8 +19,8 @@ struct Room *roomin(Coord *cp);
 //diag_ok: Check to see if the move is legal if it is diagonal
 int diag_ok(Coord *sp, Coord *ep);
 
-//cansee: Returns true if the hero can see a certain coordinate.
-int cansee(int y, int x);
+//can_see: Returns true if the hero can see a certain coordinate.
+int can_see(int y, int x);
 
 //find_dest: find the proper destination for the monster
 Coord *find_dest(AGENT *monster);

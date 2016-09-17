@@ -22,12 +22,12 @@ void slime_split(AGENT *monster)
   AGENT *nslime;
 
   if (new_slime(monster)==0 || (nslime = create_agent())==NULL) return;
-  msg("The slime divides.  Ick!");
-  new_monster(nslime, 'S', &slimy, get_level());
-  if (cansee(slimy.y, slimy.x))
+  msg("The %s divides.  Ick!", monster->get_monster_name());
+  new_monster(nslime, monster->type, &slimy, get_level());
+  if (can_see(slimy.y, slimy.x))
   {
     nslime->oldch = get_tile(slimy.y, slimy.x);
-    mvaddch(slimy.y, slimy.x, 'S');
+    mvaddch(slimy.y, slimy.x, monster->type);
   }
   start_run(nslime);
 }
@@ -39,20 +39,20 @@ int new_slime(AGENT *slime)
   Coord sp;
 
   ret = 0;
-  slime->flags |= ISFLY;
+  slime->flags |= IS_FLY;//todo: slime flys??
   if (plop_monster((ty = slime->pos.y), (tx = slime->pos.x), &sp)==0)
   {
     //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.
     for (y = ty-1; y<=ty+1; y++)
       for (x = tx-1; x<=tx+1; x++)
-        if (get_tile_or_monster(y, x)=='S' && (ntp = monster_at(y, x)))
+        if (get_tile_or_monster(y, x)==slime->type && (ntp = monster_at(y, x)))
         {
-          if (ntp->flags&ISFLY) continue; //Already done this one
+          if (ntp->flags&IS_FLY) continue; //Already done this one
           if (new_slime(ntp)) {y = ty+2; x = tx+2;}
         }
   }
   else {ret = 1; slimy = sp;}
-  slime->flags &= ~ISFLY;
+  slime->flags &= ~IS_FLY;
   return ret;
 }
 

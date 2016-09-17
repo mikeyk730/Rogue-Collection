@@ -87,7 +87,7 @@ void add_pack(ITEM *obj, bool silent)
   {
     from_floor = TRUE;
     if ((obj = find_obj(player.pos.y, player.pos.x))==NULL) return;
-    floor = (player.room->flags&ISGONE)?PASSAGE:FLOOR;
+    floor = (player.room->flags&IS_GONE)?PASSAGE:FLOOR;
   }
   else from_floor = FALSE;
   //Link it into the pack.  Search the pack for a object of similar type
@@ -120,7 +120,7 @@ void add_pack(ITEM *obj, bool silent)
   //Check if there is room
   if (get_pack_size() >= MAXPACK-1) {msg("you can't carry anything else"); return;}
   //Check for and deal with scare monster scrolls
-  if (is_scare_monster_scroll(obj)) if (obj->flags&ISFOUND)
+  if (is_scare_monster_scroll(obj)) if (obj->flags&IS_FOUND)
   {
     detach_item(&lvl_obj, obj);
     mvaddch(player.pos.y, player.pos.x, floor);
@@ -128,7 +128,7 @@ void add_pack(ITEM *obj, bool silent)
     msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
     return;
   }
-  else obj->flags |= ISFOUND;
+  else obj->flags |= IS_FOUND;
   if (from_floor) {
     detach_item(&lvl_obj, obj);
     mvaddch(player.pos.y, player.pos.x, floor); 
@@ -307,7 +307,7 @@ void money(int value)
 {
   byte floor;
 
-  floor = (player.room->flags&ISGONE)?PASSAGE:FLOOR;
+  floor = (player.room->flags&IS_GONE)?PASSAGE:FLOOR;
   adjust_purse(value);
   mvaddch(player.pos.y, player.pos.x, floor);
   set_tile(player.pos.y, player.pos.x, floor);

@@ -156,7 +156,7 @@ int can_drop(ITEM *op)
 {
   if (op==NULL) return TRUE;
   if (op!=get_current_armor() && op!=get_current_weapon() && op!=get_ring(LEFT) && op!=get_ring(RIGHT)) return TRUE;
-  if (op->flags&ISCURSED) {msg("you can't.  It appears to be cursed"); return FALSE;}
+  if (op->flags&IS_CURSED) {msg("you can't.  It appears to be cursed"); return FALSE;}
   if (op==get_current_weapon()) set_current_weapon(NULL);
   else if (op==get_current_armor()) {
     waste_time(); 

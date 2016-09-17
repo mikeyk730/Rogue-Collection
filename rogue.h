@@ -29,7 +29,7 @@ typedef unsigned char byte;
 #define prev(ptr)       (*ptr).l_prev
 #define CTRL(ch)        (ch&037)
 #define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
-#define isgone(rp)      (((rp)->flags&ISGONE) && ((rp)->flags&ISMAZE)==0)
+#define IS_GONE(rp)      (((rp)->flags&IS_GONE) && ((rp)->flags&IS_MAZE)==0)
 
 #ifdef DEBUG
 #define debug           msg
@@ -90,36 +90,36 @@ typedef unsigned char byte;
 //Various flag bits
 
 //flags for rooms
-#define ISDARK  0x0001 //room is dark
-#define ISGONE  0x0002 //room is gone (a corridor)
-#define ISMAZE  0x0004 //room is a maze
+const short IS_DARK  = 0x0001; //room is dark
+const short IS_GONE  = 0x0002; //room is gone (a corridor)
+const short IS_MAZE  = 0x0004; //room is a maze
 
 //flags for objects
-#define ISCURSED  0x0001 //object is cursed
-#define ISKNOW    0x0002 //player knows details about the object
-#define DIDFLASH  0x0004 //has the vorpal weapon flashed
-#define ISEGO     0x0008 //weapon has control of player
-#define ISMISL    0x0010 //object is a missile type
-#define ISMANY    0x0020 //object comes in groups
-#define ISREVEAL  0x0040 //Do you know who the enemy of the object is
+const short IS_CURSED  = 0x0001; //object is cursed
+const short IS_KNOW    = 0x0002; //player knows details about the object
+const short DID_FLASH  = 0x0004; //has the vorpal weapon flashed
+//const short IS_EGO     = 0x0008; //weapon has control of player
+const short IS_MISL    = 0x0010; //object is a missile type
+const short IS_MANY    = 0x0020; //object comes in groups
+const short IS_REVEAL  = 0x0040; //Do you know who the enemy of the object is
 
 //flags for creatures
-#define ISBLIND   0x0001 //creature is blind
-#define SEEMONST  0x0002 //hero can detect unseen monsters
-#define ISRUN     0x0004 //creature is running at the player
-#define ISFOUND   0x0008 //creature has been seen (used for objects)
-#define ISINVIS   0x0010 //creature is invisible
-#define ISMEAN    0x0020 //creature can wake when player enters room
-#define ISGREED   0x0040 //creature runs to protect gold
-#define ISHELD    0x0080 //creature has been held
-#define ISHUH     0x0100 //creature is confused
-#define ISREGEN   0x0200 //creature can regenerate
-#define CANHUH    0x0400 //creature can confuse
-#define CANSEE    0x0800 //creature can see invisible creatures
-#define ISCANC    0x1000 //creature has special qualities cancelled
-#define ISSLOW    0x2000 //creature has been slowed
-#define ISHASTE   0x4000 //creature has been hastened
-const short ISFLY = (short)0x8000; //creature is of the flying type
+const short IS_BLIND   = 0x0001; //creature is blind
+const short SEE_MONST  = 0x0002; //hero can detect unseen monsters
+const short IS_RUN     = 0x0004; //creature is running at the player
+const short IS_FOUND   = 0x0008; //creature has been seen (used for objects)
+const short IS_INVIS   = 0x0010; //creature is invisible
+const short IS_MEAN    = 0x0020; //creature can wake when player enters room
+const short IS_GREED   = 0x0040; //creature runs to protect gold
+const short IS_HELD    = 0x0080; //creature has been held
+const short IS_HUH     = 0x0100; //creature is confused
+const short IS_REGEN   = 0x0200; //creature can regenerate
+const short CAN_HUH    = 0x0400; //creature can confuse
+const short CAN_SEE    = 0x0800; //creature can see invisible creatures
+const short IS_CANC    = 0x1000; //creature has special qualities cancelled
+const short IS_SLOW    = 0x2000; //creature has been slowed
+const short IS_HASTE   = 0x4000; //creature has been hastened
+const short IS_FLY = (short)0x8000; //creature is of the flying type
 
 //Flags for level map
 #define F_PASS   0x040 //is a passageway
@@ -288,7 +288,7 @@ struct Agent
   }
 
   bool is_monster_confused_this_turn() const {
-      return ((is_flag_set(ISHUH) && rnd(5) != 0) ||
+      return ((is_flag_set(IS_HUH) && rnd(5) != 0) ||
           // Phantoms are slightly confused all of the time, and bats are quite confused all the time
           type == 'P' && rnd(5) == 0 ||
           type == 'B' && rnd(2) == 0);

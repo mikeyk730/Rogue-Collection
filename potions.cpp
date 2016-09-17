@@ -154,13 +154,13 @@ void init_new_potion(ITEM* potion)
 void quaff_confusion()
 {
   p_know[P_CONFUSE] = TRUE;
-  if (!player.is_flag_set(ISHUH))
+  if (!player.is_flag_set(IS_HUH))
   {
-    if (player.is_flag_set(ISHUH)) 
+    if (player.is_flag_set(IS_HUH)) 
         lengthen(unconfuse, rnd(8)+HUH_DURATION);
     else 
         fuse(unconfuse, 0, rnd(8)+HUH_DURATION);
-    player.flags |= ISHUH;
+    player.flags |= IS_HUH;
     msg("wait, what's going on? Huh? What? Who?");
   }
 }
@@ -169,7 +169,7 @@ void quaff_paralysis()
 {
   p_know[P_PARALYZE] = TRUE;
   no_command = HOLD_TIME;
-  player.flags &= ~ISRUN;
+  player.flags &= ~IS_RUN;
   msg("you can't move");
 }
 
@@ -191,7 +191,7 @@ void quaff_gain_strength()
 
 void quaff_see_invisible()
 {
-  if (!player.is_flag_set(CANSEE)) {
+  if (!player.is_flag_set(CAN_SEE)) {
       fuse(unsee, 0, SEE_DURATION); 
       look(FALSE);
       invis_on();
@@ -299,9 +299,9 @@ void quaff_restore_strength()
 void quaff_blindness()
 {
   p_know[P_BLIND] = TRUE;
-  if (!player.is_flag_set(ISBLIND))
+  if (!player.is_flag_set(IS_BLIND))
   {
-    player.flags |= ISBLIND;
+    player.flags |= IS_BLIND;
     fuse(sight, 0, SEE_DURATION);
     look(FALSE);
   }
@@ -360,8 +360,8 @@ void invis_on()
 {
   AGENT *th;
 
-  player.flags |= CANSEE;
-  for (th = mlist; th!=NULL; th = next(th)) if (th->is_flag_set(ISINVIS) && can_see_monst(th))
+  player.flags |= CAN_SEE;
+  for (th = mlist; th!=NULL; th = next(th)) if (th->is_flag_set(IS_INVIS) && can_see_monst(th))
   {
     mvaddch(th->pos.y, th->pos.x, th->disguise);
   }
@@ -395,8 +395,8 @@ bool turn_see(bool turn_off)
       if (!can_see) {standend(); add_new++;}
     }
   }
-  player.flags |= SEEMONST;
-  if (turn_off) player.flags &= ~SEEMONST;
+  player.flags |= SEE_MONST;
+  if (turn_off) player.flags &= ~SEE_MONST;
   return add_new;
 }
 
@@ -408,13 +408,13 @@ void affect_monster(ITEM *potion, AGENT *monster)
   switch (potion->which)
   {
   case P_CONFUSE: case P_BLIND:
-    monster->flags |= ISHUH;
+    monster->flags |= IS_HUH;
     msg("the %s appears confused", monster->get_monster_name());
     break;
 
   case P_PARALYZE:
-    monster->flags &= ~ISRUN;
-    monster->flags |= ISHELD;
+    monster->flags &= ~IS_RUN;
+    monster->flags |= IS_HELD;
     break;
 
   case P_HEALING: case P_XHEAL:
@@ -429,7 +429,7 @@ void affect_monster(ITEM *potion, AGENT *monster)
     break;
 
   case P_HASTE:
-    monster->flags |= ISHASTE;
+    monster->flags |= IS_HASTE;
     break;
   }
 }

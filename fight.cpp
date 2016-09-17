@@ -61,17 +61,17 @@ void do_hit(ITEM* weap, int thrown, AGENT* monster, const char* name)
     }
   }
 
-  if (player.is_flag_set(CANHUH))
+  if (player.is_flag_set(CAN_HUH))
   {
     did_huh = TRUE;
-    monster->flags |= ISHUH;
-    player.flags &= ~CANHUH;
+    monster->flags |= IS_HUH;
+    player.flags &= ~CAN_HUH;
     msg("your hands stop glowing red");
   }
 
   if (monster->stats.hp <= 0)
     killed(monster, TRUE);
-  else if (did_huh && !player.is_flag_set(ISBLIND)) 
+  else if (did_huh && !player.is_flag_set(IS_BLIND)) 
     msg("the %s appears confused", name);
 }
 
@@ -100,14 +100,14 @@ int fight(Coord *location, char mn, ITEM *weap, bool thrown)
   start_run(monster);
   //Let him know it was really a mimic (if it was one).
   //todo: handle in general way
-  if (monster->type=='X' && monster->disguise!='X' && !player.is_flag_set(ISBLIND))
+  if (monster->type=='X' && monster->disguise!='X' && !player.is_flag_set(IS_BLIND))
   {
     mn = monster->disguise = 'X';
     if (thrown) 
       return FALSE;
     msg("wait! That's a Xeroc!");
   }
-  name = player.is_flag_set(ISBLIND) ? it : get_monster_name(mn);
+  name = player.is_flag_set(IS_BLIND) ? it : get_monster_name(mn);
 
   if (roll_em(&player, monster, weap, thrown) || (weap && weap->type==POTION))
   {
@@ -152,7 +152,7 @@ void rattlesnake_attack()
 void flytrap_attack(AGENT* mp)
 {
   //Flytrap stops the poor guy from moving
-  player.flags |= ISHELD;
+  player.flags |= IS_HELD;
   sprintf(mp->stats.damage, "%dd1", ++flytrap_hit);
 }
 
@@ -231,9 +231,9 @@ int attack(AGENT *monster)
   running = FALSE;
   count = quiet = 0;
   //todo: handle X in more general case
-  if (monster->type=='X' && !player.is_flag_set(ISBLIND)) 
+  if (monster->type=='X' && !player.is_flag_set(IS_BLIND)) 
     monster->disguise = 'X';
-  name = player.is_flag_set(ISBLIND) ? it : monster->get_monster_name();
+  name = player.is_flag_set(IS_BLIND) ? it : monster->get_monster_name();
   if (roll_em(monster, &player, NULL, FALSE))
   {
     display_hit_msg(name, NULL);
@@ -241,7 +241,7 @@ int attack(AGENT *monster)
       death(monster->type); //Bye bye life ...
    
     //todo: eliminate all special cases
-    if (!monster->is_flag_set(ISCANC)) {
+    if (!monster->is_flag_set(IS_CANC)) {
       switch (monster->type)
       {
       case 'A': 
@@ -353,7 +353,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
         hplus += get_ring(RIGHT)->ring_level;
     }
     cp = weap->damage;
-    if (hurl && (weap->flags&ISMISL) && get_current_weapon()!=NULL && get_current_weapon()->which==weap->launcher)
+    if (hurl && (weap->flags&IS_MISL) && get_current_weapon()!=NULL && get_current_weapon()->which==weap->launcher)
     {
       cp = weap->throw_damage;
       hplus += get_current_weapon()->hit_plus;
@@ -368,7 +368,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
     }
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
-  if (!thdef->is_flag_set(ISRUN)) 
+  if (!thdef->is_flag_set(IS_RUN)) 
       hplus += 4;
   def_arm = def->ac;
   if (def==&player.stats)
@@ -405,7 +405,7 @@ char *prname(const char *who, bool upper)
 {
   *tbuf = '\0';
   if (who==0) strcpy(tbuf, you);
-  else if (player.is_flag_set(ISBLIND)) strcpy(tbuf, it);
+  else if (player.is_flag_set(IS_BLIND)) strcpy(tbuf, it);
   else {strcpy(tbuf, "the "); strcat(tbuf, who);}
   if (upper) *tbuf = toupper(*tbuf);
   return tbuf;
@@ -503,7 +503,7 @@ void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
     addmsg("the %s %s ", get_weapon_name(item->which), does);
   else 
     addmsg("you %s ", did);
-  player.is_flag_set(ISBLIND) ? msg(it) : msg("the %s", name);
+  player.is_flag_set(IS_BLIND) ? msg(it) : msg("the %s", name);
 }
 
 //remove: Remove a monster from the screen
@@ -525,7 +525,7 @@ void remove_monster(AGENT *monster, bool waskill)
   }
   if (get_tile(monster_pos->y, monster_pos->x)==PASSAGE) 
     standout();
-  if (monster->oldch==FLOOR && !cansee(monster_pos->y, monster_pos->x))
+  if (monster->oldch == FLOOR && !can_see(monster_pos->y, monster_pos->x))
     mvaddch(monster_pos->y, monster_pos->x, ' ');
   else if (monster->oldch!='@') 
     mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
@@ -557,7 +557,7 @@ void killed(AGENT *monster, bool print)
   {
 
   case 'F':
-    player.flags &= ~ISHELD;
+    player.flags &= ~IS_HELD;
     f_restor();
     break;
 
@@ -577,7 +577,7 @@ void killed(AGENT *monster, bool print)
   if (print)
   {
     addmsg("you have defeated ");
-    if (player.is_flag_set(ISBLIND)) 
+    if (player.is_flag_set(IS_BLIND)) 
         msg(it);
     else msg("the %s", monster->get_monster_name());
   }

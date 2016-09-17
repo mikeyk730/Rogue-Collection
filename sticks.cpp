@@ -192,16 +192,16 @@ const char* get_stick_type(int type)
 void zap_light()
 {
   //Ready Kilowatt wand.  Light up the room
-  if (player.is_flag_set(ISBLIND)) msg("you feel a warm glow around you");
+  if (player.is_flag_set(IS_BLIND)) msg("you feel a warm glow around you");
   else
   {
     ws_know[WS_LIGHT] = TRUE;
-    if (player.room->flags&ISGONE) msg("the corridor glows and then fades");
+    if (player.room->flags&IS_GONE) msg("the corridor glows and then fades");
     else msg("the room is lit by a shimmering blue light");
   }
-  if (!(player.room->flags&ISGONE))
+  if (!(player.room->flags&IS_GONE))
   {
-    player.room->flags &= ~ISDARK;
+    player.room->flags &= ~IS_DARK;
     //Light the room and put the player back up
     enter_room(&player.pos);
   }
@@ -265,8 +265,8 @@ void zap_polymorph(AGENT* monster, int y, int x)
 
 void zap_cancellation(AGENT* monster)
 {
-  monster->flags |= ISCANC;
-  monster->flags &= ~(ISINVIS|CANHUH);
+  monster->flags |= IS_CANC;
+  monster->flags &= ~(IS_INVIS|CAN_HUH);
   monster->disguise = monster->type;
 }
 
@@ -289,7 +289,7 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
   } 
 
   if (monster->can_hold()) 
-    player.flags &= ~ISHELD;
+    player.flags &= ~IS_HELD;
 }
 
 void zap_generic(ITEM* wand, int which)
@@ -303,7 +303,7 @@ void zap_generic(ITEM* wand, int which)
   if ((monster = monster_at(y, x))!=NULL)
   {
     if (monster->can_hold())
-        player.flags &= ~ISHELD;
+        player.flags &= ~IS_HELD;
     if (which==MAXSTICKS)
     {
       zap_vorpalized_weapon(wand, monster);
@@ -321,7 +321,7 @@ void zap_generic(ITEM* wand, int which)
       zap_teleport(monster, y, x, which);      
     }
     monster->dest = &player.pos;
-    monster->flags |= ISRUN;
+    monster->flags |= IS_RUN;
   }
 }
 
@@ -335,7 +335,7 @@ void zap_magic_missile()
   bolt.throw_damage = "1d8";
   bolt.hit_plus = 1000;
   bolt.damage_plus = 1;
-  bolt.flags = ISMISL;
+  bolt.flags = IS_MISL;
   if (get_current_weapon()!=NULL) bolt.launcher = get_current_weapon()->which;
   do_motion(&bolt, delta.y, delta.x);
   if ((monster = monster_at(bolt.pos.y, bolt.pos.x))!=NULL && !save_throw(VS_MAGIC, monster))
@@ -358,17 +358,17 @@ void zap_speed_monster(int which)
   {
     if (which==WS_HASTE_M)
     {
-      if (monster->is_flag_set(ISSLOW))
-          monster->flags &= ~ISSLOW;
+      if (monster->is_flag_set(IS_SLOW))
+          monster->flags &= ~IS_SLOW;
       else 
-          monster->flags |= ISHASTE;
+          monster->flags |= IS_HASTE;
     }
     else
     {
-      if (monster->is_flag_set(ISHASTE)) 
-          monster->flags &= ~ISHASTE;
+      if (monster->is_flag_set(IS_HASTE)) 
+          monster->flags &= ~IS_HASTE;
       else 
-          monster->flags |= ISSLOW;
+          monster->flags |= IS_SLOW;
       monster->turn = TRUE;
     }
     start_run(monster);
@@ -487,7 +487,7 @@ void drain()
   cnt = 0;
   if (get_tile(player.pos.y, player.pos.x)==DOOR) room = &passages[get_flags(player.pos.y, player.pos.x)&F_PNUM];
   else room = NULL;
-  inpass = (player.room->flags&ISGONE) != 0;
+  inpass = (player.room->flags&IS_GONE) != 0;
   dp = drainee;
   for (monster = mlist; monster!=NULL; monster = next(monster)){
     if (monster->room==player.room || monster->room==room || (inpass && get_tile(monster->pos.y, monster->pos.x)==DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM]==player.room)) {
@@ -631,7 +631,7 @@ const char *get_charge_string(ITEM *obj)
 {
   static char buf[20];
 
-  if (!(obj->flags&ISKNOW) && !is_wizard()) buf[0] = '\0';
+  if (!(obj->flags&IS_KNOW) && !is_wizard()) buf[0] = '\0';
   else sprintf(buf, " [%d charges]", obj->charges);
   return buf;
 }

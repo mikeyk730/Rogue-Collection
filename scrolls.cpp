@@ -160,7 +160,7 @@ void init_new_scroll(ITEM* scroll)
 void read_monster_confusion()
 {
   //Scroll of monster confusion.  Give him that power.
-  player.flags |= CANHUH;
+  player.flags |= CAN_HUH;
   msg("your hands begin to glow red");
 }
 
@@ -214,8 +214,8 @@ void read_hold_monster()
       for (y = player.pos.y-3; y<=player.pos.y+3; y++) {
         if ((y>0 && y<maxrow) && ((monster = monster_at(y, x)) != NULL))
         {
-          monster->flags &= ~ISRUN;
-          monster->flags |= ISHELD;
+          monster->flags &= ~IS_RUN;
+          monster->flags |= IS_HELD;
         }
       }
     }
@@ -227,7 +227,7 @@ void read_sleep()
   //Scroll which makes you fall asleep
   s_know[S_SLEEP] = TRUE;
   no_command += rnd(SLEEP_TIME)+4;
-  player.flags &= ~ISRUN;
+  player.flags &= ~IS_RUN;
   msg("you fall asleep");
 }
 
@@ -236,7 +236,7 @@ void read_enchant_armor()
   if (get_current_armor()!=NULL)
   {
     get_current_armor()->armor_class--;
-    get_current_armor()->flags &= ~ISCURSED;
+    get_current_armor()->flags &= ~IS_CURSED;
     ifterse("your armor glows faintly", "your armor glows faintly for a moment");
   }
 }
@@ -305,7 +305,7 @@ void read_enchant_weapon()
     msg("you feel a strange sense of loss");
   else
   {
-    get_current_weapon()->flags &= ~ISCURSED;
+    get_current_weapon()->flags &= ~IS_CURSED;
     if (rnd(2)==0) get_current_weapon()->hit_plus++;
     else get_current_weapon()->damage_plus++;
     ifterse("your %s glows blue", "your %s glows blue for a moment", get_weapon_name(get_current_weapon()->which));
@@ -326,13 +326,13 @@ void read_create_monster()
 void read_remove_curse()
 {
   if (get_current_armor()) 
-    get_current_armor()->flags &= ~ISCURSED;
+    get_current_armor()->flags &= ~IS_CURSED;
   if (get_current_weapon()) 
-    get_current_weapon()->flags &= ~ISCURSED;
+    get_current_weapon()->flags &= ~IS_CURSED;
   if (get_ring(LEFT)) 
-    get_ring(LEFT)->flags &= ~ISCURSED;
+    get_ring(LEFT)->flags &= ~IS_CURSED;
   if (get_ring(RIGHT))
-    get_ring(RIGHT)->flags &= ~ISCURSED;
+    get_ring(RIGHT)->flags &= ~IS_CURSED;
 
   ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
 }

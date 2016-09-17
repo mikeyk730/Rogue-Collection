@@ -61,7 +61,7 @@ void look(bool wakeup)
   //if the hero has moved
   if (!equal(oldpos, player.pos))
   {
-    if (!player.is_flag_set(ISBLIND))
+    if (!player.is_flag_set(IS_BLIND))
     {
       for (x = oldpos.x-1; x<=(oldpos.x+1); x++)
         for (y = oldpos.y-1; y<=(oldpos.y+1); y++)
@@ -71,7 +71,7 @@ void look(bool wakeup)
           ch = curch();
           if (ch==FLOOR)
           {
-            if ((oldrp->flags & (ISGONE|ISDARK))==ISDARK) addch(' ');
+            if ((oldrp->flags & (IS_GONE|IS_DARK))==IS_DARK) addch(' ');
           }
           else
           {
@@ -93,7 +93,7 @@ void look(bool wakeup)
   for (y = sy; y<=ey; y++) if (y>0 && y<maxrow) for (x = sx; x<=ex; x++)
   {
     if (x<=0 || x>=COLS) continue;
-    if (!player.is_flag_set(ISBLIND))
+    if (!player.is_flag_set(IS_BLIND))
     {
       if (y==player.pos.y && x==player.pos.x) continue;
     }
@@ -111,7 +111,7 @@ void look(bool wakeup)
       }
       //Not in same passage
       else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
-      if ((monster = monster_at(y, x))!=NULL) if (player.is_flag_set(SEEMONST) && monster->is_flag_set(ISINVIS))
+      if ((monster = monster_at(y, x))!=NULL) if (player.is_flag_set(SEE_MONST) && monster->is_flag_set(IS_INVIS))
       {
         if (door_stop && !firstmove) running = FALSE;
         continue;
@@ -119,7 +119,7 @@ void look(bool wakeup)
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (monster->oldch != ' ' || (!(room->flags&ISDARK) && !player.is_flag_set(ISBLIND))) monster->oldch = get_tile(y, x);
+        if (monster->oldch != ' ' || (!(room->flags&IS_DARK) && !player.is_flag_set(IS_BLIND))) monster->oldch = get_tile(y, x);
         if (can_see_monst(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
@@ -194,18 +194,18 @@ void add_str(unsigned int *sp, int amt)
 //add_haste: Add a haste to the player
 int add_haste(bool potion)
 {
-  if (player.is_flag_set(ISHASTE))
+  if (player.is_flag_set(IS_HASTE))
   {
     no_command += rnd(8);
-    player.flags &= ~ISRUN;
+    player.flags &= ~IS_RUN;
     extinguish(nohaste);
-    player.flags &= ~ISHASTE;
+    player.flags &= ~IS_HASTE;
     msg("you faint from exhaustion");
     return FALSE;
   }
   else
   {
-    player.flags |= ISHASTE;
+    player.flags |= IS_HASTE;
     if (potion) fuse(nohaste, 0, rnd(4)+10);
     return TRUE;
   }
@@ -256,7 +256,7 @@ int get_dir()
     }
   } while (find_dir(ch, &delta)==0);
   msg("");
-  if (player.is_flag_set(ISHUH) && rnd(5)==0) do
+  if (player.is_flag_set(IS_HUH) && rnd(5)==0) do
   {
     delta.y = rnd(3)-1;
     delta.x = rnd(3)-1;
@@ -326,7 +326,7 @@ int goodch(ITEM *obj)
 {
   int ch = MAGIC;
 
-  if (obj->flags&ISCURSED) ch = BMAGIC;
+  if (obj->flags&IS_CURSED) ch = BMAGIC;
   switch (obj->type)
   {
   case ARMOR:
@@ -433,7 +433,7 @@ void search()
   byte fp;
   int ey, ex;
 
-  if (player.is_flag_set(ISBLIND)) 
+  if (player.is_flag_set(IS_BLIND)) 
     return;
   ey = player.pos.y+1;
   ex = player.pos.x+1;

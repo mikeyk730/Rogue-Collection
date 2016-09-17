@@ -79,7 +79,7 @@ void digest()
     //the hero is fainting
     if (no_command || rnd(5)!=0) return;
     no_command += rnd(8)+4;
-    player.flags &= ~ISRUN;
+    player.flags &= ~IS_RUN;
     running = FALSE;
     count = 0;
     hungry_state = 3;
@@ -110,7 +110,7 @@ void init_player()
   init_weapon(obj, MACE);
   obj->hit_plus = 1;
   obj->damage_plus = 1;
-  obj->flags |= ISKNOW;
+  obj->flags |= IS_KNOW;
   add_pack(obj, TRUE);
   set_current_weapon(obj);
 
@@ -119,7 +119,7 @@ void init_player()
   init_weapon(obj, BOW);
   obj->hit_plus = 1;
   obj->damage_plus = 0;
-  obj->flags |= ISKNOW;
+  obj->flags |= IS_KNOW;
   add_pack(obj, TRUE);
 
   //Now some arrows
@@ -127,13 +127,13 @@ void init_player()
   init_weapon(obj, ARROW);
   obj->count = rnd(15)+25;
   obj->hit_plus = obj->damage_plus = 0;
-  obj->flags |= ISKNOW;
+  obj->flags |= IS_KNOW;
   add_pack(obj, TRUE);
 
   //And his suit of armor
   obj = create_item(ARMOR, RING_MAIL);
   obj->armor_class = get_default_class(RING_MAIL)-1;
-  obj->flags |= ISKNOW;
+  obj->flags |= IS_KNOW;
   set_current_armor(obj);
   add_pack(obj, TRUE);
 

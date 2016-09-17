@@ -37,34 +37,34 @@ struct Monster
 
 struct Monster monsters[26] =
 {
-  // Name           CARRY                  FLAG   str,  exp,lvl,amr, hpt, dmg
-  { "aquator",          0,               ISMEAN, { XX,   20,  5,  2, ___, "0d0/0d0"         } },
-  { "bat",              0,                ISFLY, { XX,    1,  1,  3, ___, "1d2"             } },
-  { "centaur",         15,                    0, { XX,   25,  4,  4, ___, "1d6/1d6"         } },
-  { "dragon",         100,               ISMEAN, { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    } },
-  { "emu",              0,               ISMEAN, { XX,    2,  1,  7, ___, "1d2"             } },
+  // Name           CARRY                  FLAG       str,  exp,lvl,amr, hpt, dmg
+  { "aquator",          0,                 IS_MEAN,  { XX,   20,  5,  2, ___, "0d0/0d0"         } },
+  { "bat",              0,                  IS_FLY,  { XX,    1,  1,  3, ___, "1d2"             } },
+  { "centaur",         15,                       0,  { XX,   25,  4,  4, ___, "1d6/1d6"         } },
+  { "dragon",         100,                 IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    } },
+  { "emu",              0,                 IS_MEAN,  { XX,    2,  1,  7, ___, "1d2"             } },
   //NOTE: the damage is %%% so that xstr won't merge this string with others, since it is written on in the program
-  { "venus flytrap",    0,               ISMEAN, { XX,   80,  8,  3, ___, "%%%d0"           } },
-  { "griffin",         20, ISMEAN|ISFLY|ISREGEN, { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     } },
-  { "hobgoblin",        0,               ISMEAN, { XX,    3,  1,  5, ___, "1d8"             } },
-  { "ice monster",      0,               ISMEAN, { XX,   15,  1,  9, ___, "1d2"             } },
-  { "jabberwock",      70,                    0, { XX, 4000, 15,  6, ___, "2d12/2d4"        } },
-  { "kestral",          0,         ISMEAN|ISFLY, { XX,    1,  1,  7, ___, "1d4"             } },
-  { "leprechaun",       0,                    0, { XX,   10,  3,  8, ___, "1d2"             } },
-  { "medusa",          40,               ISMEAN, { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     } },
-  { "nymph",          100,                    0, { XX,   37,  3,  9, ___, "0d0"             } },
-  { "orc",             15,              ISGREED, { XX,    5,  1,  6, ___, "1d8"             } },
-  { "phantom",          0,              ISINVIS, { XX,  120,  8,  3, ___, "4d4"             } },
-  { "quagga",          30,               ISMEAN, { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     } },
-  { "rattlesnake",      0,               ISMEAN, { XX,    9,  2,  3, ___, "1d6"             } },
-  { "slime",            0,               ISMEAN, { XX,    1,  2,  8, ___, "1d3"             } },
-  { "troll",           50,       ISREGEN|ISMEAN, { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     } },
-  { "ur-vile",          0,               ISMEAN, { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" } },
-  { "vampire",         20,       ISREGEN|ISMEAN, { XX,  350,  8,  1, ___, "1d10"            } },
-  { "wraith",           0,                    0, { XX,   55,  5,  4, ___, "1d6"             } },
-  { "xeroc",           30,                    0, { XX,  100,  7,  7, ___, "3d4"             } },
-  { "yeti",            30,                    0, { XX,   50,  4,  6, ___, "1d6/1d6"         } },
-  { "zombie",           0,               ISMEAN, { XX,    6,  2,  8, ___, "1d8"             } }
+  { "venus flytrap",    0,                 IS_MEAN,  { XX,   80,  8,  3, ___, "%%%d0"           } },
+  { "griffin",         20, IS_MEAN|IS_FLY|IS_REGEN,  { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     } },
+  { "hobgoblin",        0,                 IS_MEAN,  { XX,    3,  1,  5, ___, "1d8"             } },
+  { "ice monster",      0,                 IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             } },
+  { "jabberwock",      70,                       0,  { XX, 4000, 15,  6, ___, "2d12/2d4"        } },
+  { "kestral",          0,          IS_MEAN|IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             } },
+  { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             } },
+  { "medusa",          40,                 IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     } },
+  { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             } },
+  { "orc",             15,                IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             } },
+  { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             } },
+  { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     } },
+  { "rattlesnake",      0,                 IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             } },
+  { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             } },
+  { "troll",           50,        IS_REGEN|IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     } },
+  { "ur-vile",          0,                 IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" } },
+  { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            } },
+  { "wraith",           0,                       0,  { XX,   55,  5,  4, ___, "1d6"             } },
+  { "xeroc",           30,                       0,  { XX,  100,  7,  7, ___, "3d4"             } },
+  { "yeti",            30,                       0,  { XX,   50,  4,  6, ___, "1d6/1d6"         } },
+  { "zombie",           0,                 IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             } }
 };
 
 char f_damage[10];
@@ -212,31 +212,31 @@ AGENT *wake_monster(int y, int x)
 
   if ((monster = monster_at(y, x))==NULL) return monster;
   //Every time he sees mean monster, it might start chasing him
-  if (!monster->is_flag_set(ISRUN) && rnd(3)!=0 && monster->is_flag_set(ISMEAN) && !monster->is_flag_set(ISHELD) && !is_wearing_ring(R_STEALTH))
+  if (!monster->is_flag_set(IS_RUN) && rnd(3)!=0 && monster->is_flag_set(IS_MEAN) && !monster->is_flag_set(IS_HELD) && !is_wearing_ring(R_STEALTH))
   {
     monster->dest = &player.pos;
-    monster->flags |= ISRUN;
+    monster->flags |= IS_RUN;
   }
-  if (monster->causes_confusion() && !player.is_flag_set(ISBLIND) && !monster->is_flag_set(ISFOUND) && !monster->is_flag_set(ISCANC) && monster->is_flag_set(ISRUN))
+  if (monster->causes_confusion() && !player.is_flag_set(IS_BLIND) && !monster->is_flag_set(IS_FOUND) && !monster->is_flag_set(IS_CANC) && monster->is_flag_set(IS_RUN))
   {
     room = player.room;
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
-    if ((room!=NULL && !(room->flags&ISDARK)) || dst<LAMP_DIST)
+    if ((room!=NULL && !(room->flags&IS_DARK)) || dst<LAMP_DIST)
     {
-      monster->flags |= ISFOUND;
+      monster->flags |= IS_FOUND;
       if (!save(VS_MAGIC))
       {
-        if (player.is_flag_set(ISHUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
+        if (player.is_flag_set(IS_HUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
-        player.flags |= ISHUH;
+        player.flags |= IS_HUH;
         msg("the medusa's gaze has confused you");//todo: remove hardcoded name
       }
     }
   }
   //Let greedy ones guard gold
-  if (monster->is_flag_set(ISGREED) && !monster->is_flag_set(ISRUN))
+  if (monster->is_flag_set(IS_GREED) && !monster->is_flag_set(IS_RUN))
   {
-    monster->flags = monster->flags|ISRUN;
+    monster->flags = monster->flags|IS_RUN;
     if (player.room->goldval) monster->dest = &player.room->gold;
     else monster->dest = &player.pos;
   }

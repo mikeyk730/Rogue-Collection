@@ -53,20 +53,20 @@ void whatis()
 
   case STICK:
     discover_stick(obj->which);
-    obj->flags |= ISKNOW;
+    obj->flags |= IS_KNOW;
     break;
 
   case WEAPON: case ARMOR:
-    obj->flags |= ISKNOW;
+    obj->flags |= IS_KNOW;
     break;
 
   case RING:
     discover_ring(obj->which);
-    obj->flags |= ISKNOW;
+    obj->flags |= IS_KNOW;
     break;
   }
   //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
-  if (obj->enemy) obj->flags |= ISREVEAL;
+  if (obj->enemy) obj->flags |= IS_REVEAL;
   msg(inv_name(obj, FALSE));
 }
 
@@ -103,7 +103,7 @@ void create_obj()
     msg("blessing? (+,-,n)");
     bless = readchar();
     mpos = 0;
-    if (bless=='-') obj->flags |= ISCURSED;
+    if (bless=='-') obj->flags |= IS_CURSED;
     if (obj->type==WEAPON)
     {
       init_weapon(obj, obj->which);
@@ -123,12 +123,12 @@ void create_obj()
     msg("blessing? (+,-,n)");
     bless = readchar();
     mpos = 0;
-    if (bless=='-') obj->flags |= ISCURSED;
+    if (bless=='-') obj->flags |= IS_CURSED;
     obj->ring_level = (bless=='-'?-1:rnd(2)+1);
     break;
 
   case R_AGGR: case R_TELEPORT:
-    obj->flags |= ISCURSED;
+    obj->flags |= IS_CURSED;
     break;
   }
   else if (obj->type==STICK) fix_stick(obj);
@@ -154,9 +154,9 @@ void teleport()
   }
   else { player.pos = c; look(TRUE);}
   mvaddch(player.pos.y, player.pos.x, PLAYER);
-  //turn off ISHELD in case teleportation was done while fighting a Flytrap
-  if (player.is_flag_set(ISHELD)) { 
-      player.flags &= ~ISHELD; 
+  //turn off IS_HELD in case teleportation was done while fighting a Flytrap
+  if (player.is_flag_set(IS_HELD)) { 
+      player.flags &= ~IS_HELD; 
       f_restor();
   }
   no_move = 0;
@@ -166,11 +166,11 @@ void teleport()
   //Teleportation can be a confusing experience (unless you really are a wizard)
   if (!is_wizard())
   {
-    if (player.is_flag_set(ISHUH))
+    if (player.is_flag_set(IS_HUH))
         lengthen(unconfuse, rnd(4)+2);
     else 
         fuse(unconfuse, 0, rnd(4)+2);
-    player.flags |= ISHUH;
+    player.flags |= IS_HUH;
   }
 }
 

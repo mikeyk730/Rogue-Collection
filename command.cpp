@@ -37,7 +37,7 @@ void command()
 {
   int ntimes;
 
-  if (player.is_flag_set(ISHASTE))
+  if (player.is_flag_set(IS_HASTE))
       ntimes = rnd(2) + 2;
   else ntimes = 1;
   while (ntimes--)
@@ -129,7 +129,7 @@ int get_prefix()
   case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
     if (fastmode && !running)
     {
-      if (!player.is_flag_set(ISBLIND)) {
+      if (!player.is_flag_set(IS_BLIND)) {
           door_stop = TRUE; 
           firstmove = TRUE;
       }

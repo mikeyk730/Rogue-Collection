@@ -130,12 +130,12 @@ void init_new_ring(ITEM* ring)
   case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
     if ((ring->ring_level = rnd(3))==0) {
       ring->ring_level = -1; 
-      ring->flags |= ISCURSED;
+      ring->flags |= IS_CURSED;
     }
     break;
 
   case R_AGGR: case R_TELEPORT:
-    ring->flags |= ISCURSED;
+    ring->flags |= IS_CURSED;
     break;
   }
 }
@@ -228,7 +228,7 @@ int ring_eat(int hand)
 //ring_num: Print ring bonuses
 char *ring_num(ITEM *obj)
 {
-  if (!(obj->flags&ISKNOW) && !is_wizard()) 
+  if (!(obj->flags&IS_KNOW) && !is_wizard()) 
     return "";
 
   switch (obj->which)

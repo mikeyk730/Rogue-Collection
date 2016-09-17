@@ -71,7 +71,7 @@ void init_new_armor(ITEM* armor)
   if (j==MAXARMORS) {debug("Picked a bad armor %d", k); j = 0;}
   armor->which = j;
   armor->armor_class = get_default_class(j);
-  if ((k = rnd(100))<20) {armor->flags |= ISCURSED; armor->armor_class += rnd(3)+1;}
+  if ((k = rnd(100))<20) {armor->flags |= IS_CURSED; armor->armor_class += rnd(3)+1;}
   else if (k<28) armor->armor_class -= rnd(3)+1;
 }
 
@@ -90,7 +90,7 @@ void wear()
   if ((obj = get_item("wear", ARMOR))==NULL) return;
   if (obj->type!=ARMOR) {msg("you can't wear that"); return;}
   waste_time();
-  obj->flags |= ISKNOW ;
+  obj->flags |= IS_KNOW ;
   sp = inv_name(obj, TRUE);
   set_current_armor(obj);
   msg("you are now wearing %s", sp);
@@ -124,7 +124,7 @@ const char* get_inv_name_armor(ITEM* obj)
   char *pb = prbuf;
   int which = obj->which;
 
-  if (obj->flags&ISKNOW || is_wizard())
+  if (obj->flags&IS_KNOW || is_wizard())
     chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->armor_class, 0, (char)ARMOR), get_armor_name(which), -(obj->armor_class-11));
   else
     sprintf(pb, "%s", get_armor_name(which));
