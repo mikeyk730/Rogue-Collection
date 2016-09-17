@@ -2,6 +2,7 @@
 //rogue.h      1.4 (AI Design) 12/14/84
 
 #include <string.h>
+#include "main.h"
 
 //Options set for PC rogue
 
@@ -282,9 +283,58 @@ struct Agent
   struct Room *room;            //Current room for thing
   struct Item *pack;            //What the thing is carrying
 
-  bool is_flag_set(int flag) { 
+  bool is_flag_set(int flag) const { 
       return ((flags & flag) != 0);
   }
+
+  bool is_monster_confused_this_turn() const {
+      return ((is_flag_set(ISHUH) && rnd(5) != 0) ||
+          // Phantoms are slightly confused all of the time, and bats are quite confused all the time
+          type == 'P' && rnd(5) == 0 ||
+          type == 'B' && rnd(2) == 0);
+  }
+
+  const char* get_monster_name() const;
+  int get_monster_carry_prob() const;
+
+  //special features
+  bool is_immobile() const {
+      return type == 'F';
+  }
+  bool can_hold() const {
+      return type == 'F';
+  }
+  bool can_split() const {
+      return type == 'S';
+  }
+  bool shoots_fire() const {
+      return type == 'D';
+  }
+  bool immune_to_fire() const {
+      return type == 'D';
+  }
+  bool shoots_ice() const {
+      return type == 'I';
+  }
+  bool causes_confusion() const
+  {
+      return type == 'M';
+  }
+
+  /* todo:
+  
+        special attacks:
+        aquator_attack();
+        ice_monster_attack();
+        rattlesnake_attack();
+        vampire_wraith_attack();
+        flytrap_attack();
+        leprechaun_attack();
+        nymph_attack();
+
+        L,F death
+        xerox
+        */
 };
 
 typedef struct Agent AGENT;

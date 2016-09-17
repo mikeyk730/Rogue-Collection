@@ -81,7 +81,7 @@ void do_miss(ITEM* weap, int thrown, AGENT* monster, const char* name)
     display_throw_msg(weap, name, "misses", "missed");
   else
     miss(NULL, name);
-  if (monster->type=='S' && rnd(100)>25)
+  if (monster->can_split() && rnd(100)>25)
     slime_split(monster);
 }
 
@@ -99,6 +99,7 @@ int fight(Coord *location, char mn, ITEM *weap, bool thrown)
   
   start_run(monster);
   //Let him know it was really a mimic (if it was one).
+  //todo: handle in general way
   if (monster->type=='X' && monster->disguise!='X' && !player.is_flag_set(ISBLIND))
   {
     mn = monster->disguise = 'X';
@@ -229,15 +230,17 @@ int attack(AGENT *monster)
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = FALSE;
   count = quiet = 0;
+  //todo: handle X in more general case
   if (monster->type=='X' && !player.is_flag_set(ISBLIND)) 
     monster->disguise = 'X';
-  name = player.is_flag_set(ISBLIND) ? it : get_monster_name(monster->type);
+  name = player.is_flag_set(ISBLIND) ? it : monster->get_monster_name();
   if (roll_em(monster, &player, NULL, FALSE))
   {
     display_hit_msg(name, NULL);
     if (player.stats.hp <= 0) 
       death(monster->type); //Bye bye life ...
    
+    //todo: eliminate all special cases
     if (!monster->is_flag_set(ISCANC)) {
       switch (monster->type)
       {
@@ -279,7 +282,8 @@ int attack(AGENT *monster)
     if (monster->type=='F')
     {
       player.stats.hp -= flytrap_hit;
-      if (player.stats.hp<=0) death(monster->type); //Bye bye life ...
+      if (player.stats.hp<=0)
+          death(monster->type); //Bye bye life ...
     }
     miss(name, NULL);
   }
@@ -336,7 +340,10 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weap, bool hurl)
     hplus = weap->hit_plus;
     dplus = weap->damage_plus;
     //Check for vorpally enchanted weapon
-    if (thdef->type==weap->enemy) {hplus += 4; dplus += 4;}
+    if (is_vorpalized(weap, thdef)) {
+        hplus += 4; 
+        dplus += 4;
+    }
     if (weap==get_current_weapon())
     {
       if (is_ring_on_hand(LEFT, R_ADDDAM)) dplus += get_ring(LEFT)->ring_level;
@@ -544,6 +551,7 @@ bool is_magic(ITEM *obj)
 void killed(AGENT *monster, bool print)
 {
   player.stats.exp += monster->stats.exp;
+  //todo: eliminate F,L specific cases
   //If the monster was a flytrap, un-hold him
   switch (monster->type)
   {
@@ -571,7 +579,7 @@ void killed(AGENT *monster, bool print)
     addmsg("you have defeated ");
     if (player.is_flag_set(ISBLIND)) 
         msg(it);
-    else msg("the %s", get_monster_name(monster->type));
+    else msg("the %s", monster->get_monster_name());
   }
   //Do adjustments if he went up a level
   check_level();

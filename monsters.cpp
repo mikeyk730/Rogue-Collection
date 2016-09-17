@@ -82,6 +82,17 @@ int get_monster_carry_prob(char monster)
   return monsters[monster-'A'].carry;
 }
 
+const char* Agent::get_monster_name() const
+{
+    return ::get_monster_name(type);
+}
+
+int Agent::get_monster_carry_prob() const
+{
+    return ::get_monster_carry_prob(type);
+}
+
+
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
 char randmonster(bool wander, int level)
 {
@@ -139,6 +150,7 @@ void new_monster(AGENT *monster, byte type, Coord *position, int level)
   monster->turn = TRUE;
   monster->pack = NULL;
 
+  //todo: remove F,X checks
   if (type=='F') 
     monster->stats.damage = f_damage;
   if (type=='X') 
@@ -196,18 +208,16 @@ AGENT *wake_monster(int y, int x)
 {
   AGENT *monster;
   struct Room *room;
-  byte ch;
   int dst;
 
   if ((monster = monster_at(y, x))==NULL) return monster;
-  ch = monster->type;
   //Every time he sees mean monster, it might start chasing him
   if (!monster->is_flag_set(ISRUN) && rnd(3)!=0 && monster->is_flag_set(ISMEAN) && !monster->is_flag_set(ISHELD) && !is_wearing_ring(R_STEALTH))
   {
     monster->dest = &player.pos;
     monster->flags |= ISRUN;
   }
-  if (ch=='M' && !player.is_flag_set(ISBLIND) && !monster->is_flag_set(ISFOUND) && !monster->is_flag_set(ISCANC) && monster->is_flag_set(ISRUN))
+  if (monster->causes_confusion() && !player.is_flag_set(ISBLIND) && !monster->is_flag_set(ISFOUND) && !monster->is_flag_set(ISCANC) && monster->is_flag_set(ISRUN))
   {
     room = player.room;
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
@@ -219,7 +229,7 @@ AGENT *wake_monster(int y, int x)
         if (player.is_flag_set(ISHUH)) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
         player.flags |= ISHUH;
-        msg("the medusa's gaze has confused you");
+        msg("the medusa's gaze has confused you");//todo: remove hardcoded name
       }
     }
   }
@@ -236,7 +246,7 @@ AGENT *wake_monster(int y, int x)
 //give_pack: Give a pack to a monster if it deserves one
 void give_pack(AGENT *monster)
 {
-  if (rnd(100) < monsters[monster->type-'A'].carry) 
+  if (rnd(100) < monster->get_monster_carry_prob()) 
     attach_item(&monster->pack, new_item());
 }
 

@@ -290,3 +290,9 @@ const char* get_inv_name_weapon(ITEM* weapon)
 
   return prbuf;
 }
+
+bool is_vorpalized(ITEM* weapon, AGENT* monster)
+{
+    return (weapon && monster) ?
+        weapon->enemy == monster->type : false;
+}

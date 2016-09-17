@@ -232,7 +232,7 @@ void zap_vorpalized_weapon(ITEM* weapon, AGENT* monster)
 {
   if (monster->type == weapon->enemy)
   {
-    msg("the %s vanishes in a puff of smoke", get_monster_name(monster->type));
+    msg("the %s vanishes in a puff of smoke", monster->get_monster_name());
     killed(monster, FALSE);
   }
   else 
@@ -288,7 +288,7 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
     monster->pos.x = player.pos.x+delta.x;
   } 
 
-  if (monster->type=='F') 
+  if (monster->can_hold()) 
     player.flags &= ~ISHELD;
 }
 
@@ -302,7 +302,8 @@ void zap_generic(ITEM* wand, int which)
   while (step_ok(get_tile_or_monster(y, x))) {y += delta.y; x += delta.x;}
   if ((monster = monster_at(y, x))!=NULL)
   {
-    if (monster->type == 'F') player.flags &= ~ISHELD;
+    if (monster->can_hold())
+        player.flags &= ~ISHELD;
     if (which==MAXSTICKS)
     {
       zap_vorpalized_weapon(wand, monster);
@@ -567,7 +568,8 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
         {
           bolt.pos = pos;
           used = TRUE;
-          if (monster->type=='D' && strcmp(name, "flame")==0) msg("the flame bounces off the dragon");
+          if (monster->immune_to_fire() && strcmp(name, "flame")==0) 
+              msg("the flame bounces off the %s", get_monster_name(ch));
           else
           {
             hit_monster(pos.y, pos.x, &bolt);
@@ -589,12 +591,19 @@ int fire_bolt(Coord *start, Coord *dir, const char *name)
         {
           if (is_frost)
           {
-            msg("You are frozen by a blast of frost%s.", noterse(" from the Ice Monster"));
-            if (no_command<20) no_command += spread(7);
+            msg("You are frozen by a blast of frost%s.", noterse(" from the Ice Monster"));//todo: remove hardcoded name
+            if (no_command<20) 
+                no_command += spread(7);
           }
-          else if ((player.stats.hp -= roll(6, 6))<=0) if (start==&player.pos) death('b'); else death(monster_at(start->y, start->x)->type);
+          else if ((player.stats.hp -= roll(6, 6)) <= 0) {
+              if (start == &player.pos)
+                  death('b');
+              else
+                  death(monster_at(start->y, start->x)->type);
+          }
           used = TRUE;
-          if (!is_frost) msg("you are hit by the %s", name);
+          if (!is_frost)
+              msg("you are hit by the %s", name);
         }
         else msg("the %s whizzes by you", name);
       }

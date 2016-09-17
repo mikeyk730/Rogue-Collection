@@ -409,7 +409,7 @@ void affect_monster(ITEM *potion, AGENT *monster)
   {
   case P_CONFUSE: case P_BLIND:
     monster->flags |= ISHUH;
-    msg("the %s appears confused", get_monster_name(monster->type));
+    msg("the %s appears confused", monster->get_monster_name());
     break;
 
   case P_PARALYZE:

@@ -27,3 +27,5 @@ void wield();
 
 //fallpos: Pick a random position around the given (y, x) coordinates
 int fallpos(ITEM *obj, Coord *newpos);
+
+bool is_vorpalized(ITEM* weapon, AGENT* monster);

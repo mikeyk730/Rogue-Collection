@@ -35,13 +35,16 @@ void runners()
     if (!monster->is_flag_set(ISHELD) && monster->is_flag_set(ISRUN))
     {
       dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
-      if (!(monster->is_flag_set(ISSLOW) || (monster->type == 'S' && dist>3)) || monster->turn) //TODO: remove S check
-        if(!do_chase(monster)) continue;
+      if (!(monster->is_flag_set(ISSLOW) || (monster->can_split() && dist>3)) || monster->turn) //TODO: remove S check
+        if(!do_chase(monster)) 
+            continue;
       if (monster->is_flag_set(ISHASTE)) 
-        if(!do_chase(monster)) continue;
+        if(!do_chase(monster)) 
+            continue;
       dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
       if (monster->is_flag_set(ISFLY) && dist>3)
-        if(!do_chase(monster)) continue;
+        if(!do_chase(monster)) 
+            continue;
       monster->turn ^= TRUE;
     }
     next = next(monster);
@@ -92,16 +95,15 @@ over:
   else
   {
     tempdest = *monster->dest;
-    //todo: remove direct D,I checks
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
-    if ((monster->type=='D' || monster->type=='I') && 
+    if ((monster->shoots_fire() || monster->shoots_ice()) && 
         (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) &&
         ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->is_flag_set(ISCANC) && rnd(DRAGONSHOT)==0)
     {
       running = FALSE;
       delta.y = sign(player.pos.y-monster->pos.y);
       delta.x = sign(player.pos.x-monster->pos.x);
-      return fire_bolt(&monster->pos, &delta, monster->type=='D'?"flame":"frost"); //todo: remove D
+      return fire_bolt(&monster->pos, &delta, monster->shoots_fire()?"flame":"frost");
     }
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
@@ -124,7 +126,7 @@ over:
       break;
     }
   }
-  if (monster->type=='F') return TRUE;
+  if (monster->is_immobile()) return TRUE;
   //If the chasing thing moved, update the screen
   if (monster->oldch!='@')
   {
@@ -178,7 +180,7 @@ int can_see_monst(AGENT *monster)
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
   //give the player a hint as to what that weapon is good for.
-  if (get_current_weapon() && get_current_weapon()->enemy == monster->type && !(get_current_weapon()->flags & DIDFLASH))
+  if (is_vorpalized(get_current_weapon(), monster) && !(get_current_weapon()->flags & DIDFLASH))
   {
     get_current_weapon()->flags |= DIDFLASH;
     msg(flash, get_weapon_name(get_current_weapon()->which), short_msgs()?"":intense);
@@ -207,7 +209,7 @@ void chase(AGENT *monster, Coord *chasee_pos)
 
   chaser_pos = &monster->pos;
   //If the thing is confused, let it move randomly. Phantoms are slightly confused all of the time, and bats are quite confused all the time
-  if ((monster->is_flag_set(ISHUH) && rnd(5)!=0) || (monster->type=='P' && rnd(5)==0) || (monster->type=='B' && rnd(2)==0))
+  if (monster->is_monster_confused_this_turn())
   {
     //get a valid random move
     rndmove(monster, &ch_ret);
@@ -285,7 +287,7 @@ Coord *find_dest(AGENT *monster)
   int prob;
   struct Room *room;
 
-  if ((prob = get_monster_carry_prob(monster->type)) <= 0 || monster->room == player.room || can_see_monst(monster)) 
+  if ((prob = monster->get_monster_carry_prob()) <= 0 || monster->room == player.room || can_see_monst(monster))
     return &player.pos;
   room = monster->room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))
