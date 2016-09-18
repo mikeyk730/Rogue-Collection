@@ -185,22 +185,28 @@ void fall(ITEM *obj, bool pr)
   discard_item(obj);
 }
 
+void Item::initialize_weapon(byte type)
+{
+    static int group = 2;
+    struct init_weps *iwp;
+
+    iwp = &init_dam[type];
+    this->damage = iwp->iw_dam;
+    this->throw_damage = iwp->iw_hrl;
+    this->launcher = iwp->iw_launch;
+    this->flags = iwp->iw_flags;
+    if (this->does_group()) {
+        this->count = rnd(8) + 8;
+        this->group = group++;
+    }
+    else 
+        this->count = 1;
+}
+
 //init_weapon: Set up the initial goodies for a weapon
 void init_weapon(ITEM *weapon, byte type)
 {
-  static int group = 2;
-  struct init_weps *iwp;
-
-  iwp = &init_dam[type];
-  weapon->damage = iwp->iw_dam;
-  weapon->throw_damage = iwp->iw_hrl;
-  weapon->launcher = iwp->iw_launch;
-  weapon->flags = iwp->iw_flags;
-  if (weapon->does_group()) {
-      weapon->count = rnd(8)+8;
-      weapon->group = group++;
-  }
-  else weapon->count = 1;
+    weapon->initialize_weapon(type);
 }
 
 //hit_monster: Does the missile hit the monster?
@@ -288,19 +294,55 @@ const char* get_inv_name_weapon(ITEM* weapon)
   else
     sprintf(pb, "%s", get_weapon_name(which));
   if (weapon->count>1) strcat(pb, "s");
-  if (weapon->enemy && (weapon->is_revealed() || is_wizard()))
+  if (weapon->is_vorpalized() && (weapon->is_revealed() || is_wizard()))
   {
     strcat(pb, " of ");
-    strcat(pb, get_monster_name(weapon->enemy));
+    strcat(pb, weapon->get_vorpalized_name());
     strcat(pb, " slaying");
   }
 
   return prbuf;
 }
 
-bool Item::is_vorpalized_against(AGENT* monster)
+bool Item::is_vorpalized() const
+{
+    return enemy != 0;
+}
+
+bool Item::is_vorpalized_against(AGENT* monster) const
 {
     if (!monster)
         return false;
     return enemy == monster->type;
+}
+
+const char* Item::get_vorpalized_name() const
+{
+    return get_monster_name(enemy);
+}
+
+void Item::vorpalize()
+{
+    //Extra Vorpal Enchant Weapon
+    //    Give weapon +1,+1
+    //    Is extremely vorpal against one certain type of monster
+    //    Against this type of enemy the weapon gets:
+    //        +4,+4
+    //        The ability to zap one such monster into oblivion
+
+    //You aren't allowed to doubly vorpalize a weapon.
+    if (is_vorpalized())
+    {
+        msg("your %s vanishes in a puff of smoke", get_weapon_name(which));
+        detach_item(&player.pack, this);
+        discard_item(this); //careful not to do anything with this afterwards
+        set_current_weapon(0);
+        return;
+    }
+
+    enemy = pick_vorpal_monster();
+    hit_plus++;
+    damage_plus++;
+    charges = 1;
+    msg(flash, get_weapon_name(which), short_msgs() ? "" : intense);
 }

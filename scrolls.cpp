@@ -351,35 +351,13 @@ void read_blank_paper()
 
 void read_vorpalize_weapon()
 {
-    //Extra Vorpal Enchant Weapon
-    //    Give weapon +1,+1
-    //    Is extremely vorpal against one certain type of monster
-    //    Against this type of enemy the weapon gets:
-    //        +4,+4
-    //        The ability to zap one such monster into oblivion
-
-    //If he doesn't have a weapon I get to chortle again!
+    //If he isn't wielding a weapon I get to chortle again!
     Item* weapon = get_current_weapon();
-    if (weapon == NULL || weapon->type != WEAPON){
+    if (!weapon || weapon->type != WEAPON){
         msg(laugh, short_msgs() ? "" : in_dist);
+        return;
     }
-    //You aren't allowed to doubly vorpalize a weapon.
-    else if (weapon->enemy != 0)
-    {
-        msg("your %s vanishes in a puff of smoke", get_weapon_name(weapon->which));
-        detach_item(&player.pack, weapon);
-        discard_item(weapon);
-        set_current_weapon(NULL);
-    }
-    else
-    {
-        weapon->enemy = pick_vorpal_monster();
-        weapon->hit_plus++;
-        weapon->damage_plus++;
-        weapon->charges = 1;
-        msg(flash, get_weapon_name(weapon->which), short_msgs() ? "" : intense);
-
-    }
+    weapon->vorpalize();
 }
 
 void(*scroll_functions[MAXSCROLLS])() =

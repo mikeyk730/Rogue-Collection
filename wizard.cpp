@@ -66,7 +66,7 @@ void whatis()
     break;
   }
   //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
-  if (obj->enemy) obj->set_revealed();
+  if (obj->is_vorpalized()) obj->set_revealed();
   msg(inv_name(obj, false));
 }
 

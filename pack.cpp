@@ -214,7 +214,7 @@ int inventory(ITEM *list, int type, char *lstr)
     if (type && type!=list->type && 
         !(type==CALLABLE && (list->type==SCROLL || list->type==POTION || list->type==RING || list->type==STICK)) &&
         !(type==WEAPON && list->type==POTION) &&
-        !(type==STICK && list->enemy && list->charges)) 
+        !(type==STICK && list->is_vorpalized() && list->charges)) //todo: does this work?
         continue;
     n_objs++;
     sprintf(inv_temp, "%c) %%s", ch);

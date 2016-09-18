@@ -47,4 +47,4 @@ void remove_monster(AGENT *monster, bool waskill);
 bool is_magic(ITEM *obj);
 
 //killed: Called to put a monster to death
-void killed(AGENT *monster, bool pr);
+void killed(AGENT *monster, bool print);

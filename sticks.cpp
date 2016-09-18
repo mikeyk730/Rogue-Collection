@@ -242,13 +242,13 @@ void zap_bolt(int which, const char* name)
 
 void zap_vorpalized_weapon(ITEM* weapon, AGENT* monster)
 {
-  if (monster->type == weapon->enemy)
-  {
-    msg("the %s vanishes in a puff of smoke", monster->get_monster_name());
-    killed(monster, false);
-  }
-  else 
-    msg("you hear a maniacal chuckle in the distance.");
+    if (weapon->is_vorpalized_against(monster))
+    {
+        msg("the %s vanishes in a puff of smoke", monster->get_monster_name());
+        killed(monster, false);
+    }
+    else
+        msg("you hear a maniacal chuckle in the distance.");
 }
 
 void zap_polymorph(AGENT* monster, int y, int x)
@@ -429,75 +429,75 @@ void fix_stick(ITEM *cur)
 //do_zap: Perform a zap with a wand
 void do_zap()
 {
-  ITEM *obj;
-  int which_one;
+    ITEM *obj;
+    int which_one;
 
-  if ((obj = get_item("zap with", STICK)) == NULL) 
-    return;
-  which_one = obj->which;
-  
-  if (obj->type != STICK)
-  {
-    if (obj->enemy && obj->charges) 
-      which_one = MAXSTICKS;
-    else {
-      msg("you can't zap with that!"); 
-      counts_as_turn = false; 
-      return;
-    }
-  }
-  
-  if (obj->charges==0) {
-    msg("nothing happens"); 
-    return;
-  }
-
-  switch (which_one)
-  {
-  case WS_LIGHT: 
-    zap_light();
-    break;
-
-  case WS_DRAIN: 
-    if (!zap_drain_life()) 
+    if ((obj = get_item("zap with", STICK)) == NULL)
         return;
-    break;
+    which_one = obj->which;
 
-  case WS_POLYMORPH: case WS_TELAWAY: case WS_TELTO: case WS_CANCEL: case MAXSTICKS: //Special case for vorpal weapon
-    zap_generic(obj, which_one);
-    break;
- 
-  case WS_MISSILE:
-    zap_magic_missile();
-    break;
+    if (obj->type != STICK)
+    {
+        if (obj->is_vorpalized() && obj->charges)
+            which_one = MAXSTICKS;
+        else {
+            msg("you can't zap with that!");
+            counts_as_turn = false;
+            return;
+        }
+    }
 
-  case WS_HIT:
-    zap_striking(obj);
-    break;
+    if (obj->charges == 0) {
+        msg("nothing happens");
+        return;
+    }
 
-  case WS_HASTE_M: case WS_SLOW_M:
-    zap_speed_monster(which_one);
-    break;
+    switch (which_one)
+    {
+    case WS_LIGHT:
+        zap_light();
+        break;
 
-  case WS_ELECT: 
-    zap_bolt(which_one, "bolt");
-    break;
+    case WS_DRAIN:
+        if (!zap_drain_life())
+            return;
+        break;
 
-  case WS_FIRE: 
-    zap_bolt(which_one, "flame");
-    break;
+    case WS_POLYMORPH: case WS_TELAWAY: case WS_TELTO: case WS_CANCEL: case MAXSTICKS: //Special case for vorpal weapon
+        zap_generic(obj, which_one);
+        break;
 
-  case WS_COLD:
-    zap_bolt(which_one, "ice");
-    break;
+    case WS_MISSILE:
+        zap_magic_missile();
+        break;
 
-  default: 
-    debug("what a bizarre schtick!"); 
-    break;
-  }
+    case WS_HIT:
+        zap_striking(obj);
+        break;
 
-  if (--obj->charges < 0) 
-    obj->charges = 0;
+    case WS_HASTE_M: case WS_SLOW_M:
+        zap_speed_monster(which_one);
+        break;
+
+    case WS_ELECT:
+        zap_bolt(which_one, "bolt");
+        break;
+
+    case WS_FIRE:
+        zap_bolt(which_one, "flame");
+        break;
+
+    case WS_COLD:
+        zap_bolt(which_one, "ice");
+        break;
+
+    default:
+        debug("what a bizarre schtick!");
+        break;
+    }
+
+    if (--obj->charges < 0)
+        obj->charges = 0;
 }
 
 //drain: Do drain hit points from player schtick

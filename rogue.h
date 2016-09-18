@@ -321,6 +321,7 @@ struct Item
   short flags;                   //Information about objects
   char enemy;                    //If it is enchanted, who it hates
   int group;                     //Group number for this object
+  void initialize(int type, int which);
 
   bool is_flag_set(short flag) const{
       return (flags & flag) != 0;
@@ -376,7 +377,15 @@ struct Item
       flags |= DID_FLASH;
   }
 
-  bool is_vorpalized_against(Agent* monster);
+  //gold-specific functions
+  void initialize_gold(int value, Coord location);
+
+  //weapon-specific functions
+  void initialize_weapon(byte type);
+  void vorpalize();
+  bool is_vorpalized() const;
+  bool is_vorpalized_against(Agent* monster) const;
+  const char* get_vorpalized_name() const;
 };
 typedef struct Item ITEM;
 

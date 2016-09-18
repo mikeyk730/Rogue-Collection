@@ -3,23 +3,28 @@
 #include "rogue.h"
 #include "thing.h"
 
+void Item::initialize(int type, int which)
+{
+    this->type = type;
+    this->which = which;
+    this->hit_plus = 0;
+    this->damage_plus = 0;
+    this->damage = "0d0";
+    this->throw_damage = "0d0";
+    this->armor_class = 11;
+    this->count = 1;
+    this->group = 0;
+    this->flags = 0;
+    this->enemy = 0;
+}
+
 ITEM *create_item(int type, int which)
 {
   ITEM* item = (ITEM*)malloc(sizeof(ITEM));
   memset(item, 0, sizeof(ITEM));
 
-  item->type = type;
-  item->which = which;
-  item->hit_plus = 0;
-  item->damage_plus = 0;
-  item->damage = "0d0";
-  item->throw_damage = "0d0";
-  item->armor_class = 11;
-  item->count = 1;
-  item->group = 0;
-  item->flags = 0;
-  item->enemy = 0;
-
+  item->initialize(type, which);
+    
   return item;
 }
 
