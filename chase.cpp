@@ -34,14 +34,14 @@ void runners()
     next = next(monster); //monster may be invalidated during iteration, save next here in case continue is hit
     if (!monster->is_held() && monster->is_running())
     {
-      dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
+      dist = distance(player.pos, monster->pos);
       if (!(monster->is_slow() || (monster->can_divide() && dist>3)) || monster->turn)
         if(!do_chase(monster)) 
             continue;
       if (monster->is_fast()) 
         if(!do_chase(monster)) 
             continue;
-      dist = DISTANCE(player.pos.y, player.pos.x, monster->pos.y, monster->pos.x);
+      dist = distance(player.pos, monster->pos);
       if (monster->is_flying() && dist>3)
         if(!do_chase(monster)) 
             continue;
@@ -82,7 +82,7 @@ over:
     //loop through doors
     for (i = 0; i<monster_room->num_exits; i++)
     {
-      dist = DISTANCE(monster->dest->y, monster->dest->x, monster_room->exits[i].y, monster_room->exits[i].x);
+      dist = distance(*(monster->dest), monster_room->exits[i]);
       if (dist<mindist) {tempdest = monster_room->exits[i]; mindist = dist;}
     }
     if (door)
@@ -98,7 +98,7 @@ over:
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
     if ((monster->shoots_fire() || monster->shoots_ice()) && 
         (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) &&
-        ((dist = DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->powers_cancelled() && rnd(DRAGONSHOT)==0)
+        ((dist = distance(monster->pos, player.pos))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->powers_cancelled() && rnd(DRAGONSHOT)==0)
     {
       running = false;
       delta.y = sign(player.pos.y-monster->pos.y);
@@ -179,7 +179,7 @@ bool can_see_monst(AGENT *monster)
   if (monster->is_invisible() && !player.sees_invisible())
     return false;
   
-  if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x) >= LAMP_DIST &&
+  if (distance(monster->pos, player.pos) >= LAMP_DIST &&
     (monster->room != player.room || monster->room->is_dark() || monster->room->is_maze()))
     return false;
   
@@ -218,9 +218,10 @@ void chase(AGENT *monster, Coord *chasee_pos)
   {
     //get a valid random move
     rndmove(monster, &ch_ret);
-    dist = DISTANCE(ch_ret.y, ch_ret.x, chasee_pos->y, chasee_pos->x);
+    dist = distance(ch_ret, *chasee_pos);
     //Small chance that it will become un-confused
-    if (rnd(30)==17) monster->set_confused(false);
+    if (rnd(30)==17) 
+        monster->set_confused(false);
   }
   //Otherwise, find the empty spot next to the chaser that is closest to the chasee.
   else
@@ -228,7 +229,7 @@ void chase(AGENT *monster, Coord *chasee_pos)
     int ey, ex;
 
     //This will eventually hold where we move to get closer. If we can't find an empty spot, we stay where we are.
-    dist = DISTANCE(chaser_pos->y, chaser_pos->x, chasee_pos->y, chasee_pos->x);
+    dist = distance(*chaser_pos, *chasee_pos);
     ch_ret = *chaser_pos;
     ey = chaser_pos->y+1;
     ex = chaser_pos->x+1;
@@ -254,7 +255,7 @@ void chase(AGENT *monster, Coord *chasee_pos)
             if (is_scare_monster_scroll(obj)) continue;
           }
           //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
-          thisdist = DISTANCE(y, x, chasee_pos->y, chasee_pos->x);
+          thisdist = distance({ x, y }, *chasee_pos);
           if (thisdist<dist) {plcnt = 1; ch_ret = tryp; dist = thisdist;}
           else if (thisdist==dist && rnd(++plcnt)==0) {ch_ret = tryp; dist = thisdist;}
         }
@@ -275,14 +276,15 @@ int can_see(int y, int x)
 {
   struct Room *room;
   Coord tp;
-
-  if (player.is_blind()) return false;
-  if (DISTANCE(y, x, player.pos.y, player.pos.x)<LAMP_DIST) return true;
-  //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
   tp.y = y;
   tp.x = x;
+
+  if (player.is_blind()) return false;
+  if (distance(tp, player.pos) < LAMP_DIST)
+      return true;
+  //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
   room = roomin(&tp);
-  return (room==player.room && !(room->is_dark()));
+  return (room == player.room && !room->is_dark());
 }
 
 //find_dest: find the proper destination for the monster

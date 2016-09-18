@@ -420,13 +420,12 @@ void help(char **helpscr)
   wrestor();
 }
 
-int DISTANCE(int y1, int x1, int y2, int x2)
+int distance(Coord a, Coord b)
 {
-  int dx, dy;
-
-  dx = (x1-x2);
-  dy = (y1-y2);
-  return dx*dx+dy*dy;
+    int dx, dy;
+    dx = (a.x - b.x);
+    dy = (a.y - b.y);
+    return dx*dx + dy*dy;
 }
 
 int equal(Coord a, Coord b)

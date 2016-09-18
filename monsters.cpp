@@ -426,7 +426,7 @@ AGENT *wake_monster(int y, int x)
   if (monster->causes_confusion() && !player.is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
   {
     room = player.room;
-    dst = DISTANCE(y, x, player.pos.y, player.pos.x);
+    dst = distance({ x, y }, player.pos);
     if ((room!=NULL && !(room->is_dark())) || dst<LAMP_DIST)
     {
       monster->set_found(true);

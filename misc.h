@@ -48,7 +48,7 @@ int goodch(ITEM *obj);
 //help: prints out help screens
 void help(char **helpscr);
 
-int DISTANCE(int y1, int x1, int y2, int x2);
+int distance(Coord a, Coord b);
 
 int equal(Coord a, Coord b);
 

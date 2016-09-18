@@ -202,11 +202,11 @@ const short IS_DIRTY   = (short)0x8000; //dirty bit
 #define MAXSTICKS     14
 
 //Coordinate data type
-typedef struct
+struct Coord
 {
-  int x;
-  int y;
-} Coord;
+    int x;
+    int y;
+};
 
 //Stuff about magic items
 struct MagicItem
