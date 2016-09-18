@@ -327,7 +327,7 @@ void show_win(char *message)
 }
 
 //This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
-int getinfo(char *str, int size)
+int getinfo_impl(char *str, int size)
 {
   char *retstr, ch;
   int readcnt = 0;
@@ -342,6 +342,7 @@ int getinfo(char *str, int size)
   case ESCAPE:
     while (str!=retstr) {backspace(); readcnt--; str--;}
     ret = *str = ESCAPE;
+    str[1] = 0;
     cursor(wason);
     break;
   case '\b':

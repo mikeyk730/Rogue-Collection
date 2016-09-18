@@ -44,6 +44,7 @@ void show_win(char *message);
 
 //This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
 int getinfo(char *str, int size);
+int getinfo_impl(char *str, int size);
 
 void backspace();
 

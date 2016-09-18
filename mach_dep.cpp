@@ -1,6 +1,7 @@
 //Various installation dependent routines
 //mach_dep.c  1.4 (A.I. Design) 12/1/84
 
+#include <fstream>
 #include <Windows.h>
 #include <stdio.h>
 #include <conio.h>
@@ -33,6 +34,24 @@
 #define C_F9      0x43
 #define C_F10     0x44
 #define ALT_F9    0x70
+
+namespace
+{
+    struct InputDriver
+    {
+        virtual char GetNextChar() = 0;
+        virtual std::string GetNextString(int size) = 0;
+    };
+
+    struct KeyboardInput : public InputDriver
+    {
+        virtual char GetNextChar();
+        virtual std::string GetNextString(int size);
+    };
+
+    static InputDriver* s_input_driver(new KeyboardInput);
+//    std::ofstream s_file("game.log", std::ios::binary | std::ios::out);
+}
 
 //Table for IBM extended key translation
 static struct xlate
@@ -170,23 +189,32 @@ int getkey()
   return 0;
 }
 
+byte readchar_impl(){
+    //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
+    do SIG2(); while (!_kbhit()); //Rogue spends a lot of time here
+    //Now read a character and translate it if it appears in the translation table
+    return getkey();
+}
+
+
 //readchar: Return the next input character, from the macro or from the keyboard.
 int readchar()
 {
   byte ch;
 
   if (*typeahead) {SIG2(); return(*typeahead++);}
-  //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
-  do SIG2(); while (no_char()); //Rogue spends a lot of time here
-  //Now read a character and translate it if it appears in the translation table
-  ch = getkey();
+  
+  ch = s_input_driver->GetNextChar();
+
   if (ch==ESCAPE) count = 0;
   return ch;
 }
 
-int no_char()
-{ 
-  return !_kbhit(); 
+int getinfo(char *str, int size)
+{
+    std::string s = s_input_driver->GetNextString(size);
+    strcpy_s(str, size, s.c_str());
+    return s[0]; //todo
 }
 
 bool is_caps_lock_on()
@@ -219,3 +247,14 @@ void tick_pause()
 {
   Sleep(50);
 }
+
+char KeyboardInput::GetNextChar() { 
+    return readchar_impl(); 
+}
+
+std::string KeyboardInput::GetNextString(int size) { 
+    char buf[512];
+    getinfo_impl(buf, size-1);
+    return buf; 
+}
+
