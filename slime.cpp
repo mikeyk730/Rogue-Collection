@@ -17,9 +17,9 @@ static Coord slimy;
 
 //Slime_split: Called when it has been decided that A slime should divide itself
 
-void slime_split(AGENT *monster)
+void slime_split(Agent *monster)
 {
-  AGENT *nslime;
+  Agent *nslime;
 
   if (new_slime(monster)==0 || (nslime = create_agent())==NULL) return;
   msg("The %s divides.  Ick!", monster->get_monster_name());
@@ -32,10 +32,10 @@ void slime_split(AGENT *monster)
   start_run(nslime);
 }
 
-int new_slime(AGENT *slime)
+int new_slime(Agent *slime)
 {
   int y, x, ty, tx, ret;
-  AGENT *ntp;
+  Agent *ntp;
   Coord sp;
 
   ret = 0;

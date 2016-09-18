@@ -405,8 +405,8 @@ struct Agent
   Coord *dest;                  //Where it is running to
   short flags;                  //State word
   int exflags;                  //More state;
-  struct Stats stats;           //Physical description
-  struct Room *room;            //Current room for thing
+  Stats stats;           //Physical description
+  Room *room;            //Current room for thing
   std::list<Item*> pack;        //What the thing is carrying
 
 private:
@@ -507,20 +507,13 @@ public:
   bool is_dirty(){
       return is_flag_set(IS_DIRTY);
   }
-
-  /* todo:
-        v,W attacks
-        L,F death
-        */
 };
-
-typedef struct Agent AGENT;
 
 //External variables
 
 extern std::list<Item*> level_items;
 extern std::list<Agent*> level_monsters;
-extern AGENT player;
+extern Agent player;
 extern Coord delta, oldpos;
 extern struct Room *oldrp, passages[];
 extern struct Stats max_stats;

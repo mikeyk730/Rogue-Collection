@@ -221,7 +221,7 @@ void zap_light()
 
 void zap_striking(ITEM* obj)
 {
-  AGENT* monster;
+  Agent* monster;
   Coord coord = delta;
 
   coord.y += player.pos.y;
@@ -240,7 +240,7 @@ void zap_bolt(int which, const char* name)
   ws_know[which] = true;
 }
 
-void zap_vorpalized_weapon(ITEM* weapon, AGENT* monster)
+void zap_vorpalized_weapon(ITEM* weapon, Agent* monster)
 {
     if (weapon->is_vorpalized_against(monster))
     {
@@ -251,7 +251,7 @@ void zap_vorpalized_weapon(ITEM* weapon, AGENT* monster)
         msg("you hear a maniacal chuckle in the distance.");
 }
 
-void zap_polymorph(AGENT* monster, int y, int x)
+void zap_polymorph(Agent* monster, int y, int x)
 {
   byte ch, old_type;
   Coord coord = delta;
@@ -274,7 +274,7 @@ void zap_polymorph(AGENT* monster, int y, int x)
   ws_know[WS_POLYMORPH] |= (monster->type != old_type);
 }
 
-void zap_cancellation(AGENT* monster)
+void zap_cancellation(Agent* monster)
 {
   monster->set_cancelled(true);
   monster->set_invisible(false);
@@ -282,7 +282,7 @@ void zap_cancellation(AGENT* monster)
   monster->reveal_disguise();
 }
 
-void zap_teleport(AGENT* monster, int y, int x, int which)
+void zap_teleport(Agent* monster, int y, int x, int which)
 {
   Coord new_pos;
 
@@ -307,7 +307,7 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
 void zap_generic(ITEM* wand, int which)
 {
   int x, y;
-  AGENT* monster;
+  Agent* monster;
 
   y = player.pos.y;
   x = player.pos.x;
@@ -342,7 +342,7 @@ void zap_generic(ITEM* wand, int which)
 
 void zap_magic_missile()
 {
-  AGENT* monster;
+  Agent* monster;
   ITEM bolt;
 
   ws_know[WS_MISSILE] = true;
@@ -363,7 +363,7 @@ void zap_magic_missile()
 void zap_speed_monster(int which)
 {
   int x, y;
-  AGENT* monster;
+  Agent* monster;
 
   y = player.pos.y;
   x = player.pos.x;
@@ -502,12 +502,12 @@ void do_zap()
 //drain: Do drain hit points from player schtick
 void drain()
 {
-  AGENT *monster;
+  Agent *monster;
   int cnt;
   struct Room *room;
-  AGENT **dp;
+  Agent **dp;
   bool inpass;
-  AGENT *drainee[40];
+  Agent *drainee[40];
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
@@ -541,7 +541,7 @@ void drain()
 bool fire_bolt(Coord *start, Coord *dir, const char *name)
 {
   byte dirch, ch;
-  AGENT *monster;
+  Agent *monster;
   bool hit_hero, used, changed;
   int i, j;
   Coord pos;

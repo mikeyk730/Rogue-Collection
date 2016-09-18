@@ -226,7 +226,7 @@ void quaff_magic_detection()
   //Also give hints as to whether he would want to use the object.
   if (!level_items.empty())
   {
-    AGENT *monster;
+    Agent *monster;
     bool show;
 
     show = false;
@@ -356,7 +356,7 @@ void quaff()
 void invis_on()
 {
     player.set_sees_invisible(true);
-    std::for_each(level_monsters.begin(), level_monsters.end(), [](AGENT *monster){
+    std::for_each(level_monsters.begin(), level_monsters.end(), [](Agent *monster){
         if (monster->is_invisible() && can_see_monster(monster))
         {
             mvaddch(monster->pos.y, monster->pos.x, monster->disguise);
@@ -399,7 +399,7 @@ bool turn_see(bool turn_off)
 }
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void affect_monster(ITEM *potion, AGENT *monster)
+void affect_monster(ITEM *potion, Agent *monster)
 {
   msg("the flask shatters.");
 

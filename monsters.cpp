@@ -315,7 +315,7 @@ char randmonster(bool wander, int level)
   return mons[d];
 }
 
-void set_xeroc_disguise(AGENT* X)
+void set_xeroc_disguise(Agent* X)
 {
   switch (rnd(get_level() >= AMULETLEVEL ? 9 : 8))
   {
@@ -332,7 +332,7 @@ void set_xeroc_disguise(AGENT* X)
 }
 
 //new_monster: Pick a new monster and add it to the list
-void new_monster(AGENT *monster, byte type, Coord *position, int level)
+void new_monster(Agent *monster, byte type, Coord *position, int level)
 {
   int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
   const struct Monster* defaults;
@@ -375,7 +375,7 @@ void f_restor()
 }
 
 //expadd: Experience to add for this monster's level/hit points
-int exp_add(AGENT *monster)
+int exp_add(Agent *monster)
 {
   int divisor = (monster->stats.level == 1) ? 8 : 6;
   int value = monster->stats.max_hp / divisor;
@@ -392,7 +392,7 @@ int exp_add(AGENT *monster)
 void wanderer()
 {
   struct Room *room;
-  AGENT *monster;
+  Agent *monster;
   Coord cp;
 
   //can we allocate a new monster
@@ -410,9 +410,9 @@ void wanderer()
 }
 
 //wake_monster: What to do when the hero steps next to a monster
-AGENT *wake_monster(int y, int x)
+Agent *wake_monster(int y, int x)
 {
-  AGENT *monster;
+  Agent *monster;
   struct Room *room;
   int dst;
 
@@ -452,7 +452,7 @@ AGENT *wake_monster(int y, int x)
 }
 
 //give_pack: Give a pack to a monster if it deserves one
-void give_pack(AGENT *monster)
+void give_pack(Agent *monster)
 {
     if (rnd(100) < monster->get_monster_carry_prob())
         attach_item(monster->pack, new_item());
@@ -476,9 +476,9 @@ char pick_vorpal_monster()
 }
 
 //monster_at(x,y): returns pointer to monster at coordinate. if no monster there return NULL
-AGENT *monster_at(int y, int x)
+Agent *monster_at(int y, int x)
 {
-  AGENT *monster;
+  Agent *monster;
   for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
       monster = *it;
       if (monster->pos.x == x && monster->pos.y == y)

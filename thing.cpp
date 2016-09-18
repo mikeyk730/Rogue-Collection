@@ -33,15 +33,15 @@ void discard_item(ITEM *item)
     delete item;
 }
 
-AGENT *create_agent()
+Agent *create_agent()
 {
-    AGENT* agent = new Agent;
-    memset(agent, 0, sizeof(AGENT)-sizeof(std::list<Item*>)); //todo:very hacky
+    Agent* agent = new Agent;
+    memset(agent, 0, sizeof(Agent)-sizeof(std::list<Item*>)); //todo:very hacky
 
     return agent;
 }
 
-void discard_agent(AGENT *agent)
+void discard_agent(Agent *agent)
 {
     delete agent;
 }

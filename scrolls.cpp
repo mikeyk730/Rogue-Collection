@@ -169,7 +169,7 @@ void read_magic_mapping()
   //Scroll of magic mapping.
   int x, y;
   byte ch;
-  AGENT* monster;
+  Agent* monster;
   
   s_know[S_MAP] = true;
   msg("oh, now this scroll has a map on it");
@@ -207,7 +207,7 @@ void read_hold_monster()
 {
   //Hold monster scroll.  Stop all monsters within two spaces from chasing after the hero.
   int x, y;
-  AGENT* monster;
+  Agent* monster;
 
   for (x = player.pos.x-3; x<=player.pos.x+3; x++) {
     if (x>=0 && x<COLS) {
@@ -311,7 +311,7 @@ void read_enchant_weapon()
 
 void read_create_monster()
 {
-  AGENT* monster;
+  Agent* monster;
   Coord position;
 
   if (plop_monster(player.pos.y, player.pos.x, &position) && (monster = create_agent()) != NULL)

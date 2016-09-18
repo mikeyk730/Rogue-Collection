@@ -26,7 +26,7 @@
 void new_level(int do_implode)
 {
   int i, ntraps;
-  AGENT *monster;
+  Agent *monster;
   Coord pos;
 
   player.set_is_held(false); //unhold when you go down just in case
@@ -134,7 +134,7 @@ void treas_room()
 {
   int nm;
   ITEM *item;
-  AGENT *monster;
+  Agent *monster;
   struct Room *room;
   int spots, num_monst;
   Coord pos;

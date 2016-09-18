@@ -40,7 +40,7 @@ void do_rooms()
 {
   int i;
   struct Room *room;
-  AGENT *monster;
+  Agent *monster;
   int left_out;
   Coord top;
   Coord bsze;
@@ -192,7 +192,7 @@ void enter_room(Coord *cp)
 {
   struct Room *room;
   int y, x;
-  AGENT *monster;
+  Agent *monster;
 
   room = player.room = get_room_from_position(cp);
   if (bailout || (room->is_gone() && (room->is_maze())==0))

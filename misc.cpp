@@ -49,7 +49,7 @@ void look(bool wakeup)
 {
   int x, y;
   byte ch, pch;
-  AGENT *monster;
+  Agent *monster;
   struct Room *room;
   int ey, ex;
   int passcount = 0;
@@ -233,7 +233,7 @@ int add_haste(bool potion)
 //aggravate: Aggravate all the monsters on this level
 void aggravate()
 {
-    std::for_each(level_monsters.begin(), level_monsters.end(), [](AGENT *monster){
+    std::for_each(level_monsters.begin(), level_monsters.end(), [](Agent *monster){
         start_run(monster);
     });
 }
@@ -443,7 +443,7 @@ int offmap(int y, int x)
 
 byte get_tile_or_monster(int y, int x)
 {
-  AGENT* monster = monster_at(y, x);
+  Agent* monster = monster_at(y, x);
   return (monster ? monster->disguise : get_tile(y, x));
 }
 

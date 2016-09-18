@@ -206,7 +206,7 @@ void Item::initialize_weapon(byte type)
 int hit_monster(int y, int x, ITEM *obj)
 {
   static Coord mp;
-  AGENT *monster = monster_at(y, x);
+  Agent *monster = monster_at(y, x);
   if (!monster)  return false;
 
   mp.y = y;
@@ -312,7 +312,7 @@ bool Item::is_vorpalized() const
     return enemy != 0;
 }
 
-bool Item::is_vorpalized_against(AGENT* monster) const
+bool Item::is_vorpalized_against(Agent* monster) const
 {
     if (!monster)
         return false;

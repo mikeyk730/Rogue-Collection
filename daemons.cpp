@@ -72,7 +72,7 @@ void unconfuse()
 //unsee: Turn off the ability to see invisible
 void unsee()
 {
-  AGENT *th;
+  Agent *th;
 
   for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
       th = *it;

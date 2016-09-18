@@ -13,4 +13,4 @@ int be_trapped(Coord *tc);
 void descend(char *mesg);
 
 //rndmove: Move in a random direction if the monster/person is confused
-void rndmove(AGENT *who, Coord *newmv);
+void rndmove(Agent *who, Coord *newmv);

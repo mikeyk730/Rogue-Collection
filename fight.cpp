@@ -41,7 +41,7 @@ const char* you = "you";
 long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 
   20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
 
-void do_hit(ITEM* weapon, int thrown, AGENT* monster, const char* name)
+void do_hit(ITEM* weapon, int thrown, Agent* monster, const char* name)
 {
   bool did_huh = false;
 
@@ -77,7 +77,7 @@ void do_hit(ITEM* weapon, int thrown, AGENT* monster, const char* name)
     msg("the %s appears confused", name);
 }
 
-void do_miss(ITEM* weapon, int thrown, AGENT* monster, const char* name)
+void do_miss(ITEM* weapon, int thrown, Agent* monster, const char* name)
 {
   if (thrown)
     display_throw_msg(weapon, name, "misses", "missed");
@@ -92,7 +92,7 @@ int fight(Coord *location, ITEM *weapon, bool thrown)
 {
   const char *name;
   //Find the monster we want to fight
-  AGENT *monster = monster_at(location->y, location->x);
+  Agent *monster = monster_at(location->y, location->x);
   if (!monster) 
     return false;
 
@@ -157,7 +157,7 @@ bool rattlesnake_attack()
     return false;
 }
 
-void flytrap_attack(AGENT* mp)
+void flytrap_attack(Agent* mp)
 {
   //Flytrap stops the poor guy from moving
   player.set_is_held(true);
@@ -167,7 +167,7 @@ void flytrap_attack(AGENT* mp)
 }
 
 // return true if attack succeeded
-bool leprechaun_attack(AGENT* mp)
+bool leprechaun_attack(Agent* mp)
 {
   //Leprechaun steals some gold
   long lastpurse;
@@ -182,7 +182,7 @@ bool leprechaun_attack(AGENT* mp)
   return true;
 }
 
-bool nymph_attack(AGENT* mp)
+bool nymph_attack(Agent* mp)
 {
   //Nymphs steal a magic item, look through the pack and pick out one we like.
   ITEM *steal;
@@ -215,7 +215,7 @@ bool nymph_attack(AGENT* mp)
   return false;
 }
 
-bool vampire_wraith_attack(AGENT* monster)
+bool vampire_wraith_attack(Agent* monster)
 {
     //Wraiths might drain energy levels, and Vampires can steal max_hp
     if (rnd(100) < (monster->drains_exp() ? 15 : 30)) // vampires are twice as likely to connect
@@ -248,7 +248,7 @@ bool vampire_wraith_attack(AGENT* monster)
 }
 
 //attack: The monster attacks the player
-bool attack(AGENT *monster)
+bool attack(Agent *monster)
 {
   const char *name;
   int monster_died = false;
@@ -351,7 +351,7 @@ void check_level()
 }
 
 //roll_em: Roll several attacks
-bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
+bool roll_em(Agent *thatt, Agent *thdef, ITEM *weapon, bool hurl)
 {
   struct Stats *att, *def;
   const char *cp;
@@ -480,7 +480,7 @@ void miss(const char *er, const char *ee)
 }
 
 //save_throw: See if a creature save against something
-int save_throw(int which, AGENT *monster)
+int save_throw(int which, Agent *monster)
 {
   int need = 14 + which - monster->stats.level/2;
   return (roll(1, 20) >= need);
@@ -545,7 +545,7 @@ void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
 }
 
 //remove: Remove a monster from the screen
-void remove_monster(AGENT *monster, bool waskill)
+void remove_monster(Agent *monster, bool waskill)
 {
     Coord* monster_pos = &monster->pos;
     for (auto it = monster->pack.begin(); it != monster->pack.end();){
@@ -582,7 +582,7 @@ bool is_magic(ITEM *obj)
 }
 
 //killed: Called to put a monster to death
-void killed(AGENT *monster, bool print)
+void killed(Agent *monster, bool print)
 {
   player.stats.exp += monster->stats.exp;
 

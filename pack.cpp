@@ -81,7 +81,7 @@ int get_pack_size()
 //add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
 void add_pack(ITEM *obj, bool silent)
 {
-  AGENT *monster;
+  Agent *monster;
   bool from_floor;
   byte floor;
 

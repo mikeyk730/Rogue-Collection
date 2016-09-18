@@ -160,7 +160,7 @@ void door_open(struct Room *room)
 {
   int j, k;
   byte ch;
-  AGENT *item;
+  Agent *item;
 
   if (!(room->is_gone()) && !player.is_blind())
     for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
@@ -268,7 +268,7 @@ void descend(char *mesg)
 }
 
 //rndmove: Move in a random direction if the monster/person is confused
-void rndmove(AGENT *who, Coord *newmv)
+void rndmove(Agent *who, Coord *newmv)
 {
   int x, y;
   byte ch;
