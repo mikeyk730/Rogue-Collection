@@ -138,8 +138,8 @@ bool aquator_attack()
 void ice_monster_attack()
 {
   //When an Ice Monster hits you, you get unfrozen faster
-  if (no_command>1) 
-      no_command--;
+  if (sleep_timer>1) 
+      sleep_timer--;
 }
 
 bool rattlesnake_attack()

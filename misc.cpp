@@ -211,7 +211,7 @@ int add_haste(bool potion)
 {
   if (player.is_fast())
   {
-    no_command += rnd(8);
+    sleep_timer += rnd(8);
     player.flags &= ~IS_RUN;
     extinguish(nohaste);
     player.flags &= ~IS_HASTE;

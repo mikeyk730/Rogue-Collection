@@ -44,9 +44,12 @@ void command()
   {
     status();
     SIG2();
-    if (no_command)
+    if (sleep_timer)
     {
-      if (--no_command<=0) {msg("you can move again"); no_command = 0;}
+      if (--sleep_timer<=0) {
+          msg("you can move again");
+          sleep_timer = 0;
+      }
     }
     else execcom();
     do_fuses();

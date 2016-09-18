@@ -168,7 +168,7 @@ void quaff_confusion()
 void quaff_paralysis()
 {
   p_know[P_PARALYZE] = true;
-  no_command = HOLD_TIME;
+  sleep_timer = HOLD_TIME;
   player.flags &= ~IS_RUN;
   msg("you can't move");
 }

@@ -45,7 +45,7 @@ void eat()
   }
   else 
     msg("yum, that tasted good");
-  if (no_command) 
+  if (sleep_timer) 
     msg("You feel bloated and fall asleep");
 }
 

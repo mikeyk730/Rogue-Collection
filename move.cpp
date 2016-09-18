@@ -192,7 +192,7 @@ int be_trapped(Coord *tc)
     break;
 
   case T_SLEEP:
-    no_command += SLEEP_TIME;
+    sleep_timer += SLEEP_TIME;
     player.flags &= ~IS_RUN;
     msg("a %smist envelops you and you fall asleep", noterse("strange white "));
     break;

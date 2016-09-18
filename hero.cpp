@@ -63,7 +63,7 @@ void ingest()
   if (food_left<0)
     food_left = 0;
   if (food_left>(STOMACH_SIZE-20))
-    no_command += 2+rnd(5);
+    sleep_timer += 2+rnd(5);
   if ((food_left += HUNGER_TIME-200+rnd(400))>STOMACH_SIZE)
     food_left = STOMACH_SIZE;
   hungry_state = 0;
@@ -77,8 +77,9 @@ void digest()
   {
     if (food_left--<-STARVE_TIME) death('s');
     //the hero is fainting
-    if (no_command || rnd(5)!=0) return;
-    no_command += rnd(8)+4;
+    if (sleep_timer || rnd(5)!=0)
+        return;
+    sleep_timer += rnd(8)+4;
     player.flags &= ~IS_RUN;
     running = false;
     count = 0;
@@ -92,8 +93,14 @@ void digest()
     deltafood = ring_eat(LEFT)+ring_eat(RIGHT)+1;
     if (in_small_screen_mode()) deltafood *= 2;
     food_left -= deltafood;
-    if (food_left<MORE_TIME && oldfood>=MORE_TIME) {hungry_state = 2; msg("you are starting to feel weak");}
-    else if (food_left<2*MORE_TIME && oldfood>=2*MORE_TIME) {hungry_state = 1; msg("you are starting to get hungry");}
+    if (food_left<MORE_TIME && oldfood>=MORE_TIME) {
+        hungry_state = 2;
+        msg("you are starting to feel weak");
+    }
+    else if (food_left<2*MORE_TIME && oldfood>=2*MORE_TIME) {
+        hungry_state = 1;
+        msg("you are starting to get hungry");
+    }
   }
 }
 

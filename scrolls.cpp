@@ -226,7 +226,7 @@ void read_sleep()
 {
   //Scroll which makes you fall asleep
   s_know[S_SLEEP] = true;
-  no_command += rnd(SLEEP_TIME)+4;
+  sleep_timer += rnd(SLEEP_TIME)+4;
   player.flags &= ~IS_RUN;
   msg("you fall asleep");
 }

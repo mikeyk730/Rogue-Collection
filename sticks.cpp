@@ -618,8 +618,8 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
           if (is_frost)
           {
             msg("You are frozen by a blast of frost.");
-            if (no_command<20) 
-                no_command += spread(7);
+            if (sleep_timer<20) 
+                sleep_timer += spread(7);
           }
           else if (!player.stats.decrease_hp(roll(6, 6), true)) {
               if (start == &player.pos)
