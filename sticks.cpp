@@ -277,9 +277,10 @@ void zap_polymorph(AGENT* monster, int y, int x)
 
 void zap_cancellation(AGENT* monster)
 {
-  monster->flags |= IS_CANC;
-  monster->flags &= ~(IS_INVIS|CAN_HUH);
-  monster->disguise = monster->type;
+  monster->set_cancelled(true);
+  monster->set_invisible(false);
+  monster->set_can_confuse(false);
+  monster->reveal_disguise();
 }
 
 void zap_teleport(AGENT* monster, int y, int x, int which)
@@ -301,7 +302,7 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
   } 
 
   if (monster->can_hold()) 
-    player.flags &= ~IS_HELD;
+    player.set_is_held(false);
 }
 
 void zap_generic(ITEM* wand, int which)
@@ -318,7 +319,7 @@ void zap_generic(ITEM* wand, int which)
   if ((monster = monster_at(y, x))!=NULL)
   {
     if (monster->can_hold())
-        player.flags &= ~IS_HELD;
+        player.set_is_held(false);
     if (which==MAXSTICKS)
     {
       zap_vorpalized_weapon(wand, monster);
@@ -336,7 +337,7 @@ void zap_generic(ITEM* wand, int which)
       zap_teleport(monster, y, x, which);      
     }
     monster->dest = &player.pos;
-    monster->flags |= IS_RUN;
+    monster->set_running(true);
   }
 }
 
@@ -376,16 +377,16 @@ void zap_speed_monster(int which)
     if (which==WS_HASTE_M)
     {
       if (monster->is_slow())
-          monster->flags &= ~IS_SLOW;
+          monster->set_is_slow(false);
       else 
-          monster->flags |= IS_HASTE;
+          monster->set_is_fast(true);
     }
     else
     {
       if (monster->is_fast()) 
-          monster->flags &= ~IS_HASTE;
+          monster->set_is_fast(false);
       else 
-          monster->flags |= IS_SLOW;
+          monster->set_is_slow(true);
       monster->turn = true;
     }
     start_run(monster);

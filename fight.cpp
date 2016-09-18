@@ -66,8 +66,8 @@ void do_hit(ITEM* weapon, int thrown, AGENT* monster, const char* name)
   if (player.can_confuse())
   {
     did_huh = true;
-    monster->flags |= IS_HUH;
-    player.flags &= ~CAN_HUH;
+    monster->set_confused(true);
+    player.set_can_confuse(false);
     msg("your hands stop glowing red");
   }
 
@@ -160,7 +160,7 @@ bool rattlesnake_attack()
 void flytrap_attack(AGENT* mp)
 {
   //Flytrap stops the poor guy from moving
-  player.flags |= IS_HELD;
+  player.set_is_held(true);
   std::ostringstream ss;
   ss << ++flytrap_hit << "d1";
   mp->stats.damage = ss.str();
@@ -591,7 +591,7 @@ void killed(AGENT *monster, bool print)
 
   //If the monster was a flytrap, un-hold him
   if (monster->can_hold()){
-      player.flags &= ~IS_HELD;
+      player.set_is_held(false);
       f_restor();
   }
   else if (monster->drops_gold()){

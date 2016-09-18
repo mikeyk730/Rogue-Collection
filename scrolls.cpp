@@ -160,7 +160,7 @@ void init_new_scroll(ITEM* scroll)
 void read_monster_confusion()
 {
   //Scroll of monster confusion.  Give him that power.
-  player.flags |= CAN_HUH;
+  player.set_can_confuse(true);
   msg("your hands begin to glow red");
 }
 
@@ -214,8 +214,8 @@ void read_hold_monster()
       for (y = player.pos.y-3; y<=player.pos.y+3; y++) {
         if ((y>0 && y<maxrow) && ((monster = monster_at(y, x)) != NULL))
         {
-          monster->flags &= ~IS_RUN;
-          monster->flags |= IS_HELD;
+          monster->set_running(false);
+          monster->set_is_held(true);
         }
       }
     }
@@ -227,7 +227,7 @@ void read_sleep()
   //Scroll which makes you fall asleep
   s_know[S_SLEEP] = true;
   sleep_timer += rnd(SLEEP_TIME)+4;
-  player.flags &= ~IS_RUN;
+  player.set_running(false);
   msg("you fall asleep");
 }
 

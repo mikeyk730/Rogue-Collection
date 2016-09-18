@@ -80,7 +80,7 @@ void digest()
     if (sleep_timer || rnd(5)!=0)
         return;
     sleep_timer += rnd(8)+4;
-    player.flags &= ~IS_RUN;
+    player.set_running(false);
     running = false;
     count = 0;
     hungry_state = 3;

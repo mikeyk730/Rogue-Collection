@@ -402,7 +402,9 @@ struct Agent
   struct Item *pack;            //What the thing is carrying
 
 private:
-  bool is_flag_set(int flag) const;
+  bool is_flag_set(short flag) const;
+  void set_flag(short flag, bool enable);
+
 public:
   const char* get_monster_name() const;
   int get_monster_carry_prob() const;
@@ -445,8 +447,57 @@ public:
   bool can_confuse() const;
   bool powers_cancelled() const;
 
-  void set_found(){
-      flags |= IS_FOUND;
+  void set_invisible(bool enable){
+      set_flag(IS_INVIS, enable);
+  }
+  void set_found(bool enable){
+      set_flag(IS_FOUND, enable);
+  }
+  void set_confused(bool enable){
+      set_flag(IS_HUH, enable);
+  }
+  void set_running(bool enable){
+      set_flag(IS_RUN, enable);
+  }
+  void set_is_held(bool enable){
+      set_flag(IS_HELD, enable);
+  }
+  void set_is_slow(bool enable){
+      set_flag(IS_SLOW, enable);
+  }
+  void set_is_fast(bool enable){
+      set_flag(IS_HASTE, enable);
+  }
+  void set_can_confuse(bool enable){
+      set_flag(CAN_HUH, enable);
+  }
+  void set_cancelled(bool enable){
+      set_flag(IS_CANC, enable);
+  }
+  void set_blind(bool enable){
+      set_flag(IS_BLIND, enable);
+  }
+  void set_sees_invisible(bool enable){
+      set_flag(CAN_SEE, enable);
+  }
+  void set_detects_others(bool enable){
+      set_flag(SEE_MONST, enable);
+  }
+  void set_is_mean(bool enable){
+      set_flag(IS_MEAN, enable);
+  }
+
+  void reveal_disguise(){
+      disguise = type;
+  }
+
+
+  //todo: don't use flag
+  void set_dirty(bool enable){
+      set_flag(IS_DIRTY, enable);
+  }
+  bool is_dirty(){
+      return is_flag_set(IS_DIRTY);
   }
 
   /* todo:

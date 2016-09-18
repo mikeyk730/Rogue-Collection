@@ -213,15 +213,15 @@ int add_haste(bool potion)
   if (player.is_fast())
   {
     sleep_timer += rnd(8);
-    player.flags &= ~IS_RUN;
+    player.set_running(false);
     extinguish(nohaste);
-    player.flags &= ~IS_HASTE;
+    player.set_is_fast(false);
     msg("you faint from exhaustion");
     return false;
   }
   else
   {
-    player.flags |= IS_HASTE;
+    player.set_is_fast(true);
     if (potion) fuse(nohaste, 0, rnd(4)+10);
     return true;
   }

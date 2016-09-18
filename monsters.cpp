@@ -130,8 +130,15 @@ bool Agent::is_monster_confused_this_turn() const {
         type == 'B' && rnd(2) == 0);
 }
 
-bool Agent::is_flag_set(int flag) const {
+bool Agent::is_flag_set(short flag) const {
     return ((flags & flag) != 0);
+}
+
+void Agent::set_flag(short flag, bool enable){
+    if (enable)
+        flags |= flag;
+    else
+        flags &= ~flag;
 }
 
 bool Agent::is_flying() const {
@@ -414,7 +421,7 @@ AGENT *wake_monster(int y, int x)
   if (!monster->is_running() && rnd(3)!=0 && monster->is_mean() && !monster->is_held() && !is_wearing_ring(R_STEALTH))
   {
     monster->dest = &player.pos;
-    monster->flags |= IS_RUN;
+    monster->set_running(true);
   }
   if (monster->causes_confusion() && !player.is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
   {
@@ -422,12 +429,12 @@ AGENT *wake_monster(int y, int x)
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
     if ((room!=NULL && !(room->is_dark())) || dst<LAMP_DIST)
     {
-      monster->set_found();
+      monster->set_found(true);
       if (!save(VS_MAGIC))
       {
         if (player.is_confused()) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
-        player.flags |= IS_HUH;
+        player.set_confused(true);
         msg("the %s's gaze has confused you", monster->get_monster_name());
       }
     }
@@ -435,7 +442,7 @@ AGENT *wake_monster(int y, int x)
   //Let greedy ones guard gold
   if (monster->is_greedy() && !monster->is_running())
   {
-    monster->flags = monster->flags|IS_RUN;
+    monster->set_running(true);
     if (player.room->goldval) 
         monster->dest = &player.room->gold;
     else 

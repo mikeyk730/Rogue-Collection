@@ -65,7 +65,7 @@ void rollwand()
 //unconfuse: Release the poor player from his confusion
 void unconfuse()
 {
-  player.flags &= ~IS_HUH;
+  player.set_confused(false);
   msg("you feel less confused now");
 }
 
@@ -77,7 +77,7 @@ void unsee()
   for (th = mlist; th!=NULL; th = next(th))
     if (th->is_invisible() && can_see_monst(th) && th->oldch!='@')
       mvaddch(th->pos.y, th->pos.x, th->oldch);
-  player.flags &= ~CAN_SEE;
+  player.set_sees_invisible(false);
 }
 
 //sight: He gets his sight back
@@ -86,7 +86,7 @@ void sight()
   if (player.is_blind())
   {
     extinguish(sight);
-    player.flags &= ~IS_BLIND;
+    player.set_blind(false);
     if (!player.room->is_gone()) 
       enter_room(&player.pos);
     msg("the veil of darkness lifts");
@@ -96,7 +96,7 @@ void sight()
 //nohaste: End the hasting
 void nohaste()
 {
-  player.flags &= ~IS_HASTE;
+  player.set_is_fast(false);
   msg("you feel yourself slowing down");
 }
 

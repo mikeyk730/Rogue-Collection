@@ -29,7 +29,7 @@ void new_level(int do_implode)
   AGENT *monster;
   Coord pos;
 
-  player.flags &= ~IS_HELD; //unhold when you go down just in case
+  player.set_is_held(false); //unhold when you go down just in case
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
 
   //Clean things off from last level
@@ -168,7 +168,7 @@ void treas_room()
       {
         new_monster(monster, randmonster(false, get_level()+1), &pos, get_level()+1);
         if (bailout) debug("treasure rm bailout");
-        monster->flags |= IS_MEAN; //no sloughers in THIS room
+        monster->set_is_mean(true); //no sloughers in THIS room
         give_pack(monster);
       }
     }

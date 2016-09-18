@@ -160,7 +160,7 @@ void quaff_confusion()
         lengthen(unconfuse, rnd(8)+HUH_DURATION);
     else 
         fuse(unconfuse, 0, rnd(8)+HUH_DURATION);
-    player.flags |= IS_HUH;
+    player.set_confused(true);
     msg("wait, what's going on? Huh? What? Who?");
   }
 }
@@ -169,7 +169,7 @@ void quaff_paralysis()
 {
   p_know[P_PARALYZE] = true;
   sleep_timer = HOLD_TIME;
-  player.flags &= ~IS_RUN;
+  player.set_running(false);
   msg("you can't move");
 }
 
@@ -297,7 +297,7 @@ void quaff_blindness()
   p_know[P_BLIND] = true;
   if (!player.is_blind())
   {
-    player.flags |= IS_BLIND;
+    player.set_blind(true);
     fuse(sight, 0, SEE_DURATION);
     look(false);
   }
@@ -356,7 +356,7 @@ void invis_on()
 {
   AGENT *th;
 
-  player.flags |= CAN_SEE;
+  player.set_sees_invisible(true);
   for (th = mlist; th != NULL; th = next(th)) {
       if (th->is_invisible() && can_see_monst(th))
       {
@@ -393,8 +393,7 @@ bool turn_see(bool turn_off)
       if (!can_see) {standend(); add_new++;}
     }
   }
-  player.flags |= SEE_MONST;
-  if (turn_off) player.flags &= ~SEE_MONST;
+  player.set_detects_others(!turn_off);
   return add_new;
 }
 
@@ -406,13 +405,13 @@ void affect_monster(ITEM *potion, AGENT *monster)
   switch (potion->which)
   {
   case P_CONFUSE: case P_BLIND:
-    monster->flags |= IS_HUH;
+    monster->set_confused(true);
     msg("the %s appears confused", monster->get_monster_name());
     break;
 
   case P_PARALYZE:
-    monster->flags &= ~IS_RUN;
-    monster->flags |= IS_HELD;
+    monster->set_running(false);
+    monster->set_is_held(true);
     break;
 
   case P_HEALING: case P_XHEAL:
@@ -426,7 +425,7 @@ void affect_monster(ITEM *potion, AGENT *monster)
     break;
 
   case P_HASTE:
-    monster->flags |= IS_HASTE;
+    monster->set_is_fast(true);
     break;
   }
 }

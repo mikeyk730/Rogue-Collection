@@ -197,8 +197,8 @@ bool can_see_monst(AGENT *monster)
 void start_run(AGENT* monster)
 {
   //Start the beastie running
-  monster->flags |= IS_RUN;
-  monster->flags &= ~IS_HELD;
+  monster->set_running(true);
+  monster->set_is_held(false);
   monster->dest = find_dest(monster);
 }
 
@@ -220,7 +220,7 @@ void chase(AGENT *monster, Coord *chasee_pos)
     rndmove(monster, &ch_ret);
     dist = DISTANCE(ch_ret.y, ch_ret.x, chasee_pos->y, chasee_pos->x);
     //Small chance that it will become un-confused
-    if (rnd(30)==17) monster->flags &= ~IS_HUH;
+    if (rnd(30)==17) monster->set_confused(false);
   }
   //Otherwise, find the empty spot next to the chaser that is closest to the chasee.
   else

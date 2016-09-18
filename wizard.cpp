@@ -161,7 +161,7 @@ void teleport()
   mvaddch(player.pos.y, player.pos.x, PLAYER);
   //turn off IS_HELD in case teleportation was done while fighting a Flytrap
   if (player.is_held()) { 
-      player.flags &= ~IS_HELD; 
+      player.set_is_held(false); 
       f_restor();
   }
   no_move = 0;
@@ -175,7 +175,7 @@ void teleport()
         lengthen(unconfuse, rnd(4)+2);
     else 
         fuse(unconfuse, 0, rnd(4)+2);
-    player.flags |= IS_HUH;
+    player.set_confused(true);
   }
 }
 
