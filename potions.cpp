@@ -358,7 +358,7 @@ void invis_on()
 
   player.set_sees_invisible(true);
   for (th = mlist; th != NULL; th = next(th)) {
-      if (th->is_invisible() && can_see_monst(th))
+      if (th->is_invisible() && can_see_monster(th))
       {
           mvaddch(th->pos.y, th->pos.x, th->disguise);
       }
@@ -381,10 +381,10 @@ bool turn_see(bool turn_off)
   for (monster = mlist; monster!=NULL; monster = next(monster))
   {
     move(monster->pos.y, monster->pos.x);
-    can_see = (can_see_monst(monster) || (was_there = curch())==monster->type);
+    can_see = (can_see_monster(monster) || (was_there = curch())==monster->type);
     if (turn_off)
     {
-      if (!can_see_monst(monster) && monster->oldch!='@') addch(monster->oldch);
+      if (!can_see_monster(monster) && monster->oldch!='@') addch(monster->oldch);
     }
     else
     {

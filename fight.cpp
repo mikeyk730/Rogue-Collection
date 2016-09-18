@@ -372,7 +372,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
     hplus = weapon->hit_plus;
     dplus = weapon->damage_plus;
     //Check for vorpally enchanted weapon
-    if (weapon->is_vorpalized(thdef)) {
+    if (weapon->is_vorpalized_against(thdef)) {
         hplus += 4; 
         dplus += 4;
     }

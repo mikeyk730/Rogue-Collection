@@ -148,7 +148,7 @@ over:
     if (oroom!=monster->room) monster->dest = find_dest(monster);
     monster->pos = ch_ret;
   }
-  if (can_see_monst(monster))
+  if (can_see_monster(monster))
   {
     if (get_flags(ch_ret.y, ch_ret.x)&F_PASS) standout();
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
@@ -168,8 +168,8 @@ over:
   return true;
 }
 
-//see_monst: Return true if the hero can see the monster
-bool can_see_monst(AGENT *monster)
+//can_see_monster: Return true if the hero can see the monster
+bool can_see_monster(AGENT *monster)
 {
   // player is blind
   if (player.is_blind())
@@ -185,10 +185,11 @@ bool can_see_monst(AGENT *monster)
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
   //give the player a hint as to what that weapon is good for.
-  if (get_current_weapon() && get_current_weapon()->is_vorpalized(monster) && !get_current_weapon()->did_flash())
+  Item* weapon = weapon;
+  if (weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
   {
-    get_current_weapon()->set_flashed();
-    msg(flash, get_weapon_name(get_current_weapon()->which), short_msgs()?"":intense);
+    weapon->set_flashed();
+    msg(flash, get_weapon_name(weapon->which), short_msgs()?"":intense);
   }
   return true;
 }
@@ -294,7 +295,7 @@ Coord *find_dest(AGENT *monster)
   int prob;
   struct Room *room;
 
-  if ((prob = monster->get_monster_carry_prob()) <= 0 || monster->room == player.room || can_see_monst(monster))
+  if ((prob = monster->get_monster_carry_prob()) <= 0 || monster->room == player.room || can_see_monster(monster))
     return &player.pos;
   room = monster->room;
   for (obj = lvl_obj; obj!=NULL; obj = next(obj))

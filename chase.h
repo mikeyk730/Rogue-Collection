@@ -4,8 +4,8 @@ void runners();
 //do_chase: Make one thing chase another.  Returns false if monster has been invalidated
 bool do_chase(AGENT *monster);
 
-//see_monst: Return true if the hero can see the monster
-bool can_see_monst(AGENT *monster);
+//can_see_monster: Return true if the hero can see the monster
+bool can_see_monster(AGENT *monster);
 
 //start_run: Set a monster running after something or stop it from running (for when it dies)
 void start_run(AGENT *monster);

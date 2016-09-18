@@ -75,7 +75,7 @@ void unsee()
   AGENT *th;
 
   for (th = mlist; th!=NULL; th = next(th))
-    if (th->is_invisible() && can_see_monst(th) && th->oldch!='@')
+    if (th->is_invisible() && can_see_monster(th) && th->oldch!='@')
       mvaddch(th->pos.y, th->pos.x, th->oldch);
   player.set_sees_invisible(false);
 }

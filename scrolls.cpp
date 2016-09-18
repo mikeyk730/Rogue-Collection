@@ -351,39 +351,35 @@ void read_blank_paper()
 
 void read_vorpalize_weapon()
 {
-  //Extra Vorpal Enchant Weapon
-  //    Give weapon +1,+1
-  //    Is extremely vorpal against one certain type of monster
-  //    Against this type (o_enemy) the weapon gets:
-  // +4,+4
-  // The ability to zap one such monster into oblivion
-  //
-  //    Some of these are cursed and if the rogue misses her saving
-  //    throw she will be forced to attack monsters of this type
-  //    whenever she sees one (not yet implemented)
-  //
-  //If he doesn't have a weapon I get to chortle again!
-  if (get_current_weapon()==NULL || get_current_weapon()->type!=WEAPON) 
-    msg(laugh, short_msgs()?"":in_dist);
-  else
-  {
+    //Extra Vorpal Enchant Weapon
+    //    Give weapon +1,+1
+    //    Is extremely vorpal against one certain type of monster
+    //    Against this type of enemy the weapon gets:
+    //        +4,+4
+    //        The ability to zap one such monster into oblivion
+
+    //If he doesn't have a weapon I get to chortle again!
+    Item* weapon = get_current_weapon();
+    if (weapon == NULL || weapon->type != WEAPON){
+        msg(laugh, short_msgs() ? "" : in_dist);
+    }
     //You aren't allowed to doubly vorpalize a weapon.
-    if (get_current_weapon()->enemy!=0)
+    else if (weapon->enemy != 0)
     {
-      msg("your %s vanishes in a puff of smoke", get_weapon_name(get_current_weapon()->which));
-      detach_item(&player.pack, get_current_weapon());
-      discard_item(get_current_weapon());
-      set_current_weapon(NULL);
+        msg("your %s vanishes in a puff of smoke", get_weapon_name(weapon->which));
+        detach_item(&player.pack, weapon);
+        discard_item(weapon);
+        set_current_weapon(NULL);
     }
     else
     {
-      get_current_weapon()->enemy = pick_monster();
-      get_current_weapon()->hit_plus++;
-      get_current_weapon()->damage_plus++;
-      get_current_weapon()->charges = 1;
-      msg(flash, get_weapon_name(get_current_weapon()->which), short_msgs()?"":intense);
+        weapon->enemy = pick_vorpal_monster();
+        weapon->hit_plus++;
+        weapon->damage_plus++;
+        weapon->charges = 1;
+        msg(flash, get_weapon_name(weapon->which), short_msgs() ? "" : intense);
+
     }
-  }
 }
 
 void(*scroll_functions[MAXSCROLLS])() =

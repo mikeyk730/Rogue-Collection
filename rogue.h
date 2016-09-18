@@ -376,7 +376,7 @@ struct Item
       flags |= DID_FLASH;
   }
 
-  bool is_vorpalized(Agent* monster);
+  bool is_vorpalized_against(Agent* monster);
 };
 typedef struct Item ITEM;
 

@@ -261,7 +261,7 @@ void zap_polymorph(AGENT* monster, int y, int x)
   ch = monster->oldch;
   old_type = monster->type;
   detach_agent(&mlist, monster);
-  if (can_see_monst(monster)) 
+  if (can_see_monster(monster)) 
     mvaddch(y, x, get_tile(y, x));
 
   coord.y = y;
@@ -269,7 +269,7 @@ void zap_polymorph(AGENT* monster, int y, int x)
   new_monster(monster, rnd(26)+'A', &coord, get_level());
   monster->oldch = ch;
   monster->pack = pack;
-  if (can_see_monst(monster)) 
+  if (can_see_monster(monster)) 
     mvaddch(y, x, monster->type);
 
   ws_know[WS_POLYMORPH] |= (monster->type != old_type);
@@ -287,7 +287,7 @@ void zap_teleport(AGENT* monster, int y, int x, int which)
 {
   Coord new_pos;
 
-  if (can_see_monst(monster)) 
+  if (can_see_monster(monster)) 
     mvaddch(y, x, monster->oldch);
 
   if (which==WS_TELAWAY)
@@ -532,7 +532,7 @@ void drain()
   {
     monster = *dp;
     if (!monster->stats.decrease_hp(cnt, true))
-        killed(monster, can_see_monst(monster));
+        killed(monster, can_see_monster(monster));
     else start_run(monster);
   }
 }

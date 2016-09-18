@@ -124,7 +124,7 @@ void look(bool wakeup)
       {
         if (wakeup) wake_monster(y, x);
         if (monster->oldch != ' ' || (!(room->is_dark()) && !player.is_blind())) monster->oldch = get_tile(y, x);
-        if (can_see_monst(monster)) ch = monster->disguise;
+        if (can_see_monster(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
       if ((ch!=PASSAGE) && (fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();

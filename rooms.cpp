@@ -205,7 +205,7 @@ void enter_room(Coord *cp)
       {
         //Displaying monsters is all handled in the chase code now
         monster = monster_at(y, x);
-        if (monster==NULL || !can_see_monst(monster)) 
+        if (monster==NULL || !can_see_monster(monster)) 
           addch(get_tile(y, x));
         else {
           monster->oldch = get_tile(y,x); 

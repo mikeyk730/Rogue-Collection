@@ -298,7 +298,7 @@ const char* get_inv_name_weapon(ITEM* weapon)
   return prbuf;
 }
 
-bool Item::is_vorpalized(AGENT* monster)
+bool Item::is_vorpalized_against(AGENT* monster)
 {
     if (!monster)
         return false;

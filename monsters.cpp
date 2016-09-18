@@ -454,22 +454,25 @@ AGENT *wake_monster(int y, int x)
 //give_pack: Give a pack to a monster if it deserves one
 void give_pack(AGENT *monster)
 {
-  if (rnd(100) < monster->get_monster_carry_prob()) 
-    attach_item(&monster->pack, new_item());
+    if (rnd(100) < monster->get_monster_carry_prob())
+        attach_item(&monster->pack, new_item());
 }
 
-//pick_mons: Choose a sort of monster for the enemy of a vorpally enchanted weapon
-char pick_monster()
+//pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon
+char pick_vorpal_monster()
 {
-  char *cp;
-  
-  do {
-    cp = lvl_mons+strlen(lvl_mons);
-    while (--cp>=lvl_mons && rnd(10));
-    if (cp<lvl_mons) return 'M';
-  } while (*cp == ' ');
+    char *p;
+    do {
+        // Start at end of enemies list and walk backwards, 
+        // with a 10% chance of stopping at any given entry.
+        // Default to M if we have bad luck.
+        p = lvl_mons + strlen(lvl_mons);
+        while (--p >= lvl_mons && rnd(10));
+        if (p < lvl_mons) 
+            return 'M';
+    } while (*p == ' ');
 
-  return *cp;
+    return *p;
 }
 
 //monster_at(x,y): returns pointer to monster at coordinate. if no monster there return NULL
