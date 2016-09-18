@@ -24,13 +24,9 @@
 #include "rooms.h"
 #include "level.h"
 
-
 //List of monsters in rough order of vorpalness
-static char *lvl_mons = "FFFFK BHISOR LCA NYTWFP GMXVJD";
+static char *lvl_mons  = "K BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
-
-#define ___  1
-#define XX  10
 
 const int EX_DIVIDES      =  0x0001;
 const int EX_SHOOTS_ICE   =  0x0002;
@@ -219,6 +215,9 @@ struct Monster
   struct Stats stats; //Initial stats
   int exflags;        //todo, populate elsewhere?
 };
+
+#define ___  1
+#define XX  10
 
 struct Monster monsters[26] =
 {
