@@ -181,7 +181,7 @@ int be_trapped(Coord *tc)
 {
   byte tr;
 
-  count = running = false;
+  repeat_cmd_count = running = false;
   set_tile(tc->y, tc->x, TRAP);
   tr = get_flags(tc->y, tc->x)&F_TMASK;
   was_trapped = 1;

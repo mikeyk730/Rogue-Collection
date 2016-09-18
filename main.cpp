@@ -176,7 +176,7 @@ void quit()
     status();
     move(oy, ox);
     mpos = 0;
-    count = 0;
+    repeat_cmd_count = 0;
   }
   should_quit = false;
 }

@@ -90,10 +90,10 @@ int get_prefix()
   if (!running) door_stop = false;
   do_take = true;
   again = false;
-  if (--count>0) {do_take = lasttake; retch = lastch; fastmode = false;}
+  if (--repeat_cmd_count>0) {do_take = lasttake; retch = lastch; fastmode = false;}
   else
   {
-    count = 0;
+    repeat_cmd_count = 0;
     if (running) {retch = runch; do_take = lasttake;}
     else
     {
@@ -102,8 +102,8 @@ int get_prefix()
         switch (ch = com_char())
         {
         case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-          junk = count*10;
-          if ((junk += ch-'0')>0 && junk<10000) count = junk;
+          junk = repeat_cmd_count*10;
+          if ((junk += ch-'0')>0 && junk<10000) repeat_cmd_count = junk;
           show_count();
           break;
 
@@ -115,18 +115,18 @@ int get_prefix()
           break;
         case 'a': 
           retch = lastch; 
-          count = lastcount; 
+          repeat_cmd_count = lastcount; 
           do_take = lasttake; 
           again = true; 
           break;
         case ' ': break;
-        case ESCAPE: door_stop = false; count = 0; show_count(); break;
+        case ESCAPE: door_stop = false; repeat_cmd_count = 0; show_count(); break;
         default: retch = ch; break;
         }
       }
     }
   }
-  if (count) fastmode = false;
+  if (repeat_cmd_count) fastmode = false;
   switch (retch)
   {
   case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
@@ -145,11 +145,11 @@ int get_prefix()
 
     break;
 
-  default: count = 0;
+  default: repeat_cmd_count = 0;
   }
-  if (count || lastcount) show_count();
+  if (repeat_cmd_count || lastcount) show_count();
   lastch = retch;
-  lastcount = count;
+  lastcount = repeat_cmd_count;
   lasttake = do_take;
   return retch;
 }
@@ -157,7 +157,7 @@ int get_prefix()
 void show_count()
 {
   move(LINES-2, COLS-4);
-  if (count) printw("%-4d", count);
+  if (repeat_cmd_count) printw("%-4d", repeat_cmd_count);
   else addstr("    ");
 }
 
@@ -328,13 +328,13 @@ void execcom()
         default:
           counts_as_turn = false; 
           msg("illegal command '%s'", unctrl(ch)); 
-          count = 0; 
+          repeat_cmd_count = 0; 
         }
       }
       else{
         counts_as_turn = false; 
         msg("illegal command '%s'", unctrl(ch)); 
-        count = 0; 
+        repeat_cmd_count = 0; 
         break;
       }
     }

@@ -162,10 +162,9 @@ void teleport()
   //turn off IS_HELD in case teleportation was done while fighting a Flytrap
   if (player.is_held()) { 
       player.set_is_held(false); 
-      f_restor();
   }
   no_move = 0;
-  count = 0;
+  repeat_cmd_count = 0;
   running = false;
   flush_type();
   //Teleportation can be a confusing experience (unless you really are a wizard)

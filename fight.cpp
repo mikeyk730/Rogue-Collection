@@ -97,7 +97,8 @@ int fight(Coord *location, Item *weapon, bool thrown)
     return false;
 
   //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
-  count = quiet = 0;
+  repeat_cmd_count = 0;
+  turns_since_heal = 0;
   
   start_run(monster);
   //Let him know it was really a mimic (if it was one).
@@ -162,7 +163,7 @@ void flytrap_attack(Agent* mp)
   //Flytrap stops the poor guy from moving
   player.set_is_held(true);
   std::ostringstream ss;
-  ss << ++flytrap_hit << "d1";
+  ss << ++(mp->value) << "d1";
   mp->stats.damage = ss.str();
 }
 
@@ -256,65 +257,65 @@ bool attack(Agent *monster)
 
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = false;
-  count = quiet = 0;
+  repeat_cmd_count = turns_since_heal = 0;
   if (monster->is_disguised() && !player.is_blind()) 
     monster->disguise = monster->type;
   name = player.is_blind() ? it : monster->get_monster_name();
   if (roll_em(monster, &player, NULL, false))
   {
-    display_hit_msg(name, NULL);
-    if (player.stats.get_hp() <= 0) 
-      death(monster->type); //Bye bye life ...
-   
-    //todo: modify code, so enemy can have more than one power
-    if (!monster->powers_cancelled()) {
-        if (monster->hold_attacks())
-        {
-            flytrap_attack(monster);
-        }
-        else if (monster->shoots_ice())
-        {
-            ice_monster_attack();
-        }
-        else if (monster->rusts_armor())
-        {
-            attack_success = aquator_attack();
-        }
-        else if (monster->steals_gold())
-        {
-            attack_success = leprechaun_attack(monster);
-        }
-        else if (monster->steals_magic())
-        {   
-            attack_success = nymph_attack(monster);
-        }
-        else if (monster->drains_strength())
-        {
-            attack_success = rattlesnake_attack();
-        }
-        else if (monster->drains_life() || monster->drains_exp())
-        {
-            attack_success = vampire_wraith_attack(monster);
-        }
+      display_hit_msg(name, NULL);
+      if (player.stats.get_hp() <= 0)
+          death(monster->type); //Bye bye life ...
 
-        if (attack_success && monster->dies_from_attack())
-        {
-            monster_died = true;
-            remove_monster(monster, false);
-        }
-    }
+      //todo: modify code, so enemy can have more than one power
+      if (!monster->powers_cancelled()) {
+          if (monster->hold_attacks())
+          {
+              flytrap_attack(monster);
+          }
+          else if (monster->shoots_ice())
+          {
+              ice_monster_attack();
+          }
+          else if (monster->rusts_armor())
+          {
+              attack_success = aquator_attack();
+          }
+          else if (monster->steals_gold())
+          {
+              attack_success = leprechaun_attack(monster);
+          }
+          else if (monster->steals_magic())
+          {
+              attack_success = nymph_attack(monster);
+          }
+          else if (monster->drains_strength())
+          {
+              attack_success = rattlesnake_attack();
+          }
+          else if (monster->drains_life() || monster->drains_exp())
+          {
+              attack_success = vampire_wraith_attack(monster);
+          }
+
+          if (attack_success && monster->dies_from_attack())
+          {
+              monster_died = true;
+              remove_monster(monster, false);
+          }
+      }
   }
   else if (!monster->shoots_ice())
   {
-    if (monster->hold_attacks())
-    {
-      if (!player.stats.decrease_hp(flytrap_hit, true))
-          death(monster->type); //Bye bye life ...
-    }
-    miss(name, NULL);
+      if (monster->hold_attacks())
+      {
+          if (!player.stats.decrease_hp(monster->value, true))
+              death(monster->type); //Bye bye life ...
+      }
+      miss(name, NULL);
   }
   flush_type();
-  count = 0;
+  repeat_cmd_count = 0;
   status();
 
   return !monster_died;
@@ -589,7 +590,6 @@ void killed(Agent *monster, bool print)
   //If the monster was a flytrap, un-hold him
   if (monster->can_hold()){
       player.set_is_held(false);
-      f_restor();
   }
   else if (monster->drops_gold()){
       Item *gold;

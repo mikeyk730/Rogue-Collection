@@ -404,8 +404,9 @@ struct Agent
   Coord *dest;                  //Where it is running to
   short flags;                  //State word
   int exflags;                  //More state;
-  Stats stats;           //Physical description
-  Room *room;            //Current room for thing
+  int value;                    //
+  Stats stats;                  //Physical description
+  Room *room;                   //Current room for thing
   std::list<Item*> pack;        //What the thing is carrying
 
 private:
@@ -498,13 +499,12 @@ public:
       disguise = type;
   }
 
-
-  //todo: don't use flag
+  //slime specific
   void set_dirty(bool enable){
-      set_flag(IS_DIRTY, enable);
+      value = enable ? 1 : 0;
   }
   bool is_dirty(){
-      return is_flag_set(IS_DIRTY);
+      return value == 1;
   }
 };
 
@@ -539,7 +539,7 @@ extern char file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
   huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 
   *typeahead, take, whoami[];
 
-extern int count, flytrap_hit, iguess, mpos, sleep_timer, no_food, no_move, quiet;
+extern int repeat_cmd_count, iguess, mpos, sleep_timer, no_food, no_move, turns_since_heal;
 
 extern long seed;
 

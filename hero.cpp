@@ -82,7 +82,7 @@ void digest()
     sleep_timer += rnd(8)+4;
     player.set_running(false);
     running = false;
-    count = 0;
+    repeat_cmd_count = 0;
     hungry_state = 3;
     msg("%syou faint from lack of food", noterse("you feel very weak. "));
   }

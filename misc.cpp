@@ -470,13 +470,13 @@ void search()
         if (rnd(5)!=0) break;
         set_tile(y, x, DOOR);
         set_flag(y, x, F_REAL);
-        count = running = false;
+        repeat_cmd_count = running = false;
         break;
       case FLOOR:
         if (rnd(2)!=0) break;
         set_tile(y, x, TRAP);
         set_flag(y, x, F_REAL);
-        count = running = false;
+        repeat_cmd_count = running = false;
         msg("you found %s", tr_name(fp&F_TMASK));
         break;
       }

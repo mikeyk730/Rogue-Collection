@@ -18,26 +18,28 @@
 //doctor: A healing daemon that restores hit points after rest
 void doctor()
 {
-  int lv, ohp;
+    int lvl = player.stats.level;
+    int original_hp = player.stats.get_hp();
 
-  lv = player.stats.level;
-  ohp = player.stats.get_hp();
-  quiet++;
-  if (lv<8)
-  {
-    if (quiet+(lv<<1)>20)
+    turns_since_heal++;
+
+    if (lvl<8)
+    {
+        if (turns_since_heal + (lvl << 1)>20)
+            player.stats.increase_hp(1, false, false);
+    }
+    else if (turns_since_heal >= 3)
+        player.stats.increase_hp(rnd(lvl - 7) + 1, false, false);
+
+    if (is_ring_on_hand(LEFT, R_REGEN))
         player.stats.increase_hp(1, false, false);
-  }
-  else if (quiet>=3) 
-      player.stats.increase_hp(rnd(lv-7)+1, false, false);
-  if (is_ring_on_hand(LEFT, R_REGEN)) 
-      player.stats.increase_hp(1, false, false);
-  if (is_ring_on_hand(RIGHT, R_REGEN)) 
-      player.stats.increase_hp(1, false, false);
-  if (ohp!=player.stats.get_hp())
-  {
-    quiet = 0;//todo:how does this work?
-  }
+    if (is_ring_on_hand(RIGHT, R_REGEN))
+        player.stats.increase_hp(1, false, false);
+
+    if (original_hp != player.stats.get_hp())
+    {
+        turns_since_heal = 0;
+    }
 }
 
 //Swander: Called when it is time to start rolling for wandering monsters

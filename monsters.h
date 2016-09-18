@@ -6,9 +6,6 @@ char randmonster(bool wander, int level);
 //new_monster: Pick a new monster and add it to the list
 void new_monster(Agent *monster, byte type, Coord *cp, int level);
 
-//f_restor(): restor initial damage string for flytraps
-void f_restor();
-
 //expadd: Experience to add for this monster's level/hit points
 int exp_add(Agent *monster);
 

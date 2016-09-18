@@ -26,7 +26,7 @@
 
 
 //List of monsters in rough order of vorpalness
-static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
+static char *lvl_mons = "FFFFK BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
 #define ___  1
@@ -251,8 +251,6 @@ struct Monster monsters[26] =
   { "zombie",           0,                 IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             }, 0 }
 };
 
-char f_damage[10];
-
 #undef ___
 #undef XX
 
@@ -353,25 +351,13 @@ void new_monster(Agent *monster, byte type, Coord *position, int level)
   monster->stats.ac -= level_add;
   monster->stats.exp += level_add*10 + exp_add(monster);
   monster->turn = true;
-  //monster->pack = NULL;
+  monster->value = 0;
 
-  //todo: remove F,X checks
-  if (type=='F') 
-    monster->stats.damage = f_damage;
   if (monster->is_mimic()) 
     set_xeroc_disguise(monster);
 
   if (is_wearing_ring(R_AGGR)) 
     start_run(monster);
-}
-
-//f_restor(): restor initial damage string for flytraps
-void f_restor()
-{
-    //todo:clean this up
-  const struct Monster *monster = &monsters['F'-'A'];
-  flytrap_hit = 0;
-  strcpy(f_damage, monster->stats.damage.c_str());
 }
 
 //expadd: Experience to add for this monster's level/hit points

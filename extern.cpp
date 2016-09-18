@@ -158,12 +158,10 @@ struct Array _guesses[MAXSCROLLS+MAXPOTIONS+MAXRINGS+MAXSTICKS];
 int maxrow;            //Last Line used for map
 int mpos = 0;          //Where cursor is on top line
 int no_move = 0;       //Number of turns held in place
-int sleep_timer = 0;    //Number of turns asleep
-int total_items = 0;   //Total dynamic memory bytes
+int sleep_timer = 0;   //Number of turns asleep
 int no_food = 0;       //Number of levels without food
-int count = 0;         //Number of times to repeat command
-int flytrap_hit = 0;   //Number of time flytrap has hit
-int quiet = 0;         //Number of quiet turns
+int repeat_cmd_count = 0;  //Number of times to repeat command
+int turns_since_heal = 0;  //Number of turns_since_heal turns
 
 long seed = 0;         //Random number seed
 

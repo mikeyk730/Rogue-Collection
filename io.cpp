@@ -419,7 +419,7 @@ void SIG2()
   if (faststate!=new_fmode)
   {
     faststate = new_fmode;
-    count = 0;
+    repeat_cmd_count = 0;
     show_count();
     running = false;
     move(LINES-1, 0);
@@ -429,7 +429,7 @@ void SIG2()
   if (numl!=new_numl)
   {
     numl = new_numl;
-    count = 0;
+    repeat_cmd_count = 0;
     show_count();
     running = false;
     move(LINES-1, nspot);

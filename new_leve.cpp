@@ -40,8 +40,6 @@ void new_level(int do_implode)
       free_item_list(monster->pack);
   }
   free_agent_list(level_monsters);
-  //just in case we left some flytraps behind
-  f_restor();
   //Throw away stuff left on the previous level (if anything)
   free_item_list(level_items);
   do_rooms(); //Draw rooms

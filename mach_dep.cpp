@@ -206,7 +206,7 @@ int readchar()
   
   ch = s_input_driver->GetNextChar();
 
-  if (ch==ESCAPE) count = 0;
+  if (ch==ESCAPE) repeat_cmd_count = 0;
   return ch;
 }
 
