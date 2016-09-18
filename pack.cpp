@@ -209,14 +209,18 @@ int inventory(ITEM *list, int type, char *lstr)
   for (ch = 'a'; list!=NULL; ch++, list = next(list))
   {
     //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
-    if (type && type!=list->type && !(type==CALLABLE && (list->type==SCROLL || list->type==POTION || list->type==RING || list->type==STICK)) && !(type==WEAPON && list->type==POTION) && !(type==STICK && list->enemy && list->charges)) continue;
+    if (type && type!=list->type && 
+        !(type==CALLABLE && (list->type==SCROLL || list->type==POTION || list->type==RING || list->type==STICK)) &&
+        !(type==WEAPON && list->type==POTION) &&
+        !(type==STICK && list->enemy && list->charges)) 
+        continue;
     n_objs++;
     sprintf(inv_temp, "%c) %%s", ch);
     add_line(lstr, inv_temp, inv_name(list, false));
   }
   if (n_objs==0)
   {
-    msg(type==0?"you are empty handed":"you don't have anything appropriate");
+    msg(type == 0 ? "you are empty handed" : "you don't have anything appropriate");
     return false;
   }
   return (end_line(lstr));
@@ -304,7 +308,10 @@ skip:
       else
       {
         //If you find an object reset flag because you really don't know if the object he is getting is going to change the pack.  If he detaches the thing from the pack later this flag will get set.
-        if (strcmp(purpose, "identify")) {lch = ch; wasthing = obj;}
+        if (strcmp(purpose, "identify")) {
+            lch = ch;
+            wasthing = obj;
+        }
         return obj;
       }
     }
