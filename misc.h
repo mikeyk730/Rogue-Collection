@@ -5,7 +5,7 @@ char *tr_name(byte type);
 void look(bool wakeup);
 
 //find_obj: Find the unclaimed object at y, x
-ITEM *find_obj(int y, int x);
+Item *find_obj(int y, int x);
 
 //chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
 void chg_str(int amt);
@@ -23,7 +23,7 @@ void aggravate();
 const char *vowelstr(const char *str);
 
 //is_current: See if the object is one of the currently used items
-int is_current(ITEM *obj);
+int is_current(Item *obj);
 
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
 int get_dir();
@@ -43,7 +43,7 @@ void call_it(bool know, char **guess);
 int step_ok(int ch);
 
 //goodch: Decide how good an object is and return the correct character for printing.
-int goodch(ITEM *obj);
+int goodch(Item *obj);
 
 //help: prints out help screens
 void help(char **helpscr);

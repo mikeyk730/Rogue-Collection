@@ -51,7 +51,7 @@ void init_things()
 }
 
 //inv_name: Return the name of something as it would appear in an inventory.
-char *inv_name(ITEM *obj, bool drop)
+char *inv_name(Item *obj, bool drop)
 {
   char *pb = prbuf;
   switch (obj->type)
@@ -128,7 +128,7 @@ void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
 void drop()
 {
   byte ch;
-  ITEM *nobj, *op;
+  Item *nobj, *op;
 
   ch = get_tile(player.pos.y, player.pos.x);
   if (ch!=FLOOR && ch!=PASSAGE) {msg("there is something there already"); return;}
@@ -152,7 +152,7 @@ void drop()
 }
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
-bool can_drop(ITEM *op)
+bool can_drop(Item *op)
 {
   if (op==NULL) return true;
   if (op!=get_current_armor() && op!=get_current_weapon() && op!=get_ring(LEFT) && op!=get_ring(RIGHT)) return true;
@@ -185,9 +185,9 @@ bool can_drop(ITEM *op)
 }
 
 //new_thing: Return a new thing
-ITEM *new_item()
+Item *new_item()
 {
-  ITEM *item = create_item(0, 0);
+  Item *item = create_item(0, 0);
   if (!item)
     return NULL; 
 
@@ -269,7 +269,7 @@ void print_disc(byte type)
   int (*know)(int);
   const char* (*guess)(int);
   int i, maxnum, num_found;
-  static ITEM obj;
+  static Item obj;
   static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
   switch (type)

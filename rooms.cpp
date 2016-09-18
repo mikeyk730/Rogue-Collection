@@ -108,7 +108,7 @@ void do_rooms()
     //Put the gold in
     if ((rnd(2)==0) && (!had_amulet() || (get_level()>=max_level())))
     {
-      ITEM *gold;
+      Item *gold;
       if ((gold = create_item(GOLD, 0))!=NULL)
       {
         room->goldval = rnd_gold();

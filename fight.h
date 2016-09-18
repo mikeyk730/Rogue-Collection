@@ -1,5 +1,5 @@
 //fight: The player attacks the monster.
-int fight(Coord *monster, ITEM *weapon, bool thrown);
+int fight(Coord *monster, Item *weapon, bool thrown);
 
 //attack: The monster attacks the player
 bool attack(Agent *monster);
@@ -11,7 +11,7 @@ bool swing(int at_lvl, int op_arm, int wplus);
 void check_level();
 
 //roll_em: Roll several attacks
-bool roll_em(Agent *thatt, Agent *thdef, ITEM *weapon, bool hurl);
+bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl);
 
 //prname: The print name of a combatant
 char *prname(const char *who, bool upper);
@@ -38,13 +38,13 @@ int add_dam(unsigned int str);
 void raise_level();
 
 //thunk: A missile hit or missed a monster
-void display_throw_msg(ITEM *weapon, const char *mname, char *does, char *did);
+void display_throw_msg(Item *weapon, const char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen
 void remove_monster(Agent *monster, bool waskill);
 
 //is_magic: Returns true if an object radiates magic
-bool is_magic(ITEM *obj);
+bool is_magic(Item *obj);
 
 //killed: Called to put a monster to death
 void killed(Agent *monster, bool print);

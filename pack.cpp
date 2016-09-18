@@ -18,36 +18,36 @@
 
 static bool s_had_amulet = false;
 
-ITEM *cur_armor;   //What a well dresssed rogue wears
-ITEM *cur_weapon;  //Which weapon he is wielding
-ITEM *cur_ring[2]; //Which rings are being worn
+Item *cur_armor;   //What a well dresssed rogue wears
+Item *cur_weapon;  //Which weapon he is wielding
+Item *cur_ring[2]; //Which rings are being worn
 
-ITEM* get_ring(int hand)
+Item* get_ring(int hand)
 {
   return cur_ring[hand];
 }
 
-void set_ring(int hand, ITEM* item)
+void set_ring(int hand, Item* item)
 {
   cur_ring[hand] = item;
 }
 
-ITEM* get_current_weapon()
+Item* get_current_weapon()
 {
   return cur_weapon;
 }
 
-void set_current_weapon(ITEM* item)
+void set_current_weapon(Item* item)
 {
   cur_weapon = item;
 }
 
-ITEM* get_current_armor()
+Item* get_current_armor()
 {
   return cur_armor;
 }
 
-void set_current_armor(ITEM* item)
+void set_current_armor(Item* item)
 {
   cur_armor = item;
 }
@@ -56,7 +56,7 @@ int does_item_group(int type) {
   return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
 }
 
-ITEM *pack_obj(byte ch, byte *chp)
+Item *pack_obj(byte ch, byte *chp)
 {
   byte och = 'a';
 
@@ -79,7 +79,7 @@ int get_pack_size()
 }
 
 //add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void add_pack(ITEM *obj, bool silent)
+void add_pack(Item *obj, bool silent)
 {
   Agent *monster;
   bool from_floor;
@@ -228,7 +228,7 @@ int inventory(std::list<Item *>& list, int type, char *lstr)
 //pick_up: Add something to characters pack.
 void pick_up(byte ch)
 {
-  ITEM *obj;
+  Item *obj;
 
   switch (ch)
   {
@@ -248,13 +248,13 @@ void pick_up(byte ch)
 }
 
 //get_item: Pick something out of a pack for a purpose
-ITEM *get_item(char *purpose, int type)
+Item *get_item(char *purpose, int type)
 {
-  ITEM *obj;
+  Item *obj;
   byte ch;
   byte och;
   static byte lch;
-  static ITEM *wasthing = NULL;
+  static Item *wasthing = NULL;
   byte gi_state; //get item sub state
   int once_only = false;
 
@@ -319,7 +319,7 @@ skip:
 }
 
 //pack_char: Return which character would address a pack object
-int pack_char(ITEM *obj)
+int pack_char(Item *obj)
 {
     byte c = 'a';
     for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
@@ -346,7 +346,7 @@ void money(int value)
 bool has_amulet()
 {
     for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
-        ITEM* item = *it;
+        Item* item = *it;
         if (item->type == AMULET)
             return true;
     }

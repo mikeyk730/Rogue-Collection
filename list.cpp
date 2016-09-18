@@ -8,12 +8,12 @@
 #include "misc.h"
 #include "thing.h"
 
-void detach_item(std::list<Item*>& l, ITEM *item)
+void detach_item(std::list<Item*>& l, Item *item)
 {
     l.remove(item);
 }
 
-void attach_item(std::list<Item*>& l, ITEM *item)
+void attach_item(std::list<Item*>& l, Item *item)
 {
     l.push_front(item);
 }

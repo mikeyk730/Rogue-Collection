@@ -214,7 +214,7 @@ int be_trapped(Coord *tc)
     }
     else
     {
-      ITEM *arrow;
+      Item *arrow;
 
       if ((arrow = create_item(WEAPON, ARROW))!=NULL)
       {
@@ -272,7 +272,7 @@ void rndmove(Agent *who, Coord *newmv)
 {
   int x, y;
   byte ch;
-  ITEM *obj;
+  Item *obj;
 
   y = newmv->y = who->pos.y+rnd(3)-1;
   x = newmv->x = who->pos.x+rnd(3)-1;

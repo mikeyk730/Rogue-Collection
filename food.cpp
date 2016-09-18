@@ -11,7 +11,7 @@
 #include "list.h"
 #include "hero.h"
 
-void init_new_food(ITEM* food)
+void init_new_food(Item* food)
 {
   no_food = 0;
   food->type = FOOD;
@@ -21,7 +21,7 @@ void init_new_food(ITEM* food)
 //eat: She wants to eat something, so let her try
 void eat()
 {
-  ITEM *obj;
+  Item *obj;
 
   if ((obj = get_item("eat", FOOD))==NULL) 
     return;
@@ -49,7 +49,7 @@ void eat()
     msg("You feel bloated and fall asleep");
 }
 
-const char* get_inv_name_food(ITEM* obj)
+const char* get_inv_name_food(Item* obj)
 {
   char *pb = prbuf;
   int which = obj->which;

@@ -144,7 +144,7 @@ const char* get_stick_name(int type)
   return ws_magic[type].name;
 }
 
-void init_new_stick(ITEM* stick)
+void init_new_stick(Item* stick)
 {
   stick->type = STICK;
   stick->which = pick_one(ws_magic, MAXSTICKS);
@@ -219,7 +219,7 @@ void zap_light()
   }
 }
 
-void zap_striking(ITEM* obj)
+void zap_striking(Item* obj)
 {
   Agent* monster;
   Coord coord = delta;
@@ -240,7 +240,7 @@ void zap_bolt(int which, const char* name)
   ws_know[which] = true;
 }
 
-void zap_vorpalized_weapon(ITEM* weapon, Agent* monster)
+void zap_vorpalized_weapon(Item* weapon, Agent* monster)
 {
     if (weapon->is_vorpalized_against(monster))
     {
@@ -304,7 +304,7 @@ void zap_teleport(Agent* monster, int y, int x, int which)
     player.set_is_held(false);
 }
 
-void zap_generic(ITEM* wand, int which)
+void zap_generic(Item* wand, int which)
 {
   int x, y;
   Agent* monster;
@@ -343,7 +343,7 @@ void zap_generic(ITEM* wand, int which)
 void zap_magic_missile()
 {
   Agent* monster;
-  ITEM bolt;
+  Item bolt;
 
   ws_know[WS_MISSILE] = true;
   bolt.type = '*';
@@ -404,7 +404,7 @@ int zap_drain_life()
 }
 
 //fix_stick: Set up a new stick
-void fix_stick(ITEM *cur)
+void fix_stick(Item *cur)
 {
   if (strcmp(ws_type[cur->which], "staff")==0) 
       cur->damage = "2d3";
@@ -428,7 +428,7 @@ void fix_stick(ITEM *cur)
 //do_zap: Perform a zap with a wand
 void do_zap()
 {
-    ITEM *obj;
+    Item *obj;
     int which_one;
 
     if ((obj = get_item("zap with", STICK)) == NULL)
@@ -546,7 +546,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
   int i, j;
   Coord pos;
   struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
-  ITEM bolt;
+  Item bolt;
   bool is_frost;
 
   is_frost = (strcmp(name, "frost")==0);
@@ -654,7 +654,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
 }
 
 //charge_str: Return an appropriate string for a wand charge
-const char *get_charge_string(ITEM *obj)
+const char *get_charge_string(Item *obj)
 {
   static char buf[20];
 
@@ -663,7 +663,7 @@ const char *get_charge_string(ITEM *obj)
   return buf;
 }
 
-const char* get_inv_name_stick(ITEM* stick)
+const char* get_inv_name_stick(Item* stick)
 {
   char *pb = prbuf;
   int which = stick->which;

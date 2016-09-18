@@ -62,7 +62,7 @@ const char* get_armor_name(int type)
   return a_names[type];
 }
 
-void init_new_armor(ITEM* armor)
+void init_new_armor(Item* armor)
 {
   int j, k;
 
@@ -88,7 +88,7 @@ void init_new_armor(ITEM* armor)
 //wear: The player wants to wear something, so let him/her put it on.
 void wear()
 {
-  ITEM *obj;
+  Item *obj;
   char *sp;
 
   if (get_current_armor()!=NULL)
@@ -112,7 +112,7 @@ void wear()
 //take_off: Get the armor off of the player's back
 void take_off()
 {
-  ITEM *obj;
+  Item *obj;
 
   if ((obj = get_current_armor())==NULL)
   {
@@ -132,7 +132,7 @@ void waste_time()
   do_fuses();
 }
 
-const char* get_inv_name_armor(ITEM* obj)
+const char* get_inv_name_armor(Item* obj)
 {
   char *pb = prbuf;
   int which = obj->which;

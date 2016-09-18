@@ -107,7 +107,7 @@ void digest()
 //init_player: Roll up the rogue
 void init_player()
 {
-  ITEM *obj;
+  Item *obj;
 
   player.stats = max_stats;
   food_left = HUNGER_TIME;

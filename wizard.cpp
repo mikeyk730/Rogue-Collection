@@ -31,7 +31,7 @@
 //whatis: What a certain object is
 void whatis()
 {
-  ITEM *obj;
+  Item *obj;
 
   if (player.pack.empty()) {msg("You don't have anything in your pack to identify"); return;}
   for (;;) if ((obj = get_item("identify", 0))==NULL)
@@ -73,7 +73,7 @@ void whatis()
 //create_obj: Wizard command for getting anything he wants
 void create_obj()
 {
-  ITEM *obj;
+  Item *obj;
   byte ch, bless;
   int limit, option;
 

@@ -121,7 +121,7 @@ void init_stones()
   }
 }
 
-void init_new_ring(ITEM* ring)
+void init_new_ring(Item* ring)
 {
   ring->type = RING;
   ring->which = pick_one(r_magic, MAXRINGS);
@@ -148,7 +148,7 @@ const char* get_stone(int type)
 //ring_on: Put a ring on a hand
 void ring_on()
 {
-  ITEM *obj;
+  Item *obj;
   int ring = -1;
 
   if ((obj = get_item("put on", RING))==NULL) goto no_ring;
@@ -182,7 +182,7 @@ no_ring:
 void ring_off()
 {
   int ring;
-  ITEM *obj;
+  Item *obj;
   char packchar;
 
   if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {msg("you aren't wearing any rings"); counts_as_turn = false; return;}
@@ -229,7 +229,7 @@ int ring_eat(int hand)
 }
 
 //ring_num: Print ring bonuses
-char *ring_num(ITEM *obj)
+char *ring_num(Item *obj)
 {
   if (!obj->is_known() && !is_wizard()) 
     return "";
@@ -257,7 +257,7 @@ int is_wearing_ring(int ring)
   return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
 }
 
-const char* get_inv_name_ring(ITEM* obj)
+const char* get_inv_name_ring(Item* obj)
 {
   char *pb = prbuf;
   int which = obj->which;

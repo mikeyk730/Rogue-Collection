@@ -59,7 +59,7 @@ bool do_chase(Agent *monster)
 {
   int mindist = 32767, i, dist;
   bool door;
-  ITEM *obj;
+  Item *obj;
   struct Room *oroom;
   struct Room *monster_room, *dest_room; //room of chaser, room of chasee
   Coord tempdest; //Temporary destination for chaser
@@ -254,7 +254,7 @@ void chase(Agent *monster, Coord *chasee_pos)
           //If it is a scroll, it might be a scare monster scroll so we need to look it up to see what type it is.
             if (ch == SCROLL)
             {
-                ITEM *obj = 0;
+                Item *obj = 0;
                 for (auto it = level_items.begin(); it != level_items.end(); ++it)
                 {
                     obj = *it;

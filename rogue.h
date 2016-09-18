@@ -387,7 +387,6 @@ struct Item
   bool is_vorpalized_against(Agent* monster) const;
   const char* get_vorpalized_name() const;
 };
-typedef struct Item ITEM;
 
 #define charges      misc
 #define gold_value   misc

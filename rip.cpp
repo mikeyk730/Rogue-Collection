@@ -245,7 +245,7 @@ void death(char monst)
 //total_winner: Code for a winner
 void total_winner()
 {
-  ITEM *obj;
+  Item *obj;
   int worth;
   byte c = 'a';
   int oldpurse;

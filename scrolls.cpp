@@ -151,7 +151,7 @@ const char* get_title(int type)
   return s_names[type].storage;
 }
 
-void init_new_scroll(ITEM* scroll)
+void init_new_scroll(Item* scroll)
 {
   scroll->type = SCROLL;
   scroll->which = pick_one(s_magic, MAXSCROLLS);
@@ -379,7 +379,7 @@ void(*scroll_functions[MAXSCROLLS])() =
 //read_scroll: Read a scroll from the pack and do the appropriate thing
 void read_scroll()
 {
-  ITEM *scroll;
+  Item *scroll;
 
   scroll = get_item("read", SCROLL);
   if (scroll==NULL) return;
@@ -408,19 +408,19 @@ void read_scroll()
   }
 }
 
-int is_scare_monster_scroll(ITEM* item)
+int is_scare_monster_scroll(Item* item)
 {
   return item && item->type == SCROLL && 
     item->which == S_SCARE;
 }
 
-int is_bad_scroll(ITEM* item)
+int is_bad_scroll(Item* item)
 {
   return item && item->type == SCROLL &&
     (item->which == S_SLEEP || item->which == S_CREATE || item->which == S_AGGR);
 }
 
-const char* get_inv_name_scroll(ITEM* obj)
+const char* get_inv_name_scroll(Item* obj)
 {
   char *pb = prbuf;
   int which = obj->which;

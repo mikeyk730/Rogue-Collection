@@ -1,6 +1,6 @@
 int get_default_class(int type);
-void init_new_armor(ITEM* armor);
-const char* get_inv_name_armor(ITEM* armor);
+void init_new_armor(Item* armor);
+const char* get_inv_name_armor(Item* armor);
 
 const char* get_armor_name(int type);
 

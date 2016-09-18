@@ -18,17 +18,17 @@ void Item::initialize(int type, int which)
     this->enemy = 0;
 }
 
-ITEM *create_item(int type, int which)
+Item *create_item(int type, int which)
 {
-    ITEM* item = new Item;
-    memset(item, 0, sizeof(ITEM));
+    Item* item = new Item;
+    memset(item, 0, sizeof(Item));
 
     item->initialize(type, which); //todo:ctor
 
     return item;
 }
 
-void discard_item(ITEM *item)
+void discard_item(Item *item)
 {
     delete item;
 }

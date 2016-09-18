@@ -87,7 +87,7 @@ void new_level(int do_implode)
 void put_things()
 {
   int i = 0;
-  ITEM *cur;
+  Item *cur;
   Coord tp;
 
   //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
@@ -133,7 +133,7 @@ void put_things()
 void treas_room()
 {
   int nm;
-  ITEM *item;
+  Item *item;
   Agent *monster;
   struct Room *room;
   int spots, num_monst;

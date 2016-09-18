@@ -2,7 +2,7 @@
 void init_things();
 
 //inv_name: Return the name of something as it would appear in an inventory.
-char *inv_name(ITEM *obj, bool drop);
+char *inv_name(Item *obj, bool drop);
 
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 
@@ -10,10 +10,10 @@ void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 void drop();
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
-bool can_drop(ITEM *op);
+bool can_drop(Item *op);
 
 //new_thing: Return a new thing
-ITEM* new_item();
+Item* new_item();
 
 //pick_one: Pick an item out of a list of nitems possible magic items
 int pick_one(struct MagicItem *magic, int nitems);

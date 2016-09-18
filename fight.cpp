@@ -41,7 +41,7 @@ const char* you = "you";
 long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 
   20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
 
-void do_hit(ITEM* weapon, int thrown, Agent* monster, const char* name)
+void do_hit(Item* weapon, int thrown, Agent* monster, const char* name)
 {
   bool did_huh = false;
 
@@ -77,7 +77,7 @@ void do_hit(ITEM* weapon, int thrown, Agent* monster, const char* name)
     msg("the %s appears confused", name);
 }
 
-void do_miss(ITEM* weapon, int thrown, Agent* monster, const char* name)
+void do_miss(Item* weapon, int thrown, Agent* monster, const char* name)
 {
   if (thrown)
     display_throw_msg(weapon, name, "misses", "missed");
@@ -88,7 +88,7 @@ void do_miss(ITEM* weapon, int thrown, Agent* monster, const char* name)
 }
 
 //fight: The player attacks the monster.
-int fight(Coord *location, ITEM *weapon, bool thrown)
+int fight(Coord *location, Item *weapon, bool thrown)
 {
   const char *name;
   //Find the monster we want to fight
@@ -185,7 +185,7 @@ bool leprechaun_attack(Agent* mp)
 bool nymph_attack(Agent* mp)
 {
   //Nymphs steal a magic item, look through the pack and pick out one we like.
-  ITEM *steal;
+  Item *steal;
   int nobj = 0;
   char *she_stole = "she stole %s!";
 
@@ -351,7 +351,7 @@ void check_level()
 }
 
 //roll_em: Roll several attacks
-bool roll_em(Agent *thatt, Agent *thdef, ITEM *weapon, bool hurl)
+bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
 {
   struct Stats *att, *def;
   const char *cp;
@@ -535,7 +535,7 @@ void raise_level()
 }
 
 //thunk: A missile hit or missed a monster
-void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
+void display_throw_msg(Item *item, const char *name, char *does, char *did)
 {
   if (item->type == WEAPON)
     addmsg("the %s %s ", get_weapon_name(item->which), does);
@@ -570,7 +570,7 @@ void remove_monster(Agent *monster, bool waskill)
 }
 
 //is_magic: Returns true if an object radiates magic
-bool is_magic(ITEM *obj)
+bool is_magic(Item *obj)
 {
   switch (obj->type)
   {
@@ -592,7 +592,7 @@ void killed(Agent *monster, bool print)
       f_restor();
   }
   else if (monster->drops_gold()){
-      ITEM *gold;
+      Item *gold;
 
       if ((gold = create_item(GOLD, 0)) == NULL) 
           return;

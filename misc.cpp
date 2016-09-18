@@ -175,7 +175,7 @@ void look(bool wakeup)
 }
 
 //find_obj: Find the unclaimed object at y, x
-ITEM *find_obj(int y, int x)
+Item *find_obj(int y, int x)
 {
   for (auto it = level_items.begin(); it != level_items.end(); ++it) {
       Item* op = *it;
@@ -252,7 +252,7 @@ const char *vowelstr(const char *str)
 }
 
 //is_current: See if the object is one of the currently used items
-int is_current(ITEM *obj)
+int is_current(Item *obj)
 {
   if (obj==NULL) return false;
   if (obj==get_current_armor() || obj==get_current_weapon() || obj==get_ring(LEFT) || obj==get_ring(RIGHT))
@@ -343,7 +343,7 @@ int step_ok(int ch)
 }
 
 //goodch: Decide how good an object is and return the correct character for printing.
-int goodch(ITEM *obj)
+int goodch(Item *obj)
 {
   int ch = MAGIC;
 
@@ -515,7 +515,7 @@ void go_up_stairs()
 //call: Allow a user to call a potion, scroll, or ring something
 void call()
 {
-  ITEM *obj;
+  Item *obj;
   const char *guess, *elsewise;
   int(*know)(int);
   void(*setter)(int, const char*);

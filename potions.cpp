@@ -146,7 +146,7 @@ const char* get_color(int type)
   return p_colors[type];
 }
 
-void init_new_potion(ITEM* potion)
+void init_new_potion(Item* potion)
 {
   potion->type = POTION;
   potion->which = pick_one(p_magic, MAXPOTIONS);
@@ -330,7 +330,7 @@ void(*potion_functions[MAXPOTIONS])() = {
 //quaff: Quaff a potion from the pack
 void quaff()
 {
-  ITEM *obj;
+  Item *obj;
 
   if ((obj = get_item("quaff", POTION))==NULL) return;
   //Make certain that it is something that we want to drink
@@ -399,7 +399,7 @@ bool turn_see(bool turn_off)
 }
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void affect_monster(ITEM *potion, Agent *monster)
+void affect_monster(Item *potion, Agent *monster)
 {
   msg("the flask shatters.");
 
@@ -431,13 +431,13 @@ void affect_monster(ITEM *potion, Agent *monster)
   }
 }
 
-int is_bad_potion(ITEM* obj)
+int is_bad_potion(Item* obj)
 {
   return obj && obj->type == POTION &&
     (obj->which == P_CONFUSE || obj->which == P_PARALYZE || obj->which == P_POISON || obj->which == P_BLIND);
 }
 
-const char* get_inv_name_potion(ITEM* obj)
+const char* get_inv_name_potion(Item* obj)
 {
   char *pb = prbuf;
   int which = obj->which;

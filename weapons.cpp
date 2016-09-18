@@ -66,7 +66,7 @@ const char* get_weapon_name(int which)
   return weapon_names[which];
 }
 
-void init_new_weapon(ITEM* weapon)
+void init_new_weapon(Item* weapon)
 {
   int k;
   weapon->type = WEAPON;
@@ -83,7 +83,7 @@ void init_new_weapon(ITEM* weapon)
 //missile: Fire a missile in a given direction
 void missile(int ydelta, int xdelta)
 {
-  ITEM *obj, *nitem;
+  Item *obj, *nitem;
 
   //Get which thing we are hurling
   if ((obj = get_item("throw", WEAPON))==NULL) return;
@@ -114,7 +114,7 @@ hack:
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
-void do_motion(ITEM *obj, int ydelta, int xdelta)
+void do_motion(Item *obj, int ydelta, int xdelta)
 {
   byte under = '@';
 
@@ -146,7 +146,7 @@ void do_motion(ITEM *obj, int ydelta, int xdelta)
   }
 }
 
-const char *short_name(ITEM *obj)
+const char *short_name(Item *obj)
 {
   switch (obj->type)
   {
@@ -159,7 +159,7 @@ const char *short_name(ITEM *obj)
 }
 
 //fall: Drop an item someplace around here.
-void fall(ITEM *obj, bool pr)
+void fall(Item *obj, bool pr)
 {
   static Coord fpos;
 
@@ -203,7 +203,7 @@ void Item::initialize_weapon(byte type)
 }
 
 //hit_monster: Does the missile hit the monster?
-int hit_monster(int y, int x, ITEM *obj)
+int hit_monster(int y, int x, Item *obj)
 {
   static Coord mp;
   Agent *monster = monster_at(y, x);
@@ -227,7 +227,7 @@ char *num(int n1, int n2, char type)
 //wield: Pull out a certain weapon
 void wield()
 {
-  ITEM *obj;
+  Item *obj;
   char *sp;
 
   if (!can_drop(get_current_weapon())) {
@@ -248,10 +248,10 @@ void wield()
 }
 
 //fallpos: Pick a random position around the given (y, x) coordinates
-int fallpos(ITEM *obj, Coord *newpos)
+int fallpos(Item *obj, Coord *newpos)
 {
   int y, x, cnt = 0, ch;
-  ITEM *onfloor;
+  Item *onfloor;
 
   for (y = obj->pos.y-1; y<=obj->pos.y+1; y++)
     for (x = obj->pos.x-1; x<=obj->pos.x+1; x++)
