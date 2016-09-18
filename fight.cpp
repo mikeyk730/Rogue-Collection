@@ -214,31 +214,36 @@ bool nymph_attack(AGENT* mp)
   return false;
 }
 
-bool vampire_wraith_attack(int type)
+bool vampire_wraith_attack(AGENT* monster)
 {
-  //Wraiths might drain energy levels, and Vampires can steal max_hp
-  if (rnd(100)<(type=='W'?15:30))
-  {
-    int damage;
-
-    if (type=='W')
+    //Wraiths might drain energy levels, and Vampires can steal max_hp
+    if (rnd(100) < (monster->drains_exp() ? 15 : 30)) // vampires are twice as likely to connect
     {
-      if (player.stats.exp==0) death(type); //All levels gone
-      if (--player.stats.level==0) {player.stats.exp = 0; player.stats.level = 1;}
-      else player.stats.exp = e_levels[player.stats.level-1]+1;
-      damage = roll(1, 10);
-    }
-    else 
-        damage = roll(1, 5);
+        int damage;
 
-    player.stats.max_hp -= damage;
-    if (player.stats.max_hp<1)
-        death(type);
-    player.stats.decrease_hp(damage, false);
-    msg("you suddenly feel weaker");
-    return true;
-  }
-  return false;
+        if (monster->drains_exp())
+        {
+            if (player.stats.exp == 0) 
+                death(monster->type); //All levels gone
+            if (--player.stats.level == 0) { 
+                player.stats.exp = 0; 
+                player.stats.level = 1; 
+            }
+            else 
+                player.stats.exp = e_levels[player.stats.level - 1] + 1;
+            damage = roll(1, 10);
+        }
+        else
+            damage = roll(1, 5); //vampires only half as strong
+
+        player.stats.max_hp -= damage;
+        if (player.stats.max_hp < 1)
+            death(monster->type);
+        player.stats.decrease_hp(damage, false);
+        msg("you suddenly feel weaker");
+        return true;
+    }
+    return false;
 }
 
 //attack: The monster attacks the player
@@ -286,9 +291,9 @@ bool attack(AGENT *monster)
         {
             attack_success = rattlesnake_attack();
         }
-        else if (monster->drains_life() || monster->drops_level())
+        else if (monster->drains_life() || monster->drains_exp())
         {
-            attack_success = vampire_wraith_attack(monster->type);
+            attack_success = vampire_wraith_attack(monster);
         }
 
         if (attack_success && monster->dies_from_attack())

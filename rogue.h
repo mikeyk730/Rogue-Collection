@@ -340,7 +340,7 @@ public:
   bool drops_gold() const;
   bool steals_magic() const;
   bool drains_life() const;
-  bool drops_level() const;
+  bool drains_exp() const;
   bool drains_strength() const;
   bool rusts_armor() const;
   bool dies_from_attack() const;

@@ -106,7 +106,7 @@ bool Agent::drains_life() const {
     return (exflags & EX_DRAINS_MAXHP) != 0;
 }
 
-bool Agent::drops_level() const {
+bool Agent::drains_exp() const {
     return (exflags & EX_DRAINS_EXP) != 0;
 }
 
