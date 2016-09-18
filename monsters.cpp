@@ -26,7 +26,7 @@
 
 
 //List of monsters in rough order of vorpalness
-static char *lvl_mons = "OOOOK BHISOR LCA NYTWFP GMXVJD";
+static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
 #define ___  1
