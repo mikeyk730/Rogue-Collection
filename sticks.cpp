@@ -208,12 +208,12 @@ void zap_light()
   else
   {
     ws_know[WS_LIGHT] = true;
-    if (player.room->flags&IS_GONE) msg("the corridor glows and then fades");
+    if (player.room->is_gone()) msg("the corridor glows and then fades");
     else msg("the room is lit by a shimmering blue light");
   }
-  if (!(player.room->flags&IS_GONE))
+  if (!player.room->is_gone())
   {
-    player.room->flags &= ~IS_DARK;
+    player.room->set_dark(false);
     //Light the room and put the player back up
     enter_room(&player.pos);
   }
@@ -513,7 +513,7 @@ void drain()
   cnt = 0;
   if (get_tile(player.pos.y, player.pos.x)==DOOR) room = &passages[get_flags(player.pos.y, player.pos.x)&F_PNUM];
   else room = NULL;
-  inpass = (player.room->flags&IS_GONE) != 0;
+  inpass = (player.room->is_gone()) != 0;
   dp = drainee;
   for (monster = mlist; monster!=NULL; monster = next(monster)){
     if (monster->room==player.room || monster->room==room || (inpass && get_tile(monster->pos.y, monster->pos.x)==DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM]==player.room)) {

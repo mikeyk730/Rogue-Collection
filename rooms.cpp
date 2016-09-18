@@ -23,6 +23,10 @@
 
 struct Room rooms[MAXROOMS]; //One for each room -- A level
 
+bool isfloor(byte c){
+    return ((c) == FLOOR || (c) == PASSAGE);
+}
+
 //do_rooms: Create rooms and corridors with a connectivity graph
 void do_rooms()
 {
@@ -45,7 +49,7 @@ void do_rooms()
   for (i = 0; i < MAXROOMS; i++) {
     room = &rooms[i];
     room->index = i;
-    room->goldval = room->num_exits = room->flags = 0;
+    room->reset();
   }
   //Put the gone rooms, if any, on the level
   left_out = rnd(4);
@@ -53,10 +57,10 @@ void do_rooms()
   {
     do { 
       room = rnd_room();
-    } while (room->flags&IS_MAZE);
-    room->flags |= IS_GONE;
+    } while (room->is_maze());
+    room->set_gone();
     if (room->index>2 && get_level()>10 && rnd(20)<get_level()-9)
-      room->flags |= IS_MAZE;
+      room->set_maze();
   }
   //dig and populate all the rooms on the level
   for (i = 0, room = rooms; i<MAXROOMS; room++, i++)
@@ -64,10 +68,10 @@ void do_rooms()
     //Find upper left corner of box that this room goes in
     top.x = (i%3)*bsze.x+1;
     top.y = i/3*bsze.y;
-    if (room->flags&IS_GONE)
+    if (room->is_gone())
     {
       //If the gone room is a maze room, draw the maze and set the size equal to the maximum possible.
-      if (room->flags&IS_MAZE) {room->pos.x = top.x; room->pos.y = top.y; draw_maze(room);}
+      if (room->is_maze()) {room->pos.x = top.x; room->pos.y = top.y; draw_maze(room);}
       else
       {
         //Place a gone room.  Make certain that there is a blank line for passage drawing.
@@ -81,7 +85,9 @@ void do_rooms()
       }
       continue;
     }
-    if (rnd(10)<(get_level()-1)) room->flags |= IS_DARK;
+    // dark rooms more common as we go down
+    if (rnd(10)<(get_level()-1))
+        room->set_dark(true);
     //Find a place and size for a random room
     do
     {
@@ -185,13 +191,13 @@ void enter_room(Coord *cp)
   AGENT *monster;
 
   room = player.room = roomin(cp);
-  if (bailout || (room->flags&IS_GONE && (room->flags&IS_MAZE)==0))
+  if (bailout || (room->is_gone() && (room->is_maze())==0))
   {
     debug("in a gone room");
     return;
   }
   door_open(room);
-  if (!(room->flags&IS_DARK) && !player.is_blind() && !(room->flags&IS_MAZE))
+  if (!(room->is_dark()) && !player.is_blind() && !(room->is_maze()))
     for (y = room->pos.y; y<room->size.y+room->pos.y; y++)
     {
       move(y, room->pos.x);
@@ -219,8 +225,8 @@ void leave_room(Coord *cp)
 
   room = player.room;
   player.room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
-  floor = ((room->flags&IS_DARK) && !player.is_blind()) ? ' ' : FLOOR;
-  if (room->flags&IS_MAZE) floor = PASSAGE;
+  floor = ((room->is_dark()) && !player.is_blind()) ? ' ' : FLOOR;
+  if (room->is_maze()) floor = PASSAGE;
   for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
     for (x = room->pos.x+1; x<room->size.x+room->pos.x-1; x++) {
       switch (ch = mvinch(y, x))
@@ -275,7 +281,7 @@ struct Room* rnd_room()
   int rm;
   do { 
     rm = rnd(MAXROOMS); 
-  } while (!((rooms[rm].flags&IS_GONE)==0 || (rooms[rm].flags&IS_MAZE)));
+  } while (!((rooms[rm].is_gone())==0 || (rooms[rm].is_maze())));
 
   return &rooms[rm];
 }

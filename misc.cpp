@@ -71,7 +71,8 @@ void look(bool wakeup)
           ch = curch();
           if (ch==FLOOR)
           {
-            if ((oldrp->flags & (IS_GONE|IS_DARK))==IS_DARK) addch(' ');
+            if (oldrp->is_dark() && !oldrp->is_gone())
+                addch(' ');
           }
           else
           {
@@ -122,7 +123,7 @@ void look(bool wakeup)
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (monster->oldch != ' ' || (!(room->flags&IS_DARK) && !player.is_blind())) monster->oldch = get_tile(y, x);
+        if (monster->oldch != ' ' || (!(room->is_dark()) && !player.is_blind())) monster->oldch = get_tile(y, x);
         if (can_see_monst(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse

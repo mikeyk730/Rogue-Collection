@@ -87,7 +87,7 @@ void add_pack(ITEM *obj, bool silent)
   {
     from_floor = true;
     if ((obj = find_obj(player.pos.y, player.pos.x))==NULL) return;
-    floor = (player.room->flags&IS_GONE)?PASSAGE:FLOOR;
+    floor = (player.room->is_gone())?PASSAGE:FLOOR;
   }
   else from_floor = false;
   //Link it into the pack.  Search the pack for a object of similar type
@@ -340,7 +340,7 @@ void money(int value)
 {
   byte floor;
 
-  floor = (player.room->flags&IS_GONE) ? PASSAGE : FLOOR;
+  floor = (player.room->is_gone()) ? PASSAGE : FLOOR;
   adjust_purse(value);
   mvaddch(player.pos.y, player.pos.x, floor);
   set_tile(player.pos.y, player.pos.x, floor);

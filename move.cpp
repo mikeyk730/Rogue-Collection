@@ -35,6 +35,11 @@ void do_run(byte ch)
   runch = ch;
 }
 
+bool is_gone(Room* rp)
+{
+    return ((rp->is_gone()) && (rp->is_maze()) == 0);
+}
+
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
 void do_move(int dy, int dx)
 {
@@ -74,7 +79,7 @@ over:
   {
   case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
 hit_bound:
-    if (running && IS_GONE(player.room) && !player.is_blind())
+    if (running && is_gone(player.room) && !player.is_blind())
     {
       bool b1, b2;
 
@@ -157,7 +162,7 @@ void door_open(struct Room *room)
   byte ch;
   AGENT *item;
 
-  if (!(room->flags&IS_GONE) && !player.is_blind())
+  if (!(room->is_gone()) && !player.is_blind())
     for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
       for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
       {
@@ -165,7 +170,7 @@ void door_open(struct Room *room)
         if (isupper(ch))
         {
           item = wake_monster(j, k);
-          if (item->oldch==' ' && !(room->flags&IS_DARK) && !player.is_blind())
+          if (item->oldch==' ' && !(room->is_dark()) && !player.is_blind())
               item->oldch = get_tile(j, k);
         }
       }

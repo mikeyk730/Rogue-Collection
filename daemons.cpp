@@ -87,7 +87,7 @@ void sight()
   {
     extinguish(sight);
     player.flags &= ~IS_BLIND;
-    if (!(player.room->flags & IS_GONE)) 
+    if (!player.room->is_gone()) 
       enter_room(&player.pos);
     msg("the veil of darkness lifts");
   }

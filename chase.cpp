@@ -77,7 +77,7 @@ bool do_chase(AGENT *monster)
 
 over:
 
-  if (monster_room!=dest_room && (monster_room->flags&IS_MAZE)==0)
+  if (monster_room!=dest_room && (monster_room->is_maze())==0)
   {
     //loop through doors
     for (i = 0; i<monster_room->num_exits; i++)
@@ -119,7 +119,7 @@ over:
 
       detach_item(&lvl_obj, obj);
       attach_item(&monster->pack, obj);
-      oldchar = (monster->room->flags&IS_GONE)?PASSAGE:FLOOR;
+      oldchar = (monster->room->is_gone())?PASSAGE:FLOOR;
       set_tile(obj->pos.y, obj->pos.x, oldchar);
       if (can_see(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, oldchar);
       monster->dest = find_dest(monster);
@@ -162,7 +162,7 @@ over:
   }
   else 
     monster->oldch = '@';
-  if (monster->oldch==FLOOR && oroom->flags&IS_DARK) monster->oldch = ' ';
+  if (monster->oldch==FLOOR && oroom->is_dark()) monster->oldch = ' ';
   standend();
   return true;
 }
@@ -179,7 +179,7 @@ bool can_see_monst(AGENT *monster)
     return false;
   
   if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x) >= LAMP_DIST &&
-    ((monster->room != player.room || (monster->room->flags & IS_DARK) || (monster->room->flags & IS_MAZE)))) 
+    ((monster->room != player.room || (monster->room->is_dark()) || (monster->room->is_maze())))) 
     return false;
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
@@ -281,7 +281,7 @@ int can_see(int y, int x)
   tp.y = y;
   tp.x = x;
   room = roomin(&tp);
-  return (room==player.room && !(room->flags&IS_DARK));
+  return (room==player.room && !(room->is_dark()));
 }
 
 //find_dest: find the proper destination for the monster

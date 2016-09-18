@@ -45,14 +45,14 @@ void conn(int r1, int r2)
     del.x = 0; //direction of move
     del.y = 1;
     //If we are drawing from/to regular or maze rooms, we have to pick the spot we draw from/to
-    if ((room_from->flags&IS_GONE)==0 || (room_from->flags&IS_MAZE))
+    if ((room_from->is_gone())==0 || (room_from->is_maze()))
     {
       spos.y = room_from->pos.y+room_from->size.y-1;
       do {spos.x = room_from->pos.x+rnd(room_from->size.x-2)+1;} while (get_tile(spos.y,spos.x)==' ');
     }
     else {spos.x = room_from->pos.x; spos.y = room_from->pos.y;}
     epos.y = room_to->pos.y;
-    if ((room_to->flags&IS_GONE)==0 || (room_to->flags&IS_MAZE))
+    if ((room_to->is_gone())==0 || (room_to->is_maze()))
     {
       do {epos.x = room_to->pos.x+rnd(room_to->size.x-2)+1;} while (get_tile(epos.y,epos.x)==' ');
     }
@@ -69,14 +69,14 @@ void conn(int r1, int r2)
     room_to = &rooms[rmt];
     del.x = 1;
     del.y = 0;
-    if ((room_from->flags&IS_GONE)==0 || (room_from->flags&IS_MAZE))
+    if ((room_from->is_gone())==0 || (room_from->is_maze()))
     {
       spos.x = room_from->pos.x+room_from->size.x-1;
       do {spos.y = room_from->pos.y+rnd(room_from->size.y-2)+1;} while (get_tile(spos.y,spos.x)==' ');
     }
     else {spos.x = room_from->pos.x; spos.y = room_from->pos.y;}
     epos.x = room_to->pos.x;
-    if ((room_to->flags&IS_GONE)==0 || (room_to->flags&IS_MAZE))
+    if ((room_to->is_gone())==0 || (room_to->is_maze()))
     {
       do {epos.y = room_to->pos.y+rnd(room_to->size.y-2)+1;} while (get_tile(epos.y,epos.x)==' ');
     }
@@ -90,9 +90,9 @@ void conn(int r1, int r2)
 
   turn_spot = rnd(distance-1)+1;
   //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
-  if (!(room_from->flags&IS_GONE)) door(room_from, &spos);
+  if (!(room_from->is_gone())) door(room_from, &spos);
   else psplat(spos.y, spos.x);
-  if (!(room_to->flags&IS_GONE)) door(room_to, &epos);
+  if (!(room_to->is_gone())) door(room_to, &epos);
   else psplat(epos.y, epos.x);
   //Get ready to move...
   curr.x = spos.x;

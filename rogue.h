@@ -29,9 +29,6 @@ typedef unsigned char byte;
 #define next(ptr)       (*ptr).l_next
 #define prev(ptr)       (*ptr).l_prev
 #define CTRL(ch)        (ch&037)
-#define isfloor(c)      ((c)==FLOOR || (c)==PASSAGE)
-#define IS_GONE(rp)      (((rp)->flags&IS_GONE) && ((rp)->flags&IS_MAZE)==0)
-
 #ifdef DEBUG
 #define debug           msg
 #else
@@ -58,6 +55,8 @@ typedef unsigned char byte;
 #define RING      (0xf8) //(0x09)
 #define WEAPON    (0x18)
 #define CALLABLE  -1
+
+bool isfloor(byte c);
 
 #define VWALL   (0xba)
 #define HWALL   (0xcd)
@@ -232,8 +231,33 @@ struct Room
   int num_exits;   //Number of exits
   Coord exits[12]; //Where the exits are
 
+  bool is_flag_set(short flag) const{
+      return (flags & flag) != 0;
+  }
+
   bool is_dark() const{
-      //todo
+      return is_flag_set(IS_DARK);
+  }
+  bool is_maze() const{
+      return is_flag_set(IS_MAZE);
+  }
+  bool is_gone() const{
+      return is_flag_set(IS_GONE);
+  }
+  void set_maze(){
+      flags |= IS_MAZE;
+  }
+  void set_gone(){
+      flags |= IS_GONE;
+  }
+  void set_dark(bool enable){
+      if (enable)
+          flags |= IS_DARK;
+      else
+          flags &= ~IS_DARK;
+  }
+  void reset(){
+      goldval = num_exits = flags = 0;
   }
 };
 

@@ -420,7 +420,7 @@ AGENT *wake_monster(int y, int x)
   {
     room = player.room;
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
-    if ((room!=NULL && !(room->flags&IS_DARK)) || dst<LAMP_DIST)
+    if ((room!=NULL && !(room->is_dark())) || dst<LAMP_DIST)
     {
       monster->flags |= IS_FOUND;
       if (!save(VS_MAGIC))
