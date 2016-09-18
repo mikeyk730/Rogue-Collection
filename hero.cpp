@@ -114,7 +114,7 @@ void init_player()
 
   //Give the rogue his weaponry.  First a mace.
   obj = create_item(WEAPON, MACE);
-  init_weapon(obj, MACE);
+  obj->initialize_weapon(MACE);
   obj->hit_plus = 1;
   obj->damage_plus = 1;
   obj->set_known();
@@ -123,7 +123,7 @@ void init_player()
 
   //Now a +1 bow
   obj = create_item(WEAPON, BOW);
-  init_weapon(obj, BOW);
+  obj->initialize_weapon(BOW);
   obj->hit_plus = 1;
   obj->damage_plus = 0;
   obj->set_known();
@@ -131,7 +131,7 @@ void init_player()
 
   //Now some arrows
   obj = create_item(WEAPON, ARROW);
-  init_weapon(obj, ARROW);
+  obj->initialize_weapon(ARROW);
   obj->count = rnd(15)+25;
   obj->hit_plus = obj->damage_plus = 0;
   obj->set_known();

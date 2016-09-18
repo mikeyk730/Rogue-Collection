@@ -71,7 +71,7 @@ void init_new_weapon(ITEM* weapon)
   int k;
   weapon->type = WEAPON;
   weapon->which = rnd(MAXWEAPONS);
-  init_weapon(weapon, weapon->which);
+  weapon->initialize_weapon(weapon->which);
   if ((k = rnd(100))<10) {
       weapon->set_cursed();
       weapon->hit_plus -= rnd(3)+1;
