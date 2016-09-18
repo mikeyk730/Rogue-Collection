@@ -118,7 +118,7 @@ bool Agent::rusts_armor() const {
     return (exflags & EX_RUSTS_ARMOR) != 0;
 }
 
-bool Agent::dies_during_attack() const{
+bool Agent::dies_from_attack() const{
     return (exflags & EX_SUICIDES) != 0;
 }
 

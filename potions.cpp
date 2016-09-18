@@ -203,7 +203,7 @@ void quaff_see_invisible()
 void quaff_healing()
 {
   p_know[P_HEALING] = true;
-  if ((player.stats.hp += roll(player.stats.level, 4))>player.stats.max_hp) player.stats.hp = ++player.stats.max_hp;
+  player.stats.increase_hp(roll(player.stats.level, 4), true, false);
   sight();
   msg("you begin to feel better");
 }
@@ -266,11 +266,7 @@ void quaff_raise_level()
 void quaff_extra_healing()
 {
   p_know[P_XHEAL] = true;
-  if ((player.stats.hp += roll(player.stats.level, 8))>player.stats.max_hp)
-  {
-    if (player.stats.hp>player.stats.max_hp+player.stats.level+1) ++player.stats.max_hp;
-    player.stats.hp = ++player.stats.max_hp;
-  }
+  player.stats.increase_hp(roll(player.stats.level, 8), true, true);
   sight();
   msg("you begin to feel much better");
 }
@@ -420,13 +416,12 @@ void affect_monster(ITEM *potion, AGENT *monster)
     break;
 
   case P_HEALING: case P_XHEAL:
-    if ((monster->stats.hp += rnd(8)) > monster->stats.max_hp) 
-      monster->stats.hp = ++monster->stats.max_hp;
+      monster->stats.increase_hp(rnd(8), true, false);
     break;
 
   case P_RAISE:
-    monster->stats.hp += 8;
     monster->stats.max_hp += 8;
+    monster->stats.increase_hp(8, false, false);
     monster->stats.level++;
     break;
 

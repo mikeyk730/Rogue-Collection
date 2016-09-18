@@ -247,6 +247,35 @@ struct Stats
   int hp;             //Hit points
   std::string damage; //String describing damage done
   int max_hp;         //Max hit points
+
+  int get_hp() const {
+      return hp;
+  }
+
+  bool decrease_hp(int n, bool can_kill){
+      hp -= n;
+      if (!can_kill && hp <= 0)
+          hp = 1;
+      return hp > 0;
+  }
+
+  void increase_hp(int n, bool max_bonus, bool second_max_bonus){
+      hp += n;
+
+      if (max_bonus && hp > max_hp) 
+          ++max_hp;
+      if (second_max_bonus && hp > max_hp + level + 1) 
+          ++max_hp;
+
+      if (hp > max_hp) {
+          hp = max_hp;
+      }
+  }
+
+  int drain_hp(){
+      hp /= 2;
+      return hp;
+  }
 };
 
 struct Item
@@ -314,7 +343,7 @@ public:
   bool drops_level() const;
   bool drains_strength() const;
   bool rusts_armor() const;
-  bool dies_during_attack() const;
+  bool dies_from_attack() const;
 
   bool is_flying() const;
   bool is_mean() const;

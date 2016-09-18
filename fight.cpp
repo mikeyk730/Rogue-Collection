@@ -71,7 +71,7 @@ void do_hit(ITEM* weapon, int thrown, AGENT* monster, const char* name)
     msg("your hands stop glowing red");
   }
 
-  if (monster->stats.hp <= 0)
+  if (monster->stats.get_hp() <= 0)
     killed(monster, true);
   else if (did_huh && !player.is_blind()) 
     msg("the %s appears confused", name);
@@ -121,7 +121,7 @@ int fight(Coord *location, ITEM *weapon, bool thrown)
   return false;
 }
 
-void aquator_attack()
+bool aquator_attack()
 {
   //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
   if (get_current_armor() && get_current_armor()->armor_class < 9 && get_current_armor()->which != LEATHER)
@@ -130,25 +130,31 @@ void aquator_attack()
     else {
       msg("your armor weakens, oh my!"); 
       get_current_armor()->armor_class++;
+      return true;
     }
+    return false;
 }
 
 void ice_monster_attack()
 {
   //When an Ice Monster hits you, you get unfrozen faster
-  if (no_command>1) no_command--;
+  if (no_command>1) 
+      no_command--;
 }
 
-void rattlesnake_attack()
+bool rattlesnake_attack()
 {
   //Rattlesnakes have poisonous bites
   if (!save(VS_POISON))
     if (!is_wearing_ring(R_SUSTSTR)) {
       chg_str(-1); 
       msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
+      return true;
     }
     else 
       msg("a bite momentarily weakens you");
+
+    return false;
 }
 
 void flytrap_attack(AGENT* mp)
@@ -208,27 +214,31 @@ bool nymph_attack(AGENT* mp)
   return false;
 }
 
-void vampire_wraith_attack(int type)
+bool vampire_wraith_attack(int type)
 {
   //Wraiths might drain energy levels, and Vampires can steal max_hp
   if (rnd(100)<(type=='W'?15:30))
   {
-    int fewer;
+    int damage;
 
     if (type=='W')
     {
       if (player.stats.exp==0) death(type); //All levels gone
       if (--player.stats.level==0) {player.stats.exp = 0; player.stats.level = 1;}
       else player.stats.exp = e_levels[player.stats.level-1]+1;
-      fewer = roll(1, 10);
+      damage = roll(1, 10);
     }
-    else fewer = roll(1, 5);
-    player.stats.hp -= fewer;
-    player.stats.max_hp -= fewer;
-    if (player.stats.hp<1) player.stats.hp = 1;
-    if (player.stats.max_hp<1) death(type);
+    else 
+        damage = roll(1, 5);
+
+    player.stats.max_hp -= damage;
+    if (player.stats.max_hp<1)
+        death(type);
+    player.stats.decrease_hp(damage, false);
     msg("you suddenly feel weaker");
+    return true;
   }
+  return false;
 }
 
 //attack: The monster attacks the player
@@ -247,15 +257,12 @@ bool attack(AGENT *monster)
   if (roll_em(monster, &player, NULL, false))
   {
     display_hit_msg(name, NULL);
-    if (player.stats.hp <= 0) 
+    if (player.stats.get_hp() <= 0) 
       death(monster->type); //Bye bye life ...
    
+    //todo: modify code, so enemy can have more than one power
     if (!monster->powers_cancelled()) {
-        if (monster->rusts_armor())
-        {
-            aquator_attack();
-        }
-        else if (monster->hold_attacks())
+        if (monster->hold_attacks())
         {
             flytrap_attack(monster);
         }
@@ -263,7 +270,12 @@ bool attack(AGENT *monster)
         {
             ice_monster_attack();
         }
-        else if (monster->steals_gold()){
+        else if (monster->rusts_armor())
+        {
+            attack_success = aquator_attack();
+        }
+        else if (monster->steals_gold())
+        {
             attack_success = leprechaun_attack(monster);
         }
         else if (monster->steals_magic())
@@ -272,14 +284,14 @@ bool attack(AGENT *monster)
         }
         else if (monster->drains_strength())
         {
-            rattlesnake_attack();
+            attack_success = rattlesnake_attack();
         }
         else if (monster->drains_life() || monster->drops_level())
         {
-            vampire_wraith_attack(monster->type);
+            attack_success = vampire_wraith_attack(monster->type);
         }
 
-        if (attack_success && monster->dies_during_attack())
+        if (attack_success && monster->dies_from_attack())
         {
             monster_died = true;
             remove_monster(monster, false);
@@ -290,8 +302,7 @@ bool attack(AGENT *monster)
   {
     if (monster->hold_attacks())
     {
-      player.stats.hp -= flytrap_hit;
-      if (player.stats.hp<=0)
+      if (!player.stats.decrease_hp(flytrap_hit, true))
           death(monster->type); //Bye bye life ...
     }
     miss(name, NULL);
@@ -325,7 +336,7 @@ void check_level()
   {
     add = roll(i-olevel, 10);
     player.stats.max_hp += add;
-    if ((player.stats.hp += add)>player.stats.max_hp) player.stats.hp = player.stats.max_hp;
+    player.stats.increase_hp(add, false, false);
     if (use_level_names())
         msg("and achieve the rank of \"%s\"", he_man[i - 1]);
     else
@@ -410,7 +421,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
       //special goodies for the commercial version of rogue
       //make it easier on level one
       if (thdef==&player && max_level()==1) damage = (damage+1)/2;
-      def->hp -= max(0, damage);
+      def->decrease_hp(max(0, damage), true);
       did_hit = true;
     }
     if ((cp = strchr(cp, '/'))==NULL) break;

@@ -200,12 +200,12 @@ int be_trapped(Coord *tc)
   case T_ARROW:
     if (swing(player.stats.level-1, player.stats.ac, 1))
     {
-      player.stats.hp -= roll(1, 6);
-      if (player.stats.hp<=0) {
+      if (!player.stats.decrease_hp(roll(1, 6), true)) {
           msg("an arrow killed you"); 
           death('a');
       }
-      else msg("oh no! An arrow shot you");
+      else 
+          msg("oh no! An arrow shot you");
     }
     else
     {
@@ -231,12 +231,16 @@ int be_trapped(Coord *tc)
   case T_DART:
     if (swing(player.stats.level+1, player.stats.ac, 1))
     {
-      player.stats.hp -= roll(1, 4);
-      if (player.stats.hp<=0) {msg("a poisoned dart killed you"); death('d');}
-      if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) chg_str(-1);
+      if (!player.stats.decrease_hp(roll(1, 4), true)) {
+          msg("a poisoned dart killed you"); 
+          death('d');
+      }
+      if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) 
+          chg_str(-1);
       msg("a dart just hit you in the shoulder");
     }
-    else msg("a dart whizzes by your ear and vanishes");
+    else 
+        msg("a dart whizzes by your ear and vanishes");
     break;
   }
   flush_type();
@@ -253,7 +257,8 @@ void descend(char *mesg)
   if (!save(VS_LUCK))
   {
     msg("you are damaged by the fall");
-    if ((player.stats.hp -= roll(1,8))<=0) death('f');
+    if (!player.stats.decrease_hp(roll(1,8), true))
+        death('f');
   }
 }
 

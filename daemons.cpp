@@ -21,19 +21,22 @@ void doctor()
   int lv, ohp;
 
   lv = player.stats.level;
-  ohp = player.stats.hp;
+  ohp = player.stats.get_hp();
   quiet++;
   if (lv<8)
   {
-    if (quiet+(lv<<1)>20) player.stats.hp++;
+    if (quiet+(lv<<1)>20)
+        player.stats.increase_hp(1, false, false);
   }
-  else if (quiet>=3) player.stats.hp += rnd(lv-7)+1;
-  if (is_ring_on_hand(LEFT, R_REGEN)) player.stats.hp++;
-  if (is_ring_on_hand(RIGHT, R_REGEN)) player.stats.hp++;
-  if (ohp!=player.stats.hp)
+  else if (quiet>=3) 
+      player.stats.increase_hp(rnd(lv-7)+1, false, false);
+  if (is_ring_on_hand(LEFT, R_REGEN)) 
+      player.stats.increase_hp(1, false, false);
+  if (is_ring_on_hand(RIGHT, R_REGEN)) 
+      player.stats.increase_hp(1, false, false);
+  if (ohp!=player.stats.get_hp())
   {
-    if (player.stats.hp>player.stats.max_hp) player.stats.hp = player.stats.max_hp;
-    quiet = 0;
+    quiet = 0;//todo:how does this work?
   }
 }
 
