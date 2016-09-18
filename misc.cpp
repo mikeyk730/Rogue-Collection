@@ -1,6 +1,7 @@
 //All sorts of miscellaneous routines
 //misc.c       1.4             (A.I. Design)   12/14/84
 
+#include <algorithm>
 #include <stdio.h>
 
 #include "rogue.h"
@@ -232,9 +233,9 @@ int add_haste(bool potion)
 //aggravate: Aggravate all the monsters on this level
 void aggravate()
 {
-  AGENT *monster;
-  for (monster = mlist; monster!=NULL; monster = next(monster))
-    start_run(monster);
+    std::for_each(level_monsters.begin(), level_monsters.end(), [](AGENT *monster){
+        start_run(monster);
+    });
 }
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".

@@ -176,7 +176,7 @@ struct Stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the pl
 
 AGENT player; //The rogue
 std::list<Item*> level_items; //List of objects on this level
-AGENT *mlist = NULL; //List of monsters on the level
+std::list<Agent*> level_monsters; //List of monsters on the level
 
 //Common strings
 char *typeahead = "";

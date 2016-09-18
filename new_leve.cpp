@@ -35,9 +35,11 @@ void new_level(int do_implode)
   //Clean things off from last level
   clear_level();
   //Free up the monsters on the last level
-  for (monster = mlist; monster!=NULL; monster = next(monster)) 
-    free_item_list(monster->pack);
-  free_agent_list(&mlist);
+  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+      monster = *it;
+      free_item_list(monster->pack);
+  }
+  free_agent_list(level_monsters);
   //just in case we left some flytraps behind
   f_restor();
   //Throw away stuff left on the previous level (if anything)

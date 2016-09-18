@@ -26,7 +26,7 @@
 
 
 //List of monsters in rough order of vorpalness
-static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
+static char *lvl_mons = "LLLLLK BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
 #define ___  1
@@ -338,7 +338,7 @@ void new_monster(AGENT *monster, byte type, Coord *position, int level)
   const struct Monster* defaults;
   
   defaults = &monsters[type-'A'];
-  attach_agent(&mlist, monster);
+  attach_agent(level_monsters, monster);
 
   monster->type = type;
   monster->disguise = type;
@@ -479,8 +479,10 @@ char pick_vorpal_monster()
 AGENT *monster_at(int y, int x)
 {
   AGENT *monster;
-  for (monster = mlist; monster!=NULL; monster = next(monster)) 
-    if (monster->pos.x == x && monster->pos.y == y) 
-      return monster;
+  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+      monster = *it;
+      if (monster->pos.x == x && monster->pos.y == y)
+          return monster;
+  }
   return NULL;
 }

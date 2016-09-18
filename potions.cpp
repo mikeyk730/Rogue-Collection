@@ -1,6 +1,7 @@
 //Function(s) for dealing with potions
 //potions.c   1.4 (AI Design) 2/12/84
 
+#include <algorithm>
 #include <stdio.h>
 
 #include "rogue.h"
@@ -211,7 +212,7 @@ void quaff_healing()
 void quaff_monster_detection()
 {
   fuse(turn_see_wrapper, true, HUH_DURATION);
-  if (mlist==NULL) 
+  if (level_monsters.empty()) 
       msg("you have a strange feeling%s.", noterse(" for a moment"));
   else {
       p_know[P_MFIND] |= turn_see(false);
@@ -239,8 +240,8 @@ void quaff_magic_detection()
         p_know[P_TFIND] = true;
       }
     }
-    for (monster = mlist; monster!=NULL; monster = next(monster))
-    {
+    for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+        monster = *it;
       for (auto it = monster->pack.begin(); it != monster->pack.end(); ++it)
       {
         if (is_magic(*it))
@@ -354,15 +355,13 @@ void quaff()
 //invis_on: Turn on the ability to see invisible
 void invis_on()
 {
-  AGENT *th;
-
-  player.set_sees_invisible(true);
-  for (th = mlist; th != NULL; th = next(th)) {
-      if (th->is_invisible() && can_see_monster(th))
-      {
-          mvaddch(th->pos.y, th->pos.x, th->disguise);
-      }
-  }
+    player.set_sees_invisible(true);
+    std::for_each(level_monsters.begin(), level_monsters.end(), [](AGENT *monster){
+        if (monster->is_invisible() && can_see_monster(monster))
+        {
+            mvaddch(monster->pos.y, monster->pos.x, monster->disguise);
+        }
+    });
 }
 
 void turn_see_wrapper(int turn_off)
@@ -373,28 +372,30 @@ void turn_see_wrapper(int turn_off)
 //turn_see: Put on or off seeing monsters on this level
 bool turn_see(bool turn_off)
 {
-  AGENT *monster;
-  bool can_see, add_new;
-  byte was_there;
+    bool add_new = false;
 
-  add_new = false;
-  for (monster = mlist; monster!=NULL; monster = next(monster))
-  {
-    move(monster->pos.y, monster->pos.x);
-    can_see = (can_see_monster(monster) || (was_there = curch())==monster->type);
-    if (turn_off)
-    {
-      if (!can_see_monster(monster) && monster->oldch!='@') addch(monster->oldch);
-    }
-    else
-    {
-      if (!can_see) {standout(); monster->oldch = was_there;}
-      addch(monster->type);
-      if (!can_see) {standend(); add_new++;}
-    }
-  }
-  player.set_detects_others(!turn_off);
-  return add_new;
+    std::for_each(level_monsters.begin(), level_monsters.end(), [turn_off, &add_new](Agent* monster){
+
+        bool can_see;
+        byte was_there;
+
+        move(monster->pos.y, monster->pos.x);
+        can_see = (can_see_monster(monster) || (was_there = curch()) == monster->type);
+        if (turn_off)
+        {
+            if (!can_see_monster(monster) && monster->oldch != '@') addch(monster->oldch);
+        }
+        else
+        {
+            if (!can_see) { standout(); monster->oldch = was_there; }
+            addch(monster->type);
+            if (!can_see) { standend(); add_new++; }
+        }
+
+    });
+
+    player.set_detects_others(!turn_off);
+    return add_new;
 }
 
 //th_effect: Compute the effect of this potion hitting a monster.

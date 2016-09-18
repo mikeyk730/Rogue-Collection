@@ -259,7 +259,7 @@ void zap_polymorph(AGENT* monster, int y, int x)
   auto pack = monster->pack;
   ch = monster->oldch;
   old_type = monster->type;
-  detach_agent(&mlist, monster);
+  detach_agent(level_monsters, monster);
   if (can_see_monster(monster)) 
     mvaddch(y, x, get_tile(y, x));
 
@@ -515,7 +515,8 @@ void drain()
   else room = NULL;
   inpass = (player.room->is_gone()) != 0;
   dp = drainee;
-  for (monster = mlist; monster!=NULL; monster = next(monster)){
+  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+    monster = *it;
     if (monster->room==player.room || monster->room==room || (inpass && get_tile(monster->pos.y, monster->pos.x)==DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM]==player.room)) {
       *dp++ = monster;
     }

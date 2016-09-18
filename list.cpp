@@ -20,47 +20,29 @@ void attach_item(std::list<Item*>& l, ITEM *item)
 
 void free_item_list(std::list<Item*>& l)
 {
-    for (auto it = level_items.begin(); it != level_items.end(); ++it){
+    for (auto it = l.begin(); it != l.end(); ++it){
         discard_item(*it);
     }
     l.clear();
 }
 
 //_detach: Takes an agent out of whatever linked list it might be in
-void detach_agent(AGENT **list, AGENT *agent)
+void detach_agent(std::list<Agent*>& l, Agent *agent)
 {
-  if (*list==agent) 
-    *list = next(agent);
-  if (prev(agent)!=NULL) 
-    agent->l_prev->l_next = next(agent);
-  if (next(agent)!=NULL) 
-    agent->l_next->l_prev = prev(agent);
-  agent->l_next = NULL;
-  agent->l_prev = NULL;
+    l.remove(agent);
 }
 
 //_attach: add an agent to the head of a list
-void attach_agent(AGENT **list, AGENT *agent)
+void attach_agent(std::list<Agent*>& l, Agent *agent)
 {
-  if (*list!=NULL) {
-    agent->l_next = *list; 
-    (*list)->l_prev = agent;
-    agent->l_prev = NULL;
-  }
-  else {
-    agent->l_next = NULL; 
-    agent->l_prev = NULL;
-  }
-  *list = agent;
+    l.push_front(agent);
 }
 
 //_free_list: Throw the whole blamed thing away
-void free_agent_list(AGENT **ptr)
+void free_agent_list(std::list<Agent*>& l)
 {
-  AGENT *agent;
-  while (*ptr!=NULL) {
-    agent = *ptr;
-    *ptr = next(agent); 
-    discard_agent(agent);
-  }
+    for (auto it = l.begin(); it != l.end(); ++it){
+        discard_agent(*it);
+    }
+    l.clear();
 }

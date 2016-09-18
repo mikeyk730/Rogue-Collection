@@ -565,7 +565,7 @@ void remove_monster(AGENT *monster, bool waskill)
         mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
     standend();
 
-    detach_agent(&mlist, monster);
+    detach_agent(level_monsters, monster);
     discard_agent(monster);
 }
 

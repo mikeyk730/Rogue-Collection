@@ -183,9 +183,11 @@ void add_pack(ITEM *obj, bool silent)
 
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
-  for (monster = mlist; monster!=NULL; monster = next(monster))
-    if (monster->dest && (monster->dest->x==obj->pos.x) && (monster->dest->y==obj->pos.y))
-      monster->dest = &player.pos;
+  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+      monster = *it;
+      if (monster->dest && (monster->dest->x == obj->pos.x) && (monster->dest->y == obj->pos.y))
+          monster->dest = &player.pos;
+  }
   if (obj->type==AMULET) { 
       s_had_amulet = true;
   }
@@ -319,10 +321,7 @@ skip:
 //pack_char: Return which character would address a pack object
 int pack_char(ITEM *obj)
 {
-    ITEM *item;
-    byte c;
-
-    c = 'a';
+    byte c = 'a';
     for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
         if (*it == obj)
             return c;

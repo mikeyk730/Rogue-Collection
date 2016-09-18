@@ -27,8 +27,6 @@ typedef unsigned char byte;
 
 //All the fun defines
 
-#define next(ptr)       (*ptr).l_next
-#define prev(ptr)       (*ptr).l_prev
 #define CTRL(ch)        (ch&037)
 #ifdef DEBUG
 #define debug           msg
@@ -399,7 +397,6 @@ typedef struct Item ITEM;
 //Structure for monsters and player
 struct Agent
 {
-  struct Agent *l_next, *l_prev; //Next pointer in link
   Coord pos;                    //Position
   char turn;                    //If slowed, is it a turn to move
   char type;                    //What it is
@@ -522,7 +519,8 @@ typedef struct Agent AGENT;
 //External variables
 
 extern std::list<Item*> level_items;
-extern AGENT *mlist, player;
+extern std::list<Agent*> level_monsters;
+extern AGENT player;
 extern Coord delta, oldpos;
 extern struct Room *oldrp, passages[];
 extern struct Stats max_stats;

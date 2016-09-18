@@ -31,29 +31,27 @@ Coord ch_ret; //Where chasing takes you
 //runners: Make all the running monsters move.
 void runners()
 {
-  AGENT *monster, *next = NULL;
-  int dist;
+    AGENT *monster, *next = NULL;
+    int dist;
 
-  for (monster = mlist; monster!=NULL; monster = next)
-  {
-    next = next(monster); //monster may be invalidated during iteration, save next here in case continue is hit
-    if (!monster->is_held() && monster->is_running())
-    {
-      dist = distance(player.pos, monster->pos);
-      if (!(monster->is_slow() || (monster->can_divide() && dist>3)) || monster->turn)
-        if(!do_chase(monster)) 
-            continue;
-      if (monster->is_fast()) 
-        if(!do_chase(monster)) 
-            continue;
-      dist = distance(player.pos, monster->pos);
-      if (monster->is_flying() && dist>3)
-        if(!do_chase(monster)) 
-            continue;
-      monster->turn ^= true;
+    for (auto it = level_monsters.begin(); it != level_monsters.end();){
+        monster = *(it++);
+        if (!monster->is_held() && monster->is_running())
+        {
+            dist = distance(player.pos, monster->pos);
+            if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->turn)
+            if (!do_chase(monster))
+                continue;
+            if (monster->is_fast())
+            if (!do_chase(monster))
+                continue;
+            dist = distance(player.pos, monster->pos);
+            if (monster->is_flying() && dist > 3)
+            if (!do_chase(monster))
+                continue;
+            monster->turn ^= true;
+        }
     }
-    next = next(monster);
-  }
 }
 
 //do_chase: Make one thing chase another.
@@ -317,7 +315,8 @@ Coord *find_dest(AGENT *monster)
             continue;
         if (get_room_from_position(&obj->pos) == room && rnd(100) < prob)
         {
-            for (monster = mlist; monster != NULL; monster = next(monster)) {
+            for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+                monster = *it;
                 if (monster->dest == &obj->pos)
                     break;
             }
