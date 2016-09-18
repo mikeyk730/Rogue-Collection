@@ -8,43 +8,22 @@
 #include "misc.h"
 #include "thing.h"
 
-//_detach: Takes an item out of whatever linked list it might be in
-void detach_item(ITEM **list, ITEM *item)
+void detach_item(std::list<Item*>& l, ITEM *item)
 {
-  if (*list==item) 
-    *list = next(item);
-  if (prev(item)!=NULL) 
-    item->l_prev->l_next = next(item);
-  if (next(item)!=NULL) 
-    item->l_next->l_prev = prev(item);
-  item->l_next = NULL;
-  item->l_prev = NULL;
+    l.remove(item);
 }
 
-//_attach: add an item to the head of a list
-void attach_item(ITEM **list, ITEM *item)
+void attach_item(std::list<Item*>& l, ITEM *item)
 {
-  if (*list!=NULL) {
-    item->l_next = *list; 
-    (*list)->l_prev = item;
-    item->l_prev = NULL;
-  }
-  else {
-    item->l_next = NULL; 
-    item->l_prev = NULL;
-  }
-  *list = item;
+    l.push_front(item);
 }
 
-//_free_list: Throw the whole blamed thing away
-void free_item_list(ITEM **ptr)
+void free_item_list(std::list<Item*>& l)
 {
-  ITEM *item;
-  while (*ptr!=NULL) {
-    item = *ptr;
-    *ptr = next(item); 
-    discard_item(item);
-  }
+    for (auto it = level_items.begin(); it != level_items.end(); ++it){
+        discard_item(*it);
+    }
+    l.clear();
 }
 
 //_detach: Takes an agent out of whatever linked list it might be in

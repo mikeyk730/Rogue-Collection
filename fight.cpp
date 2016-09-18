@@ -56,7 +56,7 @@ void do_hit(ITEM* weapon, int thrown, AGENT* monster, const char* name)
     if (!thrown)
     {
       if (--weapon->count == 0) {
-        detach_item(&player.pack, weapon); 
+        detach_item(player.pack, weapon); 
         discard_item(weapon);
       }
       set_current_weapon(NULL);
@@ -185,12 +185,13 @@ bool leprechaun_attack(AGENT* mp)
 bool nymph_attack(AGENT* mp)
 {
   //Nymphs steal a magic item, look through the pack and pick out one we like.
-  ITEM *obj, *steal;
-  int nobj;
+  ITEM *steal;
+  int nobj = 0;
   char *she_stole = "she stole %s!";
 
   steal = NULL;
-  for (nobj = 0, obj = player.pack; obj != NULL; obj = next(obj)){
+  for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+      Item* obj = *it;
       if (obj != get_current_armor() && obj != get_current_weapon() && obj != get_ring(LEFT) && obj != get_ring(RIGHT) && is_magic(obj) && rnd(++nobj) == 0)
           steal = obj;
   }
@@ -205,7 +206,7 @@ bool nymph_attack(AGENT* mp)
       steal->count = oc;
     }
     else {
-        detach_item(&player.pack, steal); 
+        detach_item(player.pack, steal); 
         (steal);
         msg(she_stole, inv_name(steal, true));
     }
@@ -546,30 +547,26 @@ void display_throw_msg(ITEM *item, const char *name, char *does, char *did)
 //remove: Remove a monster from the screen
 void remove_monster(AGENT *monster, bool waskill)
 {
-  ITEM *obj, *nexti;
-  Coord* monster_pos = &monster->pos;
+    Coord* monster_pos = &monster->pos;
+    for (auto it = monster->pack.begin(); it != monster->pack.end();){
+        Item* obj = *(it++); //TODO:check all loops
+        obj->pos = monster->pos;
+        detach_item(monster->pack, obj);
+        if (waskill)
+            fall(obj, false);
+        else
+            discard_item(obj);
+    }
+    if (get_tile(monster_pos->y, monster_pos->x) == PASSAGE)
+        standout();
+    if (monster->oldch == FLOOR && !can_see(monster_pos->y, monster_pos->x))
+        mvaddch(monster_pos->y, monster_pos->x, ' ');
+    else if (monster->oldch != '@')
+        mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
+    standend();
 
-  if (monster==NULL) return;
-  for (obj = monster->pack; obj!=NULL; obj = nexti)
-  {
-    nexti = next(obj);
-    obj->pos = monster->pos;
-    detach_item(&monster->pack, obj);
-    if (waskill)
-      fall(obj, false);
-    else 
-      discard_item(obj);
-  }
-  if (get_tile(monster_pos->y, monster_pos->x)==PASSAGE) 
-    standout();
-  if (monster->oldch == FLOOR && !can_see(monster_pos->y, monster_pos->x))
-    mvaddch(monster_pos->y, monster_pos->x, ' ');
-  else if (monster->oldch!='@') 
-    mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
-  standend();
-
-  detach_agent(&mlist, monster);
-  discard_agent(monster);
+    detach_agent(&mlist, monster);
+    discard_agent(monster);
 }
 
 //is_magic: Returns true if an object radiates magic
@@ -602,7 +599,7 @@ void killed(AGENT *monster, bool print)
       gold->gold_value = rnd_gold();
       if (save(VS_MAGIC))
           gold->gold_value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();
-      attach_item(&monster->pack, gold);
+      attach_item(monster->pack, gold);
   }
   if (print)
   {

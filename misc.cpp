@@ -176,9 +176,11 @@ void look(bool wakeup)
 //find_obj: Find the unclaimed object at y, x
 ITEM *find_obj(int y, int x)
 {
-  ITEM *op;
-
-  for (op = lvl_obj; op!=NULL; op = next(op)) if (op->pos.y==y && op->pos.x==x) return op;
+  for (auto it = level_items.begin(); it != level_items.end(); ++it) {
+      Item* op = *it;
+      if (op->pos.y == y && op->pos.x == x) 
+          return op;
+  }
 
   debug("Non-object %c %d,%d", get_tile(y, x), y, x);
   return NULL; //NOTREACHED

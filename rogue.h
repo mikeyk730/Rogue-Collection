@@ -2,6 +2,7 @@
 //rogue.h      1.4 (AI Design) 12/14/84
 
 #include <string>
+#include <list>
 #include <string.h>
 #include "main.h"
 
@@ -307,7 +308,6 @@ struct Stats
 struct Agent;
 struct Item
 {
-  struct Item *l_next, *l_prev; //Next pointer in link
   int type;                      //What kind of object it is
   Coord pos;                     //Where it lives on the screen
   char launcher;                 //What you need to launch it
@@ -410,7 +410,7 @@ struct Agent
   int exflags;                  //More state;
   struct Stats stats;           //Physical description
   struct Room *room;            //Current room for thing
-  struct Item *pack;            //What the thing is carrying
+  std::list<Item*> pack;        //What the thing is carrying
 
 private:
   bool is_flag_set(short flag) const;
@@ -521,7 +521,7 @@ typedef struct Agent AGENT;
 
 //External variables
 
-extern ITEM *lvl_obj;
+extern std::list<Item*> level_items;
 extern AGENT *mlist, player;
 extern Coord delta, oldpos;
 extern struct Room *oldrp, passages[];

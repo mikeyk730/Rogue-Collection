@@ -26,7 +26,7 @@
 
 
 //List of monsters in rough order of vorpalness
-static char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
+static char *lvl_mons = "OOOOK BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
 #define ___  1
@@ -344,7 +344,7 @@ void new_monster(AGENT *monster, byte type, Coord *position, int level)
   monster->disguise = type;
   monster->pos = *position;
   monster->oldch = '@';
-  monster->room = roomin(position);
+  monster->room = get_room_from_position(position);
   monster->flags = defaults->flags;
   monster->exflags = defaults->exflags;
   monster->stats = defaults->stats;
@@ -353,7 +353,7 @@ void new_monster(AGENT *monster, byte type, Coord *position, int level)
   monster->stats.ac -= level_add;
   monster->stats.exp += level_add*10 + exp_add(monster);
   monster->turn = true;
-  monster->pack = NULL;
+  //monster->pack = NULL;
 
   //todo: remove F,X checks
   if (type=='F') 
@@ -455,7 +455,7 @@ AGENT *wake_monster(int y, int x)
 void give_pack(AGENT *monster)
 {
     if (rnd(100) < monster->get_monster_carry_prob())
-        attach_item(&monster->pack, new_item());
+        attach_item(monster->pack, new_item());
 }
 
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon

@@ -143,9 +143,9 @@ void drop()
     nobj->count = 1;
     op = nobj;
   }
-  else detach_item(&player.pack, op);
+  else detach_item(player.pack, op);
   //Link it into the level object list
-  attach_item(&lvl_obj, op);
+  attach_item(level_items, op);
   set_tile(player.pos.y, player.pos.x, op->type);
   op->pos = player.pos;
   msg("dropped %s", inv_name(op, true));

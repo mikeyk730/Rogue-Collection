@@ -120,7 +120,7 @@ void do_rooms()
           if (isfloor(gch)) break;
         }
         gold->initialize_gold(room->goldval, room->gold);
-        attach_item(&lvl_obj, gold);
+        attach_item(level_items, gold);
         set_tile(room->gold.y, room->gold.x, GOLD);
       }
     }
@@ -194,7 +194,7 @@ void enter_room(Coord *cp)
   int y, x;
   AGENT *monster;
 
-  room = player.room = roomin(cp);
+  room = player.room = get_room_from_position(cp);
   if (bailout || (room->is_gone() && (room->is_maze())==0))
   {
     debug("in a gone room");
@@ -260,8 +260,8 @@ void leave_room(Coord *cp)
   door_open(room);
 }
 
-//roomin: Find what room some coordinates are in. NULL means they aren't in any room.
-struct Room *roomin(Coord *pos)
+//get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
+struct Room *get_room_from_position(Coord *pos)
 {
   struct Room *room;
   byte fp;

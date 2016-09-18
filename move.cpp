@@ -289,7 +289,8 @@ void rndmove(AGENT *who, Coord *newmv)
         goto bad;
     if (ch == SCROLL)
     {
-        for (obj = lvl_obj; obj != NULL; obj = next(obj)){
+        for (auto it = level_items.begin(); it != level_items.end(); ++it){
+            obj = *it;
             if (y == obj->pos.y && x == obj->pos.x)
                 break;
         }

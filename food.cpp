@@ -30,7 +30,7 @@ void eat()
     return;
   }
   if (--obj->count<1) {
-    detach_item(&player.pack, obj); 
+    detach_item(player.pack, obj); 
     discard_item(obj);
   }
   ingest();

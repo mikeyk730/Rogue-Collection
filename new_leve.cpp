@@ -36,12 +36,12 @@ void new_level(int do_implode)
   clear_level();
   //Free up the monsters on the last level
   for (monster = mlist; monster!=NULL; monster = next(monster)) 
-    free_item_list(&monster->pack);
+    free_item_list(monster->pack);
   free_agent_list(&mlist);
   //just in case we left some flytraps behind
   f_restor();
   //Throw away stuff left on the previous level (if anything)
-  free_item_list(&lvl_obj);
+  free_item_list(level_items);
   do_rooms(); //Draw rooms
   if (max_level()==1)
   {
@@ -99,7 +99,7 @@ void put_things()
     {
       if ((cur = create_item(AMULET, 0))!=NULL)
       {
-        attach_item(&lvl_obj, cur);
+        attach_item(level_items, cur);
         cur->hit_plus = cur->damage_plus = 0;
         cur->damage = cur->throw_damage = "0d0";
         cur->armor_class = 11;
@@ -118,7 +118,7 @@ void put_things()
     {
       //Pick a new object and link it in the list
       cur = new_item();
-      attach_item(&lvl_obj, cur);
+      attach_item(level_items, cur);
       //Put it somewhere
       find_empty_location(&tp, false);
       set_tile(tp.y, tp.x, cur->type);
@@ -148,7 +148,7 @@ void treas_room()
     } while (!isfloor(get_tile(pos.y, pos.x)));
     item = new_item();
     item->pos = pos;
-    attach_item(&lvl_obj, item);
+    attach_item(level_items, item);
     set_tile(pos.y, pos.x, item->type);
   }
   //fill up room with monsters from the next level down

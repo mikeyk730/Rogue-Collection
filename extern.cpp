@@ -175,7 +175,7 @@ struct Room *oldrp; //Roomin(&oldpos)
 struct Stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the player
 
 AGENT player; //The rogue
-ITEM *lvl_obj = NULL; //List of objects on this level
+std::list<Item*> level_items; //List of objects on this level
 AGENT *mlist = NULL; //List of monsters on the level
 
 //Common strings

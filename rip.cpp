@@ -247,7 +247,7 @@ void total_winner()
 {
   ITEM *obj;
   int worth;
-  byte c;
+  byte c = 'a';
   int oldpurse;
 
   clear();
@@ -276,8 +276,9 @@ void total_winner()
   clear();
   mvaddstr(0, 0, "   Worth  Item");
   oldpurse = get_purse();
-  for (c = 'a', obj = player.pack; obj!=NULL; c++, obj = next(obj))
+  for (auto it = player.pack.begin(); it != player.pack.end(); c++, ++it)
   {
+    obj = *it;
     switch (obj->type)
     {
     case FOOD:

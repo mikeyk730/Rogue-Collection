@@ -4,7 +4,7 @@ ITEM *pack_obj(byte ch, byte *chp);
 void add_pack(ITEM *obj, bool silent);
 
 //inventory: List what is in the pack
-int inventory(ITEM *list, int type, char *lstr);
+int inventory(std::list<Item *>& list, int type, char *lstr);
 
 //pick_up: Add something to characters pack.
 void pick_up(byte ch);

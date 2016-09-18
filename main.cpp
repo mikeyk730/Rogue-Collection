@@ -136,7 +136,7 @@ void playit(char *sname)
     setup();
     cursor(false);
   }
-  else {oldpos.x = player.pos.x; oldpos.y = player.pos.y; oldrp = roomin(&player.pos);}
+  else {oldpos.x = player.pos.x; oldpos.y = player.pos.y; oldrp = get_room_from_position(&player.pos);}
   while (playing) command(); //Command execution
   endit();
 }

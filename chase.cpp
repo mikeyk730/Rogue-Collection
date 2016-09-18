@@ -19,6 +19,11 @@
 #include "scrolls.h"
 #include "pack.h"
 
+//orcs should pick up gold in a room, then chase the player.
+//a bug prevented orcs from picking up gold, so they'd just
+//remain on the gold space.
+const bool orc_bugfix = true;
+
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
 Coord ch_ret; //Where chasing takes you
@@ -67,7 +72,7 @@ bool do_chase(AGENT *monster)
 
   dest_room = player.room;
   if (monster->dest != &player.pos) 
-    dest_room = roomin(monster->dest); //Find room of chasee
+    dest_room = get_room_from_position(monster->dest); //Find room of chasee
   if (dest_room==NULL) 
     return true;
 
@@ -113,18 +118,21 @@ over:
   }
   else if (equal(ch_ret, *monster->dest))
   {
-    for (obj = lvl_obj; obj!=NULL; obj = next(obj)) if (monster->dest==&obj->pos)
-    {
-      byte oldchar;
-
-      detach_item(&lvl_obj, obj);
-      attach_item(&monster->pack, obj);
-      oldchar = (monster->room->is_gone())?PASSAGE:FLOOR;
-      set_tile(obj->pos.y, obj->pos.x, oldchar);
-      if (can_see(obj->pos.y, obj->pos.x)) mvaddch(obj->pos.y, obj->pos.x, oldchar);
-      monster->dest = find_dest(monster);
-      break;
-    }
+      for (auto it = level_items.begin(); it != level_items.end(); ){
+          obj = *(it++);
+          if (orc_bugfix && equal(*(monster->dest), obj->pos))
+          {
+              byte oldchar;
+              detach_item(level_items, obj);
+              attach_item(monster->pack, obj);
+              oldchar = (monster->room->is_gone()) ? PASSAGE : FLOOR;
+              set_tile(obj->pos.y, obj->pos.x, oldchar);
+              if (can_see(obj->pos.y, obj->pos.x))
+                  mvaddch(obj->pos.y, obj->pos.x, oldchar);
+              monster->dest = find_dest(monster);
+              break;
+          }
+      }
   }
   if (monster->is_stationary()) 
       return true;
@@ -141,7 +149,7 @@ over:
   oroom = monster->room;
   if (!equal(ch_ret, monster->pos))
   {
-    if ((monster->room = roomin(&ch_ret))==NULL) {
+    if ((monster->room = get_room_from_position(&ch_ret))==NULL) {
         monster->room = oroom; 
         return true;
     }
@@ -208,7 +216,6 @@ void chase(AGENT *monster, Coord *chasee_pos)
 {
   int x, y;
   int dist, thisdist;
-  ITEM *obj;
   Coord *chaser_pos;
   byte ch;
   int plcnt = 1;
@@ -238,27 +245,32 @@ void chase(AGENT *monster, Coord *chasee_pos)
     {
       for (y = chaser_pos->y-1; y<=ey; y++)
       {
-        Coord tryp;
+        Coord try_pos;
 
-        tryp.x = x;
-        tryp.y = y;
-        if (offmap(y, x) || !diag_ok(chaser_pos, &tryp)) continue;
+        try_pos.x = x;
+        try_pos.y = y;
+        if (offmap(y, x) || !diag_ok(chaser_pos, &try_pos)) continue;
         ch = get_tile_or_monster(y, x);
         if (step_ok(ch))
         {
           //If it is a scroll, it might be a scare monster scroll so we need to look it up to see what type it is.
-          if (ch==SCROLL)
-          {
-            for (obj = lvl_obj; obj!=NULL; obj = next(obj))
+            if (ch == SCROLL)
             {
-              if (y==obj->pos.y && x==obj->pos.x) break;
+                ITEM *obj = 0;
+                for (auto it = level_items.begin(); it != level_items.end(); ++it)
+                {
+                    obj = *it;
+                    if (equal(try_pos, obj->pos))
+                        break;
+                    obj = 0;
+                }
+                if (is_scare_monster_scroll(obj)) 
+                    continue;
             }
-            if (is_scare_monster_scroll(obj)) continue;
-          }
           //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
           thisdist = distance({ x, y }, *chasee_pos);
-          if (thisdist<dist) {plcnt = 1; ch_ret = tryp; dist = thisdist;}
-          else if (thisdist==dist && rnd(++plcnt)==0) {ch_ret = tryp; dist = thisdist;}
+          if (thisdist<dist) {plcnt = 1; ch_ret = try_pos; dist = thisdist;}
+          else if (thisdist==dist && rnd(++plcnt)==0) {ch_ret = try_pos; dist = thisdist;}
         }
       }
     }
@@ -266,7 +278,7 @@ void chase(AGENT *monster, Coord *chasee_pos)
 }
 
 //diag_ok: Check to see if the move is legal if it is diagonal
-int diag_ok( Coord *sp, Coord *ep )
+int diag_ok(const Coord *sp, const Coord *ep )
 {
   if (ep->x==sp->x || ep->y==sp->y) return true;
   return (step_ok(get_tile(ep->y, sp->x)) && step_ok(get_tile(sp->y, ep->x)));
@@ -284,28 +296,34 @@ int can_see(int y, int x)
   if (distance(tp, player.pos) < LAMP_DIST)
       return true;
   //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
-  room = roomin(&tp);
+  room = get_room_from_position(&tp);
   return (room == player.room && !room->is_dark());
 }
 
 //find_dest: find the proper destination for the monster
 Coord *find_dest(AGENT *monster)
 {
-  ITEM *obj;
-  int prob;
-  struct Room *room;
+    int prob;
+    struct Room *room;
 
-  if ((prob = monster->get_monster_carry_prob()) <= 0 || monster->room == player.room || can_see_monster(monster))
-    return &player.pos;
-  room = monster->room;
-  for (obj = lvl_obj; obj!=NULL; obj = next(obj))
-  {
-    if (is_scare_monster_scroll(obj)) continue;
-    if (roomin(&obj->pos)==room && rnd(100)<prob)
+    if ((prob = monster->get_monster_carry_prob()) <= 0 || monster->room == player.room || can_see_monster(monster))
+        return &player.pos;
+
+    room = monster->room;
+    for (auto it = level_items.begin(); it != level_items.end(); ++it)
     {
-      for (monster = mlist; monster!=NULL; monster = next(monster)) if (monster->dest==&obj->pos) break;
-      if (monster==NULL) return &obj->pos;
+        Item* obj = *it;
+        if (is_scare_monster_scroll(obj))
+            continue;
+        if (get_room_from_position(&obj->pos) == room && rnd(100) < prob)
+        {
+            for (monster = mlist; monster != NULL; monster = next(monster)) {
+                if (monster->dest == &obj->pos)
+                    break;
+            }
+            if (monster == NULL)
+                return &obj->pos;
+        }
     }
-  }
-  return &player.pos;
+    return &player.pos;
 }

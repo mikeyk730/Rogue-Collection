@@ -223,15 +223,15 @@ void quaff_magic_detection()
 {
   //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
   //Also give hints as to whether he would want to use the object.
-  if (lvl_obj)
+  if (!level_items.empty())
   {
-    ITEM *item;
     AGENT *monster;
     bool show;
 
     show = false;
-    for (item = lvl_obj; item!=NULL; item = next(item))
+    for (auto it = level_items.begin(); it != level_items.end(); ++it)
     {
+      Item* item = *it;
       if (is_magic(item))
       {
         show = true;
@@ -241,9 +241,9 @@ void quaff_magic_detection()
     }
     for (monster = mlist; monster!=NULL; monster = next(monster))
     {
-      for (item = monster->pack; item!=NULL; item = next(item))
+      for (auto it = monster->pack.begin(); it != monster->pack.end(); ++it)
       {
-        if (is_magic(item))
+        if (is_magic(*it))
         {
           show = true;
           mvaddch(monster->pos.y, monster->pos.x, MAGIC);
@@ -346,7 +346,7 @@ void quaff()
   //Throw the item away
   if (obj->count>1) obj->count--;
   else {
-    detach_item(&player.pack, obj); 
+    detach_item(player.pack, obj); 
     discard_item(obj);
   }
 }

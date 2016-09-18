@@ -260,11 +260,11 @@ void read_scare_monster()
 void read_food_detection()
 {
   //Scroll of food detection
-  ITEM* item;
   byte discover = false;
 
-  for (item = lvl_obj; item != NULL; item = next(item))
+  for (auto it = level_items.begin(); it != level_items.end(); ++it)
   {
+    Item* item = *it;
     if (item->type==FOOD)
     {
       discover = true;
@@ -403,7 +403,7 @@ void read_scroll()
   if (scroll->count > 1)
     scroll->count--;
   else {
-    detach_item(&player.pack, scroll); 
+    detach_item(player.pack, scroll); 
     discard_item(scroll);
   }
 }

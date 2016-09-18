@@ -58,30 +58,34 @@ int does_item_group(int type) {
 
 ITEM *pack_obj(byte ch, byte *chp)
 {
-  ITEM *obj;
-  byte och;
+  byte och = 'a';
 
-  for (obj = player.pack, och = 'a'; obj!=NULL; obj = next(obj), och++) if (ch==och) return obj;
+  for (auto it = player.pack.begin(); it != player.pack.end(); ++it, och++){ 
+      if (ch == och)
+          return *it; 
+  }
   *chp = och;
   return NULL;
 }
 
 int get_pack_size()
 {
-  ITEM* item;
   int count = 0;
-  for (item = player.pack; item; item = next(item))
-    count += item->group ? 1 : item->count;
+  for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+      Item* item = *it;
+      count += item->group ? 1 : item->count;
+  }
   return count;
 }
 
 //add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
 void add_pack(ITEM *obj, bool silent)
 {
-  ITEM *op, *lp;
   AGENT *monster;
-  bool exact, from_floor;
+  bool from_floor;
   byte floor;
+
+  auto it = player.pack.begin();
 
   if (obj==NULL)
   {
@@ -100,14 +104,14 @@ void add_pack(ITEM *obj, bool silent)
 
   if (obj->group)
   {
-    for (op = player.pack; op!=NULL; op = next(op))
-    {
+    for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+      Item* op = *it;
       if (op->group==obj->group)
       {
         //Put it in the pack and notify the user
         op->count += obj->count;
         if (from_floor) {
-          detach_item(&lvl_obj, obj);
+          detach_item(level_items, obj);
           mvaddch(player.pos.y, player.pos.x, floor);
           set_tile(player.pos.y, player.pos.x, floor);
         }
@@ -126,7 +130,7 @@ void add_pack(ITEM *obj, bool silent)
   if (is_scare_monster_scroll(obj)) {
       if (obj->is_found())
       {
-          detach_item(&lvl_obj, obj);
+          detach_item(level_items, obj);
           mvaddch(player.pos.y, player.pos.x, floor);
           set_tile(player.pos.y, player.pos.x, floor);
           msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
@@ -135,58 +139,48 @@ void add_pack(ITEM *obj, bool silent)
       else obj->set_found();
   }
   if (from_floor) {
-    detach_item(&lvl_obj, obj);
+    detach_item(level_items, obj);
     mvaddch(player.pos.y, player.pos.x, floor); 
     set_tile(player.pos.y, player.pos.x, floor);
   }
+  
+  //todo: fuck this code is infuriating
+
   //Search for an object of the same type
-  exact = false;
-  for (op = player.pack; op!=NULL; op = next(op)) if (obj->type==op->type) break;
-  if (op==NULL)
-  {
-    //Put it at the end of the pack since it is a new type
-    for (op = player.pack; op!=NULL; op = next(op))
-    {
-      if (op->type!=FOOD) break;
-      lp = op;
-    }
+  bool found_type = false;
+  for (; it != player.pack.end(); ++it){
+      if ((*it)->type == obj->type){
+          found_type = true;
+          break;
+      }
   }
-  else
-  {
-    //Search for an object which is exactly the same
-    while (op->type==obj->type)
-    {
-      if (op->which==obj->which) {exact = true; break;}
-      lp = op;
-      if ((op = next(op))==NULL) break;
-    }
-  }
-  if (op==NULL)
-  {
-    //Didn't find an exact match, just stick it here
-    if (player.pack==NULL) 
-      player.pack = obj;
-    else {
-      lp->l_next = obj;
-      obj->l_prev = lp;
-      obj->l_next = NULL;
-    }
-  }
-  else
-  {
-    //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
-    if (exact && does_item_group(obj->type))
-    {
-      op->count++;
-      discard_item(obj);
-      obj = op;
+  //Put it at the end of the pack since it is a new type
+  if (!found_type){
+      (obj->type == FOOD) ? player.pack.push_front(obj) :
+          player.pack.push_back(obj);
       goto picked_up;
-    }
-    if ((obj->l_prev = prev(op))!=NULL) obj->l_prev->l_next = obj;
-    else player.pack = obj;
-    obj->l_next = op;
-    op->l_prev = obj;
   }
+  //Search for an object which is exactly the same
+  bool exact = false;
+  for (; it != player.pack.end(); ++it){
+      if ((*it)->type != obj->type)
+          break;
+      if ((*it)->which == obj->which) {
+          exact = true;
+          break;
+      }
+  }
+  //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
+  if (exact && does_item_group(obj->type))
+  {
+      (*it)->count++;
+      discard_item(obj);
+      obj = (*it);
+      goto picked_up;
+  }
+
+  player.pack.insert(it, obj);
+
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
   for (monster = mlist; monster!=NULL; monster = next(monster))
@@ -201,24 +195,25 @@ picked_up:
 }
 
 //inventory: List what is in the pack
-int inventory(ITEM *list, int type, char *lstr)
+int inventory(std::list<Item *>& list, int type, char *lstr)
 {
-  byte ch;
+  byte ch = 'a';
   int n_objs;
   char inv_temp[MAXSTR];
 
   n_objs = 0;
-  for (ch = 'a'; list!=NULL; ch++, list = next(list))
+  for (auto it = player.pack.begin(); it != player.pack.end(); ++it, ch++)
   {
+    Item* item = *it;
     //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
-    if (type && type!=list->type && 
-        !(type==CALLABLE && (list->type==SCROLL || list->type==POTION || list->type==RING || list->type==STICK)) &&
-        !(type==WEAPON && list->type==POTION) &&
-        !(type==STICK && list->is_vorpalized() && list->charges)) //todo: does this work?
+    if (type && type!=item->type && 
+        !(type==CALLABLE && (item->type==SCROLL || item->type==POTION || item->type==RING || item->type==STICK)) &&
+        !(type==WEAPON && item->type==POTION) &&
+        !(type==STICK && item->is_vorpalized() && item->charges)) //todo: does this work?
         continue;
     n_objs++;
     sprintf(inv_temp, "%c) %%s", ch);
-    add_line(lstr, inv_temp, inv_name(list, false));
+    add_line(lstr, inv_temp, inv_name(item, false));
   }
   if (n_objs==0)
   {
@@ -239,7 +234,7 @@ void pick_up(byte ch)
     if ((obj = find_obj(player.pos.y, player.pos.x))==NULL)
         return;
     money(obj->gold_value);
-    detach_item(&lvl_obj, obj);
+    detach_item(level_items, obj);
     discard_item(obj);
     player.room->goldval = 0;
     break;
@@ -264,7 +259,7 @@ ITEM *get_item(char *purpose, int type)
   if (strcmp(s_menu, "on") == 0)
       once_only = true;
   gi_state = again;
-  if (player.pack==NULL)
+  if (player.pack.empty())
       msg("you aren't carrying anything");
   else
   {
@@ -328,9 +323,9 @@ int pack_char(ITEM *obj)
     byte c;
 
     c = 'a';
-    for (item = player.pack; item != NULL; item = next(item)) {
-        if (item == obj)
-            return c; 
+    for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+        if (*it == obj)
+            return c;
         else
             c++;
     }
@@ -351,12 +346,13 @@ void money(int value)
 
 bool has_amulet()
 {
-  ITEM* item;
-  for(item = player.pack; item != NULL; item = next(item))
-    if (item->type == AMULET)
-      return true;
+    for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+        ITEM* item = *it;
+        if (item->type == AMULET)
+            return true;
+    }
 
-  return false;
+    return false;
 }
 
 //true if player ever had amulet

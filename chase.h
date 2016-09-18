@@ -13,11 +13,11 @@ void start_run(AGENT *monster);
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
 void chase(AGENT *monster, Coord *chasee_pos);
 
-//roomin: Find what room some coordinates are in. NULL means they aren't in any room.
-struct Room *roomin(Coord *cp);
+//get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
+struct Room *get_room_from_position(Coord *cp);
 
 //diag_ok: Check to see if the move is legal if it is diagonal
-int diag_ok(Coord *sp, Coord *ep);
+int diag_ok(const Coord *sp, const Coord *ep);
 
 //can_see: Returns true if the hero can see a certain coordinate.
 int can_see(int y, int x);

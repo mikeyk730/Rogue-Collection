@@ -20,28 +20,28 @@ void Item::initialize(int type, int which)
 
 ITEM *create_item(int type, int which)
 {
-  ITEM* item = (ITEM*)malloc(sizeof(ITEM));
-  memset(item, 0, sizeof(ITEM));
+    ITEM* item = new Item;
+    memset(item, 0, sizeof(ITEM));
 
-  item->initialize(type, which);
-    
-  return item;
+    item->initialize(type, which); //todo:ctor
+
+    return item;
 }
 
 void discard_item(ITEM *item)
 {
-  free(item);
+    delete item;
 }
 
 AGENT *create_agent()
 {
-  AGENT* agent = (AGENT*)malloc(sizeof(AGENT));
-  memset(agent, 0, sizeof(AGENT));
+    AGENT* agent = new Agent;
+    memset(agent, 0, sizeof(AGENT)-sizeof(std::list<Item*>)); //todo:very hacky
 
-  return agent;
+    return agent;
 }
 
 void discard_agent(AGENT *agent)
 {
-  free(agent);
+    delete agent;
 }

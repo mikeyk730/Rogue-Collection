@@ -253,11 +253,10 @@ void zap_vorpalized_weapon(ITEM* weapon, AGENT* monster)
 
 void zap_polymorph(AGENT* monster, int y, int x)
 {
-  ITEM *pack;
   byte ch, old_type;
   Coord coord = delta;
 
-  pack = monster->pack;
+  auto pack = monster->pack;
   ch = monster->oldch;
   old_type = monster->type;
   detach_agent(&mlist, monster);

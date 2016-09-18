@@ -91,7 +91,7 @@ void missile(int ydelta, int xdelta)
   //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
 hack:
   if (obj->count<2) {
-    detach_item(&player.pack, obj); 
+    detach_item(player.pack, obj); 
   }
   else
   {
@@ -175,7 +175,7 @@ void fall(ITEM *obj, bool pr)
       standend();
       if (monster_at(fpos.y, fpos.x)!=NULL) monster_at(fpos.y, fpos.x)->oldch = obj->type;
     }
-    attach_item(&lvl_obj, obj);
+    attach_item(level_items, obj);
     return;
 
   case 2:
@@ -188,13 +188,12 @@ void fall(ITEM *obj, bool pr)
 void Item::initialize_weapon(byte type)
 {
     static int group = 2;
-    struct init_weps *iwp;
-
-    iwp = &init_dam[type];
-    this->damage = iwp->iw_dam;
-    this->throw_damage = iwp->iw_hrl;
-    this->launcher = iwp->iw_launch;
-    this->flags = iwp->iw_flags;
+    
+    init_weps* defaults = &init_dam[type];
+    this->damage = defaults->iw_dam;
+    this->throw_damage = defaults->iw_hrl;
+    this->launcher = defaults->iw_launch;
+    this->flags = defaults->iw_flags;
     if (this->does_group()) {
         this->count = rnd(8) + 8;
         this->group = group++;
@@ -237,7 +236,7 @@ void wield()
   obj = get_item("wield", WEAPON);
   if (!obj || is_current(obj) || obj->type==ARMOR)
   {
-    if (obj->type==ARMOR) 
+    if (obj && obj->type==ARMOR) 
       msg("you can't wield armor"); 
     counts_as_turn = false;
     return;
@@ -338,7 +337,7 @@ void Item::vorpalize()
     if (is_vorpalized())
     {
         msg("your %s vanishes in a puff of smoke", get_weapon_name(which));
-        detach_item(&player.pack, this);
+        detach_item(player.pack, this);
         discard_item(this); //careful not to do anything with this afterwards
         set_current_weapon(0);
         return;
