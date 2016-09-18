@@ -185,7 +185,7 @@ bool can_see_monster(AGENT *monster)
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
   //give the player a hint as to what that weapon is good for.
-  Item* weapon = weapon;
+  Item* weapon = get_current_weapon();
   if (weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
   {
     weapon->set_flashed();
