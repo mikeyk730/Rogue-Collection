@@ -130,12 +130,12 @@ void init_new_ring(ITEM* ring)
   case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
     if ((ring->ring_level = rnd(3))==0) {
       ring->ring_level = -1; 
-      ring->flags |= IS_CURSED;
+      ring->set_cursed();
     }
     break;
 
   case R_AGGR: case R_TELEPORT:
-    ring->flags |= IS_CURSED;
+    ring->set_cursed();
     break;
   }
 }
@@ -153,7 +153,10 @@ void ring_on()
 
   if ((obj = get_item("put on", RING))==NULL) goto no_ring;
   //Make certain that it is something that we want to wear
-  if (obj->type!=RING) {msg("you can't put that on your finger"); goto no_ring;}
+  if (obj->type!=RING) {
+      msg("you can't put that on your finger");
+      goto no_ring;
+  }
   //find out which hand to put it on
   if (is_current(obj)) goto no_ring;
   if (get_ring(LEFT)==NULL) ring = LEFT;
@@ -228,7 +231,7 @@ int ring_eat(int hand)
 //ring_num: Print ring bonuses
 char *ring_num(ITEM *obj)
 {
-  if (!(obj->flags&IS_KNOW) && !is_wizard()) 
+  if (!obj->is_known() && !is_wizard()) 
     return "";
 
   switch (obj->which)

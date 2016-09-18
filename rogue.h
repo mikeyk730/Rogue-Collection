@@ -302,6 +302,7 @@ struct Stats
   }
 };
 
+struct Agent;
 struct Item
 {
   struct Item *l_next, *l_prev; //Next pointer in link
@@ -318,6 +319,62 @@ struct Item
   short flags;                   //Information about objects
   char enemy;                    //If it is enchanted, who it hates
   int group;                     //Group number for this object
+
+  bool is_flag_set(short flag) const{
+      return (flags & flag) != 0;
+  }
+
+  bool is_known() const
+  {
+      return is_flag_set(IS_KNOW);
+  }
+  bool is_cursed() const
+  {
+      return is_flag_set(IS_CURSED);
+  }
+  bool did_flash() const
+  {
+      return is_flag_set(DID_FLASH);
+  }
+  bool is_missile() const
+  {
+      return is_flag_set(IS_MISL);
+  }
+  bool does_group() const
+  {
+      return is_flag_set(IS_MANY);
+  }
+  bool is_revealed() const
+  {
+      return is_flag_set(IS_REVEAL);
+  }
+  bool is_found() const
+  {
+      return is_flag_set(IS_FOUND);
+  }
+
+  void remove_curse()
+  {
+      flags &= ~IS_CURSED;
+  }
+
+  void set_known(){
+      flags |= IS_KNOW;
+  }
+  void set_cursed(){
+      flags |= IS_CURSED;
+  }
+  void set_revealed(){
+      flags |= IS_REVEAL;
+  }
+  void set_found(){
+      flags |= IS_FOUND;
+  }
+  void set_flashed(){
+      flags |= DID_FLASH;
+  }
+
+  bool is_vorpalized(Agent* monster);
 };
 typedef struct Item ITEM;
 
@@ -385,6 +442,10 @@ public:
   bool is_found() const;
   bool can_confuse() const;
   bool powers_cancelled() const;
+
+  void set_found(){
+      flags |= IS_FOUND;
+  }
 
   /* todo:
         v,W attacks

@@ -72,8 +72,12 @@ void init_new_weapon(ITEM* weapon)
   weapon->type = WEAPON;
   weapon->which = rnd(MAXWEAPONS);
   init_weapon(weapon, weapon->which);
-  if ((k = rnd(100))<10) {weapon->flags |= IS_CURSED; weapon->hit_plus -= rnd(3)+1;}
-  else if (k<15) weapon->hit_plus += rnd(3)+1;
+  if ((k = rnd(100))<10) {
+      weapon->set_cursed();
+      weapon->hit_plus -= rnd(3)+1;
+  }
+  else if (k<15)
+      weapon->hit_plus += rnd(3)+1;
 }
 
 //missile: Fire a missile in a given direction
@@ -192,7 +196,10 @@ void init_weapon(ITEM *weapon, byte type)
   weapon->throw_damage = iwp->iw_hrl;
   weapon->launcher = iwp->iw_launch;
   weapon->flags = iwp->iw_flags;
-  if (weapon->flags&IS_MANY) {weapon->count = rnd(8)+8; weapon->group = group++;}
+  if (weapon->does_group()) {
+      weapon->count = rnd(8)+8;
+      weapon->group = group++;
+  }
   else weapon->count = 1;
 }
 
@@ -276,12 +283,12 @@ const char* get_inv_name_weapon(ITEM* weapon)
   else
     sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
   pb = &prbuf[strlen(prbuf)];
-  if (weapon->flags&IS_KNOW || is_wizard()) 
+  if (weapon->is_known() || is_wizard()) 
     sprintf(pb, "%s %s", num(weapon->hit_plus, weapon->damage_plus, WEAPON), get_weapon_name(which));
   else
     sprintf(pb, "%s", get_weapon_name(which));
   if (weapon->count>1) strcat(pb, "s");
-  if (weapon->enemy && (weapon->flags&IS_REVEAL || is_wizard()))
+  if (weapon->enemy && (weapon->is_revealed() || is_wizard()))
   {
     strcat(pb, " of ");
     strcat(pb, get_monster_name(weapon->enemy));
@@ -291,8 +298,9 @@ const char* get_inv_name_weapon(ITEM* weapon)
   return prbuf;
 }
 
-bool is_vorpalized(ITEM* weapon, AGENT* monster)
+bool Item::is_vorpalized(AGENT* monster)
 {
-    return (weapon && monster) ?
-        weapon->enemy == monster->type : false;
+    if (!monster)
+        return false;
+    return enemy == monster->type;
 }

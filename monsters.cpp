@@ -422,7 +422,7 @@ AGENT *wake_monster(int y, int x)
     dst = DISTANCE(y, x, player.pos.y, player.pos.x);
     if ((room!=NULL && !(room->is_dark())) || dst<LAMP_DIST)
     {
-      monster->flags |= IS_FOUND;
+      monster->set_found();
       if (!save(VS_MAGIC))
       {
         if (player.is_confused()) lengthen(unconfuse, rnd(20)+HUH_DURATION);

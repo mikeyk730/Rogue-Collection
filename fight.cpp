@@ -372,7 +372,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
     hplus = weapon->hit_plus;
     dplus = weapon->damage_plus;
     //Check for vorpally enchanted weapon
-    if (is_vorpalized(weapon, thdef)) {
+    if (weapon->is_vorpalized(thdef)) {
         hplus += 4; 
         dplus += 4;
     }
@@ -388,7 +388,7 @@ bool roll_em(AGENT *thatt, AGENT *thdef, ITEM *weapon, bool hurl)
         hplus += get_ring(RIGHT)->ring_level;
     }
     cp = weapon->damage;
-    if (hurl && (weapon->flags&IS_MISL) && get_current_weapon()!=NULL && get_current_weapon()->which==weapon->launcher)
+    if (hurl && weapon->is_missile() && get_current_weapon() && get_current_weapon()->which == weapon->launcher)
     {
       cp = weapon->throw_damage;
       hplus += get_current_weapon()->hit_plus;

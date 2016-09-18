@@ -299,7 +299,7 @@ void total_winner()
       case SPEAR: worth = 5; break;
       }
       worth *= 3*(obj->hit_plus+obj->damage_plus)+obj->count;
-      obj->flags |= IS_KNOW;
+      obj->set_known();
       break;
 
     case ARMOR:
@@ -316,7 +316,7 @@ void total_winner()
       }
       worth += (9-obj->armor_class)*100;
       worth += (10*(get_default_class(obj->which)-obj->armor_class));
-      obj->flags |= IS_KNOW;
+      obj->set_known();
       break;
 
     case SCROLL:
@@ -338,16 +338,16 @@ void total_winner()
       if (obj->which==R_ADDSTR || obj->which==R_ADDDAM || obj->which==R_PROTECT || obj->which==R_ADDHIT)
         if (obj->ring_level>0) worth += obj->ring_level*100;
         else worth = 10;
-        if (!(obj->flags&IS_KNOW)) worth /= 2;
-        obj->flags |= IS_KNOW;
+        if (!obj->is_known()) worth /= 2;
+        obj->set_known();
         discover_ring(obj->which);
         break;
 
     case STICK:
       worth = get_stick_value(obj->which);
       worth += 20*obj->charges;
-      if (!(obj->flags&IS_KNOW)) worth /= 2;
-      obj->flags |= IS_KNOW;
+      if (!obj->is_known()) worth /= 2;
+      obj->set_known();
       discover_stick(obj->which);
       break;
 

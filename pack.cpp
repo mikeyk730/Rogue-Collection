@@ -123,15 +123,17 @@ void add_pack(ITEM *obj, bool silent)
       return;
   }
   //Check for and deal with scare monster scrolls
-  if (is_scare_monster_scroll(obj)) if (obj->flags&IS_FOUND)
-  {
-    detach_item(&lvl_obj, obj);
-    mvaddch(player.pos.y, player.pos.x, floor);
-    set_tile(player.pos.y, player.pos.x, floor);
-    msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
-    return;
+  if (is_scare_monster_scroll(obj)) {
+      if (obj->is_found())
+      {
+          detach_item(&lvl_obj, obj);
+          mvaddch(player.pos.y, player.pos.x, floor);
+          set_tile(player.pos.y, player.pos.x, floor);
+          msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
+          return;
+      }
+      else obj->set_found();
   }
-  else obj->flags |= IS_FOUND;
   if (from_floor) {
     detach_item(&lvl_obj, obj);
     mvaddch(player.pos.y, player.pos.x, floor); 

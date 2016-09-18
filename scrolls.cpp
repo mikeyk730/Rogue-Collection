@@ -236,7 +236,7 @@ void read_enchant_armor()
   if (get_current_armor()!=NULL)
   {
     get_current_armor()->armor_class--;
-    get_current_armor()->flags &= ~IS_CURSED;
+    get_current_armor()->remove_curse();
     ifterse("your armor glows faintly", "your armor glows faintly for a moment");
   }
 }
@@ -305,7 +305,7 @@ void read_enchant_weapon()
     msg("you feel a strange sense of loss");
   else
   {
-    get_current_weapon()->flags &= ~IS_CURSED;
+    get_current_weapon()->remove_curse();
     if (rnd(2)==0) get_current_weapon()->hit_plus++;
     else get_current_weapon()->damage_plus++;
     ifterse("your %s glows blue", "your %s glows blue for a moment", get_weapon_name(get_current_weapon()->which));
@@ -325,16 +325,16 @@ void read_create_monster()
 
 void read_remove_curse()
 {
-  if (get_current_armor()) 
-    get_current_armor()->flags &= ~IS_CURSED;
-  if (get_current_weapon()) 
-    get_current_weapon()->flags &= ~IS_CURSED;
-  if (get_ring(LEFT)) 
-    get_ring(LEFT)->flags &= ~IS_CURSED;
-  if (get_ring(RIGHT))
-    get_ring(RIGHT)->flags &= ~IS_CURSED;
+    if (get_current_armor())
+        get_current_armor()->remove_curse();
+    if (get_current_weapon())
+        get_current_weapon()->remove_curse();
+    if (get_ring(LEFT))
+        get_ring(LEFT)->remove_curse();
+    if (get_ring(RIGHT))
+        get_ring(RIGHT)->remove_curse();
 
-  ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
+    ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
 }
 
 void read_aggravate_monsters()

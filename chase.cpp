@@ -162,7 +162,8 @@ over:
   }
   else 
     monster->oldch = '@';
-  if (monster->oldch==FLOOR && oroom->is_dark()) monster->oldch = ' ';
+  if (monster->oldch==FLOOR && oroom->is_dark()) 
+      monster->oldch = ' ';
   standend();
   return true;
 }
@@ -179,14 +180,14 @@ bool can_see_monst(AGENT *monster)
     return false;
   
   if (DISTANCE(monster->pos.y, monster->pos.x, player.pos.y, player.pos.x) >= LAMP_DIST &&
-    ((monster->room != player.room || (monster->room->is_dark()) || (monster->room->is_maze())))) 
+    (monster->room != player.room || monster->room->is_dark() || monster->room->is_maze()))
     return false;
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
   //give the player a hint as to what that weapon is good for.
-  if (is_vorpalized(get_current_weapon(), monster) && !(get_current_weapon()->flags & DID_FLASH))
+  if (get_current_weapon() && get_current_weapon()->is_vorpalized(monster) && !get_current_weapon()->did_flash())
   {
-    get_current_weapon()->flags |= DID_FLASH;
+    get_current_weapon()->set_flashed();
     msg(flash, get_weapon_name(get_current_weapon()->which), short_msgs()?"":intense);
   }
   return true;

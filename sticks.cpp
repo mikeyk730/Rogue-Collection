@@ -657,7 +657,7 @@ const char *get_charge_string(ITEM *obj)
 {
   static char buf[20];
 
-  if (!(obj->flags&IS_KNOW) && !is_wizard()) buf[0] = '\0';
+  if (!obj->is_known() && !is_wizard()) buf[0] = '\0';
   else sprintf(buf, " [%d charges]", obj->charges);
   return buf;
 }

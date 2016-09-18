@@ -53,20 +53,20 @@ void whatis()
 
   case STICK:
     discover_stick(obj->which);
-    obj->flags |= IS_KNOW;
+    obj->set_known();
     break;
 
   case WEAPON: case ARMOR:
-    obj->flags |= IS_KNOW;
+    obj->set_known();
     break;
 
   case RING:
     discover_ring(obj->which);
-    obj->flags |= IS_KNOW;
+    obj->set_known();
     break;
   }
   //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
-  if (obj->enemy) obj->flags |= IS_REVEAL;
+  if (obj->enemy) obj->set_revealed();
   msg(inv_name(obj, false));
 }
 
@@ -103,18 +103,23 @@ void create_obj()
     msg("blessing? (+,-,n)");
     bless = readchar();
     mpos = 0;
-    if (bless=='-') obj->flags |= IS_CURSED;
+    if (bless=='-') 
+        obj->set_cursed();
     if (obj->type==WEAPON)
     {
       init_weapon(obj, obj->which);
-      if (bless=='-') obj->hit_plus -= rnd(3)+1;
-      if (bless=='+') obj->hit_plus += rnd(3)+1;
+      if (bless=='-') 
+          obj->hit_plus -= rnd(3)+1;
+      if (bless=='+') 
+          obj->hit_plus += rnd(3)+1;
     }
     else
     {
       obj->armor_class = get_default_class(obj->which);
-      if (bless=='-') obj->armor_class += rnd(3)+1;
-      if (bless=='+') obj->armor_class -= rnd(3)+1;
+      if (bless=='-') 
+          obj->armor_class += rnd(3)+1;
+      if (bless=='+')
+          obj->armor_class -= rnd(3)+1;
     }
   }
   else if (obj->type==RING) switch (obj->which)
@@ -123,12 +128,12 @@ void create_obj()
     msg("blessing? (+,-,n)");
     bless = readchar();
     mpos = 0;
-    if (bless=='-') obj->flags |= IS_CURSED;
+    if (bless=='-') obj->set_cursed();
     obj->ring_level = (bless=='-'?-1:rnd(2)+1);
     break;
 
   case R_AGGR: case R_TELEPORT:
-    obj->flags |= IS_CURSED;
+    obj->set_cursed();
     break;
   }
   else if (obj->type==STICK) fix_stick(obj);

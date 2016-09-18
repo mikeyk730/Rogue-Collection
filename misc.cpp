@@ -344,7 +344,8 @@ int goodch(ITEM *obj)
 {
   int ch = MAGIC;
 
-  if (obj->flags&IS_CURSED) ch = BMAGIC;
+  if (obj->is_cursed())
+      ch = BMAGIC;
   switch (obj->type)
   {
   case ARMOR:
@@ -547,7 +548,9 @@ void call()
     know = does_know_stick;
     elsewise = (guess ? guess : get_material(obj->which));
     break;
-  default: msg("you can't call that anything"); return;
+  default: 
+      msg("you can't call that anything"); 
+      return;
   }
   if (know(obj->which)) {
     msg("that has already been identified"); 

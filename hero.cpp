@@ -117,7 +117,7 @@ void init_player()
   init_weapon(obj, MACE);
   obj->hit_plus = 1;
   obj->damage_plus = 1;
-  obj->flags |= IS_KNOW;
+  obj->set_known();
   add_pack(obj, true);
   set_current_weapon(obj);
 
@@ -126,7 +126,7 @@ void init_player()
   init_weapon(obj, BOW);
   obj->hit_plus = 1;
   obj->damage_plus = 0;
-  obj->flags |= IS_KNOW;
+  obj->set_known();
   add_pack(obj, true);
 
   //Now some arrows
@@ -134,13 +134,13 @@ void init_player()
   init_weapon(obj, ARROW);
   obj->count = rnd(15)+25;
   obj->hit_plus = obj->damage_plus = 0;
-  obj->flags |= IS_KNOW;
+  obj->set_known();
   add_pack(obj, true);
 
   //And his suit of armor
   obj = create_item(ARMOR, RING_MAIL);
   obj->armor_class = get_default_class(RING_MAIL)-1;
-  obj->flags |= IS_KNOW;
+  obj->set_known();
   set_current_armor(obj);
   add_pack(obj, true);
 
