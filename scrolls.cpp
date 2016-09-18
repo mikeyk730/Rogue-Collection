@@ -301,15 +301,12 @@ void read_teleportation()
 
 void read_enchant_weapon()
 {
-  if (get_current_weapon() == NULL || get_current_weapon()->type != WEAPON)
-    msg("you feel a strange sense of loss");
-  else
-  {
-    get_current_weapon()->remove_curse();
-    if (rnd(2)==0) get_current_weapon()->hit_plus++;
-    else get_current_weapon()->damage_plus++;
-    ifterse("your %s glows blue", "your %s glows blue for a moment", get_weapon_name(get_current_weapon()->which));
-  }
+    Item* weapon = get_current_weapon();
+    if (weapon == NULL || weapon->type != WEAPON){
+        msg("you feel a strange sense of loss");
+        return;
+    }
+    weapon->enchant_weapon();
 }
 
 void read_create_monster()
@@ -346,7 +343,7 @@ void read_aggravate_monsters()
 
 void read_blank_paper()
 {
-  msg("this scroll seems to be blank");
+    msg("this scroll seems to be blank");
 }
 
 void read_vorpalize_weapon()

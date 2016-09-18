@@ -69,7 +69,7 @@ char *inv_name(ITEM *obj, bool drop)
     break;
 
   case WEAPON:
-    get_inv_name_weapon(obj);
+    obj->get_inv_name_weapon();
     break;
 
   case ARMOR:

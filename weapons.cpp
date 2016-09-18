@@ -203,12 +203,6 @@ void Item::initialize_weapon(byte type)
         this->count = 1;
 }
 
-//init_weapon: Set up the initial goodies for a weapon
-void init_weapon(ITEM *weapon, byte type)
-{
-    weapon->initialize_weapon(type);
-}
-
 //hit_monster: Does the missile hit the monster?
 int hit_monster(int y, int x, ITEM *obj)
 {
@@ -279,29 +273,39 @@ int fallpos(ITEM *obj, Coord *newpos)
     return (cnt!=0);
 }
 
-const char* get_inv_name_weapon(ITEM* weapon)
+const char* Item::get_inv_name_weapon() const
 {
   char *pb = prbuf;
-  int which = weapon->which;
+  int which = this->which;
 
-  if (weapon->count>1) 
-    sprintf(pb, "%d ", weapon->count);
+  if (this->count>1) 
+    sprintf(pb, "%d ", this->count);
   else
     sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
   pb = &prbuf[strlen(prbuf)];
-  if (weapon->is_known() || is_wizard()) 
-    sprintf(pb, "%s %s", num(weapon->hit_plus, weapon->damage_plus, WEAPON), get_weapon_name(which));
+  if (this->is_known() || is_wizard()) 
+    sprintf(pb, "%s %s", num(this->hit_plus, this->damage_plus, WEAPON), get_weapon_name(which));
   else
     sprintf(pb, "%s", get_weapon_name(which));
-  if (weapon->count>1) strcat(pb, "s");
-  if (weapon->is_vorpalized() && (weapon->is_revealed() || is_wizard()))
+  if (this->count>1) strcat(pb, "s");
+  if (this->is_vorpalized() && (this->is_revealed() || is_wizard()))
   {
     strcat(pb, " of ");
-    strcat(pb, weapon->get_vorpalized_name());
+    strcat(pb, this->get_vorpalized_name());
     strcat(pb, " slaying");
   }
 
   return prbuf;
+}
+
+void Item::enchant_weapon()
+{
+    this->remove_curse();
+    if (rnd(2) == 0) 
+        this->hit_plus++;
+    else 
+        this->damage_plus++;
+    ifterse("your %s glows blue", "your %s glows blue for a moment", get_weapon_name(this->which));
 }
 
 bool Item::is_vorpalized() const

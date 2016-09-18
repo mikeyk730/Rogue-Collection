@@ -107,7 +107,7 @@ void create_obj()
         obj->set_cursed();
     if (obj->type==WEAPON)
     {
-      init_weapon(obj, obj->which);
+      obj->initialize_weapon(obj->which);
       if (bless=='-') 
           obj->hit_plus -= rnd(3)+1;
       if (bless=='+') 

@@ -315,8 +315,10 @@ struct Item
   char *throw_damage;            //Damage if thrown
   int count;                     //Count for plural objects
   int which;                     //Which object of a type it is
+private:
   int hit_plus;                  //Plusses to hit
   int damage_plus;               //Plusses to damage
+public:  
   short misc;                    //Armor class
   short flags;                   //Information about objects
   char enemy;                    //If it is enchanted, who it hates
@@ -382,6 +384,8 @@ struct Item
 
   //weapon-specific functions
   void initialize_weapon(byte type);
+  const char* get_inv_name_weapon() const;
+  void enchant_weapon();
   void vorpalize();
   bool is_vorpalized() const;
   bool is_vorpalized_against(Agent* monster) const;
