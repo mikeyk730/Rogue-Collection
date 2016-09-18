@@ -39,7 +39,7 @@ int new_slime(AGENT *slime)
   Coord sp;
 
   ret = 0;
-  slime->flags |= IS_FLY; //todo: remove this hack, IS_FLY is used as a dirty bit during this recursion
+  slime->flags |= IS_DIRTY;
   if (plop_monster((ty = slime->pos.y), (tx = slime->pos.x), &sp)==0)
   {
     //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.
@@ -47,12 +47,13 @@ int new_slime(AGENT *slime)
       for (x = tx-1; x<=tx+1; x++)
         if (get_tile_or_monster(y, x)==slime->type && (ntp = monster_at(y, x)))
         {
-          if (ntp->flags&IS_FLY) continue; //Already done this one
+          if (ntp->flags&IS_DIRTY) 
+              continue; //Already done this one
           if (new_slime(ntp)) {y = ty+2; x = tx+2;}
         }
   }
   else {ret = 1; slimy = sp;}
-  slime->flags &= ~IS_FLY;
+  slime->flags &= ~IS_DIRTY;
   return ret;
 }
 
