@@ -78,7 +78,7 @@ void create_obj()
   int limit, option;
 
   if ((obj = create_item(0,0))==NULL) {msg("can't create anything now"); return;}
-  msg("type of item: ");
+  msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK,RING, WEAPON, ARMOR, AMULET, FOOD);
   switch (readchar())
   {
   case '!': obj->type = POTION; limit=MAXPOTIONS-1; break;
