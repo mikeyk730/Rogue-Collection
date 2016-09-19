@@ -146,7 +146,7 @@ int was_trapped = 0;   //Was a trap sprung
 
 int bailout = false;
 char take;  //Thing the rogue is taking
-char runch; //Direction player is running
+char run_character; //Direction player is running
 
 int iguess = 0;
 

@@ -535,7 +535,7 @@ extern bool counts_as_turn, again, door_stop, fastmode, faststate, firstmove,
 extern int was_trapped;
 
 extern char *flash, *he_man[], *helpcoms[], *helpobjs[],
-  huh[], *intense, outbuf[], prbuf[], *release, runch, 
+  huh[], *intense, outbuf[], prbuf[], *release, run_character, 
   take;
 extern const char* typeahead;
 

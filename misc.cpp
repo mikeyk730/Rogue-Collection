@@ -137,7 +137,7 @@ void look(bool wakeup)
       standend();
       if (door_stop && !firstmove && running)
       {
-        switch (runch)
+        switch (run_character)
         {
         case 'h': if (x==ex) continue; break;
         case 'j': if (y==sy) continue; break;

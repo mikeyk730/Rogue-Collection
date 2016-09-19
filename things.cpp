@@ -6,6 +6,7 @@
 #include <stdarg.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "things.h"
 #include "pack.h"
 #include "list.h"
@@ -250,9 +251,19 @@ int pick_one(struct MagicItem *magic, int nitems)
   return magic-start;
 }
 
+void debug_screen()
+{
+  add_line(0, "hey", 0);
+  add_line("", "mike", 0);
+  end_line("");
+}
+
 //discovered: list what the player has discovered in this game of a certain type
 void discovered()
 {
+  if (game->hero().is_wizard())
+    return debug_screen();
+
   print_disc(POTION);
   add_line("", " ", 0);
   print_disc(SCROLL);

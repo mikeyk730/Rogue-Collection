@@ -32,7 +32,7 @@ void do_run(byte ch)
 {
   running = true;
   counts_as_turn = false;
-  runch = ch;
+  run_character = ch;
 }
 
 bool is_gone(Room* rp)
@@ -83,18 +83,18 @@ hit_bound:
     {
       bool b1, b2;
 
-      switch (runch)
+      switch (run_character)
       {
       case 'h': case 'l':
         b1 = (player.pos.y>1 && ((get_flags(player.pos.y-1, player.pos.x)&F_PASS) || get_tile(player.pos.y-1, player.pos.x)==DOOR));
         b2 = (player.pos.y<maxrow-1 && ((get_flags(player.pos.y+1, player.pos.x)&F_PASS) || get_tile(player.pos.y+1, player.pos.x)==DOOR));
         if (!(b1^b2)) break;
         if (b1) {
-            runch = 'k'; 
+            run_character = 'k'; 
             dy = -1;
         }
         else {
-            runch = 'j';
+            run_character = 'j';
             dy = 1;
         }
         dx = 0;
@@ -106,11 +106,11 @@ hit_bound:
         if (!(b1^b2))
             break;
         if (b1) {
-            runch = 'h'; 
+            run_character = 'h'; 
             dx = -1;
         }
         else {
-            runch = 'l';
+            run_character = 'l';
             dx = 1;
         }
         dy = 0;

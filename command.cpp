@@ -80,9 +80,9 @@ int com_char()
 }
 
 //Read a command, setting things up according to prefix like devices. Return the command character to be executed.
-int get_prefix()
+int read_command()
 {
-  int retch, ch, junk;
+  int command, ch, junk;
 
   counts_as_turn = true;
   fastmode = faststate;
@@ -90,20 +90,33 @@ int get_prefix()
   if (!running) door_stop = false;
   do_take = true;
   again = false;
-  if (--repeat_cmd_count>0) {do_take = lasttake; retch = lastch; fastmode = false;}
+
+  --repeat_cmd_count;
+  if (repeat_cmd_count || lastcount)
+      show_count();
+
+  if (repeat_cmd_count > 0) {
+      do_take = lasttake;
+      command = lastch;
+      fastmode = false;
+  }
   else
   {
     repeat_cmd_count = 0;
-    if (running) {retch = runch; do_take = lasttake;}
+    if (running) {
+        command = run_character;
+        do_take = lasttake;
+    }
     else
     {
-      for (retch = 0; retch==0;)
+      for (command = 0; command==0;)
       {
         switch (ch = com_char())
         {
         case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
           junk = repeat_cmd_count*10;
-          if ((junk += ch-'0')>0 && junk<10000) repeat_cmd_count = junk;
+          if ((junk += ch-'0')>0 && junk<10000) 
+              repeat_cmd_count = junk;
           show_count();
           break;
 
@@ -114,20 +127,25 @@ int get_prefix()
           do_take = false; 
           break;
         case 'a': 
-          retch = lastch; 
+          command = lastch; 
           repeat_cmd_count = lastcount; 
           do_take = lasttake; 
           again = true; 
           break;
         case ' ': break;
-        case ESCAPE: door_stop = false; repeat_cmd_count = 0; show_count(); break;
-        default: retch = ch; break;
+        case ESCAPE:
+            door_stop = false;
+            repeat_cmd_count = 0; 
+            show_count(); 
+            break;
+        default: command = ch; break;
         }
       }
     }
   }
-  if (repeat_cmd_count) fastmode = false;
-  switch (retch)
+  if (repeat_cmd_count)
+      fastmode = false;
+  switch (command)
   {
   case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
     if (fastmode && !running)
@@ -136,7 +154,7 @@ int get_prefix()
           door_stop = true; 
           firstmove = true;
       }
-      retch = toupper(retch);
+      command = toupper(command);
     }
 
   case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N': case 'q': case 'r': case 's': case 'z': case 't': case '.':
@@ -145,20 +163,23 @@ int get_prefix()
 
     break;
 
-  default: repeat_cmd_count = 0;
+  default: 
+      repeat_cmd_count = 0;
   }
-  if (repeat_cmd_count || lastcount) show_count();
-  lastch = retch;
+
   lastcount = repeat_cmd_count;
+  lastch = command;  
   lasttake = do_take;
-  return retch;
+  return command;
 }
 
 void show_count()
 {
   move(LINES-2, COLS-4);
-  if (repeat_cmd_count) printw("%-4d", repeat_cmd_count);
-  else addstr("    ");
+  if (repeat_cmd_count > 0) 
+      printw("%-4d", repeat_cmd_count);
+  else
+      addstr("    ");
 }
 
 void execcom()
@@ -168,7 +189,7 @@ void execcom()
 
   do
   {
-    switch (ch = get_prefix())
+    switch (ch = read_command())
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n': 
         find_dir(ch, &mv);
