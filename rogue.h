@@ -119,8 +119,6 @@ const short IS_CANC    = 0x1000; //creature has special qualities cancelled
 const short IS_SLOW    = 0x2000; //creature has been slowed
 const short IS_HASTE   = 0x4000; //creature has been hastened
 const short IS_FLY     = (short)0x8000; //creature is of the flying type
-const short IS_DIRTY   = (short)0x8000; //dirty bit 
-//todo: don't reuse flag.  turn dirty into different variable
 
 //Flags for level map
 #define F_PASS   0x040 //is a passageway

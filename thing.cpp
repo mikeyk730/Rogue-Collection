@@ -37,7 +37,6 @@ Agent *create_agent()
 {
     Agent* agent = new Agent;
     memset(agent, 0, sizeof(Agent)-sizeof(std::list<Item*>)); //todo:very hacky
-
     return agent;
 }
 

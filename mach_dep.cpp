@@ -2,6 +2,7 @@
 //mach_dep.c  1.4 (A.I. Design) 12/1/84
 
 #include <fstream>
+#include <memory>
 #include <Windows.h>
 #include <stdio.h>
 #include <conio.h>
@@ -49,8 +50,33 @@ namespace
         virtual std::string GetNextString(int size);
     };
 
-    static InputDriver* s_input_driver(new KeyboardInput);
-//    std::ofstream s_file("game.log", std::ios::binary | std::ios::out);
+    struct FileInput : public InputDriver
+    {
+        FileInput(const std::string& file_prefix, InputDriver* backup);
+
+        virtual char GetNextChar();
+        virtual std::string GetNextString(int size);
+
+        std::unique_ptr<InputDriver> m_backup;
+        std::ifstream m_file_chars;
+        std::ifstream m_file_strings;
+    };
+
+    struct CaptureInput : public InputDriver
+    {
+        CaptureInput(const std::string& file_prefix, InputDriver* d);
+
+        virtual char GetNextChar();
+        virtual std::string GetNextString(int size);
+        
+        std::unique_ptr<InputDriver> m_delegate;
+        std::ofstream m_file_chars;
+        std::ofstream m_file_strings;
+    };
+
+    //static InputDriver* s_input_driver(new CaptureInput("record", new KeyboardInput));
+    static InputDriver* s_input_driver(new FileInput("replay", new KeyboardInput));
+
 }
 
 //Table for IBM extended key translation
@@ -258,3 +284,82 @@ std::string KeyboardInput::GetNextString(int size) {
     return buf; 
 }
 
+CaptureInput::CaptureInput(const std::string& file_prefix, InputDriver* d)
+: m_delegate(d),
+m_file_chars(file_prefix + ".char", std::ios::binary | std::ios::out),
+m_file_strings(file_prefix + ".str", std::ios::binary | std::ios::out)
+{ }
+
+char CaptureInput::GetNextChar()
+{
+    char c = m_delegate->GetNextChar();
+    m_file_chars.write(&c, 1);
+    return c;
+}
+
+std::string CaptureInput::GetNextString(int size)
+{
+    std::string s = m_delegate->GetNextString(size);
+    int len = s.length();
+    m_file_strings.write((char*)&len, sizeof(len));
+    m_file_strings.write(s.c_str(), len);
+    return s;
+}
+
+
+FileInput::FileInput(const std::string& file_prefix, InputDriver* backup)
+: m_backup(backup),
+m_file_chars(file_prefix + ".char", std::ios::binary | std::ios::in),
+m_file_strings(file_prefix + ".str", std::ios::binary | std::ios::in)
+{ }
+
+char FileInput::GetNextChar()
+{
+    char c;
+    m_file_chars.read(&c, 1);
+
+
+    if (!m_file_chars){
+        if (m_backup){
+            return m_backup->GetNextChar();
+        }
+        else{
+            for (;;);
+        }
+    }
+    
+    return c;
+}
+
+std::string FileInput::GetNextString(int size)
+{
+    int string_length;
+    char buf[255];
+    memset(buf, 0, 255);
+
+    m_file_strings.read((char*)&string_length, sizeof(string_length));
+
+    if (string_length){
+        m_file_strings.read(buf, string_length);
+    }
+    else{
+        buf[0] = 0x0d;
+    }
+
+    if (!m_file_strings){
+        if (m_backup){
+            return m_backup->GetNextString(size);
+        }
+        else{
+            for (;;);
+        }
+    }
+
+
+    return buf;
+}
+
+//todo:
+//serialize enter and esc
+//validate serialization
+//serialize sizeof

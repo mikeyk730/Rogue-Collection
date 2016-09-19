@@ -90,36 +90,35 @@ void do_miss(Item* weapon, int thrown, Agent* monster, const char* name)
 //fight: The player attacks the monster.
 int fight(Coord *location, Item *weapon, bool thrown)
 {
-  const char *name;
-  //Find the monster we want to fight
-  Agent *monster = monster_at(location->y, location->x);
-  if (!monster) 
+    const char *name;
+    //Find the monster we want to fight
+    Agent *monster = monster_at(location->y, location->x);
+    if (!monster)
+        return false;
+
+    //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
+    repeat_cmd_count = 0;
+    turns_since_heal = 0;
+
+    start_run(monster);
+    //Let him know it was really a mimic (if it was one).
+    if (monster->is_disguised() && !player.is_blind())
+    {
+        monster->disguise = monster->type;
+        if (thrown)
+            return false;
+        msg("wait! That's a %s!", monster->get_monster_name());
+    }
+    name = player.is_blind() ? it : monster->get_monster_name();
+
+    if (roll_em(&player, monster, weapon, thrown) || (weapon && weapon->type == POTION))
+    {
+        do_hit(weapon, thrown, monster, name);
+        return true;
+    }
+
+    do_miss(weapon, thrown, monster, name);
     return false;
-
-  //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
-  repeat_cmd_count = 0;
-  turns_since_heal = 0;
-  
-  start_run(monster);
-  //Let him know it was really a mimic (if it was one).
-  //todo: handle in general way
-  if (monster->is_disguised() && !player.is_blind())
-  {
-    monster->disguise = monster->type;
-    if (thrown) 
-      return false;
-    msg("wait! That's a %s!", monster->get_monster_name());
-  }
-  name = player.is_blind() ? it : monster->get_monster_name();
-
-  if (roll_em(&player, monster, weapon, thrown) || (weapon && weapon->type==POTION))
-  {
-    do_hit(weapon, thrown, monster, name);    
-    return true;
-  }
-
-  do_miss(weapon, thrown, monster, name);
-  return false;
 }
 
 bool aquator_attack()

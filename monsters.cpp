@@ -213,7 +213,7 @@ struct Monster
   int carry;          //Probability of carrying something
   short flags;        //Things about the monster
   struct Stats stats; //Initial stats
-  int exflags;        //todo, populate elsewhere?
+  int exflags;        //Things about special roles
 };
 
 #define ___  1
@@ -243,8 +243,8 @@ struct Monster monsters[26] =
   { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, EX_DIVIDES },
   { "troll",           50,        IS_REGEN|IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     }, 0 },
   { "ur-vile",          0,                 IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" }, 0 },
-  { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, EX_DRAINS_MAXHP }, //todo: confirm these two
-  { "wraith",           0,                       0,  { XX,   55,  5,  4, ___, "1d6"             }, EX_DRAINS_EXP },   //todo
+  { "vampire",         20,        IS_REGEN|IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, EX_DRAINS_MAXHP },
+  { "wraith",           0,                       0,  { XX,   55,  5,  4, ___, "1d6"             }, EX_DRAINS_EXP },
   { "xeroc",           30,                       0,  { XX,  100,  7,  7, ___, "3d4"             }, EX_MIMICS },
   { "yeti",            30,                       0,  { XX,   50,  4,  6, ___, "1d6/1d6"         }, 0 },
   { "zombie",           0,                 IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             }, 0 }
