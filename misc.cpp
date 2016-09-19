@@ -491,7 +491,7 @@ void search()
 //go_down_stairs: He wants to go down a level
 void go_down_stairs()
 {
-    if (get_tile(player.pos.y, player.pos.x) != STAIRS && !is_wizard())
+    if (get_tile(player.pos.y, player.pos.x) != STAIRS && !game->hero().is_wizard())
         msg("I see no way down");
     else {
         next_level();
@@ -502,8 +502,8 @@ void go_down_stairs()
 //go_up_stairs: He wants to go up a level
 void go_up_stairs()
 {
-    if (get_tile(player.pos.y, player.pos.x) == STAIRS || is_wizard()){
-        if (has_amulet() || is_wizard()) {
+    if (get_tile(player.pos.y, player.pos.x) == STAIRS || game->hero().is_wizard()){
+        if (has_amulet() || game->hero().is_wizard()) {
             if (prev_level() == 0)
                 total_winner();
             new_level(true);
@@ -578,7 +578,7 @@ void record_macro()
     memset(buf, 0, MACROSZ);
     char *cp = prbuf;
 
-    msg("F9 was %s, enter new macro: ", game_state->get_environment("macro").c_str());
+    msg("F9 was %s, enter new macro: ", game->get_environment("macro").c_str());
     if (getinfo(prbuf, MACROSZ - 1) != ESCAPE)
     do {
         if (*cp != CTRL('F'))
@@ -586,5 +586,5 @@ void record_macro()
     } while (*cp++);
     msg("");
     clear_typeahead_buffer();
-    game_state->set_environment("macro", buf);
+    game->set_environment("macro", buf);
 }

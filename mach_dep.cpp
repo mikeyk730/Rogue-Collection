@@ -174,7 +174,7 @@ void credits()
   high();
   getinfo(tname, 23);
   if (*tname && *tname!=ESCAPE)
-    set_name(tname);
+      game->hero().set_name(tname);
 
   blot_out(23, 0, 24, COLS-1);
   brown();
@@ -218,7 +218,7 @@ int readchar()
 
   if (*typeahead) {SIG2(); return(*typeahead++);}
   
-  ch = game_state->input_interface().GetNextChar();
+  ch = game->input_interface().GetNextChar();
 
   if (ch==ESCAPE) repeat_cmd_count = 0;
   return ch;
@@ -226,7 +226,7 @@ int readchar()
 
 int getinfo(char *str, int size)
 {
-    std::string s = game_state->input_interface().GetNextString(size);
+    std::string s = game->input_interface().GetNextString(size);
     strcpy_s(str, size, s.c_str());
     return s[0]; //todo
 }

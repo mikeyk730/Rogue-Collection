@@ -270,7 +270,7 @@ void execcom()
     case CTRL('F'):
         counts_as_turn = false;
         //todo: revisit macro later, this definitely isn't safe
-        //typeahead = game_state->get_environment("macro").c_str();
+        //typeahead = game->get_environment("macro").c_str();
         break;
     case CTRL('R'): 
         counts_as_turn = false;
@@ -312,12 +312,11 @@ void execcom()
 
     case CTRL('W'):
       counts_as_turn = false; 
-      set_wizard(!is_wizard());
-      msg(is_wizard() ? "You are now a wizard!" : "You feel your magic powers fade away"); 
+      game->hero().toggle_wizard();
       break; 
 
     default:
-      if (is_wizard()) {
+      if (game->hero().is_wizard()) {
         switch(ch){
           //Wizard commands
         case 'C': 

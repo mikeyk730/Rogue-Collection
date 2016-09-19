@@ -180,5 +180,5 @@ const char *typeahead = "";
 char *intense = " of intense white light";
 char *flash = "your %s gives off a flash%s";
 
-GameState* game_state;
+GameState* game;
 

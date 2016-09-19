@@ -13,52 +13,53 @@
 #include "thing.h"
 #include "rings.h"
 
-static int s_purse = 0;
-static int s_wizard = 0;
-static int s_cheated = 0;
-static int hungry_state = 0;   //How hungry is he
-static int food_left = 0;       //Amount of food in hero's stomach
 
-std::string get_name()
-{
-    return game_state->get_environment("name");
+Hero::Hero() :
+m_purse(0), m_wizard(0), m_cheated(0), hungry_state(0), food_left(0)
+{ 
 }
 
-void set_name(const char* name)
+std::string Hero::get_name()
 {
-    game_state->set_environment("name", name);
+    return game->get_environment("name");
 }
 
-int get_purse()
+void Hero::set_name(const char* name)
 {
-  return s_purse;
+    game->set_environment("name", name);
 }
 
-void adjust_purse(int delta)
+int Hero::get_purse()
 {
-  s_purse += delta;
-  if (s_purse < 0) 
-    s_purse = 0;
+  return m_purse;
 }
 
-void set_wizard(int enable)
+void Hero::adjust_purse(int delta)
 {
-  s_wizard = enable;
-  if (enable)
-    s_cheated = true;
+  m_purse += delta;
+  if (m_purse < 0) 
+    m_purse = 0;
 }
 
-int is_wizard()
+void Hero::toggle_wizard()
 {
-  return s_wizard;
+    m_wizard = !m_wizard;
+    if (m_wizard)
+        m_cheated = true;
+    msg(is_wizard() ? "You are now a wizard!" : "You feel your magic powers fade away");
 }
 
-int did_cheat()
+bool Hero::is_wizard() const
 {
-  return s_cheated;
+  return m_wizard;
 }
 
-void ingest()
+bool Hero::did_cheat() const
+{
+  return m_cheated;
+}
+
+void Hero::ingest()
 {
   if (food_left<0)
     food_left = 0;
@@ -69,7 +70,7 @@ void ingest()
   hungry_state = 0;
 }
 
-void digest()
+void Hero::digest()
 {
   int oldfood, deltafood;
 
@@ -105,7 +106,7 @@ void digest()
 }
 
 //init_player: Roll up the rogue
-void init_player()
+void Hero::init_player()
 {
   Item *obj;
 
@@ -149,12 +150,12 @@ void init_player()
   add_pack(obj, true);
 }
 
-int get_hungry_state()
+int Hero::get_hungry_state()
 {
   return hungry_state;
 }
 
-int get_food_left()
+int Hero::get_food_left()
 {
     return food_left;
 }

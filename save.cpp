@@ -22,10 +22,10 @@ void save_game()
     if (in_small_screen_mode())
         addstr("Save file ? ");
     else
-        printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", game_state->get_environment("savefile").c_str());
+        printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", game->get_environment("savefile").c_str());
     getinfo(savename, 19);
     if (*savename == 0)
-        strcpy(savename, game_state->get_environment("savefile").c_str());
+        strcpy(savename, game->get_environment("savefile").c_str());
     do_save(savename);
 }
 

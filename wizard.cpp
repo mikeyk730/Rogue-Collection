@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "daemons.h"
 #include "pack.h"
 #include "thing.h"
@@ -168,7 +169,7 @@ void teleport()
   running = false;
   clear_typeahead_buffer();
   //Teleportation can be a confusing experience (unless you really are a wizard)
-  if (!is_wizard())
+  if (!game->hero().is_wizard())
   {
     if (player.is_confused())
         lengthen(unconfuse, rnd(4)+2);

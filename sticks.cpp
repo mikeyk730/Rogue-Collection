@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "sticks.h"
 #include "monsters.h"
 #include "pack.h"
@@ -658,7 +659,7 @@ const char *get_charge_string(Item *obj)
 {
   static char buf[20];
 
-  if (!obj->is_known() && !is_wizard()) buf[0] = '\0';
+  if (!obj->is_known() && !game->hero().is_wizard()) buf[0] = '\0';
   else sprintf(buf, " [%d charges]", obj->charges);
   return buf;
 }
@@ -670,7 +671,7 @@ const char* get_inv_name_stick(Item* stick)
 
   sprintf(pb, "A%s %s ", vowelstr(get_stick_type(which)), get_stick_type(which));
   pb = &prbuf[strlen(prbuf)];
-  if (does_know_stick(which) || is_wizard())
+  if (does_know_stick(which) || game->hero().is_wizard())
     chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which), get_charge_string(stick), get_material(which));
   else if (*get_stick_guess(which))
     chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which), get_material(which));

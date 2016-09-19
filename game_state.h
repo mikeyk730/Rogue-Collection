@@ -5,6 +5,7 @@
 
 struct Random;
 struct InputInterface;
+struct Hero;
 
 struct GameState
 {
@@ -16,6 +17,7 @@ struct GameState
 
     Random& random();
     InputInterface& input_interface();
+    Hero& hero();
 
 private:
     long m_seed; //Random number seed
@@ -23,4 +25,5 @@ private:
 
     std::unique_ptr<Random> m_random; //Random number generator
     std::unique_ptr<InputInterface> m_input_interface; //Interface for getting game input
+    std::unique_ptr<Hero> m_hero;
  };

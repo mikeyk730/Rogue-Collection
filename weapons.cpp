@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "monsters.h"
 #include "pack.h"
 #include "list.h"
@@ -282,12 +283,12 @@ const char* Item::get_inv_name_weapon() const
   else
     sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
   pb = &prbuf[strlen(prbuf)];
-  if (this->is_known() || is_wizard()) 
+  if (this->is_known() || game->hero().is_wizard()) 
     sprintf(pb, "%s %s", num(this->hit_plus, this->damage_plus, WEAPON), get_weapon_name(which));
   else
     sprintf(pb, "%s", get_weapon_name(which));
   if (this->count>1) strcat(pb, "s");
-  if (this->is_vorpalized() && (this->is_revealed() || is_wizard()))
+  if (this->is_vorpalized() && (this->is_revealed() || game->hero().is_wizard()))
   {
     strcat(pb, " of ");
     strcat(pb, this->get_vorpalized_name());

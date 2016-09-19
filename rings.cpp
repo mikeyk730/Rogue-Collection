@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "rings.h"
 #include "pack.h"
 #include "misc.h"
@@ -231,7 +232,7 @@ int ring_eat(int hand)
 //ring_num: Print ring bonuses
 char *ring_num(Item *obj)
 {
-  if (!obj->is_known() && !is_wizard()) 
+  if (!obj->is_known() && !game->hero().is_wizard()) 
     return "";
 
   switch (obj->which)
@@ -262,7 +263,7 @@ const char* get_inv_name_ring(Item* obj)
   char *pb = prbuf;
   int which = obj->which;
 
-  if (does_know_ring(which) || is_wizard())
+  if (does_know_ring(which) || game->hero().is_wizard())
     chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which), get_stone(which));
   else if (*get_ring_guess(which)) 
     chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which), get_stone(which));

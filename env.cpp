@@ -23,7 +23,7 @@ static char *plabel, *pstring;
 //No meaningful return codes to save data space. Just ignores strange labels
 void putenv2(char *label, char *string)
 {
-    game_state->set_environment(label, string);
+    game->set_environment(label, string);
 }
 
 //Peekc: Return the next char associated with efd (environment file descriptor)
@@ -93,5 +93,5 @@ int setenv(char *envfile)
 
 bool use_level_names()
 {
-    return "on" == game_state->get_environment("levelnames");
+    return "on" == game->get_environment("levelnames");
 }

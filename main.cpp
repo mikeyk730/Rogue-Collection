@@ -49,12 +49,12 @@ int bwflag = false;
 int main(int argc, char **argv)
 {
     int seed = srand2();
-    game_state = new GameState(seed);
+    game = new GameState(seed);
 
     setenv("rogue.opt");
-    if ("bw" == game_state->get_environment("scorefile"))
+    if ("bw" == game->get_environment("scorefile"))
         bwflag = true;
-    load_monster_cfg(game_state->get_environment("monstercfg"));
+    load_monster_cfg(game->get_environment("monstercfg"));
 
     //todo: process args
     //todo: can i support old save files??
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     winit();
     if (bwflag) forcebw();
     credits();
-    init_player(); //Set up initial player stats
+    game->hero().init_player(); //Set up initial player stats
     init_things(); //Set up probabilities of things
     init_names(); //Set up names of scrolls
     init_colors(); //Set up colors of potions
@@ -76,11 +76,11 @@ int main(int argc, char **argv)
     fuse(swander, 0, WANDER_TIME);
     daemon(stomach, 0);
     daemon(runners, 0);
-    msg("Hello %s%s.", get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
+    msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
     raise_curtain();
 
     playit(0);
-    delete game_state;
+    delete game;
 }
 
 //endit: Exit the program abnormally.
@@ -92,7 +92,7 @@ void endit()
 //rnd: Pick a very random number.
 int rnd(int range)
 {
-    return game_state->random().rnd(range);
+    return game->random().rnd(range);
 }
 
 int srand2()
@@ -150,8 +150,8 @@ void quit()
   {
     clear();
     move(0, 0);
-    printw("You quit with %u gold pieces\n", get_purse());
-    score(get_purse(), 1, 0);
+    printw("You quit with %u gold pieces\n", game->hero().get_purse());
+    score(game->hero().get_purse(), 1, 0);
     fatal("");
   }
   else

@@ -58,58 +58,58 @@ int get_year()
 //score: Figure score and post it.
 void score(int amount, int flags, char monst)
 {
-  struct LeaderboardEntry his_score, top_ten[TOPSCORES];
-  int rank = 0;
-  char response = ' ';
+    struct LeaderboardEntry his_score, top_ten[TOPSCORES];
+    int rank = 0;
+    char response = ' ';
 
-  if (amount || flags || monst)
-  {
-    move(LINES-1, 0);
-    cursor(true);
-    printw("[Press Enter to see rankings]");
+    if (amount || flags || monst)
+    {
+        move(LINES - 1, 0);
+        cursor(true);
+        printw("[Press Enter to see rankings]");
+        clear_typeahead_buffer();
+        wait_for('\r');
+        move(LINES - 1, 0);
+    }
+    while ((sc_fd = _open(game->get_environment("scorefile").c_str(), 0)) < 0)
+    {
+        printw("\n");
+        if (game->hero().did_cheat() || (amount == 0)) return;
+        str_attr("No scorefile: %Create %Retry %Abort");
+    reread:
+        switch (response = readchar())
+        {
+        case 'c': case 'C':
+            _close(_creat(game->get_environment("scorefile").c_str(), _S_IREAD | _S_IWRITE));
+        case 'r': case 'R': break;
+        case 'a': case 'A': return;
+        default: goto reread;
+        }
+    }
+    printw("\n");
+    get_scores(&top_ten[0]);
+    if (!game->hero().did_cheat())
+    {
+        strcpy(his_score.name, game->hero().get_name().c_str());
+        his_score.gold = amount;
+        his_score.fate = flags ? flags : monst;
+        his_score.level = max_level();
+        his_score.rank = player.stats.level;
+        rank = add_scores(&his_score, &top_ten[0]);
+    }
+    _close(sc_fd);
+    if (rank > 0)
+    {
+        sc_fd = _open(game->get_environment("scorefile").c_str(), _O_RDWR | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+        if (sc_fd >= 0) {
+            put_scores(&top_ten[0]);
+            _close(sc_fd);
+        }
+    }
+    pr_scores(rank, &top_ten[0]);
+    printw("[Press Enter to quit]");
     clear_typeahead_buffer();
     wait_for('\r');
-    move(LINES-1, 0);
-  }
-  while ((sc_fd = _open(game_state->get_environment("scorefile").c_str(), 0))<0)
-  {
-    printw("\n");
-    if (did_cheat() || (amount==0)) return;
-    str_attr("No scorefile: %Create %Retry %Abort");
-reread:
-    switch (response = readchar())
-    {
-    case 'c': case 'C': 
-        _close(_creat(game_state->get_environment("scorefile").c_str(), _S_IREAD | _S_IWRITE));
-    case 'r': case 'R': break;
-    case 'a': case 'A': return;
-    default: goto reread;
-    }
-  }
-  printw("\n");
-  get_scores(&top_ten[0]);
-  if (!did_cheat())
-  {
-    strcpy(his_score.name, get_name().c_str());
-    his_score.gold = amount;
-    his_score.fate = flags?flags:monst;
-    his_score.level = max_level();
-    his_score.rank = player.stats.level;
-    rank = add_scores(&his_score, &top_ten[0]);
-  }
-  _close(sc_fd);
-  if (rank>0)
-  {
-    sc_fd = _open(game_state->get_environment("scorefile").c_str(), _O_RDWR | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
-    if (sc_fd >= 0) {
-      put_scores(&top_ten[0]); 
-      _close(sc_fd);
-    }
-  }
-  pr_scores(rank, &top_ten[0]);
-  printw("[Press Enter to quit]");
-  clear_typeahead_buffer();
-  wait_for('\r');
 }
 
 void get_scores(struct LeaderboardEntry *top10)
@@ -213,7 +213,7 @@ void death(char monst)
   char *killer;
   char buf[MAXSTR];
 
-  adjust_purse(-(get_purse()/10));
+  game->hero().adjust_purse(-(game->hero().get_purse() / 10));
 
   drop_curtain();
   clear();
@@ -228,19 +228,19 @@ void death(char monst)
   green();
   center(22, "___\\/(\\/)/(\\/ \\\\(//)\\)\\/(//)\\\\)//(\\__");
   standend();
-  center(14, get_name().c_str());
+  center(14, game->hero().get_name().c_str());
   standend();
   killer = killname(monst, true);
   strcpy(buf, "killed by");
   center(15, buf);
   center(16, killer);
-  sprintf(buf, "%u Au", get_purse());
+  sprintf(buf, "%u Au", game->hero().get_purse());
   center(18, buf);
   sprintf(buf, "%u", get_year());
   center(19, buf);
   raise_curtain();
   move(LINES-1, 0);
-  score(get_purse(), 0, monst);
+  score(game->hero().get_purse(), 0, monst);
   exit(0);
 }
 
@@ -277,7 +277,7 @@ void total_winner()
   wait_for(' ');
   clear();
   mvaddstr(0, 0, "   Worth  Item");
-  oldpurse = get_purse();
+  oldpurse = game->hero().get_purse();
   for (auto it = player.pack.begin(); it != player.pack.end(); c++, ++it)
   {
     obj = *it;
@@ -361,11 +361,11 @@ void total_winner()
     if (worth<0) worth = 0;
     move(c-'a'+1, 0);
     printw("%c) %5d  %s", c, worth, inv_name(obj, false));
-    adjust_purse(worth);
+    game->hero().adjust_purse(worth);
   }
   move(c-'a'+1, 0);
   printw("   %5u  Gold Pieces          ", oldpurse);
-  score(get_purse(), 2, 0);
+  score(game->hero().get_purse(), 2, 0);
 
 
   exit(0);

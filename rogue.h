@@ -540,6 +540,6 @@ extern char *flash, *he_man[], *helpcoms[], *helpobjs[],
 extern const char* typeahead;
 
 extern int repeat_cmd_count, iguess, mpos, sleep_timer, no_food, no_move, turns_since_heal;
-extern GameState* game_state;
+extern GameState* game;
 
 #define BUFSIZE             128

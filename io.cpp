@@ -7,6 +7,7 @@
 #include <stdarg.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "io.h"
 #include "curses.h"
 #include "misc.h"
@@ -215,98 +216,98 @@ char *unctrl(unsigned char ch)
 //status: Display the important stats line.  Keep the cursor where it was.
 void status()
 {
-  int oy, ox;
-  static int s_hungry;
-  static int s_level, s_pur = -1, s_hp, s_ac = 0;
-  static unsigned int strength;
-  static int s_elvl = 0;
-  static char *state_name[] = {"      ", "Hungry", "Weak", "Faint","?"};
+    int oy, ox;
+    static int s_hungry;
+    static int s_level, s_pur = -1, s_hp, s_ac = 0;
+    static unsigned int strength;
+    static int s_elvl = 0;
+    static char *state_name[] = { "      ", "Hungry", "Weak", "Faint", "?" };
 
-  SIG2();
-  getrc(&oy, &ox);
-  yellow();
-  //Level:
-  if (s_level!=get_level())
-  {
-    s_level = get_level();
-    move(PT(22, 23), 0);
-    printw("Level:%-4d", get_level());
-  }
-  //Hits:
-  if (s_hp!=player.stats.get_hp())
-  {
-    s_hp = player.stats.get_hp();
-    move(PT(22, 23), 12);
-    if (player.stats.get_hp()<100) {
-      printw("Hits:%2d(%2d) ", player.stats.get_hp(), player.stats.max_hp);
-      //just in case they get wraithed with 3 digit max hits
-      addstr("  ");
+    SIG2();
+    getrc(&oy, &ox);
+    yellow();
+    //Level:
+    if (s_level != get_level())
+    {
+        s_level = get_level();
+        move(PT(22, 23), 0);
+        printw("Level:%-4d", get_level());
     }
-    else 
-        printw("Hits:%3d(%3d) ", player.stats.get_hp(), player.stats.max_hp);
-  }
-  //Str:
-  if (player.stats.str!=strength)
-  {
-    strength = player.stats.str;
-    move(PT(22, 23), 26);
-    printw("Str:%2d(%2d) ", player.stats.str, max_stats.str);
-  }
-  //Gold
-  if(s_pur != get_purse())
-  {
-    s_pur = get_purse();
-    move(23, PT(0, 40));
-    printw("Gold:%-5u", get_purse());
-  }
-  //Armor:
-  if(s_ac!=(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac))
-  {
-    s_ac = (get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac);
-    if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= get_ring(LEFT)->ring_level;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= get_ring(RIGHT)->ring_level;
-    move(23, PT(12, 52));
-    printw("Armor:%-2d", AC(get_current_armor()!=NULL?get_current_armor()->armor_class:player.stats.ac));
-  }
-  //Exp:
-  if (!use_level_names())
-  {
-      move(23, PT(22, 62));
-      printw("Exp:%d/%d", player.stats.level, player.stats.exp);
-  }
-  else if (s_elvl!=player.stats.level)
-  {
-    s_elvl = player.stats.level;
-    move(23, PT(22, 62));
-    printw("%-12s", he_man[s_elvl-1]);
-  }
-  //Show raw food counter in wizard mode
-  if (is_wizard()) {
-      s_hungry = get_food_left();
-      std::ostringstream ss;
-      ss << s_hungry;
-      bold();
-      move(24, PT(28, 58));
-      addstr(state_name[0]);
-      move(24, PT(28, 58));
-      addstr(ss.str().c_str());
-      standend();
-  }
-  //Hungry state
-  else if (s_hungry!=get_hungry_state())
-  {
-    s_hungry = get_hungry_state();
-    move(24, PT(28, 58));
-    addstr(state_name[0]);
-    move(24, PT(28, 58));
-    if (get_hungry_state()) {
-        bold(); 
-        addstr(state_name[get_hungry_state()]); 
+    //Hits:
+    if (s_hp != player.stats.get_hp())
+    {
+        s_hp = player.stats.get_hp();
+        move(PT(22, 23), 12);
+        if (player.stats.get_hp() < 100) {
+            printw("Hits:%2d(%2d) ", player.stats.get_hp(), player.stats.max_hp);
+            //just in case they get wraithed with 3 digit max hits
+            addstr("  ");
+        }
+        else
+            printw("Hits:%3d(%3d) ", player.stats.get_hp(), player.stats.max_hp);
+    }
+    //Str:
+    if (player.stats.str != strength)
+    {
+        strength = player.stats.str;
+        move(PT(22, 23), 26);
+        printw("Str:%2d(%2d) ", player.stats.str, max_stats.str);
+    }
+    //Gold
+    if (s_pur != game->hero().get_purse())
+    {
+        s_pur = game->hero().get_purse();
+        move(23, PT(0, 40));
+        printw("Gold:%-5u", game->hero().get_purse());
+    }
+    //Armor:
+    if (s_ac != (get_current_armor() != NULL ? get_current_armor()->armor_class : player.stats.ac))
+    {
+        s_ac = (get_current_armor() != NULL ? get_current_armor()->armor_class : player.stats.ac);
+        if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= get_ring(LEFT)->ring_level;
+        if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= get_ring(RIGHT)->ring_level;
+        move(23, PT(12, 52));
+        printw("Armor:%-2d", AC(get_current_armor() != NULL ? get_current_armor()->armor_class : player.stats.ac));
+    }
+    //Exp:
+    if (!use_level_names())
+    {
+        move(23, PT(22, 62));
+        printw("Exp:%d/%d", player.stats.level, player.stats.exp);
+    }
+    else if (s_elvl != player.stats.level)
+    {
+        s_elvl = player.stats.level;
+        move(23, PT(22, 62));
+        printw("%-12s", he_man[s_elvl - 1]);
+    }
+    //Show raw food counter in wizard mode
+    if (game->hero().is_wizard()) {
+        s_hungry = game->hero().get_food_left();
+        std::ostringstream ss;
+        ss << s_hungry;
+        bold();
+        move(24, PT(28, 58));
+        addstr(state_name[0]);
+        move(24, PT(28, 58));
+        addstr(ss.str().c_str());
         standend();
     }
-  }
-  standend();
-  move(oy, ox);
+    //Hungry state
+    else if (s_hungry != game->hero().get_hungry_state())
+    {
+        s_hungry = game->hero().get_hungry_state();
+        move(24, PT(28, 58));
+        addstr(state_name[0]);
+        move(24, PT(28, 58));
+        if (game->hero().get_hungry_state()) {
+            bold();
+            addstr(state_name[game->hero().get_hungry_state()]);
+            standend();
+        }
+    }
+    standend();
+    move(oy, ox);
 }
 
 //wait_for: Sit around until the guy types the right key

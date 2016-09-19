@@ -1,17 +1,33 @@
-//init_player: Roll up the rogue
-void init_player();
+#pragma once
 
-std::string get_name();
-void set_name(const char* name);
+struct Hero
+{
+    Hero();
 
-int get_purse();
-void adjust_purse(int delta);
+    //init_player: Roll up the rogue
+    void init_player();
 
-void ingest();
-void digest();
-int get_hungry_state();
-int get_food_left();
+    std::string get_name();
+    void set_name(const char* name);
 
-void set_wizard(int enable);
-int is_wizard();
-int did_cheat();
+    int get_purse();
+    void adjust_purse(int delta);
+
+    void ingest();
+    void digest();
+    int get_hungry_state();
+    int get_food_left();
+
+    void toggle_wizard();
+    bool is_wizard() const;
+    bool did_cheat() const;
+
+private:
+
+    int m_purse = 0;
+    bool m_wizard = 0;
+    int m_cheated = 0;
+    int hungry_state = 0;    //How hungry is he
+    int food_left = 0;       //Amount of food in hero's stomach
+};
+

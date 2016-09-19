@@ -259,7 +259,7 @@ Item *get_item(char *purpose, int type)
   byte gi_state; //get item sub state
   int once_only = false;
 
-  if ("on" == game_state->get_environment("menu"))
+  if ("on" == game->get_environment("menu"))
       once_only = true;
   gi_state = again;
   if (player.pack.empty())
@@ -338,7 +338,7 @@ void money(int value)
   byte floor;
 
   floor = (player.room->is_gone()) ? PASSAGE : FLOOR;
-  adjust_purse(value);
+  game->hero().adjust_purse(value);
   mvaddch(player.pos.y, player.pos.x, floor);
   set_tile(player.pos.y, player.pos.x, floor);
   if (value>0) msg("you found %d gold pieces", value);

@@ -199,7 +199,7 @@ void quaff_see_invisible()
       invis_on();
   }
   sight();
-  msg("this potion tastes like %s juice", game_state->get_environment("fruit").c_str());
+  msg("this potion tastes like %s juice", game->get_environment("fruit").c_str());
 }
 
 void quaff_healing()
@@ -451,7 +451,7 @@ const char* get_inv_name_potion(Item* obj)
     sprintf(pb, "%d potions ", obj->count); 
     pb = &pb[strlen(prbuf)];
   }
-  if (does_know_potion(which) || is_wizard()) {
+  if (does_know_potion(which) || game->hero().is_wizard()) {
     chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which), get_color(which));
   }
   else if (*get_potion_guess(which)) {

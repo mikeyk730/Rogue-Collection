@@ -2,18 +2,20 @@
 #include "random.h"
 #include "input_interface.h"
 #include "keyboard_input.h"
+#include "hero.h"
 
 GameState::GameState(int seed) :
 m_seed(seed),
 m_random(new Random(seed)),
-m_input_interface(new KeyboardInput)
+m_input_interface(new KeyboardInput),
+m_hero(new Hero)
 {
 
-    m_environment["name"] = "Rodney";
+    m_environment["name"] = "Rodney";//move to Hero
     m_environment["scorefile"] = "rogue.scr";
     //m_environment["savefile"] = "rogue.sav";
     m_environment["macro"] = "v";
-    m_environment["fruit"] = "Slime Mold";
+    m_environment["fruit"] = "Slime Mold";//move to Hero
     m_environment["menu"] = "on";
     m_environment["screen"] = "";
     m_environment["levelnames"] = "on";
@@ -47,5 +49,12 @@ InputInterface& GameState::input_interface()
     return *m_input_interface;
 }
 
+Hero& GameState::hero()
+{
+    return *m_hero;
+}
+
 //todo:
 //monster config
+//all extern/global variables
+//all static variables

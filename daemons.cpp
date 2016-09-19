@@ -2,6 +2,7 @@
 //@(#)daemons.c       5.1 (Berkeley) 5/11/82
 
 #include "rogue.h"
+#include "game_state.h"
 #include "daemons.h"
 #include "daemon.h"
 #include "main.h"
@@ -100,12 +101,12 @@ void sight()
 //nohaste: End the hasting
 void nohaste()
 {
-  player.set_is_fast(false);
-  msg("you feel yourself slowing down");
+    player.set_is_fast(false);
+    msg("you feel yourself slowing down");
 }
 
 //stomach: Digest the hero's food
 void stomach()
 {
-  digest();
+    game->hero().digest();
 }

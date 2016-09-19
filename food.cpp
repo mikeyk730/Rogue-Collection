@@ -34,11 +34,11 @@ void eat()
     detach_item(player.pack, obj); 
     discard_item(obj);
   }
-  ingest();
+  game->hero().ingest();
   if (obj==get_current_weapon()) 
     set_current_weapon(NULL);
   if (obj->which==1)
-    msg("my, that was a yummy %s", game_state->get_environment("fruit").c_str());
+    msg("my, that was a yummy %s", game->get_environment("fruit").c_str());
   else if (rnd(100)>70) {
     player.stats.exp++; 
     msg("yuk, this food tastes awful");
@@ -52,7 +52,7 @@ void eat()
 
 const char* get_inv_name_food(Item* obj)
 {
-    std::string fruit = game_state->get_environment("fruit");
+    std::string fruit = game->get_environment("fruit");
 
     char *pb = prbuf;
     int which = obj->which;

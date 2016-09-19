@@ -247,7 +247,7 @@ void read_identify()
   //Identify, let the rogue figure something out
   s_know[S_IDENT] = true;
   msg("this scroll is an identify scroll");
-  if ("on" == game_state->get_environment("menu"))
+  if ("on" == game->get_environment("menu"))
     more(" More ");
   whatis();
 }
@@ -434,7 +434,7 @@ const char* get_inv_name_scroll(Item* obj)
     sprintf(pb, "%d scrolls ", obj->count); 
     pb = &prbuf[strlen(prbuf)];
   }
-  if (does_know_scroll(which) || is_wizard()) 
+  if (does_know_scroll(which) || game->hero().is_wizard()) 
     sprintf(pb, "of %s", get_scroll_name(which));
   else if (*get_scroll_guess(which)) 
     sprintf(pb, "called %s", get_scroll_guess(which));

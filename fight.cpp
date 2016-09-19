@@ -10,6 +10,7 @@
 using std::max;
 
 #include "rogue.h"
+#include "game_state.h"
 #include "hero.h"
 #include "fight.h"
 #include "list.h"
@@ -172,11 +173,11 @@ bool leprechaun_attack(Agent* mp)
   //Leprechaun steals some gold
   long lastpurse;
 
-  lastpurse = get_purse();
-  adjust_purse(-rnd_gold());
+  lastpurse = game->hero().get_purse();
+  game->hero().adjust_purse(-rnd_gold());
   if (!save(VS_MAGIC)) 
-    adjust_purse(-(rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold()));
-  if (get_purse() != lastpurse) 
+    game->hero().adjust_purse(-(rnd_gold()+rnd_gold()+rnd_gold()+rnd_gold()));
+  if (game->hero().get_purse() != lastpurse) 
     msg("your purse feels lighter");
 
   return true;
