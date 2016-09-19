@@ -8,7 +8,7 @@ const char* get_stick_type(int type);
 void init_new_stick(Item* stick);
 int get_stick_value(int type);
 const char* get_stick_name(int type);
-const char* get_stick_guess(int type);
+std::string get_stick_guess(int type);
 void set_stick_guess(int type, const char* value);
 const char* get_inv_name_stick(Item* stick);
 

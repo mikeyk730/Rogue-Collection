@@ -83,7 +83,7 @@ void discover_ring(int type)
   r_know[type] = true;
 }
 
-const char* get_ring_guess(int type)
+std::string get_ring_guess(int type)
 {
   return r_guess[type];
 }
@@ -265,8 +265,8 @@ const char* get_inv_name_ring(Item* obj)
 
   if (does_know_ring(which) || game->hero().is_wizard())
     chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which), get_stone(which));
-  else if (*get_ring_guess(which)) 
-    chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which), get_stone(which));
+  else if (!get_ring_guess(which).empty()) 
+    chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which).c_str(), get_stone(which));
   else 
     sprintf(pb, "A%s %s ring", vowelstr(get_stone(which)), get_stone(which));
 

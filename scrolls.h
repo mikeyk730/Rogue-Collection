@@ -3,11 +3,11 @@
 
 //init_names: Generate the names of the various scrolls
 void init_names();
-const char* get_title(int type);
+std::string get_title(int type);
 void init_new_scroll(Item* scroll);
 int get_scroll_value(int type);
-const char* get_scroll_name(int type);
-const char* get_scroll_guess(int type);
+std::string get_scroll_name(int type);
+std::string get_scroll_guess(int type);
 void set_scroll_guess(int type, const char* value);
 const char* get_inv_name_scroll(Item* scroll);
 

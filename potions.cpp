@@ -103,7 +103,7 @@ void discover_potion(int type)
   p_know[type] = true;
 }
 
-const char* get_potion_guess(int type)
+std::string get_potion_guess(int type)
 {
   return p_guess[type];
 }
@@ -454,8 +454,8 @@ const char* get_inv_name_potion(Item* obj)
   if (does_know_potion(which) || game->hero().is_wizard()) {
     chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which), get_color(which));
   }
-  else if (*get_potion_guess(which)) {
-    chopmsg(pb, "called %s", "called %s(%s)", get_potion_guess(which), get_color(which));
+  else if (!get_potion_guess(which).empty()) {
+    chopmsg(pb, "called %s", "called %s(%s)", get_potion_guess(which).c_str(), get_color(which));
   }
   else if (obj->count==1) 
     sprintf(prbuf, "A%s %s potion", vowelstr(get_color(which)), get_color(which));

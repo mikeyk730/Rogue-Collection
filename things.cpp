@@ -278,7 +278,7 @@ void discovered()
 void print_disc(byte type)
 {
   int (*know)(int);
-  const char* (*guess)(int);
+  std::string (*guess)(int);
   int i, maxnum, num_found;
   static Item obj;
   static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
@@ -310,7 +310,7 @@ void print_disc(byte type)
   obj.count = 1;
   obj.flags = 0;
   num_found = 0;
-  for (i = 0; i<maxnum; i++) if (know(order[i]) || *guess(order[i]))
+  for (i = 0; i<maxnum; i++) if (know(order[i]) || !guess(order[i]).empty())
   {
     obj.type = type;
     obj.which = order[i];

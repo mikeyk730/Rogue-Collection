@@ -38,17 +38,91 @@
 #define S_NOP       13
 #define S_VORPAL    14
 
-bool s_know[MAXSCROLLS];    //Does he know what a scroll does
-char *s_guess[MAXSCROLLS];         //Players guess at what scroll is
-struct Array s_names[MAXSCROLLS];  //Names of the scrolls
-
-static char *c_set = "bcdfghjklmnpqrstvwxyz";
-static char *v_set = "aeiou";
+const char *c_set = "bcdfghjklmnpqrstvwxyz";
+const char *v_set = "aeiou";
 
 const char *laugh = "you hear maniacal laughter%s.";
 const char *in_dist = " in the distance";
 
-struct MagicItem s_magic[MAXSCROLLS] =
+#include <set>
+#include <vector>
+#include <map>
+struct ItemDiscoveries
+{
+    std::string get_identifier(int type);
+
+    bool is_discovered(int type);
+    void discover(int type);
+
+    std::string get_guess(int type);
+    void set_guess(int type, const std::string& guess);
+    //call_it2: Call an object something after use.
+    void call_it2(int type);
+
+protected:
+    std::vector<std::string> m_identifier;
+private:
+    std::set<int> m_discoveries;
+    std::map<int, std::string> m_guesses;
+};
+std::string ItemDiscoveries::get_identifier(int type)
+{
+    return m_identifier[type];
+}
+
+bool ItemDiscoveries::is_discovered(int type)
+{
+    return m_discoveries.find(type) != m_discoveries.end();
+}
+void ItemDiscoveries::discover(int type)
+{
+    m_discoveries.insert(type);
+}
+std::string ItemDiscoveries::get_guess(int type)
+{
+    auto i = m_guesses.find(type);
+    if (i != m_guesses.end())
+        return i->second;
+    return "";
+}
+void ItemDiscoveries::set_guess(int type, const std::string& guess)
+{
+    m_guesses[type] = guess;
+}
+void ItemDiscoveries::call_it2(int type)
+{
+    if (is_discovered(type))
+        set_guess(type, "");
+    else if (get_guess(type).empty())
+    {
+        msg("%scall it? ", noterse("what do you want to "));
+        getinfo(prbuf, MAXNAME);
+        if (*prbuf != ESCAPE)
+            set_guess(type, prbuf);
+        msg("");
+    }
+}
+
+
+//random_char_in(): return random character in given string
+char random_char_in(const char *string)
+{
+    return (string[rnd(strlen(string))]);
+}
+
+//getsyl(): generate a random syllable
+char* getsyl()
+{
+    static char _tsyl[4];
+
+    _tsyl[3] = 0;
+    _tsyl[2] = random_char_in(c_set);
+    _tsyl[1] = random_char_in(v_set);
+    _tsyl[0] = random_char_in(c_set);
+    return (_tsyl);
+}
+
+struct MagicItem scrolls[MAXSCROLLS] =
 {
   {"monster confusion",   8, 140},
   {"magic mapping",       5, 150},
@@ -67,95 +141,90 @@ struct MagicItem s_magic[MAXSCROLLS] =
   {"vorpalize weapon",    1, 300}
 };
 
+
+struct ScrollInfo : public ItemDiscoveries
+{
+    MagicItem* s_magic;
+
+    ScrollInfo(MagicItem scrolls[]) : s_magic(scrolls){
+        int nsyl;
+        char *cp, *sp;
+        int i, nwords;
+
+        for (i = 0; i<MAXSCROLLS; i++)
+        {
+            cp = prbuf;
+            nwords = rnd(in_small_screen_mode() ? 3 : 4) + 2;
+            while (nwords--)
+            {
+                nsyl = rnd(2) + 1;
+                while (nsyl--)
+                {
+                    sp = getsyl();
+                    if (&cp[strlen(sp)]>&prbuf[MAXNAME - 1]) { nwords = 0; break; }
+                    while (*sp) *cp++ = *sp++;
+                }
+                *cp++ = ' ';
+            }
+            *--cp = '\0';
+            //I'm tired of thinking about this one so just in case .....
+            prbuf[MAXNAME] = 0;
+            m_identifier.push_back(prbuf);
+            if (i > 0) s_magic[i].prob += s_magic[i - 1].prob;
+        }
+    }
+
+    
+
+};
+
+ScrollInfo* s_scroll_info; //todo: mem leaking this for now
+
 int does_know_scroll(int type)
 {
-  return s_know[type];
+    return s_scroll_info->is_discovered(type);
 }
 
 void discover_scroll(int type)
 {
-  s_know[type] = true;
+    s_scroll_info->discover(type);
 }
 
 int get_scroll_value(int type)
 {
-  return s_magic[type].worth;
+    return s_scroll_info->s_magic[type].worth;
 }
 
-const char* get_scroll_name(int type)
+std::string get_scroll_name(int type)
 {
-  return s_magic[type].name;
+    return s_scroll_info->s_magic[type].name;
 }
 
-const char* get_scroll_guess(int type)
+std::string get_scroll_guess(int type)
 {
-  return s_guess[type];
+    return s_scroll_info->get_guess(type);
 }
 
 void set_scroll_guess(int type, const char* value)
 {
-  strcpy(s_guess[type], value);
-}
-
-//random_char_in(): return random character in given string
-char random_char_in(char *string)
-{
-  return (string[rnd(strlen(string))]);
-}
-
-//getsyl(): generate a random syllable
-char* getsyl()
-{
-  static char _tsyl[4];
-
-  _tsyl[3] = 0;
-  _tsyl[2] = random_char_in(c_set);
-  _tsyl[1] = random_char_in(v_set);
-  _tsyl[0] = random_char_in(c_set);
-  return (_tsyl);
+    s_scroll_info->set_guess(type, value);
 }
 
 //init_names: Generate the names of the various scrolls
 void init_names()
 {
-  int nsyl;
-  char *cp, *sp;
-  int i, nwords;
-
-  for (i = 0; i<MAXSCROLLS; i++)
-  {
-    cp = prbuf;
-    nwords = rnd(in_small_screen_mode()?3:4)+2;
-    while (nwords--)
-    {
-      nsyl = rnd(2)+1;
-      while (nsyl--)
-      {
-        sp = getsyl();
-        if (&cp[strlen(sp)]>&prbuf[MAXNAME-1]) {nwords = 0; break;}
-        while (*sp) *cp++ = *sp++;
-      }
-      *cp++ = ' ';
-    }
-    *--cp = '\0';
-    //I'm tired of thinking about this one so just in case .....
-    prbuf[MAXNAME] = 0;
-    s_know[i] = false;
-    s_guess[i] = (char *)&_guesses[iguess++];
-    strcpy((char*)&s_names[i], prbuf);
-    if (i>0) s_magic[i].prob += s_magic[i-1].prob;
-  }
+    s_scroll_info = new ScrollInfo(scrolls);
 }
 
-const char* get_title(int type)
+std::string get_title(int type)
 {
-  return s_names[type].storage;
+    return s_scroll_info->get_identifier(type);
 }
 
 void init_new_scroll(Item* scroll)
 {
   scroll->type = SCROLL;
-  scroll->which = pick_one(s_magic, MAXSCROLLS);
+  scroll->which = pick_one(s_scroll_info->s_magic, MAXSCROLLS);
 }
 
 void read_monster_confusion()
@@ -171,8 +240,8 @@ void read_magic_mapping()
   int x, y;
   byte ch;
   Agent* monster;
-  
-  s_know[S_MAP] = true;
+
+  s_scroll_info->discover(S_MAP);
   msg("oh, now this scroll has a map on it");
   //Take all the things we want to keep hidden out of the window
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
@@ -226,7 +295,7 @@ void read_hold_monster()
 void read_sleep()
 {
   //Scroll which makes you fall asleep
-  s_know[S_SLEEP] = true;
+  s_scroll_info->discover(S_SLEEP);
   sleep_timer += rnd(SLEEP_TIME)+4;
   player.set_running(false);
   msg("you fall asleep");
@@ -245,7 +314,7 @@ void read_enchant_armor()
 void read_identify()
 {
   //Identify, let the rogue figure something out
-  s_know[S_IDENT] = true;
+  s_scroll_info->discover(S_IDENT);
   msg("this scroll is an identify scroll");
   if ("on" == game->get_environment("menu"))
     more(" More ");
@@ -283,7 +352,7 @@ void read_food_detection()
     }
   }
   if (discover) {
-    s_know[S_GFIND] = true; 
+    s_scroll_info->discover(S_GFIND);
     msg("your nose tingles as you sense food");
   }
   else 
@@ -297,7 +366,7 @@ void read_teleportation()
   cur_room = player.room;
   teleport();
   if (cur_room != player.room) 
-    s_know[S_TELEP] = true;
+    s_scroll_info->discover(S_TELEP);
 }
 
 void read_enchant_weapon()
@@ -398,7 +467,7 @@ void read_scroll()
 
   look(true); //put the result of the scroll on the screen
   status();
-  call_it(s_know[scroll->which], &s_guess[scroll->which]);
+  s_scroll_info->call_it2(scroll->which);
 
   //Get rid of the thing
   if (scroll->count > 1)
@@ -435,11 +504,11 @@ const char* get_inv_name_scroll(Item* obj)
     pb = &prbuf[strlen(prbuf)];
   }
   if (does_know_scroll(which) || game->hero().is_wizard()) 
-    sprintf(pb, "of %s", get_scroll_name(which));
-  else if (*get_scroll_guess(which)) 
-    sprintf(pb, "called %s", get_scroll_guess(which));
+    sprintf(pb, "of %s", get_scroll_name(which).c_str());
+  else if (!get_scroll_guess(which).empty()) 
+    sprintf(pb, "called %s", get_scroll_guess(which).c_str());
   else
-    chopmsg(pb, "titled '%.17s'", "titled '%s'", get_title(which));
+    chopmsg(pb, "titled '%.17s'", "titled '%s'", get_title(which).c_str());
 
   return prbuf;
 }

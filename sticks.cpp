@@ -126,7 +126,7 @@ void discover_stick(int type)
   ws_know[type] = true;
 }
 
-const char* get_stick_guess(int type)
+std::string get_stick_guess(int type)
 {
   return ws_guess[type];
 }
@@ -675,8 +675,8 @@ const char* get_inv_name_stick(Item* stick)
   pb = &prbuf[strlen(prbuf)];
   if (does_know_stick(which) || game->hero().is_wizard())
     chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which), get_charge_string(stick), get_material(which));
-  else if (*get_stick_guess(which))
-    chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which), get_material(which));
+  else if (!get_stick_guess(which).empty())
+    chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which).c_str(), get_material(which));
   else
     sprintf(pb = &prbuf[2], "%s %s", get_material(which), get_stick_type(which));
 

@@ -520,7 +520,7 @@ void go_up_stairs()
 void call()
 {
   Item *obj;
-  const char *guess, *elsewise;
+  std::string guess, elsewise;
   int(*know)(int);
   void(*setter)(int, const char*);
 
@@ -534,25 +534,25 @@ void call()
     setter = set_ring_guess;
     guess = get_ring_guess(obj->which);
     know = does_know_ring;
-    elsewise = (guess ? guess : get_stone(obj->which));
+    elsewise = (!guess.empty() ? guess : get_stone(obj->which));
     break;
   case POTION: 
     setter = set_potion_guess;
     guess = get_potion_guess(obj->which);
     know = does_know_potion;
-    elsewise = (guess ? guess : get_color(obj->which));
+    elsewise = (!guess.empty() ? guess : get_color(obj->which));
     break;
   case SCROLL: 
     setter = set_scroll_guess;
     guess = get_scroll_guess(obj->which);
     know = does_know_scroll;
-    elsewise = (guess ? guess : get_title(obj->which)); 
+    elsewise = (!guess.empty() ? guess : get_title(obj->which));
     break;
   case STICK: 
     setter = set_stick_guess;
     guess = get_stick_guess(obj->which);
     know = does_know_stick;
-    elsewise = (guess ? guess : get_material(obj->which));
+    elsewise = (!guess.empty() ? guess : get_material(obj->which));
     break;
   default: 
       msg("you can't call that anything"); 
@@ -562,7 +562,7 @@ void call()
     msg("that has already been identified"); 
     return;
   }
-  msg("Was called \"%s\"", elsewise);
+  msg("Was called \"%s\"", elsewise.c_str());
   msg("what do you want to call it? ");
   getinfo(prbuf,MAXNAME);
   if (*prbuf && *prbuf!=ESCAPE) 
