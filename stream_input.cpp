@@ -13,7 +13,7 @@ char StreamInput::GetNextChar()
     char c;
     m_stream.read(&c, 1);
 
-    if (c == 0) //shouldn't happen
+    if (m_stream && c == 0) //shouldn't happen
     {
         printf("\a");
     }
@@ -36,7 +36,7 @@ std::string StreamInput::GetNextString(int size)
     char c;
     m_stream.read(&c, 1);
 
-    if (c != 0) //shouldn't happen
+    if (m_stream && c != 0) //shouldn't happen
     {
         printf("\a");
     }

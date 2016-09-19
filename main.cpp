@@ -13,6 +13,7 @@
 //main.c      1.4 (A.I. Design) 11/28/84
 
 #include <memory>
+#include <fstream>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -50,6 +51,8 @@ int main(int argc, char **argv)
 {
     int seed = srand2();
     game = new GameState(seed);
+    //std::ifstream in("foo.baz", std::ios::binary | std::ios::in);
+    //game = new GameState(in);
 
     setenv("rogue.opt");
     if ("bw" == game->get_environment("scorefile"))

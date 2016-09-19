@@ -81,6 +81,7 @@
   <ItemGroup>
     <ClCompile Include="agent.cpp" />
     <ClCompile Include="armor.cpp" />
+    <ClCompile Include="captured_input.cpp" />
     <ClCompile Include="chase.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="curses.cpp" />
@@ -116,6 +117,7 @@
     <ClCompile Include="scrolls.cpp" />
     <ClCompile Include="slime.cpp" />
     <ClCompile Include="sticks.cpp" />
+    <ClCompile Include="stream_input.cpp" />
     <ClCompile Include="strings.cpp" />
     <ClCompile Include="thing.cpp" />
     <ClCompile Include="things.cpp" />
@@ -125,6 +127,7 @@
   <ItemGroup>
     <ClInclude Include="agent.h" />
     <ClInclude Include="armor.h" />
+    <ClInclude Include="captured_input.h" />
     <ClInclude Include="chase.h" />
     <ClInclude Include="command.h" />
     <ClInclude Include="curses.h" />
@@ -133,6 +136,7 @@
     <ClInclude Include="env.h" />
     <ClInclude Include="fakedos.h" />
     <ClInclude Include="fight.h" />
+    <ClInclude Include="stream_input.h" />
     <ClInclude Include="food.h" />
     <ClInclude Include="game_state.h" />
     <ClInclude Include="hero.h" />

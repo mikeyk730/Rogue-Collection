@@ -10,6 +10,7 @@ struct Hero;
 struct GameState
 {
     GameState(int seed);
+    GameState(std::istream& in);
     ~GameState();
 
     void save_game(const std::string& filename);

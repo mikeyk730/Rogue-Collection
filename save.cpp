@@ -10,6 +10,7 @@
 void do_save(const char* filename)
 {
     game->save_game(filename);
+    msg("");
 }
 
 //save_game: Implement the "save game" command
