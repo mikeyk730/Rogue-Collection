@@ -135,10 +135,10 @@ char *he_man[] =
 
 bool counts_as_turn;        //True if we want after daemons
 bool again;                 //The last command is repeated
-bool door_stop = false;     //Stop running when we pass a door
+bool stop_at_door = false;     //Stop running when we pass a door
 bool fastmode = false;      //Run until you see something
-bool faststate = false;     //Toggle for find (see above)
-bool firstmove = false;     //First move after setting door_stop
+bool fast_play_enabled = false;     //Toggle for find (see above)
+bool firstmove = false;     //First move after setting stop_at_door
 bool playing = true;        //True until he quits
 bool running = false;       //True if player is running
 

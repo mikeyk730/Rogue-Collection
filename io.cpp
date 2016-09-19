@@ -408,50 +408,64 @@ void SIG2()
 {
   static bool numl, capsl;
   static int nspot, cspot, tspot;
-  bool new_numl=is_num_lock_on(), new_capsl=is_caps_lock_on(), new_fmode=is_scroll_lock_on();
+  bool num_lock_on = is_num_lock_on(),
+    caps_lock_on = is_caps_lock_on(),
+    scroll_lock_on = is_scroll_lock_on();
   static int bighand, littlehand;
   int showtime = false, spare;
   int x, y;
 
-  if (COLS==40) {nspot = 10; cspot = 19; tspot = 35;}
-  else {nspot = 20; cspot = 39; tspot = 75;}
+  if (COLS == 40) { nspot = 10; cspot = 19; tspot = 35; }
+  else { nspot = 20; cspot = 39; tspot = 75; }
 
   getrc(&x, &y);
-  if (faststate!=new_fmode)
+  if (fast_play_enabled != scroll_lock_on)
   {
-    faststate = new_fmode;
+    fast_play_enabled = scroll_lock_on;
     repeat_cmd_count = 0;
     show_count();
     running = false;
-    move(LINES-1, 0);
-    if (faststate) {bold(); addstr("Fast Play"); standend();}
+    move(LINES - 1, 0);
+    if (fast_play_enabled) {
+      bold();
+      addstr("Fast Play");
+      standend();
+    }
     else addstr("         ");
   }
-  if (numl!=new_numl)
+  if (numl != num_lock_on)
   {
-    numl = new_numl;
+    numl = num_lock_on;
     repeat_cmd_count = 0;
     show_count();
     running = false;
-    move(LINES-1, nspot);
-    if (numl) {bold(); addstr("NUM LOCK"); standend();}
+    move(LINES - 1, nspot);
+    if (numl) {
+      bold();
+      addstr("NUM LOCK");
+      standend();
+    }
     else addstr("        ");
   }
-  if (capsl!=new_capsl)
+  if (capsl != caps_lock_on)
   {
-    capsl = new_capsl;
-    move(LINES-1, cspot);
-    if (capsl) {bold(); addstr("CAP LOCK"); standend();}
+    capsl = caps_lock_on;
+    move(LINES - 1, cspot);
+    if (capsl) {
+      bold();
+      addstr("CAP LOCK");
+      standend();
+    }
     else addstr("        ");
   }
   if (showtime)
   {
     showtime = false;
     //work around the compiler buggie boos
-    spare = littlehand%10;
+    spare = littlehand % 10;
     move(24, tspot);
     bold();
-    printw("%2d:%1d%1d", bighand?bighand:12, littlehand/10, spare);
+    printw("%2d:%1d%1d", bighand ? bighand : 12, littlehand / 10, spare);
     standend();
   }
   move(x, y);

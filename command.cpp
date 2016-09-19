@@ -66,9 +66,9 @@ int com_char()
 {
   int same, ch;
   ch = readchar();
-  same = (fastmode==faststate);
-  if (same) fastmode = faststate;
-  else fastmode = !faststate;
+  same = (fastmode==fast_play_enabled);
+  if (same) fastmode = fast_play_enabled;
+  else fastmode = !fast_play_enabled;
   switch (ch)
   {
   case '\b': ch = 'h'; break;
@@ -85,9 +85,9 @@ int read_command()
   int command, ch, junk;
 
   counts_as_turn = true;
-  fastmode = faststate;
+  fastmode = fast_play_enabled;
   look(true);
-  if (!running) door_stop = false;
+  if (!running) stop_at_door = false;
   do_take = true;
   again = false;
 
@@ -134,7 +134,7 @@ int read_command()
           break;
         case ' ': break;
         case ESCAPE:
-            door_stop = false;
+            stop_at_door = false;
             repeat_cmd_count = 0; 
             show_count(); 
             break;
@@ -151,7 +151,7 @@ int read_command()
     if (fastmode && !running)
     {
       if (!player.is_blind()) {
-          door_stop = true; 
+          stop_at_door = true; 
           firstmove = true;
       }
       command = toupper(command);
@@ -363,6 +363,6 @@ void execcom()
         pick_up(take);
     take = 0;
     if (!running) 
-        door_stop = false;
+        stop_at_door = false;
   } while (counts_as_turn==false);
 }

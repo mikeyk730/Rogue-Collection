@@ -94,7 +94,7 @@ void look(bool wakeup)
   ex = player.pos.x+1;
   sx = player.pos.x-1;
   sy = player.pos.y-1;
-  if (door_stop && !firstmove && running) {
+  if (stop_at_door && !firstmove && running) {
       sumhero = player.pos.y+player.pos.x; 
       diffhero = player.pos.y-player.pos.x;
   }
@@ -121,7 +121,7 @@ void look(bool wakeup)
       else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
       if ((monster = monster_at(y, x))!=NULL) if (player.detects_others() && monster->is_invisible())
       {
-        if (door_stop && !firstmove) running = false;
+        if (stop_at_door && !firstmove) running = false;
         continue;
       }
       else
@@ -135,7 +135,7 @@ void look(bool wakeup)
       move(y, x);
       addch(ch);
       standend();
-      if (door_stop && !firstmove && running)
+      if (stop_at_door && !firstmove && running)
       {
         switch (run_character)
         {
@@ -166,7 +166,7 @@ void look(bool wakeup)
         }
       }
   }
-  if (door_stop && !firstmove && passcount>1) 
+  if (stop_at_door && !firstmove && passcount>1) 
       running = false;
   move(player.pos.y, player.pos.x);
   //todo:check logic

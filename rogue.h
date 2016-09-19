@@ -530,7 +530,7 @@ extern int bailout;
 
 extern struct Array _guesses[];
 
-extern bool counts_as_turn, again, door_stop, fastmode, faststate, firstmove, 
+extern bool counts_as_turn, again, stop_at_door, fastmode, fast_play_enabled, firstmove, 
   playing, running;
 extern int was_trapped;
 
