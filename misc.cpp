@@ -382,7 +382,7 @@ int goodch(Item *obj)
 }
 
 //help: prints out help screens
-void help(char **helpscr)
+void help(const char*const* helpscr)
 {
   int hcount = 0;
   int hrow, hcol;

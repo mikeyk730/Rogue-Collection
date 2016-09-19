@@ -345,7 +345,7 @@ void check_level()
     player.stats.max_hp += add;
     player.stats.increase_hp(add, false, false);
     if (use_level_names())
-        msg("and achieve the rank of \"%s\"", he_man[i - 1]);
+        msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
     else
         msg("Welcome to level %d", i);
   }
@@ -354,7 +354,7 @@ void check_level()
 //roll_em: Roll several attacks
 bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
 {
-  struct Stats *att, *def;
+  struct Agent::Stats *att, *def;
   const char *cp;
   int ndice, nsides, def_arm;
   bool did_hit = false;

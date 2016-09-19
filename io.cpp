@@ -280,7 +280,7 @@ void status()
     {
         s_elvl = player.stats.level;
         move(23, PT(22, 62));
-        printw("%-12s", he_man[s_elvl - 1]);
+        printw("%-12s", level_titles[s_elvl - 1]);
     }
     //Show raw food counter in wizard mode
     if (game->hero().is_wizard()) {

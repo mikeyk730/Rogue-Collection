@@ -8,7 +8,7 @@
 struct GameState;
 
 #define MAXHELPC  65
-char *helpcoms[MAXHELPC] =
+const char* const helpcoms[MAXHELPC] =
 {
   "F1     list of commands",
   "F2     list of symbols",
@@ -78,7 +78,7 @@ char *helpcoms[MAXHELPC] =
 };
 
 #define MAXHELPO  24
-char *helpobjs[MAXHELPO] =
+const char* const helpobjs[MAXHELPO] =
 {
   "\xfa: the floor",
   "\x1: the hero",
@@ -111,7 +111,7 @@ char *helpobjs[MAXHELPO] =
 
 //Names of the various experience levels
 
-char *he_man[] =
+const char* const level_titles[] =
 {
   "",
   "Guild Novice",
@@ -135,6 +135,10 @@ char *he_man[] =
   "Time Waster",
   "Bug Chaser"
 };
+
+const char* const intense = " of intense white light";
+const char* const flash = "your %s gives off a flash%s";
+
 
 bool counts_as_turn;        //True if we want after daemons
 bool again;                 //The last command is repeated
@@ -172,7 +176,7 @@ Coord delta;  //Change indicated to get_dir()
 
 struct Room *oldrp; //Roomin(&oldpos)
 
-struct Stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the player
+struct Agent::Stats max_stats = {16, 0, 1, 10, 12, "1d4", 12}; //The maximum for the player
 
 Agent player; //The rogue
 std::list<Item*> level_items; //List of objects on this level
@@ -180,8 +184,6 @@ std::list<Agent*> level_monsters; //List of monsters on the level
 
 //Common strings
 const char *typeahead = "";
-char *intense = " of intense white light";
-char *flash = "your %s gives off a flash%s";
 
 GameState* game;
 

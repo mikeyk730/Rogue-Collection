@@ -213,7 +213,7 @@ struct Monster
   std::string name;   //What to call the monster
   int carry;          //Probability of carrying something
   short flags;        //Things about the monster
-  struct Stats stats; //Initial stats
+  struct Agent::Stats stats; //Initial stats
   int exflags;        //Things about special roles
 };
 

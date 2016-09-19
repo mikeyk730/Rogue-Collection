@@ -49,7 +49,7 @@ int step_ok(int ch);
 int goodch(Item *obj);
 
 //help: prints out help screens
-void help(char **helpscr);
+void help(const char*const* helpscr);
 
 int distance(Coord a, Coord b);
 

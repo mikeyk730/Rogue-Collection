@@ -174,9 +174,9 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
     case 1: strcpy(dthstr, " quit"); break;
     default: strcpy(dthstr, " weirded out");
     }
-    if ((strlen(top10->name)+10+strlen(he_man[top10->rank-1])) < (size_t)COLS)
+    if ((strlen(top10->name)+10+strlen(level_titles[top10->rank-1])) < (size_t)COLS)
     {
-      if (top10->rank>1 && (strlen(top10->name))) printw(" \"%s\"", he_man[top10->rank-1]);
+      if (top10->rank>1 && (strlen(top10->name))) printw(" \"%s\"", level_titles[top10->rank-1]);
     }
     if (COLS==40) move(curl+1, 6);
     if (altmsg==NULL) printw("%s on level %d", dthstr, top10->level);

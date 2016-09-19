@@ -110,64 +110,6 @@ bool isfloor(byte c);
 #define MAXPOTIONS  14
 #define MAXSCROLLS  15
 
-//Weapon types
-#define MACE        0
-#define SWORD       1
-#define BOW         2
-#define ARROW       3
-#define DAGGER      4
-#define TWOSWORD    5
-#define DART        6
-#define CROSSBOW    7
-#define BOLT        8
-#define SPEAR       9
-#define FLAME       10 //fake entry for dragon breath (ick)
-#define MAXWEAPONS  10 //this should equal FLAME
-
-//Armor types
-#define LEATHER          0
-#define RING_MAIL        1
-#define STUDDED_LEATHER  2
-#define SCALE_MAIL       3
-#define CHAIN_MAIL       4
-#define SPLINT_MAIL      5
-#define BANDED_MAIL      6
-#define PLATE_MAIL       7
-#define MAXARMORS        8
-
-//Ring types
-#define R_PROTECT   0
-#define R_ADDSTR    1
-#define R_SUSTSTR   2
-#define R_SEARCH    3
-#define R_SEEINVIS  4
-#define R_NOP       5
-#define R_AGGR      6
-#define R_ADDHIT    7
-#define R_ADDDAM    8
-#define R_REGEN     9
-#define R_DIGEST    10
-#define R_TELEPORT  11
-#define R_STEALTH   12
-#define R_SUSTARM   13
-#define MAXRINGS    14
-
-//Rod/Wand/Staff types
-#define WS_LIGHT      0
-#define WS_HIT        1
-#define WS_ELECT      2
-#define WS_FIRE       3
-#define WS_COLD       4
-#define WS_POLYMORPH  5
-#define WS_MISSILE    6
-#define WS_HASTE_M    7
-#define WS_SLOW_M     8
-#define WS_DRAIN      9
-#define WS_NOP        10
-#define WS_TELAWAY    11
-#define WS_TELTO      12
-#define WS_CANCEL     13
-#define MAXSTICKS     14
 
 //Coordinate data type
 struct Coord
@@ -190,59 +132,21 @@ struct Array
 };
 
 
-//Structure describing a fighting being
-struct Stats
-{
-  unsigned int str;   //Strength
-  long exp;           //Experience
-  int level;          //Level of mastery
-  int ac;             //Armor class
-  int hp;             //Hit points
-  std::string damage; //String describing damage done
-  int max_hp;         //Max hit points
-
-  int get_hp() const {
-      return hp;
-  }
-
-  bool decrease_hp(int n, bool can_kill){
-      hp -= n;
-      if (!can_kill && hp <= 0)
-          hp = 1;
-      return hp > 0;
-  }
-
-  void increase_hp(int n, bool max_bonus, bool second_max_bonus){
-      hp += n;
-
-      if (max_bonus && hp > max_hp) 
-          ++max_hp;
-      if (second_max_bonus && hp > max_hp + level + 1) 
-          ++max_hp;
-
-      if (hp > max_hp) {
-          hp = max_hp;
-      }
-  }
-
-  int drain_hp(){
-      hp /= 2;
-      return hp;
-  }
-};
-
-
-
 //External variables
 
 
 extern Coord delta, oldpos;
 extern struct Room *oldrp, passages[];
-extern struct Stats max_stats;
+
 
 #define MAXSTR    80 //maximum length of strings
 #define MAXLINES  25 //maximum number of screen lines used
 #define MAXCOLS   80 //maximum number of screen columns used
+
+//string constants
+
+extern const char *const level_titles[], *const helpcoms[], *const helpobjs[];
+extern const char *const flash, *const intense;
 
 //Now all the global variables
 
@@ -256,8 +160,8 @@ extern bool counts_as_turn, again, stop_at_door, fastmode, fast_play_enabled, fi
   playing, running;
 extern int was_trapped;
 
-extern char *flash, *he_man[], *helpcoms[], *helpobjs[],
-  huh[], *intense, outbuf[], prbuf[], *release, run_character, 
+extern char
+  huh[], outbuf[], prbuf[], *release, run_character, 
   take;
 extern const char* typeahead;
 
