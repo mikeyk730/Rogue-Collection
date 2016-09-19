@@ -231,7 +231,8 @@ void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 void winit()
 {
   LINES = 25;
-  COLS = 80;
+  COLS = 80;  
+  //COLS = 40;  //todo: test with 40
   at_table = color_attr;
   move(c_row, c_col);
 }
