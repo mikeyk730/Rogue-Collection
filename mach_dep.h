@@ -1,8 +1,8 @@
 //setup: Get starting setup for all games
 void setup();
 
-//flush_type: Flush typeahead for traps, etc.
-void flush_type();
+//clear_typeahead_buffer: Flush typeahead for traps, etc.
+void clear_typeahead_buffer();
 
 void credits();
 

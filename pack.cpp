@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "pack.h"
 #include "io.h"
 #include "misc.h"
@@ -258,7 +259,7 @@ Item *get_item(char *purpose, int type)
   byte gi_state; //get item sub state
   int once_only = false;
 
-  if (strcmp(s_menu, "on") == 0)
+  if ("on" == game_state->get_environment("menu"))
       once_only = true;
   gi_state = again;
   if (player.pack.empty())

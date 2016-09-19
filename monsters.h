@@ -24,4 +24,4 @@ char pick_vorpal_monster();
 //monster_at(x,y): returns pointer to monster at coordinate. if no monster there return NULL
 Agent *monster_at(int y, int x);
 
-void load_monster_cfg(const char* filename);
+void load_monster_cfg(const std::string& filename);

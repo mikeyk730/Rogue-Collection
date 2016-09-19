@@ -9,9 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Items">
-      <UniqueIdentifier>{89fb4091-dad3-4601-a760-bdd731069ad3}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="chase.cpp">
@@ -98,31 +95,37 @@
     <ClCompile Include="level.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="armor.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
-    <ClCompile Include="food.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
-    <ClCompile Include="potions.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
-    <ClCompile Include="rings.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
-    <ClCompile Include="sticks.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
-    <ClCompile Include="weapons.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
     <ClCompile Include="hero.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="thing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game_state.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="random.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="weapons.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="armor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="food.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="potions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scrolls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sticks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -236,6 +239,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="weapons.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game_state.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="random.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="input_interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="keyboard_input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

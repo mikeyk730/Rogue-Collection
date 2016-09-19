@@ -313,7 +313,7 @@ bool attack(Agent *monster)
       }
       miss(name, NULL);
   }
-  flush_type();
+  clear_typeahead_buffer();
   repeat_cmd_count = 0;
   status();
 

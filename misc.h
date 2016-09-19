@@ -69,4 +69,4 @@ void go_up_stairs();
 void call();
 
 //prompt player for definition of macro
-void do_macro(char *buf, int sz);
+void record_macro();

@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "scrolls.h"
 #include "monsters.h"
 #include "pack.h"
@@ -246,7 +247,7 @@ void read_identify()
   //Identify, let the rogue figure something out
   s_know[S_IDENT] = true;
   msg("this scroll is an identify scroll");
-  if (strcmp(s_menu, "on") == 0) 
+  if ("on" == game_state->get_environment("menu"))
     more(" More ");
   whatis();
 }

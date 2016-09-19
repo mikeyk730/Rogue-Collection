@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "food.h"
 #include "pack.h"
 #include "misc.h"
@@ -37,7 +38,7 @@ void eat()
   if (obj==get_current_weapon()) 
     set_current_weapon(NULL);
   if (obj->which==1)
-    msg("my, that was a yummy %s", fruit);
+    msg("my, that was a yummy %s", game_state->get_environment("fruit").c_str());
   else if (rnd(100)>70) {
     player.stats.exp++; 
     msg("yuk, this food tastes awful");
@@ -51,16 +52,18 @@ void eat()
 
 const char* get_inv_name_food(Item* obj)
 {
-  char *pb = prbuf;
-  int which = obj->which;
+    std::string fruit = game_state->get_environment("fruit");
 
-  if (which==1) 
-    if (obj->count==1)
-      sprintf(pb, "A%s %s", vowelstr(fruit), fruit); 
-    else sprintf(pb, "%d %ss", obj->count, fruit);
-  else if (obj->count==1) 
-    strcpy(pb, "Some food");
-  else sprintf(pb, "%d rations of food", obj->count);
+    char *pb = prbuf;
+    int which = obj->which;
 
-  return prbuf;
+    if (which == 1)
+    if (obj->count == 1)
+        sprintf(pb, "A%s %s", vowelstr(fruit.c_str()), fruit.c_str());
+    else sprintf(pb, "%d %ss", obj->count, fruit.c_str());
+    else if (obj->count == 1)
+        strcpy(pb, "Some food");
+    else sprintf(pb, "%d rations of food", obj->count);
+
+    return prbuf;
 }

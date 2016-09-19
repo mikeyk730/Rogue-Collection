@@ -1,7 +1,7 @@
 //init_player: Roll up the rogue
 void init_player();
 
-const char* get_name();
+std::string get_name();
 void set_name(const char* name);
 
 int get_purse();

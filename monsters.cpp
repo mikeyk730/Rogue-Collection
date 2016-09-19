@@ -254,7 +254,7 @@ struct Monster monsters[26] =
 #undef XX
 
 //todo: validation
-void load_monster_cfg(const char* filename)
+void load_monster_cfg(const std::string& filename)
 {
     std::ifstream file(filename, std::ios::in);
     std::string line;

@@ -394,11 +394,8 @@ void drop_curtain()
 }
 
 void raise_curtain()
-{
-//  int i, o;
-//  for (i = 0, o = (LINES-1)*COLS*2; i<LINES; i++, o -= COLS*2)
-//  {
-//  }
+{ 
+    //todo
 }
 
 void move(int y, int x) 

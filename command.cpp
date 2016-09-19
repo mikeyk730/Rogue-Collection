@@ -2,6 +2,7 @@
 //command.c   1.44    (A.I. Design)   2/14/85
 
 #include "rogue.h"
+#include "game_state.h"
 #include "daemons.h"
 #include "daemon.h"
 #include "command.h"
@@ -29,7 +30,6 @@
 
 #include <ctype.h>
 
-#define MACROSZ  41
 static int lastcount;
 static byte lastch, do_take, lasttake;
 
@@ -264,12 +264,13 @@ void execcom()
         break;
       }
     case 'F':
-        counts_as_turn = false; 
-        do_macro(macro, MACROSZ); 
+        counts_as_turn = false;
+        record_macro();
         break;
     case CTRL('F'):
         counts_as_turn = false;
-        typeahead = macro; 
+        //todo: revisit macro later, this definitely isn't safe
+        //typeahead = game_state->get_environment("macro").c_str();
         break;
     case CTRL('R'): 
         counts_as_turn = false;

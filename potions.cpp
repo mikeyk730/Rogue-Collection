@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "daemons.h"
 #include "daemon.h"
 #include "potions.h"
@@ -198,7 +199,7 @@ void quaff_see_invisible()
       invis_on();
   }
   sight();
-  msg("this potion tastes like %s juice", fruit);
+  msg("this potion tastes like %s juice", game_state->get_environment("fruit").c_str());
 }
 
 void quaff_healing()

@@ -166,7 +166,7 @@ void teleport()
   no_move = 0;
   repeat_cmd_count = 0;
   running = false;
-  flush_type();
+  clear_typeahead_buffer();
   //Teleportation can be a confusing experience (unless you really are a wizard)
   if (!is_wizard())
   {

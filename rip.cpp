@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "rip.h"
 #include "curses.h"
 #include "io.h"
@@ -66,11 +67,11 @@ void score(int amount, int flags, char monst)
     move(LINES-1, 0);
     cursor(true);
     printw("[Press Enter to see rankings]");
-    flush_type();
+    clear_typeahead_buffer();
     wait_for('\r');
     move(LINES-1, 0);
   }
-  while ((sc_fd = _open(s_score, 0))<0)
+  while ((sc_fd = _open(game_state->get_environment("scorefile").c_str(), 0))<0)
   {
     printw("\n");
     if (did_cheat() || (amount==0)) return;
@@ -78,7 +79,8 @@ void score(int amount, int flags, char monst)
 reread:
     switch (response = readchar())
     {
-    case 'c': case 'C': _close(_creat(s_score, _S_IREAD | _S_IWRITE));
+    case 'c': case 'C': 
+        _close(_creat(game_state->get_environment("scorefile").c_str(), _S_IREAD | _S_IWRITE));
     case 'r': case 'R': break;
     case 'a': case 'A': return;
     default: goto reread;
@@ -88,7 +90,7 @@ reread:
   get_scores(&top_ten[0]);
   if (!did_cheat())
   {
-    strcpy(his_score.name, get_name());
+    strcpy(his_score.name, get_name().c_str());
     his_score.gold = amount;
     his_score.fate = flags?flags:monst;
     his_score.level = max_level();
@@ -98,7 +100,7 @@ reread:
   _close(sc_fd);
   if (rank>0)
   {
-    sc_fd = _open(s_score, _O_RDWR | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+    sc_fd = _open(game_state->get_environment("scorefile").c_str(), _O_RDWR | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
     if (sc_fd >= 0) {
       put_scores(&top_ten[0]); 
       _close(sc_fd);
@@ -106,7 +108,7 @@ reread:
   }
   pr_scores(rank, &top_ten[0]);
   printw("[Press Enter to quit]");
-  flush_type();
+  clear_typeahead_buffer();
   wait_for('\r');
 }
 
@@ -226,7 +228,7 @@ void death(char monst)
   green();
   center(22, "___\\/(\\/)/(\\/ \\\\(//)\\)\\/(//)\\\\)//(\\__");
   standend();
-  center(14, get_name());
+  center(14, get_name().c_str());
   standend();
   killer = killname(monst, true);
   strcpy(buf, "killed by");

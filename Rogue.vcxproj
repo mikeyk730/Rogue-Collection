@@ -90,6 +90,7 @@
     <ClCompile Include="fakedos.cpp" />
     <ClCompile Include="fight.cpp" />
     <ClCompile Include="food.cpp" />
+    <ClCompile Include="game_state.cpp" />
     <ClCompile Include="hero.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="level.cpp" />
@@ -104,6 +105,7 @@
     <ClCompile Include="pack.cpp" />
     <ClCompile Include="passages.cpp" />
     <ClCompile Include="potions.cpp" />
+    <ClCompile Include="random.cpp" />
     <ClCompile Include="rings.cpp" />
     <ClCompile Include="rip.cpp" />
     <ClCompile Include="rooms.cpp" />
@@ -128,8 +130,11 @@
     <ClInclude Include="fakedos.h" />
     <ClInclude Include="fight.h" />
     <ClInclude Include="food.h" />
+    <ClInclude Include="game_state.h" />
     <ClInclude Include="hero.h" />
+    <ClInclude Include="input_interface.h" />
     <ClInclude Include="io.h" />
+    <ClInclude Include="keyboard_input.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="mach_dep.h" />
@@ -142,6 +147,7 @@
     <ClInclude Include="pack.h" />
     <ClInclude Include="passages.h" />
     <ClInclude Include="potions.h" />
+    <ClInclude Include="random.h" />
     <ClInclude Include="rings.h" />
     <ClInclude Include="rip.h" />
     <ClInclude Include="rogue.h" />

@@ -12,12 +12,14 @@
 //All rights reserved
 //main.c      1.4 (A.I. Design) 11/28/84
 
+#include <memory>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
 #include <stdarg.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "main.h"
 #include "daemons.h"
 #include "daemon.h"
@@ -38,38 +40,28 @@
 #include "scrolls.h"
 #include "hero.h"
 #include "monsters.h"
+#include "game_state.h"
+#include "random.h"
 
 int bwflag = false;
 
 //main: The main program, of course
 int main(int argc, char **argv)
 {
-  char *curarg, *savfile = 0;
+    int seed = srand2();
+    game_state = new GameState(seed);
 
-  setenv("rogue.opt");
-  //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.
-  if (strncmp(s_screen, "bw", 2)==0) bwflag = true;
-  while (--argc)
-  {
-    curarg = *(++argv);
-    if (*curarg=='-' || *curarg=='/')
-    {
-      switch (curarg[1])
-      {
-      case 'R': case 'r': savfile = s_save; break;
-      }
-    }
-    else if (savfile==0) savfile = curarg;
-  }
-  load_monster_cfg(s_monstercfg);
-  if (savfile==0)
-  {
-    savfile = 0;
+    setenv("rogue.opt");
+    if ("bw" == game_state->get_environment("scorefile"))
+        bwflag = true;
+    load_monster_cfg(game_state->get_environment("monstercfg"));
+
+    //todo: process args
+    //todo: can i support old save files??
+
     winit();
     if (bwflag) forcebw();
     credits();
-    if (seed == 0) 
-      seed = srand2();
     init_player(); //Set up initial player stats
     init_things(); //Set up probabilities of things
     init_names(); //Set up names of scrolls
@@ -84,10 +76,11 @@ int main(int argc, char **argv)
     fuse(swander, 0, WANDER_TIME);
     daemon(stomach, 0);
     daemon(runners, 0);
-    msg("Hello %s%s.", get_name(), noterse(".  Welcome to the Dungeons of Doom"));
+    msg("Hello %s%s.", get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
     raise_curtain();
-  }
-  playit(savfile);
+
+    playit(0);
+    delete game_state;
 }
 
 //endit: Exit the program abnormally.
@@ -96,18 +89,10 @@ void endit()
   fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
 }
 
-//Random number generator - adapted from the FORTRAN version in "Software Manual for the Elementary Functions" by W.J. Cody, Jr and William Waite.
-long ran()
-{
-  seed *= 125;
-  seed -= (seed/2796203)*2796203;
-  return seed;
-}
-
 //rnd: Pick a very random number.
 int rnd(int range)
 {
-  return range<1?0:((ran()+ran())&0x7fffffffl)%range;
+    return game_state->random().rnd(range);
 }
 
 int srand2()

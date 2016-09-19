@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "io.h"
 #include "daemons.h"
 #include "misc.h"
@@ -27,6 +28,8 @@
 #include "sticks.h"
 #include "armor.h"
 #include "hero.h"
+
+const int MACROSZ = 41;
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type)
@@ -567,16 +570,21 @@ void call()
 }
 
 //prompt player for definition of macro
-void do_macro(char *buf, int sz)
+void record_macro()
 {
-  char *cp = prbuf;
+    char buffer[MACROSZ];
+    char* buf = buffer;
 
-  msg("F9 was %s, enter new macro: ", buf);
-  if (getinfo(prbuf, sz-1)!=ESCAPE) 
+    memset(buf, 0, MACROSZ);
+    char *cp = prbuf;
+
+    msg("F9 was %s, enter new macro: ", game_state->get_environment("macro").c_str());
+    if (getinfo(prbuf, MACROSZ - 1) != ESCAPE)
     do {
-      if (*cp!=CTRL('F')) 
-        *buf++ = *cp;
+        if (*cp != CTRL('F'))
+            *buf++ = *cp;
     } while (*cp++);
-  msg("");
-  flush_type();
+    msg("");
+    clear_typeahead_buffer();
+    game_state->set_environment("macro", buf);
 }

@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "hero.h"
 #include "rip.h"
 #include "main.h"
@@ -12,21 +13,20 @@
 #include "thing.h"
 #include "rings.h"
 
-static char s_name[23];
 static int s_purse = 0;
 static int s_wizard = 0;
 static int s_cheated = 0;
 static int hungry_state = 0;   //How hungry is he
 static int food_left = 0;       //Amount of food in hero's stomach
 
-const char* get_name()
+std::string get_name()
 {
-  return s_name;
+    return game_state->get_environment("name");
 }
 
 void set_name(const char* name)
 {
-  strcpy(s_name, name);
+    game_state->set_environment("name", name);
 }
 
 int get_purse()

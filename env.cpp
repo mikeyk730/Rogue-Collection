@@ -5,49 +5,13 @@
 #include <ctype.h>
 #include <string.h>
 
+#include "rogue.h"
+#include "game_state.h"
 #include "env.h"
 #include "strings.h"
 #include "main.h"
 
 #define MAXEP  9
-
-char l_name[] = "name";
-char l_save[] = "savefile";
-char l_score[] = "scorefile";
-char l_macro[] = "macro";
-char l_fruit[] = "fruit";
-char l_menu [] = "menu";
-char l_screen[] = "screen";
-char l_levels[] = "levelnames";
-char l_monstercfg[] = "monstercfg";
-
-char whoami[] = "Rodney\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-char s_score[] = "rogue.scr\0\0\0\0\0";
-char s_save[] = "rogue.sav\0\0\0\0\0";
-char macro[] = "v\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
-char fruit[] = "Slime Mold\0\0\0\0\0\0\0\0\0\0\0\0\0";
-char s_menu[] = "on\0";
-char s_screen[] = "\0w fast";
-char s_levels[] = "on\0";
-char s_monstercfg[] = "monsters.opt\0\0\0\0\0\0\0\0\0\0\0\0\0";
-
-struct environment
-{
-  char *e_label;
-  char *e_string;
-  int strlen;
-} element[MAXEP] =
-{
-  l_name,       whoami,       23,
-  l_score,      s_score,      14,
-  l_save,       s_save,       14,
-  l_macro,      macro,        40,
-  l_fruit,      fruit,        23,
-  l_menu,       s_menu,       3,
-  l_screen,     s_screen,     7,
-  l_levels,     s_levels,     3,
-  l_monstercfg, s_monstercfg, 25,
-};
 
 static int fd;
 static int ch;
@@ -59,10 +23,13 @@ static char *plabel, *pstring;
 //No meaningful return codes to save data space. Just ignores strange labels
 void putenv2(char *label, char *string)
 {
+    /*
   int i;
   for (i = 0; i<MAXEP; i++)
     if (strcmp(label, element[i].e_label)==0) 
       strncpy(element[i].e_string, string, element[i].strlen);
+      */
+    //todo
 }
 
 //Peekc: Return the next char associated with efd (environment file descriptor)
@@ -126,12 +93,11 @@ int setenv(char *envfile)
     lcase(blabel);
     putenv2(blabel, bstring);
   }
-  //for all environment strings that have to be in lowercase ....
-  lcase(s_menu);
-  lcase(s_screen);
+
+  //todo:for all environment strings that have to be in lowercase ....
 }
 
 bool use_level_names()
 {
-    return (strcmp(s_levels, "on") == 0);
+    return "on" == game_state->get_environment("levelnames");
 }

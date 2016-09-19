@@ -2,6 +2,7 @@
 //@(#)extern.c5.2 (Berkeley) 6/16/82
 
 #include "rogue.h"
+struct GameState;
 
 #define MAXHELPC  65
 char *helpcoms[MAXHELPC] =
@@ -163,8 +164,6 @@ int no_food = 0;       //Number of levels without food
 int repeat_cmd_count = 0;  //Number of times to repeat command
 int turns_since_heal = 0;  //Number of turns_since_heal turns
 
-long seed = 0;         //Random number seed
-
 Coord oldpos; //Position before last look() call
 Coord delta;  //Change indicated to get_dir()
 
@@ -177,6 +176,9 @@ std::list<Item*> level_items; //List of objects on this level
 std::list<Agent*> level_monsters; //List of monsters on the level
 
 //Common strings
-char *typeahead = "";
+const char *typeahead = "";
 char *intense = " of intense white light";
 char *flash = "your %s gives off a flash%s";
+
+GameState* game_state;
+

@@ -12,6 +12,8 @@
 #include "mach_dep.h"
 #include "io.h"
 #include "hero.h"
+#include "game_state.h"
+#include "keyboard_input.h"
 
 #define C_LEFT    0x4b
 #define C_RIGHT   0x4d
@@ -36,48 +38,34 @@
 #define C_F10     0x44
 #define ALT_F9    0x70
 
-namespace
-{
-    struct InputDriver
-    {
-        virtual char GetNextChar() = 0;
-        virtual std::string GetNextString(int size) = 0;
-    };
 
-    struct KeyboardInput : public InputDriver
+    struct FileInput : public InputInterface
     {
-        virtual char GetNextChar();
-        virtual std::string GetNextString(int size);
-    };
-
-    struct FileInput : public InputDriver
-    {
-        FileInput(const std::string& file_prefix, InputDriver* backup);
+        FileInput(const std::string& file_prefix, InputInterface* backup);
 
         virtual char GetNextChar();
         virtual std::string GetNextString(int size);
 
-        std::unique_ptr<InputDriver> m_backup;
+        std::unique_ptr<InputInterface> m_backup;
         std::ifstream m_file_chars;
         std::ifstream m_file_strings;
     };
 
-    struct CaptureInput : public InputDriver
+    struct CaptureInput : public InputInterface
     {
-        CaptureInput(const std::string& file_prefix, InputDriver* d);
+        CaptureInput(const std::string& file_prefix, InputInterface* d);
 
         virtual char GetNextChar();
         virtual std::string GetNextString(int size);
         
-        std::unique_ptr<InputDriver> m_delegate;
+        std::unique_ptr<InputInterface> m_delegate;
         std::ofstream m_file_chars;
         std::ofstream m_file_strings;
     };
 
-    //static InputDriver* s_input_driver(new CaptureInput("record", new KeyboardInput));
-    static InputDriver* s_input_driver(new FileInput("replay", new KeyboardInput));
+    //static InputInterface* s_input_driver(new CaptureInput("record", new KeyboardInput));
+    //static InputInterface* s_input_driver(new FileInput("replay", new KeyboardInput));
 
-}
 
 //Table for IBM extended key translation
 static struct xlate
@@ -132,8 +120,8 @@ void setup()
   set_brief_mode(in_small_screen_mode());
 }
 
-//flush_type: Flush typeahead for traps, etc.
-void flush_type()
+//clear_typeahead_buffer: Flush typeahead for traps, etc.
+void clear_typeahead_buffer()
 {
   typeahead = "";
 }
@@ -185,8 +173,8 @@ void credits()
 
   high();
   getinfo(tname, 23);
-  if (*tname && *tname!=ESCAPE) strcpy(whoami, tname);
-  set_name(whoami);
+  if (*tname && *tname!=ESCAPE)
+    set_name(tname);
 
   blot_out(23, 0, 24, COLS-1);
   brown();
@@ -230,7 +218,7 @@ int readchar()
 
   if (*typeahead) {SIG2(); return(*typeahead++);}
   
-  ch = s_input_driver->GetNextChar();
+  ch = game_state->input_interface().GetNextChar();
 
   if (ch==ESCAPE) repeat_cmd_count = 0;
   return ch;
@@ -238,7 +226,7 @@ int readchar()
 
 int getinfo(char *str, int size)
 {
-    std::string s = s_input_driver->GetNextString(size);
+    std::string s = game_state->input_interface().GetNextString(size);
     strcpy_s(str, size, s.c_str());
     return s[0]; //todo
 }
@@ -284,7 +272,7 @@ std::string KeyboardInput::GetNextString(int size) {
     return buf; 
 }
 
-CaptureInput::CaptureInput(const std::string& file_prefix, InputDriver* d)
+CaptureInput::CaptureInput(const std::string& file_prefix, InputInterface* d)
 : m_delegate(d),
 m_file_chars(file_prefix + ".char", std::ios::binary | std::ios::out),
 m_file_strings(file_prefix + ".str", std::ios::binary | std::ios::out)
@@ -307,7 +295,7 @@ std::string CaptureInput::GetNextString(int size)
 }
 
 
-FileInput::FileInput(const std::string& file_prefix, InputDriver* backup)
+FileInput::FileInput(const std::string& file_prefix, InputInterface* backup)
 : m_backup(backup),
 m_file_chars(file_prefix + ".char", std::ios::binary | std::ios::in),
 m_file_strings(file_prefix + ".str", std::ios::binary | std::ios::in)

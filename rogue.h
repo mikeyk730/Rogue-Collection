@@ -1,3 +1,4 @@
+#pragma once
 //Rogue definitions and variable declarations
 //rogue.h      1.4 (AI Design) 12/14/84
 
@@ -5,6 +6,8 @@
 #include <list>
 #include <string.h>
 #include "main.h"
+
+struct GameState;
 
 //Options set for PC rogue
 
@@ -525,20 +528,18 @@ extern int maxrow;
 extern int LINES, COLS;
 extern int bailout;
 
-extern char s_menu[], s_score[], s_save[], s_screen[], s_levels[], s_monstercfg[];
-
 extern struct Array _guesses[];
 
 extern bool counts_as_turn, again, door_stop, fastmode, faststate, firstmove, 
   playing, running;
 extern int was_trapped;
 
-extern char file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[],
-  huh[], macro[], *intense, outbuf[], prbuf[], *release, runch, 
-  *typeahead, take, whoami[];
+extern char *flash, *he_man[], *helpcoms[], *helpobjs[],
+  huh[], *intense, outbuf[], prbuf[], *release, runch, 
+  take;
+extern const char* typeahead;
 
 extern int repeat_cmd_count, iguess, mpos, sleep_timer, no_food, no_move, turns_since_heal;
-
-extern long seed;
+extern GameState* game_state;
 
 #define BUFSIZE             128

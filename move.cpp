@@ -248,7 +248,7 @@ int be_trapped(Coord *tc)
         msg("a dart whizzes by your ear and vanishes");
     break;
   }
-  flush_type();
+  clear_typeahead_buffer();
   return tr;
 }
 
