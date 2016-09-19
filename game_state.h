@@ -12,6 +12,8 @@ struct GameState
     GameState(int seed);
     ~GameState();
 
+    void save_game(const std::string& filename);
+
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);
 

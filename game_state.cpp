@@ -1,13 +1,16 @@
+#include <fstream>
 #include "game_state.h"
 #include "random.h"
 #include "input_interface.h"
+#include "stream_input.h"
+#include "captured_input.h"
 #include "keyboard_input.h"
 #include "hero.h"
 
 GameState::GameState(int seed) :
 m_seed(seed),
 m_random(new Random(seed)),
-m_input_interface(new KeyboardInput),
+m_input_interface(new CapturedInput(new KeyboardInput())),
 m_hero(new Hero)
 {
 
@@ -24,6 +27,12 @@ m_hero(new Hero)
 
 GameState::~GameState()
 { }
+
+void GameState::save_game(const std::string& filename)
+{
+    std::ofstream file(filename, std::ios::binary | std::ios::out);
+    m_input_interface->Serialize(file);
+}
 
 std::string GameState::get_environment(const std::string& key) const
 {

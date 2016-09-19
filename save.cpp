@@ -9,7 +9,7 @@
 
 void do_save(const char* filename)
 {
-  msg("Save not implemented");
+    game->save_game(filename);
 }
 
 //save_game: Implement the "save game" command
