@@ -1,3 +1,8 @@
+#pragma once
+#include <list>
+#include "item.h"
+#include "agent.h"
+
 //_detach: Takes an item out of whatever linked list it might be in
 void detach_item(std::list<Item*>& l, Item *item);
 

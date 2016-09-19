@@ -17,6 +17,7 @@
 #include "level.h"
 #include "thing.h"
 #include "pack.h"
+#include "room.h"
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room

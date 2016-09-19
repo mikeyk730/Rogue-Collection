@@ -79,6 +79,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="agent.cpp" />
     <ClCompile Include="armor.cpp" />
     <ClCompile Include="chase.cpp" />
     <ClCompile Include="command.cpp" />
@@ -93,6 +94,7 @@
     <ClCompile Include="game_state.cpp" />
     <ClCompile Include="hero.cpp" />
     <ClCompile Include="io.cpp" />
+    <ClCompile Include="item.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="list.cpp" />
     <ClCompile Include="mach_dep.cpp" />
@@ -108,6 +110,7 @@
     <ClCompile Include="random.cpp" />
     <ClCompile Include="rings.cpp" />
     <ClCompile Include="rip.cpp" />
+    <ClCompile Include="room.cpp" />
     <ClCompile Include="rooms.cpp" />
     <ClCompile Include="save.cpp" />
     <ClCompile Include="scrolls.cpp" />
@@ -120,6 +123,7 @@
     <ClCompile Include="wizard.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="agent.h" />
     <ClInclude Include="armor.h" />
     <ClInclude Include="chase.h" />
     <ClInclude Include="command.h" />
@@ -134,6 +138,7 @@
     <ClInclude Include="hero.h" />
     <ClInclude Include="input_interface.h" />
     <ClInclude Include="io.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="keyboard_input.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="list.h" />
@@ -151,6 +156,7 @@
     <ClInclude Include="rings.h" />
     <ClInclude Include="rip.h" />
     <ClInclude Include="rogue.h" />
+    <ClInclude Include="room.h" />
     <ClInclude Include="rooms.h" />
     <ClInclude Include="save.h" />
     <ClInclude Include="scrolls.h" />

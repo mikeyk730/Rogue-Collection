@@ -1,3 +1,6 @@
+#pragma once
+#include "agent.h"
+
 void slime_split(Agent *monster);
 
 int new_slime(Agent *monster);

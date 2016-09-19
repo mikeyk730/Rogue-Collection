@@ -18,6 +18,7 @@
 #include "weapons.h"
 #include "scrolls.h"
 #include "pack.h"
+#include "room.h"
 
 //orcs should pick up gold in a room, then chase the player.
 //a bug prevented orcs from picking up gold, so they'd just

@@ -21,6 +21,7 @@
 #include "rings.h"
 #include "scrolls.h"
 #include "pack.h"
+#include "room.h"
 
 #include <ctype.h>
 

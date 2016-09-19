@@ -28,6 +28,7 @@
 #include "sticks.h"
 #include "armor.h"
 #include "hero.h"
+#include "room.h"
 
 const int MACROSZ = 41;
 

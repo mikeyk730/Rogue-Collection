@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "rogue.h"
+#include "room.h"
 #include "maze.h"
 #include "main.h"
 #include "curses.h"

@@ -1,3 +1,6 @@
+#pragma once
+#include "item.h"
+
 const char* get_weapon_name(int which);
 void init_new_weapon(Item* weapon);
 

@@ -1,3 +1,6 @@
+#pragma once
+#include "item.h"
+
 //init_things: Initialize the probabilities for types of things
 void init_things();
 

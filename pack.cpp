@@ -16,6 +16,7 @@
 #include "thing.h"
 #include "scrolls.h"
 #include "hero.h"
+#include "room.h"
 
 static bool s_had_amulet = false;
 

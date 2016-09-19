@@ -1,3 +1,6 @@
+#pragma once
+#include "agent.h"
+
 //runners: Make all the running monsters move.
 void runners();
 

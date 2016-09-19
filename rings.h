@@ -1,3 +1,6 @@
+#pragma once
+#include "item.h"
+
 //init_stones: Initialize the ring stone setting scheme for this time
 void init_stones();
 const char* get_stone(int type);

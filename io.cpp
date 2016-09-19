@@ -19,6 +19,7 @@
 #include "level.h"
 #include "pack.h"
 #include "env.h"
+#include "agent.h"
 
 #define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)

@@ -2,21 +2,9 @@
 
 #include "rogue.h"
 #include "thing.h"
+#include "agent.h"
+#include "item.h"
 
-void Item::initialize(int type, int which)
-{
-    this->type = type;
-    this->which = which;
-    this->hit_plus = 0;
-    this->damage_plus = 0;
-    this->damage = "0d0";
-    this->throw_damage = "0d0";
-    this->armor_class = 11;
-    this->count = 1;
-    this->group = 0;
-    this->flags = 0;
-    this->enemy = 0;
-}
 
 Item *create_item(int type, int which)
 {
@@ -32,6 +20,8 @@ void discard_item(Item *item)
 {
     delete item;
 }
+
+#include <list>
 
 Agent *create_agent()
 {

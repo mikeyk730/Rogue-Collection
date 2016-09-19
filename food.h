@@ -1,3 +1,6 @@
+#pragma once
+#include "item.h"
+
 const char* get_inv_name_food(Item* food);
 
 void init_new_food(Item* food);

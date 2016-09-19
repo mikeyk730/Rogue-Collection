@@ -24,6 +24,7 @@
 #include "mach_dep.h"
 #include "things.h"
 #include "hero.h"
+#include "room.h"
 
 bool ws_know[MAXSTICKS];    //Does he know what a stick does
 char *ws_guess[MAXSTICKS];         //Players guess at what wand is
@@ -518,8 +519,9 @@ void drain()
   dp = drainee;
   for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
     monster = *it;
-    if (monster->room==player.room || monster->room==room || (inpass && get_tile(monster->pos.y, monster->pos.x)==DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM]==player.room)) {
-      *dp++ = monster;
+    if (monster->room == player.room || monster->room == room ||
+        (inpass && get_tile(monster->pos.y, monster->pos.x) == DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM] == player.room)) {
+        *dp++ = monster;
     }
   }
   if ((cnt = dp-drainee)==0) {

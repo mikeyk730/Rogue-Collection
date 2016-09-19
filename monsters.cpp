@@ -23,6 +23,7 @@
 #include "thing.h"
 #include "rooms.h"
 #include "level.h"
+#include "room.h"
 
 //List of monsters in rough order of vorpalness
 static char *lvl_mons  = "K BHISOR LCA NYTWFP GMXVJD";

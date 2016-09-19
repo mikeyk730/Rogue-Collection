@@ -15,6 +15,7 @@
 #include "rings.h"
 #include "chase.h"
 #include "hero.h"
+#include "room.h"
 
 //doctor: A healing daemon that restores hit points after rest
 void doctor()

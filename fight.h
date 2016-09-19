@@ -1,3 +1,6 @@
+#pragma once
+#include "agent.h"
+
 //fight: The player attacks the monster.
 int fight(Coord *monster, Item *weapon, bool thrown);
 

@@ -8,6 +8,7 @@
 #include "rooms.h"
 #include "io.h"
 #include "level.h"
+#include "room.h"
 
 #define MAXFRNT  100
 #define FRONTIER  'F'

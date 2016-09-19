@@ -1,7 +1,10 @@
 //global variable initializaton
 //@(#)extern.c5.2 (Berkeley) 6/16/82
-
+#include <list>
 #include "rogue.h"
+#include "agent.h"
+#include "item.h"
+
 struct GameState;
 
 #define MAXHELPC  65

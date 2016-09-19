@@ -1,3 +1,6 @@
+#pragma once
+#include "item.h"
+
 //init_names: Generate the names of the various scrolls
 void init_names();
 const char* get_title(int type);

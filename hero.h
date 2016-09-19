@@ -26,7 +26,7 @@ private:
 
     int m_purse = 0;
     bool m_wizard = 0;
-    int m_cheated = 0;
+    bool m_cheated = 0;
     int hungry_state = 0;    //How hungry is he
     int food_left = 0;       //Amount of food in hero's stomach
 };

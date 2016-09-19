@@ -5,6 +5,7 @@
 #include "misc.h"
 #include "io.h"
 #include "main.h"
+#include "room.h"
 
 byte the_level[(MAXLINES-3)*MAXCOLS];
 byte the_flags[(MAXLINES-3)*MAXCOLS];

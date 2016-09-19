@@ -1,3 +1,6 @@
+#pragma once
+#include "item.h"
+
 //init_materials: Initialize the construction materials for wands and staffs
 void init_materials();
 const char* get_material(int type);

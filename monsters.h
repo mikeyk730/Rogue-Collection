@@ -1,3 +1,7 @@
+#pragma once
+#include <string>
+#include "agent.h"
+
 const char* get_monster_name(char monster);
 
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.

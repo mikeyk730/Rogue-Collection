@@ -1,3 +1,6 @@
+#pragma once
+#include "item.h"
+
 //tr_name: Print the name of a trap
 char *tr_name(byte type);
 

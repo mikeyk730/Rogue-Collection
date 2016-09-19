@@ -1,3 +1,6 @@
+#pragma once
+#include "item.h"
+
 int get_default_class(int type);
 void init_new_armor(Item* armor);
 const char* get_inv_name_armor(Item* armor);

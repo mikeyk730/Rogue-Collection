@@ -1,3 +1,6 @@
+#pragma once
+#include "agent.h"
+
 //do_run: Start the hero running
 void do_run(byte ch);
 

@@ -18,6 +18,7 @@
 #include "level.h"
 #include "thing.h"
 #include "pack.h"
+#include "room.h"
 
 #define GOLDGRP  1
 
