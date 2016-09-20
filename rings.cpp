@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "item_class.h"
 #include "game_state.h"
 #include "rings.h"
 #include "pack.h"
@@ -17,9 +18,6 @@
 #include "hero.h"
 
 char ring_buf[6];
-bool r_know[MAXRINGS];      //Does he know what a ring does
-char *r_guess[MAXRINGS];           //Players guess at what ring is
-const char *r_stones[MAXRINGS];   //Stone settings of the rings
 
 typedef struct {char *st_name; int st_value;} STONE;
 
@@ -55,77 +53,84 @@ static STONE stones[] =
 
 #define NSTONES (sizeof(stones)/sizeof(STONE))
 
-struct MagicItem r_magic[MAXRINGS] =
+RingInfo::RingInfo()
 {
-  {"protection",          9, 400},
-  {"add strength",        9, 400},
-  {"sustain strength",    5, 280},
-  {"searching",          10, 420},
-  {"see invisible",      10, 310},
-  {"adornment",           1,  10},
-  {"aggravate monster",  10,  10},
-  {"dexterity",           8, 440},
-  {"increase damage",     8, 400},
-  {"regeneration",        4, 460},
-  {"slow digestion",      9, 240},
-  {"teleportation",       5,  30},
-  {"stealth",             7, 470},
-  {"maintain armor",      5, 380}
-};
+	m_magic_props =
+	{
+	  {"protection",          9, 400},
+	  {"add strength",        9, 400},
+	  {"sustain strength",    5, 280},
+	  {"searching",          10, 420},
+	  {"see invisible",      10, 310},
+	  {"adornment",           1,  10},
+	  {"aggravate monster",  10,  10},
+	  {"dexterity",           8, 440},
+	  {"increase damage",     8, 400},
+	  {"regeneration",        4, 460},
+	  {"slow digestion",      9, 240},
+	  {"teleportation",       5,  30},
+	  {"stealth",             7, 470},
+	  {"maintain armor",      5, 380}
+	};
+
+	int i, j;
+	bool used[NSTONES];
+
+	for (i = 0; i<NSTONES; i++) used[i] = false;
+	for (i = 0; i<MAXRINGS; i++)
+	{
+		do j = rnd(NSTONES); while (used[j]);
+		used[j] = true;
+		m_identifier.push_back(stones[j].st_name);
+		if (i>0)
+			m_magic_props[i].prob += m_magic_props[i - 1].prob;
+		m_magic_props[i].worth += stones[j].st_value;
+	}
+
+}
+
+RingInfo* s_ring_info; //todo: mem leaking this for now
 
 int does_know_ring(int type)
 {
-  return r_know[type];
+	return s_ring_info->is_discovered(type);
 }
 
 void discover_ring(int type)
 {
-  r_know[type] = true;
-}
-
-std::string get_ring_guess(int type)
-{
-  return r_guess[type];
-}
-
-void set_ring_guess(int type, const char* value)
-{
-  strcpy(r_guess[type], value);
+	s_ring_info->discover(type);
 }
 
 int get_ring_value(int type)
 {
-  return r_magic[type].worth;
+	return s_ring_info->m_magic_props[type].worth;
 }
 
-const char* get_ring_name(int type)
+std::string get_ring_name(int type)
 {
-  return r_magic[type].name;
+	return s_ring_info->m_magic_props[type].name;
+}
+
+std::string get_ring_guess(int type)
+{
+	return s_ring_info->get_guess(type);
+}
+
+void set_ring_guess(int type, const char* value)
+{
+	s_ring_info->set_guess(type, value);
 }
 
 //init_stones: Initialize the ring stone setting scheme for this time
 void init_stones()
 {
-  int i, j;
-  bool used[NSTONES];
-
-  for (i = 0; i<NSTONES; i++) used[i] = false;
-  for (i = 0; i<MAXRINGS; i++)
-  {
-    do j = rnd(NSTONES); while (used[j]);
-    used[j] = true;
-    r_stones[i] = stones[j].st_name;
-    r_know[i] = false;
-    r_guess[i] = (char *)&_guesses[iguess++];
-    if (i>0) r_magic[i].prob += r_magic[i-1].prob;
-    r_magic[i].worth += stones[j].st_value;
-  }
+	s_ring_info = new RingInfo();
 }
 
 void init_new_ring(Item* ring)
 {
   ring->type = RING;
-  ring->which = pick_one(r_magic, MAXRINGS);
+  ring->which = pick_one(s_ring_info->m_magic_props);
   switch (ring->which)
   {
   case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
@@ -141,9 +146,9 @@ void init_new_ring(Item* ring)
   }
 }
 
-const char* get_stone(int type)
+std::string get_stone(int type)
 {
-  return r_stones[type];
+	return s_ring_info->get_identifier(type);
 }
 
 //ring_on: Put a ring on a hand
@@ -262,13 +267,14 @@ const char* get_inv_name_ring(Item* obj)
 {
   char *pb = prbuf;
   int which = obj->which;
+  std::string stone = get_stone(which);
 
   if (does_know_ring(which) || game->hero().is_wizard())
-    chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which), get_stone(which));
+    chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which).c_str(), stone.c_str());
   else if (!get_ring_guess(which).empty()) 
-    chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which).c_str(), get_stone(which));
+    chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which).c_str(), stone.c_str());
   else 
-    sprintf(pb, "A%s %s ring", vowelstr(get_stone(which)), get_stone(which));
+    sprintf(pb, "A%s %s ring", vowelstr(stone.c_str()), stone.c_str());
 
   return prbuf;
 }

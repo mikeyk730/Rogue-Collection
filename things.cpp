@@ -231,6 +231,17 @@ Item *new_item()
   return item;
 }
 
+//todo: remove this wrapper
+int pick_one(std::vector<MagicItem> magic)
+{
+	MagicItem* a = new MagicItem[magic.size()];
+	for (size_t i = 0; i < magic.size(); ++i)
+		a[i] = magic[i];
+	int r = pick_one(a, magic.size());
+	delete[] a;
+	return r;
+}
+
 //pick_one: Pick an item out of a list of nitems possible magic items
 int pick_one(struct MagicItem *magic, int nitems)
 {

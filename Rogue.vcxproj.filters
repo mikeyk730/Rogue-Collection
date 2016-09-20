@@ -143,6 +143,9 @@
     <ClCompile Include="stream_input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="item_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rogue.h">
@@ -281,6 +284,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stream_input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="item_class.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

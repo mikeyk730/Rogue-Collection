@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "item_class.h"
 #include "game_state.h"
 #include "scrolls.h"
 #include "monsters.h"
@@ -44,66 +45,6 @@ const char *v_set = "aeiou";
 const char *laugh = "you hear maniacal laughter%s.";
 const char *in_dist = " in the distance";
 
-#include <set>
-#include <vector>
-#include <map>
-struct ItemDiscoveries
-{
-    std::string get_identifier(int type);
-
-    bool is_discovered(int type);
-    void discover(int type);
-
-    std::string get_guess(int type);
-    void set_guess(int type, const std::string& guess);
-    //call_it2: Call an object something after use.
-    void call_it2(int type);
-
-protected:
-    std::vector<std::string> m_identifier;
-private:
-    std::set<int> m_discoveries;
-    std::map<int, std::string> m_guesses;
-};
-std::string ItemDiscoveries::get_identifier(int type)
-{
-    return m_identifier[type];
-}
-
-bool ItemDiscoveries::is_discovered(int type)
-{
-    return m_discoveries.find(type) != m_discoveries.end();
-}
-void ItemDiscoveries::discover(int type)
-{
-    m_discoveries.insert(type);
-}
-std::string ItemDiscoveries::get_guess(int type)
-{
-    auto i = m_guesses.find(type);
-    if (i != m_guesses.end())
-        return i->second;
-    return "";
-}
-void ItemDiscoveries::set_guess(int type, const std::string& guess)
-{
-    m_guesses[type] = guess;
-}
-void ItemDiscoveries::call_it2(int type)
-{
-    if (is_discovered(type))
-        set_guess(type, "");
-    else if (get_guess(type).empty())
-    {
-        msg("%scall it? ", noterse("what do you want to "));
-        getinfo(prbuf, MAXNAME);
-        if (*prbuf != ESCAPE)
-            set_guess(type, prbuf);
-        msg("");
-    }
-}
-
-
 //random_char_in(): return random character in given string
 char random_char_in(const char *string)
 {
@@ -122,61 +63,54 @@ char* getsyl()
     return (_tsyl);
 }
 
-struct MagicItem scrolls[MAXSCROLLS] =
+ScrollInfo::ScrollInfo()
 {
-  {"monster confusion",   8, 140},
-  {"magic mapping",       5, 150},
-  {"hold monster",        3, 180},
-  {"sleep",               5,   5},
-  {"enchant armor",       8, 160},
-  {"identify",           27, 100},
-  {"scare monster",       4, 200},
-  {"food detection",      4,  50},
-  {"teleportation",       7, 165},
-  {"enchant weapon",     10, 150},
-  {"create monster",      5,  75},
-  {"remove curse",        8, 105},
-  {"aggravate monsters",  4,  20},
-  {"blank paper",         1,   5},
-  {"vorpalize weapon",    1, 300}
-};
+	m_magic_props = {
+		{ "monster confusion",   8, 140 },
+		{ "magic mapping",       5, 150 },
+		{ "hold monster",        3, 180 },
+		{ "sleep",               5,   5 },
+		{ "enchant armor",       8, 160 },
+		{ "identify",           27, 100 },
+		{ "scare monster",       4, 200 },
+		{ "food detection",      4,  50 },
+		{ "teleportation",       7, 165 },
+		{ "enchant weapon",     10, 150 },
+		{ "create monster",      5,  75 },
+		{ "remove curse",        8, 105 },
+		{ "aggravate monsters",  4,  20 },
+		{ "blank paper",         1,   5 },
+		{ "vorpalize weapon",    1, 300 }
+	};
 
+	int nsyl;
+	char *cp, *sp;
+	int i, nwords;
 
-struct ScrollInfo : public ItemDiscoveries
-{
-    MagicItem* s_magic;
+	for (i = 0; i < MAXSCROLLS; i++)
+	{
+		cp = prbuf;
+		nwords = rnd(in_small_screen_mode() ? 3 : 4) + 2;
+		while (nwords--)
+		{
+			nsyl = rnd(2) + 1;
+			while (nsyl--)
+			{
+				sp = getsyl();
+				if (&cp[strlen(sp)] > &prbuf[MAXNAME - 1]) { nwords = 0; break; }
+				while (*sp) *cp++ = *sp++;
+			}
+			*cp++ = ' ';
+		}
+		*--cp = '\0';
+		//I'm tired of thinking about this one so just in case .....
+		prbuf[MAXNAME] = 0;
+		m_identifier.push_back(prbuf);
 
-    ScrollInfo(MagicItem scrolls[]) : s_magic(scrolls){
-        int nsyl;
-        char *cp, *sp;
-        int i, nwords;
-
-        for (i = 0; i<MAXSCROLLS; i++)
-        {
-            cp = prbuf;
-            nwords = rnd(in_small_screen_mode() ? 3 : 4) + 2;
-            while (nwords--)
-            {
-                nsyl = rnd(2) + 1;
-                while (nsyl--)
-                {
-                    sp = getsyl();
-                    if (&cp[strlen(sp)]>&prbuf[MAXNAME - 1]) { nwords = 0; break; }
-                    while (*sp) *cp++ = *sp++;
-                }
-                *cp++ = ' ';
-            }
-            *--cp = '\0';
-            //I'm tired of thinking about this one so just in case .....
-            prbuf[MAXNAME] = 0;
-            m_identifier.push_back(prbuf);
-            if (i > 0) s_magic[i].prob += s_magic[i - 1].prob;
-        }
-    }
-
-    
-
-};
+		if (i > 0)
+			m_magic_props[i].prob += m_magic_props[i - 1].prob;
+	}
+}
 
 ScrollInfo* s_scroll_info; //todo: mem leaking this for now
 
@@ -192,12 +126,12 @@ void discover_scroll(int type)
 
 int get_scroll_value(int type)
 {
-    return s_scroll_info->s_magic[type].worth;
+    return s_scroll_info->m_magic_props[type].worth;
 }
 
 std::string get_scroll_name(int type)
 {
-    return s_scroll_info->s_magic[type].name;
+    return s_scroll_info->m_magic_props[type].name;
 }
 
 std::string get_scroll_guess(int type)
@@ -213,7 +147,7 @@ void set_scroll_guess(int type, const char* value)
 //init_names: Generate the names of the various scrolls
 void init_names()
 {
-    s_scroll_info = new ScrollInfo(scrolls);
+    s_scroll_info = new ScrollInfo();
 }
 
 std::string get_title(int type)
@@ -224,7 +158,7 @@ std::string get_title(int type)
 void init_new_scroll(Item* scroll)
 {
   scroll->type = SCROLL;
-  scroll->which = pick_one(s_scroll_info->s_magic, MAXSCROLLS);
+  scroll->which = pick_one(s_scroll_info->m_magic_props);
 }
 
 void read_monster_confusion()

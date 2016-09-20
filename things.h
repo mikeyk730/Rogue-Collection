@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "item.h"
 
 //init_things: Initialize the probabilities for types of things
@@ -19,6 +20,7 @@ bool can_drop(Item *op);
 Item* new_item();
 
 //pick_one: Pick an item out of a list of nitems possible magic items
+int pick_one(std::vector<MagicItem> magic);
 int pick_one(struct MagicItem *magic, int nitems);
 
 //discovered: list what the player has discovered in this game of a certain type

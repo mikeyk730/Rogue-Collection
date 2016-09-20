@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "item_class.h"
 #include "game_state.h"
 #include "sticks.h"
 #include "monsters.h"
@@ -25,11 +26,6 @@
 #include "things.h"
 #include "hero.h"
 #include "room.h"
-
-bool ws_know[MAXSTICKS];    //Does he know what a stick does
-char *ws_guess[MAXSTICKS];         //Players guess at what wand is
-const char *ws_made[MAXSTICKS]; //What sticks are made of
-const char *ws_type[MAXSTICKS]; //Is it a wand or a staff
 
 static char *wood[] =
 {
@@ -98,109 +94,120 @@ static char *metal[] =
 
 #define NMETAL (sizeof(metal)/sizeof(char *))
 
-struct MagicItem ws_magic[MAXSTICKS] =
+StickInfo::StickInfo()
 {
-  {"light",          12, 250},
-  {"striking",        9,  75},
-  {"lightning",       3, 330},
-  {"fire",            3, 330},
-  {"cold",            3, 330},
-  {"polymorph",      15, 310},
-  {"magic missile",  10, 170},
-  {"haste monster",   9,   5},
-  {"slow monster",   11, 350},
-  {"drain life",      9, 300},
-  {"nothing",         1,   5},
-  {"teleport away",   5, 340},
-  {"teleport to",     5,  50},
-  {"cancellation",    5, 280}
-};
+	m_magic_props =
+	{
+	  {"light",          12, 250},
+	  {"striking",        9,  75},
+	  {"lightning",       3, 330},
+	  {"fire",            3, 330},
+	  {"cold",            3, 330},
+	  {"polymorph",      15, 310},
+	  {"magic missile",  10, 170},
+	  {"haste monster",   9,   5},
+	  {"slow monster",   11, 350},
+	  {"drain life",      9, 300},
+	  {"nothing",         1,   5},
+	  {"teleport away",   5, 340},
+	  {"teleport to",     5,  50},
+	  {"cancellation",    5, 280}
+	};
+
+	int i, j;
+	char *str;
+	bool metused[NMETAL], woodused[NWOOD];
+
+	for (i = 0; i<NWOOD; i++)
+		woodused[i] = false;
+	for (i = 0; i<NMETAL; i++)
+		metused[i] = false;
+	for (i = 0; i<MAXSTICKS; i++)
+	{
+		for (;;) if (rnd(2) == 0)
+		{
+			j = rnd(NMETAL);
+			if (!metused[j]) {
+				m_type.push_back("wand");
+				str = metal[j];
+				metused[j] = true;
+				break;
+			}
+		}
+		else
+		{
+			j = rnd(NWOOD);
+			if (!woodused[j]) {
+				m_type.push_back("staff");
+				str = wood[j];
+				woodused[j] = true;
+				break;
+			}
+		}
+		m_identifier.push_back(str);
+		if (i>0) 
+			m_magic_props[i].prob += m_magic_props[i - 1].prob;
+	}
+}
+
+bool StickInfo::is_staff(int which) const
+{
+	return m_type[which] == "staff";
+}
+
+StickInfo* s_stick_info; //todo: mem leaking this for now
 
 int does_know_stick(int type)
 {
-  return ws_know[type];
+	return s_stick_info->is_discovered(type);
 }
 
 void discover_stick(int type)
 {
-  ws_know[type] = true;
-}
-
-std::string get_stick_guess(int type)
-{
-  return ws_guess[type];
-}
-
-void set_stick_guess(int type, const char* value)
-{
-  strcpy(ws_guess[type], value);
+	s_stick_info->discover(type);
 }
 
 int get_stick_value(int type)
 {
-  return ws_magic[type].worth;
+	return s_stick_info->m_magic_props[type].worth;
 }
 
-const char* get_stick_name(int type)
+std::string get_stick_name(int type)
 {
-  return ws_magic[type].name;
+	return s_stick_info->m_magic_props[type].name;
+}
+
+std::string get_stick_guess(int type)
+{
+	return s_stick_info->get_guess(type);
+}
+
+void set_stick_guess(int type, const char* value)
+{
+	s_stick_info->set_guess(type, value);
 }
 
 void init_new_stick(Item* stick)
 {
   stick->type = STICK;
-  stick->which = pick_one(ws_magic, MAXSTICKS);
+  stick->which = pick_one(s_stick_info->m_magic_props);
   fix_stick(stick);
 }
 
 //init_materials: Initialize the construction materials for wands and staffs
 void init_materials()
 {
-  int i, j;
-  char *str;
-  bool metused[NMETAL], woodused[NWOOD];
-
-  for (i = 0; i<NWOOD; i++) 
-      woodused[i] = false;
-  for (i = 0; i<NMETAL; i++) 
-      metused[i] = false;
-  for (i = 0; i<MAXSTICKS; i++)
-  {
-    for (;;) if (rnd(2)==0)
-    {
-      j = rnd(NMETAL);
-      if (!metused[j]) {
-          ws_type[i] = "wand"; 
-          str = metal[j];
-          metused[j] = true;
-          break;
-      }
-    }
-    else
-    {
-      j = rnd(NWOOD);
-      if (!woodused[j]) {
-          ws_type[i] = "staff"; 
-          str = wood[j]; 
-          woodused[j] = true; 
-          break;
-      }
-    }
-    ws_made[i] = str;
-    ws_know[i] = false;
-    ws_guess[i] = (char *)&_guesses[iguess++];
-    if (i>0) ws_magic[i].prob += ws_magic[i-1].prob;
-  }
+	s_stick_info = new StickInfo();
 }
 
-const char* get_material(int type)
+std::string get_material(int type)
 {
-  return ws_made[type];
+	return s_stick_info->get_identifier(type);
 }
 
-const char* get_stick_type(int type)
+std::string get_stick_type(int type)
 {
-  return ws_type[type];
+  return s_stick_info->m_type[type];
 }
 
 void zap_light()
@@ -209,7 +216,7 @@ void zap_light()
   if (player.is_blind()) msg("you feel a warm glow around you");
   else
   {
-    ws_know[WS_LIGHT] = true;
+    s_stick_info->discover(WS_LIGHT);
     if (player.room->is_gone()) msg("the corridor glows and then fades");
     else msg("the room is lit by a shimmering blue light");
   }
@@ -239,7 +246,7 @@ void zap_striking(Item* obj)
 void zap_bolt(int which, const char* name)
 {
   fire_bolt(&player.pos, &delta, name);
-  ws_know[which] = true;
+  s_stick_info->discover(which);
 }
 
 void zap_vorpalized_weapon(Item* weapon, Agent* monster)
@@ -273,7 +280,8 @@ void zap_polymorph(Agent* monster, int y, int x)
   if (can_see_monster(monster)) 
     mvaddch(y, x, monster->type);
 
-  ws_know[WS_POLYMORPH] |= (monster->type != old_type);
+  if (monster->type != old_type)
+	s_stick_info->discover(WS_POLYMORPH);
 }
 
 void zap_cancellation(Agent* monster)
@@ -347,7 +355,7 @@ void zap_magic_missile()
   Agent* monster;
   Item bolt;
 
-  ws_know[WS_MISSILE] = true;
+  s_stick_info->discover(WS_MISSILE);
   bolt.type = '*';
   bolt.throw_damage = "1d8";
   bolt.hit_plus = 1000;
@@ -406,9 +414,10 @@ int zap_drain_life()
 }
 
 //fix_stick: Set up a new stick
+//todo: do you need to weild staffs?
 void fix_stick(Item *cur)
 {
-  if (strcmp(ws_type[cur->which], "staff")==0) 
+  if (s_stick_info->is_staff(cur->which))
       cur->damage = "2d3";
   else
       cur->damage = "1d1";
@@ -670,15 +679,17 @@ const char* get_inv_name_stick(Item* stick)
 {
   char *pb = prbuf;
   int which = stick->which;
+  std::string type = get_stick_type(which);
+  std::string material = get_material(which);
 
-  sprintf(pb, "A%s %s ", vowelstr(get_stick_type(which)), get_stick_type(which));
+  sprintf(pb, "A%s %s ", vowelstr(type.c_str()), type.c_str());
   pb = &prbuf[strlen(prbuf)];
   if (does_know_stick(which) || game->hero().is_wizard())
-    chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which), get_charge_string(stick), get_material(which));
+    chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which).c_str(), get_charge_string(stick), material.c_str());
   else if (!get_stick_guess(which).empty())
-    chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which).c_str(), get_material(which));
+    chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which).c_str(), material.c_str());
   else
-    sprintf(pb = &prbuf[2], "%s %s", get_material(which), get_stick_type(which));
+    sprintf(pb = &prbuf[2], "%s %s", material.c_str(), type.c_str());
 
   return prbuf;
 }

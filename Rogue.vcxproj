@@ -94,6 +94,7 @@
     <ClCompile Include="hero.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="item.cpp" />
+    <ClCompile Include="item_class.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="list.cpp" />
     <ClCompile Include="mach_dep.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="env.h" />
     <ClInclude Include="fakedos.h" />
     <ClInclude Include="fight.h" />
+    <ClInclude Include="item_class.h" />
     <ClInclude Include="stream_input.h" />
     <ClInclude Include="food.h" />
     <ClInclude Include="game_state.h" />

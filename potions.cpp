@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "item_class.h"
 #include "game_state.h"
 #include "daemons.h"
 #include "daemon.h"
@@ -37,10 +38,6 @@
 #define P_RESTORE   11
 #define P_BLIND     12
 #define P_NOP       13
-
-bool p_know[MAXPOTIONS];    //Does he know what a potion does
-char *p_guess[MAXPOTIONS];         //Players guess at what potion is
-const char *p_colors[MAXPOTIONS];  //Colors of the potions
 
 static char *rainbow[] =
 {
@@ -75,87 +72,93 @@ static char *rainbow[] =
 
 #define NCOLORS (sizeof(rainbow)/sizeof(char *))
 
-struct MagicItem p_magic[MAXPOTIONS] =
+PotionInfo::PotionInfo()
 {
-  {"confusion",          8,   5},
-  {"paralysis",         10,   5},
-  {"poison",             8,   5},
-  {"gain strength",     15, 150},
-  {"see invisible",      2, 100},
-  {"healing",           15, 130},
-  {"monster detection",  6, 130},
-  {"magic detection",    6, 105},
-  {"raise level",        2, 250},
-  {"extra healing",      5, 200},
-  {"haste self",         4, 190},
-  {"restore strength",  14, 130},
-  {"blindness",          4,   5},
-  {"thirst quenching",   1,   5}
-};
+	m_magic_props =
+	{
+	  {"confusion",          8,   5},
+	  {"paralysis",         10,   5},
+	  {"poison",             8,   5},
+	  {"gain strength",     15, 150},
+	  {"see invisible",      2, 100},
+	  {"healing",           15, 130},
+	  {"monster detection",  6, 130},
+	  {"magic detection",    6, 105},
+	  {"raise level",        2, 250},
+	  {"extra healing",      5, 200},
+	  {"haste self",         4, 190},
+	  {"restore strength",  14, 130},
+	  {"blindness",          4,   5},
+	  {"thirst quenching",   1,   5}
+	};
+
+	int i, j;
+	bool used[NCOLORS];
+
+	for (i = 0; i<NCOLORS; i++) used[i] = false;
+	for (i = 0; i<MAXPOTIONS; i++)
+	{
+		do j = rnd(NCOLORS); while (used[j]);
+		used[j] = true;
+		m_identifier.push_back(rainbow[j]);
+		if (i>0)
+			m_magic_props[i].prob += m_magic_props[i - 1].prob;
+	}
+
+}
+
+PotionInfo* s_potion_info; //todo: mem leaking this for now
 
 int does_know_potion(int type)
 {
-  return p_know[type];
+	return s_potion_info->is_discovered(type);
 }
 
 void discover_potion(int type)
 {
-  p_know[type] = true;
-}
-
-std::string get_potion_guess(int type)
-{
-  return p_guess[type];
-}
-
-void set_potion_guess(int type, const char* value)
-{
-  strcpy(p_guess[type], value);
+	s_potion_info->discover(type);
 }
 
 int get_potion_value(int type)
 {
-  return p_magic[type].worth;
+	return s_potion_info->m_magic_props[type].worth;
 }
 
-const char* get_potion_name(int type)
+std::string get_potion_name(int type)
 {
-  return p_magic[type].name;
+	return s_potion_info->m_magic_props[type].name;
+}
+
+std::string get_potion_guess(int type)
+{
+	return s_potion_info->get_guess(type);
+}
+
+void set_potion_guess(int type, const char* value)
+{
+	s_potion_info->set_guess(type, value);
 }
 
 //init_colors: Initialize the potion color scheme for this time
 void init_colors()
 {
-  int i, j;
-  bool used[NCOLORS];
-
-  for (i = 0; i<NCOLORS; i++) used[i] = false;
-  for (i = 0; i<MAXPOTIONS; i++)
-  {
-    do j = rnd(NCOLORS); while (used[j]);
-    used[j] = true;
-    p_colors[i] = rainbow[j];
-    p_know[i] = false;
-    p_guess[i] = (char *)&_guesses[iguess++];
-    if (i>0) 
-      p_magic[i].prob += p_magic[i-1].prob;
-  }
+	s_potion_info = new PotionInfo();
 }
 
-const char* get_color(int type)
+std::string get_color(int type)
 {
-  return p_colors[type];
+	return s_potion_info->get_identifier(type);
 }
 
 void init_new_potion(Item* potion)
 {
   potion->type = POTION;
-  potion->which = pick_one(p_magic, MAXPOTIONS);
+  potion->which = pick_one(s_potion_info->m_magic_props);
 }
 
 void quaff_confusion()
 {
-  p_know[P_CONFUSE] = true;
+  s_potion_info->discover(P_CONFUSE);
   if (!player.is_confused())
   {
     if (player.is_confused()) 
@@ -169,7 +172,7 @@ void quaff_confusion()
 
 void quaff_paralysis()
 {
-  p_know[P_PARALYZE] = true;
+  s_potion_info->discover(P_PARALYZE);
   sleep_timer = HOLD_TIME;
   player.set_running(false);
   msg("you can't move");
@@ -179,14 +182,14 @@ void quaff_poison()
 {
   char *sick = "you feel %s sick.";
 
-  p_know[P_POISON] = true;
+  s_potion_info->discover(P_POISON);
   if (!is_wearing_ring(R_SUSTSTR)) {chg_str(-(rnd(3)+1)); msg(sick, "very");}
   else msg(sick, "momentarily");
 }
 
 void quaff_gain_strength()
 {
-  p_know[P_STRENGTH] = true;
+  s_potion_info->discover(P_STRENGTH);
   chg_str(1);
   msg("you feel stronger. What bulging muscles!");
 }
@@ -204,7 +207,7 @@ void quaff_see_invisible()
 
 void quaff_healing()
 {
-  p_know[P_HEALING] = true;
+  s_potion_info->discover(P_HEALING);
   player.stats.increase_hp(roll(player.stats.level, 4), true, false);
   sight();
   msg("you begin to feel better");
@@ -216,7 +219,8 @@ void quaff_monster_detection()
   if (level_monsters.empty()) 
       msg("you have a strange feeling%s.", noterse(" for a moment"));
   else {
-      p_know[P_MFIND] |= turn_see(false);
+	  if (turn_see(false))
+		  s_potion_info->discover(P_MFIND);
       msg("");
   }
 }
@@ -238,7 +242,7 @@ void quaff_magic_detection()
       {
         show = true;
         mvaddch(item->pos.y, item->pos.x, goodch(item));
-        p_know[P_TFIND] = true;
+		s_potion_info->discover(P_TFIND);
       }
     }
     for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
@@ -249,7 +253,7 @@ void quaff_magic_detection()
         {
           show = true;
           mvaddch(monster->pos.y, monster->pos.x, MAGIC);
-          p_know[P_TFIND] = true;
+		  s_potion_info->discover(P_TFIND);
         }
       }
     }
@@ -260,14 +264,14 @@ void quaff_magic_detection()
 
 void quaff_raise_level()
 {
-  p_know[P_RAISE] = true;
+  s_potion_info->discover(P_RAISE);
   msg("you suddenly feel much more skillful");
   raise_level();
 }
 
 void quaff_extra_healing()
 {
-  p_know[P_XHEAL] = true;
+  s_potion_info->discover(P_XHEAL);
   player.stats.increase_hp(roll(player.stats.level, 8), true, true);
   sight();
   msg("you begin to feel much better");
@@ -275,7 +279,7 @@ void quaff_extra_healing()
 
 void quaff_haste_self()
 {
-  p_know[P_HASTE] = true;
+  s_potion_info->discover(P_HASTE);
   if (add_haste(true)) msg("you feel yourself moving much faster");
 }
 
@@ -296,7 +300,7 @@ void quaff_restore_strength()
 
 void quaff_blindness()
 {
-  p_know[P_BLIND] = true;
+  s_potion_info->discover(P_BLIND);
   if (!player.is_blind())
   {
     player.set_blind(true);
@@ -343,7 +347,7 @@ void quaff()
   potion_functions[obj->which]();
 
   status();
-  call_it(p_know[obj->which], &p_guess[obj->which]);
+  s_potion_info->call_it2(obj->which);
 
   //Throw the item away
   if (obj->count>1) obj->count--;
@@ -442,6 +446,7 @@ const char* get_inv_name_potion(Item* obj)
 {
   char *pb = prbuf;
   int which = obj->which;
+  std::string color = get_color(which);
 
   if (obj->count==1) {
     strcpy(pb, "A potion ");
@@ -452,14 +457,14 @@ const char* get_inv_name_potion(Item* obj)
     pb = &pb[strlen(prbuf)];
   }
   if (does_know_potion(which) || game->hero().is_wizard()) {
-    chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which), get_color(which));
+    chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which).c_str(), color.c_str());
   }
   else if (!get_potion_guess(which).empty()) {
-    chopmsg(pb, "called %s", "called %s(%s)", get_potion_guess(which).c_str(), get_color(which));
+    chopmsg(pb, "called %s", "called %s(%s)", get_potion_guess(which).c_str(), color.c_str());
   }
   else if (obj->count==1) 
-    sprintf(prbuf, "A%s %s potion", vowelstr(get_color(which)), get_color(which));
-  else sprintf(prbuf, "%d %s potions", obj->count, get_color(which));
+    sprintf(prbuf, "A%s %s potion", vowelstr(color.c_str()), color.c_str());
+  else sprintf(prbuf, "%d %s potions", obj->count, color.c_str());
 
   return prbuf;
 }

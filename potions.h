@@ -3,10 +3,10 @@
 
 //init_colors: Initialize the potion color scheme for this time
 void init_colors();
-const char* get_color(int type);
+std::string get_color(int type);
 void init_new_potion(Item* potion);
 int get_potion_value(int type);
-const char* get_potion_name(int type);
+std::string get_potion_name(int type);
 std::string get_potion_guess(int type);
 void set_potion_guess(int type, const char* value);
 const char* get_inv_name_potion(Item* potion);
