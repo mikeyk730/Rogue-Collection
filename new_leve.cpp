@@ -73,7 +73,7 @@ void new_level(int do_implode)
   {
     find_empty_location(&player.pos, true);
   } while (!(get_flags(player.pos.y, player.pos.x) & F_REAL));  //don't place hero on a trap
-  mpos = 0;
+  msg_position = 0;
   enter_room(&player.pos);
   mvaddch(player.pos.y, player.pos.x, PLAYER);
   oldpos = player.pos;

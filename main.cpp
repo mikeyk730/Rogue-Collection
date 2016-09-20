@@ -140,7 +140,7 @@ void quit()
   if (should_quit) 
       leave();
   should_quit = true;
-  mpos = 0;
+  msg_position = 0;
   getrc(&oy, &ox);
   move(0, 0);
   clrtoeol();
@@ -163,7 +163,7 @@ void quit()
     clrtoeol();
     status();
     move(oy, ox);
-    mpos = 0;
+    msg_position = 0;
     repeat_cmd_count = 0;
   }
   should_quit = false;

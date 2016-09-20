@@ -72,7 +72,7 @@ int com_char()
   case '+': ch = 't'; break;
   case '-': ch = 'z'; break;
   }
-  if (mpos && !running) msg("");
+  if (msg_position && !running) msg("");
   return ch;
 }
 
@@ -122,19 +122,20 @@ int read_command()
           show_count();
           break;
 
-        case 'f':
+        case 'f': // f: toggle fast mode for this turn
           fastmode = !fastmode; 
           break;
-        case 'g': 
+        case 'g': // g + direction: move onto an item without picking it up
           do_take = false; 
           break;
-        case 'a': 
+        case 'a': //a: repeat last command
           command = lastch; 
           repeat_cmd_count = lastcount; 
           do_take = lasttake; 
           again = true; 
           break;
-        case ' ': break;
+        case ' ': 
+            break;
         case ESCAPE:
             stop_at_door = false;
             repeat_cmd_count = 0; 

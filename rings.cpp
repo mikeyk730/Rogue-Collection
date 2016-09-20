@@ -164,7 +164,7 @@ void ring_off()
   else if (get_ring(LEFT)==NULL) ring = RIGHT;
   else if (get_ring(RIGHT)==NULL) ring = LEFT;
   else if ((ring = gethand())<0) return;
-  mpos = 0;
+  msg_position = 0;
   obj = get_ring(ring);
   if (obj==NULL) {msg("not wearing such a ring"); counts_as_turn = false; return;}
   packchar = pack_char(obj);
@@ -180,7 +180,7 @@ int gethand()
   {
     msg("left hand or right hand? ");
     if ((c = readchar())==ESCAPE) {counts_as_turn = false; return -1;}
-    mpos = 0;
+    msg_position = 0;
     if (c=='l' || c=='L') return LEFT;
     else if (c=='r' || c=='R') return RIGHT;
     msg("please type L or R");

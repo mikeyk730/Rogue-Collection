@@ -284,7 +284,7 @@ Item *get_item(char *purpose, int type)
       //ignore any alt characters that may be typed
       ch = readchar();
 skip:
-      mpos = 0;
+      msg_position = 0;
       gi_state = false;
       once_only = false;
       if (ch=='*')

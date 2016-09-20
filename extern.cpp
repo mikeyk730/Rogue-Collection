@@ -156,13 +156,11 @@ bool invalid_position = false;
 char take;  //Thing the rogue is taking
 char run_character; //Direction player is running
 
-int iguess = 0;
-
 char prbuf[MAXSTR];    //Printing buffer used everywhere
 char last_message[BUFSIZE];     //The last message printed
 
 int maxrow;            //Last Line used for map
-int mpos = 0;          //Where cursor is on top line
+int msg_position = 0;          //Where cursor is on top line
 int no_move = 0;       //Number of turns held in place
 int sleep_timer = 0;   //Number of turns asleep
 int no_food = 0;       //Number of levels without food

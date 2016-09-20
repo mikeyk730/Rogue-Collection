@@ -43,7 +43,7 @@ void whatis()
         {
             msg("You must identify something");
             msg(" ");
-            mpos = 0;
+            msg_position = 0;
         }
         else 
             break;
@@ -95,19 +95,19 @@ void create_obj()
   case ',': obj->type = AMULET; limit=0; break;
   default: obj->type = FOOD; limit=1; break;
   }
-  mpos = 0;
+  msg_position = 0;
   msg("which %c do you want? (0-%x)", obj->type, limit);
   option = (isdigit((ch = readchar()))?ch-'0':ch-'a'+10);
   obj->which = (option >= 0 && option <= limit) ? option : 0;
   obj->group = 0;
   obj->count = 1;
   obj->damage = obj->throw_damage = "0d0";
-  mpos = 0;
+  msg_position = 0;
   if (obj->type==WEAPON || obj->type==ARMOR)
   {
     msg("blessing? (+,-,n)");
     bless = readchar();
-    mpos = 0;
+    msg_position = 0;
     if (bless=='-') 
         obj->set_cursed();
     if (obj->type==WEAPON)
@@ -132,7 +132,7 @@ void create_obj()
   case R_PROTECT: case R_ADDSTR: case R_ADDHIT: case R_ADDDAM:
     msg("blessing? (+,-,n)");
     bless = readchar();
-    mpos = 0;
+    msg_position = 0;
     if (bless=='-') obj->set_cursed();
     obj->ring_level = (bless=='-'?-1:rnd(2)+1);
     break;

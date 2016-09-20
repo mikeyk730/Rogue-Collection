@@ -75,7 +75,7 @@ void ifterse(const char *tfmt, const char *format, ...)
 void msg(const char *format, ...)
 {
   //if the string is "", just clear the line
-  if (*format=='\0') {move(0, 0); clrtoeol(); mpos = 0; return;}
+  if (*format=='\0') {move(0, 0); clrtoeol(); msg_position = 0; return;}
 
   char dest[1024 * 16];
   va_list argptr;
@@ -105,11 +105,11 @@ void endmsg()
 {
   if (save_msg) 
       strcpy(last_message, msgbuf);
-  if (mpos) {look(false); move(0, mpos); more(" More ");}
+  if (msg_position) {look(false); move(0, msg_position); more(" More ");}
   //All messages should start with uppercase, except ones that start with a pack addressing character
   if (islower(msgbuf[0]) && msgbuf[1]!=')') msgbuf[0] = toupper(msgbuf[0]);
   putmsg(0, msgbuf);
-  mpos = newpos;
+  msg_position = newpos;
   newpos = 0;
 }
 
