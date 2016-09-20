@@ -104,42 +104,6 @@ PotionInfo::PotionInfo()
 		if (i>0)
 			m_magic_props[i].prob += m_magic_props[i - 1].prob;
 	}
-
-}
-
-int does_know_potion(int type)
-{
-	return game->potions().is_discovered(type);
-}
-
-void discover_potion(int type)
-{
-	game->potions().discover(type);
-}
-
-int get_potion_value(int type)
-{
-	return game->potions().m_magic_props[type].worth;
-}
-
-std::string get_potion_name(int type)
-{
-	return game->potions().m_magic_props[type].name;
-}
-
-std::string get_potion_guess(int type)
-{
-	return game->potions().get_guess(type);
-}
-
-void set_potion_guess(int type, const char* value)
-{
-	game->potions().set_guess(type, value);
-}
-
-std::string get_color(int type)
-{
-	return game->potions().get_identifier(type);
 }
 
 void init_new_potion(Item* potion)
@@ -434,11 +398,11 @@ int is_bad_potion(Item* obj)
     (obj->which == P_CONFUSE || obj->which == P_PARALYZE || obj->which == P_POISON || obj->which == P_BLIND);
 }
 
-const char* get_inv_name_potion(Item* obj)
+std::string PotionInfo::get_inventory_name(Item* obj) const
 {
   char *pb = prbuf;
   int which = obj->which;
-  std::string color = get_color(which);
+  std::string color = get_identifier(which);
 
   if (obj->count==1) {
     strcpy(pb, "A potion ");
@@ -448,11 +412,11 @@ const char* get_inv_name_potion(Item* obj)
     sprintf(pb, "%d potions ", obj->count); 
     pb = &pb[strlen(prbuf)];
   }
-  if (does_know_potion(which) || game->hero().is_wizard()) {
-    chopmsg(pb, "of %s", "of %s(%s)", get_potion_name(which).c_str(), color.c_str());
+  if (is_discovered(which) || game->hero().is_wizard()) {
+    chopmsg(pb, "of %s", "of %s(%s)", get_name(which).c_str(), color.c_str());
   }
-  else if (!get_potion_guess(which).empty()) {
-    chopmsg(pb, "called %s", "called %s(%s)", get_potion_guess(which).c_str(), color.c_str());
+  else if (!get_guess(which).empty()) {
+    chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), color.c_str());
   }
   else if (obj->count==1) 
     sprintf(prbuf, "A%s %s potion", vowelstr(color.c_str()), color.c_str());

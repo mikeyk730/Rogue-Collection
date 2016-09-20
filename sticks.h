@@ -1,14 +1,7 @@
 #pragma once
 #include "item.h"
 
-std::string get_material(int type);
-std::string get_stick_type(int type);
 void init_new_stick(Item* stick);
-int get_stick_value(int type);
-std::string get_stick_name(int type);
-std::string get_stick_guess(int type);
-void set_stick_guess(int type, const char* value);
-const char* get_inv_name_stick(Item* stick);
 
 //fix_stick: Set up a new stick
 void fix_stick(Item *cur);
@@ -24,6 +17,3 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name);
 
 //charge_str: Return an appropriate string for a wand charge
 const char *get_charge_string(Item *obj);
-
-int does_know_stick(int type);
-void discover_stick(int type);

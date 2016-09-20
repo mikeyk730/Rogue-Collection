@@ -1,13 +1,7 @@
 #pragma once
 #include "item.h"
 
-std::string get_color(int type);
 void init_new_potion(Item* potion);
-int get_potion_value(int type);
-std::string get_potion_name(int type);
-std::string get_potion_guess(int type);
-void set_potion_guess(int type, const char* value);
-const char* get_inv_name_potion(Item* potion);
 
 //quaff: Quaff a potion from the pack
 void quaff();
@@ -21,7 +15,4 @@ void turn_see_wrapper(int turn_off);
 
 //th_effect: Compute the effect of this potion hitting a monster.
 void affect_monster(Item *obj, Agent *monster);
-
 int is_bad_potion(Item* obj);
-int does_know_potion(int type);
-void discover_potion(int type);

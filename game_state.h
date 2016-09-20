@@ -28,6 +28,7 @@ struct GameState
 	PotionInfo& potions();
 	RingInfo& rings();
 	StickInfo& sticks();
+	ItemClass& get_class(int type);
 
 private:
     void init_environment();

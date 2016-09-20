@@ -107,6 +107,22 @@ StickInfo& GameState::sticks()
 	return *m_sticks;
 }
 
+ItemClass& GameState::get_class(int type)
+{
+	switch (type)
+	{
+	case SCROLL:
+		return scrolls();
+	case POTION:
+		return potions();
+	case STICK:
+		return sticks();
+	case RING:
+		return rings();
+	}
+	throw std::runtime_error("Requested bad type of item.");
+}
+
 //todo:
 //monster config
 //all extern/global variables

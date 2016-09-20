@@ -155,51 +155,17 @@ bool StickInfo::is_staff(int which) const
 	return m_type[which] == "staff";
 }
 
-int does_know_stick(int type)
+std::string StickInfo::get_type(int which) const
 {
-	return game->sticks().is_discovered(type);
+	return game->sticks().m_type[which];
 }
 
-void discover_stick(int type)
-{
-	game->sticks().discover(type);
-}
-
-int get_stick_value(int type)
-{
-	return game->sticks().m_magic_props[type].worth;
-}
-
-std::string get_stick_name(int type)
-{
-	return game->sticks().m_magic_props[type].name;
-}
-
-std::string get_stick_guess(int type)
-{
-	return game->sticks().get_guess(type);
-}
-
-void set_stick_guess(int type, const char* value)
-{
-	game->sticks().set_guess(type, value);
-}
 
 void init_new_stick(Item* stick)
 {
   stick->type = STICK;
   stick->which = pick_one(game->sticks().m_magic_props);
   fix_stick(stick);
-}
-
-std::string get_material(int type)
-{
-	return game->sticks().get_identifier(type);
-}
-
-std::string get_stick_type(int type)
-{
-  return game->sticks().m_type[type];
 }
 
 void zap_light()
@@ -667,19 +633,19 @@ const char *get_charge_string(Item *obj)
   return buf;
 }
 
-const char* get_inv_name_stick(Item* stick)
+std::string StickInfo::get_inventory_name(Item* stick) const
 {
   char *pb = prbuf;
   int which = stick->which;
-  std::string type = get_stick_type(which);
-  std::string material = get_material(which);
+  std::string type = get_type(which);
+  std::string material = get_identifier(which);
 
   sprintf(pb, "A%s %s ", vowelstr(type.c_str()), type.c_str());
   pb = &prbuf[strlen(prbuf)];
-  if (does_know_stick(which) || game->hero().is_wizard())
-    chopmsg(pb, "of %s%s", "of %s%s(%s)", get_stick_name(which).c_str(), get_charge_string(stick), material.c_str());
-  else if (!get_stick_guess(which).empty())
-    chopmsg(pb, "called %s", "called %s(%s)", get_stick_guess(which).c_str(), material.c_str());
+  if (is_discovered(which) || game->hero().is_wizard())
+    chopmsg(pb, "of %s%s", "of %s%s(%s)", get_name(which).c_str(), get_charge_string(stick), material.c_str());
+  else if (!get_guess(which).empty())
+    chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), material.c_str());
   else
     sprintf(pb = &prbuf[2], "%s %s", material.c_str(), type.c_str());
 

@@ -89,36 +89,6 @@ RingInfo::RingInfo()
 
 }
 
-int does_know_ring(int type)
-{
-	return game->rings().is_discovered(type);
-}
-
-void discover_ring(int type)
-{
-	game->rings().discover(type);
-}
-
-int get_ring_value(int type)
-{
-	return game->rings().m_magic_props[type].worth;
-}
-
-std::string get_ring_name(int type)
-{
-	return game->rings().m_magic_props[type].name;
-}
-
-std::string get_ring_guess(int type)
-{
-	return game->rings().get_guess(type);
-}
-
-void set_ring_guess(int type, const char* value)
-{
-	game->rings().set_guess(type, value);
-}
-
 void init_new_ring(Item* ring)
 {
   ring->type = RING;
@@ -255,16 +225,16 @@ int is_wearing_ring(int ring)
   return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
 }
 
-const char* get_inv_name_ring(Item* obj)
+std::string RingInfo::get_inventory_name(Item* obj) const
 {
   char *pb = prbuf;
   int which = obj->which;
-  std::string stone = get_stone(which);
+  std::string stone = get_identifier(which);
 
-  if (does_know_ring(which) || game->hero().is_wizard())
-    chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_ring_name(which).c_str(), stone.c_str());
-  else if (!get_ring_guess(which).empty()) 
-    chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_ring_guess(which).c_str(), stone.c_str());
+  if (is_discovered(which) || game->hero().is_wizard())
+    chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_name(which).c_str(), stone.c_str());
+  else if (!get_guess(which).empty()) 
+    chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_guess(which).c_str(), stone.c_str());
   else 
     sprintf(pb, "A%s %s ring", vowelstr(stone.c_str()), stone.c_str());
 

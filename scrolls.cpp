@@ -112,41 +112,6 @@ ScrollInfo::ScrollInfo()
 	}
 }
 
-int does_know_scroll(int type)
-{
-    return game->scrolls().is_discovered(type);
-}
-
-void discover_scroll(int type)
-{
-    game->scrolls().discover(type);
-}
-
-int get_scroll_value(int type)
-{
-    return game->scrolls().m_magic_props[type].worth;
-}
-
-std::string get_scroll_name(int type)
-{
-    return game->scrolls().m_magic_props[type].name;
-}
-
-std::string get_scroll_guess(int type)
-{
-    return game->scrolls().get_guess(type);
-}
-
-void set_scroll_guess(int type, const char* value)
-{
-    game->scrolls().set_guess(type, value);
-}
-
-std::string get_title(int type)
-{
-    return game->scrolls().get_identifier(type);
-}
-
 void init_new_scroll(Item* scroll)
 {
   scroll->type = SCROLL;
@@ -416,7 +381,7 @@ int is_bad_scroll(Item* item)
     (item->which == S_SLEEP || item->which == S_CREATE || item->which == S_AGGR);
 }
 
-const char* get_inv_name_scroll(Item* obj)
+std::string ScrollInfo::get_inventory_name(Item* obj) const
 {
   char *pb = prbuf;
   int which = obj->which;
@@ -429,12 +394,12 @@ const char* get_inv_name_scroll(Item* obj)
     sprintf(pb, "%d scrolls ", obj->count); 
     pb = &prbuf[strlen(prbuf)];
   }
-  if (does_know_scroll(which) || game->hero().is_wizard()) 
-    sprintf(pb, "of %s", get_scroll_name(which).c_str());
-  else if (!get_scroll_guess(which).empty()) 
-    sprintf(pb, "called %s", get_scroll_guess(which).c_str());
+  if (is_discovered(which) || game->hero().is_wizard()) 
+    sprintf(pb, "of %s", get_name(which).c_str());
+  else if (!get_guess(which).empty()) 
+    sprintf(pb, "called %s", get_guess(which).c_str());
   else
-    chopmsg(pb, "titled '%.17s'", "titled '%s'", get_title(which).c_str());
+    chopmsg(pb, "titled '%.17s'", "titled '%s'", get_identifier(which).c_str());
 
   return prbuf;
 }

@@ -57,12 +57,12 @@ char *inv_name(Item *obj, bool drop)
   char *pb = prbuf;
   switch (obj->type)
   {
-  case SCROLL:
-    get_inv_name_scroll(obj);
-    break;
 
+  case SCROLL:
   case POTION:
-    get_inv_name_potion(obj);
+  case STICK:
+  case RING:
+    game->get_class(obj->type).get_inventory_name(obj);
     break;
 
   case FOOD:
@@ -81,13 +81,6 @@ char *inv_name(Item *obj, bool drop)
     strcpy(pb, "The Amulet of Yendor");
     break;
 
-  case STICK:
-    get_inv_name_stick(obj);
-    break;
-
-  case RING:
-    get_inv_name_ring(obj);
-    break;
 
 #ifdef DEBUG
 
@@ -288,47 +281,29 @@ void discovered()
 //print_disc: Print what we've discovered of type 'type'
 void print_disc(byte type)
 {
-  int (*know)(int);
-  std::string (*guess)(int);
-  int i, maxnum, num_found;
-  static Item obj;
-  static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
+	int i, maxnum, num_found;
+	static Item obj;
+	static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
-  switch (type)
-  {
-  case SCROLL:
-    maxnum = MAXSCROLLS; 
-    know = does_know_scroll;
-    guess = get_scroll_guess;
-    break;
-  case POTION:
-    maxnum = MAXPOTIONS;
-    know = does_know_potion;
-    guess = get_potion_guess; 
-    break;
-  case RING:
-    maxnum = MAXRINGS;
-    know = does_know_ring;
-    guess = get_ring_guess;
-    break;
-  case STICK:
-    maxnum = MAXSTICKS;
-    know = does_know_stick;
-    guess = get_stick_guess;
-    break;
-  }
-  set_order(order, maxnum);
-  obj.count = 1;
-  obj.flags = 0;
-  num_found = 0;
-  for (i = 0; i<maxnum; i++) if (know(order[i]) || !guess(order[i]).empty())
-  {
-    obj.type = type;
-    obj.which = order[i];
-    add_line("", "%s", inv_name(&obj, false));
-    num_found++;
-  }
-  if (num_found==0) add_line("", nothing(type), 0);
+	ItemClass& item_class = game->get_class(type);
+	maxnum = item_class.get_max_items();
+
+	set_order(order, maxnum);
+	obj.count = 1;
+	obj.flags = 0;
+	num_found = 0;
+	for (i = 0; i < maxnum; i++) {
+		if (item_class.is_discovered(order[i]) || !item_class.get_guess(order[i]).empty())
+		{
+			obj.type = type;
+			obj.which = order[i];
+			add_line("", "%s", inv_name(&obj, false));
+			num_found++;
+		}
+
+	}
+	if (num_found == 0)
+		add_line("", nothing(type), 0);
 }
 
 //set_order: Set up order for list

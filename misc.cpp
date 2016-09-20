@@ -527,16 +527,10 @@ void call()
 	switch (obj->type)
 	{
 	case RING:
-		item_info = &game->rings();
-		break;
 	case POTION:
-		item_info = &game->potions();
-		break;
 	case SCROLL:
-		item_info = &game->scrolls();
-		break;
 	case STICK:
-		item_info = &game->sticks();
+		item_info = &game->get_class(obj->type);
 		break;
 	default:
 		msg("you can't call that anything");
