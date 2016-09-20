@@ -151,7 +151,7 @@ extern const char *const flash, *const intense;
 //Now all the global variables
 
 extern int maxrow;
-extern int LINES, COLS;
+extern short LINES, COLS;
 extern int bailout;
 
 extern struct Array _guesses[];
