@@ -15,7 +15,9 @@
 
 
 Hero::Hero()
-{ }
+{
+	init_player();
+}
 
 std::string Hero::get_name()
 {

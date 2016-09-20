@@ -52,6 +52,7 @@ int main(int argc, char **argv)
 	int seed = get_seed();
 	g_random = new Random(seed);
 
+	//todo: process args
     //game = new GameState(seed);
 	std::ifstream in("foo.baz", std::ios::binary | std::ios::in);
     game = new GameState(g_random, in);
@@ -61,19 +62,14 @@ int main(int argc, char **argv)
         bwflag = true;
     load_monster_cfg(game->get_environment("monstercfg"));
 
-    //todo: process args
-    //todo: can i support old save files??
-
     winit();
-    if (bwflag) forcebw();
-    credits();
-    game->hero().init_player(); //Set up initial player stats
-    init_things(); //Set up probabilities of things
-    init_names(); //Set up names of scrolls
-    init_colors(); //Set up colors of potions
-    init_stones(); //Set up stone settings of rings
-    init_materials(); //Set up materials of wands
-    setup();
+    if (bwflag)
+		forcebw();
+
+	credits();
+    
+    init_things(); //Set up probabilities of things	
+	setup();
     drop_curtain();
     new_level(false); //Draw current level
     //Start up daemons and fuses
@@ -122,7 +118,8 @@ void playit(char *sname)
   if (sname)
   {
     restore_game(sname);
-    if (bwflag) forcebw();
+    if (bwflag) 
+		forcebw();
     setup();
     cursor(false);
   }

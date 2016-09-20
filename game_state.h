@@ -39,8 +39,8 @@ private:
     std::unique_ptr<InputInterface> m_input_interface; //Interface for getting game input
     std::unique_ptr<Hero> m_hero;
 	
-	ScrollInfo m_scrolls;
-	PotionInfo m_potions;
-	RingInfo m_rings;
-	StickInfo m_sticks;
+	std::unique_ptr<ScrollInfo> m_scrolls;
+	std::unique_ptr<PotionInfo> m_potions;
+	std::unique_ptr<RingInfo> m_rings;
+	std::unique_ptr<StickInfo> m_sticks;
  };

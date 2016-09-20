@@ -112,53 +112,45 @@ ScrollInfo::ScrollInfo()
 	}
 }
 
-ScrollInfo* s_scroll_info; //todo: mem leaking this for now
-
 int does_know_scroll(int type)
 {
-    return s_scroll_info->is_discovered(type);
+    return game->scrolls().is_discovered(type);
 }
 
 void discover_scroll(int type)
 {
-    s_scroll_info->discover(type);
+    game->scrolls().discover(type);
 }
 
 int get_scroll_value(int type)
 {
-    return s_scroll_info->m_magic_props[type].worth;
+    return game->scrolls().m_magic_props[type].worth;
 }
 
 std::string get_scroll_name(int type)
 {
-    return s_scroll_info->m_magic_props[type].name;
+    return game->scrolls().m_magic_props[type].name;
 }
 
 std::string get_scroll_guess(int type)
 {
-    return s_scroll_info->get_guess(type);
+    return game->scrolls().get_guess(type);
 }
 
 void set_scroll_guess(int type, const char* value)
 {
-    s_scroll_info->set_guess(type, value);
-}
-
-//init_names: Generate the names of the various scrolls
-void init_names()
-{
-    s_scroll_info = new ScrollInfo();
+    game->scrolls().set_guess(type, value);
 }
 
 std::string get_title(int type)
 {
-    return s_scroll_info->get_identifier(type);
+    return game->scrolls().get_identifier(type);
 }
 
 void init_new_scroll(Item* scroll)
 {
   scroll->type = SCROLL;
-  scroll->which = pick_one(s_scroll_info->m_magic_props);
+  scroll->which = pick_one(game->scrolls().m_magic_props);
 }
 
 void read_monster_confusion()
@@ -175,7 +167,7 @@ void read_magic_mapping()
   byte ch;
   Agent* monster;
 
-  s_scroll_info->discover(S_MAP);
+  game->scrolls().discover(S_MAP);
   msg("oh, now this scroll has a map on it");
   //Take all the things we want to keep hidden out of the window
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
@@ -229,7 +221,7 @@ void read_hold_monster()
 void read_sleep()
 {
   //Scroll which makes you fall asleep
-  s_scroll_info->discover(S_SLEEP);
+  game->scrolls().discover(S_SLEEP);
   sleep_timer += rnd(SLEEP_TIME)+4;
   player.set_running(false);
   msg("you fall asleep");
@@ -248,7 +240,7 @@ void read_enchant_armor()
 void read_identify()
 {
   //Identify, let the rogue figure something out
-  s_scroll_info->discover(S_IDENT);
+  game->scrolls().discover(S_IDENT);
   msg("this scroll is an identify scroll");
   if ("on" == game->get_environment("menu"))
     more(" More ");
@@ -286,7 +278,7 @@ void read_food_detection()
     }
   }
   if (discover) {
-    s_scroll_info->discover(S_GFIND);
+    game->scrolls().discover(S_GFIND);
     msg("your nose tingles as you sense food");
   }
   else 
@@ -300,7 +292,7 @@ void read_teleportation()
   cur_room = player.room;
   teleport();
   if (cur_room != player.room) 
-    s_scroll_info->discover(S_TELEP);
+    game->scrolls().discover(S_TELEP);
 }
 
 void read_enchant_weapon()
@@ -401,7 +393,7 @@ void read_scroll()
 
   look(true); //put the result of the scroll on the screen
   status();
-  s_scroll_info->call_it2(scroll->which);
+  game->scrolls().call_it2(scroll->which);
 
   //Get rid of the thing
   if (scroll->count > 1)

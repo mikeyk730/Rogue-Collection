@@ -155,59 +155,51 @@ bool StickInfo::is_staff(int which) const
 	return m_type[which] == "staff";
 }
 
-StickInfo* s_stick_info; //todo: mem leaking this for now
-
 int does_know_stick(int type)
 {
-	return s_stick_info->is_discovered(type);
+	return game->sticks().is_discovered(type);
 }
 
 void discover_stick(int type)
 {
-	s_stick_info->discover(type);
+	game->sticks().discover(type);
 }
 
 int get_stick_value(int type)
 {
-	return s_stick_info->m_magic_props[type].worth;
+	return game->sticks().m_magic_props[type].worth;
 }
 
 std::string get_stick_name(int type)
 {
-	return s_stick_info->m_magic_props[type].name;
+	return game->sticks().m_magic_props[type].name;
 }
 
 std::string get_stick_guess(int type)
 {
-	return s_stick_info->get_guess(type);
+	return game->sticks().get_guess(type);
 }
 
 void set_stick_guess(int type, const char* value)
 {
-	s_stick_info->set_guess(type, value);
+	game->sticks().set_guess(type, value);
 }
 
 void init_new_stick(Item* stick)
 {
   stick->type = STICK;
-  stick->which = pick_one(s_stick_info->m_magic_props);
+  stick->which = pick_one(game->sticks().m_magic_props);
   fix_stick(stick);
-}
-
-//init_materials: Initialize the construction materials for wands and staffs
-void init_materials()
-{
-	s_stick_info = new StickInfo();
 }
 
 std::string get_material(int type)
 {
-	return s_stick_info->get_identifier(type);
+	return game->sticks().get_identifier(type);
 }
 
 std::string get_stick_type(int type)
 {
-  return s_stick_info->m_type[type];
+  return game->sticks().m_type[type];
 }
 
 void zap_light()
@@ -216,7 +208,7 @@ void zap_light()
   if (player.is_blind()) msg("you feel a warm glow around you");
   else
   {
-    s_stick_info->discover(WS_LIGHT);
+    game->sticks().discover(WS_LIGHT);
     if (player.room->is_gone()) msg("the corridor glows and then fades");
     else msg("the room is lit by a shimmering blue light");
   }
@@ -246,7 +238,7 @@ void zap_striking(Item* obj)
 void zap_bolt(int which, const char* name)
 {
   fire_bolt(&player.pos, &delta, name);
-  s_stick_info->discover(which);
+  game->sticks().discover(which);
 }
 
 void zap_vorpalized_weapon(Item* weapon, Agent* monster)
@@ -281,7 +273,7 @@ void zap_polymorph(Agent* monster, int y, int x)
     mvaddch(y, x, monster->type);
 
   if (monster->type != old_type)
-	s_stick_info->discover(WS_POLYMORPH);
+	game->sticks().discover(WS_POLYMORPH);
 }
 
 void zap_cancellation(Agent* monster)
@@ -355,7 +347,7 @@ void zap_magic_missile()
   Agent* monster;
   Item bolt;
 
-  s_stick_info->discover(WS_MISSILE);
+  game->sticks().discover(WS_MISSILE);
   bolt.type = '*';
   bolt.throw_damage = "1d8";
   bolt.hit_plus = 1000;
@@ -417,7 +409,7 @@ int zap_drain_life()
 //todo: do you need to weild staffs?
 void fix_stick(Item *cur)
 {
-  if (s_stick_info->is_staff(cur->which))
+  if (game->sticks().is_staff(cur->which))
       cur->damage = "2d3";
   else
       cur->damage = "1d1";

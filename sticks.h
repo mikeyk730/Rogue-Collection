@@ -1,8 +1,6 @@
 #pragma once
 #include "item.h"
 
-//init_materials: Initialize the construction materials for wands and staffs
-void init_materials();
 std::string get_material(int type);
 std::string get_stick_type(int type);
 void init_new_stick(Item* stick);

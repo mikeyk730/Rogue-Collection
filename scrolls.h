@@ -1,8 +1,6 @@
 #pragma once
 #include "item.h"
 
-//init_names: Generate the names of the various scrolls
-void init_names();
 std::string get_title(int type);
 void init_new_scroll(Item* scroll);
 int get_scroll_value(int type);

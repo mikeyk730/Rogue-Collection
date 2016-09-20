@@ -1,8 +1,6 @@
 #pragma once
 #include "item.h"
 
-//init_colors: Initialize the potion color scheme for this time
-void init_colors();
 std::string get_color(int type);
 void init_new_potion(Item* potion);
 int get_potion_value(int type);

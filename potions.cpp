@@ -107,58 +107,50 @@ PotionInfo::PotionInfo()
 
 }
 
-PotionInfo* s_potion_info; //todo: mem leaking this for now
-
 int does_know_potion(int type)
 {
-	return s_potion_info->is_discovered(type);
+	return game->potions().is_discovered(type);
 }
 
 void discover_potion(int type)
 {
-	s_potion_info->discover(type);
+	game->potions().discover(type);
 }
 
 int get_potion_value(int type)
 {
-	return s_potion_info->m_magic_props[type].worth;
+	return game->potions().m_magic_props[type].worth;
 }
 
 std::string get_potion_name(int type)
 {
-	return s_potion_info->m_magic_props[type].name;
+	return game->potions().m_magic_props[type].name;
 }
 
 std::string get_potion_guess(int type)
 {
-	return s_potion_info->get_guess(type);
+	return game->potions().get_guess(type);
 }
 
 void set_potion_guess(int type, const char* value)
 {
-	s_potion_info->set_guess(type, value);
-}
-
-//init_colors: Initialize the potion color scheme for this time
-void init_colors()
-{
-	s_potion_info = new PotionInfo();
+	game->potions().set_guess(type, value);
 }
 
 std::string get_color(int type)
 {
-	return s_potion_info->get_identifier(type);
+	return game->potions().get_identifier(type);
 }
 
 void init_new_potion(Item* potion)
 {
   potion->type = POTION;
-  potion->which = pick_one(s_potion_info->m_magic_props);
+  potion->which = pick_one(game->potions().m_magic_props);
 }
 
 void quaff_confusion()
 {
-  s_potion_info->discover(P_CONFUSE);
+  game->potions().discover(P_CONFUSE);
   if (!player.is_confused())
   {
     if (player.is_confused()) 
@@ -172,7 +164,7 @@ void quaff_confusion()
 
 void quaff_paralysis()
 {
-  s_potion_info->discover(P_PARALYZE);
+  game->potions().discover(P_PARALYZE);
   sleep_timer = HOLD_TIME;
   player.set_running(false);
   msg("you can't move");
@@ -182,14 +174,14 @@ void quaff_poison()
 {
   char *sick = "you feel %s sick.";
 
-  s_potion_info->discover(P_POISON);
+  game->potions().discover(P_POISON);
   if (!is_wearing_ring(R_SUSTSTR)) {chg_str(-(rnd(3)+1)); msg(sick, "very");}
   else msg(sick, "momentarily");
 }
 
 void quaff_gain_strength()
 {
-  s_potion_info->discover(P_STRENGTH);
+  game->potions().discover(P_STRENGTH);
   chg_str(1);
   msg("you feel stronger. What bulging muscles!");
 }
@@ -207,7 +199,7 @@ void quaff_see_invisible()
 
 void quaff_healing()
 {
-  s_potion_info->discover(P_HEALING);
+  game->potions().discover(P_HEALING);
   player.stats.increase_hp(roll(player.stats.level, 4), true, false);
   sight();
   msg("you begin to feel better");
@@ -220,7 +212,7 @@ void quaff_monster_detection()
       msg("you have a strange feeling%s.", noterse(" for a moment"));
   else {
 	  if (turn_see(false))
-		  s_potion_info->discover(P_MFIND);
+		  game->potions().discover(P_MFIND);
       msg("");
   }
 }
@@ -242,7 +234,7 @@ void quaff_magic_detection()
       {
         show = true;
         mvaddch(item->pos.y, item->pos.x, goodch(item));
-		s_potion_info->discover(P_TFIND);
+		game->potions().discover(P_TFIND);
       }
     }
     for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
@@ -253,7 +245,7 @@ void quaff_magic_detection()
         {
           show = true;
           mvaddch(monster->pos.y, monster->pos.x, MAGIC);
-		  s_potion_info->discover(P_TFIND);
+		  game->potions().discover(P_TFIND);
         }
       }
     }
@@ -264,14 +256,14 @@ void quaff_magic_detection()
 
 void quaff_raise_level()
 {
-  s_potion_info->discover(P_RAISE);
+  game->potions().discover(P_RAISE);
   msg("you suddenly feel much more skillful");
   raise_level();
 }
 
 void quaff_extra_healing()
 {
-  s_potion_info->discover(P_XHEAL);
+  game->potions().discover(P_XHEAL);
   player.stats.increase_hp(roll(player.stats.level, 8), true, true);
   sight();
   msg("you begin to feel much better");
@@ -279,7 +271,7 @@ void quaff_extra_healing()
 
 void quaff_haste_self()
 {
-  s_potion_info->discover(P_HASTE);
+  game->potions().discover(P_HASTE);
   if (add_haste(true)) msg("you feel yourself moving much faster");
 }
 
@@ -300,7 +292,7 @@ void quaff_restore_strength()
 
 void quaff_blindness()
 {
-  s_potion_info->discover(P_BLIND);
+  game->potions().discover(P_BLIND);
   if (!player.is_blind())
   {
     player.set_blind(true);
@@ -347,7 +339,7 @@ void quaff()
   potion_functions[obj->which]();
 
   status();
-  s_potion_info->call_it2(obj->which);
+  game->potions().call_it2(obj->which);
 
   //Throw the item away
   if (obj->count>1) obj->count--;

@@ -1,8 +1,6 @@
 #pragma once
 #include "item.h"
 
-//init_stones: Initialize the ring stone setting scheme for this time
-void init_stones();
 std::string get_stone(int type);
 void init_new_ring(Item* ring);
 int get_ring_value(int type);

@@ -89,48 +89,40 @@ RingInfo::RingInfo()
 
 }
 
-RingInfo* s_ring_info; //todo: mem leaking this for now
-
 int does_know_ring(int type)
 {
-	return s_ring_info->is_discovered(type);
+	return game->rings().is_discovered(type);
 }
 
 void discover_ring(int type)
 {
-	s_ring_info->discover(type);
+	game->rings().discover(type);
 }
 
 int get_ring_value(int type)
 {
-	return s_ring_info->m_magic_props[type].worth;
+	return game->rings().m_magic_props[type].worth;
 }
 
 std::string get_ring_name(int type)
 {
-	return s_ring_info->m_magic_props[type].name;
+	return game->rings().m_magic_props[type].name;
 }
 
 std::string get_ring_guess(int type)
 {
-	return s_ring_info->get_guess(type);
+	return game->rings().get_guess(type);
 }
 
 void set_ring_guess(int type, const char* value)
 {
-	s_ring_info->set_guess(type, value);
-}
-
-//init_stones: Initialize the ring stone setting scheme for this time
-void init_stones()
-{
-	s_ring_info = new RingInfo();
+	game->rings().set_guess(type, value);
 }
 
 void init_new_ring(Item* ring)
 {
   ring->type = RING;
-  ring->which = pick_one(s_ring_info->m_magic_props);
+  ring->which = pick_one(game->rings().m_magic_props);
   switch (ring->which)
   {
   case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
@@ -148,7 +140,7 @@ void init_new_ring(Item* ring)
 
 std::string get_stone(int type)
 {
-	return s_ring_info->get_identifier(type);
+	return game->rings().get_identifier(type);
 }
 
 //ring_on: Put a ring on a hand
