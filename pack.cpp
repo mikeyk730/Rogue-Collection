@@ -87,8 +87,6 @@ void add_pack(Item *obj, bool silent)
   bool from_floor;
   byte floor;
 
-  auto it = player.pack.begin();
-
   if (obj==NULL)
   {
     from_floor = true;
@@ -147,6 +145,7 @@ void add_pack(Item *obj, bool silent)
   }
   
   //todo: fuck this code is infuriating
+  auto it = player.pack.begin();
 
   //Search for an object of the same type
   bool found_type = false;

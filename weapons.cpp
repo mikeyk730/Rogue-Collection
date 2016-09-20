@@ -84,34 +84,34 @@ void init_new_weapon(Item* weapon)
 //missile: Fire a missile in a given direction
 void missile(int ydelta, int xdelta)
 {
-  Item *obj, *nitem;
+    Item *obj, *nitem;
 
-  //Get which thing we are hurling
-  if ((obj = get_item("throw", WEAPON))==NULL) return;
-  if (!can_drop(obj) || is_current(obj)) return;
-  //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
+    //Get which thing we are hurling
+    if ((obj = get_item("throw", WEAPON)) == NULL) return;
+    if (!can_drop(obj) || is_current(obj)) return;
+    //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
 hack:
-  if (obj->count<2) {
-    player.pack.remove(obj); 
-  }
-  else
-  {
-    //here is a quick hack to check if we can get a new item
-    if ((nitem = new Item(0,0))==NULL)
-    {
-      obj->count = 1;
-      msg("something in your pack explodes!!!");
-      goto hack;
+    if (obj->count < 2) {
+        player.pack.remove(obj); //todo:mem leak?
     }
-    obj->count--;
-    *nitem = *obj;
-    nitem->count = 1;
-    obj = nitem;
-  }
-  do_motion(obj, ydelta, xdelta);
-  //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-  if (monster_at(obj->pos.y, obj->pos.x)==NULL || !hit_monster(obj->pos.y, obj->pos.x, obj))
-    fall(obj, true);
+    else
+    {
+        //here is a quick hack to check if we can get a new item
+        if ((nitem = new Item(0, 0)) == NULL)
+        {
+            obj->count = 1;
+            msg("something in your pack explodes!!!");
+            goto hack;
+        }
+        obj->count--;
+        *nitem = *obj;
+        nitem->count = 1;
+        obj = nitem;
+    }
+    do_motion(obj, ydelta, xdelta);
+    //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
+    if (monster_at(obj->pos.y, obj->pos.x) == NULL || !hit_monster(obj->pos.y, obj->pos.x, obj))
+        fall(obj, true);
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room

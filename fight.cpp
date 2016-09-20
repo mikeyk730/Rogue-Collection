@@ -185,35 +185,35 @@ bool leprechaun_attack(Agent* mp)
 
 bool nymph_attack(Agent* mp)
 {
-  //Nymphs steal a magic item, look through the pack and pick out one we like.
-  Item *steal;
-  int nobj = 0;
-  char *she_stole = "she stole %s!";
+    const char *she_stole = "she stole %s!";
 
-  steal = NULL;
-  for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
-      Item* obj = *it;
-      if (obj != get_current_armor() && obj != get_current_weapon() && obj != get_ring(LEFT) && obj != get_ring(RIGHT) && is_magic(obj) && rnd(++nobj) == 0)
-          steal = obj;
-  }
-  if (steal!=NULL)
-  {
-    if (steal->count>1 && steal->group==0)
+    //Nymphs steal a magic item, look through the pack and pick out one we like.
+    Item* item = NULL;
+    int nobj = 0;
+    for (auto it = player.pack.begin(); it != player.pack.end(); ++it) {
+        Item* obj = *it;
+        if (obj != get_current_armor() && obj != get_current_weapon() &&
+            obj != get_ring(LEFT) && obj != get_ring(RIGHT) &&
+            is_magic(obj) && rnd(++nobj) == 0)
+            item = obj;
+    }
+    if (item == NULL)
+        return false;
+
+    if (item->count > 1 && item->group == 0)
     {
-      int oc;
-      oc = steal->count--;
-      steal->count = 1;
-      msg(she_stole, inv_name(steal, true));
-      steal->count = oc;
+        int oc;
+        oc = item->count--;
+        item->count = 1;
+        msg(she_stole, inv_name(item, true));
+        item->count = oc;
     }
     else {
-        player.pack.remove(steal);
-        msg(she_stole, inv_name(steal, true));
-        delete steal;
+        player.pack.remove(item);
+        msg(she_stole, inv_name(item, true));
+        delete item;
     }
     return true;
-  }
-  return false;
 }
 
 bool vampire_wraith_attack(Agent* monster)
@@ -550,7 +550,7 @@ void remove_monster(Agent *monster, bool waskill)
 {
     Coord* monster_pos = &monster->pos;
     for (auto it = monster->pack.begin(); it != monster->pack.end();){
-        Item* obj = *(it++); //TODO:does this work?
+        Item* obj = *(it++);
         obj->pos = monster->pos;
         monster->pack.remove(obj);
         if (waskill)
@@ -585,28 +585,28 @@ bool is_magic(Item *obj)
 //killed: Called to put a monster to death
 void killed(Agent *monster, bool print)
 {
-  player.stats.exp += monster->stats.exp;
+    player.stats.exp += monster->stats.exp;
 
-  //If the monster was a flytrap, un-hold him
-  if (monster->can_hold()){
-      player.set_is_held(false);
-  }
-  else if (monster->drops_gold()) {
-      Item *gold = new Item(GOLD, 0);
-      gold->gold_value = rnd_gold();
-      if (save(VS_MAGIC))
-          gold->gold_value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();
-      monster->pack.push_front(gold);
-  }
-  if (print)
-  {
-    addmsg("you have defeated ");
-    if (player.is_blind()) 
-        msg(it);
-    else msg("the %s", monster->get_monster_name());
-  }
-  //Do adjustments if he went up a level
-  check_level();
-  //Get rid of the monster.
-  remove_monster(monster, true);
+    //If the monster was a flytrap, un-hold him
+    if (monster->can_hold()) {
+        player.set_is_held(false);
+    }
+    else if (monster->drops_gold()) {
+        Item *gold = new Item(GOLD, 0);
+        gold->gold_value = rnd_gold();
+        if (save(VS_MAGIC))
+            gold->gold_value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();
+        monster->pack.push_front(gold);
+    }
+    if (print)
+    {
+        addmsg("you have defeated ");
+        if (player.is_blind())
+            msg(it);
+        else msg("the %s", monster->get_monster_name());
+    }
+    //Do adjustments if he went up a level
+    check_level();
+    //Get rid of the monster.
+    remove_monster(monster, true);
 }

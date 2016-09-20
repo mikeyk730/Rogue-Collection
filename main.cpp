@@ -53,9 +53,10 @@ int main(int argc, char **argv)
     g_random = new Random(seed);
 
     //todo: process args
-    //game = new GameState(seed);
+    bool replay = true;
+    replay = false;
     std::ifstream in("foo.baz", std::ios::binary | std::ios::in);
-    game = new GameState(g_random, in);
+    game = replay ? new GameState(g_random, in) : new GameState(seed);
 
     setenv("rogue.opt");
     if ("bw" == game->get_environment("scorefile"))
