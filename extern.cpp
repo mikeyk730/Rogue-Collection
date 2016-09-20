@@ -152,7 +152,7 @@ bool running = false;       //True if player is running
 
 int was_trapped = 0;   //Was a trap sprung
 
-int bailout = false;
+bool invalid_position = false;
 char take;  //Thing the rogue is taking
 char run_character; //Direction player is running
 

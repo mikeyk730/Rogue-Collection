@@ -21,15 +21,6 @@ void discard_item(Item *item)
     delete item;
 }
 
-#include <list>
-
-Agent *create_agent()
-{
-    Agent* agent = new Agent;
-    memset(agent, 0, sizeof(Agent)-sizeof(std::list<Item*>)); //todo:very hacky
-    return agent;
-}
-
 void discard_agent(Agent *agent)
 {
     delete agent;

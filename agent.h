@@ -37,23 +37,23 @@ struct Agent
         int max_hp;         //Max hit points
 
         int get_hp() const;
-        bool decrease_hp(int n, bool can_kill);
         void increase_hp(int n, bool max_bonus, bool second_max_bonus);
+        bool decrease_hp(int n, bool can_kill);
         int drain_hp();
     };
 
-    Coord pos;                    //Position
-    char turn;                    //If slowed, is it a turn to move
-    char type;                    //What it is
-    byte disguise;                //What mimic looks like
-    byte oldch;                   //Character that was where it was
-    Coord *dest;                  //Where it is running to
-    short flags;                  //State word
-    int exflags;                  //More state;
-    int value;                    //
-    Stats stats;                  //Physical description
-    Room *room;                   //Current room for thing
-    std::list<Item*> pack;        //What the thing is carrying
+    Coord pos = { 0, 0 };             //Position
+    char turn = 0;                    //If slowed, is it a turn to move
+    char type = 0;                    //What it is
+    byte disguise = 0;                //What mimic looks like
+    byte oldch = 0;                   //Character that was where it was
+    Coord *dest = 0;                  //Where it is running to
+    short flags = 0;                  //State word
+    int exflags = 0;                  //More state;
+    int value = 0;                    //
+    Stats stats;                      //Physical description
+    Room *room = 0;                   //Current room for thing
+    std::list<Item*> pack;            //What the thing is carrying
 
 private:
     bool is_flag_set(short flag) const;

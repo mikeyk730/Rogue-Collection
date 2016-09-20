@@ -381,16 +381,16 @@ void wanderer()
   Agent *monster;
   Coord cp;
 
-  //can we allocate a new monster
-  if ((monster = create_agent())==NULL) return;
   do
   {
     room = rnd_room();
     if (room==player.room) continue;
     rnd_pos(room, &cp);
   } while (!(room!=player.room && step_ok(get_tile_or_monster(cp.y, cp.x))));
+  monster = new Agent;
   new_monster(monster, randmonster(true, get_level()), &cp, get_level());
-  if (bailout) debug("wanderer bailout");
+  if (invalid_position) 
+	  debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
   start_run(monster);
 }

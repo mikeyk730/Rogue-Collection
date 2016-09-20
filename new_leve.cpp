@@ -165,13 +165,13 @@ void treas_room()
     }
     if (spots!=MAXTRIES)
     {
-      if ((monster = create_agent())!=NULL)
-      {
+		monster = new Agent;
         new_monster(monster, randmonster(false, get_level()+1), &pos, get_level()+1);
-        if (bailout) debug("treasure rm bailout");
+        if (invalid_position) 
+			debug("treasure roomm bailout");
         monster->set_is_mean(true); //no sloughers in THIS room
         give_pack(monster);
-      }
+      
     }
   }
 }

@@ -128,17 +128,15 @@ void do_rooms()
     //Put the monster in
     if (rnd(100)<(room->goldval>0?80:25))
     {
-      if ((monster = create_agent())!=NULL)
-      {
         byte mch;
-
         do {
           rnd_pos(room, &mp); 
           mch = get_tile_or_monster(mp.y, mp.x);
         } while (!isfloor(mch));
+		monster = new Agent;
         new_monster(monster, randmonster(false, get_level()), &mp, get_level());
         give_pack(monster);
-      }
+      
     }
   }
 }
@@ -196,7 +194,7 @@ void enter_room(Coord *cp)
   Agent *monster;
 
   room = player.room = get_room_from_position(cp);
-  if (bailout || (room->is_gone() && (room->is_maze())==0))
+  if (invalid_position || (room->is_gone() && (room->is_maze())==0))
   {
     debug("in a gone room");
     return;
@@ -276,7 +274,7 @@ struct Room *get_room_from_position(Coord *pos)
     return &passages[fp&F_PNUM];
 
   debug("in some bizarre place (%d, %d)", pos->y, pos->x);
-  bailout++;
+  invalid_position = true;
   return NULL;
 }
 

@@ -21,8 +21,10 @@ void slime_split(Agent *monster)
 {
   Agent *nslime;
 
-  if (new_slime(monster)==0 || (nslime = create_agent())==NULL) return;
+  if (new_slime(monster)==0) 
+	  return;
   msg("The %s divides.  Ick!", monster->get_monster_name());
+  nslime = new Agent;
   new_monster(nslime, monster->type, &slimy, get_level());
   if (can_see(slimy.y, slimy.x))
   {

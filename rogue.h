@@ -113,6 +113,10 @@ bool isfloor(byte c);
 #define MAXPOTIONS  14
 #define MAXSCROLLS  15
 
+#define MAXSTR    80 //maximum length of strings
+#define MAXLINES  25 //maximum number of screen lines used
+#define MAXCOLS   80 //maximum number of screen columns used
+
 
 //Coordinate data type
 struct Coord
@@ -137,15 +141,6 @@ struct Array
 
 //External variables
 
-
-extern Coord delta, oldpos;
-extern struct Room *oldrp, passages[];
-
-
-#define MAXSTR    80 //maximum length of strings
-#define MAXLINES  25 //maximum number of screen lines used
-#define MAXCOLS   80 //maximum number of screen columns used
-
 //string constants
 
 extern const char *const level_titles[], *const helpcoms[], *const helpobjs[];
@@ -153,9 +148,12 @@ extern const char *const flash, *const intense;
 
 //Now all the global variables
 
+extern Coord delta, oldpos;
+extern struct Room *oldrp, passages[];
+
 extern int maxrow;
 extern short LINES, COLS;
-extern int bailout;
+extern bool invalid_position;
 
 extern bool counts_as_turn, again, stop_at_door, fastmode, fast_play_enabled, firstmove, 
   playing, running;

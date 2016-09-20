@@ -48,7 +48,12 @@ void do_move(int dy, int dx)
   int fl;
 
   firstmove = false;
-  if (bailout) {bailout = 0; msg("the crack widens ... "); descend(""); return;}
+  if (invalid_position) {
+	  invalid_position = false;
+	  msg("the crack widens ... "); 
+	  descend("");
+	  return;
+  }
   if (no_move) {no_move--; msg("you are still stuck in the bear trap"); return;}
   //Do a confused move (maybe)
   if (player.is_confused() && rnd(5) != 0) rndmove(&player, &nh);
