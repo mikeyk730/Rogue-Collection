@@ -329,14 +329,15 @@ void set_xeroc_disguise(Agent* X)
   }
 }
 
-//new_monster: Pick a new monster and add it to the list
-void new_monster(Agent *monster, byte type, Coord *position, int level)
+//create_monster: Pick a new monster and add it to the list
+Agent* create_monster(byte type, Coord *position, int level)
 {
+  Agent* monster = new Agent;
   int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
   const struct Monster* defaults;
   
   defaults = &monsters[type-'A'];
-  attach_agent(level_monsters, monster);
+  level_monsters.push_front(monster);
 
   monster->type = type;
   monster->disguise = type;
@@ -358,6 +359,8 @@ void new_monster(Agent *monster, byte type, Coord *position, int level)
 
   if (is_wearing_ring(R_AGGR)) 
     start_run(monster);
+
+  return monster;
 }
 
 //expadd: Experience to add for this monster's level/hit points
@@ -387,8 +390,7 @@ void wanderer()
     if (room==player.room) continue;
     rnd_pos(room, &cp);
   } while (!(room!=player.room && step_ok(get_tile_or_monster(cp.y, cp.x))));
-  monster = new Agent;
-  new_monster(monster, randmonster(true, get_level()), &cp, get_level());
+  monster = create_monster(randmonster(true, get_level()), &cp, get_level());
   if (invalid_position) 
       debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);

@@ -220,26 +220,27 @@ void zap_vorpalized_weapon(Item* weapon, Agent* monster)
 
 void zap_polymorph(Agent* monster, int y, int x)
 {
-  byte ch, old_type;
-  Coord coord = delta;
-
-  auto pack = monster->pack;
-  ch = monster->oldch;
-  old_type = monster->type;
-  detach_agent(level_monsters, monster);
   if (can_see_monster(monster)) 
     mvaddch(y, x, get_tile(y, x));
 
-  coord.y = y;
-  coord.x = x;
-  new_monster(monster, rnd(26)+'A', &coord, get_level());
-  monster->oldch = ch;
-  monster->pack = pack;
+  Coord coord = { x, y };
+  Agent* new_monster = create_monster(rnd(26)+'A', &coord, get_level());
+  detach_agent(level_monsters, new_monster);
+
+  new_monster->oldch = monster->oldch;
+  new_monster->pack = monster->pack;
+  if (new_monster->type != monster->type)
+      game->sticks().discover(WS_POLYMORPH);
+
+  *monster = *new_monster;
+  delete new_monster;
+  
+  //move to front of list to maintain original behavior
+  detach_agent(level_monsters, monster);
+  level_monsters.push_front(monster);
+
   if (can_see_monster(monster)) 
     mvaddch(y, x, monster->type);
-
-  if (monster->type != old_type)
-    game->sticks().discover(WS_POLYMORPH);
 }
 
 void zap_cancellation(Agent* monster)

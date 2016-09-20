@@ -32,12 +32,6 @@ void detach_agent(std::list<Agent*>& l, Agent *agent)
     l.remove(agent);
 }
 
-//_attach: add an agent to the head of a list
-void attach_agent(std::list<Agent*>& l, Agent *agent)
-{
-    l.push_front(agent);
-}
-
 //_free_list: Throw the whole blamed thing away
 void free_agent_list(std::list<Agent*>& l)
 {

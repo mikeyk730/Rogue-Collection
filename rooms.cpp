@@ -133,8 +133,7 @@ void do_rooms()
           rnd_pos(room, &mp); 
           mch = get_tile_or_monster(mp.y, mp.x);
         } while (!isfloor(mch));
-        monster = new Agent;
-        new_monster(monster, randmonster(false, get_level()), &mp, get_level());
+        monster = create_monster(randmonster(false, get_level()), &mp, get_level());
         give_pack(monster);
       
     }

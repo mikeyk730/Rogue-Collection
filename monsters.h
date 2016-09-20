@@ -7,8 +7,8 @@ const char* get_monster_name(char monster);
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
 char randmonster(bool wander, int level);
 
-//new_monster: Pick a new monster and add it to the list
-void new_monster(Agent *monster, byte type, Coord *cp, int level);
+//create_monster: Pick a new monster and add it to the list
+Agent* create_monster(byte type, Coord *cp, int level);
 
 //expadd: Experience to add for this monster's level/hit points
 int exp_add(Agent *monster);
