@@ -64,11 +64,8 @@ void command()
 
 int com_char()
 {
-  int same, ch;
+  int ch;
   ch = readchar();
-  same = (fastmode==fast_play_enabled);
-  if (same) fastmode = fast_play_enabled;
-  else fastmode = !fast_play_enabled;
   switch (ch)
   {
   case '\b': ch = 'h'; break;
@@ -85,9 +82,11 @@ int read_command()
   int command, ch, junk;
 
   counts_as_turn = true;
+  bool was_fast_play_enabled = fast_play_enabled;
   fastmode = fast_play_enabled;
   look(true);
-  if (!running) stop_at_door = false;
+  if (!running) 
+      stop_at_door = false;
   do_take = true;
   again = false;
 
@@ -111,7 +110,10 @@ int read_command()
     {
       for (command = 0; command==0;)
       {
-        switch (ch = com_char())
+        ch = com_char();
+        if (was_fast_play_enabled != fast_play_enabled)
+            fastmode = !fastmode;
+        switch (ch)
         {
         case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
           junk = repeat_cmd_count*10;
