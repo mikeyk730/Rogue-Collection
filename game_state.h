@@ -23,6 +23,8 @@ struct GameState
     Hero& hero();
 
 private:
+    void init_environment();
+
     long m_seed; //Random number seed
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 

@@ -49,10 +49,8 @@ int bwflag = false;
 //main: The main program, of course
 int main(int argc, char **argv)
 {
-    int seed = srand2();
-    game = new GameState(seed);
-    //std::ifstream in("foo.baz", std::ios::binary | std::ios::in);
-    //game = new GameState(in);
+    game = new GameState(get_seed());
+    //game = new GameState(std::ifstream("foo.baz", std::ios::binary | std::ios::in));
 
     setenv("rogue.opt");
     if ("bw" == game->get_environment("scorefile"))
@@ -98,7 +96,7 @@ int rnd(int range)
     return game->random().rnd(range);
 }
 
-int srand2()
+int get_seed()
 {
   int t = (int)time(0);
   srand(t);

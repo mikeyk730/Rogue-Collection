@@ -153,6 +153,8 @@ void credits()
   getinfo(tname, 23);
   if (*tname && *tname!=ESCAPE)
       game->hero().set_name(tname);
+  else
+      game->hero().set_name(game->get_environment("name"));
 
   blot_out(23, 0, 24, COLS-1);
   brown();

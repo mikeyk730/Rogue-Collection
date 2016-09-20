@@ -13,15 +13,7 @@ m_random(new Random(seed)),
 m_input_interface(new CapturedInput(new KeyboardInput())),
 m_hero(new Hero)
 {
-    m_environment["name"] = "Rodney";//move to Hero
-    m_environment["scorefile"] = "rogue.scr";
-    //m_environment["savefile"] = "rogue.sav";
-    m_environment["macro"] = "v";
-    m_environment["fruit"] = "Slime Mold";//move to Hero
-    m_environment["menu"] = "on";
-    m_environment["screen"] = "";
-    m_environment["levelnames"] = "on";
-    m_environment["monstercfg"] = "monsters.opt";
+    init_environment();
 }
 
 GameState::GameState(std::istream& in)
@@ -31,25 +23,30 @@ GameState::GameState(std::istream& in)
     m_input_interface.reset(new CapturedInput(new StreamInput(in, new KeyboardInput())));
     m_hero.reset(new Hero);
 
-    m_environment["name"] = "Rodney";//move to Hero
+    init_environment();
+}
+
+GameState::~GameState()
+{ }
+
+void GameState::init_environment()
+{
+    m_environment["name"] = "Rodney";
     m_environment["scorefile"] = "rogue.scr";
-    //m_environment["savefile"] = "rogue.sav";
+    m_environment["savefile"] = "rogue.sav";
     m_environment["macro"] = "v";
-    m_environment["fruit"] = "Slime Mold";//move to Hero
+    m_environment["fruit"] = "Slime Mold"; //move to Hero?
     m_environment["menu"] = "on";
     m_environment["screen"] = "";
     m_environment["levelnames"] = "on";
     m_environment["monstercfg"] = "monsters.opt";
 }
 
-
-GameState::~GameState()
-{ }
-
 void GameState::save_game(const std::string& filename)
 {
     std::ofstream file(filename, std::ios::binary | std::ios::out);
     file.write((char*)&m_seed, sizeof(m_seed));
+    //todo:serialize env
     m_input_interface->Serialize(file);
 }
 
