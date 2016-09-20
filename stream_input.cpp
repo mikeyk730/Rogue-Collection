@@ -2,14 +2,32 @@
 #include <cassert>
 #include <cstdio>
 #include "stream_input.h"
+#include "rogue.h"
 
 StreamInput::StreamInput(std::istream& in, InputInterface* backup) :
 m_backup(backup),
 m_stream(in)
 { }
 
+#include <conio.h>
+#include "mach_dep.h"
+#include "game_state.h"
+
 char StreamInput::GetNextChar()
 {
+    unsigned char f[4];
+    m_stream.read((char*)f, 4);
+    if (m_stream)
+    {
+        fastmode = (f[0] == ON);
+        fast_play_enabled = f[1] == ON;
+        stop_at_door = f[2] == ON;
+        running = f[3] == ON;
+    }
+
+   // while (!_kbhit());
+    //getkey();
+
     char c;
     m_stream.read(&c, 1);
 
@@ -19,6 +37,7 @@ char StreamInput::GetNextChar()
     }
 
     if (!m_stream){
+        game->m_allow_fast_play = true;
         if (m_backup){
             return m_backup->GetNextChar();
         }
@@ -53,6 +72,7 @@ std::string StreamInput::GetNextString(int size)
     }
 
     if (!m_stream){
+        game->m_allow_fast_play = true;
         if (m_backup){
             return m_backup->GetNextString(size);
         }

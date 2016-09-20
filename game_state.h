@@ -30,6 +30,10 @@ struct GameState
     StickInfo& sticks();
     ItemClass& item_class(int type);
 
+    bool allow_fast_play() const;
+
+    bool m_allow_fast_play = true;
+
 private:
     void init_environment();
 

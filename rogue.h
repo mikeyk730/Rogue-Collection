@@ -117,6 +117,8 @@ bool isfloor(byte c);
 #define MAXLINES  25 //maximum number of screen lines used
 #define MAXCOLS   80 //maximum number of screen columns used
 
+#define ON  0xF1
+#define OFF 0xF0
 
 //Coordinate data type
 struct Coord

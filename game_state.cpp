@@ -20,7 +20,8 @@ m_sticks(new StickInfo)
     init_environment();
 }
 
-GameState::GameState(Random* random, std::istream& in)
+GameState::GameState(Random* random, std::istream& in) :
+    m_allow_fast_play(false)
 {
     in.read((char*)&m_seed, sizeof(m_seed));
     random->set_seed(m_seed);
@@ -121,6 +122,11 @@ ItemClass& GameState::item_class(int type)
         return rings();
     }
     throw std::runtime_error("Requested bad type of item.");
+}
+
+bool GameState::allow_fast_play() const
+{
+    return m_allow_fast_play;
 }
 
 //todo:

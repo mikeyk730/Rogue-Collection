@@ -421,7 +421,7 @@ void SIG2()
   else { nspot = 20; cspot = 39; tspot = 75; }
 
   getrc(&x, &y);
-  if (fast_play_enabled != scroll_lock_on)
+  if (fast_play_enabled != scroll_lock_on && game->allow_fast_play())
   {
     fast_play_enabled = scroll_lock_on;
     repeat_cmd_count = 0;

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "captured_input.h"
+#include "rogue.h"
 
 CapturedInput::CapturedInput(InputInterface* d)
 : m_delegate(d)
@@ -8,6 +9,10 @@ CapturedInput::CapturedInput(InputInterface* d)
 char CapturedInput::GetNextChar()
 {
     char c = m_delegate->GetNextChar();
+    m_stream.push_back(fastmode ? ON : OFF);
+    m_stream.push_back(fast_play_enabled ? ON : OFF);
+    m_stream.push_back(stop_at_door ? ON : OFF);
+    m_stream.push_back(running ? ON : OFF);
     m_stream.push_back(c);
     return c;
 }

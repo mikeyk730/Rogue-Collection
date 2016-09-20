@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    replay = false;
+   // replay = false;
     std::ifstream in("foo.baz", std::ios::binary | std::ios::in);
     game = replay ? new GameState(g_random, in) : new GameState(seed);
 
