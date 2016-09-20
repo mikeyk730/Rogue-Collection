@@ -107,7 +107,7 @@ StickInfo& GameState::sticks()
 	return *m_sticks;
 }
 
-ItemClass& GameState::get_class(int type)
+ItemClass& GameState::item_class(int type)
 {
 	switch (type)
 	{

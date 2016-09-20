@@ -53,12 +53,12 @@ void whatis()
 	{
 	case SCROLL:
 	case POTION:
-		game->get_class(obj->type).discover(obj->which);
+		game->item_class(obj->type).discover(obj->which);
 		break;
 
 	case RING:
 	case STICK:
-		game->get_class(obj->type).discover(obj->which);
+		game->item_class(obj->type).discover(obj->which);
 		obj->set_known();
 		break;
 

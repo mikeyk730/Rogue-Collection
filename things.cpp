@@ -62,7 +62,7 @@ char *inv_name(Item *obj, bool drop)
   case POTION:
   case STICK:
   case RING:
-    game->get_class(obj->type).get_inventory_name(obj);
+    game->item_class(obj->type).get_inventory_name(obj);
     break;
 
   case FOOD:
@@ -285,7 +285,7 @@ void print_disc(byte type)
 	static Item obj;
 	static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
-	ItemClass& item_class = game->get_class(type);
+	ItemClass& item_class = game->item_class(type);
 	maxnum = item_class.get_max_items();
 
 	set_order(order, maxnum);

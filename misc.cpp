@@ -523,34 +523,34 @@ void call()
 	if (obj == NULL) 
 		return;
 
-	ItemClass* item_info;
+	ItemClass* item_class;
 	switch (obj->type)
 	{
 	case RING:
 	case POTION:
 	case SCROLL:
 	case STICK:
-		item_info = &game->get_class(obj->type);
+		item_class = &game->item_class(obj->type);
 		break;
 	default:
 		msg("you can't call that anything");
 		return;
 	}
 
-	if (item_info->is_discovered(obj->which)) {
+	if (item_class->is_discovered(obj->which)) {
 		msg("that has already been identified");
 		return;
 	}
 
-	std::string called = item_info->get_guess(obj->which);
+	std::string called = item_class->get_guess(obj->which);
 	if (called.empty())
-		called = item_info->get_identifier(obj->which);
+		called = item_class->get_identifier(obj->which);
 	msg("Was called \"%s\"", called.c_str());
 
 	msg("what do you want to call it? ");
 	getinfo(prbuf, MAXNAME);
 	if (*prbuf && *prbuf != ESCAPE)
-		item_info->set_guess(obj->which, prbuf);
+		item_class->set_guess(obj->which, prbuf);
 	msg("");
 }
 
