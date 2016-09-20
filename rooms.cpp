@@ -253,7 +253,7 @@ void leave_room(Coord *cp)
             break;
           }
           else 
-            monster_at(y, x)->oldch = '@';
+            monster_at(y, x)->oldch = MDK;
           addch(floor);
       }
     }

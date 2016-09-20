@@ -384,7 +384,7 @@ bool turn_see(bool turn_off)
         can_see = (can_see_monster(monster) || (was_there = curch()) == monster->type);
         if (turn_off)
         {
-            if (!can_see_monster(monster) && monster->oldch != '@') addch(monster->oldch);
+            if (!can_see_monster(monster) && monster->oldch != MDK) addch(monster->oldch);
         }
         else
         {

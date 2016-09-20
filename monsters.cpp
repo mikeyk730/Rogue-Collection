@@ -341,7 +341,7 @@ void new_monster(Agent *monster, byte type, Coord *position, int level)
   monster->type = type;
   monster->disguise = type;
   monster->pos = *position;
-  monster->oldch = '@';
+  monster->oldch = MDK;
   monster->room = get_room_from_position(position);
   monster->flags = defaults->flags;
   monster->exflags = defaults->exflags;

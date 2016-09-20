@@ -136,7 +136,7 @@ over:
   if (monster->is_stationary()) 
       return true;
   //If the chasing thing moved, update the screen
-  if (monster->oldch!='@')
+  if (monster->oldch!=MDK)
   {
     if (monster->oldch==' ' && can_see(monster->pos.y, monster->pos.x) && get_tile(monster->pos.y, monster->pos.x)==FLOOR)
       mvaddch(monster->pos.y, monster->pos.x, (char)FLOOR);
@@ -168,7 +168,7 @@ over:
     mvaddch(ch_ret.y, ch_ret.x, monster->type);
   }
   else 
-    monster->oldch = '@';
+    monster->oldch = MDK;
   if (monster->oldch==FLOOR && oroom->is_dark()) 
       monster->oldch = ' ';
   standend();

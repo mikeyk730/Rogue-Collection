@@ -56,6 +56,8 @@ typedef unsigned char byte;
 #define AMULET    (0x0c)
 #define RING      (0xf8) //(0x09)
 #define WEAPON    (0x18)
+//todo: figure out what this does:
+#define MDK       '@'
 #define CALLABLE  -1
 
 bool isfloor(byte c);

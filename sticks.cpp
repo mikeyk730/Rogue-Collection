@@ -293,7 +293,7 @@ void zap_teleport(Agent* monster, int y, int x, int which)
 
   if (which==WS_TELAWAY)
   {
-    monster->oldch = '@';
+    monster->oldch = MDK;
     find_empty_location(&new_pos, true);
     monster->pos = new_pos;
   }
@@ -592,7 +592,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
       {
         hit_hero = true;
         changed = !changed;
-        if (monster->oldch!='@') monster->oldch = get_tile(pos.y, pos.x);
+        if (monster->oldch!=MDK) monster->oldch = get_tile(pos.y, pos.x);
         if (!save_throw(VS_MAGIC, monster) || is_frost)
         {
           bolt.pos = pos;

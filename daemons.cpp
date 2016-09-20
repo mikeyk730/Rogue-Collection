@@ -80,7 +80,7 @@ void unsee()
 
   for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
       th = *it;
-      if (th->is_invisible() && can_see_monster(th) && th->oldch != '@')
+      if (th->is_invisible() && can_see_monster(th) && th->oldch != MDK)
           mvaddch(th->pos.y, th->pos.x, th->oldch);
   }
   player.set_sees_invisible(false);
