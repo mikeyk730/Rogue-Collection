@@ -24,7 +24,7 @@ struct ItemClass
 
     std::string get_guess(int type) const;
     void set_guess(int type, const std::string& guess);
-    void call_it2(int type); //Call an object something after use.
+    void call_it(int type); //Call an object something after use.
 
     int get_max_items() const;
 

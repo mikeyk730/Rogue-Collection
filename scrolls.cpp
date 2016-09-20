@@ -252,12 +252,11 @@ void read_food_detection()
 
 void read_teleportation()
 {
-  //Scroll of teleportation: Make him disappear and reappear
-  struct Room *cur_room;
-  cur_room = player.room;
-  teleport();
-  if (cur_room != player.room) 
-    game->scrolls().discover(S_TELEP);
+    //Scroll of teleportation: Make him disappear and reappear
+    Room *original_room = player.room;
+    teleport();
+    if (original_room != player.room)
+        game->scrolls().discover(S_TELEP);
 }
 
 void read_enchant_weapon()
@@ -359,7 +358,7 @@ void read_scroll()
 
   look(true); //put the result of the scroll on the screen
   status();
-  game->scrolls().call_it2(scroll->which);
+  game->scrolls().call_it(scroll->which);
 
   //Get rid of the thing
   if (scroll->count > 1)

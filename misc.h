@@ -33,9 +33,6 @@ int sign(int nm);
 //spread: Give a spread around a given number (+/- 10%)
 int spread(int nm);
 
-//call_it: Call an object something after use.
-void call_it(bool know, char **guess);
-
 //step_ok: Returns true if it is ok to step on ch
 int step_ok(int ch);
 

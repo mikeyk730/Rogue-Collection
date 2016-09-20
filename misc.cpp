@@ -300,19 +300,6 @@ int spread(int nm)
   return r;
 }
 
-//call_it: Call an object something after use.
-void call_it(bool know, char **guess)
-{
-  if (know && **guess) **guess = 0;
-  else if (!know && **guess==0)
-  {
-    msg("%scall it? ", noterse("what do you want to "));
-    getinfo(prbuf, MAXNAME);
-    if (*prbuf!=ESCAPE) strcpy(*guess, prbuf);
-    msg("");
-  }
-}
-
 //step_ok: Returns true if it is ok to step on ch
 int step_ok(int ch)
 {

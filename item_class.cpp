@@ -48,7 +48,7 @@ void ItemClass::set_guess(int type, const std::string& guess)
     m_guesses[type] = guess;
 }
 
-void ItemClass::call_it2(int type)
+void ItemClass::call_it(int type)
 {
     if (is_discovered(type))
         set_guess(type, "");
