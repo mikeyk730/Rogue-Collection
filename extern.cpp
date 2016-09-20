@@ -5,6 +5,7 @@
 #include "agent.h"
 #include "item.h"
 
+struct Random;
 struct GameState;
 
 #define MAXHELPC  65
@@ -185,5 +186,6 @@ std::list<Agent*> level_monsters; //List of monsters on the level
 //Common strings
 const char *typeahead = "";
 
+Random* g_random;
 GameState* game;
 

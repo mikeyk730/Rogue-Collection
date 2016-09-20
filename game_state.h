@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 
+#include "item_class.h"
+
 struct Random;
 struct InputInterface;
 struct Hero;
@@ -10,7 +12,7 @@ struct Hero;
 struct GameState
 {
     GameState(int seed);
-    GameState(std::istream& in);
+    GameState(Random* random, std::istream& in);
     ~GameState();
 
     void save_game(const std::string& filename);
@@ -21,6 +23,11 @@ struct GameState
     Random& random();
     InputInterface& input_interface();
     Hero& hero();
+	
+	ScrollInfo& scrolls();
+	PotionInfo& potions();
+	RingInfo& rings();
+	StickInfo& sticks();
 
 private:
     void init_environment();
@@ -31,4 +38,9 @@ private:
     std::unique_ptr<Random> m_random; //Random number generator
     std::unique_ptr<InputInterface> m_input_interface; //Interface for getting game input
     std::unique_ptr<Hero> m_hero;
+	
+	ScrollInfo m_scrolls;
+	PotionInfo m_potions;
+	RingInfo m_rings;
+	StickInfo m_sticks;
  };

@@ -1,6 +1,9 @@
 struct Random
 {
+	Random();
     Random(int seed);
+
+	void set_seed(int s);
 
     //rnd: Pick a very random number.
     int rnd(int range);

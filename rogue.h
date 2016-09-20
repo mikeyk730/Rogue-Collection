@@ -7,6 +7,7 @@
 #include <string.h>
 #include "main.h"
 
+struct Random;
 struct GameState;
 
 //Options set for PC rogue
@@ -168,6 +169,7 @@ extern char
 extern const char* typeahead;
 
 extern int repeat_cmd_count, iguess, mpos, sleep_timer, no_food, no_move, turns_since_heal;
+extern Random* g_random;
 extern GameState* game;
 
 #define BUFSIZE             128

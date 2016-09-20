@@ -1,4 +1,5 @@
 #include <fstream>
+#include "rogue.h"
 #include "game_state.h"
 #include "random.h"
 #include "input_interface.h"
@@ -9,17 +10,16 @@
 
 GameState::GameState(int seed) :
 m_seed(seed),
-m_random(new Random(seed)),
 m_input_interface(new CapturedInput(new KeyboardInput())),
 m_hero(new Hero)
 {
     init_environment();
 }
 
-GameState::GameState(std::istream& in)
+GameState::GameState(Random* random, std::istream& in)
 {
     in.read((char*)&m_seed, sizeof(m_seed));
-    m_random.reset(new Random(m_seed));
+	random->set_seed(m_seed);
     m_input_interface.reset(new CapturedInput(new StreamInput(in, new KeyboardInput())));
     m_hero.reset(new Hero);
 
@@ -77,6 +77,26 @@ InputInterface& GameState::input_interface()
 Hero& GameState::hero()
 {
     return *m_hero;
+}
+
+ScrollInfo& GameState::scrolls()
+{
+	return m_scrolls;
+}
+
+PotionInfo& GameState::potions()
+{
+	return m_potions;
+}
+
+RingInfo& GameState::rings()
+{
+	return m_rings;
+}
+
+StickInfo& GameState::sticks()
+{
+	return m_sticks;
 }
 
 //todo:

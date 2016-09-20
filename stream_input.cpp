@@ -3,9 +3,9 @@
 #include <cstdio>
 #include "stream_input.h"
 
-StreamInput::StreamInput(std::istream& inx, InputInterface* backup) :
+StreamInput::StreamInput(std::istream& in, InputInterface* backup) :
 m_backup(backup),
-m_stream(inx)
+m_stream(in)
 { }
 
 char StreamInput::GetNextChar()
