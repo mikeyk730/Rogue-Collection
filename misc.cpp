@@ -519,55 +519,45 @@ void go_up_stairs()
 //call: Allow a user to call a potion, scroll, or ring something
 void call()
 {
-  Item *obj;
-  std::string guess, elsewise;
-  int(*know)(int);
-  void(*setter)(int, const char*);
+	Item *obj = get_item("call", CALLABLE);
+	if (obj == NULL) 
+		return;
 
-  obj = get_item("call", CALLABLE);
+	ItemClass* item_info;
+	switch (obj->type)
+	{
+	case RING:
+		item_info = &game->rings();
+		break;
+	case POTION:
+		item_info = &game->potions();
+		break;
+	case SCROLL:
+		item_info = &game->scrolls();
+		break;
+	case STICK:
+		item_info = &game->sticks();
+		break;
+	default:
+		msg("you can't call that anything");
+		return;
+	}
 
-  //Make certain that it is something that we want to wear
-  if (obj==NULL) return;
-  switch (obj->type)
-  {
-  case RING: 
-    setter = set_ring_guess;
-    guess = get_ring_guess(obj->which);
-    know = does_know_ring;
-    elsewise = (!guess.empty() ? guess : get_stone(obj->which));
-    break;
-  case POTION: 
-    setter = set_potion_guess;
-    guess = get_potion_guess(obj->which);
-    know = does_know_potion;
-    elsewise = (!guess.empty() ? guess : get_color(obj->which));
-    break;
-  case SCROLL: 
-    setter = set_scroll_guess;
-    guess = get_scroll_guess(obj->which);
-    know = does_know_scroll;
-    elsewise = (!guess.empty() ? guess : get_title(obj->which));
-    break;
-  case STICK: 
-    setter = set_stick_guess;
-    guess = get_stick_guess(obj->which);
-    know = does_know_stick;
-    elsewise = (!guess.empty() ? guess : get_material(obj->which));
-    break;
-  default: 
-      msg("you can't call that anything"); 
-      return;
-  }
-  if (know(obj->which)) {
-    msg("that has already been identified"); 
-    return;
-  }
-  msg("Was called \"%s\"", elsewise.c_str());
-  msg("what do you want to call it? ");
-  getinfo(prbuf,MAXNAME);
-  if (*prbuf && *prbuf!=ESCAPE) 
-    setter(obj->which, prbuf);
-  msg("");
+	if (item_info->is_discovered(obj->which)) {
+		msg("that has already been identified");
+		return;
+	}
+
+	std::string called = item_info->get_guess(obj->which);
+	if (called.empty())
+		called = item_info->get_identifier(obj->which);
+	msg("Was called \"%s\"", called.c_str());
+
+	msg("what do you want to call it? ");
+	getinfo(prbuf, MAXNAME);
+	if (*prbuf && *prbuf != ESCAPE)
+		item_info->set_guess(obj->which, prbuf);
+	msg("");
 }
 
 //prompt player for definition of macro
