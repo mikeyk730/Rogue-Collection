@@ -295,7 +295,7 @@ void execcom()
         break;
     case CTRL('R'): 
         counts_as_turn = false;
-        msg(huh);
+        msg(last_message);
         break;
     case 'v':
       counts_as_turn = false;

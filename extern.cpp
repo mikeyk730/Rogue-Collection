@@ -159,10 +159,7 @@ char run_character; //Direction player is running
 int iguess = 0;
 
 char prbuf[MAXSTR];    //Printing buffer used everywhere
-char huh[BUFSIZE];                  //The last message printed
-
-//storage array for guesses
-struct Array _guesses[MAXSCROLLS+MAXPOTIONS+MAXRINGS+MAXSTICKS];
+char last_message[BUFSIZE];     //The last message printed
 
 int maxrow;            //Last Line used for map
 int mpos = 0;          //Where cursor is on top line
