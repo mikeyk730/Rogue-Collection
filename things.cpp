@@ -171,8 +171,13 @@ bool can_drop(Item *op)
     set_ring(hand, NULL);
     switch (op->which)
     {
-    case R_ADDSTR: chg_str(-op->ring_level); break;
-    case R_SEEINVIS: unsee(); extinguish(unsee); break;
+    case R_ADDSTR: 
+        player.stats.adjust_strength(-op->ring_level);
+        break;
+    case R_SEEINVIS:
+        unsee();
+        extinguish(unsee); 
+        break;
     }
   }
   return true;

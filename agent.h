@@ -35,11 +35,15 @@ struct Agent
         int hp;             //Hit points
         std::string damage; //String describing damage done
         int max_hp;         //Max hit points
+        unsigned int max_str;        //Max strength
 
         int get_hp() const;
         void increase_hp(int n, bool max_bonus, bool second_max_bonus);
         bool decrease_hp(int n, bool can_kill);
         int drain_hp();
+
+        void adjust_strength(int amt);
+        void restore_strength();
     };
 
     Coord pos = { 0, 0 };             //Position
@@ -125,6 +129,3 @@ public:
 //todo: move into game
 extern std::list<Agent*> level_monsters;
 extern Agent player;
-extern struct Agent::Stats max_stats;
-
-

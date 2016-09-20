@@ -10,12 +10,6 @@ void look(bool wakeup);
 //find_obj: Find the unclaimed object at y, x
 Item *find_obj(int y, int x);
 
-//chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
-void chg_str(int amt);
-
-//add_str: Perform the actual add, checking upper and lower bound
-void add_str(unsigned int *sp, int amt);
-
 //add_haste: Add a haste to the player
 int add_haste(bool potion);
 

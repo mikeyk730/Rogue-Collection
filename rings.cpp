@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "agent.h"
 #include "item_class.h"
 #include "game_state.h"
 #include "rings.h"
@@ -135,9 +136,15 @@ void ring_on()
   //Calculate the effect it has on the poor guy.
   switch (obj->which)
   {
-  case R_ADDSTR: chg_str(obj->ring_level); break;
-  case R_SEEINVIS: invis_on(); break;
-  case R_AGGR: aggravate(); break;
+  case R_ADDSTR:
+      player.stats.adjust_strength(obj->ring_level);
+      break;
+  case R_SEEINVIS:
+      invis_on();
+      break;
+  case R_AGGR: 
+      aggravate(); 
+      break;
   }
   msg("%swearing %s (%c)", noterse("you are now "), inv_name(obj, true), pack_char(obj));
   return;

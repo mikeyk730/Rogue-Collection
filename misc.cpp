@@ -191,29 +191,6 @@ Item *find_obj(int y, int x)
   return NULL; //NOTREACHED
 }
 
-//chg_str: Used to modify the player's strength.  It keeps track of the highest it has been, just in case
-void chg_str(int amt)
-{
-  unsigned int comp;
-
-  if (amt==0) return;
-  add_str(&player.stats.str, amt);
-  comp = player.stats.str;
-  if (is_ring_on_hand(LEFT, R_ADDSTR)) 
-    add_str(&comp, -get_ring(LEFT)->ring_level);
-  if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
-    add_str(&comp, -get_ring(RIGHT)->ring_level);
-  if (comp>max_stats.str) 
-    max_stats.str = comp;
-}
-
-//add_str: Perform the actual add, checking upper and lower bound
-void add_str(unsigned int *sp, int amt)
-{
-  if ((*sp += amt)<3) *sp = 3;
-  else if (*sp>31) *sp = 31;
-}
-
 //add_haste: Add a haste to the player
 int add_haste(bool potion)
 {

@@ -148,7 +148,7 @@ bool rattlesnake_attack()
   //Rattlesnakes have poisonous bites
   if (!save(VS_POISON))
     if (!is_wearing_ring(R_SUSTSTR)) {
-      chg_str(-1); 
+        player.stats.adjust_strength(-1);
       msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
       return true;
     }

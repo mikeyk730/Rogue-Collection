@@ -253,7 +253,7 @@ void status()
     {
         strength = player.stats.str;
         move(PT(22, 23), 26);
-        printw("Str:%2d(%2d) ", player.stats.str, max_stats.str);
+        printw("Str:%2d(%2d) ", player.stats.str, player.stats.max_str);
     }
     //Gold
     if (s_pur != game->hero().get_purse())

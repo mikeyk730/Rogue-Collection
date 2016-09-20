@@ -139,14 +139,17 @@ void quaff_poison()
   char *sick = "you feel %s sick.";
 
   game->potions().discover(P_POISON);
-  if (!is_wearing_ring(R_SUSTSTR)) {chg_str(-(rnd(3)+1)); msg(sick, "very");}
+  if (!is_wearing_ring(R_SUSTSTR)) {
+      player.stats.adjust_strength(-(rnd(3)+1)); 
+      msg(sick, "very");
+  }
   else msg(sick, "momentarily");
 }
 
 void quaff_gain_strength()
 {
   game->potions().discover(P_STRENGTH);
-  chg_str(1);
+  player.stats.adjust_strength(1);
   msg("you feel stronger. What bulging muscles!");
 }
 
@@ -241,17 +244,8 @@ void quaff_haste_self()
 
 void quaff_restore_strength()
 {
-  if (is_ring_on_hand(LEFT, R_ADDSTR)) 
-    add_str(&player.stats.str, -get_ring(LEFT)->ring_level);
-  if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
-    add_str(&player.stats.str, -get_ring(RIGHT)->ring_level);
-  if (player.stats.str < max_stats.str) 
-    player.stats.str = max_stats.str;
-  if (is_ring_on_hand(LEFT, R_ADDSTR)) 
-    add_str(&player.stats.str, get_ring(LEFT)->ring_level);
-  if (is_ring_on_hand(RIGHT, R_ADDSTR)) 
-    add_str(&player.stats.str, get_ring(RIGHT)->ring_level);
-  msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
+    player.stats.restore_strength();
+    msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
 }
 
 void quaff_blindness()

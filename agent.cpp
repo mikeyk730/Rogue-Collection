@@ -1,4 +1,6 @@
 #include "agent.h"
+#include "rings.h"
+#include "pack.h"
 
 void Agent::set_invisible(bool enable){
     set_flag(IS_INVIS, enable);
@@ -79,4 +81,40 @@ void Agent::Stats::increase_hp(int n, bool max_bonus, bool second_max_bonus){
 int Agent::Stats::drain_hp(){
     hp /= 2;
     return hp;
+}
+
+//add_str: Perform the actual add, checking upper and lower bound
+void add_str(unsigned int *sp, int amt)
+{
+    if ((*sp += amt)<3) *sp = 3;
+    else if (*sp>31) *sp = 31;
+}
+
+void Agent::Stats::adjust_strength(int amt)
+{
+    unsigned int comp;
+
+    if (amt == 0) return;
+    add_str(&str, amt);
+    comp = str;
+    if (is_ring_on_hand(LEFT, R_ADDSTR))
+        add_str(&comp, -get_ring(LEFT)->ring_level);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR))
+        add_str(&comp, -get_ring(RIGHT)->ring_level);
+    if (comp > max_str)
+        max_str = comp;
+}
+
+void Agent::Stats::restore_strength()
+{
+    if (is_ring_on_hand(LEFT, R_ADDSTR))
+        add_str(&player.stats.str, -get_ring(LEFT)->ring_level);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR))
+        add_str(&player.stats.str, -get_ring(RIGHT)->ring_level);
+    if (player.stats.str < player.stats.max_str)
+        player.stats.str = player.stats.max_str;
+    if (is_ring_on_hand(LEFT, R_ADDSTR))
+        add_str(&player.stats.str, get_ring(LEFT)->ring_level);
+    if (is_ring_on_hand(RIGHT, R_ADDSTR))
+        add_str(&player.stats.str, get_ring(RIGHT)->ring_level);
 }

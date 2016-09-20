@@ -247,7 +247,7 @@ int be_trapped(Coord *tc)
           death('d');
       }
       if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) 
-          chg_str(-1);
+          player.stats.adjust_strength(-1);
       msg("a dart just hit you in the shoulder");
     }
     else 

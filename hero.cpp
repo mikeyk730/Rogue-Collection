@@ -110,7 +110,7 @@ void Hero::init_player()
 {
   Item *obj;
 
-  player.stats = max_stats;
+  player.stats = { 16, 0, 1, 10, 12, "1d4", 12, 16 };
   food_left = HUNGER_TIME;
 
   //Give the rogue his weaponry.  First a mace.
