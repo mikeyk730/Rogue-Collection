@@ -87,6 +87,8 @@ void add_pack(Item *obj, bool silent)
   bool from_floor;
   byte floor;
 
+  auto it = player.pack.begin();
+
   if (obj==NULL)
   {
     from_floor = true;
@@ -115,7 +117,7 @@ void add_pack(Item *obj, bool silent)
           mvaddch(player.pos.y, player.pos.x, floor);
           set_tile(player.pos.y, player.pos.x, floor);
         }
-        delete(obj);
+        delete obj;
         obj = op;
         goto picked_up;
       }
@@ -130,7 +132,8 @@ void add_pack(Item *obj, bool silent)
   if (is_scare_monster_scroll(obj)) {
       if (obj->is_found())
       {
-          level_items.remove(obj); //todo: delete?
+          level_items.remove(obj);
+          delete obj;
           mvaddch(player.pos.y, player.pos.x, floor);
           set_tile(player.pos.y, player.pos.x, floor);
           msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
@@ -145,7 +148,6 @@ void add_pack(Item *obj, bool silent)
   }
   
   //todo: fuck this code is infuriating
-  auto it = player.pack.begin();
 
   //Search for an object of the same type
   bool found_type = false;

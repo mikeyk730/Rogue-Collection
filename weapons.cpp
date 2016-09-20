@@ -87,23 +87,20 @@ void missile(int ydelta, int xdelta)
     Item *obj, *nitem;
 
     //Get which thing we are hurling
-    if ((obj = get_item("throw", WEAPON)) == NULL) return;
-    if (!can_drop(obj) || is_current(obj)) return;
-    //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
-hack:
-    if (obj->count < 2) {
-        player.pack.remove(obj); //todo:mem leak?
+    if ((obj = get_item("throw", WEAPON)) == NULL) 
+        return;
+    if (!can_drop(obj) || is_current(obj)) 
+        return;
+
+    //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  
+    //Otherwise, create a new item with a count of one.
+    if (obj->count <= 1) {
+        player.pack.remove(obj);
     }
     else
     {
-        //here is a quick hack to check if we can get a new item
-        if ((nitem = new Item(0, 0)) == NULL)
-        {
-            obj->count = 1;
-            msg("something in your pack explodes!!!");
-            goto hack;
-        }
         obj->count--;
+        nitem = new Item(0, 0);
         *nitem = *obj;
         nitem->count = 1;
         obj = nitem;
@@ -205,7 +202,7 @@ void Item::initialize_weapon(byte type)
 }
 
 //hit_monster: Does the missile hit the monster?
-int hit_monster(int y, int x, Item *obj)
+int hit_monster(int y, int x, Item *obj)  //todo: definite memory issues here.  hit_monster is expeccted to delete, but gets stack variables too
 {
   static Coord mp;
   Agent *monster = monster_at(y, x);

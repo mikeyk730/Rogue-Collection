@@ -141,8 +141,8 @@ void drop()
       player.pack.remove(op);
   //Link it into the level object list
   level_items.push_front(op);
-  set_tile(player.pos.y, player.pos.x, op->type);
   op->pos = player.pos;
+  set_tile(op->pos.y, op->pos.x, op->type);
   msg("dropped %s", inv_name(op, true));
 }
 

@@ -300,7 +300,8 @@ void quaff()
   game->potions().call_it2(obj->which);
 
   //Throw the item away
-  if (obj->count>1) obj->count--;
+  if (obj->count>1)
+      obj->count--;
   else {
     player.pack.remove(obj);
     delete(obj);
