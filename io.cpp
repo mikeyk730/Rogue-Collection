@@ -236,17 +236,17 @@ void status()
         printw("Level:%-4d", get_level());
     }
     //Hits:
-    if (s_hp != player.stats.get_hp())
+    if (s_hp != player.get_hp())
     {
-        s_hp = player.stats.get_hp();
+        s_hp = player.get_hp();
         move(PT(22, 23), 12);
-        if (player.stats.get_hp() < 100) {
-            printw("Hits:%2d(%2d) ", player.stats.get_hp(), player.stats.max_hp);
+        if (player.get_hp() < 100) {
+            printw("Hits:%2d(%2d) ", player.get_hp(), player.stats.max_hp);
             //just in case they get wraithed with 3 digit max hits
             addstr("  ");
         }
         else
-            printw("Hits:%3d(%3d) ", player.stats.get_hp(), player.stats.max_hp);
+            printw("Hits:%3d(%3d) ", player.get_hp(), player.stats.max_hp);
     }
     //Str:
     if (player.stats.str != strength)

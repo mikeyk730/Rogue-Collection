@@ -36,14 +36,6 @@ struct Agent
         std::string damage; //String describing damage done
         int max_hp;         //Max hit points
         unsigned int max_str;        //Max strength
-
-        int get_hp() const;
-        void increase_hp(int n, bool max_bonus, bool second_max_bonus);
-        bool decrease_hp(int n, bool can_kill);
-        int drain_hp();
-
-        void adjust_strength(int amt);
-        void restore_strength();
     };
 
     Coord pos = { 0, 0 };             //Position
@@ -57,7 +49,16 @@ struct Agent
     int value = 0;                    //
     Stats stats;                      //Physical description
     Room *room = 0;                   //Current room for thing
+    bool invunerable = false;
     std::list<Item*> pack;            //What the thing is carrying
+
+    int get_hp() const;
+    void increase_hp(int n, bool max_bonus, bool second_max_bonus);
+    bool decrease_hp(int n, bool can_kill);
+    int drain_hp();
+
+    void adjust_strength(int amt);
+    void restore_strength();
 
 private:
     bool is_flag_set(short flag) const;

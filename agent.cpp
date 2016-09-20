@@ -54,33 +54,36 @@ bool Agent::is_dirty(){
     return value == 1;
 }
 
-int Agent::Stats::get_hp() const {
-    return hp;
+int Agent::get_hp() const {
+    return stats.hp;
 }
 
-bool Agent::Stats::decrease_hp(int n, bool can_kill){
-    hp -= n;
-    if (!can_kill && hp <= 0)
-        hp = 1;
-    return hp > 0;
+bool Agent::decrease_hp(int n, bool can_kill){
+    if (invunerable)
+        return true;
+
+    stats.hp -= n;
+    if (!can_kill && stats.hp <= 0)
+        stats.hp = 1;
+    return stats.hp > 0;
 }
 
-void Agent::Stats::increase_hp(int n, bool max_bonus, bool second_max_bonus){
-    hp += n;
+void Agent::increase_hp(int n, bool max_bonus, bool second_max_bonus){
+    stats.hp += n;
 
-    if (max_bonus && hp > max_hp)
-        ++max_hp;
-    if (second_max_bonus && hp > max_hp + level + 1)
-        ++max_hp;
+    if (max_bonus && stats.hp > stats.max_hp)
+        ++stats.max_hp;
+    if (second_max_bonus && stats.hp > stats.max_hp + stats.level + 1)
+        ++stats.max_hp;
 
-    if (hp > max_hp) {
-        hp = max_hp;
+    if (stats.hp > stats.max_hp) {
+        stats.hp = stats.max_hp;
     }
 }
 
-int Agent::Stats::drain_hp(){
-    hp /= 2;
-    return hp;
+int Agent::drain_hp(){
+    stats.hp /= 2;
+    return stats.hp;
 }
 
 //add_str: Perform the actual add, checking upper and lower bound
@@ -90,31 +93,31 @@ void add_str(unsigned int *sp, int amt)
     else if (*sp>31) *sp = 31;
 }
 
-void Agent::Stats::adjust_strength(int amt)
+void Agent::adjust_strength(int amt)
 {
     unsigned int comp;
 
     if (amt == 0) return;
-    add_str(&str, amt);
-    comp = str;
+    add_str(&stats.str, amt);
+    comp = stats.str;
     if (is_ring_on_hand(LEFT, R_ADDSTR))
         add_str(&comp, -get_ring(LEFT)->ring_level);
     if (is_ring_on_hand(RIGHT, R_ADDSTR))
         add_str(&comp, -get_ring(RIGHT)->ring_level);
-    if (comp > max_str)
-        max_str = comp;
+    if (comp > stats.max_str)
+        stats.max_str = comp;
 }
 
-void Agent::Stats::restore_strength()
+void Agent::restore_strength()
 {
     if (is_ring_on_hand(LEFT, R_ADDSTR))
-        add_str(&player.stats.str, -get_ring(LEFT)->ring_level);
+        add_str(&stats.str, -get_ring(LEFT)->ring_level);
     if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        add_str(&player.stats.str, -get_ring(RIGHT)->ring_level);
-    if (player.stats.str < player.stats.max_str)
-        player.stats.str = player.stats.max_str;
+        add_str(&stats.str, -get_ring(RIGHT)->ring_level);
+    if (stats.str < stats.max_str)
+        stats.str = stats.max_str;
     if (is_ring_on_hand(LEFT, R_ADDSTR))
-        add_str(&player.stats.str, get_ring(LEFT)->ring_level);
+        add_str(&stats.str, get_ring(LEFT)->ring_level);
     if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        add_str(&player.stats.str, get_ring(RIGHT)->ring_level);
+        add_str(&stats.str, get_ring(RIGHT)->ring_level);
 }

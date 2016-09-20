@@ -364,7 +364,7 @@ void zap_speed_monster(int which)
 int zap_drain_life()
 {
   //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
-  if (player.stats.get_hp() < 2) {
+  if (player.get_hp() < 2) {
     msg("you are too weak to use it"); 
     return false;
   }  
@@ -498,12 +498,12 @@ void drain()
     return;
   }
   *dp = NULL;
-  cnt = player.stats.drain_hp() / cnt + 1;
+  cnt = player.drain_hp() / cnt + 1;
   //Now zot all of the monsters
   for (dp = drainee; *dp; dp++)
   {
     monster = *dp;
-    if (!monster->stats.decrease_hp(cnt, true))
+    if (!monster->decrease_hp(cnt, true))
         killed(monster, can_see_monster(monster));
     else
         start_run(monster);
@@ -595,7 +595,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
             if (sleep_timer<20) 
                 sleep_timer += spread(7);
           }
-          else if (!player.stats.decrease_hp(roll(6, 6), true)) {
+          else if (!player.decrease_hp(roll(6, 6), true)) {
               if (start == &player.pos)
                   death('b');
               else

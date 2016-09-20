@@ -211,7 +211,7 @@ int be_trapped(Coord *tc)
   case T_ARROW:
     if (swing(player.stats.level-1, player.stats.ac, 1))
     {
-      if (!player.stats.decrease_hp(roll(1, 6), true)) {
+      if (!player.decrease_hp(roll(1, 6), true)) {
           msg("an arrow killed you"); 
           death('a');
       }
@@ -242,12 +242,12 @@ int be_trapped(Coord *tc)
   case T_DART:
     if (swing(player.stats.level+1, player.stats.ac, 1))
     {
-      if (!player.stats.decrease_hp(roll(1, 4), true)) {
+      if (!player.decrease_hp(roll(1, 4), true)) {
           msg("a poisoned dart killed you"); 
           death('d');
       }
       if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) 
-          player.stats.adjust_strength(-1);
+          player.adjust_strength(-1);
       msg("a dart just hit you in the shoulder");
     }
     else 
@@ -268,7 +268,7 @@ void descend(char *mesg)
   if (!save(VS_LUCK))
   {
     msg("you are damaged by the fall");
-    if (!player.stats.decrease_hp(roll(1,8), true))
+    if (!player.decrease_hp(roll(1,8), true))
         death('f');
   }
 }

@@ -21,24 +21,24 @@
 void doctor()
 {
     int lvl = player.stats.level;
-    int original_hp = player.stats.get_hp();
+    int original_hp = player.get_hp();
 
     turns_since_heal++;
 
     if (lvl<8)
     {
         if (turns_since_heal + (lvl << 1)>20)
-            player.stats.increase_hp(1, false, false);
+            player.increase_hp(1, false, false);
     }
     else if (turns_since_heal >= 3)
-        player.stats.increase_hp(rnd(lvl - 7) + 1, false, false);
+        player.increase_hp(rnd(lvl - 7) + 1, false, false);
 
     if (is_ring_on_hand(LEFT, R_REGEN))
-        player.stats.increase_hp(1, false, false);
+        player.increase_hp(1, false, false);
     if (is_ring_on_hand(RIGHT, R_REGEN))
-        player.stats.increase_hp(1, false, false);
+        player.increase_hp(1, false, false);
 
-    if (original_hp != player.stats.get_hp())
+    if (original_hp != player.get_hp())
     {
         turns_since_heal = 0;
     }

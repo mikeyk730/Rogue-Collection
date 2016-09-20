@@ -72,7 +72,7 @@ void do_hit(Item* weapon, int thrown, Agent* monster, const char* name)
     msg("your hands stop glowing red");
   }
 
-  if (monster->stats.get_hp() <= 0)
+  if (monster->get_hp() <= 0)
     killed(monster, true);
   else if (did_huh && !player.is_blind()) 
     msg("the %s appears confused", name);
@@ -148,7 +148,7 @@ bool rattlesnake_attack()
   //Rattlesnakes have poisonous bites
   if (!save(VS_POISON))
     if (!is_wearing_ring(R_SUSTSTR)) {
-        player.stats.adjust_strength(-1);
+        player.adjust_strength(-1);
       msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
       return true;
     }
@@ -241,7 +241,7 @@ bool vampire_wraith_attack(Agent* monster)
         player.stats.max_hp -= damage;
         if (player.stats.max_hp < 1)
             death(monster->type);
-        player.stats.decrease_hp(damage, false);
+        player.decrease_hp(damage, false);
         msg("you suddenly feel weaker");
         return true;
     }
@@ -264,7 +264,7 @@ bool attack(Agent *monster)
   if (roll_em(monster, &player, NULL, false))
   {
       display_hit_msg(name, NULL);
-      if (player.stats.get_hp() <= 0)
+      if (player.get_hp() <= 0)
           death(monster->type); //Bye bye life ...
 
       //todo: modify code, so enemy can have more than one power
@@ -309,7 +309,7 @@ bool attack(Agent *monster)
   {
       if (monster->hold_attacks())
       {
-          if (!player.stats.decrease_hp(monster->value, true))
+          if (!player.decrease_hp(monster->value, true))
               death(monster->type); //Bye bye life ...
       }
       miss(name, NULL);
@@ -343,7 +343,7 @@ void check_level()
   {
     add = roll(i-olevel, 10);
     player.stats.max_hp += add;
-    player.stats.increase_hp(add, false, false);
+    player.increase_hp(add, false, false);
     if (use_level_names())
         msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
     else
@@ -428,7 +428,7 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
       //special goodies for the commercial version of rogue
       //make it easier on level one
       if (thdef==&player && max_level()==1) damage = (damage+1)/2;
-      def->decrease_hp(max(0, damage), true);
+      thdef->decrease_hp(max(0, damage), true);
       did_hit = true;
     }
     if ((cp = strchr(cp, '/'))==NULL) break;

@@ -140,7 +140,7 @@ void quaff_poison()
 
   game->potions().discover(P_POISON);
   if (!is_wearing_ring(R_SUSTSTR)) {
-      player.stats.adjust_strength(-(rnd(3)+1)); 
+      player.adjust_strength(-(rnd(3)+1)); 
       msg(sick, "very");
   }
   else msg(sick, "momentarily");
@@ -149,7 +149,7 @@ void quaff_poison()
 void quaff_gain_strength()
 {
   game->potions().discover(P_STRENGTH);
-  player.stats.adjust_strength(1);
+  player.adjust_strength(1);
   msg("you feel stronger. What bulging muscles!");
 }
 
@@ -167,7 +167,7 @@ void quaff_see_invisible()
 void quaff_healing()
 {
   game->potions().discover(P_HEALING);
-  player.stats.increase_hp(roll(player.stats.level, 4), true, false);
+  player.increase_hp(roll(player.stats.level, 4), true, false);
   sight();
   msg("you begin to feel better");
 }
@@ -231,7 +231,7 @@ void quaff_raise_level()
 void quaff_extra_healing()
 {
   game->potions().discover(P_XHEAL);
-  player.stats.increase_hp(roll(player.stats.level, 8), true, true);
+  player.increase_hp(roll(player.stats.level, 8), true, true);
   sight();
   msg("you begin to feel much better");
 }
@@ -244,7 +244,7 @@ void quaff_haste_self()
 
 void quaff_restore_strength()
 {
-    player.stats.restore_strength();
+    player.restore_strength();
     msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
 }
 
@@ -372,12 +372,12 @@ void affect_monster(Item *potion, Agent *monster)
     break;
 
   case P_HEALING: case P_XHEAL:
-      monster->stats.increase_hp(rnd(8), true, false);
+      monster->increase_hp(rnd(8), true, false);
     break;
 
   case P_RAISE:
     monster->stats.max_hp += 8;
-    monster->stats.increase_hp(8, false, false);
+    monster->increase_hp(8, false, false);
     monster->stats.level++;
     break;
 
