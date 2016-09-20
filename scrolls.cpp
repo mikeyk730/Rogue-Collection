@@ -365,8 +365,8 @@ void read_scroll()
   if (scroll->count > 1)
     scroll->count--;
   else {
-    detach_item(player.pack, scroll); 
-    discard_item(scroll);
+    player.pack.remove(scroll); 
+    delete(scroll);
   }
 }
 

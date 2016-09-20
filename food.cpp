@@ -31,8 +31,8 @@ void eat()
     return;
   }
   if (--obj->count<1) {
-    detach_item(player.pack, obj); 
-    discard_item(obj);
+    player.pack.remove(obj);
+    delete obj;
   }
   game->hero().ingest();
   if (obj==get_current_weapon()) 

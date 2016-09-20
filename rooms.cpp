@@ -110,7 +110,7 @@ void do_rooms()
     if ((rnd(2)==0) && (!had_amulet() || (get_level()>=max_level())))
     {
       Item *gold;
-      if ((gold = create_item(GOLD, 0))!=NULL)
+      if ((gold = new Item(GOLD, 0))!=NULL)
       {
         room->goldval = rnd_gold();
         while (1)
@@ -121,7 +121,7 @@ void do_rooms()
           if (isfloor(gch)) break;
         }
         gold->initialize_gold(room->goldval, room->gold);
-        attach_item(level_items, gold);
+        level_items.push_front(gold);
         set_tile(room->gold.y, room->gold.x, GOLD);
       }
     }
@@ -264,9 +264,12 @@ struct Room *get_room_from_position(Coord *pos)
   struct Room *room;
   byte fp;
 
-  for (room = rooms; room<=&rooms[MAXROOMS-1]; room++) 
-    if (pos->x<room->pos.x+room->size.x && room->pos.x<=pos->x && pos->y<room->pos.y+room->size.y && room->pos.y<=pos->y) 
-      return room;
+  for (room = rooms; room <= &rooms[MAXROOMS - 1]; room++)
+      if (pos->x < room->pos.x + room->size.x &&
+          room->pos.x <= pos->x &&
+          pos->y < room->pos.y + room->size.y
+          && room->pos.y <= pos->y)
+          return room;
 
   fp = get_flags(pos->y, pos->x);
   if (fp&F_PASS)

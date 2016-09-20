@@ -222,7 +222,7 @@ int be_trapped(Coord *tc)
     {
       Item *arrow;
 
-      if ((arrow = create_item(WEAPON, ARROW))!=NULL)
+      if ((arrow = new Item(WEAPON, ARROW))!=NULL)
       {
         arrow->initialize_weapon(ARROW);
         arrow->count = 1;

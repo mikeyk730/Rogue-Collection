@@ -73,6 +73,9 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 
 struct Item
 {
+    Item();
+    Item(int type, int which);
+
     int type;                      //What kind of object it is
     Coord pos;                     //Where it lives on the screen
     char launcher;                 //What you need to launch it

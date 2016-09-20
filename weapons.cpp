@@ -92,12 +92,12 @@ void missile(int ydelta, int xdelta)
   //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  Otherwise, create a new item with a count of one.
 hack:
   if (obj->count<2) {
-    detach_item(player.pack, obj); 
+    player.pack.remove(obj); 
   }
   else
   {
     //here is a quick hack to check if we can get a new item
-    if ((nitem = create_item(0,0))==NULL)
+    if ((nitem = new Item(0,0))==NULL)
     {
       obj->count = 1;
       msg("something in your pack explodes!!!");
@@ -176,14 +176,15 @@ void fall(Item *obj, bool pr)
       standend();
       if (monster_at(fpos.y, fpos.x)!=NULL) monster_at(fpos.y, fpos.x)->oldch = obj->type;
     }
-    attach_item(level_items, obj);
+    level_items.push_front(obj);
     return;
 
   case 2:
     pr = 0;
   }
-  if (pr) msg("the %s vanishes%s.", short_name(obj), noterse(" as it hits the ground"));
-  discard_item(obj);
+  if (pr)
+      msg("the %s vanishes%s.", short_name(obj), noterse(" as it hits the ground"));
+  delete obj;
 }
 
 void Item::initialize_weapon(byte type)
@@ -338,9 +339,9 @@ void Item::vorpalize()
     if (is_vorpalized())
     {
         msg("your %s vanishes in a puff of smoke", get_weapon_name(which));
-        detach_item(player.pack, this);
-        discard_item(this); //careful not to do anything with this afterwards
         set_current_weapon(0);
+        player.pack.remove(this);
+        delete this; //careful not to do anything afterwards
         return;
     }
 

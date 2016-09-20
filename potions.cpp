@@ -302,8 +302,8 @@ void quaff()
   //Throw the item away
   if (obj->count>1) obj->count--;
   else {
-    detach_item(player.pack, obj); 
-    discard_item(obj);
+    player.pack.remove(obj);
+    delete(obj);
   }
 }
 

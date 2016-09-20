@@ -131,15 +131,16 @@ void drop()
   //Take it out of the pack
   if (op->count>=2 && op->type!=WEAPON)
   {
-    if ((nobj = create_item(0,0))==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
+    if ((nobj = new Item(0,0))==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
     op->count--;
     *nobj = *op;
     nobj->count = 1;
     op = nobj;
   }
-  else detach_item(player.pack, op);
+  else 
+      player.pack.remove(op);
   //Link it into the level object list
-  attach_item(level_items, op);
+  level_items.push_front(op);
   set_tile(player.pos.y, player.pos.x, op->type);
   op->pos = player.pos;
   msg("dropped %s", inv_name(op, true));
@@ -186,7 +187,7 @@ bool can_drop(Item *op)
 //new_thing: Return a new thing
 Item *new_item()
 {
-  Item *item = create_item(0, 0);
+  Item *item = new Item(0, 0);
   if (!item)
     return NULL; 
 

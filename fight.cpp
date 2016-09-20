@@ -57,8 +57,8 @@ void do_hit(Item* weapon, int thrown, Agent* monster, const char* name)
     if (!thrown)
     {
       if (--weapon->count == 0) {
-        detach_item(player.pack, weapon); 
-        discard_item(weapon);
+        player.pack.remove(weapon);
+        delete weapon;
       }
       set_current_weapon(NULL);
     }
@@ -207,9 +207,9 @@ bool nymph_attack(Agent* mp)
       steal->count = oc;
     }
     else {
-        detach_item(player.pack, steal); 
-        (steal);
+        player.pack.remove(steal);
         msg(she_stole, inv_name(steal, true));
+        delete steal;
     }
     return true;
   }
@@ -550,13 +550,13 @@ void remove_monster(Agent *monster, bool waskill)
 {
     Coord* monster_pos = &monster->pos;
     for (auto it = monster->pack.begin(); it != monster->pack.end();){
-        Item* obj = *(it++); //TODO:check all loops
+        Item* obj = *(it++); //TODO:does this work?
         obj->pos = monster->pos;
-        detach_item(monster->pack, obj);
+        monster->pack.remove(obj);
         if (waskill)
             fall(obj, false);
         else
-            discard_item(obj);
+            delete(obj);
     }
     if (get_tile(monster_pos->y, monster_pos->x) == PASSAGE)
         standout();
@@ -566,8 +566,8 @@ void remove_monster(Agent *monster, bool waskill)
         mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
     standend();
 
-    detach_agent(level_monsters, monster);
-    discard_agent(monster);
+    level_monsters.remove(monster);
+    delete monster;
 }
 
 //is_magic: Returns true if an object radiates magic
@@ -591,15 +591,12 @@ void killed(Agent *monster, bool print)
   if (monster->can_hold()){
       player.set_is_held(false);
   }
-  else if (monster->drops_gold()){
-      Item *gold;
-
-      if ((gold = create_item(GOLD, 0)) == NULL) 
-          return;
+  else if (monster->drops_gold()) {
+      Item *gold = new Item(GOLD, 0);
       gold->gold_value = rnd_gold();
       if (save(VS_MAGIC))
           gold->gold_value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();
-      attach_item(monster->pack, gold);
+      monster->pack.push_front(gold);
   }
   if (print)
   {

@@ -8,35 +8,19 @@
 #include "misc.h"
 #include "thing.h"
 
-void detach_item(std::list<Item*>& l, Item *item)
-{
-    l.remove(item);
-}
-
-void attach_item(std::list<Item*>& l, Item *item)
-{
-    l.push_front(item);
-}
-
 void free_item_list(std::list<Item*>& l)
 {
     for (auto it = l.begin(); it != l.end(); ++it){
-        discard_item(*it);
+        delete(*it);
     }
     l.clear();
-}
-
-//_detach: Takes an agent out of whatever linked list it might be in
-void detach_agent(std::list<Agent*>& l, Agent *agent)
-{
-    l.remove(agent);
 }
 
 //_free_list: Throw the whole blamed thing away
 void free_agent_list(std::list<Agent*>& l)
 {
     for (auto it = l.begin(); it != l.end(); ++it){
-        discard_agent(*it);
+        delete(*it);
     }
     l.clear();
 }

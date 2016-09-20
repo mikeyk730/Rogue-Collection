@@ -113,11 +113,11 @@ void add_pack(Item *obj, bool silent)
         //Put it in the pack and notify the user
         op->count += obj->count;
         if (from_floor) {
-          detach_item(level_items, obj);
+          level_items.remove(obj);
           mvaddch(player.pos.y, player.pos.x, floor);
           set_tile(player.pos.y, player.pos.x, floor);
         }
-        discard_item(obj);
+        delete(obj);
         obj = op;
         goto picked_up;
       }
@@ -132,7 +132,7 @@ void add_pack(Item *obj, bool silent)
   if (is_scare_monster_scroll(obj)) {
       if (obj->is_found())
       {
-          detach_item(level_items, obj);
+          level_items.remove(obj); //todo: delete?
           mvaddch(player.pos.y, player.pos.x, floor);
           set_tile(player.pos.y, player.pos.x, floor);
           msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
@@ -141,7 +141,7 @@ void add_pack(Item *obj, bool silent)
       else obj->set_found();
   }
   if (from_floor) {
-    detach_item(level_items, obj);
+    level_items.remove(obj);
     mvaddch(player.pos.y, player.pos.x, floor); 
     set_tile(player.pos.y, player.pos.x, floor);
   }
@@ -176,7 +176,7 @@ void add_pack(Item *obj, bool silent)
   if (exact && does_item_group(obj->type))
   {
       (*it)->count++;
-      discard_item(obj);
+      delete(obj);
       obj = (*it);
       goto picked_up;
   }
@@ -238,8 +238,8 @@ void pick_up(byte ch)
     if ((obj = find_obj(player.pos.y, player.pos.x))==NULL)
         return;
     money(obj->gold_value);
-    detach_item(level_items, obj);
-    discard_item(obj);
+    level_items.remove(obj);
+    delete obj;
     player.room->goldval = 0;
     break;
   default:

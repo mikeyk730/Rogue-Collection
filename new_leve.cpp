@@ -98,9 +98,9 @@ void put_things()
     //Check this first so if we are out of memory the guy has a hope of getting the amulet
     if (get_level()>=AMULETLEVEL && !had_amulet())
     {
-      if ((cur = create_item(AMULET, 0))!=NULL)
+      if ((cur = new Item(AMULET, 0))!=NULL)
       {
-        attach_item(level_items, cur);
+        level_items.push_front(cur);
         cur->hit_plus = cur->damage_plus = 0;
         cur->damage = cur->throw_damage = "0d0";
         cur->armor_class = 11;
@@ -119,7 +119,7 @@ void put_things()
     {
       //Pick a new object and link it in the list
       cur = new_item();
-      attach_item(level_items, cur);
+      level_items.push_front(cur);
       //Put it somewhere
       find_empty_location(&tp, false);
       set_tile(tp.y, tp.x, cur->type);
@@ -149,7 +149,7 @@ void treas_room()
     } while (!isfloor(get_tile(pos.y, pos.x)));
     item = new_item();
     item->pos = pos;
-    attach_item(level_items, item);
+    level_items.push_front(item);
     set_tile(pos.y, pos.x, item->type);
   }
   //fill up room with monsters from the next level down

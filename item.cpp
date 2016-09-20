@@ -3,6 +3,16 @@
 #include "item.h"
 #include "agent.h"
 
+Item::Item()
+{
+    memset(this, 0, sizeof(Item)); //todo: get rid of this
+}
+
+Item::Item(int type, int which)
+{
+    initialize(type, which);
+}
+
 void Item::initialize(int type, int which)
 {
     this->type = type;

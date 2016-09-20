@@ -12,6 +12,7 @@
 #include "io.h"
 #include "thing.h"
 #include "rings.h"
+#include "agent.h"
 
 
 Hero::Hero()
@@ -114,7 +115,7 @@ void Hero::init_player()
   food_left = HUNGER_TIME;
 
   //Give the rogue his weaponry.  First a mace.
-  obj = create_item(WEAPON, MACE);
+  obj = new Item(WEAPON, MACE);
   obj->initialize_weapon(MACE);
   obj->hit_plus = 1;
   obj->damage_plus = 1;
@@ -123,7 +124,7 @@ void Hero::init_player()
   set_current_weapon(obj);
 
   //Now a +1 bow
-  obj = create_item(WEAPON, BOW);
+  obj = new Item(WEAPON, BOW);
   obj->initialize_weapon(BOW);
   obj->hit_plus = 1;
   obj->damage_plus = 0;
@@ -131,7 +132,7 @@ void Hero::init_player()
   add_pack(obj, true);
 
   //Now some arrows
-  obj = create_item(WEAPON, ARROW);
+  obj = new Item(WEAPON, ARROW);
   obj->initialize_weapon(ARROW);
   obj->count = rnd(15)+25;
   obj->hit_plus = obj->damage_plus = 0;
@@ -139,14 +140,14 @@ void Hero::init_player()
   add_pack(obj, true);
 
   //And his suit of armor
-  obj = create_item(ARMOR, RING_MAIL);
+  obj = new Item(ARMOR, RING_MAIL);
   obj->armor_class = get_default_class(RING_MAIL)-1;
   obj->set_known();
   set_current_armor(obj);
   add_pack(obj, true);
 
   //Give him some food too
-  obj = create_item(FOOD, 0);
+  obj = new Item(FOOD, 0);
   add_pack(obj, true);
 }
 

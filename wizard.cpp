@@ -82,7 +82,7 @@ void create_obj()
   byte ch, bless;
   int limit, option;
 
-  if ((obj = create_item(0,0))==NULL) {msg("can't create anything now"); return;}
+  if ((obj = new Item(0,0))==NULL) {msg("can't create anything now"); return;}
   msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK,RING, WEAPON, ARMOR, AMULET, FOOD);
   switch (readchar())
   {

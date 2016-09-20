@@ -225,7 +225,7 @@ void zap_polymorph(Agent* monster, int y, int x)
 
   Coord coord = { x, y };
   Agent* new_monster = create_monster(rnd(26)+'A', &coord, get_level());
-  detach_agent(level_monsters, new_monster);
+  level_monsters.remove(new_monster);
 
   new_monster->oldch = monster->oldch;
   new_monster->pack = monster->pack;
@@ -236,7 +236,7 @@ void zap_polymorph(Agent* monster, int y, int x)
   delete new_monster;
   
   //move to front of list to maintain original behavior
-  detach_agent(level_monsters, monster);
+  level_monsters.remove(monster);
   level_monsters.push_front(monster);
 
   if (can_see_monster(monster)) 
@@ -476,19 +476,20 @@ void drain()
   int cnt;
   struct Room *room;
   Agent **dp;
-  bool inpass;
+  bool in_passage;
   Agent *drainee[40];
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
-  if (get_tile(player.pos.y, player.pos.x)==DOOR) room = &passages[get_flags(player.pos.y, player.pos.x)&F_PNUM];
+  if (get_tile(player.pos.y, player.pos.x)==DOOR)
+      room = &passages[get_flags(player.pos.y, player.pos.x)&F_PNUM];
   else room = NULL;
-  inpass = (player.room->is_gone()) != 0;
+  in_passage = player.room->is_gone();
   dp = drainee;
   for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
     monster = *it;
     if (monster->room == player.room || monster->room == room ||
-        (inpass && get_tile(monster->pos.y, monster->pos.x) == DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM] == player.room)) {
+        (in_passage && get_tile(monster->pos.y, monster->pos.x) == DOOR && &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM] == player.room)) {
         *dp++ = monster;
     }
   }
@@ -504,7 +505,8 @@ void drain()
     monster = *dp;
     if (!monster->stats.decrease_hp(cnt, true))
         killed(monster, can_see_monster(monster));
-    else start_run(monster);
+    else
+        start_run(monster);
   }
 }
 

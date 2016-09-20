@@ -122,8 +122,8 @@ over:
           if (orc_bugfix && equal(*(monster->dest), obj->pos))
           {
               byte oldchar;
-              detach_item(level_items, obj);
-              attach_item(monster->pack, obj);
+              level_items.remove(obj);
+              monster->pack.push_front(obj);
               oldchar = (monster->room->is_gone()) ? PASSAGE : FLOOR;
               set_tile(obj->pos.y, obj->pos.x, oldchar);
               if (can_see(obj->pos.y, obj->pos.x))
