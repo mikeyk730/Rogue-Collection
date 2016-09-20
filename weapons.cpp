@@ -117,7 +117,7 @@ hack:
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(Item *obj, int ydelta, int xdelta)
 {
-  byte under = '@';
+  byte under = MDK;
 
   //Come fly with us ...
   obj->pos = player.pos;
@@ -126,7 +126,7 @@ void do_motion(Item *obj, int ydelta, int xdelta)
     int ch;
 
     //Erase the old one
-    if (under != '@' && !equal(obj->pos, player.pos) && can_see(obj->pos.y, obj->pos.x))
+    if (under != MDK && !equal(obj->pos, player.pos) && can_see(obj->pos.y, obj->pos.x))
       mvaddch(obj->pos.y, obj->pos.x, under);
     //Get the new position
     obj->pos.y += ydelta;
@@ -140,7 +140,7 @@ void do_motion(Item *obj, int ydelta, int xdelta)
         mvaddch(obj->pos.y, obj->pos.x, obj->type);
         tick_pause();
       }
-      else under = '@';
+      else under = MDK;
       continue;
     }
     break;

@@ -1,29 +1,54 @@
+#include <fstream>
 #include "game_state.h"
 #include "random.h"
 #include "input_interface.h"
+#include "stream_input.h"
+#include "captured_input.h"
 #include "keyboard_input.h"
 #include "hero.h"
 
 GameState::GameState(int seed) :
 m_seed(seed),
 m_random(new Random(seed)),
-m_input_interface(new KeyboardInput),
+m_input_interface(new CapturedInput(new KeyboardInput())),
 m_hero(new Hero)
 {
+    init_environment();
+}
 
-    m_environment["name"] = "Rodney";//move to Hero
+GameState::GameState(std::istream& in)
+{
+    in.read((char*)&m_seed, sizeof(m_seed));
+    m_random.reset(new Random(m_seed));
+    m_input_interface.reset(new CapturedInput(new StreamInput(in, new KeyboardInput())));
+    m_hero.reset(new Hero);
+
+    init_environment();
+}
+
+GameState::~GameState()
+{ }
+
+void GameState::init_environment()
+{
+    m_environment["name"] = "Rodney";
     m_environment["scorefile"] = "rogue.scr";
-    //m_environment["savefile"] = "rogue.sav";
+    m_environment["savefile"] = "rogue.sav";
     m_environment["macro"] = "v";
-    m_environment["fruit"] = "Slime Mold";//move to Hero
+    m_environment["fruit"] = "Slime Mold"; //move to Hero?
     m_environment["menu"] = "on";
     m_environment["screen"] = "";
     m_environment["levelnames"] = "on";
     m_environment["monstercfg"] = "monsters.opt";
 }
 
-GameState::~GameState()
-{ }
+void GameState::save_game(const std::string& filename)
+{
+    std::ofstream file(filename, std::ios::binary | std::ios::out);
+    file.write((char*)&m_seed, sizeof(m_seed));
+    //todo:serialize env
+    m_input_interface->Serialize(file);
+}
 
 std::string GameState::get_environment(const std::string& key) const
 {

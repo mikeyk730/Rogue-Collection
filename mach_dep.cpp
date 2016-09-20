@@ -39,32 +39,10 @@
 #define ALT_F9    0x70
 
 
-    struct FileInput : public InputInterface
-    {
-        FileInput(const std::string& file_prefix, InputInterface* backup);
+    
 
-        virtual char GetNextChar();
-        virtual std::string GetNextString(int size);
-
-        std::unique_ptr<InputInterface> m_backup;
-        std::ifstream m_file_chars;
-        std::ifstream m_file_strings;
-    };
-
-    struct CaptureInput : public InputInterface
-    {
-        CaptureInput(const std::string& file_prefix, InputInterface* d);
-
-        virtual char GetNextChar();
-        virtual std::string GetNextString(int size);
-        
-        std::unique_ptr<InputInterface> m_delegate;
-        std::ofstream m_file_chars;
-        std::ofstream m_file_strings;
-    };
-
-    //static InputInterface* s_input_driver(new CaptureInput("record", new KeyboardInput));
-    //static InputInterface* s_input_driver(new FileInput("replay", new KeyboardInput));
+    //static InputInterface* s_input_driver(new CapturedInput("record", new KeyboardInput));
+    //static InputInterface* s_input_driver(new StreamInput("replay", new KeyboardInput));
 
 
 //Table for IBM extended key translation
@@ -175,6 +153,8 @@ void credits()
   getinfo(tname, 23);
   if (*tname && *tname!=ESCAPE)
       game->hero().set_name(tname);
+  else
+      game->hero().set_name(game->get_environment("name"));
 
   blot_out(23, 0, 24, COLS-1);
   brown();
@@ -272,82 +252,5 @@ std::string KeyboardInput::GetNextString(int size) {
     return buf; 
 }
 
-CaptureInput::CaptureInput(const std::string& file_prefix, InputInterface* d)
-: m_delegate(d),
-m_file_chars(file_prefix + ".char", std::ios::binary | std::ios::out),
-m_file_strings(file_prefix + ".str", std::ios::binary | std::ios::out)
+void KeyboardInput::Serialize(std::ostream& out)
 { }
-
-char CaptureInput::GetNextChar()
-{
-    char c = m_delegate->GetNextChar();
-    m_file_chars.write(&c, 1);
-    return c;
-}
-
-std::string CaptureInput::GetNextString(int size)
-{
-    std::string s = m_delegate->GetNextString(size);
-    int len = s.length();
-    m_file_strings.write((char*)&len, sizeof(len));
-    m_file_strings.write(s.c_str(), len);
-    return s;
-}
-
-
-FileInput::FileInput(const std::string& file_prefix, InputInterface* backup)
-: m_backup(backup),
-m_file_chars(file_prefix + ".char", std::ios::binary | std::ios::in),
-m_file_strings(file_prefix + ".str", std::ios::binary | std::ios::in)
-{ }
-
-char FileInput::GetNextChar()
-{
-    char c;
-    m_file_chars.read(&c, 1);
-
-
-    if (!m_file_chars){
-        if (m_backup){
-            return m_backup->GetNextChar();
-        }
-        else{
-            for (;;);
-        }
-    }
-    
-    return c;
-}
-
-std::string FileInput::GetNextString(int size)
-{
-    int string_length;
-    char buf[255];
-    memset(buf, 0, 255);
-
-    m_file_strings.read((char*)&string_length, sizeof(string_length));
-
-    if (string_length){
-        m_file_strings.read(buf, string_length);
-    }
-    else{
-        buf[0] = 0x0d;
-    }
-
-    if (!m_file_strings){
-        if (m_backup){
-            return m_backup->GetNextString(size);
-        }
-        else{
-            for (;;);
-        }
-    }
-
-
-    return buf;
-}
-
-//todo:
-//serialize enter and esc
-//validate serialization
-//serialize sizeof

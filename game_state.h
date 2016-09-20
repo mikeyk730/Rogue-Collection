@@ -10,7 +10,10 @@ struct Hero;
 struct GameState
 {
     GameState(int seed);
+    GameState(std::istream& in);
     ~GameState();
+
+    void save_game(const std::string& filename);
 
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);
@@ -20,6 +23,8 @@ struct GameState
     Hero& hero();
 
 private:
+    void init_environment();
+
     long m_seed; //Random number seed
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 

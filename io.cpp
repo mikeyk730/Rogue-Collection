@@ -209,7 +209,7 @@ char *unctrl(unsigned char ch)
   static char chstr[9]; //Defined in curses library
 
   if (isspace(ch)) strcpy(chstr, " ");
-  else if (!isprint(ch)) if (ch<' ') sprintf(chstr, "^%c", ch+'@'); else sprintf(chstr, "\\x%x", ch);
+  else if (!isprint(ch)) if (ch<' ') sprintf(chstr, "^%c", ch+MDK); else sprintf(chstr, "\\x%x", ch);
   else {chstr[0] = ch; chstr[1] = 0;}
   return chstr;
 }

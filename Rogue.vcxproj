@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -20,14 +20,14 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -48,8 +48,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;DEBUG;WIZARD;ME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -63,8 +62,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -81,6 +79,7 @@
   <ItemGroup>
     <ClCompile Include="agent.cpp" />
     <ClCompile Include="armor.cpp" />
+    <ClCompile Include="captured_input.cpp" />
     <ClCompile Include="chase.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="curses.cpp" />
@@ -116,6 +115,7 @@
     <ClCompile Include="scrolls.cpp" />
     <ClCompile Include="slime.cpp" />
     <ClCompile Include="sticks.cpp" />
+    <ClCompile Include="stream_input.cpp" />
     <ClCompile Include="strings.cpp" />
     <ClCompile Include="thing.cpp" />
     <ClCompile Include="things.cpp" />
@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="agent.h" />
     <ClInclude Include="armor.h" />
+    <ClInclude Include="captured_input.h" />
     <ClInclude Include="chase.h" />
     <ClInclude Include="command.h" />
     <ClInclude Include="curses.h" />
@@ -133,6 +134,7 @@
     <ClInclude Include="env.h" />
     <ClInclude Include="fakedos.h" />
     <ClInclude Include="fight.h" />
+    <ClInclude Include="stream_input.h" />
     <ClInclude Include="food.h" />
     <ClInclude Include="game_state.h" />
     <ClInclude Include="hero.h" />

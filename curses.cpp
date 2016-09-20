@@ -21,7 +21,7 @@
 #define BX_HT               5
 #define BX_HB               6
 
-int LINES = 25, COLS = 80;
+short LINES = 25, COLS = 80;
 int ch_attr = 0x7;
 
 #define MAXATTR  17
@@ -399,7 +399,7 @@ void raise_curtain()
     //todo
 }
 
-void move(int y, int x) 
+void move(short y, short x) 
 { 
   HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE); 
   COORD p = {x, y};

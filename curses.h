@@ -92,6 +92,6 @@ void drop_curtain();
 
 void raise_curtain();
 
-void move(int y, int x);
+void move(short y, short x);
 
 char curch();

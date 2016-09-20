@@ -13,6 +13,7 @@
 //main.c      1.4 (A.I. Design) 11/28/84
 
 #include <memory>
+#include <fstream>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -48,8 +49,8 @@ int bwflag = false;
 //main: The main program, of course
 int main(int argc, char **argv)
 {
-    int seed = srand2();
-    game = new GameState(seed);
+    game = new GameState(get_seed());
+    //game = new GameState(std::ifstream("foo.baz", std::ios::binary | std::ios::in));
 
     setenv("rogue.opt");
     if ("bw" == game->get_environment("scorefile"))
@@ -95,7 +96,7 @@ int rnd(int range)
     return game->random().rnd(range);
 }
 
-int srand2()
+int get_seed()
 {
   int t = (int)time(0);
   srand(t);

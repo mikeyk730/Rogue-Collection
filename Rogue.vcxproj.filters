@@ -137,6 +137,12 @@
     <ClCompile Include="room.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="captured_input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rogue.h">
@@ -269,6 +275,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="item.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="captured_input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

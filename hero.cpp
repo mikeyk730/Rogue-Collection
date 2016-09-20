@@ -14,19 +14,17 @@
 #include "rings.h"
 
 
-Hero::Hero() :
-m_purse(0), m_wizard(0), m_cheated(0), hungry_state(0), food_left(0)
-{ 
-}
+Hero::Hero()
+{ }
 
 std::string Hero::get_name()
 {
-    return game->get_environment("name");
+    return m_name;
 }
 
-void Hero::set_name(const char* name)
+void Hero::set_name(const std::string& name)
 {
-    game->set_environment("name", name);
+    m_name = name;
 }
 
 int Hero::get_purse()

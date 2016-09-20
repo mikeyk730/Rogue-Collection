@@ -562,7 +562,7 @@ void remove_monster(Agent *monster, bool waskill)
         standout();
     if (monster->oldch == FLOOR && !can_see(monster_pos->y, monster_pos->x))
         mvaddch(monster_pos->y, monster_pos->x, ' ');
-    else if (monster->oldch != '@')
+    else if (monster->oldch != MDK)
         mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
     standend();
 

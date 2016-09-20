@@ -1,7 +1,7 @@
 //endit: Exit the program abnormally.
 void endit();
 
-int srand2();
+int get_seed();
 
 //rnd: Pick a very random number.
 int rnd(int range);
