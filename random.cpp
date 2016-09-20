@@ -9,7 +9,7 @@ seed(seed)
 
 void Random::set_seed(int s)
 {
-	seed = s;
+    seed = s;
 }
  
 //rnd: Pick a very random number.

@@ -65,51 +65,51 @@ char* getsyl()
 
 ScrollInfo::ScrollInfo()
 {
-	m_magic_props = {
-		{ "monster confusion",   8, 140 },
-		{ "magic mapping",       5, 150 },
-		{ "hold monster",        3, 180 },
-		{ "sleep",               5,   5 },
-		{ "enchant armor",       8, 160 },
-		{ "identify",           27, 100 },
-		{ "scare monster",       4, 200 },
-		{ "food detection",      4,  50 },
-		{ "teleportation",       7, 165 },
-		{ "enchant weapon",     10, 150 },
-		{ "create monster",      5,  75 },
-		{ "remove curse",        8, 105 },
-		{ "aggravate monsters",  4,  20 },
-		{ "blank paper",         1,   5 },
-		{ "vorpalize weapon",    1, 300 }
-	};
+    m_magic_props = {
+        { "monster confusion",   8, 140 },
+        { "magic mapping",       5, 150 },
+        { "hold monster",        3, 180 },
+        { "sleep",               5,   5 },
+        { "enchant armor",       8, 160 },
+        { "identify",           27, 100 },
+        { "scare monster",       4, 200 },
+        { "food detection",      4,  50 },
+        { "teleportation",       7, 165 },
+        { "enchant weapon",     10, 150 },
+        { "create monster",      5,  75 },
+        { "remove curse",        8, 105 },
+        { "aggravate monsters",  4,  20 },
+        { "blank paper",         1,   5 },
+        { "vorpalize weapon",    1, 300 }
+    };
 
-	int nsyl;
-	char *cp, *sp;
-	int i, nwords;
+    int nsyl;
+    char *cp, *sp;
+    int i, nwords;
 
-	for (i = 0; i < MAXSCROLLS; i++)
-	{
-		cp = prbuf;
-		nwords = rnd(in_small_screen_mode() ? 3 : 4) + 2;
-		while (nwords--)
-		{
-			nsyl = rnd(2) + 1;
-			while (nsyl--)
-			{
-				sp = getsyl();
-				if (&cp[strlen(sp)] > &prbuf[MAXNAME - 1]) { nwords = 0; break; }
-				while (*sp) *cp++ = *sp++;
-			}
-			*cp++ = ' ';
-		}
-		*--cp = '\0';
-		//I'm tired of thinking about this one so just in case .....
-		prbuf[MAXNAME] = 0;
-		m_identifier.push_back(prbuf);
+    for (i = 0; i < MAXSCROLLS; i++)
+    {
+        cp = prbuf;
+        nwords = rnd(in_small_screen_mode() ? 3 : 4) + 2;
+        while (nwords--)
+        {
+            nsyl = rnd(2) + 1;
+            while (nsyl--)
+            {
+                sp = getsyl();
+                if (&cp[strlen(sp)] > &prbuf[MAXNAME - 1]) { nwords = 0; break; }
+                while (*sp) *cp++ = *sp++;
+            }
+            *cp++ = ' ';
+        }
+        *--cp = '\0';
+        //I'm tired of thinking about this one so just in case .....
+        prbuf[MAXNAME] = 0;
+        m_identifier.push_back(prbuf);
 
-		if (i > 0)
-			m_magic_props[i].prob += m_magic_props[i - 1].prob;
-	}
+        if (i > 0)
+            m_magic_props[i].prob += m_magic_props[i - 1].prob;
+    }
 }
 
 void init_new_scroll(Item* scroll)
@@ -276,8 +276,8 @@ void read_create_monster()
   Coord position;
 
   if (plop_monster(player.pos.y, player.pos.x, &position)) {
-	  monster = new Agent;
-	  new_monster(monster, randmonster(false, get_level()), &position, get_level());
+      monster = new Agent;
+      new_monster(monster, randmonster(false, get_level()), &position, get_level());
   }
   else 
     ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");

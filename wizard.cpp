@@ -32,47 +32,47 @@
 //whatis: What a certain object is
 void whatis()
 {
-	if (player.pack.empty()) {
-		msg("You don't have anything in your pack to identify");
-		return;
-	}
+    if (player.pack.empty()) {
+        msg("You don't have anything in your pack to identify");
+        return;
+    }
 
-	Item *obj;
-	for (;;) {
-		if ((obj = get_item("identify", 0)) == NULL)
-		{
-			msg("You must identify something");
-			msg(" ");
-			mpos = 0;
-		}
-		else 
-			break;
-	}
+    Item *obj;
+    for (;;) {
+        if ((obj = get_item("identify", 0)) == NULL)
+        {
+            msg("You must identify something");
+            msg(" ");
+            mpos = 0;
+        }
+        else 
+            break;
+    }
 
-	switch (obj->type)
-	{
-	case SCROLL:
-	case POTION:
-		game->item_class(obj->type).discover(obj->which);
-		break;
+    switch (obj->type)
+    {
+    case SCROLL:
+    case POTION:
+        game->item_class(obj->type).discover(obj->which);
+        break;
 
-	case RING:
-	case STICK:
-		game->item_class(obj->type).discover(obj->which);
-		obj->set_known();
-		break;
+    case RING:
+    case STICK:
+        game->item_class(obj->type).discover(obj->which);
+        obj->set_known();
+        break;
 
-	case WEAPON: 
-	case ARMOR:
-		obj->set_known();
-		break;
-	}
+    case WEAPON: 
+    case ARMOR:
+        obj->set_known();
+        break;
+    }
 
-	//If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
-	if (obj->is_vorpalized())
-		obj->set_revealed();
+    //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
+    if (obj->is_vorpalized())
+        obj->set_revealed();
 
-	msg(inv_name(obj, false));
+    msg(inv_name(obj, false));
 }
 
 //create_obj: Wizard command for getting anything he wants

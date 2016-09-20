@@ -74,36 +74,36 @@ static char *rainbow[] =
 
 PotionInfo::PotionInfo()
 {
-	m_magic_props =
-	{
-	  {"confusion",          8,   5},
-	  {"paralysis",         10,   5},
-	  {"poison",             8,   5},
-	  {"gain strength",     15, 150},
-	  {"see invisible",      2, 100},
-	  {"healing",           15, 130},
-	  {"monster detection",  6, 130},
-	  {"magic detection",    6, 105},
-	  {"raise level",        2, 250},
-	  {"extra healing",      5, 200},
-	  {"haste self",         4, 190},
-	  {"restore strength",  14, 130},
-	  {"blindness",          4,   5},
-	  {"thirst quenching",   1,   5}
-	};
+    m_magic_props =
+    {
+      {"confusion",          8,   5},
+      {"paralysis",         10,   5},
+      {"poison",             8,   5},
+      {"gain strength",     15, 150},
+      {"see invisible",      2, 100},
+      {"healing",           15, 130},
+      {"monster detection",  6, 130},
+      {"magic detection",    6, 105},
+      {"raise level",        2, 250},
+      {"extra healing",      5, 200},
+      {"haste self",         4, 190},
+      {"restore strength",  14, 130},
+      {"blindness",          4,   5},
+      {"thirst quenching",   1,   5}
+    };
 
-	int i, j;
-	bool used[NCOLORS];
+    int i, j;
+    bool used[NCOLORS];
 
-	for (i = 0; i<NCOLORS; i++) used[i] = false;
-	for (i = 0; i<MAXPOTIONS; i++)
-	{
-		do j = rnd(NCOLORS); while (used[j]);
-		used[j] = true;
-		m_identifier.push_back(rainbow[j]);
-		if (i>0)
-			m_magic_props[i].prob += m_magic_props[i - 1].prob;
-	}
+    for (i = 0; i<NCOLORS; i++) used[i] = false;
+    for (i = 0; i<MAXPOTIONS; i++)
+    {
+        do j = rnd(NCOLORS); while (used[j]);
+        used[j] = true;
+        m_identifier.push_back(rainbow[j]);
+        if (i>0)
+            m_magic_props[i].prob += m_magic_props[i - 1].prob;
+    }
 }
 
 void init_new_potion(Item* potion)
@@ -175,8 +175,8 @@ void quaff_monster_detection()
   if (level_monsters.empty()) 
       msg("you have a strange feeling%s.", noterse(" for a moment"));
   else {
-	  if (turn_see(false))
-		  game->potions().discover(P_MFIND);
+      if (turn_see(false))
+          game->potions().discover(P_MFIND);
       msg("");
   }
 }
@@ -198,7 +198,7 @@ void quaff_magic_detection()
       {
         show = true;
         mvaddch(item->pos.y, item->pos.x, goodch(item));
-		game->potions().discover(P_TFIND);
+        game->potions().discover(P_TFIND);
       }
     }
     for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
@@ -209,7 +209,7 @@ void quaff_magic_detection()
         {
           show = true;
           mvaddch(monster->pos.y, monster->pos.x, MAGIC);
-		  game->potions().discover(P_TFIND);
+          game->potions().discover(P_TFIND);
         }
       }
     }

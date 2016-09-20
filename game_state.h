@@ -23,12 +23,12 @@ struct GameState
     Random& random();
     InputInterface& input_interface();
     Hero& hero();
-	
-	ScrollInfo& scrolls();
-	PotionInfo& potions();
-	RingInfo& rings();
-	StickInfo& sticks();
-	ItemClass& item_class(int type);
+    
+    ScrollInfo& scrolls();
+    PotionInfo& potions();
+    RingInfo& rings();
+    StickInfo& sticks();
+    ItemClass& item_class(int type);
 
 private:
     void init_environment();
@@ -39,9 +39,9 @@ private:
     std::unique_ptr<Random> m_random; //Random number generator
     std::unique_ptr<InputInterface> m_input_interface; //Interface for getting game input
     std::unique_ptr<Hero> m_hero;
-	
-	std::unique_ptr<ScrollInfo> m_scrolls;
-	std::unique_ptr<PotionInfo> m_potions;
-	std::unique_ptr<RingInfo> m_rings;
-	std::unique_ptr<StickInfo> m_sticks;
+    
+    std::unique_ptr<ScrollInfo> m_scrolls;
+    std::unique_ptr<PotionInfo> m_potions;
+    std::unique_ptr<RingInfo> m_rings;
+    std::unique_ptr<StickInfo> m_sticks;
  };

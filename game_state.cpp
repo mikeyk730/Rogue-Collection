@@ -23,13 +23,13 @@ m_sticks(new StickInfo)
 GameState::GameState(Random* random, std::istream& in)
 {
     in.read((char*)&m_seed, sizeof(m_seed));
-	random->set_seed(m_seed);
+    random->set_seed(m_seed);
     m_input_interface.reset(new CapturedInput(new StreamInput(in, new KeyboardInput())));
     m_hero.reset(new Hero);
-	m_scrolls.reset(new ScrollInfo);
-	m_potions.reset(new PotionInfo);
-	m_rings.reset(new RingInfo);
-	m_sticks.reset(new StickInfo);
+    m_scrolls.reset(new ScrollInfo);
+    m_potions.reset(new PotionInfo);
+    m_rings.reset(new RingInfo);
+    m_sticks.reset(new StickInfo);
 
     init_environment();
 }
@@ -89,38 +89,38 @@ Hero& GameState::hero()
 
 ScrollInfo& GameState::scrolls()
 {
-	return *m_scrolls;
+    return *m_scrolls;
 }
 
 PotionInfo& GameState::potions()
 {
-	return *m_potions;
+    return *m_potions;
 }
 
 RingInfo& GameState::rings()
 {
-	return *m_rings;
+    return *m_rings;
 }
 
 StickInfo& GameState::sticks()
 {
-	return *m_sticks;
+    return *m_sticks;
 }
 
 ItemClass& GameState::item_class(int type)
 {
-	switch (type)
-	{
-	case SCROLL:
-		return scrolls();
-	case POTION:
-		return potions();
-	case STICK:
-		return sticks();
-	case RING:
-		return rings();
-	}
-	throw std::runtime_error("Requested bad type of item.");
+    switch (type)
+    {
+    case SCROLL:
+        return scrolls();
+    case POTION:
+        return potions();
+    case STICK:
+        return sticks();
+    case RING:
+        return rings();
+    }
+    throw std::runtime_error("Requested bad type of item.");
 }
 
 //todo:

@@ -227,12 +227,12 @@ Item *new_item()
 //todo: remove this wrapper
 int pick_one(std::vector<MagicItem> magic)
 {
-	MagicItem* a = new MagicItem[magic.size()];
-	for (size_t i = 0; i < magic.size(); ++i)
-		a[i] = magic[i];
-	int r = pick_one(a, magic.size());
-	delete[] a;
-	return r;
+    MagicItem* a = new MagicItem[magic.size()];
+    for (size_t i = 0; i < magic.size(); ++i)
+        a[i] = magic[i];
+    int r = pick_one(a, magic.size());
+    delete[] a;
+    return r;
 }
 
 //pick_one: Pick an item out of a list of nitems possible magic items
@@ -281,29 +281,29 @@ void discovered()
 //print_disc: Print what we've discovered of type 'type'
 void print_disc(byte type)
 {
-	int i, maxnum, num_found;
-	static Item obj;
-	static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
+    int i, maxnum, num_found;
+    static Item obj;
+    static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
-	ItemClass& item_class = game->item_class(type);
-	maxnum = item_class.get_max_items();
+    ItemClass& item_class = game->item_class(type);
+    maxnum = item_class.get_max_items();
 
-	set_order(order, maxnum);
-	obj.count = 1;
-	obj.flags = 0;
-	num_found = 0;
-	for (i = 0; i < maxnum; i++) {
-		if (item_class.is_discovered(order[i]) || !item_class.get_guess(order[i]).empty())
-		{
-			obj.type = type;
-			obj.which = order[i];
-			add_line("", "%s", inv_name(&obj, false));
-			num_found++;
-		}
+    set_order(order, maxnum);
+    obj.count = 1;
+    obj.flags = 0;
+    num_found = 0;
+    for (i = 0; i < maxnum; i++) {
+        if (item_class.is_discovered(order[i]) || !item_class.get_guess(order[i]).empty())
+        {
+            obj.type = type;
+            obj.which = order[i];
+            add_line("", "%s", inv_name(&obj, false));
+            num_found++;
+        }
 
-	}
-	if (num_found == 0)
-		add_line("", nothing(type), 0);
+    }
+    if (num_found == 0)
+        add_line("", nothing(type), 0);
 }
 
 //set_order: Set up order for list

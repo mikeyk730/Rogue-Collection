@@ -104,7 +104,7 @@ void addmsg(const char *format, ...)
 void endmsg()
 {
   if (save_msg) 
-	  strcpy(last_message, msgbuf);
+      strcpy(last_message, msgbuf);
   if (mpos) {look(false); move(0, mpos); more(" More ");}
   //All messages should start with uppercase, except ones that start with a pack addressing character
   if (islower(msgbuf[0]) && msgbuf[1]!=')') msgbuf[0] = toupper(msgbuf[0]);

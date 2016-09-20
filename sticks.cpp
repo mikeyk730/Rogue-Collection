@@ -96,68 +96,68 @@ static char *metal[] =
 
 StickInfo::StickInfo()
 {
-	m_magic_props =
-	{
-	  {"light",          12, 250},
-	  {"striking",        9,  75},
-	  {"lightning",       3, 330},
-	  {"fire",            3, 330},
-	  {"cold",            3, 330},
-	  {"polymorph",      15, 310},
-	  {"magic missile",  10, 170},
-	  {"haste monster",   9,   5},
-	  {"slow monster",   11, 350},
-	  {"drain life",      9, 300},
-	  {"nothing",         1,   5},
-	  {"teleport away",   5, 340},
-	  {"teleport to",     5,  50},
-	  {"cancellation",    5, 280}
-	};
+    m_magic_props =
+    {
+      {"light",          12, 250},
+      {"striking",        9,  75},
+      {"lightning",       3, 330},
+      {"fire",            3, 330},
+      {"cold",            3, 330},
+      {"polymorph",      15, 310},
+      {"magic missile",  10, 170},
+      {"haste monster",   9,   5},
+      {"slow monster",   11, 350},
+      {"drain life",      9, 300},
+      {"nothing",         1,   5},
+      {"teleport away",   5, 340},
+      {"teleport to",     5,  50},
+      {"cancellation",    5, 280}
+    };
 
-	int i, j;
-	char *str;
-	bool metused[NMETAL], woodused[NWOOD];
+    int i, j;
+    char *str;
+    bool metused[NMETAL], woodused[NWOOD];
 
-	for (i = 0; i<NWOOD; i++)
-		woodused[i] = false;
-	for (i = 0; i<NMETAL; i++)
-		metused[i] = false;
-	for (i = 0; i<MAXSTICKS; i++)
-	{
-		for (;;) if (rnd(2) == 0)
-		{
-			j = rnd(NMETAL);
-			if (!metused[j]) {
-				m_type.push_back("wand");
-				str = metal[j];
-				metused[j] = true;
-				break;
-			}
-		}
-		else
-		{
-			j = rnd(NWOOD);
-			if (!woodused[j]) {
-				m_type.push_back("staff");
-				str = wood[j];
-				woodused[j] = true;
-				break;
-			}
-		}
-		m_identifier.push_back(str);
-		if (i>0) 
-			m_magic_props[i].prob += m_magic_props[i - 1].prob;
-	}
+    for (i = 0; i<NWOOD; i++)
+        woodused[i] = false;
+    for (i = 0; i<NMETAL; i++)
+        metused[i] = false;
+    for (i = 0; i<MAXSTICKS; i++)
+    {
+        for (;;) if (rnd(2) == 0)
+        {
+            j = rnd(NMETAL);
+            if (!metused[j]) {
+                m_type.push_back("wand");
+                str = metal[j];
+                metused[j] = true;
+                break;
+            }
+        }
+        else
+        {
+            j = rnd(NWOOD);
+            if (!woodused[j]) {
+                m_type.push_back("staff");
+                str = wood[j];
+                woodused[j] = true;
+                break;
+            }
+        }
+        m_identifier.push_back(str);
+        if (i>0) 
+            m_magic_props[i].prob += m_magic_props[i - 1].prob;
+    }
 }
 
 bool StickInfo::is_staff(int which) const
 {
-	return m_type[which] == "staff";
+    return m_type[which] == "staff";
 }
 
 std::string StickInfo::get_type(int which) const
 {
-	return game->sticks().m_type[which];
+    return game->sticks().m_type[which];
 }
 
 
@@ -239,7 +239,7 @@ void zap_polymorph(Agent* monster, int y, int x)
     mvaddch(y, x, monster->type);
 
   if (monster->type != old_type)
-	game->sticks().discover(WS_POLYMORPH);
+    game->sticks().discover(WS_POLYMORPH);
 }
 
 void zap_cancellation(Agent* monster)

@@ -49,10 +49,10 @@ void do_move(int dy, int dx)
 
   firstmove = false;
   if (invalid_position) {
-	  invalid_position = false;
-	  msg("the crack widens ... "); 
-	  descend("");
-	  return;
+      invalid_position = false;
+      msg("the crack widens ... "); 
+      descend("");
+      return;
   }
   if (no_move) {no_move--; msg("you are still stuck in the bear trap"); return;}
   //Do a confused move (maybe)

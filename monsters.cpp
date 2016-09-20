@@ -390,7 +390,7 @@ void wanderer()
   monster = new Agent;
   new_monster(monster, randmonster(true, get_level()), &cp, get_level());
   if (invalid_position) 
-	  debug("wanderer bailout");
+      debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
   start_run(monster);
 }

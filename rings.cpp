@@ -55,37 +55,37 @@ static STONE stones[] =
 
 RingInfo::RingInfo()
 {
-	m_magic_props =
-	{
-	  {"protection",          9, 400},
-	  {"add strength",        9, 400},
-	  {"sustain strength",    5, 280},
-	  {"searching",          10, 420},
-	  {"see invisible",      10, 310},
-	  {"adornment",           1,  10},
-	  {"aggravate monster",  10,  10},
-	  {"dexterity",           8, 440},
-	  {"increase damage",     8, 400},
-	  {"regeneration",        4, 460},
-	  {"slow digestion",      9, 240},
-	  {"teleportation",       5,  30},
-	  {"stealth",             7, 470},
-	  {"maintain armor",      5, 380}
-	};
+    m_magic_props =
+    {
+      {"protection",          9, 400},
+      {"add strength",        9, 400},
+      {"sustain strength",    5, 280},
+      {"searching",          10, 420},
+      {"see invisible",      10, 310},
+      {"adornment",           1,  10},
+      {"aggravate monster",  10,  10},
+      {"dexterity",           8, 440},
+      {"increase damage",     8, 400},
+      {"regeneration",        4, 460},
+      {"slow digestion",      9, 240},
+      {"teleportation",       5,  30},
+      {"stealth",             7, 470},
+      {"maintain armor",      5, 380}
+    };
 
-	int i, j;
-	bool used[NSTONES];
+    int i, j;
+    bool used[NSTONES];
 
-	for (i = 0; i<NSTONES; i++) used[i] = false;
-	for (i = 0; i<MAXRINGS; i++)
-	{
-		do j = rnd(NSTONES); while (used[j]);
-		used[j] = true;
-		m_identifier.push_back(stones[j].st_name);
-		if (i>0)
-			m_magic_props[i].prob += m_magic_props[i - 1].prob;
-		m_magic_props[i].worth += stones[j].st_value;
-	}
+    for (i = 0; i<NSTONES; i++) used[i] = false;
+    for (i = 0; i<MAXRINGS; i++)
+    {
+        do j = rnd(NSTONES); while (used[j]);
+        used[j] = true;
+        m_identifier.push_back(stones[j].st_name);
+        if (i>0)
+            m_magic_props[i].prob += m_magic_props[i - 1].prob;
+        m_magic_props[i].worth += stones[j].st_value;
+    }
 
 }
 
@@ -110,7 +110,7 @@ void init_new_ring(Item* ring)
 
 std::string get_stone(int type)
 {
-	return game->rings().get_identifier(type);
+    return game->rings().get_identifier(type);
 }
 
 //ring_on: Put a ring on a hand

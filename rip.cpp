@@ -281,7 +281,7 @@ void total_winner()
   for (auto it = player.pack.begin(); it != player.pack.end(); c++, ++it)
   {
     obj = *it;
-	ItemClass* item_class = 0;
+    ItemClass* item_class = 0;
     switch (obj->type)
     {
     case FOOD:
@@ -324,11 +324,11 @@ void total_winner()
       break;
 
     case SCROLL:
-	  item_class = &game->scrolls();
+      item_class = &game->scrolls();
       worth = item_class->get_value(obj->which);
       worth *= obj->count;
       if (!item_class->is_discovered(obj->which)) worth /= 2;
-	  item_class->discover(obj->which);
+      item_class->discover(obj->which);
       break;
 
     case POTION:
@@ -336,27 +336,27 @@ void total_winner()
       worth = item_class->get_value(obj->which);
       worth *= obj->count;
       if (!item_class->is_discovered(obj->which)) worth /= 2;
-	  item_class->discover(obj->which);
+      item_class->discover(obj->which);
       break;
 
     case RING:
-	  item_class = &game->rings();
+      item_class = &game->rings();
       worth = item_class->get_value(obj->which);
       if (obj->which==R_ADDSTR || obj->which==R_ADDDAM || obj->which==R_PROTECT || obj->which==R_ADDHIT)
         if (obj->ring_level>0) worth += obj->ring_level*100;
         else worth = 10;
         if (!obj->is_known()) worth /= 2;
         obj->set_known();
-		item_class->discover(obj->which);
+        item_class->discover(obj->which);
         break;
 
     case STICK:
-	  item_class = &game->sticks();
+      item_class = &game->sticks();
       worth = item_class->get_value(obj->which);
       worth += 20*obj->charges;
       if (!obj->is_known()) worth /= 2;
       obj->set_known();
-	  item_class->discover(obj->which);
+      item_class->discover(obj->which);
       break;
 
     case AMULET:

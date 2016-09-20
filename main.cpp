@@ -49,12 +49,12 @@ int bwflag = false;
 //main: The main program, of course
 int main(int argc, char **argv)
 {
-	int seed = get_seed();
-	g_random = new Random(seed);
+    int seed = get_seed();
+    g_random = new Random(seed);
 
-	//todo: process args
+    //todo: process args
     //game = new GameState(seed);
-	std::ifstream in("foo.baz", std::ios::binary | std::ios::in);
+    std::ifstream in("foo.baz", std::ios::binary | std::ios::in);
     game = new GameState(g_random, in);
 
     setenv("rogue.opt");
@@ -64,12 +64,12 @@ int main(int argc, char **argv)
 
     winit();
     if (bwflag)
-		forcebw();
+        forcebw();
 
-	credits();
+    credits();
     
-    init_things(); //Set up probabilities of things	
-	setup();
+    init_things(); //Set up probabilities of things    
+    setup();
     drop_curtain();
     new_level(false); //Draw current level
     //Start up daemons and fuses
@@ -119,7 +119,7 @@ void playit(char *sname)
   {
     restore_game(sname);
     if (bwflag) 
-		forcebw();
+        forcebw();
     setup();
     cursor(false);
   }
