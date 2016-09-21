@@ -118,22 +118,17 @@ void summon_object()
   {
       char bless;
       which = get_which(RING, MAXRINGS - 1);
-      obj = new Ring(which);
-
-      switch (obj->which)
+      
+      int level = 0;
+      switch (which)
       {
       case R_PROTECT: case R_ADDSTR: case R_ADDHIT: case R_ADDDAM:
           bless = get_bless_char();
-          if (bless == '-') obj->set_cursed();
-          obj->ring_level = (bless == '-' ? -1 : rnd(2) + 1);
-          break;
-
-      case R_AGGR: case R_TELEPORT:
-          obj->set_cursed();
+          level = (bless == '-') ? -1 : rnd(2) + 1;
           break;
       }
 
-
+      obj = new Ring(which, level);
       break;
   }
   case ')':
@@ -157,17 +152,14 @@ void summon_object()
   {
       which = get_which(ARMOR, MAXARMORS - 1);
       char bless = get_bless_char();
-      obj = new Armor(which);
 
+      int ac_mod = 0;
       if (bless == '-')
-          obj->set_cursed();
+          ac_mod += rnd(3) + 1;
+      else if (bless == '+')
+          ac_mod -= rnd(3) + 1;
 
-      obj->armor_class = get_default_class(obj->which);
-          if (bless == '-')
-              obj->armor_class += rnd(3) + 1;
-          if (bless == '+')
-              obj->armor_class -= rnd(3) + 1;
-
+      obj = new Armor(which, ac_mod);
       break;
   }
   case ',':

@@ -81,11 +81,8 @@ public:
 
     virtual Item* Clone() const = 0;
 
-//protected:
     int type;                      //What kind of object it is
-//protected:
     Coord pos;                     //Where it lives on the screen
-public:
     char launcher;                 //What you need to launch it
     char *damage;                  //Damage if used like sword
     char *throw_damage;            //Damage if thrown
@@ -93,9 +90,14 @@ public:
     int which;                     //Which object of a type it is
     int hit_plus;                  //Plusses to hit
     int damage_plus;               //Plusses to damage
-    short misc;                    //Item dependent: rmor class, gold value, stick charges, ring level
+protected:
+    short armor_class;
+    short gold_value;
+    short charges;
+    short ring_level;
     short flags;                   //Information about objects
     char enemy;                    //If it is enchanted, who it hates
+public:
     int group;                     //Group number for this object
 public:
 
@@ -122,6 +124,22 @@ public:
     void set_found();
     void set_flashed();
 
+    //ring-specific
+    int get_ring_level() const;
+
+    //stick-specific
+    int get_charges() const;
+    void use_charge();
+    void drain_striking();
+
+    //armor-specific
+    int get_armor_class() const;
+    void enchant_armor();
+    void weaken_armor();
+
+    //gold-specific
+    int get_gold_value() const;
+
     //weapon-specific functions
     void initialize_weapon(byte type);
     const char* get_inv_name_weapon() const;
@@ -131,11 +149,6 @@ public:
     bool is_vorpalized_against(Agent* monster) const;
     const char* get_vorpalized_name() const;
 };
-
-#define charges      misc
-#define m_gold_value misc
-#define armor_class  misc
-#define ring_level   misc
 
 struct Amulet : public Item
 {

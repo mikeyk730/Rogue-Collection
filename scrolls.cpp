@@ -196,8 +196,7 @@ void read_enchant_armor()
 {
   if (get_current_armor()!=NULL)
   {
-    get_current_armor()->armor_class--;
-    get_current_armor()->remove_curse();
+    get_current_armor()->enchant_armor();
     ifterse("your armor glows faintly", "your armor glows faintly for a moment");
   }
 }

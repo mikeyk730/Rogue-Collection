@@ -310,7 +310,12 @@ void zap_generic(Item* wand, int which)
 
 struct Bolt : public Item
 {
-    Bolt() : Item(IBOLT, 0) {}
+    Bolt() : Item(IBOLT, 0) {
+        this->throw_damage = "1d8";
+        this->hit_plus = 1000;
+        this->damage_plus = 1;
+        this->flags = IS_MISL;
+    }
     virtual Item* Clone() const { return new Bolt(*this); }
 };
 
@@ -321,10 +326,6 @@ void zap_magic_missile()
   game->sticks().discover(WS_MISSILE);
 
   Item* bolt = new Bolt;
-  bolt->throw_damage = "1d8";
-  bolt->hit_plus = 1000;
-  bolt->damage_plus = 1;
-  bolt->flags = IS_MISL;
   if (get_current_weapon()!=NULL) 
       bolt->launcher = get_current_weapon()->which;
   do_motion(bolt, delta.y, delta.x);
@@ -389,7 +390,7 @@ void do_zap()
 
     if (obj->type != STICK)
     {
-        if (obj->is_vorpalized() && obj->charges)
+        if (obj->is_vorpalized() && obj->get_charges())
             which_one = MAXSTICKS;
         else {
             msg("you can't zap with that!");
@@ -398,7 +399,7 @@ void do_zap()
         }
     }
 
-    if (obj->charges == 0) {
+    if (obj->get_charges() == 0) {
         msg("nothing happens");
         return;
     }
@@ -447,8 +448,7 @@ void do_zap()
         break;
     }
 
-    if (--obj->charges < 0)
-        obj->charges = 0;
+    obj->use_charge();
 }
 
 //drain: Do drain hit points from player schtick
@@ -612,7 +612,7 @@ const char *get_charge_string(Item *obj)
   static char buf[20];
 
   if (!obj->is_known() && !game->hero().is_wizard()) buf[0] = '\0';
-  else sprintf(buf, " [%d charges]", obj->charges);
+  else sprintf(buf, " [%d charges]", obj->get_charges());
   return buf;
 }
 

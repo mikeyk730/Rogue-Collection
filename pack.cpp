@@ -214,7 +214,7 @@ int inventory(std::list<Item *>& list, int type, char *lstr)
     if (type && type!=item->type && 
         !(type==CALLABLE && (item->type==SCROLL || item->type==POTION || item->type==RING || item->type==STICK)) &&
         !(type==WEAPON && item->type==POTION) &&
-        !(type==STICK && item->is_vorpalized() && item->charges)) //todo: does this work?
+        !(type==STICK && item->is_vorpalized() && item->get_charges())) //todo: does this work?
         continue;
     n_objs++;
     sprintf(inv_temp, "%c) %%s", ch);
@@ -238,7 +238,7 @@ void pick_up(byte ch)
   case GOLD:
     if ((obj = find_obj(player.pos.y, player.pos.x))==NULL)
         return;
-    pick_up_gold(obj->m_gold_value);
+    pick_up_gold(obj->get_gold_value());
     level_items.remove(obj);
     delete obj;
     player.room->gold_val = 0;

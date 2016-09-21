@@ -318,8 +318,8 @@ void total_winner()
       case BANDED_MAIL: worth = 90; break;
       case PLATE_MAIL: worth = 150; break;
       }
-      worth += (9-obj->armor_class)*100;
-      worth += (10*(get_default_class(obj->which)-obj->armor_class));
+      worth += (9-obj->get_armor_class())*100;
+      worth += (10*(get_default_class(obj->which)-obj->get_armor_class()));
       obj->set_known();
       break;
 
@@ -343,7 +343,7 @@ void total_winner()
       item_class = &game->rings();
       worth = item_class->get_value(obj->which);
       if (obj->which==R_ADDSTR || obj->which==R_ADDDAM || obj->which==R_PROTECT || obj->which==R_ADDHIT)
-        if (obj->ring_level>0) worth += obj->ring_level*100;
+        if (obj->get_ring_level()>0) worth += obj->get_ring_level()*100;
         else worth = 10;
         if (!obj->is_known()) worth /= 2;
         obj->set_known();
@@ -353,7 +353,7 @@ void total_winner()
     case STICK:
       item_class = &game->sticks();
       worth = item_class->get_value(obj->which);
-      worth += 20*obj->charges;
+      worth += 20*obj->get_charges();
       if (!obj->is_known()) worth /= 2;
       obj->set_known();
       item_class->discover(obj->which);

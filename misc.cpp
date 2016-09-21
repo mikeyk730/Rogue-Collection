@@ -320,7 +320,7 @@ int goodch(Item *obj)
   switch (obj->type)
   {
   case ARMOR:
-    if (obj->armor_class>get_default_class(obj->which)) ch = BMAGIC;
+    if (obj->get_armor_class()>get_default_class(obj->which)) ch = BMAGIC;
     break;
   case WEAPON:
     if (obj->hit_plus<0 || obj->damage_plus<0) ch = BMAGIC;
@@ -337,7 +337,7 @@ int goodch(Item *obj)
   case RING:
     switch (obj->which)
     {
-    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->ring_level<0) ch = BMAGIC; break;
+    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->get_ring_level()<0) ch = BMAGIC; break;
     case R_AGGR: case R_TELEPORT: ch = BMAGIC; break;
     }
     break;

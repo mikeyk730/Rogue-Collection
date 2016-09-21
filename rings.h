@@ -4,6 +4,7 @@
 struct Ring : public Item
 {
     Ring(int which);
+    Ring(int which, int level);
 
     virtual Item* Clone() const;
 };

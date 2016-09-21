@@ -101,9 +101,9 @@ void Agent::adjust_strength(int amt)
     add_str(&stats.str, amt);
     comp = stats.str;
     if (is_ring_on_hand(LEFT, R_ADDSTR))
-        add_str(&comp, -get_ring(LEFT)->ring_level);
+        add_str(&comp, -get_ring(LEFT)->get_ring_level());
     if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        add_str(&comp, -get_ring(RIGHT)->ring_level);
+        add_str(&comp, -get_ring(RIGHT)->get_ring_level());
     if (comp > stats.max_str)
         stats.max_str = comp;
 }
@@ -111,13 +111,13 @@ void Agent::adjust_strength(int amt)
 void Agent::restore_strength()
 {
     if (is_ring_on_hand(LEFT, R_ADDSTR))
-        add_str(&stats.str, -get_ring(LEFT)->ring_level);
+        add_str(&stats.str, -get_ring(LEFT)->get_ring_level());
     if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        add_str(&stats.str, -get_ring(RIGHT)->ring_level);
+        add_str(&stats.str, -get_ring(RIGHT)->get_ring_level());
     if (stats.str < stats.max_str)
         stats.str = stats.max_str;
     if (is_ring_on_hand(LEFT, R_ADDSTR))
-        add_str(&stats.str, get_ring(LEFT)->ring_level);
+        add_str(&stats.str, get_ring(LEFT)->get_ring_level());
     if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        add_str(&stats.str, get_ring(RIGHT)->ring_level);
+        add_str(&stats.str, get_ring(RIGHT)->get_ring_level());
 }

@@ -23,6 +23,53 @@ void Item::set_location(Coord p)
     pos = p;
 }
 
+int Item::get_ring_level() const
+{
+    return ring_level;
+}
+
+int Item::get_charges() const
+{
+    return charges;
+}
+
+void Item::use_charge()
+{
+    if (--charges < 1)
+        charges = 0;
+}
+
+void Item::drain_striking()
+{
+    if (--charges < 0) {
+        damage = "0d0";
+        hit_plus = 0;
+        damage_plus = 0;
+        charges = 0;
+    }
+}
+
+int Item::get_armor_class() const
+{
+    return armor_class;
+}
+
+void Item::enchant_armor()
+{
+    armor_class--;
+    remove_curse();
+}
+
+void Item::weaken_armor()
+{
+    armor_class++;
+}
+
+int Item::get_gold_value() const
+{
+    return gold_value;
+}
+
 void Item::initialize(int type, int which)
 {
     this->type = type;
@@ -109,7 +156,7 @@ Item * Amulet::Clone() const
 Gold::Gold(int value) :
     Item(GOLD, 0)
 {
-    m_gold_value = value;
+    gold_value = value;
 }
 
 Item * Gold::Clone() const

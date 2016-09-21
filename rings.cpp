@@ -124,7 +124,7 @@ void ring_on()
   switch (obj->which)
   {
   case R_ADDSTR:
-      player.adjust_strength(obj->ring_level);
+      player.adjust_strength(obj->get_ring_level());
       break;
   case R_SEEINVIS:
       invis_on();
@@ -200,7 +200,7 @@ char *ring_num(Item *obj)
   {
   case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
     ring_buf[0] = ' ';
-    strcpy(&ring_buf[1], num(obj->ring_level, 0, (char)RING));
+    strcpy(&ring_buf[1], num(obj->get_ring_level(), 0, (char)RING));
     break;
 
   default: 
@@ -256,6 +256,21 @@ Ring::Ring(int which) :
         }
         break;
 
+    case R_AGGR: case R_TELEPORT:
+        set_cursed();
+        break;
+    }
+}
+
+Ring::Ring(int which, int level) :
+    Item(RING, which)
+{
+    ring_level = level;
+    if (ring_level < 0)
+        set_cursed();
+
+    switch (which)
+    {
     case R_AGGR: case R_TELEPORT:
         set_cursed();
         break;

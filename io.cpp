@@ -263,13 +263,13 @@ void status()
         printw("Gold:%-5u", game->hero().get_purse());
     }
     //Armor:
-    if (s_ac != (get_current_armor() != NULL ? get_current_armor()->armor_class : player.stats.ac))
+    if (s_ac != (get_current_armor() != NULL ? get_current_armor()->get_armor_class() : player.stats.ac))
     {
-        s_ac = (get_current_armor() != NULL ? get_current_armor()->armor_class : player.stats.ac);
-        if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= get_ring(LEFT)->ring_level;
-        if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= get_ring(RIGHT)->ring_level;
+        s_ac = (get_current_armor() != NULL ? get_current_armor()->get_armor_class() : player.stats.ac);
+        if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= get_ring(LEFT)->get_ring_level();
+        if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= get_ring(RIGHT)->get_ring_level();
         move(23, PT(12, 52));
-        printw("Armor:%-2d", AC(get_current_armor() != NULL ? get_current_armor()->armor_class : player.stats.ac));
+        printw("Armor:%-2d", AC(get_current_armor() != NULL ? get_current_armor()->get_armor_class() : player.stats.ac));
     }
     //Exp:
     if (!use_level_names())

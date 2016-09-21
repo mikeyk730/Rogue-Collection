@@ -125,12 +125,12 @@ int fight(Coord *location, Item *weapon, bool thrown)
 bool aquator_attack()
 {
   //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-  if (get_current_armor() && get_current_armor()->armor_class < 9 && get_current_armor()->which != LEATHER)
+  if (get_current_armor() && get_current_armor()->get_armor_class() < 9 && get_current_armor()->which != LEATHER)
     if (is_wearing_ring(R_SUSTARM))
       msg("the rust vanishes instantly");
     else {
       msg("your armor weakens, oh my!"); 
-      get_current_armor()->armor_class++;
+      get_current_armor()->weaken_armor();
       return true;
     }
     return false;
@@ -381,13 +381,13 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
     if (weapon==get_current_weapon())
     {
       if (is_ring_on_hand(LEFT, R_ADDDAM))
-          dplus += get_ring(LEFT)->ring_level;
+          dplus += get_ring(LEFT)->get_ring_level();
       else if (is_ring_on_hand(LEFT, R_ADDHIT)) 
-          hplus += get_ring(LEFT)->ring_level;
+          hplus += get_ring(LEFT)->get_ring_level();
       if (is_ring_on_hand(RIGHT, R_ADDDAM)) 
-          dplus += get_ring(RIGHT)->ring_level;
+          dplus += get_ring(RIGHT)->get_ring_level();
       else if (is_ring_on_hand(RIGHT, R_ADDHIT))
-        hplus += get_ring(RIGHT)->ring_level;
+        hplus += get_ring(RIGHT)->get_ring_level();
     }
     cp = weapon->damage;
     if (hurl && weapon->is_missile() && get_current_weapon() && get_current_weapon()->which == weapon->launcher)
@@ -397,11 +397,11 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
       dplus += get_current_weapon()->damage_plus;
     }
     //Drain a staff of striking
-    if (weapon->type==STICK && weapon->which==WS_HIT && --weapon->charges<0)
+    if (weapon->type == STICK && weapon->which == WS_HIT)
     {
-      cp = weapon->damage = "0d0";
-      weapon->hit_plus = weapon->damage_plus = 0;
-      weapon->charges = 0;
+        if (weapon->get_charges() == 0)
+            cp = "0d0";
+        weapon->drain_striking();
     }
   }
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
@@ -410,9 +410,9 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
   def_arm = def->ac;
   if (def==&player.stats)
   {
-    if (get_current_armor()!=NULL) def_arm = get_current_armor()->armor_class;
-    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= get_ring(LEFT)->ring_level;
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= get_ring(RIGHT)->ring_level;
+    if (get_current_armor()!=NULL) def_arm = get_current_armor()->get_armor_class();
+    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= get_ring(LEFT)->get_ring_level();
+    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= get_ring(RIGHT)->get_ring_level();
   }
   for (;;)
   {
@@ -493,9 +493,9 @@ int save(int which)
   if (which==VS_MAGIC)
   {
     if (is_ring_on_hand(LEFT, R_PROTECT)) 
-        which -= get_ring(LEFT)->ring_level;
+        which -= get_ring(LEFT)->get_ring_level();
     if (is_ring_on_hand(RIGHT, R_PROTECT)) 
-        which -= get_ring(RIGHT)->ring_level;
+        which -= get_ring(RIGHT)->get_ring_level();
   }
   return save_throw(which, &player);
 }
@@ -575,7 +575,7 @@ bool is_magic(Item *obj)
 {
   switch (obj->type)
   {
-  case ARMOR: return obj->armor_class!=get_default_class(obj->which);
+  case ARMOR: return obj->get_armor_class()!=get_default_class(obj->which);
   case WEAPON: return obj->hit_plus!=0 || obj->damage_plus!=0;
   case POTION: case SCROLL: case STICK: case RING: case AMULET: return true;
   }

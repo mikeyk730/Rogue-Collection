@@ -172,7 +172,7 @@ bool can_drop(Item *op)
     switch (op->which)
     {
     case R_ADDSTR: 
-        player.adjust_strength(-op->ring_level);
+        player.adjust_strength(-op->get_ring_level());
         break;
     case R_SEEINVIS:
         unsee();

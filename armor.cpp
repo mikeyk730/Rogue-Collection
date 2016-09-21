@@ -132,7 +132,7 @@ const char* get_inv_name_armor(Item* obj)
   int which = obj->which;
 
   if (obj->is_known() || game->hero().is_wizard())
-    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->armor_class, 0, (char)ARMOR), get_armor_name(which), -(obj->armor_class-11));
+    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->get_armor_class(), 0, (char)ARMOR), get_armor_name(which), -(obj->get_armor_class()-11));
   else
     sprintf(pb, "%s", get_armor_name(which));
 
@@ -156,6 +156,8 @@ Armor::Armor(int which) :
 Armor::Armor(int which, int ac_mod) :
     Item(ARMOR, which)
 {
+    if (ac_mod > 0)
+        set_cursed();
     armor_class = get_default_class(which) + ac_mod;
 }
 
