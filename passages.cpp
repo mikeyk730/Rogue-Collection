@@ -92,9 +92,9 @@ void conn(int r1, int r2)
   turn_spot = rnd(distance-1)+1;
   //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
   if (!(room_from->is_gone())) door(room_from, &spos);
-  else psplat(spos.y, spos.x);
+  else psplat(spos);
   if (!(room_to->is_gone())) door(room_to, &epos);
-  else psplat(epos.y, epos.x);
+  else psplat(epos);
   //Get ready to move...
   curr.x = spos.x;
   curr.y = spos.y;
@@ -106,15 +106,15 @@ void conn(int r1, int r2)
     //Check if we are at the turn place, if so do the turn
     if (distance==turn_spot)
     {
-      while (turn_distance--) {psplat(curr.y, curr.x); curr.x += turn_delta.x; curr.y += turn_delta.y;}
+      while (turn_distance--) {psplat(curr); curr.x += turn_delta.x; curr.y += turn_delta.y;}
     }
     //Continue digging along
-    psplat(curr.y, curr.x);
+    psplat(curr);
     distance--;
   }
   curr.x += del.x;
   curr.y += del.y;
-  if (!equal(curr, epos)) {epos.x -= del.x; epos.y -= del.y; psplat(epos.y, epos.x);}
+  if (!equal(curr, epos)) {epos.x -= del.x; epos.y -= del.y; psplat(epos);}
 }
 
 //do_passages: Draw all the passages on a level.
@@ -263,8 +263,8 @@ void numpass(int y, int x)
   numpass(y, x-1);
 }
 
-void psplat(int y, int x)
+void psplat(Coord p)
 {
-    Level::set_tile({x, y}, PASSAGE);
-    Level::set_flag({x, y}, F_PASS);
+    Level::set_tile(p, PASSAGE);
+    Level::set_flag(p, F_PASS);
 }
