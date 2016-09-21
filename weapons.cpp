@@ -159,7 +159,7 @@ void fall(Item *obj, bool pr)
     obj->pos = fpos;
     if (can_see(fpos.y, fpos.x))
     {
-      if ((get_flags(obj->pos.y, obj->pos.x)&F_PASS) || (get_flags(obj->pos.y, obj->pos.x)&F_MAZE)) standout();
+      if ((Level::get_flags(obj->pos)&F_PASS) || (Level::get_flags(obj->pos)&F_MAZE)) standout();
       Screen::DrawChar(fpos, obj->type);
       standend();
       if (monster_at(fpos)!=NULL) monster_at(fpos)->oldch = obj->type;

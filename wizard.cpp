@@ -236,7 +236,7 @@ void show_map(bool show_monsters)
   clear();
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
-    if (!(real = get_flags(y, x)&F_REAL)) standout();
+    if (!(real = Level::get_flags({x, y})&F_REAL)) standout();
     Screen::DrawChar({x, y}, show_monsters ? get_tile_or_monster({x, y}) : Level::get_tile({x, y}));
     if (!real) standend();
   }

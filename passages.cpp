@@ -201,7 +201,7 @@ void door(struct Room *rm, Coord *cp)
   if (rnd(10)+1<get_level() && rnd(5)==0)
   {
     Level::set_tile(*cp, (cp->y==rm->pos.y || cp->y==rm->pos.y+rm->size.y-1)?HWALL:VWALL);
-    unset_flag(cp->y, cp->x, F_REAL);
+    Level::unset_flag(*cp, F_REAL);
   }
   else Level::set_tile(*cp, DOOR);
   xit = rm->num_exits++;
@@ -244,7 +244,7 @@ void numpass(int y, int x)
   byte ch;
 
   if (offmap(y, x)) return;
-  fp = get_flags(y, x);
+  fp = Level::get_flags({x, y});
   if (fp&F_PNUM) return;
   if (newpnum) {pnum++; newpnum = false;}
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
@@ -255,7 +255,7 @@ void numpass(int y, int x)
     room->exits[room->num_exits++].x = x;
   }
   else if (!(fp&F_PASS)) return;
-  set_flag(y, x, pnum);
+  Level::set_flag({x, y}, pnum);
   //recurse on the surrounding places
   numpass(y+1, x);
   numpass(y-1, x);
@@ -265,6 +265,6 @@ void numpass(int y, int x)
 
 void psplat(int y, int x)
 {
-    Level::set_tile({ x, y }, PASSAGE);
-    set_flag(y, x, F_PASS);
+    Level::set_tile({x, y}, PASSAGE);
+    Level::set_flag({x, y}, F_PASS);
 }

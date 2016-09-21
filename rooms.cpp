@@ -215,7 +215,7 @@ void leave_room(Coord *cp)
   byte ch;
 
   room = player.room;
-  player.room = &passages[get_flags(cp->y, cp->x)&F_PNUM];
+  player.room = &passages[Level::get_flags(*cp)&F_PNUM];
   floor = ((room->is_dark()) && !player.is_blind()) ? ' ' : FLOOR;
   if (room->is_maze()) floor = PASSAGE;
   for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
@@ -260,7 +260,7 @@ struct Room *get_room_from_position(Coord *pos)
           && room->pos.y <= pos->y)
           return room;
 
-  fp = get_flags(pos->y, pos->x);
+  fp = Level::get_flags(*pos);
   if (fp&F_PASS)
     return &passages[fp&F_PNUM];
 

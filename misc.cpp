@@ -61,7 +61,7 @@ void look(bool wakeup)
   int sy, sx, sumhero, diffhero;
 
   room = player.room;
-  pfl = get_flags(player.pos.y, player.pos.x);
+  pfl = Level::get_flags(player.pos);
   pch = Level::get_tile(player.pos);
   //if the hero has moved
   if (!equal(oldpos, player.pos))
@@ -81,7 +81,7 @@ void look(bool wakeup)
           }
           else
           {
-            fp = get_flags(y, x);
+            fp = Level::get_flags({x, y});
             //if the maze or passage (that the hero is in!!) needs to be redrawn (passages once drawn always stay on) do it now.
             if (((fp&F_MAZE) || (fp&F_PASS)) && (ch!=PASSAGE) && (ch!=STAIRS) && ((fp&F_PNUM)==(pfl & F_PNUM))) 
               addch(PASSAGE);
@@ -108,7 +108,7 @@ void look(bool wakeup)
     }
     else if (y!=player.pos.y || x!=player.pos.x) continue;
     //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
-    fp = get_flags(y, x);
+    fp = Level::get_flags({x, y});
     ch = Level::get_tile({x, y});
     //No Doors
     if (pch!=DOOR && ch!=DOOR)
@@ -171,7 +171,7 @@ void look(bool wakeup)
       running = false;
   move(player.pos.y, player.pos.x);
   //todo:check logic
-  if ((get_flags(player.pos.y, player.pos.x)&F_PASS) || (was_trapped>1) || (get_flags(player.pos.y, player.pos.x)&F_MAZE)) 
+  if ((Level::get_flags(player.pos)&F_PASS) || (was_trapped>1) || (Level::get_flags(player.pos)&F_MAZE)) 
       standout();
   addch(PLAYER);
   standend();
@@ -433,20 +433,20 @@ void search()
   {
     if ((y==player.pos.y && x==player.pos.x) || offmap(y, x)) 
       continue;
-    fp = get_flags(y, x);
+    fp = Level::get_flags({x, y});
     if (!(fp&F_REAL)) {
       switch (Level::get_tile({x, y}))
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
         if (rnd(5)!=0) break;
         Level::set_tile({x, y}, DOOR);
-        set_flag(y, x, F_REAL);
+        Level::set_flag({x, y}, F_REAL);
         repeat_cmd_count = running = false;
         break;
       case FLOOR:
         if (rnd(2)!=0) break;
         Level::set_tile({x, y}, TRAP);
-        set_flag(y, x, F_REAL);
+        Level::set_flag({x, y}, F_REAL);
         repeat_cmd_count = running = false;
         msg("you found %s", tr_name(fp&F_TMASK));
         break;

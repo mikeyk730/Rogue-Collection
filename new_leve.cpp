@@ -65,14 +65,14 @@ void new_level(int do_implode)
     while (i--)
     {
       find_empty_location(&pos, false);
-      unset_flag(pos.y, pos.x, F_REAL);
-      set_flag(pos.y, pos.x, rnd(NTRAPS));
+      Level::unset_flag(pos, F_REAL);
+      Level::set_flag(pos, rnd(NTRAPS));
     }
   }
   do
   {
     find_empty_location(&player.pos, true);
-  } while (!(get_flags(player.pos.y, player.pos.x) & F_REAL));  //don't place hero on a trap
+  } while (!(Level::get_flags(player.pos) & F_REAL));  //don't place hero on a trap
   msg_position = 0;
   enter_room(&player.pos);
   Screen::DrawChar(player.pos, PLAYER);

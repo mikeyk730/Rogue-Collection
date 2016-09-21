@@ -91,7 +91,7 @@ over:
     }
     if (door)
     {
-      monster_room = &passages[get_flags(monster->pos.y, monster->pos.x)&F_PNUM];
+      monster_room = &passages[Level::get_flags(monster->pos)&F_PNUM];
       door = false;
       goto over;
     }
@@ -157,7 +157,7 @@ over:
   }
   if (can_see_monster(monster))
   {
-    if (get_flags(ch_ret.y, ch_ret.x)&F_PASS) standout();
+    if (Level::get_flags(ch_ret)&F_PASS) standout();
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
     Screen::DrawChar(ch_ret, monster->disguise);
   }

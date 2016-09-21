@@ -68,14 +68,14 @@ over:
   if (!diag_ok(&player.pos, &nh)) {counts_as_turn = false; running = false; return;}
   //If you are running and the move does not get you anywhere stop running
   if (running && equal(player.pos, nh)) counts_as_turn = running = false;
-  fl = get_flags(nh.y, nh.x);
+  fl = Level::get_flags(nh);
   ch = get_tile_or_monster(nh);
   //When the hero is on the door do not allow him to run until he enters the room all the way
   if ((Level::get_tile(player.pos)==DOOR) && (ch==FLOOR)) running = false;
   if (!(fl&F_REAL) && ch==FLOOR) {
     ch = TRAP;
     Level::set_tile(nh, TRAP); 
-    set_flag(nh.y, nh.x, F_REAL);
+    Level::set_flag(nh, F_REAL);
   }
   else if (player.is_held() && ch != 'F') { //TODO: remove direct check for F
       msg("you are being held"); 
@@ -92,8 +92,8 @@ hit_bound:
       switch (run_character)
       {
       case 'h': case 'l':
-        b1 = (player.pos.y>1 && ((get_flags(player.pos.y-1, player.pos.x)&F_PASS) || Level::get_tile({player.pos.x,player.pos.y - 1})==DOOR));
-        b2 = (player.pos.y<maxrow-1 && ((get_flags(player.pos.y+1, player.pos.x)&F_PASS) || Level::get_tile({player.pos.x,player.pos.y + 1})==DOOR));
+        b1 = (player.pos.y>1 && ((Level::get_flags({player.pos.x,player.pos.y-1})&F_PASS) || Level::get_tile({player.pos.x,player.pos.y-1})==DOOR));
+        b2 = (player.pos.y<maxrow-1 && ((Level::get_flags({player.pos.x,player.pos.y+1})&F_PASS) || Level::get_tile({player.pos.x,player.pos.y+1})==DOOR));
         if (!(b1^b2)) break;
         if (b1) {
             run_character = 'k'; 
@@ -107,8 +107,8 @@ hit_bound:
         goto over;
 
       case 'j': case 'k':
-        b1 = (player.pos.x>1 && ((get_flags(player.pos.y, player.pos.x-1)&F_PASS) || Level::get_tile({player.pos.x-1,player.pos.y})==DOOR));
-        b2 = (player.pos.x<COLS-2 && ((get_flags(player.pos.y, player.pos.x+1)&F_PASS) || Level::get_tile({player.pos.x+1,player.pos.y})==DOOR));
+        b1 = (player.pos.x>1 && ((Level::get_flags({player.pos.x-1,player.pos.y})&F_PASS) || Level::get_tile({player.pos.x-1,player.pos.y})==DOOR));
+        b2 = (player.pos.x<COLS-2 && ((Level::get_flags({player.pos.x+1,player.pos.y})&F_PASS) || Level::get_tile({player.pos.x+1,player.pos.y})==DOOR));
         if (!(b1^b2))
             break;
         if (b1) {
@@ -128,7 +128,7 @@ hit_bound:
 
   case DOOR:
     running = false;
-    if (get_flags(player.pos.y, player.pos.x)&F_PASS) 
+    if (Level::get_flags(player.pos)&F_PASS) 
         enter_room(&nh);
     goto move_stuff;
 
@@ -154,8 +154,8 @@ hit_bound:
       if (ch!=STAIRS) take = ch;
 move_stuff:
       Screen::DrawChar(player.pos, Level::get_tile(player.pos));
-      if ((fl&F_PASS) && (Level::get_tile(oldpos)==DOOR || (get_flags(oldpos.y, oldpos.x)&F_MAZE))) leave_room(&nh);
-      if ((fl&F_MAZE) && (get_flags(oldpos.y, oldpos.x)&F_MAZE)==0) enter_room(&nh);
+      if ((fl&F_PASS) && (Level::get_tile(oldpos)==DOOR || (Level::get_flags(oldpos)&F_MAZE))) leave_room(&nh);
+      if ((fl&F_MAZE) && (Level::get_flags(oldpos)&F_MAZE)==0) enter_room(&nh);
       player.pos = nh;
     }
   }
@@ -189,7 +189,7 @@ int be_trapped(Coord *tc)
 
   repeat_cmd_count = running = false;
   Level::set_tile(*tc, TRAP);
-  tr = get_flags(tc->y, tc->x)&F_TMASK;
+  tr = Level::get_flags(*tc)&F_TMASK;
   was_trapped = 1;
   switch (tr)
   {

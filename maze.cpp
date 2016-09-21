@@ -123,7 +123,7 @@ int maze_at(int y, int x)
 void splat(int y, int x)
 {
   Level::set_tile({x, y}, PASSAGE);
-  copy_flags(y, x, F_MAZE|F_REAL);
+  Level::copy_flags({x, y}, F_MAZE|F_REAL);
   if (x>maxx) maxx = x;
   if (y>maxy) maxy = y;
 }

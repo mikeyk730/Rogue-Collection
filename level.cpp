@@ -30,11 +30,6 @@ struct Room passages[MAXPASS] =
 int s_level = 1;
 int s_max_level = 1;
 
-int INDEX(int y, int x)
-{
-  return ((x*(maxrow-1))+y-1);
-}
-
 void clear_level()
 {
   memset(the_level, ' ', (MAXLINES-3)*MAXCOLS);
@@ -42,35 +37,40 @@ void clear_level()
 }
 
 namespace Level {
+    int INDEX(Coord p)
+    {
+        return ((p.x*(maxrow - 1)) + p.y - 1);
+    }
+
     byte get_tile(Coord p)
     {
-        return the_level[INDEX(p.y, p.x)];
+        return the_level[INDEX(p)];
     }
 
     void set_tile(Coord p, byte c)
     {
-        the_level[INDEX(p.y, p.x)] = c;
+        the_level[INDEX(p)] = c;
     }
-}
 
-byte get_flags(int y, int x)
-{
-  return the_flags[INDEX(y,x)];
-}
+    byte get_flags(Coord p)
+    {
+        return the_flags[INDEX(p)];
+    }
 
-void set_flag(int y, int x, byte f)
-{
-  the_flags[INDEX(y,x)] |= f;
-}
+    void set_flag(Coord p, byte f)
+    {
+        the_flags[INDEX(p)] |= f;
+    }
 
-void unset_flag(int y, int x, byte f)
-{
-  the_flags[INDEX(y,x)] &= ~f;
-}
+    void unset_flag(Coord p, byte f)
+    {
+        the_flags[INDEX(p)] &= ~f;
+    }
 
-void copy_flags(int y, int x, byte f)
-{
-  the_flags[INDEX(y,x)] = f;
+    void copy_flags(Coord p, byte f)
+    {
+        the_flags[INDEX(p)] = f;
+    }
 }
 
 int get_level()

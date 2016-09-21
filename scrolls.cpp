@@ -140,10 +140,10 @@ void read_magic_mapping()
     switch (ch = Level::get_tile({x, y}))
     {
     case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-      if (!(get_flags(y, x)&F_REAL)) {
+      if (!(Level::get_flags({x, y})&F_REAL)) {
         ch = DOOR; 
         Level::set_tile({x, y}, DOOR);
-        unset_flag(y, x, F_REAL);
+        Level::unset_flag({x, y}, F_REAL);
       }
     case DOOR: case PASSAGE: case STAIRS:
       if ((monster = monster_at({x, y})) != NULL) 
