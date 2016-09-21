@@ -23,8 +23,10 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 #define CROSSBOW    7
 #define BOLT        8
 #define SPEAR       9
-#define FLAME       10 //fake entry for dragon breath (ick)
-#define MAXWEAPONS  10 //this should equal FLAME
+#define MAXWEAPONS  10 
+
+#define FLAME       10  //weapons not accessible to the player
+#define MISSILE     11
 
 //Armor types
 #define LEATHER          0
@@ -83,12 +85,12 @@ public:
 
     int type;                      //What kind of object it is
     Coord pos;                     //Where it lives on the screen
+    int which;                     //Which object of a type it is
+    int count;                     //Count for plural objects
+protected:
     char launcher;                 //What you need to launch it
     char *damage;                  //Damage if used like sword
     char *throw_damage;            //Damage if thrown
-    int count;                     //Count for plural objects
-    int which;                     //Which object of a type it is
-protected:
     int hit_plus;                  //Plusses to hit
     int damage_plus;               //Plusses to damage
     short armor_class;
@@ -151,6 +153,9 @@ public:
     bool is_vorpalized() const;
     bool is_vorpalized_against(Agent* monster) const;
     const char* get_vorpalized_name() const;
+    std::string get_throw_damage() const;
+    std::string get_damage() const;
+    char get_launcher() const;
 };
 
 struct Amulet : public Item

@@ -58,7 +58,6 @@ typedef unsigned char byte;
 #define RING      (0xf8) //(0x09)
 #define WEAPON    (0x18)
 
-#define IBOLT      '*'
 //todo: figure out what this does:
 #define MDK       '@'
 #define CALLABLE  -1

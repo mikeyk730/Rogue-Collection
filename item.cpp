@@ -91,6 +91,9 @@ void Item::initialize(int type, int which)
     this->damage = "0d0";
     this->throw_damage = "0d0";
     this->armor_class = 11;
+    this->gold_value = 0;
+    this->ring_level = 0;
+    this->charges = 0;
     this->count = 1;
     this->group = 0;
     this->flags = 0;

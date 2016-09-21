@@ -325,6 +325,21 @@ const char* Item::get_vorpalized_name() const
     return get_monster_name(enemy);
 }
 
+std::string Item::get_throw_damage() const
+{
+    return throw_damage;
+}
+
+std::string Item::get_damage() const
+{
+    return damage;
+}
+
+char Item::get_launcher() const
+{
+    return launcher;
+}
+
 void Item::vorpalize()
 {
     //Extra Vorpal Enchant Weapon

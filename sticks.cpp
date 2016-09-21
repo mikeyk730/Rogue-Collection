@@ -307,27 +307,29 @@ void zap_generic(Item* wand, int which)
   }
 }
 
-struct Bolt : public Item
+struct MagicMissile : public Item
 {
-    Bolt() : Item(IBOLT, 0) {
-        this->throw_damage = "1d8";
-        this->hit_plus = 1000;
-        this->damage_plus = 1;
-        this->flags = IS_MISL;
+    MagicMissile() : Item(MISSILE, 0)
+    {
+        throw_damage = "1d8";
+        hit_plus = 1000;
+        damage_plus = 1;
+        flags = IS_MISL;
+
+        if (get_current_weapon() != NULL)
+            launcher = get_current_weapon()->which;
     }
-    virtual Item* Clone() const { return new Bolt(*this); }
+    virtual Item* Clone() const { return new MagicMissile(*this); }
 };
 
 void zap_magic_missile()
 {
-  Agent* monster;
-
   game->sticks().discover(WS_MISSILE);
 
-  Item* bolt = new Bolt;
-  if (get_current_weapon()!=NULL) 
-      bolt->launcher = get_current_weapon()->which;
+  Item* bolt = new MagicMissile;
   do_motion(bolt, delta.y, delta.x);
+
+  Agent* monster;
   if ((monster = monster_at(bolt->pos))!=NULL && !save_throw(VS_MAGIC, monster))
       hit_monster(bolt->pos.y, bolt->pos.x, bolt);
   else

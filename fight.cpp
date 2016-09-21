@@ -355,7 +355,7 @@ void check_level()
 bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
 {
   struct Agent::Stats *att, *def;
-  const char *cp;
+  std::string damage_string;
   int ndice, nsides, def_arm;
   bool did_hit = false;
   int hplus;
@@ -365,7 +365,7 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
   att = &thatt->stats;
   def = &thdef->stats;
   if (weapon==NULL) {
-      cp = att->damage.c_str();
+      damage_string = att->damage;
       dplus = 0; 
       hplus = 0;
   }
@@ -389,10 +389,10 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
       else if (is_ring_on_hand(RIGHT, R_ADDHIT))
         hplus += get_ring(RIGHT)->get_ring_level();
     }
-    cp = weapon->damage;
-    if (hurl && weapon->is_missile() && get_current_weapon() && get_current_weapon()->which == weapon->launcher)
+    damage_string = weapon->get_damage();
+    if (hurl && weapon->is_missile() && get_current_weapon() && get_current_weapon()->which == weapon->get_launcher())
     {
-      cp = weapon->throw_damage;
+      damage_string = weapon->get_throw_damage();
       hplus += get_current_weapon()->get_hit_plus();
       dplus += get_current_weapon()->get_damage_plus();
     }
@@ -400,7 +400,7 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
     if (weapon->type == STICK && weapon->which == WS_HIT)
     {
         if (weapon->get_charges() == 0)
-            cp = "0d0";
+            damage_string = "0d0";
         weapon->drain_striking();
     }
   }
@@ -414,6 +414,7 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
     if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= get_ring(LEFT)->get_ring_level();
     if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= get_ring(RIGHT)->get_ring_level();
   }
+  const char* cp = damage_string.c_str();
   for (;;)
   {
     ndice = atoi(cp);

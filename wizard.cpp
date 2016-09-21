@@ -168,9 +168,6 @@ void summon_object()
       break;
   }
 
-  obj->group = 0;
-  obj->count = 1;
-  obj->damage = obj->throw_damage = "0d0";
   msg_position = 0;
 
   //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
