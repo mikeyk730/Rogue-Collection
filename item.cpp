@@ -116,7 +116,7 @@ bool Item::did_flash() const
 {
     return is_flag_set(DID_FLASH);
 }
-bool Item::is_missile() const
+bool Item::is_projectile() const
 {
     return is_flag_set(IS_MISL);
 }

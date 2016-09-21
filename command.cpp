@@ -203,7 +203,7 @@ void execcom()
         break;
     case 't':
         if (get_dir())
-            missile(delta.y, delta.x); 
+            projectile(delta.y, delta.x); 
         else 
             counts_as_turn = false; 
         break;

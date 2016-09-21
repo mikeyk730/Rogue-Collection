@@ -40,7 +40,7 @@ int add_dam(unsigned int str);
 //raise_level: The guy just magically went up a level.
 void raise_level();
 
-//thunk: A missile hit or missed a monster
+//thunk: A projectile hit or missed a monster
 void display_throw_msg(Item *weapon, const char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen

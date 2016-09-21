@@ -12,8 +12,8 @@ struct Weapon : public Item
 const char* get_weapon_name(int which);
 Item* create_weapon();
 
-//missile: Fire a missile in a given direction
-void missile(int ydelta, int xdelta);
+//projectile: Fire a projectile in a given direction
+void projectile(int ydelta, int xdelta);
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(Item *obj, int ydelta, int xdelta);
@@ -23,7 +23,7 @@ const char *short_name(Item *obj);
 //fall: Drop an item someplace around here.
 void fall(Item *obj, bool pr);
 
-//hit_monster: Does the missile hit the monster?
+//hit_monster: Does the projectile hit the monster?
 int hit_monster(int y, int x, Item *obj);
 
 //num: Figure out the plus number for armor/weapons

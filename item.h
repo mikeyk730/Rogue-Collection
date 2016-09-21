@@ -8,7 +8,7 @@ const short IS_CURSED = 0x0001; //object is cursed
 const short IS_KNOW = 0x0002; //player knows details about the object
 const short DID_FLASH = 0x0004; //has the vorpal weapon flashed
 //const short IS_EGO   = 0x0008; //weapon has control of player
-const short IS_MISL = 0x0010; //object is a missile type
+const short IS_MISL = 0x0010; //object is a projectile type
 const short IS_MANY = 0x0020; //object comes in groups
 const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 
@@ -113,7 +113,7 @@ public:
     bool is_known() const;
     bool is_cursed() const;
     bool did_flash() const;
-    bool is_missile() const;
+    bool is_projectile() const;
     bool does_group() const;
     bool is_revealed() const;
     bool is_found() const;

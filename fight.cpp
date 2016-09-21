@@ -390,7 +390,7 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
         hplus += get_ring(RIGHT)->get_ring_level();
     }
     damage_string = weapon->get_damage();
-    if (hurl && weapon->is_missile() && get_current_weapon() && get_current_weapon()->which == weapon->get_launcher())
+    if (hurl && weapon->is_projectile() && get_current_weapon() && get_current_weapon()->which == weapon->get_launcher())
     {
       damage_string = weapon->get_throw_damage();
       hplus += get_current_weapon()->get_hit_plus();
@@ -536,7 +536,7 @@ void raise_level()
   check_level();
 }
 
-//thunk: A missile hit or missed a monster
+//thunk: A projectile hit or missed a monster
 void display_throw_msg(Item *item, const char *name, char *does, char *did)
 {
   if (item->type == WEAPON)

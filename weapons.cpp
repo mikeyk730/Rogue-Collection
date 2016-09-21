@@ -74,8 +74,8 @@ Item* create_weapon()
     return new Weapon(which);
 }
 
-//missile: Fire a missile in a given direction
-void missile(int ydelta, int xdelta)
+//projectile: Fire a projectile in a given direction
+void projectile(int ydelta, int xdelta)
 {
     Item *obj, *nitem;
 
@@ -203,7 +203,7 @@ void Item::initialize_weapon(byte type)
         this->count = 1;
 }
 
-//hit_monster: Does the missile hit the monster?
+//hit_monster: Does the projectile hit the monster?
 int hit_monster(int y, int x, Item *obj)  //todo: definite memory issues here.  hit_monster is expeccted to delete, but gets stack variables too
 {
   static Coord mp;
