@@ -98,17 +98,13 @@ void put_things()
     //Check this first so if we are out of memory the guy has a hope of getting the amulet
     if (get_level()>=AMULETLEVEL && !had_amulet())
     {
-      if ((cur = new Amulet) != NULL);
-      {
+        Item* amulet = new Amulet();
         level_items.push_front(cur);
-        cur->hit_plus = cur->damage_plus = 0;
-        cur->damage = cur->throw_damage = "0d0";
-        cur->armor_class = 11;
+
         //Put it somewhere
         find_empty_location(&tp, true);
         set_tile(tp.y, tp.x, AMULET);
-        cur->pos = tp;
-      }
+        amulet->set_location(tp);
     }
     //check for treasure rooms, and if so, put it in.
     if (rnd(TREAS_ROOM)==0) treas_room();

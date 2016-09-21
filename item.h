@@ -71,6 +71,8 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 #define WS_CANCEL     13
 #define MAXSTICKS     14
 
+#define GOLDGRP  1
+
 struct Item
 {
 protected:
@@ -81,6 +83,7 @@ public:
 
     virtual Item* Clone() const = 0;
 
+//protected:
     int type;                      //What kind of object it is
     Coord pos;                     //Where it lives on the screen
     char launcher;                 //What you need to launch it
@@ -94,7 +97,10 @@ public:
     short flags;                   //Information about objects
     char enemy;                    //If it is enchanted, who it hates
     int group;                     //Group number for this object
-    
+public:
+
+    void set_location(Coord p);
+
     void initialize(int type, int which);
 
     bool is_flag_set(short flag) const;
@@ -114,9 +120,6 @@ public:
     void set_revealed();
     void set_found();
     void set_flashed();
-
-    //gold-specific functions
-    void initialize_gold(int value, Coord location);
 
     //weapon-specific functions
     void initialize_weapon(byte type);
@@ -142,7 +145,7 @@ struct Amulet : public Item
 
 struct Gold : public Item
 {
-    Gold();
+    Gold(int value);
 
     virtual Item* Clone() const;
 };

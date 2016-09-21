@@ -20,20 +20,10 @@
 #include "pack.h"
 #include "room.h"
 
-#define GOLDGRP  1
-
 struct Room rooms[MAXROOMS]; //One for each room -- A level
 
 bool isfloor(byte c){
     return ((c) == FLOOR || (c) == PASSAGE);
-}
-
-void Item::initialize_gold(int value, Coord location)
-{
-    this->gold_value = value;
-    this->pos = location;
-    this->flags = IS_MANY;
-    this->group = GOLDGRP;
 }
 
 //do_rooms: Create rooms and corridors with a connectivity graph
@@ -109,21 +99,20 @@ void do_rooms()
     //Put the gold in
     if ((rnd(2)==0) && (!had_amulet() || (get_level()>=max_level())))
     {
-      Item *gold;
-      if ((gold = new Gold())!=NULL)
-      {
         room->goldval = rnd_gold();
+        Item *gold = new Gold(room->goldval);
+        level_items.push_front(gold);
+        
         while (1)
         {
           byte gch;
           rnd_pos(room, &room->gold);
           gch = get_tile(room->gold.y, room->gold.x);
-          if (isfloor(gch)) break;
+          if (isfloor(gch))
+              break;
         }
-        gold->initialize_gold(room->goldval, room->gold);
-        level_items.push_front(gold);
         set_tile(room->gold.y, room->gold.x, GOLD);
-      }
+        gold->set_location(room->gold);        
     }
     //Put the monster in
     if (rnd(100)<(room->goldval>0?80:25))

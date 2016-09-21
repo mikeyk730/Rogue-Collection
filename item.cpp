@@ -2,6 +2,7 @@
 
 #include "item.h"
 #include "agent.h"
+#include "rogue.h"
 
 Item::Item(int type, int which)
 {
@@ -10,6 +11,11 @@ Item::Item(int type, int which)
 
 Item::~Item()
 {
+}
+
+void Item::set_location(Coord p)
+{
+    pos = p;
 }
 
 void Item::initialize(int type, int which)
@@ -83,6 +89,11 @@ void Item::set_flashed(){
 
 Amulet::Amulet() : Item(AMULET, 0)
 {
+    this->hit_plus = 0;
+    this->damage_plus = 0;
+    this->damage = "0d0";
+    this->throw_damage = "0d0";
+    this->armor_class = 11;
 }
 
 Item * Amulet::Clone() const
@@ -90,8 +101,14 @@ Item * Amulet::Clone() const
     return new Amulet(*this);
 }
 
-Gold::Gold() : Item(GOLD, 0)
+Gold::Gold(int value) :
+    Item(GOLD, 0)
 {
+    gold_value = value;
+
+    //todo: don't think theses are needed. maybe gold used to be in inv screen
+    flags = IS_MANY;
+    group = GOLDGRP;
 }
 
 Item * Gold::Clone() const
