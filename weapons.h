@@ -1,8 +1,16 @@
 #pragma once
 #include "item.h"
 
+struct Weapon : public Item
+{
+    Weapon(int which, bool rnd_hit_plus);
+    Weapon(int which, int hit, int damage);
+
+    virtual Item* Clone() const;
+};
+
 const char* get_weapon_name(int which);
-void init_new_weapon(Item* weapon);
+Item* create_weapon();
 
 //missile: Fire a missile in a given direction
 void missile(int ydelta, int xdelta);

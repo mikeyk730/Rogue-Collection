@@ -12,11 +12,11 @@
 #include "list.h"
 #include "hero.h"
 
-void init_new_food(Item* food)
+Item* create_food()
 {
-  no_food = 0;
-  food->type = FOOD;
-  if (rnd(10)!=0) food->which = 0; else food->which = 1;
+    no_food = 0;
+    int which = (rnd(10) != 0) ? 0 : 1;
+    return new Food(which);
 }
 
 //eat: She wants to eat something, so let her try
@@ -66,4 +66,13 @@ const char* get_inv_name_food(Item* obj)
     else sprintf(pb, "%d rations of food", obj->count);
 
     return prbuf;
+}
+
+Food::Food(int which) :
+    Item(FOOD, which)
+{ }
+
+Item * Food::Clone() const
+{
+    return new Food(*this);
 }

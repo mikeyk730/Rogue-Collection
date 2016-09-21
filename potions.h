@@ -1,7 +1,14 @@
 #pragma once
 #include "item.h"
 
-void init_new_potion(Item* potion);
+struct Potion : public Item
+{
+    Potion(int which);
+
+    virtual Item* Clone() const;
+};
+
+Item* create_potion();
 
 //quaff: Quaff a potion from the pack
 void quaff();

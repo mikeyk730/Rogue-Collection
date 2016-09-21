@@ -4,7 +4,7 @@ void whatis();
 //teleport: Bamf the hero someplace else
 void teleport();
 
-void create_obj();
+void summon_object();
 
 int get_num(short *place);
 

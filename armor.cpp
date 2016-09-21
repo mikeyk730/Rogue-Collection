@@ -63,11 +63,10 @@ const char* get_armor_name(int type)
   return a_names[type];
 }
 
-void init_new_armor(Item* armor)
+Item* create_armor()
 {
   int j, k;
 
-  armor->type = ARMOR;
   for (j = 0, k = rnd(100); j < MAXARMORS; j++){ 
       if (k < a_chances[j]) 
           break; 
@@ -76,14 +75,8 @@ void init_new_armor(Item* armor)
       debug("Picked a bad armor %d", k); 
       j = 0;
   }
-  armor->which = j;
-  armor->armor_class = get_default_class(j);
-  if ((k = rnd(100))<20) {
-      armor->set_cursed();
-      armor->armor_class += rnd(3)+1;
-  }
-  else if (k<28) 
-      armor->armor_class -= rnd(3)+1;
+  int which = j;
+  return new Armor(which);
 }
 
 //wear: The player wants to wear something, so let him/her put it on.
@@ -144,4 +137,29 @@ const char* get_inv_name_armor(Item* obj)
     sprintf(pb, "%s", get_armor_name(which));
 
   return prbuf;
+}
+
+Armor::Armor(int which) : 
+    Item(ARMOR, which)
+{
+    armor_class = get_default_class(which);
+
+    int k;
+    if ((k = rnd(100))<20) {
+        set_cursed();
+        armor_class += rnd(3) + 1;
+    }
+    else if (k<28)
+        armor_class -= rnd(3) + 1;
+}
+
+Armor::Armor(int which, int ac_mod) :
+    Item(ARMOR, which)
+{
+    armor_class = get_default_class(which) + ac_mod;
+}
+
+Item * Armor::Clone() const
+{
+    return new Armor(*this);
 }

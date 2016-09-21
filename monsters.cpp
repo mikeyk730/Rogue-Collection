@@ -443,7 +443,7 @@ Agent *wake_monster(int y, int x)
 void give_pack(Agent *monster)
 {
     if (rnd(100) < monster->get_monster_carry_prob())
-        monster->pack.push_front(new_item());
+        monster->pack.push_front(create_item());
 }
 
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon

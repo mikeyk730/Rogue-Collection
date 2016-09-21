@@ -3,14 +3,13 @@
 #include "item.h"
 #include "agent.h"
 
-Item::Item()
-{
-    memset(this, 0, sizeof(Item)); //todo: get rid of this
-}
-
 Item::Item(int type, int which)
 {
     initialize(type, which);
+}
+
+Item::~Item()
+{
 }
 
 void Item::initialize(int type, int which)
@@ -80,4 +79,22 @@ void Item::set_found(){
 }
 void Item::set_flashed(){
     flags |= DID_FLASH;
+}
+
+Amulet::Amulet() : Item(AMULET, 0)
+{
+}
+
+Item * Amulet::Clone() const
+{
+    return new Amulet(*this);
+}
+
+Gold::Gold() : Item(GOLD, 0)
+{
+}
+
+Item * Gold::Clone() const
+{
+    return new Gold(*this);
 }

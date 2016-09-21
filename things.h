@@ -17,7 +17,7 @@ void drop();
 bool can_drop(Item *op);
 
 //new_thing: Return a new thing
-Item* new_item();
+Item* create_item();
 
 //pick_one: Pick an item out of a list of nitems possible magic items
 int pick_one(std::vector<MagicItem> magic);
@@ -34,7 +34,7 @@ void print_disc(byte type);
 void set_order(short *order, int numthings);
 
 //add_line: Add a line to the list of discoveries
-int add_line(char *use, char *fmt, char *arg);
+int add_line(const char *use, const char *fmt, const char *arg);
 
 //end_line: End the list of lines
 int end_line(char *use);

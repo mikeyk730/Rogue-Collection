@@ -1,7 +1,14 @@
 #pragma once
 #include "item.h"
 
-void init_new_ring(Item* ring);
+struct Ring : public Item
+{
+    Ring(int which);
+
+    virtual Item* Clone() const;
+};
+
+Item* create_ring();
 
 //ring_on: Put a ring on a hand
 void ring_on();

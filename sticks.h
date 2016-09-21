@@ -1,10 +1,15 @@
 #pragma once
 #include "item.h"
 
-void init_new_stick(Item* stick);
+struct Stick : public Item
+{
+    Stick(int which);
 
-//fix_stick: Set up a new stick
-void fix_stick(Item *cur);
+    virtual Item* Clone() const;
+};
+
+Item* create_stick();
+
 
 //do_zap: Perform a zap with a wand
 void do_zap();

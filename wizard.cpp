@@ -28,6 +28,8 @@
 #include "level.h"
 #include "armor.h"
 #include "hero.h"
+#include "food.h"
+#include "scrolls.h"
 
 //whatis: What a certain object is
 void whatis()
@@ -45,7 +47,7 @@ void whatis()
             msg(" ");
             msg_position = 0;
         }
-        else 
+        else
             break;
     }
 
@@ -62,7 +64,7 @@ void whatis()
         obj->set_known();
         break;
 
-    case WEAPON: 
+    case WEAPON:
     case ARMOR:
         obj->set_known();
         break;
@@ -75,74 +77,116 @@ void whatis()
     msg(inv_name(obj, false));
 }
 
-//create_obj: Wizard command for getting anything he wants
-void create_obj()
+int get_which(int type, int limit)
 {
-  Item *obj;
-  byte ch, bless;
-  int limit, option;
+    byte ch;
+    msg_position = 0;
+    msg("which %c do you want? (0-%x)", type, limit);
+    int option = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);
+    return (option >= 0 && option <= limit) ? option : 0;
+}
 
-  if ((obj = new Item(0,0))==NULL) {msg("can't create anything now"); return;}
+char get_bless_char(){
+    msg("blessing? (+,-,n)");
+    byte bless = readchar();
+    msg_position = 0;
+    return bless;
+}
+
+//summon_object: Wizard command for getting anything he wants
+void summon_object()
+{
+  int which;
+  Item* obj;
+  
   msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK,RING, WEAPON, ARMOR, AMULET, FOOD);
   switch (readchar())
   {
-  case '!': obj->type = POTION; limit=MAXPOTIONS-1; break;
-  case '?': obj->type = SCROLL; limit=MAXSCROLLS-1; break;
-  case '/': obj->type = STICK; limit=MAXSTICKS-1; break;
-  case '=': obj->type = RING; limit=MAXRINGS-1; break;
-  case ')': obj->type = WEAPON; limit=MAXWEAPONS-1; break;
-  case ']': obj->type = ARMOR; limit=MAXARMORS-1; break;
-  case ',': obj->type = AMULET; limit=0; break;
-  default: obj->type = FOOD; limit=1; break;
+  case '!': 
+      which = get_which(POTION, MAXPOTIONS - 1);
+      obj = new Potion(which); 
+      break;
+  case '?': 
+      which = get_which(SCROLL,MAXSCROLLS-1);
+      obj = new Scroll(which);
+      break;
+  case '/':
+      which = get_which(STICK,MAXSTICKS-1);
+      obj = new Stick(which);
+      break;
+  case '=':
+  {
+      char bless;
+      which = get_which(RING, MAXRINGS - 1);
+      obj = new Ring(which);
+
+      switch (obj->which)
+      {
+      case R_PROTECT: case R_ADDSTR: case R_ADDHIT: case R_ADDDAM:
+          bless = get_bless_char();
+          if (bless == '-') obj->set_cursed();
+          obj->ring_level = (bless == '-' ? -1 : rnd(2) + 1);
+          break;
+
+      case R_AGGR: case R_TELEPORT:
+          obj->set_cursed();
+          break;
+      }
+
+
+      break;
   }
-  msg_position = 0;
-  msg("which %c do you want? (0-%x)", obj->type, limit);
-  option = (isdigit((ch = readchar()))?ch-'0':ch-'a'+10);
-  obj->which = (option >= 0 && option <= limit) ? option : 0;
+  case ')':
+  {
+      which = get_which(WEAPON, MAXWEAPONS - 1); //todo: fix up wholefunction
+      char bless = get_bless_char();
+      obj = new Weapon(which, false);
+
+      if (bless == '-')
+          obj->set_cursed();
+
+          obj->initialize_weapon(obj->which);
+          if (bless == '-')
+              obj->hit_plus -= rnd(3) + 1;
+          if (bless == '+')
+              obj->hit_plus += rnd(3) + 1;
+
+      break;
+  }
+  case ']': 
+  {
+      which = get_which(ARMOR, MAXARMORS - 1);
+      char bless = get_bless_char();
+
+      if (bless == '-')
+          obj->set_cursed();
+
+      obj->armor_class = get_default_class(obj->which);
+          if (bless == '-')
+              obj->armor_class += rnd(3) + 1;
+          if (bless == '+')
+              obj->armor_class -= rnd(3) + 1;
+
+      obj = new Armor(which);
+      break;
+  }
+  case ',':
+      which = get_which(AMULET,0);
+      obj = new Amulet();
+      break;
+  default:
+      which = get_which(FOOD,1);
+      obj = new Food(which);
+      break;
+  }
+
   obj->group = 0;
   obj->count = 1;
   obj->damage = obj->throw_damage = "0d0";
   msg_position = 0;
-  if (obj->type==WEAPON || obj->type==ARMOR)
-  {
-    msg("blessing? (+,-,n)");
-    bless = readchar();
-    msg_position = 0;
-    if (bless=='-') 
-        obj->set_cursed();
-    if (obj->type==WEAPON)
-    {
-      obj->initialize_weapon(obj->which);
-      if (bless=='-') 
-          obj->hit_plus -= rnd(3)+1;
-      if (bless=='+') 
-          obj->hit_plus += rnd(3)+1;
-    }
-    else
-    {
-      obj->armor_class = get_default_class(obj->which);
-      if (bless=='-') 
-          obj->armor_class += rnd(3)+1;
-      if (bless=='+')
-          obj->armor_class -= rnd(3)+1;
-    }
-  }
-  else if (obj->type==RING) switch (obj->which)
-  {
-  case R_PROTECT: case R_ADDSTR: case R_ADDHIT: case R_ADDDAM:
-    msg("blessing? (+,-,n)");
-    bless = readchar();
-    msg_position = 0;
-    if (bless=='-') obj->set_cursed();
-    obj->ring_level = (bless=='-'?-1:rnd(2)+1);
-    break;
 
-  case R_AGGR: case R_TELEPORT:
-    obj->set_cursed();
-    break;
-  }
-  else if (obj->type==STICK) fix_stick(obj);
-  else if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
+  //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
+
   add_pack(obj, false);
 }
 

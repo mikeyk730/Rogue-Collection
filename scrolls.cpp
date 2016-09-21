@@ -112,17 +112,17 @@ ScrollInfo::ScrollInfo()
     }
 }
 
-void init_new_scroll(Item* scroll)
+Item* create_scroll()
 {
-  scroll->type = SCROLL;
-  scroll->which = pick_one(game->scrolls().m_magic_props);
+  int which = pick_one(game->scrolls().m_magic_props);
+  return new Scroll(which);
 }
 
 void read_monster_confusion()
 {
-  //Scroll of monster confusion.  Give him that power.
-  player.set_can_confuse(true);
-  msg("your hands begin to glow red");
+    //Scroll of monster confusion.  Give him that power.
+    player.set_can_confuse(true);
+    msg("your hands begin to glow red");
 }
 
 void read_magic_mapping()
@@ -381,17 +381,16 @@ int is_bad_scroll(Item* item)
     (item->which == S_SLEEP || item->which == S_CREATE || item->which == S_AGGR);
 }
 
-std::string ScrollInfo::get_inventory_name(Item* obj) const
+std::string ScrollInfo::get_inventory_name(int which, int count) const
 {
   char *pb = prbuf;
-  int which = obj->which;
-
-  if (obj->count==1) {
+  
+  if (count==1) {
     strcpy(pb, "A scroll ");
     pb = &prbuf[9];
   }
   else {
-    sprintf(pb, "%d scrolls ", obj->count); 
+    sprintf(pb, "%d scrolls ", count); 
     pb = &prbuf[strlen(prbuf)];
   }
   if (is_discovered(which) || game->hero().is_wizard()) 
@@ -402,4 +401,24 @@ std::string ScrollInfo::get_inventory_name(Item* obj) const
     chopmsg(pb, "titled '%.17s'", "titled '%s'", get_identifier(which).c_str());
 
   return prbuf;
+}
+
+std::string ScrollInfo::get_inventory_name(Item * obj) const
+{
+    return get_inventory_name(obj->which, obj->count);
+}
+
+std::string ScrollInfo::get_inventory_name(int which) const
+{
+    return get_inventory_name(which, 1);
+}
+
+Scroll::Scroll(int which) :
+    Item(SCROLL, which)
+{
+}
+
+Item * Scroll::Clone() const
+{
+    return new Scroll(*this);
 }

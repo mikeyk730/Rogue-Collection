@@ -1,8 +1,16 @@
 #pragma once
 #include "item.h"
 
+struct Armor : public Item
+{
+    Armor(int which);
+    Armor(int which, int ac_mod);
+
+    virtual Item* Clone() const;
+};
+
 int get_default_class(int type);
-void init_new_armor(Item* armor);
+Item* create_armor();
 const char* get_inv_name_armor(Item* armor);
 
 const char* get_armor_name(int type);

@@ -13,6 +13,7 @@
 #include "thing.h"
 #include "rings.h"
 #include "agent.h"
+#include "food.h"
 
 
 Hero::Hero()
@@ -109,45 +110,35 @@ void Hero::digest()
 //init_player: Roll up the rogue
 void Hero::init_player()
 {
-  Item *obj;
-
   player.stats = { 16, 0, 1, 10, 12, "1d4", 12, 16 };
   food_left = HUNGER_TIME;
 
   //Give the rogue his weaponry.  First a mace.
-  obj = new Item(WEAPON, MACE);
-  obj->initialize_weapon(MACE);
-  obj->hit_plus = 1;
-  obj->damage_plus = 1;
+  Item *obj;
+  obj = new Weapon(MACE, 1, 1);
   obj->set_known();
   add_pack(obj, true);
   set_current_weapon(obj);
 
   //Now a +1 bow
-  obj = new Item(WEAPON, BOW);
-  obj->initialize_weapon(BOW);
-  obj->hit_plus = 1;
-  obj->damage_plus = 0;
+  obj = new Weapon(BOW, 1, 0);
   obj->set_known();
   add_pack(obj, true);
 
   //Now some arrows
-  obj = new Item(WEAPON, ARROW);
-  obj->initialize_weapon(ARROW);
+  obj = new Weapon(ARROW, 0, 0);
   obj->count = rnd(15)+25;
-  obj->hit_plus = obj->damage_plus = 0;
   obj->set_known();
   add_pack(obj, true);
 
   //And his suit of armor
-  obj = new Item(ARMOR, RING_MAIL);
-  obj->armor_class = get_default_class(RING_MAIL)-1;
+  obj = new Armor(RING_MAIL, -1);
   obj->set_known();
   set_current_armor(obj);
   add_pack(obj, true);
 
   //Give him some food too
-  obj = new Item(FOOD, 0);
+  obj = new Food(0);
   add_pack(obj, true);
 }
 

@@ -1,8 +1,14 @@
 #pragma once
 #include "item.h"
 
-std::string get_title(int type);
-void init_new_scroll(Item* scroll);
+struct Scroll : public Item
+{
+    Scroll(int which);
+
+    virtual Item* Clone() const;
+};
+
+Item* create_scroll();
 
 void read_scroll();
 int is_scare_monster_scroll(Item* item);

@@ -106,10 +106,10 @@ PotionInfo::PotionInfo()
     }
 }
 
-void init_new_potion(Item* potion)
+Item* create_potion()
 {
-  potion->type = POTION;
-  potion->which = pick_one(game->potions().m_magic_props);
+  int which = pick_one(game->potions().m_magic_props);
+  return new Potion(which);
 }
 
 void quaff_confusion()
@@ -393,18 +393,17 @@ int is_bad_potion(Item* obj)
     (obj->which == P_CONFUSE || obj->which == P_PARALYZE || obj->which == P_POISON || obj->which == P_BLIND);
 }
 
-std::string PotionInfo::get_inventory_name(Item* obj) const
+std::string PotionInfo::get_inventory_name(int which, int count) const
 {
   char *pb = prbuf;
-  int which = obj->which;
   std::string color = get_identifier(which);
 
-  if (obj->count==1) {
+  if (count==1) {
     strcpy(pb, "A potion ");
     pb = &prbuf[9];
   }
   else {
-    sprintf(pb, "%d potions ", obj->count); 
+    sprintf(pb, "%d potions ", count); 
     pb = &pb[strlen(prbuf)];
   }
   if (is_discovered(which) || game->hero().is_wizard()) {
@@ -413,9 +412,31 @@ std::string PotionInfo::get_inventory_name(Item* obj) const
   else if (!get_guess(which).empty()) {
     chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), color.c_str());
   }
-  else if (obj->count==1) 
+  else if (count==1) 
     sprintf(prbuf, "A%s %s potion", vowelstr(color.c_str()), color.c_str());
-  else sprintf(prbuf, "%d %s potions", obj->count, color.c_str());
+  else sprintf(prbuf, "%d %s potions", count, color.c_str());
 
   return prbuf;
+}
+
+std::string PotionInfo::get_inventory_name(Item * obj) const
+{
+    return get_inventory_name(obj->which, obj->count);
+}
+
+std::string PotionInfo::get_inventory_name(int which) const
+{
+    return get_inventory_name(which, 1);
+}
+
+
+
+Potion::Potion(int which)
+    : Item(POTION, which)
+{
+}
+
+Item * Potion::Clone() const
+{
+    return new Potion(*this);
 }

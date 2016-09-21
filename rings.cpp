@@ -90,23 +90,10 @@ RingInfo::RingInfo()
 
 }
 
-void init_new_ring(Item* ring)
+Item* create_ring()
 {
-  ring->type = RING;
-  ring->which = pick_one(game->rings().m_magic_props);
-  switch (ring->which)
-  {
-  case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
-    if ((ring->ring_level = rnd(3))==0) {
-      ring->ring_level = -1; 
-      ring->set_cursed();
-    }
-    break;
-
-  case R_AGGR: case R_TELEPORT:
-    ring->set_cursed();
-    break;
-  }
+    int which = pick_one(game->rings().m_magic_props);
+    return new Ring(which);
 }
 
 std::string get_stone(int type)
@@ -232,18 +219,50 @@ int is_wearing_ring(int ring)
   return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
 }
 
-std::string RingInfo::get_inventory_name(Item* obj) const
+std::string RingInfo::get_inventory_name(int which, const std::string& bonus) const
 {
   char *pb = prbuf;
-  int which = obj->which;
   std::string stone = get_identifier(which);
 
   if (is_discovered(which) || game->hero().is_wizard())
-    chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", ring_num(obj), get_name(which).c_str(), stone.c_str());
+    chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", bonus.c_str(), get_name(which).c_str(), stone.c_str());
   else if (!get_guess(which).empty()) 
     chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_guess(which).c_str(), stone.c_str());
   else 
     sprintf(pb, "A%s %s ring", vowelstr(stone.c_str()), stone.c_str());
 
   return prbuf;
+}
+
+std::string RingInfo::get_inventory_name(Item * obj) const
+{
+    return get_inventory_name(obj->which, ring_num(obj));
+}
+
+std::string RingInfo::get_inventory_name(int which) const
+{
+    return get_inventory_name(which, "");
+}
+
+Ring::Ring(int which) :
+    Item(RING, which)
+{
+    switch (which)
+    {
+    case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
+        if ((ring_level = rnd(3)) == 0) {
+            ring_level = -1;
+            set_cursed();
+        }
+        break;
+
+    case R_AGGR: case R_TELEPORT:
+        set_cursed();
+        break;
+    }
+}
+
+Item* Ring::Clone() const
+{
+    return new Ring(*this);
 }

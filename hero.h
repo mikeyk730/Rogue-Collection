@@ -1,6 +1,6 @@
 #pragma once
 
-struct Hero
+struct Hero //todo: public Agent
 {
     Hero();
 

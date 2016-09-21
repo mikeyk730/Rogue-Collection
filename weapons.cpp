@@ -67,18 +67,10 @@ const char* get_weapon_name(int which)
   return weapon_names[which];
 }
 
-void init_new_weapon(Item* weapon)
+Item* create_weapon()
 {
-  int k;
-  weapon->type = WEAPON;
-  weapon->which = rnd(MAXWEAPONS);
-  weapon->initialize_weapon(weapon->which);
-  if ((k = rnd(100))<10) {
-      weapon->set_cursed();
-      weapon->hit_plus -= rnd(3)+1;
-  }
-  else if (k<15)
-      weapon->hit_plus += rnd(3)+1;
+    int which = rnd(MAXWEAPONS);
+    return new Weapon(which, true);
 }
 
 //missile: Fire a missile in a given direction
@@ -100,8 +92,7 @@ void missile(int ydelta, int xdelta)
     else
     {
         obj->count--;
-        nitem = new Item(0, 0);
-        *nitem = *obj;
+        nitem = obj->Clone();
         nitem->count = 1;
         obj = nitem;
     }
@@ -347,4 +338,37 @@ void Item::vorpalize()
     damage_plus++;
     charges = 1;
     msg(flash, get_weapon_name(which), short_msgs() ? "" : intense);
+}
+
+Weapon::Weapon(int which, bool rnd_hit_plus) :
+    Item(WEAPON, which)
+{
+    if (which != FLAME)
+        initialize_weapon(which);
+
+    if (rnd_hit_plus) {
+        int k;
+        if ((k = rnd(100)) < 10) {
+            set_cursed();
+            hit_plus -= rnd(3) + 1;
+        }
+        else if (k < 15)
+            hit_plus += rnd(3) + 1;
+    }
+}
+
+Weapon::Weapon(int which, int hit, int damage) :
+    Item(WEAPON, which)
+{
+    initialize_weapon(which);
+
+    hit_plus = hit;
+    damage_plus = damage;
+    if (hit_plus < 0 || damage_plus < 0)
+        set_cursed();
+}
+
+Item * Weapon::Clone() const
+{
+    return new Weapon(*this);
 }

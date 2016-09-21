@@ -129,13 +129,12 @@ void drop()
   if ((op = get_item("drop", 0))==NULL) return;
   if (!can_drop(op)) return;
   //Take it out of the pack
-  if (op->count>=2 && op->type!=WEAPON)
+  if (op->count >= 2 && op->type != WEAPON)
   {
-    if ((nobj = new Item(0,0))==NULL) {msg("%sit appears to be stuck in your pack!", noterse("can't drop it, ")); return;}
-    op->count--;
-    *nobj = *op;
-    nobj->count = 1;
-    op = nobj;
+      op->count--;
+      nobj = op->Clone();
+      nobj->count = 1;
+      op = nobj;
   }
   else 
       player.pack.remove(op);
@@ -185,41 +184,37 @@ bool can_drop(Item *op)
 }
 
 //new_thing: Return a new thing
-Item *new_item()
+Item *create_item()
 {
-  Item *item = new Item(0, 0);
-  if (!item)
-    return NULL; 
-
   //Decide what kind of object it will be. If we haven't had food for a while, let it be food.
   switch (no_food > 3 ? 2 : pick_one(things, NUMTHINGS))
   {
   case 0:
-    init_new_potion(item);
+    return create_potion();
     break;
 
   case 1:
-    init_new_scroll(item);
+    return create_scroll();
     break;
 
   case 2:
-    init_new_food(item);
+    return create_food();
     break;
 
   case 3:
-    init_new_weapon(item);
+    return create_weapon();
     break;
 
   case 4:
-    init_new_armor(item);
+    return create_armor();
     break;
 
   case 5:
-    init_new_ring(item);
+    return create_ring();
     break;
 
   case 6:
-    init_new_stick(item);
+    return create_stick();
     break;
 
   default:
@@ -227,7 +222,7 @@ Item *new_item()
     wait_for(' ');
     break;
   }
-  return item;
+  return 0;
 }
 
 //todo: remove this wrapper
@@ -288,22 +283,18 @@ void discovered()
 void print_disc(byte type)
 {
     int i, maxnum, num_found;
-    static Item obj;
     static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
     ItemClass& item_class = game->item_class(type);
     maxnum = item_class.get_max_items();
 
     set_order(order, maxnum);
-    obj.count = 1;
-    obj.flags = 0;
     num_found = 0;
     for (i = 0; i < maxnum; i++) {
         if (item_class.is_discovered(order[i]) || !item_class.get_guess(order[i]).empty())
         {
-            obj.type = type;
-            obj.which = order[i];
-            add_line("", "%s", inv_name(&obj, false));
+            std::string line = game->item_class(type).get_inventory_name(order[i]);
+            add_line("", "%s", line.c_str());
             num_found++;
         }
 
@@ -328,7 +319,7 @@ void set_order(short *order, int numthings)
 }
 
 //add_line: Add a line to the list of discoveries
-int add_line(char *use, char *fmt, char *arg)
+int add_line(const char *use, const char *fmt, const char *arg)
 {
   int x, y;
   int retchar = ' ';

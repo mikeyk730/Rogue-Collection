@@ -592,7 +592,7 @@ void killed(Agent *monster, bool print)
         player.set_is_held(false);
     }
     else if (monster->drops_gold()) {
-        Item *gold = new Item(GOLD, 0);
+        Item *gold = new Gold;
         gold->gold_value = rnd_gold();
         if (save(VS_MAGIC))
             gold->gold_value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();

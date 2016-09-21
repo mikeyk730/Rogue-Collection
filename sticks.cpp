@@ -161,11 +161,10 @@ std::string StickInfo::get_type(int which) const
 }
 
 
-void init_new_stick(Item* stick)
+Item* create_stick()
 {
-  stick->type = STICK;
-  stick->which = pick_one(game->sticks().m_magic_props);
-  fix_stick(stick);
+    int which = pick_one(game->sticks().m_magic_props);
+    return new Stick(which);
 }
 
 void zap_light()
@@ -309,22 +308,28 @@ void zap_generic(Item* wand, int which)
   }
 }
 
+struct Bolt : public Item
+{
+    Bolt() : Item(IBOLT, 0) {}
+    virtual Item* Clone() const { return new Bolt(*this); }
+};
+
 void zap_magic_missile()
 {
   Agent* monster;
-  Item bolt;
 
   game->sticks().discover(WS_MISSILE);
-  bolt.type = '*';
-  bolt.throw_damage = "1d8";
-  bolt.hit_plus = 1000;
-  bolt.damage_plus = 1;
-  bolt.flags = IS_MISL;
+
+  Item* bolt = new Bolt;
+  bolt->throw_damage = "1d8";
+  bolt->hit_plus = 1000;
+  bolt->damage_plus = 1;
+  bolt->flags = IS_MISL;
   if (get_current_weapon()!=NULL) 
-      bolt.launcher = get_current_weapon()->which;
-  do_motion(&bolt, delta.y, delta.x);
-  if ((monster = monster_at(bolt.pos.y, bolt.pos.x))!=NULL && !save_throw(VS_MAGIC, monster))
-      hit_monster(bolt.pos.y, bolt.pos.x, &bolt);
+      bolt->launcher = get_current_weapon()->which;
+  do_motion(bolt, delta.y, delta.x);
+  if ((monster = monster_at(bolt->pos.y, bolt->pos.x))!=NULL && !save_throw(VS_MAGIC, monster))
+      hit_monster(bolt->pos.y, bolt->pos.x, bolt);
   else
       msg("the missile vanishes with a puff of smoke");
 }
@@ -370,29 +375,6 @@ int zap_drain_life()
   }  
   drain();
   return true;
-}
-
-//fix_stick: Set up a new stick
-//todo: do you need to weild staffs?
-void fix_stick(Item *cur)
-{
-  if (game->sticks().is_staff(cur->which))
-      cur->damage = "2d3";
-  else
-      cur->damage = "1d1";
-  cur->throw_damage = "1d1";
-  cur->charges = 3+rnd(5);
-  switch (cur->which)
-  {
-  case WS_HIT: 
-      cur->hit_plus = 100;
-      cur->damage_plus = 3;
-      cur->damage = "1d8"; 
-      break;
-  case WS_LIGHT: 
-      cur->charges = 10+rnd(10); 
-      break;
-  }
 }
 
 //do_zap: Perform a zap with a wand
@@ -519,15 +501,12 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
   int i, j;
   Coord pos;
   struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
-  Item bolt;
-  bool is_frost;
+  bool is_frost = (strcmp(name, "frost")==0);
 
-  is_frost = (strcmp(name, "frost")==0);
-  bolt.type = WEAPON;
-  bolt.which = FLAME;
-  bolt.damage = bolt.throw_damage = "6d6";
-  bolt.hit_plus = 30;
-  bolt.damage_plus = 0;
+  Item* bolt = new Weapon(FLAME, false);
+  bolt->damage = bolt->throw_damage = "6d6";
+  bolt->hit_plus = 30;
+  bolt->damage_plus = 0;
   //TODO:weapon_names[FLAME] = name;
   switch (dir->y+dir->x)
   {
@@ -565,13 +544,13 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
         if (monster->oldch!=MDK) monster->oldch = get_tile(pos.y, pos.x);
         if (!save_throw(VS_MAGIC, monster) || is_frost)
         {
-          bolt.pos = pos;
+          bolt->pos = pos;
           used = true;
           if (monster->immune_to_fire() && strcmp(name, "flame")==0) 
               msg("the flame bounces off the %s", monster->get_monster_name());
           else
           {
-            hit_monster(pos.y, pos.x, &bolt);
+            hit_monster(pos.y, pos.x, bolt);
             if (mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = mvinch(pos.y, pos.x);
             return false; //zapping monster may have killed self, not safe to go on
           }
@@ -636,21 +615,59 @@ const char *get_charge_string(Item *obj)
   return buf;
 }
 
-std::string StickInfo::get_inventory_name(Item* stick) const
+std::string StickInfo::get_inventory_name(int which, const std::string& charge) const
 {
   char *pb = prbuf;
-  int which = stick->which;
   std::string type = get_type(which);
   std::string material = get_identifier(which);
 
   sprintf(pb, "A%s %s ", vowelstr(type.c_str()), type.c_str());
   pb = &prbuf[strlen(prbuf)];
   if (is_discovered(which) || game->hero().is_wizard())
-    chopmsg(pb, "of %s%s", "of %s%s(%s)", get_name(which).c_str(), get_charge_string(stick), material.c_str());
+    chopmsg(pb, "of %s%s", "of %s%s(%s)", get_name(which).c_str(), charge.c_str(), material.c_str());
   else if (!get_guess(which).empty())
     chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), material.c_str());
   else
     sprintf(pb = &prbuf[2], "%s %s", material.c_str(), type.c_str());
 
   return prbuf;
+}
+
+std::string StickInfo::get_inventory_name(Item * obj) const
+{
+    return get_inventory_name(obj->which, get_charge_string(obj));
+}
+
+std::string StickInfo::get_inventory_name(int which) const
+{
+    return get_inventory_name(which, "");
+}
+
+Stick::Stick(int which)
+    : Item(STICK, which)
+{
+    if (game->sticks().is_staff(which))
+        damage = "2d3";
+    else
+        damage = "1d1";
+
+    throw_damage = "1d1";
+    charges = 3 + rnd(5);
+
+    switch (which)
+    {
+    case WS_HIT:
+        hit_plus = 100;
+        damage_plus = 3;
+        damage = "1d8";
+        break;
+    case WS_LIGHT:
+        charges = 10 + rnd(10);
+        break;
+    }
+}
+
+Item * Stick::Clone() const
+{
+    return new Stick(*this);
 }

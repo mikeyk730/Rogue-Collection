@@ -73,8 +73,13 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 
 struct Item
 {
-    Item();
+protected:
+    //Item();
     Item(int type, int which);
+public:
+    virtual ~Item();
+
+    virtual Item* Clone() const = 0;
 
     int type;                      //What kind of object it is
     Coord pos;                     //Where it lives on the screen
@@ -127,6 +132,20 @@ struct Item
 #define gold_value   misc
 #define armor_class  misc
 #define ring_level   misc
+
+struct Amulet : public Item
+{
+    Amulet();
+
+    virtual Item* Clone() const;
+};
+
+struct Gold : public Item
+{
+    Gold();
+
+    virtual Item* Clone() const;
+};
 
 //todo:move into game
 #include <list>

@@ -344,7 +344,9 @@ void execcom()
         switch(ch){
           //Wizard commands
         case 'C': 
-          counts_as_turn = false; create_obj(); break;
+          counts_as_turn = false; 
+          summon_object(); 
+          break;
         case 'X': 
           counts_as_turn = false; show_map(true); break;
         case 'Z': 
