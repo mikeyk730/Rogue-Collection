@@ -13,6 +13,11 @@ Item::~Item()
 {
 }
 
+Coord Item::get_location() const
+{
+    return pos;
+}
+
 void Item::set_location(Coord p)
 {
     pos = p;
@@ -104,7 +109,7 @@ Item * Amulet::Clone() const
 Gold::Gold(int value) :
     Item(GOLD, 0)
 {
-    gold_value = value;
+    m_gold_value = value;
 }
 
 Item * Gold::Clone() const

@@ -196,18 +196,18 @@ void teleport()
   struct Room* rm;
   Coord c;
 
-  mvaddch(player.pos.y, player.pos.x, get_tile(player.pos.y, player.pos.x));
+  Screen::DrawChar(player.pos, Level::get_tile(player.pos));
   do {
     rm = rnd_room(); 
     rnd_pos(rm, &c);
-  } while (!(step_ok(get_tile_or_monster(c.y, c.x))));
+  } while (!(step_ok(get_tile_or_monster(c))));
   if (rm != player.room) {
     leave_room(&player.pos); 
     player.pos = c; 
     enter_room(&player.pos);
   }
   else { player.pos = c; look(true);}
-  mvaddch(player.pos.y, player.pos.x, PLAYER);
+  Screen::DrawChar(player.pos, PLAYER);
   //turn off IS_HELD in case teleportation was done while fighting a Flytrap
   if (player.is_held()) { 
       player.set_is_held(false); 
@@ -237,7 +237,7 @@ void show_map(bool show_monsters)
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
     if (!(real = get_flags(y, x)&F_REAL)) standout();
-    mvaddch(y, x, show_monsters ? get_tile_or_monster(y, x) : get_tile(y, x));
+    Screen::DrawChar({x, y}, show_monsters ? get_tile_or_monster({x, y}) : Level::get_tile({x, y}));
     if (!real) standend();
   }
   show_win("---More (level map)---");

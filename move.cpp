@@ -69,12 +69,12 @@ over:
   //If you are running and the move does not get you anywhere stop running
   if (running && equal(player.pos, nh)) counts_as_turn = running = false;
   fl = get_flags(nh.y, nh.x);
-  ch = get_tile_or_monster(nh.y, nh.x);
+  ch = get_tile_or_monster(nh);
   //When the hero is on the door do not allow him to run until he enters the room all the way
-  if ((get_tile(player.pos.y, player.pos.x)==DOOR) && (ch==FLOOR)) running = false;
+  if ((Level::get_tile(player.pos)==DOOR) && (ch==FLOOR)) running = false;
   if (!(fl&F_REAL) && ch==FLOOR) {
     ch = TRAP;
-    set_tile(nh.y, nh.x, TRAP); 
+    Level::set_tile(nh, TRAP); 
     set_flag(nh.y, nh.x, F_REAL);
   }
   else if (player.is_held() && ch != 'F') { //TODO: remove direct check for F
@@ -92,8 +92,8 @@ hit_bound:
       switch (run_character)
       {
       case 'h': case 'l':
-        b1 = (player.pos.y>1 && ((get_flags(player.pos.y-1, player.pos.x)&F_PASS) || get_tile(player.pos.y-1, player.pos.x)==DOOR));
-        b2 = (player.pos.y<maxrow-1 && ((get_flags(player.pos.y+1, player.pos.x)&F_PASS) || get_tile(player.pos.y+1, player.pos.x)==DOOR));
+        b1 = (player.pos.y>1 && ((get_flags(player.pos.y-1, player.pos.x)&F_PASS) || Level::get_tile({player.pos.x,player.pos.y - 1})==DOOR));
+        b2 = (player.pos.y<maxrow-1 && ((get_flags(player.pos.y+1, player.pos.x)&F_PASS) || Level::get_tile({player.pos.x,player.pos.y + 1})==DOOR));
         if (!(b1^b2)) break;
         if (b1) {
             run_character = 'k'; 
@@ -107,8 +107,8 @@ hit_bound:
         goto over;
 
       case 'j': case 'k':
-        b1 = (player.pos.x>1 && ((get_flags(player.pos.y, player.pos.x-1)&F_PASS) || get_tile(player.pos.y, player.pos.x-1)==DOOR));
-        b2 = (player.pos.x<COLS-2 && ((get_flags(player.pos.y, player.pos.x+1)&F_PASS) || get_tile(player.pos.y, player.pos.x+1)==DOOR));
+        b1 = (player.pos.x>1 && ((get_flags(player.pos.y, player.pos.x-1)&F_PASS) || Level::get_tile({player.pos.x-1,player.pos.y})==DOOR));
+        b2 = (player.pos.x<COLS-2 && ((get_flags(player.pos.y, player.pos.x+1)&F_PASS) || Level::get_tile({player.pos.x+1,player.pos.y})==DOOR));
         if (!(b1^b2))
             break;
         if (b1) {
@@ -146,15 +146,15 @@ hit_bound:
 
   default:
     running = false;
-    if (isupper(ch) || monster_at(nh.y, nh.x))
+    if (isupper(ch) || monster_at(nh))
       fight(&nh, get_current_weapon(), false);
     else
     {
       running = false;
       if (ch!=STAIRS) take = ch;
 move_stuff:
-      mvaddch(player.pos.y, player.pos.x, get_tile(player.pos.y, player.pos.x));
-      if ((fl&F_PASS) && (get_tile(oldpos.y, oldpos.x)==DOOR || (get_flags(oldpos.y, oldpos.x)&F_MAZE))) leave_room(&nh);
+      Screen::DrawChar(player.pos, Level::get_tile(player.pos));
+      if ((fl&F_PASS) && (Level::get_tile(oldpos)==DOOR || (get_flags(oldpos.y, oldpos.x)&F_MAZE))) leave_room(&nh);
       if ((fl&F_MAZE) && (get_flags(oldpos.y, oldpos.x)&F_MAZE)==0) enter_room(&nh);
       player.pos = nh;
     }
@@ -172,12 +172,12 @@ void door_open(struct Room *room)
     for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
       for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
       {
-        ch = get_tile_or_monster(j, k);
+        ch = get_tile_or_monster({k,j});
         if (isupper(ch))
         {
           item = wake_monster(j, k);
           if (item->oldch==' ' && !(room->is_dark()) && !player.is_blind())
-              item->oldch = get_tile(j, k);
+              item->oldch = Level::get_tile({k,j});
         }
       }
 }
@@ -188,7 +188,7 @@ int be_trapped(Coord *tc)
   byte tr;
 
   repeat_cmd_count = running = false;
-  set_tile(tc->y, tc->x, TRAP);
+  Level::set_tile(*tc, TRAP);
   tr = get_flags(tc->y, tc->x)&F_TMASK;
   was_trapped = 1;
   switch (tr)
@@ -234,7 +234,7 @@ int be_trapped(Coord *tc)
 
   case T_TELEP:
     teleport();
-    mvaddch(tc->y, tc->x, TRAP); //since the hero's leaving, look() won't put it on for us
+    Screen::DrawChar(*tc, TRAP); //since the hero's leaving, look() won't put it on for us
     was_trapped++;//todo:look at this
     break;
 
@@ -289,7 +289,7 @@ void rndmove(Agent *who, Coord *newmv)
       goto bad;
   else
   {
-    ch = get_tile_or_monster(y, x);
+    ch = get_tile_or_monster({x, y});
     if (!step_ok(ch))
         goto bad;
     if (ch == SCROLL)

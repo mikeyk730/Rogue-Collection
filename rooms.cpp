@@ -99,28 +99,28 @@ void do_rooms()
     //Put the gold in
     if ((rnd(2)==0) && (!had_amulet() || (get_level()>=max_level())))
     {
-        room->goldval = rnd_gold();
-        Item *gold = new Gold(room->goldval);
+        room->gold_val = rnd_gold();
+        Item *gold = new Gold(room->gold_val);
         level_items.push_front(gold);
         
         while (1)
         {
           byte gch;
           rnd_pos(room, &room->gold);
-          gch = get_tile(room->gold.y, room->gold.x);
+          gch = Level::get_tile(room->gold);
           if (isfloor(gch))
               break;
         }
-        set_tile(room->gold.y, room->gold.x, GOLD);
+        Level::set_tile(room->gold, GOLD);
         gold->set_location(room->gold);        
     }
     //Put the monster in
-    if (rnd(100)<(room->goldval>0?80:25))
+    if (rnd(100)<(room->gold_val>0?80:25))
     {
         byte mch;
         do {
           rnd_pos(room, &mp); 
-          mch = get_tile_or_monster(mp.y, mp.x);
+          mch = get_tile_or_monster(mp);
         } while (!isfloor(mch));
         monster = create_monster(randmonster(false, get_level()), &mp, get_level());
         give_pack(monster);
@@ -139,14 +139,14 @@ void draw_room(struct Room *room)
   vert(room, room->pos.x+room->size.x-1); //Draw right side
   horiz(room, room->pos.y); //Draw top
   horiz(room, room->pos.y+room->size.y-1); //Draw bottom
-  set_tile(room->pos.y, room->pos.x, ULWALL);
-  set_tile(room->pos.y, room->pos.x+room->size.x-1, URWALL);
-  set_tile(room->pos.y+room->size.y-1, room->pos.x, LLWALL);
-  set_tile(room->pos.y+room->size.y-1, room->pos.x+room->size.x-1, LRWALL);
+  Level::set_tile(room->pos, ULWALL);
+  Level::set_tile({room->pos.x+room->size.x-1,room->pos.y}, URWALL);
+  Level::set_tile({room->pos.x,room->pos.y+room->size.y-1}, LLWALL);
+  Level::set_tile({room->pos.x+room->size.x-1,room->pos.y+room->size.y-1}, LRWALL);
   //Put the floor down
   for (y = room->pos.y+1; y<room->pos.y+room->size.y-1; y++)
     for (x = room->pos.x+1; x<room->pos.x+room->size.x-1; x++)
-      set_tile(y, x, FLOOR);
+      Level::set_tile({x, y}, FLOOR);
 }
 
 //vert: Draw a vertical line
@@ -155,7 +155,7 @@ void vert(struct Room *room, int startx)
   int y;
 
   for (y = room->pos.y+1; y<=room->size.y+room->pos.y-1; y++)
-    set_tile(y, startx, VWALL);
+    Level::set_tile({startx,y}, VWALL);
 }
 
 //horiz: Draw a horizontal line
@@ -164,7 +164,7 @@ void horiz(struct Room *room, int starty)
   int x;
 
   for (x = room->pos.x; x<=room->pos.x+room->size.x-1; x++) 
-    set_tile(starty, x, HWALL);
+    Level::set_tile({x,starty}, HWALL);
 }
 
 //rnd_pos: Pick a random spot in a room
@@ -195,11 +195,11 @@ void enter_room(Coord *cp)
       for (x = room->pos.x; x<room->size.x+room->pos.x; x++)
       {
         //Displaying monsters is all handled in the chase code now
-        monster = monster_at(y, x);
+        monster = monster_at({x, y});
         if (monster==NULL || !can_see_monster(monster)) 
-          addch(get_tile(y, x));
+          addch(Level::get_tile({x, y}));
         else {
-          monster->oldch = get_tile(y,x); 
+          monster->oldch = Level::get_tile({x,y}); 
           addch(monster->disguise);
         }
       }
@@ -239,7 +239,7 @@ void leave_room(Coord *cp)
             break;
           }
           else 
-            monster_at(y, x)->oldch = MDK;
+            monster_at({x, y})->oldch = MDK;
           addch(floor);
       }
     }
@@ -282,10 +282,10 @@ struct Room* rnd_room()
 
 void find_empty_location(Coord* c, int consider_monsters)
 {
-  byte (*tile_getter)(int, int) = consider_monsters ? get_tile_or_monster : get_tile;
+  byte (*tile_getter)(Coord) = consider_monsters ? get_tile_or_monster : Level::get_tile;
 
   do
   {
     rnd_pos(rnd_room(), c);
-  } while (!isfloor(tile_getter(c->y, c->x)));
+  } while (!isfloor(tile_getter(*c)));
 }

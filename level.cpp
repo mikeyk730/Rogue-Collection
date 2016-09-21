@@ -41,14 +41,16 @@ void clear_level()
   memset(the_flags, F_REAL, (MAXLINES-3)*MAXCOLS);
 }
 
-byte get_tile(int y, int x)
-{
-  return the_level[INDEX(y,x)];
-}
+namespace Level {
+    byte get_tile(Coord p)
+    {
+        return the_level[INDEX(p.y, p.x)];
+    }
 
-void set_tile(int y, int x, byte c)
-{
-  the_level[INDEX(y,x)] = c;
+    void set_tile(Coord p, byte c)
+    {
+        the_level[INDEX(p.y, p.x)] = c;
+    }
 }
 
 byte get_flags(int y, int x)

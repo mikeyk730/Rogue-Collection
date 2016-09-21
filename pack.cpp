@@ -114,8 +114,8 @@ void add_to_pack(Item *obj, bool silent)
         op->count += obj->count;
         if (from_floor) {
           level_items.remove(obj);
-          mvaddch(player.pos.y, player.pos.x, floor);
-          set_tile(player.pos.y, player.pos.x, floor);
+          Screen::DrawChar(player.pos, floor);
+          Level::set_tile(player.pos, floor);
         }
         delete obj;
         obj = op;
@@ -134,8 +134,8 @@ void add_to_pack(Item *obj, bool silent)
       {
           level_items.remove(obj);
           delete obj;
-          mvaddch(player.pos.y, player.pos.x, floor);
-          set_tile(player.pos.y, player.pos.x, floor);
+          Screen::DrawChar(player.pos, floor);
+          Level::set_tile(player.pos, floor);
           msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
           return;
       }
@@ -143,8 +143,8 @@ void add_to_pack(Item *obj, bool silent)
   }
   if (from_floor) {
     level_items.remove(obj);
-    mvaddch(player.pos.y, player.pos.x, floor); 
-    set_tile(player.pos.y, player.pos.x, floor);
+    Screen::DrawChar(player.pos, floor); 
+    Level::set_tile(player.pos, floor);
   }
   
   //todo: fuck this code is infuriating
@@ -238,10 +238,10 @@ void pick_up(byte ch)
   case GOLD:
     if ((obj = find_obj(player.pos.y, player.pos.x))==NULL)
         return;
-    pick_up_gold(obj->gold_value);
+    pick_up_gold(obj->m_gold_value);
     level_items.remove(obj);
     delete obj;
-    player.room->goldval = 0;
+    player.room->gold_val = 0;
     break;
   default:
   case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
@@ -341,8 +341,8 @@ void pick_up_gold(int value)
     msg("you found %d gold pieces", value);
 
     byte floor = (player.room->is_gone()) ? PASSAGE : FLOOR;
-    mvaddch(player.pos.y, player.pos.x, floor);
-    set_tile(player.pos.y, player.pos.x, floor);
+    Screen::DrawChar(player.pos, floor);
+    Level::set_tile(player.pos, floor);
 }
 
 bool has_amulet()

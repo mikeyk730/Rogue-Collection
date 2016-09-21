@@ -93,7 +93,7 @@ int fight(Coord *location, Item *weapon, bool thrown)
 {
     const char *name;
     //Find the monster we want to fight
-    Agent *monster = monster_at(location->y, location->x);
+    Agent *monster = monster_at(*location);
     if (!monster)
         return false;
 
@@ -558,12 +558,12 @@ void remove_monster(Agent *monster, bool waskill)
         else
             delete(obj);
     }
-    if (get_tile(monster_pos->y, monster_pos->x) == PASSAGE)
+    if (Level::get_tile(*monster_pos) == PASSAGE)
         standout();
     if (monster->oldch == FLOOR && !can_see(monster_pos->y, monster_pos->x))
-        mvaddch(monster_pos->y, monster_pos->x, ' ');
+        Screen::DrawChar(*monster_pos, ' ');
     else if (monster->oldch != MDK)
-        mvaddch(monster_pos->y, monster_pos->x, monster->oldch);
+        Screen::DrawChar(*monster_pos, monster->oldch);
     standend();
 
     level_monsters.remove(monster);

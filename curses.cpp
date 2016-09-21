@@ -414,3 +414,7 @@ char curch()
   return buffer[c_row][c_col].Char.AsciiChar;
 }
 
+void Screen::DrawChar(Coord p, char c)
+{
+    mvaddch(p.y, p.x, c);
+}

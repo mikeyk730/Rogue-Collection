@@ -98,7 +98,7 @@ void missile(int ydelta, int xdelta)
     }
     do_motion(obj, ydelta, xdelta);
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-    if (monster_at(obj->pos.y, obj->pos.x) == NULL || !hit_monster(obj->pos.y, obj->pos.x, obj))
+    if (monster_at(obj->pos) == NULL || !hit_monster(obj->pos.y, obj->pos.x, obj))
         fall(obj, true);
 }
 
@@ -115,17 +115,17 @@ void do_motion(Item *obj, int ydelta, int xdelta)
 
     //Erase the old one
     if (under != MDK && !equal(obj->pos, player.pos) && can_see(obj->pos.y, obj->pos.x))
-      mvaddch(obj->pos.y, obj->pos.x, under);
+      Screen::DrawChar(obj->pos, under);
     //Get the new position
     obj->pos.y += ydelta;
     obj->pos.x += xdelta;
-    if (step_ok(ch = get_tile_or_monster(obj->pos.y, obj->pos.x)) && ch!=DOOR)
+    if (step_ok(ch = get_tile_or_monster(obj->pos)) && ch!=DOOR)
     {
       //It hasn't hit anything yet, so display it if alright.
         if (can_see(obj->pos.y, obj->pos.x))
       {
-        under = get_tile(obj->pos.y, obj->pos.x);
-        mvaddch(obj->pos.y, obj->pos.x, obj->type);
+        under = Level::get_tile(obj->pos);
+        Screen::DrawChar(obj->pos, obj->type);
         tick_pause();
       }
       else under = MDK;
@@ -155,14 +155,14 @@ void fall(Item *obj, bool pr)
   switch (fallpos(obj, &fpos))
   {
   case 1:
-    set_tile(fpos.y, fpos.x, obj->type);
+    Level::set_tile(fpos, obj->type);
     obj->pos = fpos;
     if (can_see(fpos.y, fpos.x))
     {
       if ((get_flags(obj->pos.y, obj->pos.x)&F_PASS) || (get_flags(obj->pos.y, obj->pos.x)&F_MAZE)) standout();
-      mvaddch(fpos.y, fpos.x, obj->type);
+      Screen::DrawChar(fpos, obj->type);
       standend();
-      if (monster_at(fpos.y, fpos.x)!=NULL) monster_at(fpos.y, fpos.x)->oldch = obj->type;
+      if (monster_at(fpos)!=NULL) monster_at(fpos)->oldch = obj->type;
     }
     level_items.push_front(obj);
     return;
@@ -196,7 +196,7 @@ void Item::initialize_weapon(byte type)
 int hit_monster(int y, int x, Item *obj)  //todo: definite memory issues here.  hit_monster is expeccted to delete, but gets stack variables too
 {
   static Coord mp;
-  Agent *monster = monster_at(y, x);
+  Agent *monster = monster_at({x, y});
   if (!monster)  return false;
 
   mp.y = y;
@@ -248,7 +248,7 @@ int fallpos(Item *obj, Coord *newpos)
     {
       //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
       if ((y==player.pos.y && x==player.pos.x) || offmap(y,x)) continue;
-      if ((ch = get_tile(y, x))==FLOOR || ch==PASSAGE)
+      if ((ch = Level::get_tile({x, y}))==FLOOR || ch==PASSAGE)
       {
         if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}
         continue;

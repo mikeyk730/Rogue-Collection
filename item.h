@@ -83,7 +83,9 @@ public:
 
 //protected:
     int type;                      //What kind of object it is
+//protected:
     Coord pos;                     //Where it lives on the screen
+public:
     char launcher;                 //What you need to launch it
     char *damage;                  //Damage if used like sword
     char *throw_damage;            //Damage if thrown
@@ -97,6 +99,7 @@ public:
     int group;                     //Group number for this object
 public:
 
+    Coord get_location() const;
     void set_location(Coord p);
 
     void initialize(int type, int which);
@@ -130,7 +133,7 @@ public:
 };
 
 #define charges      misc
-#define gold_value   misc
+#define m_gold_value misc
 #define armor_class  misc
 #define ring_level   misc
 

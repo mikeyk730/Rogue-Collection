@@ -319,7 +319,7 @@ void execcom()
 
         lookat.y = player.pos.y+delta.y;
         lookat.x = player.pos.x+delta.x;
-        if (get_tile(lookat.y, lookat.x)!=TRAP) 
+        if (Level::get_tile(lookat)!=TRAP) 
             msg("no trap there.");
         else msg("you found %s", tr_name(get_flags(lookat.y, lookat.x)&F_TMASK));
       }

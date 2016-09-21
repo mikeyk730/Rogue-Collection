@@ -137,16 +137,16 @@ void read_magic_mapping()
   //Take all the things we want to keep hidden out of the window
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
-    switch (ch = get_tile(y, x))
+    switch (ch = Level::get_tile({x, y}))
     {
     case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
       if (!(get_flags(y, x)&F_REAL)) {
         ch = DOOR; 
-        set_tile(y, x, DOOR);
+        Level::set_tile({x, y}, DOOR);
         unset_flag(y, x, F_REAL);
       }
     case DOOR: case PASSAGE: case STAIRS:
-      if ((monster = monster_at(y, x)) != NULL) 
+      if ((monster = monster_at({x, y})) != NULL) 
         if (monster->oldch == ' ')
           monster->oldch = ch;
       break;
@@ -159,7 +159,7 @@ void read_magic_mapping()
         standout();
     }
     if (ch!=' ') 
-      mvaddch(y, x, ch);
+      Screen::DrawChar({x, y}, ch);
     standend();
   }
 }
@@ -173,7 +173,7 @@ void read_hold_monster()
   for (x = player.pos.x-3; x<=player.pos.x+3; x++) {
     if (x>=0 && x<COLS) {
       for (y = player.pos.y-3; y<=player.pos.y+3; y++) {
-        if ((y>0 && y<maxrow) && ((monster = monster_at(y, x)) != NULL))
+        if ((y>0 && y<maxrow) && ((monster = monster_at({x, y})) != NULL))
         {
           monster->set_running(false);
           monster->set_is_held(true);
@@ -230,7 +230,7 @@ void read_food_detection()
     {
       discover = true;
       standout();
-      mvaddch(item->pos.y, item->pos.x, FOOD);
+      Screen::DrawChar(item->pos, FOOD);
       standend();
     }
     //as a bonus this will detect amulets as well
@@ -238,7 +238,7 @@ void read_food_detection()
     {
       discover = true;
       standout();
-      mvaddch(item->pos.y, item->pos.x, AMULET);
+      Screen::DrawChar(item->pos, AMULET);
       standend();
     }
   }

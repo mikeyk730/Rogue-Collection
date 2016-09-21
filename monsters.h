@@ -25,7 +25,7 @@ void give_pack(Agent *monster);
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon
 char pick_vorpal_monster();
 
-//monster_at(x,y): returns pointer to monster at coordinate. if no monster there return NULL
-Agent *monster_at(int y, int x);
+//monster_at: returns pointer to monster at coordinate. if no monster there return NULL
+Agent *monster_at(Coord p);
 
 void load_monster_cfg(const std::string& filename);

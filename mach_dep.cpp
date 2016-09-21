@@ -144,8 +144,8 @@ void credits()
   brown();
   move(22, 1);
   repchr(205, COLS - 2);
-  mvaddch(22, 0, (char)204);
-  mvaddch(22, COLS-1, (char)185);
+  Screen::DrawChar({ 0,22 }, (char)204);
+  Screen::DrawChar({ COLS - 1,22 }, (char)185);
   standend();
   mvaddstr(23, 2, "Rogue's Name? ");
 
@@ -158,8 +158,8 @@ void credits()
 
   blot_out(23, 0, 24, COLS-1);
   brown();
-  mvaddch(22, 0, (char)0xc8);
-  mvaddch(22, COLS-1, (char)0xbc);
+  Screen::DrawChar({ 0,22 }, (char)0xc8);
+  Screen::DrawChar({ COLS - 1,22 }, (char)0xbc);
   standend();
 }
 

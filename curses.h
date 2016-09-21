@@ -18,6 +18,11 @@
 #define high()              set_attr(15)
 #define bold()              set_attr(16)
 
+namespace Screen
+{
+    void DrawChar(Coord p, char c);
+}
+
 void clear();
 
 void putchr(int c, int attr);
@@ -43,9 +48,6 @@ void addstr(const char *s);
 void set_attr(int bute);
 
 void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
-
-//Called when rogue runs to move our cursor to be where DOS thinks the cursor is
-void set_cursor();
 
 //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
 void winit();

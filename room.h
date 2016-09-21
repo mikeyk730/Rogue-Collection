@@ -12,7 +12,7 @@ struct Room
     Coord pos;       //Upper left corner
     Coord size;      //Size of room
     Coord gold;      //Where the gold is
-    int goldval;     //How much the gold is worth
+    int gold_val;     //How much the gold is worth
     short flags;     //Info about the room
     int num_exits;   //Number of exits
     Coord exits[12]; //Where the exits are

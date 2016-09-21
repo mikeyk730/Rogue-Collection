@@ -27,5 +27,5 @@ void Room::set_dark(bool enable){
         flags &= ~IS_DARK;
 }
 void Room::reset(){
-    goldval = num_exits = flags = 0;
+    gold_val = num_exits = flags = 0;
 }

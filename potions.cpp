@@ -200,7 +200,7 @@ void quaff_magic_detection()
       if (is_magic(item))
       {
         show = true;
-        mvaddch(item->pos.y, item->pos.x, goodch(item));
+        Screen::DrawChar(item->pos, goodch(item));
         game->potions().discover(P_TFIND);
       }
     }
@@ -211,7 +211,7 @@ void quaff_magic_detection()
         if (is_magic(*it))
         {
           show = true;
-          mvaddch(monster->pos.y, monster->pos.x, MAGIC);
+          Screen::DrawChar(monster->pos, MAGIC);
           game->potions().discover(P_TFIND);
         }
       }
@@ -315,7 +315,7 @@ void invis_on()
     std::for_each(level_monsters.begin(), level_monsters.end(), [](Agent *monster){
         if (monster->is_invisible() && can_see_monster(monster))
         {
-            mvaddch(monster->pos.y, monster->pos.x, monster->disguise);
+            Screen::DrawChar(monster->pos, monster->disguise);
         }
     });
 }

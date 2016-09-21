@@ -49,13 +49,13 @@ void conn(int r1, int r2)
     if ((room_from->is_gone())==0 || (room_from->is_maze()))
     {
       spos.y = room_from->pos.y+room_from->size.y-1;
-      do {spos.x = room_from->pos.x+rnd(room_from->size.x-2)+1;} while (get_tile(spos.y,spos.x)==' ');
+      do {spos.x = room_from->pos.x+rnd(room_from->size.x-2)+1;} while (Level::get_tile(spos)==' ');
     }
     else {spos.x = room_from->pos.x; spos.y = room_from->pos.y;}
     epos.y = room_to->pos.y;
     if ((room_to->is_gone())==0 || (room_to->is_maze()))
     {
-      do {epos.x = room_to->pos.x+rnd(room_to->size.x-2)+1;} while (get_tile(epos.y,epos.x)==' ');
+      do {epos.x = room_to->pos.x+rnd(room_to->size.x-2)+1;} while (Level::get_tile(epos)==' ');
     }
     else epos.x = room_to->pos.x;
     distance = abs(spos.y-epos.y)-1; //distance to move
@@ -73,13 +73,13 @@ void conn(int r1, int r2)
     if ((room_from->is_gone())==0 || (room_from->is_maze()))
     {
       spos.x = room_from->pos.x+room_from->size.x-1;
-      do {spos.y = room_from->pos.y+rnd(room_from->size.y-2)+1;} while (get_tile(spos.y,spos.x)==' ');
+      do {spos.y = room_from->pos.y+rnd(room_from->size.y-2)+1;} while (Level::get_tile(spos)==' ');
     }
     else {spos.x = room_from->pos.x; spos.y = room_from->pos.y;}
     epos.x = room_to->pos.x;
     if ((room_to->is_gone())==0 || (room_to->is_maze()))
     {
-      do {epos.y = room_to->pos.y+rnd(room_to->size.y-2)+1;} while (get_tile(epos.y,epos.x)==' ');
+      do {epos.y = room_to->pos.y+rnd(room_to->size.y-2)+1;} while (Level::get_tile(epos)==' ');
     }
     else epos.y = room_to->pos.y;
     distance = abs(spos.x-epos.x)-1;
@@ -200,10 +200,10 @@ void door(struct Room *rm, Coord *cp)
 
   if (rnd(10)+1<get_level() && rnd(5)==0)
   {
-    set_tile(cp->y, cp->x, (cp->y==rm->pos.y || cp->y==rm->pos.y+rm->size.y-1)?HWALL:VWALL);
+    Level::set_tile(*cp, (cp->y==rm->pos.y || cp->y==rm->pos.y+rm->size.y-1)?HWALL:VWALL);
     unset_flag(cp->y, cp->x, F_REAL);
   }
-  else set_tile(cp->y, cp->x, DOOR);
+  else Level::set_tile(*cp, DOOR);
   xit = rm->num_exits++;
   rm->exits[xit].y = cp->y;
   rm->exits[xit].x = cp->x;
@@ -212,9 +212,12 @@ void door(struct Room *rm, Coord *cp)
 //add_pass: Add the passages to the current window (wizard command)
 void add_pass()
 {
-  int y, x, ch;
+    int y, x, ch;
 
-  for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++) if ((ch = get_tile(y, x))==DOOR || ch==PASSAGE) mvaddch(y, x, ch);
+    for (y = 1; y < maxrow; y++)
+        for (x = 0; x < COLS; x++)
+            if ((ch = Level::get_tile({x, y})) == DOOR || ch == PASSAGE)
+                Screen::DrawChar({ x, y }, ch);
 }
 
 //passnum: Assign a number to each passageway
@@ -245,7 +248,7 @@ void numpass(int y, int x)
   if (fp&F_PNUM) return;
   if (newpnum) {pnum++; newpnum = false;}
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
-  if ((ch = get_tile(y, x))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
+  if ((ch = Level::get_tile({x, y}))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
   {
     room = &passages[pnum];
     room->exits[room->num_exits].y = y;
@@ -262,6 +265,6 @@ void numpass(int y, int x)
 
 void psplat(int y, int x)
 {
-  set_tile(y, x, PASSAGE);
-  set_flag(y, x, F_PASS);
+    Level::set_tile({ x, y }, PASSAGE);
+    set_flag(y, x, F_PASS);
 }

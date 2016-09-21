@@ -62,7 +62,7 @@ void look(bool wakeup)
 
   room = player.room;
   pfl = get_flags(player.pos.y, player.pos.x);
-  pch = get_tile(player.pos.y, player.pos.x);
+  pch = Level::get_tile(player.pos);
   //if the hero has moved
   if (!equal(oldpos, player.pos))
   {
@@ -109,7 +109,7 @@ void look(bool wakeup)
     else if (y!=player.pos.y || x!=player.pos.x) continue;
     //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
     fp = get_flags(y, x);
-    ch = get_tile(y, x);
+    ch = Level::get_tile({x, y});
     //No Doors
     if (pch!=DOOR && ch!=DOOR)
       //Either hero or other in a passage
@@ -120,7 +120,7 @@ void look(bool wakeup)
       }
       //Not in same passage
       else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
-      if ((monster = monster_at(y, x))!=NULL) if (player.detects_others() && monster->is_invisible())
+      if ((monster = monster_at({x, y}))!=NULL) if (player.detects_others() && monster->is_invisible())
       {
         if (stop_at_door && !firstmove) running = false;
         continue;
@@ -128,7 +128,7 @@ void look(bool wakeup)
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (monster->oldch != ' ' || (!(room->is_dark()) && !player.is_blind())) monster->oldch = get_tile(y, x);
+        if (monster->oldch != ' ' || (!(room->is_dark()) && !player.is_blind())) monster->oldch = Level::get_tile({x, y});
         if (can_see_monster(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
@@ -187,7 +187,7 @@ Item *find_obj(int y, int x)
           return op;
   }
 
-  debug("Non-object %c %d,%d", get_tile(y, x), y, x);
+  debug("Non-object %c %d,%d", Level::get_tile({x, y}), y, x);
   return NULL; //NOTREACHED
 }
 
@@ -409,10 +409,13 @@ int offmap(int y, int x)
   return (y<1 || y>=maxrow || x<0 || x>=COLS);
 }
 
-byte get_tile_or_monster(int y, int x)
+byte get_tile_or_monster(Coord p)
 {
-  Agent* monster = monster_at(y, x);
-  return (monster ? monster->disguise : get_tile(y, x));
+  Agent* monster = monster_at(p);
+  if (monster)
+      return monster->disguise;
+  else
+      Level::get_tile(p);
 }
 
 //search: Player gropes about him to find hidden things.
@@ -432,17 +435,17 @@ void search()
       continue;
     fp = get_flags(y, x);
     if (!(fp&F_REAL)) {
-      switch (get_tile(y, x))
+      switch (Level::get_tile({x, y}))
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
         if (rnd(5)!=0) break;
-        set_tile(y, x, DOOR);
+        Level::set_tile({x, y}, DOOR);
         set_flag(y, x, F_REAL);
         repeat_cmd_count = running = false;
         break;
       case FLOOR:
         if (rnd(2)!=0) break;
-        set_tile(y, x, TRAP);
+        Level::set_tile({x, y}, TRAP);
         set_flag(y, x, F_REAL);
         repeat_cmd_count = running = false;
         msg("you found %s", tr_name(fp&F_TMASK));
@@ -456,7 +459,7 @@ void search()
 //go_down_stairs: He wants to go down a level
 void go_down_stairs()
 {
-    if (get_tile(player.pos.y, player.pos.x) != STAIRS && !game->hero().is_wizard())
+    if (Level::get_tile(player.pos) != STAIRS && !game->hero().is_wizard())
         msg("I see no way down");
     else {
         next_level();
@@ -467,7 +470,7 @@ void go_down_stairs()
 //go_up_stairs: He wants to go up a level
 void go_up_stairs()
 {
-    if (get_tile(player.pos.y, player.pos.x) == STAIRS || game->hero().is_wizard()){
+    if (Level::get_tile(player.pos) == STAIRS || game->hero().is_wizard()){
         if (has_amulet() || game->hero().is_wizard()) {
             if (prev_level() == 0)
                 total_winner();

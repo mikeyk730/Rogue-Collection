@@ -55,7 +55,7 @@ void new_level(int do_implode)
   put_things(); //Place objects (if any)
   //Place the staircase down.
   find_empty_location(&pos, false); //TODO: seed used to change after 100 failed attempts
-  set_tile(pos.y, pos.x, STAIRS);
+  Level::set_tile(pos, STAIRS);
   //Place the traps
   if (rnd(10)<get_level())
   {
@@ -75,7 +75,7 @@ void new_level(int do_implode)
   } while (!(get_flags(player.pos.y, player.pos.x) & F_REAL));  //don't place hero on a trap
   msg_position = 0;
   enter_room(&player.pos);
-  mvaddch(player.pos.y, player.pos.x, PLAYER);
+  Screen::DrawChar(player.pos, PLAYER);
   oldpos = player.pos;
   oldrp = player.room;
   if (player.detects_others())
@@ -103,7 +103,7 @@ void put_things()
 
         //Put it somewhere
         find_empty_location(&tp, true);
-        set_tile(tp.y, tp.x, AMULET);
+        Level::set_tile(tp, AMULET);
         amulet->set_location(tp);
     }
     //check for treasure rooms, and if so, put it in.
@@ -118,7 +118,7 @@ void put_things()
       level_items.push_front(cur);
       //Put it somewhere
       find_empty_location(&tp, false);
-      set_tile(tp.y, tp.x, cur->type);
+      Level::set_tile(tp, cur->type);
       cur->pos = tp;
     }
   }
@@ -142,11 +142,11 @@ void treas_room()
   {
     do {
       rnd_pos(room, &pos);
-    } while (!isfloor(get_tile(pos.y, pos.x)));
+    } while (!isfloor(Level::get_tile(pos)));
     item = create_item();
     item->pos = pos;
     level_items.push_front(item);
-    set_tile(pos.y, pos.x, item->type);
+    Level::set_tile(pos, item->type);
   }
   //fill up room with monsters from the next level down
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;
@@ -157,7 +157,7 @@ void treas_room()
     for (spots = 0; spots<MAXTRIES; spots++)
     {
       rnd_pos(room, &pos);
-      if (isfloor(get_tile(pos.y, pos.x)) && monster_at(pos.y, pos.x)==NULL) break;
+      if (isfloor(Level::get_tile(pos)) && monster_at(pos)==NULL) break;
     }
     if (spots!=MAXTRIES)
     {

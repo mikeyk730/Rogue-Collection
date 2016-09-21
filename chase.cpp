@@ -66,7 +66,7 @@ bool do_chase(Agent *monster)
   Coord tempdest; //Temporary destination for chaser
 
   monster_room = monster->room; //Find room of chaser
-  if (monster->is_greedy() && monster_room->goldval == 0) 
+  if (monster->is_greedy() && monster_room->gold_val == 0) 
     monster->dest = &player.pos; //If gold has been taken, run after hero
 
   dest_room = player.room;
@@ -76,7 +76,7 @@ bool do_chase(Agent *monster)
     return true;
 
   //We don't count doors as inside rooms for this routine
-  door = (get_tile(monster->pos.y, monster->pos.x)==DOOR);
+  door = (Level::get_tile(monster->pos)==DOOR);
   //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
 
 over:
@@ -125,9 +125,9 @@ over:
               level_items.remove(obj);
               monster->pack.push_front(obj);
               oldchar = (monster->room->is_gone()) ? PASSAGE : FLOOR;
-              set_tile(obj->pos.y, obj->pos.x, oldchar);
+              Level::set_tile(obj->pos, oldchar);
               if (can_see(obj->pos.y, obj->pos.x))
-                  mvaddch(obj->pos.y, obj->pos.x, oldchar);
+                  Screen::DrawChar(obj->pos, oldchar);
               monster->dest = find_dest(monster);
               break;
           }
@@ -138,12 +138,12 @@ over:
   //If the chasing thing moved, update the screen
   if (monster->oldch!=MDK)
   {
-    if (monster->oldch==' ' && can_see(monster->pos.y, monster->pos.x) && get_tile(monster->pos.y, monster->pos.x)==FLOOR)
-      mvaddch(monster->pos.y, monster->pos.x, (char)FLOOR);
+    if (monster->oldch==' ' && can_see(monster->pos.y, monster->pos.x) && Level::get_tile(monster->pos)==FLOOR)
+      Screen::DrawChar(monster->pos, (char)FLOOR);
     else if (monster->oldch == FLOOR && !can_see(monster->pos.y, monster->pos.x) && !player.detects_others())
-      mvaddch(monster->pos.y, monster->pos.x, ' ');
+      Screen::DrawChar(monster->pos, ' ');
     else
-      mvaddch(monster->pos.y, monster->pos.x, monster->oldch);
+      Screen::DrawChar(monster->pos, monster->oldch);
   }
   oroom = monster->room;
   if (!equal(ch_ret, monster->pos))
@@ -159,13 +159,13 @@ over:
   {
     if (get_flags(ch_ret.y, ch_ret.x)&F_PASS) standout();
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
-    mvaddch(ch_ret.y, ch_ret.x, monster->disguise);
+    Screen::DrawChar(ch_ret, monster->disguise);
   }
   else if (player.detects_others())
   {
     standout();
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
-    mvaddch(ch_ret.y, ch_ret.x, monster->type);
+    Screen::DrawChar(ch_ret, monster->type);
   }
   else 
     monster->oldch = MDK;
@@ -249,7 +249,7 @@ void chase(Agent *monster, Coord *chasee_pos)
         try_pos.x = x;
         try_pos.y = y;
         if (offmap(y, x) || !diag_ok(chaser_pos, &try_pos)) continue;
-        ch = get_tile_or_monster(y, x);
+        ch = get_tile_or_monster({x,y});
         if (step_ok(ch))
         {
           //If it is a scroll, it might be a scare monster scroll so we need to look it up to see what type it is.
@@ -280,7 +280,7 @@ void chase(Agent *monster, Coord *chasee_pos)
 int diag_ok(const Coord *sp, const Coord *ep )
 {
   if (ep->x==sp->x || ep->y==sp->y) return true;
-  return (step_ok(get_tile(ep->y, sp->x)) && step_ok(get_tile(sp->y, ep->x)));
+  return (step_ok(Level::get_tile({sp->x,ep->y})) && step_ok(Level::get_tile({ep->x,sp->y})));
 }
 
 //can_see: Returns true if the hero can see a certain coordinate.

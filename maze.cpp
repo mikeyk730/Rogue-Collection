@@ -55,9 +55,9 @@ void draw_maze(struct Room *room)
     for (psgcnt = 0, cp = ld, sh = 1; cp<&ld[4]; sh <<= 1, cp++)
     {
       y = cp->y+spos.y; x = cp->x+spos.x;
-      if (!offmap(y, x) && get_tile(y, x)==PASSAGE) psgcnt += sh;
+      if (!offmap(y, x) && Level::get_tile({x, y})==PASSAGE) psgcnt += sh;
     }
-  } while (get_tile(spos.y, spos.x)==PASSAGE || psgcnt%5);
+  } while (Level::get_tile(spos)==PASSAGE || psgcnt%5);
   splat(spos.y, spos.x);
 }
 
@@ -73,9 +73,9 @@ void add_frnt(int y, int x)
 {
   if (frcnt==MAXFRNT-1) debug("MAZE DRAWING ERROR #3\n");
 
-  if (inrange(y, x) && get_tile(y, x)==NOTHING)
+  if (inrange(y, x) && Level::get_tile({x, y})==NOTHING)
   {
-    set_tile(y, x, FRONTIER);
+    Level::set_tile({x, y}, FRONTIER);
     fr_y[frcnt] = y;
     fr_x[frcnt++] = x;
   }
@@ -116,13 +116,13 @@ void con_frnt()
 
 int maze_at(int y, int x)
 {
-  if (inrange(y, x) && get_tile(y, x)==PASSAGE) return 1;
+  if (inrange(y, x) && Level::get_tile({x, y})==PASSAGE) return 1;
   else return 0;
 }
 
 void splat(int y, int x)
 {
-  set_tile(y, x, PASSAGE);
+  Level::set_tile({x, y}, PASSAGE);
   copy_flags(y, x, F_MAZE|F_REAL);
   if (x>maxx) maxx = x;
   if (y>maxy) maxy = y;
