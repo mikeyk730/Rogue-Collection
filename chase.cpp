@@ -91,7 +91,7 @@ over:
     }
     if (door)
     {
-      monster_room = &passages[Level::get_flags(monster->pos)&F_PNUM];
+      monster_room = &passages[Level::get_passage_num(monster->pos)];
       door = false;
       goto over;
     }

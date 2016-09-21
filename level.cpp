@@ -71,6 +71,31 @@ namespace Level {
     {
         the_flags[INDEX(p)] = f;
     }
+
+    bool is_passage(Coord p)
+    {
+        return (get_flags(p) & F_PASS) != 0;
+    }
+
+    bool is_maze(Coord p)
+    {
+        return (get_flags(p) & F_MAZE) != 0;
+    }
+
+    bool is_real(Coord p)
+    {
+        return (get_flags(p) & F_REAL) != 0;
+    }
+
+    int get_passage_num(Coord p)
+    {
+        return get_flags(p) & F_PNUM;
+    }
+
+    int get_trap_type(Coord p)
+    {
+        return get_flags(p) & F_TMASK;
+    }
 }
 
 int get_level()

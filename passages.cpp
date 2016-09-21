@@ -239,22 +239,22 @@ void passnum()
 //numpass: Number a passageway square and its brethren
 void numpass(int y, int x)
 {
-  byte fp;
   struct Room *room;
   byte ch;
 
   if (offmap(y, x)) return;
-  fp = Level::get_flags({x, y});
-  if (fp&F_PNUM) return;
+  if (Level::get_passage_num({x, y}))
+      return;
   if (newpnum) {pnum++; newpnum = false;}
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
-  if ((ch = Level::get_tile({x, y}))==DOOR || (!(fp&F_REAL) && ch!=FLOOR))
+  if ((ch = Level::get_tile({x, y}))==DOOR || (!Level::is_real({x, y}) && ch!=FLOOR))
   {
     room = &passages[pnum];
     room->exits[room->num_exits].y = y;
     room->exits[room->num_exits++].x = x;
   }
-  else if (!(fp&F_PASS)) return;
+  else if (!Level::is_passage({x, y}))
+      return;
   Level::set_flag({x, y}, pnum);
   //recurse on the surrounding places
   numpass(y+1, x);

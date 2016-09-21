@@ -321,7 +321,7 @@ void execcom()
         lookat.x = player.pos.x+delta.x;
         if (Level::get_tile(lookat)!=TRAP) 
             msg("no trap there.");
-        else msg("you found %s", tr_name(Level::get_flags(lookat)&F_TMASK));
+        else msg("you found %s", tr_name(Level::get_trap_type(lookat)));
       }
       break;
 

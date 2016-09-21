@@ -189,7 +189,7 @@ int be_trapped(Coord *tc)
 
   repeat_cmd_count = running = false;
   Level::set_tile(*tc, TRAP);
-  tr = Level::get_flags(*tc)&F_TMASK;
+  tr = Level::get_trap_type(*tc);
   was_trapped = 1;
   switch (tr)
   {

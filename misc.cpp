@@ -414,15 +414,13 @@ byte get_tile_or_monster(Coord p)
   Agent* monster = monster_at(p);
   if (monster)
       return monster->disguise;
-  else
-      Level::get_tile(p);
+  return Level::get_tile(p);
 }
 
 //search: Player gropes about him to find hidden things.
 void search()
 {
   int y, x;
-  byte fp;
   int ey, ex;
 
   if (player.is_blind()) 
@@ -433,8 +431,7 @@ void search()
   {
     if ((y==player.pos.y && x==player.pos.x) || offmap(y, x)) 
       continue;
-    fp = Level::get_flags({x, y});
-    if (!(fp&F_REAL)) {
+    if (!(Level::is_real({ x, y }))) {
       switch (Level::get_tile({x, y}))
       {
       case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
@@ -448,7 +445,7 @@ void search()
         Level::set_tile({x, y}, TRAP);
         Level::set_flag({x, y}, F_REAL);
         repeat_cmd_count = running = false;
-        msg("you found %s", tr_name(fp&F_TMASK));
+        msg("you found %s", tr_name(Level::get_trap_type({ x, y })));
         break;
       }
     }

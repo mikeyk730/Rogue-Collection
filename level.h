@@ -8,6 +8,12 @@ namespace Level {
     void set_flag(Coord p, byte f);
     void unset_flag(Coord p, byte f);
     void copy_flags(Coord p, byte f);
+
+    bool is_passage(Coord p);
+    bool is_maze(Coord p);
+    bool is_real(Coord p);
+    int get_passage_num(Coord p);
+    int get_trap_type(Coord p);
 }
 
 

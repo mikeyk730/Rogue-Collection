@@ -215,7 +215,7 @@ void leave_room(Coord *cp)
   byte ch;
 
   room = player.room;
-  player.room = &passages[Level::get_flags(*cp)&F_PNUM];
+  player.room = &passages[Level::get_passage_num(*cp)];
   floor = ((room->is_dark()) && !player.is_blind()) ? ' ' : FLOOR;
   if (room->is_maze()) floor = PASSAGE;
   for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
@@ -251,7 +251,6 @@ void leave_room(Coord *cp)
 struct Room *get_room_from_position(Coord *pos)
 {
   struct Room *room;
-  byte fp;
 
   for (room = rooms; room <= &rooms[MAXROOMS - 1]; room++)
       if (pos->x < room->pos.x + room->size.x &&
@@ -260,9 +259,8 @@ struct Room *get_room_from_position(Coord *pos)
           && room->pos.y <= pos->y)
           return room;
 
-  fp = Level::get_flags(*pos);
-  if (fp&F_PASS)
-    return &passages[fp&F_PNUM];
+  if (Level::is_passage(*pos))
+    return &passages[Level::get_passage_num(*pos)];
 
   debug("in some bizarre place (%d, %d)", pos->y, pos->x);
   invalid_position = true;

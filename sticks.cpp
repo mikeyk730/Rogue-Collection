@@ -464,14 +464,14 @@ void drain()
   //First count how many things we need to spread the hit points among
   cnt = 0;
   if (Level::get_tile(player.pos)==DOOR)
-      room = &passages[Level::get_flags(player.pos)&F_PNUM];
+      room = &passages[Level::get_passage_num(player.pos)];
   else room = NULL;
   in_passage = player.room->is_gone();
   dp = drainee;
   for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
     monster = *it;
     if (monster->room == player.room || monster->room == room ||
-        (in_passage && Level::get_tile(monster->pos) == DOOR && &passages[Level::get_flags(monster->pos)&F_PNUM] == player.room)) {
+        (in_passage && Level::get_tile(monster->pos) == DOOR && &passages[Level::get_passage_num(monster->pos)] == player.room)) {
         *dp++ = monster;
     }
   }
