@@ -105,10 +105,6 @@ Gold::Gold(int value) :
     Item(GOLD, 0)
 {
     gold_value = value;
-
-    //todo: don't think theses are needed. maybe gold used to be in inv screen
-    flags = IS_MANY;
-    group = GOLDGRP;
 }
 
 Item * Gold::Clone() const

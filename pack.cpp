@@ -334,16 +334,15 @@ int pack_char(Item *obj)
     return '?';
 }
 
-//pick_up_gold: Add or subtract gold from the pack
+//pick_up_gold: Add gold to the pack
 void pick_up_gold(int value)
 {
-  byte floor;
+    game->hero().adjust_purse(value);
+    msg("you found %d gold pieces", value);
 
-  floor = (player.room->is_gone()) ? PASSAGE : FLOOR;
-  game->hero().adjust_purse(value);
-  mvaddch(player.pos.y, player.pos.x, floor);
-  set_tile(player.pos.y, player.pos.x, floor);
-  if (value>0) msg("you found %d gold pieces", value);
+    byte floor = (player.room->is_gone()) ? PASSAGE : FLOOR;
+    mvaddch(player.pos.y, player.pos.x, floor);
+    set_tile(player.pos.y, player.pos.x, floor);
 }
 
 bool has_amulet()

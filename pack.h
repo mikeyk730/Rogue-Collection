@@ -18,7 +18,7 @@ Item *get_item(char *purpose, int type);
 //pack_char: Return which character would address a pack object
 int pack_char(Item *obj);
 
-//pick_up_gold: Add or subtract gold from the pack
+//pick_up_gold: Add gold to the pack
 void pick_up_gold(int value);
 
 //true if player currently has amulet
