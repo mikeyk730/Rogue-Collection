@@ -3,8 +3,8 @@
 
 Item *pack_obj(byte ch, byte *chp);
 
-//add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void add_pack(Item *obj, bool silent);
+//add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+void add_to_pack(Item *obj, bool silent);
 
 //inventory: List what is in the pack
 int inventory(std::list<Item *>& list, int type, char *lstr);
@@ -18,8 +18,8 @@ Item *get_item(char *purpose, int type);
 //pack_char: Return which character would address a pack object
 int pack_char(Item *obj);
 
-//money: Add or subtract gold from the pack
-void money(int value);
+//pick_up_gold: Add or subtract gold from the pack
+void pick_up_gold(int value);
 
 //true if player currently has amulet
 bool has_amulet();

@@ -117,29 +117,29 @@ void Hero::init_player()
   Item *obj;
   obj = new Weapon(MACE, 1, 1);
   obj->set_known();
-  add_pack(obj, true);
+  add_to_pack(obj, true);
   set_current_weapon(obj);
 
   //Now a +1 bow
   obj = new Weapon(BOW, 1, 0);
   obj->set_known();
-  add_pack(obj, true);
+  add_to_pack(obj, true);
 
   //Now some arrows
   obj = new Weapon(ARROW, 0, 0);
   obj->count = rnd(15)+25;
   obj->set_known();
-  add_pack(obj, true);
+  add_to_pack(obj, true);
 
   //And his suit of armor
   obj = new Armor(RING_MAIL, -1);
   obj->set_known();
   set_current_armor(obj);
-  add_pack(obj, true);
+  add_to_pack(obj, true);
 
   //Give him some food too
   obj = new Food(0);
-  add_pack(obj, true);
+  add_to_pack(obj, true);
 }
 
 int Hero::get_hungry_state()

@@ -80,8 +80,8 @@ int get_pack_size()
   return count;
 }
 
-//add_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void add_pack(Item *obj, bool silent)
+//add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+void add_to_pack(Item *obj, bool silent)
 {
   Agent *monster;
   bool from_floor;
@@ -238,14 +238,14 @@ void pick_up(byte ch)
   case GOLD:
     if ((obj = find_obj(player.pos.y, player.pos.x))==NULL)
         return;
-    money(obj->gold_value);
+    pick_up_gold(obj->gold_value);
     level_items.remove(obj);
     delete obj;
     player.room->goldval = 0;
     break;
   default:
   case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
-    add_pack(NULL, false);
+    add_to_pack(NULL, false);
     break;
   }
 }
@@ -334,8 +334,8 @@ int pack_char(Item *obj)
     return '?';
 }
 
-//money: Add or subtract gold from the pack
-void money(int value)
+//pick_up_gold: Add or subtract gold from the pack
+void pick_up_gold(int value)
 {
   byte floor;
 

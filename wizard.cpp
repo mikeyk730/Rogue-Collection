@@ -157,6 +157,7 @@ void summon_object()
   {
       which = get_which(ARMOR, MAXARMORS - 1);
       char bless = get_bless_char();
+      obj = new Armor(which);
 
       if (bless == '-')
           obj->set_cursed();
@@ -167,7 +168,6 @@ void summon_object()
           if (bless == '+')
               obj->armor_class -= rnd(3) + 1;
 
-      obj = new Armor(which);
       break;
   }
   case ',':
@@ -187,7 +187,7 @@ void summon_object()
 
   //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
 
-  add_pack(obj, false);
+  add_to_pack(obj, false);
 }
 
 //teleport: Bamf the hero someplace else
