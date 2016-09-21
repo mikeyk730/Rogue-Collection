@@ -352,20 +352,19 @@ void check_level()
 }
 
 //roll_em: Roll several attacks
-bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
+bool roll_em(Agent *the_attacker, Agent *the_defender, Item *weapon, bool hurl)
 {
-  struct Agent::Stats *att, *def;
   std::string damage_string;
-  int ndice, nsides, def_arm;
+  int ndice, nsides;
   bool did_hit = false;
   int hplus;
   int dplus;
   int damage;
+  struct Agent::Stats *attacker_stats = &the_attacker->stats;
+  struct Agent::Stats *defender_stats = &the_defender->stats;
 
-  att = &thatt->stats;
-  def = &thdef->stats;
   if (weapon==NULL) {
-      damage_string = att->damage;
+      damage_string = attacker_stats->damage;
       dplus = 0; 
       hplus = 0;
   }
@@ -373,11 +372,13 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
   {
     hplus = weapon->get_hit_plus();
     dplus = weapon->get_damage_plus();
+
     //Check for vorpally enchanted weapon
-    if (weapon->is_vorpalized_against(thdef)) {
+    if (weapon->is_vorpalized_against(the_defender)) {
         hplus += 4; 
         dplus += 4;
     }
+
     if (weapon==get_current_weapon())
     {
       if (is_ring_on_hand(LEFT, R_ADDDAM))
@@ -390,12 +391,15 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
         hplus += get_ring(RIGHT)->get_ring_level();
     }
     damage_string = weapon->get_damage();
+
+    //if we've used the right weapon to launch the projectile, we get benefits
     if (hurl && weapon->is_projectile() && get_current_weapon() && get_current_weapon()->which == weapon->get_launcher())
     {
       damage_string = weapon->get_throw_damage();
       hplus += get_current_weapon()->get_hit_plus();
       dplus += get_current_weapon()->get_damage_plus();
     }
+
     //Drain a staff of striking
     if (weapon->type == STICK && weapon->which == WS_HIT)
     {
@@ -404,32 +408,39 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
         weapon->drain_striking();
     }
   }
+
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
-  if (!thdef->is_running()) 
+  if (!the_defender->is_running()) 
       hplus += 4;
-  def_arm = def->ac;
-  if (def==&player.stats)
+
+  int defender_armor = defender_stats->ac;
+  if (defender_stats==&player.stats)
   {
-    if (get_current_armor()!=NULL) def_arm = get_current_armor()->get_armor_class();
-    if (is_ring_on_hand(LEFT, R_PROTECT)) def_arm -= get_ring(LEFT)->get_ring_level();
-    if (is_ring_on_hand(RIGHT, R_PROTECT)) def_arm -= get_ring(RIGHT)->get_ring_level();
+    if (get_current_armor()!=NULL) 
+        defender_armor = get_current_armor()->get_armor_class();
+    if (is_ring_on_hand(LEFT, R_PROTECT)) 
+        defender_armor -= get_ring(LEFT)->get_ring_level();
+    if (is_ring_on_hand(RIGHT, R_PROTECT))
+        defender_armor -= get_ring(RIGHT)->get_ring_level();
   }
+
   const char* cp = damage_string.c_str();
   for (;;)
   {
     ndice = atoi(cp);
     if ((cp = strchr(cp, 'd'))==NULL) break;
     nsides = atoi(++cp);
-    if (swing(att->level, def_arm, hplus+str_plus(att->str)))
+    if (swing(attacker_stats->level, defender_armor, hplus+str_plus(attacker_stats->str)))
     {
       int proll;
 
       proll = roll(ndice, nsides);
-      damage = dplus+proll+add_dam(att->str);
+      damage = dplus+proll+add_dam(attacker_stats->str);
       //special goodies for the commercial version of rogue
       //make it easier on level one
-      if (thdef==&player && max_level()==1) damage = (damage+1)/2;
-      thdef->decrease_hp(max(0, damage), true);
+      if (the_defender==&player && max_level()==1)
+          damage = (damage+1)/2;
+      the_defender->decrease_hp(max(0, damage), true);
       did_hit = true;
     }
     if ((cp = strchr(cp, '/'))==NULL) break;

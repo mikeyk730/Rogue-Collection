@@ -14,7 +14,7 @@ bool swing(int at_lvl, int op_arm, int wplus);
 void check_level();
 
 //roll_em: Roll several attacks
-bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl);
+bool roll_em(Agent *the_attacker, Agent *the_defender, Item *weapon, bool hurl);
 
 //prname: The print name of a combatant
 char *prname(const char *who, bool upper);
