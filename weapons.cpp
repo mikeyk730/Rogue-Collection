@@ -31,7 +31,7 @@ static struct init_weps
   char *iw_hrl;   //Damage when thrown
   char iw_launch; //Launching weapon
   int iw_flags;   //Miscellaneous flags
-} init_dam[MAXWEAPONS] =
+} init_dam[MAXWEAPONS+1] =
 {
   "2d4", "1d3", NONE,     0,               //Mace
   "3d4", "1d2", NONE,     0,               //Long sword
@@ -42,7 +42,8 @@ static struct init_weps
   "1d1", "1d3", NONE,     IS_MANY|IS_MISL, //Dart
   "1d1", "1d1", NONE,     0,               //Crossbow
   "1d2", "2d5", CROSSBOW, IS_MANY|IS_MISL, //Crossbow bolt
-  "2d3", "1d6", NONE,     IS_MISL          //Spear
+  "2d3", "1d6", NONE,     IS_MISL,         //Spear
+  "6d6", "6d6", NONE,     0                //Dragon flame (not accessible to player)
 };
 
 
@@ -59,7 +60,7 @@ const char *weapon_names[MAXWEAPONS+1] =
   "crossbow",
   "crossbow bolt",
   "spear",
-  "charge" //fake entry for dragon's breath
+  "flame"  // dragon flame (not accessible to player)
 };
 
 const char* get_weapon_name(int which)
@@ -70,7 +71,7 @@ const char* get_weapon_name(int which)
 Item* create_weapon()
 {
     int which = rnd(MAXWEAPONS);
-    return new Weapon(which, true);
+    return new Weapon(which);
 }
 
 //missile: Fire a missile in a given direction
@@ -173,6 +174,16 @@ void fall(Item *obj, bool pr)
   if (pr)
       msg("the %s vanishes%s.", short_name(obj), noterse(" as it hits the ground"));
   delete obj;
+}
+
+int Item::get_hit_plus() const
+{
+    return hit_plus;
+}
+
+int Item::get_damage_plus() const
+{
+    return damage_plus;
 }
 
 void Item::initialize_weapon(byte type)
@@ -340,21 +351,18 @@ void Item::vorpalize()
     msg(flash, get_weapon_name(which), short_msgs() ? "" : intense);
 }
 
-Weapon::Weapon(int which, bool rnd_hit_plus) :
+Weapon::Weapon(int which) :
     Item(WEAPON, which)
 {
-    if (which != FLAME)
-        initialize_weapon(which);
+    initialize_weapon(which);
 
-    if (rnd_hit_plus) {
-        int k;
-        if ((k = rnd(100)) < 10) {
-            set_cursed();
-            hit_plus -= rnd(3) + 1;
-        }
-        else if (k < 15)
-            hit_plus += rnd(3) + 1;
+    int k;
+    if ((k = rnd(100)) < 10) {
+        set_cursed();
+        hit_plus -= rnd(3) + 1;
     }
+    else if (k < 15)
+        hit_plus += rnd(3) + 1;
 }
 
 Weapon::Weapon(int which, int hit, int damage) :

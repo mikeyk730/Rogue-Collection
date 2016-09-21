@@ -49,6 +49,18 @@ void Item::drain_striking()
     }
 }
 
+void Item::randomize_damage()
+{
+    if (rnd(20) == 0) {
+        damage = "3d8"; 
+        damage_plus = 9; 
+    }
+    else { 
+        damage = "2d8"; 
+        damage_plus = 4;
+    }
+}
+
 int Item::get_armor_class() const
 {
     return armor_class;

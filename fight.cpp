@@ -371,8 +371,8 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
   }
   else
   {
-    hplus = weapon->hit_plus;
-    dplus = weapon->damage_plus;
+    hplus = weapon->get_hit_plus();
+    dplus = weapon->get_damage_plus();
     //Check for vorpally enchanted weapon
     if (weapon->is_vorpalized_against(thdef)) {
         hplus += 4; 
@@ -393,8 +393,8 @@ bool roll_em(Agent *thatt, Agent *thdef, Item *weapon, bool hurl)
     if (hurl && weapon->is_missile() && get_current_weapon() && get_current_weapon()->which == weapon->launcher)
     {
       cp = weapon->throw_damage;
-      hplus += get_current_weapon()->hit_plus;
-      dplus += get_current_weapon()->damage_plus;
+      hplus += get_current_weapon()->get_hit_plus();
+      dplus += get_current_weapon()->get_damage_plus();
     }
     //Drain a staff of striking
     if (weapon->type == STICK && weapon->which == WS_HIT)
@@ -576,7 +576,7 @@ bool is_magic(Item *obj)
   switch (obj->type)
   {
   case ARMOR: return obj->get_armor_class()!=get_default_class(obj->which);
-  case WEAPON: return obj->hit_plus!=0 || obj->damage_plus!=0;
+  case WEAPON: return obj->get_hit_plus() !=0 || obj->get_damage_plus() !=0;
   case POTION: case SCROLL: case STICK: case RING: case AMULET: return true;
   }
   return false;

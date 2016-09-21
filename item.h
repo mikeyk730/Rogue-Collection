@@ -88,9 +88,9 @@ public:
     char *throw_damage;            //Damage if thrown
     int count;                     //Count for plural objects
     int which;                     //Which object of a type it is
+protected:
     int hit_plus;                  //Plusses to hit
     int damage_plus;               //Plusses to damage
-protected:
     short armor_class;
     short gold_value;
     short charges;
@@ -131,6 +131,7 @@ public:
     int get_charges() const;
     void use_charge();
     void drain_striking();
+    void randomize_damage();
 
     //armor-specific
     int get_armor_class() const;
@@ -141,6 +142,8 @@ public:
     int get_gold_value() const;
 
     //weapon-specific functions
+    int get_hit_plus() const;
+    int get_damage_plus() const;
     void initialize_weapon(byte type);
     const char* get_inv_name_weapon() const;
     void enchant_weapon();

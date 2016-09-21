@@ -3,7 +3,7 @@
 
 struct Weapon : public Item
 {
-    Weapon(int which, bool rnd_hit_plus);
+    Weapon(int which);
     Weapon(int which, int hit, int damage);
 
     virtual Item* Clone() const;

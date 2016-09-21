@@ -222,7 +222,7 @@ int be_trapped(Coord *tc)
     {
       Item *arrow;
 
-      if ((arrow = new Weapon(ARROW, false))!=NULL)
+      if ((arrow = new Weapon(ARROW, 0, 0))!=NULL)
       {
         arrow->count = 1;
         arrow->pos = player.pos;

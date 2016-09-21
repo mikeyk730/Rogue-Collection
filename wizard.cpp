@@ -133,19 +133,15 @@ void summon_object()
   }
   case ')':
   {
-      which = get_which(WEAPON, MAXWEAPONS - 1); //todo: fix up wholefunction
+      which = get_which(WEAPON, MAXWEAPONS - 1); 
       char bless = get_bless_char();
-      obj = new Weapon(which, false);
-
+      int hit_plus = 0;
       if (bless == '-')
-          obj->set_cursed();
+          hit_plus -= rnd(3) + 1;
+      else if (bless == '+')
+          hit_plus += rnd(3) + 1;
 
-          obj->initialize_weapon(obj->which);
-          if (bless == '-')
-              obj->hit_plus -= rnd(3) + 1;
-          if (bless == '+')
-              obj->hit_plus += rnd(3) + 1;
-
+      obj = new Weapon(which, hit_plus, 0);
       break;
   }
   case ']': 

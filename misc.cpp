@@ -323,7 +323,7 @@ int goodch(Item *obj)
     if (obj->get_armor_class()>get_default_class(obj->which)) ch = BMAGIC;
     break;
   case WEAPON:
-    if (obj->hit_plus<0 || obj->damage_plus<0) ch = BMAGIC;
+    if (obj->get_hit_plus()<0 || obj->get_damage_plus()<0) ch = BMAGIC;
     break;
   case SCROLL:
     if (is_bad_scroll(obj)) ch = BMAGIC;

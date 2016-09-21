@@ -302,7 +302,7 @@ void total_winner()
       case BOLT: worth = 1; break;
       case SPEAR: worth = 5; break;
       }
-      worth *= 3*(obj->hit_plus+obj->damage_plus)+obj->count;
+      worth *= 3*(obj->get_hit_plus() +obj->get_damage_plus())+obj->count;
       obj->set_known();
       break;
 

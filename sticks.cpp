@@ -194,8 +194,7 @@ void zap_striking(Item* obj)
   coord.x += player.pos.x;
   if ((monster = monster_at(coord))!=NULL)
   {
-    if (rnd(20)==0) {obj->damage = "3d8"; obj->damage_plus = 9;}
-    else {obj->damage = "2d8"; obj->damage_plus = 4;}
+    obj->randomize_damage();
     fight(&coord, obj, false);
   }
 }
@@ -503,11 +502,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
   struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
   bool is_frost = (strcmp(name, "frost")==0);
 
-  Item* bolt = new Weapon(FLAME, false);
-  bolt->damage = bolt->throw_damage = "6d6";
-  bolt->hit_plus = 30;
-  bolt->damage_plus = 0;
-  //TODO:weapon_names[FLAME] = name;
+  Item* bolt = new Weapon(FLAME, 30, 0);
   switch (dir->y+dir->x)
   {
   case 0: dirch = '/'; break;
