@@ -153,11 +153,12 @@ extern const char *const flash, *const intense;
 
 struct CommandModifiers
 {
+    //todo: which do i need to serialize?
     bool stop_at_door() const { return m_stop_at_door; }
     bool scroll_lock() const { return m_fast_play_enabled; }
     bool fast_mode() const { return m_fast_mode; }
     bool first_move() const { return m_first_move; }
-    bool is_running() const { return m_running; } // move to Hero?
+    bool is_running() const { return m_running; } // todo:move to Hero?
 
     bool m_stop_at_door = false;  //Stop running when we pass a door
     bool m_fast_mode = false;      //Run until you see something

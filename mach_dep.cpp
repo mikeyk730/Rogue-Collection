@@ -48,7 +48,7 @@
 //Table for IBM extended key translation
 static struct xlate
 {
-  byte keycode, keyis;
+  byte keycode, keyis; //todo: need to translate all of these
 } xtab[] =
 {
   C_HOME,  'y',
@@ -74,7 +74,7 @@ static struct xlate
   ALT_F9,  'F'
 };
 
-int is_direction_key(int key) //TODO: num pad keys
+int is_direction_key(int key)
 {
   return key == C_HOME
     || key == C_UP
@@ -182,6 +182,112 @@ int getkey()
   }
   return 0;
 }
+
+/*
+SHORT s_keyboard[256];
+int s_key;
+
+bool my_kbhit()
+{
+    for (int i = 0; i <= 255; ++i) {
+        s_keyboard[i] = GetAsyncKeyState(i);
+    }
+    for (int i = 0; i <= 255; ++i) {
+        switch (i){
+        case VK_SHIFT:
+        case VK_CONTROL:
+        case VK_MENU:
+        case VK_LSHIFT:
+        case VK_LCONTROL:
+        case VK_LMENU:
+        case VK_RSHIFT:
+        case VK_RCONTROL:
+        case VK_RMENU:
+            continue;
+        }
+        if (LOBYTE(s_keyboard[i]) != 0) {
+            s_key = i;
+            return true;
+        }
+    }
+    s_key = 0;
+    return false;
+}
+
+char my_getkey()
+{
+    char key = my_translate(s_key);
+    while (_kbhit()) _getch();
+    if (is_shift_pressed() && is_direction_key(key))
+        game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
+    return key;
+}*/
+
+/*
+std::vector<int> direction_vk = { VK_PRIOR, VK_NEXT, VK_END, VK_HOME, VK_LEFT, VK_UP, VK_RIGHT, VK_DOWN };
+char s_key;
+
+char translate(char c)
+{
+    switch (c) {
+    case VK_PRIOR:
+        return 'u';
+    case VK_NEXT:
+        return 'n';
+    case VK_END:
+        return 'b';
+    case VK_HOME:
+        return 'y';
+    case VK_LEFT:
+        return 'h';
+    case VK_UP:
+        return 'k';
+    case VK_RIGHT:
+        return 'l';
+    case VK_DOWN:
+        return 'j';
+    }
+    return c;
+}
+
+
+bool ex_kbhit() {
+    s_key = 0;
+    for (auto i = direction_vk.begin(); i != direction_vk.end(); ++i) {
+    //for (int i = 8; i <= 255; ++i){
+        switch (*i) {
+        case VK_SHIFT:
+        case VK_CONTROL:
+        case VK_MENU:
+        case VK_LSHIFT:
+        case VK_LCONTROL:
+        case VK_LMENU:
+        case VK_RSHIFT:
+        case VK_RCONTROL:
+        case VK_RMENU:
+            continue;
+        }
+        SHORT state = GetAsyncKeyState(*i);
+        if (LOBYTE(state) != 0) {
+            s_key = translate(*i);
+        }
+    }
+
+   if (_kbhit()) {
+        s_key = 0;
+        return true;
+    }
+
+    return s_key != 0;
+}
+
+char ex_getkey()
+{
+    if (s_key != 0)
+        return s_key;
+    return getkey();
+}
+*/
 
 byte readchar_impl(){
     //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
