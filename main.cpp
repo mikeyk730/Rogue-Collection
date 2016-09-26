@@ -54,13 +54,13 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    //replay = false;
-    std::ifstream in("foo.baz", std::ios::binary | std::ios::in);
+    replay = false;
+    std::ifstream in("v1.sav", std::ios::binary | std::ios::in);
     game = replay ? new GameState(g_random, in) : new GameState(seed);
 
     //player.invunerable = true;
-
-    setenv("rogue.opt");
+    if (!replay)
+        setenv("rogue.opt");
     if ("bw" == game->get_environment("scorefile"))
         bwflag = true;
     load_monster_cfg(game->get_environment("monstercfg"));

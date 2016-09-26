@@ -119,7 +119,7 @@ over:
   {
       for (auto it = level_items.begin(); it != level_items.end(); ){
           obj = *(it++);
-          if (orc_bugfix && equal(*(monster->dest), obj->pos))
+          if (orc_bugfix && equal(*(monster->dest), obj->pos)) //todo:why didn't old code work?
           {
               byte oldchar;
               level_items.remove(obj);
