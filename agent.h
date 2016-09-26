@@ -139,6 +139,7 @@ public:
 
     //find_dest: find the proper destination for the monster
     Coord *find_dest();
+    void set_destination();
 
     bool in_same_room_as(Agent* other);
 

@@ -131,7 +131,7 @@ over:
               game->level().set_tile(obj->pos, oldchar);
               if (game->hero().can_see(obj->pos))
                   Screen::DrawChar(obj->pos, oldchar);
-              this->dest = this->find_dest();
+              set_destination();
               break;
           }
       }
@@ -156,7 +156,7 @@ over:
         return true;
     }
     if (oroom!=this->room) 
-        this->dest = this->find_dest();
+        set_destination();
     this->pos = ch_ret;
   }
   if (game->hero().can_see_monster(this))
@@ -209,9 +209,9 @@ bool Hero::can_see_monster(Agent *monster)
 void Agent::start_run()
 {
   //Start the beastie running
-  this->set_running(true);
-  this->set_is_held(false);
-  this->dest = this->find_dest();
+  set_running(true);
+  set_is_held(false);
+  set_destination();
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
@@ -290,14 +290,13 @@ int diag_ok(const Coord *sp, const Coord *ep )
 //can_see: Returns true if the hero can see a certain coordinate.
 int Hero::can_see(Coord p)
 {
-  struct Room *room;
-
-  if (this->is_blind()) return false;
-  if (distance(p, this->pos) < LAMP_DIST)
-      return true;
-  //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
-  room = get_room_from_position(&p);
-  return (room == this->room && !room->is_dark());
+    if (is_blind()) 
+        return false;
+    //if the coordinate is close.
+    if (distance(p, pos) < LAMP_DIST)
+        return true;
+    //if the coordinate is in the same room as the hero, and the room is lit
+    return (room == get_room_from_position(&p) && !room->is_dark());
 }
 
 //find_dest: find the proper destination for the monster
@@ -330,6 +329,11 @@ Coord* Agent::find_dest()
         }
     }
     return &game->hero().pos;
+}
+
+void Agent::set_destination()
+{
+    dest = find_dest();
 }
 
 bool Agent::in_same_room_as(Agent* other)
