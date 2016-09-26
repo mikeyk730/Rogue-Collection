@@ -21,7 +21,7 @@
 #define BX_HT               5
 #define BX_HB               6
 
-short LINES = 25, COLS = 80;
+short LINES = 25, COLS = 0;
 int ch_attr = 0x7;
 
 #define MAXATTR  17
@@ -72,7 +72,7 @@ byte monoc_attr[] =
 
 byte *at_table;
 
-int c_row, c_col; //Save cursor positions so we don't ask dos
+short c_row, c_col; //Save cursor positions so we don't ask dos
 
 byte dbl_box[BX_SIZE] = {0xc9, 0xbb, 0xc8, 0xbc, 0xba, 0xcd, 0xcd};
 byte sng_box[BX_SIZE] = {0xda, 0xbf, 0xc0, 0xd9, 0xb3, 0xc4, 0xc4};
@@ -228,11 +228,10 @@ void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 }
 
 //winit(win_name): initialize window
-void winit()
+void winit(bool narrow_screen)
 {
   LINES = 25;
-  COLS = 80;  
-  //COLS = 40;  //todo: test with 40.  crashes when leaving room with monster
+  COLS = narrow_screen ? 40 : 80;  
   at_table = color_attr;
   move(c_row, c_col);
 }
@@ -247,23 +246,21 @@ CHAR_INFO buffer[MAXLINES][MAXCOLS];
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void wdump()
 {
-  HANDLE hOutput = GetStdHandle( STD_OUTPUT_HANDLE );
-  COORD dwBufferSize = { COLS,LINES }; 
-  COORD dwBufferCoord = { 0, 0 }; 
-  SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
-  ReadConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
-    dwBufferCoord, &rcRegion ); 
+    HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwBufferSize = { MAXCOLS, MAXLINES };
+    COORD dwBufferCoord = { 0, 0 };
+    SMALL_RECT rcRegion = { 0, 0, MAXCOLS - 1, MAXLINES - 1 };
+    ReadConsoleOutput(hOutput, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
 //wrestor(windex): restore the window saved on disk
 void wrestor()
 {
-  HANDLE hOutput = (HANDLE)GetStdHandle( STD_OUTPUT_HANDLE ); 
-  COORD dwBufferSize = { COLS,LINES }; 
-  COORD dwBufferCoord = { 0, 0 }; 
-  SMALL_RECT rcRegion = { 0, 0, COLS-1, LINES-1 }; 
-  WriteConsoleOutput( hOutput, (CHAR_INFO *)buffer, dwBufferSize, 
-    dwBufferCoord, &rcRegion ); 
+    HANDLE hOutput = (HANDLE)GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwBufferSize = { MAXCOLS, MAXLINES };
+    COORD dwBufferCoord = { 0, 0 };
+    SMALL_RECT rcRegion = { 0, 0, COLS - 1, LINES - 1 };
+    WriteConsoleOutput(hOutput, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
 //Some general drawing routines
@@ -399,19 +396,32 @@ void raise_curtain()
     //todo
 }
 
-void move(short y, short x) 
-{ 
-  HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE); 
-  COORD p = {x, y};
-  SetConsoleCursorPosition(h, p);
-  c_row = y;
-  c_col = x;
+void move(short y, short x)
+{
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD p = { x, y };
+    SetConsoleCursorPosition(h, p);
+    c_row = y;
+    c_col = x;
 }
 
 char curch()
 {
-  wdump(); // very excessive, could just get single char
-  return buffer[c_row][c_col].Char.AsciiChar;
+    CHAR_INFO c;
+    HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD dwBufferSize = { 1, 1 };
+    COORD dwBufferCoord = { 0, 0 };
+    SMALL_RECT rcRegion = { c_col, c_row, c_col, c_row };
+    ReadConsoleOutput(hOutput, (CHAR_INFO *)&c, dwBufferSize, dwBufferCoord, &rcRegion);
+    return c.Char.AsciiChar;
+}
+
+#include "game_state.h"
+#include "level.h"
+
+void Screen::RedrawChar(Coord p)
+{
+    DrawChar(p, game->level().get_tile(p));
 }
 
 void Screen::DrawChar(Coord p, char c)

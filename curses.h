@@ -20,6 +20,7 @@
 
 namespace Screen
 {
+    void RedrawChar(Coord p);
     void DrawChar(Coord p, char c);
 }
 
@@ -50,7 +51,7 @@ void set_attr(int bute);
 void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
 
 //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
-void winit();
+void winit(bool);
 
 void forcebw();
 

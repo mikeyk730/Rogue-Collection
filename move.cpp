@@ -165,9 +165,11 @@ hit_bound:
       game->modifiers.m_running = false;
       if (ch!=STAIRS) take = ch;
 move_stuff:
-      Screen::DrawChar(game->hero().pos, game->level().get_tile(game->hero().pos));
-      if ((fl&F_PASS) && (game->level().get_tile(oldpos)==DOOR || (game->level().get_flags(oldpos)&F_MAZE))) leave_room(&nh);
-      if ((fl&F_MAZE) && (game->level().get_flags(oldpos)&F_MAZE)==0) enter_room(&nh);
+      Screen::RedrawChar(game->hero().pos);
+      if ((fl&F_PASS) && (game->level().get_tile(oldpos)==DOOR || (game->level().get_flags(oldpos)&F_MAZE))) 
+          leave_room(&nh);
+      if ((fl&F_MAZE) && (game->level().get_flags(oldpos)&F_MAZE)==0)
+          enter_room(&nh);
       game->hero().pos = nh;
     }
   }

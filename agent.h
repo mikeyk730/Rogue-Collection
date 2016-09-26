@@ -134,7 +134,7 @@ public:
     //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
     void chase(Coord *chasee_pos);
 
-    //start_run: Set a monster running after something or stop it from running (for when it dies)
+    //start_run: Set a monster running after something
     void start_run();
 
     //find_dest: find the proper destination for the monster

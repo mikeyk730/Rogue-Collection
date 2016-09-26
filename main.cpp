@@ -55,8 +55,8 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    //replay = false;
-    std::ifstream in("level7.sav", std::ios::binary | std::ios::in);
+    replay = false;
+    std::ifstream in("40.sav", std::ios::binary | std::ios::in);
     game = replay ? new GameState(g_random, in) : new GameState(seed);
 
     //game->hero().invunerable = true;
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
         bwflag = true;
     load_monster_cfg(game->get_environment("monstercfg"));
 
-    winit();
+    winit(game->get_environment("width") == "40");
     if (bwflag)
         forcebw();
 
@@ -111,8 +111,8 @@ int get_seed()
 int roll(int number, int sides)
 {
   int dtotal = 0;
-
-  while (number--) dtotal += rnd(sides)+1;
+  while (number--)
+      dtotal += rnd(sides)+1;
   return dtotal;
 }
 
@@ -127,7 +127,11 @@ void playit(char *sname)
     setup();
     cursor(false);
   }
-  else {oldpos.x = game->hero().pos.x; oldpos.y = game->hero().pos.y; oldrp = get_room_from_position(&game->hero().pos);}
+  else {
+      oldpos = game->hero().pos;
+      oldrp = get_room_from_position(&game->hero().pos);
+  }
+
   while (true) 
       command(); //Command execution
   endit();

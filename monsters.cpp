@@ -25,6 +25,7 @@
 #include "level.h"
 #include "room.h"
 #include "game_state.h"
+#include "wizard.h"
 #include "hero.h"
 
 
@@ -188,7 +189,8 @@ bool Agent::sees_invisible() const
 }
 
 bool Agent::detects_others() const {
-    return is_flag_set(SEE_MONST);
+    return game->wizard().detects_others() ||
+        is_flag_set(SEE_MONST);
 }
 
 bool Agent::is_running() const {

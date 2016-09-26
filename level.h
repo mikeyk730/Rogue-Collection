@@ -35,7 +35,7 @@ struct Level {
 
     std::list<Item*> items; //List of objects on this level
     std::list<Agent*> monsters; //List of monsters on the level
-
+private:
     byte the_level[(MAXLINES - 3)*MAXCOLS];
     byte the_flags[(MAXLINES - 3)*MAXCOLS];
 };

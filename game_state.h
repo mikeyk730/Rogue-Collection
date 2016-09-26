@@ -4,6 +4,7 @@
 #include <string>
 #include "rogue.h"
 #include "item_class.h"
+#include "wizard.h"
 
 struct Random;
 struct InputInterface;
@@ -32,10 +33,14 @@ struct GameState
     StickInfo& sticks();
     ItemClass& item_class(int type);
 
+    Cheats& wizard();
+
     bool allow_fast_play() const; //todo:kill this
     bool m_allow_fast_play = true;
 
     CommandModifiers modifiers;
+    Cheats cheats;
+
 
 private:
     void init_environment();

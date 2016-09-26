@@ -201,6 +201,11 @@ ItemClass& GameState::item_class(int type)
     throw std::runtime_error("Requested bad type of item.");
 }
 
+Cheats & GameState::wizard()
+{
+    return cheats;
+}
+
 bool GameState::allow_fast_play() const
 {
     return m_allow_fast_play;

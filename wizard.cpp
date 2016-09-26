@@ -200,3 +200,8 @@ int get_num(short *place)
   *place = atoi(numbuf);
   return (*place);
 }
+
+bool Cheats::detects_others() const
+{
+    return m_detects_monsters;
+}
