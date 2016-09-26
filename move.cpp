@@ -264,7 +264,7 @@ void descend(char *mesg)
 {
   next_level();
   if (*mesg==0) msg(" ");
-  new_level(true);
+  game->level().new_level(true);
   msg("");
   msg(mesg);
   if (!save(VS_LUCK))

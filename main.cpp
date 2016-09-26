@@ -43,6 +43,7 @@
 #include "monsters.h"
 #include "game_state.h"
 #include "random.h"
+#include "level.h"
 
 int bwflag = false;
 
@@ -55,7 +56,7 @@ int main(int argc, char **argv)
     //todo: process args
     bool replay = true;
     //replay = false;
-    std::ifstream in("v0.sav", std::ios::binary | std::ios::in);
+    std::ifstream in("v1.001", std::ios::binary | std::ios::in);
     game = replay ? new GameState(g_random, in) : new GameState(seed);
 
     //game->hero().invunerable = true;
@@ -74,7 +75,7 @@ int main(int argc, char **argv)
     init_things(); //Set up probabilities of things    
     setup();
     drop_curtain();
-    new_level(false); //Draw current level
+    game->level().new_level(false); //Draw current level
     //Start up daemons and fuses
     daemon(doctor, 0);
     fuse(swander, 0, WANDER_TIME);

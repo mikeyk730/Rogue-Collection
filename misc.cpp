@@ -452,7 +452,7 @@ void go_down_stairs()
         msg("I see no way down");
     else {
         next_level();
-        new_level(true);
+        game->level().new_level(true);
     }
 }
 
@@ -463,7 +463,7 @@ void go_up_stairs()
         if (has_amulet() || game->hero().is_wizard()) {
             if (prev_level() == 0)
                 total_winner();
-            new_level(true);
+            game->level().new_level(true);
             msg("you feel a wrenching sensation in your gut");
         }
         else
