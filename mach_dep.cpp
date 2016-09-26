@@ -171,7 +171,7 @@ int getkey()
 
   key = _getch();
   if (is_shift_pressed() && is_direction_key(key))
-      game->modifiers.m_fastmode = !game->modifiers.m_fastmode;
+      game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
 
   for (x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
   {

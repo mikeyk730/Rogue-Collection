@@ -50,7 +50,7 @@ void do_move(int dy, int dx)
   byte ch;
   int fl;
 
-  game->modifiers.m_firstmove = false;
+  game->modifiers.m_first_move = false;
   if (invalid_position) {
       invalid_position = false;
       msg("the crack widens ... "); 

@@ -91,7 +91,7 @@ int read_command()
 
   counts_as_turn = true;
   bool was_fast_play_enabled = game->modifiers.scroll_lock();
-  game->modifiers.m_fastmode = game->modifiers.scroll_lock();
+  game->modifiers.m_fast_mode = game->modifiers.scroll_lock();
   look(true);
   if (!game->modifiers.is_running())
       game->modifiers.m_stop_at_door = false;
@@ -105,7 +105,7 @@ int read_command()
   if (repeat_cmd_count > 0) {
       do_take = lasttake;
       command = lastch;
-      game->modifiers.m_fastmode = false;
+      game->modifiers.m_fast_mode = false;
   }
   else
   {
@@ -120,7 +120,7 @@ int read_command()
       {
         ch = com_char();
         if (was_fast_play_enabled != game->modifiers.scroll_lock())
-            game->modifiers.m_fastmode = !game->modifiers.m_fastmode;
+            game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
         switch (ch)
         {
         case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
@@ -131,7 +131,7 @@ int read_command()
           break;
 
         case 'f': // f: toggle fast mode for this turn
-          game->modifiers.m_fastmode = !game->modifiers.m_fastmode;
+          game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
           break;
         case 'g': // g + direction: move onto an item without picking it up
           do_take = false; 
@@ -155,7 +155,7 @@ int read_command()
     }
   }
   if (repeat_cmd_count)
-      game->modifiers.m_fastmode = false;
+      game->modifiers.m_fast_mode = false;
   switch (command)
   {
   case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
@@ -163,7 +163,7 @@ int read_command()
     {
       if (!game->hero().is_blind()) {
           game->modifiers.m_stop_at_door = true;
-          game->modifiers.m_firstmove = true;
+          game->modifiers.m_first_move = true;
       }
       command = toupper(command);
     }
