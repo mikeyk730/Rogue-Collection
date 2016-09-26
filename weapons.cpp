@@ -88,7 +88,7 @@ void projectile(int ydelta, int xdelta)
     //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  
     //Otherwise, create a new item with a count of one.
     if (obj->count <= 1) {
-        player.pack.remove(obj);
+        game->hero().pack.remove(obj);
     }
     else
     {
@@ -109,13 +109,13 @@ void do_motion(Item *obj, int ydelta, int xdelta)
   byte under = MDK;
 
   //Come fly with us ...
-  obj->pos = player.pos;
+  obj->pos = game->hero().pos;
   for (;;)
   {
     int ch;
 
     //Erase the old one
-    if (under != MDK && !equal(obj->pos, player.pos) && can_see(obj->pos.y, obj->pos.x))
+    if (under != MDK && !equal(obj->pos, game->hero().pos) && can_see(obj->pos.y, obj->pos.x))
       Screen::DrawChar(obj->pos, under);
     //Get the new position
     obj->pos.y += ydelta;
@@ -258,13 +258,13 @@ int fallpos(Item *obj, Coord *newpos)
     for (x = obj->pos.x-1; x<=obj->pos.x+1; x++)
     {
       //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
-      if ((y==player.pos.y && x==player.pos.x) || offmap(y,x)) continue;
+      if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap(y,x)) continue;
       if ((ch = Level::get_tile({x, y}))==FLOOR || ch==PASSAGE)
       {
         if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}
         continue;
       }
-      if (step_ok(ch) && (onfloor = find_obj(y, x)) && onfloor->type==obj->type && onfloor->group && onfloor->group==obj->group)
+      if (step_ok(ch) && (onfloor = find_obj({x,y})) && onfloor->type==obj->type && onfloor->group && onfloor->group==obj->group)
       {
         onfloor->count += obj->count;
         return 2;
@@ -354,7 +354,7 @@ void Item::vorpalize()
     {
         msg("your %s vanishes in a puff of smoke", get_weapon_name(which));
         set_current_weapon(0);
-        player.pack.remove(this);
+        game->hero().pack.remove(this);
         delete this; //careful not to do anything afterwards
         return;
     }

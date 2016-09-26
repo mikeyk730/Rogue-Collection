@@ -34,7 +34,7 @@
 //whatis: What a certain object is
 void whatis()
 {
-    if (player.pack.empty()) {
+    if (game->hero().pack.empty()) {
         msg("You don't have anything in your pack to identify");
         return;
     }
@@ -172,7 +172,7 @@ void summon_object()
 
   //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
 
-  add_to_pack(obj, false);
+  game->hero().add_to_pack(obj, false);
 }
 
 //teleport: Bamf the hero someplace else
@@ -181,21 +181,21 @@ void teleport()
   struct Room* rm;
   Coord c;
 
-  Screen::DrawChar(player.pos, Level::get_tile(player.pos));
+  Screen::DrawChar(game->hero().position(), Level::get_tile(game->hero().position()));
   do {
     rm = rnd_room(); 
     rnd_pos(rm, &c);
   } while (!(step_ok(get_tile_or_monster(c))));
-  if (rm != player.room) {
-    leave_room(&player.pos); 
-    player.pos = c; 
-    enter_room(&player.pos);
+  if (rm != game->hero().room) {
+    leave_room(&game->hero().pos); 
+    game->hero().pos = c; 
+    enter_room(&game->hero().pos);
   }
-  else { player.pos = c; look(true);}
-  Screen::DrawChar(player.pos, PLAYER);
+  else { game->hero().pos = c; look(true);}
+  Screen::DrawChar(game->hero().pos, PLAYER);
   //turn off IS_HELD in case teleportation was done while fighting a Flytrap
-  if (player.is_held()) { 
-      player.set_is_held(false); 
+  if (game->hero().is_held()) { 
+      game->hero().set_is_held(false); 
   }
   no_move = 0;
   repeat_cmd_count = 0;
@@ -204,11 +204,11 @@ void teleport()
   //Teleportation can be a confusing experience (unless you really are a wizard)
   if (!game->hero().is_wizard())
   {
-    if (player.is_confused())
+    if (game->hero().is_confused())
         lengthen(unconfuse, rnd(4)+2);
     else 
         fuse(unconfuse, 0, rnd(4)+2);
-    player.set_confused(true);
+    game->hero().set_confused(true);
   }
 }
 

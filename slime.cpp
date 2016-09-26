@@ -12,6 +12,8 @@
 #include "main.h"
 #include "level.h"
 #include "scrolls.h"
+#include "game_state.h"
+#include "hero.h"
 
 static Coord slimy;
 
@@ -68,11 +70,11 @@ bool plop_monster(int r, int c, Coord *cp)
     for (x = c-1; x<=c+1; x++)
     {
       //Don't put a monster on top of the player.
-      if ((y==player.pos.y && x==player.pos.x) || offmap(y,x)) continue;
+      if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap(y,x)) continue;
       //Or anything else nasty
       if (step_ok(ch = get_tile_or_monster({x, y})))
       {
-        if (ch==SCROLL && is_scare_monster_scroll(find_obj(y, x))) continue;
+        if (ch==SCROLL && is_scare_monster_scroll(find_obj({x,y}))) continue;
         if (rnd(++appear)==0) {cp->y = y; cp->x = x;}
       }
     }

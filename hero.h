@@ -1,11 +1,17 @@
 #pragma once
 
-struct Hero //todo: public Agent
+#include "agent.h"
+
+struct Hero : public Agent
 {
     Hero();
 
     //init_player: Roll up the rogue
     void init_player();
+
+    //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+    void add_to_pack(Item *obj, bool silent);
+    int get_pack_size();
 
     std::string get_name();
     void set_name(const std::string& name);

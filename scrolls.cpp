@@ -121,7 +121,7 @@ Item* create_scroll()
 void read_monster_confusion()
 {
     //Scroll of monster confusion.  Give him that power.
-    player.set_can_confuse(true);
+    game->hero().set_can_confuse(true);
     msg("your hands begin to glow red");
 }
 
@@ -170,9 +170,9 @@ void read_hold_monster()
   int x, y;
   Agent* monster;
 
-  for (x = player.pos.x-3; x<=player.pos.x+3; x++) {
+  for (x = game->hero().pos.x-3; x<=game->hero().pos.x+3; x++) {
     if (x>=0 && x<COLS) {
-      for (y = player.pos.y-3; y<=player.pos.y+3; y++) {
+      for (y = game->hero().pos.y-3; y<=game->hero().pos.y+3; y++) {
         if ((y>0 && y<maxrow) && ((monster = monster_at({x, y})) != NULL))
         {
           monster->set_running(false);
@@ -188,7 +188,7 @@ void read_sleep()
   //Scroll which makes you fall asleep
   game->scrolls().discover(S_SLEEP);
   sleep_timer += rnd(SLEEP_TIME)+4;
-  player.set_running(false);
+  game->hero().set_running(false);
   msg("you fall asleep");
 }
 
@@ -252,9 +252,9 @@ void read_food_detection()
 void read_teleportation()
 {
     //Scroll of teleportation: Make him disappear and reappear
-    Room *original_room = player.room;
+    Room *original_room = game->hero().room;
     teleport();
-    if (original_room != player.room)
+    if (original_room != game->hero().room)
         game->scrolls().discover(S_TELEP);
 }
 
@@ -273,7 +273,7 @@ void read_create_monster()
   Agent* monster;
   Coord position;
 
-  if (plop_monster(player.pos.y, player.pos.x, &position)) {
+  if (plop_monster(game->hero().pos.y, game->hero().pos.x, &position)) {
       monster = create_monster(randmonster(false, get_level()), &position, get_level());
   }
   else 
@@ -363,7 +363,7 @@ void read_scroll()
   if (scroll->count > 1)
     scroll->count--;
   else {
-    player.pack.remove(scroll); 
+    game->hero().pack.remove(scroll); 
     delete(scroll);
   }
 }

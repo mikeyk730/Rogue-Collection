@@ -60,6 +60,8 @@ struct Agent
     void adjust_strength(int amt);
     void restore_strength();
 
+    Coord position() const;
+
 private:
     bool is_flag_set(short flag) const;
     void set_flag(short flag, bool enable);
@@ -129,4 +131,3 @@ public:
 
 //todo: move into game
 extern std::list<Agent*> level_monsters;
-extern Agent player;

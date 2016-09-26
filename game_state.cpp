@@ -66,6 +66,7 @@ GameState::GameState(Random* random, std::istream& in) :
 
     if (version == 1) {
         read(in, &m_seed);
+        read(in, &m_restore_count);
 
         int length = 0;
         read(in, &length);
@@ -83,6 +84,7 @@ GameState::GameState(Random* random, std::istream& in) :
         init_environment();
     }    
 
+    ++m_restore_count;
     random->set_seed(m_seed);
     m_input_interface.reset(new CapturedInput(new StreamInput(in, new KeyboardInput())));
     m_hero.reset(new Hero);
@@ -114,6 +116,7 @@ void GameState::save_game(const std::string& filename)
 
     write(file, s_serial_version);
     write(file, m_seed);
+    write(file, m_restore_count);
 
     write(file, m_environment.size());
     for (auto i = m_environment.begin(); i != m_environment.end(); ++i) {

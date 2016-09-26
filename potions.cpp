@@ -115,13 +115,13 @@ Item* create_potion()
 void quaff_confusion()
 {
   game->potions().discover(P_CONFUSE);
-  if (!player.is_confused())
+  if (!game->hero().is_confused())
   {
-    if (player.is_confused()) 
+    if (game->hero().is_confused()) 
         lengthen(unconfuse, rnd(8)+HUH_DURATION);
     else 
         fuse(unconfuse, 0, rnd(8)+HUH_DURATION);
-    player.set_confused(true);
+    game->hero().set_confused(true);
     msg("wait, what's going on? Huh? What? Who?");
   }
 }
@@ -130,7 +130,7 @@ void quaff_paralysis()
 {
   game->potions().discover(P_PARALYZE);
   sleep_timer = HOLD_TIME;
-  player.set_running(false);
+  game->hero().set_running(false);
   msg("you can't move");
 }
 
@@ -140,7 +140,7 @@ void quaff_poison()
 
   game->potions().discover(P_POISON);
   if (!is_wearing_ring(R_SUSTSTR)) {
-      player.adjust_strength(-(rnd(3)+1)); 
+      game->hero().adjust_strength(-(rnd(3)+1)); 
       msg(sick, "very");
   }
   else msg(sick, "momentarily");
@@ -149,13 +149,13 @@ void quaff_poison()
 void quaff_gain_strength()
 {
   game->potions().discover(P_STRENGTH);
-  player.adjust_strength(1);
+  game->hero().adjust_strength(1);
   msg("you feel stronger. What bulging muscles!");
 }
 
 void quaff_see_invisible()
 {
-  if (!player.sees_invisible()) {
+  if (!game->hero().sees_invisible()) {
       fuse(unsee, 0, SEE_DURATION); 
       look(false);
       invis_on();
@@ -167,7 +167,7 @@ void quaff_see_invisible()
 void quaff_healing()
 {
   game->potions().discover(P_HEALING);
-  player.increase_hp(roll(player.stats.level, 4), true, false);
+  game->hero().increase_hp(roll(game->hero().stats.level, 4), true, false);
   sight();
   msg("you begin to feel better");
 }
@@ -231,7 +231,7 @@ void quaff_raise_level()
 void quaff_extra_healing()
 {
   game->potions().discover(P_XHEAL);
-  player.increase_hp(roll(player.stats.level, 8), true, true);
+  game->hero().increase_hp(roll(game->hero().stats.level, 8), true, true);
   sight();
   msg("you begin to feel much better");
 }
@@ -244,16 +244,16 @@ void quaff_haste_self()
 
 void quaff_restore_strength()
 {
-    player.restore_strength();
+    game->hero().restore_strength();
     msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
 }
 
 void quaff_blindness()
 {
   game->potions().discover(P_BLIND);
-  if (!player.is_blind())
+  if (!game->hero().is_blind())
   {
-    player.set_blind(true);
+    game->hero().set_blind(true);
     fuse(sight, 0, SEE_DURATION);
     look(false);
   }
@@ -303,7 +303,7 @@ void quaff()
   if (obj->count>1)
       obj->count--;
   else {
-    player.pack.remove(obj);
+    game->hero().pack.remove(obj);
     delete(obj);
   }
 }
@@ -311,7 +311,7 @@ void quaff()
 //invis_on: Turn on the ability to see invisible
 void invis_on()
 {
-    player.set_sees_invisible(true);
+    game->hero().set_sees_invisible(true);
     std::for_each(level_monsters.begin(), level_monsters.end(), [](Agent *monster){
         if (monster->is_invisible() && can_see_monster(monster))
         {
@@ -350,7 +350,7 @@ bool turn_see(bool turn_off)
 
     });
 
-    player.set_detects_others(!turn_off);
+    game->hero().set_detects_others(!turn_off);
     return add_new;
 }
 

@@ -54,11 +54,11 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    replay = false;
-    std::ifstream in("v1.sav", std::ios::binary | std::ios::in);
+    //replay = false;
+    std::ifstream in("v0.sav", std::ios::binary | std::ios::in);
     game = replay ? new GameState(g_random, in) : new GameState(seed);
 
-    //player.invunerable = true;
+    //game->hero().invunerable = true;
     if (!replay)
         setenv("rogue.opt");
     if ("bw" == game->get_environment("scorefile"))
@@ -126,7 +126,7 @@ void playit(char *sname)
     setup();
     cursor(false);
   }
-  else {oldpos.x = player.pos.x; oldpos.y = player.pos.y; oldrp = get_room_from_position(&player.pos);}
+  else {oldpos.x = game->hero().pos.x; oldpos.y = game->hero().pos.y; oldrp = get_room_from_position(&game->hero().pos);}
   while (playing) command(); //Command execution
   endit();
 }

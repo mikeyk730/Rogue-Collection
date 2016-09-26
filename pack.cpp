@@ -62,7 +62,7 @@ Item *pack_obj(byte ch, byte *chp)
 {
   byte och = 'a';
 
-  for (auto it = player.pack.begin(); it != player.pack.end(); ++it, och++){ 
+  for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); ++it, och++){ 
       if (ch == och)
           return *it; 
   }
@@ -70,10 +70,10 @@ Item *pack_obj(byte ch, byte *chp)
   return NULL;
 }
 
-int get_pack_size()
+int Hero::get_pack_size()
 {
   int count = 0;
-  for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+  for (auto it = pack.begin(); it != pack.end(); ++it){
       Item* item = *it;
       count += item->group ? 1 : item->count;
   }
@@ -81,19 +81,19 @@ int get_pack_size()
 }
 
 //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void add_to_pack(Item *obj, bool silent)
+void Hero::add_to_pack(Item *obj, bool silent)
 {
   Agent *monster;
   bool from_floor;
   byte floor;
 
-  auto it = player.pack.begin();
+  auto it = pack.begin();
 
   if (obj==NULL)
   {
     from_floor = true;
-    if ((obj = find_obj(player.pos.y, player.pos.x))==NULL) return;
-    floor = (player.room->is_gone())?PASSAGE:FLOOR;
+    if ((obj = find_obj(pos))==NULL) return;
+    floor = (room->is_gone())?PASSAGE:FLOOR;
   }
   else from_floor = false;
   //Link it into the pack.  Search the pack for a object of similar type
@@ -106,7 +106,7 @@ void add_to_pack(Item *obj, bool silent)
 
   if (obj->group)
   {
-    for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+    for (auto it = pack.begin(); it != pack.end(); ++it){
       Item* op = *it;
       if (op->group==obj->group)
       {
@@ -114,8 +114,8 @@ void add_to_pack(Item *obj, bool silent)
         op->count += obj->count;
         if (from_floor) {
           level_items.remove(obj);
-          Screen::DrawChar(player.pos, floor);
-          Level::set_tile(player.pos, floor);
+          Screen::DrawChar(pos, floor);
+          Level::set_tile(pos, floor);
         }
         delete obj;
         obj = op;
@@ -134,8 +134,8 @@ void add_to_pack(Item *obj, bool silent)
       {
           level_items.remove(obj);
           delete obj;
-          Screen::DrawChar(player.pos, floor);
-          Level::set_tile(player.pos, floor);
+          Screen::DrawChar(pos, floor);
+          Level::set_tile(pos, floor);
           msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
           return;
       }
@@ -143,15 +143,15 @@ void add_to_pack(Item *obj, bool silent)
   }
   if (from_floor) {
     level_items.remove(obj);
-    Screen::DrawChar(player.pos, floor); 
-    Level::set_tile(player.pos, floor);
+    Screen::DrawChar(pos, floor); 
+    Level::set_tile(pos, floor);
   }
   
   //todo: fuck this code is infuriating
 
   //Search for an object of the same type
   bool found_type = false;
-  for (; it != player.pack.end(); ++it){
+  for (; it != pack.end(); ++it){
       if ((*it)->type == obj->type){
           found_type = true;
           break;
@@ -159,13 +159,13 @@ void add_to_pack(Item *obj, bool silent)
   }
   //Put it at the end of the pack since it is a new type
   if (!found_type){
-      (obj->type == FOOD) ? player.pack.push_front(obj) :
-          player.pack.push_back(obj);
+      (obj->type == FOOD) ? pack.push_front(obj) :
+          pack.push_back(obj);
       goto picked_up;
   }
   //Search for an object which is exactly the same
   bool exact = false;
-  for (; it != player.pack.end(); ++it){
+  for (; it != pack.end(); ++it){
       if ((*it)->type != obj->type)
           break;
       if ((*it)->which == obj->which) {
@@ -182,14 +182,14 @@ void add_to_pack(Item *obj, bool silent)
       goto picked_up;
   }
 
-  player.pack.insert(it, obj);
+  pack.insert(it, obj);
 
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
   for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
       monster = *it;
       if (monster->dest && (monster->dest->x == obj->pos.x) && (monster->dest->y == obj->pos.y))
-          monster->dest = &player.pos;
+          monster->dest = &pos;
   }
   if (obj->type==AMULET) { 
       s_had_amulet = true;
@@ -207,7 +207,7 @@ int inventory(std::list<Item *>& list, int type, char *lstr)
   char inv_temp[MAXSTR];
 
   n_objs = 0;
-  for (auto it = player.pack.begin(); it != player.pack.end(); ++it, ch++)
+  for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); ++it, ch++)
   {
     Item* item = *it;
     //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
@@ -236,16 +236,16 @@ void pick_up(byte ch)
   switch (ch)
   {
   case GOLD:
-    if ((obj = find_obj(player.pos.y, player.pos.x))==NULL)
+    if ((obj = find_obj(game->hero().pos))==NULL)
         return;
     pick_up_gold(obj->get_gold_value());
     level_items.remove(obj);
     delete obj;
-    player.room->gold_val = 0;
+    game->hero().room->gold_val = 0;
     break;
   default:
   case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
-    add_to_pack(NULL, false);
+    game->hero().add_to_pack(NULL, false);
     break;
   }
 }
@@ -264,7 +264,7 @@ Item *get_item(char *purpose, int type)
   if ("on" == game->get_environment("menu"))
       once_only = true;
   gi_state = again;
-  if (player.pack.empty())
+  if (game->hero().pack.empty())
       msg("you aren't carrying anything");
   else
   {
@@ -289,7 +289,7 @@ skip:
       once_only = false;
       if (ch=='*')
       {
-        if ((ch = inventory(player.pack, type, purpose))==0) {
+        if ((ch = inventory(game->hero().pack, type, purpose))==0) {
             counts_as_turn = false; 
             return NULL;
         }
@@ -325,7 +325,7 @@ skip:
 int pack_char(Item *obj)
 {
     byte c = 'a';
-    for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+    for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); ++it){
         if (*it == obj)
             return c;
         else
@@ -340,14 +340,14 @@ void pick_up_gold(int value)
     game->hero().adjust_purse(value);
     msg("you found %d gold pieces", value);
 
-    byte floor = (player.room->is_gone()) ? PASSAGE : FLOOR;
-    Screen::DrawChar(player.pos, floor);
-    Level::set_tile(player.pos, floor);
+    byte floor = (game->hero().room->is_gone()) ? PASSAGE : FLOOR;
+    Screen::DrawChar(game->hero().pos, floor);
+    Level::set_tile(game->hero().pos, floor);
 }
 
 bool has_amulet()
 {
-    for (auto it = player.pack.begin(); it != player.pack.end(); ++it){
+    for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); ++it){
         Item* item = *it;
         if (item->type == AMULET)
             return true;

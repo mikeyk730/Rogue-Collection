@@ -37,7 +37,7 @@ void command()
 {
   int ntimes;
 
-  if (player.is_fast())
+  if (game->hero().is_fast())
       ntimes = rnd(2) + 2;
   else ntimes = 1;
   while (ntimes--)
@@ -153,7 +153,7 @@ int read_command()
   case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
     if (fastmode && !running)
     {
-      if (!player.is_blind()) {
+      if (!game->hero().is_blind()) {
           stop_at_door = true; 
           firstmove = true;
       }
@@ -213,7 +213,7 @@ void execcom()
         break;
     case 'i':
         counts_as_turn = false;
-        inventory(player.pack, 0, ""); 
+        inventory(game->hero().pack, 0, ""); 
         break;
     case 'd':
         drop();
@@ -317,8 +317,8 @@ void execcom()
       {
         Coord lookat;
 
-        lookat.y = player.pos.y+delta.y;
-        lookat.x = player.pos.x+delta.x;
+        lookat.y = game->hero().pos.y+delta.y;
+        lookat.x = game->hero().pos.x+delta.x;
         if (Level::get_tile(lookat)!=TRAP) 
             msg("no trap there.");
         else msg("you found %s", tr_name(Level::get_trap_type(lookat)));

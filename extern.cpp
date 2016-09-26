@@ -172,7 +172,6 @@ Coord delta;  //Change indicated to get_dir()
 
 struct Room *oldrp; //Roomin(&oldpos)
 
-Agent player; //The rogue
 std::list<Item*> level_items; //List of objects on this level
 std::list<Agent*> level_monsters; //List of monsters on the level
 

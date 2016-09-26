@@ -236,24 +236,24 @@ void status()
         printw("Level:%-4d", get_level());
     }
     //Hits:
-    if (s_hp != player.get_hp())
+    if (s_hp != game->hero().get_hp())
     {
-        s_hp = player.get_hp();
+        s_hp = game->hero().get_hp();
         move(PT(22, 23), 12);
-        if (player.get_hp() < 100) {
-            printw("Hits:%2d(%2d) ", player.get_hp(), player.stats.max_hp);
+        if (game->hero().get_hp() < 100) {
+            printw("Hits:%2d(%2d) ", game->hero().get_hp(), game->hero().stats.max_hp);
             //just in case they get wraithed with 3 digit max hits
             addstr("  ");
         }
         else
-            printw("Hits:%3d(%3d) ", player.get_hp(), player.stats.max_hp);
+            printw("Hits:%3d(%3d) ", game->hero().get_hp(), game->hero().stats.max_hp);
     }
     //Str:
-    if (player.stats.str != strength)
+    if (game->hero().stats.str != strength)
     {
-        strength = player.stats.str;
+        strength = game->hero().stats.str;
         move(PT(22, 23), 26);
-        printw("Str:%2d(%2d) ", player.stats.str, player.stats.max_str);
+        printw("Str:%2d(%2d) ", game->hero().stats.str, game->hero().stats.max_str);
     }
     //Gold
     if (s_pur != game->hero().get_purse())
@@ -263,23 +263,23 @@ void status()
         printw("Gold:%-5u", game->hero().get_purse());
     }
     //Armor:
-    if (s_ac != (get_current_armor() != NULL ? get_current_armor()->get_armor_class() : player.stats.ac))
+    if (s_ac != (get_current_armor() != NULL ? get_current_armor()->get_armor_class() : game->hero().stats.ac))
     {
-        s_ac = (get_current_armor() != NULL ? get_current_armor()->get_armor_class() : player.stats.ac);
+        s_ac = (get_current_armor() != NULL ? get_current_armor()->get_armor_class() : game->hero().stats.ac);
         if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= get_ring(LEFT)->get_ring_level();
         if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= get_ring(RIGHT)->get_ring_level();
         move(23, PT(12, 52));
-        printw("Armor:%-2d", AC(get_current_armor() != NULL ? get_current_armor()->get_armor_class() : player.stats.ac));
+        printw("Armor:%-2d", AC(get_current_armor() != NULL ? get_current_armor()->get_armor_class() : game->hero().stats.ac));
     }
     //Exp:
     if (!use_level_names())
     {
         move(23, PT(22, 62));
-        printw("Exp:%d/%d", player.stats.level, player.stats.exp);
+        printw("Exp:%d/%d", game->hero().stats.level, game->hero().stats.exp);
     }
-    else if (s_elvl != player.stats.level)
+    else if (s_elvl != game->hero().stats.level)
     {
-        s_elvl = player.stats.level;
+        s_elvl = game->hero().stats.level;
         move(23, PT(22, 62));
         printw("%-12s", level_titles[s_elvl - 1]);
     }
@@ -325,7 +325,7 @@ void wait_for(char ch)
 void show_win(char *message)
 {
   mvaddstr(0, 0, message);
-  move(player.pos.y, player.pos.x);
+  move(game->hero().pos.y, game->hero().pos.x);
   wait_for(' ');
 }
 

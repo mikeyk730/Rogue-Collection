@@ -170,18 +170,18 @@ Item* create_stick()
 void zap_light()
 {
   //Ready Kilowatt wand.  Light up the room
-  if (player.is_blind()) msg("you feel a warm glow around you");
+  if (game->hero().is_blind()) msg("you feel a warm glow around you");
   else
   {
     game->sticks().discover(WS_LIGHT);
-    if (player.room->is_gone()) msg("the corridor glows and then fades");
+    if (game->hero().room->is_gone()) msg("the corridor glows and then fades");
     else msg("the room is lit by a shimmering blue light");
   }
-  if (!player.room->is_gone())
+  if (!game->hero().room->is_gone())
   {
-    player.room->set_dark(false);
+    game->hero().room->set_dark(false);
     //Light the room and put the player back up
-    enter_room(&player.pos);
+    enter_room(&game->hero().pos);
   }
 }
 
@@ -190,8 +190,8 @@ void zap_striking(Item* obj)
   Agent* monster;
   Coord coord = delta;
 
-  coord.y += player.pos.y;
-  coord.x += player.pos.x;
+  coord.y += game->hero().pos.y;
+  coord.x += game->hero().pos.x;
   if ((monster = monster_at(coord))!=NULL)
   {
     obj->randomize_damage();
@@ -201,7 +201,7 @@ void zap_striking(Item* obj)
 
 void zap_bolt(int which, const char* name)
 {
-  fire_bolt(&player.pos, &delta, name);
+  fire_bolt(&game->hero().pos, &delta, name);
   game->sticks().discover(which);
 }
 
@@ -263,12 +263,12 @@ void zap_teleport(Agent* monster, int y, int x, int which)
     monster->pos = new_pos;
   }
   else { //it MUST BE at WS_TELTO
-    monster->pos.y = player.pos.y+delta.y; 
-    monster->pos.x = player.pos.x+delta.x;
+    monster->pos.y = game->hero().pos.y+delta.y; 
+    monster->pos.x = game->hero().pos.x+delta.x;
   } 
 
   if (monster->can_hold()) 
-    player.set_is_held(false);
+    game->hero().set_is_held(false);
 }
 
 void zap_generic(Item* wand, int which)
@@ -276,8 +276,8 @@ void zap_generic(Item* wand, int which)
   int x, y;
   Agent* monster;
 
-  y = player.pos.y;
-  x = player.pos.x;
+  y = game->hero().pos.y;
+  x = game->hero().pos.x;
   while (step_ok(get_tile_or_monster({x, y}))) {
       y += delta.y; 
       x += delta.x;
@@ -285,7 +285,7 @@ void zap_generic(Item* wand, int which)
   if ((monster = monster_at({x, y}))!=NULL)
   {
     if (monster->can_hold())
-        player.set_is_held(false);
+        game->hero().set_is_held(false);
     if (which==MAXSTICKS)
     {
       zap_vorpalized_weapon(wand, monster);
@@ -302,7 +302,7 @@ void zap_generic(Item* wand, int which)
     {
       zap_teleport(monster, y, x, which);      
     }
-    monster->dest = &player.pos;
+    monster->dest = &game->hero().pos;
     monster->set_running(true);
   }
 }
@@ -341,8 +341,8 @@ void zap_speed_monster(int which)
   int x, y;
   Agent* monster;
 
-  y = player.pos.y;
-  x = player.pos.x;
+  y = game->hero().pos.y;
+  x = game->hero().pos.x;
   while (step_ok(get_tile_or_monster({x, y}))) {
     y += delta.y; 
     x += delta.x;
@@ -371,7 +371,7 @@ void zap_speed_monster(int which)
 int zap_drain_life()
 {
   //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
-  if (player.get_hp() < 2) {
+  if (game->hero().get_hp() < 2) {
     msg("you are too weak to use it"); 
     return false;
   }  
@@ -464,15 +464,15 @@ void drain()
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
-  if (Level::get_tile(player.pos)==DOOR)
-      room = &passages[Level::get_passage_num(player.pos)];
+  if (Level::get_tile(game->hero().pos)==DOOR)
+      room = &passages[Level::get_passage_num(game->hero().pos)];
   else room = NULL;
-  in_passage = player.room->is_gone();
+  in_passage = game->hero().room->is_gone();
   dp = drainee;
   for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
     monster = *it;
-    if (monster->room == player.room || monster->room == room ||
-        (in_passage && Level::get_tile(monster->pos) == DOOR && &passages[Level::get_passage_num(monster->pos)] == player.room)) {
+    if (monster->room == game->hero().room || monster->room == room ||
+        (in_passage && Level::get_tile(monster->pos) == DOOR && &passages[Level::get_passage_num(monster->pos)] == game->hero().room)) {
         *dp++ = monster;
     }
   }
@@ -481,7 +481,7 @@ void drain()
     return;
   }
   *dp = NULL;
-  cnt = player.drain_hp() / cnt + 1;
+  cnt = game->hero().drain_hp() / cnt + 1;
   //Now zot all of the monsters
   for (dp = drainee; *dp; dp++)
   {
@@ -512,7 +512,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
   case 2: case -2: dirch = '\\'; break;
   }
   pos = *start;
-  hit_hero = (start!=&player.pos);
+  hit_hero = (start!=&game->hero().pos);
   used = false;
   changed = false;
   for (i = 0; i<BOLT_LENGTH && !used; i++)
@@ -554,12 +554,12 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
         }
         else if (!monster->is_disguised())
         {
-          if (start==&player.pos) 
+          if (start==&game->hero().pos) 
               start_run(monster);
           msg("the %s whizzes past the %s", name, get_monster_name(ch));
         }
       }
-      else if (hit_hero && equal(pos, player.pos))
+      else if (hit_hero && equal(pos, game->hero().pos))
       {
         hit_hero = false;
         changed = !changed;
@@ -571,8 +571,8 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
             if (sleep_timer<20) 
                 sleep_timer += spread(7);
           }
-          else if (!player.decrease_hp(roll(6, 6), true)) {
-              if (start == &player.pos)
+          else if (!game->hero().decrease_hp(roll(6, 6), true)) {
+              if (start == &game->hero().pos)
                   death('b');
               else
                   death(monster_at(*start)->type);

@@ -83,7 +83,7 @@ void Hero::digest()
     if (sleep_timer || rnd(5)!=0)
         return;
     sleep_timer += rnd(8)+4;
-    player.set_running(false);
+    game->hero().set_running(false);
     running = false;
     repeat_cmd_count = 0;
     hungry_state = 3;
@@ -110,7 +110,7 @@ void Hero::digest()
 //init_player: Roll up the rogue
 void Hero::init_player()
 {
-  player.stats = { 16, 0, 1, 10, 12, "1d4", 12, 16 };
+  stats = { 16, 0, 1, 10, 12, "1d4", 12, 16 };
   food_left = HUNGER_TIME;
 
   //Give the rogue his weaponry.  First a mace.

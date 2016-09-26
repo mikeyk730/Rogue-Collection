@@ -20,25 +20,25 @@
 //doctor: A healing daemon that restores hit points after rest
 void doctor()
 {
-    int lvl = player.stats.level;
-    int original_hp = player.get_hp();
+    int lvl = game->hero().stats.level;
+    int original_hp = game->hero().get_hp();
 
     turns_since_heal++;
 
     if (lvl<8)
     {
         if (turns_since_heal + (lvl << 1)>20)
-            player.increase_hp(1, false, false);
+            game->hero().increase_hp(1, false, false);
     }
     else if (turns_since_heal >= 3)
-        player.increase_hp(rnd(lvl - 7) + 1, false, false);
+        game->hero().increase_hp(rnd(lvl - 7) + 1, false, false);
 
     if (is_ring_on_hand(LEFT, R_REGEN))
-        player.increase_hp(1, false, false);
+        game->hero().increase_hp(1, false, false);
     if (is_ring_on_hand(RIGHT, R_REGEN))
-        player.increase_hp(1, false, false);
+        game->hero().increase_hp(1, false, false);
 
-    if (original_hp != player.get_hp())
+    if (original_hp != game->hero().get_hp())
     {
         turns_since_heal = 0;
     }
@@ -69,7 +69,7 @@ void rollwand()
 //unconfuse: Release the poor player from his confusion
 void unconfuse()
 {
-  player.set_confused(false);
+  game->hero().set_confused(false);
   msg("you feel less confused now");
 }
 
@@ -83,18 +83,18 @@ void unsee()
       if (th->is_invisible() && can_see_monster(th) && th->oldch != MDK)
           Screen::DrawChar(th->pos, th->oldch);
   }
-  player.set_sees_invisible(false);
+  game->hero().set_sees_invisible(false);
 }
 
 //sight: He gets his sight back
 void sight()
 {
-  if (player.is_blind())
+  if (game->hero().is_blind())
   {
     extinguish(sight);
-    player.set_blind(false);
-    if (!player.room->is_gone()) 
-      enter_room(&player.pos);
+    game->hero().set_blind(false);
+    if (!game->hero().room->is_gone()) 
+      enter_room(&game->hero().pos);
     msg("the veil of darkness lifts");
   }
 }
@@ -102,7 +102,7 @@ void sight()
 //nohaste: End the hasting
 void nohaste()
 {
-    player.set_is_fast(false);
+    game->hero().set_is_fast(false);
     msg("you feel yourself slowing down");
 }
 

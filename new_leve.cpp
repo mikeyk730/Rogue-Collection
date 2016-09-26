@@ -18,6 +18,9 @@
 #include "thing.h"
 #include "pack.h"
 #include "room.h"
+#include "game_state.h"
+#include "hero.h"
+
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room
@@ -30,7 +33,7 @@ void new_level(int do_implode)
   Agent *monster;
   Coord pos;
 
-  player.set_is_held(false); //unhold when you go down just in case
+  game->hero().set_is_held(false); //unhold when you go down just in case
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
 
   //Clean things off from last level
@@ -71,14 +74,14 @@ void new_level(int do_implode)
   }
   do
   {
-    find_empty_location(&player.pos, true);
-  } while (!(Level::get_flags(player.pos) & F_REAL));  //don't place hero on a trap
+    find_empty_location(&game->hero().pos, true);
+  } while (!(Level::get_flags(game->hero().pos) & F_REAL));  //don't place hero on a trap
   msg_position = 0;
-  enter_room(&player.pos);
-  Screen::DrawChar(player.pos, PLAYER);
-  oldpos = player.pos;
-  oldrp = player.room;
-  if (player.detects_others())
+  enter_room(&game->hero().pos);
+  Screen::DrawChar(game->hero().pos, PLAYER);
+  oldpos = game->hero().pos;
+  oldrp = game->hero().room;
+  if (game->hero().detects_others())
       turn_see(false);
 }
 

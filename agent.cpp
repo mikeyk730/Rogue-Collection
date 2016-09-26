@@ -121,3 +121,8 @@ void Agent::restore_strength()
     if (is_ring_on_hand(RIGHT, R_ADDSTR))
         add_str(&stats.str, get_ring(RIGHT)->get_ring_level());
 }
+
+Coord Agent::position() const
+{
+    return pos;
+}

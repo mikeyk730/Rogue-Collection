@@ -24,6 +24,9 @@
 #include "rooms.h"
 #include "level.h"
 #include "room.h"
+#include "game_state.h"
+#include "hero.h"
+
 
 //List of monsters in rough order of vorpalness
 static char *lvl_mons  = "K BHISOR LCA NYTWFP GMXVJD";
@@ -387,9 +390,9 @@ void wanderer()
   do
   {
     room = rnd_room();
-    if (room==player.room) continue;
+    if (room==game->hero().room) continue;
     rnd_pos(room, &cp);
-  } while (!(room!=player.room && step_ok(get_tile_or_monster(cp))));
+  } while (!(room!=game->hero().room && step_ok(get_tile_or_monster(cp))));
   monster = create_monster(randmonster(true, get_level()), &cp, get_level());
   if (invalid_position) 
       debug("wanderer bailout");
@@ -408,21 +411,21 @@ Agent *wake_monster(int y, int x)
   //Every time he sees mean monster, it might start chasing him
   if (!monster->is_running() && rnd(3)!=0 && monster->is_mean() && !monster->is_held() && !is_wearing_ring(R_STEALTH))
   {
-    monster->dest = &player.pos;
+    monster->dest = &game->hero().pos;
     monster->set_running(true);
   }
-  if (monster->causes_confusion() && !player.is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
+  if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
   {
-    room = player.room;
-    dst = distance({ x, y }, player.pos);
+    room = game->hero().room;
+    dst = distance({ x, y }, game->hero().pos);
     if ((room!=NULL && !(room->is_dark())) || dst<LAMP_DIST)
     {
       monster->set_found(true);
       if (!save(VS_MAGIC))
       {
-        if (player.is_confused()) lengthen(unconfuse, rnd(20)+HUH_DURATION);
+        if (game->hero().is_confused()) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
-        player.set_confused(true);
+        game->hero().set_confused(true);
         msg("the %s's gaze has confused you", monster->get_monster_name());
       }
     }
@@ -431,10 +434,10 @@ Agent *wake_monster(int y, int x)
   if (monster->is_greedy() && !monster->is_running())
   {
     monster->set_running(true);
-    if (player.room->gold_val) 
-        monster->dest = &player.room->gold;
+    if (game->hero().room->gold_val) 
+        monster->dest = &game->hero().room->gold;
     else 
-        monster->dest = &player.pos;
+        monster->dest = &game->hero().pos;
   }
   return monster;
 }

@@ -94,7 +94,7 @@ void score(int amount, int flags, char monst)
         his_score.gold = amount;
         his_score.fate = flags ? flags : monst;
         his_score.level = max_level();
-        his_score.rank = player.stats.level;
+        his_score.rank = game->hero().stats.level;
         rank = add_scores(&his_score, &top_ten[0]);
     }
     _close(sc_fd);
@@ -278,7 +278,7 @@ void total_winner()
   clear();
   mvaddstr(0, 0, "   Worth  Item");
   oldpurse = game->hero().get_purse();
-  for (auto it = player.pack.begin(); it != player.pack.end(); c++, ++it)
+  for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); c++, ++it)
   {
     obj = *it;
     ItemClass* item_class = 0;

@@ -19,6 +19,9 @@
 #include "scrolls.h"
 #include "pack.h"
 #include "room.h"
+#include "game_state.h"
+#include "hero.h"
+
 
 //orcs should pick up gold in a room, then chase the player.
 //a bug prevented orcs from picking up gold, so they'd just
@@ -39,14 +42,14 @@ void runners()
         monster = *(it++);
         if (!monster->is_held() && monster->is_running())
         {
-            dist = distance(player.pos, monster->pos);
+            dist = distance(game->hero().pos, monster->pos);
             if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->turn)
             if (!do_chase(monster))
                 continue;
             if (monster->is_fast())
             if (!do_chase(monster))
                 continue;
-            dist = distance(player.pos, monster->pos);
+            dist = distance(game->hero().pos, monster->pos);
             if (monster->is_flying() && dist > 3)
             if (!do_chase(monster))
                 continue;
@@ -67,10 +70,10 @@ bool do_chase(Agent *monster)
 
   monster_room = monster->room; //Find room of chaser
   if (monster->is_greedy() && monster_room->gold_val == 0) 
-    monster->dest = &player.pos; //If gold has been taken, run after hero
+    monster->dest = &game->hero().pos; //If gold has been taken, run after hero
 
-  dest_room = player.room;
-  if (monster->dest != &player.pos) 
+  dest_room = game->hero().room;
+  if (monster->dest != &game->hero().pos) 
     dest_room = get_room_from_position(monster->dest); //Find room of chasee
   if (dest_room==NULL) 
     return true;
@@ -101,18 +104,18 @@ over:
     tempdest = *monster->dest;
     //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
     if ((monster->shoots_fire() || monster->shoots_ice()) && 
-        (monster->pos.y==player.pos.y || monster->pos.x==player.pos.x || abs(monster->pos.y-player.pos.y)==abs(monster->pos.x-player.pos.x)) &&
-        ((dist = distance(monster->pos, player.pos))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->powers_cancelled() && rnd(DRAGONSHOT)==0)
+        (monster->pos.y==game->hero().pos.y || monster->pos.x==game->hero().pos.x || abs(monster->pos.y-game->hero().pos.y)==abs(monster->pos.x-game->hero().pos.x)) &&
+        ((dist = distance(monster->pos, game->hero().pos))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->powers_cancelled() && rnd(DRAGONSHOT)==0)
     {
       running = false;
-      delta.y = sign(player.pos.y-monster->pos.y);
-      delta.x = sign(player.pos.x-monster->pos.x);
+      delta.y = sign(game->hero().pos.y-monster->pos.y);
+      delta.x = sign(game->hero().pos.x-monster->pos.x);
       return fire_bolt(&monster->pos, &delta, monster->shoots_fire()?"flame":"frost");
     }
   }
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
   chase(monster, &tempdest);
-  if (equal(ch_ret, player.pos)) {
+  if (equal(ch_ret, game->hero().pos)) {
     return attack(monster); 
   }
   else if (equal(ch_ret, *monster->dest))
@@ -140,7 +143,7 @@ over:
   {
     if (monster->oldch==' ' && can_see(monster->pos.y, monster->pos.x) && Level::get_tile(monster->pos)==FLOOR)
       Screen::DrawChar(monster->pos, (char)FLOOR);
-    else if (monster->oldch == FLOOR && !can_see(monster->pos.y, monster->pos.x) && !player.detects_others())
+    else if (monster->oldch == FLOOR && !can_see(monster->pos.y, monster->pos.x) && !game->hero().detects_others())
       Screen::DrawChar(monster->pos, ' ');
     else
       Screen::DrawChar(monster->pos, monster->oldch);
@@ -161,7 +164,7 @@ over:
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
     Screen::DrawChar(ch_ret, monster->disguise);
   }
-  else if (player.detects_others())
+  else if (game->hero().detects_others())
   {
     standout();
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
@@ -179,15 +182,15 @@ over:
 bool can_see_monster(Agent *monster)
 {
   // player is blind
-  if (player.is_blind())
+  if (game->hero().is_blind())
     return false;
 
   //monster is invisible, and can't see invisible
-  if (monster->is_invisible() && !player.sees_invisible())
+  if (monster->is_invisible() && !game->hero().sees_invisible())
     return false;
   
-  if (distance(monster->pos, player.pos) >= LAMP_DIST &&
-    (monster->room != player.room || monster->room->is_dark() || monster->room->is_maze()))
+  if (distance(monster->pos, game->hero().pos) >= LAMP_DIST &&
+    (monster->room != game->hero().room || monster->room->is_dark() || monster->room->is_maze()))
     return false;
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
@@ -291,12 +294,12 @@ int can_see(int y, int x)
   tp.y = y;
   tp.x = x;
 
-  if (player.is_blind()) return false;
-  if (distance(tp, player.pos) < LAMP_DIST)
+  if (game->hero().is_blind()) return false;
+  if (distance(tp, game->hero().pos) < LAMP_DIST)
       return true;
   //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
   room = get_room_from_position(&tp);
-  return (room == player.room && !room->is_dark());
+  return (room == game->hero().room && !room->is_dark());
 }
 
 //find_dest: find the proper destination for the monster
@@ -305,8 +308,8 @@ Coord *find_dest(Agent *monster)
     int prob;
     struct Room *room;
 
-    if ((prob = monster->get_monster_carry_prob()) <= 0 || monster->room == player.room || can_see_monster(monster))
-        return &player.pos;
+    if ((prob = monster->get_monster_carry_prob()) <= 0 || monster->room == game->hero().room || can_see_monster(monster))
+        return &game->hero().pos;
 
     room = monster->room;
     for (auto it = level_items.begin(); it != level_items.end(); ++it)
@@ -325,5 +328,5 @@ Coord *find_dest(Agent *monster)
                 return &obj->pos;
         }
     }
-    return &player.pos;
+    return &game->hero().pos;
 }

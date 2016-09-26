@@ -22,6 +22,9 @@
 #include "scrolls.h"
 #include "pack.h"
 #include "room.h"
+#include "game_state.h"
+#include "hero.h"
+
 
 #include <ctype.h>
 
@@ -56,28 +59,28 @@ void do_move(int dy, int dx)
   }
   if (no_move) {no_move--; msg("you are still stuck in the bear trap"); return;}
   //Do a confused move (maybe)
-  if (player.is_confused() && rnd(5) != 0) rndmove(&player, &nh);
+  if (game->hero().is_confused() && rnd(5) != 0) rndmove(&game->hero(), &nh);
   else
   {
 over:
-    nh.y = player.pos.y+dy;
-    nh.x = player.pos.x+dx;
+    nh.y = game->hero().pos.y+dy;
+    nh.x = game->hero().pos.x+dx;
   }
   //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
   if (offmap(nh.y, nh.x)) goto hit_bound;
-  if (!diag_ok(&player.pos, &nh)) {counts_as_turn = false; running = false; return;}
+  if (!diag_ok(&game->hero().pos, &nh)) {counts_as_turn = false; running = false; return;}
   //If you are running and the move does not get you anywhere stop running
-  if (running && equal(player.pos, nh)) counts_as_turn = running = false;
+  if (running && equal(game->hero().pos, nh)) counts_as_turn = running = false;
   fl = Level::get_flags(nh);
   ch = get_tile_or_monster(nh);
   //When the hero is on the door do not allow him to run until he enters the room all the way
-  if ((Level::get_tile(player.pos)==DOOR) && (ch==FLOOR)) running = false;
+  if ((Level::get_tile(game->hero().pos)==DOOR) && (ch==FLOOR)) running = false;
   if (!(fl&F_REAL) && ch==FLOOR) {
     ch = TRAP;
     Level::set_tile(nh, TRAP); 
     Level::set_flag(nh, F_REAL);
   }
-  else if (player.is_held() && ch != 'F') { //TODO: remove direct check for F
+  else if (game->hero().is_held() && ch != 'F') { //TODO: remove direct check for F
       msg("you are being held"); 
       return; 
   }
@@ -85,15 +88,15 @@ over:
   {
   case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
 hit_bound:
-    if (running && is_gone(player.room) && !player.is_blind())
+    if (running && is_gone(game->hero().room) && !game->hero().is_blind())
     {
       bool b1, b2;
 
       switch (run_character)
       {
       case 'h': case 'l':
-        b1 = (player.pos.y>1 && ((Level::get_flags({player.pos.x,player.pos.y-1})&F_PASS) || Level::get_tile({player.pos.x,player.pos.y-1})==DOOR));
-        b2 = (player.pos.y<maxrow-1 && ((Level::get_flags({player.pos.x,player.pos.y+1})&F_PASS) || Level::get_tile({player.pos.x,player.pos.y+1})==DOOR));
+        b1 = (game->hero().pos.y>1 && ((Level::get_flags({game->hero().pos.x,game->hero().pos.y-1})&F_PASS) || Level::get_tile({game->hero().pos.x,game->hero().pos.y-1})==DOOR));
+        b2 = (game->hero().pos.y<maxrow-1 && ((Level::get_flags({game->hero().pos.x,game->hero().pos.y+1})&F_PASS) || Level::get_tile({game->hero().pos.x,game->hero().pos.y+1})==DOOR));
         if (!(b1^b2)) break;
         if (b1) {
             run_character = 'k'; 
@@ -107,8 +110,8 @@ hit_bound:
         goto over;
 
       case 'j': case 'k':
-        b1 = (player.pos.x>1 && ((Level::get_flags({player.pos.x-1,player.pos.y})&F_PASS) || Level::get_tile({player.pos.x-1,player.pos.y})==DOOR));
-        b2 = (player.pos.x<COLS-2 && ((Level::get_flags({player.pos.x+1,player.pos.y})&F_PASS) || Level::get_tile({player.pos.x+1,player.pos.y})==DOOR));
+        b1 = (game->hero().pos.x>1 && ((Level::get_flags({game->hero().pos.x-1,game->hero().pos.y})&F_PASS) || Level::get_tile({game->hero().pos.x-1,game->hero().pos.y})==DOOR));
+        b2 = (game->hero().pos.x<COLS-2 && ((Level::get_flags({game->hero().pos.x+1,game->hero().pos.y})&F_PASS) || Level::get_tile({game->hero().pos.x+1,game->hero().pos.y})==DOOR));
         if (!(b1^b2))
             break;
         if (b1) {
@@ -128,7 +131,7 @@ hit_bound:
 
   case DOOR:
     running = false;
-    if (Level::get_flags(player.pos)&F_PASS) 
+    if (Level::get_flags(game->hero().pos)&F_PASS) 
         enter_room(&nh);
     goto move_stuff;
 
@@ -141,7 +144,7 @@ hit_bound:
 
   case FLOOR:
     if (!(fl&F_REAL)) 
-        be_trapped(&player.pos);
+        be_trapped(&game->hero().pos);
     goto move_stuff;
 
   default:
@@ -153,10 +156,10 @@ hit_bound:
       running = false;
       if (ch!=STAIRS) take = ch;
 move_stuff:
-      Screen::DrawChar(player.pos, Level::get_tile(player.pos));
+      Screen::DrawChar(game->hero().pos, Level::get_tile(game->hero().pos));
       if ((fl&F_PASS) && (Level::get_tile(oldpos)==DOOR || (Level::get_flags(oldpos)&F_MAZE))) leave_room(&nh);
       if ((fl&F_MAZE) && (Level::get_flags(oldpos)&F_MAZE)==0) enter_room(&nh);
-      player.pos = nh;
+      game->hero().pos = nh;
     }
   }
 }
@@ -168,7 +171,7 @@ void door_open(struct Room *room)
   byte ch;
   Agent *item;
 
-  if (!(room->is_gone()) && !player.is_blind())
+  if (!(room->is_gone()) && !game->hero().is_blind())
     for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
       for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
       {
@@ -176,7 +179,7 @@ void door_open(struct Room *room)
         if (isupper(ch))
         {
           item = wake_monster(j, k);
-          if (item->oldch==' ' && !(room->is_dark()) && !player.is_blind())
+          if (item->oldch==' ' && !(room->is_dark()) && !game->hero().is_blind())
               item->oldch = Level::get_tile({k,j});
         }
       }
@@ -204,14 +207,14 @@ int be_trapped(Coord *tc)
 
   case T_SLEEP:
     sleep_timer += SLEEP_TIME;
-    player.set_running(false);
+    game->hero().set_running(false);
     msg("a %smist envelops you and you fall asleep", noterse("strange white "));
     break;
 
   case T_ARROW:
-    if (swing(player.stats.level-1, player.stats.ac, 1))
+    if (swing(game->hero().stats.level-1, game->hero().stats.ac, 1))
     {
-      if (!player.decrease_hp(roll(1, 6), true)) {
+      if (!game->hero().decrease_hp(roll(1, 6), true)) {
           msg("an arrow killed you"); 
           death('a');
       }
@@ -225,7 +228,7 @@ int be_trapped(Coord *tc)
       if ((arrow = new Weapon(ARROW, 0, 0))!=NULL)
       {
         arrow->count = 1;
-        arrow->pos = player.pos;
+        arrow->pos = game->hero().pos;
         fall(arrow, false);
       }
       msg("an arrow shoots past you");
@@ -239,14 +242,14 @@ int be_trapped(Coord *tc)
     break;
 
   case T_DART:
-    if (swing(player.stats.level+1, player.stats.ac, 1))
+    if (swing(game->hero().stats.level+1, game->hero().stats.ac, 1))
     {
-      if (!player.decrease_hp(roll(1, 4), true)) {
+      if (!game->hero().decrease_hp(roll(1, 4), true)) {
           msg("a poisoned dart killed you"); 
           death('d');
       }
       if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) 
-          player.adjust_strength(-1);
+          game->hero().adjust_strength(-1);
       msg("a dart just hit you in the shoulder");
     }
     else 
@@ -267,7 +270,7 @@ void descend(char *mesg)
   if (!save(VS_LUCK))
   {
     msg("you are damaged by the fall");
-    if (!player.decrease_hp(roll(1,8), true))
+    if (!game->hero().decrease_hp(roll(1,8), true))
         death('f');
   }
 }

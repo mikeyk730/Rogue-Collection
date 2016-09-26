@@ -3,8 +3,6 @@
 
 Item *pack_obj(byte ch, byte *chp);
 
-//add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void add_to_pack(Item *obj, bool silent);
 
 //inventory: List what is in the pack
 int inventory(std::list<Item *>& list, int type, char *lstr);

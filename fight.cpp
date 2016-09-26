@@ -57,24 +57,24 @@ void do_hit(Item* weapon, int thrown, Agent* monster, const char* name)
     if (!thrown)
     {
       if (--weapon->count == 0) {
-        player.pack.remove(weapon);
+        game->hero().pack.remove(weapon);
         delete weapon;
       }
       set_current_weapon(NULL);
     }
   }
 
-  if (player.can_confuse())
+  if (game->hero().can_confuse())
   {
     did_huh = true;
     monster->set_confused(true);
-    player.set_can_confuse(false);
+    game->hero().set_can_confuse(false);
     msg("your hands stop glowing red");
   }
 
   if (monster->get_hp() <= 0)
     killed(monster, true);
-  else if (did_huh && !player.is_blind()) 
+  else if (did_huh && !game->hero().is_blind()) 
     msg("the %s appears confused", name);
 }
 
@@ -103,16 +103,16 @@ int fight(Coord *location, Item *weapon, bool thrown)
 
     start_run(monster);
     //Let him know it was really a mimic (if it was one).
-    if (monster->is_disguised() && !player.is_blind())
+    if (monster->is_disguised() && !game->hero().is_blind())
     {
         monster->disguise = monster->type;
         if (thrown)
             return false;
         msg("wait! That's a %s!", monster->get_monster_name());
     }
-    name = player.is_blind() ? it : monster->get_monster_name();
+    name = game->hero().is_blind() ? it : monster->get_monster_name();
 
-    if (roll_em(&player, monster, weapon, thrown) || (weapon && weapon->type == POTION))
+    if (roll_em(&game->hero(), monster, weapon, thrown) || (weapon && weapon->type == POTION))
     {
         do_hit(weapon, thrown, monster, name);
         return true;
@@ -148,7 +148,7 @@ bool rattlesnake_attack()
   //Rattlesnakes have poisonous bites
   if (!save(VS_POISON))
     if (!is_wearing_ring(R_SUSTSTR)) {
-        player.adjust_strength(-1);
+        game->hero().adjust_strength(-1);
       msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
       return true;
     }
@@ -161,7 +161,7 @@ bool rattlesnake_attack()
 void flytrap_attack(Agent* mp)
 {
   //Flytrap stops the poor guy from moving
-  player.set_is_held(true);
+  game->hero().set_is_held(true);
   std::ostringstream ss;
   ss << ++(mp->value) << "d1";
   mp->stats.damage = ss.str();
@@ -190,7 +190,7 @@ bool nymph_attack(Agent* mp)
     //Nymphs steal a magic item, look through the pack and pick out one we like.
     Item* item = NULL;
     int nobj = 0;
-    for (auto it = player.pack.begin(); it != player.pack.end(); ++it) {
+    for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); ++it) {
         Item* obj = *it;
         if (obj != get_current_armor() && obj != get_current_weapon() &&
             obj != get_ring(LEFT) && obj != get_ring(RIGHT) &&
@@ -209,7 +209,7 @@ bool nymph_attack(Agent* mp)
         item->count = oc;
     }
     else {
-        player.pack.remove(item);
+        game->hero().pack.remove(item);
         msg(she_stole, inv_name(item, true));
         delete item;
     }
@@ -225,23 +225,23 @@ bool vampire_wraith_attack(Agent* monster)
 
         if (monster->drains_exp())
         {
-            if (player.stats.exp == 0) 
+            if (game->hero().stats.exp == 0) 
                 death(monster->type); //All levels gone
-            if (--player.stats.level == 0) { 
-                player.stats.exp = 0; 
-                player.stats.level = 1; 
+            if (--game->hero().stats.level == 0) { 
+                game->hero().stats.exp = 0; 
+                game->hero().stats.level = 1; 
             }
             else 
-                player.stats.exp = e_levels[player.stats.level - 1] + 1;
+                game->hero().stats.exp = e_levels[game->hero().stats.level - 1] + 1;
             damage = roll(1, 10);
         }
         else
             damage = roll(1, 5); //vampires only half as strong
 
-        player.stats.max_hp -= damage;
-        if (player.stats.max_hp < 1)
+        game->hero().stats.max_hp -= damage;
+        if (game->hero().stats.max_hp < 1)
             death(monster->type);
-        player.decrease_hp(damage, false);
+        game->hero().decrease_hp(damage, false);
         msg("you suddenly feel weaker");
         return true;
     }
@@ -258,13 +258,13 @@ bool attack(Agent *monster)
   //Since this is an attack, stop running and any healing that was going on at the time.
   running = false;
   repeat_cmd_count = turns_since_heal = 0;
-  if (monster->is_disguised() && !player.is_blind()) 
+  if (monster->is_disguised() && !game->hero().is_blind()) 
     monster->disguise = monster->type;
-  name = player.is_blind() ? it : monster->get_monster_name();
-  if (roll_em(monster, &player, NULL, false))
+  name = game->hero().is_blind() ? it : monster->get_monster_name();
+  if (roll_em(monster, &game->hero(), NULL, false))
   {
       display_hit_msg(name, NULL);
-      if (player.get_hp() <= 0)
+      if (game->hero().get_hp() <= 0)
           death(monster->type); //Bye bye life ...
 
       //todo: modify code, so enemy can have more than one power
@@ -309,7 +309,7 @@ bool attack(Agent *monster)
   {
       if (monster->hold_attacks())
       {
-          if (!player.decrease_hp(monster->value, true))
+          if (!game->hero().decrease_hp(monster->value, true))
               death(monster->type); //Bye bye life ...
       }
       miss(name, NULL);
@@ -335,15 +335,15 @@ void check_level()
 {
   int i, add, olevel;
 
-  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>player.stats.exp) break;
+  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>game->hero().stats.exp) break;
   i++;
-  olevel = player.stats.level;
-  player.stats.level = i;
+  olevel = game->hero().stats.level;
+  game->hero().stats.level = i;
   if (i>olevel)
   {
     add = roll(i-olevel, 10);
-    player.stats.max_hp += add;
-    player.increase_hp(add, false, false);
+    game->hero().stats.max_hp += add;
+    game->hero().increase_hp(add, false, false);
     if (use_level_names())
         msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
     else
@@ -414,7 +414,7 @@ bool roll_em(Agent *the_attacker, Agent *the_defender, Item *weapon, bool hurl)
       hplus += 4;
 
   int defender_armor = defender_stats->ac;
-  if (defender_stats==&player.stats)
+  if (defender_stats==&game->hero().stats)
   {
     if (get_current_armor()!=NULL) 
         defender_armor = get_current_armor()->get_armor_class();
@@ -438,7 +438,7 @@ bool roll_em(Agent *the_attacker, Agent *the_defender, Item *weapon, bool hurl)
       damage = dplus+proll+add_dam(attacker_stats->str);
       //special goodies for the commercial version of rogue
       //make it easier on level one
-      if (the_defender==&player && max_level()==1)
+      if (the_defender==&game->hero() && max_level()==1)
           damage = (damage+1)/2;
       the_defender->decrease_hp(max(0, damage), true);
       did_hit = true;
@@ -454,7 +454,7 @@ char *prname(const char *who, bool upper)
 {
   *tbuf = '\0';
   if (who==0) strcpy(tbuf, you);
-  else if (player.is_blind()) strcpy(tbuf, it);
+  else if (game->hero().is_blind()) strcpy(tbuf, it);
   else {strcpy(tbuf, "the "); strcat(tbuf, who);}
   if (upper) *tbuf = toupper(*tbuf);
   return tbuf;
@@ -509,7 +509,7 @@ int save(int which)
     if (is_ring_on_hand(RIGHT, R_PROTECT)) 
         which -= get_ring(RIGHT)->get_ring_level();
   }
-  return save_throw(which, &player);
+  return save_throw(which, &game->hero());
 }
 
 //str_plus: Compute bonus/penalties for strength on the "to hit" roll
@@ -543,7 +543,7 @@ int add_dam(unsigned int str)
 //raise_level: The guy just magically went up a level.
 void raise_level()
 {
-  player.stats.exp = e_levels[player.stats.level-1]+1L;
+  game->hero().stats.exp = e_levels[game->hero().stats.level-1]+1L;
   check_level();
 }
 
@@ -554,7 +554,7 @@ void display_throw_msg(Item *item, const char *name, char *does, char *did)
     addmsg("the %s %s ", get_weapon_name(item->which), does);
   else 
     addmsg("you %s ", did);
-  player.is_blind() ? msg(it) : msg("the %s", name);
+  game->hero().is_blind() ? msg(it) : msg("the %s", name);
 }
 
 //remove: Remove a monster from the screen
@@ -597,11 +597,11 @@ bool is_magic(Item *obj)
 //killed: Called to put a monster to death
 void killed(Agent *monster, bool print)
 {
-    player.stats.exp += monster->stats.exp;
+    game->hero().stats.exp += monster->stats.exp;
 
     //If the monster was a flytrap, un-hold him
     if (monster->can_hold()) {
-        player.set_is_held(false);
+        game->hero().set_is_held(false);
     }
     else if (monster->drops_gold()) {
         int value = rnd_gold();
@@ -613,7 +613,7 @@ void killed(Agent *monster, bool print)
     if (print)
     {
         addmsg("you have defeated ");
-        if (player.is_blind())
+        if (game->hero().is_blind())
             msg(it);
         else msg("the %s", monster->get_monster_name());
     }

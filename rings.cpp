@@ -124,7 +124,7 @@ void ring_on()
   switch (obj->which)
   {
   case R_ADDSTR:
-      player.adjust_strength(obj->get_ring_level());
+      game->hero().adjust_strength(obj->get_ring_level());
       break;
   case R_SEEINVIS:
       invis_on();

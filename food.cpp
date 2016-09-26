@@ -31,7 +31,7 @@ void eat()
     return;
   }
   if (--obj->count<1) {
-    player.pack.remove(obj);
+    game->hero().pack.remove(obj);
     delete obj;
   }
   game->hero().ingest();
@@ -40,7 +40,7 @@ void eat()
   if (obj->which==1)
     msg("my, that was a yummy %s", game->get_environment("fruit").c_str());
   else if (rnd(100)>70) {
-    player.stats.exp++; 
+    game->hero().stats.exp++; 
     msg("yuk, this food tastes awful");
     check_level();
   }

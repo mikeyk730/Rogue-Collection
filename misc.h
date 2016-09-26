@@ -8,7 +8,7 @@ char *tr_name(byte type);
 void look(bool wakeup);
 
 //find_obj: Find the unclaimed object at y, x
-Item *find_obj(int y, int x);
+Item *find_obj(Coord p);
 
 //add_haste: Add a haste to the player
 int add_haste(bool potion);

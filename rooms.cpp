@@ -19,6 +19,8 @@
 #include "thing.h"
 #include "pack.h"
 #include "room.h"
+#include "game_state.h"
+#include "hero.h"
 
 struct Room rooms[MAXROOMS]; //One for each room -- A level
 
@@ -181,14 +183,14 @@ void enter_room(Coord *cp)
   int y, x;
   Agent *monster;
 
-  room = player.room = get_room_from_position(cp);
+  room = game->hero().room = get_room_from_position(cp);
   if (invalid_position || (room->is_gone() && (room->is_maze())==0))
   {
     debug("in a gone room");
     return;
   }
   door_open(room);
-  if (!(room->is_dark()) && !player.is_blind() && !(room->is_maze()))
+  if (!(room->is_dark()) && !game->hero().is_blind() && !(room->is_maze()))
     for (y = room->pos.y; y<room->size.y+room->pos.y; y++)
     {
       move(y, room->pos.x);
@@ -214,9 +216,9 @@ void leave_room(Coord *cp)
   byte floor;
   byte ch;
 
-  room = player.room;
-  player.room = &passages[Level::get_passage_num(*cp)];
-  floor = ((room->is_dark()) && !player.is_blind()) ? ' ' : FLOOR;
+  room = game->hero().room;
+  game->hero().room = &passages[Level::get_passage_num(*cp)];
+  floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
   if (room->is_maze()) floor = PASSAGE;
   for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
     for (x = room->pos.x+1; x<room->size.x+room->pos.x-1; x++) {
@@ -232,7 +234,7 @@ void leave_room(Coord *cp)
       default:
         //to check for monster, we have to strip out standout bit
         if (isupper(toascii(ch)))
-        if (player.detects_others()) {
+        if (game->hero().detects_others()) {
             standout(); 
             addch(ch); 
             standend(); 

@@ -37,7 +37,8 @@ struct GameState
 private:
     void init_environment();
 
-    long m_seed; //Random number seed
+    long m_seed = 0; //Random number seed
+    int m_restore_count = 0;
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 
     std::unique_ptr<Random> m_random; //Random number generator

@@ -60,18 +60,18 @@ void look(bool wakeup)
   byte pfl, fp;
   int sy, sx, sumhero, diffhero;
 
-  room = player.room;
-  pfl = Level::get_flags(player.pos);
-  pch = Level::get_tile(player.pos);
+  room = game->hero().room;
+  pfl = Level::get_flags(game->hero().pos);
+  pch = Level::get_tile(game->hero().pos);
   //if the hero has moved
-  if (!equal(oldpos, player.pos))
+  if (!equal(oldpos, game->hero().pos))
   {
-    if (!player.is_blind())
+    if (!game->hero().is_blind())
     {
       for (x = oldpos.x-1; x<=(oldpos.x+1); x++)
         for (y = oldpos.y-1; y<=(oldpos.y+1); y++)
         {
-          if ((y==player.pos.y && x==player.pos.x) || offmap(y,x)) continue;
+          if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap(y,x)) continue;
           move(y, x);
           ch = curch();
           if (ch==FLOOR)
@@ -88,25 +88,25 @@ void look(bool wakeup)
           }
         }
     }
-    oldpos = player.pos;
+    oldpos = game->hero().pos;
     oldrp = room;
   }
-  ey = player.pos.y+1;
-  ex = player.pos.x+1;
-  sx = player.pos.x-1;
-  sy = player.pos.y-1;
+  ey = game->hero().pos.y+1;
+  ex = game->hero().pos.x+1;
+  sx = game->hero().pos.x-1;
+  sy = game->hero().pos.y-1;
   if (stop_at_door && !firstmove && running) {
-      sumhero = player.pos.y+player.pos.x; 
-      diffhero = player.pos.y-player.pos.x;
+      sumhero = game->hero().pos.y+game->hero().pos.x; 
+      diffhero = game->hero().pos.y-game->hero().pos.x;
   }
   for (y = sy; y<=ey; y++) if (y>0 && y<maxrow) for (x = sx; x<=ex; x++)
   {
     if (x<=0 || x>=COLS) continue;
-    if (!player.is_blind())
+    if (!game->hero().is_blind())
     {
-      if (y==player.pos.y && x==player.pos.x) continue;
+      if (y==game->hero().pos.y && x==game->hero().pos.x) continue;
     }
-    else if (y!=player.pos.y || x!=player.pos.x) continue;
+    else if (y!=game->hero().pos.y || x!=game->hero().pos.x) continue;
     //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
     fp = Level::get_flags({x, y});
     ch = Level::get_tile({x, y});
@@ -120,7 +120,7 @@ void look(bool wakeup)
       }
       //Not in same passage
       else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
-      if ((monster = monster_at({x, y}))!=NULL) if (player.detects_others() && monster->is_invisible())
+      if ((monster = monster_at({x, y}))!=NULL) if (game->hero().detects_others() && monster->is_invisible())
       {
         if (stop_at_door && !firstmove) running = false;
         continue;
@@ -128,7 +128,7 @@ void look(bool wakeup)
       else
       {
         if (wakeup) wake_monster(y, x);
-        if (monster->oldch != ' ' || (!(room->is_dark()) && !player.is_blind())) monster->oldch = Level::get_tile({x, y});
+        if (monster->oldch != ' ' || (!(room->is_dark()) && !game->hero().is_blind())) monster->oldch = Level::get_tile({x, y});
         if (can_see_monster(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
@@ -152,11 +152,11 @@ void look(bool wakeup)
         switch (ch)
         {
         case DOOR: 
-            if (x==player.pos.x || y==player.pos.y) 
+            if (x==game->hero().pos.x || y==game->hero().pos.y) 
                 running = false;
             break;
         case PASSAGE:
-            if (x==player.pos.x || y==player.pos.y) 
+            if (x==game->hero().pos.x || y==game->hero().pos.y) 
                 passcount++; 
             break;
         case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ': 
@@ -169,9 +169,9 @@ void look(bool wakeup)
   }
   if (stop_at_door && !firstmove && passcount>1) 
       running = false;
-  move(player.pos.y, player.pos.x);
+  move(game->hero().pos.y, game->hero().pos.x);
   //todo:check logic
-  if ((Level::get_flags(player.pos)&F_PASS) || (was_trapped>1) || (Level::get_flags(player.pos)&F_MAZE)) 
+  if ((Level::get_flags(game->hero().pos)&F_PASS) || (was_trapped>1) || (Level::get_flags(game->hero().pos)&F_MAZE)) 
       standout();
   addch(PLAYER);
   standend();
@@ -179,33 +179,33 @@ void look(bool wakeup)
 }
 
 //find_obj: Find the unclaimed object at y, x
-Item *find_obj(int y, int x)
+Item *find_obj(Coord p)
 {
   for (auto it = level_items.begin(); it != level_items.end(); ++it) {
       Item* op = *it;
-      if (op->pos.y == y && op->pos.x == x) 
+      if (op->pos.y == p.y && op->pos.x == p.x) 
           return op;
   }
 
-  debug("Non-object %c %d,%d", Level::get_tile({x, y}), y, x);
+  debug("Non-object %c %d,%d", Level::get_tile(p), p.y, p.x);
   return NULL; //NOTREACHED
 }
 
 //add_haste: Add a haste to the player
 int add_haste(bool potion)
 {
-  if (player.is_fast())
+  if (game->hero().is_fast())
   {
     sleep_timer += rnd(8);
-    player.set_running(false);
+    game->hero().set_running(false);
     extinguish(nohaste);
-    player.set_is_fast(false);
+    game->hero().set_is_fast(false);
     msg("you faint from exhaustion");
     return false;
   }
   else
   {
-    player.set_is_fast(true);
+    game->hero().set_is_fast(true);
     if (potion) fuse(nohaste, 0, rnd(4)+10);
     return true;
   }
@@ -258,7 +258,7 @@ int get_dir()
     }
   } while (find_dir(ch, &delta)==0);
   msg("");
-  if (player.is_confused() && rnd(5)==0) do
+  if (game->hero().is_confused() && rnd(5)==0) do
   {
     delta.y = rnd(3)-1;
     delta.x = rnd(3)-1;
@@ -423,13 +423,13 @@ void search()
   int y, x;
   int ey, ex;
 
-  if (player.is_blind()) 
+  if (game->hero().is_blind()) 
     return;
-  ey = player.pos.y+1;
-  ex = player.pos.x+1;
-  for (y = player.pos.y-1; y<=ey; y++) for (x = player.pos.x-1; x<=ex; x++)
+  ey = game->hero().pos.y+1;
+  ex = game->hero().pos.x+1;
+  for (y = game->hero().pos.y-1; y<=ey; y++) for (x = game->hero().pos.x-1; x<=ex; x++)
   {
-    if ((y==player.pos.y && x==player.pos.x) || offmap(y, x)) 
+    if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap(y, x)) 
       continue;
     if (!(Level::is_real({ x, y }))) {
       switch (Level::get_tile({x, y}))
@@ -456,7 +456,7 @@ void search()
 //go_down_stairs: He wants to go down a level
 void go_down_stairs()
 {
-    if (Level::get_tile(player.pos) != STAIRS && !game->hero().is_wizard())
+    if (Level::get_tile(game->hero().pos) != STAIRS && !game->hero().is_wizard())
         msg("I see no way down");
     else {
         next_level();
@@ -467,7 +467,7 @@ void go_down_stairs()
 //go_up_stairs: He wants to go up a level
 void go_up_stairs()
 {
-    if (Level::get_tile(player.pos) == STAIRS || game->hero().is_wizard()){
+    if (Level::get_tile(game->hero().pos) == STAIRS || game->hero().is_wizard()){
         if (has_amulet() || game->hero().is_wizard()) {
             if (prev_level() == 0)
                 total_winner();
