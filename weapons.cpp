@@ -212,7 +212,7 @@ int hit_monster(Coord p, Item *obj)  //todo: definite memory issues here.  hit_m
 
   mp.y = p.y;
   mp.x = p.x; 
-  return fight(&mp, obj, true);
+  return game->hero().fight(&mp, obj, true);
  }
 
 //num: Figure out the plus number for armor/weapons
@@ -221,12 +221,13 @@ char *num(int n1, int n2, char type)
   static char numbuf[10];
 
   sprintf(numbuf, "%s%d", n1<0?"":"+", n1);
-  if (type==WEAPON) sprintf(&numbuf[strlen(numbuf)], ",%s%d", n2<0?"":"+", n2);
+  if (type==WEAPON) 
+      sprintf(&numbuf[strlen(numbuf)], ",%s%d", n2<0?"":"+", n2);
   return numbuf;
 }
 
 //wield: Pull out a certain weapon
-void wield()
+void Hero::wield()
 {
   Item *obj;
   char *sp;
@@ -338,6 +339,11 @@ std::string Item::get_damage() const
 char Item::get_launcher() const
 {
     return launcher;
+}
+
+Room * Item::get_room()
+{
+    return get_room_from_position(&pos);
 }
 
 void Item::vorpalize()

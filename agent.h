@@ -137,5 +137,14 @@ public:
     //start_run: Set a monster running after something or stop it from running (for when it dies)
     void start_run();
 
+    //find_dest: find the proper destination for the monster
+    Coord *find_dest();
+
+    bool in_same_room_as(Agent* other);
+
+    bool is_seeking(Item* obj);
+    bool in_same_room_as(Item* obj);
+
+
 
 };

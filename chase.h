@@ -12,5 +12,3 @@ struct Room *get_room_from_position(Coord *cp);
 int diag_ok(const Coord *sp, const Coord *ep);
 
 
-//find_dest: find the proper destination for the monster
-Coord *find_dest(Agent *monster);

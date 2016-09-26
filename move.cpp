@@ -159,7 +159,7 @@ hit_bound:
   default:
     game->modifiers.m_running = false;
     if (isupper(ch) || game->level().monster_at(nh))
-      fight(&nh, get_current_weapon(), false);
+        game->hero().fight(&nh, get_current_weapon(), false);
     else
     {
       game->modifiers.m_running = false;

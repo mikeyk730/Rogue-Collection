@@ -89,7 +89,7 @@ void do_miss(Item* weapon, int thrown, Agent* monster, const char* name)
 }
 
 //fight: The player attacks the monster.
-int fight(Coord *location, Item *weapon, bool thrown)
+int Hero::fight(Coord *location, Item *weapon, bool thrown)
 {
     const char *name;
     //Find the monster we want to fight
@@ -103,14 +103,14 @@ int fight(Coord *location, Item *weapon, bool thrown)
 
     monster->start_run();
     //Let him know it was really a mimic (if it was one).
-    if (monster->is_disguised() && !game->hero().is_blind())
+    if (monster->is_disguised() && !this->is_blind())
     {
         monster->disguise = monster->type;
         if (thrown)
             return false;
         msg("wait! That's a %s!", monster->get_monster_name());
     }
-    name = game->hero().is_blind() ? it : monster->get_monster_name();
+    name = this->is_blind() ? it : monster->get_monster_name();
 
     if (roll_em(&game->hero(), monster, weapon, thrown) || (weapon && weapon->type == POTION))
     {

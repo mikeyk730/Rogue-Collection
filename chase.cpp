@@ -131,7 +131,7 @@ over:
               game->level().set_tile(obj->pos, oldchar);
               if (game->hero().can_see(obj->pos))
                   Screen::DrawChar(obj->pos, oldchar);
-              this->dest = find_dest(this);
+              this->dest = this->find_dest();
               break;
           }
       }
@@ -155,7 +155,8 @@ over:
         this->room = oroom; 
         return true;
     }
-    if (oroom!=this->room) this->dest = find_dest(this);
+    if (oroom!=this->room) 
+        this->dest = this->find_dest();
     this->pos = ch_ret;
   }
   if (game->hero().can_see_monster(this))
@@ -210,7 +211,7 @@ void Agent::start_run()
   //Start the beastie running
   this->set_running(true);
   this->set_is_held(false);
-  this->dest = find_dest(this);
+  this->dest = this->find_dest();
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
@@ -300,30 +301,48 @@ int Hero::can_see(Coord p)
 }
 
 //find_dest: find the proper destination for the monster
-Coord *find_dest(Agent *monster)
+Coord* Agent::find_dest()
 {
-    int prob;
-    struct Room *room;
-
-    if ((prob = monster->get_monster_carry_prob()) <= 0 || monster->room == game->hero().room || game->hero().can_see_monster(monster))
+    // if we're in the same room as the player, or can see the player, then we go after the player
+    // if we have a chance to carry an item, we may go after an unclaimed item in the same room
+    int carry_prob;
+    if ((carry_prob = this->get_monster_carry_prob()) <= 0 || this->in_same_room_as(&game->hero()) || game->hero().can_see_monster(this))
         return &game->hero().pos;
 
-    room = monster->room;
-    for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
+    for (auto i = game->level().items.begin(); i != game->level().items.end(); ++i)
     {
-        Item* obj = *it;
+        Item* obj = *i;
         if (is_scare_monster_scroll(obj))
             continue;
-        if (get_room_from_position(&obj->pos) == room && rnd(100) < prob)
+
+        if (this->in_same_room_as(obj) && rnd(100) < carry_prob)
         {
-            for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
-                monster = *it;
-                if (monster->dest == &obj->pos)
+            // don't go after the same object as another monster
+            Agent* monster = 0;
+            for (auto m = game->level().monsters.begin(); m != game->level().monsters.end(); ++m){
+                if ((*m)->is_seeking(obj)) {
+                    monster = *m;
                     break;
+                }
             }
             if (monster == NULL)
                 return &obj->pos;
         }
     }
     return &game->hero().pos;
+}
+
+bool Agent::in_same_room_as(Agent* other)
+{
+    return room == other->room;
+}
+
+bool Agent::is_seeking(Item * obj)
+{
+    return dest == &obj->pos;
+}
+
+bool Agent::in_same_room_as(Item * obj)
+{
+    return room == obj->get_room();
 }

@@ -195,7 +195,7 @@ void zap_striking(Item* obj)
   if ((monster = game->level().monster_at(coord))!=NULL)
   {
     obj->randomize_damage();
-    fight(&coord, obj, false);
+    game->hero().fight(&coord, obj, false);
   }
 }
 

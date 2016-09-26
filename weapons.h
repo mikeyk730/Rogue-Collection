@@ -29,9 +29,6 @@ int hit_monster(Coord p, Item *obj);
 //num: Figure out the plus number for armor/weapons
 char *num(int n1, int n2, char type);
 
-//wield: Pull out a certain weapon
-void wield();
-
 //fallpos: Pick a random position around the given (y, x) coordinates
 int fallpos(Item *obj, Coord *newpos);
 

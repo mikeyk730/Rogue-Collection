@@ -37,6 +37,13 @@ struct Hero : public Agent
     //can_see: Returns true if the hero can see a certain coordinate.
     int can_see(Coord p);
 
+
+    //wield: Pull out a certain weapon
+    void wield();
+
+    //fight: The player attacks the monster.
+    int fight(Coord *monster, Item *weapon, bool thrown);
+
 private:
 
     int m_purse = 0;

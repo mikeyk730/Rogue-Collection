@@ -156,6 +156,8 @@ public:
     std::string get_throw_damage() const;
     std::string get_damage() const;
     char get_launcher() const;
+
+    Room* get_room();
 };
 
 struct Amulet : public Item

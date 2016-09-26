@@ -236,7 +236,7 @@ void execcom()
         eat();
         break;
     case 'w':
-        wield(); 
+        game->hero().wield(); 
         break;
     case 'W':
         wear(); 
