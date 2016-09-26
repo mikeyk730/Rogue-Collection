@@ -18,6 +18,26 @@ extern struct Room rooms[];
 static int pnum;
 static byte newpnum;
 
+Coord north(Coord p)
+{
+    return{ p.x, p.y - 1 };
+}
+
+Coord south(Coord p)
+{
+    return{ p.x, p.y + 1 };
+}
+
+Coord east(Coord p)
+{
+    return{ p.x + 1, p.y };
+}
+
+Coord west(Coord p)
+{
+    return{ p.x - 1, p.y };
+}
+
 //conn: Draw a corridor from a room in a certain direction.
 void conn(int r1, int r2)
 {
@@ -232,35 +252,35 @@ void passnum()
   for (room = rooms; room<&rooms[MAXROOMS]; room++) for (i = 0; i<room->num_exits; i++)
   {
     newpnum++;
-    numpass(room->exits[i].y, room->exits[i].x);
+    numpass(room->exits[i]);
   }
 }
 
 //numpass: Number a passageway square and its brethren
-void numpass(int y, int x)
+void numpass(Coord p)
 {
   struct Room *room;
   byte ch;
 
-  if (offmap(y, x)) return;
-  if (Level::get_passage_num({x, y}))
+  if (offmap(p)) return;
+  if (Level::get_passage_num(p))
       return;
   if (newpnum) {pnum++; newpnum = false;}
   //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
-  if ((ch = Level::get_tile({x, y}))==DOOR || (!Level::is_real({x, y}) && ch!=FLOOR))
+  if ((ch = Level::get_tile(p))==DOOR || (!Level::is_real(p) && ch!=FLOOR))
   {
     room = &passages[pnum];
-    room->exits[room->num_exits].y = y;
-    room->exits[room->num_exits++].x = x;
+    room->exits[room->num_exits].y = p.y;
+    room->exits[room->num_exits++].x = p.x;
   }
-  else if (!Level::is_passage({x, y}))
+  else if (!Level::is_passage(p))
       return;
-  Level::set_flag({x, y}, pnum);
+  Level::set_flag(p, pnum);
   //recurse on the surrounding places
-  numpass(y+1, x);
-  numpass(y-1, x);
-  numpass(y, x+1);
-  numpass(y, x-1);
+  numpass(south(p));
+  numpass(north(p));
+  numpass(east(p));
+  numpass(west(p));
 }
 
 void psplat(Coord p)

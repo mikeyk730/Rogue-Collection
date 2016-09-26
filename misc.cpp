@@ -71,7 +71,7 @@ void look(bool wakeup)
       for (x = oldpos.x-1; x<=(oldpos.x+1); x++)
         for (y = oldpos.y-1; y<=(oldpos.y+1); y++)
         {
-          if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap(y,x)) continue;
+          if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap({x,y})) continue;
           move(y, x);
           ch = curch();
           if (ch==FLOOR)
@@ -127,7 +127,7 @@ void look(bool wakeup)
       }
       else
       {
-        if (wakeup) wake_monster(y, x);
+        if (wakeup) wake_monster({x,y});
         if (monster->oldch != ' ' || (!(room->is_dark()) && !game->hero().is_blind())) monster->oldch = Level::get_tile({x, y});
         if (can_see_monster(monster)) ch = monster->disguise;
       }
@@ -404,9 +404,9 @@ int equal(Coord a, Coord b)
   return (a.x == b.x && a.y == b.y);
 }
 
-int offmap(int y, int x)
+int offmap(Coord p)
 {
-  return (y<1 || y>=maxrow || x<0 || x>=COLS);
+  return (p.y<1 || p.y>=maxrow || p.x<0 || p.x>=COLS);
 }
 
 byte get_tile_or_monster(Coord p)
@@ -429,7 +429,7 @@ void search()
   ex = game->hero().pos.x+1;
   for (y = game->hero().pos.y-1; y<=ey; y++) for (x = game->hero().pos.x-1; x<=ex; x++)
   {
-    if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap(y, x)) 
+    if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap({x,y})) 
       continue;
     if (!(Level::is_real({ x, y }))) {
       switch (Level::get_tile({x, y}))

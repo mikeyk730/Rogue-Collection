@@ -17,7 +17,7 @@ int exp_add(Agent *monster);
 void wanderer();
 
 //wake_monster: What to do when the hero steps next to a monster
-Agent *wake_monster(int y, int x);
+Agent *wake_monster(Coord p);
 
 //give_pack: Give a pack to a monster if it deserves one
 void give_pack(Agent *monster);

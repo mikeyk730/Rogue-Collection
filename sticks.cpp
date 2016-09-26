@@ -216,13 +216,12 @@ void zap_vorpalized_weapon(Item* weapon, Agent* monster)
         msg("you hear a maniacal chuckle in the distance.");
 }
 
-void zap_polymorph(Agent* monster, int y, int x)
+void zap_polymorph(Agent* monster, Coord p)
 {
-  Coord coord = { x, y };
   if (can_see_monster(monster)) 
-    Screen::DrawChar(coord, Level::get_tile(coord));
+    Screen::DrawChar(p, Level::get_tile(p));
 
-  Agent* new_monster = create_monster(rnd(26)+'A', &coord, get_level());
+  Agent* new_monster = create_monster(rnd(26)+'A', &p, get_level());
   level_monsters.remove(new_monster);
 
   new_monster->oldch = monster->oldch;
@@ -238,7 +237,7 @@ void zap_polymorph(Agent* monster, int y, int x)
   level_monsters.push_front(monster);
 
   if (can_see_monster(monster)) 
-    Screen::DrawChar({x, y}, monster->type);
+    Screen::DrawChar(p, monster->type);
 }
 
 void zap_cancellation(Agent* monster)
@@ -249,12 +248,12 @@ void zap_cancellation(Agent* monster)
   monster->reveal_disguise();
 }
 
-void zap_teleport(Agent* monster, int y, int x, int which)
+void zap_teleport(Agent* monster, Coord p, int which)
 {
   Coord new_pos;
 
   if (can_see_monster(monster)) 
-    Screen::DrawChar({x, y}, monster->oldch);
+    Screen::DrawChar(p, monster->oldch);
 
   if (which==WS_TELAWAY)
   {
@@ -292,7 +291,7 @@ void zap_generic(Item* wand, int which)
     }
     else if (which==WS_POLYMORPH)
     {
-      zap_polymorph(monster, y, x);
+      zap_polymorph(monster, {x, y});
     }
     else if (which==WS_CANCEL)
     {
@@ -300,7 +299,7 @@ void zap_generic(Item* wand, int which)
     }
     else
     {
-      zap_teleport(monster, y, x, which);      
+      zap_teleport(monster, {x,y}, which);      
     }
     monster->dest = &game->hero().pos;
     monster->set_running(true);
@@ -331,7 +330,7 @@ void zap_magic_missile()
 
   Agent* monster;
   if ((monster = monster_at(bolt->pos))!=NULL && !save_throw(VS_MAGIC, monster))
-      hit_monster(bolt->pos.y, bolt->pos.x, bolt);
+      hit_monster(bolt->pos, bolt);
   else
       msg("the missile vanishes with a puff of smoke");
 }
@@ -547,7 +546,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
               msg("the flame bounces off the %s", monster->get_monster_name());
           else
           {
-            hit_monster(pos.y, pos.x, bolt);
+            hit_monster(pos, bolt);
             if (mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = mvinch(pos.y, pos.x);
             return false; //zapping monster may have killed self, not safe to go on
           }

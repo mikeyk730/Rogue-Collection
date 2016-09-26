@@ -24,7 +24,7 @@ const char *short_name(Item *obj);
 void fall(Item *obj, bool pr);
 
 //hit_monster: Does the projectile hit the monster?
-int hit_monster(int y, int x, Item *obj);
+int hit_monster(Coord p, Item *obj);
 
 //num: Figure out the plus number for armor/weapons
 char *num(int n1, int n2, char type);

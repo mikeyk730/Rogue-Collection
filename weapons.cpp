@@ -99,7 +99,7 @@ void projectile(int ydelta, int xdelta)
     }
     do_motion(obj, ydelta, xdelta);
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-    if (monster_at(obj->pos) == NULL || !hit_monster(obj->pos.y, obj->pos.x, obj))
+    if (monster_at(obj->pos) == NULL || !hit_monster(obj->pos, obj))
         fall(obj, true);
 }
 
@@ -115,7 +115,7 @@ void do_motion(Item *obj, int ydelta, int xdelta)
     int ch;
 
     //Erase the old one
-    if (under != MDK && !equal(obj->pos, game->hero().pos) && can_see(obj->pos.y, obj->pos.x))
+    if (under != MDK && !equal(obj->pos, game->hero().pos) && can_see(obj->pos))
       Screen::DrawChar(obj->pos, under);
     //Get the new position
     obj->pos.y += ydelta;
@@ -123,7 +123,7 @@ void do_motion(Item *obj, int ydelta, int xdelta)
     if (step_ok(ch = get_tile_or_monster(obj->pos)) && ch!=DOOR)
     {
       //It hasn't hit anything yet, so display it if alright.
-        if (can_see(obj->pos.y, obj->pos.x))
+        if (can_see(obj->pos))
       {
         under = Level::get_tile(obj->pos);
         Screen::DrawChar(obj->pos, obj->type);
@@ -158,7 +158,7 @@ void fall(Item *obj, bool pr)
   case 1:
     Level::set_tile(fpos, obj->type);
     obj->pos = fpos;
-    if (can_see(fpos.y, fpos.x))
+    if (can_see(fpos))
     {
       if ((Level::get_flags(obj->pos)&F_PASS) || (Level::get_flags(obj->pos)&F_MAZE)) standout();
       Screen::DrawChar(fpos, obj->type);
@@ -204,14 +204,14 @@ void Item::initialize_weapon(byte type)
 }
 
 //hit_monster: Does the projectile hit the monster?
-int hit_monster(int y, int x, Item *obj)  //todo: definite memory issues here.  hit_monster is expeccted to delete, but gets stack variables too
+int hit_monster(Coord p, Item *obj)  //todo: definite memory issues here.  hit_monster is expeccted to delete, but gets stack variables too
 {
   static Coord mp;
-  Agent *monster = monster_at({x, y});
+  Agent *monster = monster_at(p);
   if (!monster)  return false;
 
-  mp.y = y;
-  mp.x = x; 
+  mp.y = p.y;
+  mp.x = p.x; 
   return fight(&mp, obj, true);
  }
 
@@ -258,7 +258,7 @@ int fallpos(Item *obj, Coord *newpos)
     for (x = obj->pos.x-1; x<=obj->pos.x+1; x++)
     {
       //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
-      if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap(y,x)) continue;
+      if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap({x,y})) continue;
       if ((ch = Level::get_tile({x, y}))==FLOOR || ch==PASSAGE)
       {
         if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}

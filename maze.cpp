@@ -38,10 +38,13 @@ void draw_maze(struct Room *room)
   //Choose a random spot in the maze and initialize the frontier to be the immediate neighbors of this random spot.
   y = topy;
   x = topx;
-  splat(y, x);
-  new_frontier(y, x);
+  splat({x,y});
+  new_frontier({ x,y });
   //While there are new frontiers, connect them to the path and possibly expand the frontier even more.
-  while (frcnt) {con_frnt(); new_frontier(ny, nx);}
+  while (frcnt) { 
+      con_frnt(); 
+      new_frontier({ nx,ny }); 
+  }
   //According to the Grand Beeking, every maze should have a loop. Don't worry if you don't understand this.
   room->size.x = maxx-room->pos.x+1;
   room->size.y = maxy-room->pos.y+1;
@@ -55,29 +58,29 @@ void draw_maze(struct Room *room)
     for (psgcnt = 0, cp = ld, sh = 1; cp<&ld[4]; sh <<= 1, cp++)
     {
       y = cp->y+spos.y; x = cp->x+spos.x;
-      if (!offmap(y, x) && Level::get_tile({x, y})==PASSAGE) psgcnt += sh;
+      if (!offmap({ x,y }) && Level::get_tile({x, y})==PASSAGE) psgcnt += sh;
     }
   } while (Level::get_tile(spos)==PASSAGE || psgcnt%5);
-  splat(spos.y, spos.x);
+  splat(spos);
 }
 
-void new_frontier(int y, int x)
+void new_frontier(Coord p)
 {
-  add_frnt(y-2, x);
-  add_frnt(y+2, x);
-  add_frnt(y, x-2);
-  add_frnt(y, x+2);
+    add_frnt({ p.x,     p.y - 2 });
+    add_frnt({ p.x,     p.y + 2 });
+    add_frnt({ p.x - 2, p.y });
+    add_frnt({ p.x + 2, p.y });
 }
 
-void add_frnt(int y, int x)
+void add_frnt(Coord p)
 {
   if (frcnt==MAXFRNT-1) debug("MAZE DRAWING ERROR #3\n");
 
-  if (inrange(y, x) && Level::get_tile({x, y})==NOTHING)
+  if (inrange(p) && Level::get_tile(p)==NOTHING)
   {
-    Level::set_tile({x, y}, FRONTIER);
-    fr_y[frcnt] = y;
-    fr_x[frcnt++] = x;
+    Level::set_tile(p, FRONTIER);
+    fr_y[frcnt] = p.y;
+    fr_x[frcnt++] = p.x;
   }
 }
 
@@ -95,13 +98,13 @@ void con_frnt()
   fr_y[n] = fr_y[frcnt-1];
   fr_x[n] = fr_x[--frcnt];
   //Count and collect the adjacent points we can connect to
-  if (maze_at(ny-2, nx)>0) choice[cnt++] = 0;
-  if (maze_at(ny+2, nx)>0) choice[cnt++] = 1;
-  if (maze_at(ny, nx-2)>0) choice[cnt++] = 2;
-  if (maze_at(ny, nx+2)>0) choice[cnt++] = 3;
+  if (maze_at({ nx, ny - 2 }) > 0) choice[cnt++] = 0;
+  if (maze_at({ nx, ny + 2 }) > 0) choice[cnt++] = 1;
+  if (maze_at({ nx - 2, ny }) > 0) choice[cnt++] = 2;
+  if (maze_at({ nx + 2, ny }) > 0) choice[cnt++] = 3;
   //Choose one of the open places, connect to it and then the task is complete
   which = choice[rnd(cnt)];
-  splat(ny, nx);
+  splat({ nx,ny });
   switch (which)
   {
   case 0: which = 1; ydelt = -1; break;
@@ -111,24 +114,26 @@ void con_frnt()
   }
   y = ny+ydelt;
   x = nx+xdelt;
-  if (inrange(y, x)) splat(y, x);
+  if (inrange({ x,y })) splat({ x,y });
 }
 
-int maze_at(int y, int x)
+int maze_at(Coord p)
 {
-  if (inrange(y, x) && Level::get_tile({x, y})==PASSAGE) return 1;
+  if (inrange(p) && Level::get_tile(p)==PASSAGE) return 1;
   else return 0;
 }
 
-void splat(int y, int x)
+void splat(Coord p)
 {
-  Level::set_tile({x, y}, PASSAGE);
-  Level::copy_flags({x, y}, F_MAZE|F_REAL);
-  if (x>maxx) maxx = x;
-  if (y>maxy) maxy = y;
+  Level::set_tile(p, PASSAGE);
+  Level::copy_flags(p, F_MAZE|F_REAL);
+  if (p.x>maxx) 
+      maxx = p.x;
+  if (p.y>maxy)
+      maxy = p.y;
 }
 
-int inrange(int y, int x)
+int inrange(Coord p)
 {
-  return (y>=topy && y<MAXY && x>=topx && x<MAXX);
+  return (p.y>=topy && p.y<MAXY && p.x>=topx && p.x<MAXX);
 }

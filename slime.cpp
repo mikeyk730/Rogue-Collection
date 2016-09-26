@@ -27,7 +27,7 @@ void slime_split(Agent *monster)
       return;
   msg("The %s divides.  Ick!", monster->get_monster_name());
   nslime = create_monster(monster->type, &slimy, get_level());
-  if (can_see(slimy.y, slimy.x))
+  if (can_see(slimy))
   {
     nslime->oldch = Level::get_tile(slimy);
     Screen::DrawChar(slimy, monster->type);
@@ -70,7 +70,7 @@ bool plop_monster(int r, int c, Coord *cp)
     for (x = c-1; x<=c+1; x++)
     {
       //Don't put a monster on top of the player.
-      if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap(y,x)) continue;
+      if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap({x,y})) continue;
       //Or anything else nasty
       if (step_ok(ch = get_tile_or_monster({x, y})))
       {

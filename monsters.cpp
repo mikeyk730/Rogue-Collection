@@ -401,13 +401,13 @@ void wanderer()
 }
 
 //wake_monster: What to do when the hero steps next to a monster
-Agent *wake_monster(int y, int x)
+Agent *wake_monster(Coord p)
 {
   Agent *monster;
   struct Room *room;
   int dst;
 
-  if ((monster = monster_at({x, y}))==NULL) return monster;
+  if ((monster = monster_at(p))==NULL) return monster;
   //Every time he sees mean monster, it might start chasing him
   if (!monster->is_running() && rnd(3)!=0 && monster->is_mean() && !monster->is_held() && !is_wearing_ring(R_STEALTH))
   {
@@ -417,7 +417,7 @@ Agent *wake_monster(int y, int x)
   if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
   {
     room = game->hero().room;
-    dst = distance({ x, y }, game->hero().pos);
+    dst = distance(p, game->hero().pos);
     if ((room!=NULL && !(room->is_dark())) || dst<LAMP_DIST)
     {
       monster->set_found(true);

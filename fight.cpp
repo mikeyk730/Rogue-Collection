@@ -572,7 +572,7 @@ void remove_monster(Agent *monster, bool waskill)
     }
     if (Level::get_tile(*monster_pos) == PASSAGE)
         standout();
-    if (monster->oldch == FLOOR && !can_see(monster_pos->y, monster_pos->x))
+    if (monster->oldch == FLOOR && !can_see(*monster_pos))
         Screen::DrawChar(*monster_pos, ' ');
     else if (monster->oldch != MDK)
         Screen::DrawChar(*monster_pos, monster->oldch);

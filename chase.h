@@ -23,7 +23,7 @@ struct Room *get_room_from_position(Coord *cp);
 int diag_ok(const Coord *sp, const Coord *ep);
 
 //can_see: Returns true if the hero can see a certain coordinate.
-int can_see(int y, int x);
+int can_see(Coord p);
 
 //find_dest: find the proper destination for the monster
 Coord *find_dest(Agent *monster);

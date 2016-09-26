@@ -129,7 +129,7 @@ over:
               monster->pack.push_front(obj);
               oldchar = (monster->room->is_gone()) ? PASSAGE : FLOOR;
               Level::set_tile(obj->pos, oldchar);
-              if (can_see(obj->pos.y, obj->pos.x))
+              if (can_see(obj->pos))
                   Screen::DrawChar(obj->pos, oldchar);
               monster->dest = find_dest(monster);
               break;
@@ -141,9 +141,9 @@ over:
   //If the chasing thing moved, update the screen
   if (monster->oldch!=MDK)
   {
-    if (monster->oldch==' ' && can_see(monster->pos.y, monster->pos.x) && Level::get_tile(monster->pos)==FLOOR)
+    if (monster->oldch==' ' && can_see(monster->pos) && Level::get_tile(monster->pos)==FLOOR)
       Screen::DrawChar(monster->pos, (char)FLOOR);
-    else if (monster->oldch == FLOOR && !can_see(monster->pos.y, monster->pos.x) && !game->hero().detects_others())
+    else if (monster->oldch == FLOOR && !can_see(monster->pos) && !game->hero().detects_others())
       Screen::DrawChar(monster->pos, ' ');
     else
       Screen::DrawChar(monster->pos, monster->oldch);
@@ -251,7 +251,7 @@ void chase(Agent *monster, Coord *chasee_pos)
 
         try_pos.x = x;
         try_pos.y = y;
-        if (offmap(y, x) || !diag_ok(chaser_pos, &try_pos)) continue;
+        if (offmap({x,y}) || !diag_ok(chaser_pos, &try_pos)) continue;
         ch = get_tile_or_monster({x,y});
         if (step_ok(ch))
         {
@@ -287,18 +287,15 @@ int diag_ok(const Coord *sp, const Coord *ep )
 }
 
 //can_see: Returns true if the hero can see a certain coordinate.
-int can_see(int y, int x)
+int can_see(Coord p)
 {
   struct Room *room;
-  Coord tp;
-  tp.y = y;
-  tp.x = x;
 
   if (game->hero().is_blind()) return false;
-  if (distance(tp, game->hero().pos) < LAMP_DIST)
+  if (distance(p, game->hero().pos) < LAMP_DIST)
       return true;
   //We can only see if the hero in the same room as the coordinate and the room is lit or if it is close.
-  room = get_room_from_position(&tp);
+  room = get_room_from_position(&p);
   return (room == game->hero().room && !room->is_dark());
 }
 

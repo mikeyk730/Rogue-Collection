@@ -46,7 +46,7 @@ int distance(Coord a, Coord b);
 
 int equal(Coord a, Coord b);
 
-int offmap(int y, int x);
+int offmap(Coord p);
 
 byte get_tile_or_monster(Coord p);
 

@@ -67,7 +67,7 @@ over:
     nh.x = game->hero().pos.x+dx;
   }
   //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
-  if (offmap(nh.y, nh.x)) goto hit_bound;
+  if (offmap(nh)) goto hit_bound;
   if (!diag_ok(&game->hero().pos, &nh)) {counts_as_turn = false; running = false; return;}
   //If you are running and the move does not get you anywhere stop running
   if (running && equal(game->hero().pos, nh)) counts_as_turn = running = false;
@@ -178,7 +178,7 @@ void door_open(struct Room *room)
         ch = get_tile_or_monster({k,j});
         if (isupper(ch))
         {
-          item = wake_monster(j, k);
+          item = wake_monster({k,j});
           if (item->oldch==' ' && !(room->is_dark()) && !game->hero().is_blind())
               item->oldch = Level::get_tile({k,j});
         }
