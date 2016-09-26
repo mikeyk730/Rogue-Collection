@@ -198,7 +198,7 @@ void enter_room(Coord *cp)
       {
         //Displaying monsters is all handled in the chase code now
         monster = game->level().monster_at({x, y});
-        if (monster==NULL || !can_see_monster(monster)) 
+        if (monster==NULL || !game->hero().can_see_monster(monster)) 
           addch(game->level().get_tile({x, y}));
         else {
           monster->oldch = game->level().get_tile({x,y}); 

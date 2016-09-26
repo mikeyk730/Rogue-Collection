@@ -13,8 +13,8 @@ Agent* create_monster(byte type, Coord *cp, int level);
 //expadd: Experience to add for this monster's level/hit points
 int exp_add(Agent *monster);
 
-//wanderer: Create a new wandering monster and aim it at the player
-void wanderer();
+//create_wandering_monster: Create a new wandering monster and aim it at the player
+void create_wandering_monster();
 
 //wake_monster: What to do when the hero steps next to a monster
 Agent *wake_monster(Coord p);

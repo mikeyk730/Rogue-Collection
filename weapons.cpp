@@ -115,7 +115,7 @@ void do_motion(Item *obj, int ydelta, int xdelta)
     int ch;
 
     //Erase the old one
-    if (under != MDK && !equal(obj->pos, game->hero().pos) && can_see(obj->pos))
+    if (under != MDK && !equal(obj->pos, game->hero().pos) && game->hero().can_see(obj->pos))
       Screen::DrawChar(obj->pos, under);
     //Get the new position
     obj->pos.y += ydelta;
@@ -123,7 +123,7 @@ void do_motion(Item *obj, int ydelta, int xdelta)
     if (step_ok(ch = game->level().get_tile_or_monster(obj->pos)) && ch!=DOOR)
     {
       //It hasn't hit anything yet, so display it if alright.
-        if (can_see(obj->pos))
+        if (game->hero().can_see(obj->pos))
       {
         under = game->level().get_tile(obj->pos);
         Screen::DrawChar(obj->pos, obj->type);
@@ -158,7 +158,7 @@ void fall(Item *obj, bool pr)
   case 1:
     game->level().set_tile(fpos, obj->type);
     obj->pos = fpos;
-    if (can_see(fpos))
+    if (game->hero().can_see(fpos))
     {
       if ((game->level().get_flags(obj->pos)&F_PASS) || (game->level().get_flags(obj->pos)&F_MAZE)) standout();
       Screen::DrawChar(fpos, obj->type);

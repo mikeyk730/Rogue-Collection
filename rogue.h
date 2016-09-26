@@ -128,6 +128,8 @@ struct Coord
     int y;
 };
 
+bool operator==(const Coord& c1, const Coord& c2);
+
 //Stuff about magic items
 struct MagicItem
 {

@@ -101,7 +101,7 @@ int fight(Coord *location, Item *weapon, bool thrown)
     repeat_cmd_count = 0;
     turns_since_heal = 0;
 
-    start_run(monster);
+    monster->start_run();
     //Let him know it was really a mimic (if it was one).
     if (monster->is_disguised() && !game->hero().is_blind())
     {
@@ -572,7 +572,7 @@ void remove_monster(Agent *monster, bool waskill)
     }
     if (game->level().get_tile(*monster_pos) == PASSAGE)
         standout();
-    if (monster->oldch == FLOOR && !can_see(*monster_pos))
+    if (monster->oldch == FLOOR && !game->hero().can_see(*monster_pos))
         Screen::DrawChar(*monster_pos, ' ');
     else if (monster->oldch != MDK)
         Screen::DrawChar(*monster_pos, monster->oldch);

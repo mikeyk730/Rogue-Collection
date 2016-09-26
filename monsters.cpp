@@ -361,7 +361,7 @@ Agent* create_monster(byte type, Coord *position, int level)
     set_xeroc_disguise(monster);
 
   if (is_wearing_ring(R_AGGR)) 
-    start_run(monster);
+      monster->start_run();
 
   return monster;
 }
@@ -380,8 +380,8 @@ int exp_add(Agent *monster)
   return value;
 }
 
-//wanderer: Create a new wandering monster and aim it at the player
-void wanderer()
+//create_wandering_monster: Create a new wandering monster and aim it at the player
+void create_wandering_monster()
 {
   struct Room *room;
   Agent *monster;
@@ -397,7 +397,7 @@ void wanderer()
   if (invalid_position) 
       debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
-  start_run(monster);
+  monster->start_run();
 }
 
 //wake_monster: What to do when the hero steps next to a monster

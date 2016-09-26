@@ -130,7 +130,7 @@ void look(bool wakeup)
       {
         if (wakeup) wake_monster({x,y});
         if (monster->oldch != ' ' || (!(room->is_dark()) && !game->hero().is_blind())) monster->oldch = game->level().get_tile({x, y});
-        if (can_see_monster(monster)) ch = monster->disguise;
+        if (game->hero().can_see_monster(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
       if ((ch!=PASSAGE) && (fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();
@@ -216,7 +216,7 @@ int add_haste(bool potion)
 void aggravate()
 {
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Agent *monster){
-        start_run(monster);
+        monster->start_run();
     });
 }
 

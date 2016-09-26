@@ -31,6 +31,12 @@ struct Hero : public Agent
     //teleport: Bamf the hero someplace else
     void teleport();
 
+    //can_see_monster: Return true if the hero can see the monster
+    bool can_see_monster(Agent *monster);
+
+    //can_see: Returns true if the hero can see a certain coordinate.
+    int can_see(Coord p);
+
 private:
 
     int m_purse = 0;

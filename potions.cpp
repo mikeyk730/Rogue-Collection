@@ -314,7 +314,7 @@ void invis_on()
 {
     game->hero().set_sees_invisible(true);
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Agent *monster){
-        if (monster->is_invisible() && can_see_monster(monster))
+        if (monster->is_invisible() && game->hero().can_see_monster(monster))
         {
             Screen::DrawChar(monster->pos, monster->disguise);
         }
@@ -337,10 +337,10 @@ bool turn_see(bool turn_off)
         byte was_there;
 
         move(monster->pos.y, monster->pos.x);
-        can_see = (can_see_monster(monster) || (was_there = curch()) == monster->type);
+        can_see = (game->hero().can_see_monster(monster) || (was_there = curch()) == monster->type);
         if (turn_off)
         {
-            if (!can_see_monster(monster) && monster->oldch != MDK) addch(monster->oldch);
+            if (!game->hero().can_see_monster(monster) && monster->oldch != MDK) addch(monster->oldch);
         }
         else
         {

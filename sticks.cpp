@@ -218,7 +218,7 @@ void zap_vorpalized_weapon(Item* weapon, Agent* monster)
 
 void zap_polymorph(Agent* monster, Coord p)
 {
-  if (can_see_monster(monster)) 
+  if (game->hero().can_see_monster(monster)) 
     Screen::DrawChar(p, game->level().get_tile(p));
 
   Agent* new_monster = create_monster(rnd(26)+'A', &p, get_level());
@@ -236,7 +236,7 @@ void zap_polymorph(Agent* monster, Coord p)
   game->level().monsters.remove(monster);
   game->level().monsters.push_front(monster);
 
-  if (can_see_monster(monster)) 
+  if (game->hero().can_see_monster(monster)) 
     Screen::DrawChar(p, monster->type);
 }
 
@@ -252,7 +252,7 @@ void zap_teleport(Agent* monster, Coord p, int which)
 {
   Coord new_pos;
 
-  if (can_see_monster(monster)) 
+  if (game->hero().can_see_monster(monster)) 
     Screen::DrawChar(p, monster->oldch);
 
   if (which==WS_TELAWAY)
@@ -363,7 +363,7 @@ void zap_speed_monster(int which)
           monster->set_is_slow(true);
       monster->turn = true;
     }
-    start_run(monster);
+    monster->start_run();
   }
 }
 
@@ -486,9 +486,9 @@ void drain()
   {
     monster = *dp;
     if (!monster->decrease_hp(cnt, true))
-        killed(monster, can_see_monster(monster));
+        killed(monster, game->hero().can_see_monster(monster));
     else
-        start_run(monster);
+        monster->start_run();
   }
 }
 
@@ -554,7 +554,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
         else if (!monster->is_disguised())
         {
           if (start==&game->hero().pos) 
-              start_run(monster);
+              monster->start_run();
           msg("the %s whizzes past the %s", name, get_monster_name(ch));
         }
       }

@@ -140,6 +140,9 @@ const char* const level_titles[] =
 const char* const intense = " of intense white light";
 const char* const flash = "your %s gives off a flash%s";
 
+bool operator==(const Coord& c1, const Coord& c2) {
+    return c1.x == c2.x && c1.y == c2.y;
+}
 
 bool counts_as_turn;        //True if we want after daemons
 bool again;                 //The last command is repeated

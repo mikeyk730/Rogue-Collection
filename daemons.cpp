@@ -59,7 +59,7 @@ void rollwand()
   if (++between >= 3 + rnd(3))
   {
     if (roll(1, 6) == 4) {
-      wanderer(); 
+      create_wandering_monster(); 
       extinguish(rollwand); 
       fuse(swander, 0, WANDER_TIME);
     }
@@ -81,7 +81,7 @@ void unsee()
 
   for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
       th = *it;
-      if (th->is_invisible() && can_see_monster(th) && th->oldch != MDK)
+      if (th->is_invisible() && game->hero().can_see_monster(th) && th->oldch != MDK)
           Screen::DrawChar(th->pos, th->oldch);
   }
   game->hero().set_sees_invisible(false);

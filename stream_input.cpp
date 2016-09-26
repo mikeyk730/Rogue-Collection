@@ -43,7 +43,7 @@ StreamInput::StreamInput(std::istream& in) :
     m_shared_data(new ThreadData)
 {
     m_stream.peek();
-    if (!m_stream) {
+    if (!m_stream || m_stream.eof()) {
         OnStreamEnd();
     }
     else {
@@ -92,7 +92,7 @@ char StreamInput::GetNextChar()
     }
 
     m_stream.peek();
-    if (!m_stream){
+    if (!m_stream || m_stream.eof()){
         OnStreamEnd();
     }
     return c;
@@ -131,7 +131,7 @@ std::string StreamInput::GetNextString(int size)
     }
 
     m_stream.peek();
-    if (!m_stream){
+    if (!m_stream || m_stream.eof()){
         OnStreamEnd();
     }
 

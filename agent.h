@@ -127,4 +127,15 @@ public:
     //slime specific
     void set_dirty(bool enable);
     bool is_dirty();
+
+    //do_chase: Make one thing chase another.  Returns false if monster has been invalidated
+    bool do_chase();
+
+    //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
+    void chase(Coord *chasee_pos);
+
+    //start_run: Set a monster running after something or stop it from running (for when it dies)
+    void start_run();
+
+
 };
