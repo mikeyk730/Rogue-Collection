@@ -421,20 +421,24 @@ void SIG2()
   else { nspot = 20; cspot = 39; tspot = 75; }
 
   getrc(&x, &y);
-  if (game->modifiers.scroll_lock() != scroll_lock_on && game->allow_fast_play())
-  {
-    game->modifiers.m_fast_play_enabled = scroll_lock_on;
-    repeat_cmd_count = 0;
-    show_count();
-    game->modifiers.m_running = false;
-    move(LINES - 1, 0);
-    if (game->modifiers.scroll_lock()) {
-      bold();
-      addstr("Fast Play");
-      standend();
-    }
-    else addstr("         ");
+  if (game->allow_fast_play()) {
+      if (game->modifiers.scroll_lock() != scroll_lock_on)
+      {
+          game->modifiers.m_fast_play_enabled = scroll_lock_on;
+          repeat_cmd_count = 0;
+          show_count();
+          game->modifiers.m_running = false;
+      }
+
+      move(LINES - 1, 0);
+      if (game->modifiers.scroll_lock()) {
+          bold();
+          addstr("Fast Play");
+          standend();
+      }
+      else addstr("         ");
   }
+
   if (numl != num_lock_on)
   {
     numl = num_lock_on;
