@@ -146,6 +146,9 @@
     <ClCompile Include="item_class.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="combo_input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rogue.h">
@@ -288,6 +291,9 @@
     </ClInclude>
     <ClInclude Include="item_class.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="combo_input.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

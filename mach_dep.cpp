@@ -291,7 +291,9 @@ char ex_getkey()
 
 byte readchar_impl(){
     //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
-    do SIG2(); while (!_kbhit()); //Rogue spends a lot of time here
+    do 
+        SIG2();
+    while (!_kbhit()); //Rogue spends a lot of time here
     //Now read a character and translate it if it appears in the translation table
     return getkey();
 }
@@ -346,6 +348,11 @@ void beep()
 void tick_pause()
 {
   Sleep(50);
+}
+
+bool KeyboardInput::HasMoreInput()
+{
+    return true;
 }
 
 char KeyboardInput::GetNextChar() { 

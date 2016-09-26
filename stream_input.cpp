@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdio>
 #include <conio.h>
+#include <thread>
 #include "mach_dep.h"
 #include "game_state.h"
 #include "stream_input.h"
@@ -9,20 +10,26 @@
 
 namespace
 {
-    DWORD WINAPI ThreadProc(_In_ LPVOID lpParameter)
+
+    int ThreadProc(std::shared_ptr<StreamInput::ThreadData> shared_data)
     {
-        StreamInput* si = (StreamInput*)lpParameter;
         for (;;) {
+            do {
+                std::unique_lock<std::mutex> lock(shared_data->m_mutex);
+                if(shared_data->m_stream_empty){
+                    return 0;
+                }
+            }
             while (!_kbhit());
             char c = _getch();
             if (c == 'p')
-                si->PausePlayback();
+                shared_data->PausePlayback();
             else if (c == 's')
-                si->StepPlayback();
+                shared_data->StepPlayback();
             else if (c == 'r')
-                si->ResumePlayback();
+                shared_data->ResumePlayback();
             else if (c == 'c') {
-                si->CancelPlayback();
+                shared_data->CancelPlayback();
                 break;
             }
         }
@@ -31,20 +38,40 @@ namespace
 }
 
 
-StreamInput::StreamInput(std::istream& in, InputInterface* backup) :
-m_backup(backup),
-m_stream(in)
-{ 
-    m_thread = CreateThread(NULL, 0, ThreadProc, this, 0, 0);
+StreamInput::StreamInput(std::istream& in) :
+    m_stream(in),
+    m_shared_data(new ThreadData)
+{
+    m_stream.peek();
+    if (!m_stream) {
+        OnStreamEnd();
+    }
+    else {
+        std::thread t(ThreadProc, m_shared_data);
+        t.detach();
+    }
+}
+
+StreamInput::~StreamInput()
+{
+}
+
+bool StreamInput::HasMoreInput()
+{
+    std::unique_lock<std::mutex> lock(m_shared_data->m_mutex);
+    return !m_shared_data->m_canceled && !m_shared_data->m_stream_empty;
 }
 
 char StreamInput::GetNextChar()
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    while (m_paused && m_steps == 0) {
-        m_step_cv.wait(lock);
+    std::unique_lock<std::mutex> lock(m_shared_data->m_mutex);
+    while (m_shared_data->m_paused && m_shared_data->m_steps == 0) {
+        m_shared_data->m_step_cv.wait(lock);
     }
-    --m_steps;
+    --m_shared_data->m_steps;
+
+    if (!m_stream || m_shared_data->m_canceled)
+        return 0;
 
     unsigned char f[4];
     m_stream.read((char*)f, 4);
@@ -56,10 +83,7 @@ char StreamInput::GetNextChar()
         game->modifiers.m_running = f[3] == ON;
     }
 
-   // while (!_kbhit());
-    //getkey();
-
-    char c;
+    char c = 0;
     m_stream.read(&c, 1);
 
     if (m_stream && c == 0) //shouldn't happen
@@ -67,29 +91,27 @@ char StreamInput::GetNextChar()
         printf("\a");
     }
 
+    m_stream.peek();
     if (!m_stream){
         OnStreamEnd();
-        if (m_backup){
-            return m_backup->GetNextChar();
-        }
-        else{
-            for (;;);
-        }
     }
     return c;
 }
 
 std::string StreamInput::GetNextString(int size)
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    while (m_paused && m_steps == 0) {
-        m_step_cv.wait(lock);
+    std::unique_lock<std::mutex> lock(m_shared_data->m_mutex);
+    while (m_shared_data->m_paused && m_shared_data->m_steps == 0) {
+        m_shared_data->m_step_cv.wait(lock);
     }
-    --m_steps;
+    --m_shared_data->m_steps;
+
+    if (!m_stream || m_shared_data->m_canceled)
+        return "";
 
     std::ostringstream ss;
 
-    char c;
+    char c = 0;
     m_stream.read(&c, 1);
 
     if (m_stream && c != 0) //shouldn't happen
@@ -108,15 +130,9 @@ std::string StreamInput::GetNextString(int size)
         printf("\a");
     }
 
+    m_stream.peek();
     if (!m_stream){
         OnStreamEnd();
-        
-        if (m_backup){
-            return m_backup->GetNextString(size);
-        }
-        else{
-            for (;;);
-        }
     }
 
     return ss.str();
@@ -126,32 +142,28 @@ void StreamInput::Serialize(std::ostream& out)
 {
 }
 
-//todo: gets called too late.  need to peek ahead in stream
 void StreamInput::OnStreamEnd()
 {
-    game->m_allow_fast_play = true;
-    if (m_thread) {
-        TerminateThread(m_thread, 0);
-        CloseHandle(m_thread);
-        m_thread = 0;
-    }
+    m_shared_data->m_stream_empty = true;
+    game->m_allow_fast_play = true; //todo: this isn't set if canceled, have game poll for this. this crashes now if save not found
 }
 
-void StreamInput::PausePlayback()
+void StreamInput::ThreadData::PausePlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_paused = true;
     m_steps = 0;
+    m_step_cv.notify_all();
 }
 
-void StreamInput::StepPlayback()
+void StreamInput::ThreadData::StepPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_steps++;
     m_step_cv.notify_all();
 }
 
-void StreamInput::ResumePlayback()
+void StreamInput::ThreadData::ResumePlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_paused = false;
@@ -159,13 +171,19 @@ void StreamInput::ResumePlayback()
     m_step_cv.notify_all();
 }
 
-void StreamInput::CancelPlayback()
+void StreamInput::ThreadData::CancelPlayback()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_stream.setstate(std::ios::failbit);
+    m_canceled = true;
     m_paused = false;
     m_steps = 0;
     m_step_cv.notify_all();
+}
+
+void StreamInput::ThreadData::OnEmptyStream()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_stream_empty = true;
 }
 
 //todo:

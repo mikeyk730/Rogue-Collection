@@ -3,6 +3,7 @@
 
 struct InputInterface
 {
+    virtual bool HasMoreInput() = 0;
     virtual char GetNextChar() = 0;
     virtual std::string GetNextString(int size) = 0;
 

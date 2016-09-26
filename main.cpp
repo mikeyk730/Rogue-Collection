@@ -55,8 +55,8 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    replay = false;
-    std::ifstream in("v1.001", std::ios::binary | std::ios::in);
+    //replay = false;
+    std::ifstream in("rogue.1", std::ios::binary | std::ios::in);
     game = replay ? new GameState(g_random, in) : new GameState(seed);
 
     //game->hero().invunerable = true;

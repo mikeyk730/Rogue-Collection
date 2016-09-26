@@ -81,6 +81,7 @@
     <ClCompile Include="armor.cpp" />
     <ClCompile Include="captured_input.cpp" />
     <ClCompile Include="chase.cpp" />
+    <ClCompile Include="combo_input.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="curses.cpp" />
     <ClCompile Include="daemon.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="env.h" />
     <ClInclude Include="fakedos.h" />
     <ClInclude Include="fight.h" />
+    <ClInclude Include="combo_input.h" />
     <ClInclude Include="item_class.h" />
     <ClInclude Include="stream_input.h" />
     <ClInclude Include="food.h" />

@@ -7,6 +7,7 @@ struct CapturedInput : public InputInterface
 {
     CapturedInput(InputInterface* d);
 
+    virtual bool HasMoreInput();
     virtual char GetNextChar();
     virtual std::string GetNextString(int size);
 
@@ -14,4 +15,6 @@ struct CapturedInput : public InputInterface
 
     std::unique_ptr<InputInterface> m_delegate;
     std::vector<char> m_stream;
+
+    bool m_save_pending = false;
 };

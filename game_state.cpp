@@ -8,6 +8,7 @@
 #include "stream_input.h"
 #include "captured_input.h"
 #include "keyboard_input.h"
+#include "combo_input.h"
 #include "hero.h"
 #include "level.h"
 
@@ -88,7 +89,7 @@ GameState::GameState(Random* random, std::istream& in) :
 
     ++m_restore_count;
     random->set_seed(m_seed);
-    m_input_interface.reset(new CapturedInput(new StreamInput(in, new KeyboardInput())));
+    m_input_interface.reset(new CapturedInput(new ComboInput(new StreamInput(in), new KeyboardInput())));
     m_level.reset(new Level);
     m_hero.reset(new Hero);
     m_scrolls.reset(new ScrollInfo);
