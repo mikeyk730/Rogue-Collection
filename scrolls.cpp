@@ -137,16 +137,16 @@ void read_magic_mapping()
   //Take all the things we want to keep hidden out of the window
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
-    switch (ch = Level::get_tile({x, y}))
+    switch (ch = game->level().get_tile({x, y}))
     {
     case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-      if (!(Level::get_flags({x, y})&F_REAL)) {
+      if (!(game->level().get_flags({x, y})&F_REAL)) {
         ch = DOOR; 
-        Level::set_tile({x, y}, DOOR);
-        Level::unset_flag({x, y}, F_REAL);
+        game->level().set_tile({x, y}, DOOR);
+        game->level().unset_flag({x, y}, F_REAL);
       }
     case DOOR: case PASSAGE: case STAIRS:
-      if ((monster = monster_at({x, y})) != NULL) 
+      if ((monster = game->level().monster_at({x, y})) != NULL) 
         if (monster->oldch == ' ')
           monster->oldch = ch;
       break;
@@ -173,7 +173,7 @@ void read_hold_monster()
   for (x = game->hero().pos.x-3; x<=game->hero().pos.x+3; x++) {
     if (x>=0 && x<COLS) {
       for (y = game->hero().pos.y-3; y<=game->hero().pos.y+3; y++) {
-        if ((y>0 && y<maxrow) && ((monster = monster_at({x, y})) != NULL))
+        if ((y>0 && y<maxrow) && ((monster = game->level().monster_at({x, y})) != NULL))
         {
           monster->set_running(false);
           monster->set_is_held(true);
@@ -222,7 +222,7 @@ void read_food_detection()
   //Scroll of food detection
   byte discover = false;
 
-  for (auto it = level_items.begin(); it != level_items.end(); ++it)
+  for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
   {
     Item* item = *it;
     if (item->type==FOOD)

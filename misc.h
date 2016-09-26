@@ -48,8 +48,6 @@ int equal(Coord a, Coord b);
 
 int offmap(Coord p);
 
-byte get_tile_or_monster(Coord p);
-
 //search: Player gropes about him to find hidden things.
 void search();
 

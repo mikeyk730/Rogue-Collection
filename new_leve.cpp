@@ -37,15 +37,15 @@ void new_level(int do_implode)
   //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
 
   //Clean things off from last level
-  clear_level();
+  game->level().clear_level(); //todo:move stuff into clearlevel
   //Free up the monsters on the last level
-  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+  for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
       monster = *it;
       free_item_list(monster->pack);
   }
-  free_agent_list(level_monsters);
+  free_agent_list(game->level().monsters);
   //Throw away stuff left on the previous level (if anything)
-  free_item_list(level_items);
+  free_item_list(game->level().items);
   do_rooms(); //Draw rooms
   if (max_level()==1)
   {
@@ -58,7 +58,7 @@ void new_level(int do_implode)
   put_things(); //Place objects (if any)
   //Place the staircase down.
   find_empty_location(&pos, false); //TODO: seed used to change after 100 failed attempts
-  Level::set_tile(pos, STAIRS);
+  game->level().set_tile(pos, STAIRS);
   //Place the traps
   if (rnd(10)<get_level())
   {
@@ -68,14 +68,14 @@ void new_level(int do_implode)
     while (i--)
     {
       find_empty_location(&pos, false);
-      Level::unset_flag(pos, F_REAL);
-      Level::set_flag(pos, rnd(NTRAPS));
+      game->level().unset_flag(pos, F_REAL);
+      game->level().set_flag(pos, rnd(NTRAPS));
     }
   }
   do
   {
     find_empty_location(&game->hero().pos, true);
-  } while (!(Level::get_flags(game->hero().pos) & F_REAL));  //don't place hero on a trap
+  } while (!(game->level().get_flags(game->hero().pos) & F_REAL));  //don't place hero on a trap
   msg_position = 0;
   enter_room(&game->hero().pos);
   Screen::DrawChar(game->hero().pos, PLAYER);
@@ -102,11 +102,11 @@ void put_things()
     if (get_level()>=AMULETLEVEL && !had_amulet())
     {
         Item* amulet = new Amulet();
-        level_items.push_front(cur);
+        game->level().items.push_front(cur);
 
         //Put it somewhere
         find_empty_location(&tp, true);
-        Level::set_tile(tp, AMULET);
+        game->level().set_tile(tp, AMULET);
         amulet->set_location(tp);
     }
     //check for treasure rooms, and if so, put it in.
@@ -118,10 +118,10 @@ void put_things()
     {
       //Pick a new object and link it in the list
       cur = create_item();
-      level_items.push_front(cur);
+      game->level().items.push_front(cur);
       //Put it somewhere
       find_empty_location(&tp, false);
-      Level::set_tile(tp, cur->type);
+      game->level().set_tile(tp, cur->type);
       cur->pos = tp;
     }
   }
@@ -145,11 +145,11 @@ void treas_room()
   {
     do {
       rnd_pos(room, &pos);
-    } while (!isfloor(Level::get_tile(pos)));
+    } while (!isfloor(game->level().get_tile(pos)));
     item = create_item();
     item->pos = pos;
-    level_items.push_front(item);
-    Level::set_tile(pos, item->type);
+    game->level().items.push_front(item);
+    game->level().set_tile(pos, item->type);
   }
   //fill up room with monsters from the next level down
   if ((nm = rnd(spots)+MINTREAS)<num_monst+2) nm = num_monst+2;
@@ -160,7 +160,7 @@ void treas_room()
     for (spots = 0; spots<MAXTRIES; spots++)
     {
       rnd_pos(room, &pos);
-      if (isfloor(Level::get_tile(pos)) && monster_at(pos)==NULL) break;
+      if (isfloor(game->level().get_tile(pos)) && game->level().monster_at(pos)==NULL) break;
     }
     if (spots!=MAXTRIES)
     {

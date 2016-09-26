@@ -71,14 +71,14 @@ over:
   if (!diag_ok(&game->hero().pos, &nh)) {counts_as_turn = false; running = false; return;}
   //If you are running and the move does not get you anywhere stop running
   if (running && equal(game->hero().pos, nh)) counts_as_turn = running = false;
-  fl = Level::get_flags(nh);
-  ch = get_tile_or_monster(nh);
+  fl = game->level().get_flags(nh);
+  ch = game->level().get_tile_or_monster(nh);
   //When the hero is on the door do not allow him to run until he enters the room all the way
-  if ((Level::get_tile(game->hero().pos)==DOOR) && (ch==FLOOR)) running = false;
+  if ((game->level().get_tile(game->hero().pos)==DOOR) && (ch==FLOOR)) running = false;
   if (!(fl&F_REAL) && ch==FLOOR) {
     ch = TRAP;
-    Level::set_tile(nh, TRAP); 
-    Level::set_flag(nh, F_REAL);
+    game->level().set_tile(nh, TRAP); 
+    game->level().set_flag(nh, F_REAL);
   }
   else if (game->hero().is_held() && ch != 'F') { //TODO: remove direct check for F
       msg("you are being held"); 
@@ -95,8 +95,8 @@ hit_bound:
       switch (run_character)
       {
       case 'h': case 'l':
-        b1 = (game->hero().pos.y>1 && ((Level::get_flags({game->hero().pos.x,game->hero().pos.y-1})&F_PASS) || Level::get_tile({game->hero().pos.x,game->hero().pos.y-1})==DOOR));
-        b2 = (game->hero().pos.y<maxrow-1 && ((Level::get_flags({game->hero().pos.x,game->hero().pos.y+1})&F_PASS) || Level::get_tile({game->hero().pos.x,game->hero().pos.y+1})==DOOR));
+        b1 = (game->hero().pos.y>1 && ((game->level().get_flags({game->hero().pos.x,game->hero().pos.y-1})&F_PASS) || game->level().get_tile({game->hero().pos.x,game->hero().pos.y-1})==DOOR));
+        b2 = (game->hero().pos.y<maxrow-1 && ((game->level().get_flags({game->hero().pos.x,game->hero().pos.y+1})&F_PASS) || game->level().get_tile({game->hero().pos.x,game->hero().pos.y+1})==DOOR));
         if (!(b1^b2)) break;
         if (b1) {
             run_character = 'k'; 
@@ -110,8 +110,8 @@ hit_bound:
         goto over;
 
       case 'j': case 'k':
-        b1 = (game->hero().pos.x>1 && ((Level::get_flags({game->hero().pos.x-1,game->hero().pos.y})&F_PASS) || Level::get_tile({game->hero().pos.x-1,game->hero().pos.y})==DOOR));
-        b2 = (game->hero().pos.x<COLS-2 && ((Level::get_flags({game->hero().pos.x+1,game->hero().pos.y})&F_PASS) || Level::get_tile({game->hero().pos.x+1,game->hero().pos.y})==DOOR));
+        b1 = (game->hero().pos.x>1 && ((game->level().get_flags({game->hero().pos.x-1,game->hero().pos.y})&F_PASS) || game->level().get_tile({game->hero().pos.x-1,game->hero().pos.y})==DOOR));
+        b2 = (game->hero().pos.x<COLS-2 && ((game->level().get_flags({game->hero().pos.x+1,game->hero().pos.y})&F_PASS) || game->level().get_tile({game->hero().pos.x+1,game->hero().pos.y})==DOOR));
         if (!(b1^b2))
             break;
         if (b1) {
@@ -131,7 +131,7 @@ hit_bound:
 
   case DOOR:
     running = false;
-    if (Level::get_flags(game->hero().pos)&F_PASS) 
+    if (game->level().get_flags(game->hero().pos)&F_PASS) 
         enter_room(&nh);
     goto move_stuff;
 
@@ -149,16 +149,16 @@ hit_bound:
 
   default:
     running = false;
-    if (isupper(ch) || monster_at(nh))
+    if (isupper(ch) || game->level().monster_at(nh))
       fight(&nh, get_current_weapon(), false);
     else
     {
       running = false;
       if (ch!=STAIRS) take = ch;
 move_stuff:
-      Screen::DrawChar(game->hero().pos, Level::get_tile(game->hero().pos));
-      if ((fl&F_PASS) && (Level::get_tile(oldpos)==DOOR || (Level::get_flags(oldpos)&F_MAZE))) leave_room(&nh);
-      if ((fl&F_MAZE) && (Level::get_flags(oldpos)&F_MAZE)==0) enter_room(&nh);
+      Screen::DrawChar(game->hero().pos, game->level().get_tile(game->hero().pos));
+      if ((fl&F_PASS) && (game->level().get_tile(oldpos)==DOOR || (game->level().get_flags(oldpos)&F_MAZE))) leave_room(&nh);
+      if ((fl&F_MAZE) && (game->level().get_flags(oldpos)&F_MAZE)==0) enter_room(&nh);
       game->hero().pos = nh;
     }
   }
@@ -175,12 +175,12 @@ void door_open(struct Room *room)
     for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
       for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
       {
-        ch = get_tile_or_monster({k,j});
+        ch = game->level().get_tile_or_monster({k,j});
         if (isupper(ch))
         {
           item = wake_monster({k,j});
           if (item->oldch==' ' && !(room->is_dark()) && !game->hero().is_blind())
-              item->oldch = Level::get_tile({k,j});
+              item->oldch = game->level().get_tile({k,j});
         }
       }
 }
@@ -191,8 +191,8 @@ int be_trapped(Coord *tc)
   byte tr;
 
   repeat_cmd_count = running = false;
-  Level::set_tile(*tc, TRAP);
-  tr = Level::get_trap_type(*tc);
+  game->level().set_tile(*tc, TRAP);
+  tr = game->level().get_trap_type(*tc);
   was_trapped = 1;
   switch (tr)
   {
@@ -292,12 +292,12 @@ void rndmove(Agent *who, Coord *newmv)
       goto bad;
   else
   {
-    ch = get_tile_or_monster({x, y});
+    ch = game->level().get_tile_or_monster({x, y});
     if (!step_ok(ch))
         goto bad;
     if (ch == SCROLL)
     {
-        for (auto it = level_items.begin(); it != level_items.end(); ++it){
+        for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it){
             obj = *it;
             if (y == obj->pos.y && x == obj->pos.x)
                 break;

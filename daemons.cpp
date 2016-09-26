@@ -16,6 +16,7 @@
 #include "chase.h"
 #include "hero.h"
 #include "room.h"
+#include "level.h"
 
 //doctor: A healing daemon that restores hit points after rest
 void doctor()
@@ -78,7 +79,7 @@ void unsee()
 {
   Agent *th;
 
-  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+  for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
       th = *it;
       if (th->is_invisible() && can_see_monster(th) && th->oldch != MDK)
           Screen::DrawChar(th->pos, th->oldch);

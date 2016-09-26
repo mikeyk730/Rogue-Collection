@@ -171,7 +171,3 @@ struct Gold : public Item
 
     virtual Item* Clone() const;
 };
-
-//todo:move into game
-#include <list>
-extern std::list<Item*> level_items;

@@ -38,7 +38,7 @@ void runners()
     Agent *monster, *next = NULL;
     int dist;
 
-    for (auto it = level_monsters.begin(); it != level_monsters.end();){
+    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end();){
         monster = *(it++);
         if (!monster->is_held() && monster->is_running())
         {
@@ -79,7 +79,7 @@ bool do_chase(Agent *monster)
     return true;
 
   //We don't count doors as inside rooms for this routine
-  door = (Level::get_tile(monster->pos)==DOOR);
+  door = (game->level().get_tile(monster->pos)==DOOR);
   //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
 
 over:
@@ -94,7 +94,7 @@ over:
     }
     if (door)
     {
-      monster_room = &passages[Level::get_passage_num(monster->pos)];
+      monster_room = &passages[game->level().get_passage_num(monster->pos)];
       door = false;
       goto over;
     }
@@ -120,15 +120,15 @@ over:
   }
   else if (equal(ch_ret, *monster->dest))
   {
-      for (auto it = level_items.begin(); it != level_items.end(); ){
+      for (auto it = game->level().items.begin(); it != game->level().items.end(); ){
           obj = *(it++);
           if (orc_bugfix && equal(*(monster->dest), obj->pos)) //todo:why didn't old code work?
           {
               byte oldchar;
-              level_items.remove(obj);
+              game->level().items.remove(obj);
               monster->pack.push_front(obj);
               oldchar = (monster->room->is_gone()) ? PASSAGE : FLOOR;
-              Level::set_tile(obj->pos, oldchar);
+              game->level().set_tile(obj->pos, oldchar);
               if (can_see(obj->pos))
                   Screen::DrawChar(obj->pos, oldchar);
               monster->dest = find_dest(monster);
@@ -141,7 +141,7 @@ over:
   //If the chasing thing moved, update the screen
   if (monster->oldch!=MDK)
   {
-    if (monster->oldch==' ' && can_see(monster->pos) && Level::get_tile(monster->pos)==FLOOR)
+    if (monster->oldch==' ' && can_see(monster->pos) && game->level().get_tile(monster->pos)==FLOOR)
       Screen::DrawChar(monster->pos, (char)FLOOR);
     else if (monster->oldch == FLOOR && !can_see(monster->pos) && !game->hero().detects_others())
       Screen::DrawChar(monster->pos, ' ');
@@ -160,7 +160,7 @@ over:
   }
   if (can_see_monster(monster))
   {
-    if (Level::get_flags(ch_ret)&F_PASS) standout();
+    if (game->level().get_flags(ch_ret)&F_PASS) standout();
     monster->oldch = mvinch(ch_ret.y, ch_ret.x);
     Screen::DrawChar(ch_ret, monster->disguise);
   }
@@ -252,14 +252,14 @@ void chase(Agent *monster, Coord *chasee_pos)
         try_pos.x = x;
         try_pos.y = y;
         if (offmap({x,y}) || !diag_ok(chaser_pos, &try_pos)) continue;
-        ch = get_tile_or_monster({x,y});
+        ch = game->level().get_tile_or_monster({x,y});
         if (step_ok(ch))
         {
           //If it is a scroll, it might be a scare monster scroll so we need to look it up to see what type it is.
             if (ch == SCROLL)
             {
                 Item *obj = 0;
-                for (auto it = level_items.begin(); it != level_items.end(); ++it)
+                for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
                 {
                     obj = *it;
                     if (equal(try_pos, obj->pos))
@@ -283,7 +283,7 @@ void chase(Agent *monster, Coord *chasee_pos)
 int diag_ok(const Coord *sp, const Coord *ep )
 {
   if (ep->x==sp->x || ep->y==sp->y) return true;
-  return (step_ok(Level::get_tile({sp->x,ep->y})) && step_ok(Level::get_tile({ep->x,sp->y})));
+  return (step_ok(game->level().get_tile({sp->x,ep->y})) && step_ok(game->level().get_tile({ep->x,sp->y})));
 }
 
 //can_see: Returns true if the hero can see a certain coordinate.
@@ -309,14 +309,14 @@ Coord *find_dest(Agent *monster)
         return &game->hero().pos;
 
     room = monster->room;
-    for (auto it = level_items.begin(); it != level_items.end(); ++it)
+    for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
     {
         Item* obj = *it;
         if (is_scare_monster_scroll(obj))
             continue;
         if (get_room_from_position(&obj->pos) == room && rnd(100) < prob)
         {
-            for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+            for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
                 monster = *it;
                 if (monster->dest == &obj->pos)
                     break;

@@ -9,6 +9,7 @@
 #include "captured_input.h"
 #include "keyboard_input.h"
 #include "hero.h"
+#include "level.h"
 
 namespace
 {
@@ -49,6 +50,7 @@ namespace
 GameState::GameState(int seed) :
 m_seed(seed),
 m_input_interface(new CapturedInput(new KeyboardInput())),
+m_level(new Level),
 m_hero(new Hero),
 m_scrolls(new ScrollInfo),
 m_potions(new PotionInfo),
@@ -87,6 +89,7 @@ GameState::GameState(Random* random, std::istream& in) :
     ++m_restore_count;
     random->set_seed(m_seed);
     m_input_interface.reset(new CapturedInput(new StreamInput(in, new KeyboardInput())));
+    m_level.reset(new Level);
     m_hero.reset(new Hero);
     m_scrolls.reset(new ScrollInfo);
     m_potions.reset(new PotionInfo);
@@ -154,6 +157,11 @@ InputInterface& GameState::input_interface()
 Hero& GameState::hero()
 {
     return *m_hero;
+}
+
+Level & GameState::level()
+{
+    return *m_level;
 }
 
 ScrollInfo& GameState::scrolls()

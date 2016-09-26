@@ -113,9 +113,9 @@ void Hero::add_to_pack(Item *obj, bool silent)
         //Put it in the pack and notify the user
         op->count += obj->count;
         if (from_floor) {
-          level_items.remove(obj);
+          game->level().items.remove(obj);
           Screen::DrawChar(pos, floor);
-          Level::set_tile(pos, floor);
+          game->level().set_tile(pos, floor);
         }
         delete obj;
         obj = op;
@@ -132,19 +132,19 @@ void Hero::add_to_pack(Item *obj, bool silent)
   if (is_scare_monster_scroll(obj)) {
       if (obj->is_found())
       {
-          level_items.remove(obj);
+          game->level().items.remove(obj);
           delete obj;
           Screen::DrawChar(pos, floor);
-          Level::set_tile(pos, floor);
+          game->level().set_tile(pos, floor);
           msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
           return;
       }
       else obj->set_found();
   }
   if (from_floor) {
-    level_items.remove(obj);
+    game->level().items.remove(obj);
     Screen::DrawChar(pos, floor); 
-    Level::set_tile(pos, floor);
+    game->level().set_tile(pos, floor);
   }
   
   //todo: fuck this code is infuriating
@@ -186,10 +186,12 @@ void Hero::add_to_pack(Item *obj, bool silent)
 
 picked_up:
   //If this was the object of something's desire, that monster will get mad and run at the hero
-  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
-      monster = *it;
-      if (monster->dest && (monster->dest->x == obj->pos.x) && (monster->dest->y == obj->pos.y))
-          monster->dest = &pos;
+  if (from_floor) {
+      for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+          monster = *it;
+          if (monster->dest && (monster->dest->x == obj->pos.x) && (monster->dest->y == obj->pos.y))
+              monster->dest = &pos;
+      }
   }
   if (obj->type==AMULET) { 
       s_had_amulet = true;
@@ -239,7 +241,7 @@ void pick_up(byte ch)
     if ((obj = find_obj(game->hero().pos))==NULL)
         return;
     pick_up_gold(obj->get_gold_value());
-    level_items.remove(obj);
+    game->level().items.remove(obj);
     delete obj;
     game->hero().room->gold_val = 0;
     break;
@@ -342,7 +344,7 @@ void pick_up_gold(int value)
 
     byte floor = (game->hero().room->is_gone()) ? PASSAGE : FLOOR;
     Screen::DrawChar(game->hero().pos, floor);
-    Level::set_tile(game->hero().pos, floor);
+    game->level().set_tile(game->hero().pos, floor);
 }
 
 bool has_amulet()

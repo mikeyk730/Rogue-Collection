@@ -192,7 +192,7 @@ void zap_striking(Item* obj)
 
   coord.y += game->hero().pos.y;
   coord.x += game->hero().pos.x;
-  if ((monster = monster_at(coord))!=NULL)
+  if ((monster = game->level().monster_at(coord))!=NULL)
   {
     obj->randomize_damage();
     fight(&coord, obj, false);
@@ -219,10 +219,10 @@ void zap_vorpalized_weapon(Item* weapon, Agent* monster)
 void zap_polymorph(Agent* monster, Coord p)
 {
   if (can_see_monster(monster)) 
-    Screen::DrawChar(p, Level::get_tile(p));
+    Screen::DrawChar(p, game->level().get_tile(p));
 
   Agent* new_monster = create_monster(rnd(26)+'A', &p, get_level());
-  level_monsters.remove(new_monster);
+  game->level().monsters.remove(new_monster);
 
   new_monster->oldch = monster->oldch;
   new_monster->pack = monster->pack;
@@ -233,8 +233,8 @@ void zap_polymorph(Agent* monster, Coord p)
   delete new_monster;
   
   //move to front of list to maintain original behavior
-  level_monsters.remove(monster);
-  level_monsters.push_front(monster);
+  game->level().monsters.remove(monster);
+  game->level().monsters.push_front(monster);
 
   if (can_see_monster(monster)) 
     Screen::DrawChar(p, monster->type);
@@ -277,11 +277,11 @@ void zap_generic(Item* wand, int which)
 
   y = game->hero().pos.y;
   x = game->hero().pos.x;
-  while (step_ok(get_tile_or_monster({x, y}))) {
+  while (step_ok(game->level().get_tile_or_monster({x, y}))) {
       y += delta.y; 
       x += delta.x;
   }
-  if ((monster = monster_at({x, y}))!=NULL)
+  if ((monster = game->level().monster_at({x, y}))!=NULL)
   {
     if (monster->can_hold())
         game->hero().set_is_held(false);
@@ -329,7 +329,7 @@ void zap_magic_missile()
   do_motion(bolt, delta.y, delta.x);
 
   Agent* monster;
-  if ((monster = monster_at(bolt->pos))!=NULL && !save_throw(VS_MAGIC, monster))
+  if ((monster = game->level().monster_at(bolt->pos))!=NULL && !save_throw(VS_MAGIC, monster))
       hit_monster(bolt->pos, bolt);
   else
       msg("the missile vanishes with a puff of smoke");
@@ -342,11 +342,11 @@ void zap_speed_monster(int which)
 
   y = game->hero().pos.y;
   x = game->hero().pos.x;
-  while (step_ok(get_tile_or_monster({x, y}))) {
+  while (step_ok(game->level().get_tile_or_monster({x, y}))) {
     y += delta.y; 
     x += delta.x;
   }
-  if (monster = monster_at({x, y}))
+  if (monster = game->level().monster_at({x, y}))
   {
     if (which==WS_HASTE_M)
     {
@@ -463,15 +463,15 @@ void drain()
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
-  if (Level::get_tile(game->hero().pos)==DOOR)
-      room = &passages[Level::get_passage_num(game->hero().pos)];
+  if (game->level().get_tile(game->hero().pos)==DOOR)
+      room = &passages[game->level().get_passage_num(game->hero().pos)];
   else room = NULL;
   in_passage = game->hero().room->is_gone();
   dp = drainee;
-  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+  for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
     monster = *it;
     if (monster->room == game->hero().room || monster->room == room ||
-        (in_passage && Level::get_tile(monster->pos) == DOOR && &passages[Level::get_passage_num(monster->pos)] == game->hero().room)) {
+        (in_passage && game->level().get_tile(monster->pos) == DOOR && &passages[game->level().get_passage_num(monster->pos)] == game->hero().room)) {
         *dp++ = monster;
     }
   }
@@ -518,7 +518,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
   {
     pos.y += dir->y;
     pos.x += dir->x;
-    ch = get_tile_or_monster(pos);
+    ch = game->level().get_tile_or_monster(pos);
     spotpos[i].s_pos = pos;
     if ((spotpos[i].s_under = mvinch(pos.y, pos.x))==dirch) spotpos[i].s_under = 0;
     switch (ch)
@@ -533,11 +533,11 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
       break;
 
     default:
-      if (!hit_hero && (monster = monster_at(pos))!=NULL)
+      if (!hit_hero && (monster = game->level().monster_at(pos))!=NULL)
       {
         hit_hero = true;
         changed = !changed;
-        if (monster->oldch!=MDK) monster->oldch = Level::get_tile(pos);
+        if (monster->oldch!=MDK) monster->oldch = game->level().get_tile(pos);
         if (!save_throw(VS_MAGIC, monster) || is_frost)
         {
           bolt->pos = pos;
@@ -574,7 +574,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
               if (start == &game->hero().pos)
                   death('b');
               else
-                  death(monster_at(*start)->type);
+                  death(game->level().monster_at(*start)->type);
           }
           used = true;
           if (!is_frost)

@@ -29,7 +29,7 @@ void slime_split(Agent *monster)
   nslime = create_monster(monster->type, &slimy, get_level());
   if (can_see(slimy))
   {
-    nslime->oldch = Level::get_tile(slimy);
+    nslime->oldch = game->level().get_tile(slimy);
     Screen::DrawChar(slimy, monster->type);
   }
   start_run(nslime);
@@ -48,7 +48,7 @@ int new_slime(Agent *slime)
     //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.
     for (y = ty-1; y<=ty+1; y++)
       for (x = tx-1; x<=tx+1; x++)
-        if (get_tile_or_monster({x, y})==slime->type && (ntp = monster_at({x, y})))
+        if (game->level().get_tile_or_monster({x, y})==slime->type && (ntp = game->level().monster_at({x, y})))
         {
           if (ntp->is_dirty()) 
               continue; //Already done this one
@@ -72,7 +72,7 @@ bool plop_monster(int r, int c, Coord *cp)
       //Don't put a monster on top of the player.
       if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap({x,y})) continue;
       //Or anything else nasty
-      if (step_ok(ch = get_tile_or_monster({x, y})))
+      if (step_ok(ch = game->level().get_tile_or_monster({x, y})))
       {
         if (ch==SCROLL && is_scare_monster_scroll(find_obj({x,y}))) continue;
         if (rnd(++appear)==0) {cp->y = y; cp->x = x;}

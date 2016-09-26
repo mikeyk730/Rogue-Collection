@@ -99,7 +99,7 @@ void projectile(int ydelta, int xdelta)
     }
     do_motion(obj, ydelta, xdelta);
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-    if (monster_at(obj->pos) == NULL || !hit_monster(obj->pos, obj))
+    if (game->level().monster_at(obj->pos) == NULL || !hit_monster(obj->pos, obj))
         fall(obj, true);
 }
 
@@ -120,12 +120,12 @@ void do_motion(Item *obj, int ydelta, int xdelta)
     //Get the new position
     obj->pos.y += ydelta;
     obj->pos.x += xdelta;
-    if (step_ok(ch = get_tile_or_monster(obj->pos)) && ch!=DOOR)
+    if (step_ok(ch = game->level().get_tile_or_monster(obj->pos)) && ch!=DOOR)
     {
       //It hasn't hit anything yet, so display it if alright.
         if (can_see(obj->pos))
       {
-        under = Level::get_tile(obj->pos);
+        under = game->level().get_tile(obj->pos);
         Screen::DrawChar(obj->pos, obj->type);
         tick_pause();
       }
@@ -156,16 +156,16 @@ void fall(Item *obj, bool pr)
   switch (fallpos(obj, &fpos))
   {
   case 1:
-    Level::set_tile(fpos, obj->type);
+    game->level().set_tile(fpos, obj->type);
     obj->pos = fpos;
     if (can_see(fpos))
     {
-      if ((Level::get_flags(obj->pos)&F_PASS) || (Level::get_flags(obj->pos)&F_MAZE)) standout();
+      if ((game->level().get_flags(obj->pos)&F_PASS) || (game->level().get_flags(obj->pos)&F_MAZE)) standout();
       Screen::DrawChar(fpos, obj->type);
       standend();
-      if (monster_at(fpos)!=NULL) monster_at(fpos)->oldch = obj->type;
+      if (game->level().monster_at(fpos)!=NULL) game->level().monster_at(fpos)->oldch = obj->type;
     }
-    level_items.push_front(obj);
+    game->level().items.push_front(obj);
     return;
 
   case 2:
@@ -207,7 +207,7 @@ void Item::initialize_weapon(byte type)
 int hit_monster(Coord p, Item *obj)  //todo: definite memory issues here.  hit_monster is expeccted to delete, but gets stack variables too
 {
   static Coord mp;
-  Agent *monster = monster_at(p);
+  Agent *monster = game->level().monster_at(p);
   if (!monster)  return false;
 
   mp.y = p.y;
@@ -259,7 +259,7 @@ int fallpos(Item *obj, Coord *newpos)
     {
       //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
       if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap({x,y})) continue;
-      if ((ch = Level::get_tile({x, y}))==FLOOR || ch==PASSAGE)
+      if ((ch = game->level().get_tile({x, y}))==FLOOR || ch==PASSAGE)
       {
         if (rnd(++cnt)==0) {newpos->y = y; newpos->x = x;}
         continue;

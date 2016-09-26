@@ -103,17 +103,17 @@ void do_rooms()
     {
         room->gold_val = rnd_gold();
         Item *gold = new Gold(room->gold_val);
-        level_items.push_front(gold);
+        game->level().items.push_front(gold);
         
         while (1)
         {
           byte gch;
           rnd_pos(room, &room->gold);
-          gch = Level::get_tile(room->gold);
+          gch = game->level().get_tile(room->gold);
           if (isfloor(gch))
               break;
         }
-        Level::set_tile(room->gold, GOLD);
+        game->level().set_tile(room->gold, GOLD);
         gold->set_location(room->gold);        
     }
     //Put the monster in
@@ -122,7 +122,7 @@ void do_rooms()
         byte mch;
         do {
           rnd_pos(room, &mp); 
-          mch = get_tile_or_monster(mp);
+          mch = game->level().get_tile_or_monster(mp);
         } while (!isfloor(mch));
         monster = create_monster(randmonster(false, get_level()), &mp, get_level());
         give_pack(monster);
@@ -141,14 +141,14 @@ void draw_room(struct Room *room)
   vert(room, room->pos.x+room->size.x-1); //Draw right side
   horiz(room, room->pos.y); //Draw top
   horiz(room, room->pos.y+room->size.y-1); //Draw bottom
-  Level::set_tile(room->pos, ULWALL);
-  Level::set_tile({room->pos.x+room->size.x-1,room->pos.y}, URWALL);
-  Level::set_tile({room->pos.x,room->pos.y+room->size.y-1}, LLWALL);
-  Level::set_tile({room->pos.x+room->size.x-1,room->pos.y+room->size.y-1}, LRWALL);
+  game->level().set_tile(room->pos, ULWALL);
+  game->level().set_tile({room->pos.x+room->size.x-1,room->pos.y}, URWALL);
+  game->level().set_tile({room->pos.x,room->pos.y+room->size.y-1}, LLWALL);
+  game->level().set_tile({room->pos.x+room->size.x-1,room->pos.y+room->size.y-1}, LRWALL);
   //Put the floor down
   for (y = room->pos.y+1; y<room->pos.y+room->size.y-1; y++)
     for (x = room->pos.x+1; x<room->pos.x+room->size.x-1; x++)
-      Level::set_tile({x, y}, FLOOR);
+      game->level().set_tile({x, y}, FLOOR);
 }
 
 //vert: Draw a vertical line
@@ -157,7 +157,7 @@ void vert(struct Room *room, int startx)
   int y;
 
   for (y = room->pos.y+1; y<=room->size.y+room->pos.y-1; y++)
-    Level::set_tile({startx,y}, VWALL);
+    game->level().set_tile({startx,y}, VWALL);
 }
 
 //horiz: Draw a horizontal line
@@ -166,7 +166,7 @@ void horiz(struct Room *room, int starty)
   int x;
 
   for (x = room->pos.x; x<=room->pos.x+room->size.x-1; x++) 
-    Level::set_tile({x,starty}, HWALL);
+    game->level().set_tile({x,starty}, HWALL);
 }
 
 //rnd_pos: Pick a random spot in a room
@@ -197,11 +197,11 @@ void enter_room(Coord *cp)
       for (x = room->pos.x; x<room->size.x+room->pos.x; x++)
       {
         //Displaying monsters is all handled in the chase code now
-        monster = monster_at({x, y});
+        monster = game->level().monster_at({x, y});
         if (monster==NULL || !can_see_monster(monster)) 
-          addch(Level::get_tile({x, y}));
+          addch(game->level().get_tile({x, y}));
         else {
-          monster->oldch = Level::get_tile({x,y}); 
+          monster->oldch = game->level().get_tile({x,y}); 
           addch(monster->disguise);
         }
       }
@@ -217,7 +217,7 @@ void leave_room(Coord *cp)
   byte ch;
 
   room = game->hero().room;
-  game->hero().room = &passages[Level::get_passage_num(*cp)];
+  game->hero().room = &passages[game->level().get_passage_num(*cp)];
   floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
   if (room->is_maze()) floor = PASSAGE;
   for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
@@ -241,7 +241,7 @@ void leave_room(Coord *cp)
             break;
           }
           else 
-            monster_at({x, y})->oldch = MDK;
+            game->level().monster_at({x, y})->oldch = MDK;
           addch(floor);
       }
     }
@@ -261,8 +261,8 @@ struct Room *get_room_from_position(Coord *pos)
           && room->pos.y <= pos->y)
           return room;
 
-  if (Level::is_passage(*pos))
-    return &passages[Level::get_passage_num(*pos)];
+  if (game->level().is_passage(*pos))
+    return &passages[game->level().get_passage_num(*pos)];
 
   debug("in some bizarre place (%d, %d)", pos->y, pos->x);
   invalid_position = true;
@@ -282,10 +282,10 @@ struct Room* rnd_room()
 
 void find_empty_location(Coord* c, int consider_monsters)
 {
-  byte (*tile_getter)(Coord) = consider_monsters ? get_tile_or_monster : Level::get_tile;
+  auto tile_getter = consider_monsters ? &Level::get_tile_or_monster : &Level::get_tile;
 
   do
   {
     rnd_pos(rnd_room(), c);
-  } while (!isfloor(tile_getter(*c)));
+  } while (!isfloor((game->level().*tile_getter)(*c)));
 }

@@ -128,6 +128,3 @@ public:
     void set_dirty(bool enable);
     bool is_dirty();
 };
-
-//todo: move into game
-extern std::list<Agent*> level_monsters;

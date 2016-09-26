@@ -124,7 +124,7 @@ void drop()
   byte ch;
   Item *nobj, *op;
 
-  ch = Level::get_tile(game->hero().pos);
+  ch = game->level().get_tile(game->hero().pos);
   if (ch!=FLOOR && ch!=PASSAGE) {msg("there is something there already"); return;}
   if ((op = get_item("drop", 0))==NULL) return;
   if (!can_drop(op)) return;
@@ -139,9 +139,9 @@ void drop()
   else 
       game->hero().pack.remove(op);
   //Link it into the level object list
-  level_items.push_front(op);
+  game->level().items.push_front(op);
   op->pos = game->hero().pos;
-  Level::set_tile(op->pos, op->type);
+  game->level().set_tile(op->pos, op->type);
   msg("dropped %s", inv_name(op, true));
 }
 

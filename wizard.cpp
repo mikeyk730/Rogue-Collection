@@ -181,11 +181,11 @@ void teleport()
   struct Room* rm;
   Coord c;
 
-  Screen::DrawChar(game->hero().position(), Level::get_tile(game->hero().position()));
+  Screen::DrawChar(game->hero().position(), game->level().get_tile(game->hero().position()));
   do {
     rm = rnd_room(); 
     rnd_pos(rm, &c);
-  } while (!(step_ok(get_tile_or_monster(c))));
+  } while (!(step_ok(game->level().get_tile_or_monster(c))));
   if (rm != game->hero().room) {
     leave_room(&game->hero().pos); 
     game->hero().pos = c; 
@@ -221,8 +221,8 @@ void show_map(bool show_monsters)
   clear();
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
-    if (!(real = Level::get_flags({x, y})&F_REAL)) standout();
-    Screen::DrawChar({x, y}, show_monsters ? get_tile_or_monster({x, y}) : Level::get_tile({x, y}));
+    if (!(real = game->level().get_flags({x, y})&F_REAL)) standout();
+    Screen::DrawChar({x, y}, show_monsters ? game->level().get_tile_or_monster({x, y}) : game->level().get_tile({x, y}));
     if (!real) standend();
   }
   show_win("---More (level map)---");

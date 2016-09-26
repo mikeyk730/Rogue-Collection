@@ -340,7 +340,7 @@ Agent* create_monster(byte type, Coord *position, int level)
   const struct Monster* defaults;
   
   defaults = &monsters[type-'A'];
-  level_monsters.push_front(monster);
+  game->level().monsters.push_front(monster);
 
   monster->type = type;
   monster->disguise = type;
@@ -392,7 +392,7 @@ void wanderer()
     room = rnd_room();
     if (room==game->hero().room) continue;
     rnd_pos(room, &cp);
-  } while (!(room!=game->hero().room && step_ok(get_tile_or_monster(cp))));
+  } while (!(room!=game->hero().room && step_ok(game->level().get_tile_or_monster(cp))));
   monster = create_monster(randmonster(true, get_level()), &cp, get_level());
   if (invalid_position) 
       debug("wanderer bailout");
@@ -407,7 +407,7 @@ Agent *wake_monster(Coord p)
   struct Room *room;
   int dst;
 
-  if ((monster = monster_at(p))==NULL) return monster;
+  if ((monster = game->level().monster_at(p))==NULL) return monster;
   //Every time he sees mean monster, it might start chasing him
   if (!monster->is_running() && rnd(3)!=0 && monster->is_mean() && !monster->is_held() && !is_wearing_ring(R_STEALTH))
   {
@@ -464,16 +464,4 @@ char pick_vorpal_monster()
     } while (*p == ' ');
 
     return *p;
-}
-
-//monster_at: returns pointer to monster at coordinate. if no monster there return NULL
-Agent *monster_at(Coord p)
-{
-  Agent *monster;
-  for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
-      monster = *it;
-      if (monster->pos.x == p.x && monster->pos.y == p.y)
-          return monster;
-  }
-  return NULL;
 }

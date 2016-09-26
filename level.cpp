@@ -1,14 +1,13 @@
 #include <stdlib.h>
 
 #include "rogue.h"
+#include "game_state.h"
 #include "level.h"
 #include "misc.h"
 #include "io.h"
 #include "main.h"
 #include "room.h"
-
-byte the_level[(MAXLINES-3)*MAXCOLS];
-byte the_flags[(MAXLINES-3)*MAXCOLS];
+#include "agent.h"
 
 //One for each passage
 struct Room passages[MAXPASS] =
@@ -30,73 +29,93 @@ struct Room passages[MAXPASS] =
 int s_level = 1;
 int s_max_level = 1;
 
-void clear_level()
+void Level::clear_level()
 {
   memset(the_level, ' ', (MAXLINES-3)*MAXCOLS);
   memset(the_flags, F_REAL, (MAXLINES-3)*MAXCOLS);
 }
 
-namespace Level {
     int INDEX(Coord p)
     {
         return ((p.x*(maxrow - 1)) + p.y - 1);
     }
 
-    byte get_tile(Coord p)
+    byte Level::get_tile(Coord p)
     {
         return the_level[INDEX(p)];
     }
 
-    void set_tile(Coord p, byte c)
+    byte Level::get_tile_or_monster(Coord p)
+    {
+        Agent* monster = monster_at(p);
+        if (monster)
+            return monster->disguise;
+        return get_tile(p);
+    }
+
+
+    void Level::set_tile(Coord p, byte c)
     {
         the_level[INDEX(p)] = c;
     }
 
-    byte get_flags(Coord p)
+    byte Level::get_flags(Coord p)
     {
         return the_flags[INDEX(p)];
     }
 
-    void set_flag(Coord p, byte f)
+    void Level::set_flag(Coord p, byte f)
     {
         the_flags[INDEX(p)] |= f;
     }
 
-    void unset_flag(Coord p, byte f)
+    void Level::unset_flag(Coord p, byte f)
     {
         the_flags[INDEX(p)] &= ~f;
     }
 
-    void copy_flags(Coord p, byte f)
+    void Level::copy_flags(Coord p, byte f)
     {
         the_flags[INDEX(p)] = f;
     }
 
-    bool is_passage(Coord p)
+    bool Level::is_passage(Coord p)
     {
         return (get_flags(p) & F_PASS) != 0;
     }
 
-    bool is_maze(Coord p)
+    bool Level::is_maze(Coord p)
     {
         return (get_flags(p) & F_MAZE) != 0;
     }
 
-    bool is_real(Coord p)
+    bool Level::is_real(Coord p)
     {
         return (get_flags(p) & F_REAL) != 0;
     }
 
-    int get_passage_num(Coord p)
+    int Level::get_passage_num(Coord p)
     {
         return get_flags(p) & F_PNUM;
     }
 
-    int get_trap_type(Coord p)
+    int Level::get_trap_type(Coord p)
     {
         return get_flags(p) & F_TMASK;
     }
-}
+
+    //monster_at: returns pointer to monster at coordinate. if no monster there return NULL
+    Agent* Level::monster_at(Coord p)
+    {
+        Agent *monster;
+        for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+            monster = *it;
+            if (monster->pos.x == p.x && monster->pos.y == p.y)
+                return monster;
+        }
+        return NULL;
+    }
+
 
 int get_level()
 {

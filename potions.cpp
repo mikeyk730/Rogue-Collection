@@ -23,6 +23,7 @@
 #include "monsters.h"
 #include "things.h"
 #include "hero.h"
+#include "level.h"
 
 #define P_CONFUSE   0
 #define P_PARALYZE  1
@@ -175,7 +176,7 @@ void quaff_healing()
 void quaff_monster_detection()
 {
   fuse(turn_see_wrapper, true, HUH_DURATION);
-  if (level_monsters.empty()) 
+  if (game->level().monsters.empty()) 
       msg("you have a strange feeling%s.", noterse(" for a moment"));
   else {
       if (turn_see(false))
@@ -188,13 +189,13 @@ void quaff_magic_detection()
 {
   //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
   //Also give hints as to whether he would want to use the object.
-  if (!level_items.empty())
+  if (!game->level().items.empty())
   {
     Agent *monster;
     bool show;
 
     show = false;
-    for (auto it = level_items.begin(); it != level_items.end(); ++it)
+    for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
     {
       Item* item = *it;
       if (is_magic(item))
@@ -204,7 +205,7 @@ void quaff_magic_detection()
         game->potions().discover(P_TFIND);
       }
     }
-    for (auto it = level_monsters.begin(); it != level_monsters.end(); ++it){
+    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
         monster = *it;
       for (auto it = monster->pack.begin(); it != monster->pack.end(); ++it)
       {
@@ -312,7 +313,7 @@ void quaff()
 void invis_on()
 {
     game->hero().set_sees_invisible(true);
-    std::for_each(level_monsters.begin(), level_monsters.end(), [](Agent *monster){
+    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Agent *monster){
         if (monster->is_invisible() && can_see_monster(monster))
         {
             Screen::DrawChar(monster->pos, monster->disguise);
@@ -330,7 +331,7 @@ bool turn_see(bool turn_off)
 {
     bool add_new = false;
 
-    std::for_each(level_monsters.begin(), level_monsters.end(), [turn_off, &add_new](Agent* monster){
+    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [turn_off, &add_new](Agent* monster){
 
         bool can_see;
         byte was_there;

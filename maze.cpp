@@ -9,6 +9,7 @@
 #include "io.h"
 #include "level.h"
 #include "room.h"
+#include "game_state.h"
 
 #define MAXFRNT  100
 #define FRONTIER  'F'
@@ -58,9 +59,9 @@ void draw_maze(struct Room *room)
     for (psgcnt = 0, cp = ld, sh = 1; cp<&ld[4]; sh <<= 1, cp++)
     {
       y = cp->y+spos.y; x = cp->x+spos.x;
-      if (!offmap({ x,y }) && Level::get_tile({x, y})==PASSAGE) psgcnt += sh;
+      if (!offmap({ x,y }) && game->level().get_tile({x, y})==PASSAGE) psgcnt += sh;
     }
-  } while (Level::get_tile(spos)==PASSAGE || psgcnt%5);
+  } while (game->level().get_tile(spos)==PASSAGE || psgcnt%5);
   splat(spos);
 }
 
@@ -76,9 +77,9 @@ void add_frnt(Coord p)
 {
   if (frcnt==MAXFRNT-1) debug("MAZE DRAWING ERROR #3\n");
 
-  if (inrange(p) && Level::get_tile(p)==NOTHING)
+  if (inrange(p) && game->level().get_tile(p)==NOTHING)
   {
-    Level::set_tile(p, FRONTIER);
+    game->level().set_tile(p, FRONTIER);
     fr_y[frcnt] = p.y;
     fr_x[frcnt++] = p.x;
   }
@@ -119,14 +120,14 @@ void con_frnt()
 
 int maze_at(Coord p)
 {
-  if (inrange(p) && Level::get_tile(p)==PASSAGE) return 1;
+  if (inrange(p) && game->level().get_tile(p)==PASSAGE) return 1;
   else return 0;
 }
 
 void splat(Coord p)
 {
-  Level::set_tile(p, PASSAGE);
-  Level::copy_flags(p, F_MAZE|F_REAL);
+  game->level().set_tile(p, PASSAGE);
+  game->level().copy_flags(p, F_MAZE|F_REAL);
   if (p.x>maxx) 
       maxx = p.x;
   if (p.y>maxy)
