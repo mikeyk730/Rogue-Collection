@@ -146,6 +146,7 @@ public:
     bool is_seeking(Item* obj);
     bool in_same_room_as(Item* obj);
 
-
+    //roll_attack: Roll several attacks
+    bool roll_attack(Agent *the_defender, Item *weapon, bool hurl);
 
 };

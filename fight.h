@@ -11,9 +11,6 @@ bool swing(int at_lvl, int op_arm, int wplus);
 //check_level: Check to see if the guy has gone up a level.
 void check_level();
 
-//roll_em: Roll several attacks
-bool roll_em(Agent *the_attacker, Agent *the_defender, Item *weapon, bool hurl);
-
 //prname: The print name of a combatant
 char *prname(const char *who, bool upper);
 

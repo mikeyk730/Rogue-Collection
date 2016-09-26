@@ -112,7 +112,7 @@ int Hero::fight(Coord *location, Item *weapon, bool thrown)
     }
     name = this->is_blind() ? it : monster->get_monster_name();
 
-    if (roll_em(&game->hero(), monster, weapon, thrown) || (weapon && weapon->type == POTION))
+    if (game->hero().roll_attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))
     {
         do_hit(weapon, thrown, monster, name);
         return true;
@@ -261,7 +261,7 @@ bool attack(Agent *monster)
   if (monster->is_disguised() && !game->hero().is_blind()) 
     monster->disguise = monster->type;
   name = game->hero().is_blind() ? it : monster->get_monster_name();
-  if (roll_em(monster, &game->hero(), NULL, false))
+  if (monster->roll_attack(&game->hero(), NULL, false))
   {
       display_hit_msg(name, NULL);
       if (game->hero().get_hp() <= 0)
@@ -351,8 +351,8 @@ void check_level()
   }
 }
 
-//roll_em: Roll several attacks
-bool roll_em(Agent *the_attacker, Agent *the_defender, Item *weapon, bool hurl)
+//roll_attack: Roll several attacks
+bool Agent::roll_attack(Agent *the_defender, Item *weapon, bool hurl)
 {
   std::string damage_string;
   int ndice, nsides;
@@ -360,7 +360,7 @@ bool roll_em(Agent *the_attacker, Agent *the_defender, Item *weapon, bool hurl)
   int hplus;
   int dplus;
   int damage;
-  struct Agent::Stats *attacker_stats = &the_attacker->stats;
+  struct Agent::Stats *attacker_stats = &this->stats;
   struct Agent::Stats *defender_stats = &the_defender->stats;
 
   if (weapon==NULL) {
