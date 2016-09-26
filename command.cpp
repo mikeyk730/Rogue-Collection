@@ -54,11 +54,18 @@ void command()
     else execcom();
     do_fuses();
     do_daemons();
-    for (ntimes = LEFT; ntimes<=RIGHT; ntimes++) if (get_ring(ntimes)) switch (get_ring(ntimes)->which)
-    {
-    case R_SEARCH: search(); break;
-    case R_TELEPORT: if (rnd(50)==17) teleport(); break;
-    }
+    for (ntimes = LEFT; ntimes<=RIGHT; ntimes++)
+        if (get_ring(ntimes)) 
+            switch (get_ring(ntimes)->which)
+            {
+            case R_SEARCH:
+                search();
+                break;
+            case R_TELEPORT:
+                if (rnd(50) == 17)
+                    game->hero().teleport();
+                break;
+            }
   }
 }
 
@@ -72,7 +79,8 @@ int com_char()
   case '+': ch = 't'; break;
   case '-': ch = 'z'; break;
   }
-  if (msg_position && !running) msg("");
+  if (msg_position && !game->modifiers.is_running())
+      msg("");
   return ch;
 }
 
@@ -82,11 +90,11 @@ int read_command()
   int command, ch, junk;
 
   counts_as_turn = true;
-  bool was_fast_play_enabled = fast_play_enabled;
-  fastmode = fast_play_enabled;
+  bool was_fast_play_enabled = game->modifiers.scroll_lock();
+  game->modifiers.m_fastmode = game->modifiers.scroll_lock();
   look(true);
-  if (!running) 
-      stop_at_door = false;
+  if (!game->modifiers.is_running())
+      game->modifiers.m_stop_at_door = false;
   do_take = true;
   again = false;
 
@@ -97,12 +105,12 @@ int read_command()
   if (repeat_cmd_count > 0) {
       do_take = lasttake;
       command = lastch;
-      fastmode = false;
+      game->modifiers.m_fastmode = false;
   }
   else
   {
     repeat_cmd_count = 0;
-    if (running) {
+    if (game->modifiers.is_running()) {
         command = run_character;
         do_take = lasttake;
     }
@@ -111,8 +119,8 @@ int read_command()
       for (command = 0; command==0;)
       {
         ch = com_char();
-        if (was_fast_play_enabled != fast_play_enabled)
-            fastmode = !fastmode;
+        if (was_fast_play_enabled != game->modifiers.scroll_lock())
+            game->modifiers.m_fastmode = !game->modifiers.m_fastmode;
         switch (ch)
         {
         case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
@@ -123,7 +131,7 @@ int read_command()
           break;
 
         case 'f': // f: toggle fast mode for this turn
-          fastmode = !fastmode; 
+          game->modifiers.m_fastmode = !game->modifiers.m_fastmode;
           break;
         case 'g': // g + direction: move onto an item without picking it up
           do_take = false; 
@@ -137,7 +145,7 @@ int read_command()
         case ' ': 
             break;
         case ESCAPE:
-            stop_at_door = false;
+            game->modifiers.m_stop_at_door = false;
             repeat_cmd_count = 0; 
             show_count(); 
             break;
@@ -147,15 +155,15 @@ int read_command()
     }
   }
   if (repeat_cmd_count)
-      fastmode = false;
+      game->modifiers.m_fastmode = false;
   switch (command)
   {
   case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-    if (fastmode && !running)
+    if (game->modifiers.fast_mode() && !game->modifiers.is_running())
     {
       if (!game->hero().is_blind()) {
-          stop_at_door = true; 
-          firstmove = true;
+          game->modifiers.m_stop_at_door = true;
+          game->modifiers.m_firstmove = true;
       }
       command = toupper(command);
     }
@@ -367,7 +375,7 @@ void execcom()
     if (take && do_take)
         pick_up(take);
     take = 0;
-    if (!running) 
-        stop_at_door = false;
+    if (!game->modifiers.is_running())
+        game->modifiers.m_stop_at_door = false;
   } while (counts_as_turn==false);
 }

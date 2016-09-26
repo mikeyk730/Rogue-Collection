@@ -175,43 +175,6 @@ void summon_object()
   game->hero().add_to_pack(obj, false);
 }
 
-//teleport: Bamf the hero someplace else
-void teleport()
-{
-  struct Room* rm;
-  Coord c;
-
-  Screen::DrawChar(game->hero().position(), game->level().get_tile(game->hero().position()));
-  do {
-    rm = rnd_room(); 
-    rnd_pos(rm, &c);
-  } while (!(step_ok(game->level().get_tile_or_monster(c))));
-  if (rm != game->hero().room) {
-    leave_room(&game->hero().pos); 
-    game->hero().pos = c; 
-    enter_room(&game->hero().pos);
-  }
-  else { game->hero().pos = c; look(true);}
-  Screen::DrawChar(game->hero().pos, PLAYER);
-  //turn off IS_HELD in case teleportation was done while fighting a Flytrap
-  if (game->hero().is_held()) { 
-      game->hero().set_is_held(false); 
-  }
-  no_move = 0;
-  repeat_cmd_count = 0;
-  running = false;
-  clear_typeahead_buffer();
-  //Teleportation can be a confusing experience (unless you really are a wizard)
-  if (!game->hero().is_wizard())
-  {
-    if (game->hero().is_confused())
-        lengthen(unconfuse, rnd(4)+2);
-    else 
-        fuse(unconfuse, 0, rnd(4)+2);
-    game->hero().set_confused(true);
-  }
-}
-
 //show_map: Print out the map for the wizard
 void show_map(bool show_monsters)
 {

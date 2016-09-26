@@ -19,10 +19,10 @@ char StreamInput::GetNextChar()
     m_stream.read((char*)f, 4);
     if (m_stream)
     {
-        fastmode = (f[0] == ON);
-        fast_play_enabled = f[1] == ON;
-        stop_at_door = f[2] == ON;
-        running = f[3] == ON;
+        game->modifiers.m_fastmode = (f[0] == ON);
+        game->modifiers.m_fast_play_enabled = f[1] == ON;
+        game->modifiers.m_stop_at_door = f[2] == ON;
+        game->modifiers.m_running = f[3] == ON;
     }
 
    // while (!_kbhit());

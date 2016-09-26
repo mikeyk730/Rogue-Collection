@@ -32,9 +32,10 @@ struct GameState
     StickInfo& sticks();
     ItemClass& item_class(int type);
 
-    bool allow_fast_play() const;
-
+    bool allow_fast_play() const; //todo:kill this
     bool m_allow_fast_play = true;
+
+    CommandModifiers modifiers;
 
 private:
     void init_environment();

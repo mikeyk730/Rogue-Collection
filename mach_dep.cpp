@@ -74,7 +74,7 @@ static struct xlate
   ALT_F9,  'F'
 };
 
-int is_direction_key(int key)
+int is_direction_key(int key) //TODO: num pad keys
 {
   return key == C_HOME
     || key == C_UP
@@ -171,7 +171,7 @@ int getkey()
 
   key = _getch();
   if (is_shift_pressed() && is_direction_key(key))
-    fastmode = !fastmode;
+      game->modifiers.m_fastmode = !game->modifiers.m_fastmode;
 
   for (x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
   {

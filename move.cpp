@@ -34,7 +34,7 @@ Coord nh;
 //do_run: Start the hero running
 void do_run(byte ch)
 {
-  running = true;
+  game->modifiers.m_running = true;
   counts_as_turn = false;
   run_character = ch;
 }
@@ -50,7 +50,7 @@ void do_move(int dy, int dx)
   byte ch;
   int fl;
 
-  firstmove = false;
+  game->modifiers.m_firstmove = false;
   if (invalid_position) {
       invalid_position = false;
       msg("the crack widens ... "); 
@@ -68,13 +68,21 @@ over:
   }
   //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
   if (offmap(nh)) goto hit_bound;
-  if (!diag_ok(&game->hero().pos, &nh)) {counts_as_turn = false; running = false; return;}
+  if (!diag_ok(&game->hero().pos, &nh)) {
+      counts_as_turn = false;
+      game->modifiers.m_running = false; 
+      return;
+  }
   //If you are running and the move does not get you anywhere stop running
-  if (running && equal(game->hero().pos, nh)) counts_as_turn = running = false;
+  if (game->modifiers.is_running() && equal(game->hero().pos, nh)) { 
+      counts_as_turn = false;
+      game->modifiers.m_running = false;
+  }
   fl = game->level().get_flags(nh);
   ch = game->level().get_tile_or_monster(nh);
   //When the hero is on the door do not allow him to run until he enters the room all the way
-  if ((game->level().get_tile(game->hero().pos)==DOOR) && (ch==FLOOR)) running = false;
+  if ((game->level().get_tile(game->hero().pos)==DOOR) && (ch==FLOOR))
+      game->modifiers.m_running = false;
   if (!(fl&F_REAL) && ch==FLOOR) {
     ch = TRAP;
     game->level().set_tile(nh, TRAP); 
@@ -88,7 +96,7 @@ over:
   {
   case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
 hit_bound:
-    if (running && is_gone(game->hero().room) && !game->hero().is_blind())
+    if (game->modifiers.is_running() && is_gone(game->hero().room) && !game->hero().is_blind())
     {
       bool b1, b2;
 
@@ -126,11 +134,12 @@ hit_bound:
         goto over;
       }
     }
-    counts_as_turn = running = false;
+    counts_as_turn = false;
+    game->modifiers.m_running = false;
     break;
 
   case DOOR:
-    running = false;
+    game->modifiers.m_running = false;
     if (game->level().get_flags(game->hero().pos)&F_PASS) 
         enter_room(&nh);
     goto move_stuff;
@@ -148,12 +157,12 @@ hit_bound:
     goto move_stuff;
 
   default:
-    running = false;
+    game->modifiers.m_running = false;
     if (isupper(ch) || game->level().monster_at(nh))
       fight(&nh, get_current_weapon(), false);
     else
     {
-      running = false;
+      game->modifiers.m_running = false;
       if (ch!=STAIRS) take = ch;
 move_stuff:
       Screen::DrawChar(game->hero().pos, game->level().get_tile(game->hero().pos));
@@ -190,7 +199,7 @@ int be_trapped(Coord *tc)
 {
   byte tr;
 
-  repeat_cmd_count = running = false;
+  repeat_cmd_count = game->modifiers.m_running = false;
   game->level().set_tile(*tc, TRAP);
   tr = game->level().get_trap_type(*tc);
   was_trapped = 1;
@@ -236,7 +245,7 @@ int be_trapped(Coord *tc)
     break;
 
   case T_TELEP:
-    teleport();
+    game->hero().teleport();
     Screen::DrawChar(*tc, TRAP); //since the hero's leaving, look() won't put it on for us
     was_trapped++;//todo:look at this
     break;

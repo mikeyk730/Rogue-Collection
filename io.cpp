@@ -421,14 +421,14 @@ void SIG2()
   else { nspot = 20; cspot = 39; tspot = 75; }
 
   getrc(&x, &y);
-  if (fast_play_enabled != scroll_lock_on && game->allow_fast_play())
+  if (game->modifiers.scroll_lock() != scroll_lock_on && game->allow_fast_play())
   {
-    fast_play_enabled = scroll_lock_on;
+    game->modifiers.m_fast_play_enabled = scroll_lock_on;
     repeat_cmd_count = 0;
     show_count();
-    running = false;
+    game->modifiers.m_running = false;
     move(LINES - 1, 0);
-    if (fast_play_enabled) {
+    if (game->modifiers.scroll_lock()) {
       bold();
       addstr("Fast Play");
       standend();
@@ -440,7 +440,7 @@ void SIG2()
     numl = num_lock_on;
     repeat_cmd_count = 0;
     show_count();
-    running = false;
+    game->modifiers.m_running = false;
     move(LINES - 1, nspot);
     if (numl) {
       bold();

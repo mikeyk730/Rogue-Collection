@@ -95,7 +95,7 @@ void look(bool wakeup)
   ex = game->hero().pos.x+1;
   sx = game->hero().pos.x-1;
   sy = game->hero().pos.y-1;
-  if (stop_at_door && !firstmove && running) {
+  if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && game->modifiers.is_running()) {
       sumhero = game->hero().pos.y+game->hero().pos.x; 
       diffhero = game->hero().pos.y-game->hero().pos.x;
   }
@@ -122,7 +122,8 @@ void look(bool wakeup)
       else if ((fp&F_PASS) && (fp&F_PNUM)!=(pfl & F_PNUM)) continue;
       if ((monster = game->level().monster_at({x, y}))!=NULL) if (game->hero().detects_others() && monster->is_invisible())
       {
-        if (stop_at_door && !firstmove) running = false;
+        if (game->modifiers.stop_at_door() && !game->modifiers.first_move())
+            game->modifiers.m_running = false;
         continue;
       }
       else
@@ -136,7 +137,7 @@ void look(bool wakeup)
       move(y, x);
       addch(ch);
       standend();
-      if (stop_at_door && !firstmove && running)
+      if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && game->modifiers.is_running())
       {
         switch (run_character)
         {
@@ -153,7 +154,7 @@ void look(bool wakeup)
         {
         case DOOR: 
             if (x==game->hero().pos.x || y==game->hero().pos.y) 
-                running = false;
+                game->modifiers.m_running = false;
             break;
         case PASSAGE:
             if (x==game->hero().pos.x || y==game->hero().pos.y) 
@@ -162,13 +163,13 @@ void look(bool wakeup)
         case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ': 
             break;
         default:
-            running = false; 
+            game->modifiers.m_running = false; 
             break;
         }
       }
   }
-  if (stop_at_door && !firstmove && passcount>1) 
-      running = false;
+  if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && passcount>1)
+      game->modifiers.m_running = false;
   move(game->hero().pos.y, game->hero().pos.x);
   //todo:check logic
   if ((game->level().get_flags(game->hero().pos)&F_PASS) || (was_trapped>1) || (game->level().get_flags(game->hero().pos)&F_MAZE)) 
@@ -430,13 +431,13 @@ void search()
         if (rnd(5)!=0) break;
         game->level().set_tile({x, y}, DOOR);
         game->level().set_flag({x, y}, F_REAL);
-        repeat_cmd_count = running = false;
+        repeat_cmd_count = game->modifiers.m_running = false;
         break;
       case FLOOR:
         if (rnd(2)!=0) break;
         game->level().set_tile({x, y}, TRAP);
         game->level().set_flag({x, y}, F_REAL);
-        repeat_cmd_count = running = false;
+        repeat_cmd_count = game->modifiers.m_running = false;
         msg("you found %s", tr_name(game->level().get_trap_type({ x, y })));
         break;
       }

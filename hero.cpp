@@ -14,7 +14,12 @@
 #include "rings.h"
 #include "agent.h"
 #include "food.h"
-
+#include "curses.h"
+#include "level.h"
+#include "rooms.h"
+#include "daemon.h"
+#include "daemons.h"
+#include "mach_dep.h"
 
 Hero::Hero()
 {
@@ -83,8 +88,8 @@ void Hero::digest()
     if (sleep_timer || rnd(5)!=0)
         return;
     sleep_timer += rnd(8)+4;
-    game->hero().set_running(false);
-    running = false;
+    set_running(false);
+    game->modifiers.m_running = false;
     repeat_cmd_count = 0;
     hungry_state = 3;
     msg("%syou faint from lack of food", noterse("you feel very weak. "));
@@ -151,3 +156,41 @@ int Hero::get_food_left()
 {
     return food_left;
 }
+
+//teleport: Bamf the hero someplace else
+void Hero::teleport()
+{
+    struct Room* rm;
+    Coord c;
+
+    Screen::DrawChar(pos, game->level().get_tile(pos));
+    do {
+        rm = rnd_room();
+        rnd_pos(rm, &c);
+    } while (!(step_ok(game->level().get_tile_or_monster(c))));
+    if (rm != room) {
+        leave_room(&pos);
+        pos = c;
+        enter_room(&pos);
+    }
+    else { pos = c; look(true); }
+    Screen::DrawChar(pos, PLAYER);
+    //turn off IS_HELD in case teleportation was done while fighting a Flytrap
+    if (is_held()) {
+        set_is_held(false);
+    }
+    no_move = 0;
+    repeat_cmd_count = 0;
+    game->modifiers.m_running = false;
+    clear_typeahead_buffer();
+    //Teleportation can be a confusing experience (unless you really are a wizard)
+    if (!is_wizard())
+    {
+        if (is_confused())
+            lengthen(unconfuse, rnd(4) + 2);
+        else
+            fuse(unconfuse, 0, rnd(4) + 2);
+        set_confused(true);
+    }
+}
+

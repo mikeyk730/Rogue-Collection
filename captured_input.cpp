@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "captured_input.h"
 #include "rogue.h"
+#include "game_state.h"
 
 CapturedInput::CapturedInput(InputInterface* d)
 : m_delegate(d)
@@ -9,10 +10,10 @@ CapturedInput::CapturedInput(InputInterface* d)
 char CapturedInput::GetNextChar()
 {
     char c = m_delegate->GetNextChar();
-    m_stream.push_back(fastmode ? ON : OFF);
-    m_stream.push_back(fast_play_enabled ? ON : OFF);
-    m_stream.push_back(stop_at_door ? ON : OFF);
-    m_stream.push_back(running ? ON : OFF);
+    m_stream.push_back(game->modifiers.fast_mode() ? ON : OFF);
+    m_stream.push_back(game->modifiers.scroll_lock() ? ON : OFF);
+    m_stream.push_back(game->modifiers.stop_at_door() ? ON : OFF);
+    m_stream.push_back(game->modifiers.is_running() ? ON : OFF);
     m_stream.push_back(c);
     return c;
 }

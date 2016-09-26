@@ -128,7 +128,8 @@ void playit(char *sname)
     cursor(false);
   }
   else {oldpos.x = game->hero().pos.x; oldpos.y = game->hero().pos.y; oldrp = get_room_from_position(&game->hero().pos);}
-  while (playing) command(); //Command execution
+  while (true) 
+      command(); //Command execution
   endit();
 }
 

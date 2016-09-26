@@ -252,8 +252,8 @@ void read_food_detection()
 void read_teleportation()
 {
     //Scroll of teleportation: Make him disappear and reappear
-    Room *original_room = game->hero().room;
-    teleport();
+    Room* original_room = game->hero().room;
+    game->hero().teleport();
     if (original_room != game->hero().room)
         game->scrolls().discover(S_TELEP);
 }

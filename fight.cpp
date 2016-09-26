@@ -256,7 +256,7 @@ bool attack(Agent *monster)
   bool attack_success = false; // todo:set this everywhere
 
   //Since this is an attack, stop running and any healing that was going on at the time.
-  running = false;
+  game->modifiers.m_running = false;
   repeat_cmd_count = turns_since_heal = 0;
   if (monster->is_disguised() && !game->hero().is_blind()) 
     monster->disguise = monster->type;

@@ -28,6 +28,9 @@ struct Hero : public Agent
     bool is_wizard() const;
     bool did_cheat() const;
 
+    //teleport: Bamf the hero someplace else
+    void teleport();
+
 private:
 
     int m_purse = 0;

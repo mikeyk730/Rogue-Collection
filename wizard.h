@@ -1,9 +1,6 @@
 //whatis: What a certain object is
 void whatis();
 
-//teleport: Bamf the hero someplace else
-void teleport();
-
 void summon_object();
 
 int get_num(short *place);

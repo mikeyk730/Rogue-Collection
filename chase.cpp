@@ -107,7 +107,7 @@ over:
         (monster->pos.y==game->hero().pos.y || monster->pos.x==game->hero().pos.x || abs(monster->pos.y-game->hero().pos.y)==abs(monster->pos.x-game->hero().pos.x)) &&
         ((dist = distance(monster->pos, game->hero().pos))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !monster->powers_cancelled() && rnd(DRAGONSHOT)==0)
     {
-      running = false;
+      game->modifiers.m_running = false;
       delta.y = sign(game->hero().pos.y-monster->pos.y);
       delta.x = sign(game->hero().pos.x-monster->pos.x);
       return fire_bolt(&monster->pos, &delta, monster->shoots_fire()?"flame":"frost");

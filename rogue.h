@@ -151,6 +151,21 @@ extern const char *const flash, *const intense;
 
 //Now all the global variables
 
+struct CommandModifiers
+{
+    bool stop_at_door() const { return m_stop_at_door; }
+    bool scroll_lock() const { return m_fast_play_enabled; }
+    bool fast_mode() const { return m_fastmode; }
+    bool first_move() const { return m_firstmove; }
+    bool is_running() const { return m_running; } // move to Hero?
+
+    bool m_stop_at_door = false;  //Stop running when we pass a door
+    bool m_fastmode = false;      //Run until you see something
+    bool m_fast_play_enabled = false;     //Toggle for find (see above)
+    bool m_firstmove = false;     //First move after setting stop_at_door
+    bool m_running = false;       //True if player is running
+};
+
 extern Coord delta, oldpos;
 extern struct Room *oldrp, passages[];
 
@@ -158,8 +173,7 @@ extern int maxrow;
 extern short LINES, COLS;
 extern bool invalid_position;
 
-extern bool counts_as_turn, again, stop_at_door, fastmode, fast_play_enabled, firstmove, 
-  playing, running;
+extern bool counts_as_turn, again;
 extern int was_trapped;
 
 extern char
