@@ -2,7 +2,7 @@
 #include <memory>
 #include <map>
 #include <string>
-
+#include "rogue.h"
 #include "item_class.h"
 
 struct Random;
