@@ -17,6 +17,20 @@ bool is_num_lock_on();
 bool is_shift_pressed();
 
 void beep();
-int no_char();
 void tick_pause();
+
+template <typename T>
+std::ostream& write(std::ostream& out, T t) {
+    out.write((char*)&t, sizeof(T));
+    return out;
+}
+
+template <typename T>
+std::istream& read(std::istream& in, T* t) {
+    in.read((char*)t, sizeof(T));
+    return in;
+}
+
+std::ostream& write_string(std::ostream& out, const std::string& s);
+std::istream& read_string(std::istream& in, std::string* s);
 

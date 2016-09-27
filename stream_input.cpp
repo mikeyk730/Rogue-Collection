@@ -10,7 +10,6 @@
 
 namespace
 {
-
     int ThreadProc(std::shared_ptr<StreamInput::ThreadData> shared_data)
     {
         for (;;) {
@@ -38,10 +37,17 @@ namespace
 }
 
 
-StreamInput::StreamInput(std::istream& in) :
+StreamInput::StreamInput(std::istream& in, int version) :
     m_stream(in),
     m_shared_data(new ThreadData)
 {
+    if (version < 2) {
+        m_version = 'A';
+    }
+    else {
+        read<char>(in, &m_version);
+    }
+
     m_stream.peek();
     if (!m_stream || m_stream.eof()) {
         OnStreamEnd();
@@ -62,17 +68,8 @@ bool StreamInput::HasMoreInput()
     return !m_shared_data->m_canceled && !m_shared_data->m_stream_empty;
 }
 
-char StreamInput::GetNextChar()
+char StreamInput::ReadCharA()
 {
-    std::unique_lock<std::mutex> lock(m_shared_data->m_mutex);
-    while (m_shared_data->m_paused && m_shared_data->m_steps == 0) {
-        m_shared_data->m_step_cv.wait(lock);
-    }
-    --m_shared_data->m_steps;
-
-    if (!m_stream || m_shared_data->m_canceled)
-        return 0;
-
     unsigned char f[4];
     m_stream.read((char*)f, 4);
     if (m_stream)
@@ -90,12 +87,70 @@ char StreamInput::GetNextChar()
     {
         printf("\a");
     }
+    return c;
+}
+
+char StreamInput::GetNextChar()
+{
+    std::unique_lock<std::mutex> lock(m_shared_data->m_mutex);
+    while (m_shared_data->m_paused && m_shared_data->m_steps == 0) {
+        m_shared_data->m_step_cv.wait(lock);
+    }
+    --m_shared_data->m_steps;
+
+    if (!m_stream || m_shared_data->m_canceled)
+        return 0;
+
+    char c = ReadCharA();
 
     m_stream.peek();
     if (!m_stream || m_stream.eof()){
         OnStreamEnd();
     }
     return c;
+}
+
+std::string StreamInput::ReadStringA()
+{
+    std::ostringstream ss;
+
+    char c = 0;
+    m_stream.read(&c, 1);
+
+    if (m_stream && c != 0) //shouldn't happen
+    {
+        printf("\a");
+    }
+
+    for (int i = 0; m_stream && i < 255; ++i) {
+        m_stream.read(&c, 1);
+        if (c == 0)
+            break;
+        ss << c;
+    }
+
+    if (ss.str().size() > 150) { //shouldn't happen
+        printf("\a");
+    }
+
+    return ss.str();
+}
+
+std::string StreamInput::ReadStringB()
+{
+    int size;
+    read<int>(m_stream, &size);
+ 
+    char buf[256];
+    memset(buf, 0, 256);
+    if (size > 255)
+    {
+        assert(false);
+        size = 255;
+    }
+    m_stream.read(buf, size);
+
+    return buf;
 }
 
 std::string StreamInput::GetNextString(int size)
@@ -109,33 +164,18 @@ std::string StreamInput::GetNextString(int size)
     if (!m_stream || m_shared_data->m_canceled)
         return "";
 
-    std::ostringstream ss;
-
-    char c = 0;
-    m_stream.read(&c, 1);
-
-    if (m_stream && c != 0) //shouldn't happen
-    {
-        printf("\a");
-    }
-
-    for (int i = 0; m_stream && i < 255; ++i){
-        m_stream.read(&c, 1);
-        if (c == 0)
-            break;
-        ss << c;
-    }
-
-    if (ss.str().size() > 150){ //shouldn't happen
-        printf("\a");
-    }
+    std::string s;
+    if (m_version == 'A')
+        s = ReadStringA();
+    else
+        s = ReadStringB();
 
     m_stream.peek();
     if (!m_stream || m_stream.eof()){
         OnStreamEnd();
     }
 
-    return ss.str();
+    return s;
 }
 
 void StreamInput::Serialize(std::ostream& out) 

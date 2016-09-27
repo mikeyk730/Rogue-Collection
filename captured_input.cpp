@@ -3,6 +3,12 @@
 #include "captured_input.h"
 #include "rogue.h"
 #include "game_state.h"
+#include "mach_dep.h"
+
+namespace 
+{
+    const char s_version = 'B';
+}
 
 CapturedInput::CapturedInput(InputInterface* d)
 : m_delegate(d)
@@ -30,13 +36,16 @@ char CapturedInput::GetNextChar()
     return c;
 }
 
-std::string CapturedInput::GetNextString(int size)
+std::string CapturedInput::GetNextString(int max_size)
 {
-    std::string s = m_delegate->GetNextString(size);
+    std::string s = m_delegate->GetNextString(max_size);
     if (!m_save_pending) {
-        m_stream.push_back(0);
+        int size = s.length();
+        m_stream.push_back(size & 0xff);
+        m_stream.push_back(size>>8 & 0xff);
+        m_stream.push_back(size>>16 & 0xff);
+        m_stream.push_back(size>>24 & 0xff);        
         m_stream.insert(m_stream.end(), s.begin(), s.end());
-        m_stream.push_back(0);
     }
     m_save_pending = false;
     return s;
@@ -44,5 +53,6 @@ std::string CapturedInput::GetNextString(int size)
 
 void CapturedInput::Serialize(std::ostream& out)
 {
+    write<char>(out, s_version);
     out.write((const char*)&m_stream[0], m_stream.size());
 }

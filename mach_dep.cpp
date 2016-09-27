@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <memory>
+#include <cassert>
 #include <Windows.h>
 #include <stdio.h>
 #include <conio.h>
@@ -367,3 +368,22 @@ std::string KeyboardInput::GetNextString(int size) {
 
 void KeyboardInput::Serialize(std::ostream& out)
 { }
+
+std::ostream& write_string(std::ostream& out, const std::string& s) {
+    write(out, s.length());
+    out.write(s.c_str(), s.length());
+    return out;
+}
+
+std::istream& read_string(std::istream& in, std::string* s) {
+    int length;
+    read(in, &length);
+    assert(length < 255);
+
+    char buf[255];
+    memset(buf, 0, 255);
+    in.read(buf, length);
+    *s = buf;
+
+    return in;
+}

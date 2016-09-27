@@ -7,7 +7,7 @@
 
 struct StreamInput : public InputInterface
 {
-    StreamInput(std::istream& in);
+    StreamInput(std::istream& in, int version);
     ~StreamInput();
 
     virtual bool HasMoreInput();
@@ -18,8 +18,12 @@ struct StreamInput : public InputInterface
 
 private:
     void OnStreamEnd();
+    char ReadCharA();
+    std::string ReadStringA();
+    std::string ReadStringB();
 
     std::istream& m_stream;
+    char m_version;
 
 public:
     struct ThreadData

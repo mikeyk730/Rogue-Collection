@@ -1,6 +1,5 @@
 #include <fstream>
 #include <algorithm>
-#include <cassert>
 #include "rogue.h"
 #include "game_state.h"
 #include "random.h"
@@ -12,41 +11,11 @@
 #include "hero.h"
 #include "level.h"
 #include "console_output.h"
+#include "mach_dep.h"
 
 namespace
 {
-    const int s_serial_version = 1;
-
-    template <typename T>
-    std::ostream& write(std::ostream& out, T t) {
-        out.write((char*)&t, sizeof(T));
-        return out;
-    }
-
-    template <typename T>
-    std::istream& read(std::istream& in, T* t) {
-        in.read((char*)t, sizeof(T));
-        return in;
-    }
-
-    std::ostream& write_string(std::ostream& out, const std::string& s) {
-        write(out, s.length());
-        out.write(s.c_str(), s.length());
-        return out;
-    }
-
-    std::istream& read_string(std::istream& in, std::string* s) {
-        int length;
-        read(in, &length);
-        assert(length < 255);
-
-        char buf[255];
-        memset(buf, 0, 255);
-        in.read(buf, length);
-        *s = buf;
-
-        return in;
-    }
+    const int s_serial_version = 2;
 }
 
 GameState::GameState(int seed) :
@@ -70,7 +39,7 @@ GameState::GameState(Random* random, std::istream& in) :
     int version = 0;
     read(in, &version);
 
-    if (version == 1) {
+    if (version == 1 || version == 2) {
         read(in, &m_seed);
         read(in, &m_restore_count);
 
@@ -92,7 +61,7 @@ GameState::GameState(Random* random, std::istream& in) :
 
     ++m_restore_count;
     random->set_seed(m_seed);
-    m_input_interface.reset(new CapturedInput(new ComboInput(new StreamInput(in), new KeyboardInput())));
+    m_input_interface.reset(new CapturedInput(new ComboInput(new StreamInput(in, version), new KeyboardInput())));
     m_level.reset(new Level);
     m_hero.reset(new Hero);
     m_scrolls.reset(new ScrollInfo);
