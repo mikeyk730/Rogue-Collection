@@ -6,6 +6,14 @@ struct Hero : public Agent
 {
     Hero();
 
+    virtual int calculate_armor() const;
+    virtual int calculate_strength() const;
+    virtual int calculate_max_strength() const;
+private:
+    int calculate_strength_impl(int s) const;
+
+public:
+
     //init_player: Roll up the rogue
     void init_player();
 

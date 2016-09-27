@@ -2,6 +2,35 @@
 #include "rings.h"
 #include "pack.h"
 
+int Agent::calculate_armor() const
+{
+    return stats.ac;
+}
+
+int Agent::calculate_strength() const
+{
+    return stats.m_str;
+}
+
+int Agent::calculate_max_strength() const
+{
+    return stats.m_max_str;
+}
+
+void Agent::restore_strength()
+{
+    stats.m_str = stats.m_max_str;
+}
+
+void Agent::adjust_strength(int amt)
+{
+    stats.m_str += amt;
+    if (stats.m_str > 31)
+        stats.m_str = 31;
+    if (stats.m_str > stats.m_max_str)
+        stats.m_max_str = stats.m_str;
+}
+
 void Agent::set_invisible(bool enable){
     set_flag(IS_INVIS, enable);
 }
@@ -84,42 +113,6 @@ void Agent::increase_hp(int n, bool max_bonus, bool second_max_bonus){
 int Agent::drain_hp(){
     stats.hp /= 2;
     return stats.hp;
-}
-
-//add_str: Perform the actual add, checking upper and lower bound
-void add_str(unsigned int *sp, int amt)
-{
-    if ((*sp += amt)<3) *sp = 3;
-    else if (*sp>31) *sp = 31;
-}
-
-void Agent::adjust_strength(int amt)
-{
-    unsigned int comp;
-
-    if (amt == 0) return;
-    add_str(&stats.str, amt);
-    comp = stats.str;
-    if (is_ring_on_hand(LEFT, R_ADDSTR))
-        add_str(&comp, -get_ring(LEFT)->get_ring_level());
-    if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        add_str(&comp, -get_ring(RIGHT)->get_ring_level());
-    if (comp > stats.max_str)
-        stats.max_str = comp;
-}
-
-void Agent::restore_strength()
-{
-    if (is_ring_on_hand(LEFT, R_ADDSTR))
-        add_str(&stats.str, -get_ring(LEFT)->get_ring_level());
-    if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        add_str(&stats.str, -get_ring(RIGHT)->get_ring_level());
-    if (stats.str < stats.max_str)
-        stats.str = stats.max_str;
-    if (is_ring_on_hand(LEFT, R_ADDSTR))
-        add_str(&stats.str, get_ring(LEFT)->get_ring_level());
-    if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        add_str(&stats.str, get_ring(RIGHT)->get_ring_level());
 }
 
 Coord Agent::position() const

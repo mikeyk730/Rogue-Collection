@@ -145,15 +145,15 @@ void ice_monster_attack()
 
 bool rattlesnake_attack()
 {
-  //Rattlesnakes have poisonous bites
-  if (!save(VS_POISON))
-    if (!is_wearing_ring(R_SUSTSTR)) {
-        game->hero().adjust_strength(-1);
-      msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
-      return true;
-    }
-    else 
-      msg("a bite momentarily weakens you");
+    //Rattlesnakes have poisonous bites
+    if (!save(VS_POISON))
+        if (!is_wearing_ring(R_SUSTSTR)) {
+            game->hero().adjust_strength(-1);
+            msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
+            return true;
+        }
+        else
+            msg("a bite momentarily weakens you");
 
     return false;
 }
@@ -413,29 +413,20 @@ bool Agent::roll_attack(Agent *the_defender, Item *weapon, bool hurl)
   if (!the_defender->is_running()) 
       hplus += 4;
 
-  int defender_armor = defender_stats->ac;
-  if (defender_stats==&game->hero().stats)
-  {
-    if (get_current_armor()!=NULL) 
-        defender_armor = get_current_armor()->get_armor_class();
-    if (is_ring_on_hand(LEFT, R_PROTECT)) 
-        defender_armor -= get_ring(LEFT)->get_ring_level();
-    if (is_ring_on_hand(RIGHT, R_PROTECT))
-        defender_armor -= get_ring(RIGHT)->get_ring_level();
-  }
-
+  int defender_armor = the_defender->calculate_armor();
+  
   const char* cp = damage_string.c_str();
   for (;;)
   {
     ndice = atoi(cp);
     if ((cp = strchr(cp, 'd'))==NULL) break;
     nsides = atoi(++cp);
-    if (swing(attacker_stats->level, defender_armor, hplus+str_plus(attacker_stats->str)))
+    if (swing(attacker_stats->level, defender_armor, hplus+str_plus(calculate_strength())))
     {
       int proll;
 
       proll = roll(ndice, nsides);
-      damage = dplus+proll+add_dam(attacker_stats->str);
+      damage = dplus+proll+add_dam(calculate_strength());
       //special goodies for the commercial version of rogue
       //make it easier on level one
       if (the_defender==&game->hero() && max_level()==1)

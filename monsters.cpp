@@ -259,7 +259,7 @@ struct Monster monsters[26] =
 #undef ___
 #undef XX
 
-//todo: validation
+//todo: validation, move to better location
 void load_monster_cfg(const std::string& filename)
 {
     std::ifstream file(filename, std::ios::in);
@@ -273,7 +273,7 @@ void load_monster_cfg(const std::string& filename)
         ss >> m.name;
         ss >> m.carry;
         ss >> std::hex >> m.flags;
-        ss >> std::dec >> m.stats.str >> m.stats.exp >> m.stats.level >> m.stats.ac >> m.stats.hp;
+        ss >> std::dec >> m.stats.m_str >> m.stats.exp >> m.stats.level >> m.stats.ac >> m.stats.hp;
         ss >> m.stats.damage;
         ss >> std::hex >> m.exflags;
 

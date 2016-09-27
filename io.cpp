@@ -220,8 +220,7 @@ void status()
 {
     int oy, ox;
     static int s_hungry;
-    static int s_level, s_pur = -1, s_hp, s_ac = 0;
-    static unsigned int strength;
+    static int s_level, s_pur = -1, s_hp;
     static int s_elvl = 0;
     static char *state_name[] = { "      ", "Hungry", "Weak", "Faint", "?" };
 
@@ -248,13 +247,11 @@ void status()
         else
             printw("Hits:%3d(%3d) ", game->hero().get_hp(), game->hero().stats.max_hp);
     }
+
     //Str:
-    if (game->hero().stats.str != strength)
-    {
-        strength = game->hero().stats.str;
-        move(PT(22, 23), 26);
-        printw("Str:%2d(%2d) ", game->hero().stats.str, game->hero().stats.max_str);
-    }
+    move(PT(22, 23), 26);
+    printw("Str:%2d(%2d) ", game->hero().calculate_strength(), game->hero().calculate_max_strength());
+
     //Gold
     if (s_pur != game->hero().get_purse())
     {
@@ -263,14 +260,9 @@ void status()
         printw("Gold:%-5u", game->hero().get_purse());
     }
     //Armor:
-    if (s_ac != (get_current_armor() != NULL ? get_current_armor()->get_armor_class() : game->hero().stats.ac))
-    {
-        s_ac = (get_current_armor() != NULL ? get_current_armor()->get_armor_class() : game->hero().stats.ac);
-        if (is_ring_on_hand(LEFT, R_PROTECT)) s_ac -= get_ring(LEFT)->get_ring_level();
-        if (is_ring_on_hand(RIGHT, R_PROTECT)) s_ac -= get_ring(RIGHT)->get_ring_level();
-        move(23, PT(12, 52));
-        printw("Armor:%-2d", AC(get_current_armor() != NULL ? get_current_armor()->get_armor_class() : game->hero().stats.ac));
-    }
+    move(23, PT(12, 52));    
+    printw("Armor:%-2d", AC(game->hero().calculate_armor()));
+    
     //Exp:
     if (!use_level_names())
     {

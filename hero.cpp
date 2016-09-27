@@ -26,6 +26,39 @@ Hero::Hero()
     init_player();
 }
 
+int Hero::calculate_armor() const
+{
+    int armor = stats.ac;
+
+    if (get_current_armor() != NULL)
+        armor = get_current_armor()->get_armor_class();
+    if (is_ring_on_hand(LEFT, R_PROTECT))
+        armor -= get_ring(LEFT)->get_ring_level();
+    if (is_ring_on_hand(RIGHT, R_PROTECT))
+        armor -= get_ring(RIGHT)->get_ring_level();
+
+    return armor;
+}
+
+int Hero::calculate_strength() const
+{
+    return calculate_strength_impl(stats.m_str);
+}
+
+int Hero::calculate_max_strength() const
+{
+    return calculate_strength_impl(stats.m_max_str);
+}
+
+int Hero::calculate_strength_impl(int strength) const
+{
+    if (is_ring_on_hand(LEFT, R_ADDSTR))
+        strength += get_ring(LEFT)->get_ring_level();
+    if (is_ring_on_hand(RIGHT, R_ADDSTR))
+        strength += get_ring(RIGHT)->get_ring_level();
+    return (strength > 31) ? 31 : strength;
+}
+
 std::string Hero::get_name()
 {
     return m_name;

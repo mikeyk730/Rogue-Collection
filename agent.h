@@ -25,17 +25,24 @@ const short IS_FLY = (short)0x8000; //creature is of the flying type
 //Structure for monsters and player
 struct Agent
 {
+    virtual int calculate_armor() const;
+
+    virtual int calculate_strength() const;
+    virtual int calculate_max_strength() const;
+    void restore_strength();
+    void adjust_strength(int amt);
+
     //Structure describing a fighting being
     struct Stats
     {
-        unsigned int str;   //Strength
+        unsigned int m_str;   //Strength
         long exp;           //Experience
         int level;          //Level of mastery
         int ac;             //Armor class
         int hp;             //Hit points
         std::string damage; //String describing damage done
         int max_hp;         //Max hit points
-        unsigned int max_str;        //Max strength
+        unsigned int m_max_str;        //Max strength
     };
 
     Coord pos = { 0, 0 };             //Position
@@ -57,9 +64,6 @@ struct Agent
     bool decrease_hp(int n, bool can_kill);
     int drain_hp();
 
-    void adjust_strength(int amt);
-    void restore_strength();
-
     Coord position() const;
 
 private:
@@ -67,6 +71,7 @@ private:
     void set_flag(short flag, bool enable);
 
 public:
+
     const char* get_monster_name() const;
     int get_monster_carry_prob() const;
 

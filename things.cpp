@@ -172,7 +172,6 @@ bool can_drop(Item *op)
     switch (op->which)
     {
     case R_ADDSTR: 
-        game->hero().adjust_strength(-op->get_ring_level());
         break;
     case R_SEEINVIS:
         unsee();
