@@ -21,7 +21,6 @@
 #include "env.h"
 #include "agent.h"
 
-#define AC(a)    (-((a)-11))
 #define PT(i,j)  ((COLS==40)?i:j)
 
 extern unsigned tick;
@@ -266,7 +265,7 @@ void status()
     }
     //Armor:
     game->screen().move(23, PT(12, 52));    
-    game->screen().printw("Armor:%-2d", AC(game->hero().calculate_armor()));
+    game->screen().printw("Armor:%-2d", game->hero().armor_for_display());
     
     //Exp:
     if (!use_level_names())

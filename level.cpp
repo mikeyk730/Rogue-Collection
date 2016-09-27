@@ -215,12 +215,12 @@ void Level::clear_level()
     void Level::put_things()
     {
         int i = 0;
-        Item *cur;
         Coord tp;
 
         //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
         //This is real unfair - I'm going to allow one thing, that way the poor guy will get some food.
-        if (had_amulet() && get_level()<max_level()) i = MAXOBJ - 1;
+        if (had_amulet() && get_level() < max_level())
+            i = MAXOBJ - 1;
         else
         {
             //If he is really deep in the dungeon and he hasn't found the amulet yet, put it somewhere on the ground
@@ -228,7 +228,7 @@ void Level::clear_level()
             if (get_level() >= AMULETLEVEL && !had_amulet())
             {
                 Item* amulet = new Amulet();
-                items.push_front(cur);
+                items.push_front(amulet);
 
                 //Put it somewhere
                 find_empty_location(&tp, true);
@@ -236,14 +236,16 @@ void Level::clear_level()
                 amulet->set_location(tp);
             }
             //check for treasure rooms, and if so, put it in.
-            if (rnd(TREAS_ROOM) == 0) treas_room();
+            if (rnd(TREAS_ROOM) == 0) 
+                treas_room();
         }
+
         //Do MAXOBJ attempts to put things on a level
         for (; i<MAXOBJ; i++) {
             if (rnd(100)<35)
             {
                 //Pick a new object and link it in the list
-                cur = create_item();
+                Item* cur = create_item();
                 items.push_front(cur);
                 //Put it somewhere
                 find_empty_location(&tp, false);

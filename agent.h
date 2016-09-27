@@ -28,11 +28,16 @@ struct Agent
     virtual void calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
         int* hit_plus, std::string* damage_string, int* damage_plus);
     virtual int calculate_armor() const;
+    int armor_for_display() const;
 
     virtual int calculate_strength() const;
     virtual int calculate_max_strength() const;
     void restore_strength();
     void adjust_strength(int amt);
+
+    int level() const;
+    int experience() const;
+    std::string damage_string() const;
 
     //Structure describing a fighting being
     struct Stats

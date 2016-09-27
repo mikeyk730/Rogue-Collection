@@ -131,7 +131,8 @@ const char* Item::get_inv_name_armor()
   char *pb = prbuf;
 
   if (is_known() || game->hero().is_wizard())
-    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-get_armor_class(), 0, (char)ARMOR), get_armor_name(which), -(get_armor_class()-11));
+    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-get_armor_class(), 0, (char)ARMOR), 
+        get_armor_name(which), armor_class_for_display());
   else
     sprintf(pb, "%s", get_armor_name(which));
 

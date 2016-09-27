@@ -1,6 +1,8 @@
 //Special wizard commands (some of which are also non-wizard commands under strange circumstances)
 //wizard.c    1.4 (AI Design) 12/14/84
 
+#include <sstream>
+#include <iomanip>
 #include <ctype.h>
 #include <stdlib.h>
 
@@ -195,14 +197,59 @@ void show_map(bool show_monsters)
   game->screen().wrestor();
 }
 
+namespace 
+{
+    using std::left;
+    using std::setw;
+
+    void add_debug_items(const std::list<Item*>& items, bool coord, const char* fmt)
+    {
+        for (auto it = items.begin(); it != items.end(); ++it)
+        {
+            Item* item = *it;
+            std::ostringstream ss;
+
+            Coord pos = item->get_location();
+            ss  << item->inv_name(false);
+            if (coord)
+                ss << " at (" << pos.x << "," << pos.y << ")";
+
+            add_line("", fmt, ss.str().c_str());
+        }
+    }
+
+    void debug_items()
+    {
+        add_debug_items(game->level().items, true, "  %s");
+    }
+
+    void debug_monsters()
+    {
+        for (auto i = game->level().monsters.begin(); i != game->level().monsters.end(); ++i)
+        {
+            Agent* monster = *i;
+            std::ostringstream ss;
+            ss << "  "   << left << setw(14) << monster->get_monster_name() << " ";
+            ss << "hp:"  << left << setw(4) << monster->get_hp() << " ";
+            ss << "lvl:" << left << setw(3) << monster->level() << " ";
+            ss << "amr:" << left << setw(4) << monster->calculate_armor() << " ";
+            ss << "exp:" << left << setw(5) << monster->experience() << " ";
+            ss << "dmg:" << left << setw(4) << monster->damage_string();
+            add_line("", ss.str().c_str(), "");
+            if (!monster->pack.empty()) {
+                add_debug_items(monster->pack, false, "    * %s");
+            }
+        }
+    }
+}
+
 void debug_screen()
 {
-    for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
-    {
-        Item* item = *it;
-        std::string inv = item->inv_name(false);
-        add_line("", inv.c_str(), "");
-    }
+    add_line("", "Level Items:", "");
+    debug_items();
+    add_line("", " ", "");
+    add_line("", "Level Monsters:", "");
+    debug_monsters();
     end_line("");
 }
 

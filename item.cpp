@@ -67,6 +67,12 @@ int Item::get_armor_class() const
     return armor_class;
 }
 
+int Item::armor_class_for_display() const
+{
+    int a = get_armor_class();
+    return (-((a)-11));
+}
+
 void Item::enchant_armor()
 {
     armor_class--;

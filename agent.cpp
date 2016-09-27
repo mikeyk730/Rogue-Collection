@@ -15,6 +15,12 @@ int Agent::calculate_armor() const
     return stats.ac;
 }
 
+int Agent::armor_for_display() const
+{
+    int a = calculate_armor();
+    return (-((a)-11));
+}
+
 int Agent::calculate_strength() const
 {
     return stats.m_str;
@@ -37,6 +43,21 @@ void Agent::adjust_strength(int amt)
         stats.m_str = 31;
     if (stats.m_str > stats.m_max_str)
         stats.m_max_str = stats.m_str;
+}
+
+int Agent::level() const
+{
+    return stats.level;
+}
+
+int Agent::experience() const
+{
+    return stats.exp;
+}
+
+std::string Agent::damage_string() const
+{
+    return stats.damage;
 }
 
 void Agent::set_invisible(bool enable){

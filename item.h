@@ -144,6 +144,7 @@ public:
     //armor-specific
     const char* get_inv_name_armor();
     int get_armor_class() const;
+    int armor_class_for_display() const;
     void enchant_armor();
     void weaken_armor();
 
