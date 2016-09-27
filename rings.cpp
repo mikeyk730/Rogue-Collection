@@ -132,7 +132,7 @@ void ring_on()
       aggravate(); 
       break;
   }
-  msg("%swearing %s (%c)", noterse("you are now "), inv_name(obj, true), pack_char(obj));
+  msg("%swearing %s (%c)", noterse("you are now "), obj->inv_name(true), pack_char(obj));
   return;
 no_ring:
   counts_as_turn = false;
@@ -154,7 +154,7 @@ void ring_off()
   obj = get_ring(ring);
   if (obj==NULL) {msg("not wearing such a ring"); counts_as_turn = false; return;}
   packchar = pack_char(obj);
-  if (can_drop(obj)) msg("was wearing %s(%c)", inv_name(obj, true), packchar);
+  if (can_drop(obj)) msg("was wearing %s(%c)", obj->inv_name(true), packchar);
 }
 
 //gethand: Which hand is the hero interested in?

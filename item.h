@@ -76,12 +76,14 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 struct Item
 {
 protected:
-    //Item();
     Item(int type, int which);
 public:
     virtual ~Item();
 
     virtual Item* Clone() const = 0;
+
+    //inv_name: Return the name of something as it would appear in an inventory.
+    char * inv_name(bool lowercase);
 
     int type;                      //What kind of object it is
     Coord pos;                     //Where it lives on the screen
@@ -127,6 +129,9 @@ public:
     void set_found();
     void set_flashed();
 
+    //food-specific
+    const char* get_inv_name_food();
+
     //ring-specific
     int get_ring_level() const;
 
@@ -137,6 +142,7 @@ public:
     void randomize_damage();
 
     //armor-specific
+    const char* get_inv_name_armor();
     int get_armor_class() const;
     void enchant_armor();
     void weaken_armor();

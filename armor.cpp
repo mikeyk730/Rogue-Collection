@@ -98,7 +98,7 @@ void wear()
   }
   waste_time();
   obj->set_known() ;
-  sp = inv_name(obj, true);
+  sp = obj->inv_name(true);
   set_current_armor(obj);
   msg("you are now wearing %s", sp);
 }
@@ -116,7 +116,7 @@ void take_off()
   }
   if (!can_drop(get_current_armor())) return;
   set_current_armor(NULL);
-  msg("you used to be wearing %c) %s", pack_char(obj), inv_name(obj, true));
+  msg("you used to be wearing %c) %s", pack_char(obj), obj->inv_name(true));
 }
 
 //waste_time: Do nothing but let other things happen
@@ -126,13 +126,12 @@ void waste_time()
   do_fuses();
 }
 
-const char* get_inv_name_armor(Item* obj)
+const char* Item::get_inv_name_armor()
 {
   char *pb = prbuf;
-  int which = obj->which;
 
-  if (obj->is_known() || game->hero().is_wizard())
-    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-obj->get_armor_class(), 0, (char)ARMOR), get_armor_name(which), -(obj->get_armor_class()-11));
+  if (is_known() || game->hero().is_wizard())
+    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-get_armor_class(), 0, (char)ARMOR), get_armor_name(which), -(get_armor_class()-11));
   else
     sprintf(pb, "%s", get_armor_name(which));
 

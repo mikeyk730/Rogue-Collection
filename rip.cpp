@@ -372,7 +372,7 @@ void total_winner()
     }
     if (worth<0) worth = 0;
     game->screen().move(c-'a'+1, 0);
-    game->screen().printw("%c) %5d  %s", c, worth, inv_name(obj, false));
+    game->screen().printw("%c) %5d  %s", c, worth, obj->inv_name(false));
     game->hero().adjust_purse(worth);
   }
   game->screen().move(c-'a'+1, 0);

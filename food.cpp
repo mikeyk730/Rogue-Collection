@@ -50,20 +50,19 @@ void eat()
     msg("You feel bloated and fall asleep");
 }
 
-const char* get_inv_name_food(Item* obj)
+const char* Item::get_inv_name_food()
 {
     std::string fruit = game->get_environment("fruit");
 
     char *pb = prbuf;
-    int which = obj->which;
 
     if (which == 1)
-    if (obj->count == 1)
+    if (this->count == 1)
         sprintf(pb, "A%s %s", vowelstr(fruit.c_str()), fruit.c_str());
-    else sprintf(pb, "%d %ss", obj->count, fruit.c_str());
-    else if (obj->count == 1)
+    else sprintf(pb, "%d %ss", this->count, fruit.c_str());
+    else if (this->count == 1)
         strcpy(pb, "Some food");
-    else sprintf(pb, "%d rations of food", obj->count);
+    else sprintf(pb, "%d rations of food", this->count);
 
     return prbuf;
 }

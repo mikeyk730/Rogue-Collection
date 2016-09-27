@@ -74,7 +74,7 @@ void whatis()
     if (obj->is_vorpalized())
         obj->set_revealed();
 
-    msg(inv_name(obj, false));
+    msg(obj->inv_name(false));
 }
 
 int get_which(int type, int limit)
@@ -193,6 +193,17 @@ void show_map(bool show_monsters)
   }
   show_win("---More (level map)---");
   game->screen().wrestor();
+}
+
+void debug_screen()
+{
+    for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
+    {
+        Item* item = *it;
+        std::string inv = item->inv_name(false);
+        add_line("", inv.c_str(), "");
+    }
+    end_line("");
 }
 
 int get_num(short *place)

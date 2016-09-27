@@ -405,23 +405,29 @@ void str_attr(char *str)
 //key_state:
 void SIG2()
 {
-  static bool numl, capsl;
+  static bool numl = false, capsl = false, scrl = false;
   static int nspot, cspot, tspot;
   bool num_lock_on = is_num_lock_on(),
     caps_lock_on = is_caps_lock_on(),
     scroll_lock_on = is_scroll_lock_on();
   static int bighand, littlehand;
   int showtime = false, spare;
-  int x, y;
 
   const int COLS = game->screen().columns();
   const int LINES = game->screen().lines();
 
-  if (COLS == 40) { nspot = 10; cspot = 19; tspot = 35; }
-  else { nspot = 20; cspot = 39; tspot = 75; }
+  if (COLS == 40) { 
+      nspot = 10;
+      cspot = 19;
+      tspot = 35;
+  }
+  else {
+      nspot = 20;
+      cspot = 39; 
+      tspot = 75; 
+  }
 
-  game->screen().getrc(&x, &y);
-  if (game->allow_fast_play()) {
+  if (game->allow_fast_play() && scrl != scroll_lock_on) {
       if (game->modifiers.scroll_lock() != scroll_lock_on)
       {
           game->modifiers.m_fast_play_enabled = scroll_lock_on;
@@ -430,6 +436,7 @@ void SIG2()
           game->modifiers.m_running = false;
       }
 
+      scrl = scroll_lock_on;
       game->screen().move(LINES - 1, 0);
       if (game->modifiers.scroll_lock()) {
           game->screen().bold();
@@ -474,7 +481,6 @@ void SIG2()
     game->screen().printw("%2d:%1d%1d", bighand ? bighand : 12, littlehand / 10, spare);
     game->screen().standend();
   }
-  game->screen().move(x, y);
 }
 
 char *noterse(char *str)

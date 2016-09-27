@@ -52,29 +52,29 @@ void init_things()
 }
 
 //inv_name: Return the name of something as it would appear in an inventory.
-char *inv_name(Item *obj, bool drop)
+char * Item::inv_name(bool lowercase)
 {
   char *pb = prbuf;
-  switch (obj->type)
+  switch (this->type)
   {
 
   case SCROLL:
   case POTION:
   case STICK:
   case RING:
-    game->item_class(obj->type).get_inventory_name(obj);
+    game->item_class(this->type).get_inventory_name(this);
     break;
 
   case FOOD:
-    get_inv_name_food(obj);
+    this->get_inv_name_food();
     break;
 
   case WEAPON:
-    obj->get_inv_name_weapon();
+    this->get_inv_name_weapon();
     break;
 
   case ARMOR:
-    get_inv_name_armor(obj);
+    this->get_inv_name_armor();
     break;
 
   case AMULET:
@@ -85,28 +85,31 @@ char *inv_name(Item *obj, bool drop)
 #ifdef DEBUG
 
   case GOLD:
-    sprintf(pb, "Gold at %d,%d", obj->pos.y, obj->pos.x);
+    sprintf(pb, "%d gold", get_gold_value());
     break;
 
   default:
-    debug("Picked up someting bizarre %s", unctrl(obj->type));
-    sprintf(pb, "Something bizarre %c(%d)", obj->type, obj->type);
+    debug("Picked up someting bizarre %s", unctrl(this->type));
+    sprintf(pb, "Something bizarre %c(%d)", this->type, this->type);
     break;
 
 #endif
   }
-  if (obj==get_current_armor()) 
+  if (this==get_current_armor()) 
     strcat(pb, " (being worn)");
-  if (obj==get_current_weapon()) 
+  if (this==get_current_weapon()) 
     strcat(pb, " (weapon in hand)");
-  if (obj==get_ring(LEFT)) 
+  if (this==get_ring(LEFT)) 
     strcat(pb, " (on left hand)");
-  else if (obj==get_ring(RIGHT))
+  else if (this==get_ring(RIGHT))
     strcat(pb, " (on right hand)");
-  if (drop && isupper(prbuf[0])) 
+
+  //todo: what is this?
+  if (lowercase && isupper(prbuf[0]))
     prbuf[0] = tolower(prbuf[0]);
-  else if (!drop && islower(*prbuf)) 
+  else if (!lowercase && islower(*prbuf)) 
     *prbuf = toupper(*prbuf);
+
   return prbuf;
 }
 
@@ -142,7 +145,7 @@ void drop()
   game->level().items.push_front(op);
   op->pos = game->hero().pos;
   game->level().set_tile(op->pos, op->type);
-  msg("dropped %s", inv_name(op, true));
+  msg("dropped %s", op->inv_name(true));
 }
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
@@ -253,13 +256,6 @@ int pick_one(struct MagicItem *magic, int nitems)
     magic = start;
   }
   return magic-start;
-}
-
-void debug_screen()
-{
-  add_line(0, "hey", 0);
-  add_line("", "mike", 0);
-  end_line("");
 }
 
 //discovered: list what the player has discovered in this game of a certain type

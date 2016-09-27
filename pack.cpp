@@ -199,7 +199,7 @@ picked_up:
   }
   //Notify the user
   if (!silent) 
-      msg("%s%s (%c)", noterse("you now have "), inv_name(obj, true), pack_char(obj));
+      msg("%s%s (%c)", noterse("you now have "), obj->inv_name(true), pack_char(obj));
 }
 
 //inventory: List what is in the pack
@@ -221,7 +221,7 @@ int inventory(std::list<Item *>& list, int type, char *lstr)
         continue;
     n_objs++;
     sprintf(inv_temp, "%c) %%s", ch);
-    add_line(lstr, inv_temp, inv_name(item, false));
+    add_line(lstr, inv_temp, item->inv_name(false));
   }
   if (n_objs==0)
   {

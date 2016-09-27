@@ -143,7 +143,7 @@ const char *short_name(Item *obj)
   case WEAPON: return get_weapon_name(obj->which);
   case ARMOR: return get_armor_name(obj->which);
   case FOOD: return "food";
-  case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(inv_name(obj, true), ' ')+1;
+  case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(obj->inv_name(true), ' ')+1;
   default: return "bizzare thing";
   }
 }
@@ -246,7 +246,7 @@ void Hero::wield()
     return;
   }
 
-  sp = inv_name(obj, true);
+  sp = obj->inv_name(true);
   set_current_weapon(obj);
   ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
 }
@@ -279,7 +279,6 @@ int fallpos(Item *obj, Coord *newpos)
 const char* Item::get_inv_name_weapon() const
 {
   char *pb = prbuf;
-  int which = this->which;
 
   if (this->count>1) 
     sprintf(pb, "%d ", this->count);

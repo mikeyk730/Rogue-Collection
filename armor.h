@@ -11,7 +11,6 @@ struct Armor : public Item
 
 int get_default_class(int type);
 Item* create_armor();
-const char* get_inv_name_armor(Item* armor);
 
 const char* get_armor_name(int type);
 
