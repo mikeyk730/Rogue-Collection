@@ -193,7 +193,7 @@ void Item::initialize_weapon(byte type)
     init_weps* defaults = &init_dam[type];
     this->damage = defaults->iw_dam;
     this->throw_damage = defaults->iw_hrl;
-    this->launcher = defaults->iw_launch;
+    this->m_launcher = defaults->iw_launch;
     this->flags = defaults->iw_flags;
     if (this->does_group()) {
         this->count = rnd(8) + 8;
@@ -336,9 +336,9 @@ std::string Item::get_damage() const
     return damage;
 }
 
-char Item::get_launcher() const
+char Item::launcher() const
 {
-    return launcher;
+    return m_launcher;
 }
 
 Room * Item::get_room()

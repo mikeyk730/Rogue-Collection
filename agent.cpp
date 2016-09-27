@@ -2,6 +2,14 @@
 #include "rings.h"
 #include "pack.h"
 
+void Agent::calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
+    int* hit_plus, std::string* damage_string, int* damage_plus)
+{
+    *damage_string = stats.damage;
+    *hit_plus = 0;
+    *damage_plus = 0;
+}
+
 int Agent::calculate_armor() const
 {
     return stats.ac;

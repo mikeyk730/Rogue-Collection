@@ -363,51 +363,7 @@ bool Agent::roll_attack(Agent *the_defender, Item *weapon, bool hurl)
   struct Agent::Stats *attacker_stats = &this->stats;
   struct Agent::Stats *defender_stats = &the_defender->stats;
 
-  if (weapon==NULL) {
-      damage_string = attacker_stats->damage;
-      dplus = 0; 
-      hplus = 0;
-  }
-  else
-  {
-    hplus = weapon->get_hit_plus();
-    dplus = weapon->get_damage_plus();
-
-    //Check for vorpally enchanted weapon
-    if (weapon->is_vorpalized_against(the_defender)) {
-        hplus += 4; 
-        dplus += 4;
-    }
-
-    if (weapon==get_current_weapon())
-    {
-      if (is_ring_on_hand(LEFT, R_ADDDAM))
-          dplus += get_ring(LEFT)->get_ring_level();
-      else if (is_ring_on_hand(LEFT, R_ADDHIT)) 
-          hplus += get_ring(LEFT)->get_ring_level();
-      if (is_ring_on_hand(RIGHT, R_ADDDAM)) 
-          dplus += get_ring(RIGHT)->get_ring_level();
-      else if (is_ring_on_hand(RIGHT, R_ADDHIT))
-        hplus += get_ring(RIGHT)->get_ring_level();
-    }
-    damage_string = weapon->get_damage();
-
-    //if we've used the right weapon to launch the projectile, we get benefits
-    if (hurl && weapon->is_projectile() && get_current_weapon() && get_current_weapon()->which == weapon->get_launcher())
-    {
-      damage_string = weapon->get_throw_damage();
-      hplus += get_current_weapon()->get_hit_plus();
-      dplus += get_current_weapon()->get_damage_plus();
-    }
-
-    //Drain a staff of striking
-    if (weapon->type == STICK && weapon->which == WS_HIT)
-    {
-        if (weapon->get_charges() == 0)
-            damage_string = "0d0";
-        weapon->drain_striking();
-    }
-  }
+  calculate_roll_stats(the_defender, weapon, hurl, &hplus, &damage_string, &dplus);
 
   //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
   if (!the_defender->is_running()) 

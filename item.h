@@ -88,7 +88,7 @@ public:
     int which;                     //Which object of a type it is
     int count;                     //Count for plural objects
 protected:
-    char launcher;                 //What you need to launch it
+    char m_launcher;                 //What you need to launch it
     char *damage;                  //Damage if used like sword
     char *throw_damage;            //Damage if thrown
     int hit_plus;                  //Plusses to hit
@@ -155,7 +155,7 @@ public:
     const char* get_vorpalized_name() const;
     std::string get_throw_damage() const;
     std::string get_damage() const;
-    char get_launcher() const;
+    char launcher() const;
 
     Room* get_room();
 };

@@ -26,6 +26,60 @@ Hero::Hero()
     init_player();
 }
 
+void Hero::calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
+    int* hit_plus, std::string* damage_string, int* damage_plus)
+{
+    if (weapon == NULL) {
+        *damage_string = stats.damage;
+        *damage_plus = 0;
+        *hit_plus = 0;
+        return;
+    }
+
+    *damage_string = weapon->get_damage();
+    *hit_plus = weapon->get_hit_plus();
+    *damage_plus = weapon->get_damage_plus();
+
+    //vorpally enchanted weapon adds +4,+4 against target
+    if (weapon->is_vorpalized_against(the_defender)) {
+        *hit_plus += 4;
+        *damage_plus += 4;
+    }
+
+    Item* current_weapon = get_current_weapon();
+    if (weapon == current_weapon)
+    {
+        //rings can boost the wielded weapon
+        if (is_ring_on_hand(LEFT, R_ADDDAM))
+            *damage_plus += get_ring(LEFT)->get_ring_level();
+        else if (is_ring_on_hand(LEFT, R_ADDHIT))
+            *hit_plus += get_ring(LEFT)->get_ring_level();
+
+        if (is_ring_on_hand(RIGHT, R_ADDDAM))
+            *damage_plus += get_ring(RIGHT)->get_ring_level();
+        else if (is_ring_on_hand(RIGHT, R_ADDHIT))
+            *hit_plus += get_ring(RIGHT)->get_ring_level();
+
+
+        //if we've used the right weapon to launch the projectile, we get benefits
+        if (hurl && weapon->is_projectile() && weapon->launcher() == current_weapon->which)
+        {
+            *damage_string = weapon->get_throw_damage();
+            *hit_plus += current_weapon->get_hit_plus();
+            *damage_plus += current_weapon->get_damage_plus();
+        }
+    }
+
+    //Drain a staff of striking
+    if (weapon->type == STICK && weapon->which == WS_HIT)
+    {
+        if (weapon->get_charges() == 0) {
+            *damage_string = "0d0";
+        }
+        weapon->drain_striking();
+    }
+}
+
 int Hero::calculate_armor() const
 {
     int armor = stats.ac;

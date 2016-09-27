@@ -316,7 +316,7 @@ struct MagicMissile : public Item
         flags = IS_MISL;
 
         if (get_current_weapon() != NULL)
-            launcher = get_current_weapon()->which;
+            m_launcher = get_current_weapon()->which;
     }
     virtual Item* Clone() const { return new MagicMissile(*this); }
 };
