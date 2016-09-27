@@ -10,7 +10,6 @@ bool in_brief_mode();
 void ifterse(const char *tfmt, const char *fmt, ...);
 
 void msg(const char *fmt, ...);
-void unsaved_msg(const char *fmt, ...);
 
 //addmsg: Add things to the current message
 void addmsg(const char *fmt, ...);

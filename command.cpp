@@ -186,6 +186,9 @@ int read_command()
 
 void show_count()
 {
+    const int COLS = game->screen().columns();
+    const int LINES = game->screen().lines();
+
     game->screen().move(LINES - 2, COLS - 4);
     if (repeat_cmd_count > 0)
         game->screen().printw("%-4d", repeat_cmd_count);

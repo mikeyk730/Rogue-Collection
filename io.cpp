@@ -41,7 +41,7 @@ bool short_msgs()
   return in_small_screen_mode() || in_brief_mode();
 }
 
-void set_small_screen_mode(bool enable)
+void set_small_screen_mode(bool enable) //todo:todo
 {
   terse = enable;
 }
@@ -121,6 +121,7 @@ void more(const char *msg)
   char mbuf[80];
   int morethere = true;
   int covered = false;
+  const int COLS = game->screen().columns();
 
   msz = strlen(msg);
   game->screen().getrc(&x,&y);
@@ -160,6 +161,7 @@ void doadd(char *format, ...)
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
 void putmsg(int msgline, const char *msg)
 {
+  const int COLS = game->screen().columns();
   const char *curmsg, *lastmsg=0, *tmpmsg;
   int curlen;
 
@@ -187,6 +189,7 @@ void putmsg(int msgline, const char *msg)
 //scrl: scroll a message across the line
 void scrl(int msgline, const char *str1, const char *str2)
 {
+  const int COLS = game->screen().columns();
   char *fmt;
 
   if (COLS>40) fmt = "%.80s"; else fmt = "%.40s";
@@ -223,6 +226,8 @@ void status()
     static int s_level, s_pur = -1, s_hp;
     static int s_elvl = 0;
     static char *state_name[] = { "      ", "Hungry", "Weak", "Faint", "?" };
+
+    const int COLS = game->screen().columns();
 
     SIG2();
     game->screen().getrc(&oy, &ox);
@@ -408,6 +413,9 @@ void SIG2()
   static int bighand, littlehand;
   int showtime = false, spare;
   int x, y;
+
+  const int COLS = game->screen().columns();
+  const int LINES = game->screen().lines();
 
   if (COLS == 40) { nspot = 10; cspot = 19; tspot = 35; }
   else { nspot = 20; cspot = 39; tspot = 75; }

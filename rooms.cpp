@@ -44,6 +44,7 @@ void do_rooms()
   endline = maxrow+1;
   old_lev = get_level();
   //bsze is the maximum room size
+  const int COLS = game->screen().columns();
   bsze.x = COLS/3;
   bsze.y = endline/3;
   //Clear things for a new level

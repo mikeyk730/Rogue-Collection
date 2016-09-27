@@ -55,8 +55,8 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    //replay = false;
-    std::ifstream in("test_esc.sav", std::ios::binary | std::ios::in);
+    replay = false;
+    std::ifstream in("40.sav", std::ios::binary | std::ios::in);
     game = replay ? new GameState(g_random, in) : new GameState(seed);
 
     //game->hero().invunerable = true;
@@ -180,6 +180,7 @@ void quit()
 //leave: Leave quickly, but courteously
 void leave()
 {
+  const int LINES = game->screen().lines();
   look(false);
   game->screen().move(LINES-1, 0);
   game->screen().clrtoeol();

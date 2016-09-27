@@ -182,6 +182,7 @@ void show_map(bool show_monsters)
 
   game->screen().wdump();
   game->screen().clear();
+  const int COLS = game->screen().columns();
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
     if (!(real = game->level().get_flags({x, y})&F_REAL))

@@ -59,6 +59,7 @@ void look(bool wakeup)
   int passcount = 0;
   byte pfl, fp;
   int sy, sx, sumhero, diffhero;
+  const int COLS = game->screen().columns();
 
   room = game->hero().room;
   pfl = game->level().get_flags(game->hero().pos);
@@ -409,7 +410,8 @@ int equal(Coord a, Coord b)
 
 int offmap(Coord p)
 {
-  return (p.y<1 || p.y>=maxrow || p.x<0 || p.x>=COLS);
+    const int COLS = game->screen().columns();
+    return (p.y < 1 || p.y >= maxrow || p.x < 0 || p.x >= COLS);
 }
 
 //search: Player gropes about him to find hidden things.

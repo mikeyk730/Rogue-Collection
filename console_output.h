@@ -43,7 +43,7 @@ struct ConsoleOutput : public OutputInterface
     //Some general drawing routines
     virtual void box(int ul_r, int ul_c, int lr_r, int lr_c);
 
-    virtual void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
+    virtual void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
     //center a string according to how many columns there really are
     virtual void center(int row, const char *string);
@@ -77,4 +77,21 @@ struct ConsoleOutput : public OutputInterface
     virtual char curch();
 
     virtual void mvaddch(Coord p, byte c);
+
+    virtual int lines() const;
+    virtual int columns() const;
+
+private:
+    //screen size
+    short LINES = 25;
+    short COLS = 80;
+
+    int ch_attr = 0x7;
+    
+    //points to either color or monochrom attribute table
+    const byte *at_table;
+
+    //cursor position
+    short c_row;
+    short c_col;
 };

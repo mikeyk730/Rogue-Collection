@@ -259,6 +259,7 @@ void add_door(struct Room *rm, Coord *cp)
 void add_pass()
 {
     int y, x, ch;
+    const int COLS = game->screen().columns();
 
     for (y = 1; y < maxrow; y++)
         for (x = 0; x < COLS; x++)

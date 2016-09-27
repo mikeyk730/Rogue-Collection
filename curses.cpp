@@ -21,64 +21,59 @@
 #define BX_HT               5
 #define BX_HB               6
 
-short LINES = 25, COLS = 0;
-int ch_attr = 0x7;
-
 #define MAXATTR  17
 
-byte color_attr[] =
+namespace 
 {
-  7, // 0 normal
-  2, // 1 green
-  3, // 2 cyan
-  4, // 3 red
-  5, // 4 magenta
-  6, // 5 brown
-  8, // 6 dark grey
-  9, // 7 light blue
-  10, // 8 light green
-  12, // 9 light red
-  13, //10 light magenta
-  14, //11 yellow
-  15, //12 uline
-  1, //13 blue
-  112, //14 reverse
-  15, //15 high intensity
-  112, //16 bold
-  0  //no more
-};
+    const byte color_attr[] =
+    {
+      7, // 0 normal
+      2, // 1 green
+      3, // 2 cyan
+      4, // 3 red
+      5, // 4 magenta
+      6, // 5 brown
+      8, // 6 dark grey
+      9, // 7 light blue
+      10, // 8 light green
+      12, // 9 light red
+      13, //10 light magenta
+      14, //11 yellow
+      15, //12 uline
+      1, //13 blue
+      112, //14 reverse
+      15, //15 high intensity
+      112, //16 bold
+      0  //no more
+    };
 
-byte monoc_attr[] =
-{
-  7, // 0 normal
-  7, // 1 green
-  7, // 2 cyan
-  7, // 3 red
-  7, // 4 magenta
-  7, // 5 brown
-  7, // 6 dark grey
-  7, // 7 light blue
-  7, // 8 light green
-  7, // 9 light red
-  7, //10 light magenta
-  7, //11 yellow
-  17, //12 uline
-  7, //13 blue
-  120, //14 reverse
-  7, //15 white/hight
-  120, //16 bold
-  0  //no more
-};
+    const byte monoc_attr[] =
+    {
+      7, // 0 normal
+      7, // 1 green
+      7, // 2 cyan
+      7, // 3 red
+      7, // 4 magenta
+      7, // 5 brown
+      7, // 6 dark grey
+      7, // 7 light blue
+      7, // 8 light green
+      7, // 9 light red
+      7, //10 light magenta
+      7, //11 yellow
+      17, //12 uline
+      7, //13 blue
+      120, //14 reverse
+      7, //15 white/hight
+      120, //16 bold
+      0  //no more
+    };
 
-byte *at_table;
-
-short c_row, c_col; //Save cursor positions so we don't ask dos
-
-byte dbl_box[BX_SIZE] = { 0xc9, 0xbb, 0xc8, 0xbc, 0xba, 0xcd, 0xcd };
-byte sng_box[BX_SIZE] = { 0xda, 0xbf, 0xc0, 0xd9, 0xb3, 0xc4, 0xc4 };
-byte fat_box[BX_SIZE] = { 0xdb, 0xdb, 0xdb, 0xdb, 0xdb, 0xdf, 0xdc };
-byte spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-
+    const byte const dbl_box[BX_SIZE] = { 0xc9, 0xbb, 0xc8, 0xbc, 0xba, 0xcd, 0xcd };
+    const byte const sng_box[BX_SIZE] = { 0xda, 0xbf, 0xc0, 0xd9, 0xb3, 0xc4, 0xc4 };
+    const byte const fat_box[BX_SIZE] = { 0xdb, 0xdb, 0xdb, 0xdb, 0xdb, 0xdf, 0xdc };
+    const byte const spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+}
 
 void ConsoleOutput::putchr(int c, int attr)
 {
@@ -272,7 +267,7 @@ void ConsoleOutput::box(int ul_r, int ul_c, int lr_r, int lr_c)
 }
 
 //box: draw a box given the upper left coordinate and the lower right
-void ConsoleOutput::vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
+void ConsoleOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
     int i;
     bool wason;
@@ -424,4 +419,14 @@ char ConsoleOutput::curch()
 void ConsoleOutput::mvaddch(Coord p, byte c)
 {
     mvaddch(p.y, p.x, c);
+}
+
+int ConsoleOutput::lines() const
+{
+    return LINES;
+}
+
+int ConsoleOutput::columns() const
+{
+    return COLS;
 }

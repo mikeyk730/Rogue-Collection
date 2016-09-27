@@ -135,6 +135,7 @@ void read_magic_mapping()
   game->scrolls().discover(S_MAP);
   msg("oh, now this scroll has a map on it");
   //Take all the things we want to keep hidden out of the window
+  const int COLS = game->screen().columns();
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
     switch (ch = game->level().get_tile({x, y}))
@@ -170,6 +171,7 @@ void read_hold_monster()
   int x, y;
   Agent* monster;
 
+  const int COLS = game->screen().columns();
   for (x = game->hero().pos.x-3; x<=game->hero().pos.x+3; x++) {
     if (x>=0 && x<COLS) {
       for (y = game->hero().pos.y-3; y<=game->hero().pos.y+3; y++) {

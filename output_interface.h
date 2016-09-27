@@ -45,7 +45,7 @@ struct OutputInterface
     //Some general drawing routines
     virtual void box(int ul_r, int ul_c, int lr_r, int lr_c) = 0;
 
-    virtual void vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c) = 0;
+    virtual void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c) = 0;
 
     //center a string according to how many columns there really are
     virtual void center(int row, const char *string) = 0;
@@ -79,4 +79,7 @@ struct OutputInterface
     virtual char curch() = 0;
 
     virtual void mvaddch(Coord p, byte c) = 0;
+
+    virtual int lines() const = 0;
+    virtual int columns() const = 0;
  };

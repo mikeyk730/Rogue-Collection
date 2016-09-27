@@ -172,7 +172,6 @@ extern Coord delta, oldpos;
 extern struct Room *oldrp;
 
 extern int maxrow;
-extern short LINES, COLS;
 extern bool invalid_position;
 
 extern bool counts_as_turn, again;

@@ -61,6 +61,7 @@ void score(int amount, int flags, char monst)
     struct LeaderboardEntry his_score, top_ten[TOPSCORES];
     int rank = 0;
     char response = ' ';
+    const int LINES = game->screen().lines();
 
     if (amount || flags || monst)
     {
@@ -140,6 +141,8 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
   char dthstr[30];
   char *altmsg;
 
+  const int COLS = game->screen().columns();
+
   game->screen().clear();
   game->screen().high();
   game->screen().mvaddstr(0, 0, "Guildmaster's Hall Of Fame:");
@@ -210,6 +213,9 @@ int add_scores(struct LeaderboardEntry *newscore, struct LeaderboardEntry *oldli
 //death: Do something really fun when he dies
 void death(char monst)
 {
+  const int COLS = game->screen().columns();
+  const int LINES = game->screen().lines();
+
   char *killer;
   char buf[MAXSTR];
 
@@ -251,6 +257,7 @@ void total_winner()
   int worth;
   byte c = 'a';
   int oldpurse;
+  const int LINES = game->screen().lines();
 
   game->screen().clear();
 

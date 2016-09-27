@@ -322,6 +322,7 @@ int add_line(const char *use, const char *fmt, const char *arg)
 {
   int x, y;
   int retchar = ' ';
+  const int LINES = game->screen().lines();
 
   if (line_cnt==0) {
       game->screen().wdump(); 

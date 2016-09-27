@@ -91,6 +91,7 @@ int is_direction_key(int key)
 void setup()
 {
   set_small_screen_mode(false);
+  const int COLS = game->screen().columns();
   maxrow = 23;
   if (COLS==40) {
     maxrow = 22; 
@@ -112,6 +113,8 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
 
 void credits()
 {
+  const int COLS = game->screen().columns();
+  const int LINES = game->screen().lines();
   char tname[25];
 
   SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);

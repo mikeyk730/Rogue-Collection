@@ -10,6 +10,7 @@
 #include "level.h"
 #include "room.h"
 #include "game_state.h"
+#include "output_interface.h"
 
 #define MAXFRNT  100
 #define FRONTIER  'F'
@@ -136,5 +137,6 @@ void splat(Coord p)
 
 int inrange(Coord p)
 {
-  return (p.y>=topy && p.y<MAXY && p.x>=topx && p.x<MAXX);
+    const int COLS = game->screen().columns();
+    return (p.y >= topy && p.y < MAXY && p.x >= topx && p.x < MAXX);
 }

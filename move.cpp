@@ -47,6 +47,7 @@ bool is_gone(Room* rp)
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
 void do_move(int dy, int dx)
 {
+  const int COLS = game->screen().columns();
   byte ch;
   int fl;
 
@@ -204,6 +205,7 @@ void door_open(struct Room *room)
 int be_trapped(Coord *tc)
 {
   byte tr;
+  const int COLS = game->screen().columns();
 
   repeat_cmd_count = game->modifiers.m_running = false;
   game->level().set_tile(*tc, TRAP);
@@ -296,6 +298,7 @@ void rndmove(Agent *who, Coord *newmv)
   int x, y;
   byte ch;
   Item *obj;
+  const int COLS = game->screen().columns();
 
   y = newmv->y = who->pos.y+rnd(3)-1;
   x = newmv->x = who->pos.x+rnd(3)-1;
