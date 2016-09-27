@@ -354,46 +354,42 @@ void check_level()
 //roll_attack: Roll several attacks
 bool Agent::roll_attack(Agent *the_defender, Item *weapon, bool hurl)
 {
-  std::string damage_string;
-  int ndice, nsides;
-  bool did_hit = false;
-  int hplus;
-  int dplus;
-  int damage;
-  struct Agent::Stats *attacker_stats = &this->stats;
-  struct Agent::Stats *defender_stats = &the_defender->stats;
+    std::string damage_string;
+    int hplus;
+    int dplus;
+    calculate_roll_stats(the_defender, weapon, hurl, &hplus, &damage_string, &dplus);
 
-  calculate_roll_stats(the_defender, weapon, hurl, &hplus, &damage_string, &dplus);
+    //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
+    if (!the_defender->is_running())
+        hplus += 4;
 
-  //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
-  if (!the_defender->is_running()) 
-      hplus += 4;
+    int defender_armor = the_defender->calculate_armor();
 
-  int defender_armor = the_defender->calculate_armor();
-  
-  const char* cp = damage_string.c_str();
-  for (;;)
-  {
-    ndice = atoi(cp);
-    if ((cp = strchr(cp, 'd'))==NULL) break;
-    nsides = atoi(++cp);
-    if (swing(attacker_stats->level, defender_armor, hplus+str_plus(calculate_strength())))
+    bool did_hit = false;
+    const char* cp = damage_string.c_str();
+    for (;;)
     {
-      int proll;
+        int ndice = atoi(cp);
+        if ((cp = strchr(cp, 'd')) == NULL) 
+            break;
+        int nsides = atoi(++cp);
+        if (swing(stats.level, defender_armor, hplus + str_plus(calculate_strength())))
+        {
+            int proll;
 
-      proll = roll(ndice, nsides);
-      damage = dplus+proll+add_dam(calculate_strength());
-      //special goodies for the commercial version of rogue
-      //make it easier on level one
-      if (the_defender==&game->hero() && max_level()==1)
-          damage = (damage+1)/2;
-      the_defender->decrease_hp(max(0, damage), true);
-      did_hit = true;
+            proll = roll(ndice, nsides);
+            int damage = dplus + proll + add_dam(calculate_strength());
+            //special goodies for the commercial version of rogue
+            //make it easier on level one
+            if (the_defender == &game->hero() && max_level() == 1)
+                damage = (damage + 1) / 2;
+            the_defender->decrease_hp(max(0, damage), true);
+            did_hit = true;
+        }
+        if ((cp = strchr(cp, '/')) == NULL) break;
+        cp++;
     }
-    if ((cp = strchr(cp, '/'))==NULL) break;
-    cp++;
-  }
-  return did_hit;
+    return did_hit;
 }
 
 //prname: The print name of a combatant
@@ -532,13 +528,16 @@ void remove_monster(Agent *monster, bool waskill)
 //is_magic: Returns true if an object radiates magic
 bool is_magic(Item *obj)
 {
-  switch (obj->type)
-  {
-  case ARMOR: return obj->get_armor_class()!=get_default_class(obj->which);
-  case WEAPON: return obj->get_hit_plus() !=0 || obj->get_damage_plus() !=0;
-  case POTION: case SCROLL: case STICK: case RING: case AMULET: return true;
-  }
-  return false;
+    switch (obj->type)
+    {
+    case ARMOR:
+        return obj->get_armor_class() != get_default_class(obj->which);
+    case WEAPON:
+        return obj->get_hit_plus() != 0 || obj->get_damage_plus() != 0;
+    case POTION: case SCROLL: case STICK: case RING: case AMULET:
+        return true;
+    }
+    return false;
 }
 
 //killed: Called to put a monster to death
