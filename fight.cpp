@@ -190,7 +190,7 @@ bool nymph_attack(Agent* mp)
         Item* obj = *it;
         if (obj != get_current_armor() && obj != get_current_weapon() &&
             obj != get_ring(LEFT) && obj != get_ring(RIGHT) &&
-            is_magic(obj) && rnd(++nobj) == 0)
+            obj->is_magic() && rnd(++nobj) == 0)
             item = obj;
     }
     if (item == NULL)
@@ -495,14 +495,14 @@ void remove_monster(Agent *monster, bool waskill)
 }
 
 //is_magic: Returns true if an object radiates magic
-bool is_magic(Item *obj)
+bool Item::is_magic()
 {
-    switch (obj->type)
+    switch (type)
     {
     case ARMOR:
-        return obj->get_armor_class() != get_default_class(obj->which);
+        return get_armor_class() != get_default_class(which);
     case WEAPON:
-        return obj->get_hit_plus() != 0 || obj->get_damage_plus() != 0;
+        return get_hit_plus() != 0 || get_damage_plus() != 0;
     case POTION: case SCROLL: case STICK: case RING: case AMULET:
         return true;
     }

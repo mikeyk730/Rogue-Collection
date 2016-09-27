@@ -187,46 +187,46 @@ void quaff_monster_detection()
 
 void quaff_magic_detection()
 {
-  //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
-  //Also give hints as to whether he would want to use the object.
-  if (!game->level().items.empty())
-  {
-    Agent *monster;
-    bool show;
+    //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
+    //Also give hints as to whether he would want to use the object.
+    bool discovered = false;
 
-    show = false;
-    for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
+    for (auto i = game->level().items.begin(); i != game->level().items.end(); ++i)
     {
-      Item* item = *it;
-      if (is_magic(item))
-      {
-        show = true;
-        game->screen().mvaddch(item->pos, goodch(item));
-        game->potions().discover(P_TFIND);
-      }
-    }
-    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
-        monster = *it;
-      for (auto it = monster->pack.begin(); it != monster->pack.end(); ++it)
-      {
-        if (is_magic(*it))
+        Item* item = *i;
+        if (item->is_magic())
         {
-          show = true;
-          game->screen().mvaddch(monster->pos, MAGIC);
-          game->potions().discover(P_TFIND);
+            discovered = true;
+            game->screen().mvaddch(item->pos, goodch(item));
         }
-      }
     }
-    if (show) {msg("You sense the presence of magic."); return;}
-  }
-  msg("you have a strange feeling for a moment%s.", noterse(", then it passes"));
+    for (auto m = game->level().monsters.begin(); m != game->level().monsters.end(); ++m) {
+        Agent* monster = *m;
+        for (auto i = monster->pack.begin(); i != monster->pack.end(); ++i)
+        {
+            Item* item = *i;
+            if (item->is_magic())
+            {
+                discovered = true;
+                game->screen().mvaddch(monster->pos, MAGIC);
+            }
+        }
+    }
+
+    if (discovered) {
+        game->potions().discover(P_TFIND);
+        msg("You sense the presence of magic.");
+    }
+    else {
+        msg("you have a strange feeling for a moment%s.", noterse(", then it passes"));
+    }
 }
 
 void quaff_raise_level()
 {
-  game->potions().discover(P_RAISE);
-  msg("you suddenly feel much more skillful");
-  game->hero().raise_level();
+    game->potions().discover(P_RAISE);
+    msg("you suddenly feel much more skillful");
+    game->hero().raise_level();
 }
 
 void quaff_extra_healing()

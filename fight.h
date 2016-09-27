@@ -31,8 +31,5 @@ void display_throw_msg(Item *weapon, const char *mname, char *does, char *did);
 //remove: Remove a monster from the screen
 void remove_monster(Agent *monster, bool waskill);
 
-//is_magic: Returns true if an object radiates magic
-bool is_magic(Item *obj);
-
 //killed: Called to put a monster to death
 void killed(Agent *monster, bool print);
