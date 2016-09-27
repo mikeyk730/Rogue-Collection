@@ -250,7 +250,7 @@ void ConsoleOutput::wdump()
     HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { 0, 0 };
-    SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + MAXCOLS - 1, m_origin.y + MAXLINES - 1 };
+    SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
     ReadConsoleOutput(hOutput, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
