@@ -21,6 +21,13 @@
 #include "daemons.h"
 #include "mach_dep.h"
 
+namespace
+{
+    // Each level is twice the previous
+    const long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240,
+        20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
+}
+
 Hero::Hero()
 {
     init_player();
@@ -151,6 +158,36 @@ bool Hero::is_wizard() const
 bool Hero::did_cheat() const
 {
   return m_cheated;
+}
+
+void Hero::eat(Item* obj)
+{
+    if (obj->type != FOOD) {
+        msg("ugh, you would get ill if you ate that");
+        return;
+    }
+
+    if (--obj->count < 1) {
+        pack.remove(obj);
+        if (obj == get_current_weapon())
+            set_current_weapon(NULL);
+        delete obj;
+    }
+    ingest();
+
+    if (obj->which == 1) {
+        msg("my, that was a yummy %s", game->get_environment("fruit").c_str());
+    }
+    else if (rnd(100) > 70) {
+        msg("yuk, this food tastes awful");
+        gain_experience(1);
+    }
+    else {
+        msg("yum, that tasted good");
+    }
+
+    if (game->sleep_timer)
+        msg("You feel bloated and fall asleep");
 }
 
 void Hero::ingest()
@@ -284,6 +321,54 @@ void Hero::teleport()
         else
             fuse(unconfuse, 0, rnd(4) + 2);
         set_confused(true);
+    }
+}
+
+//check_level: Check to see if the guy has gone up a level.
+void Hero::check_level()
+{
+    int i, add, olevel;
+
+    for (i = 0; e_levels[i] != 0; i++) 
+        if (e_levels[i] > experience()) 
+            break;
+    i++;
+    olevel = stats.level;
+    stats.level = i;
+    if (i > olevel)
+    {
+        add = roll(i - olevel, 10);
+        stats.max_hp += add;
+        increase_hp(add, false, false);
+        if (game->use_level_names())
+            msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
+        else
+            msg("Welcome to level %d", i);
+    }
+}
+
+//raise_level: The guy just magically went up a level.
+void Hero::raise_level()
+{
+    stats.m_exp = e_levels[stats.level - 1] + 1L;
+    check_level();
+}
+
+void Hero::gain_experience(int exp)
+{
+    Agent::gain_experience(exp);
+    check_level();
+}
+
+void Hero::reduce_level()
+{
+    --stats.level;
+    if (stats.level == 0) {
+        stats.m_exp = 0;
+        stats.level = 1;
+    }
+    else {
+        stats.m_exp = e_levels[stats.level - 1] + 1;
     }
 }
 

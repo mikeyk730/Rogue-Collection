@@ -38,10 +38,6 @@ char tbuf[MAXSTR];
 const char* it = "it";
 const char* you = "you";
 
-// Each level is twice the previous
-long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240, 
-  20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
-
 void do_hit(Item* weapon, int thrown, Agent* monster, const char* name)
 {
   bool did_huh = false;
@@ -225,14 +221,9 @@ bool vampire_wraith_attack(Agent* monster)
 
         if (monster->drains_exp())
         {
-            if (game->hero().stats.exp == 0) 
+            if (game->hero().experience() == 0)
                 death(monster->type); //All levels gone
-            if (--game->hero().stats.level == 0) { 
-                game->hero().stats.exp = 0; 
-                game->hero().stats.level = 1; 
-            }
-            else 
-                game->hero().stats.exp = e_levels[game->hero().stats.level - 1] + 1;
+            game->hero().reduce_level();
             damage = roll(1, 10);
         }
         else
@@ -242,6 +233,7 @@ bool vampire_wraith_attack(Agent* monster)
         if (game->hero().stats.max_hp < 1)
             death(monster->type);
         game->hero().decrease_hp(damage, false);
+
         msg("you suddenly feel weaker");
         return true;
     }
@@ -329,27 +321,6 @@ bool swing(int at_lvl, int op_arm, int wplus)
   int need = (20-at_lvl)-op_arm;
 
   return (res+wplus>=need);
-}
-
-//check_level: Check to see if the guy has gone up a level.
-void check_level()
-{
-  int i, add, olevel;
-
-  for (i = 0; e_levels[i]!=0; i++) if (e_levels[i]>game->hero().stats.exp) break;
-  i++;
-  olevel = game->hero().stats.level;
-  game->hero().stats.level = i;
-  if (i>olevel)
-  {
-    add = roll(i-olevel, 10);
-    game->hero().stats.max_hp += add;
-    game->hero().increase_hp(add, false, false);
-    if (use_level_names())
-        msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
-    else
-        msg("Welcome to level %d", i);
-  }
 }
 
 //roll_attack: Roll several attacks
@@ -484,13 +455,6 @@ int add_dam(unsigned int str)
   return add;
 }
 
-//raise_level: The guy just magically went up a level.
-void raise_level()
-{
-  game->hero().stats.exp = e_levels[game->hero().stats.level-1]+1L;
-  check_level();
-}
-
 //thunk: A projectile hit or missed a monster
 void display_throw_msg(Item *item, const char *name, char *does, char *did)
 {
@@ -548,28 +512,30 @@ bool is_magic(Item *obj)
 //killed: Called to put a monster to death
 void killed(Agent *monster, bool print)
 {
-    game->hero().stats.exp += monster->stats.exp;
-
     //If the monster was a flytrap, un-hold him
     if (monster->can_hold()) {
         game->hero().set_is_held(false);
     }
-    else if (monster->drops_gold()) {
+
+    if (monster->drops_gold()) {
         int value = rnd_gold();
         if (save(VS_MAGIC))
             value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();
         Item *gold = new Gold(value);
         monster->pack.push_front(gold);
     }
+
     if (print)
     {
         addmsg("you have defeated ");
         if (game->hero().is_blind())
             msg(it);
-        else msg("the %s", monster->get_monster_name());
+        else
+            msg("the %s", monster->get_monster_name());
     }
-    //Do adjustments if he went up a level
-    check_level();
+
+    game->hero().gain_experience(monster->experience());
+    
     //Get rid of the monster.
     remove_monster(monster, true);
 }

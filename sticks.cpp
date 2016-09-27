@@ -221,7 +221,7 @@ void zap_polymorph(Agent* monster, Coord p)
   if (game->hero().can_see_monster(monster)) 
     game->screen().mvaddch(p, game->level().get_tile(p));
 
-  Agent* new_monster = create_monster(rnd(26)+'A', &p, get_level());
+  Agent* new_monster = Agent::CreateMonster(rnd(26)+'A', &p, get_level());
   game->level().monsters.remove(new_monster);
 
   new_monster->oldch = monster->oldch;

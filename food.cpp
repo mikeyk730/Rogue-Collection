@@ -19,35 +19,12 @@ Item* create_food()
     return new Food(which);
 }
 
-//eat: She wants to eat something, so let her try
 void eat()
 {
-  Item *obj;
-
-  if ((obj = get_item("eat", FOOD))==NULL) 
-    return;
-  if (obj->type!=FOOD) {
-    msg("ugh, you would get ill if you ate that"); 
-    return;
-  }
-  if (--obj->count<1) {
-    game->hero().pack.remove(obj);
-    delete obj;
-  }
-  game->hero().ingest();
-  if (obj==get_current_weapon()) 
-    set_current_weapon(NULL);
-  if (obj->which==1)
-    msg("my, that was a yummy %s", game->get_environment("fruit").c_str());
-  else if (rnd(100)>70) {
-    game->hero().stats.exp++; 
-    msg("yuk, this food tastes awful");
-    check_level();
-  }
-  else 
-    msg("yum, that tasted good");
-  if (game->sleep_timer) 
-    msg("You feel bloated and fall asleep");
+    Item* obj = get_item("eat", FOOD);
+    if (obj == nullptr)
+        return;
+    game->hero().eat(obj);
 }
 
 const char* Item::get_inv_name_food()

@@ -117,6 +117,11 @@ void GameState::set_environment(const std::string& key, const std::string& value
     m_environment[key] = value;
 }
 
+bool GameState::use_level_names() const
+{
+    return "on" == game->get_environment("levelnames");
+}
+
 Random& GameState::random()
 {
     return *m_random;

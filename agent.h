@@ -36,14 +36,17 @@ struct Agent
     void adjust_strength(int amt);
 
     int level() const;
+    
     int experience() const;
+    virtual void gain_experience(int exp);
+
     std::string damage_string() const;
 
     //Structure describing a fighting being
     struct Stats
     {
         unsigned int m_str;   //Strength
-        long exp;           //Experience
+        long m_exp;           //Experience
         int level;          //Level of mastery
         int ac;             //Armor class
         int hp;             //Hit points
@@ -163,4 +166,7 @@ public:
 
     //attack: The monster attacks the player
     bool attack_player();
+
+    //create_monster: Pick a new monster and add it to the list
+    static Agent* CreateMonster(byte type, Coord *cp, int level);
 };

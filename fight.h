@@ -4,9 +4,6 @@
 //swing: Returns true if the swing hits
 bool swing(int at_lvl, int op_arm, int wplus);
 
-//check_level: Check to see if the guy has gone up a level.
-void check_level();
-
 //prname: The print name of a combatant
 char *prname(const char *who, bool upper);
 
@@ -27,9 +24,6 @@ int str_plus(unsigned int str);
 
 //add_dam: Compute additional damage done for exceptionally high or low strength
 int add_dam(unsigned int str);
-
-//raise_level: The guy just magically went up a level.
-void raise_level();
 
 //thunk: A projectile hit or missed a monster
 void display_throw_msg(Item *weapon, const char *mname, char *does, char *did);

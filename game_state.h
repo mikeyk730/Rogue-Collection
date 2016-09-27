@@ -22,6 +22,7 @@ struct GameState
 
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);
+    bool use_level_names() const;
 
     Random& random();
     InputInterface& input_interface();

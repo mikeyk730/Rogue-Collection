@@ -276,7 +276,7 @@ void read_create_monster()
   Coord position;
 
   if (plop_monster(game->hero().pos.y, game->hero().pos.x, &position)) {
-      monster = create_monster(randmonster(false, get_level()), &position, get_level());
+      monster = Agent::CreateMonster(randmonster(false, get_level()), &position, get_level());
   }
   else 
     ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");

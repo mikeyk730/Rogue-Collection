@@ -126,7 +126,7 @@ void do_rooms()
           rnd_pos(room, &mp); 
           mch = game->level().get_tile_or_monster(mp);
         } while (!isfloor(mch));
-        monster = create_monster(randmonster(false, get_level()), &mp, get_level());
+        monster = Agent::CreateMonster(randmonster(false, get_level()), &mp, get_level());
         give_pack(monster);
       
     }

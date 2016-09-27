@@ -274,7 +274,7 @@ void load_monster_cfg(const std::string& filename)
         ss >> m.name;
         ss >> m.carry;
         ss >> std::hex >> m.flags;
-        ss >> std::dec >> m.stats.m_str >> m.stats.exp >> m.stats.level >> m.stats.ac >> m.stats.hp;
+        ss >> std::dec >> m.stats.m_str >> m.stats.m_exp >> m.stats.level >> m.stats.ac >> m.stats.hp;
         ss >> m.stats.damage;
         ss >> std::hex >> m.exflags;
 
@@ -336,7 +336,7 @@ void set_xeroc_disguise(Agent* X)
 }
 
 //create_monster: Pick a new monster and add it to the list
-Agent* create_monster(byte type, Coord *position, int level)
+Agent* Agent::CreateMonster(byte type, Coord *position, int level)
 {
   Agent* monster = new Agent;
   int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
@@ -356,7 +356,7 @@ Agent* create_monster(byte type, Coord *position, int level)
   monster->stats.level += level_add;
   monster->stats.hp = monster->stats.max_hp = roll(monster->stats.level, 8);
   monster->stats.ac -= level_add;
-  monster->stats.exp += level_add*10 + exp_add(monster);
+  monster->stats.m_exp += level_add*10 + exp_add(monster);
   monster->turn = true;
   monster->value = 0;
 
@@ -396,7 +396,7 @@ void create_wandering_monster()
     if (room==game->hero().room) continue;
     rnd_pos(room, &cp);
   } while (!(room!=game->hero().room && step_ok(game->level().get_tile_or_monster(cp))));
-  monster = create_monster(randmonster(true, get_level()), &cp, get_level());
+  monster = Agent::CreateMonster(randmonster(true, get_level()), &cp, get_level());
   if (invalid_position) 
       debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);

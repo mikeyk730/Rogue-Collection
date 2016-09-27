@@ -292,7 +292,7 @@ void Level::clear_level()
             }
             if (spots != MAXTRIES)
             {
-                monster = create_monster(randmonster(false, get_level() + 1), &pos, get_level() + 1);
+                monster = Agent::CreateMonster(randmonster(false, get_level() + 1), &pos, get_level() + 1);
                 if (invalid_position)
                     debug("treasure roomm bailout");
                 monster->set_is_mean(true); //no sloughers in THIS room

@@ -90,8 +90,3 @@ int setenv(char *envfile)
 
   //todo:for all environment strings that have to be in lowercase ....
 }
-
-bool use_level_names()
-{
-    return "on" == game->get_environment("levelnames");
-}

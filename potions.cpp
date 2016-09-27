@@ -226,7 +226,7 @@ void quaff_raise_level()
 {
   game->potions().discover(P_RAISE);
   msg("you suddenly feel much more skillful");
-  raise_level();
+  game->hero().raise_level();
 }
 
 void quaff_extra_healing()

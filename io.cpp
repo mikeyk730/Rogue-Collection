@@ -268,10 +268,10 @@ void status()
     game->screen().printw("Armor:%-2d", game->hero().armor_for_display());
     
     //Exp:
-    if (!use_level_names())
+    if (!game->use_level_names())
     {
         game->screen().move(23, PT(22, 62));
-        game->screen().printw("Exp:%d/%d", game->hero().stats.level, game->hero().stats.exp);
+        game->screen().printw("Exp:%d/%d", game->hero().stats.level, game->hero().experience());
     }
     else if (s_elvl != game->hero().stats.level)
     {

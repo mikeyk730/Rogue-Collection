@@ -52,7 +52,12 @@ int Agent::level() const
 
 int Agent::experience() const
 {
-    return stats.exp;
+    return stats.m_exp;
+}
+
+void Agent::gain_experience(int exp)
+{
+    stats.m_exp += exp;
 }
 
 std::string Agent::damage_string() const

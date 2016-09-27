@@ -10,6 +10,8 @@ struct Hero : public Agent
         int* hit_plus, std::string* damage_string, int* damage_plus);
     virtual int calculate_armor() const;
 
+    virtual void gain_experience(int exp);
+
     virtual int calculate_strength() const;
     virtual int calculate_max_strength() const;
 private:
@@ -30,6 +32,7 @@ public:
     int get_purse();
     void adjust_purse(int delta);
 
+    void eat(Item* obj);
     void ingest();
     void digest();
     int get_hungry_state();
@@ -54,6 +57,15 @@ public:
 
     //fight: The player attacks the monster.
     int fight(Coord *monster, Item *weapon, bool thrown);
+
+    void reduce_level();
+
+    //check_level: Check to see if the guy has gone up a level.
+    void check_level();
+
+    //raise_level: The guy just magically went up a level.
+    void raise_level();
+
 
 private:
 
