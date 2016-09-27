@@ -56,8 +56,14 @@ int main(int argc, char **argv)
     //todo: process args
     bool replay = true;
     //replay = false;
-    std::ifstream in("level7.sav", std::ios::binary | std::ios::in);
-    game = replay ? new GameState(g_random, in) : new GameState(seed);
+
+    std::ifstream infile("saves\\level7.sav", std::ios::binary | std::ios::in);
+    if (replay && infile) {
+        game = new GameState(g_random, infile);
+    }
+    else {
+        game = new GameState(seed);
+    }
 
     //game->hero().invunerable = true;
     if (!replay)

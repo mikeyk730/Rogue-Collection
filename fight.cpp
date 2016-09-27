@@ -6,6 +6,7 @@
 #include <cctype>
 #include <algorithm>
 #include <sstream>
+#include <iomanip>
 
 using std::max;
 
@@ -321,8 +322,13 @@ bool swing(int lvl, int defender_amr, int hplus)
     int got = roll + hplus;
     int need = (20 - lvl) - defender_amr;
     bool hit(got >= need);
-    //todo: log battle strings
-    //msg("%4s: %d (roll:%d+hplus:%d) %d (20-lvl:%d-amr:%d)", hit ? "Hit" : "Miss", got, roll, hplus, need, lvl, defender_amr);
+    
+    std::ostringstream ss;
+    ss << std::left << std::setw(5) << (hit ? "Hit " : "Miss ")
+        << got << " (roll:" << roll << "+hplus:" << hplus << ") " 
+        << need << " (20-lvl:" << lvl << "-amr:" << defender_amr << ")";
+    game->log("battle", ss.str());
+
     return hit;
 }
 

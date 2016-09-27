@@ -2,6 +2,7 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <fstream>
 #include "rogue.h"
 #include "item_class.h"
 #include "wizard.h"
@@ -23,6 +24,8 @@ struct GameState
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);
     bool use_level_names() const;
+
+    void log(const std::string& category, const std::string& msg);
 
     Random& random();
     InputInterface& input_interface();
@@ -65,6 +68,9 @@ private:
     std::unique_ptr<PotionInfo> m_potions;
     std::unique_ptr<RingInfo> m_rings;
     std::unique_ptr<StickInfo> m_sticks;
+
+    std::vector<std::pair<std::string, std::string>> m_log;
+    std::ofstream m_log_stream;
 
     Cheats cheats;
  };

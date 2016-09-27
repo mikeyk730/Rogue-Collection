@@ -27,14 +27,16 @@ m_hero(new Hero),
 m_scrolls(new ScrollInfo),
 m_potions(new PotionInfo),
 m_rings(new RingInfo),
-m_sticks(new StickInfo)
+m_sticks(new StickInfo),
+m_log_stream("log.txt")
 {
     init_environment();
 }
 
 GameState::GameState(Random* random, std::istream& in) :
     m_output_interface(new ConsoleOutput({0,0})),
-    m_allow_fast_play(false)
+    m_allow_fast_play(false),
+    m_log_stream("log.txt")
 {
     int version = 0;
     read(in, &version);
@@ -120,6 +122,12 @@ void GameState::set_environment(const std::string& key, const std::string& value
 bool GameState::use_level_names() const
 {
     return "on" == game->get_environment("levelnames");
+}
+
+void GameState::log(const std::string & category, const std::string & msg)
+{
+    m_log.push_back(std::make_pair(category, msg));
+    m_log_stream << category << ": " << msg << std::endl;
 }
 
 Random& GameState::random()
