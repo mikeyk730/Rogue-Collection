@@ -464,14 +464,14 @@ void drain()
   //First count how many things we need to spread the hit points among
   cnt = 0;
   if (game->level().get_tile(game->hero().pos)==DOOR)
-      room = &passages[game->level().get_passage_num(game->hero().pos)];
+      room = game->level().get_passage(game->hero().pos);
   else room = NULL;
   in_passage = game->hero().room->is_gone();
   dp = drainee;
   for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
     monster = *it;
     if (monster->room == game->hero().room || monster->room == room ||
-        (in_passage && game->level().get_tile(monster->pos) == DOOR && &passages[game->level().get_passage_num(monster->pos)] == game->hero().room)) {
+        (in_passage && game->level().get_tile(monster->pos) == DOOR && game->level().get_passage(monster->pos) == game->hero().room)) {
         *dp++ = monster;
     }
   }

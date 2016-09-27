@@ -21,7 +21,7 @@
 #include "potions.h"
 
 //One for each passage
-struct Room passages[MAXPASS] =
+Room passages[MAXPASS] =
 {
   { 0, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE|IS_DARK, 0, 0 },
   { 1, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE|IS_DARK, 0, 0 },
@@ -113,6 +113,11 @@ void Level::clear_level()
     int Level::get_trap_type(Coord p)
     {
         return get_flags(p) & F_TMASK;
+    }
+
+    Room * Level::get_passage(Coord pos)
+    {
+        return &passages[get_passage_num(pos)];
     }
 
     //monster_at: returns pointer to monster at coordinate. if no monster there return NULL

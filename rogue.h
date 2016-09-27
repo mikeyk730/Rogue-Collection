@@ -169,7 +169,7 @@ struct CommandModifiers
 };
 
 extern Coord delta, oldpos;
-extern struct Room *oldrp, passages[];
+extern struct Room *oldrp;
 
 extern int maxrow;
 extern short LINES, COLS;

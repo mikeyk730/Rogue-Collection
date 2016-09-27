@@ -22,7 +22,7 @@
 #include "game_state.h"
 #include "hero.h"
 
-struct Room rooms[MAXROOMS]; //One for each room -- A level
+Room rooms[MAXROOMS]; //One for each room -- A level
 
 bool isfloor(byte c){
     return ((c) == FLOOR || (c) == PASSAGE);
@@ -217,7 +217,7 @@ void leave_room(Coord *cp)
     byte ch;
 
     room = game->hero().room;
-    game->hero().room = &passages[game->level().get_passage_num(*cp)];
+    game->hero().room = game->level().get_passage(*cp);
     
     byte floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
     if (room->is_maze()) 
@@ -271,7 +271,7 @@ struct Room *get_room_from_position(Coord *pos)
           return room;
 
   if (game->level().is_passage(*pos))
-    return &passages[game->level().get_passage_num(*pos)];
+    return game->level().get_passage(*pos);
 
   debug("in some bizarre place (%d, %d)", pos->y, pos->x);
   invalid_position = true;

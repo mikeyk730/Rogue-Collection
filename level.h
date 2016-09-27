@@ -29,6 +29,8 @@ struct Level {
     int get_passage_num(Coord p);
     int get_trap_type(Coord p);
 
+    Room* get_passage(Coord pos);
+
     //monster_at: returns pointer to monster at coordinate. if no monster there return NULL
     Agent *monster_at(Coord p);
 
@@ -41,7 +43,6 @@ private:
     byte the_level[(MAXLINES - 3)*MAXCOLS];
     byte the_flags[(MAXLINES - 3)*MAXCOLS];
 };
-
 
 int get_level();
 int next_level();

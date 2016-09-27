@@ -14,7 +14,8 @@
 #include "level.h"
 #include "game_state.h"
 
-extern struct Room rooms[];
+extern Room rooms[];
+extern Room passages[];
 
 static int pnum;
 static byte newpnum;

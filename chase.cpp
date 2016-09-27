@@ -103,7 +103,7 @@ over:
         }
         if (door)
         {
-            monster_room = &passages[game->level().get_passage_num(this->pos)];
+            monster_room = game->level().get_passage(pos);
             door = false;
             goto over;
         }
