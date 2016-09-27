@@ -291,11 +291,6 @@ const char* get_monster_name(char monster)
   return monsters[monster-'A'].name.c_str();
 }
 
-std::string Monster::get_name()
-{
-    return ::get_monster_name(type);
-}
-
 int Agent::get_monster_carry_prob() const
 {
     return monsters[type - 'A'].carry;
