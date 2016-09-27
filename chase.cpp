@@ -23,10 +23,11 @@
 #include "hero.h"
 
 
+//todo: move to env or remove
 //orcs should pick up gold in a room, then chase the player.
 //a bug prevented orcs from picking up gold, so they'd just
 //remain on the gold space.
-const bool orc_bugfix = true;
+const bool alt_orc_behavior = true;
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -35,24 +36,26 @@ Coord ch_ret; //Where chasing takes you
 //runners: Make all the running monsters move.
 void runners()
 {
-    Agent *monster, *next = NULL;
-    int dist;
-
-    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end();){
-        monster = *(it++);
+    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end();) {
+        Agent* monster = *(it++);
         if (!monster->is_held() && monster->is_running())
         {
-            dist = distance(game->hero().pos, monster->pos);
+            int dist = distance(game->hero().pos, monster->pos);
             if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->turn)
-            if (!monster->do_chase())
-                continue;
+                if (!monster->do_chase())
+                    continue;
+
+            // fast monsters get an extra turn
             if (monster->is_fast())
-            if (!monster->do_chase())
-                continue;
+                if (!monster->do_chase())
+                    continue;
+
+            // flying monsters get an extra turn to close the distance
             dist = distance(game->hero().pos, monster->pos);
             if (monster->is_flying() && dist > 3)
-            if (!monster->do_chase())
-                continue;
+                if (!monster->do_chase())
+                    continue;
+
             monster->turn ^= true;
         }
     }
@@ -61,48 +64,56 @@ void runners()
 //do_chase: Make one thing chase another.
 bool Agent::do_chase()
 {
-  int mindist = 32767, i, dist;
-  bool door;
-  Item *obj;
-  struct Room *oroom;
-  struct Room *monster_room, *dest_room; //room of chaser, room of chasee
-  Coord tempdest; //Temporary destination for chaser
+    //If gold has been taken, target the hero
+    if (is_greedy() && room->gold_val == 0)
+        dest = &game->hero().pos;
 
-  monster_room = this->room; //Find room of chaser
-  if (this->is_greedy() && monster_room->gold_val == 0) 
-    this->dest = &game->hero().pos; //If gold has been taken, run after hero
+    //Find room of the target
+    Room* destination_room = game->hero().room;
+    if (dest != &game->hero().pos)
+        destination_room = get_room_from_position(dest);
+    if (destination_room == NULL)
+        return true;
 
-  dest_room = game->hero().room;
-  if (this->dest != &game->hero().pos) 
-    dest_room = get_room_from_position(this->dest); //Find room of chasee
-  if (dest_room==NULL) 
-    return true;
 
-  //We don't count doors as inside rooms for this routine
-  door = (game->level().get_tile(this->pos)==DOOR);
-  //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
+    int mindist = 32767, i, dist;
+    Item *obj;
+    Room *oroom;
+    Coord tempdest; //Temporary destination for chaser
+    
+    
+    Room* monster_room = this->room; //Find room of chaser
+    //We don't count doors as inside rooms for this routine
+    bool door = game->level().get_tile(pos) == DOOR;
+
+    //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
 
 over:
 
-  if (monster_room!=dest_room && (monster_room->is_maze())==0)
-  {
-    //loop through doors
-    for (i = 0; i<monster_room->num_exits; i++)
+    if (monster_room != destination_room && (monster_room->is_maze()) == 0)
     {
-      dist = distance(*(this->dest), monster_room->exits[i]);
-      if (dist<mindist) {tempdest = monster_room->exits[i]; mindist = dist;}
+        //loop through doors
+        for (i = 0; i < monster_room->num_exits; i++)
+        {
+            dist = distance(*(this->dest), monster_room->exits[i]);
+            if (dist < mindist) {
+                tempdest = monster_room->exits[i];
+                mindist = dist;
+            }
+        }
+        if (door)
+        {
+            monster_room = &passages[game->level().get_passage_num(this->pos)];
+            door = false;
+            goto over;
+        }
     }
-    if (door)
-    {
-      monster_room = &passages[game->level().get_passage_num(this->pos)];
-      door = false;
-      goto over;
-    }
-  }
   else
   {
     tempdest = *this->dest;
-    //For monsters which can fire bolts at the poor hero, we check to see if (a) the hero is on a straight line from it, and (b) that it is within shooting distance, but outside of striking range.
+    //For monsters which can fire bolts at the poor hero, we check to see if 
+    // (a) the hero is on a straight line from it, and 
+    // (b) that it is within shooting distance, but outside of striking range.
     if ((this->shoots_fire() || this->shoots_ice()) && 
         (this->pos.y==game->hero().pos.y || this->pos.x==game->hero().pos.x || abs(this->pos.y-game->hero().pos.y)==abs(this->pos.x-game->hero().pos.x)) &&
         ((dist = distance(this->pos, game->hero().pos))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !this->powers_cancelled() && rnd(DRAGONSHOT)==0)
@@ -116,13 +127,14 @@ over:
   //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
   this->chase(&tempdest);
   if (equal(ch_ret, game->hero().pos)) {
-    return attack(this); 
+    return attack_player(); 
   }
   else if (equal(ch_ret, *this->dest))
   {
       for (auto it = game->level().items.begin(); it != game->level().items.end(); ){
           obj = *(it++);
-          if (orc_bugfix && equal(*(this->dest), obj->pos)) //todo:why didn't old code work?
+          if ( alt_orc_behavior && (*this->dest == obj->pos) ||
+              !alt_orc_behavior && (this->dest == &obj->pos))
           {
               byte oldchar;
               game->level().items.remove(obj);

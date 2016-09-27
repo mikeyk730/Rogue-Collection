@@ -288,10 +288,12 @@ bool find_dir(byte ch, Coord *cp)
 }
 
 //sign: Return the sign of the number
-int sign(int nm)
+int sign(int n)
 {
-  if (nm<0) return -1;
-  else return (nm>0);
+    if (n < 0)
+        return -1;
+    else
+        return (n > 0);
 }
 
 //spread: Give a spread around a given number (+/- 10%)

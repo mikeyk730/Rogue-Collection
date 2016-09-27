@@ -249,7 +249,7 @@ bool vampire_wraith_attack(Agent* monster)
 }
 
 //attack: The monster attacks the player
-bool attack(Agent *monster)
+bool Agent::attack_player()
 {
   const char *name;
   int monster_died = false;
@@ -258,62 +258,63 @@ bool attack(Agent *monster)
   //Since this is an attack, stop running and any healing that was going on at the time.
   game->modifiers.m_running = false;
   repeat_cmd_count = turns_since_heal = 0;
-  if (monster->is_disguised() && !game->hero().is_blind()) 
-    monster->disguise = monster->type;
-  name = game->hero().is_blind() ? it : monster->get_monster_name();
-  if (monster->roll_attack(&game->hero(), NULL, false))
+  if (is_disguised() && !game->hero().is_blind()) 
+    disguise = type;
+  name = game->hero().is_blind() ? it : get_monster_name();
+  if (roll_attack(&game->hero(), NULL, false))
   {
       display_hit_msg(name, NULL);
       if (game->hero().get_hp() <= 0)
-          death(monster->type); //Bye bye life ...
+          death(type); //Bye bye life ...
 
       //todo: modify code, so enemy can have more than one power
-      if (!monster->powers_cancelled()) {
-          if (monster->hold_attacks())
+      if (!powers_cancelled()) {
+          if (hold_attacks())
           {
-              flytrap_attack(monster);
+              flytrap_attack(this);
           }
-          else if (monster->shoots_ice())
+          else if (shoots_ice())
           {
               ice_monster_attack();
           }
-          else if (monster->rusts_armor())
+          else if (rusts_armor())
           {
               attack_success = aquator_attack();
           }
-          else if (monster->steals_gold())
+          else if (steals_gold())
           {
-              attack_success = leprechaun_attack(monster);
+              attack_success = leprechaun_attack(this);
           }
-          else if (monster->steals_magic())
+          else if (steals_magic())
           {
-              attack_success = nymph_attack(monster);
+              attack_success = nymph_attack(this);
           }
-          else if (monster->drains_strength())
+          else if (drains_strength())
           {
               attack_success = rattlesnake_attack();
           }
-          else if (monster->drains_life() || monster->drains_exp())
+          else if (drains_life() || drains_exp())
           {
-              attack_success = vampire_wraith_attack(monster);
+              attack_success = vampire_wraith_attack(this);
           }
 
-          if (attack_success && monster->dies_from_attack())
+          if (attack_success && dies_from_attack())
           {
               monster_died = true;
-              remove_monster(monster, false);
+              remove_monster(this, false);
           }
       }
   }
-  else if (!monster->shoots_ice())
+  else if (!shoots_ice())
   {
-      if (monster->hold_attacks())
+      if (hold_attacks())
       {
-          if (!game->hero().decrease_hp(monster->value, true))
-              death(monster->type); //Bye bye life ...
+          if (!game->hero().decrease_hp(value, true))
+              death(type); //Bye bye life ...
       }
       miss(name, NULL);
   }
+
   clear_typeahead_buffer();
   repeat_cmd_count = 0;
   status();

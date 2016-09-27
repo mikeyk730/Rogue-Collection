@@ -156,4 +156,6 @@ public:
     //roll_attack: Roll several attacks
     bool roll_attack(Agent *the_defender, Item *weapon, bool hurl);
 
+    //attack: The monster attacks the player
+    bool attack_player();
 };

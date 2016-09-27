@@ -1,10 +1,6 @@
 #pragma once
 #include "agent.h"
 
-
-//attack: The monster attacks the player
-bool attack(Agent *monster);
-
 //swing: Returns true if the swing hits
 bool swing(int at_lvl, int op_arm, int wplus);
 
