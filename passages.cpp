@@ -70,13 +70,17 @@ void conn(int r1, int r2)
     if ((room_from->is_gone())==0 || (room_from->is_maze()))
     {
       spos.y = room_from->pos.y+room_from->size.y-1;
-      do {spos.x = room_from->pos.x+rnd(room_from->size.x-2)+1;} while (game->level().get_tile(spos)==' ');
+      do {
+          spos.x = room_from->pos.x + rnd(room_from->size.x - 2) + 1;
+      } while (game->level().get_tile(spos)==' ');
     }
     else {spos.x = room_from->pos.x; spos.y = room_from->pos.y;}
     epos.y = room_to->pos.y;
     if ((room_to->is_gone())==0 || (room_to->is_maze()))
     {
-      do {epos.x = room_to->pos.x+rnd(room_to->size.x-2)+1;} while (game->level().get_tile(epos)==' ');
+      do {
+          epos.x = room_to->pos.x + rnd(room_to->size.x - 2) + 1;
+      } while (game->level().get_tile(epos)==' ');
     }
     else epos.x = room_to->pos.x;
     distance = abs(spos.y-epos.y)-1; //distance to move
@@ -94,13 +98,20 @@ void conn(int r1, int r2)
     if ((room_from->is_gone())==0 || (room_from->is_maze()))
     {
       spos.x = room_from->pos.x+room_from->size.x-1;
-      do {spos.y = room_from->pos.y+rnd(room_from->size.y-2)+1;} while (game->level().get_tile(spos)==' ');
+      do {
+          spos.y = room_from->pos.y+rnd(room_from->size.y-2)+1;
+      } while (game->level().get_tile(spos)==' ');
     }
-    else {spos.x = room_from->pos.x; spos.y = room_from->pos.y;}
+    else {
+        spos.x = room_from->pos.x; 
+        spos.y = room_from->pos.y;
+    }
     epos.x = room_to->pos.x;
     if ((room_to->is_gone())==0 || (room_to->is_maze()))
     {
-      do {epos.y = room_to->pos.y+rnd(room_to->size.y-2)+1;} while (game->level().get_tile(epos)==' ');
+      do {
+          epos.y = room_to->pos.y+rnd(room_to->size.y-2)+1;
+      } while (game->level().get_tile(epos)==' ');
     }
     else epos.y = room_to->pos.y;
     distance = abs(spos.x-epos.x)-1;
@@ -112,10 +123,14 @@ void conn(int r1, int r2)
 
   turn_spot = rnd(distance-1)+1;
   //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
-  if (!(room_from->is_gone())) door(room_from, &spos);
-  else psplat(spos);
-  if (!(room_to->is_gone())) door(room_to, &epos);
-  else psplat(epos);
+  if (!(room_from->is_gone())) 
+      door(room_from, &spos);
+  else
+      psplat(spos);
+  if (!(room_to->is_gone())) 
+      door(room_to, &epos);
+  else 
+      psplat(epos);
   //Get ready to move...
   curr.x = spos.x;
   curr.y = spos.y;
@@ -127,7 +142,11 @@ void conn(int r1, int r2)
     //Check if we are at the turn place, if so do the turn
     if (distance==turn_spot)
     {
-      while (turn_distance--) {psplat(curr); curr.x += turn_delta.x; curr.y += turn_delta.y;}
+      while (turn_distance--) {
+          psplat(curr); 
+          curr.x += turn_delta.x; 
+          curr.y += turn_delta.y;
+      }
     }
     //Continue digging along
     psplat(curr);
@@ -135,7 +154,11 @@ void conn(int r1, int r2)
   }
   curr.x += del.x;
   curr.y += del.y;
-  if (!equal(curr, epos)) {epos.x -= del.x; epos.y -= del.y; psplat(epos);}
+  if (!equal(curr, epos)) {
+      epos.x -= del.x;
+      epos.y -= del.y;
+      psplat(epos);
+  }
 }
 
 //do_passages: Draw all the passages on a level.

@@ -84,7 +84,7 @@ void ConsoleOutput::putchr(int c, int attr)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, attr);
-    putchar(c);
+    putchar('B');
 }
 
 //clear screen
@@ -136,10 +136,11 @@ void ConsoleOutput::mvaddch(int r, int c, char chr)
     addch(chr);
 }
 
+//todo: get rid of entirely
 int ConsoleOutput::mvinch(int r, int c)
 {
     move(r, c);
-    return (curch());
+    return curch();
 }
 
 //put the character on the screen and update the character position
@@ -301,7 +302,6 @@ void ConsoleOutput::center(int row, const char *string)
     mvaddstr(row, (COLS - strlen(string)) / 2, string);
 }
 
-//printw(Ieeeee)
 void ConsoleOutput::printw(const char *format, ...)
 {
     char dest[1024 * 16];
@@ -345,7 +345,10 @@ void ConsoleOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 
 void ConsoleOutput::repchr(int chr, int cnt)
 {
-    while (cnt-- > 0) { putchr(chr, ch_attr); c_col++; }
+    while (cnt-- > 0) { 
+        putchr(chr, ch_attr);
+        c_col++;
+    }
 }
 
 //try to fixup screen after we get a control break
@@ -406,6 +409,7 @@ void ConsoleOutput::move(short y, short x)
     c_col = x;
 }
 
+//todo: can i eliminate this?
 char ConsoleOutput::curch()
 {
     CHAR_INFO c;

@@ -48,7 +48,6 @@ struct ConsoleOutput : public OutputInterface
     //center a string according to how many columns there really are
     virtual void center(int row, const char *string);
 
-    //printw(Ieeeee)
     virtual void printw(const char *msg, ...);
 
     virtual void scroll_up(int start_row, int end_row, int nlines);

@@ -213,13 +213,15 @@ void leave_room(Coord *cp)
 {
     int y, x;
     struct Room *room;
-    byte floor;
     byte ch;
 
     room = game->hero().room;
     game->hero().room = &passages[game->level().get_passage_num(*cp)];
-    floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
-    if (room->is_maze()) floor = PASSAGE;
+    
+    byte floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
+    if (room->is_maze()) 
+        floor = PASSAGE;
+
     for (y = room->pos.y + 1; y < room->size.y + room->pos.y - 1; y++) {
         for (x = room->pos.x + 1; x < room->size.x + room->pos.x - 1; x++) {
             switch (ch = game->screen().mvinch(y, x))
@@ -234,15 +236,20 @@ void leave_room(Coord *cp)
 
             default:
                 //to check for monster, we have to strip out standout bit
-                if (isupper(toascii(ch)))
+                if (isupper(toascii(ch))) {
                     if (game->hero().detects_others()) {
                         game->screen().standout();
                         game->screen().addch(ch);
                         game->screen().standend();
                         break;
                     }
-                    else
-                        game->level().monster_at({ x, y })->oldch = MDK;
+                    else {
+                        Agent* m = game->level().monster_at({ x, y });
+                        if (m) {
+                            m->oldch = MDK;
+                        }
+                    }
+                }
                 game->screen().addch(floor);
             }
         }
