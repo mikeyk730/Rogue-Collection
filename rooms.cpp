@@ -87,8 +87,9 @@ void do_rooms()
       continue;
     }
     // dark rooms more common as we go down
-    if (rnd(10)<(get_level()-1))
+    if (rnd(10) < (get_level() - 1) && !game->wizard().no_dark_rooms()) {
         room->set_dark(true);
+    }
     //Find a place and size for a random room
     do
     {

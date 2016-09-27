@@ -212,11 +212,17 @@ Cheats::Cheats()
     //m_no_hidden_doors = true;
     //m_no_ring_hunger = true;
     //m_no_hunger = true;
+    //m_no_dark_rooms = true;
 }
 
 bool Cheats::detects_monsters() const
 {
     return m_detects_monsters;
+}
+
+bool Cheats::no_dark_rooms() const
+{
+    return m_no_dark_rooms;
 }
 
 bool Cheats::sees_invisible() const

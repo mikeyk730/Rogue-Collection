@@ -14,7 +14,7 @@ struct Cheats
     Cheats();
 
     bool detects_monsters() const;
-    bool no_dark_passages() const;
+    bool no_dark_rooms() const;
     bool slow_monster() const;
     bool haste_self() const;
     bool invunerability() const;
@@ -36,6 +36,7 @@ private:
     bool m_no_hidden_doors = false;
     bool m_no_ring_hunger = false;
     bool m_no_hunger = false;
+    bool m_no_dark_rooms = false;
 };
 
 

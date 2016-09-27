@@ -178,6 +178,8 @@ void StreamInput::ThreadData::CancelPlayback()
     m_paused = false;
     m_steps = 0;
     m_step_cv.notify_all();
+
+    game->m_allow_fast_play = true; //todo: remove
 }
 
 void StreamInput::ThreadData::OnEmptyStream()
