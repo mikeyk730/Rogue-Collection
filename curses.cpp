@@ -84,7 +84,7 @@ void ConsoleOutput::putchr(int c, int attr)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, attr);
-    putchar('B');
+    putchar(c);
 }
 
 //clear screen

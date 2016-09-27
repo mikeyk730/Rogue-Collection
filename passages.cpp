@@ -124,11 +124,11 @@ void conn(int r1, int r2)
   turn_spot = rnd(distance-1)+1;
   //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
   if (!(room_from->is_gone())) 
-      door(room_from, &spos);
+      add_door(room_from, &spos);
   else
       psplat(spos);
   if (!(room_to->is_gone())) 
-      door(room_to, &epos);
+      add_door(room_to, &epos);
   else 
       psplat(epos);
   //Get ready to move...
@@ -238,19 +238,20 @@ void do_passages()
 }
 
 //door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
-void door(struct Room *rm, Coord *cp)
+void add_door(struct Room *rm, Coord *cp)
 {
-  int xit;
+    int xit;
 
-  if (rnd(10)+1<get_level() && rnd(5)==0)
-  {
-    game->level().set_tile(*cp, (cp->y==rm->pos.y || cp->y==rm->pos.y+rm->size.y-1)?HWALL:VWALL);
-    game->level().unset_flag(*cp, F_REAL);
-  }
-  else game->level().set_tile(*cp, DOOR);
-  xit = rm->num_exits++;
-  rm->exits[xit].y = cp->y;
-  rm->exits[xit].x = cp->x;
+    if (rnd(10) + 1 < get_level() && rnd(5) == 0 && !game->wizard().no_hidden_doors())
+    {
+        game->level().set_tile(*cp, (cp->y == rm->pos.y || cp->y == rm->pos.y + rm->size.y - 1) ? HWALL : VWALL);
+        game->level().unset_flag(*cp, F_REAL);
+    }
+    else 
+        game->level().set_tile(*cp, DOOR);
+    xit = rm->num_exits++;
+    rm->exits[xit].y = cp->y;
+    rm->exits[xit].x = cp->x;
 }
 
 //add_pass: Add the passages to the current window (wizard command)

@@ -195,15 +195,15 @@ over:
 bool Hero::can_see_monster(Agent *monster)
 {
   // player is blind
-  if (this->is_blind())
+  if (is_blind())
     return false;
 
   //monster is invisible, and can't see invisible
-  if (monster->is_invisible() && !this->sees_invisible())
+  if (monster->is_invisible() && !sees_invisible())
     return false;
   
-  if (distance(monster->pos, this->pos) >= LAMP_DIST &&
-    (monster->room != this->room || monster->room->is_dark() || monster->room->is_maze()))
+  if (distance(monster->pos, pos) >= LAMP_DIST &&
+    (monster->room != room || monster->room->is_dark() || monster->room->is_maze()))
     return false;
   
   //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 

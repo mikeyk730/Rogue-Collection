@@ -43,7 +43,7 @@ static struct init_weps
   "1d1", "1d1", NONE,     0,               //Crossbow
   "1d2", "2d5", CROSSBOW, IS_MANY|IS_MISL, //Crossbow bolt
   "2d3", "1d6", NONE,     IS_MISL,         //Spear
-  "6d6", "6d6", NONE,     0                //Dragon flame (not accessible to player)
+  "6d6", "6d6", NONE,     0                //Dragon flame (not accessible to player) //todo: check ice monster
 };
 
 
@@ -60,7 +60,7 @@ const char *weapon_names[MAXWEAPONS+1] =
   "crossbow",
   "crossbow bolt",
   "spear",
-  "flame"  // dragon flame (not accessible to player)
+  "bolt"  // dragon flame/ice monster frost (not accessible to player)
 };
 
 const char* get_weapon_name(int which)
@@ -341,6 +341,16 @@ std::string Item::get_damage() const
 char Item::launcher() const
 {
     return m_launcher;
+}
+
+void Item::set_name(const std::string & name)
+{
+    m_name = name;
+}
+
+std::string Item::name() const
+{
+    return m_name;
 }
 
 Room * Item::get_room()

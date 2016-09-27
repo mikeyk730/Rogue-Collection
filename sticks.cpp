@@ -493,7 +493,7 @@ void drain()
 }
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
-bool fire_bolt(Coord *start, Coord *dir, const char *name)
+bool fire_bolt(Coord *start, Coord *dir, const std::string& name1)
 {
   byte dirch, ch;
   Agent *monster;
@@ -501,9 +501,11 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
   int i, j;
   Coord pos;
   struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
-  bool is_frost = (strcmp(name, "frost")==0);
+  bool is_frost(name1 == "frost");
+  bool is_flame(name1 == "flame");
 
   Item* bolt = new Weapon(FLAME, 30, 0);
+  bolt->set_name(name1);
   switch (dir->y+dir->x)
   {
   case 0: dirch = '/'; break;
@@ -520,7 +522,8 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
     pos.x += dir->x;
     ch = game->level().get_tile_or_monster(pos);
     spotpos[i].s_pos = pos;
-    if ((spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x))==dirch) spotpos[i].s_under = 0;
+    if ((spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x))==dirch) 
+        spotpos[i].s_under = 0;
     switch (ch)
     {
     case DOOR: case HWALL: case VWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
@@ -529,7 +532,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
       dir->y = -dir->y;
       dir->x = -dir->x;
       i--;
-      msg("the %s bounces", name);
+      msg("the %s bounces", name1.c_str());
       break;
 
     default:
@@ -537,12 +540,13 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
       {
         hit_hero = true;
         changed = !changed;
-        if (monster->oldch!=MDK) monster->oldch = game->level().get_tile(pos);
+        if (monster->oldch!=MDK)
+            monster->oldch = game->level().get_tile(pos);
         if (!save_throw(VS_MAGIC, monster) || is_frost)
         {
           bolt->pos = pos;
           used = true;
-          if (monster->immune_to_fire() && strcmp(name, "flame")==0) 
+          if (is_flame && monster->immune_to_fire())
               msg("the flame bounces off the %s", monster->get_monster_name());
           else
           {
@@ -555,7 +559,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
         {
           if (start==&game->hero().pos) 
               monster->start_run();
-          msg("the %s whizzes past the %s", name, get_monster_name(ch));
+          msg("the %s whizzes past the %s", name1.c_str(), get_monster_name(ch));
         }
       }
       else if (hit_hero && equal(pos, game->hero().pos))
@@ -578,13 +582,13 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
           }
           used = true;
           if (!is_frost)
-              msg("you are hit by the %s", name);
+              msg("you are hit by the %s", name1.c_str());
         }
-        else msg("the %s whizzes by you", name);
+        else msg("the %s whizzes by you", name1.c_str());
       }
-      if (is_frost || strcmp(name, "ice")==0) 
+      if (is_frost || name1 == "ice") 
           game->screen().blue();
-      else if (strcmp(name, "bolt")==0) 
+      else if (name1 == "bolt") 
           game->screen().yellow();
       else 
           game->screen().red();

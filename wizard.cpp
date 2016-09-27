@@ -203,7 +203,43 @@ int get_num(short *place)
   return (*place);
 }
 
-bool Cheats::detects_others() const
+Cheats::Cheats()
+{
+    //todo: should be empty
+    //m_detects_monsters = true;
+    //m_sees_invisible = true;
+    //m_no_traps = true;
+    //m_no_hidden_doors = true;
+    //m_no_ring_hunger = true;
+    //m_no_hunger = true;
+}
+
+bool Cheats::detects_monsters() const
 {
     return m_detects_monsters;
+}
+
+bool Cheats::sees_invisible() const
+{
+    return m_sees_invisible;
+}
+
+bool Cheats::no_hunger() const
+{
+    return m_no_hunger;
+}
+
+bool Cheats::no_hidden_doors() const
+{
+    return m_no_hidden_doors;
+}
+
+bool Cheats::no_traps() const
+{
+    return m_no_traps;
+}
+
+bool Cheats::no_ring_hunger() const
+{
+    return m_no_ring_hunger;
 }

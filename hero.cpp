@@ -166,11 +166,10 @@ void Hero::ingest()
 
 void Hero::digest()
 {
-  int oldfood, deltafood;
-
   if (food_left<=0)
   {
-    if (food_left--<-STARVE_TIME) death('s');
+    if (food_left--<-STARVE_TIME) 
+        death('s');
     //the hero is fainting
     if (sleep_timer || rnd(5)!=0)
         return;
@@ -183,11 +182,18 @@ void Hero::digest()
   }
   else
   {
-    oldfood = food_left;
+    int oldfood = food_left;
     //If you are in 40 column mode use food twice as fast (e.g. 3-(80/40) = 1, 3-(40/40) = 2 : pretty gross huh?)
-    deltafood = ring_eat(LEFT)+ring_eat(RIGHT)+1;
-    if (in_small_screen_mode()) deltafood *= 2;
-    food_left -= deltafood;
+    int deltafood = 1;
+    if (!game->wizard().no_ring_hunger()) {
+        deltafood += ring_eat(LEFT);
+        deltafood += ring_eat(RIGHT);
+    }
+    if (in_small_screen_mode())
+        deltafood *= 2;
+    if (!game->wizard().no_hunger()) {
+        food_left -= deltafood;
+    }
     if (food_left<MORE_TIME && oldfood>=MORE_TIME) {
         hungry_state = 2;
         msg("you are starting to feel weak");

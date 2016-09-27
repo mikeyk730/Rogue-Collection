@@ -494,8 +494,12 @@ void raise_level()
 //thunk: A projectile hit or missed a monster
 void display_throw_msg(Item *item, const char *name, char *does, char *did)
 {
+    std::string type = item->name();
+    if (type.empty())
+        type = get_weapon_name(item->which);
+
   if (item->type == WEAPON)
-    addmsg("the %s %s ", get_weapon_name(item->which), does);
+    addmsg("the %s %s ", type.c_str(), does);
   else 
     addmsg("you %s ", did);
   game->hero().is_blind() ? msg(it) : msg("the %s", name);

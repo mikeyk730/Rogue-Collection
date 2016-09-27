@@ -183,8 +183,11 @@ void Level::clear_level()
             while (i--)
             {
                 find_empty_location(&pos, false);
-                unset_flag(pos, F_REAL);
-                set_flag(pos, rnd(NTRAPS));
+                byte type = rnd(NTRAPS);
+                if (!game->wizard().no_traps()) {
+                    unset_flag(pos, F_REAL);
+                    set_flag(pos, type);
+                }
             }
         }
         do
