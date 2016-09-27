@@ -364,7 +364,7 @@ void affect_monster(Item *potion, Agent *monster)
   {
   case P_CONFUSE: case P_BLIND:
     monster->set_confused(true);
-    msg("the %s appears confused", monster->get_monster_name());
+    msg("the %s appears confused", monster->get_name().c_str());
     break;
 
   case P_PARALYZE:

@@ -25,7 +25,7 @@ void slime_split(Agent *monster)
 
   if (new_slime(monster)==0) 
       return;
-  msg("The %s divides.  Ick!", monster->get_monster_name());
+  msg("The %s divides.  Ick!", monster->get_name().c_str());
   nslime = Agent::CreateMonster(monster->type, &slimy, get_level());
   if (game->hero().can_see(slimy))
   {

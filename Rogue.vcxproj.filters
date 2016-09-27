@@ -149,6 +149,9 @@
     <ClCompile Include="combo_input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="monster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rogue.h">
@@ -300,6 +303,9 @@
     </ClInclude>
     <ClInclude Include="output_interface.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="monster.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

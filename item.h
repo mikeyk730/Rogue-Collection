@@ -163,7 +163,7 @@ public:
     void vorpalize();
     bool is_vorpalized() const;
     bool is_vorpalized_against(Agent* monster) const;
-    const char* get_vorpalized_name() const;
+    std::string get_vorpalized_name() const;
     std::string get_throw_damage() const;
     std::string get_damage() const;
     char launcher() const;

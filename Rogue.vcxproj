@@ -102,6 +102,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maze.cpp" />
     <ClCompile Include="misc.cpp" />
+    <ClCompile Include="monster.cpp" />
     <ClCompile Include="monsters.cpp" />
     <ClCompile Include="move.cpp" />
     <ClCompile Include="new_leve.cpp" />
@@ -139,6 +140,7 @@
     <ClInclude Include="fight.h" />
     <ClInclude Include="combo_input.h" />
     <ClInclude Include="item_class.h" />
+    <ClInclude Include="monster.h" />
     <ClInclude Include="output_interface.h" />
     <ClInclude Include="stream_input.h" />
     <ClInclude Include="food.h" />

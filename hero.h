@@ -26,7 +26,7 @@ public:
     void add_to_pack(Item *obj, bool silent);
     int get_pack_size();
 
-    std::string get_name();
+    virtual std::string get_name();
     void set_name(const std::string& name);
 
     int get_purse();

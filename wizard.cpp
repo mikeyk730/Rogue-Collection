@@ -229,7 +229,7 @@ namespace
         {
             Agent* monster = *i;
             std::ostringstream ss;
-            ss << "  "   << left << setw(14) << monster->get_monster_name() << " ";
+            ss << "  "   << left << setw(14) << monster->get_name() << " ";
             ss << "hp:"  << left << setw(4) << monster->get_hp() << " ";
             ss << "lvl:" << left << setw(3) << monster->level() << " ";
             ss << "amr:" << left << setw(4) << monster->calculate_armor() << " ";

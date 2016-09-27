@@ -209,7 +209,7 @@ void zap_vorpalized_weapon(Item* weapon, Agent* monster)
 {
     if (weapon->is_vorpalized_against(monster))
     {
-        msg("the %s vanishes in a puff of smoke", monster->get_monster_name());
+        msg("the %s vanishes in a puff of smoke", monster->get_name().c_str());
         killed(monster, false);
     }
     else
@@ -549,7 +549,7 @@ bool fire_bolt(Coord *start, Coord *dir, const std::string& name)
           bolt->pos = pos;
           used = true;
           if (is_flame && monster->immune_to_fire())
-              msg("the flame bounces off the %s", monster->get_monster_name());
+              msg("the flame bounces off the %s", monster->get_name().c_str());
           else
           {
             projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon

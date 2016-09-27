@@ -25,6 +25,8 @@ const short IS_FLY = (short)0x8000; //creature is of the flying type
 //Structure for monsters and player
 struct Agent
 {
+    virtual std::string get_name() = 0;
+
     virtual void calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
         int* hit_plus, std::string* damage_string, int* damage_plus);
     virtual int calculate_armor() const;
@@ -82,7 +84,6 @@ private:
 
 public:
 
-    const char* get_monster_name() const;
     int get_monster_carry_prob() const;
 
     //special features

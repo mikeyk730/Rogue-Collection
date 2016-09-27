@@ -229,7 +229,7 @@ int be_trapped(Coord *tc)
     break;
 
   case T_ARROW:
-    if (swing(game->hero().stats.level-1, game->hero().stats.ac, 1))
+    if (attempt_swing(game->hero().stats.level-1, game->hero().stats.ac, 1))
     {
       if (!game->hero().decrease_hp(roll(1, 6), true)) {
           msg("an arrow killed you"); 
@@ -259,7 +259,7 @@ int be_trapped(Coord *tc)
     break;
 
   case T_DART:
-    if (swing(game->hero().stats.level+1, game->hero().stats.ac, 1))
+    if (attempt_swing(game->hero().stats.level+1, game->hero().stats.ac, 1))
     {
       if (!game->hero().decrease_hp(roll(1, 4), true)) {
           msg("a poisoned dart killed you"); 

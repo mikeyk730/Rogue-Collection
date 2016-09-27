@@ -1,8 +1,8 @@
 #pragma once
 #include "agent.h"
 
-//swing: Returns true if the swing hits
-bool swing(int at_lvl, int op_arm, int wplus);
+//attempt_swing: Returns true if the swing hits
+bool attempt_swing(int at_lvl, int op_arm, int wplus);
 
 //prname: The print name of a combatant
 char *prname(const char *who, bool upper);
@@ -10,8 +10,8 @@ char *prname(const char *who, bool upper);
 //hit: Print a message to indicate a successful hit
 void display_hit_msg(const char *er, const char *ee);
 
-//miss: Print a message to indicate a poor swing
-void miss(const char *er, const char *ee);
+//display_miss_msg: Print a message to indicate a poor swing
+void display_miss_msg(const char *er, const char *ee);
 
 //save_throw: See if a creature save against something
 int save_throw(int which, Agent *monster);

@@ -226,9 +226,9 @@ void death(char monst)
   game->screen().brown();
   game->screen().box((COLS==40)?1:7, (COLS-28)/2, 22, (COLS+28)/2);
   game->screen().standend();
-  game->screen().center(10, "REST");
-  game->screen().center(11, "IN");
-  game->screen().center(12, "PEACE");
+  game->screen().center(10, "R E S T");
+  game->screen().center(11, "I N");
+  game->screen().center(12, "P E A C E");
   game->screen().red();
   game->screen().center(21, "  *    *      * ");
   game->screen().green();

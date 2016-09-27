@@ -80,7 +80,7 @@ void do_miss(Item* weapon, int thrown, Agent* monster, const char* name)
   if (thrown)
     display_throw_msg(weapon, name, "misses", "missed");
   else
-    miss(NULL, name);
+    display_miss_msg(NULL, name);
   if (monster->can_divide() && rnd(100)>25)
     slime_split(monster);
 }
@@ -88,7 +88,7 @@ void do_miss(Item* weapon, int thrown, Agent* monster, const char* name)
 //fight: The player attacks the monster.
 int Hero::fight(Coord *location, Item *weapon, bool thrown)
 {
-    const char *name;
+    std::string name;
     //Find the monster we want to fight
     Agent *monster = game->level().monster_at(*location);
     if (!monster)
@@ -105,17 +105,17 @@ int Hero::fight(Coord *location, Item *weapon, bool thrown)
         monster->disguise = monster->type;
         if (thrown)
             return false;
-        msg("wait! That's a %s!", monster->get_monster_name());
+        msg("wait! That's a %s!", monster->get_name().c_str());
     }
-    name = this->is_blind() ? it : monster->get_monster_name();
+    name = this->is_blind() ? it : monster->get_name();
 
     if (game->hero().roll_attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))
     {
-        do_hit(weapon, thrown, monster, name);
+        do_hit(weapon, thrown, monster, name.c_str());
         return true;
     }
 
-    do_miss(weapon, thrown, monster, name);
+    do_miss(weapon, thrown, monster, name.c_str());
     return false;
 }
 
@@ -244,7 +244,7 @@ bool vampire_wraith_attack(Agent* monster)
 //attack: The monster attacks the player
 bool Agent::attack_player()
 {
-  const char *name;
+  std::string name;
   int monster_died = false;
   bool attack_success = false; // todo:set this everywhere
 
@@ -253,10 +253,10 @@ bool Agent::attack_player()
   repeat_cmd_count = game->turns_since_heal = 0;
   if (is_disguised() && !game->hero().is_blind()) 
     disguise = type;
-  name = game->hero().is_blind() ? it : get_monster_name();
+  name = game->hero().is_blind() ? it : get_name();
   if (roll_attack(&game->hero(), NULL, false))
   {
-      display_hit_msg(name, NULL);
+      display_hit_msg(name.c_str(), NULL);
       if (game->hero().get_hp() <= 0)
           death(type); //Bye bye life ...
 
@@ -305,7 +305,7 @@ bool Agent::attack_player()
           if (!game->hero().decrease_hp(value, true))
               death(type); //Bye bye life ...
       }
-      miss(name, NULL);
+      display_miss_msg(name.c_str(), NULL);
   }
 
   clear_typeahead_buffer();
@@ -315,8 +315,8 @@ bool Agent::attack_player()
   return !monster_died;
 }
 
-//swing: Returns true if the swing hits
-bool swing(int lvl, int defender_amr, int hplus)
+//attempt_swing: Returns true if the swing hits
+bool attempt_swing(int lvl, int defender_amr, int hplus)
 {
     int roll = rnd(20);
     int got = roll + hplus;
@@ -348,13 +348,13 @@ bool Agent::roll_attack(Agent *the_defender, Item *weapon, bool hurl)
 
     bool did_hit = false;
     const char* cp = damage_string.c_str();
-    for (;;)
+    for (int i = 0; ; ++i)
     {
         int ndice = atoi(cp);
         if ((cp = strchr(cp, 'd')) == NULL) 
             break;
         int nsides = atoi(++cp);
-        if (swing(stats.level, defender_armor, hplus + str_plus(calculate_strength())))
+        if (attempt_swing(stats.level, defender_armor, hplus + str_plus(calculate_strength())))
         {
             int proll;
 
@@ -400,8 +400,8 @@ void display_hit_msg(const char *er, const char *ee)
   msg("%s%s", s, prname(ee, false));
 }
 
-//miss: Print a message to indicate a poor swing
-void miss(const char *er, const char *ee)
+//display_miss_msg: Print a message to indicate a poor swing
+void display_miss_msg(const char *er, const char *ee)
 {
   char *s;
 
@@ -540,7 +540,7 @@ void killed(Agent *monster, bool print)
         if (game->hero().is_blind())
             msg(it);
         else
-            msg("the %s", monster->get_monster_name());
+            msg("the %s", monster->get_name().c_str());
     }
 
     game->hero().gain_experience(monster->experience());

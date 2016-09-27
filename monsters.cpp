@@ -27,6 +27,7 @@
 #include "game_state.h"
 #include "wizard.h"
 #include "hero.h"
+#include "monster.h"
 
 
 //List of monsters in rough order of vorpalness
@@ -214,7 +215,7 @@ bool Agent::powers_cancelled() const {
 
 
 //Array containing information on all the various types of monsters
-struct Monster
+struct MonsterEntry
 {
   std::string name;   //What to call the monster
   int carry;          //Probability of carrying something
@@ -226,7 +227,7 @@ struct Monster
 #define ___  1
 #define XX  10
 
-struct Monster monsters[26] =
+struct MonsterEntry monsters[26] =
 {
   // Name           CARRY                  FLAG       str,  exp,lvl,amr, hpt, dmg
   { "aquator",          0,                 IS_MEAN,  { XX,   20,  5,  2, ___, "0d0/0d0"         }, EX_RUSTS_ARMOR },
@@ -269,7 +270,7 @@ void load_monster_cfg(const std::string& filename)
         std::istringstream ss(line);
 
         char type;
-        Monster m;
+        MonsterEntry m;
         ss >> type;
         ss >> m.name;
         ss >> m.carry;
@@ -290,7 +291,7 @@ const char* get_monster_name(char monster)
   return monsters[monster-'A'].name.c_str();
 }
 
-const char* Agent::get_monster_name() const
+std::string Monster::get_name()
 {
     return ::get_monster_name(type);
 }
@@ -338,9 +339,9 @@ void set_xeroc_disguise(Agent* X)
 //create_monster: Pick a new monster and add it to the list
 Agent* Agent::CreateMonster(byte type, Coord *position, int level)
 {
-  Agent* monster = new Agent;
+  Agent* monster = new Monster;
   int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
-  const struct Monster* defaults;
+  const struct MonsterEntry* defaults;
   
   defaults = &monsters[type-'A'];
   game->level().monsters.push_front(monster);
@@ -429,7 +430,7 @@ Agent *wake_monster(Coord p)
         if (game->hero().is_confused()) lengthen(unconfuse, rnd(20)+HUH_DURATION);
         else fuse(unconfuse, 0, rnd(20)+HUH_DURATION);
         game->hero().set_confused(true);
-        msg("the %s's gaze has confused you", monster->get_monster_name());
+        msg("the %s's gaze has confused you", monster->get_name().c_str());
       }
     }
   }

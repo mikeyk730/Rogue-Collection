@@ -293,7 +293,7 @@ const char* Item::get_inv_name_weapon() const
   if (this->is_vorpalized() && (this->is_revealed() || game->hero().is_wizard()))
   {
     strcat(pb, " of ");
-    strcat(pb, this->get_vorpalized_name());
+    strcat(pb, get_vorpalized_name().c_str());
     strcat(pb, " slaying");
   }
 
@@ -322,7 +322,7 @@ bool Item::is_vorpalized_against(Agent* monster) const
     return enemy == monster->type;
 }
 
-const char* Item::get_vorpalized_name() const
+std::string Item::get_vorpalized_name() const
 {
     return get_monster_name(enemy);
 }
