@@ -24,6 +24,7 @@
 #include "things.h"
 #include "hero.h"
 #include "level.h"
+#include "monster.h"
 
 #define P_CONFUSE   0
 #define P_PARALYZE  1

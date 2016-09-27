@@ -144,9 +144,6 @@ public:
     void set_dirty(bool enable);
     bool is_dirty();
 
-    //do_chase: Make one thing chase another.  Returns false if monster has been invalidated
-    bool do_chase();
-
     //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
     void chase(Coord *chasee_pos);
 
@@ -164,10 +161,4 @@ public:
 
     //roll_attack: Roll several attacks
     bool roll_attack(Agent *the_defender, Item *weapon, bool hurl);
-
-    //attack: The monster attacks the player
-    bool attack_player();
-
-    //create_monster: Pick a new monster and add it to the list
-    static Agent* CreateMonster(byte type, Coord *cp, int level);
 };

@@ -332,9 +332,9 @@ void set_xeroc_disguise(Agent* X)
 }
 
 //create_monster: Pick a new monster and add it to the list
-Agent* Agent::CreateMonster(byte type, Coord *position, int level)
+Monster* Monster::CreateMonster(byte type, Coord *position, int level)
 {
-  Agent* monster = new Monster;
+  Monster* monster = new Monster;
   int level_add = (level <= AMULETLEVEL) ? 0 : level-AMULETLEVEL;
   const struct MonsterEntry* defaults;
   
@@ -392,7 +392,7 @@ void create_wandering_monster()
     if (room==game->hero().room) continue;
     rnd_pos(room, &cp);
   } while (!(room!=game->hero().room && step_ok(game->level().get_tile_or_monster(cp))));
-  monster = Agent::CreateMonster(randmonster(true, get_level()), &cp, get_level());
+  monster = Monster::CreateMonster(randmonster(true, get_level()), &cp, get_level());
   if (invalid_position) 
       debug("wanderer bailout");
   //debug("started a wandering %s", monsters[tp->type-'A'].m_name);

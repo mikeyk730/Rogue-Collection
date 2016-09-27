@@ -21,6 +21,7 @@
 #include "room.h"
 #include "game_state.h"
 #include "hero.h"
+#include "monster.h"
 
 Room rooms[MAXROOMS]; //One for each room -- A level
 
@@ -126,7 +127,7 @@ void do_rooms()
           rnd_pos(room, &mp); 
           mch = game->level().get_tile_or_monster(mp);
         } while (!isfloor(mch));
-        monster = Agent::CreateMonster(randmonster(false, get_level()), &mp, get_level());
+        monster = Monster::CreateMonster(randmonster(false, get_level()), &mp, get_level());
         give_pack(monster);
       
     }

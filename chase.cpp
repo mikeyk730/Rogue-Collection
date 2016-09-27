@@ -21,6 +21,7 @@
 #include "room.h"
 #include "game_state.h"
 #include "hero.h"
+#include "monster.h"
 
 
 //todo: move to env or remove
@@ -37,7 +38,7 @@ Coord ch_ret; //Where chasing takes you
 void runners()
 {
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end();) {
-        Agent* monster = *(it++);
+        Monster* monster = *(it++);
         if (!monster->is_held() && monster->is_running())
         {
             int dist = distance(game->hero().pos, monster->pos);
@@ -62,7 +63,7 @@ void runners()
 }
 
 //do_chase: Make one thing chase another.
-bool Agent::do_chase()
+bool Monster::do_chase()
 {
     //If gold has been taken, target the hero
     if (is_greedy() && room->gold_val == 0)

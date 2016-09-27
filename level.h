@@ -1,7 +1,7 @@
 #include <list>
 
 struct Item;
-struct Agent;
+struct Monster;
 
 struct Level {
     void new_level(int do_implode);
@@ -32,13 +32,13 @@ struct Level {
     Room* get_passage(Coord pos);
 
     //monster_at: returns pointer to monster at coordinate. if no monster there return NULL
-    Agent *monster_at(Coord p);
+    Monster* monster_at(Coord p);
 
     void draw_char(Coord p);
 
 
     std::list<Item*> items; //List of objects on this level
-    std::list<Agent*> monsters; //List of monsters on the level
+    std::list<Monster*> monsters; //List of monsters on the level
 private:
     byte the_level[(MAXLINES - 3)*MAXCOLS];
     byte the_flags[(MAXLINES - 3)*MAXCOLS];

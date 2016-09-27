@@ -32,6 +32,7 @@
 #include "hero.h"
 #include "food.h"
 #include "scrolls.h"
+#include "monster.h"
 
 //whatis: What a certain object is
 void whatis()
@@ -227,7 +228,7 @@ namespace
     {
         for (auto i = game->level().monsters.begin(); i != game->level().monsters.end(); ++i)
         {
-            Agent* monster = *i;
+            Monster* monster = *i;
             std::ostringstream ss;
             ss << "  "   << left << setw(14) << monster->get_name() << " ";
             ss << "hp:"  << left << setw(4) << monster->get_hp() << " ";

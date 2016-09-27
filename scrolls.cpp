@@ -21,6 +21,7 @@
 #include "weapons.h"
 #include "things.h"
 #include "hero.h"
+#include "monster.h"
 
 //Scroll types
 #define S_CONFUSE   0
@@ -276,7 +277,7 @@ void read_create_monster()
   Coord position;
 
   if (plop_monster(game->hero().pos.y, game->hero().pos.x, &position)) {
-      monster = Agent::CreateMonster(randmonster(false, get_level()), &position, get_level());
+      monster = Monster::CreateMonster(randmonster(false, get_level()), &position, get_level());
   }
   else 
     ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");

@@ -22,6 +22,7 @@
 #include "armor.h"
 #include "hero.h"
 #include "pack.h"
+#include "monster.h"
 
 #define NONE 100
 

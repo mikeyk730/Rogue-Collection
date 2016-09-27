@@ -33,13 +33,14 @@ using std::max;
 #include "armor.h"
 #include "pack.h"
 #include "env.h"
+#include "monster.h"
 
 char tbuf[MAXSTR];
 
 const char* it = "it";
 const char* you = "you";
 
-void do_hit(Item* weapon, int thrown, Agent* monster, const char* name)
+void do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
 {
   bool did_huh = false;
 
@@ -90,7 +91,7 @@ int Hero::fight(Coord *location, Item *weapon, bool thrown)
 {
     std::string name;
     //Find the monster we want to fight
-    Agent *monster = game->level().monster_at(*location);
+    Monster* monster = game->level().monster_at(*location);
     if (!monster)
         return false;
 
@@ -242,7 +243,7 @@ bool vampire_wraith_attack(Agent* monster)
 }
 
 //attack: The monster attacks the player
-bool Agent::attack_player()
+bool Monster::attack_player()
 {
   std::string name;
   int monster_died = false;
@@ -479,7 +480,7 @@ void display_throw_msg(Item *item, const char *name, char *does, char *did)
 }
 
 //remove: Remove a monster from the screen
-void remove_monster(Agent *monster, bool waskill)
+void remove_monster(Monster* monster, bool waskill)
 {
     Coord* monster_pos = &monster->pos;
     for (auto it = monster->pack.begin(); it != monster->pack.end();){
@@ -519,7 +520,7 @@ bool Item::is_magic()
 }
 
 //killed: Called to put a monster to death
-void killed(Agent *monster, bool print)
+void killed(Monster* monster, bool print)
 {
     //If the monster was a flytrap, un-hold him
     if (monster->can_hold()) {

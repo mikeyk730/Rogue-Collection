@@ -19,6 +19,7 @@
 #include "pack.h"
 #include "things.h"
 #include "potions.h"
+#include "monster.h"
 
 //One for each passage
 Room passages[MAXPASS] =
@@ -121,9 +122,9 @@ void Level::clear_level()
     }
 
     //monster_at: returns pointer to monster at coordinate. if no monster there return NULL
-    Agent* Level::monster_at(Coord p)
+    Monster* Level::monster_at(Coord p)
     {
-        Agent *monster;
+        Monster* monster;
         for (auto it = monsters.begin(); it != monsters.end(); ++it) {
             monster = *it;
             if (monster->pos.x == p.x && monster->pos.y == p.y)
@@ -292,7 +293,7 @@ void Level::clear_level()
             }
             if (spots != MAXTRIES)
             {
-                monster = Agent::CreateMonster(randmonster(false, get_level() + 1), &pos, get_level() + 1);
+                monster = Monster::CreateMonster(randmonster(false, get_level() + 1), &pos, get_level() + 1);
                 if (invalid_position)
                     debug("treasure roomm bailout");
                 monster->set_is_mean(true); //no sloughers in THIS room

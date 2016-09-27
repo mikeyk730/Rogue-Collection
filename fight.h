@@ -1,5 +1,6 @@
 #pragma once
-#include "agent.h"
+
+struct Monster;
 
 //attempt_swing: Returns true if the swing hits
 bool attempt_swing(int at_lvl, int op_arm, int wplus);
@@ -29,7 +30,7 @@ int add_dam(unsigned int str);
 void display_throw_msg(Item *weapon, const char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen
-void remove_monster(Agent *monster, bool waskill);
+void remove_monster(Monster* monster, bool waskill);
 
 //killed: Called to put a monster to death
-void killed(Agent *monster, bool print);
+void killed(Monster* monster, bool print);

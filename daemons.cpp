@@ -17,6 +17,7 @@
 #include "hero.h"
 #include "room.h"
 #include "level.h"
+#include "monster.h"
 
 //doctor: A healing daemon that restores hit points after rest
 void doctor()

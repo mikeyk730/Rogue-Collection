@@ -17,7 +17,7 @@ void free_item_list(std::list<Item*>& l)
 }
 
 //_free_list: Throw the whole blamed thing away
-void free_agent_list(std::list<Agent*>& l)
+void free_agent_list(std::list<Monster*>& l)
 {
     for (auto it = l.begin(); it != l.end(); ++it){
         delete(*it);

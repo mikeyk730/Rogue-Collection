@@ -26,6 +26,7 @@
 #include "things.h"
 #include "hero.h"
 #include "room.h"
+#include "monster.h"
 
 static char *wood[] =
 {
@@ -205,7 +206,7 @@ void zap_bolt(int which, const char* name)
   game->sticks().discover(which);
 }
 
-void zap_vorpalized_weapon(Item* weapon, Agent* monster)
+void zap_vorpalized_weapon(Item* weapon, Monster* monster)
 {
     if (weapon->is_vorpalized_against(monster))
     {
@@ -216,12 +217,12 @@ void zap_vorpalized_weapon(Item* weapon, Agent* monster)
         msg("you hear a maniacal chuckle in the distance.");
 }
 
-void zap_polymorph(Agent* monster, Coord p)
+void zap_polymorph(Monster* monster, Coord p)
 {
   if (game->hero().can_see_monster(monster)) 
     game->screen().mvaddch(p, game->level().get_tile(p));
 
-  Agent* new_monster = Agent::CreateMonster(rnd(26)+'A', &p, get_level());
+  Monster* new_monster = Monster::CreateMonster(rnd(26)+'A', &p, get_level());
   game->level().monsters.remove(new_monster);
 
   new_monster->oldch = monster->oldch;
@@ -273,7 +274,7 @@ void zap_teleport(Agent* monster, Coord p, int which)
 void zap_generic(Item* wand, int which)
 {
   int x, y;
-  Agent* monster;
+  Monster* monster;
 
   y = game->hero().pos.y;
   x = game->hero().pos.x;
@@ -454,12 +455,12 @@ void do_zap()
 //drain: Do drain hit points from player schtick
 void drain()
 {
-  Agent *monster;
+  Monster* monster;
   int cnt;
   struct Room *room;
-  Agent **dp;
+  Monster **dp;
   bool in_passage;
-  Agent *drainee[40];
+  Monster *drainee[40];
 
   //First count how many things we need to spread the hit points among
   cnt = 0;
