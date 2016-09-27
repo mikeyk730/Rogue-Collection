@@ -315,12 +315,15 @@ bool Agent::attack_player()
 }
 
 //swing: Returns true if the swing hits
-bool swing(int at_lvl, int op_arm, int wplus)
+bool swing(int lvl, int defender_amr, int hplus)
 {
-  int res = rnd(20);
-  int need = (20-at_lvl)-op_arm;
-
-  return (res+wplus>=need);
+    int roll = rnd(20);
+    int got = roll + hplus;
+    int need = (20 - lvl) - defender_amr;
+    bool hit(got >= need);
+    //todo: log battle strings
+    //msg("%4s: %d (roll:%d+hplus:%d) %d (20-lvl:%d-amr:%d)", hit ? "Hit" : "Miss", got, roll, hplus, need, lvl, defender_amr);
+    return hit;
 }
 
 //roll_attack: Roll several attacks
