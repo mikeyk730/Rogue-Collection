@@ -5,7 +5,7 @@
 #include "slime.h"
 #include "misc.h"
 #include "thing.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "io.h"
 #include "monsters.h"
 #include "chase.h"
@@ -30,7 +30,7 @@ void slime_split(Agent *monster)
   if (game->hero().can_see(slimy))
   {
     nslime->oldch = game->level().get_tile(slimy);
-    Screen::DrawChar(slimy, monster->type);
+    game->screen().mvaddch(slimy, monster->type);
   }
   nslime->start_run();
 }

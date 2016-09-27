@@ -9,7 +9,7 @@
 #include "pack.h"
 #include "list.h"
 #include "weapons.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "io.h"
 #include "things.h"
 #include "fight.h"
@@ -116,7 +116,7 @@ void do_motion(Item *obj, int ydelta, int xdelta)
 
     //Erase the old one
     if (under != MDK && !equal(obj->pos, game->hero().pos) && game->hero().can_see(obj->pos))
-      Screen::DrawChar(obj->pos, under);
+      game->screen().mvaddch(obj->pos, under);
     //Get the new position
     obj->pos.y += ydelta;
     obj->pos.x += xdelta;
@@ -126,7 +126,7 @@ void do_motion(Item *obj, int ydelta, int xdelta)
         if (game->hero().can_see(obj->pos))
       {
         under = game->level().get_tile(obj->pos);
-        Screen::DrawChar(obj->pos, obj->type);
+        game->screen().mvaddch(obj->pos, obj->type);
         tick_pause();
       }
       else under = MDK;
@@ -160,10 +160,12 @@ void fall(Item *obj, bool pr)
     obj->pos = fpos;
     if (game->hero().can_see(fpos))
     {
-      if ((game->level().get_flags(obj->pos)&F_PASS) || (game->level().get_flags(obj->pos)&F_MAZE)) standout();
-      Screen::DrawChar(fpos, obj->type);
-      standend();
-      if (game->level().monster_at(fpos)!=NULL) game->level().monster_at(fpos)->oldch = obj->type;
+      if ((game->level().get_flags(obj->pos)&F_PASS) || (game->level().get_flags(obj->pos)&F_MAZE))
+          game->screen().standout();
+      game->screen().mvaddch(fpos, obj->type);
+      game->screen().standend();
+      if (game->level().monster_at(fpos)!=NULL) 
+          game->level().monster_at(fpos)->oldch = obj->type;
     }
     game->level().items.push_front(obj);
     return;

@@ -18,7 +18,7 @@
 #include "scrolls.h"
 #include "potions.h"
 #include "weapons.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "main.h"
 #include "armor.h"
 #include "daemon.h"
@@ -323,21 +323,26 @@ int add_line(const char *use, const char *fmt, const char *arg)
   int x, y;
   int retchar = ' ';
 
-  if (line_cnt==0) {wdump(); clear();}
+  if (line_cnt==0) {
+      game->screen().wdump(); 
+      game->screen().clear();
+  }
   if (line_cnt>=LINES-1 || fmt==NULL)
   {
-    move(LINES-1, 0);
-    if (*use) printw("-Select item to %s. Esc to cancel-", use);
-    else addstr("-Press space to continue-");
+      game->screen().move(LINES-1, 0);
+    if (*use) 
+        game->screen().printw("-Select item to %s. Esc to cancel-", use);
+    else 
+        game->screen().addstr("-Press space to continue-");
     do retchar = readchar(); while (retchar!=ESCAPE && retchar!=' ' && (!islower(retchar)));
-    clear();
+    game->screen().clear();
     line_cnt = 0;
   }
   if (fmt!=NULL && !(line_cnt==0 && *fmt=='\0'))
   {
-    move(line_cnt, 0);
-    printw(fmt, arg);
-    getrc(&x, &y);
+    game->screen().move(line_cnt, 0);
+    game->screen().printw(fmt, arg);
+    game->screen().getrc(&x, &y);
     //if the line wrapped but nothing was printed on this line you might as well use it for the next item
     if (y!=0) line_cnt = x+1;
   }
@@ -350,7 +355,7 @@ int end_line(char *use)
   int retchar;
 
   retchar = add_line(use, 0, 0);
-  wrestor();
+  game->screen().wrestor();
   line_cnt = 0;
   return (retchar);
 }

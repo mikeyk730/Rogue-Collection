@@ -5,7 +5,7 @@
 #include "move.h"
 #include "thing.h"
 #include "weapons.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "io.h"
 #include "rip.h"
 #include "wizard.h"
@@ -165,7 +165,7 @@ hit_bound:
       game->modifiers.m_running = false;
       if (ch!=STAIRS) take = ch;
 move_stuff:
-      Screen::RedrawChar(game->hero().pos);
+      game->level().draw_char(game->hero().pos);
       if ((fl&F_PASS) && (game->level().get_tile(oldpos)==DOOR || (game->level().get_flags(oldpos)&F_MAZE))) 
           leave_room(&nh);
       if ((fl&F_MAZE) && (game->level().get_flags(oldpos)&F_MAZE)==0)
@@ -248,7 +248,7 @@ int be_trapped(Coord *tc)
 
   case T_TELEP:
     game->hero().teleport();
-    Screen::DrawChar(*tc, TRAP); //since the hero's leaving, look() won't put it on for us
+    game->screen().mvaddch(*tc, TRAP); //since the hero's leaving, look() won't put it on for us
     was_trapped++;//todo:look at this
     break;
 

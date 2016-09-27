@@ -20,7 +20,7 @@ using std::max;
 #include "rip.h"
 #include "things.h"
 #include "main.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "slime.h"
 #include "chase.h"
 #include "potions.h"
@@ -515,12 +515,12 @@ void remove_monster(Agent *monster, bool waskill)
             delete(obj);
     }
     if (game->level().get_tile(*monster_pos) == PASSAGE)
-        standout();
+        game->screen().standout();
     if (monster->oldch == FLOOR && !game->hero().can_see(*monster_pos))
-        Screen::DrawChar(*monster_pos, ' ');
+        game->screen().mvaddch(*monster_pos, ' ');
     else if (monster->oldch != MDK)
-        Screen::DrawChar(*monster_pos, monster->oldch);
-    standend();
+        game->screen().mvaddch(*monster_pos, monster->oldch);
+    game->screen().standend();
 
     game->level().monsters.remove(monster);
     delete monster;

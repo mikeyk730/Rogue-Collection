@@ -10,7 +10,7 @@
 #include "io.h"
 #include "sticks.h"
 #include "misc.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "main.h"
 #include "monsters.h"
 #include "list.h"
@@ -80,8 +80,8 @@ bool Agent::do_chase()
     Item *obj;
     Room *oroom;
     Coord tempdest; //Temporary destination for chaser
-    
-    
+
+
     Room* monster_room = this->room; //Find room of chaser
     //We don't count doors as inside rooms for this routine
     bool door = game->level().get_tile(pos) == DOOR;
@@ -108,87 +108,87 @@ over:
             goto over;
         }
     }
-  else
-  {
-    tempdest = *this->dest;
-    //For monsters which can fire bolts at the poor hero, we check to see if 
-    // (a) the hero is on a straight line from it, and 
-    // (b) that it is within shooting distance, but outside of striking range.
-    if ((this->shoots_fire() || this->shoots_ice()) && 
-        (this->pos.y==game->hero().pos.y || this->pos.x==game->hero().pos.x || abs(this->pos.y-game->hero().pos.y)==abs(this->pos.x-game->hero().pos.x)) &&
-        ((dist = distance(this->pos, game->hero().pos))>2 && dist<=BOLT_LENGTH*BOLT_LENGTH) && !this->powers_cancelled() && rnd(DRAGONSHOT)==0)
-    {
-      game->modifiers.m_running = false;
-      delta.y = sign(game->hero().pos.y-this->pos.y);
-      delta.x = sign(game->hero().pos.x-this->pos.x);
-      return fire_bolt(&this->pos, &delta, this->shoots_fire()?"flame":"frost");
-    }
-  }
-  //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
-  this->chase(&tempdest);
-  if (equal(ch_ret, game->hero().pos)) {
-    return attack_player(); 
-  }
-  else if (equal(ch_ret, *this->dest))
-  {
-      for (auto it = game->level().items.begin(); it != game->level().items.end(); ){
-          obj = *(it++);
-          if ( alt_orc_behavior && (*this->dest == obj->pos) ||
-              !alt_orc_behavior && (this->dest == &obj->pos))
-          {
-              byte oldchar;
-              game->level().items.remove(obj);
-              this->pack.push_front(obj);
-              oldchar = (this->room->is_gone()) ? PASSAGE : FLOOR;
-              game->level().set_tile(obj->pos, oldchar);
-              if (game->hero().can_see(obj->pos))
-                  Screen::DrawChar(obj->pos, oldchar);
-              set_destination();
-              break;
-          }
-      }
-  }
-  if (this->is_stationary()) 
-      return true;
-  //If the chasing thing moved, update the screen
-  if (this->oldch!=MDK)
-  {
-    if (this->oldch==' ' && game->hero().can_see(this->pos) && game->level().get_tile(this->pos)==FLOOR)
-      Screen::DrawChar(this->pos, (char)FLOOR);
-    else if (this->oldch == FLOOR && !game->hero().can_see(this->pos) && !game->hero().detects_others())
-      Screen::DrawChar(this->pos, ' ');
     else
-      Screen::DrawChar(this->pos, this->oldch);
-  }
-  oroom = this->room;
-  if (!equal(ch_ret, this->pos))
-  {
-    if ((this->room = get_room_from_position(&ch_ret))==NULL) {
-        this->room = oroom; 
-        return true;
+    {
+        tempdest = *this->dest;
+        //For monsters which can fire bolts at the poor hero, we check to see if 
+        // (a) the hero is on a straight line from it, and 
+        // (b) that it is within shooting distance, but outside of striking range.
+        if ((this->shoots_fire() || this->shoots_ice()) &&
+            (this->pos.y == game->hero().pos.y || this->pos.x == game->hero().pos.x || abs(this->pos.y - game->hero().pos.y) == abs(this->pos.x - game->hero().pos.x)) &&
+            ((dist = distance(this->pos, game->hero().pos)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !this->powers_cancelled() && rnd(DRAGONSHOT) == 0)
+        {
+            game->modifiers.m_running = false;
+            delta.y = sign(game->hero().pos.y - this->pos.y);
+            delta.x = sign(game->hero().pos.x - this->pos.x);
+            return fire_bolt(&this->pos, &delta, this->shoots_fire() ? "flame" : "frost");
+        }
     }
-    if (oroom!=this->room) 
-        set_destination();
-    this->pos = ch_ret;
-  }
-  if (game->hero().can_see_monster(this))
-  {
-    if (game->level().get_flags(ch_ret)&F_PASS) standout();
-    this->oldch = mvinch(ch_ret.y, ch_ret.x);
-    Screen::DrawChar(ch_ret, this->disguise);
-  }
-  else if (game->hero().detects_others())
-  {
-    standout();
-    this->oldch = mvinch(ch_ret.y, ch_ret.x);
-    Screen::DrawChar(ch_ret, this->type);
-  }
-  else 
-    this->oldch = MDK;
-  if (this->oldch==FLOOR && oroom->is_dark()) 
-      this->oldch = ' ';
-  standend();
-  return true;
+    //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
+    this->chase(&tempdest);
+    if (equal(ch_ret, game->hero().pos)) {
+        return attack_player();
+    }
+    else if (equal(ch_ret, *this->dest))
+    {
+        for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
+            obj = *(it++);
+            if (alt_orc_behavior && (*this->dest == obj->pos) ||
+                !alt_orc_behavior && (this->dest == &obj->pos))
+            {
+                byte oldchar;
+                game->level().items.remove(obj);
+                this->pack.push_front(obj);
+                oldchar = (this->room->is_gone()) ? PASSAGE : FLOOR;
+                game->level().set_tile(obj->pos, oldchar);
+                if (game->hero().can_see(obj->pos))
+                    game->screen().mvaddch(obj->pos, oldchar);
+                set_destination();
+                break;
+            }
+        }
+    }
+    if (this->is_stationary())
+        return true;
+    //If the chasing thing moved, update the screen
+    if (this->oldch != MDK)
+    {
+        if (this->oldch == ' ' && game->hero().can_see(this->pos) && game->level().get_tile(this->pos) == FLOOR)
+            game->screen().mvaddch(this->pos, (char)FLOOR);
+        else if (this->oldch == FLOOR && !game->hero().can_see(this->pos) && !game->hero().detects_others())
+            game->screen().mvaddch(this->pos, ' ');
+        else
+            game->screen().mvaddch(this->pos, this->oldch);
+    }
+    oroom = this->room;
+    if (!equal(ch_ret, this->pos))
+    {
+        if ((this->room = get_room_from_position(&ch_ret)) == NULL) {
+            this->room = oroom;
+            return true;
+        }
+        if (oroom != this->room)
+            set_destination();
+        this->pos = ch_ret;
+    }
+    if (game->hero().can_see_monster(this))
+    {
+        if (game->level().get_flags(ch_ret)&F_PASS) game->screen().standout();
+        this->oldch = game->screen().mvinch(ch_ret.y, ch_ret.x);
+        game->screen().mvaddch(ch_ret, this->disguise);
+    }
+    else if (game->hero().detects_others())
+    {
+        game->screen().standout();
+        this->oldch = game->screen().mvinch(ch_ret.y, ch_ret.x);
+        game->screen().mvaddch(ch_ret, this->type);
+    }
+    else
+        this->oldch = MDK;
+    if (this->oldch == FLOOR && oroom->is_dark())
+        this->oldch = ' ';
+    game->screen().standend();
+    return true;
 }
 
 //can_see_monster: Return true if the hero can see the monster

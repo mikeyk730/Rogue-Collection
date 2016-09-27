@@ -3,7 +3,8 @@
 #include <ctype.h>
 
 #include "rogue.h"
-#include "curses.h"
+#include "game_state.h"
+#include "output_interface.h"
 #include "fakedos.h"
 #include "mach_dep.h"
 #include "io.h"
@@ -16,26 +17,26 @@ void fakedos()
   char comline[132];
   char *comhead;
 
-  wdump();
-  clear();
-  move(0, 0);
-  cursor(true);
+  game->screen().wdump();
+  game->screen().clear();
+  game->screen().move(0, 0);
+  game->screen().cursor(true);
   do
   {
     memset(comline, 0, sizeof(comline));
-    printw("\nC:\\>");
+    game->screen().printw("\nC:\\>");
     getinfo(comline, 130);
     comhead = stpblk(comline);
     endblk(comhead);
   } while (dodos(comhead));
-  cursor(false);
-  wrestor();
+  game->screen().cursor(false);
+  game->screen().wrestor();
 }
 
 //execute a dos like command
 int dodos(char *com)
 {
   if (strcmp(com, "rogue")==0) return 0;
-  printw("\nBad command or file name\n");
+  game->screen().printw("\nBad command or file name\n");
   return 1;
 }

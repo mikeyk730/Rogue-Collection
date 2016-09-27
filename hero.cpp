@@ -14,7 +14,7 @@
 #include "rings.h"
 #include "agent.h"
 #include "food.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "level.h"
 #include "rooms.h"
 #include "daemon.h"
@@ -250,7 +250,7 @@ void Hero::teleport()
     struct Room* rm;
     Coord c;
 
-    Screen::DrawChar(pos, game->level().get_tile(pos));
+    game->screen().mvaddch(pos, game->level().get_tile(pos));
     do {
         rm = rnd_room();
         rnd_pos(rm, &c);
@@ -261,7 +261,7 @@ void Hero::teleport()
         enter_room(&pos);
     }
     else { pos = c; look(true); }
-    Screen::DrawChar(pos, PLAYER);
+    game->screen().mvaddch(pos, PLAYER);
     //turn off IS_HELD in case teleportation was done while fighting a Flytrap
     if (is_held()) {
         set_is_held(false);

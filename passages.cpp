@@ -7,13 +7,12 @@
 #include "room.h"
 #include "maze.h"
 #include "main.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "misc.h"
 #include "passages.h"
 #include "io.h"
 #include "level.h"
 #include "game_state.h"
-
 
 extern struct Room rooms[];
 
@@ -239,7 +238,7 @@ void add_pass()
     for (y = 1; y < maxrow; y++)
         for (x = 0; x < COLS; x++)
             if ((ch = game->level().get_tile({x, y})) == DOOR || ch == PASSAGE)
-                Screen::DrawChar({ x, y }, ch);
+                game->screen().mvaddch({ x, y }, ch);
 }
 
 //passnum: Assign a number to each passageway

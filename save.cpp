@@ -5,7 +5,7 @@
 #include "game_state.h"
 #include "save.h"
 #include "io.h"
-#include "curses.h"
+#include "output_interface.h"
 
 void do_save(const char* filename)
 {
@@ -21,9 +21,9 @@ void save_game()
     msg("");
     msg_position = 0;
     if (in_small_screen_mode())
-        addstr("Save file ? ");
+        game->screen().addstr("Save file ? ");
     else
-        printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", game->get_environment("savefile").c_str());
+        game->screen().printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", game->get_environment("savefile").c_str());
     getinfo(savename, 19);
     if (*savename == 0)
         strcpy(savename, game->get_environment("savefile").c_str());

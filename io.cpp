@@ -9,7 +9,7 @@
 #include "rogue.h"
 #include "game_state.h"
 #include "io.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "misc.h"
 #include "mach_dep.h"
 #include "strings.h"
@@ -33,7 +33,7 @@ static int min_width, max_width;
 static char ibuf[6];
 
 bool save_msg = true;       //Remember last msg
-bool terse = false;
+bool terse = false; //todo: small_screen_mode / 40 chars 
 bool expert = false;
 
 bool short_msgs()
@@ -75,7 +75,7 @@ void ifterse(const char *tfmt, const char *format, ...)
 void msg(const char *format, ...)
 {
   //if the string is "", just clear the line
-  if (*format=='\0') {move(0, 0); clrtoeol(); msg_position = 0; return;}
+  if (*format=='\0') {game->screen().move(0, 0); game->screen().clrtoeol(); msg_position = 0; return;}
 
   char dest[1024 * 16];
   va_list argptr;
@@ -105,7 +105,7 @@ void endmsg()
 {
   if (save_msg) 
       strcpy(last_message, msgbuf);
-  if (msg_position) {look(false); move(0, msg_position); more(" More ");}
+  if (msg_position) {look(false); game->screen().move(0, msg_position); more(" More ");}
   //All messages should start with uppercase, except ones that start with a pack addressing character
   if (islower(msgbuf[0]) && msgbuf[1]!=')') msgbuf[0] = toupper(msgbuf[0]);
   putmsg(0, msgbuf);
@@ -123,27 +123,27 @@ void more(const char *msg)
   int covered = false;
 
   msz = strlen(msg);
-  getrc(&x,&y);
+  game->screen().getrc(&x,&y);
   //it is reasonable to assume that if the you are no longer on line 0, you must have wrapped.
   if (x!=0) {x = 0; y = COLS;}
-  if ((y+msz)>COLS) {move(x, y = COLS-msz); covered = true;}
+  if ((y+msz)>COLS) {game->screen().move(x, y = COLS-msz); covered = true;}
   for (i=0; i<msz; i++)
   {
-    mbuf[i] = curch();
-    if ((i+y)<(COLS-2)) move(x, y+i+1);
+    mbuf[i] = game->screen().curch();
+    if ((i+y)<(COLS-2)) game->screen().move(x, y+i+1);
     mbuf[i+1] = 0;
   }
-  move(x, y);
-  standout();
-  addstr(msg);
-  standend();
+  game->screen().move(x, y);
+  game->screen().standout();
+  game->screen().addstr(msg);
+  game->screen().standend();
   while (readchar()!=' ')
   {
-    if (covered && morethere) {move(x, y); addstr(mbuf); morethere = false;}
-    else if (covered) {move(x, y); standout(); addstr(msg); standend(); morethere = true;}
+    if (covered && morethere) {game->screen().move(x, y); game->screen().addstr(mbuf); morethere = false;}
+    else if (covered) {game->screen().move(x, y); game->screen().standout(); game->screen().addstr(msg); game->screen().standend(); morethere = true;}
   }
-  move(x, y);
-  addstr(mbuf);
+  game->screen().move(x, y);
+  game->screen().addstr(mbuf);
 }
 
 //doadd: Perform an add onto the message buffer
@@ -192,15 +192,15 @@ void scrl(int msgline, const char *str1, const char *str2)
   if (COLS>40) fmt = "%.80s"; else fmt = "%.40s";
   if (str1==0)
   {
-    move(msgline, 0);
-    if (strlen(str2)<(size_t)COLS) clrtoeol();
-    printw(fmt, str2);
+    game->screen().move(msgline, 0);
+    if (strlen(str2)<(size_t)COLS) game->screen().clrtoeol();
+    game->screen().printw(fmt, str2);
   }
   else while (str1<=str2)
   {
-    move(msgline, 0);
-    printw(fmt, str1++);
-    if (strlen(str1)<(size_t)(COLS-1)) clrtoeol();
+    game->screen().move(msgline, 0);
+    game->screen().printw(fmt, str1++);
+    if (strlen(str1)<(size_t)(COLS-1)) game->screen().clrtoeol();
   }
 }
 
@@ -225,83 +225,83 @@ void status()
     static char *state_name[] = { "      ", "Hungry", "Weak", "Faint", "?" };
 
     SIG2();
-    getrc(&oy, &ox);
-    yellow();
+    game->screen().getrc(&oy, &ox);
+    game->screen().yellow();
     //Level:
     if (s_level != get_level())
     {
         s_level = get_level();
-        move(PT(22, 23), 0);
-        printw("Level:%-4d", get_level());
+        game->screen().move(PT(22, 23), 0);
+        game->screen().printw("Level:%-4d", get_level());
     }
     //Hits:
     if (s_hp != game->hero().get_hp())
     {
         s_hp = game->hero().get_hp();
-        move(PT(22, 23), 12);
+        game->screen().move(PT(22, 23), 12);
         if (game->hero().get_hp() < 100) {
-            printw("Hits:%2d(%2d) ", game->hero().get_hp(), game->hero().stats.max_hp);
+            game->screen().printw("Hits:%2d(%2d) ", game->hero().get_hp(), game->hero().stats.max_hp);
             //just in case they get wraithed with 3 digit max hits
-            addstr("  ");
+            game->screen().addstr("  ");
         }
         else
-            printw("Hits:%3d(%3d) ", game->hero().get_hp(), game->hero().stats.max_hp);
+            game->screen().printw("Hits:%3d(%3d) ", game->hero().get_hp(), game->hero().stats.max_hp);
     }
 
     //Str:
-    move(PT(22, 23), 26);
-    printw("Str:%2d(%2d) ", game->hero().calculate_strength(), game->hero().calculate_max_strength());
+    game->screen().move(PT(22, 23), 26);
+    game->screen().printw("Str:%2d(%2d) ", game->hero().calculate_strength(), game->hero().calculate_max_strength());
 
     //Gold
     if (s_pur != game->hero().get_purse())
     {
         s_pur = game->hero().get_purse();
-        move(23, PT(0, 40));
-        printw("Gold:%-5u", game->hero().get_purse());
+        game->screen().move(23, PT(0, 40));
+        game->screen().printw("Gold:%-5u", game->hero().get_purse());
     }
     //Armor:
-    move(23, PT(12, 52));    
-    printw("Armor:%-2d", AC(game->hero().calculate_armor()));
+    game->screen().move(23, PT(12, 52));    
+    game->screen().printw("Armor:%-2d", AC(game->hero().calculate_armor()));
     
     //Exp:
     if (!use_level_names())
     {
-        move(23, PT(22, 62));
-        printw("Exp:%d/%d", game->hero().stats.level, game->hero().stats.exp);
+        game->screen().move(23, PT(22, 62));
+        game->screen().printw("Exp:%d/%d", game->hero().stats.level, game->hero().stats.exp);
     }
     else if (s_elvl != game->hero().stats.level)
     {
         s_elvl = game->hero().stats.level;
-        move(23, PT(22, 62));
-        printw("%-12s", level_titles[s_elvl - 1]);
+        game->screen().move(23, PT(22, 62));
+        game->screen().printw("%-12s", level_titles[s_elvl - 1]);
     }
     //Show raw food counter in wizard mode
     if (game->hero().is_wizard()) {
         s_hungry = game->hero().get_food_left();
         std::ostringstream ss;
         ss << s_hungry;
-        bold();
-        move(24, PT(28, 58));
-        addstr(state_name[0]);
-        move(24, PT(28, 58));
-        addstr(ss.str().c_str());
-        standend();
+        game->screen().bold();
+        game->screen().move(24, PT(28, 58));
+        game->screen().addstr(state_name[0]);
+        game->screen().move(24, PT(28, 58));
+        game->screen().addstr(ss.str().c_str());
+        game->screen().standend();
     }
     //Hungry state
     else if (s_hungry != game->hero().get_hungry_state())
     {
         s_hungry = game->hero().get_hungry_state();
-        move(24, PT(28, 58));
-        addstr(state_name[0]);
-        move(24, PT(28, 58));
+        game->screen().move(24, PT(28, 58));
+        game->screen().addstr(state_name[0]);
+        game->screen().move(24, PT(28, 58));
         if (game->hero().get_hungry_state()) {
-            bold();
-            addstr(state_name[game->hero().get_hungry_state()]);
-            standend();
+            game->screen().bold();
+            game->screen().addstr(state_name[game->hero().get_hungry_state()]);
+            game->screen().standend();
         }
     }
-    standend();
-    move(oy, ox);
+    game->screen().standend();
+    game->screen().move(oy, ox);
 }
 
 //wait_for: Sit around until the guy types the right key
@@ -316,8 +316,8 @@ void wait_for(char ch)
 //show_win: Function used to display a window and wait before returning
 void show_win(char *message)
 {
-  mvaddstr(0, 0, message);
-  move(game->hero().pos.y, game->hero().pos.x);
+  game->screen().mvaddstr(0, 0, message);
+  game->screen().move(game->hero().pos.y, game->hero().pos.x);
   wait_for(' ');
 }
 
@@ -331,14 +331,14 @@ int getinfo_impl(char *str, int size)
 
   retstr = str;
   *str = 0;
-  wason = cursor(true);
+  wason = game->screen().cursor(true);
   while (ret==1) switch (ch = getkey())
   {
   case ESCAPE:
     while (str!=retstr) {backspace(); readcnt--; str--;}
     ret = *str = ESCAPE;
     str[1] = 0;
-    cursor(wason);
+    game->screen().cursor(wason);
     break;
   case '\b':
     if (str!=retstr) {backspace(); readcnt--; str--;}
@@ -346,13 +346,13 @@ int getinfo_impl(char *str, int size)
   default:
     if (readcnt>=size) {beep(); break;}
     readcnt++;
-    addch(ch);
+    game->screen().addch(ch);
     *str++ = ch;
     if ((ch&0x80)==0) break;
   case '\n':
   case '\r':
     *str = 0;
-    cursor(wason);
+    game->screen().cursor(wason);
     ret = ch;
     break;
   }
@@ -362,11 +362,11 @@ int getinfo_impl(char *str, int size)
 void backspace()
 {
   int x, y;
-  getrc(&x, &y);
+  game->screen().getrc(&x, &y);
   if (--y<0) y = 0;
-  move(x, y);
+  game->screen().move(x, y);
   putchar(' ');
-  move(x, y);
+  game->screen().move(x, y);
 }
 
 //str_attr: format a string with attributes.
@@ -391,9 +391,9 @@ void str_attr(char *str)
 {
   while (*str)
   {
-    if (*str=='%') {str++; standout();}
-    addch(*str++);
-    standend();
+    if (*str=='%') {str++; game->screen().standout();}
+    game->screen().addch(*str++);
+    game->screen().standend();
   }
 }
 
@@ -412,7 +412,7 @@ void SIG2()
   if (COLS == 40) { nspot = 10; cspot = 19; tspot = 35; }
   else { nspot = 20; cspot = 39; tspot = 75; }
 
-  getrc(&x, &y);
+  game->screen().getrc(&x, &y);
   if (game->allow_fast_play()) {
       if (game->modifiers.scroll_lock() != scroll_lock_on)
       {
@@ -422,13 +422,13 @@ void SIG2()
           game->modifiers.m_running = false;
       }
 
-      move(LINES - 1, 0);
+      game->screen().move(LINES - 1, 0);
       if (game->modifiers.scroll_lock()) {
-          bold();
-          addstr("Fast Play");
-          standend();
+          game->screen().bold();
+          game->screen().addstr("Fast Play");
+          game->screen().standend();
       }
-      else addstr("         ");
+      else game->screen().addstr("         ");
   }
 
   if (numl != num_lock_on)
@@ -437,36 +437,36 @@ void SIG2()
     repeat_cmd_count = 0;
     show_count();
     game->modifiers.m_running = false;
-    move(LINES - 1, nspot);
+    game->screen().move(LINES - 1, nspot);
     if (numl) {
-      bold();
-      addstr("NUM LOCK");
-      standend();
+      game->screen().bold();
+      game->screen().addstr("NUM LOCK");
+      game->screen().standend();
     }
-    else addstr("        ");
+    else game->screen().addstr("        ");
   }
   if (capsl != caps_lock_on)
   {
     capsl = caps_lock_on;
-    move(LINES - 1, cspot);
+    game->screen().move(LINES - 1, cspot);
     if (capsl) {
-      bold();
-      addstr("CAP LOCK");
-      standend();
+      game->screen().bold();
+      game->screen().addstr("CAP LOCK");
+      game->screen().standend();
     }
-    else addstr("        ");
+    else game->screen().addstr("        ");
   }
   if (showtime)
   {
     showtime = false;
     //work around the compiler buggie boos
     spare = littlehand % 10;
-    move(24, tspot);
-    bold();
-    printw("%2d:%1d%1d", bighand ? bighand : 12, littlehand / 10, spare);
-    standend();
+    game->screen().move(24, tspot);
+    game->screen().bold();
+    game->screen().printw("%2d:%1d%1d", bighand ? bighand : 12, littlehand / 10, spare);
+    game->screen().standend();
   }
-  move(x, y);
+  game->screen().move(x, y);
 }
 
 char *noterse(char *str)

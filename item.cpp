@@ -1,5 +1,6 @@
 #pragma once
 
+#include "main.h"
 #include "item.h"
 #include "agent.h"
 #include "rogue.h"

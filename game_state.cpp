@@ -11,6 +11,7 @@
 #include "combo_input.h"
 #include "hero.h"
 #include "level.h"
+#include "console_output.h"
 
 namespace
 {
@@ -51,6 +52,7 @@ namespace
 GameState::GameState(int seed) :
 m_seed(seed),
 m_input_interface(new CapturedInput(new KeyboardInput())),
+m_output_interface(new ConsoleOutput()),
 m_level(new Level),
 m_hero(new Hero),
 m_scrolls(new ScrollInfo),
@@ -62,6 +64,7 @@ m_sticks(new StickInfo)
 }
 
 GameState::GameState(Random* random, std::istream& in) :
+    m_output_interface(new ConsoleOutput()),
     m_allow_fast_play(false)
 {
     int version = 0;
@@ -153,6 +156,11 @@ Random& GameState::random()
 InputInterface& GameState::input_interface()
 {
     return *m_input_interface;
+}
+
+OutputInterface & GameState::screen()
+{
+    return *m_output_interface;
 }
 
 Hero& GameState::hero()

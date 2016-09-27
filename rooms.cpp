@@ -8,7 +8,7 @@
 #include "rooms.h"
 #include "monsters.h"
 #include "list.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "new_leve.h"
 #include "maze.h"
 #include "move.h"
@@ -193,16 +193,16 @@ void enter_room(Coord *cp)
   if (!(room->is_dark()) && !game->hero().is_blind() && !(room->is_maze()))
     for (y = room->pos.y; y<room->size.y+room->pos.y; y++)
     {
-      move(y, room->pos.x);
+        game->screen().move(y, room->pos.x);
       for (x = room->pos.x; x<room->size.x+room->pos.x; x++)
       {
         //Displaying monsters is all handled in the chase code now
         monster = game->level().monster_at({x, y});
         if (monster==NULL || !game->hero().can_see_monster(monster)) 
-          addch(game->level().get_tile({x, y}));
+            game->screen().addch(game->level().get_tile({x, y}));
         else {
           monster->oldch = game->level().get_tile({x,y}); 
-          addch(monster->disguise);
+          game->screen().addch(monster->disguise);
         }
       }
     }
@@ -211,42 +211,43 @@ void enter_room(Coord *cp)
 //leave_room: Code for when we exit a room
 void leave_room(Coord *cp)
 {
-  int y, x;
-  struct Room *room;
-  byte floor;
-  byte ch;
+    int y, x;
+    struct Room *room;
+    byte floor;
+    byte ch;
 
-  room = game->hero().room;
-  game->hero().room = &passages[game->level().get_passage_num(*cp)];
-  floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
-  if (room->is_maze()) floor = PASSAGE;
-  for (y = room->pos.y+1; y<room->size.y+room->pos.y-1; y++) {
-    for (x = room->pos.x+1; x<room->size.x+room->pos.x-1; x++) {
-      switch (ch = mvinch(y, x))
-      {
-      case ' ': case PASSAGE: case TRAP: case STAIRS:
-        break;
+    room = game->hero().room;
+    game->hero().room = &passages[game->level().get_passage_num(*cp)];
+    floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
+    if (room->is_maze()) floor = PASSAGE;
+    for (y = room->pos.y + 1; y < room->size.y + room->pos.y - 1; y++) {
+        for (x = room->pos.x + 1; x < room->size.x + room->pos.x - 1; x++) {
+            switch (ch = game->screen().mvinch(y, x))
+            {
+            case ' ': case PASSAGE: case TRAP: case STAIRS:
+                break;
 
-      case FLOOR:
-        if (floor==' ') addch(' ');
-        break;
+            case FLOOR:
+                if (floor == ' ')
+                    game->screen().addch(' ');
+                break;
 
-      default:
-        //to check for monster, we have to strip out standout bit
-        if (isupper(toascii(ch)))
-        if (game->hero().detects_others()) {
-            standout(); 
-            addch(ch); 
-            standend(); 
-            break;
-          }
-          else 
-            game->level().monster_at({x, y})->oldch = MDK;
-          addch(floor);
-      }
+            default:
+                //to check for monster, we have to strip out standout bit
+                if (isupper(toascii(ch)))
+                    if (game->hero().detects_others()) {
+                        game->screen().standout();
+                        game->screen().addch(ch);
+                        game->screen().standend();
+                        break;
+                    }
+                    else
+                        game->level().monster_at({ x, y })->oldch = MDK;
+                game->screen().addch(floor);
+            }
+        }
     }
-  }
-  door_open(room);
+    door_open(room);
 }
 
 //get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.

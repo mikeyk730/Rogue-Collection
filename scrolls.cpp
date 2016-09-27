@@ -10,7 +10,7 @@
 #include "monsters.h"
 #include "pack.h"
 #include "list.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "io.h"
 #include "main.h"
 #include "misc.h"
@@ -154,13 +154,13 @@ void read_magic_mapping()
     }
     if (ch==DOOR)
     {
-      move(y, x);
-      if (curch()!=DOOR) 
-        standout();
+      game->screen().move(y, x);
+      if (game->screen().curch()!=DOOR) 
+          game->screen().standout();
     }
     if (ch!=' ') 
-      Screen::DrawChar({x, y}, ch);
-    standend();
+      game->screen().mvaddch({x, y}, ch);
+    game->screen().standend();
   }
 }
 
@@ -228,17 +228,17 @@ void read_food_detection()
     if (item->type==FOOD)
     {
       discover = true;
-      standout();
-      Screen::DrawChar(item->pos, FOOD);
-      standend();
+      game->screen().standout();
+      game->screen().mvaddch(item->pos, FOOD);
+      game->screen().standend();
     }
     //as a bonus this will detect amulets as well
     else if (item->type==AMULET)
     {
       discover = true;
-      standout();
-      Screen::DrawChar(item->pos, AMULET);
-      standend();
+      game->screen().standout();
+      game->screen().mvaddch(item->pos, AMULET);
+      game->screen().standend();
     }
   }
   if (discover) {

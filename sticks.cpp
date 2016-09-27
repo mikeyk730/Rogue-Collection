@@ -10,7 +10,7 @@
 #include "monsters.h"
 #include "pack.h"
 #include "io.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "main.h"
 #include "chase.h"
 #include "fight.h"
@@ -219,7 +219,7 @@ void zap_vorpalized_weapon(Item* weapon, Agent* monster)
 void zap_polymorph(Agent* monster, Coord p)
 {
   if (game->hero().can_see_monster(monster)) 
-    Screen::DrawChar(p, game->level().get_tile(p));
+    game->screen().mvaddch(p, game->level().get_tile(p));
 
   Agent* new_monster = create_monster(rnd(26)+'A', &p, get_level());
   game->level().monsters.remove(new_monster);
@@ -237,7 +237,7 @@ void zap_polymorph(Agent* monster, Coord p)
   game->level().monsters.push_front(monster);
 
   if (game->hero().can_see_monster(monster)) 
-    Screen::DrawChar(p, monster->type);
+    game->screen().mvaddch(p, monster->type);
 }
 
 void zap_cancellation(Agent* monster)
@@ -253,7 +253,7 @@ void zap_teleport(Agent* monster, Coord p, int which)
   Coord new_pos;
 
   if (game->hero().can_see_monster(monster)) 
-    Screen::DrawChar(p, monster->oldch);
+    game->screen().mvaddch(p, monster->oldch);
 
   if (which==WS_TELAWAY)
   {
@@ -520,7 +520,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
     pos.x += dir->x;
     ch = game->level().get_tile_or_monster(pos);
     spotpos[i].s_pos = pos;
-    if ((spotpos[i].s_under = mvinch(pos.y, pos.x))==dirch) spotpos[i].s_under = 0;
+    if ((spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x))==dirch) spotpos[i].s_under = 0;
     switch (ch)
     {
     case DOOR: case HWALL: case VWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
@@ -547,7 +547,7 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
           else
           {
             hit_monster(pos, bolt);
-            if (mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = mvinch(pos.y, pos.x);
+            if (game->screen().mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
             return false; //zapping monster may have killed self, not safe to go on
           }
         }
@@ -583,21 +583,21 @@ bool fire_bolt(Coord *start, Coord *dir, const char *name)
         else msg("the %s whizzes by you", name);
       }
       if (is_frost || strcmp(name, "ice")==0) 
-        blue(); 
+          game->screen().blue();
       else if (strcmp(name, "bolt")==0) 
-        yellow(); 
+          game->screen().yellow();
       else 
-        red();
+          game->screen().red();
       tick_pause();
-      Screen::DrawChar(pos, dirch);
-      standend();
+      game->screen().mvaddch(pos, dirch);
+      game->screen().standend();
     }
   }
   for (j = 0; j<i; j++)
   {
     tick_pause();
     if (spotpos[j].s_under)
-        Screen::DrawChar(spotpos[j].s_pos, spotpos[j].s_under);
+        game->screen().mvaddch(spotpos[j].s_pos, spotpos[j].s_under);
   }
   return true;
 }

@@ -11,7 +11,7 @@
 #include "daemon.h"
 #include "potions.h"
 #include "pack.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "io.h"
 #include "list.h"
 #include "chase.h"
@@ -201,7 +201,7 @@ void quaff_magic_detection()
       if (is_magic(item))
       {
         show = true;
-        Screen::DrawChar(item->pos, goodch(item));
+        game->screen().mvaddch(item->pos, goodch(item));
         game->potions().discover(P_TFIND);
       }
     }
@@ -212,7 +212,7 @@ void quaff_magic_detection()
         if (is_magic(*it))
         {
           show = true;
-          Screen::DrawChar(monster->pos, MAGIC);
+          game->screen().mvaddch(monster->pos, MAGIC);
           game->potions().discover(P_TFIND);
         }
       }
@@ -316,7 +316,7 @@ void invis_on()
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Agent *monster){
         if (monster->is_invisible() && game->hero().can_see_monster(monster))
         {
-            Screen::DrawChar(monster->pos, monster->disguise);
+            game->screen().mvaddch(monster->pos, monster->disguise);
         }
     });
 }
@@ -336,17 +336,17 @@ bool turn_see(bool turn_off)
         bool can_see;
         byte was_there;
 
-        move(monster->pos.y, monster->pos.x);
-        can_see = (game->hero().can_see_monster(monster) || (was_there = curch()) == monster->type);
+        game->screen().move(monster->pos.y, monster->pos.x);
+        can_see = (game->hero().can_see_monster(monster) || (was_there = game->screen().curch()) == monster->type);
         if (turn_off)
         {
-            if (!game->hero().can_see_monster(monster) && monster->oldch != MDK) addch(monster->oldch);
+            if (!game->hero().can_see_monster(monster) && monster->oldch != MDK) game->screen().addch(monster->oldch);
         }
         else
         {
-            if (!can_see) { standout(); monster->oldch = was_there; }
-            addch(monster->type);
-            if (!can_see) { standend(); add_new++; }
+            if (!can_see) { game->screen().standout(); monster->oldch = was_there; }
+            game->screen().addch(monster->type);
+            if (!can_see) { game->screen().standend(); add_new++; }
         }
 
     });

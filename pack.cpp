@@ -8,7 +8,7 @@
 #include "pack.h"
 #include "io.h"
 #include "misc.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "list.h"
 #include "things.h"
 #include "mach_dep.h"
@@ -115,7 +115,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
         op->count += obj->count;
         if (from_floor) {
           game->level().items.remove(obj);
-          Screen::DrawChar(pos, floor);
+          game->screen().mvaddch(pos, floor);
           game->level().set_tile(pos, floor);
         }
         delete obj;
@@ -135,7 +135,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
       {
           game->level().items.remove(obj);
           delete obj;
-          Screen::DrawChar(pos, floor);
+          game->screen().mvaddch(pos, floor);
           game->level().set_tile(pos, floor);
           msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
           return;
@@ -144,7 +144,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
   }
   if (from_floor) {
     game->level().items.remove(obj);
-    Screen::DrawChar(pos, floor); 
+    game->screen().mvaddch(pos, floor); 
     game->level().set_tile(pos, floor);
   }
   
@@ -344,7 +344,7 @@ void pick_up_gold(int value)
     msg("you found %d gold pieces", value);
 
     byte floor = (game->hero().room->is_gone()) ? PASSAGE : FLOOR;
-    Screen::DrawChar(game->hero().pos, floor);
+    game->screen().mvaddch(game->hero().pos, floor);
     game->level().set_tile(game->hero().pos, floor);
 }
 

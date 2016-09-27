@@ -15,7 +15,7 @@
 #include "armor.h"
 #include "weapons.h"
 #include "sticks.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "passages.h"
 #include "mach_dep.h"
 #include "move.h"
@@ -186,11 +186,11 @@ int read_command()
 
 void show_count()
 {
-  move(LINES-2, COLS-4);
-  if (repeat_cmd_count > 0) 
-      printw("%-4d", repeat_cmd_count);
-  else
-      addstr("    ");
+    game->screen().move(LINES - 2, COLS - 4);
+    if (repeat_cmd_count > 0)
+        game->screen().printw("%-4d", repeat_cmd_count);
+    else
+        game->screen().addstr("    ");
 }
 
 void execcom()

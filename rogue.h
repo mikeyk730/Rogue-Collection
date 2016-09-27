@@ -5,7 +5,6 @@
 #include <string>
 #include <list>
 #include <string.h>
-#include "main.h"
 
 struct Random;
 struct GameState;

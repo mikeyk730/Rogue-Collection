@@ -12,7 +12,7 @@
 #include "rogue.h"
 #include "game_state.h"
 #include "rip.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "io.h"
 #include "mach_dep.h"
 #include "things.h"
@@ -64,16 +64,16 @@ void score(int amount, int flags, char monst)
 
     if (amount || flags || monst)
     {
-        move(LINES - 1, 0);
-        cursor(true);
-        printw("[Press Enter to see rankings]");
+        game->screen().move(LINES - 1, 0);
+        game->screen().cursor(true);
+        game->screen().printw("[Press Enter to see rankings]");
         clear_typeahead_buffer();
         wait_for('\r');
-        move(LINES - 1, 0);
+        game->screen().move(LINES - 1, 0);
     }
     while ((sc_fd = _open(game->get_environment("scorefile").c_str(), 0)) < 0)
     {
-        printw("\n");
+        game->screen().printw("\n");
         if (game->hero().did_cheat() || (amount == 0)) return;
         str_attr("No scorefile: %Create %Retry %Abort");
     reread:
@@ -86,7 +86,7 @@ void score(int amount, int flags, char monst)
         default: goto reread;
         }
     }
-    printw("\n");
+    game->screen().printw("\n");
     get_scores(&top_ten[0]);
     if (!game->hero().did_cheat())
     {
@@ -107,7 +107,7 @@ void score(int amount, int flags, char monst)
         }
     }
     pr_scores(rank, &top_ten[0]);
-    printw("[Press Enter to quit]");
+    game->screen().printw("[Press Enter to quit]");
     clear_typeahead_buffer();
     wait_for('\r');
 }
@@ -140,28 +140,28 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
   char dthstr[30];
   char *altmsg;
 
-  clear();
-  high();
-  mvaddstr(0, 0, "Guildmaster's Hall Of Fame:");
-  standend();
-  yellow();
-  mvaddstr(2, 0, "Gold");
+  game->screen().clear();
+  game->screen().high();
+  game->screen().mvaddstr(0, 0, "Guildmaster's Hall Of Fame:");
+  game->screen().standend();
+  game->screen().yellow();
+  game->screen().mvaddstr(2, 0, "Gold");
   for (i = 0; i<TOPSCORES; i++, top10++)
   {
     altmsg = NULL;
-    brown();
+    game->screen().brown();
     if (newrank-1==i)
     {
-      yellow();
+      game->screen().yellow();
     }
     if (top10->gold<=0) break;
     curl = 4+((COLS==40)?(i*2):i);
-    move(curl, 0);
-    printw("%d ", top10->gold);
-    move(curl, 6);
-    if (newrank-1!=i) red();
-    printw("%s", top10->name);
-    if ((newrank)-1!=i) brown();
+    game->screen().move(curl, 0);
+    game->screen().printw("%d ", top10->gold);
+    game->screen().move(curl, 6);
+    if (newrank-1!=i) game->screen().red();
+    game->screen().printw("%s", top10->name);
+    if ((newrank)-1!=i) game->screen().brown();
     if (top10->level>=26) altmsg = " Honored by the Guild";
     if (isalpha(top10->fate))
     {
@@ -176,15 +176,15 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
     }
     if ((strlen(top10->name)+10+strlen(level_titles[top10->rank-1])) < (size_t)COLS)
     {
-      if (top10->rank>1 && (strlen(top10->name))) printw(" \"%s\"", level_titles[top10->rank-1]);
+      if (top10->rank>1 && (strlen(top10->name))) game->screen().printw(" \"%s\"", level_titles[top10->rank-1]);
     }
-    if (COLS==40) move(curl+1, 6);
-    if (altmsg==NULL) printw("%s on level %d", dthstr, top10->level);
-    else addstr(altmsg);
+    if (COLS==40) game->screen().move(curl+1, 6);
+    if (altmsg==NULL) game->screen().printw("%s on level %d", dthstr, top10->level);
+    else game->screen().addstr(altmsg);
   }
-  standend();
-  addstr(" ");
-  if (COLS==80) addstr("\n\n\n\n");
+  game->screen().standend();
+  game->screen().addstr(" ");
+  if (COLS==80) game->screen().addstr("\n\n\n\n");
 }
 
 int add_scores(struct LeaderboardEntry *newscore, struct LeaderboardEntry *oldlist)
@@ -215,31 +215,31 @@ void death(char monst)
 
   game->hero().adjust_purse(-(game->hero().get_purse() / 10));
 
-  drop_curtain();
-  clear();
-  brown();
-  box((COLS==40)?1:7, (COLS-28)/2, 22, (COLS+28)/2);
-  standend();
-  center(10, "REST");
-  center(11, "IN");
-  center(12, "PEACE");
-  red();
-  center(21, "  *    *      * ");
-  green();
-  center(22, "___\\/(\\/)/(\\/ \\\\(//)\\)\\/(//)\\\\)//(\\__");
-  standend();
-  center(14, game->hero().get_name().c_str());
-  standend();
+  game->screen().drop_curtain();
+  game->screen().clear();
+  game->screen().brown();
+  game->screen().box((COLS==40)?1:7, (COLS-28)/2, 22, (COLS+28)/2);
+  game->screen().standend();
+  game->screen().center(10, "REST");
+  game->screen().center(11, "IN");
+  game->screen().center(12, "PEACE");
+  game->screen().red();
+  game->screen().center(21, "  *    *      * ");
+  game->screen().green();
+  game->screen().center(22, "___\\/(\\/)/(\\/ \\\\(//)\\)\\/(//)\\\\)//(\\__");
+  game->screen().standend();
+  game->screen().center(14, game->hero().get_name().c_str());
+  game->screen().standend();
   killer = killname(monst, true);
   strcpy(buf, "killed by");
-  center(15, buf);
-  center(16, killer);
+  game->screen().center(15, buf);
+  game->screen().center(16, killer);
   sprintf(buf, "%u Au", game->hero().get_purse());
-  center(18, buf);
+  game->screen().center(18, buf);
   sprintf(buf, "%u", get_year());
-  center(19, buf);
-  raise_curtain();
-  move(LINES-1, 0);
+  game->screen().center(19, buf);
+  game->screen().raise_curtain();
+  game->screen().move(LINES-1, 0);
   score(game->hero().get_purse(), 0, monst);
   exit(0);
 }
@@ -252,31 +252,31 @@ void total_winner()
   byte c = 'a';
   int oldpurse;
 
-  clear();
+  game->screen().clear();
 
   if (!in_small_screen_mode())
   {
-    standout();
-    printw("                                                               \n");
-    printw("  @   @               @   @           @          @@@  @     @  \n");
-    printw("  @   @               @@ @@           @           @   @     @  \n");
-    printw("  @   @  @@@  @   @   @ @ @  @@@   @@@@  @@@      @  @@@    @  \n");
-    printw("   @@@@ @   @ @   @   @   @     @ @   @ @   @     @   @     @  \n");
-    printw("      @ @   @ @   @   @   @  @@@@ @   @ @@@@@     @   @     @  \n");
-    printw("  @   @ @   @ @  @@   @   @ @   @ @   @ @         @   @  @     \n");
-    printw("   @@@   @@@   @@ @   @   @  @@@@  @@@@  @@@     @@@   @@   @  \n");
+    game->screen().standout();
+    game->screen().printw("                                                               \n");
+    game->screen().printw("  @   @               @   @           @          @@@  @     @  \n");
+    game->screen().printw("  @   @               @@ @@           @           @   @     @  \n");
+    game->screen().printw("  @   @  @@@  @   @   @ @ @  @@@   @@@@  @@@      @  @@@    @  \n");
+    game->screen().printw("   @@@@ @   @ @   @   @   @     @ @   @ @   @     @   @     @  \n");
+    game->screen().printw("      @ @   @ @   @   @   @  @@@@ @   @ @@@@@     @   @     @  \n");
+    game->screen().printw("  @   @ @   @ @  @@   @   @ @   @ @   @ @         @   @  @     \n");
+    game->screen().printw("   @@@   @@@   @@ @   @   @  @@@@  @@@@  @@@     @@@   @@   @  \n");
   }
-  printw("                                                               \n");
-  printw("     Congratulations, you have made it to the light of day!    \n");
-  standend();
-  printw("\nYou have joined the elite ranks of those who have escaped the\n");
-  printw("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
-  printw("a great profit and are admitted to the fighters guild.\n");
+  game->screen().printw("                                                               \n");
+  game->screen().printw("     Congratulations, you have made it to the light of day!    \n");
+  game->screen().standend();
+  game->screen().printw("\nYou have joined the elite ranks of those who have escaped the\n");
+  game->screen().printw("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
+  game->screen().printw("a great profit and are admitted to the fighters guild.\n");
 
-  mvaddstr(LINES-1, 0, "--Press space to continue--");
+  game->screen().mvaddstr(LINES-1, 0, "--Press space to continue--");
   wait_for(' ');
-  clear();
-  mvaddstr(0, 0, "   Worth  Item");
+  game->screen().clear();
+  game->screen().mvaddstr(0, 0, "   Worth  Item");
   oldpurse = game->hero().get_purse();
   for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); c++, ++it)
   {
@@ -364,12 +364,12 @@ void total_winner()
       break;
     }
     if (worth<0) worth = 0;
-    move(c-'a'+1, 0);
-    printw("%c) %5d  %s", c, worth, inv_name(obj, false));
+    game->screen().move(c-'a'+1, 0);
+    game->screen().printw("%c) %5d  %s", c, worth, inv_name(obj, false));
     game->hero().adjust_purse(worth);
   }
-  move(c-'a'+1, 0);
-  printw("   %5u  Gold Pieces          ", oldpurse);
+  game->screen().move(c-'a'+1, 0);
+  game->screen().printw("   %5u  Gold Pieces          ", oldpurse);
   score(game->hero().get_purse(), 2, 0);
 
 

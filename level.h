@@ -32,6 +32,8 @@ struct Level {
     //monster_at: returns pointer to monster at coordinate. if no monster there return NULL
     Agent *monster_at(Coord p);
 
+    void draw_char(Coord p);
+
 
     std::list<Item*> items; //List of objects on this level
     std::list<Agent*> monsters; //List of monsters on the level

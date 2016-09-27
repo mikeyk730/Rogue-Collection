@@ -149,6 +149,9 @@
     <ClCompile Include="combo_input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="console_output.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rogue.h">
@@ -293,6 +296,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="combo_input.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="output_interface.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="console_output.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -26,7 +26,7 @@
 #include "daemon.h"
 #include "chase.h"
 #include "mach_dep.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "io.h"
 #include "new_leve.h"
 #include "misc.h"
@@ -66,15 +66,15 @@ int main(int argc, char **argv)
         bwflag = true;
     load_monster_cfg(game->get_environment("monstercfg"));
 
-    winit(game->get_environment("width") == "40");
+    game->screen().winit(game->get_environment("width") == "40");
     if (bwflag)
-        forcebw();
+        game->screen().forcebw();
 
     credits();
     
     init_things(); //Set up probabilities of things    
     setup();
-    drop_curtain();
+    game->screen().drop_curtain();
     game->level().new_level(false); //Draw current level
     //Start up daemons and fuses
     daemon(doctor, 0);
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
     daemon(stomach, 0);
     daemon(runners, 0);
     msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
-    raise_curtain();
+    game->screen().raise_curtain();
 
     playit(0);
     delete game;
@@ -123,9 +123,9 @@ void playit(char *sname)
   {
     restore_game(sname);
     if (bwflag) 
-        forcebw();
+        game->screen().forcebw();
     setup();
-    cursor(false);
+    game->screen().cursor(false);
   }
   else {
       oldpos = game->hero().pos;
@@ -149,28 +149,28 @@ void quit()
       leave();
   should_quit = true;
   msg_position = 0;
-  getrc(&oy, &ox);
-  move(0, 0);
-  clrtoeol();
-  move(0, 0);
-  if (!in_small_screen_mode()) addstr("Do you wish to ");
+  game->screen().getrc(&oy, &ox);
+  game->screen().move(0, 0);
+  game->screen().clrtoeol();
+  game->screen().move(0, 0);
+  if (!in_small_screen_mode()) game->screen().addstr("Do you wish to ");
   str_attr("end your quest now (%Yes/%No) ?");
   look(false);
   answer = readchar();
   if (answer=='y' || answer=='Y')
   {
-    clear();
-    move(0, 0);
-    printw("You quit with %u gold pieces\n", game->hero().get_purse());
+    game->screen().clear();
+    game->screen().move(0, 0);
+    game->screen().printw("You quit with %u gold pieces\n", game->hero().get_purse());
     score(game->hero().get_purse(), 1, 0);
     fatal("");
   }
   else
   {
-    move(0, 0);
-    clrtoeol();
+    game->screen().move(0, 0);
+    game->screen().clrtoeol();
     status();
-    move(oy, ox);
+    game->screen().move(oy, ox);
     msg_position = 0;
     repeat_cmd_count = 0;
   }
@@ -181,11 +181,11 @@ void quit()
 void leave()
 {
   look(false);
-  move(LINES-1, 0);
-  clrtoeol();
-  move(LINES-2, 0);
-  clrtoeol();
-  move(LINES-2, 0);
+  game->screen().move(LINES-1, 0);
+  game->screen().clrtoeol();
+  game->screen().move(LINES-2, 0);
+  game->screen().clrtoeol();
+  game->screen().move(LINES-2, 0);
   fatal("Ok, if you want to leave that badly\n");
 }
 
@@ -198,6 +198,6 @@ void fatal(char *format, ...)
   vsprintf(dest, format, argptr);
   va_end(argptr);
 
-  printw(dest);
+  game->screen().printw(dest);
   exit(0);
 }

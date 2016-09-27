@@ -9,7 +9,7 @@
 #include "daemons.h"
 #include "pack.h"
 #include "thing.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "io.h"
 #include "wizard.h"
 #include "daemon.h"
@@ -180,16 +180,18 @@ void show_map(bool show_monsters)
 {
   int y, x, real;
 
-  wdump();
-  clear();
+  game->screen().wdump();
+  game->screen().clear();
   for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
   {
-    if (!(real = game->level().get_flags({x, y})&F_REAL)) standout();
-    Screen::DrawChar({x, y}, show_monsters ? game->level().get_tile_or_monster({x, y}) : game->level().get_tile({x, y}));
-    if (!real) standend();
+    if (!(real = game->level().get_flags({x, y})&F_REAL))
+        game->screen().standout();
+    game->screen().mvaddch({x, y}, show_monsters ? game->level().get_tile_or_monster({x, y}) : game->level().get_tile({x, y}));
+    if (!real) 
+        game->screen().standend();
   }
   show_win("---More (level map)---");
-  wrestor();
+  game->screen().wrestor();
 }
 
 int get_num(short *place)

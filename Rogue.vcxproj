@@ -83,6 +83,7 @@
     <ClCompile Include="chase.cpp" />
     <ClCompile Include="combo_input.cpp" />
     <ClCompile Include="command.cpp" />
+    <ClCompile Include="console_output.cpp" />
     <ClCompile Include="curses.cpp" />
     <ClCompile Include="daemon.cpp" />
     <ClCompile Include="daemons.cpp" />
@@ -130,6 +131,7 @@
     <ClInclude Include="captured_input.h" />
     <ClInclude Include="chase.h" />
     <ClInclude Include="command.h" />
+    <ClInclude Include="console_output.h" />
     <ClInclude Include="curses.h" />
     <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />
@@ -138,6 +140,7 @@
     <ClInclude Include="fight.h" />
     <ClInclude Include="combo_input.h" />
     <ClInclude Include="item_class.h" />
+    <ClInclude Include="output_interface.h" />
     <ClInclude Include="stream_input.h" />
     <ClInclude Include="food.h" />
     <ClInclude Include="game_state.h" />

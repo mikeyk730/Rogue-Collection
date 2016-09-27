@@ -11,7 +11,7 @@
 #include "list.h"
 #include "agent.h"
 #include "monsters.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "game_state.h"
 #include "hero.h"
 #include "passages.h"
@@ -127,6 +127,11 @@ void Level::clear_level()
         return NULL;
     }
 
+    void Level::draw_char(Coord p)
+    {
+        game->screen().mvaddch(p, get_tile(p));
+    }
+
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room
@@ -156,10 +161,10 @@ void Level::clear_level()
         do_rooms(); //Draw rooms
         if (max_level() == 1)
         {
-            clear();
+            game->screen().clear();
         }
         if (do_implode)
-            implode();
+            game->screen().implode();
         status();
         do_passages(); //Draw passages
         no_food++;
@@ -191,7 +196,7 @@ void Level::clear_level()
         //unhold when you go down just in case
         game->hero().set_is_held(false);
         enter_room(&game->hero().pos);
-        Screen::DrawChar(game->hero().pos, PLAYER);
+        game->screen().mvaddch(game->hero().pos, PLAYER);
         oldpos = game->hero().pos;
         oldrp = game->hero().room;
         if (game->hero().detects_others())

@@ -11,7 +11,7 @@
 #include "misc.h"
 #include "monsters.h"
 #include "pack.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "chase.h"
 #include "rip.h"
 #include "new_leve.h"
@@ -72,19 +72,19 @@ void look(bool wakeup)
         for (y = oldpos.y-1; y<=(oldpos.y+1); y++)
         {
           if ((y==game->hero().pos.y && x==game->hero().pos.x) || offmap({x,y})) continue;
-          move(y, x);
-          ch = curch();
+          game->screen().move(y, x);
+          ch = game->screen().curch();
           if (ch==FLOOR)
           {
             if (oldrp->is_dark() && !oldrp->is_gone())
-                addch(' ');
+                game->screen().addch(' ');
           }
           else
           {
             fp = game->level().get_flags({x, y});
             //if the maze or passage (that the hero is in!!) needs to be redrawn (passages once drawn always stay on) do it now.
             if (((fp&F_MAZE) || (fp&F_PASS)) && (ch!=PASSAGE) && (ch!=STAIRS) && ((fp&F_PNUM)==(pfl & F_PNUM))) 
-              addch(PASSAGE);
+              game->screen().addch(PASSAGE);
           }
         }
     }
@@ -133,10 +133,10 @@ void look(bool wakeup)
         if (game->hero().can_see_monster(monster)) ch = monster->disguise;
       }
       //The current character used for IBM ARMOR doesn't look right in Inverse
-      if ((ch!=PASSAGE) && (fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) standout();
-      move(y, x);
-      addch(ch);
-      standend();
+      if ((ch!=PASSAGE) && (fp&(F_PASS|F_MAZE))) if (ch!=ARMOR) game->screen().standout();
+      game->screen().move(y, x);
+      game->screen().addch(ch);
+      game->screen().standend();
       if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && game->modifiers.is_running())
       {
         switch (run_character)
@@ -170,12 +170,12 @@ void look(bool wakeup)
   }
   if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && passcount>1)
       game->modifiers.m_running = false;
-  move(game->hero().pos.y, game->hero().pos.x);
+  game->screen().move(game->hero().pos.y, game->hero().pos.x);
   //todo:check logic
   if ((game->level().get_flags(game->hero().pos)&F_PASS) || (was_trapped>1) || (game->level().get_flags(game->hero().pos)&F_MAZE)) 
-      standout();
-  addch(PLAYER);
-  standend();
+      game->screen().standout();
+  game->screen().addch(PLAYER);
+  game->screen().standend();
   if (was_trapped) {beep(); was_trapped = 0;}
 }
 
@@ -356,11 +356,11 @@ void help(const char*const* helpscr)
   int isfull;
   byte answer = 0;
 
-  wdump();
+  game->screen().wdump();
   while (*helpscr && answer!=ESCAPE)
   {
     isfull = false;
-    if ((hcount%(in_small_screen_mode()?23:46))==0) clear();
+    if ((hcount%(in_small_screen_mode()?23:46))==0) game->screen().clear();
     //determine row and column
     hcol = 0;
     if (in_small_screen_mode())
@@ -374,24 +374,24 @@ void help(const char*const* helpscr)
       if (hcount%2) hcol = 40;
       if (hrow==22 && hcol==40) isfull = true;
     }
-    move (hrow, hcol);
-    addstr(*helpscr++);
+    game->screen().move (hrow, hcol);
+    game->screen().addstr(*helpscr++);
     //decide if we need print a continue type message
     if ((*helpscr==0) || isfull)
     {
       if (*helpscr==0) 
-        mvaddstr(24, 0, "--press space to continue--");
+        game->screen().mvaddstr(24, 0, "--press space to continue--");
       else if (in_small_screen_mode()) 
-        mvaddstr(24, 0, "--Space for more, Esc to continue--");
+        game->screen().mvaddstr(24, 0, "--Space for more, Esc to continue--");
       else 
-        mvaddstr(24, 0, "--Press space for more, Esc to continue--");
+        game->screen().mvaddstr(24, 0, "--Press space for more, Esc to continue--");
       do {
         answer = readchar();
       } while (answer!=' ' && answer!=ESCAPE);
     }
     hcount++;
   }
-  wrestor();
+  game->screen().wrestor();
 }
 
 int distance(Coord a, Coord b)

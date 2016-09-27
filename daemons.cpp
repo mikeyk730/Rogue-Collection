@@ -11,7 +11,7 @@
 #include "io.h"
 #include "misc.h"
 #include "rip.h"
-#include "curses.h"
+#include "output_interface.h"
 #include "rings.h"
 #include "chase.h"
 #include "hero.h"
@@ -82,7 +82,7 @@ void unsee()
   for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
       th = *it;
       if (th->is_invisible() && game->hero().can_see_monster(th) && th->oldch != MDK)
-          Screen::DrawChar(th->pos, th->oldch);
+          game->screen().mvaddch(th->pos, th->oldch);
   }
   game->hero().set_sees_invisible(false);
 }
