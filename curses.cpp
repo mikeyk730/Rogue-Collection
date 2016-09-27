@@ -3,14 +3,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <Windows.h>
 
 #include "rogue.h"
 #include "console_output.h"
 #include "mach_dep.h"
 #include "main.h"
 #include "misc.h"
-
-#include <Windows.h>
 
 //Globals for curses
 #define BX_UL               0
@@ -69,10 +68,10 @@ namespace
       0  //no more
     };
 
-    const byte const dbl_box[BX_SIZE] = { 0xc9, 0xbb, 0xc8, 0xbc, 0xba, 0xcd, 0xcd };
-    const byte const sng_box[BX_SIZE] = { 0xda, 0xbf, 0xc0, 0xd9, 0xb3, 0xc4, 0xc4 };
-    const byte const fat_box[BX_SIZE] = { 0xdb, 0xdb, 0xdb, 0xdb, 0xdb, 0xdf, 0xdc };
-    const byte const spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+    const byte dbl_box[BX_SIZE] = { 0xc9, 0xbb, 0xc8, 0xbc, 0xba, 0xcd, 0xcd };
+    const byte sng_box[BX_SIZE] = { 0xda, 0xbf, 0xc0, 0xd9, 0xb3, 0xc4, 0xc4 };
+    const byte fat_box[BX_SIZE] = { 0xdb, 0xdb, 0xdb, 0xdb, 0xdb, 0xdf, 0xdc };
+    const byte spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 }
 
 void ConsoleOutput::putchr(int c, int attr)
@@ -80,6 +79,11 @@ void ConsoleOutput::putchr(int c, int attr)
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, attr);
     putchar(c);
+}
+
+ConsoleOutput::ConsoleOutput(Coord origin) :
+    m_origin(origin)
+{
 }
 
 //clear screen
@@ -246,7 +250,7 @@ void ConsoleOutput::wdump()
     HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { 0, 0 };
-    SMALL_RECT rcRegion = { 0, 0, MAXCOLS - 1, MAXLINES - 1 };
+    SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + MAXCOLS - 1, m_origin.y + MAXLINES - 1 };
     ReadConsoleOutput(hOutput, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
@@ -256,7 +260,7 @@ void ConsoleOutput::wrestor()
     HANDLE hOutput = (HANDLE)GetStdHandle(STD_OUTPUT_HANDLE);
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { 0, 0 };
-    SMALL_RECT rcRegion = { 0, 0, COLS - 1, LINES - 1 };
+    SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
     WriteConsoleOutput(hOutput, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
@@ -397,21 +401,24 @@ void ConsoleOutput::raise_curtain()
 
 void ConsoleOutput::move(short y, short x)
 {
-    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD p = { x, y };
-    SetConsoleCursorPosition(h, p);
     c_row = y;
     c_col = x;
+    Coord pos = translated_position();
+
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD p = { pos.x, pos.y };
+    SetConsoleCursorPosition(h, p);
 }
 
 //todo: can i eliminate this?
 char ConsoleOutput::curch()
 {
+    Coord pos = translated_position();
     CHAR_INFO c;
     HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD dwBufferSize = { 1, 1 };
     COORD dwBufferCoord = { 0, 0 };
-    SMALL_RECT rcRegion = { c_col, c_row, c_col, c_row };
+    SMALL_RECT rcRegion = { pos.x, pos.y, pos.x, pos.y };
     ReadConsoleOutput(hOutput, (CHAR_INFO *)&c, dwBufferSize, dwBufferCoord, &rcRegion);
     return c.Char.AsciiChar;
 }
@@ -429,4 +436,9 @@ int ConsoleOutput::lines() const
 int ConsoleOutput::columns() const
 {
     return COLS;
+}
+
+Coord ConsoleOutput::translated_position()
+{
+    return{ c_col + m_origin.x, c_row + m_origin.y };
 }

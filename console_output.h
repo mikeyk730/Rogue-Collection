@@ -3,6 +3,8 @@
 
 struct ConsoleOutput : public OutputInterface
 {
+    ConsoleOutput(Coord origin);
+
     virtual void clear();
 
     virtual void putchr(int c, int attr);
@@ -94,4 +96,7 @@ private:
     //cursor position
     short c_row;
     short c_col;
+
+    Coord m_origin;
+    Coord translated_position();
 };

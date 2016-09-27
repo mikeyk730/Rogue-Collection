@@ -21,7 +21,7 @@ namespace
 GameState::GameState(int seed) :
 m_seed(seed),
 m_input_interface(new CapturedInput(new KeyboardInput())),
-m_output_interface(new ConsoleOutput()),
+m_output_interface(new ConsoleOutput({0,0})),
 m_level(new Level),
 m_hero(new Hero),
 m_scrolls(new ScrollInfo),
@@ -33,7 +33,7 @@ m_sticks(new StickInfo)
 }
 
 GameState::GameState(Random* random, std::istream& in) :
-    m_output_interface(new ConsoleOutput()),
+    m_output_interface(new ConsoleOutput({0,0})),
     m_allow_fast_play(false)
 {
     int version = 0;
