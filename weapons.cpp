@@ -74,8 +74,8 @@ Item* create_weapon()
     return new Weapon(which);
 }
 
-//projectile: Fire a projectile in a given direction
-void projectile(int ydelta, int xdelta)
+//throw_projectile: Fire a projectile in a given direction
+void throw_projectile(int ydelta, int xdelta)
 {
     Item *obj, *nitem;
 
@@ -99,7 +99,7 @@ void projectile(int ydelta, int xdelta)
     }
     do_motion(obj, ydelta, xdelta);
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-    if (game->level().monster_at(obj->pos) == NULL || !hit_monster(obj->pos, obj))
+    if (game->level().monster_at(obj->pos) == NULL || !projectile_hit(obj->pos, obj))
         fall(obj, true);
 }
 
@@ -205,8 +205,8 @@ void Item::initialize_weapon(byte type)
         this->count = 1;
 }
 
-//hit_monster: Does the projectile hit the monster?
-int hit_monster(Coord p, Item *obj)  //todo: definite memory issues here.  hit_monster is expeccted to delete, but gets stack variables too
+//projectile_hit: Does the projectile hit the monster?
+int projectile_hit(Coord p, Item *obj)  //todo: definite memory issues here.  projectile_hit is expeccted to delete, but gets stack variables too
 {
   static Coord mp;
   Agent *monster = game->level().monster_at(p);

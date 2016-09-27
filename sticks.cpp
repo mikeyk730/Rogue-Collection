@@ -330,7 +330,7 @@ void zap_magic_missile()
 
   Agent* monster;
   if ((monster = game->level().monster_at(bolt->pos))!=NULL && !save_throw(VS_MAGIC, monster))
-      hit_monster(bolt->pos, bolt);
+      projectile_hit(bolt->pos, bolt);
   else
       msg("the missile vanishes with a puff of smoke");
 }
@@ -493,7 +493,9 @@ void drain()
 }
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
-bool fire_bolt(Coord *start, Coord *dir, const std::string& name1)
+//shared between player and monsters (ice monster, dragon)
+//todo: player bolts don't disappear when kill a monster
+bool fire_bolt(Coord *start, Coord *dir, const std::string& name)
 {
   byte dirch, ch;
   Agent *monster;
@@ -501,11 +503,11 @@ bool fire_bolt(Coord *start, Coord *dir, const std::string& name1)
   int i, j;
   Coord pos;
   struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
-  bool is_frost(name1 == "frost");
-  bool is_flame(name1 == "flame");
+  bool is_frost(name == "frost");
+  bool is_flame(name == "flame");
 
   Item* bolt = new Weapon(FLAME, 30, 0);
-  bolt->set_name(name1);
+  bolt->set_name(name);
   switch (dir->y+dir->x)
   {
   case 0: dirch = '/'; break;
@@ -532,7 +534,7 @@ bool fire_bolt(Coord *start, Coord *dir, const std::string& name1)
       dir->y = -dir->y;
       dir->x = -dir->x;
       i--;
-      msg("the %s bounces", name1.c_str());
+      msg("the %s bounces", name.c_str());
       break;
 
     default:
@@ -550,16 +552,17 @@ bool fire_bolt(Coord *start, Coord *dir, const std::string& name1)
               msg("the flame bounces off the %s", monster->get_monster_name());
           else
           {
-            hit_monster(pos, bolt);
-            if (game->screen().mvinch(pos.y, pos.x)!=dirch) spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
-            return false; //zapping monster may have killed self, not safe to go on
+            projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
+            if (game->screen().mvinch(pos.y, pos.x)!=dirch) 
+                spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
+            return false; //todo:zapping monster may have killed self, not safe to go on
           }
         }
         else if (!monster->is_disguised())
         {
           if (start==&game->hero().pos) 
               monster->start_run();
-          msg("the %s whizzes past the %s", name1.c_str(), get_monster_name(ch));
+          msg("the %s whizzes past the %s", name.c_str(), get_monster_name(ch));
         }
       }
       else if (hit_hero && equal(pos, game->hero().pos))
@@ -582,13 +585,13 @@ bool fire_bolt(Coord *start, Coord *dir, const std::string& name1)
           }
           used = true;
           if (!is_frost)
-              msg("you are hit by the %s", name1.c_str());
+              msg("you are hit by the %s", name.c_str());
         }
-        else msg("the %s whizzes by you", name1.c_str());
+        else msg("the %s whizzes by you", name.c_str());
       }
-      if (is_frost || name1 == "ice") 
+      if (is_frost || name == "ice") 
           game->screen().blue();
-      else if (name1 == "bolt") 
+      else if (name == "bolt") 
           game->screen().yellow();
       else 
           game->screen().red();
