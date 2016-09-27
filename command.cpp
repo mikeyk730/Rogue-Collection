@@ -44,11 +44,11 @@ void command()
   {
     status();
     SIG2();
-    if (sleep_timer)
+    if (game->sleep_timer)
     {
-      if (--sleep_timer<=0) {
+      if (--game->sleep_timer<=0) {
           msg("you can move again");
-          sleep_timer = 0;
+          game->sleep_timer = 0;
       }
     }
     else execcom();

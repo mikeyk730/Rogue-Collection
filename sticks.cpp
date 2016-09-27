@@ -574,8 +574,8 @@ bool fire_bolt(Coord *start, Coord *dir, const std::string& name)
           if (is_frost)
           {
             msg("You are frozen by a blast of frost.");
-            if (sleep_timer<20) 
-                sleep_timer += spread(7);
+            if (game->sleep_timer<20) 
+                game->sleep_timer += spread(7);
           }
           else if (!game->hero().decrease_hp(roll(6, 6), true)) {
               if (start == &game->hero().pos)

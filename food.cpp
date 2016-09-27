@@ -14,7 +14,7 @@
 
 Item* create_food()
 {
-    no_food = 0;
+    game->no_food = 0;
     int which = (rnd(10) != 0) ? 0 : 1;
     return new Food(which);
 }
@@ -46,7 +46,7 @@ void eat()
   }
   else 
     msg("yum, that tasted good");
-  if (sleep_timer) 
+  if (game->sleep_timer) 
     msg("You feel bloated and fall asleep");
 }
 

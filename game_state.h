@@ -41,8 +41,11 @@ struct GameState
     bool m_allow_fast_play = true;
 
     CommandModifiers modifiers;
-    Cheats cheats;
 
+    int no_move = 0;       //Number of turns held in place
+    int sleep_timer = 0;   //Number of turns asleep
+    int no_food = 0;       //Number of levels without food
+    int turns_since_heal = 0;  //Number of turns_since_heal turns
 
 private:
     void init_environment();
@@ -61,4 +64,6 @@ private:
     std::unique_ptr<PotionInfo> m_potions;
     std::unique_ptr<RingInfo> m_rings;
     std::unique_ptr<StickInfo> m_sticks;
+
+    Cheats cheats;
  };

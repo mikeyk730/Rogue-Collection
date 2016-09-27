@@ -172,7 +172,7 @@ void Level::clear_level()
             game->screen().implode();
         status();
         do_passages(); //Draw passages
-        no_food++;
+        game->no_food++;
         put_things(); //Place objects (if any)
 
         //Place the staircase down.

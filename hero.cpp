@@ -158,7 +158,7 @@ void Hero::ingest()
   if (food_left<0)
     food_left = 0;
   if (food_left>(STOMACH_SIZE-20))
-    sleep_timer += 2+rnd(5);
+    game->sleep_timer += 2+rnd(5);
   if ((food_left += HUNGER_TIME-200+rnd(400))>STOMACH_SIZE)
     food_left = STOMACH_SIZE;
   hungry_state = 0;
@@ -171,9 +171,9 @@ void Hero::digest()
     if (food_left--<-STARVE_TIME) 
         death('s');
     //the hero is fainting
-    if (sleep_timer || rnd(5)!=0)
+    if (game->sleep_timer || rnd(5)!=0)
         return;
-    sleep_timer += rnd(8)+4;
+    game->sleep_timer += rnd(8)+4;
     set_running(false);
     game->modifiers.m_running = false;
     repeat_cmd_count = 0;
@@ -272,7 +272,7 @@ void Hero::teleport()
     if (is_held()) {
         set_is_held(false);
     }
-    no_move = 0;
+    game->no_move = 0;
     repeat_cmd_count = 0;
     game->modifiers.m_running = false;
     clear_typeahead_buffer();

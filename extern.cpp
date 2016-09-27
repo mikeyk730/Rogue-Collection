@@ -158,11 +158,7 @@ char last_message[BUFSIZE];     //The last message printed
 
 int maxrow;            //Last Line used for map
 int msg_position = 0;  //Where cursor is on top line
-int no_move = 0;       //Number of turns held in place
-int sleep_timer = 0;   //Number of turns asleep
-int no_food = 0;       //Number of levels without food
 int repeat_cmd_count = 0;  //Number of times to repeat command
-int turns_since_heal = 0;  //Number of turns_since_heal turns
 
 Coord oldpos; //Position before last look() call
 Coord delta;  //Change indicated to get_dir()

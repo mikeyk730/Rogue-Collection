@@ -183,7 +183,7 @@ extern char
   take;
 extern const char* typeahead;
 
-extern int repeat_cmd_count, msg_position, sleep_timer, no_food, no_move, turns_since_heal;
+extern int repeat_cmd_count, msg_position;
 extern Random* g_random;
 extern GameState* game;
 

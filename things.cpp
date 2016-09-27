@@ -186,7 +186,7 @@ bool can_drop(Item *op)
 Item *create_item()
 {
   //Decide what kind of object it will be. If we haven't had food for a while, let it be food.
-  switch (no_food > 3 ? 2 : pick_one(things, NUMTHINGS))
+  switch (game->no_food > 3 ? 2 : pick_one(things, NUMTHINGS))
   {
   case 0:
     return create_potion();

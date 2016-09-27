@@ -99,7 +99,7 @@ int Hero::fight(Coord *location, Item *weapon, bool thrown)
 
     //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
     repeat_cmd_count = 0;
-    turns_since_heal = 0;
+    game->turns_since_heal = 0;
 
     monster->start_run();
     //Let him know it was really a mimic (if it was one).
@@ -139,8 +139,8 @@ bool aquator_attack()
 void ice_monster_attack()
 {
   //When an Ice Monster hits you, you get unfrozen faster
-  if (sleep_timer>1) 
-      sleep_timer--;
+  if (game->sleep_timer>1) 
+      game->sleep_timer--;
 }
 
 bool rattlesnake_attack()
@@ -257,7 +257,7 @@ bool Agent::attack_player()
 
   //Since this is an attack, stop running and any healing that was going on at the time.
   game->modifiers.m_running = false;
-  repeat_cmd_count = turns_since_heal = 0;
+  repeat_cmd_count = game->turns_since_heal = 0;
   if (is_disguised() && !game->hero().is_blind()) 
     disguise = type;
   name = game->hero().is_blind() ? it : get_monster_name();

@@ -57,7 +57,11 @@ void do_move(int dy, int dx)
       descend("");
       return;
   }
-  if (no_move) {no_move--; msg("you are still stuck in the bear trap"); return;}
+  if (game->no_move) {
+      game->no_move--; 
+      msg("you are still stuck in the bear trap");
+      return;
+  }
   //Do a confused move (maybe)
   if (game->hero().is_confused() && rnd(5) != 0) rndmove(&game->hero(), &nh);
   else
@@ -212,12 +216,12 @@ int be_trapped(Coord *tc)
     break;
 
   case T_BEAR:
-    no_move += BEAR_TIME;
+    game->no_move += BEAR_TIME;
     msg("you are caught in a bear trap");
     break;
 
   case T_SLEEP:
-    sleep_timer += SLEEP_TIME;
+    game->sleep_timer += SLEEP_TIME;
     game->hero().set_running(false);
     msg("a %smist envelops you and you fall asleep", noterse("strange white "));
     break;

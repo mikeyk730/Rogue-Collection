@@ -24,14 +24,14 @@ void doctor()
     int lvl = game->hero().stats.level;
     int original_hp = game->hero().get_hp();
 
-    turns_since_heal++;
+    game->turns_since_heal++;
 
     if (lvl<8)
     {
-        if (turns_since_heal + (lvl << 1)>20)
+        if (game->turns_since_heal + (lvl << 1)>20)
             game->hero().increase_hp(1, false, false);
     }
-    else if (turns_since_heal >= 3)
+    else if (game->turns_since_heal >= 3)
         game->hero().increase_hp(rnd(lvl - 7) + 1, false, false);
 
     if (is_ring_on_hand(LEFT, R_REGEN))
@@ -41,7 +41,7 @@ void doctor()
 
     if (original_hp != game->hero().get_hp())
     {
-        turns_since_heal = 0;
+        game->turns_since_heal = 0;
     }
 }
 

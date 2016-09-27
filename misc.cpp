@@ -197,7 +197,7 @@ int add_haste(bool potion)
 {
   if (game->hero().is_fast())
   {
-    sleep_timer += rnd(8);
+    game->sleep_timer += rnd(8);
     game->hero().set_running(false);
     extinguish(nohaste);
     game->hero().set_is_fast(false);

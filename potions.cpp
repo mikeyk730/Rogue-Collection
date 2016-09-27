@@ -130,7 +130,7 @@ void quaff_confusion()
 void quaff_paralysis()
 {
   game->potions().discover(P_PARALYZE);
-  sleep_timer = HOLD_TIME;
+  game->sleep_timer = HOLD_TIME;
   game->hero().set_running(false);
   msg("you can't move");
 }

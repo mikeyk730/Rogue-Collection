@@ -187,7 +187,7 @@ void read_sleep()
 {
   //Scroll which makes you fall asleep
   game->scrolls().discover(S_SLEEP);
-  sleep_timer += rnd(SLEEP_TIME)+4;
+  game->sleep_timer += rnd(SLEEP_TIME)+4;
   game->hero().set_running(false);
   msg("you fall asleep");
 }
