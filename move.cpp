@@ -26,7 +26,7 @@
 #include "monster.h"
 
 //Used to hold the new hero position
-Coord nh;
+Coord new_position;
 
 //do_run: Start the hero running
 void do_run(byte ch)
@@ -48,54 +48,79 @@ int diag_ok(const Coord *sp, const Coord *ep)
     return (step_ok(game->level().get_tile({ sp->x,ep->y })) && step_ok(game->level().get_tile({ ep->x,sp->y })));
 }
 
+void do_move2();
+
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
 void do_move(int dy, int dx)
 {
-    const int COLS = game->screen().columns();
-    byte ch;
-    int fl;
-
     game->modifiers.m_first_move = false;
+
+    //if something went wrong, bail out on this level
     if (invalid_position) {
         invalid_position = false;
         msg("the crack widens ... ");
         descend("");
         return;
     }
-    if (game->no_move) {
-        game->no_move--;
+
+    //skip the turn if the hero is stuck in a bear trap
+    if (game->bear_trap_turns) {
+        game->bear_trap_turns--;
         msg("you are still stuck in the bear trap");
         return;
     }
+
     //Do a confused move (maybe)
-    if (game->hero().is_confused() && rnd(5) != 0) rndmove(&game->hero(), &nh);
+    if (game->hero().is_confused() && rnd(5) != 0)
+        rndmove(&game->hero(), &new_position);
     else
     {
-    over:
-        nh.y = game->hero().pos.y + dy;
-        nh.x = game->hero().pos.x + dx;
+        new_position.y = game->hero().pos.y + dy;
+        new_position.x = game->hero().pos.x + dx;
     }
+    do_move2();
+}
+
+void do_move_stuff(int fl)
+{
+    game->level().draw_char(game->hero().pos);
+    if ((fl&F_PASS) && (game->level().get_tile(oldpos) == DOOR || (game->level().get_flags(oldpos)&F_MAZE)))
+        leave_room(&new_position);
+    if ((fl&F_MAZE) && (game->level().get_flags(oldpos)&F_MAZE) == 0)
+        enter_room(&new_position);
+    game->hero().pos = new_position;
+}
+
+void do_move2()
+{
+    int dy, dx;
+    const int COLS = game->screen().columns();
+    byte ch;
+    int fl;
+
+over:
     //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
-    if (offmap(nh)) goto hit_bound;
-    if (!diag_ok(&game->hero().pos, &nh)) {
+    if (offmap(new_position)) 
+        goto hit_bound;
+    if (!diag_ok(&game->hero().pos, &new_position)) {
         counts_as_turn = false;
         game->modifiers.m_running = false;
         return;
     }
     //If you are running and the move does not get you anywhere stop running
-    if (game->modifiers.is_running() && equal(game->hero().pos, nh)) {
+    if (game->modifiers.is_running() && equal(game->hero().pos, new_position)) {
         counts_as_turn = false;
         game->modifiers.m_running = false;
     }
-    fl = game->level().get_flags(nh);
-    ch = game->level().get_tile_or_monster(nh);
+    fl = game->level().get_flags(new_position);
+    ch = game->level().get_tile_or_monster(new_position);
     //When the hero is on the door do not allow him to run until he enters the room all the way
     if ((game->level().get_tile(game->hero().pos) == DOOR) && (ch == FLOOR))
         game->modifiers.m_running = false;
     if (!(fl&F_REAL) && ch == FLOOR) {
         ch = TRAP;
-        game->level().set_tile(nh, TRAP);
-        game->level().set_flag(nh, F_REAL);
+        game->level().set_tile(new_position, TRAP);
+        game->level().set_flag(new_position, F_REAL);
     }
     else if (game->hero().is_held() && ch != 'F') { //TODO: remove direct check for F
         msg("you are being held");
@@ -124,6 +149,8 @@ void do_move(int dy, int dx)
                     dy = 1;
                 }
                 dx = 0;
+                new_position.y = game->hero().pos.y + dy;
+                new_position.x = game->hero().pos.x + dx;
                 goto over;
 
             case 'j': case 'k':
@@ -140,6 +167,8 @@ void do_move(int dy, int dx)
                     dx = 1;
                 }
                 dy = 0;
+                new_position.y = game->hero().pos.y + dy;
+                new_position.x = game->hero().pos.x + dx;
                 goto over;
             }
         }
@@ -150,36 +179,36 @@ void do_move(int dy, int dx)
     case DOOR:
         game->modifiers.m_running = false;
         if (game->level().get_flags(game->hero().pos)&F_PASS)
-            enter_room(&nh);
-        goto move_stuff;
+            enter_room(&new_position);
+        do_move_stuff(fl);
+        return;
 
     case TRAP:
-        ch = be_trapped(&nh);
-        if (ch == T_DOOR || ch == T_TELEP) return;
+        ch = be_trapped(&new_position);
+        if (ch == T_DOOR || ch == T_TELEP)
+            return;
 
     case PASSAGE:
-        goto move_stuff;
+        do_move_stuff(fl);
+        return;
 
     case FLOOR:
         if (!(fl&F_REAL))
             be_trapped(&game->hero().pos);
-        goto move_stuff;
+        do_move_stuff(fl);
+        return;
 
     default:
         game->modifiers.m_running = false;
-        if (isupper(ch) || game->level().monster_at(nh))
-            game->hero().fight(&nh, game->hero().get_current_weapon(), false);
+        if (isupper(ch) || game->level().monster_at(new_position))
+            game->hero().fight(&new_position, game->hero().get_current_weapon(), false);
         else
         {
             game->modifiers.m_running = false;
-            if (ch != STAIRS) take = ch;
-        move_stuff:
-            game->level().draw_char(game->hero().pos);
-            if ((fl&F_PASS) && (game->level().get_tile(oldpos) == DOOR || (game->level().get_flags(oldpos)&F_MAZE)))
-                leave_room(&nh);
-            if ((fl&F_MAZE) && (game->level().get_flags(oldpos)&F_MAZE) == 0)
-                enter_room(&nh);
-            game->hero().pos = nh;
+            if (ch != STAIRS) 
+                take = ch;
+        
+            do_move_stuff(fl);
         }
     }
 }
@@ -222,7 +251,7 @@ int be_trapped(Coord *tc)
         break;
 
     case T_BEAR:
-        game->no_move += BEAR_TIME;
+        game->bear_trap_turns += BEAR_TIME;
         msg("you are caught in a bear trap");
         break;
 

@@ -576,11 +576,14 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
                         if (game->sleep_timer < 20)
                             game->sleep_timer += spread(7);
                     }
-                    else if (!game->hero().decrease_hp(roll(6, 6), true)) {
-                        if (start == &game->hero().pos)
-                            death('b');
-                        else
-                            death(game->level().monster_at(*start)->type);
+                    else {
+                        game->log("battle", "Flame 6d6 damage to player");
+                        if (!game->hero().decrease_hp(roll(6, 6), true)) {
+                            if (start == &game->hero().pos)
+                                death('b');
+                            else
+                                death(game->level().monster_at(*start)->type);
+                        }
                     }
                     used = true;
                     if (!is_frost)

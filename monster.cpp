@@ -510,7 +510,7 @@ Monster* Monster::attack_player()
     std::string name;
     bool attack_success = false; // todo:set this everywhere
 
-                                 //Since this is an attack, stop running and any healing that was going on at the time.
+    //Since this is an attack, stop running and any healing that was going on at the time.
     game->modifiers.m_running = false;
     repeat_cmd_count = game->turns_since_heal = 0;
 
@@ -524,7 +524,7 @@ Monster* Monster::attack_player()
         if (game->hero().get_hp() <= 0)
             death(type); //Bye bye life ...
 
-                         //todo: modify code, so enemy can have more than one power
+        //todo: modify code, so enemy can have more than one power
         if (!powers_cancelled()) {
             if (hold_attacks())
             {

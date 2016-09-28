@@ -315,7 +315,7 @@ void Hero::teleport()
     if (is_held()) {
         set_is_held(false);
     }
-    game->no_move = 0;
+    game->bear_trap_turns = 0;
     repeat_cmd_count = 0;
     game->modifiers.m_running = false;
     clear_typeahead_buffer();
