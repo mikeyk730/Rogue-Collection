@@ -75,7 +75,11 @@ struct Monster : public Agent
     //give_pack: Give a pack to a monster if it deserves one
     void give_pack();
 
+    bool is_seeking(Item* obj);
+
+
     byte disguise = 0;                //What mimic looks like
     int exflags = 0;                  //More state;
     int value = 0;                    //
+    Coord *dest = 0;                  //Where it is running to
 };

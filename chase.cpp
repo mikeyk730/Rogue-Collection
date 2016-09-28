@@ -357,19 +357,9 @@ Coord* Monster::find_dest()
     return &game->hero().pos;
 }
 
-void Monster::set_destination()
-{
-    dest = find_dest();
-}
-
 bool Agent::in_same_room_as(Agent* other)
 {
     return room == other->room;
-}
-
-bool Agent::is_seeking(Item * obj)
-{
-    return dest == &obj->pos;
 }
 
 bool Agent::in_same_room_as(Item * obj)

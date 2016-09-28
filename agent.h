@@ -36,13 +36,22 @@ struct Agent
     virtual int calculate_max_strength() const;
     void restore_strength();
     void adjust_strength(int amt);
-
-    int level() const;
     
     int experience() const;
     virtual void gain_experience(int exp);
 
+    int get_hp() const;
+    void increase_hp(int n, bool max_bonus, bool second_max_bonus);
+    bool decrease_hp(int n, bool can_kill);
+    int drain_hp();
+
+    Coord position() const;
+    int level() const;
     std::string damage_string() const;
+
+    //attack: Roll several attacks
+    bool attack(Agent *defender, Item *weapon, bool hurl);
+
 
     //Structure describing a fighting being
     struct Stats
@@ -61,19 +70,11 @@ struct Agent
     char turn = 0;                    //If slowed, is it a turn to move
     char type = 0;                    //What it is
     byte oldch = 0;                   //Character that was where it was
-    Coord *dest = 0;                  //Where it is running to
     short flags = 0;                  //State word
     Stats stats;                      //Physical description
     Room *room = 0;                   //Current room for thing
     bool invunerable = false;
     std::list<Item*> pack;            //What the thing is carrying
-
-    int get_hp() const;
-    void increase_hp(int n, bool max_bonus, bool second_max_bonus);
-    bool decrease_hp(int n, bool can_kill);
-    int drain_hp();
-
-    Coord position() const;
 
 private:
     bool is_flag_set(short flag) const;
@@ -111,12 +112,6 @@ public:
     void set_detects_others(bool enable);
     void set_is_mean(bool enable);
 
-
     bool in_same_room_as(Agent* other);
-
-    bool is_seeking(Item* obj);
     bool in_same_room_as(Item* obj);
-
-    //roll_attack: Roll several attacks
-    bool roll_attack(Agent *the_defender, Item *weapon, bool hurl);
 };

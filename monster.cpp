@@ -1,6 +1,7 @@
 #include "monster.h"
 #include "main.h"
 #include "monsters.h"
+#include "item.h"
 
 bool Monster::can_divide() const
 {
@@ -107,4 +108,14 @@ void Monster::start_run()
     set_running(true);
     set_is_held(false);
     set_destination();
+}
+
+void Monster::set_destination()
+{
+    dest = find_dest();
+}
+
+bool Monster::is_seeking(Item * obj)
+{
+    return dest == &obj->pos;
 }

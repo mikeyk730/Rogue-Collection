@@ -84,7 +84,7 @@ int Hero::get_pack_size()
 //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
 void Hero::add_to_pack(Item *obj, bool silent)
 {
-  Agent *monster;
+  Monster* monster;
   bool from_floor;
   byte floor;
 

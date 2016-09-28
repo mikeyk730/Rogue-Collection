@@ -65,43 +65,55 @@ std::string Agent::damage_string() const
     return stats.damage;
 }
 
-void Agent::set_invisible(bool enable){
+void Agent::set_invisible(bool enable) {
     set_flag(IS_INVIS, enable);
 }
-void Agent::set_found(bool enable){
+
+void Agent::set_found(bool enable) {
     set_flag(IS_FOUND, enable);
 }
-void Agent::set_confused(bool enable){
+
+void Agent::set_confused(bool enable) {
     set_flag(IS_HUH, enable);
 }
-void Agent::set_running(bool enable){
+
+void Agent::set_running(bool enable) {
     set_flag(IS_RUN, enable);
 }
-void Agent::set_is_held(bool enable){
+
+void Agent::set_is_held(bool enable) {
     set_flag(IS_HELD, enable);
 }
-void Agent::set_is_slow(bool enable){
+
+void Agent::set_is_slow(bool enable) {
     set_flag(IS_SLOW, enable);
 }
-void Agent::set_is_fast(bool enable){
+
+void Agent::set_is_fast(bool enable) {
     set_flag(IS_HASTE, enable);
 }
-void Agent::set_can_confuse(bool enable){
+
+void Agent::set_can_confuse(bool enable) {
     set_flag(CAN_HUH, enable);
 }
-void Agent::set_cancelled(bool enable){
+
+void Agent::set_cancelled(bool enable) {
     set_flag(IS_CANC, enable);
 }
-void Agent::set_blind(bool enable){
+
+void Agent::set_blind(bool enable) {
     set_flag(IS_BLIND, enable);
 }
-void Agent::set_sees_invisible(bool enable){
+
+void Agent::set_sees_invisible(bool enable) {
     set_flag(CAN_SEE, enable);
 }
-void Agent::set_detects_others(bool enable){
+
+void Agent::set_detects_others(bool enable) {
     set_flag(SEE_MONST, enable);
 }
-void Agent::set_is_mean(bool enable){
+
+void Agent::set_is_mean(bool enable) {
     set_flag(IS_MEAN, enable);
 }
 
@@ -109,7 +121,7 @@ int Agent::get_hp() const {
     return stats.hp;
 }
 
-bool Agent::decrease_hp(int n, bool can_kill){
+bool Agent::decrease_hp(int n, bool can_kill) {
     if (invunerable)
         return true;
 
@@ -119,7 +131,7 @@ bool Agent::decrease_hp(int n, bool can_kill){
     return stats.hp > 0;
 }
 
-void Agent::increase_hp(int n, bool max_bonus, bool second_max_bonus){
+void Agent::increase_hp(int n, bool max_bonus, bool second_max_bonus) {
     stats.hp += n;
 
     if (max_bonus && stats.hp > stats.max_hp)
@@ -132,7 +144,7 @@ void Agent::increase_hp(int n, bool max_bonus, bool second_max_bonus){
     }
 }
 
-int Agent::drain_hp(){
+int Agent::drain_hp() {
     stats.hp /= 2;
     return stats.hp;
 }

@@ -111,7 +111,7 @@ Monster* Hero::fight(Coord *location, Item *weapon, bool thrown)
     }
     name = this->is_blind() ? it : monster->get_name();
 
-    if (roll_attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))
+    if (attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))
     {
         do_hit(weapon, thrown, monster, name.c_str());
         return monster;
@@ -257,7 +257,7 @@ Monster* Monster::attack_player()
         disguise = type;
     name = game->hero().is_blind() ? it : get_name();
 
-    if (roll_attack(&game->hero(), NULL, false))
+    if (attack(&game->hero(), NULL, false))
     {
         display_hit_msg(name.c_str(), NULL);
         if (game->hero().get_hp() <= 0)
@@ -334,8 +334,8 @@ bool attempt_swing(int lvl, int defender_amr, int hplus)
     return hit;
 }
 
-//roll_attack: Roll several attacks
-bool Agent::roll_attack(Agent *defender, Item *weapon, bool hurl)
+//attack: Roll several attacks
+bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
 {
     std::string damage_string;
     int hplus;
