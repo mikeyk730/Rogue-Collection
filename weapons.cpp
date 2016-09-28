@@ -75,7 +75,7 @@ Item* create_weapon()
 }
 
 //throw_projectile: Fire a projectile in a given direction
-void throw_projectile(int ydelta, int xdelta)
+void throw_projectile(Coord delta)
 {
     Item *obj, *nitem;
 
@@ -97,14 +97,14 @@ void throw_projectile(int ydelta, int xdelta)
         nitem->count = 1;
         obj = nitem;
     }
-    do_motion(obj, ydelta, xdelta);
+    do_motion(obj, delta);
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
     if (game->level().monster_at(obj->pos) == NULL || !projectile_hit(obj->pos, obj))
         fall(obj, true);
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
-void do_motion(Item *obj, int ydelta, int xdelta)
+void do_motion(Item *obj, Coord delta)
 {
     byte under = MDK;
 
@@ -118,8 +118,8 @@ void do_motion(Item *obj, int ydelta, int xdelta)
         if (under != MDK && !equal(obj->pos, game->hero().pos) && game->hero().can_see(obj->pos))
             game->screen().mvaddch(obj->pos, under);
         //Get the new position
-        obj->pos.y += ydelta;
-        obj->pos.x += xdelta;
+        obj->pos.y += delta.y;
+        obj->pos.x += delta.x;
         if (step_ok(ch = game->level().get_tile_or_monster(obj->pos)) && ch != DOOR)
         {
             //It hasn't hit anything yet, so display it if alright.

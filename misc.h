@@ -23,7 +23,7 @@ const char *vowelstr(const char *str);
 int is_current(Item *obj);
 
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
-int get_dir();
+int get_dir(Coord* delta);
 
 bool find_dir(byte ch, Coord *cp);
 

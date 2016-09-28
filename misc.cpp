@@ -247,26 +247,39 @@ int is_current(Item *obj)
     return false;
 }
 
-//get_dir: Set up the direction co_ordinate for use in various "prefix" commands
-int get_dir()
+int get_dir_impl(Coord* delta)
 {
     int ch;
 
-    if (again) return true;
     msg("which direction? ");
     do {
         if ((ch = readchar()) == ESCAPE) {
             msg("");
             return false;
         }
-    } while (find_dir(ch, &delta) == 0);
+    } while (find_dir(ch, delta) == 0);
     msg("");
     if (game->hero().is_confused() && rnd(5) == 0) do
     {
-        delta.y = rnd(3) - 1;
-        delta.x = rnd(3) - 1;
-    } while (delta.y == 0 && delta.x == 0);
+        delta->y = rnd(3) - 1;
+        delta->x = rnd(3) - 1;
+    } while (delta->y == 0 && delta->x == 0);
     return true;
+}
+
+//get_dir: Set up the direction co_ordinate for use in various "prefix" commands
+int get_dir(Coord *delta)
+{
+    if (again) { 
+        *delta = game->last_input_direction;
+        return true;
+    }
+    if (get_dir_impl(delta))
+    {
+        game->last_input_direction = *delta;
+        return true;
+    }
+    return false;
 }
 
 bool find_dir(byte ch, Coord *cp)

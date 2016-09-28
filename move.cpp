@@ -42,11 +42,11 @@ bool is_gone(Room* rp)
 }
 
 //diag_ok: Check to see if the move is legal if it is diagonal
-int diag_ok(const Coord sp, const Coord ep)
+int diag_ok(const Coord orig_pos, const Coord new_pos)
 {
-    if (ep.x == sp.x || ep.y == sp.y)
+    if (new_pos.x == orig_pos.x || new_pos.y == orig_pos.y)
         return true;
-    return (step_ok(game->level().get_tile({ sp.x,ep.y })) && step_ok(game->level().get_tile({ ep.x,sp.y })));
+    return (step_ok(game->level().get_tile({ orig_pos.x,new_pos.y })) && step_ok(game->level().get_tile({ new_pos.x,orig_pos.y })));
 }
 
 

@@ -207,6 +207,7 @@ over:
             ((dist = distance(this->pos, game->hero().pos)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !this->powers_cancelled() && rnd(DRAGONSHOT) == 0)
         {
             game->modifiers.m_running = false;
+            Coord delta;
             delta.y = sign(game->hero().pos.y - this->pos.y);
             delta.x = sign(game->hero().pos.x - this->pos.x);
             return fire_bolt(&this->pos, &delta, this->shoots_fire() ? "flame" : "frost");

@@ -14,7 +14,7 @@ Item* create_stick();
 
 
 //do_zap: Perform a zap with a wand
-void do_zap();
+void do_zap(Coord delta);
 
 //drain: Do drain hit points from player schtick
 void drain();

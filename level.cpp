@@ -225,7 +225,7 @@ void Level::put_things()
     {
         //If he is really deep in the dungeon and he hasn't found the amulet yet, put it somewhere on the ground
         //Check this first so if we are out of memory the guy has a hope of getting the amulet
-        if (get_level() >= AMULETLEVEL && !game->hero().had_amulet())
+        if (get_level() >= AMULETLEVEL && !game->hero().had_amulet()) //mdk: amulet doesn't appear again if you lose it
         {
             Item* amulet = new Amulet();
             items.push_front(amulet);

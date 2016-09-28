@@ -184,13 +184,11 @@ void zap_light()
     }
 }
 
-void zap_striking(Item* obj)
+void zap_striking(Coord delta, Item* obj)
 {
     Agent* monster;
-    Coord coord = delta;
+    Coord coord = game->hero().pos + delta;
 
-    coord.y += game->hero().pos.y;
-    coord.x += game->hero().pos.x;
     if ((monster = game->level().monster_at(coord)) != NULL)
     {
         obj->randomize_damage();
@@ -198,7 +196,7 @@ void zap_striking(Item* obj)
     }
 }
 
-void zap_bolt(int which, const char* name)
+void zap_bolt(Coord delta, int which, const char* name)
 {
     fire_bolt(&game->hero().pos, &delta, name);
     game->sticks().discover(which);
@@ -247,7 +245,7 @@ void zap_cancellation(Monster* monster)
     monster->reveal_disguise();
 }
 
-void zap_teleport(Monster* monster, Coord p, int which)
+void zap_teleport(Coord delta, Monster* monster, Coord p, int which)
 {
     Coord new_pos;
 
@@ -261,26 +259,22 @@ void zap_teleport(Monster* monster, Coord p, int which)
         monster->pos = new_pos;
     }
     else { //it MUST BE at WS_TELTO
-        monster->pos.y = game->hero().pos.y + delta.y;
-        monster->pos.x = game->hero().pos.x + delta.x;
+        monster->pos = game->hero().pos + delta;
     }
 
     if (monster->can_hold())
         game->hero().set_is_held(false);
 }
 
-void zap_generic(Item* wand, int which)
+void zap_generic(Coord delta, Item* wand, int which)
 {
-    int x, y;
     Monster* monster;
+    Coord pos = game->hero().pos;
 
-    y = game->hero().pos.y;
-    x = game->hero().pos.x;
-    while (step_ok(game->level().get_tile_or_monster({ x, y }))) {
-        y += delta.y;
-        x += delta.x;
+    while (step_ok(game->level().get_tile_or_monster(pos))) {
+        pos = pos + delta;
     }
-    if ((monster = game->level().monster_at({ x, y })) != NULL)
+    if ((monster = game->level().monster_at(pos)) != NULL)
     {
         if (monster->can_hold())
             game->hero().set_is_held(false);
@@ -290,7 +284,7 @@ void zap_generic(Item* wand, int which)
         }
         else if (which == WS_POLYMORPH)
         {
-            zap_polymorph(monster, { x, y });
+            zap_polymorph(monster, pos);
         }
         else if (which == WS_CANCEL)
         {
@@ -298,7 +292,7 @@ void zap_generic(Item* wand, int which)
         }
         else
         {
-            zap_teleport(monster, { x,y }, which);
+            zap_teleport(delta, monster, pos, which);
         }
         monster->dest = &game->hero().pos;
         monster->set_running(true);
@@ -320,12 +314,12 @@ struct MagicMissile : public Item
     virtual Item* Clone() const { return new MagicMissile(*this); }
 };
 
-void zap_magic_missile()
+void zap_magic_missile(Coord delta)
 {
     game->sticks().discover(WS_MISSILE);
 
     Item* bolt = new MagicMissile;
-    do_motion(bolt, delta.y, delta.x);
+    do_motion(bolt, delta);
 
     Agent* monster;
     if ((monster = game->level().monster_at(bolt->pos)) != NULL && !save_throw(VS_MAGIC, monster))
@@ -334,18 +328,15 @@ void zap_magic_missile()
         msg("the missile vanishes with a puff of smoke");
 }
 
-void zap_speed_monster(int which)
+void zap_speed_monster(Coord delta, int which)
 {
-    int x, y;
     Monster* monster;
 
-    y = game->hero().pos.y;
-    x = game->hero().pos.x;
-    while (step_ok(game->level().get_tile_or_monster({ x, y }))) {
-        y += delta.y;
-        x += delta.x;
+    Coord pos = game->hero().pos;
+    while (step_ok(game->level().get_tile_or_monster(pos))) {
+        pos = pos + delta;
     }
-    if (monster = game->level().monster_at({ x, y }))
+    if (monster = game->level().monster_at(pos))
     {
         if (which == WS_HASTE_M)
         {
@@ -378,7 +369,7 @@ int zap_drain_life()
 }
 
 //do_zap: Perform a zap with a wand
-void do_zap()
+void do_zap(Coord delta)
 {
     Item *obj;
     int which_one;
@@ -415,31 +406,31 @@ void do_zap()
         break;
 
     case WS_POLYMORPH: case WS_TELAWAY: case WS_TELTO: case WS_CANCEL: case MAXSTICKS: //Special case for vorpal weapon
-        zap_generic(obj, which_one);
+        zap_generic(delta, obj, which_one);
         break;
 
     case WS_MISSILE:
-        zap_magic_missile();
+        zap_magic_missile(delta);
         break;
 
     case WS_HIT:
-        zap_striking(obj);
+        zap_striking(delta, obj);
         break;
 
     case WS_HASTE_M: case WS_SLOW_M:
-        zap_speed_monster(which_one);
+        zap_speed_monster(delta, which_one);
         break;
 
     case WS_ELECT:
-        zap_bolt(which_one, "bolt");
+        zap_bolt(delta, which_one, "bolt");
         break;
 
     case WS_FIRE:
-        zap_bolt(which_one, "flame");
+        zap_bolt(delta, which_one, "flame");
         break;
 
     case WS_COLD:
-        zap_bolt(which_one, "ice");
+        zap_bolt(delta, which_one, "ice");
         break;
 
     default:

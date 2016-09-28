@@ -212,11 +212,14 @@ void execcom()
             do_run(tolower(ch));
             break;
         case 't':
-            if (get_dir())
-                throw_projectile(delta.y, delta.x);
+        {
+            Coord d;
+            if (get_dir(&d))
+                throw_projectile(d);
             else
                 counts_as_turn = false;
             break;
+        }
         case 'Q':
             counts_as_turn = false;
             quit();
@@ -280,11 +283,14 @@ void execcom()
             search();
             break;
         case 'z':
-            if (get_dir())
-                do_zap();
+        {
+            Coord d;
+            if (get_dir(&d))
+                do_zap(d);
             else
                 counts_as_turn = false;
             break;
+        }
         case 'D':
             counts_as_turn = false;
             discovered();
@@ -322,19 +328,21 @@ void execcom()
             doctor(); break;
 
         case '^':
+        {
             counts_as_turn = false;
-            if (get_dir())
+            Coord d;
+            if (get_dir(&d))
             {
                 Coord lookat;
 
-                lookat.y = game->hero().pos.y + delta.y;
-                lookat.x = game->hero().pos.x + delta.x;
+                lookat.y = game->hero().pos.y + d.y;
+                lookat.x = game->hero().pos.x + d.x;
                 if (game->level().get_tile(lookat) != TRAP)
                     msg("no trap there.");
                 else msg("you found %s", tr_name(game->level().get_trap_type(lookat)));
             }
             break;
-
+        }
         case 'o':
             counts_as_turn = false;
             msg("i don't have any options, oh my!");

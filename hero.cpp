@@ -668,12 +668,10 @@ void Hero::pick_up_gold(int value)
 
 bool Hero::has_amulet()
 {
-    for (auto it = pack.begin(); it != pack.end(); ++it) {
-        Item* item = *it;
-        if (item->type == AMULET)
+    for (auto i = pack.begin(); i != pack.end(); ++i) {
+        if ((*i)->type == AMULET)
             return true;
     }
-
     return false;
 }
 

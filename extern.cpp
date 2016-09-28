@@ -140,8 +140,14 @@ const char* const level_titles[] =
 const char* const intense = " of intense white light";
 const char* const flash = "your %s gives off a flash%s";
 
-bool operator==(const Coord& c1, const Coord& c2) {
+bool operator==(const Coord& c1, const Coord& c2) 
+{
     return c1.x == c2.x && c1.y == c2.y;
+}
+
+Coord operator+(const Coord & c1, const Coord & c2)
+{
+    return{ c1.x + c2.x, c1.y + c2.y };
 }
 
 bool counts_as_turn;        //True if we want after daemons
@@ -161,7 +167,6 @@ int msg_position = 0;  //Where cursor is on top line
 int repeat_cmd_count = 0;  //Number of times to repeat command
 
 Coord oldpos; //Position before last look() call
-Coord delta;  //Change indicated to get_dir()
 
 struct Room *oldrp; //Roomin(&oldpos)
 

@@ -133,6 +133,7 @@ Coord east(Coord p);
 Coord west(Coord p);
 
 bool operator==(const Coord& c1, const Coord& c2);
+Coord operator+(const Coord& c1, const Coord& c2);
 
 //Stuff about magic items
 struct MagicItem
@@ -173,7 +174,7 @@ struct CommandModifiers
     bool m_running = false;       //True if player is running
 };
 
-extern Coord delta, oldpos;
+extern Coord oldpos;
 extern struct Room *oldrp;
 
 extern int maxrow;

@@ -15,10 +15,10 @@ const char* get_weapon_name(int which);
 Item* create_weapon();
 
 //throw_projectile: Fire a projectile in a given direction
-void throw_projectile(int ydelta, int xdelta);
+void throw_projectile(Coord delta);
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
-void do_motion(Item *obj, int ydelta, int xdelta);
+void do_motion(Item *obj, Coord delta);
 
 const char *short_name(Item *obj);
 

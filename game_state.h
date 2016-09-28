@@ -46,10 +46,11 @@ struct GameState
 
     CommandModifiers modifiers;
 
-    int bear_trap_turns = 0;       //Number of turns held in place
-    int sleep_timer = 0;   //Number of turns asleep
-    int no_food = 0;       //Number of levels without food
-    int turns_since_heal = 0;  //Number of turns_since_heal turns
+    int bear_trap_turns = 0;     //Number of turns held in place
+    int sleep_timer = 0;         //Number of turns asleep
+    int no_food = 0;             //Number of levels without food
+    int turns_since_heal = 0;    //Number of turns_since_heal turns
+    Coord last_input_direction;  //Direction the player specified for the last throw, zap, etc.
 
 private:
     void init_environment();

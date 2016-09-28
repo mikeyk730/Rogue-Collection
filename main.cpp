@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     bool replay = true;
     //replay = false;
 
-    std::ifstream infile("saves\\level7.sav", std::ios::binary | std::ios::in);
+    std::ifstream infile("wands.sav", std::ios::binary | std::ios::in);
     if (replay && infile) {
         game = new GameState(g_random, infile);
     }
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
         game = new GameState(seed);
     }
 
-    //game->hero().invunerable = true;
+    game->hero().invunerable = true;
     if (!replay)
         setenv("rogue.opt");
     if ("bw" == game->get_environment("scorefile"))
