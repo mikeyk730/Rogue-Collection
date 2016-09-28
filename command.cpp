@@ -82,10 +82,51 @@ int com_char()
     return ch;
 }
 
+int process_prefixes(int ch)
+{
+    int junk;
+    int command = 0;
+
+    switch (ch)
+    {
+    case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+        junk = repeat_cmd_count * 10;
+        if ((junk += ch - '0') > 0 && junk < 10000)
+            repeat_cmd_count = junk;
+        show_count();
+        break;
+
+    case 'f': // f: toggle fast mode for this turn
+        game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
+        break;
+    case 'g': // g + direction: move onto an item without picking it up
+        can_pickup_this_turn = false;
+        break;
+    case 'a': //a: repeat last command
+        command = game->last_turn.command;
+        repeat_cmd_count = game->last_turn.count;
+        can_pickup_this_turn = game->last_turn.could_pickup;
+        repeat_last_action = true;
+        break;
+    case ' ':
+        break;
+    case ESCAPE:
+        game->modifiers.m_stop_at_door = false;
+        repeat_cmd_count = 0;
+        show_count();
+        break;
+    default:
+        command = ch;
+        break;
+    }
+
+    return command;
+}
+
 //Read a command, setting things up according to prefix like devices. Return the command character to be executed.
 int read_command()
 {
-    int command, ch, junk;
+    int command, ch;
 
     bool was_fast_play_enabled = game->modifiers.scroll_lock();
     game->modifiers.m_fast_mode = game->modifiers.scroll_lock();
@@ -118,36 +159,7 @@ int read_command()
                 ch = com_char();
                 if (was_fast_play_enabled != game->modifiers.scroll_lock())
                     game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
-                switch (ch)
-                {
-                case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-                    junk = repeat_cmd_count * 10;
-                    if ((junk += ch - '0') > 0 && junk < 10000)
-                        repeat_cmd_count = junk;
-                    show_count();
-                    break;
-
-                case 'f': // f: toggle fast mode for this turn
-                    game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
-                    break;
-                case 'g': // g + direction: move onto an item without picking it up
-                    can_pickup_this_turn = false;
-                    break;
-                case 'a': //a: repeat last command
-                    command = game->last_turn.command;
-                    repeat_cmd_count = game->last_turn.count;
-                    can_pickup_this_turn = game->last_turn.could_pickup;
-                    repeat_last_action = true;
-                    break;
-                case ' ':
-                    break;
-                case ESCAPE:
-                    game->modifiers.m_stop_at_door = false;
-                    repeat_cmd_count = 0;
-                    show_count();
-                    break;
-                default: command = ch; break;
-                }
+                command = process_prefixes(ch);
             }
         }
     }
