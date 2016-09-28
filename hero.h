@@ -75,9 +75,6 @@ public:
     void do_hit(Item* weapon, int thrown, Monster* monster, const char* name);
     void do_miss(Item* weapon, int thrown, Monster* monster, const char* name);
 
-    //pick_up: Add something to characters pack.
-    void pick_up(byte ch);
-
     //pick_up_gold: Add gold to the pack
     void pick_up_gold(int value);
 

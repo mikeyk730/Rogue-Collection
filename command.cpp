@@ -376,7 +376,7 @@ void execcom()
       }
     }
     if (take && do_take)
-        game->hero().pick_up(take);
+        pick_up(take);
     take = 0;
     if (!game->modifiers.is_running())
         game->modifiers.m_stop_at_door = false;

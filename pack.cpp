@@ -143,3 +143,28 @@ int pack_char(Item *obj)
     }
     return '?';
 }
+
+//pick_up: Add something to characters pack.
+void pick_up(byte ch)
+{
+    if (ch == GOLD)
+    {
+        Room* room = game->hero().room;
+        Coord pos = game->hero().position();
+        Item* obj = find_obj(pos);
+        if (obj == NULL)
+            return;
+
+        game->hero().pick_up_gold(obj->get_gold_value());
+        room->gold_val = 0;
+        game->level().items.remove(obj);
+        delete obj;
+
+        byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
+        game->screen().mvaddch(pos, floor);
+        game->level().set_tile(pos, floor);
+    }
+    else {
+        game->hero().add_to_pack(NULL, false);
+    }
+}

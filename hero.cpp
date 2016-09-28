@@ -660,37 +660,11 @@ picked_up:
         msg("%s%s (%c)", noterse("you now have "), obj->inv_name(true), pack_char(obj));
 }
 
-//pick_up: Add something to characters pack.
-void Hero::pick_up(byte ch)
-{
-    Item *obj;
-
-    switch (ch)
-    {
-    case GOLD:
-        if ((obj = find_obj(pos)) == NULL)
-            return;
-        pick_up_gold(obj->get_gold_value());
-        game->level().items.remove(obj);
-        delete obj;
-        room->gold_val = 0;
-        break;
-    default:
-    case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
-        add_to_pack(NULL, false);
-        break;
-    }
-}
-
 //pick_up_gold: Add gold to the pack
 void Hero::pick_up_gold(int value)
 {
     adjust_purse(value);
     msg("you found %d gold pieces", value);
-
-    byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
-    game->screen().mvaddch(pos, floor);
-    game->level().set_tile(pos, floor);
 }
 
 bool Hero::has_amulet()
