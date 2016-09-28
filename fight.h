@@ -1,6 +1,8 @@
 #pragma once
 
 struct Monster;
+struct Agent;
+struct Item;
 
 //attempt_swing: Returns true if the swing hits
 bool attempt_swing(int at_lvl, int op_arm, int wplus);

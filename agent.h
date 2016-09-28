@@ -66,9 +66,7 @@ struct Agent
     };
 
     Coord pos = { 0, 0 };             //Position
-    char turn = 0;                    //If slowed, is it a turn to move
     char type = 0;                    //What it is
-    byte oldch = 0;                   //Character that was where it was
     short flags = 0;                  //State word
     Stats stats;                      //Physical description
     Room *room = 0;                   //Current room for thing

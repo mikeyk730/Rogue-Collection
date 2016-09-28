@@ -131,7 +131,7 @@ void read_magic_mapping()
   //Scroll of magic mapping.
   int x, y;
   byte ch;
-  Agent* monster;
+  Monster* monster;
 
   game->scrolls().discover(S_MAP);
   msg("oh, now this scroll has a map on it");

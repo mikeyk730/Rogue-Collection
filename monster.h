@@ -82,4 +82,6 @@ struct Monster : public Agent
     int exflags = 0;                  //More state;
     int value = 0;                    //
     Coord *dest = 0;                  //Where it is running to
+    char turn = 0;                    //If slowed, is it a turn to move
+    byte oldch = 0;                   //Character that was where it was
 };

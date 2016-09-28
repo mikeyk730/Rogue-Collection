@@ -215,7 +215,7 @@ over:
 }
 
 //can_see_monster: Return true if the hero can see the monster
-bool Hero::can_see_monster(Agent *monster)
+bool Hero::can_see_monster(Monster *monster)
 {
   // player is blind
   if (is_blind())

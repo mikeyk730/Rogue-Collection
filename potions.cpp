@@ -332,7 +332,7 @@ bool turn_see(bool turn_off)
 {
     bool add_new = false;
 
-    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [turn_off, &add_new](Agent* monster){
+    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [turn_off, &add_new](Monster* monster){
 
         bool can_see;
         byte was_there;

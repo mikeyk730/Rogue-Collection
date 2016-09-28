@@ -247,7 +247,7 @@ void leave_room(Coord *cp)
                         break;
                     }
                     else {
-                        Agent* m = game->level().monster_at({ x, y });
+                        Monster* m = game->level().monster_at({ x, y });
                         if (m) {
                             m->oldch = MDK;
                         }

@@ -48,7 +48,7 @@ public:
     void teleport();
 
     //can_see_monster: Return true if the hero can see the monster
-    bool can_see_monster(Agent *monster);
+    bool can_see_monster(Monster *monster);
 
     //can_see: Returns true if the hero can see a certain coordinate.
     int can_see(Coord p);
