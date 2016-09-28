@@ -8,6 +8,9 @@ struct Hero : public Agent
 {
     Hero();
 
+    //fight: The player attacks the monster.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
+    Monster* fight(Coord *monster, Item *weapon, bool thrown);
+
     virtual void calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
         int* hit_plus, std::string* damage_string, int* damage_plus);
     virtual int calculate_armor() const;
@@ -23,10 +26,6 @@ public:
 
     //init_player: Roll up the rogue
     void init_player();
-
-    //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-    void add_to_pack(Item *obj, bool silent);
-    int get_pack_size();
 
     virtual std::string get_name();
     void set_name(const std::string& name);
@@ -48,6 +47,10 @@ public:
     bool is_wizard() const;
     bool did_cheat() const;
 
+    //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+    void add_to_pack(Item *obj, bool silent);
+    int get_pack_size();
+
     //teleport: Bamf the hero someplace else
     void teleport();
 
@@ -57,12 +60,8 @@ public:
     //can_see: Returns true if the hero can see a certain coordinate.
     int can_see(Coord p);
 
-
     //wield: Pull out a certain weapon
     void wield();
-
-    //fight: The player attacks the monster.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
-    Monster* fight(Coord *monster, Item *weapon, bool thrown);
 
     void reduce_level();
 
