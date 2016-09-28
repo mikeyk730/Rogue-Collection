@@ -99,4 +99,6 @@ private:
 
     Coord m_origin;
     Coord translated_position();
+
+    HANDLE hConsole;
 };

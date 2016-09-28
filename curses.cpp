@@ -76,7 +76,10 @@ namespace
 
 void ConsoleOutput::putchr(int c, int attr)
 {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    Coord pos = translated_position();
+    COORD p = { pos.x, pos.y };
+    SetConsoleCursorPosition(hConsole, p);
+
     SetConsoleTextAttribute(hConsole, attr);
     putchar(c);
 }
@@ -84,6 +87,7 @@ void ConsoleOutput::putchr(int c, int attr)
 ConsoleOutput::ConsoleOutput(Coord origin) :
     m_origin(origin)
 {
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 }
 
 //clear screen
@@ -97,14 +101,13 @@ bool ConsoleOutput::cursor(bool ison)
 {
     bool oldstate;
     CONSOLE_CURSOR_INFO info;
-    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    GetConsoleCursorInfo(h, &info);
+    GetConsoleCursorInfo(hConsole, &info);
     if (info.bVisible == (ison ? TRUE : FALSE))
         return ison;
     oldstate = info.bVisible == TRUE;
     info.bVisible = ison;
-    SetConsoleCursorInfo(h, &info);
+    SetConsoleCursorInfo(hConsole, &info);
     return (oldstate);
 }
 
@@ -247,21 +250,19 @@ CHAR_INFO buffer[MAXLINES][MAXCOLS];
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void ConsoleOutput::wdump()
 {
-    HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { 0, 0 };
     SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
-    ReadConsoleOutput(hOutput, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
+    ReadConsoleOutput(hConsole, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
 //wrestor(windex): restore the window saved on disk
 void ConsoleOutput::wrestor()
 {
-    HANDLE hOutput = (HANDLE)GetStdHandle(STD_OUTPUT_HANDLE);
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { 0, 0 };
     SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
-    WriteConsoleOutput(hOutput, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
+    WriteConsoleOutput(hConsole, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
 //Some general drawing routines
@@ -403,11 +404,6 @@ void ConsoleOutput::move(short y, short x)
 {
     c_row = y;
     c_col = x;
-    Coord pos = translated_position();
-
-    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-    COORD p = { pos.x, pos.y };
-    SetConsoleCursorPosition(h, p);
 }
 
 //todo: can i eliminate this?
@@ -415,11 +411,10 @@ char ConsoleOutput::curch()
 {
     Coord pos = translated_position();
     CHAR_INFO c;
-    HANDLE hOutput = GetStdHandle(STD_OUTPUT_HANDLE);
     COORD dwBufferSize = { 1, 1 };
     COORD dwBufferCoord = { 0, 0 };
     SMALL_RECT rcRegion = { pos.x, pos.y, pos.x, pos.y };
-    ReadConsoleOutput(hOutput, (CHAR_INFO *)&c, dwBufferSize, dwBufferCoord, &rcRegion);
+    ReadConsoleOutput(hConsole, (CHAR_INFO *)&c, dwBufferSize, dwBufferCoord, &rcRegion);
     return c.Char.AsciiChar;
 }
 
