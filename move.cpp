@@ -60,17 +60,16 @@ void finish_do_move(int fl)
     game->hero().pos = new_position;
 }
 
-bool check1() {
-    bool b1, b2;
-    int dy, dx;
+bool continue_vertical() {
+    int dy;
 
-    b1 = (game->hero().pos.y > 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y - 1 })&F_PASS) ||
+    bool up_is_door_or_psg = (game->hero().pos.y > 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y - 1 })&F_PASS) ||
         game->level().get_tile({ game->hero().pos.x,game->hero().pos.y - 1 }) == DOOR));
-    b2 = (game->hero().pos.y < maxrow - 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y + 1 })&F_PASS) ||
+    bool down_is_door_or_psg = (game->hero().pos.y < maxrow - 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y + 1 })&F_PASS) ||
         game->level().get_tile({ game->hero().pos.x,game->hero().pos.y + 1 }) == DOOR));
-    if (!(b1^b2))
+    if (!(up_is_door_or_psg^down_is_door_or_psg))
         return false;
-    if (b1) {
+    if (up_is_door_or_psg) {
         run_character = 'k';
         dy = -1;
     }
@@ -78,25 +77,23 @@ bool check1() {
         run_character = 'j';
         dy = 1;
     }
-    dx = 0;
     new_position.y = game->hero().pos.y + dy;
-    new_position.x = game->hero().pos.x + dx;
+    new_position.x = game->hero().pos.x;
     return true;
 }
 
-bool check2()
+bool continue_horizontal()
 {
-    bool b1, b2;
-    int dy, dx;
+    int dx;
     const int COLS = game->screen().columns();
 
-    b1 = (game->hero().pos.x > 1 && ((game->level().get_flags({ game->hero().pos.x - 1,game->hero().pos.y })&F_PASS) ||
+    bool left_is_door_or_passage = (game->hero().pos.x > 1 && ((game->level().get_flags({ game->hero().pos.x - 1,game->hero().pos.y })&F_PASS) ||
         game->level().get_tile({ game->hero().pos.x - 1,game->hero().pos.y }) == DOOR));
-    b2 = (game->hero().pos.x < COLS - 2 && ((game->level().get_flags({ game->hero().pos.x + 1,game->hero().pos.y })&F_PASS) ||
+    bool right_is_door_or_passage = (game->hero().pos.x < COLS - 2 && ((game->level().get_flags({ game->hero().pos.x + 1,game->hero().pos.y })&F_PASS) ||
         game->level().get_tile({ game->hero().pos.x + 1,game->hero().pos.y }) == DOOR));
-    if (!(b1^b2))
+    if (!(left_is_door_or_passage^right_is_door_or_passage))
         return false;
-    if (b1) {
+    if (left_is_door_or_passage) {
         run_character = 'h';
         dx = -1;
     }
@@ -104,13 +101,12 @@ bool check2()
         run_character = 'l';
         dx = 1;
     }
-    dy = 0;
-    new_position.y = game->hero().pos.y + dy;
+    new_position.y = game->hero().pos.y;
     new_position.x = game->hero().pos.x + dx;
     return true;
 }
 
-bool do_hit_bound()
+bool do_hit_boundary()
 {
     if (game->modifiers.is_running() && is_gone(game->hero().room) && !game->hero().is_blind())
     {
@@ -118,24 +114,24 @@ bool do_hit_bound()
         {
         case 'h': case 'l':
         {
-            if (!check1())
-                break;
-            return true;
+            if (continue_vertical())
+                return false;
+            break;
         }
         case 'j': case 'k':
         {
-            if (!check2())
-                break;
-            return true;
+            if (continue_horizontal())
+                return false;
+            break;
         }
         }
     }
     counts_as_turn = false;
     game->modifiers.m_running = false;
-    return false;
+    return true;
 }
 
-bool do_move2()
+bool do_move_impl()
 {
     byte ch;
     int fl;
@@ -241,7 +237,7 @@ void do_move(int dy, int dx)
 
     bool more;
     do {
-        more = do_move2();
+        more = do_move_impl();
     } while (more);
 }
 
