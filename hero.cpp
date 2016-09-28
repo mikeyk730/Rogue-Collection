@@ -714,8 +714,8 @@ void Hero::wield()
     ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
 }
 
-//gethand: Which hand is the hero interested in?
-int gethand()
+//get_hand: Which hand is the hero interested in?
+int get_hand()
 {
     for (;;)
     {
@@ -751,7 +751,7 @@ bool Hero::put_on_ring(Item* obj)
     if (get_ring(RIGHT) == NULL)
         ring = RIGHT;
     if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) 
-        if ((ring = gethand()) < 0)
+        if ((ring = get_hand()) < 0)
             return false;
     
     if (ring < 0) { 
@@ -787,7 +787,7 @@ bool Hero::take_off_ring()
         ring = RIGHT;
     else if (get_ring(RIGHT) == NULL)
         ring = LEFT;
-    else if ((ring = gethand()) < 0)
+    else if ((ring = get_hand()) < 0)
         return false;
 
     Item* obj = game->hero().get_ring(ring);
