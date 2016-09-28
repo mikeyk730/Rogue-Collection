@@ -6,11 +6,14 @@ bool in_small_screen_mode();
 void set_brief_mode(bool enable);
 bool in_brief_mode();
 
-//msg: Display a message at the top of the screen.
 void ifterse(const char *tfmt, const char *fmt, ...);
 
-void reset_msg_position();
+//msg: Display a message at the top of the screen.
 void msg(const char *fmt, ...);
+//unsaved_msg: Same as above, but is replaced by a new msg instead of showing -More-
+void unsaved_msg(const char *fmt, ...);
+
+void reset_msg_position();
 void clear_msg();
 
 //addmsg: Add things to the current message

@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    replay = false;
+    //replay = false;
 
     std::ifstream infile("saves\\level7.sav", std::ios::binary | std::ios::in);
     //std::ifstream infile("scroll.sav", std::ios::binary | std::ios::in);
@@ -65,8 +65,8 @@ int main(int argc, char **argv)
     else {
         game = new GameState(seed);
     }
-
-    game->hero().invunerable = true;
+    //game->hero().invunerable = true;
+    
     if (!replay)
         setenv("rogue.opt");
     if ("bw" == game->get_environment("scorefile"))
@@ -160,7 +160,8 @@ void quit()
     game->screen().move(0, 0);
     game->screen().clrtoeol();
     game->screen().move(0, 0);
-    if (!in_small_screen_mode()) game->screen().addstr("Do you wish to ");
+    if (!in_small_screen_mode())
+        game->screen().addstr("Do you wish to ");
     str_attr("end your quest now (%Yes/%No) ?");
     look(false);
     answer = readchar();

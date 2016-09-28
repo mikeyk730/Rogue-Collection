@@ -125,10 +125,15 @@ void Hero::ring_off()
         ring = RIGHT;
     else if (get_ring(RIGHT) == NULL)
         ring = LEFT;
-    else if ((ring = gethand()) < 0) return;
-    reset_msg_position();
+    else if ((ring = gethand()) < 0)
+        return;
+
     Item* obj = game->hero().get_ring(ring);
-    if (obj == NULL) { msg("not wearing such a ring"); game->counts_as_turn = false; return; }
+    if (obj == NULL) { 
+        msg("not wearing such a ring"); 
+        game->counts_as_turn = false;
+        return; 
+    }
 
     char packchar = pack_char(obj);
     if (can_drop(obj))
@@ -138,15 +143,18 @@ void Hero::ring_off()
 //gethand: Which hand is the hero interested in?
 int gethand()
 {
-    int c;
-
     for (;;)
     {
-        msg("left hand or right hand? ");
-        if ((c = readchar()) == ESCAPE) { game->counts_as_turn = false; return -1; }
-        reset_msg_position();
-        if (c == 'l' || c == 'L') return LEFT;
-        else if (c == 'r' || c == 'R') return RIGHT;
+        unsaved_msg("left hand or right hand? ");
+        int c = readchar();
+        if (c == ESCAPE) {
+            game->counts_as_turn = false; 
+            return -1; 
+        }
+        if (c == 'l' || c == 'L') 
+            return LEFT;
+        else if (c == 'r' || c == 'R') 
+            return RIGHT;
         msg("please type L or R");
     }
 }

@@ -45,8 +45,7 @@ void whatis()
         if ((obj = get_item("identify", 0)) == NULL)
         {
             msg("You must identify something");
-            msg(" ");
-            reset_msg_position();
+            unsaved_msg(" ");
         }
         else
             break;
@@ -81,16 +80,14 @@ void whatis()
 int get_which(int type, int limit)
 {
     byte ch;
-    reset_msg_position();
-    msg("which %c do you want? (0-%x)", type, limit);
+    unsaved_msg("which %c do you want? (0-%x)", type, limit);
     int option = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);
     return (option >= 0 && option <= limit) ? option : 0;
 }
 
 char get_bless_char() {
-    msg("blessing? (+,-,n)");
+    unsaved_msg("blessing? (+,-,n)");
     byte bless = readchar();
-    reset_msg_position();
     return bless;
 }
 
@@ -100,7 +97,7 @@ void summon_object()
     int which;
     Item* obj;
 
-    msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK, RING, WEAPON, ARMOR, AMULET, FOOD);
+    unsaved_msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK, RING, WEAPON, ARMOR, AMULET, FOOD);
     switch (readchar())
     {
     case '!':
@@ -168,8 +165,6 @@ void summon_object()
         obj = new Food(which);
         break;
     }
-
-    reset_msg_position();
 
     //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
 

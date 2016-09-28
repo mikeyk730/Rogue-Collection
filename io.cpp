@@ -97,6 +97,28 @@ void msg(const char *format, ...)
     endmsg();
 }
 
+void unsaved_msg(const char * format, ...)
+{
+    //if the string is "", just clear the line
+    if (*format == '\0') {
+        game->screen().move(0, 0);
+        game->screen().clrtoeol();
+        reset_msg_position();
+        return;
+    }
+
+    char dest[1024 * 16];
+    va_list argptr;
+    va_start(argptr, format);
+    vsprintf(dest, format, argptr);
+    va_end(argptr);
+
+    //otherwise add to the message and flush it out
+    doadd(dest);
+    endmsg();
+    reset_msg_position();
+}
+
 void clear_msg()
 {
     msg("");
@@ -125,7 +147,8 @@ void endmsg()
         more(" More "); 
     }
     //All messages should start with uppercase, except ones that start with a pack addressing character
-    if (islower(msgbuf[0]) && msgbuf[1] != ')') msgbuf[0] = toupper(msgbuf[0]);
+    if (islower(msgbuf[0]) && msgbuf[1] != ')') 
+        msgbuf[0] = toupper(msgbuf[0]);
     putmsg(0, msgbuf);
     game->msg_position = newpos;
     newpos = 0;
