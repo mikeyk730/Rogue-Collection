@@ -135,8 +135,8 @@ void playit(char *sname)
         game->screen().cursor(false);
     }
     else {
-        oldpos = game->hero().pos;
-        oldrp = get_room_from_position(game->hero().pos);
+        game->oldpos = game->hero().pos;
+        game->oldrp = get_room_from_position(game->hero().pos);
     }
 
     while (true)
@@ -155,7 +155,7 @@ void quit()
     if (should_quit)
         leave();
     should_quit = true;
-    msg_position = 0;
+    reset_msg_position();
     game->screen().getrc(&oy, &ox);
     game->screen().move(0, 0);
     game->screen().clrtoeol();
@@ -178,8 +178,8 @@ void quit()
         game->screen().clrtoeol();
         status();
         game->screen().move(oy, ox);
-        msg_position = 0;
-        repeat_cmd_count = 0;
+        reset_msg_position();
+        game->repeat_cmd_count = 0;
     }
     should_quit = false;
 }

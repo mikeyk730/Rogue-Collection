@@ -3,6 +3,7 @@
 #include "rogue.h"
 
 struct Item;
+struct Room;
 
 //flags for creatures
 const short IS_BLIND = 0x0001; //creature is blind

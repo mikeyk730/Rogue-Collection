@@ -29,8 +29,6 @@
 #include "food.h"
 #include "hero.h"
 
-static byte can_pickup_this_turn; //todo:eliminate
-
 void command()
 {
     int ntimes;
@@ -86,7 +84,7 @@ int com_char()
 {
     int ch;
     ch = readchar();
-    if (msg_position && !game->modifiers.is_running())
+    if (game->msg_position && !game->modifiers.is_running())
         msg("");
     return translate_command(ch);
 }
@@ -99,9 +97,9 @@ int process_prefixes(int ch)
     switch (ch)
     {
     case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-        junk = repeat_cmd_count * 10;
+        junk = game->repeat_cmd_count * 10;
         if ((junk += ch - '0') > 0 && junk < 10000)
-            repeat_cmd_count = junk;
+            game->repeat_cmd_count = junk;
         show_count();
         break;
 
@@ -109,19 +107,19 @@ int process_prefixes(int ch)
         game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
         break;
     case 'g': // g + direction: move onto an item without picking it up
-        can_pickup_this_turn = false;
+        game->can_pickup_this_turn = false;
         break;
     case 'a': //a: repeat last command
         command = game->last_turn.command;
-        repeat_cmd_count = game->last_turn.count;
-        can_pickup_this_turn = game->last_turn.could_pickup;
-        repeat_last_action = true;
+        game->repeat_cmd_count = game->last_turn.count;
+        game->can_pickup_this_turn = game->last_turn.could_pickup;
+        game->repeat_last_action = true;
         break;
     case ' ':
         break;
     case ESCAPE:
         game->modifiers.m_stop_at_door = false;
-        repeat_cmd_count = 0;
+        game->repeat_cmd_count = 0;
         show_count();
         break;
     default:
@@ -142,24 +140,24 @@ int read_command()
     look(true);
     if (!game->modifiers.is_running())
         game->modifiers.m_stop_at_door = false;
-    can_pickup_this_turn = true;
-    repeat_last_action = false;
+    game->can_pickup_this_turn = true;
+    game->repeat_last_action = false;
 
-    --repeat_cmd_count;
-    if (repeat_cmd_count || game->last_turn.count)
+    --game->repeat_cmd_count;
+    if (game->repeat_cmd_count || game->last_turn.count)
         show_count();
 
-    if (repeat_cmd_count > 0) {
-        can_pickup_this_turn = game->last_turn.could_pickup;
+    if (game->repeat_cmd_count > 0) {
+        game->can_pickup_this_turn = game->last_turn.could_pickup;
         command = game->last_turn.command;
         game->modifiers.m_fast_mode = false;
     }
     else
     {
-        repeat_cmd_count = 0;
+        game->repeat_cmd_count = 0;
         if (game->modifiers.is_running()) {
-            command = run_character;
-            can_pickup_this_turn = game->last_turn.could_pickup;
+            command = game->run_character;
+            game->can_pickup_this_turn = game->last_turn.could_pickup;
         }
         else
         {
@@ -172,7 +170,7 @@ int read_command()
             }
         }
     }
-    if (repeat_cmd_count)
+    if (game->repeat_cmd_count)
         game->modifiers.m_fast_mode = false;
     switch (command)
     {
@@ -193,12 +191,12 @@ int read_command()
         break;
 
     default:
-        repeat_cmd_count = 0;
+        game->repeat_cmd_count = 0;
     }
 
-    game->last_turn.count = repeat_cmd_count;
+    game->last_turn.count = game->repeat_cmd_count;
     game->last_turn.command = command;
-    game->last_turn.could_pickup = can_pickup_this_turn;
+    game->last_turn.could_pickup = game->can_pickup_this_turn;
     return command;
 }
 
@@ -208,8 +206,8 @@ void show_count()
     const int LINES = game->screen().lines();
 
     game->screen().move(LINES - 2, COLS - 4);
-    if (repeat_cmd_count > 0)
-        game->screen().printw("%-4d", repeat_cmd_count);
+    if (game->repeat_cmd_count > 0)
+        game->screen().printw("%-4d", game->repeat_cmd_count);
     else
         game->screen().addstr("    ");
 }
@@ -222,7 +220,7 @@ void dispatch_command(int ch)
     {
         Coord mv;
         find_dir(ch, &mv);
-        do_move(mv, can_pickup_this_turn);
+        do_move(mv, game->can_pickup_this_turn);
         break;
     }
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
@@ -234,15 +232,15 @@ void dispatch_command(int ch)
         if (get_dir(&d))
             throw_projectile(d);
         else
-            counts_as_turn = false;
+            game->counts_as_turn = false;
         break;
     }
     case 'Q':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         quit();
         break;
     case 'i':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         inventory(game->hero().pack, 0, "");
         break;
     case 'd':
@@ -273,27 +271,27 @@ void dispatch_command(int ch)
         game->hero().ring_off();
         break;
     case 'c':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         call();
         break;
     case '>':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         go_down_stairs();
         break;
     case '<':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         go_up_stairs();
         break;
     case '/':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         help(helpobjs);
         break;
     case '?':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         help(helpcoms);
         break;
     case '!':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         fakedos();
         break;
     case 's':
@@ -305,11 +303,11 @@ void dispatch_command(int ch)
         if (get_dir(&d))
             do_zap(d);
         else
-            counts_as_turn = false;
+            game->counts_as_turn = false;
         break;
     }
     case 'D':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         discovered();
         break;
     case CTRL('T'):
@@ -317,28 +315,28 @@ void dispatch_command(int ch)
         bool new_value = !in_brief_mode();
         set_brief_mode(new_value);
         msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!");
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         break;
     }
     case 'F':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         record_macro();
         break;
     case CTRL('F'):
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         //todo: revisit macro later, this definitely isn't safe
         //typeahead = game->get_environment("macro").c_str();
         break;
     case CTRL('R'):
-        counts_as_turn = false;
-        msg(last_message);
+        game->counts_as_turn = false;
+        msg(game->last_message);
         break;
     case 'v':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         msg("Rogue version %d.%d", REV, VER);
         break;
     case 'S':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         save_game();
         break;
     case '.':
@@ -346,7 +344,7 @@ void dispatch_command(int ch)
 
     case '^':
     {
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         Coord d;
         if (get_dir(&d))
         {
@@ -361,16 +359,16 @@ void dispatch_command(int ch)
         break;
     }
     case 'o':
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         msg("i don't have any options, oh my!");
         break;
     case CTRL('L'):
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         msg("the screen looks fine to me");
         break;
 
     case CTRL('W'):
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         game->hero().toggle_wizard();
         break;
 
@@ -379,23 +377,23 @@ void dispatch_command(int ch)
             switch (ch) {
                 //Wizard commands
             case 'C':
-                counts_as_turn = false;
+                game->counts_as_turn = false;
                 summon_object();
                 break;
             case 'X':
-                counts_as_turn = false; show_map(true); break;
+                game->counts_as_turn = false; show_map(true); break;
             case 'Z':
-                counts_as_turn = false;  show_map(false); break;
+                game->counts_as_turn = false;  show_map(false); break;
             default:
-                counts_as_turn = false;
+                game->counts_as_turn = false;
                 msg("illegal command '%s'", unctrl(ch));
-                repeat_cmd_count = 0;
+                game->repeat_cmd_count = 0;
             }
         }
         else {
-            counts_as_turn = false;
+            game->counts_as_turn = false;
             msg("illegal command '%s'", unctrl(ch));
-            repeat_cmd_count = 0;
+            game->repeat_cmd_count = 0;
             break;
         }
     }
@@ -405,7 +403,7 @@ void execcom()
 {
     do
     {
-        counts_as_turn = true;
+        game->counts_as_turn = true;
 
         int ch = read_command();
         dispatch_command(ch);
@@ -413,5 +411,5 @@ void execcom()
         if (!game->modifiers.is_running())
             game->modifiers.m_stop_at_door = false;
 
-    } while (!counts_as_turn);
+    } while (!game->counts_as_turn);
 }

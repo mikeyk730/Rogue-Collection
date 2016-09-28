@@ -40,7 +40,7 @@ void do_rooms()
     int old_lev;
     int endline;
 
-    endline = maxrow + 1;
+    endline = maxrow() + 1;
     old_lev = get_level();
     //bsze is the maximum room size
     const int COLS = game->screen().columns();
@@ -185,7 +185,7 @@ void enter_room(Coord cp)
     Monster* monster;
 
     room = game->hero().room = get_room_from_position(cp);
-    if (invalid_position || (room->is_gone() && (room->is_maze()) == 0))
+    if (game->invalid_position || (room->is_gone() && (room->is_maze()) == 0))
     {
         debug("in a gone room");
         return;
@@ -274,7 +274,7 @@ Room* get_room_from_position(Coord pos)
         return game->level().get_passage(pos);
 
     debug("in some bizarre place (%d, %d)", pos.y, pos.x);
-    invalid_position = true;
+    game->invalid_position = true;
     return NULL;
 }
 

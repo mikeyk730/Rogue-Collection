@@ -71,10 +71,20 @@ void ifterse(const char *tfmt, const char *format, ...)
     msg(dest);
 }
 
+void reset_msg_position()
+{
+    game->msg_position = 0;
+}
+
 void msg(const char *format, ...)
 {
     //if the string is "", just clear the line
-    if (*format == '\0') { game->screen().move(0, 0); game->screen().clrtoeol(); msg_position = 0; return; }
+    if (*format == '\0') { 
+        game->screen().move(0, 0); 
+        game->screen().clrtoeol(); 
+        reset_msg_position();
+        return;
+    }
 
     char dest[1024 * 16];
     va_list argptr;
@@ -103,12 +113,16 @@ void addmsg(const char *format, ...)
 void endmsg()
 {
     if (save_msg)
-        strcpy(last_message, msgbuf);
-    if (msg_position) { look(false); game->screen().move(0, msg_position); more(" More "); }
+        strcpy(game->last_message, msgbuf);
+    if (game->msg_position) {
+        look(false); 
+        game->screen().move(0, game->msg_position);
+        more(" More "); 
+    }
     //All messages should start with uppercase, except ones that start with a pack addressing character
     if (islower(msgbuf[0]) && msgbuf[1] != ')') msgbuf[0] = toupper(msgbuf[0]);
     putmsg(0, msgbuf);
-    msg_position = newpos;
+    game->msg_position = newpos;
     newpos = 0;
 }
 
@@ -430,7 +444,7 @@ void SIG2()
         if (game->modifiers.scroll_lock() != scroll_lock_on)
         {
             game->modifiers.m_fast_play_enabled = scroll_lock_on;
-            repeat_cmd_count = 0;
+            game->repeat_cmd_count = 0;
             show_count();
             game->modifiers.m_running = false;
         }
@@ -448,7 +462,7 @@ void SIG2()
     if (numl != num_lock_on)
     {
         numl = num_lock_on;
-        repeat_cmd_count = 0;
+        game->repeat_cmd_count = 0;
         show_count();
         game->modifiers.m_running = false;
         game->screen().move(LINES - 1, nspot);

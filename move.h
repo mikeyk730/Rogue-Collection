@@ -1,6 +1,7 @@
 #pragma once
 
 struct Agent;
+struct Room;
 
 //diag_ok: Check to see if the move is legal if it is diagonal
 int diag_ok(const Coord sp, const Coord ep);

@@ -2,6 +2,7 @@
 
 struct Item;
 struct Monster;
+struct Room;
 
 struct Level {
     void new_level(int do_implode);
@@ -50,3 +51,4 @@ int prev_level();
 int max_level();
 
 int rnd_gold();
+int maxrow();

@@ -19,7 +19,7 @@ void save_game()
     char savename[20];
 
     msg("");
-    msg_position = 0;
+    reset_msg_position();
     if (in_small_screen_mode())
         game->screen().addstr("Save file ? ");
     else

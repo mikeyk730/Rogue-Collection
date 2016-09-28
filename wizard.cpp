@@ -46,7 +46,7 @@ void whatis()
         {
             msg("You must identify something");
             msg(" ");
-            msg_position = 0;
+            reset_msg_position();
         }
         else
             break;
@@ -81,7 +81,7 @@ void whatis()
 int get_which(int type, int limit)
 {
     byte ch;
-    msg_position = 0;
+    reset_msg_position();
     msg("which %c do you want? (0-%x)", type, limit);
     int option = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);
     return (option >= 0 && option <= limit) ? option : 0;
@@ -90,7 +90,7 @@ int get_which(int type, int limit)
 char get_bless_char() {
     msg("blessing? (+,-,n)");
     byte bless = readchar();
-    msg_position = 0;
+    reset_msg_position();
     return bless;
 }
 
@@ -169,7 +169,7 @@ void summon_object()
         break;
     }
 
-    msg_position = 0;
+    reset_msg_position();
 
     //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
 
@@ -184,7 +184,7 @@ void show_map(bool show_monsters)
     game->screen().wdump();
     game->screen().clear();
     const int COLS = game->screen().columns();
-    for (y = 1; y < maxrow; y++) for (x = 0; x < COLS; x++)
+    for (y = 1; y < maxrow(); y++) for (x = 0; x < COLS; x++)
     {
         if (!(real = game->level().get_flags({ x, y })&F_REAL))
             game->screen().standout();

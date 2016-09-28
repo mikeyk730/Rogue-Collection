@@ -261,7 +261,7 @@ void add_pass()
     int y, x, ch;
     const int COLS = game->screen().columns();
 
-    for (y = 1; y < maxrow; y++)
+    for (y = 1; y < maxrow(); y++)
         for (x = 0; x < COLS; x++)
             if ((ch = game->level().get_tile({ x, y })) == DOOR || ch == PASSAGE)
                 game->screen().mvaddch({ x, y }, ch);

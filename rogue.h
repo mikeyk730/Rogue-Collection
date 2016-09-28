@@ -174,19 +174,7 @@ struct CommandModifiers
     bool m_running = false;       //True if player is running
 };
 
-extern Coord oldpos;
-extern struct Room *oldrp;
-
-extern int maxrow;
-extern bool invalid_position;
-
-extern bool counts_as_turn, repeat_last_action;
-extern int was_trapped;
-
-extern char last_message[], prbuf[], run_character;
-extern const char* typeahead;
-
-extern int repeat_cmd_count, msg_position;
+extern char prbuf[];
 extern Random* g_random;
 extern GameState* game;
 

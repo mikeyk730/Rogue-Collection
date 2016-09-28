@@ -219,7 +219,7 @@ void Hero::digest()
         game->sleep_timer += rnd(8) + 4;
         set_running(false);
         game->modifiers.m_running = false;
-        repeat_cmd_count = 0;
+        game->repeat_cmd_count = 0;
         hungry_state = 3;
         msg("%syou faint from lack of food", noterse("you feel very weak. "));
     }
@@ -316,7 +316,7 @@ void Hero::teleport()
         set_is_held(false);
     }
     game->bear_trap_turns = 0;
-    repeat_cmd_count = 0;
+    game->repeat_cmd_count = 0;
     game->modifiers.m_running = false;
     clear_typeahead_buffer();
     //Teleportation can be a confusing experience (unless you really are a wizard)
@@ -473,7 +473,7 @@ Monster* Hero::fight(Coord *location, Item *weapon, bool thrown)
         return 0;
 
     //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
-    repeat_cmd_count = 0;
+    game->repeat_cmd_count = 0;
     game->turns_since_heal = 0;
 
     monster->start_run();
@@ -705,7 +705,7 @@ void Hero::wield()
     {
         if (obj && obj->type == ARMOR)
             msg("you can't wield armor");
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         return;
     }
 
@@ -745,7 +745,7 @@ void Hero::put_on_ring(Item* obj)
     msg("%swearing %s (%c)", noterse("you are now "), obj->inv_name(true), pack_char(obj));
     return;
 no_ring:
-    counts_as_turn = false;
+    game->counts_as_turn = false;
     return;
 }
 
@@ -756,7 +756,7 @@ void Hero::take_off()
 
     if ((obj = get_current_armor()) == NULL)
     {
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         msg("you aren't wearing any armor");
         return;
     }

@@ -211,7 +211,7 @@ void create_wandering_monster()
         rnd_pos(room, &cp);
     } while (!(room != game->hero().room && step_ok(game->level().get_tile_or_monster(cp))));
     monster = Monster::CreateMonster(randmonster(true, get_level()), &cp, get_level());
-    if (invalid_position)
+    if (game->invalid_position)
         debug("wanderer bailout");
     //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
     monster->start_run();

@@ -9,6 +9,7 @@ bool in_brief_mode();
 //msg: Display a message at the top of the screen.
 void ifterse(const char *tfmt, const char *fmt, ...);
 
+void reset_msg_position();
 void msg(const char *fmt, ...);
 
 //addmsg: Add things to the current message

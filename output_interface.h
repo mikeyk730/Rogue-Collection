@@ -82,4 +82,6 @@ struct OutputInterface
 
     virtual int lines() const = 0;
     virtual int columns() const = 0;
+
+    virtual bool small_screen_mode() const = 0;
  };

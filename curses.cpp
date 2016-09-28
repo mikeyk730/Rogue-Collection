@@ -433,6 +433,11 @@ int ConsoleOutput::columns() const
     return COLS;
 }
 
+bool ConsoleOutput::small_screen_mode() const
+{
+    return COLS == 40;
+}
+
 Coord ConsoleOutput::translated_position()
 {
     return{ c_col + m_origin.x, c_row + m_origin.y };

@@ -89,12 +89,11 @@ int is_direction_key(int key)
 
 //setup: Get starting setup for all games
 void setup()
-{
+{ 
+    //TODO:now
     set_small_screen_mode(false);
     const int COLS = game->screen().columns();
-    maxrow = 23;
     if (COLS == 40) {
-        maxrow = 22;
         set_small_screen_mode(true);
     }
     set_brief_mode(in_small_screen_mode());
@@ -103,7 +102,7 @@ void setup()
 //clear_typeahead_buffer: Flush typeahead for traps, etc.
 void clear_typeahead_buffer()
 {
-    typeahead = "";
+    game->typeahead = "";
 }
 
 BOOL CtrlHandler(DWORD fdwCtrlType)
@@ -308,11 +307,15 @@ int readchar()
 {
     byte ch;
 
-    if (*typeahead) { SIG2(); return(*typeahead++); }
+    if (*game->typeahead) { 
+        SIG2();
+        return(*game->typeahead++);
+    }
 
     ch = game->input_interface().GetNextChar();
 
-    if (ch == ESCAPE) repeat_cmd_count = 0;
+    if (ch == ESCAPE) 
+        game->repeat_cmd_count = 0;
     return ch;
 }
 

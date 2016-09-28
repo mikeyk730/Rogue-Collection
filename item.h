@@ -2,6 +2,7 @@
 #include "rogue.h"
 
 struct Monster;
+struct Room;
 
 //flags for objects
 const short IS_CURSED = 0x0001; //object is cursed

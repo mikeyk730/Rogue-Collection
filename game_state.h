@@ -52,7 +52,7 @@ struct GameState
 
         byte command;             //Last command executed
         int count;                //Count of last command executed
-        byte could_pickup;        //Could the player pickup items (was 'g' not pressed last turn)
+        bool could_pickup;        //Could the player pickup items (was 'g' not pressed last turn)
 
         Coord input_direction;     //Direction the player specified for the last throw, zap, etc.
         Item* item_used = nullptr; //Last item used (quaffed, zapped, thrown, dropped, etc.)
@@ -60,12 +60,24 @@ struct GameState
 
     } last_turn;
 
-
     // uncategorized state.  //todo: categorize it.
     int bear_trap_turns = 0;     //Number of turns held in place
     int sleep_timer = 0;         //Number of turns asleep
     int no_food = 0;             //Number of levels without food
     int turns_since_heal = 0;    //Number of turns_since_heal turns
+    bool can_pickup_this_turn = 0;  //Will the rogue pick up an item if he steps on it
+    bool counts_as_turn;        //True if we want after daemons
+    bool repeat_last_action;    //The last command is repeated
+    int was_trapped = 0;   //Was a trap sprung
+    bool invalid_position = false;
+    char run_character; //Direction player is running
+    char last_message[BUFSIZE];     //The last message printed
+    int maxrow;            //Last Line used for map
+    int msg_position = 0;  //Where cursor is on top line
+    int repeat_cmd_count = 0;  //Number of times to repeat command
+    Coord oldpos; //Position before last look() call
+    struct Room *oldrp; //room of oldpos
+    const char* typeahead = "";
 
 private:
     void init_environment();

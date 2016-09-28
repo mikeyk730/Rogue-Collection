@@ -64,19 +64,19 @@ void look(bool wakeup)
     pfl = game->level().get_flags(game->hero().pos);
     pch = game->level().get_tile(game->hero().pos);
     //if the hero has moved
-    if (!equal(oldpos, game->hero().pos))
+    if (!equal(game->oldpos, game->hero().pos))
     {
         if (!game->hero().is_blind())
         {
-            for (x = oldpos.x - 1; x <= (oldpos.x + 1); x++)
-                for (y = oldpos.y - 1; y <= (oldpos.y + 1); y++)
+            for (x = game->oldpos.x - 1; x <= (game->oldpos.x + 1); x++)
+                for (y = game->oldpos.y - 1; y <= (game->oldpos.y + 1); y++)
                 {
                     if ((y == game->hero().pos.y && x == game->hero().pos.x) || offmap({ x,y })) continue;
                     game->screen().move(y, x);
                     ch = game->screen().curch();
                     if (ch == FLOOR)
                     {
-                        if (oldrp->is_dark() && !oldrp->is_gone())
+                        if (game->oldrp->is_dark() && !game->oldrp->is_gone())
                             game->screen().addch(' ');
                     }
                     else
@@ -88,8 +88,8 @@ void look(bool wakeup)
                     }
                 }
         }
-        oldpos = game->hero().pos;
-        oldrp = room;
+        game->oldpos = game->hero().pos;
+        game->oldrp = room;
     }
     ey = game->hero().pos.y + 1;
     ex = game->hero().pos.x + 1;
@@ -99,7 +99,7 @@ void look(bool wakeup)
         sumhero = game->hero().pos.y + game->hero().pos.x;
         diffhero = game->hero().pos.y - game->hero().pos.x;
     }
-    for (y = sy; y <= ey; y++) if (y > 0 && y < maxrow) for (x = sx; x <= ex; x++)
+    for (y = sy; y <= ey; y++) if (y > 0 && y < maxrow()) for (x = sx; x <= ex; x++)
     {
         if (x <= 0 || x >= COLS) continue;
         if (!game->hero().is_blind())
@@ -139,7 +139,7 @@ void look(bool wakeup)
             game->screen().standend();
             if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && game->modifiers.is_running())
             {
-                switch (run_character)
+                switch (game->run_character)
                 {
                 case 'h': if (x == ex) continue; break;
                 case 'j': if (y == sy) continue; break;
@@ -172,13 +172,13 @@ void look(bool wakeup)
         game->modifiers.m_running = false;
     game->screen().move(game->hero().pos.y, game->hero().pos.x);
     //todo:check logic
-    if ((game->level().get_flags(game->hero().pos)&F_PASS) || (was_trapped > 1) || (game->level().get_flags(game->hero().pos)&F_MAZE))
+    if ((game->level().get_flags(game->hero().pos)&F_PASS) || (game->was_trapped > 1) || (game->level().get_flags(game->hero().pos)&F_MAZE))
         game->screen().standout();
     game->screen().addch(PLAYER);
     game->screen().standend();
-    if (was_trapped) {
+    if (game->was_trapped) {
         beep();
-        was_trapped = 0;
+        game->was_trapped = 0;
     }
 }
 
@@ -270,7 +270,7 @@ int get_dir_impl(Coord* delta)
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
 int get_dir(Coord *delta)
 {
-    if (repeat_last_action) {
+    if (game->repeat_last_action) {
         *delta = game->last_turn.input_direction;
         return true;
     }
@@ -445,7 +445,7 @@ int equal(Coord a, Coord b)
 int offmap(Coord p)
 {
     const int COLS = game->screen().columns();
-    return (p.y < 1 || p.y >= maxrow || p.x < 0 || p.x >= COLS);
+    return (p.y < 1 || p.y >= maxrow() || p.x < 0 || p.x >= COLS);
 }
 
 //search: Player gropes about him to find hidden things.
@@ -469,13 +469,13 @@ void search()
                 if (rnd(5) != 0) break;
                 game->level().set_tile({ x, y }, DOOR);
                 game->level().set_flag({ x, y }, F_REAL);
-                repeat_cmd_count = game->modifiers.m_running = false;
+                game->repeat_cmd_count = game->modifiers.m_running = false;
                 break;
             case FLOOR:
                 if (rnd(2) != 0) break;
                 game->level().set_tile({ x, y }, TRAP);
                 game->level().set_flag({ x, y }, F_REAL);
-                repeat_cmd_count = game->modifiers.m_running = false;
+                game->repeat_cmd_count = game->modifiers.m_running = false;
                 msg("you found %s", tr_name(game->level().get_trap_type({ x, y })));
                 break;
             }

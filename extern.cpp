@@ -150,27 +150,7 @@ Coord operator+(const Coord & c1, const Coord & c2)
     return{ c1.x + c2.x, c1.y + c2.y };
 }
 
-bool counts_as_turn;        //True if we want after daemons
-bool repeat_last_action;    //The last command is repeated
-
-int was_trapped = 0;   //Was a trap sprung
-
-bool invalid_position = false;
-char run_character; //Direction player is running
-
 char prbuf[MAXSTR];    //Printing buffer used everywhere
-char last_message[BUFSIZE];     //The last message printed
-
-int maxrow;            //Last Line used for map
-int msg_position = 0;  //Where cursor is on top line
-int repeat_cmd_count = 0;  //Number of times to repeat command
-
-Coord oldpos; //Position before last look() call
-
-struct Room *oldrp; //Roomin(&oldpos)
-
-//Common strings
-const char *typeahead = "";
 
 Random* g_random;
 GameState* game;

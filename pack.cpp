@@ -64,12 +64,12 @@ Item* get_item(const std::string& purpose, int type)
 {
     if (game->hero().pack.empty()) {
         msg("you aren't carrying anything");
-        counts_as_turn = false; //mdk: previously, trying to do something with an empty pack would count as a turn
+        game->counts_as_turn = false; //mdk: previously, trying to do something with an empty pack would count as a turn
         return NULL;
     }
 
     //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
-    if (repeat_last_action && purpose != "identify") {
+    if (game->repeat_last_action && purpose != "identify") {
         byte och = 0;
         Item* item = pack_obj(game->last_turn.item_letter, &och);
         if (item == game->last_turn.item_used) {
@@ -91,14 +91,14 @@ Item* get_item(const std::string& purpose, int type)
             ch = readchar();
         }
 
-        msg_position = 0;
+        reset_msg_position();
         show_menu = false;
         if (ch == '*')
         {
             //display the inventory and get a new selection
             ch = inventory(game->hero().pack, type, purpose.c_str());
             if (ch == 0) {
-                counts_as_turn = false;
+                game->counts_as_turn = false;
                 return NULL;
             }
             if (ch == ' ') continue;
@@ -106,7 +106,7 @@ Item* get_item(const std::string& purpose, int type)
 
         //Give the poor player a chance to abort the command
         if (ch == ESCAPE) {
-            counts_as_turn = false;
+            game->counts_as_turn = false;
             msg("");
             return NULL;
         }

@@ -88,7 +88,7 @@ void wear()
     if (game->hero().get_current_armor() != NULL)
     {
         msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         return;
     }
     if ((obj = get_item("wear", ARMOR)) == NULL) return;

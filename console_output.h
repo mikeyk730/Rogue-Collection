@@ -83,6 +83,8 @@ struct ConsoleOutput : public OutputInterface
     virtual int lines() const;
     virtual int columns() const;
 
+    virtual bool small_screen_mode() const;
+
 private:
     //screen size
     short LINES = 25;

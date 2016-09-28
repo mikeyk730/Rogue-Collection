@@ -48,7 +48,7 @@ void Level::clear_level()
 
 int INDEX(Coord p)
 {
-    return ((p.x*(maxrow - 1)) + p.y - 1);
+    return ((p.x*(maxrow() - 1)) + p.y - 1);
 }
 
 byte Level::get_tile(Coord p)
@@ -200,13 +200,13 @@ void Level::new_level(int do_implode)
         find_empty_location(&game->hero().pos, true);
     } while (!(get_flags(game->hero().pos) & F_REAL));  //don't place hero on a trap
 
-    msg_position = 0;  //todo: rest probably belongs somewhere else
+    reset_msg_position();  //todo: rest probably belongs somewhere else
     //unhold when you go down just in case
     game->hero().set_is_held(false);
     enter_room(game->hero().pos);
     game->screen().mvaddch(game->hero().pos, PLAYER);
-    oldpos = game->hero().pos;
-    oldrp = game->hero().room;
+    game->oldpos = game->hero().pos;
+    game->oldrp = game->hero().room;
     if (game->hero().detects_others())
         turn_see(false);
 }
@@ -293,7 +293,7 @@ void Level::treas_room()
         if (spots != MAXTRIES)
         {
             monster = Monster::CreateMonster(randmonster(false, get_level() + 1), &pos, get_level() + 1);
-            if (invalid_position)
+            if (game->invalid_position)
                 debug("treasure roomm bailout");
             monster->set_is_mean(true); //no sloughers in THIS room
             monster->give_pack();
@@ -330,4 +330,12 @@ int max_level()
 int rnd_gold()
 {
     return (rnd(50 + 10 * s_level) + 2);
+}
+
+int maxrow()
+{
+    int lines = game->screen().lines();
+    if (game->screen().small_screen_mode())
+        return lines - 3;
+    return lines - 2;
 }

@@ -15,10 +15,8 @@
 #define MAXFRNT  100
 #define FRONTIER  'F'
 #define NOTHING  ' '
-#define MAXY  (topy+((maxrow+1)/3))
+#define MAXY  (topy+((maxrow()+1)/3))
 #define MAXX  (topx+COLS/3)
-
-extern int maxrow;
 
 static int frcnt, ny, nx, topy, topx;
 static int maxx, maxy;

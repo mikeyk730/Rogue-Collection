@@ -32,8 +32,8 @@ Coord new_position;
 void do_run(byte ch)
 {
     game->modifiers.m_running = true;
-    counts_as_turn = false;
-    run_character = ch;
+    game->counts_as_turn = false;
+    game->run_character = ch;
 }
 
 bool is_gone(Room* rp)
@@ -53,9 +53,9 @@ int diag_ok(const Coord orig_pos, const Coord new_pos)
 void finish_do_move(int fl)
 {
     game->level().draw_char(game->hero().pos);
-    if ((fl&F_PASS) && (game->level().get_tile(oldpos) == DOOR || (game->level().get_flags(oldpos)&F_MAZE)))
+    if ((fl&F_PASS) && (game->level().get_tile(game->oldpos) == DOOR || (game->level().get_flags(game->oldpos)&F_MAZE)))
         leave_room(new_position);
-    if ((fl&F_MAZE) && (game->level().get_flags(oldpos)&F_MAZE) == 0)
+    if ((fl&F_MAZE) && (game->level().get_flags(game->oldpos)&F_MAZE) == 0)
         enter_room(new_position);
     game->hero().pos = new_position;
 }
@@ -72,17 +72,17 @@ bool continue_vertical() {
     Coord s = south(game->hero().pos);
 
     bool up = (game->hero().pos.y > 1 && is_passage_or_door(n));
-    bool down = (game->hero().pos.y < maxrow - 1 && is_passage_or_door(s));
+    bool down = (game->hero().pos.y < maxrow() - 1 && is_passage_or_door(s));
 
     if (!(up^down))
         return false;
 
     if (up) {
-        run_character = 'k';
+        game->run_character = 'k';
         dy = -1;
     }
     else {
-        run_character = 'j';
+        game->run_character = 'j';
         dy = 1;
     }
 
@@ -106,11 +106,11 @@ bool continue_horizontal()
         return false;
 
     if (left) {
-        run_character = 'h';
+        game->run_character = 'h';
         dx = -1;
     }
     else {
-        run_character = 'l';
+        game->run_character = 'l';
         dx = 1;
     }
 
@@ -123,7 +123,7 @@ bool do_hit_boundary()
 {
     if (game->modifiers.is_running() && is_gone(game->hero().room) && !game->hero().is_blind())
     {
-        switch (run_character)
+        switch (game->run_character)
         {
         case 'h': case 'l':
         {
@@ -139,7 +139,7 @@ bool do_hit_boundary()
         }
         }
     }
-    counts_as_turn = false;
+    game->counts_as_turn = false;
     game->modifiers.m_running = false;
     return true;
 }
@@ -153,13 +153,13 @@ bool do_move_impl(bool can_pickup)
     if (offmap(new_position))
         return !do_hit_boundary();
     if (!diag_ok(game->hero().pos, new_position)) {
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         game->modifiers.m_running = false;
         return false;
     }
     //If you are running and the move does not get you anywhere stop running
     if (game->modifiers.is_running() && equal(game->hero().pos, new_position)) {
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         game->modifiers.m_running = false;
     }
     fl = game->level().get_flags(new_position);
@@ -225,8 +225,8 @@ void do_move(Coord delta, bool can_pickup)
     game->modifiers.m_first_move = false;
 
     //if something went wrong, bail out on this level
-    if (invalid_position) {
-        invalid_position = false;
+    if (game->invalid_position) {
+        game->invalid_position = false;
         msg("the crack widens ... ");
         descend("");
         return;
@@ -281,10 +281,10 @@ int handle_trap(Coord tc)
     byte tr;
     const int COLS = game->screen().columns();
 
-    repeat_cmd_count = game->modifiers.m_running = false;
+    game->repeat_cmd_count = game->modifiers.m_running = false;
     game->level().set_tile(tc, TRAP);
     tr = game->level().get_trap_type(tc);
-    was_trapped = 1;
+    game->was_trapped = 1;
     switch (tr)
     {
     case T_DOOR:
@@ -330,7 +330,7 @@ int handle_trap(Coord tc)
     case T_TELEP:
         game->hero().teleport();
         game->screen().mvaddch(tc, TRAP); //since the hero's leaving, look() won't put it on for us
-        was_trapped++;//todo:look at this
+        game->was_trapped++;//todo:look at this
         break;
 
     case T_DART:
@@ -380,7 +380,7 @@ void rndmove(Agent *who, Coord *newmv)
     x = newmv->x = who->pos.x + rnd(3) - 1;
     //Now check to see if that's a legal move.  If not, don't move. (I.e., bump into the wall or whatever)
     if (y == who->pos.y && x == who->pos.x) return;
-    if ((y < 1 || y >= maxrow) || (x < 0 || x >= COLS))
+    if ((y < 1 || y >= maxrow()) || (x < 0 || x >= COLS))
         goto bad;
     else if (!diag_ok(who->pos, *newmv))
         goto bad;

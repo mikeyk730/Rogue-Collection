@@ -384,7 +384,7 @@ void do_zap(Coord delta)
             which_one = MAXSTICKS;
         else {
             msg("you can't zap with that!");
-            counts_as_turn = false;
+            game->counts_as_turn = false;
             return;
         }
     }

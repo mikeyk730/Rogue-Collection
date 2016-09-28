@@ -106,7 +106,7 @@ void ring_on()
 {
     Item *obj;
     if ((obj = get_item("put on", RING)) == NULL) {
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         return;
     }
     game->hero().put_on_ring(obj);
@@ -118,7 +118,7 @@ void Hero::ring_off()
     int ring;
     if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) {
         msg("you aren't wearing any rings");
-        counts_as_turn = false;
+        game->counts_as_turn = false;
         return;
     }
     else if (get_ring(LEFT) == NULL)
@@ -126,9 +126,9 @@ void Hero::ring_off()
     else if (get_ring(RIGHT) == NULL)
         ring = LEFT;
     else if ((ring = gethand()) < 0) return;
-    msg_position = 0;
+    reset_msg_position();
     Item* obj = game->hero().get_ring(ring);
-    if (obj == NULL) { msg("not wearing such a ring"); counts_as_turn = false; return; }
+    if (obj == NULL) { msg("not wearing such a ring"); game->counts_as_turn = false; return; }
 
     char packchar = pack_char(obj);
     if (can_drop(obj))
@@ -143,8 +143,8 @@ int gethand()
     for (;;)
     {
         msg("left hand or right hand? ");
-        if ((c = readchar()) == ESCAPE) { counts_as_turn = false; return -1; }
-        msg_position = 0;
+        if ((c = readchar()) == ESCAPE) { game->counts_as_turn = false; return -1; }
+        reset_msg_position();
         if (c == 'l' || c == 'L') return LEFT;
         else if (c == 'r' || c == 'R') return RIGHT;
         msg("please type L or R");
