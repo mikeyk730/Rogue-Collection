@@ -151,7 +151,7 @@ Coord operator+(const Coord & c1, const Coord & c2)
 }
 
 bool counts_as_turn;        //True if we want after daemons
-bool again;                 //The last command is repeated
+bool repeat_last_action;    //The last command is repeated
 
 int was_trapped = 0;   //Was a trap sprung
 

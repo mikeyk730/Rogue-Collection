@@ -180,7 +180,7 @@ extern struct Room *oldrp;
 extern int maxrow;
 extern bool invalid_position;
 
-extern bool counts_as_turn, again;
+extern bool counts_as_turn, repeat_last_action;
 extern int was_trapped;
 
 extern char last_message[], prbuf[], run_character;

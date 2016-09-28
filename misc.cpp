@@ -270,13 +270,13 @@ int get_dir_impl(Coord* delta)
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
 int get_dir(Coord *delta)
 {
-    if (again) { 
-        *delta = game->last_input_direction;
+    if (repeat_last_action) {
+        *delta = game->again_state.last_input_direction;
         return true;
     }
     if (get_dir_impl(delta))
     {
-        game->last_input_direction = *delta;
+        game->again_state.last_input_direction = *delta;
         return true;
     }
     return false;

@@ -347,7 +347,7 @@ int add_line(const char *use, const char *fmt, const char *arg)
 }
 
 //end_line: End the list of lines
-int end_line(char *use)
+int end_line(const char *use)
 {
     int retchar;
 

@@ -46,11 +46,21 @@ struct GameState
 
     CommandModifiers modifiers;
 
+    struct AgainState
+    {
+        //state required in order to support 'a' command to repeat last action
+
+        Coord last_input_direction;     //Direction the player specified for the last throw, zap, etc.
+        Item* last_item_used = nullptr; //Last item used (quaffed, zapped, thrown, dropped, etc.)
+        byte last_item_letter = 0;      //The last letter selected from inventory
+
+    } again_state;
+
+
     int bear_trap_turns = 0;     //Number of turns held in place
     int sleep_timer = 0;         //Number of turns asleep
     int no_food = 0;             //Number of levels without food
     int turns_since_heal = 0;    //Number of turns_since_heal turns
-    Coord last_input_direction;  //Direction the player specified for the last throw, zap, etc.
 
 private:
     void init_environment();

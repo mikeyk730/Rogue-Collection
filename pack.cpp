@@ -31,7 +31,7 @@ Item *pack_obj(byte ch, byte *chp)
 
 
 //inventory: List what is in the pack
-int inventory(std::list<Item *>& list, int type, char *lstr)
+int inventory(std::list<Item *>& list, int type, const char *lstr)
 {
     byte ch = 'a';
     int n_objs;
@@ -60,74 +60,73 @@ int inventory(std::list<Item *>& list, int type, char *lstr)
 }
 
 //get_item: Pick something out of a pack for a purpose
-Item* get_item(char *purpose, int type)
+Item* get_item(const std::string& purpose, int type)
 {
-    Item *obj;
-    byte ch;
-    byte och;
-    static byte lch;
-    static Item *wasthing = NULL;
-    byte gi_state; //get item sub state
-    int once_only = false;
-
-    if ("on" == game->get_environment("menu"))
-        once_only = true;
-    gi_state = again;
-    if (game->hero().pack.empty())
+    if (game->hero().pack.empty()) {
         msg("you aren't carrying anything");
-    else
-    {
-        ch = lch;
-        for (;;)
-        {
-            //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
-            if (gi_state && wasthing == pack_obj(ch, &och))
-                goto skip;
-            if (once_only) {
-                ch = '*';
-                goto skip;
-            }
-            if (!short_msgs())
-                addmsg("which object do you want to ");
-            msg("%s? (* for list): ", purpose);
-            //ignore any alt characters that may be typed
-            ch = readchar();
-        skip:
-            msg_position = 0;
-            gi_state = false;
-            once_only = false;
-            if (ch == '*')
-            {
-                if ((ch = inventory(game->hero().pack, type, purpose)) == 0) {
-                    counts_as_turn = false;
-                    return NULL;
-                }
-                if (ch == ' ') continue;
-                lch = ch;
-            }
-            //Give the poor player a chance to abort the command
-            if (ch == ESCAPE) {
-                counts_as_turn = false;
-                msg("");
-                return NULL;
-            }
-            if ((obj = pack_obj(ch, &och)) == NULL)
-            {
-                ifterse("range is 'a' to '%c'", "please specify a letter between 'a' and '%c'", och - 1);
-                continue;
-            }
-            else
-            {
-                //If you find an object reset flag because you really don't know if the object he is getting is going to change the pack.  If he detaches the thing from the pack later this flag will get set.
-                if (strcmp(purpose, "identify")) {
-                    lch = ch;
-                    wasthing = obj;
-                }
-                return obj;
-            }
+        counts_as_turn = false; //mdk: previously, trying to do something with an empty pack would count as a turn
+        return NULL;
+    }
+
+    //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
+    if (repeat_last_action && purpose != "identify") {
+        byte och = 0;
+        Item* item = pack_obj(game->again_state.last_item_letter, &och);
+        if (item == game->again_state.last_item_used) {
+            return item;
         }
     }
-    return NULL;
+
+    bool show_menu(game->get_environment("menu") == "on");
+    for (;;)
+    {
+        byte ch;
+        if (show_menu) {
+            ch = '*';
+        }
+        else {
+            if (!short_msgs())
+                addmsg("which object do you want to ");
+            msg("%s? (* for list): ", purpose.c_str());
+            ch = readchar();
+        }
+
+        msg_position = 0;
+        show_menu = false;
+        if (ch == '*')
+        {
+            //display the inventory and get a new selection
+            ch = inventory(game->hero().pack, type, purpose.c_str());
+            if (ch == 0) {
+                counts_as_turn = false;
+                return NULL;
+            }
+            if (ch == ' ') continue;
+        }
+
+        //Give the poor player a chance to abort the command
+        if (ch == ESCAPE) {
+            counts_as_turn = false;
+            msg("");
+            return NULL;
+        }
+        
+        byte och = 0;
+        Item *obj = pack_obj(ch, &och);
+        if (!obj)
+        {
+            ifterse("range is 'a' to '%c'", "please specify a letter between 'a' and '%c'", och - 1);
+            continue;
+        }
+        else
+        {
+            if (purpose != "identify") {
+                game->again_state.last_item_letter = ch;
+                game->again_state.last_item_used = obj;
+            }
+            return obj;
+        }
+    }
 }
 
 //pack_char: Return which character would address a pack object

@@ -94,7 +94,7 @@ int read_command()
     if (!game->modifiers.is_running())
         game->modifiers.m_stop_at_door = false;
     can_pickup_this_turn = true;
-    again = false;
+    repeat_last_action = false;
 
     --repeat_cmd_count;
     if (repeat_cmd_count || lastcount)
@@ -138,7 +138,7 @@ int read_command()
                     command = lastch;
                     repeat_cmd_count = lastcount;
                     can_pickup_this_turn = lasttake;
-                    again = true;
+                    repeat_last_action = true;
                     break;
                 case ' ':
                     break;
