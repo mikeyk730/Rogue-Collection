@@ -117,7 +117,7 @@ void do_rooms()
               break;
         }
         game->level().set_tile(room->gold, GOLD);
-        gold->set_location(room->gold);        
+        gold->set_position(room->gold);
     }
     //Put the monster in
     if (rnd(100)<(room->gold_val>0?80:25))

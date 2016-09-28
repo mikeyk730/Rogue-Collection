@@ -210,7 +210,7 @@ namespace
             Item* item = *it;
             std::ostringstream ss;
 
-            Coord pos = item->get_location();
+            Coord pos = item->position();
             ss  << item->inv_name(false);
             if (coord)
                 ss << " at (" << pos.x << "," << pos.y << ")";

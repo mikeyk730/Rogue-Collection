@@ -234,7 +234,7 @@ void Level::clear_level()
                 //Put it somewhere
                 find_empty_location(&tp, true);
                 set_tile(tp, AMULET);
-                amulet->set_location(tp);
+                amulet->set_position(tp);
             }
             //check for treasure rooms, and if so, put it in.
             if (rnd(TREAS_ROOM) == 0) 

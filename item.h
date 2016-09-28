@@ -109,8 +109,8 @@ public:
     //is_magic: Returns true if an object radiates magic
     bool is_magic();
 
-    Coord get_location() const;
-    void set_location(Coord p);
+    Coord position() const;
+    void set_position(Coord p);
 
     void initialize(int type, int which);
 

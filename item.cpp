@@ -14,12 +14,12 @@ Item::~Item()
 {
 }
 
-Coord Item::get_location() const
+Coord Item::position() const
 {
     return pos;
 }
 
-void Item::set_location(Coord p)
+void Item::set_position(Coord p)
 {
     pos = p;
 }
