@@ -44,6 +44,7 @@
 #include "game_state.h"
 #include "random.h"
 #include "level.h"
+#include "rooms.h"
 
 int bwflag = false;
 

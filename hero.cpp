@@ -21,6 +21,7 @@
 #include "daemons.h"
 #include "mach_dep.h"
 #include "monster.h"
+#include "room.h"
 
 namespace
 {
@@ -373,3 +374,40 @@ void Hero::reduce_level()
     }
 }
 
+//can_see_monster: Return true if the hero can see the monster
+bool Hero::can_see_monster(Monster *monster)
+{
+    // player is blind
+    if (is_blind())
+        return false;
+
+    //monster is invisible, and can't see invisible
+    if (monster->is_invisible() && !sees_invisible())
+        return false;
+
+    if (distance(monster->pos, pos) >= LAMP_DIST &&
+        (monster->room != room || monster->room->is_dark() || monster->room->is_maze()))
+        return false;
+
+    //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
+    //give the player a hint as to what that weapon is good for.
+    Item* weapon = get_current_weapon();
+    if (weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
+    {
+        weapon->set_flashed();
+        msg(flash, get_weapon_name(weapon->which), short_msgs() ? "" : intense);
+    }
+    return true;
+}
+
+//can_see: Returns true if the hero can see a certain coordinate.
+int Hero::can_see(Coord p)
+{
+    if (is_blind())
+        return false;
+    //if the coordinate is close.
+    if (distance(p, pos) < LAMP_DIST)
+        return true;
+    //if the coordinate is in the same room as the hero, and the room is lit
+    return (room == get_room_from_position(&p) && !room->is_dark());
+}

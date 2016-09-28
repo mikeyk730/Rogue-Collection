@@ -261,7 +261,7 @@ void leave_room(Coord *cp)
 }
 
 //get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
-struct Room *get_room_from_position(Coord *pos)
+Room* get_room_from_position(Coord *pos)
 {
   struct Room *room;
 
@@ -281,7 +281,7 @@ struct Room *get_room_from_position(Coord *pos)
 }
 
 //rnd_room: Pick a room that is really there
-struct Room* rnd_room()
+Room* rnd_room()
 {
   int rm;
   do { 

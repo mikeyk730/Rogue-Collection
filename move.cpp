@@ -43,6 +43,13 @@ bool is_gone(Room* rp)
     return ((rp->is_gone()) && (rp->is_maze()) == 0);
 }
 
+//diag_ok: Check to see if the move is legal if it is diagonal
+int diag_ok(const Coord *sp, const Coord *ep)
+{
+    if (ep->x == sp->x || ep->y == sp->y) return true;
+    return (step_ok(game->level().get_tile({ sp->x,ep->y })) && step_ok(game->level().get_tile({ ep->x,sp->y })));
+}
+
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
 void do_move(int dy, int dx)
 {
@@ -180,7 +187,7 @@ move_stuff:
 }
 
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
-void door_open(struct Room *room)
+void door_open(Room *room)
 {
     int j, k;
     byte ch;

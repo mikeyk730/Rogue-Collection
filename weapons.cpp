@@ -13,7 +13,7 @@
 #include "io.h"
 #include "things.h"
 #include "fight.h"
-#include "chase.h"
+#include "rooms.h"
 #include "misc.h"
 #include "main.h"
 #include "level.h"
@@ -353,7 +353,7 @@ std::string Item::name() const
     return m_name;
 }
 
-Room * Item::get_room()
+Room* Item::get_room()
 {
     return get_room_from_position(&pos);
 }

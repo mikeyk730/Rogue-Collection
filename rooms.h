@@ -19,6 +19,9 @@ void enter_room(Coord *cp);
 //leave_room: Code for when we exit a room
 void leave_room(Coord *cp);
 
-struct Room* rnd_room();
+Room* rnd_room();
+
+//get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
+Room* get_room_from_position(Coord *cp);
 
 void find_empty_location(Coord* c, int consider_monsters);

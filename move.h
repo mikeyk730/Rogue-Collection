@@ -1,5 +1,9 @@
 #pragma once
-#include "agent.h"
+
+struct Agent;
+
+//diag_ok: Check to see if the move is legal if it is diagonal
+int diag_ok(const Coord *sp, const Coord *ep);
 
 //do_run: Start the hero running
 void do_run(byte ch);
@@ -8,7 +12,7 @@ void do_run(byte ch);
 void do_move(int dy, int dx);
 
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
-void door_open(struct Room *room);
+void door_open(Room *room);
 
 //be_trapped: The guy stepped on a trap.... Make him pay.
 int be_trapped(Coord *tc);
