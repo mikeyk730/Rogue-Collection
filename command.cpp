@@ -67,19 +67,28 @@ void command()
     }
 }
 
+//allow multiple keys to be mapped to the same command
+int translate_command(int ch)
+{
+    switch (ch)
+    {
+    case '\b': 
+        return 'h';
+    case '+': 
+        return 't';
+    case '-':
+        return 'z';
+    }
+    return ch;
+}
+
 int com_char()
 {
     int ch;
     ch = readchar();
-    switch (ch)
-    {
-    case '\b': ch = 'h'; break;
-    case '+': ch = 't'; break;
-    case '-': ch = 'z'; break;
-    }
     if (msg_position && !game->modifiers.is_running())
         msg("");
-    return ch;
+    return translate_command(ch);
 }
 
 int process_prefixes(int ch)
