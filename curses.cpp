@@ -76,10 +76,6 @@ namespace
 
 void ConsoleOutput::putchr(int c, int attr)
 {
-    Coord pos = translated_position();
-    COORD p = { pos.x, pos.y };
-    SetConsoleCursorPosition(hConsole, p);
-
     SetConsoleTextAttribute(hConsole, attr);
     putchar(c);
 }
@@ -404,6 +400,10 @@ void ConsoleOutput::move(short y, short x)
 {
     c_row = y;
     c_col = x;
+
+    Coord pos = translated_position();
+    COORD p = { pos.x, pos.y };
+    SetConsoleCursorPosition(hConsole, p);
 }
 
 //todo: can i eliminate this?
