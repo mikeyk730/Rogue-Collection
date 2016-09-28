@@ -102,61 +102,13 @@ std::string get_stone(int type)
 }
 
 //ring_on: Put a ring on a hand
-void ring_on()
+bool ring_on()
 {
-    Item *obj;
-    if ((obj = get_item("put on", RING)) == NULL) {
-        game->counts_as_turn = false;
-        return;
+    Item* obj = get_item("put on", RING);
+    if (obj == NULL) {
+        return false;
     }
-    game->hero().put_on_ring(obj);
-}
-
-//ring_off: Take off a ring
-void Hero::ring_off()
-{
-    int ring;
-    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) {
-        msg("you aren't wearing any rings");
-        game->counts_as_turn = false;
-        return;
-    }
-    else if (get_ring(LEFT) == NULL)
-        ring = RIGHT;
-    else if (get_ring(RIGHT) == NULL)
-        ring = LEFT;
-    else if ((ring = gethand()) < 0)
-        return;
-
-    Item* obj = game->hero().get_ring(ring);
-    if (obj == NULL) { 
-        msg("not wearing such a ring"); 
-        game->counts_as_turn = false;
-        return; 
-    }
-
-    char packchar = pack_char(obj);
-    if (can_drop(obj))
-        msg("was wearing %s(%c)", obj->inv_name(true), packchar);
-}
-
-//gethand: Which hand is the hero interested in?
-int gethand()
-{
-    for (;;)
-    {
-        unsaved_msg("left hand or right hand? ");
-        int c = readchar();
-        if (c == ESCAPE) {
-            game->counts_as_turn = false; 
-            return -1; 
-        }
-        if (c == 'l' || c == 'L') 
-            return LEFT;
-        else if (c == 'r' || c == 'R') 
-            return RIGHT;
-        msg("please type L or R");
-    }
+    return game->hero().put_on_ring(obj);
 }
 
 //ring_eat: How much food does this ring use up?

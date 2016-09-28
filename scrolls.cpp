@@ -299,7 +299,7 @@ void read_remove_curse()
 void read_aggravate_monsters()
 {
     //This scroll aggravates all the monsters on the current level and sets them running towards the hero
-    aggravate();
+    aggravate_monsters();
     ifterse("you hear a humming noise", "you hear a high pitched humming noise");
 }
 

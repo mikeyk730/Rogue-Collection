@@ -223,7 +223,8 @@ namespace
         {
             Monster* monster = *i;
             std::ostringstream ss;
-            ss << "  " << left << setw(14) << monster->get_name() << " ";
+            ss << (monster->is_running() ? "  R" : "   ");
+            ss << " " << left << setw(14) << monster->get_name() << " ";
             ss << "hp:" << left << setw(4) << monster->get_hp() << " ";
             ss << "lvl:" << left << setw(3) << monster->level() << " ";
             ss << "amr:" << left << setw(4) << monster->calculate_armor() << " ";

@@ -13,14 +13,14 @@ Item *find_obj(Coord p);
 //add_haste: Add a haste to the player
 int add_haste(bool potion);
 
-//aggravate: Aggravate all the monsters on this level
-void aggravate();
+//aggravate_monsters: Aggravate all the monsters on this level
+void aggravate_monsters();
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
 const char *vowelstr(const char *str);
 
-//is_current: See if the object is one of the currently used items
-int is_current(Item *obj);
+//is_in_use: See if the object is one of the currently used items
+int is_in_use(Item *obj);
 
 //get_dir: Set up the direction co_ordinate for use in various "prefix" commands
 int get_dir(Coord* delta);

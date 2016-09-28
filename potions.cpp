@@ -159,7 +159,7 @@ void quaff_see_invisible()
     if (!game->hero().sees_invisible()) {
         fuse(unsee, 0, SEE_DURATION);
         look(false);
-        invis_on();
+        show_invisible();
     }
     sight();
     msg("this potion tastes like %s juice", game->get_environment("fruit").c_str());
@@ -309,8 +309,8 @@ void quaff()
     }
 }
 
-//invis_on: Turn on the ability to see invisible
-void invis_on()
+//show_invisible: Turn on the ability to see invisible
+void show_invisible()
 {
     game->hero().set_sees_invisible(true);
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster* monster) {

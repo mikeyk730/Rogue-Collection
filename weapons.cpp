@@ -82,7 +82,7 @@ void throw_projectile(Coord delta)
     //Get which thing we are hurling
     if ((obj = get_item("throw", WEAPON)) == NULL)
         return;
-    if (!can_drop(obj) || is_current(obj))
+    if (!can_drop(obj) || is_in_use(obj))
         return;
 
     //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  

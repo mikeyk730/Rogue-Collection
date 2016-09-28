@@ -15,8 +15,8 @@ Item* create_potion();
 //quaff: Quaff a potion from the pack
 void quaff();
 
-//invis_on: Turn on the ability to see invisible
-void invis_on();
+//show_invisible: Turn on the ability to see invisible
+void show_invisible();
 
 //turn_see: Put on or off seeing monsters on this level
 bool turn_see(bool turn_off);

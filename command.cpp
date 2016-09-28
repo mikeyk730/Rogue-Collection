@@ -264,10 +264,10 @@ void dispatch_command(int ch)
         game->hero().take_off();
         break;
     case 'P':
-        ring_on();
+        game->counts_as_turn = ring_on();
         break;
     case 'R':
-        game->hero().ring_off();
+        game->counts_as_turn = game->hero().take_off_ring();
         break;
     case 'c':
         game->counts_as_turn = false;

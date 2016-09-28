@@ -701,7 +701,7 @@ void Hero::wield()
         return;
     }
     obj = get_item("wield", WEAPON);
-    if (!obj || is_current(obj) || obj->type == ARMOR)
+    if (!obj || is_in_use(obj) || obj->type == ARMOR)
     {
         if (obj && obj->type == ARMOR)
             msg("you can't wield armor");
@@ -714,40 +714,95 @@ void Hero::wield()
     ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
 }
 
-void Hero::put_on_ring(Item* obj)
+//gethand: Which hand is the hero interested in?
+int gethand()
 {
-    int ring = -1;
+    for (;;)
+    {
+        unsaved_msg("left hand or right hand? ");
+        int c = readchar();
+        if (c == ESCAPE) {
+            return -1;
+        }
+        if (c == 'l' || c == 'L')
+            return LEFT;
+        else if (c == 'r' || c == 'R')
+            return RIGHT;
+        msg("please type L or R");
+    }
+}
 
+bool Hero::put_on_ring(Item* obj)
+{
     //Make certain that it is something that we want to wear
     if (obj->type != RING) {
         msg("you can't put that on your finger");
-        goto no_ring;
+        return false;
     }
+        
+    if (is_in_use(obj)) {
+        return false;
+    }
+
     //find out which hand to put it on
-    if (is_current(obj)) goto no_ring;
-    if (get_ring(LEFT) == NULL) ring = LEFT;
-    if (get_ring(RIGHT) == NULL) ring = RIGHT;
-    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) if ((ring = gethand()) < 0) goto no_ring;
-    if (ring < 0) { msg("you already have a ring on each hand"); goto no_ring; }
+    int ring = -1;
+    if (get_ring(LEFT) == NULL) 
+        ring = LEFT;
+    if (get_ring(RIGHT) == NULL)
+        ring = RIGHT;
+    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) 
+        if ((ring = gethand()) < 0)
+            return false;
+    
+    if (ring < 0) { 
+        msg("you already have a ring on each hand");
+        return false;
+    }
+
     set_ring(ring, obj);
+
     //Calculate the effect it has on the poor guy.
     switch (obj->which)
     {
-    case R_ADDSTR:
-        break;
     case R_SEEINVIS:
-        invis_on();
+        show_invisible();
         break;
     case R_AGGR:
-        aggravate();
+        aggravate_monsters();
         break;
     }
+    
     msg("%swearing %s (%c)", noterse("you are now "), obj->inv_name(true), pack_char(obj));
-    return;
-no_ring:
-    game->counts_as_turn = false;
-    return;
+    return true;
 }
+
+bool Hero::take_off_ring()
+{
+    int ring;
+    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) {
+        msg("you aren't wearing any rings");
+        return false;
+    }
+    else if (get_ring(LEFT) == NULL)
+        ring = RIGHT;
+    else if (get_ring(RIGHT) == NULL)
+        ring = LEFT;
+    else if ((ring = gethand()) < 0)
+        return false;
+
+    Item* obj = game->hero().get_ring(ring);
+    if (obj == NULL) {
+        msg("not wearing such a ring");
+        return false;
+    }
+
+    char packchar = pack_char(obj);
+    //mdk: attempting to take off cursed ring counts as turn.  seems like bug.
+    if (can_drop(obj))
+        msg("was wearing %s(%c)", obj->inv_name(true), packchar);
+    return true;
+}
+
 
 //take_off: Get the armor off of the player's back
 void Hero::take_off()

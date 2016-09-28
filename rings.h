@@ -12,10 +12,7 @@ struct Ring : public Item
 Item* create_ring();
 
 //ring_on: Put a ring on a hand
-void ring_on();
-
-//gethand: Which hand is the hero interested in?
-int gethand();
+bool ring_on();
 
 //ring_eat: How much food does this ring use up?
 int ring_eat(int hand);

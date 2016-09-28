@@ -39,7 +39,8 @@ public:
     int get_hungry_state();
     int get_food_left();
 
-    void put_on_ring(Item* obj);
+    bool put_on_ring(Item* obj);
+    bool take_off_ring();
     int is_ring_on_hand(int h, int r) const;
     int is_wearing_ring(int r) const;
 
@@ -93,10 +94,6 @@ public:
 
     //take_off: Get the armor off of the player's back
     void take_off();
-
-    //ring_off: Take off a ring
-    void ring_off();
-
 
 private:
 

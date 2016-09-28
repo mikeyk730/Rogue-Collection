@@ -215,8 +215,8 @@ int add_haste(bool potion)
     }
 }
 
-//aggravate: Aggravate all the monsters on this level
-void aggravate()
+//aggravate_monsters: Aggravate all the monsters on this level
+void aggravate_monsters()
 {
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster *monster) {
         monster->start_run();
@@ -235,10 +235,11 @@ const char *vowelstr(const char *str)
     }
 }
 
-//is_current: See if the object is one of the currently used items
-int is_current(Item *obj)
+//is_in_use: See if the object is one of the currently used items
+int is_in_use(Item *obj)
 {
-    if (obj == NULL) return false;
+    if (obj == NULL)
+        return false;
     if (obj == game->hero().get_current_armor() || obj == game->hero().get_current_weapon() || obj == game->hero().get_ring(LEFT) || obj == game->hero().get_ring(RIGHT))
     {
         msg("That's already in use");
