@@ -55,85 +55,85 @@ int a_class[MAXARMORS] =
 
 int get_default_class(int type)
 {
-  return a_class[type];
+    return a_class[type];
 }
 
 const char* get_armor_name(int type)
 {
-  return a_names[type];
+    return a_names[type];
 }
 
 Item* create_armor()
 {
-  int j, k;
+    int j, k;
 
-  for (j = 0, k = rnd(100); j < MAXARMORS; j++){ 
-      if (k < a_chances[j]) 
-          break; 
-  }
-  if (j==MAXARMORS) {
-      debug("Picked a bad armor %d", k); 
-      j = 0;
-  }
-  int which = j;
-  return new Armor(which);
+    for (j = 0, k = rnd(100); j < MAXARMORS; j++) {
+        if (k < a_chances[j])
+            break;
+    }
+    if (j == MAXARMORS) {
+        debug("Picked a bad armor %d", k);
+        j = 0;
+    }
+    int which = j;
+    return new Armor(which);
 }
 
 //wear: The player wants to wear something, so let him/her put it on.
 void wear()
 {
-  Item *obj;
-  char *sp;
+    Item *obj;
+    char *sp;
 
-  if (game->hero().get_current_armor()!=NULL)
-  {
-    msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
-    counts_as_turn = false;
-    return;
-  }
-  if ((obj = get_item("wear", ARMOR))==NULL) return;
-  if (obj->type!=ARMOR) {
-      msg("you can't wear that"); 
-      return;
-  }
-  waste_time();
-  obj->set_known() ;
-  sp = obj->inv_name(true);
-  game->hero().set_current_armor(obj);
-  msg("you are now wearing %s", sp);
+    if (game->hero().get_current_armor() != NULL)
+    {
+        msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
+        counts_as_turn = false;
+        return;
+    }
+    if ((obj = get_item("wear", ARMOR)) == NULL) return;
+    if (obj->type != ARMOR) {
+        msg("you can't wear that");
+        return;
+    }
+    waste_time();
+    obj->set_known();
+    sp = obj->inv_name(true);
+    game->hero().set_current_armor(obj);
+    msg("you are now wearing %s", sp);
 }
 
 //waste_time: Do nothing but let other things happen
 void waste_time()
 {
-  do_daemons();
-  do_fuses();
+    do_daemons();
+    do_fuses();
 }
 
 const char* Item::get_inv_name_armor()
 {
-  char *pb = prbuf;
+    char *pb = prbuf;
 
-  if (is_known() || game->hero().is_wizard())
-    chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which)-get_armor_class(), 0, (char)ARMOR), 
-        get_armor_name(which), armor_class_for_display());
-  else
-    sprintf(pb, "%s", get_armor_name(which));
+    if (is_known() || game->hero().is_wizard())
+        chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which) - get_armor_class(), 0, (char)ARMOR),
+            get_armor_name(which), armor_class_for_display());
+    else
+        sprintf(pb, "%s", get_armor_name(which));
 
-  return prbuf;
+    return prbuf;
 }
 
-Armor::Armor(int which) : 
+Armor::Armor(int which) :
     Item(ARMOR, which)
 {
     armor_class = get_default_class(which);
 
     int k;
-    if ((k = rnd(100))<20) {
+    if ((k = rnd(100)) < 20) {
         set_cursed();
         armor_class += rnd(3) + 1;
     }
-    else if (k<28)
+    else if (k < 28)
         armor_class -= rnd(3) + 1;
 }
 

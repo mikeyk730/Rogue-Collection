@@ -19,22 +19,22 @@ namespace
 }
 
 GameState::GameState(int seed) :
-m_seed(seed),
-m_input_interface(new CapturedInput(new KeyboardInput())),
-m_output_interface(new ConsoleOutput({0,0})),
-m_level(new Level),
-m_hero(new Hero),
-m_scrolls(new ScrollInfo),
-m_potions(new PotionInfo),
-m_rings(new RingInfo),
-m_sticks(new StickInfo),
-m_log_stream("log.txt")
+    m_seed(seed),
+    m_input_interface(new CapturedInput(new KeyboardInput())),
+    m_output_interface(new ConsoleOutput({ 0,0 })),
+    m_level(new Level),
+    m_hero(new Hero),
+    m_scrolls(new ScrollInfo),
+    m_potions(new PotionInfo),
+    m_rings(new RingInfo),
+    m_sticks(new StickInfo),
+    m_log_stream("log.txt")
 {
     init_environment();
 }
 
 GameState::GameState(Random* random, std::istream& in) :
-    m_output_interface(new ConsoleOutput({0,0})),
+    m_output_interface(new ConsoleOutput({ 0,0 })),
     m_allow_fast_play(false),
     m_log_stream("log.txt")
 {
@@ -59,7 +59,7 @@ GameState::GameState(Random* random, std::istream& in) :
         // original code didn't write a version, so what we've already read is the seed
         m_seed = version;
         init_environment();
-    }    
+    }
 
     ++m_restore_count;
     random->set_seed(m_seed);
@@ -108,7 +108,7 @@ void GameState::save_game(const std::string& filename)
 std::string GameState::get_environment(const std::string& key) const
 {
     auto i = m_environment.find(key);
-    if (i != m_environment.end()){
+    if (i != m_environment.end()) {
         return i->second;
     }
     return "";

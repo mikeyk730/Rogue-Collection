@@ -40,7 +40,7 @@
 #define ALT_F9    0x70
 
 
-    
+
 
     //static InputInterface* s_input_driver(new CapturedInput("record", new KeyboardInput));
     //static InputInterface* s_input_driver(new StreamInput("replay", new KeyboardInput));
@@ -49,7 +49,7 @@
 //Table for IBM extended key translation
 static struct xlate
 {
-  byte keycode, keyis; //todo: need to translate all of these
+    byte keycode, keyis; //todo: need to translate all of these
 } xtab[] =
 {
   C_HOME,  'y',
@@ -77,114 +77,114 @@ static struct xlate
 
 int is_direction_key(int key)
 {
-  return key == C_HOME
-    || key == C_UP
-    || key == C_PGUP
-    || key == C_LEFT
-    || key == C_RIGHT
-    || key ==  C_END
-    || key ==  C_DOWN
-    || key ==  C_PGDN;
+    return key == C_HOME
+        || key == C_UP
+        || key == C_PGUP
+        || key == C_LEFT
+        || key == C_RIGHT
+        || key == C_END
+        || key == C_DOWN
+        || key == C_PGDN;
 }
 
 //setup: Get starting setup for all games
 void setup()
 {
-  set_small_screen_mode(false);
-  const int COLS = game->screen().columns();
-  maxrow = 23;
-  if (COLS==40) {
-    maxrow = 22; 
-    set_small_screen_mode(true);
-  }
-  set_brief_mode(in_small_screen_mode());
+    set_small_screen_mode(false);
+    const int COLS = game->screen().columns();
+    maxrow = 23;
+    if (COLS == 40) {
+        maxrow = 22;
+        set_small_screen_mode(true);
+    }
+    set_brief_mode(in_small_screen_mode());
 }
 
 //clear_typeahead_buffer: Flush typeahead for traps, etc.
 void clear_typeahead_buffer()
 {
-  typeahead = "";
+    typeahead = "";
 }
 
-BOOL CtrlHandler(DWORD fdwCtrlType) 
+BOOL CtrlHandler(DWORD fdwCtrlType)
 {
-  return TRUE;
+    return TRUE;
 }
 
 void credits()
 {
-  const int COLS = game->screen().columns();
-  const int LINES = game->screen().lines();
-  char tname[25];
+    const int COLS = game->screen().columns();
+    const int LINES = game->screen().lines();
+    char tname[25];
 
-  SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
+    SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE);
 
-  game->screen().cursor(false);
-  game->screen().clear();
-  game->screen().brown();
-  game->screen().box(0, 0, LINES-1, COLS-1);
-  game->screen().bold();
-  game->screen().center(2, "ROGUE:  The Adventure Game");
-  game->screen().lmagenta();
-  game->screen().center(4, "The game of Rogue was designed by:");
-  game->screen().high();
-  game->screen().center(6, "Michael Toy and Glenn Wichman");
-  game->screen().lmagenta();
-  game->screen().center(9, "Various implementations by:");
-  game->screen().high();
-  game->screen().center(11, "Ken Arnold, Jon Lane and Michael Toy");
-  game->screen().lmagenta();
-  game->screen().center(14, "Adapted for the IBM PC by:");
-  game->screen().high();
-  game->screen().center(16, "A.I. Design");
-  game->screen().lmagenta();
-  game->screen().yellow();
-  game->screen().center(19, "(C)Copyright 1985");
-  game->screen().high();
-  game->screen().center(20, "Epyx Incorporated");
-  game->screen().standend();
-  game->screen().yellow();
-  game->screen().center(21, "All Rights Reserved");
-  game->screen().brown();
-  game->screen().move(22, 1);
-  game->screen().repchr(205, COLS - 2);
-  game->screen().mvaddch({ 0,22 }, (char)204);
-  game->screen().mvaddch({ COLS - 1,22 }, (char)185);
-  game->screen().standend();
-  game->screen().mvaddstr(23, 2, "Rogue's Name? ");
+    game->screen().cursor(false);
+    game->screen().clear();
+    game->screen().brown();
+    game->screen().box(0, 0, LINES - 1, COLS - 1);
+    game->screen().bold();
+    game->screen().center(2, "ROGUE:  The Adventure Game");
+    game->screen().lmagenta();
+    game->screen().center(4, "The game of Rogue was designed by:");
+    game->screen().high();
+    game->screen().center(6, "Michael Toy and Glenn Wichman");
+    game->screen().lmagenta();
+    game->screen().center(9, "Various implementations by:");
+    game->screen().high();
+    game->screen().center(11, "Ken Arnold, Jon Lane and Michael Toy");
+    game->screen().lmagenta();
+    game->screen().center(14, "Adapted for the IBM PC by:");
+    game->screen().high();
+    game->screen().center(16, "A.I. Design");
+    game->screen().lmagenta();
+    game->screen().yellow();
+    game->screen().center(19, "(C)Copyright 1985");
+    game->screen().high();
+    game->screen().center(20, "Epyx Incorporated");
+    game->screen().standend();
+    game->screen().yellow();
+    game->screen().center(21, "All Rights Reserved");
+    game->screen().brown();
+    game->screen().move(22, 1);
+    game->screen().repchr(205, COLS - 2);
+    game->screen().mvaddch({ 0,22 }, (char)204);
+    game->screen().mvaddch({ COLS - 1,22 }, (char)185);
+    game->screen().standend();
+    game->screen().mvaddstr(23, 2, "Rogue's Name? ");
 
-  game->screen().high();
-  getinfo(tname, 23);
-  if (*tname && *tname!=ESCAPE)
-      game->hero().set_name(tname);
-  else
-      game->hero().set_name(game->get_environment("name"));
+    game->screen().high();
+    getinfo(tname, 23);
+    if (*tname && *tname != ESCAPE)
+        game->hero().set_name(tname);
+    else
+        game->hero().set_name(game->get_environment("name"));
 
-  game->screen().blot_out(23, 0, 24, COLS-1);
-  game->screen().brown();
-  game->screen().mvaddch({ 0,22 }, (char)0xc8);
-  game->screen().mvaddch({ COLS - 1,22 }, (char)0xbc);
-  game->screen().standend();
+    game->screen().blot_out(23, 0, 24, COLS - 1);
+    game->screen().brown();
+    game->screen().mvaddch({ 0,22 }, (char)0xc8);
+    game->screen().mvaddch({ COLS - 1,22 }, (char)0xbc);
+    game->screen().standend();
 }
 
 int getkey()
 {
-  struct xlate *x;
-  int key = _getch();
-  if (key != 0 && key != 0xE0) return key;
+    struct xlate *x;
+    int key = _getch();
+    if (key != 0 && key != 0xE0) return key;
 
-  key = _getch();
-  if (is_shift_pressed() && is_direction_key(key))
-      game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
+    key = _getch();
+    if (is_shift_pressed() && is_direction_key(key))
+        game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
 
-  for (x = xtab; x < xtab+(sizeof xtab)/sizeof *xtab; x++) 
-  {
-    if (key == x->keycode)
+    for (x = xtab; x < xtab + (sizeof xtab) / sizeof *xtab; x++)
     {
-      return x->keyis;
+        if (key == x->keycode)
+        {
+            return x->keyis;
+        }
     }
-  }
-  return 0;
+    return 0;
 }
 
 /*
@@ -293,9 +293,9 @@ char ex_getkey()
 }
 */
 
-byte readchar_impl(){
+byte readchar_impl() {
     //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
-    do 
+    do
         SIG2();
     while (!_kbhit()); //Rogue spends a lot of time here
     //Now read a character and translate it if it appears in the translation table
@@ -306,14 +306,14 @@ byte readchar_impl(){
 //readchar: Return the next input character, from the macro or from the keyboard.
 int readchar()
 {
-  byte ch;
+    byte ch;
 
-  if (*typeahead) {SIG2(); return(*typeahead++);}
-  
-  ch = game->input_interface().GetNextChar();
+    if (*typeahead) { SIG2(); return(*typeahead++); }
 
-  if (ch==ESCAPE) repeat_cmd_count = 0;
-  return ch;
+    ch = game->input_interface().GetNextChar();
+
+    if (ch == ESCAPE) repeat_cmd_count = 0;
+    return ch;
 }
 
 int getinfo(char *str, int size)
@@ -325,33 +325,33 @@ int getinfo(char *str, int size)
 
 bool is_caps_lock_on()
 {
-  return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
+    return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
 }
 
 bool is_scroll_lock_on()
 {
-  return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
+    return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
 }
 
 bool is_num_lock_on()
 {
-  return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
+    return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
 }
 
 bool is_shift_pressed()
 {
-  return (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
-    || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);
+    return (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+        || (GetAsyncKeyState(VK_RSHIFT) & 0x8000);
 }
 
 void beep()
 {
-  Beep(750, 300);
+    Beep(750, 300);
 }
 
 void tick_pause()
 {
-  Sleep(50);
+    Sleep(50);
 }
 
 bool KeyboardInput::HasMoreInput()
@@ -359,14 +359,14 @@ bool KeyboardInput::HasMoreInput()
     return true;
 }
 
-char KeyboardInput::GetNextChar() { 
-    return readchar_impl(); 
+char KeyboardInput::GetNextChar() {
+    return readchar_impl();
 }
 
-std::string KeyboardInput::GetNextString(int size) { 
+std::string KeyboardInput::GetNextString(int size) {
     char buf[512];
-    getinfo_impl(buf, size-1);
-    return buf; 
+    getinfo_impl(buf, size - 1);
+    return buf;
 }
 
 void KeyboardInput::Serialize(std::ostream& out)

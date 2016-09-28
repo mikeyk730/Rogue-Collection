@@ -5,13 +5,13 @@
 #include "game_state.h"
 #include "mach_dep.h"
 
-namespace 
+namespace
 {
     const char s_version = 'B';
 }
 
 CapturedInput::CapturedInput(InputInterface* d)
-: m_delegate(d)
+    : m_delegate(d)
 { }
 
 bool CapturedInput::HasMoreInput()
@@ -42,9 +42,9 @@ std::string CapturedInput::GetNextString(int max_size)
     if (!m_save_pending) {
         int size = s.length();
         m_stream.push_back(size & 0xff);
-        m_stream.push_back(size>>8 & 0xff);
-        m_stream.push_back(size>>16 & 0xff);
-        m_stream.push_back(size>>24 & 0xff);        
+        m_stream.push_back(size >> 8 & 0xff);
+        m_stream.push_back(size >> 16 & 0xff);
+        m_stream.push_back(size >> 24 & 0xff);
         m_stream.insert(m_stream.end(), s.begin(), s.end());
     }
     m_save_pending = false;

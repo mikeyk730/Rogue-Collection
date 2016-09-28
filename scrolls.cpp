@@ -17,7 +17,6 @@
 #include "wizard.h"
 #include "slime.h"
 #include "level.h"
-#include "thing.h"
 #include "weapons.h"
 #include "things.h"
 #include "hero.h"
@@ -115,8 +114,8 @@ ScrollInfo::ScrollInfo()
 
 Item* create_scroll()
 {
-  int which = pick_one(game->scrolls().m_magic_props);
-  return new Scroll(which);
+    int which = pick_one(game->scrolls().m_magic_props);
+    return new Scroll(which);
 }
 
 void read_monster_confusion()
@@ -128,128 +127,128 @@ void read_monster_confusion()
 
 void read_magic_mapping()
 {
-  //Scroll of magic mapping.
-  int x, y;
-  byte ch;
-  Monster* monster;
+    //Scroll of magic mapping.
+    int x, y;
+    byte ch;
+    Monster* monster;
 
-  game->scrolls().discover(S_MAP);
-  msg("oh, now this scroll has a map on it");
-  //Take all the things we want to keep hidden out of the window
-  const int COLS = game->screen().columns();
-  for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
-  {
-    switch (ch = game->level().get_tile({x, y}))
+    game->scrolls().discover(S_MAP);
+    msg("oh, now this scroll has a map on it");
+    //Take all the things we want to keep hidden out of the window
+    const int COLS = game->screen().columns();
+    for (y = 1; y < maxrow; y++) for (x = 0; x < COLS; x++)
     {
-    case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-      if (!(game->level().get_flags({x, y})&F_REAL)) {
-        ch = DOOR; 
-        game->level().set_tile({x, y}, DOOR);
-        game->level().unset_flag({x, y}, F_REAL);
-      }
-    case DOOR: case PASSAGE: case STAIRS:
-      if ((monster = game->level().monster_at({x, y})) != NULL) 
-        if (monster->oldch == ' ')
-          monster->oldch = ch;
-      break;
-    default: ch = ' ';
+        switch (ch = game->level().get_tile({ x, y }))
+        {
+        case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+            if (!(game->level().get_flags({ x, y })&F_REAL)) {
+                ch = DOOR;
+                game->level().set_tile({ x, y }, DOOR);
+                game->level().unset_flag({ x, y }, F_REAL);
+            }
+        case DOOR: case PASSAGE: case STAIRS:
+            if ((monster = game->level().monster_at({ x, y })) != NULL)
+                if (monster->oldch == ' ')
+                    monster->oldch = ch;
+            break;
+        default: ch = ' ';
+        }
+        if (ch == DOOR)
+        {
+            game->screen().move(y, x);
+            if (game->screen().curch() != DOOR)
+                game->screen().standout();
+        }
+        if (ch != ' ')
+            game->screen().mvaddch({ x, y }, ch);
+        game->screen().standend();
     }
-    if (ch==DOOR)
-    {
-      game->screen().move(y, x);
-      if (game->screen().curch()!=DOOR) 
-          game->screen().standout();
-    }
-    if (ch!=' ') 
-      game->screen().mvaddch({x, y}, ch);
-    game->screen().standend();
-  }
 }
 
 void read_hold_monster()
 {
-  //Hold monster scroll.  Stop all monsters within two spaces from chasing after the hero.
-  int x, y;
-  Agent* monster;
+    //Hold monster scroll.  Stop all monsters within two spaces from chasing after the hero.
+    int x, y;
+    Agent* monster;
 
-  const int COLS = game->screen().columns();
-  for (x = game->hero().pos.x-3; x<=game->hero().pos.x+3; x++) {
-    if (x>=0 && x<COLS) {
-      for (y = game->hero().pos.y-3; y<=game->hero().pos.y+3; y++) {
-        if ((y>0 && y<maxrow) && ((monster = game->level().monster_at({x, y})) != NULL))
-        {
-          monster->set_running(false);
-          monster->set_is_held(true);
+    const int COLS = game->screen().columns();
+    for (x = game->hero().pos.x - 3; x <= game->hero().pos.x + 3; x++) {
+        if (x >= 0 && x < COLS) {
+            for (y = game->hero().pos.y - 3; y <= game->hero().pos.y + 3; y++) {
+                if ((y > 0 && y < maxrow) && ((monster = game->level().monster_at({ x, y })) != NULL))
+                {
+                    monster->set_running(false);
+                    monster->set_is_held(true);
+                }
+            }
         }
-      }
     }
-  }
 }
 
 void read_sleep()
 {
-  //Scroll which makes you fall asleep
-  game->scrolls().discover(S_SLEEP);
-  game->sleep_timer += rnd(SLEEP_TIME)+4;
-  game->hero().set_running(false);
-  msg("you fall asleep");
+    //Scroll which makes you fall asleep
+    game->scrolls().discover(S_SLEEP);
+    game->sleep_timer += rnd(SLEEP_TIME) + 4;
+    game->hero().set_running(false);
+    msg("you fall asleep");
 }
 
 void read_enchant_armor()
 {
-  if (game->hero().get_current_armor()!=NULL)
-  {
-    game->hero().get_current_armor()->enchant_armor();
-    ifterse("your armor glows faintly", "your armor glows faintly for a moment");
-  }
+    if (game->hero().get_current_armor() != NULL)
+    {
+        game->hero().get_current_armor()->enchant_armor();
+        ifterse("your armor glows faintly", "your armor glows faintly for a moment");
+    }
 }
 
 void read_identify()
 {
-  //Identify, let the rogue figure something out
-  game->scrolls().discover(S_IDENT);
-  msg("this scroll is an identify scroll");
-  if ("on" == game->get_environment("menu"))
-    more(" More ");
-  whatis();
+    //Identify, let the rogue figure something out
+    game->scrolls().discover(S_IDENT);
+    msg("this scroll is an identify scroll");
+    if ("on" == game->get_environment("menu"))
+        more(" More ");
+    whatis();
 }
 
 void read_scare_monster()
 {
-  //Reading it is a mistake and produces laughter at the poor rogue's boo boo.
-  msg(laugh, short_msgs() ? "" : in_dist);
+    //Reading it is a mistake and produces laughter at the poor rogue's boo boo.
+    msg(laugh, short_msgs() ? "" : in_dist);
 }
 
 void read_food_detection()
 {
-  //Scroll of food detection
-  byte discover = false;
+    //Scroll of food detection
+    byte discover = false;
 
-  for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
-  {
-    Item* item = *it;
-    if (item->type==FOOD)
+    for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
     {
-      discover = true;
-      game->screen().standout();
-      game->screen().mvaddch(item->pos, FOOD);
-      game->screen().standend();
+        Item* item = *it;
+        if (item->type == FOOD)
+        {
+            discover = true;
+            game->screen().standout();
+            game->screen().mvaddch(item->pos, FOOD);
+            game->screen().standend();
+        }
+        //as a bonus this will detect amulets as well
+        else if (item->type == AMULET)
+        {
+            discover = true;
+            game->screen().standout();
+            game->screen().mvaddch(item->pos, AMULET);
+            game->screen().standend();
+        }
     }
-    //as a bonus this will detect amulets as well
-    else if (item->type==AMULET)
-    {
-      discover = true;
-      game->screen().standout();
-      game->screen().mvaddch(item->pos, AMULET);
-      game->screen().standend();
+    if (discover) {
+        game->scrolls().discover(S_GFIND);
+        msg("your nose tingles as you sense food");
     }
-  }
-  if (discover) {
-    game->scrolls().discover(S_GFIND);
-    msg("your nose tingles as you sense food");
-  }
-  else 
-    ifterse("you hear a growling noise close by", "you hear a growling noise very close to you");
+    else
+        ifterse("you hear a growling noise close by", "you hear a growling noise very close to you");
 }
 
 void read_teleportation()
@@ -264,7 +263,7 @@ void read_teleportation()
 void read_enchant_weapon()
 {
     Item* weapon = game->hero().get_current_weapon();
-    if (weapon == NULL || weapon->type != WEAPON){
+    if (weapon == NULL || weapon->type != WEAPON) {
         msg("you feel a strange sense of loss");
         return;
     }
@@ -273,14 +272,14 @@ void read_enchant_weapon()
 
 void read_create_monster()
 {
-  Agent* monster;
-  Coord position;
+    Agent* monster;
+    Coord position;
 
-  if (plop_monster(game->hero().pos.y, game->hero().pos.x, &position)) {
-      monster = Monster::CreateMonster(randmonster(false, get_level()), &position, get_level());
-  }
-  else 
-    ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
+    if (plop_monster(game->hero().pos.y, game->hero().pos.x, &position)) {
+        monster = Monster::CreateMonster(randmonster(false, get_level()), &position, get_level());
+    }
+    else
+        ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 }
 
 void read_remove_curse()
@@ -299,9 +298,9 @@ void read_remove_curse()
 
 void read_aggravate_monsters()
 {
-  //This scroll aggravates all the monsters on the current level and sets them running towards the hero
-  aggravate();
-  ifterse("you hear a humming noise", "you hear a high pitched humming noise");
+    //This scroll aggravates all the monsters on the current level and sets them running towards the hero
+    aggravate();
+    ifterse("you hear a humming noise", "you hear a high pitched humming noise");
 }
 
 void read_blank_paper()
@@ -313,7 +312,7 @@ void read_vorpalize_weapon()
 {
     //If he isn't wielding a weapon I get to chortle again!
     Item* weapon = game->hero().get_current_weapon();
-    if (!weapon || weapon->type != WEAPON){
+    if (!weapon || weapon->type != WEAPON) {
         msg(laugh, short_msgs() ? "" : in_dist);
         return;
     }
@@ -342,68 +341,68 @@ void(*scroll_functions[MAXSCROLLS])() =
 //read_scroll: Read a scroll from the pack and do the appropriate thing
 void read_scroll()
 {
-  Item *scroll;
+    Item *scroll;
 
-  scroll = get_item("read", SCROLL);
-  if (scroll==NULL) return;
-  if (scroll->type!=SCROLL) {msg("there is nothing on it to read"); return;}
-  ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
-  if (scroll==game->hero().get_current_weapon()) 
-      game->hero().set_current_weapon(NULL);
+    scroll = get_item("read", SCROLL);
+    if (scroll == NULL) return;
+    if (scroll->type != SCROLL) { msg("there is nothing on it to read"); return; }
+    ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
+    if (scroll == game->hero().get_current_weapon())
+        game->hero().set_current_weapon(NULL);
 
-  //Call the function for this scroll
-  if (scroll->which >= 0 && scroll->which < MAXSCROLLS)
-    scroll_functions[scroll->which]();
-  else {
-    msg("what a puzzling scroll!");
-    return;
-  }
+    //Call the function for this scroll
+    if (scroll->which >= 0 && scroll->which < MAXSCROLLS)
+        scroll_functions[scroll->which]();
+    else {
+        msg("what a puzzling scroll!");
+        return;
+    }
 
-  look(true); //put the result of the scroll on the screen
-  status();
-  game->scrolls().call_it(scroll->which);
+    look(true); //put the result of the scroll on the screen
+    status();
+    game->scrolls().call_it(scroll->which);
 
-  //Get rid of the thing
-  if (scroll->count > 1)
-    scroll->count--;
-  else {
-    game->hero().pack.remove(scroll); 
-    delete(scroll);
-  }
+    //Get rid of the thing
+    if (scroll->count > 1)
+        scroll->count--;
+    else {
+        game->hero().pack.remove(scroll);
+        delete(scroll);
+    }
 }
 
 int is_scare_monster_scroll(Item* item)
 {
-  return item && item->type == SCROLL && 
-    item->which == S_SCARE;
+    return item && item->type == SCROLL &&
+        item->which == S_SCARE;
 }
 
 int is_bad_scroll(Item* item)
 {
-  return item && item->type == SCROLL &&
-    (item->which == S_SLEEP || item->which == S_CREATE || item->which == S_AGGR);
+    return item && item->type == SCROLL &&
+        (item->which == S_SLEEP || item->which == S_CREATE || item->which == S_AGGR);
 }
 
 std::string ScrollInfo::get_inventory_name(int which, int count) const
 {
-  char *pb = prbuf;
-  
-  if (count==1) {
-    strcpy(pb, "A scroll ");
-    pb = &prbuf[9];
-  }
-  else {
-    sprintf(pb, "%d scrolls ", count); 
-    pb = &prbuf[strlen(prbuf)];
-  }
-  if (is_discovered(which) || game->hero().is_wizard()) 
-    sprintf(pb, "of %s", get_name(which).c_str());
-  else if (!get_guess(which).empty()) 
-    sprintf(pb, "called %s", get_guess(which).c_str());
-  else
-    chopmsg(pb, "titled '%.17s'", "titled '%s'", get_identifier(which).c_str());
+    char *pb = prbuf;
 
-  return prbuf;
+    if (count == 1) {
+        strcpy(pb, "A scroll ");
+        pb = &prbuf[9];
+    }
+    else {
+        sprintf(pb, "%d scrolls ", count);
+        pb = &prbuf[strlen(prbuf)];
+    }
+    if (is_discovered(which) || game->hero().is_wizard())
+        sprintf(pb, "of %s", get_name(which).c_str());
+    else if (!get_guess(which).empty())
+        sprintf(pb, "called %s", get_guess(which).c_str());
+    else
+        chopmsg(pb, "titled '%.17s'", "titled '%s'", get_identifier(which).c_str());
+
+    return prbuf;
 }
 
 std::string ScrollInfo::get_inventory_name(Item * obj) const

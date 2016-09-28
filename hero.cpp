@@ -10,7 +10,6 @@
 #include "armor.h"
 #include "weapons.h"
 #include "io.h"
-#include "thing.h"
 #include "rings.h"
 #include "agent.h"
 #include "food.h"
@@ -139,14 +138,14 @@ void Hero::set_name(const std::string& name)
 
 int Hero::get_purse()
 {
-  return m_purse;
+    return m_purse;
 }
 
 void Hero::adjust_purse(int delta)
 {
-  m_purse += delta;
-  if (m_purse < 0) 
-    m_purse = 0;
+    m_purse += delta;
+    if (m_purse < 0)
+        m_purse = 0;
 }
 
 void Hero::toggle_wizard()
@@ -159,12 +158,12 @@ void Hero::toggle_wizard()
 
 bool Hero::is_wizard() const
 {
-  return m_wizard;
+    return m_wizard;
 }
 
 bool Hero::did_cheat() const
 {
-  return m_cheated;
+    return m_cheated;
 }
 
 void Hero::eat(Item* obj)
@@ -199,94 +198,94 @@ void Hero::eat(Item* obj)
 
 void Hero::ingest()
 {
-  if (food_left<0)
-    food_left = 0;
-  if (food_left>(STOMACH_SIZE-20))
-    game->sleep_timer += 2+rnd(5);
-  if ((food_left += HUNGER_TIME-200+rnd(400))>STOMACH_SIZE)
-    food_left = STOMACH_SIZE;
-  hungry_state = 0;
+    if (food_left < 0)
+        food_left = 0;
+    if (food_left > (STOMACH_SIZE - 20))
+        game->sleep_timer += 2 + rnd(5);
+    if ((food_left += HUNGER_TIME - 200 + rnd(400)) > STOMACH_SIZE)
+        food_left = STOMACH_SIZE;
+    hungry_state = 0;
 }
 
 void Hero::digest()
 {
-  if (food_left<=0)
-  {
-    if (food_left--<-STARVE_TIME) 
-        death('s');
-    //the hero is fainting
-    if (game->sleep_timer || rnd(5)!=0)
-        return;
-    game->sleep_timer += rnd(8)+4;
-    set_running(false);
-    game->modifiers.m_running = false;
-    repeat_cmd_count = 0;
-    hungry_state = 3;
-    msg("%syou faint from lack of food", noterse("you feel very weak. "));
-  }
-  else
-  {
-    int oldfood = food_left;
-    //If you are in 40 column mode use food twice as fast (e.g. 3-(80/40) = 1, 3-(40/40) = 2 : pretty gross huh?)
-    int deltafood = 1;
-    if (!game->wizard().no_ring_hunger()) {
-        deltafood += ring_eat(LEFT);
-        deltafood += ring_eat(RIGHT);
+    if (food_left <= 0)
+    {
+        if (food_left-- < -STARVE_TIME)
+            death('s');
+        //the hero is fainting
+        if (game->sleep_timer || rnd(5) != 0)
+            return;
+        game->sleep_timer += rnd(8) + 4;
+        set_running(false);
+        game->modifiers.m_running = false;
+        repeat_cmd_count = 0;
+        hungry_state = 3;
+        msg("%syou faint from lack of food", noterse("you feel very weak. "));
     }
-    if (in_small_screen_mode())
-        deltafood *= 2;
-    if (!game->wizard().no_hunger()) {
-        food_left -= deltafood;
+    else
+    {
+        int oldfood = food_left;
+        //If you are in 40 column mode use food twice as fast (e.g. 3-(80/40) = 1, 3-(40/40) = 2 : pretty gross huh?)
+        int deltafood = 1;
+        if (!game->wizard().no_ring_hunger()) {
+            deltafood += ring_eat(LEFT);
+            deltafood += ring_eat(RIGHT);
+        }
+        if (in_small_screen_mode())
+            deltafood *= 2;
+        if (!game->wizard().no_hunger()) {
+            food_left -= deltafood;
+        }
+        if (food_left < MORE_TIME && oldfood >= MORE_TIME) {
+            hungry_state = 2;
+            msg("you are starting to feel weak");
+        }
+        else if (food_left < 2 * MORE_TIME && oldfood >= 2 * MORE_TIME) {
+            hungry_state = 1;
+            msg("you are starting to get hungry");
+        }
     }
-    if (food_left<MORE_TIME && oldfood>=MORE_TIME) {
-        hungry_state = 2;
-        msg("you are starting to feel weak");
-    }
-    else if (food_left<2*MORE_TIME && oldfood>=2*MORE_TIME) {
-        hungry_state = 1;
-        msg("you are starting to get hungry");
-    }
-  }
 }
 
 //init_player: Roll up the rogue
 void Hero::init_player()
 {
-  stats = { 16, 0, 1, 10, 12, "1d4", 12, 16 };
-  food_left = HUNGER_TIME;
+    stats = { 16, 0, 1, 10, 12, "1d4", 12, 16 };
+    food_left = HUNGER_TIME;
 
-  //Give the rogue his weaponry.  First a mace.
-  Item *obj;
-  obj = new Weapon(MACE, 1, 1);
-  obj->set_known();
-  add_to_pack(obj, true);
-  set_current_weapon(obj);
+    //Give the rogue his weaponry.  First a mace.
+    Item *obj;
+    obj = new Weapon(MACE, 1, 1);
+    obj->set_known();
+    add_to_pack(obj, true);
+    set_current_weapon(obj);
 
-  //Now a +1 bow
-  obj = new Weapon(BOW, 1, 0);
-  obj->set_known();
-  add_to_pack(obj, true);
+    //Now a +1 bow
+    obj = new Weapon(BOW, 1, 0);
+    obj->set_known();
+    add_to_pack(obj, true);
 
-  //Now some arrows
-  obj = new Weapon(ARROW, 0, 0);
-  obj->count = rnd(15)+25;
-  obj->set_known();
-  add_to_pack(obj, true);
+    //Now some arrows
+    obj = new Weapon(ARROW, 0, 0);
+    obj->count = rnd(15) + 25;
+    obj->set_known();
+    add_to_pack(obj, true);
 
-  //And his suit of armor
-  obj = new Armor(RING_MAIL, -1);
-  obj->set_known();
-  set_current_armor(obj);
-  add_to_pack(obj, true);
+    //And his suit of armor
+    obj = new Armor(RING_MAIL, -1);
+    obj->set_known();
+    set_current_armor(obj);
+    add_to_pack(obj, true);
 
-  //Give him some food too
-  obj = new Food(0);
-  add_to_pack(obj, true);
+    //Give him some food too
+    obj = new Food(0);
+    add_to_pack(obj, true);
 }
 
 int Hero::get_hungry_state()
 {
-  return hungry_state;
+    return hungry_state;
 }
 
 int Hero::get_food_left()
@@ -336,8 +335,8 @@ void Hero::check_level()
 {
     int i, add, olevel;
 
-    for (i = 0; e_levels[i] != 0; i++) 
-        if (e_levels[i] > experience()) 
+    for (i = 0; e_levels[i] != 0; i++)
+        if (e_levels[i] > experience())
             break;
     i++;
     olevel = stats.level;
@@ -460,7 +459,7 @@ void Hero::do_miss(Item* weapon, int thrown, Monster* monster, const char* name)
     else
         display_miss_msg(NULL, name);
 
-    if (monster->can_divide() && rnd(100)>25)
+    if (monster->can_divide() && rnd(100) > 25)
         slime_split(monster);
 }
 

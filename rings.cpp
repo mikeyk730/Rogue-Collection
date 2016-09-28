@@ -20,7 +20,7 @@
 
 char ring_buf[6];
 
-typedef struct {char *st_name; int st_value;} STONE;
+typedef struct { char *st_name; int st_value; } STONE;
 
 static STONE stones[] =
 {
@@ -77,13 +77,13 @@ RingInfo::RingInfo()
     int i, j;
     bool used[NSTONES];
 
-    for (i = 0; i<NSTONES; i++) used[i] = false;
-    for (i = 0; i<MAXRINGS; i++)
+    for (i = 0; i < NSTONES; i++) used[i] = false;
+    for (i = 0; i < MAXRINGS; i++)
     {
         do j = rnd(NSTONES); while (used[j]);
         used[j] = true;
         m_identifier.push_back(stones[j].st_name);
-        if (i>0)
+        if (i > 0)
             m_magic_props[i].prob += m_magic_props[i - 1].prob;
         m_magic_props[i].worth += stones[j].st_value;
     }
@@ -115,90 +115,90 @@ void ring_on()
 //ring_off: Take off a ring
 void Hero::ring_off()
 {
-  int ring;
-  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {
-      msg("you aren't wearing any rings");
-      counts_as_turn = false;
-      return;
-  }
-  else if (get_ring(LEFT)==NULL) 
-      ring = RIGHT;
-  else if (get_ring(RIGHT)==NULL)
-      ring = LEFT;
-  else if ((ring = gethand())<0) return;
-  msg_position = 0;
-  Item* obj = game->hero().get_ring(ring);
-  if (obj==NULL) {msg("not wearing such a ring"); counts_as_turn = false; return;}
-  
-  char packchar = pack_char(obj);
-  if (can_drop(obj))
-      msg("was wearing %s(%c)", obj->inv_name(true), packchar);
+    int ring;
+    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) {
+        msg("you aren't wearing any rings");
+        counts_as_turn = false;
+        return;
+    }
+    else if (get_ring(LEFT) == NULL)
+        ring = RIGHT;
+    else if (get_ring(RIGHT) == NULL)
+        ring = LEFT;
+    else if ((ring = gethand()) < 0) return;
+    msg_position = 0;
+    Item* obj = game->hero().get_ring(ring);
+    if (obj == NULL) { msg("not wearing such a ring"); counts_as_turn = false; return; }
+
+    char packchar = pack_char(obj);
+    if (can_drop(obj))
+        msg("was wearing %s(%c)", obj->inv_name(true), packchar);
 }
 
 //gethand: Which hand is the hero interested in?
 int gethand()
 {
-  int c;
+    int c;
 
-  for (;;)
-  {
-    msg("left hand or right hand? ");
-    if ((c = readchar())==ESCAPE) {counts_as_turn = false; return -1;}
-    msg_position = 0;
-    if (c=='l' || c=='L') return LEFT;
-    else if (c=='r' || c=='R') return RIGHT;
-    msg("please type L or R");
-  }
+    for (;;)
+    {
+        msg("left hand or right hand? ");
+        if ((c = readchar()) == ESCAPE) { counts_as_turn = false; return -1; }
+        msg_position = 0;
+        if (c == 'l' || c == 'L') return LEFT;
+        else if (c == 'r' || c == 'R') return RIGHT;
+        msg("please type L or R");
+    }
 }
 
 //ring_eat: How much food does this ring use up?
 int ring_eat(int hand)
 {
-  if (game->hero().get_ring(hand)==NULL) return 0;
-  switch (game->hero().get_ring(hand)->which)
-  {
-  case R_REGEN: return 2;
-  case R_SUSTSTR: case R_SUSTARM: case R_PROTECT: case R_ADDSTR: case R_STEALTH: return 1;
-  case R_SEARCH: return (rnd(5)==0);
-  case R_ADDHIT: case R_ADDDAM: return (rnd(3)==0);
-  case R_DIGEST: return -rnd(2);
-  case R_SEEINVIS: return (rnd(5)==0);
-  default: return 0;
-  }
+    if (game->hero().get_ring(hand) == NULL) return 0;
+    switch (game->hero().get_ring(hand)->which)
+    {
+    case R_REGEN: return 2;
+    case R_SUSTSTR: case R_SUSTARM: case R_PROTECT: case R_ADDSTR: case R_STEALTH: return 1;
+    case R_SEARCH: return (rnd(5) == 0);
+    case R_ADDHIT: case R_ADDDAM: return (rnd(3) == 0);
+    case R_DIGEST: return -rnd(2);
+    case R_SEEINVIS: return (rnd(5) == 0);
+    default: return 0;
+    }
 }
 
 //ring_num: Print ring bonuses
 char *ring_num(Item *obj)
 {
-  if (!obj->is_known() && !game->hero().is_wizard()) 
-    return "";
+    if (!obj->is_known() && !game->hero().is_wizard())
+        return "";
 
-  switch (obj->which)
-  {
-  case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
-    ring_buf[0] = ' ';
-    strcpy(&ring_buf[1], num(obj->get_ring_level(), 0, (char)RING));
-    break;
+    switch (obj->which)
+    {
+    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
+        ring_buf[0] = ' ';
+        strcpy(&ring_buf[1], num(obj->get_ring_level(), 0, (char)RING));
+        break;
 
-  default: 
-    return "";
-  }
-  return ring_buf;
+    default:
+        return "";
+    }
+    return ring_buf;
 }
 
 std::string RingInfo::get_inventory_name(int which, const std::string& bonus) const
 {
-  char *pb = prbuf;
-  std::string stone = get_identifier(which);
+    char *pb = prbuf;
+    std::string stone = get_identifier(which);
 
-  if (is_discovered(which) || game->hero().is_wizard())
-    chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", bonus.c_str(), get_name(which).c_str(), stone.c_str());
-  else if (!get_guess(which).empty()) 
-    chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_guess(which).c_str(), stone.c_str());
-  else 
-    sprintf(pb, "A%s %s ring", vowelstr(stone.c_str()), stone.c_str());
+    if (is_discovered(which) || game->hero().is_wizard())
+        chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", bonus.c_str(), get_name(which).c_str(), stone.c_str());
+    else if (!get_guess(which).empty())
+        chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_guess(which).c_str(), stone.c_str());
+    else
+        sprintf(pb, "A%s %s ring", vowelstr(stone.c_str()), stone.c_str());
 
-  return prbuf;
+    return prbuf;
 }
 
 std::string RingInfo::get_inventory_name(Item * obj) const

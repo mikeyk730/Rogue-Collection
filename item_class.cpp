@@ -5,7 +5,7 @@
 ItemClass::~ItemClass()
 { }
 
-std::string ItemClass::get_name(int type) const 
+std::string ItemClass::get_name(int type) const
 {
     return m_magic_props[type].name;
 }

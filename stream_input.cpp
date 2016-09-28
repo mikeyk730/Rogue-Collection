@@ -15,11 +15,10 @@ namespace
         for (;;) {
             do {
                 std::unique_lock<std::mutex> lock(shared_data->m_mutex);
-                if(shared_data->m_stream_empty){
+                if (shared_data->m_stream_empty) {
                     return 0;
                 }
-            }
-            while (!_kbhit());
+            } while (!_kbhit());
             char c = _getch();
             if (c == 'p')
                 shared_data->PausePlayback();
@@ -33,7 +32,7 @@ namespace
             }
         }
         return 0;
-    }    
+    }
 }
 
 
@@ -104,7 +103,7 @@ char StreamInput::GetNextChar()
     char c = ReadCharA();
 
     m_stream.peek();
-    if (!m_stream || m_stream.eof()){
+    if (!m_stream || m_stream.eof()) {
         OnStreamEnd();
     }
     return c;
@@ -140,7 +139,7 @@ std::string StreamInput::ReadStringB()
 {
     int size;
     read<int>(m_stream, &size);
- 
+
     char buf[256];
     memset(buf, 0, 256);
     if (size > 255)
@@ -171,14 +170,14 @@ std::string StreamInput::GetNextString(int size)
         s = ReadStringB();
 
     m_stream.peek();
-    if (!m_stream || m_stream.eof()){
+    if (!m_stream || m_stream.eof()) {
         OnStreamEnd();
     }
 
     return s;
 }
 
-void StreamInput::Serialize(std::ostream& out) 
+void StreamInput::Serialize(std::ostream& out)
 {
 }
 

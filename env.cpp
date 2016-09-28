@@ -30,18 +30,18 @@ void putenv2(char *label, char *string)
 //This routine has some knowledge of the file parsing state so that it knows if there has been a premature eof.  This way I can avoid checking for premature eof every time a character is read.
 int peekc()
 {
-  ch = 0;
-  //we make sure that the strings never get filled past the end, this way we only have to check for these things once
-  if (plabel>&blabel[10]) plabel = &blabel[10];
-  if (pstring>&bstring[24]) pstring = &bstring[24];
-  if (_read(fd, &ch, 1)<1 && pstate!=0)
-  {
-    //When looking for the end of the string, Let the eof look like newlines
-    if (pstate>=2) return('\n');
-    fatal("rogue.opt: incorrect file format\n");
-  }
-  if (ch==26) ch = '\n';
-  return (ch);
+    ch = 0;
+    //we make sure that the strings never get filled past the end, this way we only have to check for these things once
+    if (plabel > &blabel[10]) plabel = &blabel[10];
+    if (pstring > &bstring[24]) pstring = &bstring[24];
+    if (_read(fd, &ch, 1) < 1 && pstate != 0)
+    {
+        //When looking for the end of the string, Let the eof look like newlines
+        if (pstate >= 2) return('\n');
+        fatal("rogue.opt: incorrect file format\n");
+    }
+    if (ch == 26) ch = '\n';
+    return (ch);
 }
 
 //setenv: read in environment from a file
@@ -49,44 +49,44 @@ int peekc()
 //STATUS - setenv return -1 if the file does not exist or if there is not enough memory to expand the environment
 int setenv(char *envfile)
 {
-  char pc;
+    char pc;
 
-  if ((fd = _open(envfile, 0))<0) 
-    return(-1);
+    if ((fd = _open(envfile, 0)) < 0)
+        return(-1);
 
-  while (1)
-  {
-    //Look for another label
-    pstate = 0;
-    plabel = blabel;
-    pstring = bstring;
-    //Skip white space, this is the only state (pstate == 0) where eof will not be aborted
-    while (isspace(peekc())) ;
-    if (ch==0) {_close(fd); return 0;}
-    pstate = 3;
-    //Skip comments.
-    if (ch=='#')
+    while (1)
     {
-      while (peekc()!='\n') ;
-      continue;
+        //Look for another label
+        pstate = 0;
+        plabel = blabel;
+        pstring = bstring;
+        //Skip white space, this is the only state (pstate == 0) where eof will not be aborted
+        while (isspace(peekc()));
+        if (ch == 0) { _close(fd); return 0; }
+        pstate = 3;
+        //Skip comments.
+        if (ch == '#')
+        {
+            while (peekc() != '\n');
+            continue;
+        }
+        pstate = 1;
+        //start of label found
+        *plabel = ch;
+        while ((pc = peekc()) != '=' && pc != '-') if (!isspace(*plabel) || !isspace(ch)) *(++plabel) = ch;
+        if (!isspace(*plabel)) plabel++;
+        *plabel = 0;
+        //Looking for corresponding string
+        while (isspace(peekc()));
+        //Start of string found
+        pstate = 2;
+        *pstring = ch;
+        while (peekc() != '\n') if (!isspace(*pstring) || !isspace(ch)) *(++pstring) = ch;
+        if (!isspace(*pstring)) pstring++;
+        *pstring = 0;
+        lcase(blabel);
+        putenv2(blabel, bstring);
     }
-    pstate = 1;
-    //start of label found
-    *plabel = ch;
-    while ((pc = peekc())!='=' && pc!='-') if (!isspace(*plabel) || !isspace(ch)) *(++plabel) = ch;
-    if (!isspace(*plabel)) plabel++;
-    *plabel = 0;
-    //Looking for corresponding string
-    while (isspace(peekc())) ;
-    //Start of string found
-    pstate = 2;
-    *pstring = ch;
-    while (peekc()!='\n') if (!isspace(*pstring) || !isspace(ch)) *(++pstring) = ch;
-    if (!isspace(*pstring)) pstring++;
-    *pstring = 0;
-    lcase(blabel);
-    putenv2(blabel, bstring);
-  }
 
-  //todo:for all environment strings that have to be in lowercase ....
+    //todo:for all environment strings that have to be in lowercase ....
 }

@@ -14,12 +14,10 @@
 #include "main.h"
 #include "chase.h"
 #include "fight.h"
-#include "new_leve.h"
 #include "rooms.h"
 #include "misc.h"
 #include "weapons.h"
 #include "rip.h"
-#include "thing.h"
 #include "level.h"
 #include "list.h"
 #include "mach_dep.h"
@@ -119,11 +117,11 @@ StickInfo::StickInfo()
     char *str;
     bool metused[NMETAL], woodused[NWOOD];
 
-    for (i = 0; i<NWOOD; i++)
+    for (i = 0; i < NWOOD; i++)
         woodused[i] = false;
-    for (i = 0; i<NMETAL; i++)
+    for (i = 0; i < NMETAL; i++)
         metused[i] = false;
-    for (i = 0; i<MAXSTICKS; i++)
+    for (i = 0; i < MAXSTICKS; i++)
     {
         for (;;) if (rnd(2) == 0)
         {
@@ -146,7 +144,7 @@ StickInfo::StickInfo()
             }
         }
         m_identifier.push_back(str);
-        if (i>0) 
+        if (i > 0)
             m_magic_props[i].prob += m_magic_props[i - 1].prob;
     }
 }
@@ -170,40 +168,40 @@ Item* create_stick()
 
 void zap_light()
 {
-  //Ready Kilowatt wand.  Light up the room
-  if (game->hero().is_blind()) msg("you feel a warm glow around you");
-  else
-  {
-    game->sticks().discover(WS_LIGHT);
-    if (game->hero().room->is_gone()) msg("the corridor glows and then fades");
-    else msg("the room is lit by a shimmering blue light");
-  }
-  if (!game->hero().room->is_gone())
-  {
-    game->hero().room->set_dark(false);
-    //Light the room and put the player back up
-    enter_room(&game->hero().pos);
-  }
+    //Ready Kilowatt wand.  Light up the room
+    if (game->hero().is_blind()) msg("you feel a warm glow around you");
+    else
+    {
+        game->sticks().discover(WS_LIGHT);
+        if (game->hero().room->is_gone()) msg("the corridor glows and then fades");
+        else msg("the room is lit by a shimmering blue light");
+    }
+    if (!game->hero().room->is_gone())
+    {
+        game->hero().room->set_dark(false);
+        //Light the room and put the player back up
+        enter_room(&game->hero().pos);
+    }
 }
 
 void zap_striking(Item* obj)
 {
-  Agent* monster;
-  Coord coord = delta;
+    Agent* monster;
+    Coord coord = delta;
 
-  coord.y += game->hero().pos.y;
-  coord.x += game->hero().pos.x;
-  if ((monster = game->level().monster_at(coord))!=NULL)
-  {
-    obj->randomize_damage();
-    game->hero().fight(&coord, obj, false);
-  }
+    coord.y += game->hero().pos.y;
+    coord.x += game->hero().pos.x;
+    if ((monster = game->level().monster_at(coord)) != NULL)
+    {
+        obj->randomize_damage();
+        game->hero().fight(&coord, obj, false);
+    }
 }
 
 void zap_bolt(int which, const char* name)
 {
-  fire_bolt(&game->hero().pos, &delta, name);
-  game->sticks().discover(which);
+    fire_bolt(&game->hero().pos, &delta, name);
+    game->sticks().discover(which);
 }
 
 void zap_vorpalized_weapon(Item* weapon, Monster* monster)
@@ -219,26 +217,26 @@ void zap_vorpalized_weapon(Item* weapon, Monster* monster)
 
 void zap_polymorph(Monster* monster, Coord p)
 {
-  if (game->hero().can_see_monster(monster)) 
-    game->screen().mvaddch(p, game->level().get_tile(p));
+    if (game->hero().can_see_monster(monster))
+        game->screen().mvaddch(p, game->level().get_tile(p));
 
-  Monster* new_monster = Monster::CreateMonster(rnd(26)+'A', &p, get_level());
-  game->level().monsters.remove(new_monster);
+    Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, get_level());
+    game->level().monsters.remove(new_monster);
 
-  new_monster->oldch = monster->oldch;
-  new_monster->pack = monster->pack;
-  if (new_monster->type != monster->type)
-      game->sticks().discover(WS_POLYMORPH);
+    new_monster->oldch = monster->oldch;
+    new_monster->pack = monster->pack;
+    if (new_monster->type != monster->type)
+        game->sticks().discover(WS_POLYMORPH);
 
-  *monster = *new_monster;
-  delete new_monster;
-  
-  //move to front of list to maintain original behavior
-  game->level().monsters.remove(monster);
-  game->level().monsters.push_front(monster);
+    *monster = *new_monster;
+    delete new_monster;
 
-  if (game->hero().can_see_monster(monster)) 
-    game->screen().mvaddch(p, monster->type);
+    //move to front of list to maintain original behavior
+    game->level().monsters.remove(monster);
+    game->level().monsters.push_front(monster);
+
+    if (game->hero().can_see_monster(monster))
+        game->screen().mvaddch(p, monster->type);
 }
 
 void zap_cancellation(Monster* monster)
@@ -251,60 +249,60 @@ void zap_cancellation(Monster* monster)
 
 void zap_teleport(Monster* monster, Coord p, int which)
 {
-  Coord new_pos;
+    Coord new_pos;
 
-  if (game->hero().can_see_monster(monster)) 
-    game->screen().mvaddch(p, monster->oldch);
+    if (game->hero().can_see_monster(monster))
+        game->screen().mvaddch(p, monster->oldch);
 
-  if (which==WS_TELAWAY)
-  {
-    monster->oldch = MDK;
-    find_empty_location(&new_pos, true);
-    monster->pos = new_pos;
-  }
-  else { //it MUST BE at WS_TELTO
-    monster->pos.y = game->hero().pos.y+delta.y; 
-    monster->pos.x = game->hero().pos.x+delta.x;
-  } 
+    if (which == WS_TELAWAY)
+    {
+        monster->oldch = MDK;
+        find_empty_location(&new_pos, true);
+        monster->pos = new_pos;
+    }
+    else { //it MUST BE at WS_TELTO
+        monster->pos.y = game->hero().pos.y + delta.y;
+        monster->pos.x = game->hero().pos.x + delta.x;
+    }
 
-  if (monster->can_hold()) 
-    game->hero().set_is_held(false);
+    if (monster->can_hold())
+        game->hero().set_is_held(false);
 }
 
 void zap_generic(Item* wand, int which)
 {
-  int x, y;
-  Monster* monster;
+    int x, y;
+    Monster* monster;
 
-  y = game->hero().pos.y;
-  x = game->hero().pos.x;
-  while (step_ok(game->level().get_tile_or_monster({x, y}))) {
-      y += delta.y; 
-      x += delta.x;
-  }
-  if ((monster = game->level().monster_at({x, y}))!=NULL)
-  {
-    if (monster->can_hold())
-        game->hero().set_is_held(false);
-    if (which==MAXSTICKS)
-    {
-      zap_vorpalized_weapon(wand, monster);
+    y = game->hero().pos.y;
+    x = game->hero().pos.x;
+    while (step_ok(game->level().get_tile_or_monster({ x, y }))) {
+        y += delta.y;
+        x += delta.x;
     }
-    else if (which==WS_POLYMORPH)
+    if ((monster = game->level().monster_at({ x, y })) != NULL)
     {
-      zap_polymorph(monster, {x, y});
+        if (monster->can_hold())
+            game->hero().set_is_held(false);
+        if (which == MAXSTICKS)
+        {
+            zap_vorpalized_weapon(wand, monster);
+        }
+        else if (which == WS_POLYMORPH)
+        {
+            zap_polymorph(monster, { x, y });
+        }
+        else if (which == WS_CANCEL)
+        {
+            zap_cancellation(monster);
+        }
+        else
+        {
+            zap_teleport(monster, { x,y }, which);
+        }
+        monster->dest = &game->hero().pos;
+        monster->set_running(true);
     }
-    else if (which==WS_CANCEL)
-    {
-      zap_cancellation(monster);
-    }
-    else
-    {
-      zap_teleport(monster, {x,y}, which);      
-    }
-    monster->dest = &game->hero().pos;
-    monster->set_running(true);
-  }
 }
 
 struct MagicMissile : public Item
@@ -324,59 +322,59 @@ struct MagicMissile : public Item
 
 void zap_magic_missile()
 {
-  game->sticks().discover(WS_MISSILE);
+    game->sticks().discover(WS_MISSILE);
 
-  Item* bolt = new MagicMissile;
-  do_motion(bolt, delta.y, delta.x);
+    Item* bolt = new MagicMissile;
+    do_motion(bolt, delta.y, delta.x);
 
-  Agent* monster;
-  if ((monster = game->level().monster_at(bolt->pos))!=NULL && !save_throw(VS_MAGIC, monster))
-      projectile_hit(bolt->pos, bolt);
-  else
-      msg("the missile vanishes with a puff of smoke");
+    Agent* monster;
+    if ((monster = game->level().monster_at(bolt->pos)) != NULL && !save_throw(VS_MAGIC, monster))
+        projectile_hit(bolt->pos, bolt);
+    else
+        msg("the missile vanishes with a puff of smoke");
 }
 
 void zap_speed_monster(int which)
 {
-  int x, y;
-  Monster* monster;
+    int x, y;
+    Monster* monster;
 
-  y = game->hero().pos.y;
-  x = game->hero().pos.x;
-  while (step_ok(game->level().get_tile_or_monster({x, y}))) {
-    y += delta.y; 
-    x += delta.x;
-  }
-  if (monster = game->level().monster_at({x, y}))
-  {
-    if (which==WS_HASTE_M)
-    {
-      if (monster->is_slow())
-          monster->set_is_slow(false);
-      else 
-          monster->set_is_fast(true);
+    y = game->hero().pos.y;
+    x = game->hero().pos.x;
+    while (step_ok(game->level().get_tile_or_monster({ x, y }))) {
+        y += delta.y;
+        x += delta.x;
     }
-    else
+    if (monster = game->level().monster_at({ x, y }))
     {
-      if (monster->is_fast()) 
-          monster->set_is_fast(false);
-      else 
-          monster->set_is_slow(true);
-      monster->turn = true;
+        if (which == WS_HASTE_M)
+        {
+            if (monster->is_slow())
+                monster->set_is_slow(false);
+            else
+                monster->set_is_fast(true);
+        }
+        else
+        {
+            if (monster->is_fast())
+                monster->set_is_fast(false);
+            else
+                monster->set_is_slow(true);
+            monster->turn = true;
+        }
+        monster->start_run();
     }
-    monster->start_run();
-  }
 }
 
 int zap_drain_life()
 {
-  //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
-  if (game->hero().get_hp() < 2) {
-    msg("you are too weak to use it"); 
-    return false;
-  }  
-  drain();
-  return true;
+    //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
+    if (game->hero().get_hp() < 2) {
+        msg("you are too weak to use it");
+        return false;
+    }
+    drain();
+    return true;
 }
 
 //do_zap: Perform a zap with a wand
@@ -613,29 +611,29 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
 //charge_str: Return an appropriate string for a wand charge
 const char *get_charge_string(Item *obj)
 {
-  static char buf[20];
+    static char buf[20];
 
-  if (!obj->is_known() && !game->hero().is_wizard()) buf[0] = '\0';
-  else sprintf(buf, " [%d charges]", obj->get_charges());
-  return buf;
+    if (!obj->is_known() && !game->hero().is_wizard()) buf[0] = '\0';
+    else sprintf(buf, " [%d charges]", obj->get_charges());
+    return buf;
 }
 
 std::string StickInfo::get_inventory_name(int which, const std::string& charge) const
 {
-  char *pb = prbuf;
-  std::string type = get_type(which);
-  std::string material = get_identifier(which);
+    char *pb = prbuf;
+    std::string type = get_type(which);
+    std::string material = get_identifier(which);
 
-  sprintf(pb, "A%s %s ", vowelstr(type.c_str()), type.c_str());
-  pb = &prbuf[strlen(prbuf)];
-  if (is_discovered(which) || game->hero().is_wizard())
-    chopmsg(pb, "of %s%s", "of %s%s(%s)", get_name(which).c_str(), charge.c_str(), material.c_str());
-  else if (!get_guess(which).empty())
-    chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), material.c_str());
-  else
-    sprintf(pb = &prbuf[2], "%s %s", material.c_str(), type.c_str());
+    sprintf(pb, "A%s %s ", vowelstr(type.c_str()), type.c_str());
+    pb = &prbuf[strlen(prbuf)];
+    if (is_discovered(which) || game->hero().is_wizard())
+        chopmsg(pb, "of %s%s", "of %s%s(%s)", get_name(which).c_str(), charge.c_str(), material.c_str());
+    else if (!get_guess(which).empty())
+        chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), material.c_str());
+    else
+        sprintf(pb = &prbuf[2], "%s %s", material.c_str(), type.c_str());
 
-  return prbuf;
+    return prbuf;
 }
 
 std::string StickInfo::get_inventory_name(Item * obj) const

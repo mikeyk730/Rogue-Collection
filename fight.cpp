@@ -26,7 +26,6 @@
 #include "mach_dep.h"
 #include "level.h"
 #include "rings.h"
-#include "thing.h"
 #include "armor.h"
 #include "pack.h"
 #include "env.h"
@@ -56,92 +55,92 @@ bool attempt_swing(int lvl, int defender_amr, int hplus)
 //prname: The print name of a combatant
 char *prname(const char *who, bool upper)
 {
-  *tbuf = '\0';
-  if (who==0) strcpy(tbuf, you);
-  else if (game->hero().is_blind()) strcpy(tbuf, it);
-  else {strcpy(tbuf, "the "); strcat(tbuf, who);}
-  if (upper) *tbuf = toupper(*tbuf);
-  return tbuf;
+    *tbuf = '\0';
+    if (who == 0) strcpy(tbuf, you);
+    else if (game->hero().is_blind()) strcpy(tbuf, it);
+    else { strcpy(tbuf, "the "); strcat(tbuf, who); }
+    if (upper) *tbuf = toupper(*tbuf);
+    return tbuf;
 }
 
 //hit: Print a message to indicate a successful hit
 void display_hit_msg(const char *er, const char *ee)
 {
-  char *s;
+    char *s;
 
-  addmsg(prname(er, true));
-  switch ((short_msgs())?1:rnd(4))
-  {
-  case 0: s = " scored an excellent hit on "; break;
-  case 1: s = " hit "; break;
-  case 2: s = (er==0?" have injured ":" has injured "); break;
-  case 3: s = (er==0?" swing and hit ":" swings and hits "); break;
-  }
-  msg("%s%s", s, prname(ee, false));
+    addmsg(prname(er, true));
+    switch ((short_msgs()) ? 1 : rnd(4))
+    {
+    case 0: s = " scored an excellent hit on "; break;
+    case 1: s = " hit "; break;
+    case 2: s = (er == 0 ? " have injured " : " has injured "); break;
+    case 3: s = (er == 0 ? " swing and hit " : " swings and hits "); break;
+    }
+    msg("%s%s", s, prname(ee, false));
 }
 
 //display_miss_msg: Print a message to indicate a poor swing
 void display_miss_msg(const char *er, const char *ee)
 {
-  char *s;
+    char *s;
 
-  addmsg(prname(er, true));
-  switch ((short_msgs())?1:rnd(4))
-  {
-  case 0: s = (er==0?" swing and miss":" swings and misses"); break;
-  case 1: s = (er==0?" miss":" misses"); break;
-  case 2: s = (er==0?" barely miss":" barely misses"); break;
-  case 3: s = (er==0?" don't hit":" doesn't hit"); break;
-  }
-  msg("%s %s", s, prname(ee, false));
+    addmsg(prname(er, true));
+    switch ((short_msgs()) ? 1 : rnd(4))
+    {
+    case 0: s = (er == 0 ? " swing and miss" : " swings and misses"); break;
+    case 1: s = (er == 0 ? " miss" : " misses"); break;
+    case 2: s = (er == 0 ? " barely miss" : " barely misses"); break;
+    case 3: s = (er == 0 ? " don't hit" : " doesn't hit"); break;
+    }
+    msg("%s %s", s, prname(ee, false));
 }
 
 //save_throw: See if a creature save against something
 int save_throw(int which, Agent *monster)
 {
-  int need = 14 + which - monster->stats.level/2;
-  return (roll(1, 20) >= need);
+    int need = 14 + which - monster->stats.level / 2;
+    return (roll(1, 20) >= need);
 }
 
 //save: See if he saves against various nasty things
 int save(int which)
 {
-  if (which==VS_MAGIC)
-  {
-    if (game->hero().is_ring_on_hand(LEFT, R_PROTECT))
-        which -= game->hero().get_ring(LEFT)->get_ring_level();
-    if (game->hero().is_ring_on_hand(RIGHT, R_PROTECT))
-        which -= game->hero().get_ring(RIGHT)->get_ring_level();
-  }
-  return save_throw(which, &game->hero());
+    if (which == VS_MAGIC)
+    {
+        if (game->hero().is_ring_on_hand(LEFT, R_PROTECT))
+            which -= game->hero().get_ring(LEFT)->get_ring_level();
+        if (game->hero().is_ring_on_hand(RIGHT, R_PROTECT))
+            which -= game->hero().get_ring(RIGHT)->get_ring_level();
+    }
+    return save_throw(which, &game->hero());
 }
 
 //str_plus: Compute bonus/penalties for strength on the "to hit" roll
 int str_plus(unsigned int str)
 {
-  int add = 4;
+    int add = 4;
 
-  if (str<8) return str-7;
-  if (str<31) add--;
-  if (str<21) add--;
-  if (str<19) add--;
-  if (str<17) add--;
-  return add;
+    if (str < 8) return str - 7;
+    if (str < 31) add--;
+    if (str < 21) add--;
+    if (str < 19) add--;
+    if (str < 17) add--;
+    return add;
 }
 
 //add_dam: Compute additional damage done for exceptionally high or low strength
 int add_dam(unsigned int str)
 {
-  int add = 6;
+    int add = 6;
 
-  if (str<8) return str-7;
-  if (str<31) add--;
-  if (str<22) add--;
-  if (str<20) add--;
-  if (str<18) add--;
-  if (str<17) add--;
-  if (str<16) add--;
-  return add;
+    if (str < 8) return str - 7;
+    if (str < 31) add--;
+    if (str < 22) add--;
+    if (str < 20) add--;
+    if (str < 18) add--;
+    if (str < 17) add--;
+    if (str < 16) add--;
+    return add;
 }
 
 //thunk: A projectile hit or missed a monster
@@ -151,18 +150,18 @@ void display_throw_msg(Item *item, const char *name, char *does, char *did)
     if (type.empty())
         type = get_weapon_name(item->which);
 
-  if (item->type == WEAPON)
-    addmsg("the %s %s ", type.c_str(), does);
-  else 
-    addmsg("you %s ", did);
-  game->hero().is_blind() ? msg(it) : msg("the %s", name);
+    if (item->type == WEAPON)
+        addmsg("the %s %s ", type.c_str(), does);
+    else
+        addmsg("you %s ", did);
+    game->hero().is_blind() ? msg(it) : msg("the %s", name);
 }
 
 //remove: Remove a monster from the screen
 void remove_monster(Monster* monster, bool waskill)
 {
     Coord* monster_pos = &monster->pos;
-    for (auto it = monster->pack.begin(); it != monster->pack.end();){
+    for (auto it = monster->pack.begin(); it != monster->pack.end();) {
         Item* obj = *(it++);
         obj->pos = monster->pos;
         monster->pack.remove(obj);
@@ -209,7 +208,7 @@ void killed(Monster* monster, bool print)
     }
 
     game->hero().gain_experience(monster->experience());
-    
+
     //Get rid of the monster.
     remove_monster(monster, true);
 }

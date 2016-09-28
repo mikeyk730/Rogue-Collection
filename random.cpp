@@ -3,15 +3,15 @@
 Random::Random()
 { }
 
-Random::Random(int seed) : 
-seed(seed)
+Random::Random(int seed) :
+    seed(seed)
 { }
 
 void Random::set_seed(int s)
 {
     seed = s;
 }
- 
+
 //rnd: Pick a very random number.
 int Random::rnd(int range)
 {

@@ -8,7 +8,6 @@
 #include "main.h"
 #include "fight.h"
 #include "io.h"
-#include "thing.h"
 #include "list.h"
 #include "hero.h"
 
@@ -34,9 +33,9 @@ const char* Item::get_inv_name_food()
     char *pb = prbuf;
 
     if (which == 1)
-    if (this->count == 1)
-        sprintf(pb, "A%s %s", vowelstr(fruit.c_str()), fruit.c_str());
-    else sprintf(pb, "%d %ss", this->count, fruit.c_str());
+        if (this->count == 1)
+            sprintf(pb, "A%s %s", vowelstr(fruit.c_str()), fruit.c_str());
+        else sprintf(pb, "%d %ss", this->count, fruit.c_str());
     else if (this->count == 1)
         strcpy(pb, "Some food");
     else sprintf(pb, "%d rations of food", this->count);

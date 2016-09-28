@@ -10,7 +10,6 @@
 #include "game_state.h"
 #include "daemons.h"
 #include "pack.h"
-#include "thing.h"
 #include "output_interface.h"
 #include "io.h"
 #include "wizard.h"
@@ -19,7 +18,6 @@
 #include "things.h"
 #include "rooms.h"
 #include "misc.h"
-#include "new_leve.h"
 #include "monsters.h"
 #include "mach_dep.h"
 #include "sticks.h"
@@ -89,7 +87,7 @@ int get_which(int type, int limit)
     return (option >= 0 && option <= limit) ? option : 0;
 }
 
-char get_bless_char(){
+char get_bless_char() {
     msg("blessing? (+,-,n)");
     byte bless = readchar();
     msg_position = 0;
@@ -99,106 +97,106 @@ char get_bless_char(){
 //summon_object: Wizard command for getting anything he wants
 void summon_object()
 {
-  int which;
-  Item* obj;
-  
-  msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK,RING, WEAPON, ARMOR, AMULET, FOOD);
-  switch (readchar())
-  {
-  case '!': 
-      which = get_which(POTION, MAXPOTIONS - 1);
-      obj = new Potion(which); 
-      break;
-  case '?': 
-      which = get_which(SCROLL,MAXSCROLLS-1);
-      obj = new Scroll(which);
-      break;
-  case '/':
-      which = get_which(STICK,MAXSTICKS-1);
-      obj = new Stick(which);
-      break;
-  case '=':
-  {
-      char bless;
-      which = get_which(RING, MAXRINGS - 1);
-      
-      int level = 0;
-      switch (which)
-      {
-      case R_PROTECT: case R_ADDSTR: case R_ADDHIT: case R_ADDDAM:
-          bless = get_bless_char();
-          level = (bless == '-') ? -1 : rnd(2) + 1;
-          break;
-      }
+    int which;
+    Item* obj;
 
-      obj = new Ring(which, level);
-      break;
-  }
-  case ')':
-  {
-      which = get_which(WEAPON, MAXWEAPONS - 1); 
-      char bless = get_bless_char();
-      int hit_plus = 0;
-      if (bless == '-')
-          hit_plus -= rnd(3) + 1;
-      else if (bless == '+')
-          hit_plus += rnd(3) + 1;
+    msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK, RING, WEAPON, ARMOR, AMULET, FOOD);
+    switch (readchar())
+    {
+    case '!':
+        which = get_which(POTION, MAXPOTIONS - 1);
+        obj = new Potion(which);
+        break;
+    case '?':
+        which = get_which(SCROLL, MAXSCROLLS - 1);
+        obj = new Scroll(which);
+        break;
+    case '/':
+        which = get_which(STICK, MAXSTICKS - 1);
+        obj = new Stick(which);
+        break;
+    case '=':
+    {
+        char bless;
+        which = get_which(RING, MAXRINGS - 1);
 
-      obj = new Weapon(which, hit_plus, 0);
-      break;
-  }
-  case ']': 
-  {
-      which = get_which(ARMOR, MAXARMORS - 1);
-      char bless = get_bless_char();
+        int level = 0;
+        switch (which)
+        {
+        case R_PROTECT: case R_ADDSTR: case R_ADDHIT: case R_ADDDAM:
+            bless = get_bless_char();
+            level = (bless == '-') ? -1 : rnd(2) + 1;
+            break;
+        }
 
-      int ac_mod = 0;
-      if (bless == '-')
-          ac_mod += rnd(3) + 1;
-      else if (bless == '+')
-          ac_mod -= rnd(3) + 1;
+        obj = new Ring(which, level);
+        break;
+    }
+    case ')':
+    {
+        which = get_which(WEAPON, MAXWEAPONS - 1);
+        char bless = get_bless_char();
+        int hit_plus = 0;
+        if (bless == '-')
+            hit_plus -= rnd(3) + 1;
+        else if (bless == '+')
+            hit_plus += rnd(3) + 1;
 
-      obj = new Armor(which, ac_mod);
-      break;
-  }
-  case ',':
-      which = get_which(AMULET,0);
-      obj = new Amulet();
-      break;
-  default:
-      which = get_which(FOOD,1);
-      obj = new Food(which);
-      break;
-  }
+        obj = new Weapon(which, hit_plus, 0);
+        break;
+    }
+    case ']':
+    {
+        which = get_which(ARMOR, MAXARMORS - 1);
+        char bless = get_bless_char();
 
-  msg_position = 0;
+        int ac_mod = 0;
+        if (bless == '-')
+            ac_mod += rnd(3) + 1;
+        else if (bless == '+')
+            ac_mod -= rnd(3) + 1;
 
-  //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
+        obj = new Armor(which, ac_mod);
+        break;
+    }
+    case ',':
+        which = get_which(AMULET, 0);
+        obj = new Amulet();
+        break;
+    default:
+        which = get_which(FOOD, 1);
+        obj = new Food(which);
+        break;
+    }
 
-  game->hero().add_to_pack(obj, false);
+    msg_position = 0;
+
+    //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
+
+    game->hero().add_to_pack(obj, false);
 }
 
 //show_map: Print out the map for the wizard
 void show_map(bool show_monsters)
 {
-  int y, x, real;
+    int y, x, real;
 
-  game->screen().wdump();
-  game->screen().clear();
-  const int COLS = game->screen().columns();
-  for (y = 1; y<maxrow; y++) for (x = 0; x<COLS; x++)
-  {
-    if (!(real = game->level().get_flags({x, y})&F_REAL))
-        game->screen().standout();
-    game->screen().mvaddch({x, y}, show_monsters ? game->level().get_tile_or_monster({x, y}) : game->level().get_tile({x, y}));
-    if (!real) 
-        game->screen().standend();
-  }
-  show_win("---More (level map)---");
-  game->screen().wrestor();
+    game->screen().wdump();
+    game->screen().clear();
+    const int COLS = game->screen().columns();
+    for (y = 1; y < maxrow; y++) for (x = 0; x < COLS; x++)
+    {
+        if (!(real = game->level().get_flags({ x, y })&F_REAL))
+            game->screen().standout();
+        game->screen().mvaddch({ x, y }, show_monsters ? game->level().get_tile_or_monster({ x, y }) : game->level().get_tile({ x, y }));
+        if (!real)
+            game->screen().standend();
+    }
+    show_win("---More (level map)---");
+    game->screen().wrestor();
 }
 
-namespace 
+namespace
 {
     using std::left;
     using std::setw;
@@ -211,7 +209,7 @@ namespace
             std::ostringstream ss;
 
             Coord pos = item->position();
-            ss  << item->inv_name(false);
+            ss << item->inv_name(false);
             if (coord)
                 ss << " at (" << pos.x << "," << pos.y << ")";
 
@@ -230,8 +228,8 @@ namespace
         {
             Monster* monster = *i;
             std::ostringstream ss;
-            ss << "  "   << left << setw(14) << monster->get_name() << " ";
-            ss << "hp:"  << left << setw(4) << monster->get_hp() << " ";
+            ss << "  " << left << setw(14) << monster->get_name() << " ";
+            ss << "hp:" << left << setw(4) << monster->get_hp() << " ";
             ss << "lvl:" << left << setw(3) << monster->level() << " ";
             ss << "amr:" << left << setw(4) << monster->calculate_armor() << " ";
             ss << "exp:" << left << setw(5) << monster->experience() << " ";
@@ -256,11 +254,11 @@ void debug_screen()
 
 int get_num(short *place)
 {
-  char numbuf[12];
+    char numbuf[12];
 
-  getinfo(numbuf, 10);
-  *place = atoi(numbuf);
-  return (*place);
+    getinfo(numbuf, 10);
+    *place = atoi(numbuf);
+    return (*place);
 }
 
 Cheats::Cheats()

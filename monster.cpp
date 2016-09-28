@@ -342,7 +342,7 @@ void Monster::chase(Coord *chasee_pos)
                     }
                     //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
                     thisdist = distance({ x, y }, *chasee_pos);
-                    if (thisdist<dist) { plcnt = 1; ch_ret = try_pos; dist = thisdist; }
+                    if (thisdist < dist) { plcnt = 1; ch_ret = try_pos; dist = thisdist; }
                     else if (thisdist == dist && rnd(++plcnt) == 0) { ch_ret = try_pos; dist = thisdist; }
                 }
             }
@@ -399,7 +399,7 @@ bool aquator_attack()
 void ice_monster_attack()
 {
     //When an Ice Monster hits you, you get unfrozen faster
-    if (game->sleep_timer>1)
+    if (game->sleep_timer > 1)
         game->sleep_timer--;
 }
 

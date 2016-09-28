@@ -28,7 +28,6 @@
 #include "mach_dep.h"
 #include "output_interface.h"
 #include "io.h"
-#include "new_leve.h"
 #include "misc.h"
 #include "rip.h"
 #include "save.h"
@@ -78,7 +77,7 @@ int main(int argc, char **argv)
         game->screen().forcebw();
 
     credits();
-    
+
     init_things(); //Set up probabilities of things    
     setup();
     game->screen().drop_curtain();
@@ -98,7 +97,7 @@ int main(int argc, char **argv)
 //endit: Exit the program abnormally.
 void endit()
 {
-  fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
+    fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
 }
 
 //rnd: Pick a very random number.
@@ -109,103 +108,103 @@ int rnd(int range)
 
 int get_seed()
 {
-  int t = (int)time(0);
-  srand(t);
-  return t;
+    int t = (int)time(0);
+    srand(t);
+    return t;
 }
 
 //roll: Roll a number of dice
 int roll(int number, int sides)
 {
-  int dtotal = 0;
-  while (number--)
-      dtotal += rnd(sides)+1;
-  return dtotal;
+    int dtotal = 0;
+    while (number--)
+        dtotal += rnd(sides) + 1;
+    return dtotal;
 }
 
 //playit: The main loop of the program.  Loop until the game is over, refreshing things and looking at the proper times.
 void playit(char *sname)
 {
-  if (sname)
-  {
-    restore_game(sname);
-    if (bwflag) 
-        game->screen().forcebw();
-    setup();
-    game->screen().cursor(false);
-  }
-  else {
-      oldpos = game->hero().pos;
-      oldrp = get_room_from_position(&game->hero().pos);
-  }
+    if (sname)
+    {
+        restore_game(sname);
+        if (bwflag)
+            game->screen().forcebw();
+        setup();
+        game->screen().cursor(false);
+    }
+    else {
+        oldpos = game->hero().pos;
+        oldrp = get_room_from_position(&game->hero().pos);
+    }
 
-  while (true) 
-      command(); //Command execution
-  endit();
+    while (true)
+        command(); //Command execution
+    endit();
 }
 
 //quit: Have player make certain, then exit.
 void quit()
 {
-  int oy, ox;
-  byte answer;
-  static bool should_quit = false;
+    int oy, ox;
+    byte answer;
+    static bool should_quit = false;
 
-  //if they try to interrupt with a control C while in this routine blow them away!
-  if (should_quit) 
-      leave();
-  should_quit = true;
-  msg_position = 0;
-  game->screen().getrc(&oy, &ox);
-  game->screen().move(0, 0);
-  game->screen().clrtoeol();
-  game->screen().move(0, 0);
-  if (!in_small_screen_mode()) game->screen().addstr("Do you wish to ");
-  str_attr("end your quest now (%Yes/%No) ?");
-  look(false);
-  answer = readchar();
-  if (answer=='y' || answer=='Y')
-  {
-    game->screen().clear();
-    game->screen().move(0, 0);
-    game->screen().printw("You quit with %u gold pieces\n", game->hero().get_purse());
-    score(game->hero().get_purse(), 1, 0);
-    fatal("");
-  }
-  else
-  {
+    //if they try to interrupt with a control C while in this routine blow them away!
+    if (should_quit)
+        leave();
+    should_quit = true;
+    msg_position = 0;
+    game->screen().getrc(&oy, &ox);
     game->screen().move(0, 0);
     game->screen().clrtoeol();
-    status();
-    game->screen().move(oy, ox);
-    msg_position = 0;
-    repeat_cmd_count = 0;
-  }
-  should_quit = false;
+    game->screen().move(0, 0);
+    if (!in_small_screen_mode()) game->screen().addstr("Do you wish to ");
+    str_attr("end your quest now (%Yes/%No) ?");
+    look(false);
+    answer = readchar();
+    if (answer == 'y' || answer == 'Y')
+    {
+        game->screen().clear();
+        game->screen().move(0, 0);
+        game->screen().printw("You quit with %u gold pieces\n", game->hero().get_purse());
+        score(game->hero().get_purse(), 1, 0);
+        fatal("");
+    }
+    else
+    {
+        game->screen().move(0, 0);
+        game->screen().clrtoeol();
+        status();
+        game->screen().move(oy, ox);
+        msg_position = 0;
+        repeat_cmd_count = 0;
+    }
+    should_quit = false;
 }
 
 //leave: Leave quickly, but courteously
 void leave()
 {
-  const int LINES = game->screen().lines();
-  look(false);
-  game->screen().move(LINES-1, 0);
-  game->screen().clrtoeol();
-  game->screen().move(LINES-2, 0);
-  game->screen().clrtoeol();
-  game->screen().move(LINES-2, 0);
-  fatal("Ok, if you want to leave that badly\n");
+    const int LINES = game->screen().lines();
+    look(false);
+    game->screen().move(LINES - 1, 0);
+    game->screen().clrtoeol();
+    game->screen().move(LINES - 2, 0);
+    game->screen().clrtoeol();
+    game->screen().move(LINES - 2, 0);
+    fatal("Ok, if you want to leave that badly\n");
 }
 
 //fatal: exit with a message
 void fatal(char *format, ...)
 {
-  char dest[1024 * 16];
-  va_list argptr;
-  va_start(argptr, format);
-  vsprintf(dest, format, argptr);
-  va_end(argptr);
+    char dest[1024 * 16];
+    va_list argptr;
+    va_start(argptr, format);
+    vsprintf(dest, format, argptr);
+    va_end(argptr);
 
-  game->screen().printw(dest);
-  exit(0);
+    game->screen().printw(dest);
+    exit(0);
 }

@@ -6,11 +6,10 @@
 #include "list.h"
 #include "io.h"
 #include "misc.h"
-#include "thing.h"
 
 void free_item_list(std::list<Item*>& l)
 {
-    for (auto it = l.begin(); it != l.end(); ++it){
+    for (auto it = l.begin(); it != l.end(); ++it) {
         delete(*it);
     }
     l.clear();
@@ -19,7 +18,7 @@ void free_item_list(std::list<Item*>& l)
 //_free_list: Throw the whole blamed thing away
 void free_agent_list(std::list<Monster*>& l)
 {
-    for (auto it = l.begin(); it != l.end(); ++it){
+    for (auto it = l.begin(); it != l.end(); ++it) {
         delete(*it);
     }
     l.clear();

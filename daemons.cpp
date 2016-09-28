@@ -27,9 +27,9 @@ void doctor()
 
     game->turns_since_heal++;
 
-    if (lvl<8)
+    if (lvl < 8)
     {
-        if (game->turns_since_heal + (lvl << 1)>20)
+        if (game->turns_since_heal + (lvl << 1) > 20)
             game->hero().increase_hp(1, false, false);
     }
     else if (game->turns_since_heal >= 3)
@@ -49,56 +49,56 @@ void doctor()
 //Swander: Called when it is time to start rolling for wandering monsters
 void swander()
 {
-  daemon(rollwand, 0);
+    daemon(rollwand, 0);
 }
 
 //rollwand: Called to roll to see if a wandering monster starts up
 void rollwand()
 {
-  static int between = 0;
+    static int between = 0;
 
-  if (++between >= 3 + rnd(3))
-  {
-    if (roll(1, 6) == 4) {
-      create_wandering_monster(); 
-      extinguish(rollwand); 
-      fuse(swander, 0, WANDER_TIME);
+    if (++between >= 3 + rnd(3))
+    {
+        if (roll(1, 6) == 4) {
+            create_wandering_monster();
+            extinguish(rollwand);
+            fuse(swander, 0, WANDER_TIME);
+        }
+        between = 0;
     }
-    between = 0;
-  }
 }
 
 //unconfuse: Release the poor player from his confusion
 void unconfuse()
 {
-  game->hero().set_confused(false);
-  msg("you feel less confused now");
+    game->hero().set_confused(false);
+    msg("you feel less confused now");
 }
 
 //unsee: Turn off the ability to see invisible
 void unsee()
 {
-  Monster *th;
+    Monster *th;
 
-  for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
-      th = *it;
-      if (th->is_invisible() && game->hero().can_see_monster(th) && th->oldch != MDK)
-          game->screen().mvaddch(th->pos, th->oldch);
-  }
-  game->hero().set_sees_invisible(false);
+    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+        th = *it;
+        if (th->is_invisible() && game->hero().can_see_monster(th) && th->oldch != MDK)
+            game->screen().mvaddch(th->pos, th->oldch);
+    }
+    game->hero().set_sees_invisible(false);
 }
 
 //sight: He gets his sight back
 void sight()
 {
-  if (game->hero().is_blind())
-  {
-    extinguish(sight);
-    game->hero().set_blind(false);
-    if (!game->hero().room->is_gone()) 
-      enter_room(&game->hero().pos);
-    msg("the veil of darkness lifts");
-  }
+    if (game->hero().is_blind())
+    {
+        extinguish(sight);
+        game->hero().set_blind(false);
+        if (!game->hero().room->is_gone())
+            enter_room(&game->hero().pos);
+        msg("the veil of darkness lifts");
+    }
 }
 
 //nohaste: End the hasting

@@ -54,11 +54,11 @@ void Item::drain_striking()
 void Item::randomize_damage()
 {
     if (rnd(20) == 0) {
-        damage = "3d8"; 
-        damage_plus = 9; 
+        damage = "3d8";
+        damage_plus = 9;
     }
-    else { 
-        damage = "2d8"; 
+    else {
+        damage = "2d8";
         damage_plus = 4;
     }
 }
@@ -108,7 +108,7 @@ void Item::initialize(int type, int which)
     this->enemy = 0;
 }
 
-bool Item::is_flag_set(short flag) const{
+bool Item::is_flag_set(short flag) const {
     return (flags & flag) != 0;
 }
 
@@ -146,19 +146,19 @@ void Item::remove_curse()
     flags &= ~IS_CURSED;
 }
 
-void Item::set_known(){
+void Item::set_known() {
     flags |= IS_KNOW;
 }
-void Item::set_cursed(){
+void Item::set_cursed() {
     flags |= IS_CURSED;
 }
-void Item::set_revealed(){
+void Item::set_revealed() {
     flags |= IS_REVEAL;
 }
-void Item::set_found(){
+void Item::set_found() {
     flags |= IS_FOUND;
 }
-void Item::set_flashed(){
+void Item::set_flashed() {
     flags |= DID_FLASH;
 }
 

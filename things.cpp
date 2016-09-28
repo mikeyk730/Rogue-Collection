@@ -24,7 +24,6 @@
 #include "daemon.h"
 #include "mach_dep.h"
 #include "level.h"
-#include "thing.h"
 #include "food.h"
 #include "hero.h"
 
@@ -46,186 +45,186 @@ static int line_cnt = 0;
 //init_things: Initialize the probabilities for types of things
 void init_things()
 {
-  struct MagicItem *mp;
-  for (mp = &things[1]; mp<=&things[NUMTHINGS-1]; mp++) 
-    mp->prob += (mp-1)->prob;
+    struct MagicItem *mp;
+    for (mp = &things[1]; mp <= &things[NUMTHINGS - 1]; mp++)
+        mp->prob += (mp - 1)->prob;
 }
 
 //inv_name: Return the name of something as it would appear in an inventory.
 char * Item::inv_name(bool lowercase)
 {
-  char *pb = prbuf;
-  switch (this->type)
-  {
+    char *pb = prbuf;
+    switch (this->type)
+    {
 
-  case SCROLL:
-  case POTION:
-  case STICK:
-  case RING:
-    game->item_class(this->type).get_inventory_name(this);
-    break;
+    case SCROLL:
+    case POTION:
+    case STICK:
+    case RING:
+        game->item_class(this->type).get_inventory_name(this);
+        break;
 
-  case FOOD:
-    this->get_inv_name_food();
-    break;
+    case FOOD:
+        this->get_inv_name_food();
+        break;
 
-  case WEAPON:
-    this->get_inv_name_weapon();
-    break;
+    case WEAPON:
+        this->get_inv_name_weapon();
+        break;
 
-  case ARMOR:
-    this->get_inv_name_armor();
-    break;
+    case ARMOR:
+        this->get_inv_name_armor();
+        break;
 
-  case AMULET:
-    strcpy(pb, "The Amulet of Yendor");
-    break;
+    case AMULET:
+        strcpy(pb, "The Amulet of Yendor");
+        break;
 
 
 #ifdef DEBUG
 
-  case GOLD:
-    sprintf(pb, "%d gold", get_gold_value());
-    break;
+    case GOLD:
+        sprintf(pb, "%d gold", get_gold_value());
+        break;
 
-  default:
-    debug("Picked up someting bizarre %s", unctrl(this->type));
-    sprintf(pb, "Something bizarre %c(%d)", this->type, this->type);
-    break;
+    default:
+        debug("Picked up someting bizarre %s", unctrl(this->type));
+        sprintf(pb, "Something bizarre %c(%d)", this->type, this->type);
+        break;
 
 #endif
-  }
-  if (this==game->hero().get_current_armor()) 
-    strcat(pb, " (being worn)");
-  if (this==game->hero().get_current_weapon()) 
-    strcat(pb, " (weapon in hand)");
-  if (this==game->hero().get_ring(LEFT)) 
-    strcat(pb, " (on left hand)");
-  else if (this==game->hero().get_ring(RIGHT))
-    strcat(pb, " (on right hand)");
+    }
+    if (this == game->hero().get_current_armor())
+        strcat(pb, " (being worn)");
+    if (this == game->hero().get_current_weapon())
+        strcat(pb, " (weapon in hand)");
+    if (this == game->hero().get_ring(LEFT))
+        strcat(pb, " (on left hand)");
+    else if (this == game->hero().get_ring(RIGHT))
+        strcat(pb, " (on right hand)");
 
-  //todo: what is this?
-  if (lowercase && isupper(prbuf[0]))
-    prbuf[0] = tolower(prbuf[0]);
-  else if (!lowercase && islower(*prbuf)) 
-    *prbuf = toupper(*prbuf);
+    //todo: what is this?
+    if (lowercase && isupper(prbuf[0]))
+        prbuf[0] = tolower(prbuf[0]);
+    else if (!lowercase && islower(*prbuf))
+        *prbuf = toupper(*prbuf);
 
-  return prbuf;
+    return prbuf;
 }
 
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
 {
-   va_list argptr;
-   va_start(argptr, lnmsg);
-   vsprintf(s, short_msgs() ? shmsg : lnmsg, argptr);
-   va_end(argptr);
+    va_list argptr;
+    va_start(argptr, lnmsg);
+    vsprintf(s, short_msgs() ? shmsg : lnmsg, argptr);
+    va_end(argptr);
 }
 
 //drop: Put something down
 void drop()
 {
-  byte ch;
-  Item *nobj, *op;
+    byte ch;
+    Item *nobj, *op;
 
-  ch = game->level().get_tile(game->hero().pos);
-  if (ch!=FLOOR && ch!=PASSAGE) {msg("there is something there already"); return;}
-  if ((op = get_item("drop", 0))==NULL) return;
-  if (!can_drop(op)) return;
-  //Take it out of the pack
-  if (op->count >= 2 && op->type != WEAPON)
-  {
-      op->count--;
-      nobj = op->Clone();
-      nobj->count = 1;
-      op = nobj;
-  }
-  else 
-      game->hero().pack.remove(op);
-  //Link it into the level object list
-  game->level().items.push_front(op);
-  op->pos = game->hero().pos;
-  game->level().set_tile(op->pos, op->type);
-  msg("dropped %s", op->inv_name(true));
+    ch = game->level().get_tile(game->hero().pos);
+    if (ch != FLOOR && ch != PASSAGE) { msg("there is something there already"); return; }
+    if ((op = get_item("drop", 0)) == NULL) return;
+    if (!can_drop(op)) return;
+    //Take it out of the pack
+    if (op->count >= 2 && op->type != WEAPON)
+    {
+        op->count--;
+        nobj = op->Clone();
+        nobj->count = 1;
+        op = nobj;
+    }
+    else
+        game->hero().pack.remove(op);
+    //Link it into the level object list
+    game->level().items.push_front(op);
+    op->pos = game->hero().pos;
+    game->level().set_tile(op->pos, op->type);
+    msg("dropped %s", op->inv_name(true));
 }
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
 bool can_drop(Item *op)
 {
-  if (op==NULL) return true;
-  if (op!=game->hero().get_current_armor() && op!=game->hero().get_current_weapon() && op!=game->hero().get_ring(LEFT) && op!=game->hero().get_ring(RIGHT)) return true;
-  if (op->is_cursed()) {
-      msg("you can't.  It appears to be cursed"); 
-      return false;
-  }
-  if (op==game->hero().get_current_weapon()) 
-      game->hero().set_current_weapon(NULL);
-  else if (op==game->hero().get_current_armor()) {
-    waste_time(); 
-    game->hero().set_current_armor(NULL);
-  }
-  else
-  {
-    int hand;
+    if (op == NULL) return true;
+    if (op != game->hero().get_current_armor() && op != game->hero().get_current_weapon() && op != game->hero().get_ring(LEFT) && op != game->hero().get_ring(RIGHT)) return true;
+    if (op->is_cursed()) {
+        msg("you can't.  It appears to be cursed");
+        return false;
+    }
+    if (op == game->hero().get_current_weapon())
+        game->hero().set_current_weapon(NULL);
+    else if (op == game->hero().get_current_armor()) {
+        waste_time();
+        game->hero().set_current_armor(NULL);
+    }
+    else
+    {
+        int hand;
 
-    if (op!=game->hero().get_ring(hand = LEFT)) if (op!=game->hero().get_ring(hand = RIGHT))
-    {
-      debug("Candrop called with funny thing");
-      return true;
+        if (op != game->hero().get_ring(hand = LEFT)) if (op != game->hero().get_ring(hand = RIGHT))
+        {
+            debug("Candrop called with funny thing");
+            return true;
+        }
+        game->hero().set_ring(hand, NULL);
+        switch (op->which)
+        {
+        case R_ADDSTR:
+            break;
+        case R_SEEINVIS:
+            unsee();
+            extinguish(unsee);
+            break;
+        }
     }
-    game->hero().set_ring(hand, NULL);
-    switch (op->which)
-    {
-    case R_ADDSTR: 
-        break;
-    case R_SEEINVIS:
-        unsee();
-        extinguish(unsee); 
-        break;
-    }
-  }
-  return true;
+    return true;
 }
 
 //new_thing: Return a new thing
 Item* Item::CreateItem()
 {
-  //Decide what kind of object it will be. If we haven't had food for a while, let it be food.
-  switch (game->no_food > 3 ? 2 : pick_one(things, NUMTHINGS))
-  {
-  case 0:
-    return create_potion();
-    break;
+    //Decide what kind of object it will be. If we haven't had food for a while, let it be food.
+    switch (game->no_food > 3 ? 2 : pick_one(things, NUMTHINGS))
+    {
+    case 0:
+        return create_potion();
+        break;
 
-  case 1:
-    return create_scroll();
-    break;
+    case 1:
+        return create_scroll();
+        break;
 
-  case 2:
-    return create_food();
-    break;
+    case 2:
+        return create_food();
+        break;
 
-  case 3:
-    return create_weapon();
-    break;
+    case 3:
+        return create_weapon();
+        break;
 
-  case 4:
-    return create_armor();
-    break;
+    case 4:
+        return create_armor();
+        break;
 
-  case 5:
-    return create_ring();
-    break;
+    case 5:
+        return create_ring();
+        break;
 
-  case 6:
-    return create_stick();
-    break;
+    case 6:
+        return create_stick();
+        break;
 
-  default:
-    debug("Picked a bad kind of object");
-    wait_for(' ');
-    break;
-  }
-  return 0;
+    default:
+        debug("Picked a bad kind of object");
+        wait_for(' ');
+        break;
+    }
+    return 0;
 }
 
 //todo: remove this wrapper
@@ -242,37 +241,37 @@ int pick_one(std::vector<MagicItem> magic)
 //pick_one: Pick an item out of a list of nitems possible magic items
 int pick_one(struct MagicItem *magic, int nitems)
 {
-  struct MagicItem *end;
-  int i;
-  struct MagicItem *start;
+    struct MagicItem *end;
+    int i;
+    struct MagicItem *start;
 
-  start = magic;
-  for (end = &magic[nitems], i = rnd(100); magic<end; magic++) if (i<magic->prob) break;
-  if (magic==end)
-  {
-    debug("bad pick_one: %d from %d items", i, nitems);
-    for (magic = start; magic<end; magic++)
-      debug("%s: %d%%", magic->name, magic->prob);
+    start = magic;
+    for (end = &magic[nitems], i = rnd(100); magic < end; magic++) if (i < magic->prob) break;
+    if (magic == end)
+    {
+        debug("bad pick_one: %d from %d items", i, nitems);
+        for (magic = start; magic < end; magic++)
+            debug("%s: %d%%", magic->name, magic->prob);
 
-    magic = start;
-  }
-  return magic-start;
+        magic = start;
+    }
+    return magic - start;
 }
 
 //discovered: list what the player has discovered in this game of a certain type
 void discovered()
 {
-  if (game->hero().is_wizard())
-    return debug_screen();
+    if (game->hero().is_wizard())
+        return debug_screen();
 
-  print_disc(POTION);
-  add_line("", " ", 0);
-  print_disc(SCROLL);
-  add_line("", " ", 0);
-  print_disc(RING);
-  add_line("", " ", 0);
-  print_disc(STICK);
-  end_line("");
+    print_disc(POTION);
+    add_line("", " ", 0);
+    print_disc(SCROLL);
+    add_line("", " ", 0);
+    print_disc(RING);
+    add_line("", " ", 0);
+    print_disc(STICK);
+    end_line("");
 }
 
 //print_disc: Print what we've discovered of type 'type'
@@ -302,77 +301,77 @@ void print_disc(byte type)
 //set_order: Set up order for list
 void set_order(short *order, int numthings)
 {
-  int i, r, t;
+    int i, r, t;
 
-  for (i = 0; i<numthings; i++) order[i] = i;
-  for (i = numthings; i>0; i--)
-  {
-    r = rnd(i);
-    t = order[i-1];
-    order[i-1] = order[r];
-    order[r] = t;
-  }
+    for (i = 0; i < numthings; i++) order[i] = i;
+    for (i = numthings; i > 0; i--)
+    {
+        r = rnd(i);
+        t = order[i - 1];
+        order[i - 1] = order[r];
+        order[r] = t;
+    }
 }
 
 //add_line: Add a line to the list of discoveries
 int add_line(const char *use, const char *fmt, const char *arg)
 {
-  int x, y;
-  int retchar = ' ';
-  const int LINES = game->screen().lines();
+    int x, y;
+    int retchar = ' ';
+    const int LINES = game->screen().lines();
 
-  if (line_cnt==0) {
-      game->screen().wdump(); 
-      game->screen().clear();
-  }
-  if (line_cnt>=LINES-1 || fmt==NULL)
-  {
-      game->screen().move(LINES-1, 0);
-    if (*use) 
-        game->screen().printw("-Select item to %s. Esc to cancel-", use);
-    else 
-        game->screen().addstr("-Press space to continue-");
-    do retchar = readchar(); while (retchar!=ESCAPE && retchar!=' ' && (!islower(retchar)));
-    game->screen().clear();
-    line_cnt = 0;
-  }
-  if (fmt!=NULL && !(line_cnt==0 && *fmt=='\0'))
-  {
-    game->screen().move(line_cnt, 0);
-    game->screen().printw(fmt, arg);
-    game->screen().getrc(&x, &y);
-    //if the line wrapped but nothing was printed on this line you might as well use it for the next item
-    if (y!=0) line_cnt = x+1;
-  }
-  return (retchar);
+    if (line_cnt == 0) {
+        game->screen().wdump();
+        game->screen().clear();
+    }
+    if (line_cnt >= LINES - 1 || fmt == NULL)
+    {
+        game->screen().move(LINES - 1, 0);
+        if (*use)
+            game->screen().printw("-Select item to %s. Esc to cancel-", use);
+        else
+            game->screen().addstr("-Press space to continue-");
+        do retchar = readchar(); while (retchar != ESCAPE && retchar != ' ' && (!islower(retchar)));
+        game->screen().clear();
+        line_cnt = 0;
+    }
+    if (fmt != NULL && !(line_cnt == 0 && *fmt == '\0'))
+    {
+        game->screen().move(line_cnt, 0);
+        game->screen().printw(fmt, arg);
+        game->screen().getrc(&x, &y);
+        //if the line wrapped but nothing was printed on this line you might as well use it for the next item
+        if (y != 0) line_cnt = x + 1;
+    }
+    return (retchar);
 }
 
 //end_line: End the list of lines
 int end_line(char *use)
 {
-  int retchar;
+    int retchar;
 
-  retchar = add_line(use, 0, 0);
-  game->screen().wrestor();
-  line_cnt = 0;
-  return (retchar);
+    retchar = add_line(use, 0, 0);
+    game->screen().wrestor();
+    line_cnt = 0;
+    return (retchar);
 }
 
 //nothing: Set up prbuf so that message for "nothing found" is there
 char *nothing(byte type)
 {
-  char *sp, *tystr;
+    char *sp, *tystr;
 
-  sprintf(prbuf, "Haven't discovered anything");
-  if (in_small_screen_mode()) sprintf(prbuf, "Nothing");
-  sp = &prbuf[strlen(prbuf)];
-  switch (type)
-  {
-  case POTION: tystr = "potion"; break;
-  case SCROLL: tystr = "scroll"; break;
-  case RING: tystr = "ring"; break;
-  case STICK: tystr = "stick"; break;
-  }
-  sprintf(sp, " about any %ss", tystr);
-  return prbuf;
+    sprintf(prbuf, "Haven't discovered anything");
+    if (in_small_screen_mode()) sprintf(prbuf, "Nothing");
+    sp = &prbuf[strlen(prbuf)];
+    switch (type)
+    {
+    case POTION: tystr = "potion"; break;
+    case SCROLL: tystr = "scroll"; break;
+    case RING: tystr = "ring"; break;
+    case STICK: tystr = "stick"; break;
+    }
+    sprintf(sp, " about any %ss", tystr);
+    return prbuf;
 }

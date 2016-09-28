@@ -14,7 +14,6 @@
 #include "output_interface.h"
 #include "chase.h"
 #include "rip.h"
-#include "new_leve.h"
 #include "list.h"
 #include "mach_dep.h"
 #include "main.h"
@@ -22,7 +21,6 @@
 #include "daemon.h"
 #include "level.h"
 #include "rings.h"
-#include "thing.h"
 #include "scrolls.h"
 #include "potions.h"
 #include "sticks.h"
@@ -291,16 +289,16 @@ bool find_dir(byte ch, Coord *cp)
         cp->y = 0; cp->x = 1;
         break;
     case 'y': case'Y':
-        cp->y = -1; cp->x = -1; 
+        cp->y = -1; cp->x = -1;
         break;
     case 'u': case'U':
         cp->y = -1; cp->x = 1;
         break;
     case 'b': case'B':
-        cp->y = 1; cp->x = -1; 
+        cp->y = 1; cp->x = -1;
         break;
     case 'n': case'N':
-        cp->y = 1; cp->x = 1; 
+        cp->y = 1; cp->x = 1;
         break;
     default:
         gotit = false;
@@ -330,7 +328,7 @@ int step_ok(int ch)
 {
     switch (ch)
     {
-    case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: 
+    case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
         return false;
     default:
         return ((ch < 'A') || (ch > 'Z'));

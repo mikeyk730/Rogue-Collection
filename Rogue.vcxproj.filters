@@ -62,9 +62,6 @@
     <ClCompile Include="move.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="new_leve.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -96,9 +93,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="hero.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="thing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="game_state.cpp">
@@ -214,9 +208,6 @@
     <ClInclude Include="mach_dep.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="new_leve.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="wizard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -236,9 +227,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="thing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hero.h">
@@ -305,7 +293,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="monster.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

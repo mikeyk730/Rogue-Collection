@@ -37,184 +37,184 @@ bool expert = false;
 
 bool short_msgs()
 {
-  return in_small_screen_mode() || in_brief_mode();
+    return in_small_screen_mode() || in_brief_mode();
 }
 
 void set_small_screen_mode(bool enable) //todo:todo
 {
-  terse = enable;
+    terse = enable;
 }
 
 bool in_small_screen_mode()
 {
-  return terse;
+    return terse;
 }
 
 void set_brief_mode(bool enable)
 {
-  expert = enable;
+    expert = enable;
 }
 
 bool in_brief_mode()
 {
-  return expert;
+    return expert;
 }
 
 //msg: Display a message at the top of the screen.
 void ifterse(const char *tfmt, const char *format, ...)
 {
-   char dest[1024 * 16];
-   va_list argptr;
-   va_start(argptr, format);
-   vsprintf(dest, expert ? tfmt : format, argptr);
-   va_end(argptr);
-   msg(dest);
+    char dest[1024 * 16];
+    va_list argptr;
+    va_start(argptr, format);
+    vsprintf(dest, expert ? tfmt : format, argptr);
+    va_end(argptr);
+    msg(dest);
 }
 
 void msg(const char *format, ...)
 {
-  //if the string is "", just clear the line
-  if (*format=='\0') {game->screen().move(0, 0); game->screen().clrtoeol(); msg_position = 0; return;}
+    //if the string is "", just clear the line
+    if (*format == '\0') { game->screen().move(0, 0); game->screen().clrtoeol(); msg_position = 0; return; }
 
-  char dest[1024 * 16];
-  va_list argptr;
-  va_start(argptr, format);
-  vsprintf(dest, format, argptr);
-  va_end(argptr);
+    char dest[1024 * 16];
+    va_list argptr;
+    va_start(argptr, format);
+    vsprintf(dest, format, argptr);
+    va_end(argptr);
 
-  //otherwise add to the message and flush it out
-  doadd(dest);
-  endmsg();
+    //otherwise add to the message and flush it out
+    doadd(dest);
+    endmsg();
 }
 
 //addmsg: Add things to the current message
 void addmsg(const char *format, ...)
 {
-  char dest[1024 * 16];
-  va_list argptr;
-  va_start(argptr, format);
-  vsprintf(dest, format, argptr);
-  va_end(argptr);
+    char dest[1024 * 16];
+    va_list argptr;
+    va_start(argptr, format);
+    vsprintf(dest, format, argptr);
+    va_end(argptr);
 
-  doadd(dest);
+    doadd(dest);
 }
 
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
 void endmsg()
 {
-  if (save_msg) 
-      strcpy(last_message, msgbuf);
-  if (msg_position) {look(false); game->screen().move(0, msg_position); more(" More ");}
-  //All messages should start with uppercase, except ones that start with a pack addressing character
-  if (islower(msgbuf[0]) && msgbuf[1]!=')') msgbuf[0] = toupper(msgbuf[0]);
-  putmsg(0, msgbuf);
-  msg_position = newpos;
-  newpos = 0;
+    if (save_msg)
+        strcpy(last_message, msgbuf);
+    if (msg_position) { look(false); game->screen().move(0, msg_position); more(" More "); }
+    //All messages should start with uppercase, except ones that start with a pack addressing character
+    if (islower(msgbuf[0]) && msgbuf[1] != ')') msgbuf[0] = toupper(msgbuf[0]);
+    putmsg(0, msgbuf);
+    msg_position = newpos;
+    newpos = 0;
 }
 
 //More: tag the end of a line and wait for a space
 void more(const char *msg)
 {
-  int x, y;
-  int i, msz;
-  char mbuf[80];
-  int morethere = true;
-  int covered = false;
-  const int COLS = game->screen().columns();
+    int x, y;
+    int i, msz;
+    char mbuf[80];
+    int morethere = true;
+    int covered = false;
+    const int COLS = game->screen().columns();
 
-  msz = strlen(msg);
-  game->screen().getrc(&x,&y);
-  //it is reasonable to assume that if the you are no longer on line 0, you must have wrapped.
-  if (x!=0) {x = 0; y = COLS;}
-  if ((y+msz)>COLS) {game->screen().move(x, y = COLS-msz); covered = true;}
-  for (i=0; i<msz; i++)
-  {
-    mbuf[i] = game->screen().curch();
-    if ((i+y)<(COLS-2)) game->screen().move(x, y+i+1);
-    mbuf[i+1] = 0;
-  }
-  game->screen().move(x, y);
-  game->screen().standout();
-  game->screen().addstr(msg);
-  game->screen().standend();
-  while (readchar()!=' ')
-  {
-    if (covered && morethere) {game->screen().move(x, y); game->screen().addstr(mbuf); morethere = false;}
-    else if (covered) {game->screen().move(x, y); game->screen().standout(); game->screen().addstr(msg); game->screen().standend(); morethere = true;}
-  }
-  game->screen().move(x, y);
-  game->screen().addstr(mbuf);
+    msz = strlen(msg);
+    game->screen().getrc(&x, &y);
+    //it is reasonable to assume that if the you are no longer on line 0, you must have wrapped.
+    if (x != 0) { x = 0; y = COLS; }
+    if ((y + msz) > COLS) { game->screen().move(x, y = COLS - msz); covered = true; }
+    for (i = 0; i < msz; i++)
+    {
+        mbuf[i] = game->screen().curch();
+        if ((i + y) < (COLS - 2)) game->screen().move(x, y + i + 1);
+        mbuf[i + 1] = 0;
+    }
+    game->screen().move(x, y);
+    game->screen().standout();
+    game->screen().addstr(msg);
+    game->screen().standend();
+    while (readchar() != ' ')
+    {
+        if (covered && morethere) { game->screen().move(x, y); game->screen().addstr(mbuf); morethere = false; }
+        else if (covered) { game->screen().move(x, y); game->screen().standout(); game->screen().addstr(msg); game->screen().standend(); morethere = true; }
+    }
+    game->screen().move(x, y);
+    game->screen().addstr(mbuf);
 }
 
 //doadd: Perform an add onto the message buffer
 void doadd(char *format, ...)
 {
-   va_list argptr;
-   va_start(argptr, format);
-   vsprintf(&msgbuf[newpos], format, argptr);
-   va_end(argptr);
+    va_list argptr;
+    va_start(argptr, format);
+    vsprintf(&msgbuf[newpos], format, argptr);
+    va_end(argptr);
 
-  newpos = strlen(msgbuf);
+    newpos = strlen(msgbuf);
 }
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
 void putmsg(int msgline, const char *msg)
 {
-  const int COLS = game->screen().columns();
-  const char *curmsg, *lastmsg=0, *tmpmsg;
-  int curlen;
+    const int COLS = game->screen().columns();
+    const char *curmsg, *lastmsg = 0, *tmpmsg;
+    int curlen;
 
-  curmsg = msg;
-  do
-  {
-    scrl(msgline, lastmsg, curmsg);
-    newpos = curlen = strlen(curmsg);
-    if (curlen>COLS)
+    curmsg = msg;
+    do
     {
-      more(" Cont ");
-      lastmsg = curmsg;
-      do
-      {
-        tmpmsg = stpbrk(curmsg, " ");
-        //If there are no blanks in line
-        if ((tmpmsg==0 || tmpmsg>=&lastmsg[COLS]) && lastmsg==curmsg) {curmsg = &lastmsg[COLS]; break;}
-        if ((tmpmsg>=(lastmsg+COLS)) || (strlen(curmsg)< (size_t)COLS)) break;
-        curmsg = tmpmsg+1;
-      } while (1);
-    }
-  } while (curlen>COLS);
+        scrl(msgline, lastmsg, curmsg);
+        newpos = curlen = strlen(curmsg);
+        if (curlen > COLS)
+        {
+            more(" Cont ");
+            lastmsg = curmsg;
+            do
+            {
+                tmpmsg = stpbrk(curmsg, " ");
+                //If there are no blanks in line
+                if ((tmpmsg == 0 || tmpmsg >= &lastmsg[COLS]) && lastmsg == curmsg) { curmsg = &lastmsg[COLS]; break; }
+                if ((tmpmsg >= (lastmsg + COLS)) || (strlen(curmsg) < (size_t)COLS)) break;
+                curmsg = tmpmsg + 1;
+            } while (1);
+        }
+    } while (curlen > COLS);
 }
 
 //scrl: scroll a message across the line
 void scrl(int msgline, const char *str1, const char *str2)
 {
-  const int COLS = game->screen().columns();
-  char *fmt;
+    const int COLS = game->screen().columns();
+    char *fmt;
 
-  if (COLS>40) fmt = "%.80s"; else fmt = "%.40s";
-  if (str1==0)
-  {
-    game->screen().move(msgline, 0);
-    if (strlen(str2)<(size_t)COLS) game->screen().clrtoeol();
-    game->screen().printw(fmt, str2);
-  }
-  else while (str1<=str2)
-  {
-    game->screen().move(msgline, 0);
-    game->screen().printw(fmt, str1++);
-    if (strlen(str1)<(size_t)(COLS-1)) game->screen().clrtoeol();
-  }
+    if (COLS > 40) fmt = "%.80s"; else fmt = "%.40s";
+    if (str1 == 0)
+    {
+        game->screen().move(msgline, 0);
+        if (strlen(str2) < (size_t)COLS) game->screen().clrtoeol();
+        game->screen().printw(fmt, str2);
+    }
+    else while (str1 <= str2)
+    {
+        game->screen().move(msgline, 0);
+        game->screen().printw(fmt, str1++);
+        if (strlen(str1) < (size_t)(COLS - 1)) game->screen().clrtoeol();
+    }
 }
 
 //unctrl: Print a readable version of a certain character
 char *unctrl(unsigned char ch)
 {
-  static char chstr[9]; //Defined in curses library
+    static char chstr[9]; //Defined in curses library
 
-  if (isspace(ch)) strcpy(chstr, " ");
-  else if (!isprint(ch)) if (ch<' ') sprintf(chstr, "^%c", ch+MDK); else sprintf(chstr, "\\x%x", ch);
-  else {chstr[0] = ch; chstr[1] = 0;}
-  return chstr;
+    if (isspace(ch)) strcpy(chstr, " ");
+    else if (!isprint(ch)) if (ch < ' ') sprintf(chstr, "^%c", ch + MDK); else sprintf(chstr, "\\x%x", ch);
+    else { chstr[0] = ch; chstr[1] = 0; }
+    return chstr;
 }
 
 //status: Display the important stats line.  Keep the cursor where it was.
@@ -264,9 +264,9 @@ void status()
         game->screen().printw("Gold:%-5u", game->hero().get_purse());
     }
     //Armor:
-    game->screen().move(23, PT(12, 52));    
+    game->screen().move(23, PT(12, 52));
     game->screen().printw("Armor:%-2d", game->hero().armor_for_display());
-    
+
     //Exp:
     if (!game->use_level_names())
     {
@@ -311,66 +311,66 @@ void status()
 //wait_for: Sit around until the guy types the right key
 void wait_for(char ch)
 {
-  char c;
+    char c;
 
-  if (ch=='\n') while ((c = readchar())!='\n' && c!='\r') continue;
-  else while (readchar()!=ch) continue;
+    if (ch == '\n') while ((c = readchar()) != '\n' && c != '\r') continue;
+    else while (readchar() != ch) continue;
 }
 
 //show_win: Function used to display a window and wait before returning
 void show_win(char *message)
 {
-  game->screen().mvaddstr(0, 0, message);
-  game->screen().move(game->hero().pos.y, game->hero().pos.x);
-  wait_for(' ');
+    game->screen().mvaddstr(0, 0, message);
+    game->screen().move(game->hero().pos.y, game->hero().pos.x);
+    wait_for(' ');
 }
 
 //This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
 int getinfo_impl(char *str, int size)
 {
-  char *retstr, ch;
-  int readcnt = 0;
-  bool wason;
-  int ret = 1;
+    char *retstr, ch;
+    int readcnt = 0;
+    bool wason;
+    int ret = 1;
 
-  retstr = str;
-  *str = 0;
-  wason = game->screen().cursor(true);
-  while (ret==1) switch (ch = getkey())
-  {
-  case ESCAPE:
-    while (str!=retstr) {backspace(); readcnt--; str--;}
-    ret = *str = ESCAPE;
-    str[1] = 0;
-    game->screen().cursor(wason);
-    break;
-  case '\b':
-    if (str!=retstr) {backspace(); readcnt--; str--;}
-    break;
-  default:
-    if (readcnt>=size) {beep(); break;}
-    readcnt++;
-    game->screen().addch(ch);
-    *str++ = ch;
-    if ((ch&0x80)==0) break;
-  case '\n':
-  case '\r':
+    retstr = str;
     *str = 0;
-    game->screen().cursor(wason);
-    ret = ch;
-    break;
-  }
-  return ret;
+    wason = game->screen().cursor(true);
+    while (ret == 1) switch (ch = getkey())
+    {
+    case ESCAPE:
+        while (str != retstr) { backspace(); readcnt--; str--; }
+        ret = *str = ESCAPE;
+        str[1] = 0;
+        game->screen().cursor(wason);
+        break;
+    case '\b':
+        if (str != retstr) { backspace(); readcnt--; str--; }
+        break;
+    default:
+        if (readcnt >= size) { beep(); break; }
+        readcnt++;
+        game->screen().addch(ch);
+        *str++ = ch;
+        if ((ch & 0x80) == 0) break;
+    case '\n':
+    case '\r':
+        *str = 0;
+        game->screen().cursor(wason);
+        ret = ch;
+        break;
+    }
+    return ret;
 }
 
 void backspace()
 {
-  int x, y;
-  game->screen().getrc(&x, &y);
-  if (--y<0) y = 0;
-  game->screen().move(x, y);
-  putchar(' ');
-  game->screen().move(x, y);
+    int x, y;
+    game->screen().getrc(&x, &y);
+    if (--y < 0) y = 0;
+    game->screen().move(x, y);
+    putchar(' ');
+    game->screen().move(x, y);
 }
 
 //str_attr: format a string with attributes.
@@ -393,96 +393,96 @@ void backspace()
 
 void str_attr(char *str)
 {
-  while (*str)
-  {
-    if (*str=='%') {str++; game->screen().standout();}
-    game->screen().addch(*str++);
-    game->screen().standend();
-  }
+    while (*str)
+    {
+        if (*str == '%') { str++; game->screen().standout(); }
+        game->screen().addch(*str++);
+        game->screen().standend();
+    }
 }
 
 //key_state:
 void SIG2()
 {
-  static bool numl = false, capsl = false, scrl = false;
-  static int nspot, cspot, tspot;
-  bool num_lock_on = is_num_lock_on(),
-    caps_lock_on = is_caps_lock_on(),
-    scroll_lock_on = is_scroll_lock_on();
-  static int bighand, littlehand;
-  int showtime = false, spare;
+    static bool numl = false, capsl = false, scrl = false;
+    static int nspot, cspot, tspot;
+    bool num_lock_on = is_num_lock_on(),
+        caps_lock_on = is_caps_lock_on(),
+        scroll_lock_on = is_scroll_lock_on();
+    static int bighand, littlehand;
+    int showtime = false, spare;
 
-  const int COLS = game->screen().columns();
-  const int LINES = game->screen().lines();
+    const int COLS = game->screen().columns();
+    const int LINES = game->screen().lines();
 
-  if (COLS == 40) { 
-      nspot = 10;
-      cspot = 19;
-      tspot = 35;
-  }
-  else {
-      nspot = 20;
-      cspot = 39; 
-      tspot = 75; 
-  }
-
-  if (game->allow_fast_play() && scrl != scroll_lock_on) {
-      if (game->modifiers.scroll_lock() != scroll_lock_on)
-      {
-          game->modifiers.m_fast_play_enabled = scroll_lock_on;
-          repeat_cmd_count = 0;
-          show_count();
-          game->modifiers.m_running = false;
-      }
-
-      scrl = scroll_lock_on;
-      game->screen().move(LINES - 1, 0);
-      if (game->modifiers.scroll_lock()) {
-          game->screen().bold();
-          game->screen().addstr("Fast Play");
-          game->screen().standend();
-      }
-      else game->screen().addstr("         ");
-  }
-
-  if (numl != num_lock_on)
-  {
-    numl = num_lock_on;
-    repeat_cmd_count = 0;
-    show_count();
-    game->modifiers.m_running = false;
-    game->screen().move(LINES - 1, nspot);
-    if (numl) {
-      game->screen().bold();
-      game->screen().addstr("NUM LOCK");
-      game->screen().standend();
+    if (COLS == 40) {
+        nspot = 10;
+        cspot = 19;
+        tspot = 35;
     }
-    else game->screen().addstr("        ");
-  }
-  if (capsl != caps_lock_on)
-  {
-    capsl = caps_lock_on;
-    game->screen().move(LINES - 1, cspot);
-    if (capsl) {
-      game->screen().bold();
-      game->screen().addstr("CAP LOCK");
-      game->screen().standend();
+    else {
+        nspot = 20;
+        cspot = 39;
+        tspot = 75;
     }
-    else game->screen().addstr("        ");
-  }
-  if (showtime)
-  {
-    showtime = false;
-    //work around the compiler buggie boos
-    spare = littlehand % 10;
-    game->screen().move(24, tspot);
-    game->screen().bold();
-    game->screen().printw("%2d:%1d%1d", bighand ? bighand : 12, littlehand / 10, spare);
-    game->screen().standend();
-  }
+
+    if (game->allow_fast_play() && scrl != scroll_lock_on) {
+        if (game->modifiers.scroll_lock() != scroll_lock_on)
+        {
+            game->modifiers.m_fast_play_enabled = scroll_lock_on;
+            repeat_cmd_count = 0;
+            show_count();
+            game->modifiers.m_running = false;
+        }
+
+        scrl = scroll_lock_on;
+        game->screen().move(LINES - 1, 0);
+        if (game->modifiers.scroll_lock()) {
+            game->screen().bold();
+            game->screen().addstr("Fast Play");
+            game->screen().standend();
+        }
+        else game->screen().addstr("         ");
+    }
+
+    if (numl != num_lock_on)
+    {
+        numl = num_lock_on;
+        repeat_cmd_count = 0;
+        show_count();
+        game->modifiers.m_running = false;
+        game->screen().move(LINES - 1, nspot);
+        if (numl) {
+            game->screen().bold();
+            game->screen().addstr("NUM LOCK");
+            game->screen().standend();
+        }
+        else game->screen().addstr("        ");
+    }
+    if (capsl != caps_lock_on)
+    {
+        capsl = caps_lock_on;
+        game->screen().move(LINES - 1, cspot);
+        if (capsl) {
+            game->screen().bold();
+            game->screen().addstr("CAP LOCK");
+            game->screen().standend();
+        }
+        else game->screen().addstr("        ");
+    }
+    if (showtime)
+    {
+        showtime = false;
+        //work around the compiler buggie boos
+        spare = littlehand % 10;
+        game->screen().move(24, tspot);
+        game->screen().bold();
+        game->screen().printw("%2d:%1d%1d", bighand ? bighand : 12, littlehand / 10, spare);
+        game->screen().standend();
+    }
 }
 
 char *noterse(char *str)
 {
-  return (short_msgs() ? "" : str);
+    return (short_msgs() ? "" : str);
 }

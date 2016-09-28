@@ -105,7 +105,6 @@
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="monsters.cpp" />
     <ClCompile Include="move.cpp" />
-    <ClCompile Include="new_leve.cpp" />
     <ClCompile Include="pack.cpp" />
     <ClCompile Include="passages.cpp" />
     <ClCompile Include="potions.cpp" />
@@ -120,7 +119,6 @@
     <ClCompile Include="sticks.cpp" />
     <ClCompile Include="stream_input.cpp" />
     <ClCompile Include="strings.cpp" />
-    <ClCompile Include="thing.cpp" />
     <ClCompile Include="things.cpp" />
     <ClCompile Include="weapons.cpp" />
     <ClCompile Include="wizard.cpp" />
@@ -158,7 +156,6 @@
     <ClInclude Include="misc.h" />
     <ClInclude Include="monsters.h" />
     <ClInclude Include="move.h" />
-    <ClInclude Include="new_leve.h" />
     <ClInclude Include="pack.h" />
     <ClInclude Include="passages.h" />
     <ClInclude Include="potions.h" />
@@ -173,7 +170,6 @@
     <ClInclude Include="slime.h" />
     <ClInclude Include="sticks.h" />
     <ClInclude Include="strings.h" />
-    <ClInclude Include="thing.h" />
     <ClInclude Include="things.h" />
     <ClInclude Include="weapons.h" />
     <ClInclude Include="wizard.h" />
