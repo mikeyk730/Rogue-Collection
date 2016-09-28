@@ -60,16 +60,24 @@ void finish_do_move(int fl)
     game->hero().pos = new_position;
 }
 
+bool is_passage_or_door(Coord p)
+{
+    return (game->level().is_passage(p) || game->level().get_tile(p) == DOOR);
+}
+
 bool continue_vertical() {
     int dy;
 
-    bool up_is_door_or_psg = (game->hero().pos.y > 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y - 1 })&F_PASS) ||
-        game->level().get_tile({ game->hero().pos.x,game->hero().pos.y - 1 }) == DOOR));
-    bool down_is_door_or_psg = (game->hero().pos.y < maxrow - 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y + 1 })&F_PASS) ||
-        game->level().get_tile({ game->hero().pos.x,game->hero().pos.y + 1 }) == DOOR));
-    if (!(up_is_door_or_psg^down_is_door_or_psg))
+    Coord n = north(game->hero().pos);
+    Coord s = south(game->hero().pos);
+
+    bool up = (game->hero().pos.y > 1 && is_passage_or_door(n));
+    bool down = (game->hero().pos.y < maxrow - 1 && is_passage_or_door(s));
+
+    if (!(up^down))
         return false;
-    if (up_is_door_or_psg) {
+
+    if (up) {
         run_character = 'k';
         dy = -1;
     }
@@ -77,6 +85,7 @@ bool continue_vertical() {
         run_character = 'j';
         dy = 1;
     }
+
     new_position.y = game->hero().pos.y + dy;
     new_position.x = game->hero().pos.x;
     return true;
@@ -87,13 +96,16 @@ bool continue_horizontal()
     int dx;
     const int COLS = game->screen().columns();
 
-    bool left_is_door_or_psg = (game->hero().pos.x > 1 && ((game->level().get_flags({ game->hero().pos.x - 1,game->hero().pos.y })&F_PASS) ||
-        game->level().get_tile({ game->hero().pos.x - 1,game->hero().pos.y }) == DOOR));
-    bool right_is_door_or_psg = (game->hero().pos.x < COLS - 2 && ((game->level().get_flags({ game->hero().pos.x + 1,game->hero().pos.y })&F_PASS) ||
-        game->level().get_tile({ game->hero().pos.x + 1,game->hero().pos.y }) == DOOR));
-    if (!(left_is_door_or_psg^right_is_door_or_psg))
+    Coord w = west(game->hero().pos);
+    Coord e = east(game->hero().pos);
+
+    bool left = (game->hero().pos.x > 1 && is_passage_or_door(w));
+    bool right = (game->hero().pos.x < COLS - 2 && is_passage_or_door(e));
+
+    if (!(left^right))
         return false;
-    if (left_is_door_or_psg) {
+
+    if (left) {
         run_character = 'h';
         dx = -1;
     }
@@ -101,6 +113,7 @@ bool continue_horizontal()
         run_character = 'l';
         dx = 1;
     }
+
     new_position.y = game->hero().pos.y;
     new_position.x = game->hero().pos.x + dx;
     return true;
