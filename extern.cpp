@@ -156,7 +156,7 @@ bool again;                 //The last command is repeated
 int was_trapped = 0;   //Was a trap sprung
 
 bool invalid_position = false;
-char take;  //Thing the rogue is taking
+char char_to_pickup;  //Thing the rogue is taking
 char run_character; //Direction player is running
 
 char prbuf[MAXSTR];    //Printing buffer used everywhere

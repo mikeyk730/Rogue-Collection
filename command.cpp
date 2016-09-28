@@ -30,7 +30,7 @@
 #include "hero.h"
 
 static int lastcount;
-static byte lastch, do_take, lasttake;
+static byte lastch, can_pickup_this_turn, lasttake;
 
 void command()
 {
@@ -88,13 +88,12 @@ int read_command()
 {
     int command, ch, junk;
 
-    counts_as_turn = true;
     bool was_fast_play_enabled = game->modifiers.scroll_lock();
     game->modifiers.m_fast_mode = game->modifiers.scroll_lock();
     look(true);
     if (!game->modifiers.is_running())
         game->modifiers.m_stop_at_door = false;
-    do_take = true;
+    can_pickup_this_turn = true;
     again = false;
 
     --repeat_cmd_count;
@@ -102,7 +101,7 @@ int read_command()
         show_count();
 
     if (repeat_cmd_count > 0) {
-        do_take = lasttake;
+        can_pickup_this_turn = lasttake;
         command = lastch;
         game->modifiers.m_fast_mode = false;
     }
@@ -111,7 +110,7 @@ int read_command()
         repeat_cmd_count = 0;
         if (game->modifiers.is_running()) {
             command = run_character;
-            do_take = lasttake;
+            can_pickup_this_turn = lasttake;
         }
         else
         {
@@ -133,12 +132,12 @@ int read_command()
                     game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
                     break;
                 case 'g': // g + direction: move onto an item without picking it up
-                    do_take = false;
+                    can_pickup_this_turn = false;
                     break;
                 case 'a': //a: repeat last command
                     command = lastch;
                     repeat_cmd_count = lastcount;
-                    do_take = lasttake;
+                    can_pickup_this_turn = lasttake;
                     again = true;
                     break;
                 case ' ':
@@ -179,7 +178,7 @@ int read_command()
 
     lastcount = repeat_cmd_count;
     lastch = command;
-    lasttake = do_take;
+    lasttake = can_pickup_this_turn;
     return command;
 }
 
@@ -195,197 +194,206 @@ void show_count()
         game->screen().addstr("    ");
 }
 
-void execcom()
+void dispatch_command(int ch)
 {
-    Coord mv;
-    int ch;
-
-    do
+    switch (ch)
     {
-        switch (ch = read_command())
+    case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
+    {
+        Coord mv;
+        find_dir(ch, &mv);
+        do_move(mv.y, mv.x);
+        break;
+    }
+    case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
+        do_run(tolower(ch));
+        break;
+    case 't':
+    {
+        Coord d;
+        if (get_dir(&d))
+            throw_projectile(d);
+        else
+            counts_as_turn = false;
+        break;
+    }
+    case 'Q':
+        counts_as_turn = false;
+        quit();
+        break;
+    case 'i':
+        counts_as_turn = false;
+        inventory(game->hero().pack, 0, "");
+        break;
+    case 'd':
+        drop();
+        break;
+    case 'q':
+        quaff();
+        break;
+    case 'r':
+        read_scroll();
+        break;
+    case 'e':
+        eat();
+        break;
+    case 'w':
+        game->hero().wield();
+        break;
+    case 'W':
+        wear();
+        break;
+    case 'T':
+        game->hero().take_off();
+        break;
+    case 'P':
+        ring_on();
+        break;
+    case 'R':
+        game->hero().ring_off();
+        break;
+    case 'c':
+        counts_as_turn = false;
+        call();
+        break;
+    case '>':
+        counts_as_turn = false;
+        go_down_stairs();
+        break;
+    case '<':
+        counts_as_turn = false;
+        go_up_stairs();
+        break;
+    case '/':
+        counts_as_turn = false;
+        help(helpobjs);
+        break;
+    case '?':
+        counts_as_turn = false;
+        help(helpcoms);
+        break;
+    case '!':
+        counts_as_turn = false;
+        fakedos();
+        break;
+    case 's':
+        search();
+        break;
+    case 'z':
+    {
+        Coord d;
+        if (get_dir(&d))
+            do_zap(d);
+        else
+            counts_as_turn = false;
+        break;
+    }
+    case 'D':
+        counts_as_turn = false;
+        discovered();
+        break;
+    case CTRL('T'):
+    {
+        bool new_value = !in_brief_mode();
+        set_brief_mode(new_value);
+        msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!");
+        counts_as_turn = false;
+        break;
+    }
+    case 'F':
+        counts_as_turn = false;
+        record_macro();
+        break;
+    case CTRL('F'):
+        counts_as_turn = false;
+        //todo: revisit macro later, this definitely isn't safe
+        //typeahead = game->get_environment("macro").c_str();
+        break;
+    case CTRL('R'):
+        counts_as_turn = false;
+        msg(last_message);
+        break;
+    case 'v':
+        counts_as_turn = false;
+        msg("Rogue version %d.%d", REV, VER);
+        break;
+    case 'S':
+        counts_as_turn = false;
+        save_game();
+        break;
+    case '.':
+        doctor(); break;
+
+    case '^':
+    {
+        counts_as_turn = false;
+        Coord d;
+        if (get_dir(&d))
         {
-        case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-            find_dir(ch, &mv);
-            do_move(mv.y, mv.x);
-            break;
-        case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
-            do_run(tolower(ch));
-            break;
-        case 't':
-        {
-            Coord d;
-            if (get_dir(&d))
-                throw_projectile(d);
-            else
+            Coord lookat;
+
+            lookat.y = game->hero().pos.y + d.y;
+            lookat.x = game->hero().pos.x + d.x;
+            if (game->level().get_tile(lookat) != TRAP)
+                msg("no trap there.");
+            else msg("you found %s", tr_name(game->level().get_trap_type(lookat)));
+        }
+        break;
+    }
+    case 'o':
+        counts_as_turn = false;
+        msg("i don't have any options, oh my!");
+        break;
+    case CTRL('L'):
+        counts_as_turn = false;
+        msg("the screen looks fine to me");
+        break;
+
+    case CTRL('W'):
+        counts_as_turn = false;
+        game->hero().toggle_wizard();
+        break;
+
+    default:
+        if (game->hero().is_wizard()) {
+            switch (ch) {
+                //Wizard commands
+            case 'C':
                 counts_as_turn = false;
-            break;
-        }
-        case 'Q':
-            counts_as_turn = false;
-            quit();
-            break;
-        case 'i':
-            counts_as_turn = false;
-            inventory(game->hero().pack, 0, "");
-            break;
-        case 'd':
-            drop();
-            break;
-        case 'q':
-            quaff();
-            break;
-        case 'r':
-            read_scroll();
-            break;
-        case 'e':
-            eat();
-            break;
-        case 'w':
-            game->hero().wield();
-            break;
-        case 'W':
-            wear();
-            break;
-        case 'T':
-            game->hero().take_off();
-            break;
-        case 'P':
-            ring_on();
-            break;
-        case 'R':
-            game->hero().ring_off();
-            break;
-        case 'c':
-            counts_as_turn = false;
-            call();
-            break;
-        case '>':
-            counts_as_turn = false;
-            go_down_stairs();
-            break;
-        case '<':
-            counts_as_turn = false;
-            go_up_stairs();
-            break;
-        case '/':
-            counts_as_turn = false;
-            help(helpobjs);
-            break;
-        case '?':
-            counts_as_turn = false;
-            help(helpcoms);
-            break;
-        case '!':
-            counts_as_turn = false;
-            fakedos();
-            break;
-        case 's':
-            search();
-            break;
-        case 'z':
-        {
-            Coord d;
-            if (get_dir(&d))
-                do_zap(d);
-            else
-                counts_as_turn = false;
-            break;
-        }
-        case 'D':
-            counts_as_turn = false;
-            discovered();
-            break;
-        case CTRL('T'):
-        {
-            bool new_value = !in_brief_mode();
-            set_brief_mode(new_value);
-            msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!");
-            counts_as_turn = false;
-            break;
-        }
-        case 'F':
-            counts_as_turn = false;
-            record_macro();
-            break;
-        case CTRL('F'):
-            counts_as_turn = false;
-            //todo: revisit macro later, this definitely isn't safe
-            //typeahead = game->get_environment("macro").c_str();
-            break;
-        case CTRL('R'):
-            counts_as_turn = false;
-            msg(last_message);
-            break;
-        case 'v':
-            counts_as_turn = false;
-            msg("Rogue version %d.%d", REV, VER);
-            break;
-        case 'S':
-            counts_as_turn = false;
-            save_game();
-            break;
-        case '.':
-            doctor(); break;
-
-        case '^':
-        {
-            counts_as_turn = false;
-            Coord d;
-            if (get_dir(&d))
-            {
-                Coord lookat;
-
-                lookat.y = game->hero().pos.y + d.y;
-                lookat.x = game->hero().pos.x + d.x;
-                if (game->level().get_tile(lookat) != TRAP)
-                    msg("no trap there.");
-                else msg("you found %s", tr_name(game->level().get_trap_type(lookat)));
-            }
-            break;
-        }
-        case 'o':
-            counts_as_turn = false;
-            msg("i don't have any options, oh my!");
-            break;
-        case CTRL('L'):
-            counts_as_turn = false;
-            msg("the screen looks fine to me");
-            break;
-
-        case CTRL('W'):
-            counts_as_turn = false;
-            game->hero().toggle_wizard();
-            break;
-
-        default:
-            if (game->hero().is_wizard()) {
-                switch (ch) {
-                    //Wizard commands
-                case 'C':
-                    counts_as_turn = false;
-                    summon_object();
-                    break;
-                case 'X':
-                    counts_as_turn = false; show_map(true); break;
-                case 'Z':
-                    counts_as_turn = false;  show_map(false); break;
-                default:
-                    counts_as_turn = false;
-                    msg("illegal command '%s'", unctrl(ch));
-                    repeat_cmd_count = 0;
-                }
-            }
-            else {
+                summon_object();
+                break;
+            case 'X':
+                counts_as_turn = false; show_map(true); break;
+            case 'Z':
+                counts_as_turn = false;  show_map(false); break;
+            default:
                 counts_as_turn = false;
                 msg("illegal command '%s'", unctrl(ch));
                 repeat_cmd_count = 0;
-                break;
             }
         }
-        if (take && do_take)
+        else {
+            counts_as_turn = false;
+            msg("illegal command '%s'", unctrl(ch));
+            repeat_cmd_count = 0;
+            break;
+        }
+    }
+}
+
+void execcom()
+{
+    do
+    {
+        counts_as_turn = true;
+        int ch = read_command();
+        dispatch_command(ch);
+
+        if (take && can_pickup_this_turn)
             pick_up(take);
         take = 0;
         if (!game->modifiers.is_running())
             game->modifiers.m_stop_at_door = false;
-    } while (counts_as_turn == false);
+
+    } while (!counts_as_turn);
 }

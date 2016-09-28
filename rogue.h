@@ -185,7 +185,7 @@ extern int was_trapped;
 
 extern char
   last_message[], prbuf[], run_character,
-  take;
+  char_to_pickup;
 extern const char* typeahead;
 
 extern int repeat_cmd_count, msg_position;
