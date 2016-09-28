@@ -1,6 +1,8 @@
 #pragma once
 #include "item.h"
 
+struct Monster;
+
 struct Stick : public Item
 {
     Stick(int which);
@@ -17,8 +19,8 @@ void do_zap();
 //drain: Do drain hit points from player schtick
 void drain();
 
-//fire_bolt: Fire a bolt in a given direction from a specific starting place
-bool fire_bolt(Coord *start, Coord *dir, const std::string& name);
+//fire_bolt: Fire a bolt in a given direction from a specific starting place.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
+Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name);
 
 //charge_str: Return an appropriate string for a wand charge
 const char *get_charge_string(Item *obj);

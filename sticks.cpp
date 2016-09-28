@@ -455,159 +455,158 @@ void do_zap()
 //drain: Do drain hit points from player schtick
 void drain()
 {
-  Monster* monster;
-  int cnt;
-  struct Room *room;
-  Monster **dp;
-  bool in_passage;
-  Monster *drainee[40];
+    Monster* monster;
+    int cnt;
+    struct Room *room;
+    Monster **dp;
+    bool in_passage;
+    Monster *drainee[40];
 
-  //First count how many things we need to spread the hit points among
-  cnt = 0;
-  if (game->level().get_tile(game->hero().pos)==DOOR)
-      room = game->level().get_passage(game->hero().pos);
-  else room = NULL;
-  in_passage = game->hero().room->is_gone();
-  dp = drainee;
-  for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it){
-    monster = *it;
-    if (monster->room == game->hero().room || monster->room == room ||
-        (in_passage && game->level().get_tile(monster->pos) == DOOR && game->level().get_passage(monster->pos) == game->hero().room)) {
-        *dp++ = monster;
+    //First count how many things we need to spread the hit points among
+    cnt = 0;
+    if (game->level().get_tile(game->hero().pos) == DOOR)
+        room = game->level().get_passage(game->hero().pos);
+    else room = NULL;
+    in_passage = game->hero().room->is_gone();
+    dp = drainee;
+    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+        monster = *it;
+        if (monster->room == game->hero().room || monster->room == room ||
+            (in_passage && game->level().get_tile(monster->pos) == DOOR && game->level().get_passage(monster->pos) == game->hero().room)) {
+            *dp++ = monster;
+        }
     }
-  }
-  if ((cnt = dp-drainee)==0) {
-    msg("you have a tingling feeling"); 
-    return;
-  }
-  *dp = NULL;
-  cnt = game->hero().drain_hp() / cnt + 1;
-  //Now zot all of the monsters
-  for (dp = drainee; *dp; dp++)
-  {
-    monster = *dp;
-    if (!monster->decrease_hp(cnt, true))
-        killed(monster, game->hero().can_see_monster(monster));
-    else
-        monster->start_run();
-  }
+    if ((cnt = dp - drainee) == 0) {
+        msg("you have a tingling feeling");
+        return;
+    }
+    *dp = NULL;
+    cnt = game->hero().drain_hp() / cnt + 1;
+    //Now zot all of the monsters
+    for (dp = drainee; *dp; dp++)
+    {
+        monster = *dp;
+        if (!monster->decrease_hp(cnt, true))
+            killed(monster, game->hero().can_see_monster(monster));
+        else
+            monster->start_run();
+    }
 }
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
 //shared between player and monsters (ice monster, dragon)
 //todo: player bolts don't disappear when kill a monster
-bool fire_bolt(Coord *start, Coord *dir, const std::string& name)
+Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
 {
-  byte dirch, ch;
-  Agent *monster;
-  bool hit_hero, used, changed;
-  int i, j;
-  Coord pos;
-  struct {Coord s_pos; byte s_under;} spotpos[BOLT_LENGTH*2];
-  bool is_frost(name == "frost");
-  bool is_flame(name == "flame");
+    byte dirch, ch;
+    Agent *monster;
+    bool hit_hero, used, changed;
+    int i, j;
+    Coord pos;
+    struct { Coord s_pos; byte s_under; } spotpos[BOLT_LENGTH * 2];
+    bool is_frost(name == "frost");
+    bool is_flame(name == "flame");
 
-  Item* bolt = new Weapon(FLAME, 30, 0);
-  bolt->set_name(name);
-  switch (dir->y+dir->x)
-  {
-  case 0: dirch = '/'; break;
-  case 1: case -1: dirch = (dir->y==0?'-':'|'); break;
-  case 2: case -2: dirch = '\\'; break;
-  }
-  pos = *start;
-  hit_hero = (start!=&game->hero().pos);
-  used = false;
-  changed = false;
-  for (i = 0; i<BOLT_LENGTH && !used; i++)
-  {
-    pos.y += dir->y;
-    pos.x += dir->x;
-    ch = game->level().get_tile_or_monster(pos);
-    spotpos[i].s_pos = pos;
-    if ((spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x))==dirch) 
-        spotpos[i].s_under = 0;
-    switch (ch)
+    Item* bolt = new Weapon(FLAME, 30, 0);
+    bolt->set_name(name);
+    switch (dir->y + dir->x)
     {
-    case DOOR: case HWALL: case VWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
-      if (!changed) hit_hero = !hit_hero;
-      changed = false;
-      dir->y = -dir->y;
-      dir->x = -dir->x;
-      i--;
-      msg("the %s bounces", name.c_str());
-      break;
-
-    default:
-      if (!hit_hero && (monster = game->level().monster_at(pos))!=NULL)
-      {
-        hit_hero = true;
-        changed = !changed;
-        if (monster->oldch!=MDK)
-            monster->oldch = game->level().get_tile(pos);
-        if (!save_throw(VS_MAGIC, monster) || is_frost)
-        {
-          bolt->pos = pos;
-          used = true;
-          if (is_flame && monster->immune_to_fire())
-              msg("the flame bounces off the %s", monster->get_name().c_str());
-          else
-          {
-            projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
-            if (game->screen().mvinch(pos.y, pos.x)!=dirch) 
-                spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
-            return false; //todo:zapping monster may have killed self, not safe to go on
-          }
-        }
-        else if (!monster->is_disguised())
-        {
-          if (start==&game->hero().pos) 
-              monster->start_run();
-          msg("the %s whizzes past the %s", name.c_str(), get_monster_name(ch));
-        }
-      }
-      else if (hit_hero && equal(pos, game->hero().pos))
-      {
-        hit_hero = false;
-        changed = !changed;
-        if (!save(VS_MAGIC))
-        {
-          if (is_frost)
-          {
-            msg("You are frozen by a blast of frost.");
-            if (game->sleep_timer<20) 
-                game->sleep_timer += spread(7);
-          }
-          else if (!game->hero().decrease_hp(roll(6, 6), true)) {
-              if (start == &game->hero().pos)
-                  death('b');
-              else
-                  death(game->level().monster_at(*start)->type);
-          }
-          used = true;
-          if (!is_frost)
-              msg("you are hit by the %s", name.c_str());
-        }
-        else msg("the %s whizzes by you", name.c_str());
-      }
-      if (is_frost || name == "ice") 
-          game->screen().blue();
-      else if (name == "bolt") 
-          game->screen().yellow();
-      else 
-          game->screen().red();
-      tick_pause();
-      game->screen().mvaddch(pos, dirch);
-      game->screen().standend();
+    case 0: dirch = '/'; break;
+    case 1: case -1: dirch = (dir->y == 0 ? '-' : '|'); break;
+    case 2: case -2: dirch = '\\'; break;
     }
-  }
-  for (j = 0; j<i; j++)
-  {
-    tick_pause();
-    if (spotpos[j].s_under)
-        game->screen().mvaddch(spotpos[j].s_pos, spotpos[j].s_under);
-  }
-  return true;
+    pos = *start;
+    hit_hero = (start != &game->hero().pos);
+    used = false;
+    changed = false;
+    for (i = 0; i < BOLT_LENGTH && !used; i++)
+    {
+        pos.y += dir->y;
+        pos.x += dir->x;
+        ch = game->level().get_tile_or_monster(pos);
+        spotpos[i].s_pos = pos;
+        if ((spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x)) == dirch)
+            spotpos[i].s_under = 0;
+        switch (ch)
+        {
+        case DOOR: case HWALL: case VWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
+            if (!changed) hit_hero = !hit_hero;
+            changed = false;
+            dir->y = -dir->y;
+            dir->x = -dir->x;
+            i--;
+            msg("the %s bounces", name.c_str());
+            break;
+
+        default:
+            if (!hit_hero && (monster = game->level().monster_at(pos)) != NULL)
+            {
+                hit_hero = true;
+                changed = !changed;
+                if (monster->oldch != MDK)
+                    monster->oldch = game->level().get_tile(pos);
+                if (!save_throw(VS_MAGIC, monster) || is_frost)
+                {
+                    bolt->pos = pos;
+                    used = true;
+                    if (is_flame && monster->immune_to_fire())
+                        msg("the flame bounces off the %s", monster->get_name().c_str());
+                    else
+                    {
+                        if (game->screen().mvinch(pos.y, pos.x) != dirch)
+                            spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
+                        return projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
+                    }
+                }
+                else if (!monster->is_disguised())
+                {
+                    if (start == &game->hero().pos)
+                        monster->start_run();
+                    msg("the %s whizzes past the %s", name.c_str(), get_monster_name(ch));
+                }
+            }
+            else if (hit_hero && equal(pos, game->hero().pos))
+            {
+                hit_hero = false;
+                changed = !changed;
+                if (!save(VS_MAGIC))
+                {
+                    if (is_frost)
+                    {
+                        msg("You are frozen by a blast of frost.");
+                        if (game->sleep_timer < 20)
+                            game->sleep_timer += spread(7);
+                    }
+                    else if (!game->hero().decrease_hp(roll(6, 6), true)) {
+                        if (start == &game->hero().pos)
+                            death('b');
+                        else
+                            death(game->level().monster_at(*start)->type);
+                    }
+                    used = true;
+                    if (!is_frost)
+                        msg("you are hit by the %s", name.c_str());
+                }
+                else msg("the %s whizzes by you", name.c_str());
+            }
+            if (is_frost || name == "ice")
+                game->screen().blue();
+            else if (name == "bolt")
+                game->screen().yellow();
+            else
+                game->screen().red();
+            tick_pause();
+            game->screen().mvaddch(pos, dirch);
+            game->screen().standend();
+        }
+    }
+    for (j = 0; j < i; j++)
+    {
+        tick_pause();
+        if (spotpos[j].s_under)
+            game->screen().mvaddch(spotpos[j].s_pos, spotpos[j].s_under);
+    }
+    return 0;
 }
 
 //charge_str: Return an appropriate string for a wand charge

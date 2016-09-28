@@ -37,33 +37,55 @@ Coord ch_ret; //Where chasing takes you
 //runners: Make all the running monsters move.
 void runners()
 {
-    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end();) {
-        Monster* monster = *(it++);
+    //Todo: Major refactor needed.  Monsters can die during do_chase.  Leprechauns
+    //and Nymphs disappear as part of their attack.  Ice Monsters and Dragons can
+    //kill themselves or others with their projectiles.  The logic here to avoid
+    //iterator invalidation is horrendous.
+    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end();)
+    {
+        //save the next iterator in case the monster dies during its own turn
+        auto next = it;
+        ++next;
+
+        Monster* monster = *(it);
         if (!monster->is_held() && monster->is_running())
         {
+            Monster* victim = 0;
             int dist = distance(game->hero().pos, monster->pos);
-            if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->turn)
-                if (!monster->do_chase())
+            if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->turn) {
+                victim = monster->do_chase();
+                if (victim == monster) {
+                    it = next;
                     continue;
+                }
+            }
 
             // fast monsters get an extra turn
-            if (monster->is_fast())
-                if (!monster->do_chase())
+            if (!victim && monster->is_fast()) {
+                victim = monster->do_chase();
+                if (victim == monster) {
+                    it = next;
                     continue;
+                }
+            }
 
             // flying monsters get an extra turn to close the distance
             dist = distance(game->hero().pos, monster->pos);
-            if (monster->is_flying() && dist > 3)
-                if (!monster->do_chase())
+            if (!victim && monster->is_flying() && dist > 3) {
+                Monster* victim = monster->do_chase();
+                if (victim == monster) {
+                    it = next;
                     continue;
-
+                }
+            }
             monster->turn ^= true;
         }
+        ++it;
     }
 }
 
 //do_chase: Make one thing chase another.
-bool Monster::do_chase()
+Monster* Monster::do_chase()
 {
     //If gold has been taken, target the hero
     if (is_greedy() && room->gold_val == 0)
@@ -74,7 +96,7 @@ bool Monster::do_chase()
     if (dest != &game->hero().pos)
         destination_room = get_room_from_position(dest);
     if (destination_room == NULL)
-        return true;
+        return 0;
 
 
     int mindist = 32767, i, dist;
@@ -150,7 +172,7 @@ over:
         }
     }
     if (this->is_stationary())
-        return true;
+        return 0;
     //If the chasing thing moved, update the screen
     if (this->oldch != MDK)
     {
@@ -166,7 +188,7 @@ over:
     {
         if ((this->room = get_room_from_position(&ch_ret)) == NULL) {
             this->room = oroom;
-            return true;
+            return 0;
         }
         if (oroom != this->room)
             set_destination();
@@ -189,7 +211,7 @@ over:
     if (this->oldch == FLOOR && oroom->is_dark())
         this->oldch = ' ';
     game->screen().standend();
-    return true;
+    return 0;
 }
 
 //can_see_monster: Return true if the hero can see the monster

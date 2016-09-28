@@ -207,7 +207,7 @@ void Item::initialize_weapon(byte type)
 }
 
 //projectile_hit: Does the projectile hit the monster?
-int projectile_hit(Coord p, Item *obj)  //todo: definite memory issues here.  projectile_hit is expeccted to delete, but gets stack variables too
+Monster* projectile_hit(Coord p, Item *obj)  //todo: definite memory issues here.  projectile_hit is expeccted to delete, but gets stack variables too
 {
   static Coord mp;
   Agent *monster = game->level().monster_at(p);

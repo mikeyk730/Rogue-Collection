@@ -266,7 +266,7 @@ int get_num(short *place)
 Cheats::Cheats()
 {
     //todo: should be empty
-    //m_detects_monsters = true;
+    m_detects_monsters = true;
     //m_sees_invisible = true;
     //m_no_traps = true;
     //m_no_hidden_doors = true;

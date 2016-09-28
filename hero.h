@@ -2,6 +2,8 @@
 
 #include "agent.h"
 
+struct Monster;
+
 struct Hero : public Agent
 {
     Hero();
@@ -55,8 +57,8 @@ public:
     //wield: Pull out a certain weapon
     void wield();
 
-    //fight: The player attacks the monster.
-    int fight(Coord *monster, Item *weapon, bool thrown);
+    //fight: The player attacks the monster.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
+    Monster* fight(Coord *monster, Item *weapon, bool thrown);
 
     void reduce_level();
 
@@ -65,6 +67,9 @@ public:
 
     //raise_level: The guy just magically went up a level.
     void raise_level();
+
+    void do_hit(Item* weapon, int thrown, Monster* monster, const char* name);
+    void do_miss(Item* weapon, int thrown, Monster* monster, const char* name);
 
 
 private:

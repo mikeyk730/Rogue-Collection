@@ -229,6 +229,7 @@ int be_trapped(Coord *tc)
     break;
 
   case T_ARROW:
+    game->log("battle", "Arrow trap 1d6 attack on player");
     if (attempt_swing(game->hero().stats.level-1, game->hero().stats.ac, 1))
     {
       if (!game->hero().decrease_hp(roll(1, 6), true)) {
@@ -259,6 +260,7 @@ int be_trapped(Coord *tc)
     break;
 
   case T_DART:
+    game->log("battle", "Dart trap 1d4 attack on player");
     if (attempt_swing(game->hero().stats.level+1, game->hero().stats.ac, 1))
     {
       if (!game->hero().decrease_hp(roll(1, 4), true)) {

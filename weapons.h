@@ -1,6 +1,8 @@
 #pragma once
 #include "item.h"
 
+struct Monster;
+
 struct Weapon : public Item
 {
     Weapon(int which);
@@ -23,8 +25,8 @@ const char *short_name(Item *obj);
 //fall: Drop an item someplace around here.
 void fall(Item *obj, bool pr);
 
-//projectile_hit: Does the projectile hit the monster?
-int projectile_hit(Coord p, Item *obj);
+//projectile_hit: Does the projectile hit the monster?  Returns pointer to monster that may have been invalidated.  //todo:nix return value
+Monster* projectile_hit(Coord p, Item *obj);
 
 //num: Figure out the plus number for armor/weapons
 char *num(int n1, int n2, char type);

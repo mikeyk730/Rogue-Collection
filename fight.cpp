@@ -40,60 +40,61 @@ char tbuf[MAXSTR];
 const char* it = "it";
 const char* you = "you";
 
-void do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
+void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
 {
-  bool did_huh = false;
+    bool did_confuse = false;
 
-  if (thrown) 
-    display_throw_msg(weapon, name, "hits", "hit");
-  else 
-    display_hit_msg(NULL, name);
+    if (thrown)
+        display_throw_msg(weapon, name, "hits", "hit");
+    else
+        display_hit_msg(NULL, name);
 
-  if (weapon && weapon->type==POTION)
-  {
-    affect_monster(weapon, monster);
-    if (!thrown)
+    if (weapon && weapon->type == POTION)
     {
-      if (--weapon->count == 0) {
-        game->hero().pack.remove(weapon);
-        delete weapon;
-      }
-      set_current_weapon(NULL);
+        affect_monster(weapon, monster);
+        if (!thrown)
+        {
+            if (--weapon->count == 0) {
+                pack.remove(weapon);
+                delete weapon;
+            }
+            set_current_weapon(NULL);
+        }
     }
-  }
 
-  if (game->hero().can_confuse())
-  {
-    did_huh = true;
-    monster->set_confused(true);
-    game->hero().set_can_confuse(false);
-    msg("your hands stop glowing red");
-  }
+    if (can_confuse())
+    {
+        did_confuse = true;
+        monster->set_confused(true);
+        set_can_confuse(false);
+        msg("your hands stop glowing red");
+    }
 
-  if (monster->get_hp() <= 0)
-    killed(monster, true);
-  else if (did_huh && !game->hero().is_blind()) 
-    msg("the %s appears confused", name);
+    if (monster->get_hp() <= 0)
+        killed(monster, true);
+    else if (did_confuse && !is_blind())
+        msg("the %s appears confused", name);
 }
 
-void do_miss(Item* weapon, int thrown, Agent* monster, const char* name)
+void Hero::do_miss(Item* weapon, int thrown, Monster* monster, const char* name)
 {
   if (thrown)
     display_throw_msg(weapon, name, "misses", "missed");
   else
     display_miss_msg(NULL, name);
+
   if (monster->can_divide() && rnd(100)>25)
     slime_split(monster);
 }
 
 //fight: The player attacks the monster.
-int Hero::fight(Coord *location, Item *weapon, bool thrown)
+Monster* Hero::fight(Coord *location, Item *weapon, bool thrown)
 {
     std::string name;
     //Find the monster we want to fight
     Monster* monster = game->level().monster_at(*location);
     if (!monster)
-        return false;
+        return 0;
 
     //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
     repeat_cmd_count = 0;
@@ -105,19 +106,19 @@ int Hero::fight(Coord *location, Item *weapon, bool thrown)
     {
         monster->disguise = monster->type;
         if (thrown)
-            return false;
+            return 0;
         msg("wait! That's a %s!", monster->get_name().c_str());
     }
     name = this->is_blind() ? it : monster->get_name();
 
-    if (game->hero().roll_attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))
+    if (roll_attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))
     {
         do_hit(weapon, thrown, monster, name.c_str());
-        return true;
+        return monster;
     }
 
     do_miss(weapon, thrown, monster, name.c_str());
-    return false;
+    return 0;
 }
 
 bool aquator_attack()
@@ -243,77 +244,78 @@ bool vampire_wraith_attack(Agent* monster)
 }
 
 //attack: The monster attacks the player
-bool Monster::attack_player()
+Monster* Monster::attack_player()
 {
-  std::string name;
-  int monster_died = false;
-  bool attack_success = false; // todo:set this everywhere
+    std::string name;
+    bool attack_success = false; // todo:set this everywhere
 
-  //Since this is an attack, stop running and any healing that was going on at the time.
-  game->modifiers.m_running = false;
-  repeat_cmd_count = game->turns_since_heal = 0;
-  if (is_disguised() && !game->hero().is_blind()) 
-    disguise = type;
-  name = game->hero().is_blind() ? it : get_name();
-  if (roll_attack(&game->hero(), NULL, false))
-  {
-      display_hit_msg(name.c_str(), NULL);
-      if (game->hero().get_hp() <= 0)
-          death(type); //Bye bye life ...
+    //Since this is an attack, stop running and any healing that was going on at the time.
+    game->modifiers.m_running = false;
+    repeat_cmd_count = game->turns_since_heal = 0;
 
-      //todo: modify code, so enemy can have more than one power
-      if (!powers_cancelled()) {
-          if (hold_attacks())
-          {
-              flytrap_attack(this);
-          }
-          else if (shoots_ice())
-          {
-              ice_monster_attack();
-          }
-          else if (rusts_armor())
-          {
-              attack_success = aquator_attack();
-          }
-          else if (steals_gold())
-          {
-              attack_success = leprechaun_attack(this);
-          }
-          else if (steals_magic())
-          {
-              attack_success = nymph_attack(this);
-          }
-          else if (drains_strength())
-          {
-              attack_success = rattlesnake_attack();
-          }
-          else if (drains_life() || drains_exp())
-          {
-              attack_success = vampire_wraith_attack(this);
-          }
+    if (is_disguised() && !game->hero().is_blind())
+        disguise = type;
+    name = game->hero().is_blind() ? it : get_name();
 
-          if (attack_success && dies_from_attack())
-          {
-              monster_died = true;
-              remove_monster(this, false);
-          }
-      }
-  }
-  else if (!shoots_ice())
-  {
-      if (hold_attacks())
-      {
-          if (!game->hero().decrease_hp(value, true))
-              death(type); //Bye bye life ...
-      }
-      display_miss_msg(name.c_str(), NULL);
-  }
+    if (roll_attack(&game->hero(), NULL, false))
+    {
+        display_hit_msg(name.c_str(), NULL);
+        if (game->hero().get_hp() <= 0)
+            death(type); //Bye bye life ...
 
-  clear_typeahead_buffer();
-  repeat_cmd_count = 0;
-  status();
+        //todo: modify code, so enemy can have more than one power
+        if (!powers_cancelled()) {
+            if (hold_attacks())
+            {
+                flytrap_attack(this);
+            }
+            else if (shoots_ice())
+            {
+                ice_monster_attack();
+            }
+            else if (rusts_armor())
+            {
+                attack_success = aquator_attack();
+            }
+            else if (steals_gold())
+            {
+                attack_success = leprechaun_attack(this);
+            }
+            else if (steals_magic())
+            {
+                attack_success = nymph_attack(this);
+            }
+            else if (drains_strength())
+            {
+                attack_success = rattlesnake_attack();
+            }
+            else if (drains_life() || drains_exp())
+            {
+                attack_success = vampire_wraith_attack(this);
+            }
 
-  return !monster_died;
+            if (attack_success && dies_from_attack())
+            {
+                remove_monster(this, false);
+                return this;
+            }
+        }
+    }
+    else if (!shoots_ice())
+    {
+        if (hold_attacks())
+        {
+            if (!game->hero().decrease_hp(value, true))
+                death(type); //Bye bye life ...
+        }
+        display_miss_msg(name.c_str(), NULL);
+    }
+
+    clear_typeahead_buffer();
+    repeat_cmd_count = 0;
+    status();
+
+    return 0;
 }
 
 //attempt_swing: Returns true if the swing hits
@@ -325,31 +327,35 @@ bool attempt_swing(int lvl, int defender_amr, int hplus)
     bool hit(got >= need);
     
     std::ostringstream ss;
-    ss << std::left << std::setw(5) << (hit ? "Hit " : "Miss ")
-        << got << " (roll:" << roll << "+hplus:" << hplus << ") " 
-        << need << " (20-lvl:" << lvl << "-amr:" << defender_amr << ")";
+    ss << (hit ? "HIT: " : "MISS: ") << got << " ? " << need
+        << " (1d20=" << roll << " + hplus=" << hplus << ") ? (20 - lvl=" << lvl << " - amr=" << defender_amr << ")";
     game->log("battle", ss.str());
 
     return hit;
 }
 
 //roll_attack: Roll several attacks
-bool Agent::roll_attack(Agent *the_defender, Item *weapon, bool hurl)
+bool Agent::roll_attack(Agent *defender, Item *weapon, bool hurl)
 {
     std::string damage_string;
     int hplus;
     int dplus;
-    calculate_roll_stats(the_defender, weapon, hurl, &hplus, &damage_string, &dplus);
+    calculate_roll_stats(defender, weapon, hurl, &hplus, &damage_string, &dplus);
 
     //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
-    if (!the_defender->is_running())
+    if (!defender->is_running())
         hplus += 4;
 
-    int defender_armor = the_defender->calculate_armor();
+    int defender_armor = defender->calculate_armor();
+
+    std::ostringstream ss;
+    ss << get_name() << "[hp=" << get_hp() << "] " << damage_string << " attack on " 
+        << defender->get_name() << "[hp=" << defender->get_hp() << "]";
+    game->log("battle", ss.str());
 
     bool did_hit = false;
     const char* cp = damage_string.c_str();
-    for (int i = 0; ; ++i)
+    for (;;)
     {
         int ndice = atoi(cp);
         if ((cp = strchr(cp, 'd')) == NULL) 
@@ -357,16 +363,24 @@ bool Agent::roll_attack(Agent *the_defender, Item *weapon, bool hurl)
         int nsides = atoi(++cp);
         if (attempt_swing(stats.level, defender_armor, hplus + str_plus(calculate_strength())))
         {
-            int proll;
-
-            proll = roll(ndice, nsides);
-            int damage = dplus + proll + add_dam(calculate_strength());
-            //special goodies for the commercial version of rogue
-            //make it easier on level one
-            if (the_defender == &game->hero() && max_level() == 1)
-                damage = (damage + 1) / 2;
-            the_defender->decrease_hp(max(0, damage), true);
             did_hit = true;
+
+            int r = roll(ndice, nsides);
+            int str_bonus = add_dam(calculate_strength());
+            int damage = dplus + r + str_bonus;
+
+            bool half_damage(defender == &game->hero() && max_level() == 1); //make it easier on level one
+            if (half_damage) {
+                damage = (damage + 1) / 2;
+            }
+            damage = max(0, damage);
+            defender->decrease_hp(damage, true);
+
+            std::ostringstream ss;
+            ss << "damage=" << damage << " => " << defender->get_name() << "[hp=" << defender->get_hp() << "]: ("
+                << damage_string << "=" << r << " + dplus=" << dplus << " + str_plus=" << str_bonus << ")" 
+                << (half_damage ? "/2" : "");
+            game->log("battle", ss.str());
         }
         if ((cp = strchr(cp, '/')) == NULL) break;
         cp++;
