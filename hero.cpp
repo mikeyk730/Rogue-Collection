@@ -752,4 +752,18 @@ no_ring:
     return;
 }
 
+//take_off: Get the armor off of the player's back
+void Hero::take_off()
+{
+    Item *obj;
 
+    if ((obj = get_current_armor()) == NULL)
+    {
+        counts_as_turn = false;
+        msg("you aren't wearing any armor");
+        return;
+    }
+    if (!can_drop(get_current_armor())) return;
+    set_current_armor(NULL);
+    msg("you used to be wearing %c) %s", pack_char(obj), obj->inv_name(true));
+}

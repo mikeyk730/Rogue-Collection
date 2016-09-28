@@ -92,6 +92,13 @@ public:
     void set_current_armor(Item* item);
     void set_ring(int hand, Item* item);
 
+    //take_off: Get the armor off of the player's back
+    void take_off();
+
+    //ring_off: Take off a ring
+    void ring_off();
+
+
 private:
 
     int m_purse = 0;

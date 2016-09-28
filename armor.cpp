@@ -103,22 +103,6 @@ void wear()
   msg("you are now wearing %s", sp);
 }
 
-//take_off: Get the armor off of the player's back
-void take_off()
-{
-  Item *obj;
-
-  if ((obj = game->hero().get_current_armor())==NULL)
-  {
-    counts_as_turn = false;
-    msg("you aren't wearing any armor");
-    return;
-  }
-  if (!can_drop(game->hero().get_current_armor())) return;
-  game->hero().set_current_armor(NULL);
-  msg("you used to be wearing %c) %s", pack_char(obj), obj->inv_name(true));
-}
-
 //waste_time: Do nothing but let other things happen
 void waste_time()
 {

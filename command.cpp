@@ -1,6 +1,7 @@
 //Read and execute the user commands
 //command.c   1.44    (A.I. Design)   2/14/85
 
+#include <ctype.h>
 #include "rogue.h"
 #include "game_state.h"
 #include "daemons.h"
@@ -27,8 +28,6 @@
 #include "level.h"
 #include "food.h"
 #include "hero.h"
-
-#include <ctype.h>
 
 static int lastcount;
 static byte lastch, do_take, lasttake;
@@ -245,13 +244,13 @@ void execcom()
         wear(); 
         break;
     case 'T': 
-        take_off();
+        game->hero().take_off();
         break;
     case 'P':
         ring_on();
         break;
     case 'R': 
-        ring_off();
+        game->hero().ring_off();
         break;
     case 'c':
         counts_as_turn = false; 

@@ -14,9 +14,6 @@ Item* create_ring();
 //ring_on: Put a ring on a hand
 void ring_on();
 
-//ring_off: Take off a ring
-void ring_off();
-
 //gethand: Which hand is the hero interested in?
 int gethand();
 

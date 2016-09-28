@@ -113,27 +113,26 @@ void ring_on()
 }
 
 //ring_off: Take off a ring
-void ring_off()
+void Hero::ring_off()
 {
   int ring;
-  Item *obj;
-  char packchar;
-
-  if (game->hero().get_ring(LEFT)==NULL && game->hero().get_ring(RIGHT)==NULL) {
+  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {
       msg("you aren't wearing any rings");
       counts_as_turn = false;
       return;
   }
-  else if (game->hero().get_ring(LEFT)==NULL) 
+  else if (get_ring(LEFT)==NULL) 
       ring = RIGHT;
-  else if (game->hero().get_ring(RIGHT)==NULL)
+  else if (get_ring(RIGHT)==NULL)
       ring = LEFT;
   else if ((ring = gethand())<0) return;
   msg_position = 0;
-  obj = game->hero().get_ring(ring);
+  Item* obj = game->hero().get_ring(ring);
   if (obj==NULL) {msg("not wearing such a ring"); counts_as_turn = false; return;}
-  packchar = pack_char(obj);
-  if (can_drop(obj)) msg("was wearing %s(%c)", obj->inv_name(true), packchar);
+  
+  char packchar = pack_char(obj);
+  if (can_drop(obj))
+      msg("was wearing %s(%c)", obj->inv_name(true), packchar);
 }
 
 //gethand: Which hand is the hero interested in?
