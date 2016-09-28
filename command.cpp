@@ -84,8 +84,7 @@ int com_char()
 {
     int ch;
     ch = readchar();
-    if (game->msg_position && !game->modifiers.is_running())
-        msg("");
+    clear_msg();
     return translate_command(ch);
 }
 

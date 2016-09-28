@@ -97,6 +97,11 @@ void msg(const char *format, ...)
     endmsg();
 }
 
+void clear_msg()
+{
+    msg("");
+}
+
 //addmsg: Add things to the current message
 void addmsg(const char *format, ...)
 {

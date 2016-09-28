@@ -11,6 +11,7 @@ void ifterse(const char *tfmt, const char *fmt, ...);
 
 void reset_msg_position();
 void msg(const char *fmt, ...);
+void clear_msg();
 
 //addmsg: Add things to the current message
 void addmsg(const char *fmt, ...);
