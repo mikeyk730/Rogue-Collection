@@ -163,7 +163,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     monster->disguise = type;
     monster->pos = *position;
     monster->oldch = MDK;
-    monster->room = get_room_from_position(position);
+    monster->room = get_room_from_position(*position);
     monster->flags = defaults->flags;
     monster->exflags = defaults->exflags;
     monster->stats = defaults->stats;

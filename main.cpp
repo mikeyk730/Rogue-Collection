@@ -135,7 +135,7 @@ void playit(char *sname)
     }
     else {
         oldpos = game->hero().pos;
-        oldrp = get_room_from_position(&game->hero().pos);
+        oldrp = get_room_from_position(game->hero().pos);
     }
 
     while (true)

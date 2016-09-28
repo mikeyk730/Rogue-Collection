@@ -331,7 +331,7 @@ std::string Item::name() const
 
 Room* Item::get_room()
 {
-    return get_room_from_position(&pos);
+    return get_room_from_position(pos);
 }
 
 void Item::vorpalize()

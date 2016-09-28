@@ -86,9 +86,9 @@ void do_move_stuff(int fl)
 {
     game->level().draw_char(game->hero().pos);
     if ((fl&F_PASS) && (game->level().get_tile(oldpos) == DOOR || (game->level().get_flags(oldpos)&F_MAZE)))
-        leave_room(&new_position);
+        leave_room(new_position);
     if ((fl&F_MAZE) && (game->level().get_flags(oldpos)&F_MAZE) == 0)
-        enter_room(&new_position);
+        enter_room(new_position);
     game->hero().pos = new_position;
 }
 
@@ -185,12 +185,12 @@ void do_move2()
         case DOOR:
             game->modifiers.m_running = false;
             if (game->level().get_flags(game->hero().pos)&F_PASS)
-                enter_room(&new_position);
+                enter_room(new_position);
             do_move_stuff(fl);
             return;
 
         case TRAP:
-            ch = be_trapped(&new_position);
+            ch = handle_trap(new_position);
             if (ch == T_DOOR || ch == T_TELEP)
                 return;
 
@@ -200,7 +200,7 @@ void do_move2()
 
         case FLOOR:
             if (!(fl&F_REAL))
-                be_trapped(&game->hero().pos);
+                handle_trap(game->hero().pos);
             do_move_stuff(fl);
             return;
 
@@ -241,15 +241,15 @@ void door_open(Room *room)
             }
 }
 
-//be_trapped: The guy stepped on a trap.... Make him pay.
-int be_trapped(Coord *tc)
+//handle_trap: The guy stepped on a trap.... Make him pay.
+int handle_trap(Coord tc)
 {
     byte tr;
     const int COLS = game->screen().columns();
 
     repeat_cmd_count = game->modifiers.m_running = false;
-    game->level().set_tile(*tc, TRAP);
-    tr = game->level().get_trap_type(*tc);
+    game->level().set_tile(tc, TRAP);
+    tr = game->level().get_trap_type(tc);
     was_trapped = 1;
     switch (tr)
     {
@@ -295,7 +295,7 @@ int be_trapped(Coord *tc)
 
     case T_TELEP:
         game->hero().teleport();
-        game->screen().mvaddch(*tc, TRAP); //since the hero's leaving, look() won't put it on for us
+        game->screen().mvaddch(tc, TRAP); //since the hero's leaving, look() won't put it on for us
         was_trapped++;//todo:look at this
         break;
 

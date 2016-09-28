@@ -159,7 +159,7 @@ Monster* Monster::do_chase()
     //Find room of the target
     Room* destination_room = game->hero().room;
     if (dest != &game->hero().pos)
-        destination_room = get_room_from_position(dest);
+        destination_room = get_room_from_position(*dest);
     if (destination_room == NULL)
         return 0;
 
@@ -256,7 +256,7 @@ over:
     oroom = this->room;
     if (!equal(ch_ret, this->pos))
     {
-        if ((this->room = get_room_from_position(&ch_ret)) == NULL) {
+        if ((this->room = get_room_from_position(ch_ret)) == NULL) {
             this->room = oroom;
             return 0;
         }

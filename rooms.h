@@ -11,17 +11,17 @@ void vert(struct Room *room, int startx);
 void horiz(struct Room *room, int starty);
 
 //rnd_pos: Pick a random spot in a room
-void rnd_pos(struct Room *room, Coord *cp);
+void rnd_pos(struct Room *room, Coord* cp);
 
 //enter_room: Code that is executed whenever you appear in a room
-void enter_room(Coord *cp);
+void enter_room(Coord cp);
 
 //leave_room: Code for when we exit a room
-void leave_room(Coord *cp);
+void leave_room(Coord cp);
 
 Room* rnd_room();
 
 //get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
-Room* get_room_from_position(Coord *cp);
+Room* get_room_from_position(Coord cp);
 
 void find_empty_location(Coord* c, int consider_monsters);

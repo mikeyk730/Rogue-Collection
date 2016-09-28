@@ -178,7 +178,7 @@ void rnd_pos(struct Room *room, Coord *cp)
 }
 
 //enter_room: Code that is executed whenever you appear in a room
-void enter_room(Coord *cp)
+void enter_room(Coord cp)
 {
     struct Room *room;
     int y, x;
@@ -210,14 +210,14 @@ void enter_room(Coord *cp)
 }
 
 //leave_room: Code for when we exit a room
-void leave_room(Coord *cp)
+void leave_room(Coord cp)
 {
     int y, x;
     struct Room *room;
     byte ch;
 
     room = game->hero().room;
-    game->hero().room = game->level().get_passage(*cp);
+    game->hero().room = game->level().get_passage(cp);
 
     byte floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
     if (room->is_maze())
@@ -259,21 +259,21 @@ void leave_room(Coord *cp)
 }
 
 //get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
-Room* get_room_from_position(Coord *pos)
+Room* get_room_from_position(Coord pos)
 {
     struct Room *room;
 
     for (room = rooms; room <= &rooms[MAXROOMS - 1]; room++)
-        if (pos->x < room->pos.x + room->size.x &&
-            room->pos.x <= pos->x &&
-            pos->y < room->pos.y + room->size.y
-            && room->pos.y <= pos->y)
+        if (pos.x < room->pos.x + room->size.x &&
+            room->pos.x <= pos.x &&
+            pos.y < room->pos.y + room->size.y
+            && room->pos.y <= pos.y)
             return room;
 
-    if (game->level().is_passage(*pos))
-        return game->level().get_passage(*pos);
+    if (game->level().is_passage(pos))
+        return game->level().get_passage(pos);
 
-    debug("in some bizarre place (%d, %d)", pos->y, pos->x);
+    debug("in some bizarre place (%d, %d)", pos.y, pos.x);
     invalid_position = true;
     return NULL;
 }

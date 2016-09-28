@@ -305,9 +305,9 @@ void Hero::teleport()
         rnd_pos(rm, &c);
     } while (!(step_ok(game->level().get_tile_or_monster(c))));
     if (rm != room) {
-        leave_room(&pos);
+        leave_room(pos);
         pos = c;
-        enter_room(&pos);
+        enter_room(pos);
     }
     else { pos = c; look(true); }
     game->screen().mvaddch(pos, PLAYER);
@@ -413,7 +413,7 @@ int Hero::can_see(Coord p)
     if (distance(p, pos) < LAMP_DIST)
         return true;
     //if the coordinate is in the same room as the hero, and the room is lit
-    return (room == get_room_from_position(&p) && !room->is_dark());
+    return (room == get_room_from_position(p) && !room->is_dark());
 }
 
 void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)

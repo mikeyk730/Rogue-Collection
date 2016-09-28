@@ -203,7 +203,7 @@ void Level::new_level(int do_implode)
     msg_position = 0;  //todo: rest probably belongs somewhere else
     //unhold when you go down just in case
     game->hero().set_is_held(false);
-    enter_room(&game->hero().pos);
+    enter_room(game->hero().pos);
     game->screen().mvaddch(game->hero().pos, PLAYER);
     oldpos = game->hero().pos;
     oldrp = game->hero().room;

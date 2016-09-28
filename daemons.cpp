@@ -96,7 +96,7 @@ void sight()
         extinguish(sight);
         game->hero().set_blind(false);
         if (!game->hero().room->is_gone())
-            enter_room(&game->hero().pos);
+            enter_room(game->hero().pos);
         msg("the veil of darkness lifts");
     }
 }

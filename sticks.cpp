@@ -180,7 +180,7 @@ void zap_light()
     {
         game->hero().room->set_dark(false);
         //Light the room and put the player back up
-        enter_room(&game->hero().pos);
+        enter_room(game->hero().pos);
     }
 }
 
