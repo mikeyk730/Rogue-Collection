@@ -119,3 +119,10 @@ bool Monster::is_seeking(Item * obj)
 {
     return dest == &obj->pos;
 }
+
+//give_pack: Give a pack to a monster if it deserves one
+void Monster::give_pack()
+{
+    if (rnd(100) < this->get_carry_probability())
+        this->pack.push_front(Item::CreateItem());
+}

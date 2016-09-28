@@ -261,13 +261,6 @@ Monster *wake_monster(Coord p)
   return monster;
 }
 
-//give_pack: Give a pack to a monster if it deserves one
-void Monster::give_pack()
-{
-    if (rnd(100) < this->get_carry_probability())
-        this->pack.push_front(create_item());
-}
-
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon
 char pick_vorpal_monster()
 {

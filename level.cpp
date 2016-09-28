@@ -246,7 +246,7 @@ void Level::clear_level()
             if (rnd(100)<35)
             {
                 //Pick a new object and link it in the list
-                Item* cur = create_item();
+                Item* cur = Item::CreateItem();
                 items.push_front(cur);
                 //Put it somewhere
                 find_empty_location(&tp, false);
@@ -275,7 +275,7 @@ void Level::clear_level()
             do {
                 rnd_pos(room, &pos);
             } while (!isfloor(get_tile(pos)));
-            item = create_item();
+            item = Item::CreateItem();
             item->pos = pos;
             items.push_front(item);
             set_tile(pos, item->type);

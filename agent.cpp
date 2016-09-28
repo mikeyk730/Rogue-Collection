@@ -6,6 +6,7 @@
 #include "game_state.h"
 #include "hero.h"
 #include "level.h"
+#include "item.h"
 
 bool Agent::is_flag_set(short flag) const {
     return ((flags & flag) != 0);
@@ -86,6 +87,58 @@ bool Agent::powers_cancelled() const {
     return is_flag_set(IS_CANC);
 }
 
+void Agent::set_invisible(bool enable) {
+    set_flag(IS_INVIS, enable);
+}
+
+void Agent::set_found(bool enable) {
+    set_flag(IS_FOUND, enable);
+}
+
+void Agent::set_confused(bool enable) {
+    set_flag(IS_HUH, enable);
+}
+
+void Agent::set_running(bool enable) {
+    set_flag(IS_RUN, enable);
+}
+
+void Agent::set_is_held(bool enable) {
+    set_flag(IS_HELD, enable);
+}
+
+void Agent::set_is_slow(bool enable) {
+    set_flag(IS_SLOW, enable);
+}
+
+void Agent::set_is_fast(bool enable) {
+    set_flag(IS_HASTE, enable);
+}
+
+void Agent::set_can_confuse(bool enable) {
+    set_flag(CAN_HUH, enable);
+}
+
+void Agent::set_cancelled(bool enable) {
+    set_flag(IS_CANC, enable);
+}
+
+void Agent::set_blind(bool enable) {
+    set_flag(IS_BLIND, enable);
+}
+
+void Agent::set_sees_invisible(bool enable) {
+    set_flag(CAN_SEE, enable);
+}
+
+void Agent::set_detects_others(bool enable) {
+    set_flag(SEE_MONST, enable);
+}
+
+void Agent::set_is_mean(bool enable) {
+    set_flag(IS_MEAN, enable);
+}
+
 void Agent::calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
     int* hit_plus, std::string* damage_string, int* damage_plus)
 {
@@ -149,58 +202,6 @@ std::string Agent::damage_string() const
     return stats.damage;
 }
 
-void Agent::set_invisible(bool enable) {
-    set_flag(IS_INVIS, enable);
-}
-
-void Agent::set_found(bool enable) {
-    set_flag(IS_FOUND, enable);
-}
-
-void Agent::set_confused(bool enable) {
-    set_flag(IS_HUH, enable);
-}
-
-void Agent::set_running(bool enable) {
-    set_flag(IS_RUN, enable);
-}
-
-void Agent::set_is_held(bool enable) {
-    set_flag(IS_HELD, enable);
-}
-
-void Agent::set_is_slow(bool enable) {
-    set_flag(IS_SLOW, enable);
-}
-
-void Agent::set_is_fast(bool enable) {
-    set_flag(IS_HASTE, enable);
-}
-
-void Agent::set_can_confuse(bool enable) {
-    set_flag(CAN_HUH, enable);
-}
-
-void Agent::set_cancelled(bool enable) {
-    set_flag(IS_CANC, enable);
-}
-
-void Agent::set_blind(bool enable) {
-    set_flag(IS_BLIND, enable);
-}
-
-void Agent::set_sees_invisible(bool enable) {
-    set_flag(CAN_SEE, enable);
-}
-
-void Agent::set_detects_others(bool enable) {
-    set_flag(SEE_MONST, enable);
-}
-
-void Agent::set_is_mean(bool enable) {
-    set_flag(IS_MEAN, enable);
-}
-
 int Agent::get_hp() const {
     return stats.hp;
 }
@@ -246,6 +247,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
     calculate_roll_stats(defender, weapon, hurl, &hplus, &damage_string, &dplus);
 
     //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
+    //MDK: the hero never has IS_RUN set, so Monsters always get this +4.  Is this intended?
     if (!defender->is_running())
         hplus += 4;
 
@@ -289,4 +291,14 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
         cp++;
     }
     return did_hit;
+}
+
+bool Agent::in_same_room_as(Agent* other)
+{
+    return room == other->room;
+}
+
+bool Agent::in_same_room_as(Item * obj)
+{
+    return room == obj->get_room();
 }

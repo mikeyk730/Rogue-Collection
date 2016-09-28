@@ -186,7 +186,7 @@ bool can_drop(Item *op)
 }
 
 //new_thing: Return a new thing
-Item *create_item()
+Item* Item::CreateItem()
 {
   //Decide what kind of object it will be. If we haven't had food for a while, let it be food.
   switch (game->no_food > 3 ? 2 : pick_one(things, NUMTHINGS))

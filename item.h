@@ -75,6 +75,8 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 
 struct Item
 {
+    static Item* CreateItem();
+
 protected:
     Item(int type, int which);
 public:
