@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     bool replay = true;
     //replay = false;
 
-    std::ifstream infile("crash.sav", std::ios::binary | std::ios::in);
+    std::ifstream infile("tests\\frost_kills_ice_monster.sav", std::ios::binary | std::ios::in);
     if (replay && infile) {
         game = new GameState(g_random, infile);
     }

@@ -506,6 +506,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
     struct { Coord s_pos; byte s_under; } spotpos[BOLT_LENGTH * 2];
     bool is_frost(name == "frost");
     bool is_flame(name == "flame");
+    Monster* victim = 0;
 
     Item* bolt = new Weapon(FLAME, 30, 0);
     bolt->set_name(name);
@@ -553,9 +554,9 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
                         msg("the flame bounces off the %s", monster->get_name().c_str());
                     else
                     {
+                        victim = projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
                         if (game->screen().mvinch(pos.y, pos.x) != dirch)
                             spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
-                        return projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
                     }
                 }
                 else if (!monster->is_disguised())
@@ -606,7 +607,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
         if (spotpos[j].s_under)
             game->screen().mvaddch(spotpos[j].s_pos, spotpos[j].s_under);
     }
-    return 0;
+    return victim;
 }
 
 //charge_str: Return an appropriate string for a wand charge
