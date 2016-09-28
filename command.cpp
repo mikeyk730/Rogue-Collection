@@ -29,8 +29,7 @@
 #include "food.h"
 #include "hero.h"
 
-static int lastcount;
-static byte lastch, can_pickup_this_turn, lasttake;
+static byte can_pickup_this_turn; //todo:eliminate
 
 void command()
 {
@@ -97,12 +96,12 @@ int read_command()
     repeat_last_action = false;
 
     --repeat_cmd_count;
-    if (repeat_cmd_count || lastcount)
+    if (repeat_cmd_count || game->last_turn.count)
         show_count();
 
     if (repeat_cmd_count > 0) {
-        can_pickup_this_turn = lasttake;
-        command = lastch;
+        can_pickup_this_turn = game->last_turn.could_pickup;
+        command = game->last_turn.command;
         game->modifiers.m_fast_mode = false;
     }
     else
@@ -110,7 +109,7 @@ int read_command()
         repeat_cmd_count = 0;
         if (game->modifiers.is_running()) {
             command = run_character;
-            can_pickup_this_turn = lasttake;
+            can_pickup_this_turn = game->last_turn.could_pickup;
         }
         else
         {
@@ -135,9 +134,9 @@ int read_command()
                     can_pickup_this_turn = false;
                     break;
                 case 'a': //a: repeat last command
-                    command = lastch;
-                    repeat_cmd_count = lastcount;
-                    can_pickup_this_turn = lasttake;
+                    command = game->last_turn.command;
+                    repeat_cmd_count = game->last_turn.count;
+                    can_pickup_this_turn = game->last_turn.could_pickup;
                     repeat_last_action = true;
                     break;
                 case ' ':
@@ -176,9 +175,9 @@ int read_command()
         repeat_cmd_count = 0;
     }
 
-    lastcount = repeat_cmd_count;
-    lastch = command;
-    lasttake = can_pickup_this_turn;
+    game->last_turn.count = repeat_cmd_count;
+    game->last_turn.command = command;
+    game->last_turn.could_pickup = can_pickup_this_turn;
     return command;
 }
 

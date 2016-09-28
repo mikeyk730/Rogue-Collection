@@ -46,17 +46,22 @@ struct GameState
 
     CommandModifiers modifiers;
 
-    struct AgainState
+    struct LastTurnState
     {
-        //state required in order to support 'a' command to repeat last action
+        //State about the last command, needed to support commands like 'a' (repeat last action)
 
-        Coord last_input_direction;     //Direction the player specified for the last throw, zap, etc.
-        Item* last_item_used = nullptr; //Last item used (quaffed, zapped, thrown, dropped, etc.)
-        byte last_item_letter = 0;      //The last letter selected from inventory
+        byte command;             //Last command executed
+        int count;                //Count of last command executed
+        byte could_pickup;        //Could the player pickup items (was 'g' not pressed last turn)
 
-    } again_state;
+        Coord input_direction;     //Direction the player specified for the last throw, zap, etc.
+        Item* item_used = nullptr; //Last item used (quaffed, zapped, thrown, dropped, etc.)
+        byte item_letter = 0;      //The last letter selected from inventory
+
+    } last_turn;
 
 
+    // uncategorized state.  //todo: categorize it.
     int bear_trap_turns = 0;     //Number of turns held in place
     int sleep_timer = 0;         //Number of turns asleep
     int no_food = 0;             //Number of levels without food

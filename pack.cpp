@@ -71,8 +71,8 @@ Item* get_item(const std::string& purpose, int type)
     //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
     if (repeat_last_action && purpose != "identify") {
         byte och = 0;
-        Item* item = pack_obj(game->again_state.last_item_letter, &och);
-        if (item == game->again_state.last_item_used) {
+        Item* item = pack_obj(game->last_turn.item_letter, &och);
+        if (item == game->last_turn.item_used) {
             return item;
         }
     }
@@ -121,8 +121,8 @@ Item* get_item(const std::string& purpose, int type)
         else
         {
             if (purpose != "identify") {
-                game->again_state.last_item_letter = ch;
-                game->again_state.last_item_used = obj;
+                game->last_turn.item_letter = ch;
+                game->last_turn.item_used = obj;
             }
             return obj;
         }

@@ -271,12 +271,12 @@ int get_dir_impl(Coord* delta)
 int get_dir(Coord *delta)
 {
     if (repeat_last_action) {
-        *delta = game->again_state.last_input_direction;
+        *delta = game->last_turn.input_direction;
         return true;
     }
     if (get_dir_impl(delta))
     {
-        game->again_state.last_input_direction = *delta;
+        game->last_turn.input_direction = *delta;
         return true;
     }
     return false;
