@@ -7,9 +7,6 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
-
-using std::max;
-
 #include "rogue.h"
 #include "game_state.h"
 #include "hero.h"
@@ -325,67 +322,13 @@ bool attempt_swing(int lvl, int defender_amr, int hplus)
     int got = roll + hplus;
     int need = (20 - lvl) - defender_amr;
     bool hit(got >= need);
-    
+
     std::ostringstream ss;
     ss << (hit ? "HIT: " : "MISS: ") << got << " ? " << need
         << " (1d20=" << roll << " + hplus=" << hplus << ") ? (20 - lvl=" << lvl << " - amr=" << defender_amr << ")";
     game->log("battle", ss.str());
 
     return hit;
-}
-
-//attack: Roll several attacks
-bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
-{
-    std::string damage_string;
-    int hplus;
-    int dplus;
-    calculate_roll_stats(defender, weapon, hurl, &hplus, &damage_string, &dplus);
-
-    //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
-    if (!defender->is_running())
-        hplus += 4;
-
-    int defender_armor = defender->calculate_armor();
-
-    std::ostringstream ss;
-    ss << get_name() << "[hp=" << get_hp() << "] " << damage_string << " attack on " 
-        << defender->get_name() << "[hp=" << defender->get_hp() << "]";
-    game->log("battle", ss.str());
-
-    bool did_hit = false;
-    const char* cp = damage_string.c_str();
-    for (;;)
-    {
-        int ndice = atoi(cp);
-        if ((cp = strchr(cp, 'd')) == NULL) 
-            break;
-        int nsides = atoi(++cp);
-        if (attempt_swing(stats.level, defender_armor, hplus + str_plus(calculate_strength())))
-        {
-            did_hit = true;
-
-            int r = roll(ndice, nsides);
-            int str_bonus = add_dam(calculate_strength());
-            int damage = dplus + r + str_bonus;
-
-            bool half_damage(defender == &game->hero() && max_level() == 1); //make it easier on level one
-            if (half_damage) {
-                damage = (damage + 1) / 2;
-            }
-            damage = max(0, damage);
-            defender->decrease_hp(damage, true);
-
-            std::ostringstream ss;
-            ss << "damage=" << damage << " => " << defender->get_name() << "[hp=" << defender->get_hp() << "]: ("
-                << damage_string << "=" << r << " + dplus=" << dplus << " + str_plus=" << str_bonus << ")" 
-                << (half_damage ? "/2" : "");
-            game->log("battle", ss.str());
-        }
-        if ((cp = strchr(cp, '/')) == NULL) break;
-        cp++;
-    }
-    return did_hit;
 }
 
 //prname: The print name of a combatant

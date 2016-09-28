@@ -49,7 +49,6 @@ struct Agent
     int level() const;
     std::string damage_string() const;
 
-    //attack: Roll several attacks
     bool attack(Agent *defender, Item *weapon, bool hurl);
 
 

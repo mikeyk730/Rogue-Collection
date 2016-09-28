@@ -1,6 +1,90 @@
+#include <sstream>
+#include <algorithm>
 #include "agent.h"
-#include "rings.h"
-#include "pack.h"
+#include "main.h"
+#include "fight.h"
+#include "game_state.h"
+#include "hero.h"
+#include "level.h"
+
+bool Agent::is_flag_set(short flag) const {
+    return ((flags & flag) != 0);
+}
+
+void Agent::set_flag(short flag, bool enable) {
+    if (enable)
+        flags |= flag;
+    else
+        flags &= ~flag;
+}
+
+bool Agent::is_flying() const {
+    return is_flag_set(IS_FLY);
+}
+
+bool Agent::is_mean() const {
+    return is_flag_set(IS_MEAN);
+}
+
+bool Agent::regenerates_hp() const {
+    return is_flag_set(IS_REGEN);
+}
+
+bool Agent::is_greedy() const {
+    return is_flag_set(IS_GREED);
+}
+
+bool Agent::is_invisible() const {
+    return is_flag_set(IS_INVIS);
+}
+
+bool Agent::is_confused() const {
+    return is_flag_set(IS_HUH);
+}
+
+bool Agent::is_held() const {
+    return is_flag_set(IS_HELD);
+}
+
+bool Agent::is_blind() const {
+    return is_flag_set(IS_BLIND);
+}
+
+bool Agent::is_fast() const
+{
+    return is_flag_set(IS_HASTE);
+}
+
+bool Agent::is_slow() const {
+    return is_flag_set(IS_SLOW);
+}
+
+bool Agent::sees_invisible() const
+{
+    return game->wizard().see_invisible() ||
+        is_flag_set(CAN_SEE);
+}
+
+bool Agent::detects_others() const {
+    return game->wizard().detect_monsters() ||
+        is_flag_set(SEE_MONST);
+}
+
+bool Agent::is_running() const {
+    return is_flag_set(IS_RUN);
+}
+
+bool Agent::is_found() const {
+    return is_flag_set(IS_FOUND);
+}
+
+bool Agent::can_confuse() const {
+    return is_flag_set(CAN_HUH);
+}
+
+bool Agent::powers_cancelled() const {
+    return is_flag_set(IS_CANC);
+}
 
 void Agent::calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
     int* hit_plus, std::string* damage_string, int* damage_plus)
@@ -152,4 +236,57 @@ int Agent::drain_hp() {
 Coord Agent::position() const
 {
     return pos;
+}
+
+bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
+{
+    std::string damage_string;
+    int hplus;
+    int dplus;
+    calculate_roll_stats(defender, weapon, hurl, &hplus, &damage_string, &dplus);
+
+    //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
+    if (!defender->is_running())
+        hplus += 4;
+
+    int defender_armor = defender->calculate_armor();
+
+    std::ostringstream ss;
+    ss << get_name() << "[hp=" << get_hp() << "] " << damage_string << " attack on "
+        << defender->get_name() << "[hp=" << defender->get_hp() << "]";
+    game->log("battle", ss.str());
+
+    bool did_hit = false;
+    const char* cp = damage_string.c_str();
+    for (;;)
+    {
+        int ndice = atoi(cp);
+        if ((cp = strchr(cp, 'd')) == NULL)
+            break;
+        int nsides = atoi(++cp);
+        if (attempt_swing(stats.level, defender_armor, hplus + str_plus(calculate_strength())))
+        {
+            did_hit = true;
+
+            int r = roll(ndice, nsides);
+            int str_bonus = add_dam(calculate_strength());
+            int damage = dplus + r + str_bonus;
+
+            bool half_damage(defender == &game->hero() && max_level() == 1); //make it easier on level one
+            if (half_damage) {
+                damage = (damage + 1) / 2;
+            }
+            damage = std::max(0, damage);
+            defender->decrease_hp(damage, true);
+
+            std::ostringstream ss;
+            ss << "damage=" << damage << " => " << defender->get_name() << "[hp=" << defender->get_hp() << "]: ("
+                << damage_string << "=" << r << " + dplus=" << dplus << " + str_plus=" << str_bonus << ")"
+                << (half_damage ? "/2" : "");
+            game->log("battle", ss.str());
+        }
+        if ((cp = strchr(cp, '/')) == NULL) break;
+        cp++;
+    }
+    return did_hit;
 }
