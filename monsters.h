@@ -2,22 +2,21 @@
 #include <string>
 #include "agent.h"
 
+struct Monster;
+
 const char* get_monster_name(char monster);
 
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
 char randmonster(bool wander, int level);
 
 //expadd: Experience to add for this monster's level/hit points
-int exp_add(Agent *monster);
+int exp_add(Monster *monster);
 
 //create_wandering_monster: Create a new wandering monster and aim it at the player
 void create_wandering_monster();
 
 //wake_monster: What to do when the hero steps next to a monster
 Agent *wake_monster(Coord p);
-
-//give_pack: Give a pack to a monster if it deserves one
-void give_pack(Agent *monster);
 
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon
 char pick_vorpal_monster();

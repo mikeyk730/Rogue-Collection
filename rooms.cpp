@@ -34,7 +34,7 @@ void do_rooms()
 {
   int i;
   struct Room *room;
-  Agent *monster;
+  Monster* monster;
   int left_out;
   Coord top;
   Coord bsze;
@@ -128,7 +128,7 @@ void do_rooms()
           mch = game->level().get_tile_or_monster(mp);
         } while (!isfloor(mch));
         monster = Monster::CreateMonster(randmonster(false, get_level()), &mp, get_level());
-        give_pack(monster);
+        monster->give_pack();
       
     }
   }

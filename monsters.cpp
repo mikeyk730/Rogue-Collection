@@ -291,7 +291,7 @@ const char* get_monster_name(char monster)
   return monsters[monster-'A'].name.c_str();
 }
 
-int Agent::get_monster_carry_prob() const
+int Monster::get_carry_probability() const
 {
     return monsters[type - 'A'].carry;
 }
@@ -366,7 +366,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
 }
 
 //expadd: Experience to add for this monster's level/hit points
-int exp_add(Agent *monster)
+int exp_add(Monster *monster)
 {
   int divisor = (monster->stats.level == 1) ? 8 : 6;
   int value = monster->stats.max_hp / divisor;
@@ -383,7 +383,7 @@ int exp_add(Agent *monster)
 void create_wandering_monster()
 {
   struct Room *room;
-  Agent *monster;
+  Monster* monster;
   Coord cp;
 
   do
@@ -442,10 +442,10 @@ Agent *wake_monster(Coord p)
 }
 
 //give_pack: Give a pack to a monster if it deserves one
-void give_pack(Agent *monster)
+void Monster::give_pack()
 {
-    if (rnd(100) < monster->get_monster_carry_prob())
-        monster->pack.push_front(create_item());
+    if (rnd(100) < this->get_carry_probability())
+        this->pack.push_front(create_item());
 }
 
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon

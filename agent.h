@@ -83,9 +83,6 @@ private:
     void set_flag(short flag, bool enable);
 
 public:
-
-    int get_monster_carry_prob() const;
-
     //special features
     bool is_monster_confused_this_turn() const;
     bool is_stationary() const;
@@ -138,21 +135,6 @@ public:
     void set_detects_others(bool enable);
     void set_is_mean(bool enable);
 
-    void reveal_disguise();
-
-    //slime specific
-    void set_dirty(bool enable);
-    bool is_dirty();
-
-    //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
-    void chase(Coord *chasee_pos);
-
-    //start_run: Set a monster running after something
-    void start_run();
-
-    //find_dest: find the proper destination for the monster
-    Coord *find_dest();
-    void set_destination();
 
     bool in_same_room_as(Agent* other);
 

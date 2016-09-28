@@ -240,17 +240,8 @@ bool Hero::can_see_monster(Agent *monster)
   return true;
 }
 
-//start_run: Set a monster running after something or stop it from running (for when it dies)
-void Agent::start_run()
-{
-  //Start the beastie running
-  set_running(true);
-  set_is_held(false);
-  set_destination();
-}
-
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
-void Agent::chase(Coord *chasee_pos)
+void Monster::chase(Coord *chasee_pos)
 {
   int x, y;
   int dist, thisdist;
@@ -335,12 +326,12 @@ int Hero::can_see(Coord p)
 }
 
 //find_dest: find the proper destination for the monster
-Coord* Agent::find_dest()
+Coord* Monster::find_dest()
 {
     // if we're in the same room as the player, or can see the player, then we go after the player
     // if we have a chance to carry an item, we may go after an unclaimed item in the same room
     int carry_prob;
-    if ((carry_prob = this->get_monster_carry_prob()) <= 0 || this->in_same_room_as(&game->hero()) || game->hero().can_see_monster(this))
+    if ((carry_prob = this->get_carry_probability()) <= 0 || this->in_same_room_as(&game->hero()) || game->hero().can_see_monster(this))
         return &game->hero().pos;
 
     for (auto i = game->level().items.begin(); i != game->level().items.end(); ++i)
@@ -366,7 +357,7 @@ Coord* Agent::find_dest()
     return &game->hero().pos;
 }
 
-void Agent::set_destination()
+void Monster::set_destination()
 {
     dest = find_dest();
 }

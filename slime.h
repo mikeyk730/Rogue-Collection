@@ -1,8 +1,9 @@
 #pragma once
-#include "agent.h"
 
-void slime_split(Agent *monster);
+struct Monster;
 
-int new_slime(Agent *monster);
+void slime_split(Monster* monster);
+
+int new_slime(Monster* monster);
 
 bool plop_monster(int r, int c, Coord *cp);

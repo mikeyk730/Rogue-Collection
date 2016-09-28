@@ -217,7 +217,7 @@ int add_haste(bool potion)
 //aggravate: Aggravate all the monsters on this level
 void aggravate()
 {
-    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Agent *monster){
+    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster *monster){
         monster->start_run();
     });
 }

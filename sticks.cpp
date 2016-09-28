@@ -241,12 +241,12 @@ void zap_polymorph(Monster* monster, Coord p)
     game->screen().mvaddch(p, monster->type);
 }
 
-void zap_cancellation(Agent* monster)
+void zap_cancellation(Monster* monster)
 {
-  monster->set_cancelled(true);
-  monster->set_invisible(false);
-  monster->set_can_confuse(false);
-  monster->reveal_disguise();
+    monster->set_cancelled(true);
+    monster->set_invisible(false);
+    monster->set_can_confuse(false);
+    monster->reveal_disguise();
 }
 
 void zap_teleport(Agent* monster, Coord p, int which)
@@ -339,7 +339,7 @@ void zap_magic_missile()
 void zap_speed_monster(int which)
 {
   int x, y;
-  Agent* monster;
+  Monster* monster;
 
   y = game->hero().pos.y;
   x = game->hero().pos.x;
@@ -499,7 +499,7 @@ void drain()
 Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
 {
     byte dirch, ch;
-    Agent *monster;
+    Monster* monster;
     bool hit_hero, used, changed;
     int i, j;
     Coord pos;

@@ -261,7 +261,7 @@ void Level::clear_level()
     {
         int nm;
         Item *item;
-        Agent *monster;
+        Monster* monster;
         struct Room *room;
         int spots, num_monst;
         Coord pos;
@@ -297,7 +297,7 @@ void Level::clear_level()
                 if (invalid_position)
                     debug("treasure roomm bailout");
                 monster->set_is_mean(true); //no sloughers in THIS room
-                give_pack(monster);
+                monster->give_pack();
 
             }
         }

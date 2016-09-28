@@ -105,18 +105,6 @@ void Agent::set_is_mean(bool enable){
     set_flag(IS_MEAN, enable);
 }
 
-void Agent::reveal_disguise(){
-    disguise = type;
-}
-
-//slime specific
-void Agent::set_dirty(bool enable){
-    value = enable ? 1 : 0;
-}
-bool Agent::is_dirty(){
-    return value == 1;
-}
-
 int Agent::get_hp() const {
     return stats.hp;
 }
