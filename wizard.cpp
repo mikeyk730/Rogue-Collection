@@ -266,8 +266,8 @@ int get_num(short *place)
 Cheats::Cheats()
 {
     //todo: should be empty
-    m_detects_monsters = true;
-    //m_sees_invisible = true;
+    //m_detect_monsters = true;
+    //m_see_invisible = true;
     //m_no_traps = true;
     //m_no_hidden_doors = true;
     //m_no_ring_hunger = true;
@@ -275,9 +275,9 @@ Cheats::Cheats()
     //m_no_dark_rooms = true;
 }
 
-bool Cheats::detects_monsters() const
+bool Cheats::detect_monsters() const
 {
-    return m_detects_monsters;
+    return m_detect_monsters;
 }
 
 bool Cheats::no_dark_rooms() const
@@ -285,9 +285,9 @@ bool Cheats::no_dark_rooms() const
     return m_no_dark_rooms;
 }
 
-bool Cheats::sees_invisible() const
+bool Cheats::see_invisible() const
 {
-    return m_sees_invisible;
+    return m_see_invisible;
 }
 
 bool Cheats::no_hunger() const

@@ -15,7 +15,7 @@ struct Cheats
 {
     Cheats();
 
-    bool detects_monsters() const;
+    bool detect_monsters() const;
     bool no_dark_rooms() const;
     bool slow_monster() const;
     bool haste_self() const;
@@ -28,12 +28,14 @@ struct Cheats
     bool no_ring_hunger() const;
     bool sense_magic() const;
     bool sense_food() const;
-    bool sees_invisible() const;
+    bool see_invisible() const;
+    bool show_food_counter() const;
+    bool free_level_movement() const;
 
 private:
     //todo: replace with set<string>?
-    bool m_detects_monsters = false;
-    bool m_sees_invisible = false;
+    bool m_detect_monsters = false;
+    bool m_see_invisible = false;
     bool m_no_traps = false;
     bool m_no_hidden_doors = false;
     bool m_no_ring_hunger = false;

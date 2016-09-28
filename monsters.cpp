@@ -186,12 +186,12 @@ bool Agent::is_slow() const {
 
 bool Agent::sees_invisible() const
 {
-    return game->wizard().sees_invisible() ||
+    return game->wizard().see_invisible() ||
         is_flag_set(CAN_SEE);
 }
 
 bool Agent::detects_others() const {
-    return game->wizard().detects_monsters() ||
+    return game->wizard().detect_monsters() ||
         is_flag_set(SEE_MONST);
 }
 
