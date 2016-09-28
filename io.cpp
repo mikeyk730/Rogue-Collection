@@ -369,7 +369,7 @@ void backspace()
     game->screen().getrc(&x, &y);
     if (--y < 0) y = 0;
     game->screen().move(x, y);
-    putchar(' ');
+    game->screen().addch(' ');
     game->screen().move(x, y);
 }
 
