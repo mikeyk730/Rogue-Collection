@@ -1,6 +1,8 @@
 #pragma once
 #include "item.h"
 
+struct Agent;
+
 struct Potion : public Item
 {
     Potion(int which);

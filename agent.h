@@ -27,7 +27,7 @@ struct Agent
 {
     virtual std::string get_name() = 0;
 
-    virtual void calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
+    virtual void calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
         int* hit_plus, std::string* damage_string, int* damage_plus);
     virtual int calculate_armor() const;
     int armor_for_display() const;
@@ -66,12 +66,12 @@ struct Agent
     };
 
     Coord pos = { 0, 0 };             //Position
-    char type = 0;                    //What it is
     short flags = 0;                  //State word
     Stats stats;                      //Physical description
     Room *room = 0;                   //Current room for thing
-    bool invunerable = false;
     std::list<Item*> pack;            //What the thing is carrying
+    
+    bool invunerable = false;
 
 private:
     bool is_flag_set(short flag) const;

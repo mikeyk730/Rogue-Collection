@@ -20,6 +20,7 @@
 #include "daemon.h"
 #include "daemons.h"
 #include "mach_dep.h"
+#include "monster.h"
 
 namespace
 {
@@ -33,7 +34,7 @@ Hero::Hero()
     init_player();
 }
 
-void Hero::calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
+void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
     int* hit_plus, std::string* damage_string, int* damage_plus)
 {
     if (weapon == NULL) {
@@ -48,7 +49,7 @@ void Hero::calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
     *damage_plus = weapon->get_damage_plus();
 
     //vorpally enchanted weapon adds +4,+4 against target
-    if (weapon->is_vorpalized_against(the_defender)) {
+    if (weapon->is_vorpalized_against(dynamic_cast<Monster*>(defender))) {
         *hit_plus += 4;
         *damage_plus += 4;
     }

@@ -8,7 +8,7 @@ struct Hero : public Agent
 {
     Hero();
 
-    virtual void calculate_roll_stats(Agent *the_defender, Item *weapon, bool hurl,
+    virtual void calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
         int* hit_plus, std::string* damage_string, int* damage_plus);
     virtual int calculate_armor() const;
 

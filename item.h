@@ -1,7 +1,7 @@
 #pragma once
 #include "rogue.h"
 
-struct Agent;
+struct Monster;
 
 //flags for objects
 const short IS_CURSED = 0x0001; //object is cursed
@@ -164,7 +164,7 @@ public:
     void enchant_weapon();
     void vorpalize();
     bool is_vorpalized() const;
-    bool is_vorpalized_against(Agent* monster) const;
+    bool is_vorpalized_against(Monster* monster) const;
     std::string get_vorpalized_name() const;
     std::string get_throw_damage() const;
     std::string get_damage() const;

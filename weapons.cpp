@@ -316,7 +316,7 @@ bool Item::is_vorpalized() const
     return enemy != 0;
 }
 
-bool Item::is_vorpalized_against(Agent* monster) const
+bool Item::is_vorpalized_against(Monster* monster) const
 {
     if (!monster)
         return false;
