@@ -42,10 +42,11 @@ bool is_gone(Room* rp)
 }
 
 //diag_ok: Check to see if the move is legal if it is diagonal
-int diag_ok(const Coord *sp, const Coord *ep)
+int diag_ok(const Coord sp, const Coord ep)
 {
-    if (ep->x == sp->x || ep->y == sp->y) return true;
-    return (step_ok(game->level().get_tile({ sp->x,ep->y })) && step_ok(game->level().get_tile({ ep->x,sp->y })));
+    if (ep.x == sp.x || ep.y == sp.y)
+        return true;
+    return (step_ok(game->level().get_tile({ sp.x,ep.y })) && step_ok(game->level().get_tile({ ep.x,sp.y })));
 }
 
 void do_move2();
@@ -93,124 +94,130 @@ void do_move_stuff(int fl)
 
 void do_move2()
 {
-    int dy, dx;
-    const int COLS = game->screen().columns();
     byte ch;
     int fl;
 
-over:
-    //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
-    if (offmap(new_position)) 
-        goto hit_bound;
-    if (!diag_ok(&game->hero().pos, &new_position)) {
-        counts_as_turn = false;
-        game->modifiers.m_running = false;
-        return;
-    }
-    //If you are running and the move does not get you anywhere stop running
-    if (game->modifiers.is_running() && equal(game->hero().pos, new_position)) {
-        counts_as_turn = false;
-        game->modifiers.m_running = false;
-    }
-    fl = game->level().get_flags(new_position);
-    ch = game->level().get_tile_or_monster(new_position);
-    //When the hero is on the door do not allow him to run until he enters the room all the way
-    if ((game->level().get_tile(game->hero().pos) == DOOR) && (ch == FLOOR))
-        game->modifiers.m_running = false;
-    if (!(fl&F_REAL) && ch == FLOOR) {
-        ch = TRAP;
-        game->level().set_tile(new_position, TRAP);
-        game->level().set_flag(new_position, F_REAL);
-    }
-    else if (game->hero().is_held() && ch != 'F') { //TODO: remove direct check for F
-        msg("you are being held");
-        return;
-    }
-    switch (ch)
-    {
-    case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-    hit_bound:
-        if (game->modifiers.is_running() && is_gone(game->hero().room) && !game->hero().is_blind())
-        {
-            bool b1, b2;
-
-            switch (run_character)
-            {
-            case 'h': case 'l':
-                b1 = (game->hero().pos.y > 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y - 1 })&F_PASS) || game->level().get_tile({ game->hero().pos.x,game->hero().pos.y - 1 }) == DOOR));
-                b2 = (game->hero().pos.y < maxrow - 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y + 1 })&F_PASS) || game->level().get_tile({ game->hero().pos.x,game->hero().pos.y + 1 }) == DOOR));
-                if (!(b1^b2)) break;
-                if (b1) {
-                    run_character = 'k';
-                    dy = -1;
-                }
-                else {
-                    run_character = 'j';
-                    dy = 1;
-                }
-                dx = 0;
-                new_position.y = game->hero().pos.y + dy;
-                new_position.x = game->hero().pos.x + dx;
-                goto over;
-
-            case 'j': case 'k':
-                b1 = (game->hero().pos.x > 1 && ((game->level().get_flags({ game->hero().pos.x - 1,game->hero().pos.y })&F_PASS) || game->level().get_tile({ game->hero().pos.x - 1,game->hero().pos.y }) == DOOR));
-                b2 = (game->hero().pos.x < COLS - 2 && ((game->level().get_flags({ game->hero().pos.x + 1,game->hero().pos.y })&F_PASS) || game->level().get_tile({ game->hero().pos.x + 1,game->hero().pos.y }) == DOOR));
-                if (!(b1^b2))
-                    break;
-                if (b1) {
-                    run_character = 'h';
-                    dx = -1;
-                }
-                else {
-                    run_character = 'l';
-                    dx = 1;
-                }
-                dy = 0;
-                new_position.y = game->hero().pos.y + dy;
-                new_position.x = game->hero().pos.x + dx;
-                goto over;
-            }
+    bool new_try;
+    do {
+        new_try = false;
+        //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
+        if (offmap(new_position))
+            goto hit_bound;
+        if (!diag_ok(game->hero().pos, new_position)) {
+            counts_as_turn = false;
+            game->modifiers.m_running = false;
+            return;
         }
-        counts_as_turn = false;
-        game->modifiers.m_running = false;
-        break;
+        //If you are running and the move does not get you anywhere stop running
+        if (game->modifiers.is_running() && equal(game->hero().pos, new_position)) {
+            counts_as_turn = false;
+            game->modifiers.m_running = false;
+        }
+        fl = game->level().get_flags(new_position);
+        ch = game->level().get_tile_or_monster(new_position);
+        //When the hero is on the door do not allow him to run until he enters the room all the way
+        if ((game->level().get_tile(game->hero().pos) == DOOR) && (ch == FLOOR))
+            game->modifiers.m_running = false;
+        if (!(fl&F_REAL) && ch == FLOOR) {
+            ch = TRAP;
+            game->level().set_tile(new_position, TRAP);
+            game->level().set_flag(new_position, F_REAL);
+        }
+        else if (game->hero().is_held() && ch != 'F') { //TODO: remove direct check for F
+            msg("you are being held");
+            return;
+        }
+        switch (ch)
+        {
+        case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+        hit_bound:
+            if (game->modifiers.is_running() && is_gone(game->hero().room) && !game->hero().is_blind())
+            {
+                bool b1, b2;
+                int dy, dx;
+                const int COLS = game->screen().columns();
 
-    case DOOR:
-        game->modifiers.m_running = false;
-        if (game->level().get_flags(game->hero().pos)&F_PASS)
-            enter_room(&new_position);
-        do_move_stuff(fl);
-        return;
 
-    case TRAP:
-        ch = be_trapped(&new_position);
-        if (ch == T_DOOR || ch == T_TELEP)
+                switch (run_character)
+                {
+                case 'h': case 'l':
+                    b1 = (game->hero().pos.y > 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y - 1 })&F_PASS) || game->level().get_tile({ game->hero().pos.x,game->hero().pos.y - 1 }) == DOOR));
+                    b2 = (game->hero().pos.y < maxrow - 1 && ((game->level().get_flags({ game->hero().pos.x,game->hero().pos.y + 1 })&F_PASS) || game->level().get_tile({ game->hero().pos.x,game->hero().pos.y + 1 }) == DOOR));
+                    if (!(b1^b2)) break;
+                    if (b1) {
+                        run_character = 'k';
+                        dy = -1;
+                    }
+                    else {
+                        run_character = 'j';
+                        dy = 1;
+                    }
+                    dx = 0;
+                    new_position.y = game->hero().pos.y + dy;
+                    new_position.x = game->hero().pos.x + dx;
+                    new_try = true;
+                    continue;
+
+                case 'j': case 'k':
+                    b1 = (game->hero().pos.x > 1 && ((game->level().get_flags({ game->hero().pos.x - 1,game->hero().pos.y })&F_PASS) || game->level().get_tile({ game->hero().pos.x - 1,game->hero().pos.y }) == DOOR));
+                    b2 = (game->hero().pos.x < COLS - 2 && ((game->level().get_flags({ game->hero().pos.x + 1,game->hero().pos.y })&F_PASS) || game->level().get_tile({ game->hero().pos.x + 1,game->hero().pos.y }) == DOOR));
+                    if (!(b1^b2))
+                        break;
+                    if (b1) {
+                        run_character = 'h';
+                        dx = -1;
+                    }
+                    else {
+                        run_character = 'l';
+                        dx = 1;
+                    }
+                    dy = 0;
+                    new_position.y = game->hero().pos.y + dy;
+                    new_position.x = game->hero().pos.x + dx;
+                    new_try = true;
+                    continue;
+                }
+            }
+            counts_as_turn = false;
+            game->modifiers.m_running = false;
+            break;
+
+        case DOOR:
+            game->modifiers.m_running = false;
+            if (game->level().get_flags(game->hero().pos)&F_PASS)
+                enter_room(&new_position);
+            do_move_stuff(fl);
             return;
 
-    case PASSAGE:
-        do_move_stuff(fl);
-        return;
+        case TRAP:
+            ch = be_trapped(&new_position);
+            if (ch == T_DOOR || ch == T_TELEP)
+                return;
 
-    case FLOOR:
-        if (!(fl&F_REAL))
-            be_trapped(&game->hero().pos);
-        do_move_stuff(fl);
-        return;
-
-    default:
-        game->modifiers.m_running = false;
-        if (isupper(ch) || game->level().monster_at(new_position))
-            game->hero().fight(&new_position, game->hero().get_current_weapon(), false);
-        else
-        {
-            game->modifiers.m_running = false;
-            if (ch != STAIRS) 
-                take = ch;
-        
+        case PASSAGE:
             do_move_stuff(fl);
+            return;
+
+        case FLOOR:
+            if (!(fl&F_REAL))
+                be_trapped(&game->hero().pos);
+            do_move_stuff(fl);
+            return;
+
+        default:
+            game->modifiers.m_running = false;
+            if (isupper(ch) || game->level().monster_at(new_position))
+                game->hero().fight(&new_position, game->hero().get_current_weapon(), false);
+            else
+            {
+                game->modifiers.m_running = false;
+                if (ch != STAIRS)
+                    take = ch;
+
+                do_move_stuff(fl);
+            }
         }
-    }
+    } while (new_try);
 }
 
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
@@ -341,7 +348,7 @@ void rndmove(Agent *who, Coord *newmv)
     if (y == who->pos.y && x == who->pos.x) return;
     if ((y < 1 || y >= maxrow) || (x < 0 || x >= COLS))
         goto bad;
-    else if (!diag_ok(&who->pos, newmv))
+    else if (!diag_ok(who->pos, *newmv))
         goto bad;
     else
     {

@@ -3,7 +3,7 @@
 struct Agent;
 
 //diag_ok: Check to see if the move is legal if it is diagonal
-int diag_ok(const Coord *sp, const Coord *ep);
+int diag_ok(const Coord sp, const Coord ep);
 
 //do_run: Start the hero running
 void do_run(byte ch);

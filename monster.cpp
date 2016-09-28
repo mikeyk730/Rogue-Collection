@@ -322,7 +322,7 @@ void Monster::chase(Coord *chasee_pos)
 
                 try_pos.x = x;
                 try_pos.y = y;
-                if (offmap({ x,y }) || !diag_ok(chaser_pos, &try_pos)) continue;
+                if (offmap({ x,y }) || !diag_ok(*chaser_pos, try_pos)) continue;
                 ch = game->level().get_tile_or_monster({ x,y });
                 if (step_ok(ch))
                 {
