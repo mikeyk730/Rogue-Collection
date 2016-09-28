@@ -144,7 +144,7 @@ bool do_hit_boundary()
     return true;
 }
 
-bool do_move_impl()
+bool do_move_impl(bool can_pickup)
 {
     byte ch;
     int fl;
@@ -210,17 +210,17 @@ bool do_move_impl()
         else
         {
             game->modifiers.m_running = false;
-            if (ch != STAIRS)
-                take = ch;
-
             finish_do_move(fl);
+
+            if (ch != STAIRS && can_pickup)
+                pick_up(ch);
         }
     }
     return false;
 }
 
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
-void do_move(int dy, int dx)
+void do_move(Coord delta, bool can_pickup)
 {
     game->modifiers.m_first_move = false;
 
@@ -244,13 +244,12 @@ void do_move(int dy, int dx)
         rndmove(&game->hero(), &new_position);
     else
     {
-        new_position.y = game->hero().pos.y + dy;
-        new_position.x = game->hero().pos.x + dx;
+        new_position = game->hero().pos + delta;
     }
 
     bool more;
     do {
-        more = do_move_impl();
+        more = do_move_impl(can_pickup);
     } while (more);
 }
 

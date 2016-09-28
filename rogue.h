@@ -183,9 +183,7 @@ extern bool invalid_position;
 extern bool counts_as_turn, again;
 extern int was_trapped;
 
-extern char
-  last_message[], prbuf[], run_character,
-  char_to_pickup;
+extern char last_message[], prbuf[], run_character;
 extern const char* typeahead;
 
 extern int repeat_cmd_count, msg_position;

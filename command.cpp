@@ -202,7 +202,7 @@ void dispatch_command(int ch)
     {
         Coord mv;
         find_dir(ch, &mv);
-        do_move(mv.y, mv.x);
+        do_move(mv, can_pickup_this_turn);
         break;
     }
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
@@ -386,12 +386,10 @@ void execcom()
     do
     {
         counts_as_turn = true;
+
         int ch = read_command();
         dispatch_command(ch);
 
-        if (take && can_pickup_this_turn)
-            pick_up(take);
-        take = 0;
         if (!game->modifiers.is_running())
             game->modifiers.m_stop_at_door = false;
 
