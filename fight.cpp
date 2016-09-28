@@ -157,7 +157,7 @@ bool rattlesnake_attack()
     return false;
 }
 
-void flytrap_attack(Agent* mp)
+void flytrap_attack(Monster* mp)
 {
   //Flytrap stops the poor guy from moving
   game->hero().set_is_held(true);
@@ -167,7 +167,7 @@ void flytrap_attack(Agent* mp)
 }
 
 // return true if attack succeeded
-bool leprechaun_attack(Agent* mp)
+bool leprechaun_attack(Monster* mp)
 {
   //Leprechaun steals some gold
   long lastpurse;
@@ -182,7 +182,7 @@ bool leprechaun_attack(Agent* mp)
   return true;
 }
 
-bool nymph_attack(Agent* mp)
+bool nymph_attack(Monster* mp)
 {
     const char *she_stole = "she stole %s!";
 
@@ -215,7 +215,7 @@ bool nymph_attack(Agent* mp)
     return true;
 }
 
-bool vampire_wraith_attack(Agent* monster)
+bool vampire_wraith_attack(Monster* monster)
 {
     //Wraiths might drain energy levels, and Vampires can steal max_hp
     if (rnd(100) < (monster->drains_exp() ? 15 : 30)) // vampires are twice as likely to connect

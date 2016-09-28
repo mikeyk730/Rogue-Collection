@@ -34,103 +34,6 @@
 static char *lvl_mons  = "K BHISOR LCA NYTWFP GMXVJD";
 static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 
-const int EX_DIVIDES      =  0x0001;
-const int EX_SHOOTS_ICE   =  0x0002;
-const int EX_SHOOTS_FIRE  =  0x0004;
-const int EX_RUSTS_ARMOR  =  0x0008;
-const int EX_HOLDS        =  0x0010;
-const int EX_STATIONARY   =  0x0020;
-const int EX_MIMICS       =  0x0040;
-const int EX_CONFUSES     =  0x0080;
-const int EX_STEALS_GOLD  =  0x0100;
-const int EX_STEALS_MAGIC =  0x0200;
-const int EX_DRAINS_STR   =  0x0400;
-const int EX_DRAINS_EXP   =  0x0800;
-const int EX_DRAINS_MAXHP =  0x1000;
-const int EX_HOLD_ATTACKS =  0x2000;
-const int EX_SUICIDES     =  0x4000;
-const int EX_DROPS_GOLD   =  0x8000;
-
-bool Agent::can_divide() const
-{
-    return (exflags & EX_DIVIDES) != 0;
-}
-
-bool Agent::is_stationary() const {
-    return (exflags & EX_STATIONARY) != 0;
-}
-
-bool Agent::can_hold() const {
-    return (exflags & EX_HOLDS) != 0;
-}
-
-bool Agent::hold_attacks() const {
-    return (exflags & EX_HOLD_ATTACKS) != 0;
-}
-
-bool Agent::shoots_fire() const {
-    return (exflags & EX_SHOOTS_FIRE) != 0;
-}
-
-bool Agent::immune_to_fire() const {
-    return shoots_fire();
-}
-
-bool Agent::shoots_ice() const {
-    return (exflags & EX_SHOOTS_ICE) != 0;
-}
-
-bool Agent::causes_confusion() const {
-    return (exflags & EX_CONFUSES) != 0;
-}
-
-bool Agent::is_mimic() const {
-    return (exflags & EX_MIMICS) != 0;
-}
-
-bool Agent::is_disguised() const {
-    return is_mimic() && type != disguise;
-}
-
-bool Agent::drops_gold() const {
-    return (exflags & EX_DROPS_GOLD) != 0;
-}
-
-bool Agent::steals_gold() const {
-    return (exflags & EX_STEALS_GOLD) != 0;
-}
-
-bool Agent::steals_magic() const {
-    return (exflags & EX_STEALS_MAGIC) != 0;
-}
-
-bool Agent::drains_life() const {
-    return (exflags & EX_DRAINS_MAXHP) != 0;
-}
-
-bool Agent::drains_exp() const {
-    return (exflags & EX_DRAINS_EXP) != 0;
-}
-
-bool Agent::drains_strength() const {
-    return (exflags & EX_DRAINS_STR) != 0;
-}
-
-bool Agent::rusts_armor() const {
-    return (exflags & EX_RUSTS_ARMOR) != 0;
-}
-
-bool Agent::dies_from_attack() const{
-    return (exflags & EX_SUICIDES) != 0;
-}
-
-//todo: make configurable
-bool Agent::is_monster_confused_this_turn() const {
-    return ((is_confused() && rnd(5) != 0) ||
-        // Phantoms are slightly confused all of the time, and bats are quite confused all the time
-        type == 'P' && rnd(5) == 0 ||
-        type == 'B' && rnd(2) == 0);
-}
 
 bool Agent::is_flag_set(short flag) const {
     return ((flags & flag) != 0);
@@ -315,20 +218,20 @@ char randmonster(bool wander, int level)
   return mons[d];
 }
 
-void set_xeroc_disguise(Agent* X)
+void set_xeroc_disguise(Monster* X)
 {
-  switch (rnd(get_level() >= AMULETLEVEL ? 9 : 8))
-  {
-  case 0: X->disguise = GOLD; break;
-  case 1: X->disguise = POTION; break;
-  case 2: X->disguise = SCROLL; break;
-  case 3: X->disguise = STAIRS; break;
-  case 4: X->disguise = WEAPON; break;
-  case 5: X->disguise = ARMOR; break;
-  case 6: X->disguise = RING; break;
-  case 7: X->disguise = STICK; break;
-  case 8: X->disguise = AMULET; break;
-  }
+    switch (rnd(get_level() >= AMULETLEVEL ? 9 : 8))
+    {
+    case 0: X->disguise = GOLD; break;
+    case 1: X->disguise = POTION; break;
+    case 2: X->disguise = SCROLL; break;
+    case 3: X->disguise = STAIRS; break;
+    case 4: X->disguise = WEAPON; break;
+    case 5: X->disguise = ARMOR; break;
+    case 6: X->disguise = RING; break;
+    case 7: X->disguise = STICK; break;
+    case 8: X->disguise = AMULET; break;
+    }
 }
 
 //create_monster: Pick a new monster and add it to the list
@@ -400,9 +303,9 @@ void create_wandering_monster()
 }
 
 //wake_monster: What to do when the hero steps next to a monster
-Agent *wake_monster(Coord p)
+Monster *wake_monster(Coord p)
 {
-  Agent *monster;
+  Monster *monster;
   struct Room *room;
   int dst;
 

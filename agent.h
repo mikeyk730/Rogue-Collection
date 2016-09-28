@@ -60,12 +60,9 @@ struct Agent
     Coord pos = { 0, 0 };             //Position
     char turn = 0;                    //If slowed, is it a turn to move
     char type = 0;                    //What it is
-    byte disguise = 0;                //What mimic looks like
     byte oldch = 0;                   //Character that was where it was
     Coord *dest = 0;                  //Where it is running to
     short flags = 0;                  //State word
-    int exflags = 0;                  //More state;
-    int value = 0;                    //
     Stats stats;                      //Physical description
     Room *room = 0;                   //Current room for thing
     bool invunerable = false;
@@ -83,27 +80,6 @@ private:
     void set_flag(short flag, bool enable);
 
 public:
-    //special features
-    bool is_monster_confused_this_turn() const;
-    bool is_stationary() const;
-    bool can_hold() const;
-    bool hold_attacks() const;
-    bool can_divide() const;
-    bool shoots_fire() const;
-    bool immune_to_fire() const;
-    bool shoots_ice() const;
-    bool causes_confusion() const;
-    bool is_mimic() const;
-    bool is_disguised() const;
-    bool steals_gold() const;
-    bool drops_gold() const;
-    bool steals_magic() const;
-    bool drains_life() const;
-    bool drains_exp() const;
-    bool drains_strength() const;
-    bool rusts_armor() const;
-    bool dies_from_attack() const;
-
     bool is_flying() const;
     bool is_mean() const;
     bool regenerates_hp() const;

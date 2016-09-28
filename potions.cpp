@@ -314,7 +314,7 @@ void quaff()
 void invis_on()
 {
     game->hero().set_sees_invisible(true);
-    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Agent *monster){
+    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster* monster) {
         if (monster->is_invisible() && game->hero().can_see_monster(monster))
         {
             game->screen().mvaddch(monster->pos, monster->disguise);

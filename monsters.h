@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include "agent.h"
 
 struct Monster;
 
@@ -16,7 +15,7 @@ int exp_add(Monster *monster);
 void create_wandering_monster();
 
 //wake_monster: What to do when the hero steps next to a monster
-Agent *wake_monster(Coord p);
+Monster *wake_monster(Coord p);
 
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon
 char pick_vorpal_monster();

@@ -59,7 +59,7 @@ void Level::clear_level()
 
     byte Level::get_tile_or_monster(Coord p)
     {
-        Agent* monster = monster_at(p);
+        Monster *monster = monster_at(p);
         if (monster)
             return monster->disguise;
         return get_tile(p);

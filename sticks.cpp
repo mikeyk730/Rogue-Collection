@@ -249,7 +249,7 @@ void zap_cancellation(Monster* monster)
     monster->reveal_disguise();
 }
 
-void zap_teleport(Agent* monster, Coord p, int which)
+void zap_teleport(Monster* monster, Coord p, int which)
 {
   Coord new_pos;
 

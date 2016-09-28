@@ -1,5 +1,6 @@
 //Hero movement commands
 //move.c      1.4 (A.I. Design)       12/22/84
+#include <ctype.h>
 
 #include "rogue.h"
 #include "move.h"
@@ -24,9 +25,7 @@
 #include "room.h"
 #include "game_state.h"
 #include "hero.h"
-
-
-#include <ctype.h>
+#include "monster.h"
 
 //Used to hold the new hero position
 Coord nh;
@@ -183,22 +182,22 @@ move_stuff:
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
 void door_open(struct Room *room)
 {
-  int j, k;
-  byte ch;
-  Agent *item;
+    int j, k;
+    byte ch;
+    Monster* item;
 
-  if (!(room->is_gone()) && !game->hero().is_blind())
-    for (j = room->pos.y; j<room->pos.y+room->size.y; j++)
-      for (k = room->pos.x; k<room->pos.x+room->size.x; k++)
-      {
-        ch = game->level().get_tile_or_monster({k,j});
-        if (isupper(ch))
-        {
-          item = wake_monster({k,j});
-          if (item->oldch==' ' && !(room->is_dark()) && !game->hero().is_blind())
-              item->oldch = game->level().get_tile({k,j});
-        }
-      }
+    if (!(room->is_gone()) && !game->hero().is_blind())
+        for (j = room->pos.y; j < room->pos.y + room->size.y; j++)
+            for (k = room->pos.x; k < room->pos.x + room->size.x; k++)
+            {
+                ch = game->level().get_tile_or_monster({ k,j });
+                if (isupper(ch))
+                {
+                    item = wake_monster({ k,j });
+                    if (item->oldch == ' ' && !(room->is_dark()) && !game->hero().is_blind())
+                        item->oldch = game->level().get_tile({ k,j });
+                }
+            }
 }
 
 //be_trapped: The guy stepped on a trap.... Make him pay.

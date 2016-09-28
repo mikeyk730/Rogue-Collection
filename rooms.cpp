@@ -184,7 +184,7 @@ void enter_room(Coord *cp)
 {
   struct Room *room;
   int y, x;
-  Agent *monster;
+  Monster* monster;
 
   room = game->hero().room = get_room_from_position(cp);
   if (invalid_position || (room->is_gone() && (room->is_maze())==0))

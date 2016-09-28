@@ -54,7 +54,7 @@ void look(bool wakeup)
 {
   int x, y;
   byte ch, pch;
-  Agent *monster;
+  Monster* monster;
   struct Room *room;
   int ey, ex;
   int passcount = 0;
