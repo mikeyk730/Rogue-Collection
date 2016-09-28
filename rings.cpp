@@ -104,39 +104,12 @@ std::string get_stone(int type)
 //ring_on: Put a ring on a hand
 void ring_on()
 {
-  Item *obj;
-  int ring = -1;
-
-  if ((obj = get_item("put on", RING))==NULL) goto no_ring;
-  //Make certain that it is something that we want to wear
-  if (obj->type!=RING) {
-      msg("you can't put that on your finger");
-      goto no_ring;
-  }
-  //find out which hand to put it on
-  if (is_current(obj)) goto no_ring;
-  if (get_ring(LEFT)==NULL) ring = LEFT;
-  if (get_ring(RIGHT)==NULL) ring = RIGHT;
-  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) if ((ring = gethand())<0) goto no_ring;
-  if (ring<0) {msg("you already have a ring on each hand"); goto no_ring;}
-  set_ring(ring, obj);
-  //Calculate the effect it has on the poor guy.
-  switch (obj->which)
-  {
-  case R_ADDSTR:
-      break;
-  case R_SEEINVIS:
-      invis_on();
-      break;
-  case R_AGGR: 
-      aggravate(); 
-      break;
-  }
-  msg("%swearing %s (%c)", noterse("you are now "), obj->inv_name(true), pack_char(obj));
-  return;
-no_ring:
-  counts_as_turn = false;
-  return;
+    Item *obj;
+    if ((obj = get_item("put on", RING)) == NULL) {
+        counts_as_turn = false;
+        return;
+    }
+    game->hero().put_on_ring(obj);
 }
 
 //ring_off: Take off a ring
@@ -146,12 +119,18 @@ void ring_off()
   Item *obj;
   char packchar;
 
-  if (get_ring(LEFT)==NULL && get_ring(RIGHT)==NULL) {msg("you aren't wearing any rings"); counts_as_turn = false; return;}
-  else if (get_ring(LEFT)==NULL) ring = RIGHT;
-  else if (get_ring(RIGHT)==NULL) ring = LEFT;
+  if (game->hero().get_ring(LEFT)==NULL && game->hero().get_ring(RIGHT)==NULL) {
+      msg("you aren't wearing any rings");
+      counts_as_turn = false;
+      return;
+  }
+  else if (game->hero().get_ring(LEFT)==NULL) 
+      ring = RIGHT;
+  else if (game->hero().get_ring(RIGHT)==NULL)
+      ring = LEFT;
   else if ((ring = gethand())<0) return;
   msg_position = 0;
-  obj = get_ring(ring);
+  obj = game->hero().get_ring(ring);
   if (obj==NULL) {msg("not wearing such a ring"); counts_as_turn = false; return;}
   packchar = pack_char(obj);
   if (can_drop(obj)) msg("was wearing %s(%c)", obj->inv_name(true), packchar);
@@ -176,8 +155,8 @@ int gethand()
 //ring_eat: How much food does this ring use up?
 int ring_eat(int hand)
 {
-  if (get_ring(hand)==NULL) return 0;
-  switch (get_ring(hand)->which)
+  if (game->hero().get_ring(hand)==NULL) return 0;
+  switch (game->hero().get_ring(hand)->which)
   {
   case R_REGEN: return 2;
   case R_SUSTSTR: case R_SUSTARM: case R_PROTECT: case R_ADDSTR: case R_STEALTH: return 1;
@@ -206,16 +185,6 @@ char *ring_num(Item *obj)
     return "";
   }
   return ring_buf;
-}
-
-int is_ring_on_hand(int hand, int ring)
-{
-  return (get_ring(hand) != NULL && get_ring(hand)->which == ring);
-}
-
-int is_wearing_ring(int ring)
-{
-  return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
 }
 
 std::string RingInfo::get_inventory_name(int which, const std::string& bonus) const

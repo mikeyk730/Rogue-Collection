@@ -35,9 +35,9 @@ void doctor()
     else if (game->turns_since_heal >= 3)
         game->hero().increase_hp(rnd(lvl - 7) + 1, false, false);
 
-    if (is_ring_on_hand(LEFT, R_REGEN))
+    if (game->hero().is_ring_on_hand(LEFT, R_REGEN))
         game->hero().increase_hp(1, false, false);
-    if (is_ring_on_hand(RIGHT, R_REGEN))
+    if (game->hero().is_ring_on_hand(RIGHT, R_REGEN))
         game->hero().increase_hp(1, false, false);
 
     if (original_hp != game->hero().get_hp())

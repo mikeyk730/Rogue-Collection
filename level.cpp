@@ -220,13 +220,13 @@ void Level::clear_level()
 
         //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
         //This is real unfair - I'm going to allow one thing, that way the poor guy will get some food.
-        if (had_amulet() && get_level() < max_level())
+        if (game->hero().had_amulet() && get_level() < max_level())
             i = MAXOBJ - 1;
         else
         {
             //If he is really deep in the dungeon and he hasn't found the amulet yet, put it somewhere on the ground
             //Check this first so if we are out of memory the guy has a hope of getting the amulet
-            if (get_level() >= AMULETLEVEL && !had_amulet())
+            if (get_level() >= AMULETLEVEL && !game->hero().had_amulet())
             {
                 Item* amulet = new Amulet();
                 items.push_front(amulet);

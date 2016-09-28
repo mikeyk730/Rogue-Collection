@@ -229,29 +229,6 @@ char *num(int n1, int n2, char type)
   return numbuf;
 }
 
-//wield: Pull out a certain weapon
-void Hero::wield()
-{
-  Item *obj;
-  char *sp;
-
-  if (!can_drop(get_current_weapon())) {
-    return;
-  }
-  obj = get_item("wield", WEAPON);
-  if (!obj || is_current(obj) || obj->type==ARMOR)
-  {
-    if (obj && obj->type==ARMOR) 
-      msg("you can't wield armor"); 
-    counts_as_turn = false;
-    return;
-  }
-
-  sp = obj->inv_name(true);
-  set_current_weapon(obj);
-  ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
-}
-
 //fallpos: Pick a random position around the given (y, x) coordinates
 int fallpos(Item *obj, Coord *newpos)
 {
@@ -371,7 +348,7 @@ void Item::vorpalize()
     if (is_vorpalized())
     {
         msg("your %s vanishes in a puff of smoke", get_weapon_name(which));
-        set_current_weapon(0);
+        game->hero().set_current_weapon(0);
         game->hero().pack.remove(this);
         delete this; //careful not to do anything afterwards
         return;

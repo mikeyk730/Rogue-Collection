@@ -239,7 +239,7 @@ const char *vowelstr(const char *str)
 int is_current(Item *obj)
 {
   if (obj==NULL) return false;
-  if (obj==get_current_armor() || obj==get_current_weapon() || obj==get_ring(LEFT) || obj==get_ring(RIGHT))
+  if (obj==game->hero().get_current_armor() || obj==game->hero().get_current_weapon() || obj==game->hero().get_ring(LEFT) || obj==game->hero().get_ring(RIGHT))
   {
     msg("That's already in use");
     return true;
@@ -466,7 +466,7 @@ void go_down_stairs()
 void go_up_stairs()
 {
     if (game->level().get_tile(game->hero().pos) == STAIRS || game->hero().is_wizard()){
-        if (has_amulet() || game->hero().is_wizard()) {
+        if (game->hero().has_amulet() || game->hero().is_wizard()) {
             if (prev_level() == 0)
                 total_winner();
             game->level().new_level(true);

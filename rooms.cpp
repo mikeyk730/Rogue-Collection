@@ -102,7 +102,7 @@ void do_rooms()
     } while (room->pos.y==0);
     draw_room(room);
     //Put the gold in
-    if ((rnd(2)==0) && (!had_amulet() || (get_level()>=max_level())))
+    if ((rnd(2)==0) && (!game->hero().had_amulet() || (get_level()>=max_level())))
     {
         room->gold_val = rnd_gold();
         Item *gold = new Gold(room->gold_val);

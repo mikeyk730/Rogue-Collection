@@ -197,9 +197,9 @@ void read_sleep()
 
 void read_enchant_armor()
 {
-  if (get_current_armor()!=NULL)
+  if (game->hero().get_current_armor()!=NULL)
   {
-    get_current_armor()->enchant_armor();
+    game->hero().get_current_armor()->enchant_armor();
     ifterse("your armor glows faintly", "your armor glows faintly for a moment");
   }
 }
@@ -263,7 +263,7 @@ void read_teleportation()
 
 void read_enchant_weapon()
 {
-    Item* weapon = get_current_weapon();
+    Item* weapon = game->hero().get_current_weapon();
     if (weapon == NULL || weapon->type != WEAPON){
         msg("you feel a strange sense of loss");
         return;
@@ -285,14 +285,14 @@ void read_create_monster()
 
 void read_remove_curse()
 {
-    if (get_current_armor())
-        get_current_armor()->remove_curse();
-    if (get_current_weapon())
-        get_current_weapon()->remove_curse();
-    if (get_ring(LEFT))
-        get_ring(LEFT)->remove_curse();
-    if (get_ring(RIGHT))
-        get_ring(RIGHT)->remove_curse();
+    if (game->hero().get_current_armor())
+        game->hero().get_current_armor()->remove_curse();
+    if (game->hero().get_current_weapon())
+        game->hero().get_current_weapon()->remove_curse();
+    if (game->hero().get_ring(LEFT))
+        game->hero().get_ring(LEFT)->remove_curse();
+    if (game->hero().get_ring(RIGHT))
+        game->hero().get_ring(RIGHT)->remove_curse();
 
     ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
 }
@@ -312,7 +312,7 @@ void read_blank_paper()
 void read_vorpalize_weapon()
 {
     //If he isn't wielding a weapon I get to chortle again!
-    Item* weapon = get_current_weapon();
+    Item* weapon = game->hero().get_current_weapon();
     if (!weapon || weapon->type != WEAPON){
         msg(laugh, short_msgs() ? "" : in_dist);
         return;
@@ -348,7 +348,8 @@ void read_scroll()
   if (scroll==NULL) return;
   if (scroll->type!=SCROLL) {msg("there is nothing on it to read"); return;}
   ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
-  if (scroll==get_current_weapon()) set_current_weapon(NULL);
+  if (scroll==game->hero().get_current_weapon()) 
+      game->hero().set_current_weapon(NULL);
 
   //Call the function for this scroll
   if (scroll->which >= 0 && scroll->which < MAXSCROLLS)

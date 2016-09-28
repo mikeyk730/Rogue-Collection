@@ -40,6 +40,10 @@ public:
     int get_hungry_state();
     int get_food_left();
 
+    void put_on_ring(Item* obj);
+    int is_ring_on_hand(int h, int r) const;
+    int is_wearing_ring(int r) const;
+
     void toggle_wizard();
     bool is_wizard() const;
     bool did_cheat() const;
@@ -71,14 +75,38 @@ public:
     void do_hit(Item* weapon, int thrown, Monster* monster, const char* name);
     void do_miss(Item* weapon, int thrown, Monster* monster, const char* name);
 
+    //pick_up: Add something to characters pack.
+    void pick_up(byte ch);
+
+    //pick_up_gold: Add gold to the pack
+    void pick_up_gold(int value);
+
+    //true if player currently has amulet
+    bool has_amulet();
+
+    //true if player ever had amulet
+    bool had_amulet();
+
+    Item* get_current_weapon() const;
+    Item* get_current_armor() const;
+    Item* get_ring(int hand) const;
+
+    void set_current_weapon(Item* item);
+    void set_current_armor(Item* item);
+    void set_ring(int hand, Item* item);
 
 private:
 
     int m_purse = 0;
     bool m_wizard = false;
     bool m_cheated = false;
+    bool m_had_amulet = false;
     int hungry_state = 0;    //How hungry is he
     int food_left = 0;       //Amount of food in hero's stomach
     std::string m_name;
+
+    Item* cur_armor = 0;       //What a well dresssed rogue wears
+    Item* cur_weapon = 0;      //Which weapon he is wielding
+    Item* cur_ring[2] = {0,0}; //Which rings are being worn
 };
 

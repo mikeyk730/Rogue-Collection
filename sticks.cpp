@@ -316,8 +316,8 @@ struct MagicMissile : public Item
         damage_plus = 1;
         flags = IS_MISL;
 
-        if (get_current_weapon() != NULL)
-            m_launcher = get_current_weapon()->which;
+        if (game->hero().get_current_weapon() != NULL)
+            m_launcher = game->hero().get_current_weapon()->which;
     }
     virtual Item* Clone() const { return new MagicMissile(*this); }
 };

@@ -25,6 +25,3 @@ int ring_eat(int hand);
 
 //ring_num: Print ring bonuses
 char *ring_num(Item *obj);
-
-int is_ring_on_hand(int h, int r);
-int is_wearing_ring(int r);

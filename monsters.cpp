@@ -179,7 +179,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
   if (monster->is_mimic()) 
     set_xeroc_disguise(monster);
 
-  if (is_wearing_ring(R_AGGR)) 
+  if (game->hero().is_wearing_ring(R_AGGR))
       monster->start_run();
 
   return monster;
@@ -228,7 +228,7 @@ Monster *wake_monster(Coord p)
 
   if ((monster = game->level().monster_at(p))==NULL) return monster;
   //Every time he sees mean monster, it might start chasing him
-  if (!monster->is_running() && rnd(3)!=0 && monster->is_mean() && !monster->is_held() && !is_wearing_ring(R_STEALTH))
+  if (!monster->is_running() && rnd(3)!=0 && monster->is_mean() && !monster->is_held() && !game->hero().is_wearing_ring(R_STEALTH))
   {
     monster->dest = &game->hero().pos;
     monster->set_running(true);

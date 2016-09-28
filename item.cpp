@@ -4,6 +4,7 @@
 #include "item.h"
 #include "agent.h"
 #include "rogue.h"
+#include "armor.h"
 
 Item::Item(int type, int which)
 {
@@ -184,4 +185,24 @@ Gold::Gold(int value) :
 Item * Gold::Clone() const
 {
     return new Gold(*this);
+}
+
+//is_magic: Returns true if an object radiates magic
+bool Item::is_magic()
+{
+    switch (type)
+    {
+    case ARMOR:
+        return get_armor_class() != get_default_class(which);
+    case WEAPON:
+        return get_hit_plus() != 0 || get_damage_plus() != 0;
+    case POTION: case SCROLL: case STICK: case RING: case AMULET:
+        return true;
+    }
+    return false;
+}
+
+int does_item_group(int type)
+{
+    return (type == POTION || type == SCROLL || type == FOOD || type == GOLD);
 }

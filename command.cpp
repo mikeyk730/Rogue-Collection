@@ -55,8 +55,8 @@ void command()
     do_fuses();
     do_daemons();
     for (ntimes = LEFT; ntimes<=RIGHT; ntimes++)
-        if (get_ring(ntimes)) 
-            switch (get_ring(ntimes)->which)
+        if (game->hero().get_ring(ntimes))
+            switch (game->hero().get_ring(ntimes)->which)
             {
             case R_SEARCH:
                 search();
@@ -376,7 +376,7 @@ void execcom()
       }
     }
     if (take && do_take)
-        pick_up(take);
+        game->hero().pick_up(take);
     take = 0;
     if (!game->modifiers.is_running())
         game->modifiers.m_stop_at_door = false;

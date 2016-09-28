@@ -141,7 +141,7 @@ void quaff_poison()
   char *sick = "you feel %s sick.";
 
   game->potions().discover(P_POISON);
-  if (!is_wearing_ring(R_SUSTSTR)) {
+  if (!game->hero().is_wearing_ring(R_SUSTSTR)) {
       game->hero().adjust_strength(-(rnd(3)+1)); 
       msg(sick, "very");
   }
@@ -292,8 +292,8 @@ void quaff()
   if ((obj = get_item("quaff", POTION))==NULL) return;
   //Make certain that it is something that we want to drink
   if (obj->type!=POTION) {msg("yuk! Why would you want to drink that?"); return;}
-  if (obj==get_current_weapon()) 
-    set_current_weapon(NULL);
+  if (obj==game->hero().get_current_weapon()) 
+      game->hero().set_current_weapon(NULL);
 
   //Calculate the effect it has on the poor guy.
   potion_functions[obj->which]();

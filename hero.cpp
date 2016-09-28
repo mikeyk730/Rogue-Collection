@@ -22,6 +22,11 @@
 #include "mach_dep.h"
 #include "monster.h"
 #include "room.h"
+#include "fight.h"
+#include "potions.h"
+#include "slime.h"
+#include "scrolls.h"
+#include "things.h"
 
 namespace
 {
@@ -411,3 +416,366 @@ int Hero::can_see(Coord p)
     //if the coordinate is in the same room as the hero, and the room is lit
     return (room == get_room_from_position(&p) && !room->is_dark());
 }
+
+void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
+{
+    bool did_confuse = false;
+
+    if (thrown)
+        display_throw_msg(weapon, name, "hits", "hit");
+    else
+        display_hit_msg(NULL, name);
+
+    if (weapon && weapon->type == POTION)
+    {
+        affect_monster(weapon, monster);
+        if (!thrown)
+        {
+            if (--weapon->count == 0) {
+                pack.remove(weapon);
+                delete weapon;
+            }
+            set_current_weapon(NULL);
+        }
+    }
+
+    if (can_confuse())
+    {
+        did_confuse = true;
+        monster->set_confused(true);
+        set_can_confuse(false);
+        msg("your hands stop glowing red");
+    }
+
+    if (monster->get_hp() <= 0)
+        killed(monster, true);
+    else if (did_confuse && !is_blind())
+        msg("the %s appears confused", name);
+}
+
+void Hero::do_miss(Item* weapon, int thrown, Monster* monster, const char* name)
+{
+    if (thrown)
+        display_throw_msg(weapon, name, "misses", "missed");
+    else
+        display_miss_msg(NULL, name);
+
+    if (monster->can_divide() && rnd(100)>25)
+        slime_split(monster);
+}
+
+//fight: The player attacks the monster.
+Monster* Hero::fight(Coord *location, Item *weapon, bool thrown)
+{
+    std::string name;
+    //Find the monster we want to fight
+    Monster* monster = game->level().monster_at(*location);
+    if (!monster)
+        return 0;
+
+    //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
+    repeat_cmd_count = 0;
+    game->turns_since_heal = 0;
+
+    monster->start_run();
+    //Let him know it was really a mimic (if it was one).
+    if (monster->is_disguised() && !this->is_blind())
+    {
+        monster->disguise = monster->type;
+        if (thrown)
+            return 0;
+        msg("wait! That's a %s!", monster->get_name().c_str());
+    }
+    name = this->is_blind() ? "it" : monster->get_name();
+
+    if (attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))
+    {
+        do_hit(weapon, thrown, monster, name.c_str());
+        return monster;
+    }
+
+    do_miss(weapon, thrown, monster, name.c_str());
+    return 0;
+}
+
+Item* Hero::get_ring(int hand) const
+{
+    return cur_ring[hand];
+}
+
+void Hero::set_ring(int hand, Item* item)
+{
+    cur_ring[hand] = item;
+}
+
+Item* Hero::get_current_weapon() const
+{
+    return cur_weapon;
+}
+
+void Hero::set_current_weapon(Item* item)
+{
+    cur_weapon = item;
+}
+
+Item* Hero::get_current_armor() const
+{
+    return cur_armor;
+}
+
+void Hero::set_current_armor(Item* item)
+{
+    cur_armor = item;
+}
+
+int Hero::get_pack_size()
+{
+    int count = 0;
+    for (auto it = pack.begin(); it != pack.end(); ++it) {
+        Item* item = *it;
+        count += item->group ? 1 : item->count;
+    }
+    return count;
+}
+
+//add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+void Hero::add_to_pack(Item *obj, bool silent)
+{
+    Monster* monster;
+    bool from_floor;
+    byte floor;
+
+    auto it = pack.begin();
+
+    if (obj == NULL)
+    {
+        from_floor = true;
+        if ((obj = find_obj(pos)) == NULL)
+            return;
+        floor = (room->is_gone()) ? PASSAGE : FLOOR;
+    }
+    else from_floor = false;
+    //Link it into the pack.  Search the pack for a object of similar type
+    //if there isn't one, stuff it at the beginning, if there is, look for one
+    //that is exactly the same and just increment the count if there is.
+    //Food is always put at the beginning for ease of access, but it
+    //is not ordered so that you can't tell good food from bad.  First check
+    //to see if there is something in the same group and if there is then
+    //increment the count.
+
+    if (obj->group)
+    {
+        for (auto it = pack.begin(); it != pack.end(); ++it) {
+            Item* op = *it;
+            if (op->group == obj->group)
+            {
+                //Put it in the pack and notify the user
+                op->count += obj->count;
+                if (from_floor) {
+                    game->level().items.remove(obj);
+                    game->screen().mvaddch(pos, floor);
+                    game->level().set_tile(pos, floor);
+                }
+                delete obj;
+                obj = op;
+                goto picked_up;
+            }
+        }
+    }
+    //Check if there is room
+    if (get_pack_size() >= MAXPACK - 1) {
+        msg("you can't carry anything else");
+        return;
+    }
+    //Check for and deal with scare monster scrolls
+    if (is_scare_monster_scroll(obj)) {
+        if (obj->is_found())
+        {
+            game->level().items.remove(obj);
+            delete obj;
+            game->screen().mvaddch(pos, floor);
+            game->level().set_tile(pos, floor);
+            msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
+            return;
+        }
+        else obj->set_found();
+    }
+    if (from_floor) {
+        game->level().items.remove(obj);
+        game->screen().mvaddch(pos, floor);
+        game->level().set_tile(pos, floor);
+    }
+
+    //todo: fuck this code is infuriating
+
+    //Search for an object of the same type
+    bool found_type = false;
+    for (; it != pack.end(); ++it) {
+        if ((*it)->type == obj->type) {
+            found_type = true;
+            break;
+        }
+    }
+    //Put it at the end of the pack since it is a new type
+    if (!found_type) {
+        (obj->type == FOOD) ? pack.push_front(obj) :
+            pack.push_back(obj);
+        goto picked_up;
+    }
+    //Search for an object which is exactly the same
+    bool exact = false;
+    for (; it != pack.end(); ++it) {
+        if ((*it)->type != obj->type)
+            break;
+        if ((*it)->which == obj->which) {
+            exact = true;
+            break;
+        }
+    }
+    //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
+    if (exact && does_item_group(obj->type))
+    {
+        (*it)->count++;
+        delete(obj);
+        obj = (*it);
+        goto picked_up;
+    }
+
+    pack.insert(it, obj);
+
+picked_up:
+    //If this was the object of something's desire, that monster will get mad and run at the hero
+    if (from_floor) {
+        for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+            monster = *it;
+            if (monster->dest && (monster->dest->x == obj->pos.x) && (monster->dest->y == obj->pos.y))
+                monster->dest = &pos;
+        }
+    }
+    if (obj->type == AMULET) {
+        m_had_amulet = true;
+    }
+    //Notify the user
+    if (!silent)
+        msg("%s%s (%c)", noterse("you now have "), obj->inv_name(true), pack_char(obj));
+}
+
+//pick_up: Add something to characters pack.
+void Hero::pick_up(byte ch)
+{
+    Item *obj;
+
+    switch (ch)
+    {
+    case GOLD:
+        if ((obj = find_obj(pos)) == NULL)
+            return;
+        pick_up_gold(obj->get_gold_value());
+        game->level().items.remove(obj);
+        delete obj;
+        room->gold_val = 0;
+        break;
+    default:
+    case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
+        add_to_pack(NULL, false);
+        break;
+    }
+}
+
+//pick_up_gold: Add gold to the pack
+void Hero::pick_up_gold(int value)
+{
+    adjust_purse(value);
+    msg("you found %d gold pieces", value);
+
+    byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
+    game->screen().mvaddch(pos, floor);
+    game->level().set_tile(pos, floor);
+}
+
+bool Hero::has_amulet()
+{
+    for (auto it = pack.begin(); it != pack.end(); ++it) {
+        Item* item = *it;
+        if (item->type == AMULET)
+            return true;
+    }
+
+    return false;
+}
+
+//true if player ever had amulet
+bool Hero::had_amulet()
+{
+    return m_had_amulet;
+}
+
+int Hero::is_ring_on_hand(int hand, int ring) const
+{
+    return (get_ring(hand) != NULL && get_ring(hand)->which == ring);
+}
+
+int Hero::is_wearing_ring(int ring) const
+{
+    return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
+}
+
+//wield: Pull out a certain weapon
+void Hero::wield()
+{
+    Item *obj;
+    char *sp;
+
+    if (!can_drop(get_current_weapon())) {
+        return;
+    }
+    obj = get_item("wield", WEAPON);
+    if (!obj || is_current(obj) || obj->type == ARMOR)
+    {
+        if (obj && obj->type == ARMOR)
+            msg("you can't wield armor");
+        counts_as_turn = false;
+        return;
+    }
+
+    sp = obj->inv_name(true);
+    set_current_weapon(obj);
+    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
+}
+
+void Hero::put_on_ring(Item* obj)
+{
+    int ring = -1;
+
+    //Make certain that it is something that we want to wear
+    if (obj->type != RING) {
+        msg("you can't put that on your finger");
+        goto no_ring;
+    }
+    //find out which hand to put it on
+    if (is_current(obj)) goto no_ring;
+    if (get_ring(LEFT) == NULL) ring = LEFT;
+    if (get_ring(RIGHT) == NULL) ring = RIGHT;
+    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) if ((ring = gethand()) < 0) goto no_ring;
+    if (ring < 0) { msg("you already have a ring on each hand"); goto no_ring; }
+    set_ring(ring, obj);
+    //Calculate the effect it has on the poor guy.
+    switch (obj->which)
+    {
+    case R_ADDSTR:
+        break;
+    case R_SEEINVIS:
+        invis_on();
+        break;
+    case R_AGGR:
+        aggravate();
+        break;
+    }
+    msg("%swearing %s (%c)", noterse("you are now "), obj->inv_name(true), pack_char(obj));
+    return;
+no_ring:
+    counts_as_turn = false;
+    return;
+}
+
+

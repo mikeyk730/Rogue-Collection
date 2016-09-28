@@ -95,13 +95,13 @@ char * Item::inv_name(bool lowercase)
 
 #endif
   }
-  if (this==get_current_armor()) 
+  if (this==game->hero().get_current_armor()) 
     strcat(pb, " (being worn)");
-  if (this==get_current_weapon()) 
+  if (this==game->hero().get_current_weapon()) 
     strcat(pb, " (weapon in hand)");
-  if (this==get_ring(LEFT)) 
+  if (this==game->hero().get_ring(LEFT)) 
     strcat(pb, " (on left hand)");
-  else if (this==get_ring(RIGHT))
+  else if (this==game->hero().get_ring(RIGHT))
     strcat(pb, " (on right hand)");
 
   //todo: what is this?
@@ -152,26 +152,27 @@ void drop()
 bool can_drop(Item *op)
 {
   if (op==NULL) return true;
-  if (op!=get_current_armor() && op!=get_current_weapon() && op!=get_ring(LEFT) && op!=get_ring(RIGHT)) return true;
+  if (op!=game->hero().get_current_armor() && op!=game->hero().get_current_weapon() && op!=game->hero().get_ring(LEFT) && op!=game->hero().get_ring(RIGHT)) return true;
   if (op->is_cursed()) {
       msg("you can't.  It appears to be cursed"); 
       return false;
   }
-  if (op==get_current_weapon()) set_current_weapon(NULL);
-  else if (op==get_current_armor()) {
+  if (op==game->hero().get_current_weapon()) 
+      game->hero().set_current_weapon(NULL);
+  else if (op==game->hero().get_current_armor()) {
     waste_time(); 
-    set_current_armor(NULL);
+    game->hero().set_current_armor(NULL);
   }
   else
   {
     int hand;
 
-    if (op!=get_ring(hand = LEFT)) if (op!=get_ring(hand = RIGHT))
+    if (op!=game->hero().get_ring(hand = LEFT)) if (op!=game->hero().get_ring(hand = RIGHT))
     {
       debug("Candrop called with funny thing");
       return true;
     }
-    set_ring(hand, NULL);
+    game->hero().set_ring(hand, NULL);
     switch (op->which)
     {
     case R_ADDSTR: 

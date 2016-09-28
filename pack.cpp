@@ -14,50 +14,9 @@
 #include "mach_dep.h"
 #include "level.h"
 #include "thing.h"
-#include "scrolls.h"
 #include "hero.h"
 #include "room.h"
 #include "monster.h"
-
-static bool s_had_amulet = false;
-
-Item *cur_armor;   //What a well dresssed rogue wears
-Item *cur_weapon;  //Which weapon he is wielding
-Item *cur_ring[2]; //Which rings are being worn
-
-Item* get_ring(int hand)
-{
-  return cur_ring[hand];
-}
-
-void set_ring(int hand, Item* item)
-{
-  cur_ring[hand] = item;
-}
-
-Item* get_current_weapon()
-{
-  return cur_weapon;
-}
-
-void set_current_weapon(Item* item)
-{
-  cur_weapon = item;
-}
-
-Item* get_current_armor()
-{
-  return cur_armor;
-}
-
-void set_current_armor(Item* item)
-{
-  cur_armor = item;
-}
-
-int does_item_group(int type) {
-  return (type==POTION || type==SCROLL || type==FOOD || type==GOLD);
-}
 
 Item *pack_obj(byte ch, byte *chp)
 {
@@ -71,137 +30,6 @@ Item *pack_obj(byte ch, byte *chp)
   return NULL;
 }
 
-int Hero::get_pack_size()
-{
-  int count = 0;
-  for (auto it = pack.begin(); it != pack.end(); ++it){
-      Item* item = *it;
-      count += item->group ? 1 : item->count;
-  }
-  return count;
-}
-
-//add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void Hero::add_to_pack(Item *obj, bool silent)
-{
-  Monster* monster;
-  bool from_floor;
-  byte floor;
-
-  auto it = pack.begin();
-
-  if (obj==NULL)
-  {
-    from_floor = true;
-    if ((obj = find_obj(pos))==NULL)
-        return;
-    floor = (room->is_gone())?PASSAGE:FLOOR;
-  }
-  else from_floor = false;
-  //Link it into the pack.  Search the pack for a object of similar type
-  //if there isn't one, stuff it at the beginning, if there is, look for one
-  //that is exactly the same and just increment the count if there is.
-  //Food is always put at the beginning for ease of access, but it
-  //is not ordered so that you can't tell good food from bad.  First check
-  //to see if there is something in the same group and if there is then
-  //increment the count.
-
-  if (obj->group)
-  {
-    for (auto it = pack.begin(); it != pack.end(); ++it){
-      Item* op = *it;
-      if (op->group==obj->group)
-      {
-        //Put it in the pack and notify the user
-        op->count += obj->count;
-        if (from_floor) {
-          game->level().items.remove(obj);
-          game->screen().mvaddch(pos, floor);
-          game->level().set_tile(pos, floor);
-        }
-        delete obj;
-        obj = op;
-        goto picked_up;
-      }
-    }
-  }
-  //Check if there is room
-  if (get_pack_size() >= MAXPACK-1) {
-      msg("you can't carry anything else");
-      return;
-  }
-  //Check for and deal with scare monster scrolls
-  if (is_scare_monster_scroll(obj)) {
-      if (obj->is_found())
-      {
-          game->level().items.remove(obj);
-          delete obj;
-          game->screen().mvaddch(pos, floor);
-          game->level().set_tile(pos, floor);
-          msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
-          return;
-      }
-      else obj->set_found();
-  }
-  if (from_floor) {
-    game->level().items.remove(obj);
-    game->screen().mvaddch(pos, floor); 
-    game->level().set_tile(pos, floor);
-  }
-  
-  //todo: fuck this code is infuriating
-
-  //Search for an object of the same type
-  bool found_type = false;
-  for (; it != pack.end(); ++it){
-      if ((*it)->type == obj->type){
-          found_type = true;
-          break;
-      }
-  }
-  //Put it at the end of the pack since it is a new type
-  if (!found_type){
-      (obj->type == FOOD) ? pack.push_front(obj) :
-          pack.push_back(obj);
-      goto picked_up;
-  }
-  //Search for an object which is exactly the same
-  bool exact = false;
-  for (; it != pack.end(); ++it){
-      if ((*it)->type != obj->type)
-          break;
-      if ((*it)->which == obj->which) {
-          exact = true;
-          break;
-      }
-  }
-  //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
-  if (exact && does_item_group(obj->type))
-  {
-      (*it)->count++;
-      delete(obj);
-      obj = (*it);
-      goto picked_up;
-  }
-
-  pack.insert(it, obj);
-
-picked_up:
-  //If this was the object of something's desire, that monster will get mad and run at the hero
-  if (from_floor) {
-      for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
-          monster = *it;
-          if (monster->dest && (monster->dest->x == obj->pos.x) && (monster->dest->y == obj->pos.y))
-              monster->dest = &pos;
-      }
-  }
-  if (obj->type==AMULET) { 
-      s_had_amulet = true;
-  }
-  //Notify the user
-  if (!silent) 
-      msg("%s%s (%c)", noterse("you now have "), obj->inv_name(true), pack_char(obj));
-}
 
 //inventory: List what is in the pack
 int inventory(std::list<Item *>& list, int type, char *lstr)
@@ -232,30 +60,8 @@ int inventory(std::list<Item *>& list, int type, char *lstr)
   return (end_line(lstr));
 }
 
-//pick_up: Add something to characters pack.
-void pick_up(byte ch)
-{
-  Item *obj;
-
-  switch (ch)
-  {
-  case GOLD:
-    if ((obj = find_obj(game->hero().pos))==NULL)
-        return;
-    pick_up_gold(obj->get_gold_value());
-    game->level().items.remove(obj);
-    delete obj;
-    game->hero().room->gold_val = 0;
-    break;
-  default:
-  case ARMOR: case POTION: case FOOD: case WEAPON: case SCROLL: case AMULET: case RING: case STICK:
-    game->hero().add_to_pack(NULL, false);
-    break;
-  }
-}
-
 //get_item: Pick something out of a pack for a purpose
-Item *get_item(char *purpose, int type)
+Item* get_item(char *purpose, int type)
 {
   Item *obj;
   byte ch;
@@ -336,32 +142,4 @@ int pack_char(Item *obj)
             c++;
     }
     return '?';
-}
-
-//pick_up_gold: Add gold to the pack
-void pick_up_gold(int value)
-{
-    game->hero().adjust_purse(value);
-    msg("you found %d gold pieces", value);
-
-    byte floor = (game->hero().room->is_gone()) ? PASSAGE : FLOOR;
-    game->screen().mvaddch(game->hero().pos, floor);
-    game->level().set_tile(game->hero().pos, floor);
-}
-
-bool has_amulet()
-{
-    for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); ++it){
-        Item* item = *it;
-        if (item->type == AMULET)
-            return true;
-    }
-
-    return false;
-}
-
-//true if player ever had amulet
-bool had_amulet()
-{
-  return s_had_amulet;
 }

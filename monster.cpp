@@ -1,3 +1,4 @@
+#include <sstream>
 #include "monster.h"
 #include "main.h"
 #include "monsters.h"
@@ -12,6 +13,10 @@
 #include "sticks.h"
 #include "output_interface.h"
 #include "move.h"
+#include "fight.h"
+#include "io.h"
+#include "rip.h"
+#include "mach_dep.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -375,4 +380,201 @@ Coord* Monster::find_dest()
         }
     }
     return &game->hero().pos;
+}
+
+bool aquator_attack()
+{
+    //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
+    if (game->hero().get_current_armor() && game->hero().get_current_armor()->get_armor_class() < 9 && game->hero().get_current_armor()->which != LEATHER)
+        if (game->hero().is_wearing_ring(R_SUSTARM))
+            msg("the rust vanishes instantly");
+        else {
+            msg("your armor weakens, oh my!");
+            game->hero().get_current_armor()->weaken_armor();
+            return true;
+        }
+        return false;
+}
+
+void ice_monster_attack()
+{
+    //When an Ice Monster hits you, you get unfrozen faster
+    if (game->sleep_timer>1)
+        game->sleep_timer--;
+}
+
+bool rattlesnake_attack()
+{
+    //Rattlesnakes have poisonous bites
+    if (!save(VS_POISON))
+        if (!game->hero().is_wearing_ring(R_SUSTSTR)) {
+            game->hero().adjust_strength(-1);
+            msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
+            return true;
+        }
+        else
+            msg("a bite momentarily weakens you");
+
+    return false;
+}
+
+void flytrap_attack(Monster* mp)
+{
+    //Flytrap stops the poor guy from moving
+    game->hero().set_is_held(true);
+    std::ostringstream ss;
+    ss << ++(mp->value) << "d1";
+    mp->stats.damage = ss.str();
+}
+
+// return true if attack succeeded
+bool leprechaun_attack(Monster* mp)
+{
+    //Leprechaun steals some gold
+    long lastpurse;
+
+    lastpurse = game->hero().get_purse();
+    game->hero().adjust_purse(-rnd_gold());
+    if (!save(VS_MAGIC))
+        game->hero().adjust_purse(-(rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold()));
+    if (game->hero().get_purse() != lastpurse)
+        msg("your purse feels lighter");
+
+    return true;
+}
+
+bool nymph_attack(Monster* mp)
+{
+    const char *she_stole = "she stole %s!";
+
+    //Nymphs steal a magic item, look through the pack and pick out one we like.
+    Item* item = NULL;
+    int nobj = 0;
+    for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); ++it) {
+        Item* obj = *it;
+        if (obj != game->hero().get_current_armor() && obj != game->hero().get_current_weapon() &&
+            obj != game->hero().get_ring(LEFT) && obj != game->hero().get_ring(RIGHT) &&
+            obj->is_magic() && rnd(++nobj) == 0)
+            item = obj;
+    }
+    if (item == NULL)
+        return false;
+
+    if (item->count > 1 && item->group == 0)
+    {
+        int oc;
+        oc = item->count--;
+        item->count = 1;
+        msg(she_stole, item->inv_name(true));
+        item->count = oc;
+    }
+    else {
+        game->hero().pack.remove(item);
+        msg(she_stole, item->inv_name(true));
+        delete item;
+    }
+    return true;
+}
+
+bool vampire_wraith_attack(Monster* monster)
+{
+    //Wraiths might drain energy levels, and Vampires can steal max_hp
+    if (rnd(100) < (monster->drains_exp() ? 15 : 30)) // vampires are twice as likely to connect
+    {
+        int damage;
+
+        if (monster->drains_exp())
+        {
+            if (game->hero().experience() == 0)
+                death(monster->type); //All levels gone
+            game->hero().reduce_level();
+            damage = roll(1, 10);
+        }
+        else
+            damage = roll(1, 5); //vampires only half as strong
+
+        game->hero().stats.max_hp -= damage;
+        if (game->hero().stats.max_hp < 1)
+            death(monster->type);
+        game->hero().decrease_hp(damage, false);
+
+        msg("you suddenly feel weaker");
+        return true;
+    }
+    return false;
+}
+
+//attack: The monster attacks the player
+Monster* Monster::attack_player()
+{
+    std::string name;
+    bool attack_success = false; // todo:set this everywhere
+
+                                 //Since this is an attack, stop running and any healing that was going on at the time.
+    game->modifiers.m_running = false;
+    repeat_cmd_count = game->turns_since_heal = 0;
+
+    if (is_disguised() && !game->hero().is_blind())
+        disguise = type;
+    name = game->hero().is_blind() ? "it" : get_name();
+
+    if (attack(&game->hero(), NULL, false))
+    {
+        display_hit_msg(name.c_str(), NULL);
+        if (game->hero().get_hp() <= 0)
+            death(type); //Bye bye life ...
+
+                         //todo: modify code, so enemy can have more than one power
+        if (!powers_cancelled()) {
+            if (hold_attacks())
+            {
+                flytrap_attack(this);
+            }
+            else if (shoots_ice())
+            {
+                ice_monster_attack();
+            }
+            else if (rusts_armor())
+            {
+                attack_success = aquator_attack();
+            }
+            else if (steals_gold())
+            {
+                attack_success = leprechaun_attack(this);
+            }
+            else if (steals_magic())
+            {
+                attack_success = nymph_attack(this);
+            }
+            else if (drains_strength())
+            {
+                attack_success = rattlesnake_attack();
+            }
+            else if (drains_life() || drains_exp())
+            {
+                attack_success = vampire_wraith_attack(this);
+            }
+
+            if (attack_success && dies_from_attack())
+            {
+                remove_monster(this, false);
+                return this;
+            }
+        }
+    }
+    else if (!shoots_ice())
+    {
+        if (hold_attacks())
+        {
+            if (!game->hero().decrease_hp(value, true))
+                death(type); //Bye bye life ...
+        }
+        display_miss_msg(name.c_str(), NULL);
+    }
+
+    clear_typeahead_buffer();
+    repeat_cmd_count = 0;
+    status();
+
+    return 0;
 }

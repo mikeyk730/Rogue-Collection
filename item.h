@@ -177,6 +177,8 @@ public:
     Room* get_room();
 };
 
+int does_item_group(int type);
+
 struct Amulet : public Item
 {
     Amulet();

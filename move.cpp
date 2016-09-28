@@ -170,7 +170,7 @@ hit_bound:
   default:
     game->modifiers.m_running = false;
     if (isupper(ch) || game->level().monster_at(nh))
-        game->hero().fight(&nh, get_current_weapon(), false);
+        game->hero().fight(&nh, game->hero().get_current_weapon(), false);
     else
     {
       game->modifiers.m_running = false;
@@ -273,7 +273,7 @@ int be_trapped(Coord *tc)
           msg("a poisoned dart killed you"); 
           death('d');
       }
-      if (!is_wearing_ring(R_SUSTSTR) && !save(VS_POISON)) 
+      if (!game->hero().is_wearing_ring(R_SUSTSTR) && !save(VS_POISON))
           game->hero().adjust_strength(-1);
       msg("a dart just hit you in the shoulder");
     }

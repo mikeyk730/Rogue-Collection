@@ -85,7 +85,7 @@ void wear()
   Item *obj;
   char *sp;
 
-  if (get_current_armor()!=NULL)
+  if (game->hero().get_current_armor()!=NULL)
   {
     msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
     counts_as_turn = false;
@@ -99,7 +99,7 @@ void wear()
   waste_time();
   obj->set_known() ;
   sp = obj->inv_name(true);
-  set_current_armor(obj);
+  game->hero().set_current_armor(obj);
   msg("you are now wearing %s", sp);
 }
 
@@ -108,14 +108,14 @@ void take_off()
 {
   Item *obj;
 
-  if ((obj = get_current_armor())==NULL)
+  if ((obj = game->hero().get_current_armor())==NULL)
   {
     counts_as_turn = false;
     msg("you aren't wearing any armor");
     return;
   }
-  if (!can_drop(get_current_armor())) return;
-  set_current_armor(NULL);
+  if (!can_drop(game->hero().get_current_armor())) return;
+  game->hero().set_current_armor(NULL);
   msg("you used to be wearing %c) %s", pack_char(obj), obj->inv_name(true));
 }
 
