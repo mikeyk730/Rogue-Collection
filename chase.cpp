@@ -23,13 +23,6 @@
 #include "hero.h"
 #include "monster.h"
 
-
-//todo: move to env or remove
-//orcs should pick up gold in a room, then chase the player.
-//a bug prevented orcs from picking up gold, so they'd just
-//remain on the gold space.
-const bool alt_orc_behavior = true;
-
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
 Coord ch_ret; //Where chasing takes you
@@ -154,10 +147,15 @@ over:
     }
     else if (equal(ch_ret, *this->dest))
     {
+        //mdk: aggressive orcs pick up gold in a room, then chase the player.  It
+        //looks as if this were the original intended behavior, so I added it as
+        //an option.
+        bool orc_aggressive(game->get_environment("orc_type") == "aggressive");
+
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
             obj = *(it++);
-            if (alt_orc_behavior && (*this->dest == obj->pos) ||
-                !alt_orc_behavior && (this->dest == &obj->pos))
+            if ( orc_aggressive && (*this->dest == obj->pos) ||
+                !orc_aggressive && (this->dest == &obj->pos))
             {
                 byte oldchar;
                 game->level().items.remove(obj);
