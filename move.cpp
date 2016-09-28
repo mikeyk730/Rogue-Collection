@@ -87,13 +87,13 @@ bool continue_horizontal()
     int dx;
     const int COLS = game->screen().columns();
 
-    bool left_is_door_or_passage = (game->hero().pos.x > 1 && ((game->level().get_flags({ game->hero().pos.x - 1,game->hero().pos.y })&F_PASS) ||
+    bool left_is_door_or_psg = (game->hero().pos.x > 1 && ((game->level().get_flags({ game->hero().pos.x - 1,game->hero().pos.y })&F_PASS) ||
         game->level().get_tile({ game->hero().pos.x - 1,game->hero().pos.y }) == DOOR));
-    bool right_is_door_or_passage = (game->hero().pos.x < COLS - 2 && ((game->level().get_flags({ game->hero().pos.x + 1,game->hero().pos.y })&F_PASS) ||
+    bool right_is_door_or_psg = (game->hero().pos.x < COLS - 2 && ((game->level().get_flags({ game->hero().pos.x + 1,game->hero().pos.y })&F_PASS) ||
         game->level().get_tile({ game->hero().pos.x + 1,game->hero().pos.y }) == DOOR));
-    if (!(left_is_door_or_passage^right_is_door_or_passage))
+    if (!(left_is_door_or_psg^right_is_door_or_psg))
         return false;
-    if (left_is_door_or_passage) {
+    if (left_is_door_or_psg) {
         run_character = 'h';
         dx = -1;
     }
@@ -138,7 +138,7 @@ bool do_move_impl()
 
     //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
     if (offmap(new_position))
-        return do_hit_bound();
+        return !do_hit_boundary();
     if (!diag_ok(game->hero().pos, new_position)) {
         counts_as_turn = false;
         game->modifiers.m_running = false;
@@ -166,7 +166,7 @@ bool do_move_impl()
     switch (ch)
     {
     case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-        return do_hit_bound();
+        return !do_hit_boundary();
 
     case DOOR:
         game->modifiers.m_running = false;
