@@ -433,7 +433,7 @@ std::string PotionInfo::get_inventory_name(int which) const
 
 
 Potion::Potion(int which)
-    : Item(POTION, which)
+    : Item(POTION, which, "potion")
 {
 }
 

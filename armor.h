@@ -12,8 +12,6 @@ struct Armor : public Item
 int get_default_class(int type);
 Item* create_armor();
 
-const char* get_armor_name(int type);
-
 //wear: The player wants to wear something, so let him/her put it on.
 void wear();
 

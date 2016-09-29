@@ -416,7 +416,7 @@ std::string ScrollInfo::get_inventory_name(int which) const
 }
 
 Scroll::Scroll(int which) :
-    Item(SCROLL, which)
+    Item(SCROLL, which, "scroll")
 {
 }
 

@@ -63,11 +63,6 @@ const char *weapon_names[MAXWEAPONS + 1] =
   "bolt"  // dragon flame/ice monster frost (not accessible to player)
 };
 
-const char* get_weapon_name(int which)
-{
-    return weapon_names[which];
-}
-
 Item* create_weapon()
 {
     int which = rnd(MAXWEAPONS);
@@ -136,18 +131,6 @@ void do_motion(Item *obj, Coord delta)
     }
 }
 
-const char *short_name(Item *obj)
-{
-    switch (obj->type)
-    {
-    case WEAPON: return get_weapon_name(obj->which);
-    case ARMOR: return get_armor_name(obj->which);
-    case FOOD: return "food";
-    case POTION: case SCROLL: case AMULET: case STICK: case RING: return strchr(obj->inv_name(true), ' ') + 1;
-    default: return "bizzare thing";
-    }
-}
-
 //fall: Drop an item someplace around here.
 void fall(Item *obj, bool pr)
 {
@@ -174,7 +157,7 @@ void fall(Item *obj, bool pr)
         pr = 0;
     }
     if (pr)
-        msg("the %s vanishes%s.", short_name(obj), noterse(" as it hits the ground"));
+        msg("the %s vanishes%s.", obj->name().c_str(), noterse(" as it hits the ground"));
     delete obj;
 }
 
@@ -273,12 +256,12 @@ const char* Item::get_inv_name_weapon() const
     if (this->count > 1)
         sprintf(pb, "%d ", this->count);
     else
-        sprintf(pb, "A%s ", vowelstr(get_weapon_name(which)));
+        sprintf(pb, "A%s ", vowelstr(name().c_str()));
     pb = &prbuf[strlen(prbuf)];
     if (this->is_known() || game->hero().is_wizard())
-        sprintf(pb, "%s %s", num(this->hit_plus, this->damage_plus, WEAPON), get_weapon_name(which));
+        sprintf(pb, "%s %s", num(this->hit_plus, this->damage_plus, WEAPON), name().c_str());
     else
-        sprintf(pb, "%s", get_weapon_name(which));
+        sprintf(pb, "%s", name().c_str());
     if (this->count > 1) strcat(pb, "s");
     if (this->is_vorpalized() && (this->is_revealed() || game->hero().is_wizard()))
     {
@@ -297,7 +280,7 @@ void Item::enchant_weapon()
         this->hit_plus++;
     else
         this->damage_plus++;
-    ifterse("your %s glows blue", "your %s glows blue for a moment", get_weapon_name(this->which));
+    ifterse("your %s glows blue", "your %s glows blue for a moment", name().c_str());
 }
 
 bool Item::is_vorpalized() const
@@ -332,14 +315,14 @@ char Item::launcher() const
     return m_launcher;
 }
 
-void Item::set_projectile_name(const std::string & name)
+void Item::set_name(const std::string & name)
 {
-    m_projectile_name = name;
+    m_name = name;
 }
 
-std::string Item::projectile_name() const
+std::string Item::name() const
 {
-    return m_projectile_name;
+    return m_name;
 }
 
 Room* Item::get_room()
@@ -359,7 +342,7 @@ void Item::vorpalize()
     //You aren't allowed to doubly vorpalize a weapon.
     if (is_vorpalized())
     {
-        msg("your %s vanishes in a puff of smoke", get_weapon_name(which));
+        msg("your %s vanishes in a puff of smoke", name().c_str());
         game->hero().set_current_weapon(0);
         game->hero().pack.remove(this);
         delete this; //careful not to do anything afterwards
@@ -370,11 +353,11 @@ void Item::vorpalize()
     hit_plus++;
     damage_plus++;
     charges = 1;
-    msg(flash, get_weapon_name(which), short_msgs() ? "" : intense);
+    msg(flash, name().c_str(), short_msgs() ? "" : intense);
 }
 
 Weapon::Weapon(int which) :
-    Item(WEAPON, which)
+    Item(WEAPON, which, weapon_names[which])
 {
     initialize_weapon(which);
 
@@ -388,7 +371,7 @@ Weapon::Weapon(int which) :
 }
 
 Weapon::Weapon(int which, int hit, int damage) :
-    Item(WEAPON, which)
+    Item(WEAPON, which, weapon_names[which])
 {
     initialize_weapon(which);
 

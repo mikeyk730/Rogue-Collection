@@ -6,7 +6,8 @@
 #include "rogue.h"
 #include "armor.h"
 
-Item::Item(int type, int which)
+Item::Item(int type, int which, const std::string& name) :
+    m_name(name)
 {
     initialize(type, which);
 }
@@ -162,7 +163,7 @@ void Item::set_flashed() {
     flags |= DID_FLASH;
 }
 
-Amulet::Amulet() : Item(AMULET, 0)
+Amulet::Amulet() : Item(AMULET, 0, "amulet")
 {
     this->hit_plus = 0;
     this->damage_plus = 0;
@@ -177,7 +178,7 @@ Item * Amulet::Clone() const
 }
 
 Gold::Gold(int value) :
-    Item(GOLD, 0)
+    Item(GOLD, 0, "gold")
 {
     gold_value = value;
 }

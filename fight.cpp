@@ -146,14 +146,7 @@ int add_dam(unsigned int str)
 //display_throw_msg: A projectile hit or missed a monster
 void display_throw_msg(Item *item, const char *name, char *does, char *did)
 {
-    if (item->type == WEAPON) {
-        std::string wname = item->projectile_name();
-        if (wname.empty())
-            wname = get_weapon_name(item->which);
-        addmsg("the %s %s ", wname.c_str(), does);
-    }
-    else
-        addmsg("you %s ", did);
+    addmsg("the %s %s ", item->name().c_str(), does);
     game->hero().is_blind() ? msg(it) : msg("the %s", name);
 }
 

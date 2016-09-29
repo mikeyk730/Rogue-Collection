@@ -58,11 +58,6 @@ int get_default_class(int type)
     return a_class[type];
 }
 
-const char* get_armor_name(int type)
-{
-    return a_names[type];
-}
-
 Item* create_armor()
 {
     int j, k;
@@ -116,15 +111,15 @@ const char* Item::get_inv_name_armor()
 
     if (is_known() || game->hero().is_wizard())
         chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which) - get_armor_class(), 0, (char)ARMOR),
-            get_armor_name(which), armor_class_for_display());
+            name().c_str(), armor_class_for_display());
     else
-        sprintf(pb, "%s", get_armor_name(which));
+        sprintf(pb, "%s", name().c_str());
 
     return prbuf;
 }
 
 Armor::Armor(int which) :
-    Item(ARMOR, which)
+    Item(ARMOR, which, a_names[which])
 {
     armor_class = get_default_class(which);
 
@@ -138,7 +133,7 @@ Armor::Armor(int which) :
 }
 
 Armor::Armor(int which, int ac_mod) :
-    Item(ARMOR, which)
+    Item(ARMOR, which, a_names[which])
 {
     if (ac_mod > 0)
         set_cursed();

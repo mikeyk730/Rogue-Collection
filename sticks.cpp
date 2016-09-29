@@ -301,7 +301,7 @@ void zap_generic(Coord delta, Item* wand, int which)
 
 struct MagicMissile : public Item
 {
-    MagicMissile() : Item(MISSILE, 0)
+    MagicMissile() : Item(MISSILE, 0, "magic missile")
     {
         throw_damage = "1d8";
         hit_plus = 1000;
@@ -498,7 +498,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
     Monster* victim = 0;
 
     Item* bolt = new Weapon(FLAME, 30, 0);
-    bolt->set_projectile_name(name);
+    bolt->set_name(name);
     switch (dir->y + dir->x)
     {
     case 0: dirch = '/'; break;
@@ -641,7 +641,7 @@ std::string StickInfo::get_inventory_name(int which) const
 }
 
 Stick::Stick(int which)
-    : Item(STICK, which)
+    : Item(STICK, which, game->sticks().get_type(which))
 {
     if (game->sticks().is_staff(which))
         damage = "2d3";

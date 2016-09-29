@@ -44,8 +44,9 @@ const char* Item::get_inv_name_food()
 }
 
 Food::Food(int which) :
-    Item(FOOD, which)
-{ }
+    Item(FOOD, which, "food")
+{ 
+}
 
 Item * Food::Clone() const
 {

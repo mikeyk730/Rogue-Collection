@@ -11,7 +11,6 @@ struct Weapon : public Item
     virtual Item* Clone() const;
 };
 
-const char* get_weapon_name(int which);
 Item* create_weapon();
 
 //throw_projectile: Fire a projectile in a given direction
@@ -19,8 +18,6 @@ void throw_projectile(Coord delta);
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(Item *obj, Coord delta);
-
-const char *short_name(Item *obj);
 
 //fall: Drop an item someplace around here.
 void fall(Item *obj, bool pr);

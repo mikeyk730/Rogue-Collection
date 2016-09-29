@@ -172,7 +172,7 @@ std::string RingInfo::get_inventory_name(int which) const
 }
 
 Ring::Ring(int which) :
-    Item(RING, which)
+    Item(RING, which, "ring")
 {
     switch (which)
     {
@@ -190,7 +190,7 @@ Ring::Ring(int which) :
 }
 
 Ring::Ring(int which, int level) :
-    Item(RING, which)
+    Item(RING, which, "ring")
 {
     ring_level = level;
     if (ring_level < 0)
