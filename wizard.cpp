@@ -285,6 +285,7 @@ void Cheats::toggle()
     if (m_enabled)
         m_cheated = true;
     msg(m_enabled ? "You are now a wizard!" : "You feel your magic powers fade away");
+    apply_powers();
 }
 
 bool Cheats::enabled() const
@@ -304,6 +305,8 @@ void Cheats::add_powers(const std::string & powers)
     while (getline(ss, item, ',')) {
         m_powers.insert(item);
     }
+    if (enabled())
+        apply_powers();
 }
 
 void Cheats::toggle_powers(const std::string & powers)
@@ -317,6 +320,18 @@ void Cheats::toggle_powers(const std::string & powers)
         else
             m_powers.insert(item);
     }
+    if (enabled())
+        apply_powers();
+}
+
+void Cheats::apply_powers()
+{
+    game->hero().invunerable = (enabled() && invunerability());
+    turn_see(!(enabled() && detect_monsters()));
+    if (enabled() && see_invisible())
+        show_invisible();
+    else
+        unsee();
 }
 
 bool Cheats::is_enabled(const std::string& power) const
@@ -347,6 +362,11 @@ bool Cheats::show_food_counter() const
 bool Cheats::jump_levels() const
 {
     return is_enabled("jump_levels");
+}
+
+bool Cheats::invunerability() const
+{
+    return is_enabled("invunerability");
 }
 
 bool Cheats::no_hunger() const

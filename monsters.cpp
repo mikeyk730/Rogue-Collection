@@ -88,6 +88,8 @@ void load_monster_cfg(const std::string& filename)
     std::ifstream file(filename, std::ios::in);
     std::string line;
     while (std::getline(file, line)) {
+        if (line.empty() || line[0] == '#')
+            continue;
 
         if (line.substr(0, 7) == "l_order") {
             std::string l = line.substr(9, 26);

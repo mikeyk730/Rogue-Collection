@@ -24,6 +24,8 @@ struct Cheats
     void add_powers(const std::string& powers);
     void toggle_powers(const std::string& powers);
 
+    void apply_powers();
+
     bool detect_monsters() const;
     bool no_dark_rooms() const;
     bool slow_monster() const;

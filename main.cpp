@@ -64,7 +64,6 @@ int main(int argc, char **argv)
     else {
         game = new GameState(seed);
     }
-    //game->hero().invunerable = true;
     
     if (!replay)
         setenv("rogue.opt");
