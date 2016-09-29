@@ -262,10 +262,9 @@ void Hero::init_player()
     add_to_pack(obj, true);
 
     //And his suit of armor
-    obj = new Armor(RING_MAIL, -1);
-    obj->set_known();
-    set_current_armor(obj);
-    add_to_pack(obj, true);
+    Armor* armor = new Armor(RING_MAIL, -1);
+    set_current_armor(armor);
+    add_to_pack(armor, true);
 
     //Give him some food too
     obj = new Food(0);
@@ -509,9 +508,11 @@ Item* Hero::get_current_armor() const
     return cur_armor;
 }
 
-void Hero::set_current_armor(Item* item)
+void Hero::set_current_armor(Armor* armor)
 {
-    cur_armor = item;
+    if (armor)
+        armor->set_known();
+    cur_armor = armor;
 }
 
 int Hero::get_pack_size()
@@ -797,8 +798,7 @@ bool Hero::remove_ring()
 //wear_armor: The player wants to wear something, so let him/her put it on.
 bool Hero::wear_armor()
 {
-    if (get_current_armor())
-    {
+    if (get_current_armor()) {
         msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
         return false;
     }
@@ -808,17 +808,16 @@ bool Hero::wear_armor()
         return false;
 
     //mdk: trying to wear non-armor counts as turn
-    if (obj->type != ARMOR) {
+    Armor* armor = dynamic_cast<Armor*>(obj);
+    if (!armor) {
         msg("you can't wear that");
         return true;
     }
 
-    //mdk: putting on armor takes 2 turns
-    waste_time();
+    waste_time(); //mdk: putting on armor takes 2 turns
 
-    obj->set_known();
-    set_current_armor(obj);
-    msg("you are now wearing %s", obj->inventory_name(true).c_str());
+    set_current_armor(armor);
+    msg("you are now wearing %s", armor->inventory_name(true).c_str());
     return true;
 }
 
@@ -826,8 +825,7 @@ bool Hero::wear_armor()
 bool Hero::take_off_armor()
 {
     Item *obj = get_current_armor();
-    if (!obj)
-    {
+    if (!obj) {
         msg("you aren't wearing any armor");
         return false;
     }

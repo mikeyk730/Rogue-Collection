@@ -5,6 +5,7 @@
 struct Monster;
 struct Item;
 struct Ring;
+struct Armor;
 
 struct Hero : public Agent
 {
@@ -87,7 +88,7 @@ public:
     Ring* get_ring(int hand) const;
 
     void set_current_weapon(Item* item);
-    void set_current_armor(Item* item);
+    void set_current_armor(Armor* item);
     void set_ring(int hand, Ring* ring);
 
     //wear_armor: The player wants to wear something, so let him/her put it on.
@@ -104,7 +105,7 @@ private:
     int food_left = 0;       //Amount of food in hero's stomach
     std::string m_name;
 
-    Item* cur_armor = 0;       //What a well dresssed rogue wears
+    Armor* cur_armor = 0;       //What a well dresssed rogue wears
     Item* cur_weapon = 0;      //Which weapon he is wielding
     Ring* cur_ring[2] = {0,0}; //Which rings are being worn
 };
