@@ -172,7 +172,7 @@ bool do_move_impl(bool can_pickup)
         game->level().set_tile(new_position, TRAP);
         game->level().set_flag(new_position, F_REAL);
     }
-    else if (game->hero().is_held() && ch != 'F') { //TODO: remove direct check for F
+    else if (game->hero().is_held() && ch != 'F') { //TODO: can only attack the monster holding you, remove direct check for 'F'
         msg("you are being held");
         return false;
     }
