@@ -7,10 +7,10 @@ struct Room;
 int diag_ok(const Coord sp, const Coord ep);
 
 //do_run: Start the hero running
-void do_run(byte ch);
+bool do_run(byte ch);
 
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
-void do_move(Coord delta, bool can_pickup);
+bool do_move(Coord delta, bool can_pickup);
 
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
 void door_open(Room *room);

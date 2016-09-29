@@ -245,7 +245,8 @@ int is_in_use(Item *obj)
 {
     if (obj == NULL)
         return false;
-    if (obj == game->hero().get_current_armor() || obj == game->hero().get_current_weapon() || obj == game->hero().get_ring(LEFT) || obj == game->hero().get_ring(RIGHT))
+    if (obj == game->hero().get_current_armor() || obj == game->hero().get_current_weapon() || 
+        obj == game->hero().get_ring(LEFT) || obj == game->hero().get_ring(RIGHT))
     {
         msg("That's already in use");
         return true;

@@ -14,7 +14,7 @@ struct Potion : public Item
 Item* create_potion();
 
 //quaff: Quaff a potion from the pack
-void quaff();
+bool quaff();
 
 //show_invisible: Turn on the ability to see invisible
 void show_invisible();

@@ -29,11 +29,11 @@
 Coord new_position;
 
 //do_run: Start the hero running
-void do_run(byte ch)
+bool do_run(byte ch)
 {
     game->modifiers.m_running = true;
-    game->counts_as_turn = false;
     game->run_character = ch;
+    return false;
 }
 
 bool is_gone(Room* rp)
@@ -119,6 +119,8 @@ bool continue_horizontal()
     return true;
 }
 
+bool this_move_counts; //todo: remove
+
 bool do_hit_boundary()
 {
     if (game->modifiers.is_running() && is_gone(game->hero().room) && !game->hero().is_blind())
@@ -139,7 +141,7 @@ bool do_hit_boundary()
         }
         }
     }
-    game->counts_as_turn = false;
+    this_move_counts = false;
     game->modifiers.m_running = false;
     return true;
 }
@@ -153,13 +155,13 @@ bool do_move_impl(bool can_pickup)
     if (offmap(new_position))
         return !do_hit_boundary();
     if (!diag_ok(game->hero().pos, new_position)) {
-        game->counts_as_turn = false;
+        this_move_counts = false;
         game->modifiers.m_running = false;
         return false;
     }
     //If you are running and the move does not get you anywhere stop running
     if (game->modifiers.is_running() && equal(game->hero().pos, new_position)) {
-        game->counts_as_turn = false;
+        this_move_counts = false;
         game->modifiers.m_running = false;
     }
     fl = game->level().get_flags(new_position);
@@ -220,8 +222,10 @@ bool do_move_impl(bool can_pickup)
 }
 
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
-void do_move(Coord delta, bool can_pickup)
+bool do_move(Coord delta, bool can_pickup)
 {
+    this_move_counts = true;
+
     game->modifiers.m_first_move = false;
 
     //if something went wrong, bail out on this level
@@ -229,14 +233,14 @@ void do_move(Coord delta, bool can_pickup)
         game->invalid_position = false;
         msg("the crack widens ... ");
         descend("");
-        return;
+        return this_move_counts;
     }
 
     //skip the turn if the hero is stuck in a bear trap
     if (game->bear_trap_turns) {
         game->bear_trap_turns--;
         msg("you are still stuck in the bear trap");
-        return;
+        return this_move_counts;
     }
 
     //Do a confused move (maybe)
@@ -251,6 +255,8 @@ void do_move(Coord delta, bool can_pickup)
     do {
         more = do_move_impl(can_pickup);
     } while (more);
+
+    return this_move_counts;
 }
 
 

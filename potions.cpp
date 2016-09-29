@@ -284,13 +284,20 @@ void(*potion_functions[MAXPOTIONS])() = {
 };
 
 //quaff: Quaff a potion from the pack
-void quaff()
+bool quaff()
 {
     Item *obj;
 
-    if ((obj = get_item("quaff", POTION)) == NULL) return;
+    if ((obj = get_item("quaff", POTION)) == NULL) 
+        return false;
+
     //Make certain that it is something that we want to drink
-    if (obj->type != POTION) { msg("yuk! Why would you want to drink that?"); return; }
+    if (obj->type != POTION) {
+        //mdk: trying to drink non-potion counts as turn
+        msg("yuk! Why would you want to drink that?");
+        return true;
+    }
+
     if (obj == game->hero().get_current_weapon())
         game->hero().set_current_weapon(NULL);
 
@@ -307,6 +314,8 @@ void quaff()
         game->hero().pack.remove(obj);
         delete(obj);
     }
+
+    return true;
 }
 
 //show_invisible: Turn on the ability to see invisible

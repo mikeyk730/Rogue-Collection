@@ -70,15 +70,20 @@ Item* create_weapon()
 }
 
 //throw_projectile: Fire a projectile in a given direction
-void throw_projectile(Coord delta)
+bool throw_projectile()
 {
+    Coord delta;
+    if (!get_dir(&delta))
+        return false;
+
     Item *obj, *nitem;
 
     //Get which thing we are hurling
     if ((obj = get_item("throw", WEAPON)) == NULL)
-        return;
-    if (!can_drop(obj) || is_in_use(obj))
-        return;
+        return false;
+
+    if (!can_drop(obj) || is_in_use(obj)) //mdk: i think is_in_use is redundant since can_drop handles unequipping
+        return true;
 
     //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  
     //Otherwise, create a new item with a count of one.
@@ -96,6 +101,8 @@ void throw_projectile(Coord delta)
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
     if (game->level().monster_at(obj->pos) == NULL || !projectile_hit(obj->pos, obj))
         fall(obj, true);
+
+    return true;
 }
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room

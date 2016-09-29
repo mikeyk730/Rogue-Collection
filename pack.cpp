@@ -63,8 +63,8 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
 Item* get_item(const std::string& purpose, int type)
 {
     if (game->hero().pack.empty()) {
+        //mdk:bugfix: previously, trying to do something with an empty pack would count as a turn
         msg("you aren't carrying anything");
-        game->counts_as_turn = false; //mdk: previously, trying to do something with an empty pack would count as a turn
         return NULL;
     }
 
@@ -98,7 +98,6 @@ Item* get_item(const std::string& purpose, int type)
             //display the inventory and get a new selection
             ch = inventory(game->hero().pack, type, purpose.c_str());
             if (ch == 0) {
-                game->counts_as_turn = false;
                 return NULL;
             }
             if (ch == ' ') continue;
@@ -106,7 +105,6 @@ Item* get_item(const std::string& purpose, int type)
 
         //Give the poor player a chance to abort the command
         if (ch == ESCAPE) {
-            game->counts_as_turn = false;
             msg("");
             return NULL;
         }

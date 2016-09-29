@@ -8,7 +8,7 @@ void init_things();
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 
 //drop: Put something down
-void drop();
+bool drop();
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
 bool can_drop(Item *op);

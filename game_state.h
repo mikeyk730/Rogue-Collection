@@ -67,7 +67,6 @@ struct GameState
     int no_food = 0;             //Number of levels without food
     int turns_since_heal = 0;    //Number of turns_since_heal turns
     bool can_pickup_this_turn = 0;  //Will the rogue pick up an item if he steps on it
-    bool counts_as_turn;        //True if we want after daemons
     bool repeat_last_action;    //The last command is repeated
     int was_trapped = 0;   //Was a trap sprung
     bool invalid_position = false;

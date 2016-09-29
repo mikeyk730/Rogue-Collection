@@ -339,13 +339,18 @@ void(*scroll_functions[MAXSCROLLS])() =
 };
 
 //read_scroll: Read a scroll from the pack and do the appropriate thing
-void read_scroll()
+bool read_scroll()
 {
-    Item *scroll;
+    Item *scroll = get_item("read", SCROLL);
+    if (scroll == NULL)
+        return false;
 
-    scroll = get_item("read", SCROLL);
-    if (scroll == NULL) return;
-    if (scroll->type != SCROLL) { msg("there is nothing on it to read"); return; }
+    if (scroll->type != SCROLL) {
+        //mdk: reading non-scroll counts as turn
+        msg("there is nothing on it to read"); 
+        return true;
+    }
+
     ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
     if (scroll == game->hero().get_current_weapon())
         game->hero().set_current_weapon(NULL);
@@ -355,7 +360,7 @@ void read_scroll()
         scroll_functions[scroll->which]();
     else {
         msg("what a puzzling scroll!");
-        return;
+        return true;
     }
 
     look(true); //put the result of the scroll on the screen
@@ -369,6 +374,7 @@ void read_scroll()
         game->hero().pack.remove(scroll);
         delete(scroll);
     }
+    return true;
 }
 
 int is_scare_monster_scroll(Item* item)

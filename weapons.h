@@ -15,7 +15,7 @@ struct Weapon : public Item
 Item* create_weapon();
 
 //throw_projectile: Fire a projectile in a given direction
-void throw_projectile(Coord delta);
+bool throw_projectile();
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(Item *obj, Coord delta);

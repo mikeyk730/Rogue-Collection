@@ -11,6 +11,6 @@ struct Scroll : public Item
 
 Item* create_scroll();
 
-void read_scroll();
+bool read_scroll();
 int is_scare_monster_scroll(Item* item);
 int is_bad_scroll(Item* item);

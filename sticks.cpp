@@ -370,29 +370,32 @@ int zap_drain_life()
 }
 
 //do_zap: Perform a zap with a wand
-void do_zap(Coord delta)
+bool do_zap()
 {
+    Coord delta;
+    if (!get_dir(&delta))
+        return false;
+
     Item *obj;
-    int which_one;
 
     if ((obj = get_item("zap with", STICK)) == NULL)
-        return;
-    which_one = obj->which;
-
+        return false;
+   
+    int which_one = obj->which;
     if (obj->type != STICK)
     {
         if (obj->is_vorpalized() && obj->get_charges())
             which_one = MAXSTICKS;
         else {
+            //mdk: zapping with non-stick doesn't count as turn
             msg("you can't zap with that!");
-            game->counts_as_turn = false;
-            return;
+            return false;
         }
     }
 
     if (obj->get_charges() == 0) {
         msg("nothing happens");
-        return;
+        return true;
     }
 
     switch (which_one)
@@ -403,7 +406,7 @@ void do_zap(Coord delta)
 
     case WS_DRAIN:
         if (!zap_drain_life())
-            return;
+            return true;
         break;
 
     case WS_POLYMORPH: case WS_TELAWAY: case WS_TELTO: case WS_CANCEL: case MAXSTICKS: //Special case for vorpal weapon
@@ -440,6 +443,7 @@ void do_zap(Coord delta)
     }
 
     obj->use_charge();
+    return true;
 }
 
 //drain: Do drain hit points from player schtick

@@ -81,15 +81,24 @@ void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
 }
 
 //drop: Put something down
-void drop()
+bool drop()
 {
     byte ch;
     Item *nobj, *op;
 
     ch = game->level().get_tile(game->hero().pos);
-    if (ch != FLOOR && ch != PASSAGE) { msg("there is something there already"); return; }
-    if ((op = get_item("drop", 0)) == NULL) return;
-    if (!can_drop(op)) return;
+    if (ch != FLOOR && ch != PASSAGE) {
+        //mdk: trying to drop item into occupied space counts as turn
+        msg("there is something there already");
+        return true;
+    }
+
+    if ((op = get_item("drop", 0)) == NULL) 
+        return false;
+
+    if (!can_drop(op)) 
+        return true;
+
     //Take it out of the pack
     if (op->count >= 2 && op->type != WEAPON)
     {
@@ -105,6 +114,8 @@ void drop()
     op->pos = game->hero().pos;
     game->level().set_tile(op->pos, op->type);
     msg("dropped %s", op->inventory_name(true).c_str());
+
+    return true;
 }
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
@@ -127,11 +138,12 @@ bool can_drop(Item *op)
     {
         int hand;
 
-        if (op != game->hero().get_ring(hand = LEFT)) if (op != game->hero().get_ring(hand = RIGHT))
-        {
-            debug("Candrop called with funny thing");
-            return true;
-        }
+        if (op != game->hero().get_ring(hand = LEFT)) 
+            if (op != game->hero().get_ring(hand = RIGHT))
+            {
+                debug("Candrop called with funny thing");
+                return true;
+            }
         game->hero().set_ring(hand, NULL);
         switch (op->which)
         {

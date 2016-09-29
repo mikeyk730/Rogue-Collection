@@ -211,102 +211,94 @@ void show_count()
         game->screen().addstr("    ");
 }
 
-void dispatch_command(int ch)
+bool dispatch_command(int ch)
 {
+    bool counts_as_turn = true;
+
+    //todo: replace switch with call into map<char,bool(*)()>
     switch (ch)
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
     {
         Coord mv;
         find_dir(ch, &mv);
-        do_move(mv, game->can_pickup_this_turn);
+        counts_as_turn = do_move(mv, game->can_pickup_this_turn);
         break;
     }
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
-        do_run(tolower(ch));
+        counts_as_turn = do_run(tolower(ch));
         break;
-    case 't': //todo:
-    {
-        Coord d;
-        if (get_dir(&d))
-            throw_projectile(d);
-        else
-            game->counts_as_turn = false;
+    case 't':
+        counts_as_turn = throw_projectile();
         break;
-    }
     case 'Q':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         quit();
         break;
     case 'i':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         inventory(game->hero().pack, 0, "");
         break;
     case 'd':
-        drop();
+        counts_as_turn = drop();
         break;
     case 'q':
-        quaff();//todo
+        counts_as_turn = quaff();
         break;
     case 'r':
-        read_scroll();//todo
+        counts_as_turn = read_scroll();
         break;
     case 'e':
-        game->counts_as_turn = game->hero().eat();
+        counts_as_turn = game->hero().eat();
         break;
     case 'w':
-        game->counts_as_turn = game->hero().wield();
+        counts_as_turn = game->hero().wield();
         break;
     case 'W':
-        game->counts_as_turn = game->hero().wear_armor();
+        counts_as_turn = game->hero().wear_armor();
         break;
     case 'T':
-        game->counts_as_turn = game->hero().take_off_armor();
+        counts_as_turn = game->hero().take_off_armor();
         break;
     case 'P':
-        game->counts_as_turn = game->hero().put_on_ring();
+        counts_as_turn = game->hero().put_on_ring();
         break;
     case 'R':
-        game->counts_as_turn = game->hero().remove_ring();
+        counts_as_turn = game->hero().remove_ring();
         break;
     case 'c':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         call();
         break;
     case '>':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         go_down_stairs();
         break;
     case '<':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         go_up_stairs();
         break;
     case '/':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         help(helpobjs);
         break;
     case '?':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         help(helpcoms);
         break;
     case '!':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         fakedos();
         break;
     case 's':
+        counts_as_turn = true;
         search();
         break;
-    case 'z'://todo
-    {
-        Coord d;
-        if (get_dir(&d))
-            do_zap(d);
-        else
-            game->counts_as_turn = false;
+    case 'z':
+        counts_as_turn = do_zap();
         break;
-    }
     case 'D':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         discovered();
         break;
     case CTRL('T'):
@@ -314,40 +306,41 @@ void dispatch_command(int ch)
         bool new_value = !in_brief_mode();
         set_brief_mode(new_value);
         msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!");
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         break;
     }
     case 'F':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         record_macro();
         break;
     case CTRL('F'):
     {
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         std::string macro = game->macro;
         std::reverse(macro.begin(), macro.end());
         game->typeahead = macro;
     }
         break;
     case CTRL('R'):
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         msg(game->last_message);
         break;
     case 'v':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         msg("Rogue version %d.%d", REV, VER);
         break;
     case 'S':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         save_game();
         break;
     case '.':
+        counts_as_turn = true;
         doctor(); 
         break;
 
     case '^':
     {
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         Coord d;
         if (get_dir(&d))
         {
@@ -362,16 +355,16 @@ void dispatch_command(int ch)
         break;
     }
     case 'o':
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         msg("i don't have any options, oh my!");
         break;
     case CTRL('L'):
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         msg("the screen looks fine to me");
         break;
 
     case CTRL('W'):
-        game->counts_as_turn = false;
+        counts_as_turn = false;
         game->wizard().toggle();
         break;
 
@@ -380,15 +373,20 @@ void dispatch_command(int ch)
             switch (ch) {
                 //Wizard commands
             case 'C':
-                game->counts_as_turn = false;
+                counts_as_turn = false;
                 summon_object();
                 break;
             case 'X':
-                game->counts_as_turn = false; show_map(true); break;
+                counts_as_turn = false; 
+                show_map(true); 
+                break;
             case 'Z':
-                game->counts_as_turn = false;  show_map(false); break;
+                counts_as_turn = false; 
+                show_map(false);
+                break;
             case CTRL('P'):
             {
+                counts_as_turn = false;
                 char b[255];
                 msg("Enter power: ");
                 getinfo(b, 128);
@@ -398,31 +396,32 @@ void dispatch_command(int ch)
                 break;
             }
             default:
-                game->counts_as_turn = false;
+                counts_as_turn = false;
                 msg("illegal command '%s'", unctrl(ch));
                 game->repeat_cmd_count = 0;
             }
         }
         else {
-            game->counts_as_turn = false;
+            counts_as_turn = false;
             msg("illegal command '%s'", unctrl(ch));
             game->repeat_cmd_count = 0;
             break;
         }
     }
+
+    return counts_as_turn;
 }
 
 void execcom()
 {
+    bool is_turn;
     do
     {
-        game->counts_as_turn = true;
-
         int ch = read_command();
-        dispatch_command(ch);
+        is_turn = dispatch_command(ch);
 
         if (!game->modifiers.is_running())
             game->modifiers.m_stop_at_door = false;
 
-    } while (!game->counts_as_turn);
+    } while (!is_turn);
 }
