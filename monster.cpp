@@ -103,12 +103,10 @@ std::string Monster::get_name()
     return get_monster_name(type);
 }
 
-//todo: make configurable
 bool Monster::is_monster_confused_this_turn() const {
     return ((is_confused() && rnd(5) != 0) ||
         // Phantoms are slightly confused all of the time, and bats are quite confused all the time
-        type == 'P' && rnd(5) == 0 ||
-        type == 'B' && rnd(2) == 0);
+        confuse_roll && rnd(confuse_roll) == 0);
 }
 
 void Monster::reveal_disguise() {

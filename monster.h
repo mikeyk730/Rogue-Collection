@@ -84,4 +84,5 @@ struct Monster : public Agent
     byte oldch = 0;                   //Character that was where it was
     byte disguise = 0;                //What mimic looks like
     int value = 0;
+    int confuse_roll = 0;
 };

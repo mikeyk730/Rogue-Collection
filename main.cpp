@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     bool replay = true;
     //replay = false;
 
-    std::ifstream infile("nonobject.sav", std::ios::binary | std::ios::in);
+    std::ifstream infile("saves\\level7.sav", std::ios::binary | std::ios::in);
     if (replay && infile) {
         game = new GameState(g_random, infile);
     }

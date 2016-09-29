@@ -27,57 +27,60 @@
 #include "hero.h"
 #include "monster.h"
 
-
-//List of monsters in rough order of vorpalness
-static char *lvl_mons  = "K BHISOR LCA NYTWFP GMXVJD";
-static char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
-
-//Array containing information on all the various types of monsters
-struct MonsterEntry
+namespace
 {
-    std::string name;   //What to call the monster
-    int carry;          //Probability of carrying something
-    short flags;        //Things about the monster
-    struct Agent::Stats stats; //Initial stats
-    int exflags;        //Things about special roles
-};
+    //Array containing information on all the various types of monsters
+    struct MonsterEntry
+    {
+        std::string name;   //What to call the monster
+        int carry;          //Probability of carrying something
+        short flags;        //Things about the monster
+        struct Agent::Stats stats; //Initial stats
+        int confuse_roll;
+        int exflags;        //Things about special roles
+    };
 
 #define ___  1
 #define XX  10
 
-struct MonsterEntry monsters[26] =
-{
-    // Name           CARRY                  FLAG       str,  exp,lvl,amr, hpt, dmg
-    { "aquator",          0,                 IS_MEAN,  { XX,   20,  5,  2, ___, "0d0/0d0"         }, EX_RUSTS_ARMOR },
-    { "bat",              0,                  IS_FLY,  { XX,    1,  1,  3, ___, "1d2"             }, 0 },
-    { "centaur",         15,                       0,  { XX,   25,  4,  4, ___, "1d6/1d6"         }, 0 },
-    { "dragon",         100,                 IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    }, EX_SHOOTS_FIRE },
-    { "emu",              0,                 IS_MEAN,  { XX,    2,  1,  7, ___, "1d2"             }, 0 },
-    { "venus flytrap",    0,                 IS_MEAN,  { XX,   80,  8,  3, ___, "0d1"             }, EX_HOLDS | EX_STATIONARY | EX_HOLD_ATTACKS },
-    { "griffin",         20, IS_MEAN | IS_FLY | IS_REGEN,  { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     }, 0 },
-    { "hobgoblin",        0,                 IS_MEAN,  { XX,    3,  1,  5, ___, "1d8"             }, 0 },
-    { "ice monster",      0,                 IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, EX_SHOOTS_ICE },
-    { "jabberwock",      70,                       0,  { XX, 4000, 15,  6, ___, "2d12/2d4"        }, 0 },
-    { "kestral",          0,        IS_MEAN | IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             }, 0 },
-    { "leprechaun",       0,                       0,  { XX,   10,  3,  8, ___, "1d2"             }, EX_STEALS_GOLD | EX_DROPS_GOLD | EX_SUICIDES },
-    { "medusa",          40,                 IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     }, EX_CONFUSES },
-    { "nymph",          100,                       0,  { XX,   37,  3,  9, ___, "0d0"             }, EX_STEALS_MAGIC | EX_SUICIDES },
-    { "orc",             15,                IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             }, 0 },
-    { "phantom",          0,                IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 0 },
-    { "quagga",          30,                 IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0 },
-    { "rattlesnake",      0,                 IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             }, EX_DRAINS_STR },
-    { "slime",            0,                 IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, EX_DIVIDES },
-    { "troll",           50,      IS_REGEN | IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     }, 0 },
-    { "ur-vile",          0,                 IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" }, 0 },
-    { "vampire",         20,      IS_REGEN | IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, EX_DRAINS_MAXHP },
-    { "wraith",           0,                       0,  { XX,   55,  5,  4, ___, "1d6"             }, EX_DRAINS_EXP },
-    { "xeroc",           30,                       0,  { XX,  100,  7,  7, ___, "3d4"             }, EX_MIMICS },
-    { "yeti",            30,                       0,  { XX,   50,  4,  6, ___, "1d6/1d6"         }, 0 },
-    { "zombie",           0,                 IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             }, 0 }
-};
+    struct MonsterEntry monsters[26] =
+    {
+        // Name           CARRY                        FLAG    str,  exp,lvl,amr, hpt, dmg
+        { "aquator",          0,                    IS_MEAN,  { XX,   20,  5,  2, ___, "0d0/0d0"         }, 0, EX_RUSTS_ARMOR },
+        { "bat",              0,                     IS_FLY,  { XX,    1,  1,  3, ___, "1d2"             }, 2, 0 },
+        { "centaur",         15,                          0,  { XX,   25,  4,  4, ___, "1d6/1d6"         }, 0, 0 },
+        { "dragon",         100,                    IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    }, 0, EX_SHOOTS_FIRE },
+        { "emu",              0,                    IS_MEAN,  { XX,    2,  1,  7, ___, "1d2"             }, 0, 0 },
+        { "venus flytrap",    0,                    IS_MEAN,  { XX,   80,  8,  3, ___, "0d1"             }, 0, EX_HOLDS | EX_STATIONARY | EX_HOLD_ATTACKS },
+        { "griffin",         20, IS_MEAN | IS_FLY | IS_REGEN, { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     }, 0, 0 },
+        { "hobgoblin",        0,                    IS_MEAN,  { XX,    3,  1,  5, ___, "1d8"             }, 0, 0 },
+        { "ice monster",      0,                    IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, 0, EX_SHOOTS_ICE },
+        { "jabberwock",      70,                          0,  { XX, 4000, 15,  6, ___, "2d12/2d4"        }, 0, 0 },
+        { "kestral",          0,           IS_MEAN | IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             }, 0, 0 },
+        { "leprechaun",       0,                          0,  { XX,   10,  3,  8, ___, "1d2"             }, 0, EX_STEALS_GOLD | EX_DROPS_GOLD | EX_SUICIDES },
+        { "medusa",          40,                    IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     }, 0, EX_CONFUSES },
+        { "nymph",          100,                          0,  { XX,   37,  3,  9, ___, "0d0"             }, 0, EX_STEALS_MAGIC | EX_SUICIDES },
+        { "orc",             15,                   IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             }, 0, 0 },
+        { "phantom",          0,                   IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 5, 0 },
+        { "quagga",          30,                    IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0, 0 },
+        { "rattlesnake",      0,                    IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             }, 0, EX_DRAINS_STR },
+        { "slime",            0,                    IS_MEAN,  { XX,    1,  2,  8, ___, "1d3"             }, 0, EX_DIVIDES },
+        { "troll",           50,         IS_REGEN | IS_MEAN,  { XX,  120,  6,  4, ___, "1d8/1d8/2d6"     }, 0, 0 },
+        { "ur-vile",          0,                    IS_MEAN,  { XX,  190,  7, -2, ___, "1d3/1d3/1d3/4d6" }, 0, 0 },
+        { "vampire",         20,         IS_REGEN | IS_MEAN,  { XX,  350,  8,  1, ___, "1d10"            }, 0, EX_DRAINS_MAXHP },
+        { "wraith",           0,                          0,  { XX,   55,  5,  4, ___, "1d6"             }, 0, EX_DRAINS_EXP },
+        { "xeroc",           30,                          0,  { XX,  100,  7,  7, ___, "3d4"             }, 0, EX_MIMICS },
+        { "yeti",            30,                          0,  { XX,   50,  4,  6, ___, "1d6/1d6"         }, 0, 0 },
+        { "zombie",           0,                    IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             }, 0, 0 }
+    };
 
 #undef ___
 #undef XX
+
+    //List of monsters in rough order of vorpalness
+    const char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
+    const char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
+}
 
 //todo: validation, move to better location
 void load_monster_cfg(const std::string& filename)
@@ -114,18 +117,14 @@ int Monster::get_carry_probability() const
     return monsters[type - 'A'].carry;
 }
 
-
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
 char randmonster(bool wander, int level)
 {
     int d;
-    char *mons;
-
-    mons = wander ? wand_mons : lvl_mons;
+    const char* mons = wander ? wand_mons : lvl_mons;
     do
     {
         int r10 = rnd(5) + rnd(6);
-
         d = level + (r10 - 5);
         if (d < 1) d = rnd(5) + 1;
         if (d > 26) d = rnd(5) + 22;
@@ -133,7 +132,7 @@ char randmonster(bool wander, int level)
     return mons[d];
 }
 
-void set_xeroc_disguise(Monster* X)
+void set_disguise(Monster* X)
 {
     switch (rnd(get_level() >= AMULETLEVEL ? 9 : 8))
     {
@@ -154,11 +153,8 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
 {
     Monster* monster = new Monster;
     int level_add = (level <= AMULETLEVEL) ? 0 : level - AMULETLEVEL;
-    const struct MonsterEntry* defaults;
-
-    defaults = &monsters[type - 'A'];
-    game->level().monsters.push_front(monster);
-
+    
+    const MonsterEntry* defaults = &monsters[type - 'A'];
     monster->type = type;
     monster->disguise = type;
     monster->pos = *position;
@@ -173,9 +169,12 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     monster->stats.m_exp += level_add * 10 + exp_add(monster);
     monster->turn = true;
     monster->value = 0;
+    monster->confuse_roll = defaults->confuse_roll;
 
     if (monster->is_mimic())
-        set_xeroc_disguise(monster);
+        set_disguise(monster);
+
+    game->level().monsters.push_front(monster);
 
     if (game->hero().is_wearing_ring(R_AGGR))
         monster->start_run();
@@ -262,7 +261,7 @@ Monster *wake_monster(Coord p)
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon
 char pick_vorpal_monster()
 {
-    char *p;
+    const char *p;
     do {
         // Start at end of enemies list and walk backwards, 
         // with a 10% chance of stopping at any given entry.

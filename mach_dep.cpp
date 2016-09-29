@@ -39,13 +39,6 @@
 #define C_F10     0x44
 #define ALT_F9    0x70
 
-
-
-
-    //static InputInterface* s_input_driver(new CapturedInput("record", new KeyboardInput));
-    //static InputInterface* s_input_driver(new StreamInput("replay", new KeyboardInput));
-
-
 //Table for IBM extended key translation
 static struct xlate
 {

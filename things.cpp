@@ -39,8 +39,8 @@ struct MagicItem things[NUMTHINGS] =
 };
 
 #define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
-
-static int line_cnt = 0;
+static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)]; //todo:eliminate static
+static int line_cnt = 0; //todo:eliminate static
 
 //init_things: Initialize the probabilities for types of things
 void init_things()
@@ -278,7 +278,6 @@ void discovered()
 void print_disc(byte type)
 {
     int i, maxnum, num_found;
-    static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
     ItemClass& item_class = game->item_class(type);
     maxnum = item_class.get_max_items();
