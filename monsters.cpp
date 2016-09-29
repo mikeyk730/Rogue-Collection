@@ -78,8 +78,8 @@ namespace
 #undef XX
 
     //List of monsters in rough order of vorpalness
-    const char *lvl_mons  = "K BHISOR LCA NYTWFP GMXVJD";
-    const char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
+    char  lvl_mons[] = "K BHISOR LCA NYTWFP GMXVJD";
+    char wand_mons[] = "KEBHISORZ CAQ YTW PUGM VJ ";
 }
 
 //todo: validation, move to better location
@@ -88,6 +88,16 @@ void load_monster_cfg(const std::string& filename)
     std::ifstream file(filename, std::ios::in);
     std::string line;
     while (std::getline(file, line)) {
+
+        if (line.substr(0, 7) == "l_order") {
+            std::string l = line.substr(9, 26);
+            l.copy(lvl_mons, 26);
+        }
+        else if (line.substr(0, 7) == "w_order") {
+            std::string w = line.substr(9, 26);
+            w.copy(wand_mons, 26);
+        }
+
         std::istringstream ss(line);
 
         char type;
