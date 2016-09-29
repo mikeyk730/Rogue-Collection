@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    //replay = false;
+    replay = false;
 
     std::ifstream infile("saves\\level7.sav", std::ios::binary | std::ios::in);
     if (replay && infile) {

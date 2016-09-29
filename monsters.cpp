@@ -78,7 +78,7 @@ namespace
 #undef XX
 
     //List of monsters in rough order of vorpalness
-    const char *lvl_mons = "K BHISOR LCA NYTWFP GMXVJD";
+    const char *lvl_mons  = "K BHISOR LCA NYTWFP GMXVJD";
     const char *wand_mons = "KEBHISORZ CAQ YTW PUGM VJ ";
 }
 
@@ -98,6 +98,7 @@ void load_monster_cfg(const std::string& filename)
         ss >> std::hex >> m.flags;
         ss >> std::dec >> m.stats.m_str >> m.stats.m_exp >> m.stats.level >> m.stats.ac >> m.stats.hp;
         ss >> m.stats.damage;
+        ss >> std::dec >> m.confuse_roll;
         ss >> std::hex >> m.exflags;
 
         std::replace(m.name.begin(), m.name.end(), '_', ' ');
