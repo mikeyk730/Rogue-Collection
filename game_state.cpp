@@ -53,7 +53,7 @@ GameState::GameState(Random* random, std::istream& in) :
             read_string(in, &value);
             m_environment[key] = value;
         }
-        macro = get_environment("macro");
+        process_environment();
     }
     else
     {
@@ -82,13 +82,17 @@ void GameState::init_environment()
     m_environment["scorefile"] = "rogue.scr";
     m_environment["savefile"] = "rogue.sav";
     m_environment["macro"] = "v";
-    m_environment["fruit"] = "Slime Mold"; //move to Hero?
+    m_environment["fruit"] = "Slime Mold";
     m_environment["menu"] = "on";
-    m_environment["screen"] = "";
+    m_environment["screen"] = "color";
     m_environment["levelnames"] = "on";
     m_environment["monstercfg"] = "monsters.opt";
+}
 
+void GameState::process_environment()
+{
     macro = get_environment("macro");
+    wizard().add_powers(get_environment("powers"));
 }
 
 void GameState::save_game(const std::string& filename)

@@ -1,4 +1,6 @@
 #pragma once
+#include <set>
+
 //whatis: What a certain object is
 void whatis();
 
@@ -15,6 +17,13 @@ struct Cheats
 {
     Cheats();
 
+    void toggle();
+    bool enabled() const;
+    bool did_cheat() const;
+
+    void add_powers(const std::string& powers);
+    void toggle_powers(const std::string& powers);
+
     bool detect_monsters() const;
     bool no_dark_rooms() const;
     bool slow_monster() const;
@@ -30,17 +39,14 @@ struct Cheats
     bool sense_food() const;
     bool see_invisible() const;
     bool show_food_counter() const;
-    bool free_level_movement() const;
+    bool jump_levels() const;
 
 private:
-    //todo: replace with set<string>?
-    bool m_detect_monsters = false;
-    bool m_see_invisible = false;
-    bool m_no_traps = false;
-    bool m_no_hidden_doors = false;
-    bool m_no_ring_hunger = false;
-    bool m_no_hunger = false;
-    bool m_no_dark_rooms = false;
+    bool is_enabled(const std::string& power) const;
+
+    std::set<std::string> m_powers;
+    bool m_enabled = false;
+    bool m_cheated = false;
 };
 
 

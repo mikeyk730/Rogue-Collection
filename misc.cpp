@@ -492,7 +492,7 @@ void search()
 //go_down_stairs: He wants to go down a level
 void go_down_stairs()
 {
-    if (game->level().get_tile(game->hero().pos) != STAIRS && !game->hero().is_wizard())
+    if (game->level().get_tile(game->hero().pos) != STAIRS && !game->wizard().jump_levels())
         msg("I see no way down");
     else {
         next_level();
@@ -503,8 +503,8 @@ void go_down_stairs()
 //go_up_stairs: He wants to go up a level
 void go_up_stairs()
 {
-    if (game->level().get_tile(game->hero().pos) == STAIRS || game->hero().is_wizard()) {
-        if (game->hero().has_amulet() || game->hero().is_wizard()) {
+    if (game->level().get_tile(game->hero().pos) == STAIRS || game->wizard().jump_levels()) {
+        if (game->hero().has_amulet() || game->wizard().jump_levels()) {
             if (prev_level() == 0)
                 total_winner();
             game->level().new_level(true);

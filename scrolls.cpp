@@ -395,7 +395,7 @@ std::string ScrollInfo::get_inventory_name(int which, int count) const
         sprintf(pb, "%d scrolls ", count);
         pb = &prbuf[strlen(prbuf)];
     }
-    if (is_discovered(which) || game->hero().is_wizard())
+    if (is_discovered(which) || game->wizard().reveal_items())
         sprintf(pb, "of %s", get_name(which).c_str());
     else if (!get_guess(which).empty())
         sprintf(pb, "called %s", get_guess(which).c_str());

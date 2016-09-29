@@ -148,24 +148,6 @@ void Hero::adjust_purse(int delta)
         m_purse = 0;
 }
 
-void Hero::toggle_wizard()
-{
-    m_wizard = !m_wizard;
-    if (m_wizard)
-        m_cheated = true;
-    msg(is_wizard() ? "You are now a wizard!" : "You feel your magic powers fade away");
-}
-
-bool Hero::is_wizard() const
-{
-    return m_wizard;
-}
-
-bool Hero::did_cheat() const
-{
-    return m_cheated;
-}
-
 void Hero::eat(Item* obj)
 {
     if (obj->type != FOOD) {
@@ -319,15 +301,13 @@ void Hero::teleport()
     game->repeat_cmd_count = 0;
     game->modifiers.m_running = false;
     clear_typeahead_buffer();
+
     //Teleportation can be a confusing experience (unless you really are a wizard)
-    if (!is_wizard())
-    {
-        if (is_confused())
-            lengthen(unconfuse, rnd(4) + 2);
-        else
-            fuse(unconfuse, 0, rnd(4) + 2);
-        set_confused(true);
-    }
+    if (is_confused())
+        lengthen(unconfuse, rnd(4) + 2);
+    else
+        fuse(unconfuse, 0, rnd(4) + 2);
+    set_confused(true);
 }
 
 //check_level: Check to see if the guy has gone up a level.

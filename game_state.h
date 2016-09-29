@@ -23,6 +23,7 @@ struct GameState
 
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);
+    void process_environment();
     bool use_level_names() const;
 
     void log(const std::string& category, const std::string& msg);

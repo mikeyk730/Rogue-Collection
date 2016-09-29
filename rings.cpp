@@ -130,7 +130,7 @@ int ring_eat(int hand)
 //ring_num: Print ring bonuses
 char *ring_num(Item *obj)
 {
-    if (!obj->is_known() && !game->hero().is_wizard())
+    if (!obj->is_known() && !game->wizard().reveal_items())
         return "";
 
     switch (obj->which)
@@ -151,7 +151,7 @@ std::string RingInfo::get_inventory_name(int which, const std::string& bonus) co
     char *pb = prbuf;
     std::string stone = get_identifier(which);
 
-    if (is_discovered(which) || game->hero().is_wizard())
+    if (is_discovered(which) || game->wizard().reveal_items())
         chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", bonus.c_str(), get_name(which).c_str(), stone.c_str());
     else if (!get_guess(which).empty())
         chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_guess(which).c_str(), stone.c_str());

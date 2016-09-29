@@ -75,7 +75,7 @@ void score(int amount, int flags, char monst)
     while ((sc_fd = _open(game->get_environment("scorefile").c_str(), 0)) < 0)
     {
         game->screen().printw("\n");
-        if (game->hero().did_cheat() || (amount == 0)) return;
+        if (game->wizard().did_cheat() || (amount == 0)) return;
         str_attr("No scorefile: %Create %Retry %Abort");
 
         bool reread;
@@ -96,7 +96,7 @@ void score(int amount, int flags, char monst)
     }
     game->screen().printw("\n");
     get_scores(&top_ten[0]);
-    if (!game->hero().did_cheat())
+    if (!game->wizard().did_cheat())
     {
         strcpy(his_score.name, game->hero().get_name().c_str());
         his_score.gold = amount;

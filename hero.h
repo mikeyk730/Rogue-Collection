@@ -44,10 +44,6 @@ public:
     int is_ring_on_hand(int h, int r) const;
     int is_wearing_ring(int r) const;
 
-    void toggle_wizard();
-    bool is_wizard() const;
-    bool did_cheat() const;
-
     //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
     void add_to_pack(Item *obj, bool silent);
     int get_pack_size();
@@ -98,8 +94,6 @@ public:
 private:
 
     int m_purse = 0;
-    bool m_wizard = false;
-    bool m_cheated = false;
     bool m_had_amulet = false;
     int hungry_state = 0;    //How hungry is he
     int food_left = 0;       //Amount of food in hero's stomach

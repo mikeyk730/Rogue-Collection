@@ -258,12 +258,12 @@ const char* Item::get_inv_name_weapon() const
     else
         sprintf(pb, "A%s ", vowelstr(name().c_str()));
     pb = &prbuf[strlen(prbuf)];
-    if (this->is_known() || game->hero().is_wizard())
+    if (this->is_known() || game->wizard().reveal_items())
         sprintf(pb, "%s %s", num(this->hit_plus, this->damage_plus, WEAPON), name().c_str());
     else
         sprintf(pb, "%s", name().c_str());
     if (this->count > 1) strcat(pb, "s");
-    if (this->is_vorpalized() && (this->is_revealed() || game->hero().is_wizard()))
+    if (this->is_vorpalized() && (this->is_revealed() || game->wizard().reveal_items()))
     {
         strcat(pb, " of ");
         strcat(pb, get_vorpalized_name().c_str());

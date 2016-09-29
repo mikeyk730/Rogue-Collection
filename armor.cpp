@@ -109,7 +109,7 @@ const char* Item::get_inv_name_armor()
 {
     char *pb = prbuf;
 
-    if (is_known() || game->hero().is_wizard())
+    if (is_known() || game->wizard().reveal_items())
         chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which) - get_armor_class(), 0, (char)ARMOR),
             name().c_str(), armor_class_for_display());
     else

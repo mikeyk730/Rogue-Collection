@@ -322,7 +322,7 @@ void status()
         game->screen().printw("%-12s", level_titles[s_elvl - 1]);
     }
     //Show raw food counter in wizard mode
-    if (game->hero().is_wizard()) {
+    if (game->wizard().show_food_counter()) {
         s_hungry = game->hero().get_food_left();
         std::ostringstream ss;
         ss << s_hungry;

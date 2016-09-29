@@ -261,7 +261,7 @@ int pick_one(struct MagicItem *magic, int nitems)
 //discovered: list what the player has discovered in this game of a certain type
 void discovered()
 {
-    if (game->hero().is_wizard())
+    if (game->wizard().enabled())
         return debug_screen();
 
     print_disc(POTION);

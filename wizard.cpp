@@ -279,37 +279,97 @@ Cheats::Cheats()
     //m_no_dark_rooms = true;
 }
 
+void Cheats::toggle()
+{
+    m_enabled = !m_enabled;
+    if (m_enabled)
+        m_cheated = true;
+    msg(m_enabled ? "You are now a wizard!" : "You feel your magic powers fade away");
+}
+
+bool Cheats::enabled() const
+{
+    return m_enabled;
+}
+
+bool Cheats::did_cheat() const
+{
+    return m_cheated;
+}
+
+void Cheats::add_powers(const std::string & powers)
+{
+    std::stringstream ss(powers);
+    std::string item;
+    while (getline(ss, item, ',')) {
+        m_powers.insert(item);
+    }
+}
+
+void Cheats::toggle_powers(const std::string & powers)
+{
+    std::stringstream ss(powers);
+    std::string item;
+    while (getline(ss, item, ',')) {
+        auto i = m_powers.find(item);
+        if (i != m_powers.end())
+            m_powers.erase(i);
+        else
+            m_powers.insert(item);
+    }
+}
+
+bool Cheats::is_enabled(const std::string& power) const
+{
+    return m_enabled && (m_powers.find(power) != m_powers.end());
+}
+
 bool Cheats::detect_monsters() const
 {
-    return m_detect_monsters;
+    return is_enabled("detect_monsters");
 }
 
 bool Cheats::no_dark_rooms() const
 {
-    return m_no_dark_rooms;
+    return is_enabled("no_dark_rooms");
 }
 
 bool Cheats::see_invisible() const
 {
-    return m_see_invisible;
+    return is_enabled("see_invisible");
+}
+
+bool Cheats::show_food_counter() const
+{
+    return is_enabled("show_food_counter");
+}
+
+bool Cheats::jump_levels() const
+{
+    return is_enabled("jump_levels");
 }
 
 bool Cheats::no_hunger() const
 {
-    return m_no_hunger;
+    return is_enabled("no_hunger");
 }
 
 bool Cheats::no_hidden_doors() const
 {
-    return m_no_hidden_doors;
+    return is_enabled("no_hidden_doors");
 }
 
 bool Cheats::no_traps() const
 {
-    return m_no_traps;
+    return is_enabled("no_traps");
+}
+
+bool Cheats::reveal_items() const
+{
+    return is_enabled("reveal_items");
 }
 
 bool Cheats::no_ring_hunger() const
 {
-    return m_no_ring_hunger;
+    return is_enabled("no_ring_hunger");
 }

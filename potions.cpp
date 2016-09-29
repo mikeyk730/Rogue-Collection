@@ -340,7 +340,8 @@ bool turn_see(bool turn_off)
         can_see = (game->hero().can_see_monster(monster) || (was_there = game->screen().curch()) == monster->type);
         if (turn_off)
         {
-            if (!game->hero().can_see_monster(monster) && monster->oldch != MDK) game->screen().addch(monster->oldch);
+            if (!game->hero().can_see_monster(monster) && monster->oldch != MDK)
+                game->screen().addch(monster->oldch);
         }
         else
         {
@@ -407,7 +408,7 @@ std::string PotionInfo::get_inventory_name(int which, int count) const
         sprintf(pb, "%d potions ", count);
         pb = &pb[strlen(prbuf)];
     }
-    if (is_discovered(which) || game->hero().is_wizard()) {
+    if (is_discovered(which) || game->wizard().reveal_items()) {
         chopmsg(pb, "of %s", "of %s(%s)", get_name(which).c_str(), color.c_str());
     }
     else if (!get_guess(which).empty()) {

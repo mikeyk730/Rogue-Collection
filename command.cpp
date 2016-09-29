@@ -371,11 +371,11 @@ void dispatch_command(int ch)
 
     case CTRL('W'):
         game->counts_as_turn = false;
-        game->hero().toggle_wizard();
+        game->wizard().toggle();
         break;
 
     default:
-        if (game->hero().is_wizard()) {
+        if (game->wizard().enabled()) {
             switch (ch) {
                 //Wizard commands
             case 'C':
@@ -386,6 +386,16 @@ void dispatch_command(int ch)
                 game->counts_as_turn = false; show_map(true); break;
             case 'Z':
                 game->counts_as_turn = false;  show_map(false); break;
+            case CTRL('P'):
+            {
+                char b[255];
+                msg("Enter power: ");
+                getinfo(b, 128);
+                if (*b != ESCAPE)
+                    game->wizard().toggle_powers(b);
+                clear_msg();
+                break;
+            }
             default:
                 game->counts_as_turn = false;
                 msg("illegal command '%s'", unctrl(ch));

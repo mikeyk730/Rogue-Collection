@@ -607,7 +607,7 @@ const char *get_charge_string(Item *obj)
 {
     static char buf[20];
 
-    if (!obj->is_known() && !game->hero().is_wizard()) buf[0] = '\0';
+    if (!obj->is_known() && !game->wizard().reveal_items()) buf[0] = '\0';
     else sprintf(buf, " [%d charges]", obj->get_charges());
     return buf;
 }
@@ -620,7 +620,7 @@ std::string StickInfo::get_inventory_name(int which, const std::string& charge) 
 
     sprintf(pb, "A%s %s ", vowelstr(type.c_str()), type.c_str());
     pb = &prbuf[strlen(prbuf)];
-    if (is_discovered(which) || game->hero().is_wizard())
+    if (is_discovered(which) || game->wizard().reveal_items())
         chopmsg(pb, "of %s%s", "of %s%s(%s)", get_name(which).c_str(), charge.c_str(), material.c_str());
     else if (!get_guess(which).empty())
         chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), material.c_str());

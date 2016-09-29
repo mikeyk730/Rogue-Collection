@@ -16,7 +16,7 @@
 static int fd;
 static int ch;
 static int pstate;
-static char blabel[11], bstring[25], barg[36];
+static char blabel[11], bstring[256], barg[36];
 static char *plabel, *pstring;
 
 //Putenv: Put something into the environment. label - label of thing in environment. string - string associated with the label
@@ -32,8 +32,10 @@ int peekc()
 {
     ch = 0;
     //we make sure that the strings never get filled past the end, this way we only have to check for these things once
-    if (plabel > &blabel[10]) plabel = &blabel[10];
-    if (pstring > &bstring[24]) pstring = &bstring[24];
+    if (plabel > &blabel[10]) 
+        plabel = &blabel[10];
+    if (pstring > &bstring[255]) 
+        pstring = &bstring[255];
     if (_read(fd, &ch, 1) < 1 && pstate != 0)
     {
         //When looking for the end of the string, Let the eof look like newlines
@@ -62,7 +64,7 @@ int setenv(char *envfile)
         pstring = bstring;
         //Skip white space, this is the only state (pstate == 0) where eof will not be aborted
         while (isspace(peekc()));
-        if (ch == 0) { _close(fd); return 0; }
+        if (ch == 0) { _close(fd); break; }
         pstate = 3;
         //Skip comments.
         if (ch == '#')
@@ -88,5 +90,6 @@ int setenv(char *envfile)
         putenv2(blabel, bstring);
     }
 
-    //todo:for all environment strings that have to be in lowercase ....
+    game->process_environment();
+    return 0;
 }
