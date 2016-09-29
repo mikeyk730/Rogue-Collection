@@ -640,9 +640,12 @@ std::string StickInfo::get_inventory_name(int which) const
     return get_inventory_name(which, "");
 }
 
+//todo: it's problematic to need to poke into the game here
+//e.g. we'd crash if we started the hero off with a wand
 Stick::Stick(int which)
     : Item(STICK, which, game->sticks().get_type(which))
 {
+    //mdk: A staff is more powerful than a wand for striking 
     if (game->sticks().is_staff(which))
         damage = "2d3";
     else
