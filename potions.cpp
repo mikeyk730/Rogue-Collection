@@ -443,7 +443,7 @@ std::string PotionInfo::get_inventory_name(int which) const
 
 
 Potion::Potion(int which)
-    : Item(POTION, which, "potion")
+    : Item(POTION, which)
 {
 }
 
@@ -452,8 +452,12 @@ Item * Potion::Clone() const
     return new Potion(*this);
 }
 
+std::string Potion::Name() const
+{
+    return "potion";
+}
+
 std::string Potion::InventoryName() const
 {
-    //todo: change class layout, so we don't need to poke into game
-    return game->item_class(type).get_inventory_name(this);
+    return item_class()->get_inventory_name(this);
 }

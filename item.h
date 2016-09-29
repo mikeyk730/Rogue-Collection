@@ -3,6 +3,7 @@
 
 struct Monster;
 struct Room;
+struct ItemClass;
 
 //flags for objects
 const short IS_CURSED = 0x0001; //object is cursed
@@ -79,12 +80,15 @@ struct Item
     static Item* CreateItem();
 
 protected:
-    Item(int type, int which, const std::string& name);
+    Item(int type, int which);
 public:
     virtual ~Item();
 
     virtual Item* Clone() const = 0;
+    virtual std::string Name() const = 0;
     virtual std::string InventoryName() const = 0;
+
+    ItemClass* item_class() const;
 
     //inv_name: Return the name of something as it would appear in an inventory.
     std::string inventory_name(bool lowercase);
@@ -105,7 +109,6 @@ protected:
     short ring_level;
     short flags;                   //Information about objects
     char enemy;                    //If it is enchanted, who it hates
-    std::string m_name;
 public:
     int group;                     //Group number for this object
 public:
@@ -167,10 +170,6 @@ public:
     std::string get_damage() const;
     char launcher() const;
 
-    void set_name(const std::string& name);
-    std::string name() const;
-
-
     Room* get_room();
 };
 
@@ -181,6 +180,7 @@ struct Amulet : public Item
     Amulet();
 
     virtual Item* Clone() const;
+    virtual std::string Name() const;
     virtual std::string InventoryName() const;
 };
 
@@ -189,5 +189,6 @@ struct Gold : public Item
     Gold(int value);
 
     virtual Item* Clone() const;
+    virtual std::string Name() const;
     virtual std::string InventoryName() const;
 };

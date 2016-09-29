@@ -7,6 +7,7 @@ struct Armor : public Item
     Armor(int which, int ac_mod);
 
     virtual Item* Clone() const;
+    virtual std::string Name() const;
     virtual std::string InventoryName() const;
 };
 

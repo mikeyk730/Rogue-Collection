@@ -301,7 +301,7 @@ void zap_generic(Coord delta, Item* wand, int which)
 
 struct MagicMissile : public Item
 {
-    MagicMissile() : Item(MISSILE, 0, "magic missile")
+    MagicMissile() : Item(MISSILE, 0)
     {
         throw_damage = "1d8";
         hit_plus = 1000;
@@ -312,6 +312,7 @@ struct MagicMissile : public Item
             m_launcher = game->hero().get_current_weapon()->which;
     }
     virtual Item* Clone() const { return new MagicMissile(*this); }
+    virtual std::string Name() const { return "magic missile"; }
     virtual std::string InventoryName() const { return "magic missile"; }
 };
 
@@ -502,7 +503,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
     bool is_flame(name == "flame");
     Monster* victim = 0;
 
-    Item* bolt = new Weapon(FLAME, 30, 0);
+    Weapon* bolt = new Weapon(FLAME, 30, 0);
     bolt->set_name(name);
     switch (dir->y + dir->x)
     {
@@ -645,14 +646,13 @@ std::string StickInfo::get_inventory_name(int which) const
     return get_inventory_name(which, "");
 }
 
-//todo: it's problematic to need to poke into the game here
 //e.g. we'd crash if we started the hero off with a wand
 Stick::Stick(int which)
-    : Item(STICK, which, game->sticks().get_type(which))
+    : Item(STICK, which)
 {
-    //mdk: A staff is more powerful than a wand for striking 
-    if (game->sticks().is_staff(which))
-        damage = "2d3";
+    StickInfo* sticks = dynamic_cast<StickInfo*>(item_class());
+    if (sticks->is_staff(which))
+        damage = "2d3";  //mdk: A staff is more powerful than a wand for striking 
     else
         damage = "1d1";
 
@@ -677,8 +677,13 @@ Item * Stick::Clone() const
     return new Stick(*this);
 }
 
+std::string Stick::Name() const
+{
+    StickInfo* sticks = dynamic_cast<StickInfo*>(item_class());
+    return sticks->get_type(which);
+}
+
 std::string Stick::InventoryName() const
 {
-    //todo: change class layout, so we don't need to poke into game
-    return game->item_class(type).get_inventory_name(this);
+    return item_class()->get_inventory_name(this);
 }

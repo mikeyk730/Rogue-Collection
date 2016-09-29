@@ -50,6 +50,14 @@ void init_things()
         mp->prob += (mp - 1)->prob;
 }
 
+ItemClass * Item::item_class() const
+{
+    //todo: change class layout, so we don't need to poke into game
+    //this is problematic because we couldn't, for example, start
+    //the hero off with a stick
+    return &game->item_class(type);
+}
+
 //inv_name: Return the name of something as it would appear in an inventory.
 std::string Item::inventory_name(bool lowercase)
 {

@@ -386,7 +386,7 @@ bool Hero::can_see_monster(Monster *monster)
     if (weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
     {
         weapon->set_flashed();
-        msg(flash, weapon->name().c_str(), short_msgs() ? "" : intense);
+        msg(flash, weapon->Name().c_str(), short_msgs() ? "" : intense);
     }
     return true;
 }

@@ -7,13 +7,18 @@
 #include "misc.h"
 
 Food::Food(int which) :
-    Item(FOOD, which, "food")
+    Item(FOOD, which)
 {
 }
 
 Item * Food::Clone() const
 {
     return new Food(*this);
+}
+
+std::string Food::Name() const
+{
+    return "food";
 }
 
 Item* Food::CreateFood()

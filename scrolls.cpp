@@ -422,7 +422,7 @@ std::string ScrollInfo::get_inventory_name(int which) const
 }
 
 Scroll::Scroll(int which) :
-    Item(SCROLL, which, "scroll")
+    Item(SCROLL, which)
 {
 }
 
@@ -431,8 +431,12 @@ Item * Scroll::Clone() const
     return new Scroll(*this);
 }
 
+std::string Scroll::Name() const
+{
+    return "scroll";
+}
+
 std::string Scroll::InventoryName() const
 {
-    //todo: change class layout, so we don't need to poke into game
-    return game->item_class(type).get_inventory_name(this);
+    return item_class()->get_inventory_name(this);
 }

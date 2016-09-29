@@ -8,6 +8,7 @@ struct Potion : public Item
     Potion(int which);
 
     virtual Item* Clone() const;
+    virtual std::string Name() const;
     virtual std::string InventoryName() const;
 };
 

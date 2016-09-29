@@ -162,7 +162,7 @@ std::string RingInfo::get_inventory_name(int which) const
 }
 
 Ring::Ring(int which) :
-    Item(RING, which, "ring")
+    Item(RING, which)
 {
     switch (which)
     {
@@ -180,7 +180,7 @@ Ring::Ring(int which) :
 }
 
 Ring::Ring(int which, int level) :
-    Item(RING, which, "ring")
+    Item(RING, which)
 {
     ring_level = level;
     if (ring_level < 0)
@@ -199,8 +199,12 @@ Item* Ring::Clone() const
     return new Ring(*this);
 }
 
+std::string Ring::Name() const
+{
+    return "ring";
+}
+
 std::string Ring::InventoryName() const
 {
-    //todo: change class layout, so we don't need to poke into game
-    return game->item_class(type).get_inventory_name(this);
+    return item_class()->get_inventory_name(this);
 }

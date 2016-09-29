@@ -164,7 +164,7 @@ void fall(Item *obj, bool pr)
         pr = 0;
     }
     if (pr)
-        msg("the %s vanishes%s.", obj->name().c_str(), noterse(" as it hits the ground"));
+        msg("the %s vanishes%s.", obj->Name().c_str(), noterse(" as it hits the ground"));
     delete obj;
 }
 
@@ -263,12 +263,12 @@ std::string Weapon::InventoryName() const
     if (this->count > 1)
         sprintf(pb, "%d ", this->count);
     else
-        sprintf(pb, "A%s ", vowelstr(name().c_str()));
+        sprintf(pb, "A%s ", vowelstr(Name().c_str()));
     pb = &prbuf[strlen(prbuf)];
     if (this->is_known() || game->wizard().reveal_items())
-        sprintf(pb, "%s %s", num(this->hit_plus, this->damage_plus, WEAPON), name().c_str());
+        sprintf(pb, "%s %s", num(this->hit_plus, this->damage_plus, WEAPON), Name().c_str());
     else
-        sprintf(pb, "%s", name().c_str());
+        sprintf(pb, "%s", Name().c_str());
     if (this->count > 1) strcat(pb, "s");
     if (this->is_vorpalized() && (this->is_revealed() || game->wizard().reveal_items()))
     {
@@ -287,7 +287,7 @@ void Item::enchant_weapon()
         this->hit_plus++;
     else
         this->damage_plus++;
-    ifterse("your %s glows blue", "your %s glows blue for a moment", name().c_str());
+    ifterse("your %s glows blue", "your %s glows blue for a moment", Name().c_str());
 }
 
 bool Item::is_vorpalized() const
@@ -322,14 +322,9 @@ char Item::launcher() const
     return m_launcher;
 }
 
-void Item::set_name(const std::string & name)
+void Weapon::set_name(const std::string & name)
 {
     m_name = name;
-}
-
-std::string Item::name() const
-{
-    return m_name;
 }
 
 Room* Item::get_room()
@@ -349,7 +344,7 @@ void Item::vorpalize()
     //You aren't allowed to doubly vorpalize a weapon.
     if (is_vorpalized())
     {
-        msg("your %s vanishes in a puff of smoke", name().c_str());
+        msg("your %s vanishes in a puff of smoke", Name().c_str());
         game->hero().set_current_weapon(0);
         game->hero().pack.remove(this);
         delete this; //careful not to do anything afterwards
@@ -360,11 +355,12 @@ void Item::vorpalize()
     hit_plus++;
     damage_plus++;
     charges = 1;
-    msg(flash, name().c_str(), short_msgs() ? "" : intense);
+    msg(flash, Name().c_str(), short_msgs() ? "" : intense);
 }
 
 Weapon::Weapon(int which) :
-    Item(WEAPON, which, weapon_names[which])
+    Item(WEAPON, which),
+    m_name(weapon_names[which])
 {
     initialize_weapon(which);
 
@@ -378,7 +374,8 @@ Weapon::Weapon(int which) :
 }
 
 Weapon::Weapon(int which, int hit, int damage) :
-    Item(WEAPON, which, weapon_names[which])
+    Item(WEAPON, which),
+    m_name(weapon_names[which])
 {
     initialize_weapon(which);
 
@@ -391,4 +388,9 @@ Weapon::Weapon(int which, int hit, int damage) :
 Item * Weapon::Clone() const
 {
     return new Weapon(*this);
+}
+
+std::string Weapon::Name() const
+{
+    return m_name;
 }

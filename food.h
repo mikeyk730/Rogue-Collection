@@ -8,5 +8,6 @@ struct Food : public Item
     Food(int which);
 
     virtual Item* Clone() const;
+    virtual std::string Name() const;
     virtual std::string InventoryName() const;
 };

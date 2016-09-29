@@ -7,6 +7,7 @@ struct Ring : public Item
     Ring(int which, int level);
 
     virtual Item* Clone() const;
+    virtual std::string Name() const;
     virtual std::string InventoryName() const;
 };
 
