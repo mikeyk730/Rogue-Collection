@@ -10,6 +10,8 @@ struct Stick : public Item
     virtual Item* Clone() const;
     virtual std::string Name() const;
     virtual std::string InventoryName() const;
+    virtual bool IsEvil() const;
+    virtual int Worth() const;
 };
 
 Item* create_stick();

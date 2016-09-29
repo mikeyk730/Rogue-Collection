@@ -31,6 +31,7 @@
 #include "food.h"
 #include "scrolls.h"
 #include "monster.h"
+#include "amulet.h"
 
 //whatis: What a certain object is
 void whatis()
@@ -51,24 +52,7 @@ void whatis()
             break;
     }
 
-    switch (obj->type)
-    {
-    case SCROLL:
-    case POTION:
-        game->item_class(obj->type).discover(obj->which);
-        break;
-
-    case RING:
-    case STICK:
-        game->item_class(obj->type).discover(obj->which);
-        obj->set_known();
-        break;
-
-    case WEAPON:
-    case ARMOR:
-        obj->set_known();
-        break;
-    }
+    obj->discover();
 
     //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
     if (obj->is_vorpalized())

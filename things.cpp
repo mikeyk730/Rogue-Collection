@@ -50,12 +50,19 @@ void init_things()
         mp->prob += (mp - 1)->prob;
 }
 
-ItemClass * Item::item_class() const
+void Item::discover()
+{
+    set_known();
+    if (item_class())
+        item_class()->discover(which);
+}
+
+ItemClass* Item::item_class() const
 {
     //todo: change class layout, so we don't need to poke into game
     //this is problematic because we couldn't, for example, start
     //the hero off with a stick
-    return &game->item_class(type);
+    return game->item_class(type);
 }
 
 //inv_name: Return the name of something as it would appear in an inventory.
@@ -258,21 +265,18 @@ void discovered()
 //print_disc: Print what we've discovered of type 'type'
 void print_disc(byte type)
 {
-    int i, maxnum, num_found;
-
-    ItemClass& item_class = game->item_class(type);
-    maxnum = item_class.get_max_items();
+    ItemClass* items = game->item_class(type);
+    int maxnum = items->get_max_items();
 
     set_order(order, maxnum);
-    num_found = 0;
-    for (i = 0; i < maxnum; i++) {
-        if (item_class.is_discovered(order[i]) || !item_class.get_guess(order[i]).empty())
+    int num_found = 0;
+    for (int i = 0; i < maxnum; i++) {
+        if (items->is_discovered(order[i]) || !items->get_guess(order[i]).empty())
         {
-            std::string line = game->item_class(type).get_inventory_name(order[i]);
+            std::string line = items->get_inventory_name(order[i]);
             add_line("", "%s", line.c_str());
             num_found++;
         }
-
     }
     if (num_found == 0)
         add_line("", nothing(type), 0);

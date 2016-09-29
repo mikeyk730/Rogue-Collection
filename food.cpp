@@ -44,3 +44,13 @@ std::string Food::InventoryName() const
 
     return prbuf;
 }
+
+bool Food::IsEvil() const
+{
+    return false;
+}
+
+int Food::Worth() const
+{
+    return 2 * count;
+}

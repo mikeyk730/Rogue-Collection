@@ -118,7 +118,7 @@ int ring_eat(int hand)
 }
 
 //ring_num: Print ring bonuses
-char *ring_num(const Item *obj)
+char *ring_num(const Ring *obj)
 {
     if (!obj->is_known() && !game->wizard().reveal_items())
         return "";
@@ -153,7 +153,8 @@ std::string RingInfo::get_inventory_name(int which, const std::string& bonus) co
 
 std::string RingInfo::get_inventory_name(const Item * obj) const
 {
-    return get_inventory_name(obj->which, ring_num(obj));
+    const Ring* ring = dynamic_cast<const Ring*>(obj);
+    return get_inventory_name(obj->which, ring_num(ring));
 }
 
 std::string RingInfo::get_inventory_name(int which) const
@@ -208,3 +209,36 @@ std::string Ring::InventoryName() const
 {
     return item_class()->get_inventory_name(this);
 }
+
+bool Ring::IsEvil() const
+{
+    switch (which)
+    {
+    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
+        return (get_ring_level() < 0);
+
+    case R_AGGR: case R_TELEPORT:
+        return true;
+    }
+    return false;
+}
+
+int Ring::Worth() const
+{
+    int worth = item_class()->get_value(which);
+    if (which == R_ADDSTR || which == R_ADDDAM || which == R_PROTECT || which == R_ADDHIT) {
+        if (get_ring_level() > 0)
+            worth += get_ring_level() * 100;
+        else 
+            worth = 10;
+    }
+    if (!is_known())
+        worth /= 2;
+    return worth;
+}
+
+int Ring::get_ring_level() const
+{
+    return ring_level;
+}
+

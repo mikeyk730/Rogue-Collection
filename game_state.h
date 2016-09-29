@@ -38,7 +38,7 @@ struct GameState
     PotionInfo& potions();
     RingInfo& rings();
     StickInfo& sticks();
-    ItemClass& item_class(int type);
+    ItemClass* item_class(int type);
 
     Cheats& wizard();
 

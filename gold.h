@@ -1,10 +1,10 @@
 #pragma once
+
 #include "item.h"
 
-struct Armor : public Item
+struct Gold : public Item
 {
-    Armor(int which);
-    Armor(int which, int ac_mod);
+    Gold(int value);
 
     virtual Item* Clone() const;
     virtual std::string Name() const;
@@ -12,9 +12,3 @@ struct Armor : public Item
     virtual bool IsEvil() const;
     virtual int Worth() const;
 };
-
-int get_default_class(int type);
-Item* create_armor();
-
-//waste_time: Do nothing but let other things happen
-void waste_time();

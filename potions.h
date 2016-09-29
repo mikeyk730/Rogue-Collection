@@ -10,6 +10,8 @@ struct Potion : public Item
     virtual Item* Clone() const;
     virtual std::string Name() const;
     virtual std::string InventoryName() const;
+    virtual bool IsEvil() const;
+    virtual int Worth() const;
 };
 
 Item* create_potion();
@@ -26,4 +28,3 @@ void turn_see_wrapper(int turn_off);
 
 //th_effect: Compute the effect of this potion hitting a monster.
 void affect_monster(Item *obj, Agent *monster);
-int is_bad_potion(Item* obj);

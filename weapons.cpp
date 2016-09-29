@@ -394,3 +394,28 @@ std::string Weapon::Name() const
 {
     return m_name;
 }
+
+bool Weapon::IsEvil() const
+{
+    return (get_hit_plus() < 0 || get_damage_plus() < 0);
+}
+
+int Weapon::Worth() const
+{
+    int worth = 0;
+    switch (which)
+    {
+    case MACE: worth = 8; break;
+    case SWORD: worth = 15; break;
+    case CROSSBOW: worth = 30; break;
+    case ARROW: worth = 1; break;
+    case DAGGER: worth = 2; break;
+    case TWOSWORD: worth = 75; break;
+    case DART: worth = 1; break;
+    case BOW: worth = 15; break;
+    case BOLT: worth = 1; break;
+    case SPEAR: worth = 5; break;
+    }
+    worth *= 3 * (get_hit_plus() + get_damage_plus()) + count;
+    return worth;
+}

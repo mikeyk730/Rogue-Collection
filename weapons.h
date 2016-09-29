@@ -11,6 +11,8 @@ struct Weapon : public Item
     virtual Item* Clone() const;
     virtual std::string Name() const;
     virtual std::string InventoryName() const;
+    virtual bool IsEvil() const;
+    virtual int Worth() const;
 
     void set_name(const std::string& name);
 private:

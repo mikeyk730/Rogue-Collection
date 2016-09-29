@@ -314,6 +314,8 @@ struct MagicMissile : public Item
     virtual Item* Clone() const { return new MagicMissile(*this); }
     virtual std::string Name() const { return "magic missile"; }
     virtual std::string InventoryName() const { return "magic missile"; }
+    virtual bool IsEvil() const { return false; }
+    virtual int Worth() const { return 0; }
 };
 
 void zap_magic_missile(Coord delta)
@@ -687,3 +689,18 @@ std::string Stick::InventoryName() const
 {
     return item_class()->get_inventory_name(this);
 }
+
+bool Stick::IsEvil() const
+{
+    return (which == WS_HASTE_M || which == WS_TELTO);
+}
+
+int Stick::Worth() const
+{
+    int worth = item_class()->get_value(which);
+    worth += 20 * get_charges();
+    if (!is_known())
+        worth /= 2;
+    return worth;
+}
+

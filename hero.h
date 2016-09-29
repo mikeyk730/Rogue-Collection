@@ -3,6 +3,8 @@
 #include "agent.h"
 
 struct Monster;
+struct Item;
+struct Ring;
 
 struct Hero : public Agent
 {
@@ -82,11 +84,11 @@ public:
 
     Item* get_current_weapon() const;
     Item* get_current_armor() const;
-    Item* get_ring(int hand) const;
+    Ring* get_ring(int hand) const;
 
     void set_current_weapon(Item* item);
     void set_current_armor(Item* item);
-    void set_ring(int hand, Item* item);
+    void set_ring(int hand, Ring* ring);
 
     //wear_armor: The player wants to wear something, so let him/her put it on.
     bool wear_armor();
@@ -104,6 +106,6 @@ private:
 
     Item* cur_armor = 0;       //What a well dresssed rogue wears
     Item* cur_weapon = 0;      //Which weapon he is wielding
-    Item* cur_ring[2] = {0,0}; //Which rings are being worn
+    Ring* cur_ring[2] = {0,0}; //Which rings are being worn
 };
 

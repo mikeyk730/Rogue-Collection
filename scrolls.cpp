@@ -21,6 +21,7 @@
 #include "things.h"
 #include "hero.h"
 #include "monster.h"
+#include "rings.h"
 
 //Scroll types
 #define S_CONFUSE   0
@@ -383,12 +384,6 @@ int is_scare_monster_scroll(Item* item)
         item->which == S_SCARE;
 }
 
-int is_bad_scroll(Item* item)
-{
-    return item && item->type == SCROLL &&
-        (item->which == S_SLEEP || item->which == S_CREATE || item->which == S_AGGR);
-}
-
 std::string ScrollInfo::get_inventory_name(int which, int count) const
 {
     char *pb = prbuf;
@@ -439,4 +434,19 @@ std::string Scroll::Name() const
 std::string Scroll::InventoryName() const
 {
     return item_class()->get_inventory_name(this);
+}
+
+bool Scroll::IsEvil() const
+{
+    return (which == S_SLEEP || which == S_CREATE || which == S_AGGR);
+
+}
+
+int Scroll::Worth() const
+{
+    int worth = item_class()->get_value(which);
+    worth *= count;
+    if (!item_class()->is_discovered(which))
+        worth /= 2;
+    return worth;
 }

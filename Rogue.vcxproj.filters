@@ -9,6 +9,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Items">
+      <UniqueIdentifier>{51d6bbdd-c714-4215-b927-56eda1c78ca6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="chase.cpp">
@@ -101,31 +104,7 @@
     <ClCompile Include="random.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="weapons.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="armor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="food.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="potions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="scrolls.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="sticks.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="agent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="item.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="room.cpp">
@@ -145,6 +124,36 @@
     </ClCompile>
     <ClCompile Include="monster.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="armor.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="item.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="rings.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="potions.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="sticks.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="weapons.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="scrolls.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="food.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="amulet.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="gold.cpp">
+      <Filter>Items</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -232,27 +241,6 @@
     <ClInclude Include="hero.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="armor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="food.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="potions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="scrolls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sticks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="weapons.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="game_state.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -269,9 +257,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="room.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="item.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="captured_input.h">
@@ -294,6 +279,36 @@
     </ClInclude>
     <ClInclude Include="monster.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="armor.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="item.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="rings.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="weapons.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="sticks.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="scrolls.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="food.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="potions.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="amulet.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="gold.h">
+      <Filter>Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

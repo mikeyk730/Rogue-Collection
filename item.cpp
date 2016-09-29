@@ -25,11 +25,6 @@ void Item::set_position(Coord p)
     pos = p;
 }
 
-int Item::get_ring_level() const
-{
-    return ring_level;
-}
-
 int Item::get_charges() const
 {
     return charges;
@@ -100,7 +95,6 @@ void Item::initialize(int type, int which)
     this->throw_damage = "0d0";
     this->armor_class = 11;
     this->gold_value = 0;
-    this->ring_level = 0;
     this->charges = 0;
     this->count = 1;
     this->group = 0;
@@ -160,52 +154,6 @@ void Item::set_found() {
 }
 void Item::set_flashed() {
     flags |= DID_FLASH;
-}
-
-Amulet::Amulet() : Item(AMULET, 0)
-{
-    this->hit_plus = 0;
-    this->damage_plus = 0;
-    this->damage = "0d0";
-    this->throw_damage = "0d0";
-    this->armor_class = 11;
-}
-
-Item * Amulet::Clone() const
-{
-    return new Amulet(*this);
-}
-
-std::string Amulet::Name() const
-{
-    return "amulet";
-}
-
-std::string Amulet::InventoryName() const
-{
-    return "The Amulet of Yendor";
-}
-
-Gold::Gold(int value) :
-    Item(GOLD, 0)
-{
-    gold_value = value;
-}
-
-Item * Gold::Clone() const
-{
-    return new Gold(*this);
-}
-
-std::string Gold::Name() const
-{
-    return "gold";
-}
-
-std::string Gold::InventoryName() const
-{
-    sprintf(prbuf, "%d gold", get_gold_value());
-    return prbuf;
 }
 
 //is_magic: Returns true if an object radiates magic

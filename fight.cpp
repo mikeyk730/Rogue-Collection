@@ -30,6 +30,7 @@
 #include "pack.h"
 #include "env.h"
 #include "monster.h"
+#include "gold.h"
 
 char tbuf[MAXSTR];
 

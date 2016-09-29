@@ -182,20 +182,20 @@ StickInfo& GameState::sticks()
     return *m_sticks;
 }
 
-ItemClass& GameState::item_class(int type)
+ItemClass* GameState::item_class(int type)
 {
     switch (type)
     {
     case SCROLL:
-        return scrolls();
+        return &scrolls();
     case POTION:
-        return potions();
+        return &potions();
     case STICK:
-        return sticks();
+        return &sticks();
     case RING:
-        return rings();
+        return &rings();
     }
-    throw std::runtime_error("Requested bad type of item.");
+    return 0;
 }
 
 Cheats & GameState::wizard()

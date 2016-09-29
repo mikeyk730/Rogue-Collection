@@ -9,6 +9,13 @@ struct Ring : public Item
     virtual Item* Clone() const;
     virtual std::string Name() const;
     virtual std::string InventoryName() const;
+    virtual bool IsEvil() const;
+    virtual int Worth() const;
+
+    int get_ring_level() const;
+
+private:
+    short ring_level = 0;
 };
 
 Item* create_ring();
@@ -17,4 +24,4 @@ Item* create_ring();
 int ring_eat(int hand);
 
 //ring_num: Print ring bonuses
-char *ring_num(const Item *obj);
+char *ring_num(const Ring *obj);

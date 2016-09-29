@@ -295,89 +295,10 @@ void total_winner()
     for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); c++, ++it)
     {
         obj = *it;
-        ItemClass* item_class = 0;
-        switch (obj->type)
-        {
-        case FOOD:
-            worth = 2 * obj->count;
-            break;
-
-        case WEAPON:
-            switch (obj->which)
-            {
-            case MACE: worth = 8; break;
-            case SWORD: worth = 15; break;
-            case CROSSBOW: worth = 30; break;
-            case ARROW: worth = 1; break;
-            case DAGGER: worth = 2; break;
-            case TWOSWORD: worth = 75; break;
-            case DART: worth = 1; break;
-            case BOW: worth = 15; break;
-            case BOLT: worth = 1; break;
-            case SPEAR: worth = 5; break;
-            }
-            worth *= 3 * (obj->get_hit_plus() + obj->get_damage_plus()) + obj->count;
-            obj->set_known();
-            break;
-
-        case ARMOR:
-            switch (obj->which)
-            {
-            case LEATHER: worth = 20; break;
-            case RING_MAIL: worth = 25; break;
-            case STUDDED_LEATHER: worth = 20; break;
-            case SCALE_MAIL: worth = 30; break;
-            case CHAIN_MAIL: worth = 75; break;
-            case SPLINT_MAIL: worth = 80; break;
-            case BANDED_MAIL: worth = 90; break;
-            case PLATE_MAIL: worth = 150; break;
-            }
-            worth += (9 - obj->get_armor_class()) * 100;
-            worth += (10 * (get_default_class(obj->which) - obj->get_armor_class()));
-            obj->set_known();
-            break;
-
-        case SCROLL:
-            item_class = &game->scrolls();
-            worth = item_class->get_value(obj->which);
-            worth *= obj->count;
-            if (!item_class->is_discovered(obj->which)) worth /= 2;
-            item_class->discover(obj->which);
-            break;
-
-        case POTION:
-            item_class = &game->potions();
-            worth = item_class->get_value(obj->which);
-            worth *= obj->count;
-            if (!item_class->is_discovered(obj->which)) worth /= 2;
-            item_class->discover(obj->which);
-            break;
-
-        case RING:
-            item_class = &game->rings();
-            worth = item_class->get_value(obj->which);
-            if (obj->which == R_ADDSTR || obj->which == R_ADDDAM || obj->which == R_PROTECT || obj->which == R_ADDHIT)
-                if (obj->get_ring_level() > 0) worth += obj->get_ring_level() * 100;
-                else worth = 10;
-                if (!obj->is_known()) worth /= 2;
-                obj->set_known();
-                item_class->discover(obj->which);
-                break;
-
-        case STICK:
-            item_class = &game->sticks();
-            worth = item_class->get_value(obj->which);
-            worth += 20 * obj->get_charges();
-            if (!obj->is_known()) worth /= 2;
-            obj->set_known();
-            item_class->discover(obj->which);
-            break;
-
-        case AMULET:
-            worth = 1000;
-            break;
-        }
+        worth = obj->Worth();
         if (worth < 0) worth = 0;
+        obj->discover();
+
         game->screen().move(c - 'a' + 1, 0);
         game->screen().printw("%c) %5d  %s", c, worth, obj->inventory_name(false).c_str());
         game->hero().adjust_purse(worth);

@@ -484,14 +484,14 @@ Monster* Hero::fight(Coord *location, Item *weapon, bool thrown)
     return 0;
 }
 
-Item* Hero::get_ring(int hand) const
+Ring* Hero::get_ring(int hand) const
 {
     return cur_ring[hand];
 }
 
-void Hero::set_ring(int hand, Item* item)
+void Hero::set_ring(int hand, Ring* ring)
 {
-    cur_ring[hand] = item;
+    cur_ring[hand] = ring;
 }
 
 Item* Hero::get_current_weapon() const
@@ -719,13 +719,14 @@ int get_hand()
 
 bool Hero::put_on_ring()
 {
-    Item* obj = get_item("put on", RING);
-    if (obj == NULL) {
+    Item* item = get_item("put on", RING);
+    if (!item) {
         return false;
     }
 
     //Make certain that it is something that we want to wear
-    if (obj->type != RING) {
+    Ring* obj = dynamic_cast<Ring*>(item);
+    if (!obj) {
         msg("you can't put that on your finger");
         return false;
     }

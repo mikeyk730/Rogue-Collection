@@ -358,36 +358,9 @@ int step_ok(int ch)
 //goodch: Decide how good an object is and return the correct character for printing.
 int goodch(Item *obj)
 {
-    int ch = MAGIC;
-
-    if (obj->is_cursed())
-        ch = BMAGIC;
-    switch (obj->type)
-    {
-    case ARMOR:
-        if (obj->get_armor_class() > get_default_class(obj->which)) ch = BMAGIC;
-        break;
-    case WEAPON:
-        if (obj->get_hit_plus() < 0 || obj->get_damage_plus() < 0) ch = BMAGIC;
-        break;
-    case SCROLL:
-        if (is_bad_scroll(obj)) ch = BMAGIC;
-        break;
-    case POTION:
-        if (is_bad_potion(obj)) ch = BMAGIC;
-        break;
-    case STICK:
-        switch (obj->which) { case WS_HASTE_M: case WS_TELTO: ch = BMAGIC; break; }
-        break;
-    case RING:
-        switch (obj->which)
-        {
-        case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT: if (obj->get_ring_level() < 0) ch = BMAGIC; break;
-        case R_AGGR: case R_TELEPORT: ch = BMAGIC; break;
-        }
-        break;
-    }
-    return ch;
+    if (obj->is_cursed() || obj->IsEvil())
+        return BMAGIC;
+    return MAGIC;
 }
 
 //help: prints out help screens
@@ -521,19 +494,11 @@ void go_up_stairs()
 void call()
 {
     Item *obj = get_item("call", CALLABLE);
-    if (obj == NULL)
+    if (!obj)
         return;
 
-    ItemClass* item_class;
-    switch (obj->type)
-    {
-    case RING:
-    case POTION:
-    case SCROLL:
-    case STICK:
-        item_class = &game->item_class(obj->type);
-        break;
-    default:
+    ItemClass* item_class = obj->item_class();
+    if (!item_class){
         msg("you can't call that anything");
         return;
     }

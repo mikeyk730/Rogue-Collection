@@ -19,6 +19,7 @@
 #include "things.h"
 #include "potions.h"
 #include "monster.h"
+#include "amulet.h"
 
 //One for each passage
 Room passages[MAXPASS] =

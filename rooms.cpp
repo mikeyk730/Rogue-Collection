@@ -20,6 +20,7 @@
 #include "game_state.h"
 #include "hero.h"
 #include "monster.h"
+#include "gold.h"
 
 Room rooms[MAXROOMS]; //One for each room -- A level
 

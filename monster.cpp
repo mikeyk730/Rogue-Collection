@@ -17,6 +17,7 @@
 #include "io.h"
 #include "rip.h"
 #include "mach_dep.h"
+#include "rings.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 

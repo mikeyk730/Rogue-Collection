@@ -398,12 +398,6 @@ void affect_monster(Item *potion, Agent *monster)
     }
 }
 
-int is_bad_potion(Item* obj)
-{
-    return obj && obj->type == POTION &&
-        (obj->which == P_CONFUSE || obj->which == P_PARALYZE || obj->which == P_POISON || obj->which == P_BLIND);
-}
-
 std::string PotionInfo::get_inventory_name(int which, int count) const
 {
     char *pb = prbuf;
@@ -460,4 +454,18 @@ std::string Potion::Name() const
 std::string Potion::InventoryName() const
 {
     return item_class()->get_inventory_name(this);
+}
+
+bool Potion::IsEvil() const
+{
+    return (which == P_CONFUSE || which == P_PARALYZE || which == P_POISON || which == P_BLIND);
+}
+
+int Potion::Worth() const
+{
+    int worth = item_class()->get_value(which);
+    worth *= count;
+    if (!item_class()->is_discovered(which)) 
+        worth /= 2;
+    return worth;
 }

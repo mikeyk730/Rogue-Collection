@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="agent.cpp" />
+    <ClCompile Include="amulet.cpp" />
     <ClCompile Include="armor.cpp" />
     <ClCompile Include="captured_input.cpp" />
     <ClCompile Include="chase.cpp" />
@@ -92,6 +93,7 @@
     <ClCompile Include="fight.cpp" />
     <ClCompile Include="food.cpp" />
     <ClCompile Include="game_state.cpp" />
+    <ClCompile Include="gold.cpp" />
     <ClCompile Include="hero.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="item.cpp" />
@@ -125,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="agent.h" />
+    <ClInclude Include="amulet.h" />
     <ClInclude Include="armor.h" />
     <ClInclude Include="captured_input.h" />
     <ClInclude Include="chase.h" />
@@ -137,6 +140,7 @@
     <ClInclude Include="fakedos.h" />
     <ClInclude Include="fight.h" />
     <ClInclude Include="combo_input.h" />
+    <ClInclude Include="gold.h" />
     <ClInclude Include="item_class.h" />
     <ClInclude Include="monster.h" />
     <ClInclude Include="output_interface.h" />

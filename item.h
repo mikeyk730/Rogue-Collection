@@ -87,6 +87,8 @@ public:
     virtual Item* Clone() const = 0;
     virtual std::string Name() const = 0;
     virtual std::string InventoryName() const = 0;
+    virtual bool IsEvil() const = 0;
+    virtual int Worth() const = 0;
 
     ItemClass* item_class() const;
 
@@ -106,12 +108,12 @@ protected:
     short armor_class;
     short gold_value;
     short charges;
-    short ring_level;
     short flags;                   //Information about objects
     char enemy;                    //If it is enchanted, who it hates
 public:
     int group;                     //Group number for this object
 public:
+    void discover();
 
     //is_magic: Returns true if an object radiates magic
     bool is_magic();
@@ -138,9 +140,6 @@ public:
     void set_revealed();
     void set_found();
     void set_flashed();
-
-    //ring-specific
-    int get_ring_level() const;
 
     //stick-specific
     int get_charges() const;
@@ -174,21 +173,3 @@ public:
 };
 
 int does_item_group(int type);
-
-struct Amulet : public Item
-{
-    Amulet();
-
-    virtual Item* Clone() const;
-    virtual std::string Name() const;
-    virtual std::string InventoryName() const;
-};
-
-struct Gold : public Item
-{
-    Gold(int value);
-
-    virtual Item* Clone() const;
-    virtual std::string Name() const;
-    virtual std::string InventoryName() const;
-};

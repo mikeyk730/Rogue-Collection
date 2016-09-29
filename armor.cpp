@@ -126,3 +126,27 @@ std::string Armor::Name() const
 {
     return a_names[which];
 }
+
+bool Armor::IsEvil() const
+{
+    return get_armor_class() > get_default_class(which);
+}
+
+int Armor::Worth() const
+{
+    int worth = 0;
+    switch (which)
+    {
+    case LEATHER: worth = 20; break;
+    case RING_MAIL: worth = 25; break;
+    case STUDDED_LEATHER: worth = 20; break;
+    case SCALE_MAIL: worth = 30; break;
+    case CHAIN_MAIL: worth = 75; break;
+    case SPLINT_MAIL: worth = 80; break;
+    case BANDED_MAIL: worth = 90; break;
+    case PLATE_MAIL: worth = 150; break;
+    }
+    worth += (9 - get_armor_class()) * 100;
+    worth += (10 * (get_default_class(which) - get_armor_class()));
+    return worth;
+}
