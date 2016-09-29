@@ -485,34 +485,34 @@ Monster* Hero::fight(Coord *location, Item *weapon, bool thrown)
 
 Ring* Hero::get_ring(int hand) const
 {
-    return cur_ring[hand];
+    return m_rings[hand];
 }
 
 void Hero::set_ring(int hand, Ring* ring)
 {
-    cur_ring[hand] = ring;
+    m_rings[hand] = ring;
 }
 
 Item* Hero::get_current_weapon() const
 {
-    return cur_weapon;
+    return m_weapon;
 }
 
 void Hero::set_current_weapon(Item* item)
 {
-    cur_weapon = item;
+    m_weapon = item;
 }
 
-Item* Hero::get_current_armor() const
+Armor* Hero::get_current_armor() const
 {
-    return cur_armor;
+    return m_armor;
 }
 
 void Hero::set_current_armor(Armor* armor)
 {
     if (armor)
         armor->set_known();
-    cur_armor = armor;
+    m_armor = armor;
 }
 
 int Hero::get_pack_size()

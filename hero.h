@@ -84,7 +84,7 @@ public:
     bool had_amulet();
 
     Item* get_current_weapon() const;
-    Item* get_current_armor() const;
+    Armor* get_current_armor() const;
     Ring* get_ring(int hand) const;
 
     void set_current_weapon(Item* item);
@@ -105,8 +105,8 @@ private:
     int food_left = 0;       //Amount of food in hero's stomach
     std::string m_name;
 
-    Armor* cur_armor = 0;       //What a well dresssed rogue wears
-    Item* cur_weapon = 0;      //Which weapon he is wielding
-    Ring* cur_ring[2] = {0,0}; //Which rings are being worn
+    Armor* m_armor = 0;       //What a well dresssed rogue wears
+    Item* m_weapon = 0;      //Which weapon he is wielding
+    Ring* m_rings[2] = {0,0}; //Which rings are being worn
 };
 
