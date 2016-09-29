@@ -12,6 +12,23 @@ struct Potion : public Item
     virtual std::string InventoryName() const;
     virtual bool IsEvil() const;
     virtual int Worth() const;
+
+    //todo: each potion should be own derived class with quaff as virtual function
+    void quaff_confusion();
+    void quaff_paralysis();
+    void quaff_poison();
+    void quaff_gain_strength();
+    void quaff_see_invisible();
+    void quaff_healing();
+    void quaff_monster_detection();
+    void quaff_magic_detection();
+    void quaff_raise_level();
+    void quaff_extra_healing();
+    void quaff_haste_self();
+    void quaff_restore_strength();
+    void quaff_blindness();
+    void quaff_thirst_quenching();
+
 };
 
 Item* create_potion();

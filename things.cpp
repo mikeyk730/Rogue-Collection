@@ -57,6 +57,14 @@ void Item::discover()
         item_class()->discover(which);
 }
 
+void Item::call_it()
+{
+    ItemClass* items = item_class();
+    if (items) {
+        items->call_it(which);
+    }
+}
+
 ItemClass* Item::item_class() const
 {
     //todo: change class layout, so we don't need to poke into game

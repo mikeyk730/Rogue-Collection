@@ -37,8 +37,8 @@ void scrl(int msgline, const char *str1, const char *str2);
 //unctrl: Print a readable version of a certain character
 char *unctrl(unsigned char ch);
 
-//status: Display the important stats line.  Keep the cursor where it was.
-void status();
+//update_status_bar: Display the important stats line.  Keep the cursor where it was.
+void update_status_bar();
 
 //wait_for: Sit around until the guy types the right key
 void wait_for(char ch);

@@ -175,7 +175,7 @@ void quit()
     {
         game->screen().move(0, 0);
         game->screen().clrtoeol();
-        status();
+        update_status_bar();
         game->screen().move(oy, ox);
         reset_msg_position();
         game->repeat_cmd_count = 0;

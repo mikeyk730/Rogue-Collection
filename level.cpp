@@ -171,7 +171,7 @@ void Level::new_level(int do_implode)
     }
     if (do_implode)
         game->screen().implode();
-    status();
+    update_status_bar();
     do_passages(); //Draw passages
     game->no_food++;
     put_things(); //Place objects (if any)

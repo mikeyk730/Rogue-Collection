@@ -113,9 +113,9 @@ Item* create_potion()
     return new Potion(which);
 }
 
-void quaff_confusion()
+void Potion::quaff_confusion()
 {
-    game->potions().discover(P_CONFUSE);
+    discover();
     if (!game->hero().is_confused())
     {
         if (game->hero().is_confused())
@@ -127,19 +127,19 @@ void quaff_confusion()
     }
 }
 
-void quaff_paralysis()
+void Potion::quaff_paralysis()
 {
-    game->potions().discover(P_PARALYZE);
+    discover();
     game->sleep_timer = HOLD_TIME;
     game->hero().set_running(false);
     msg("you can't move");
 }
 
-void quaff_poison()
+void Potion::quaff_poison()
 {
     char *sick = "you feel %s sick.";
 
-    game->potions().discover(P_POISON);
+    discover();
     if (!game->hero().is_wearing_ring(R_SUSTSTR)) {
         game->hero().adjust_strength(-(rnd(3) + 1));
         msg(sick, "very");
@@ -147,14 +147,14 @@ void quaff_poison()
     else msg(sick, "momentarily");
 }
 
-void quaff_gain_strength()
+void Potion::quaff_gain_strength()
 {
-    game->potions().discover(P_STRENGTH);
+    discover();
     game->hero().adjust_strength(1);
     msg("you feel stronger. What bulging muscles!");
 }
 
-void quaff_see_invisible()
+void Potion::quaff_see_invisible()
 {
     if (!game->hero().sees_invisible()) {
         fuse(unsee, 0, SEE_DURATION);
@@ -165,27 +165,27 @@ void quaff_see_invisible()
     msg("this potion tastes like %s juice", game->get_environment("fruit").c_str());
 }
 
-void quaff_healing()
+void Potion::quaff_healing()
 {
-    game->potions().discover(P_HEALING);
+    discover();
     game->hero().increase_hp(roll(game->hero().stats.level, 4), true, false);
     sight();
     msg("you begin to feel better");
 }
 
-void quaff_monster_detection()
+void Potion::quaff_monster_detection()
 {
     fuse(turn_see_wrapper, true, HUH_DURATION);
     if (game->level().monsters.empty())
         msg("you have a strange feeling%s.", noterse(" for a moment"));
     else {
         if (turn_see(false))
-            game->potions().discover(P_MFIND);
+            discover();
         msg("");
     }
 }
 
-void quaff_magic_detection()
+void Potion::quaff_magic_detection()
 {
     //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
     //Also give hints as to whether he would want to use the object.
@@ -214,7 +214,7 @@ void quaff_magic_detection()
     }
 
     if (discovered) {
-        game->potions().discover(P_TFIND);
+        discover();
         msg("You sense the presence of magic.");
     }
     else {
@@ -222,36 +222,36 @@ void quaff_magic_detection()
     }
 }
 
-void quaff_raise_level()
+void Potion::quaff_raise_level()
 {
-    game->potions().discover(P_RAISE);
+    discover();
     msg("you suddenly feel much more skillful");
     game->hero().raise_level();
 }
 
-void quaff_extra_healing()
+void Potion::quaff_extra_healing()
 {
-    game->potions().discover(P_XHEAL);
+    discover();
     game->hero().increase_hp(roll(game->hero().stats.level, 8), true, true);
     sight();
     msg("you begin to feel much better");
 }
 
-void quaff_haste_self()
+void Potion::quaff_haste_self()
 {
-    game->potions().discover(P_HASTE);
+    discover();
     if (add_haste(true)) msg("you feel yourself moving much faster");
 }
 
-void quaff_restore_strength()
+void Potion::quaff_restore_strength()
 {
     game->hero().restore_strength();
     msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
 }
 
-void quaff_blindness()
+void Potion::quaff_blindness()
 {
-    game->potions().discover(P_BLIND);
+    discover();
     if (!game->hero().is_blind())
     {
         game->hero().set_blind(true);
@@ -261,26 +261,26 @@ void quaff_blindness()
     msg("a cloak of darkness falls around you");
 }
 
-void quaff_thirst_quenching()
+void Potion::quaff_thirst_quenching()
 {
     msg("this potion tastes extremely dull");
 }
 
-void(*potion_functions[MAXPOTIONS])() = {
-  quaff_confusion,
-  quaff_paralysis,
-  quaff_poison,
-  quaff_gain_strength,
-  quaff_see_invisible,
-  quaff_healing,
-  quaff_monster_detection,
-  quaff_magic_detection,
-  quaff_raise_level,
-  quaff_extra_healing,
-  quaff_haste_self,
-  quaff_restore_strength,
-  quaff_blindness,
-  quaff_thirst_quenching
+void(Potion::*potion_functions[MAXPOTIONS])() = {
+  &Potion::quaff_confusion,
+  &Potion::quaff_paralysis,
+  &Potion::quaff_poison,
+  &Potion::quaff_gain_strength,
+  &Potion::quaff_see_invisible,
+  &Potion::quaff_healing,
+  &Potion::quaff_monster_detection,
+  &Potion::quaff_magic_detection,
+  &Potion::quaff_raise_level,
+  &Potion::quaff_extra_healing,
+  &Potion::quaff_haste_self,
+  &Potion::quaff_restore_strength,
+  &Potion::quaff_blindness,
+  &Potion::quaff_thirst_quenching
 };
 
 //quaff: Quaff a potion from the pack
@@ -292,7 +292,8 @@ bool quaff()
         return false;
 
     //Make certain that it is something that we want to drink
-    if (obj->type != POTION) {
+    Potion* potion = dynamic_cast<Potion*>(obj);
+    if (!obj) {
         //mdk: trying to drink non-potion counts as turn
         msg("yuk! Why would you want to drink that?");
         return true;
@@ -302,10 +303,10 @@ bool quaff()
         game->hero().set_current_weapon(NULL);
 
     //Calculate the effect it has on the poor guy.
-    potion_functions[obj->which]();
+    (potion->*potion_functions[obj->which])();
 
-    status();
-    game->potions().call_it(obj->which);
+    update_status_bar();
+    potion->call_it();
 
     //Throw the item away
     if (obj->count > 1)

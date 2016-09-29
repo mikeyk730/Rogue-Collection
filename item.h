@@ -114,6 +114,7 @@ public:
     int group;                     //Group number for this object
 public:
     void discover();
+    void call_it();
 
     //is_magic: Returns true if an object radiates magic
     bool is_magic();

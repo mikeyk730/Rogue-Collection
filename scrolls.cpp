@@ -22,6 +22,7 @@
 #include "hero.h"
 #include "monster.h"
 #include "rings.h"
+#include "armor.h"
 
 //Scroll types
 #define S_CONFUSE   0
@@ -365,7 +366,7 @@ bool read_scroll()
     }
 
     look(true); //put the result of the scroll on the screen
-    status();
+    update_status_bar();
     game->scrolls().call_it(scroll->which);
 
     //Get rid of the thing

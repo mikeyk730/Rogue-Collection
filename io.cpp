@@ -259,8 +259,8 @@ char *unctrl(unsigned char ch)
     return chstr;
 }
 
-//status: Display the important stats line.  Keep the cursor where it was.
-void status()
+//update_status_bar: Display the important stats line.  Keep the cursor where it was.
+void update_status_bar()
 {
     int oy, ox;
     static int s_hungry;

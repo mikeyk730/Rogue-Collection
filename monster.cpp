@@ -18,6 +18,7 @@
 #include "rip.h"
 #include "mach_dep.h"
 #include "rings.h"
+#include "armor.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -574,7 +575,7 @@ Monster* Monster::attack_player()
 
     clear_typeahead_buffer();
     game->repeat_cmd_count = 0;
-    status();
+    update_status_bar();
 
     return 0;
 }

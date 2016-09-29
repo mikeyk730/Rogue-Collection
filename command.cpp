@@ -38,7 +38,7 @@ void command()
     else ntimes = 1;
     while (ntimes--)
     {
-        status();
+        update_status_bar();
         SIG2();
         if (game->sleep_timer)
         {
