@@ -96,11 +96,6 @@ Item* create_ring()
     return new Ring(which);
 }
 
-std::string get_stone(int type)
-{
-    return game->rings().get_identifier(type);
-}
-
 //ring_eat: How much food does this ring use up?
 int ring_eat(int hand)
 {

@@ -120,21 +120,21 @@ Item* create_scroll()
     return new Scroll(which);
 }
 
-void read_monster_confusion()
+void Scroll::read_monster_confusion()
 {
     //Scroll of monster confusion.  Give him that power.
     game->hero().set_can_confuse(true);
     msg("your hands begin to glow red");
 }
 
-void read_magic_mapping()
+void Scroll::read_magic_mapping()
 {
     //Scroll of magic mapping.
     int x, y;
     byte ch;
     Monster* monster;
 
-    game->scrolls().discover(S_MAP);
+    discover();
     msg("oh, now this scroll has a map on it");
     //Take all the things we want to keep hidden out of the window
     const int COLS = game->screen().columns();
@@ -167,7 +167,7 @@ void read_magic_mapping()
     }
 }
 
-void read_hold_monster()
+void Scroll::read_hold_monster()
 {
     //Hold monster scroll.  Stop all monsters within two spaces from chasing after the hero.
     int x, y;
@@ -187,16 +187,16 @@ void read_hold_monster()
     }
 }
 
-void read_sleep()
+void Scroll::read_sleep()
 {
     //Scroll which makes you fall asleep
-    game->scrolls().discover(S_SLEEP);
+    discover();
     game->sleep_timer += rnd(SLEEP_TIME) + 4;
     game->hero().set_running(false);
     msg("you fall asleep");
 }
 
-void read_enchant_armor()
+void Scroll::read_enchant_armor()
 {
     if (game->hero().get_current_armor() != NULL)
     {
@@ -205,33 +205,33 @@ void read_enchant_armor()
     }
 }
 
-void read_identify()
+void Scroll::read_identify()
 {
     //Identify, let the rogue figure something out
-    game->scrolls().discover(S_IDENT);
+    discover();
     msg("this scroll is an identify scroll");
     if ("on" == game->get_environment("menu"))
         more(" More ");
     whatis();
 }
 
-void read_scare_monster()
+void Scroll::read_scare_monster()
 {
     //Reading it is a mistake and produces laughter at the poor rogue's boo boo.
     msg(laugh, short_msgs() ? "" : in_dist);
 }
 
-void read_food_detection()
+void Scroll::read_food_detection()
 {
     //Scroll of food detection
-    byte discover = false;
+    byte discovered = false;
 
     for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
     {
         Item* item = *it;
         if (item->type == FOOD)
         {
-            discover = true;
+            discovered = true;
             game->screen().standout();
             game->screen().mvaddch(item->pos, FOOD);
             game->screen().standend();
@@ -239,30 +239,30 @@ void read_food_detection()
         //as a bonus this will detect amulets as well
         else if (item->type == AMULET)
         {
-            discover = true;
+            discovered = true;
             game->screen().standout();
             game->screen().mvaddch(item->pos, AMULET);
             game->screen().standend();
         }
     }
-    if (discover) {
-        game->scrolls().discover(S_GFIND);
+    if (discovered) {
+        discover();
         msg("your nose tingles as you sense food");
     }
     else
         ifterse("you hear a growling noise close by", "you hear a growling noise very close to you");
 }
 
-void read_teleportation()
+void Scroll::read_teleportation()
 {
     //Scroll of teleportation: Make him disappear and reappear
     Room* original_room = game->hero().room;
     game->hero().teleport();
     if (original_room != game->hero().room)
-        game->scrolls().discover(S_TELEP);
+        discover();
 }
 
-void read_enchant_weapon()
+void Scroll::read_enchant_weapon()
 {
     Item* weapon = game->hero().get_current_weapon();
     if (weapon == NULL || weapon->type != WEAPON) {
@@ -272,7 +272,7 @@ void read_enchant_weapon()
     weapon->enchant_weapon();
 }
 
-void read_create_monster()
+void Scroll::read_create_monster()
 {
     Agent* monster;
     Coord position;
@@ -284,7 +284,7 @@ void read_create_monster()
         ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 }
 
-void read_remove_curse()
+void Scroll::read_remove_curse()
 {
     if (game->hero().get_current_armor())
         game->hero().get_current_armor()->remove_curse();
@@ -298,19 +298,19 @@ void read_remove_curse()
     ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
 }
 
-void read_aggravate_monsters()
+void Scroll::read_aggravate_monsters()
 {
     //This scroll aggravates all the monsters on the current level and sets them running towards the hero
     aggravate_monsters();
     ifterse("you hear a humming noise", "you hear a high pitched humming noise");
 }
 
-void read_blank_paper()
+void Scroll::read_blank_paper()
 {
     msg("this scroll seems to be blank");
 }
 
-void read_vorpalize_weapon()
+void Scroll::read_vorpalize_weapon()
 {
     //If he isn't wielding a weapon I get to chortle again!
     Item* weapon = game->hero().get_current_weapon();
@@ -321,33 +321,34 @@ void read_vorpalize_weapon()
     weapon->vorpalize();
 }
 
-void(*scroll_functions[MAXSCROLLS])() =
+void(Scroll::*scroll_functions[MAXSCROLLS])() =
 {
-  read_monster_confusion,
-  read_magic_mapping,
-  read_hold_monster,
-  read_sleep,
-  read_enchant_armor,
-  read_identify,
-  read_scare_monster,
-  read_food_detection,
-  read_teleportation,
-  read_enchant_weapon,
-  read_create_monster,
-  read_remove_curse,
-  read_aggravate_monsters,
-  read_blank_paper,
-  read_vorpalize_weapon
+  &Scroll::read_monster_confusion,
+  &Scroll::read_magic_mapping,
+  &Scroll::read_hold_monster,
+  &Scroll::read_sleep,
+  &Scroll::read_enchant_armor,
+  &Scroll::read_identify,
+  &Scroll::read_scare_monster,
+  &Scroll::read_food_detection,
+  &Scroll::read_teleportation,
+  &Scroll::read_enchant_weapon,
+  &Scroll::read_create_monster,
+  &Scroll::read_remove_curse,
+  &Scroll::read_aggravate_monsters,
+  &Scroll::read_blank_paper,
+  &Scroll::read_vorpalize_weapon
 };
 
 //read_scroll: Read a scroll from the pack and do the appropriate thing
 bool read_scroll()
 {
-    Item *scroll = get_item("read", SCROLL);
-    if (scroll == NULL)
+    Item *item = get_item("read", SCROLL);
+    if (!item)
         return false;
 
-    if (scroll->type != SCROLL) {
+    Scroll* scroll = dynamic_cast<Scroll*>(item);
+    if (!scroll) {
         //mdk: reading non-scroll counts as turn
         msg("there is nothing on it to read"); 
         return true;
@@ -359,7 +360,7 @@ bool read_scroll()
 
     //Call the function for this scroll
     if (scroll->which >= 0 && scroll->which < MAXSCROLLS)
-        scroll_functions[scroll->which]();
+        (scroll->*scroll_functions[scroll->which])();
     else {
         msg("what a puzzling scroll!");
         return true;
@@ -367,7 +368,7 @@ bool read_scroll()
 
     look(true); //put the result of the scroll on the screen
     update_status_bar();
-    game->scrolls().call_it(scroll->which);
+    scroll->call_it();
 
     //Get rid of the thing
     if (scroll->count > 1)

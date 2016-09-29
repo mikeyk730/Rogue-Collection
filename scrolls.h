@@ -10,6 +10,24 @@ struct Scroll : public Item
     virtual std::string InventoryName() const;
     virtual bool IsEvil() const;
     virtual int Worth() const;
+
+    //todo: each scroll should be a class
+    void read_monster_confusion();
+    void read_magic_mapping();
+    void read_hold_monster();
+    void read_sleep();
+    void read_enchant_armor();
+    void read_identify();
+    void read_scare_monster();
+    void read_food_detection();
+    void read_teleportation();
+    void read_enchant_weapon();
+    void read_create_monster();
+    void read_remove_curse();
+    void read_aggravate_monsters();
+    void read_blank_paper();
+    void read_vorpalize_weapon();
+
 };
 
 Item* create_scroll();
