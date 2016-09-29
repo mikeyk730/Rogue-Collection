@@ -33,14 +33,14 @@ public:
     int get_purse();
     void adjust_purse(int delta);
 
-    void eat(Item* obj);
+    bool eat();
     void ingest();
     void digest();
     int get_hungry_state();
     int get_food_left();
 
-    bool put_on_ring(Item* obj);
-    bool take_off_ring();
+    bool put_on_ring();
+    bool remove_ring();
     int is_ring_on_hand(int h, int r) const;
     int is_wearing_ring(int r) const;
 
@@ -58,7 +58,7 @@ public:
     int can_see(Coord p);
 
     //wield: Pull out a certain weapon
-    void wield();
+    bool wield();
 
     void reduce_level();
 
@@ -88,8 +88,11 @@ public:
     void set_current_armor(Item* item);
     void set_ring(int hand, Item* item);
 
-    //take_off: Get the armor off of the player's back
-    void take_off();
+    //wear_armor: The player wants to wear something, so let him/her put it on.
+    bool wear_armor();
+
+    //take_off_armor: Get the armor off of the player's back
+    bool take_off_armor();
 
 private:
 

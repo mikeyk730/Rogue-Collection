@@ -177,6 +177,11 @@ Item * Amulet::Clone() const
     return new Amulet(*this);
 }
 
+std::string Amulet::InventoryName() const
+{
+    return "The Amulet of Yendor";
+}
+
 Gold::Gold(int value) :
     Item(GOLD, 0, "gold")
 {
@@ -186,6 +191,12 @@ Gold::Gold(int value) :
 Item * Gold::Clone() const
 {
     return new Gold(*this);
+}
+
+std::string Gold::InventoryName() const
+{
+    sprintf(prbuf, "%d gold", get_gold_value());
+    return prbuf;
 }
 
 //is_magic: Returns true if an object radiates magic

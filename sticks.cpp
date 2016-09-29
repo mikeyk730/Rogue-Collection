@@ -312,6 +312,7 @@ struct MagicMissile : public Item
             m_launcher = game->hero().get_current_weapon()->which;
     }
     virtual Item* Clone() const { return new MagicMissile(*this); }
+    virtual std::string InventoryName() const { return "magic missile"; }
 };
 
 void zap_magic_missile(Coord delta)
@@ -603,7 +604,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
 }
 
 //charge_str: Return an appropriate string for a wand charge
-const char *get_charge_string(Item *obj)
+const char *get_charge_string(const Item *obj)
 {
     static char buf[20];
 
@@ -630,7 +631,7 @@ std::string StickInfo::get_inventory_name(int which, const std::string& charge) 
     return prbuf;
 }
 
-std::string StickInfo::get_inventory_name(Item * obj) const
+std::string StickInfo::get_inventory_name(const Item * obj) const
 {
     return get_inventory_name(obj->which, get_charge_string(obj));
 }
@@ -670,4 +671,10 @@ Stick::Stick(int which)
 Item * Stick::Clone() const
 {
     return new Stick(*this);
+}
+
+std::string Stick::InventoryName() const
+{
+    //todo: change class layout, so we don't need to poke into game
+    return game->item_class(type).get_inventory_name(this);
 }

@@ -405,7 +405,7 @@ std::string ScrollInfo::get_inventory_name(int which, int count) const
     return prbuf;
 }
 
-std::string ScrollInfo::get_inventory_name(Item * obj) const
+std::string ScrollInfo::get_inventory_name(const Item * obj) const
 {
     return get_inventory_name(obj->which, obj->count);
 }
@@ -423,4 +423,10 @@ Scroll::Scroll(int which) :
 Item * Scroll::Clone() const
 {
     return new Scroll(*this);
+}
+
+std::string Scroll::InventoryName() const
+{
+    //todo: change class layout, so we don't need to poke into game
+    return game->item_class(type).get_inventory_name(this);
 }

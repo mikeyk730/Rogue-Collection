@@ -74,7 +74,7 @@ void whatis()
     if (obj->is_vorpalized())
         obj->set_revealed();
 
-    msg(obj->inv_name(false));
+    msg(obj->inventory_name(false).c_str());
 }
 
 int get_which(int type, int limit)
@@ -204,7 +204,7 @@ namespace
             std::ostringstream ss;
 
             Coord pos = item->position();
-            ss << item->inv_name(false);
+            ss << item->inventory_name(false);
             if (coord)
                 ss << " at (" << pos.x << "," << pos.y << ")";
 

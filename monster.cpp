@@ -464,12 +464,12 @@ bool nymph_attack(Monster* mp)
         int oc;
         oc = item->count--;
         item->count = 1;
-        msg(she_stole, item->inv_name(true));
+        msg(she_stole, item->inventory_name(true).c_str());
         item->count = oc;
     }
     else {
         game->hero().pack.remove(item);
-        msg(she_stole, item->inv_name(true));
+        msg(she_stole, item->inventory_name(true).c_str());
         delete item;
     }
     return true;

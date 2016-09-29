@@ -101,16 +101,6 @@ std::string get_stone(int type)
     return game->rings().get_identifier(type);
 }
 
-//ring_on: Put a ring on a hand
-bool ring_on()
-{
-    Item* obj = get_item("put on", RING);
-    if (obj == NULL) {
-        return false;
-    }
-    return game->hero().put_on_ring(obj);
-}
-
 //ring_eat: How much food does this ring use up?
 int ring_eat(int hand)
 {
@@ -128,7 +118,7 @@ int ring_eat(int hand)
 }
 
 //ring_num: Print ring bonuses
-char *ring_num(Item *obj)
+char *ring_num(const Item *obj)
 {
     if (!obj->is_known() && !game->wizard().reveal_items())
         return "";
@@ -161,7 +151,7 @@ std::string RingInfo::get_inventory_name(int which, const std::string& bonus) co
     return prbuf;
 }
 
-std::string RingInfo::get_inventory_name(Item * obj) const
+std::string RingInfo::get_inventory_name(const Item * obj) const
 {
     return get_inventory_name(obj->which, ring_num(obj));
 }
@@ -207,4 +197,10 @@ Ring::Ring(int which, int level) :
 Item* Ring::Clone() const
 {
     return new Ring(*this);
+}
+
+std::string Ring::InventoryName() const
+{
+    //todo: change class layout, so we don't need to poke into game
+    return game->item_class(type).get_inventory_name(this);
 }

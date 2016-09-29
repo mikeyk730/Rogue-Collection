@@ -8,6 +8,7 @@ struct Stick : public Item
     Stick(int which);
 
     virtual Item* Clone() const;
+    virtual std::string InventoryName() const;
 };
 
 Item* create_stick();
@@ -23,4 +24,4 @@ void drain();
 Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name);
 
 //charge_str: Return an appropriate string for a wand charge
-const char *get_charge_string(Item *obj);
+const char *get_charge_string(const Item *obj);

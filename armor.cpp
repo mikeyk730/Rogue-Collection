@@ -74,30 +74,7 @@ Item* create_armor()
     return new Armor(which);
 }
 
-//wear: The player wants to wear something, so let him/her put it on.
-void wear()
-{
-    Item *obj;
-    char *sp;
-
-    if (game->hero().get_current_armor() != NULL)
-    {
-        msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
-        game->counts_as_turn = false;
-        return;
-    }
-    if ((obj = get_item("wear", ARMOR)) == NULL) return;
-    if (obj->type != ARMOR) {
-        msg("you can't wear that");
-        return;
-    }
-    waste_time();
-    obj->set_known();
-    sp = obj->inv_name(true);
-    game->hero().set_current_armor(obj);
-    msg("you are now wearing %s", sp);
-}
-
+//todo:does this cause any problems?
 //waste_time: Do nothing but let other things happen
 void waste_time()
 {
@@ -105,7 +82,7 @@ void waste_time()
     do_fuses();
 }
 
-const char* Item::get_inv_name_armor()
+std::string Armor::InventoryName() const
 {
     char *pb = prbuf;
 

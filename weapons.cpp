@@ -249,7 +249,7 @@ int fallpos(Item *obj, Coord *newpos)
     return (cnt != 0);
 }
 
-const char* Item::get_inv_name_weapon() const
+std::string Weapon::InventoryName() const
 {
     char *pb = prbuf;
 

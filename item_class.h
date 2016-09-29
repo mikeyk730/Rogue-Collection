@@ -14,7 +14,7 @@ struct ItemClass
 
     std::string get_name(int type) const;
     std::string get_identifier(int type) const;
-    virtual std::string get_inventory_name(Item* obj) const = 0;
+    virtual std::string get_inventory_name(const Item* obj) const = 0;
     virtual std::string get_inventory_name(int which) const = 0;
     
     int get_probability(int type) const;
@@ -42,7 +42,7 @@ struct ScrollInfo : public ItemClass
 {
     ScrollInfo();
 
-    virtual std::string get_inventory_name(Item* obj) const;
+    virtual std::string get_inventory_name(const Item* obj) const;
     virtual std::string get_inventory_name(int which) const;
 private:
     std::string get_inventory_name(int which, int count) const;
@@ -52,7 +52,7 @@ struct PotionInfo : public ItemClass
 {
     PotionInfo();
 
-    virtual std::string get_inventory_name(Item* obj) const;
+    virtual std::string get_inventory_name(const Item* obj) const;
     virtual std::string get_inventory_name(int which) const;
 private:
     std::string get_inventory_name(int which, int count) const;
@@ -62,7 +62,7 @@ struct StickInfo : public ItemClass
 {
     StickInfo();
 
-    virtual std::string get_inventory_name(Item* obj) const;
+    virtual std::string get_inventory_name(const Item* obj) const;
     virtual std::string get_inventory_name(int which) const;
 
     bool is_staff(int which) const;
@@ -78,7 +78,7 @@ struct RingInfo : public ItemClass
 {
     RingInfo();
 
-    virtual std::string get_inventory_name(Item* obj) const;
+    virtual std::string get_inventory_name(const Item* obj) const;
     virtual std::string get_inventory_name(int which) const;
 private:
     std::string get_inventory_name(int which, const std::string& bonus) const;

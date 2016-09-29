@@ -9,6 +9,7 @@ struct Weapon : public Item
     Weapon(int which, int hit, int damage);
 
     virtual Item* Clone() const;
+    virtual std::string InventoryName() const;
 };
 
 Item* create_weapon();

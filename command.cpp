@@ -225,7 +225,7 @@ void dispatch_command(int ch)
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
         do_run(tolower(ch));
         break;
-    case 't':
+    case 't': //todo:
     {
         Coord d;
         if (get_dir(&d))
@@ -246,28 +246,28 @@ void dispatch_command(int ch)
         drop();
         break;
     case 'q':
-        quaff();
+        quaff();//todo
         break;
     case 'r':
-        read_scroll();
+        read_scroll();//todo
         break;
     case 'e':
-        eat();
+        game->counts_as_turn = game->hero().eat();
         break;
     case 'w':
-        game->hero().wield();
+        game->counts_as_turn = game->hero().wield();
         break;
     case 'W':
-        wear();
+        game->counts_as_turn = game->hero().wear_armor();
         break;
     case 'T':
-        game->hero().take_off();
+        game->counts_as_turn = game->hero().take_off_armor();
         break;
     case 'P':
-        game->counts_as_turn = ring_on();
+        game->counts_as_turn = game->hero().put_on_ring();
         break;
     case 'R':
-        game->counts_as_turn = game->hero().take_off_ring();
+        game->counts_as_turn = game->hero().remove_ring();
         break;
     case 'c':
         game->counts_as_turn = false;
@@ -296,7 +296,7 @@ void dispatch_command(int ch)
     case 's':
         search();
         break;
-    case 'z':
+    case 'z'://todo
     {
         Coord d;
         if (get_dir(&d))
@@ -342,7 +342,8 @@ void dispatch_command(int ch)
         save_game();
         break;
     case '.':
-        doctor(); break;
+        doctor(); 
+        break;
 
     case '^':
     {

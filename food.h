@@ -3,12 +3,10 @@
 
 struct Food : public Item
 {
+    static Item* CreateFood(); //factory
+
     Food(int which);
 
     virtual Item* Clone() const;
+    virtual std::string InventoryName() const;
 };
-
-Item* create_food();
-
-//eat: She wants to eat something, so let her try
-void eat();

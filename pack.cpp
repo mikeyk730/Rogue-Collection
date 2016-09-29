@@ -49,7 +49,7 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
             continue;
         n_objs++;
         sprintf(inv_temp, "%c) %%s", ch);
-        add_line(lstr, inv_temp, item->inv_name(false));
+        add_line(lstr, inv_temp, item->inventory_name(false).c_str());
     }
     if (n_objs == 0)
     {

@@ -51,65 +51,25 @@ void init_things()
 }
 
 //inv_name: Return the name of something as it would appear in an inventory.
-char * Item::inv_name(bool lowercase)
+std::string Item::inventory_name(bool lowercase)
 {
-    char *pb = prbuf;
-    switch (this->type)
-    {
+    std::string name = InventoryName();
 
-    case SCROLL:
-    case POTION:
-    case STICK:
-    case RING:
-        game->item_class(this->type).get_inventory_name(this);
-        break;
-
-    case FOOD:
-        this->get_inv_name_food();
-        break;
-
-    case WEAPON:
-        this->get_inv_name_weapon();
-        break;
-
-    case ARMOR:
-        this->get_inv_name_armor();
-        break;
-
-    case AMULET:
-        strcpy(pb, "The Amulet of Yendor");
-        break;
-
-
-#ifdef DEBUG
-
-    case GOLD:
-        sprintf(pb, "%d gold", get_gold_value());
-        break;
-
-    default:
-        debug("Picked up someting bizarre %s", unctrl(this->type));
-        sprintf(pb, "Something bizarre %c(%d)", this->type, this->type);
-        break;
-
-#endif
-    }
     if (this == game->hero().get_current_armor())
-        strcat(pb, " (being worn)");
+        name += " (being worn)";
     if (this == game->hero().get_current_weapon())
-        strcat(pb, " (weapon in hand)");
+        name += " (weapon in hand)";
     if (this == game->hero().get_ring(LEFT))
-        strcat(pb, " (on left hand)");
+        name += " (on left hand)";
     else if (this == game->hero().get_ring(RIGHT))
-        strcat(pb, " (on right hand)");
+        name += " (on right hand)";
 
-    //todo: what is this?
-    if (lowercase && isupper(prbuf[0]))
-        prbuf[0] = tolower(prbuf[0]);
-    else if (!lowercase && islower(*prbuf))
-        *prbuf = toupper(*prbuf);
+    if (lowercase && isupper(name[0]))
+        name[0] = tolower(name[0]);
+    else if (!lowercase && islower(name[0]))
+        name[0] = toupper(name[0]);
 
-    return prbuf;
+    return name;
 }
 
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
@@ -144,7 +104,7 @@ void drop()
     game->level().items.push_front(op);
     op->pos = game->hero().pos;
     game->level().set_tile(op->pos, op->type);
-    msg("dropped %s", op->inv_name(true));
+    msg("dropped %s", op->inventory_name(true).c_str());
 }
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
@@ -159,6 +119,7 @@ bool can_drop(Item *op)
     if (op == game->hero().get_current_weapon())
         game->hero().set_current_weapon(NULL);
     else if (op == game->hero().get_current_armor()) {
+        //mdk: taking off/dropping/throwing current armor takes two turns
         waste_time();
         game->hero().set_current_armor(NULL);
     }
@@ -200,7 +161,7 @@ Item* Item::CreateItem()
         break;
 
     case 2:
-        return create_food();
+        return Food::CreateFood();
         break;
 
     case 3:

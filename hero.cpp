@@ -148,17 +148,22 @@ void Hero::adjust_purse(int delta)
         m_purse = 0;
 }
 
-void Hero::eat(Item* obj)
+bool Hero::eat()
 {
+    Item* obj = get_item("eat", FOOD);
+    if (obj == nullptr)
+        return false;
+
+    //mdk: attempting to eat non-food counts as turn
     if (obj->type != FOOD) {
         msg("ugh, you would get ill if you ate that");
-        return;
+        return true;
     }
 
     if (--obj->count < 1) {
         pack.remove(obj);
         if (obj == get_current_weapon())
-            set_current_weapon(NULL);
+            set_current_weapon(NULL); //todo: this should be done automatically when removing from pack
         delete obj;
     }
     ingest();
@@ -176,6 +181,8 @@ void Hero::eat(Item* obj)
 
     if (game->sleep_timer)
         msg("You feel bloated and fall asleep");
+
+    return true;
 }
 
 void Hero::ingest()
@@ -636,7 +643,7 @@ picked_up:
     }
     //Notify the user
     if (!silent)
-        msg("%s%s (%c)", noterse("you now have "), obj->inv_name(true), pack_char(obj));
+        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(true).c_str(), pack_char(obj));
 }
 
 //pick_up_gold: Add gold to the pack
@@ -672,26 +679,24 @@ int Hero::is_wearing_ring(int ring) const
 }
 
 //wield: Pull out a certain weapon
-void Hero::wield()
+bool Hero::wield()
 {
-    Item *obj;
-    char *sp;
-
+    //mdk: trying to wield weapon while old one is cursed counts as turn
     if (!can_drop(get_current_weapon())) {
-        return;
+        return true;
     }
-    obj = get_item("wield", WEAPON);
+
+    Item* obj = get_item("wield", WEAPON);
     if (!obj || is_in_use(obj) || obj->type == ARMOR)
     {
         if (obj && obj->type == ARMOR)
             msg("you can't wield armor");
-        game->counts_as_turn = false;
-        return;
+        return false;
     }
 
-    sp = obj->inv_name(true);
     set_current_weapon(obj);
-    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", sp, pack_char(obj));
+    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", obj->inventory_name(true).c_str(), pack_char(obj));
+    return true;
 }
 
 //get_hand: Which hand is the hero interested in?
@@ -712,8 +717,13 @@ int get_hand()
     }
 }
 
-bool Hero::put_on_ring(Item* obj)
+bool Hero::put_on_ring()
 {
+    Item* obj = get_item("put on", RING);
+    if (obj == NULL) {
+        return false;
+    }
+
     //Make certain that it is something that we want to wear
     if (obj->type != RING) {
         msg("you can't put that on your finger");
@@ -752,11 +762,11 @@ bool Hero::put_on_ring(Item* obj)
         break;
     }
     
-    msg("%swearing %s (%c)", noterse("you are now "), obj->inv_name(true), pack_char(obj));
+    msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(true).c_str(), pack_char(obj));
     return true;
 }
 
-bool Hero::take_off_ring()
+bool Hero::remove_ring()
 {
     int ring;
     if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) {
@@ -770,32 +780,62 @@ bool Hero::take_off_ring()
     else if ((ring = get_hand()) < 0)
         return false;
 
-    Item* obj = game->hero().get_ring(ring);
+    Item* obj = get_ring(ring);
     if (obj == NULL) {
         msg("not wearing such a ring");
         return false;
     }
 
     char packchar = pack_char(obj);
-    //mdk: attempting to take off cursed ring counts as turn.  seems like bug.
+    //mdk: attempting to take off cursed ring counts as turn.
     if (can_drop(obj))
-        msg("was wearing %s(%c)", obj->inv_name(true), packchar);
+        msg("was wearing %s(%c)", obj->inventory_name(true).c_str(), packchar);
     return true;
 }
 
-
-//take_off: Get the armor off of the player's back
-void Hero::take_off()
+//wear_armor: The player wants to wear something, so let him/her put it on.
+bool Hero::wear_armor()
 {
-    Item *obj;
-
-    if ((obj = get_current_armor()) == NULL)
+    if (get_current_armor())
     {
-        game->counts_as_turn = false;
-        msg("you aren't wearing any armor");
-        return;
+        msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
+        return false;
     }
-    if (!can_drop(get_current_armor())) return;
+
+    Item *obj = get_item("wear", ARMOR);
+    if (!obj) 
+        return false;
+
+    //mdk: trying to wear non-armor counts as turn
+    if (obj->type != ARMOR) {
+        msg("you can't wear that");
+        return true;
+    }
+
+    //mdk: putting on armor takes 2 turns
+    waste_time();
+
+    obj->set_known();
+    set_current_armor(obj);
+    msg("you are now wearing %s", obj->inventory_name(true).c_str());
+    return true;
+}
+
+//take_off_armor: Get the armor off of the player's back
+bool Hero::take_off_armor()
+{
+    Item *obj = get_current_armor();
+    if (!obj)
+    {
+        msg("you aren't wearing any armor");
+        return false;
+    }
+
+    //mdk: trying to take off cursed armor counts as turn
+    if (!can_drop(get_current_armor()))
+        return true;
+
     set_current_armor(NULL);
-    msg("you used to be wearing %c) %s", pack_char(obj), obj->inv_name(true));
+    msg("you used to be wearing %c) %s", pack_char(obj), obj->inventory_name(true).c_str());
+    return true;
 }

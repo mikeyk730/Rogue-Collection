@@ -84,9 +84,10 @@ public:
     virtual ~Item();
 
     virtual Item* Clone() const = 0;
+    virtual std::string InventoryName() const = 0;
 
     //inv_name: Return the name of something as it would appear in an inventory.
-    char * inv_name(bool lowercase);
+    std::string inventory_name(bool lowercase);
 
     int type;                      //What kind of object it is
     Coord pos;                     //Where it lives on the screen
@@ -135,9 +136,6 @@ public:
     void set_found();
     void set_flashed();
 
-    //food-specific
-    const char* get_inv_name_food();
-
     //ring-specific
     int get_ring_level() const;
 
@@ -148,7 +146,6 @@ public:
     void randomize_damage();
 
     //armor-specific
-    const char* get_inv_name_armor();
     int get_armor_class() const;
     int armor_class_for_display() const;
     void enchant_armor();
@@ -161,7 +158,6 @@ public:
     int get_hit_plus() const;
     int get_damage_plus() const;
     void initialize_weapon(byte type);
-    const char* get_inv_name_weapon() const;
     void enchant_weapon();
     void vorpalize();
     bool is_vorpalized() const;
@@ -185,6 +181,7 @@ struct Amulet : public Item
     Amulet();
 
     virtual Item* Clone() const;
+    virtual std::string InventoryName() const;
 };
 
 struct Gold : public Item
@@ -192,4 +189,5 @@ struct Gold : public Item
     Gold(int value);
 
     virtual Item* Clone() const;
+    virtual std::string InventoryName() const;
 };

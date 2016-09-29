@@ -7,13 +7,11 @@ struct Armor : public Item
     Armor(int which, int ac_mod);
 
     virtual Item* Clone() const;
+    virtual std::string InventoryName() const;
 };
 
 int get_default_class(int type);
 Item* create_armor();
-
-//wear: The player wants to wear something, so let him/her put it on.
-void wear();
 
 //waste_time: Do nothing but let other things happen
 void waste_time();
