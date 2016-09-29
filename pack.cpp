@@ -149,7 +149,7 @@ void pick_up(byte ch)
     {
         Room* room = game->hero().room;
         Coord pos = game->hero().position();
-        Item* obj = find_obj(pos);
+        Item* obj = find_obj(pos, true);
         if (obj == NULL)
             return;
 

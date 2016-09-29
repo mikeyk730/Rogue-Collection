@@ -104,7 +104,7 @@ protected:
     short ring_level;
     short flags;                   //Information about objects
     char enemy;                    //If it is enchanted, who it hates
-    std::string m_name;            //Projectile name
+    std::string m_projectile_name; //Projectile name
 public:
     int group;                     //Group number for this object
 public:
@@ -171,8 +171,8 @@ public:
     std::string get_damage() const;
     char launcher() const;
 
-    void set_name(const std::string& name);
-    std::string name() const;
+    void set_projectile_name(const std::string& name);
+    std::string projectile_name() const;
 
 
     Room* get_room();

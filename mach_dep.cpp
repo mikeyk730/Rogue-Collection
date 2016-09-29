@@ -102,7 +102,7 @@ void setup()
 //clear_typeahead_buffer: Flush typeahead for traps, etc.
 void clear_typeahead_buffer()
 {
-    game->typeahead = "";
+    game->typeahead.clear();
 }
 
 BOOL CtrlHandler(DWORD fdwCtrlType)
@@ -307,9 +307,11 @@ int readchar()
 {
     byte ch;
 
-    if (*game->typeahead) { 
+    if (!game->typeahead.empty()) { 
         SIG2();
-        return(*game->typeahead++);
+        ch = game->typeahead.back();
+        game->typeahead.pop_back();
+        return ch;
     }
 
     ch = game->input_interface().GetNextChar();

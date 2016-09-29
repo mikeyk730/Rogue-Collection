@@ -236,10 +236,20 @@ namespace
             }
         }
     }
+
+    void debug_hero()
+    {
+        Coord pos = game->hero().position();
+        std::ostringstream ss;
+        ss << "Hero at (" << pos.x << "," << pos.y << ")";
+        add_line("", ss.str().c_str(), "");
+    }
 }
 
 void debug_screen()
 {
+    debug_hero();
+    add_line("", " ", "");
     add_line("", "Level Items:", "");
     debug_items();
     add_line("", " ", "");

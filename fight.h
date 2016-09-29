@@ -28,7 +28,7 @@ int str_plus(unsigned int str);
 //add_dam: Compute additional damage done for exceptionally high or low strength
 int add_dam(unsigned int str);
 
-//thunk: A projectile hit or missed a monster
+//display_throw_msg: A projectile hit or missed a monster
 void display_throw_msg(Item *weapon, const char *mname, char *does, char *did);
 
 //remove: Remove a monster from the screen

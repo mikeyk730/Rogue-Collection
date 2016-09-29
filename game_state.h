@@ -77,7 +77,8 @@ struct GameState
     int repeat_cmd_count = 0;  //Number of times to repeat command
     Coord oldpos; //Position before last look() call
     struct Room *oldrp; //room of oldpos
-    const char* typeahead = "";
+    std::string typeahead;
+    std::string macro;
 
 private:
     void init_environment();

@@ -53,6 +53,7 @@ GameState::GameState(Random* random, std::istream& in) :
             read_string(in, &value);
             m_environment[key] = value;
         }
+        macro = get_environment("macro");
     }
     else
     {
@@ -86,6 +87,8 @@ void GameState::init_environment()
     m_environment["screen"] = "";
     m_environment["levelnames"] = "on";
     m_environment["monstercfg"] = "monsters.opt";
+
+    macro = get_environment("macro");
 }
 
 void GameState::save_game(const std::string& filename)

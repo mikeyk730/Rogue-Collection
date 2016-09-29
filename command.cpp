@@ -322,9 +322,12 @@ void dispatch_command(int ch)
         record_macro();
         break;
     case CTRL('F'):
+    {
         game->counts_as_turn = false;
-        //todo: revisit macro later, this definitely isn't safe
-        //typeahead = game->get_environment("macro").c_str();
+        std::string macro = game->macro;
+        std::reverse(macro.begin(), macro.end());
+        game->typeahead = macro;
+    }
         break;
     case CTRL('R'):
         game->counts_as_turn = false;

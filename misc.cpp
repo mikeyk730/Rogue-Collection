@@ -2,6 +2,7 @@
 //misc.c       1.4             (A.I. Design)   12/14/84
 
 #include <algorithm>
+#include <sstream>
 #include <stdio.h>
 
 #include "rogue.h"
@@ -183,16 +184,20 @@ void look(bool wakeup)
 }
 
 //find_obj: Find the unclaimed object at y, x
-Item *find_obj(Coord p)
+Item* find_obj(Coord p, bool expect_item)
 {
     for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it) {
         Item* op = *it;
         if (op->pos.y == p.y && op->pos.x == p.x)
             return op;
     }
-
-    debug("Non-object %c %d,%d", game->level().get_tile(p), p.y, p.x);
-    return NULL; //NOTREACHED
+    if (expect_item) {
+        std::ostringstream ss;
+        ss << "Non-item " << game->level().get_tile(p) << " " << p.y << "," << p.x;
+        game->log("error", ss.str());
+        debug(ss.str().c_str());
+    }
+    return NULL;
 }
 
 //add_haste: Add a haste to the player
@@ -558,7 +563,7 @@ void record_macro()
     memset(buf, 0, MACROSZ);
     char *cp = prbuf;
 
-    msg("F9 was %s, enter new macro: ", game->get_environment("macro").c_str());
+    msg("F9 was %s, enter new macro: ", game->macro.c_str());
     if (getinfo(prbuf, MACROSZ - 1) != ESCAPE)
         do {
             if (*cp != CTRL('F'))
@@ -566,5 +571,5 @@ void record_macro()
         } while (*cp++);
         msg("");
         clear_typeahead_buffer();
-        game->set_environment("macro", buf);
+        game->macro = buffer;
 }

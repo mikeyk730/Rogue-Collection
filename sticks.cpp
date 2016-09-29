@@ -498,7 +498,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
     Monster* victim = 0;
 
     Item* bolt = new Weapon(FLAME, 30, 0);
-    bolt->set_name(name);
+    bolt->set_projectile_name(name);
     switch (dir->y + dir->x)
     {
     case 0: dirch = '/'; break;

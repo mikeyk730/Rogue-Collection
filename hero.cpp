@@ -549,7 +549,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
     if (obj == NULL)
     {
         from_floor = true;
-        if ((obj = find_obj(pos)) == NULL)
+        if ((obj = find_obj(pos, true)) == NULL)
             return;
         floor = (room->is_gone()) ? PASSAGE : FLOOR;
     }

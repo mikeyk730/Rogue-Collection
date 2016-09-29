@@ -231,25 +231,38 @@ char *num(int n1, int n2, char type)
 //fallpos: Pick a random position around the given (y, x) coordinates
 int fallpos(Item *obj, Coord *newpos)
 {
-    int y, x, cnt = 0, ch;
-    Item *onfloor;
+   int cnt = 0;
 
-    for (y = obj->pos.y - 1; y <= obj->pos.y + 1; y++)
-        for (x = obj->pos.x - 1; x <= obj->pos.x + 1; x++)
+    for (int y = obj->pos.y - 1; y <= obj->pos.y + 1; y++)
+    {
+        for (int x = obj->pos.x - 1; x <= obj->pos.x + 1; x++)
         {
-            //check to make certain the spot is empty, if it is, put the object there, set it in the level list and re-draw the room if he can see it
-            if ((y == game->hero().pos.y && x == game->hero().pos.x) || offmap({ x,y })) continue;
-            if ((ch = game->level().get_tile({ x, y })) == FLOOR || ch == PASSAGE)
+            Coord pos = { x, y };
+            //check to make certain the spot is empty, if it is, put the object there, set it in the 
+            //level list and re-draw the room if he can see it
+            if (pos == game->hero().pos || offmap(pos)) 
+                continue;
+
+            int ch = game->level().get_tile(pos);
+            if (ch == FLOOR || ch == PASSAGE)
             {
-                if (rnd(++cnt) == 0) { newpos->y = y; newpos->x = x; }
+                if (rnd(++cnt) == 0) { 
+                    newpos->y = y; 
+                    newpos->x = x; 
+                }
                 continue;
             }
-            if (step_ok(ch) && (onfloor = find_obj({ x,y })) && onfloor->type == obj->type && onfloor->group && onfloor->group == obj->group)
-            {
-                onfloor->count += obj->count;
-                return 2;
+
+            if (step_ok(ch)) {
+                Item* floor_item = find_obj(pos, false);
+                if (floor_item && floor_item->type == obj->type && floor_item->group && floor_item->group == obj->group)
+                {
+                    floor_item->count += obj->count;
+                    return 2;
+                }
             }
         }
+    }
     return (cnt != 0);
 }
 
@@ -319,14 +332,14 @@ char Item::launcher() const
     return m_launcher;
 }
 
-void Item::set_name(const std::string & name)
+void Item::set_projectile_name(const std::string & name)
 {
-    m_name = name;
+    m_projectile_name = name;
 }
 
-std::string Item::name() const
+std::string Item::projectile_name() const
 {
-    return m_name;
+    return m_projectile_name;
 }
 
 Room* Item::get_room()

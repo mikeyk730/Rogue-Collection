@@ -69,13 +69,18 @@ bool plop_monster(int r, int c, Coord *cp)
     for (y = r - 1; y <= r + 1; y++)
         for (x = c - 1; x <= c + 1; x++)
         {
+            Coord pos = { x, y };
             //Don't put a monster on top of the player.
-            if ((y == game->hero().pos.y && x == game->hero().pos.x) || offmap({ x,y })) continue;
+            if (pos == game->hero().pos || offmap({ x,y }))
+                continue;
             //Or anything else nasty
-            if (step_ok(ch = game->level().get_tile_or_monster({ x, y })))
+            if (step_ok(ch = game->level().get_tile_or_monster(pos)))
             {
-                if (ch == SCROLL && is_scare_monster_scroll(find_obj({ x,y }))) continue;
-                if (rnd(++appear) == 0) { cp->y = y; cp->x = x; }
+                if (ch == SCROLL && is_scare_monster_scroll(find_obj(pos, false)))
+                    continue;
+                if (rnd(++appear) == 0) { 
+                    *cp = pos;
+                }
             }
         }
     return appear;
