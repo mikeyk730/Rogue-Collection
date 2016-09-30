@@ -666,7 +666,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
 {
     byte dirch, ch;
     Monster* monster;
-    bool used, changed;
+    bool bolt_hit_something, changed;
     int i, j;
     Coord pos;
     struct { Coord s_pos; byte s_under; } spotpos[BOLT_LENGTH * 2];
@@ -680,9 +680,9 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
     }
     pos = *start;
     bool hero_is_target = !bolt->from_player;
-    used = false;
+    bolt_hit_something = false;
     changed = false;
-    for (i = 0; i < BOLT_LENGTH && !used; i++)
+    for (i = 0; i < BOLT_LENGTH && !bolt_hit_something; i++)
     {
         pos = pos + *dir;
         ch = game->level().get_tile_or_monster(pos);
@@ -708,8 +708,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
                 changed = !changed;
                 if (bolt_vs_monster(bolt, monster, start, &victim))
                 {
-                    used = true;
-                    //todo: technically shouldn't do when flame against dragon.  test this.
+                    bolt_hit_something = true;
                     if (game->screen().mvinch(pos.y, pos.x) != dirch)
                         spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
                 }
@@ -720,7 +719,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
                 hero_is_target = false;
                 changed = !changed;
                 if (bolt_vs_hero(bolt, start)) {
-                    used = true;
+                    bolt_hit_something = true;
                 }
             }
 
