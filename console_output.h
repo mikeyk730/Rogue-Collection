@@ -86,6 +86,13 @@ struct ConsoleOutput : public OutputInterface
     virtual bool small_screen_mode() const;
 
 private:
+    void putchr_(int c, int attr);
+    void move_(short y, short x);
+
+    void Render();
+    void Render(SMALL_RECT rect);
+    void ApplyMove();
+
     //screen size
     short LINES = 25;
     short COLS = 80;
@@ -104,4 +111,5 @@ private:
 
     HANDLE hConsole;
     CHAR_INFO m_buffer[MAXLINES][MAXCOLS];
+    CHAR_INFO m_backup[MAXLINES][MAXCOLS];
 };
