@@ -235,15 +235,21 @@ bool Stick::zap_light(Coord dir)
     return true;
 }
 
-bool Stick::zap_striking(Coord dir) 
+bool Stick::zap_striking(Coord dir)
 {
     Monster* monster = get_monster_in_direction(dir, false);
-    if (monster)
-    {
-        randomize_damage();
-        game->hero().fight(monster->position(), this, false);
-    }
-    return true;
+    if (!monster)
+        return true;
+
+    randomize_damage();
+    game->hero().fight(monster->position(), this, false);
+
+    //mdk:bugfix: originally the stick would be drained here, but it
+    //also gets drained in Hero::fight.  I don't think the double 
+    //draining was intentional.
+    bool double_drain(game->get_environment("double_drain") == "bug_on");
+
+    return double_drain ? true : false;
 }
 
 bool Stick::zap_lightning(Coord dir)
@@ -404,8 +410,10 @@ bool Stick::zap_teleport_to(Coord dir)
     //move the monster to beside the player
     monster->pos = game->hero().pos + dir;
 
-    //mdk:teleport to cancels the hold, is this intended?
-    if (monster->can_hold())
+    //mdk:bugfix: originally zapping a flytrap would release the hold,
+    //but this doesn't make sense
+    bool zap_release(game->get_environment("zap_release") == "bug_on");
+    if (zap_release && monster->can_hold())
         game->hero().set_is_held(false);
 
     //the monster chases the player
@@ -450,6 +458,13 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
     }
     else {
         msg("you hear a maniacal chuckle in the distance.");
+
+        //mdk:bugfix: originally zapping a flytrap would release the hold,
+        //but this doesn't make sense
+        bool zap_release(game->get_environment("zap_release") == "bug_on");
+        if (zap_release && monster->can_hold())
+            game->hero().set_is_held(false);
+
         //the monster chases the player
         monster->dest = &game->hero().pos;
         monster->set_running(true);
@@ -458,7 +473,6 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
 }
 
 //do_zap: Perform a zap with a wand
-//mdk:bugfix: teleport to and vorpalized weapon previously cancelled a hold on flytraps
 bool do_zap()
 {
     Coord delta;
