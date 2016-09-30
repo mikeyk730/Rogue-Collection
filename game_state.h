@@ -61,6 +61,11 @@ struct GameState
 
     } last_turn;
 
+    struct Options
+    {
+        bool throws_affect_mimics() const;
+    } options;
+
     // uncategorized state.  //todo: categorize it.
     int bear_trap_turns = 0;     //Number of turns held in place
     int sleep_timer = 0;         //Number of turns asleep

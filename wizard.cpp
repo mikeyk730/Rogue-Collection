@@ -158,19 +158,23 @@ void summon_object()
 //show_map: Print out the map for the wizard
 void show_map(bool show_monsters)
 {
-    int y, x, real;
-
     game->screen().wdump();
     game->screen().clear();
+
     const int COLS = game->screen().columns();
-    for (y = 1; y < maxrow(); y++) for (x = 0; x < COLS; x++)
-    {
-        if (!(real = game->level().get_flags({ x, y })&F_REAL))
-            game->screen().standout();
-        game->screen().mvaddch({ x, y }, show_monsters ? game->level().get_tile_or_monster({ x, y }) : game->level().get_tile({ x, y }));
-        if (!real)
-            game->screen().standend();
+    for (int y = 1; y < maxrow(); y++) {
+        for (int x = 0; x < COLS; x++) {
+            Coord c = { x, y };
+            byte tile = game->level().get_tile(c, show_monsters, false);
+            int real = game->level().is_real(c);
+            if (!real)
+                game->screen().standout();
+            game->screen().mvaddch(c, tile);
+            if (!real)
+                game->screen().standend();
+        }
     }
+
     show_win("---More (level map)---");
     game->screen().wrestor();
 }

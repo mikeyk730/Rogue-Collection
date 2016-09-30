@@ -171,7 +171,7 @@ void Scroll::read_hold_monster()
 {
     //Hold monster scroll.  Stop all monsters within two spaces from chasing after the hero.
     int x, y;
-    Agent* monster;
+    Monster* monster;
 
     const int COLS = game->screen().columns();
     for (x = game->hero().pos.x - 3; x <= game->hero().pos.x + 3; x++) {
@@ -179,8 +179,7 @@ void Scroll::read_hold_monster()
             for (y = game->hero().pos.y - 3; y <= game->hero().pos.y + 3; y++) {
                 if ((y > 0 && y < maxrow()) && ((monster = game->level().monster_at({ x, y })) != NULL))
                 {
-                    monster->set_running(false);
-                    monster->set_is_held(true);
+                    monster->hold();
                 }
             }
         }

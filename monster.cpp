@@ -123,18 +123,30 @@ bool Monster::is_dirty() {
     return value == 1;
 }
 
-//start_run: Set a monster running after something or stop it from running (for when it dies)
-void Monster::start_run()
+void Monster::hold()
+{
+    set_running(false);
+    set_is_held(true);
+}
+
+void Monster::start_run(Coord* c, bool reveal_mimic)
 {
     //Start the beastie running
     set_running(true);
     set_is_held(false);
-    set_destination();
+    dest = c;
+    
+    //mdk:bugfix: originally some actions (aggravate monsters, drain life) could cause
+    //a mimic to start running while still disguised
+    if (reveal_mimic) {
+        reveal_disguise();
+    }
 }
 
-void Monster::set_destination()
+//start_run: Set a monster running after something
+void Monster::start_run()
 {
-    dest = find_dest();
+    start_run(find_dest(), false);
 }
 
 bool Monster::is_seeking(Item * obj)
@@ -237,7 +249,7 @@ over:
                 game->level().set_tile(obj->pos, oldchar);
                 if (game->hero().can_see(obj->pos))
                     game->screen().mvaddch(obj->pos, oldchar);
-                set_destination();
+                dest = find_dest();
                 break;
             }
         }
@@ -262,7 +274,7 @@ over:
             return 0;
         }
         if (oroom != this->room)
-            set_destination();
+            dest = find_dest();
         this->pos = ch_ret;
     }
     if (game->hero().can_see_monster(this))
@@ -324,7 +336,7 @@ void Monster::chase(Coord *chasee_pos)
                 try_pos.x = x;
                 try_pos.y = y;
                 if (offmap({ x,y }) || !diag_ok(*chaser_pos, try_pos)) continue;
-                ch = game->level().get_tile_or_monster({ x,y });
+                ch = game->level().get_tile_or_monster({ x,y }); //todo:bug: can chaser step on mimic?
                 if (step_ok(ch))
                 {
                     //If it is a scroll, it might be a scare monster scroll so we need to look it up to see what type it is.

@@ -73,7 +73,7 @@ bool plop_monster(int r, int c, Coord *cp)
             if (pos == game->hero().pos || offmap({ x,y }))
                 continue;
             //Or anything else nasty
-            if (step_ok(ch = game->level().get_tile_or_monster(pos)))
+            if (step_ok(ch = game->level().get_tile_or_monster(pos)))//todo:bug: on mimic?
             {
                 if (ch == SCROLL && is_scare_monster_scroll(find_obj(pos, false)))
                     continue;

@@ -52,26 +52,29 @@ int INDEX(Coord p)
     return ((p.x*(maxrow() - 1)) + p.y - 1);
 }
 
-bool Level::is_floor_or_passage(Coord p, bool consider_monsters)
+bool Level::is_floor_or_passage(Coord p)
 {
-    int ch = get_tile(p, consider_monsters);
+    byte ch = get_tile_or_monster(p, true);
     return (ch == FLOOR || ch == PASSAGE);
 }
 
-byte Level::get_tile(Coord p, bool consider_monsters)
+byte Level::get_tile(Coord p, bool consider_monsters, bool mimic_as_monster)
 {
     if (consider_monsters)
     {
         Monster *monster = monster_at(p);
-        if (monster)
+        if (monster) {
+            if (mimic_as_monster)
+                return monster->type;
             return monster->disguise;
+        }
     }
     return the_level[INDEX(p)];
 }
 
-byte Level::get_tile_or_monster(Coord p)
+byte Level::get_tile_or_monster(Coord p, bool mimic_as_monster)
 {
-    return get_tile(p, true);
+    return get_tile(p, true, mimic_as_monster);
 }
 
 
@@ -131,15 +134,19 @@ Room * Level::get_passage(Coord pos)
 }
 
 //monster_at: returns pointer to monster at coordinate. if no monster there return NULL
-Monster* Level::monster_at(Coord p)
+Monster* Level::monster_at(Coord p, bool include_disguised)
 {
     Monster* monster;
     for (auto it = monsters.begin(); it != monsters.end(); ++it) {
         monster = *it;
         if (monster->pos.x == p.x && monster->pos.y == p.y)
+        {
+            if (monster->is_disguised() && !include_disguised)
+                return nullptr;
             return monster;
+        }
     }
-    return NULL;
+    return nullptr;
 }
 
 void Level::draw_char(Coord p)

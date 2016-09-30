@@ -16,7 +16,7 @@
 static int fd;
 static int ch;
 static int pstate;
-static char blabel[11], bstring[256], barg[36];
+static char blabel[256], bstring[256], barg[36];
 static char *plabel, *pstring;
 
 //Putenv: Put something into the environment. label - label of thing in environment. string - string associated with the label
@@ -32,8 +32,8 @@ int peekc()
 {
     ch = 0;
     //we make sure that the strings never get filled past the end, this way we only have to check for these things once
-    if (plabel > &blabel[10]) 
-        plabel = &blabel[10];
+    if (plabel > &blabel[255]) 
+        plabel = &blabel[255];
     if (pstring > &bstring[255]) 
         pstring = &bstring[255];
     if (_read(fd, &ch, 1) < 1 && pstate != 0)

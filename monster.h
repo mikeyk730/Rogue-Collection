@@ -67,10 +67,11 @@ struct Monster : public Agent
 
     //find_dest: find the proper destination for the monster
     Coord *find_dest();
-    void set_destination();
 
     //start_run: Set a monster running after something
     void start_run();
+    void start_run(Coord* c, bool reveal_mimic = true);
+    void hold();
 
     //give_pack: Give a pack to a monster if it deserves one
     void give_pack();

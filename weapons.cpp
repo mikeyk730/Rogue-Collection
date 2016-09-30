@@ -42,7 +42,7 @@ static struct init_weps
   "1d1", "1d1", NONE,     0,                 //Crossbow
   "1d2", "2d5", CROSSBOW, IS_MANY | IS_MISL, //Crossbow bolt
   "2d3", "1d6", NONE,     IS_MISL,           //Spear
-  "6d6", "6d6", NONE,     0                  //Dragon flame (not accessible to player) //todo: check ice monster
+  "6d6", "6d6", NONE,     0                  //flame/frost/ice/lightning
 };
 
 
@@ -59,7 +59,7 @@ const char *weapon_names[MAXWEAPONS + 1] =
   "crossbow",
   "crossbow bolt",
   "spear",
-  "bolt"  // dragon flame/ice monster frost (not accessible to player)
+  "bolt"  //flame/frost/ice/lightning
 };
 
 Item* create_weapon()
@@ -121,14 +121,16 @@ void do_motion(Item *obj, Coord delta)
         //Get the new position
         obj->pos.y += delta.y;
         obj->pos.x += delta.x;
-        //mdk: mimics are not considered here, so thrown objects pass through
-        if (step_ok(ch = game->level().get_tile_or_monster(obj->pos)) && ch != DOOR)
+        //mdk: Originally thrown items would pass through mimics.  With =throws_affect_mimics= they
+        //have a chance to hit.
+        bool hit_mimics(game->options.throws_affect_mimics());
+        if (step_ok(ch = game->level().get_tile_or_monster(obj->pos, hit_mimics)) && ch != DOOR)
         {
             //It hasn't hit anything yet, so display it if alright.
             if (game->hero().can_see(obj->pos))
             {
-                //mdk:bugfix: thrown objects would replace xerox with floor when passing through
-                under = game->level().get_tile_or_monster(obj->pos);
+                //mdk:bugfix: xerox tile was replaced with floor after object passed
+                under = game->level().get_tile_or_monster(obj->pos, false);
                 //under = game->level().get_tile(obj->pos);
 
                 game->screen().mvaddch(obj->pos, obj->type);
@@ -151,11 +153,13 @@ void fall(Item *obj, bool pr)
     {
     case 1:
     {
-        bool location_is_empty(game->level().is_floor_or_passage(fpos, true));
+        bool location_is_empty(game->level().is_floor_or_passage(fpos));
 
         obj->pos = fpos;
         game->level().set_tile(obj->pos, obj->type);
         game->level().items.push_front(obj);
+        if (game->level().monster_at(fpos))
+            game->level().monster_at(fpos)->oldch = obj->type;
 
         //mdk:bugfix: prevent a fallen item from appearing on top of a monster
         //if (game->hero().can_see(fpos))
@@ -165,8 +169,6 @@ void fall(Item *obj, bool pr)
                 game->screen().standout();
             game->screen().mvaddch(fpos, obj->type);
             game->screen().standend();
-            if (game->level().monster_at(fpos) != NULL)
-                game->level().monster_at(fpos)->oldch = obj->type;
         }
         return;
     }

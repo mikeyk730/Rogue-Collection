@@ -44,4 +44,4 @@ bool turn_see(bool turn_off);
 void turn_see_wrapper(int turn_off);
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void affect_monster(Item *obj, Agent *monster);
+void affect_monster(Item *obj, Monster *monster);

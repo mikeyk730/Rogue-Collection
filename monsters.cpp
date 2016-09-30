@@ -26,6 +26,8 @@
 #include "hero.h"
 #include "monster.h"
 
+#pragma warning(disable:4996)
+
 namespace
 {
     //Array containing information on all the various types of monsters
@@ -221,7 +223,7 @@ void create_wandering_monster()
         room = rnd_room();
         if (room == game->hero().room) continue;
         rnd_pos(room, &cp);
-    } while (!(room != game->hero().room && step_ok(game->level().get_tile_or_monster(cp))));
+    } while (!(room != game->hero().room && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic?
     monster = Monster::CreateMonster(randmonster(true, get_level()), &cp, get_level());
     if (game->invalid_position)
         debug("wanderer bailout");
@@ -233,19 +235,18 @@ void create_wandering_monster()
 Monster *wake_monster(Coord p)
 {
     Monster *monster;
-    struct Room *room;
-    int dst;
 
-    if ((monster = game->level().monster_at(p)) == NULL) return monster;
+    if ((monster = game->level().monster_at(p)) == NULL)
+        return monster;
     //Every time he sees mean monster, it might start chasing him
     if (!monster->is_running() && rnd(3) != 0 && monster->is_mean() && !monster->is_held() && !game->hero().is_wearing_ring(R_STEALTH))
     {
-        monster->dest = &game->hero().pos;
-        monster->set_running(true);
+        monster->start_run(&game->hero().pos, false);
     }
     if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
     {
-        room = game->hero().room;
+        int dst;
+        Room* room = game->hero().room;
         dst = distance(p, game->hero().pos);
         if ((room != NULL && !(room->is_dark())) || dst < LAMP_DIST)
         {
@@ -262,11 +263,10 @@ Monster *wake_monster(Coord p)
     //Let greedy ones guard gold
     if (monster->is_greedy() && !monster->is_running())
     {
-        monster->set_running(true);
+        Coord* dest = &game->hero().pos;
         if (game->hero().room->gold_val)
-            monster->dest = &game->hero().room->gold;
-        else
-            monster->dest = &game->hero().pos;
+            dest = &game->hero().room->gold;
+        monster->start_run(dest);
     }
     return monster;
 }

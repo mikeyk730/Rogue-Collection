@@ -366,7 +366,7 @@ bool turn_see(bool turn_off)
 }
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void affect_monster(Item *potion, Agent *monster)
+void affect_monster(Item *potion, Monster *monster)
 {
     msg("the flask shatters.");
 
@@ -378,8 +378,7 @@ void affect_monster(Item *potion, Agent *monster)
         break;
 
     case P_PARALYZE:
-        monster->set_running(false);
-        monster->set_is_held(true);
+        monster->hold();
         break;
 
     case P_HEALING: case P_XHEAL:

@@ -299,7 +299,7 @@ void Hero::teleport()
     do {
         rm = rnd_room();
         rnd_pos(rm, &c);
-    } while (!(step_ok(game->level().get_tile_or_monster(c))));
+    } while (!(step_ok(game->level().get_tile_or_monster(c)))); //todo:bug: can we teleport onto a xerox?
     if (rm != room) {
         leave_room(pos);
         pos = c;
@@ -470,17 +470,19 @@ Monster* Hero::fight(Coord monster_pos, Item *weapon, bool thrown)
     game->repeat_cmd_count = 0;
     game->turns_since_heal = 0;
 
-    monster->start_run();
-    //Let him know it was really a mimic (if it was one).
-    if (monster->is_disguised() && !is_blind())
+    if (monster->is_disguised())
     {
-        monster->disguise = monster->type;
-        if (thrown) { //mdk: bolts awaken but miss a xerox.  thrown obejcts pass through (see do_motion())
-            msg("You've awakened a %s!", monster->get_name().c_str());
+        bool throws_affect_mimics(game->options.throws_affect_mimics());
+        if (thrown && !throws_affect_mimics) {
             return 0;
         }
-        msg("wait! That's a %s!", monster->get_name().c_str());
+        //Let him know it was really a mimic (if it was one).
+        if (!is_blind())
+            msg("wait! That's a %s!", monster->get_name().c_str());
     }
+
+    monster->start_run();
+
     name = this->is_blind() ? "it" : monster->get_name();
 
     if (attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))

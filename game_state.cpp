@@ -13,6 +13,22 @@
 #include "console_output.h"
 #include "mach_dep.h"
 
+
+/*
+-------------------------------------------------------------------------------
+throws_affect_mimics(true, false): false
+-------------------------------------------------------------------------------
+In the original code, a thrown objects would always pass through a disguised 
+mimic.  A zapped bolt would reveal a mimic, but only hit him if the player were 
+blind.  In many cases the mimic would start chasing you while still disguised.
+
+I've simplified this.  If 'throws_affect_mimics' is 'true' you can zap and throw
+items at a disguised mimic just like any other monster.  If 'throws_affect_mimics'
+is 'false' then zaps and throws will pass through a disguised mimic
+
+*/
+
+
 namespace
 {
     const int s_serial_version = 2;
@@ -212,3 +228,8 @@ bool GameState::allow_fast_play() const
 //monster config
 //all extern/global variables
 //all static variables
+
+bool GameState::Options::throws_affect_mimics() const
+{
+    return game->get_environment("throws_affect_mimics") == "true";
+}

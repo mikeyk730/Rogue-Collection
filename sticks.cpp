@@ -185,7 +185,8 @@ Item* create_stick()
 Monster* get_monster_in_direction(Coord dir, bool check_distant)
 {
     Coord pos = game->hero().pos + dir;
-    while (check_distant && step_ok(game->level().get_tile_or_monster(pos))) {
+    bool throws_affect_mimics(game->options.throws_affect_mimics());
+    while (check_distant && step_ok(game->level().get_tile_or_monster(pos, throws_affect_mimics))) {
         pos = pos + dir;
     }
     return game->level().monster_at(pos);
@@ -321,8 +322,7 @@ bool Stick::zap_polymorph(Coord dir)
         game->screen().mvaddch(p, new_monster->type);
 
     //the monster chases the player
-    new_monster->dest = &game->hero().pos;
-    new_monster->set_running(true);
+    new_monster->start_run(&game->hero().pos);
 
     //destroy the original
     game->level().monsters.remove(monster);
@@ -414,8 +414,7 @@ bool Stick::zap_teleport_away(Coord dir)
         game->hero().set_is_held(false);
 
     //the monster chases the player
-    monster->dest = &game->hero().pos;
-    monster->set_running(true);
+    monster->start_run(&game->hero().pos);
 
     return true;
 }
@@ -440,8 +439,7 @@ bool Stick::zap_teleport_to(Coord dir)
         game->hero().set_is_held(false);
 
     //the monster chases the player
-    monster->dest = &game->hero().pos;
-    monster->set_running(true);
+    monster->start_run(&game->hero().pos);
 
     return true;
 }
@@ -461,8 +459,7 @@ bool Stick::zap_cancellation(Coord dir)
     monster->reveal_disguise();
 
     //the monster chases the player
-    monster->dest = &game->hero().pos;
-    monster->set_running(true);
+    monster->start_run(&game->hero().pos);
 
     return true;
 }
@@ -489,8 +486,7 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
             game->hero().set_is_held(false);
 
         //the monster chases the player
-        monster->dest = &game->hero().pos;
-        monster->set_running(true);
+        monster->start_run(&game->hero().pos);
     }
     return true;
 }
@@ -647,10 +643,8 @@ bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Monster**victim)
             *victim = projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
         }
     }
-    else if (monster->is_disguised())
+    else if (!monster->is_disguised())
     {
-        //todo:if throw items at xerox, they can land on top of him
-        //todo:bug: this can cause xerox running around while still disguised
         if (bolt->from_player)
             monster->start_run();
         msg("the %s whizzes past the %s", bolt->Name().c_str(), monster->get_name().c_str());
@@ -661,7 +655,6 @@ bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Monster**victim)
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
 //shared between player and monsters (ice monster, dragon)
-//todo: player bolts don't disappear when kill a monster
 Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
 {
     byte dirch, ch;
@@ -685,7 +678,8 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
     {
         bolt->pos = bolt->pos + *dir;
 
-        ch = game->level().get_tile_or_monster(bolt->pos);
+        bool throws_affect_mimics(game->options.throws_affect_mimics());
+        ch = game->level().get_tile_or_monster(bolt->pos, throws_affect_mimics);
         spotpos[i].s_pos = bolt->pos;
         if ((spotpos[i].s_under = game->screen().mvinch(bolt->pos.y, bolt->pos.x)) == dirch)
             spotpos[i].s_under = 0;
@@ -702,15 +696,18 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
             break;
 
         default:
-            if (!hero_is_target && (monster = game->level().monster_at(bolt->pos)) != NULL)
+            if (!hero_is_target)
             {
-                hero_is_target = true;
-                changed = !changed;
-                if (bolt_vs_monster(bolt, monster, &victim))
-                {
-                    bolt_hit_something = true;
-                    if (game->screen().mvinch(bolt->pos.y, bolt->pos.x) != dirch)
-                        spotpos[i].s_under = game->screen().mvinch(bolt->pos.y, bolt->pos.x);
+                monster = game->level().monster_at(bolt->pos, throws_affect_mimics);
+                if (monster) {
+                    hero_is_target = true;
+                    changed = !changed;
+                    if (bolt_vs_monster(bolt, monster, &victim))
+                    {
+                        bolt_hit_something = true;
+                        if (game->screen().mvinch(bolt->pos.y, bolt->pos.x) != dirch)
+                            spotpos[i].s_under = game->screen().mvinch(bolt->pos.y, bolt->pos.x);
+                    }
                 }
             }
 
