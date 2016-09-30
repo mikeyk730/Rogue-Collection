@@ -245,7 +245,7 @@ over:
     if (this->is_stationary())
         return 0;
     //If the chasing thing moved, update the screen
-    if (this->oldch != MDK)
+    if (this->oldch != UNSET)
     {
         if (this->oldch == ' ' && game->hero().can_see(this->pos) && game->level().get_tile(this->pos) == FLOOR)
             game->screen().mvaddch(this->pos, (char)FLOOR);
@@ -278,7 +278,7 @@ over:
         game->screen().mvaddch(ch_ret, this->type);
     }
     else
-        this->oldch = MDK;
+        this->oldch = UNSET;
     if (this->oldch == FLOOR && oroom->is_dark())
         this->oldch = ' ';
     game->screen().standend();

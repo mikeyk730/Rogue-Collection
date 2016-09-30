@@ -12,7 +12,7 @@ struct Hero : public Agent
     Hero();
 
     //fight: The player attacks the monster.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
-    Monster* fight(Coord *monster, Item *weapon, bool thrown);
+    Monster* fight(Coord pos, Item *weapon, bool thrown);
 
     virtual void calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
         int* hit_plus, std::string* damage_string, int* damage_plus);

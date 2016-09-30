@@ -350,7 +350,7 @@ bool turn_see(bool turn_off)
         can_see = (game->hero().can_see_monster(monster) || (was_there = game->screen().curch()) == monster->type);
         if (turn_off)
         {
-            if (!game->hero().can_see_monster(monster) && monster->oldch != MDK)
+            if (!game->hero().can_see_monster(monster) && monster->oldch != UNSET)
                 game->screen().addch(monster->oldch);
         }
         else

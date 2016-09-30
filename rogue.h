@@ -58,7 +58,7 @@ typedef unsigned char byte;
 #define WEAPON    (0x18)
 
 //todo: figure out what this does:
-#define MDK       '@'
+#define UNSET       '@'
 #define CALLABLE  -1
 
 bool isfloor(byte c);

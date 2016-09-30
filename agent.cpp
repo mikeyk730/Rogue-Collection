@@ -247,7 +247,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
     calculate_roll_stats(defender, weapon, hurl, &hplus, &damage_string, &dplus);
 
     //If the creature being attacked is not running (asleep or held) then the attacker gets a plus four bonus to hit.
-    //MDK: the hero never has IS_RUN set, so Monsters always get this +4.  Is this intended?
+    //mdk: the hero never has IS_RUN set, so Monsters always get this +4.  Is this intended?
     if (!defender->is_running())
         hplus += 4;
 

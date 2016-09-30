@@ -149,6 +149,24 @@ StickInfo::StickInfo()
     }
 }
 
+bool(Stick::*stick_functions[MAXSTICKS])(Coord) =
+{
+  &Stick::zap_light,
+  &Stick::zap_striking,
+  &Stick::zap_lightning,
+  &Stick::zap_fire,
+  &Stick::zap_cold,
+  &Stick::zap_polymorph,
+  &Stick::zap_magic_missile,
+  &Stick::zap_haste_monster,
+  &Stick::zap_slow_monster,
+  &Stick::zap_drain_life,
+  &Stick::zap_nothing,
+  &Stick::zap_teleport_away,
+  &Stick::zap_teleport_to,
+  &Stick::zap_cancellation
+};
+
 bool StickInfo::is_staff(int which) const
 {
     return m_type[which] == "staff";
@@ -159,144 +177,19 @@ std::string StickInfo::get_type(int which) const
     return game->sticks().m_type[which];
 }
 
-
 Item* create_stick()
 {
     int which = pick_one(game->sticks().m_magic_props);
     return new Stick(which);
 }
 
-void zap_light()
+Monster* get_monster_in_direction(Coord dir, bool check_distant)
 {
-    //Ready Kilowatt wand.  Light up the room
-    if (game->hero().is_blind()) msg("you feel a warm glow around you");
-    else
-    {
-        game->sticks().discover(WS_LIGHT);
-        if (game->hero().room->is_gone()) msg("the corridor glows and then fades");
-        else msg("the room is lit by a shimmering blue light");
+    Coord pos = game->hero().pos + dir;
+    while (check_distant && step_ok(game->level().get_tile_or_monster(pos))) {
+        pos = pos + dir;
     }
-    if (!game->hero().room->is_gone())
-    {
-        game->hero().room->set_dark(false);
-        //Light the room and put the player back up
-        enter_room(game->hero().pos);
-    }
-}
-
-void zap_striking(Coord delta, Item* obj)
-{
-    Agent* monster;
-    Coord coord = game->hero().pos + delta;
-
-    if ((monster = game->level().monster_at(coord)) != NULL)
-    {
-        obj->randomize_damage();
-        game->hero().fight(&coord, obj, false);
-    }
-}
-
-void zap_bolt(Coord delta, int which, const char* name)
-{
-    fire_bolt(&game->hero().pos, &delta, name);
-    game->sticks().discover(which);
-}
-
-void zap_vorpalized_weapon(Item* weapon, Monster* monster)
-{
-    if (weapon->is_vorpalized_against(monster))
-    {
-        msg("the %s vanishes in a puff of smoke", monster->get_name().c_str());
-        killed(monster, false);
-    }
-    else
-        msg("you hear a maniacal chuckle in the distance.");
-}
-
-void zap_polymorph(Monster* monster, Coord p)
-{
-    if (game->hero().can_see_monster(monster))
-        game->screen().mvaddch(p, game->level().get_tile(p));
-
-    Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, get_level());
-    game->level().monsters.remove(new_monster);
-
-    new_monster->oldch = monster->oldch;
-    new_monster->pack = monster->pack;
-    if (new_monster->type != monster->type)
-        game->sticks().discover(WS_POLYMORPH);
-
-    *monster = *new_monster;
-    delete new_monster;
-
-    //move to front of list to maintain original behavior
-    game->level().monsters.remove(monster);
-    game->level().monsters.push_front(monster);
-
-    if (game->hero().can_see_monster(monster))
-        game->screen().mvaddch(p, monster->type);
-}
-
-void zap_cancellation(Monster* monster)
-{
-    monster->set_cancelled(true);
-    monster->set_invisible(false);
-    monster->set_can_confuse(false);
-    monster->reveal_disguise();
-}
-
-void zap_teleport(Coord delta, Monster* monster, Coord p, int which)
-{
-    Coord new_pos;
-
-    if (game->hero().can_see_monster(monster))
-        game->screen().mvaddch(p, monster->oldch);
-
-    if (which == WS_TELAWAY)
-    {
-        monster->oldch = MDK;
-        find_empty_location(&new_pos, true);
-        monster->pos = new_pos;
-    }
-    else { //it MUST BE at WS_TELTO
-        monster->pos = game->hero().pos + delta;
-    }
-
-    if (monster->can_hold())
-        game->hero().set_is_held(false);
-}
-
-void zap_generic(Coord delta, Item* wand, int which)
-{
-    Monster* monster;
-    Coord pos = game->hero().pos;
-
-    while (step_ok(game->level().get_tile_or_monster(pos))) {
-        pos = pos + delta;
-    }
-    if ((monster = game->level().monster_at(pos)) != NULL)
-    {
-        if (monster->can_hold())
-            game->hero().set_is_held(false);
-        if (which == MAXSTICKS)
-        {
-            zap_vorpalized_weapon(wand, monster);
-        }
-        else if (which == WS_POLYMORPH)
-        {
-            zap_polymorph(monster, pos);
-        }
-        else if (which == WS_CANCEL)
-        {
-            zap_cancellation(monster);
-        }
-        else
-        {
-            zap_teleport(delta, monster, pos, which);
-        }
-        monster->dest = &game->hero().pos;
-        monster->set_running(true);
-    }
+    return game->level().monster_at(pos);
 }
 
 struct MagicMissile : public Item
@@ -318,50 +211,144 @@ struct MagicMissile : public Item
     virtual int Worth() const { return 0; }
 };
 
-void zap_magic_missile(Coord delta)
+
+bool Stick::zap_light(Coord dir) 
 {
-    game->sticks().discover(WS_MISSILE);
+    //Ready Kilowatt wand.  Light up the room
+    if (game->hero().is_blind()) 
+        msg("you feel a warm glow around you");
+    else
+    {
+        discover();
+        if (game->hero().room->is_gone()) 
+            msg("the corridor glows and then fades");
+        else 
+            msg("the room is lit by a shimmering blue light");
+    }
+
+    if (!game->hero().room->is_gone())
+    {
+        game->hero().room->set_dark(false);
+        //Light the room and put the player back up
+        enter_room(game->hero().pos);
+    }
+
+    return true;
+}
+
+bool Stick::zap_striking(Coord dir) 
+{
+    Monster* monster = get_monster_in_direction(dir, false);
+    if (monster)
+    {
+        randomize_damage();
+        game->hero().fight(monster->position(), this, false);
+    }
+    return true;
+}
+
+bool Stick::zap_lightning(Coord dir)
+{
+    fire_bolt(&game->hero().pos, &dir, "bolt");
+    discover();
+    return true;
+}
+
+bool Stick::zap_fire(Coord dir)
+{
+    fire_bolt(&game->hero().pos, &dir, "flame");
+    discover();
+    return true;
+}
+
+bool Stick::zap_cold(Coord dir)
+{
+    fire_bolt(&game->hero().pos, &dir, "ice");
+    discover();
+    return true;
+}
+
+bool Stick::zap_polymorph(Coord dir)
+{
+    Monster* monster = get_monster_in_direction(dir, true);
+    if (!monster)
+        return true;
+
+    //cancel the holding effect as the monster is changing
+    if (monster->can_hold())
+        game->hero().set_is_held(false);
+
+    //restore the level tile, as the new monster may be invisible
+    Coord p = monster->position();
+    if (game->hero().can_see_monster(monster))
+        game->screen().mvaddch(p, game->level().get_tile(p));
+
+    //create a random monster
+    Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, get_level());
+    new_monster->oldch = monster->oldch;
+    new_monster->pack = monster->pack;
+    if (new_monster->type != monster->type)
+        discover();
+    if (game->hero().can_see_monster(new_monster))
+        game->screen().mvaddch(p, new_monster->type);
+
+    //the monster chases the player
+    new_monster->dest = &game->hero().pos;
+    new_monster->set_running(true);
+
+    //destroy the original
+    game->level().monsters.remove(monster);
+    delete monster;
+
+    return true;
+}
+
+bool Stick::zap_magic_missile(Coord dir) 
+{
+    discover();
 
     Item* bolt = new MagicMissile;
-    do_motion(bolt, delta);
+    do_motion(bolt, dir);
 
     Agent* monster;
     if ((monster = game->level().monster_at(bolt->pos)) != NULL && !save_throw(VS_MAGIC, monster))
         projectile_hit(bolt->pos, bolt);
     else
         msg("the missile vanishes with a puff of smoke");
+
+    return true;
 }
 
-void zap_speed_monster(Coord delta, int which)
+bool Stick::zap_haste_monster(Coord dir)
 {
-    Monster* monster;
-
-    Coord pos = game->hero().pos;
-    while (step_ok(game->level().get_tile_or_monster(pos))) {
-        pos = pos + delta;
-    }
-    if (monster = game->level().monster_at(pos))
+    Monster* monster = get_monster_in_direction(dir, true);
+    if (monster)
     {
-        if (which == WS_HASTE_M)
-        {
-            if (monster->is_slow())
-                monster->set_is_slow(false);
-            else
-                monster->set_is_fast(true);
-        }
+        if (monster->is_slow())
+            monster->set_is_slow(false);
         else
-        {
-            if (monster->is_fast())
-                monster->set_is_fast(false);
-            else
-                monster->set_is_slow(true);
-            monster->turn = true;
-        }
+            monster->set_is_fast(true);
         monster->start_run();
     }
+    return true;
 }
 
-int zap_drain_life()
+bool Stick::zap_slow_monster(Coord dir)
+{
+    Monster* monster = get_monster_in_direction(dir, true);
+    if (monster)
+    {
+        if (monster->is_fast())
+            monster->set_is_fast(false);
+        else
+            monster->set_is_slow(true);
+        monster->turn = true;
+        monster->start_run();
+    }
+    return true;
+}
+
+bool Stick::zap_drain_life(Coord dir) 
 {
     //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
     if (game->hero().get_hp() < 2) {
@@ -372,80 +359,141 @@ int zap_drain_life()
     return true;
 }
 
+bool Stick::zap_nothing(Coord dir) 
+{
+    debug("what a bizarre schtick!");
+    return true;
+}
+
+bool Stick::zap_teleport_away(Coord dir)
+{
+    Monster* monster = get_monster_in_direction(dir, true);
+    if (!monster)
+        return true;
+    
+    //erase the monster from the screen
+    if (game->hero().can_see_monster(monster))
+        game->screen().mvaddch(monster->position(), monster->oldch);
+
+    //pick a new location for the monster
+    Coord new_pos;
+    monster->oldch = UNSET;
+    find_empty_location(&new_pos, true);
+    monster->pos = new_pos;
+
+    //the monster can no longer hold the player
+    if (monster->can_hold())
+        game->hero().set_is_held(false);
+
+    //the monster chases the player
+    monster->dest = &game->hero().pos;
+    monster->set_running(true);
+
+    return true;
+}
+
+bool Stick::zap_teleport_to(Coord dir)
+{
+    Monster* monster = get_monster_in_direction(dir, true);
+    if (!monster)
+        return true;
+
+    //erase the monster from the screen
+    if (game->hero().can_see_monster(monster))
+        game->screen().mvaddch(monster->position(), monster->oldch);
+
+    //move the monster to beside the player
+    monster->pos = game->hero().pos + dir;
+
+    //mdk:teleport to cancels the hold, is this intended?
+    if (monster->can_hold())
+        game->hero().set_is_held(false);
+
+    //the monster chases the player
+    monster->dest = &game->hero().pos;
+    monster->set_running(true);
+
+    return true;
+}
+
+bool Stick::zap_cancellation(Coord dir) 
+{
+    Monster* monster = get_monster_in_direction(dir, true);
+    if (!monster)
+        return true;
+    
+    if (monster->can_hold())    
+        game->hero().set_is_held(false);
+
+    monster->set_cancelled(true);
+    monster->set_invisible(false);
+    monster->set_can_confuse(false);
+    monster->reveal_disguise();
+
+    //the monster chases the player
+    monster->dest = &game->hero().pos;
+    monster->set_running(true);
+
+    return true;
+}
+
+bool Weapon::zap_vorpalized_weapon(Coord dir)
+{
+    Monster* monster = get_monster_in_direction(dir, true);
+    if (!monster)
+        return true;
+        
+    //a vorpalized weapon kills the target instantly
+    if (is_vorpalized_against(monster))
+    {
+        msg("the %s vanishes in a puff of smoke", monster->get_name().c_str());
+        killed(monster, false);
+    }
+    else {
+        msg("you hear a maniacal chuckle in the distance.");
+        //the monster chases the player
+        monster->dest = &game->hero().pos;
+        monster->set_running(true);
+    }
+    return true;
+}
+
 //do_zap: Perform a zap with a wand
+//mdk:bugfix: teleport to and vorpalized weapon previously cancelled a hold on flytraps
 bool do_zap()
 {
     Coord delta;
     if (!get_dir(&delta))
         return false;
 
-    Item *obj;
-
-    if ((obj = get_item("zap with", STICK)) == NULL)
+    Item *item = get_item("zap with", STICK);
+    if (!item)
         return false;
-   
-    int which_one = obj->which;
-    if (obj->type != STICK)
-    {
-        if (obj->is_vorpalized() && obj->get_charges())
-            which_one = MAXSTICKS;
-        else {
-            //mdk: zapping with non-stick doesn't count as turn
-            msg("you can't zap with that!");
-            return false;
-        }
+
+    Stick* stick = dynamic_cast<Stick*>(item);
+    Weapon* weapon = dynamic_cast<Weapon*>(item);
+    if (!(stick || weapon && weapon->is_vorpalized() && weapon->get_charges())) {
+        //mdk: zapping with non-stick doesn't count as turn
+        msg("you can't zap with that!");
+        return false;
     }
 
-    if (obj->get_charges() == 0) {
-        msg("nothing happens");
+    // Handle the special case of a vorpalized weapon
+    if (weapon) {
+        if (weapon->zap_vorpalized_weapon(delta)) {
+            weapon->use_charge();
+        }
         return true;
     }
 
-    switch (which_one)
-    {
-    case WS_LIGHT:
-        zap_light();
-        break;
-
-    case WS_DRAIN:
-        if (!zap_drain_life())
-            return true;
-        break;
-
-    case WS_POLYMORPH: case WS_TELAWAY: case WS_TELTO: case WS_CANCEL: case MAXSTICKS: //Special case for vorpal weapon
-        zap_generic(delta, obj, which_one);
-        break;
-
-    case WS_MISSILE:
-        zap_magic_missile(delta);
-        break;
-
-    case WS_HIT:
-        zap_striking(delta, obj);
-        break;
-
-    case WS_HASTE_M: case WS_SLOW_M:
-        zap_speed_monster(delta, which_one);
-        break;
-
-    case WS_ELECT:
-        zap_bolt(delta, which_one, "bolt");
-        break;
-
-    case WS_FIRE:
-        zap_bolt(delta, which_one, "flame");
-        break;
-
-    case WS_COLD:
-        zap_bolt(delta, which_one, "ice");
-        break;
-
-    default:
-        debug("what a bizarre schtick!");
-        break;
+    // Zap the appropriate stick
+    if (stick->get_charges() == 0) {
+        msg("nothing happens");
+    }
+    else if ((stick->*stick_functions[stick->which])(delta)) {
+        stick->use_charge();
     }
 
-    obj->use_charge();
     return true;
 }
 
@@ -541,7 +589,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
             {
                 hit_hero = true;
                 changed = !changed;
-                if (monster->oldch != MDK)
+                if (monster->oldch != UNSET)
                     monster->oldch = game->level().get_tile(pos);
                 if (!save_throw(VS_MAGIC, monster) || is_frost)
                 {

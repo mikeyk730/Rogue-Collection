@@ -108,7 +108,7 @@ bool throw_projectile()
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(Item *obj, Coord delta)
 {
-    byte under = MDK;
+    byte under = UNSET;
 
     //Come fly with us ...
     obj->pos = game->hero().pos;
@@ -117,7 +117,7 @@ void do_motion(Item *obj, Coord delta)
         int ch;
 
         //Erase the old one
-        if (under != MDK && !equal(obj->pos, game->hero().pos) && game->hero().can_see(obj->pos))
+        if (under != UNSET && !equal(obj->pos, game->hero().pos) && game->hero().can_see(obj->pos))
             game->screen().mvaddch(obj->pos, under);
         //Get the new position
         obj->pos.y += delta.y;
@@ -131,7 +131,7 @@ void do_motion(Item *obj, Coord delta)
                 game->screen().mvaddch(obj->pos, obj->type);
                 tick_pause();
             }
-            else under = MDK;
+            else under = UNSET;
             continue;
         }
         break;
@@ -198,13 +198,7 @@ void Item::initialize_weapon(byte type)
 //projectile_hit: Does the projectile hit the monster?
 Monster* projectile_hit(Coord p, Item *obj)  //todo: definite memory issues here.  projectile_hit is expeccted to delete, but gets stack variables too
 {
-    static Coord mp;
-    Agent *monster = game->level().monster_at(p);
-    if (!monster)  return false;
-
-    mp.y = p.y;
-    mp.x = p.x;
-    return game->hero().fight(&mp, obj, true);
+    return game->hero().fight(p, obj, true);
 }
 
 //num: Figure out the plus number for armor/weapons

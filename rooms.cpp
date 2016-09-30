@@ -248,7 +248,7 @@ void leave_room(Coord cp)
                     else {
                         Monster* m = game->level().monster_at({ x, y });
                         if (m) {
-                            m->oldch = MDK;
+                            m->oldch = UNSET;
                         }
                     }
                 }

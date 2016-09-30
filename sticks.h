@@ -12,6 +12,21 @@ struct Stick : public Item
     virtual std::string InventoryName() const;
     virtual bool IsEvil() const;
     virtual int Worth() const;
+
+    bool zap_light(Coord dir);
+    bool zap_striking(Coord dir);
+    bool zap_lightning(Coord dir);
+    bool zap_fire(Coord dir);
+    bool zap_cold(Coord dir);
+    bool zap_polymorph(Coord dir);
+    bool zap_magic_missile(Coord dir);
+    bool zap_haste_monster(Coord dir);
+    bool zap_slow_monster(Coord dir);
+    bool zap_drain_life(Coord dir);
+    bool zap_nothing(Coord dir);
+    bool zap_teleport_away(Coord dir);
+    bool zap_teleport_to(Coord dir);
+    bool zap_cancellation(Coord dir);
 };
 
 Item* create_stick();

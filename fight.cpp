@@ -168,7 +168,7 @@ void remove_monster(Monster* monster, bool waskill)
         game->screen().standout();
     if (monster->oldch == FLOOR && !game->hero().can_see(*monster_pos))
         game->screen().mvaddch(*monster_pos, ' ');
-    else if (monster->oldch != MDK)
+    else if (monster->oldch != UNSET)
         game->screen().mvaddch(*monster_pos, monster->oldch);
     game->screen().standend();
 

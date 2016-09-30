@@ -450,11 +450,11 @@ void Hero::do_miss(Item* weapon, int thrown, Monster* monster, const char* name)
 }
 
 //fight: The player attacks the monster.
-Monster* Hero::fight(Coord *location, Item *weapon, bool thrown)
+Monster* Hero::fight(Coord monster_pos, Item *weapon, bool thrown)
 {
     std::string name;
     //Find the monster we want to fight
-    Monster* monster = game->level().monster_at(*location);
+    Monster* monster = game->level().monster_at(monster_pos);
     if (!monster)
         return 0;
 

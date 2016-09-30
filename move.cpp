@@ -208,7 +208,7 @@ bool do_move_impl(bool can_pickup)
     default:
         game->modifiers.m_running = false;
         if (isupper(ch) || game->level().monster_at(new_position))
-            game->hero().fight(&new_position, game->hero().get_current_weapon(), false);
+            game->hero().fight(new_position, game->hero().get_current_weapon(), false);
         else
         {
             game->modifiers.m_running = false;
