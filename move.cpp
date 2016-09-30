@@ -14,7 +14,6 @@
 #include "misc.h"
 #include "main.h"
 #include "fight.h"
-#include "chase.h"
 #include "mach_dep.h"
 #include "level.h"
 #include "rings.h"

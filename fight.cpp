@@ -20,7 +20,6 @@
 #include "main.h"
 #include "output_interface.h"
 #include "slime.h"
-#include "chase.h"
 #include "potions.h"
 #include "misc.h"
 #include "mach_dep.h"

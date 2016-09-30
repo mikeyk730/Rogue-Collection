@@ -7,7 +7,6 @@
 #include "output_interface.h"
 #include "io.h"
 #include "monsters.h"
-#include "chase.h"
 #include "main.h"
 #include "level.h"
 #include "scrolls.h"

@@ -14,7 +14,6 @@
 #include "output_interface.h"
 #include "io.h"
 #include "list.h"
-#include "chase.h"
 #include "misc.h"
 #include "main.h"
 #include "fight.h"

@@ -13,7 +13,6 @@
 #include "monsters.h"
 #include "pack.h"
 #include "output_interface.h"
-#include "chase.h"
 #include "rip.h"
 #include "list.h"
 #include "mach_dep.h"

@@ -1,129 +1,80 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Items">
       <UniqueIdentifier>{51d6bbdd-c714-4215-b927-56eda1c78ca6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="IO">
+      <UniqueIdentifier>{8520dfc8-83cc-4780-acdc-b05eaae9ff6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Levels">
+      <UniqueIdentifier>{1af15637-eb9d-44c6-abb9-8abf856e9253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Agents">
+      <UniqueIdentifier>{2b654d38-84e8-461e-b7fc-d7c41883cf6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unsorted">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="chase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="command.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="curses.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="daemon.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="daemons.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="env.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="extern.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="fakedos.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="fight.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="io.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="list.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mach_dep.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="maze.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="misc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="monsters.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="move.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="pack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="passages.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="rip.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rooms.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="save.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="slime.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="strings.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="things.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="wizard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="hero.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="game_state.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="random.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="agent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="room.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="captured_input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stream_input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="item_class.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="combo_input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="monster.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="armor.cpp">
       <Filter>Items</Filter>
@@ -155,131 +106,59 @@
     <ClCompile Include="gold.cpp">
       <Filter>Items</Filter>
     </ClCompile>
+    <ClCompile Include="agent.cpp">
+      <Filter>Agents</Filter>
+    </ClCompile>
+    <ClCompile Include="hero.cpp">
+      <Filter>Agents</Filter>
+    </ClCompile>
+    <ClCompile Include="monster.cpp">
+      <Filter>Agents</Filter>
+    </ClCompile>
+    <ClCompile Include="monsters.cpp">
+      <Filter>Agents</Filter>
+    </ClCompile>
+    <ClCompile Include="captured_input.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="combo_input.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="io.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="mach_dep.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="curses.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="item_class.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="maze.cpp">
+      <Filter>Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="passages.cpp">
+      <Filter>Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="room.cpp">
+      <Filter>Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="rooms.cpp">
+      <Filter>Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="level.cpp">
+      <Filter>Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="slime.cpp">
+      <Filter>Agents</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_input.cpp">
+      <Filter>IO</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="rogue.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="chase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="daemons.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="io.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="slime.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rooms.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="monsters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="misc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="things.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="move.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="command.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="daemon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="maze.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="curses.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="mach_dep.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="wizard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="passages.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fakedos.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="save.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="env.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="strings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="hero.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game_state.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="random.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="input_interface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="keyboard_input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="agent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="room.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="captured_input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stream_input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="item_class.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="console_output.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="combo_input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="output_interface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="monster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="armor.h">
       <Filter>Items</Filter>
     </ClInclude>
@@ -309,6 +188,126 @@
     </ClInclude>
     <ClInclude Include="gold.h">
       <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="agent.h">
+      <Filter>Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="monsters.h">
+      <Filter>Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="monster.h">
+      <Filter>Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="hero.h">
+      <Filter>Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="slime.h">
+      <Filter>Agents</Filter>
+    </ClInclude>
+    <ClInclude Include="room.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="rooms.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="passages.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="maze.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="level.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="io.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="input_interface.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="console_output.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_input.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="output_interface.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="captured_input.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="combo_input.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="mach_dep.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="command.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="daemon.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="daemons.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="env.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="fakedos.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="fight.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="game_state.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="list.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="misc.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="move.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="pack.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="random.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="rip.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="rogue.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="save.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="strings.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="things.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="wizard.h">
+      <Filter>Unsorted</Filter>
+    </ClInclude>
+    <ClInclude Include="keyboard_input.h">
+      <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="item_class.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="curses.h">
+      <Filter>IO</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

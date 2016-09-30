@@ -81,7 +81,6 @@
     <ClCompile Include="amulet.cpp" />
     <ClCompile Include="armor.cpp" />
     <ClCompile Include="captured_input.cpp" />
-    <ClCompile Include="chase.cpp" />
     <ClCompile Include="combo_input.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="curses.cpp" />
@@ -130,7 +129,6 @@
     <ClInclude Include="amulet.h" />
     <ClInclude Include="armor.h" />
     <ClInclude Include="captured_input.h" />
-    <ClInclude Include="chase.h" />
     <ClInclude Include="command.h" />
     <ClInclude Include="console_output.h" />
     <ClInclude Include="curses.h" />

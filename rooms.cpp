@@ -11,7 +11,6 @@
 #include "output_interface.h"
 #include "maze.h"
 #include "move.h"
-#include "chase.h"
 #include "misc.h"
 #include "io.h"
 #include "level.h"

@@ -21,3 +21,7 @@ void nohaste();
 
 //stomach: Digest the hero's food
 void stomach();
+
+//runners: Make all the running monsters move.
+void runners();
+

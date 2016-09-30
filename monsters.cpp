@@ -11,7 +11,6 @@
 #include "daemons.h"
 #include "list.h"
 #include "main.h"
-#include "chase.h"
 #include "rooms.h"
 #include "things.h"
 #include "io.h"

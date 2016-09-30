@@ -24,7 +24,6 @@
 #include "main.h"
 #include "daemons.h"
 #include "daemon.h"
-#include "chase.h"
 #include "mach_dep.h"
 #include "output_interface.h"
 #include "io.h"

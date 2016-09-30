@@ -12,7 +12,6 @@
 #include "io.h"
 #include "output_interface.h"
 #include "main.h"
-#include "chase.h"
 #include "fight.h"
 #include "rooms.h"
 #include "misc.h"
@@ -174,7 +173,7 @@ bool StickInfo::is_staff(int which) const
 
 std::string StickInfo::get_type(int which) const
 {
-    return game->sticks().m_type[which];
+    return m_type[which];
 }
 
 Item* create_stick()
