@@ -76,18 +76,22 @@ namespace
 
 void ConsoleOutput::putchr(int c, int attr)
 {
-    Coord pos = translated_position();
-    COORD p = { pos.x, pos.y };
-    SetConsoleCursorPosition(hConsole, p);
+    putchr_(c, attr);
+    Render({ c_col, c_row, c_col, c_row });
+}
 
-    SetConsoleTextAttribute(hConsole, attr);
-    putchar(c);
+void ConsoleOutput::putchr_(int c, int attr)
+{
+    CHAR_INFO ci;
+    ci.Attributes = attr;
+    ci.Char.AsciiChar = c;
+    m_buffer[c_row][c_col] = ci;
 }
 
 ConsoleOutput::ConsoleOutput(Coord origin) :
     m_origin(origin)
 {
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE); //todo:leaking this
 }
 
 //clear screen
@@ -128,20 +132,20 @@ void ConsoleOutput::clrtoeol()
 
 void ConsoleOutput::mvaddstr(int r, int c, const char *s)
 {
-    move(r, c);
+    move_(r, c);
     addstr(s);
 }
 
 void ConsoleOutput::mvaddch(int r, int c, char chr)
 {
-    move(r, c);
+    move_(r, c);
     addch(chr);
 }
 
 //todo: get rid of entirely
 int ConsoleOutput::mvinch(int r, int c)
 {
-    move(r, c);
+    move_(r, c);
     return curch();
 }
 
@@ -197,8 +201,8 @@ int ConsoleOutput::addch(byte chr)
     getrc(&r, &c);
     if (chr == '\n')
     {
-        if (r == LINES - 1) { scroll_up(0, LINES - 1, 1); move(LINES - 1, 0); }
-        else move(r + 1, 0);
+        if (r == LINES - 1) { scroll_up(0, LINES - 1, 1); move_(LINES - 1, 0); }
+        else move_(r + 1, 0);
         ch_attr = old_attr;
         return c_row;
     }
@@ -225,10 +229,10 @@ void ConsoleOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, 
     int row, col;
 
     getrc(&row, &col);
-    move(mline, 0);
+    move_(mline, 0);
     clrtoeol();
     printw(msg, a1, a2, a3, a4, a5);
-    move(row, col);
+    move_(row, col);
 }
 
 //winit(win_name): initialize window
@@ -237,7 +241,7 @@ void ConsoleOutput::winit(bool narrow_screen)
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;
     at_table = color_attr;
-    move(c_row, c_col);
+    move_(c_row, c_col);
 }
 
 void ConsoleOutput::forcebw()
@@ -245,24 +249,22 @@ void ConsoleOutput::forcebw()
     at_table = monoc_attr;
 }
 
-CHAR_INFO buffer[MAXLINES][MAXCOLS];
-
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void ConsoleOutput::wdump()
 {
-    COORD dwBufferSize = { MAXCOLS, MAXLINES };
-    COORD dwBufferCoord = { 0, 0 };
-    SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
-    ReadConsoleOutput(hConsole, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
+    memcpy(m_backup, m_buffer, MAXCOLS*MAXLINES);
+    //CHAR_INFO buffer[MAXLINES][MAXCOLS];
+    //COORD dwBufferSize = { MAXCOLS, MAXLINES };
+    //COORD dwBufferCoord = { 0, 0 };
+    //SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
+    //ReadConsoleOutput(hConsole, (CHAR_INFO *)m_backup, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
 //wrestor(windex): restore the window saved on disk
 void ConsoleOutput::wrestor()
 {
-    COORD dwBufferSize = { MAXCOLS, MAXLINES };
-    COORD dwBufferCoord = { 0, 0 };
-    SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
-    WriteConsoleOutput(hConsole, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
+    memcpy(m_buffer, m_backup, MAXCOLS*MAXLINES);
+    Render();
 }
 
 //Some general drawing routines
@@ -281,9 +283,9 @@ void ConsoleOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, 
     wason = cursor(false);
     getrc(&r, &c);
     //draw horizontal boundary
-    move(ul_r, ul_c + 1);
+    move_(ul_r, ul_c + 1);
     repchr(box[BX_HT], i = (lr_c - ul_c - 1));
-    move(lr_r, ul_c + 1);
+    move_(lr_r, ul_c + 1);
     repchr(box[BX_HB], i);
     //draw vertical boundary
     for (i = ul_r + 1; i < lr_r; i++) { mvaddch(i, ul_c, box[BX_VW]); mvaddch(i, lr_c, box[BX_VW]); }
@@ -292,7 +294,7 @@ void ConsoleOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, 
     mvaddch(ul_r, lr_c, box[BX_UR]);
     mvaddch(lr_r, ul_c, box[BX_LL]);
     mvaddch(lr_r, lr_c, box[BX_LR]);
-    move(r, c);
+    move_(r, c);
     cursor(wason);
 }
 
@@ -315,12 +317,12 @@ void ConsoleOutput::printw(const char *format, ...)
 
 void ConsoleOutput::scroll_up(int start_row, int end_row, int nlines)
 {
-    move(end_row, c_col);
+    move_(end_row, c_col);
 }
 
 void ConsoleOutput::scroll_dn(int start_row, int end_row, int nlines)
 {
-    move(start_row, c_col);
+    move_(start_row, c_col);
 }
 
 void ConsoleOutput::scroll()
@@ -336,19 +338,22 @@ void ConsoleOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
     {
         for (c = ul_col; c <= lr_col; ++c)
         {
-            move(r, c);
-            putchr(' ', ch_attr);
+            move_(r, c);
+            putchr_(' ', ch_attr);
         }
     }
-    move(ul_row, ul_col);
+    move_(ul_row, ul_col);
+    Render({ (SHORT)ul_col, (SHORT)ul_row, (SHORT)lr_col, (SHORT)lr_row });
 }
 
 void ConsoleOutput::repchr(int chr, int cnt)
 {
+    SMALL_RECT r = { c_col, c_row, c_col + cnt - 1, c_row };
     while (cnt-- > 0) { 
-        putchr(chr, ch_attr);
+        putchr_(chr, ch_attr);
         c_col++;
     }
+    Render(r);
 }
 
 //try to fixup screen after we get a control break
@@ -370,8 +375,8 @@ void ConsoleOutput::implode()
         Sleep(25);
         for (j = r + 1; j <= er - 1; j++)
         {
-            move(j, c + 1); repchr(' ', cinc - 1);
-            move(j, ec - cinc + 1); repchr(' ', cinc - 1);
+            move_(j, c + 1); repchr(' ', cinc - 1);
+            move_(j, ec - cinc + 1); repchr(' ', cinc - 1);
         }
         vbox(spc_box, r, c, er, ec);
     }
@@ -387,11 +392,11 @@ void ConsoleOutput::drop_curtain()
     yellow();
     for (r = 1; r < LINES - 1; r++)
     {
-        move(r, 1);
+        move_(r, 1);
         repchr(0xb1, COLS - 2);
         Sleep(20);
     }
-    move(0, 0);
+    move_(0, 0);
     standend();
 }
 
@@ -402,20 +407,19 @@ void ConsoleOutput::raise_curtain()
 
 void ConsoleOutput::move(short y, short x)
 {
+    move_(y, x);
+    ApplyMove();
+}
+
+void ConsoleOutput::move_(short y, short x)
+{
     c_row = y;
     c_col = x;
 }
 
-//todo: can i eliminate this?
 char ConsoleOutput::curch()
 {
-    Coord pos = translated_position();
-    CHAR_INFO c;
-    COORD dwBufferSize = { 1, 1 };
-    COORD dwBufferCoord = { 0, 0 };
-    SMALL_RECT rcRegion = { pos.x, pos.y, pos.x, pos.y };
-    ReadConsoleOutput(hConsole, (CHAR_INFO *)&c, dwBufferSize, dwBufferCoord, &rcRegion);
-    return c.Char.AsciiChar;
+    return m_buffer[c_row][c_col].Char.AsciiChar;
 }
 
 void ConsoleOutput::mvaddch(Coord p, byte c)
@@ -436,6 +440,29 @@ int ConsoleOutput::columns() const
 bool ConsoleOutput::small_screen_mode() const
 {
     return COLS == 40;
+}
+
+void ConsoleOutput::Render()
+{
+    COORD dwBufferSize = { MAXCOLS, MAXLINES };
+    COORD dwBufferCoord = { 0, 0 };
+    SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
+    WriteConsoleOutput(hConsole, (CHAR_INFO *)m_buffer, dwBufferSize, dwBufferCoord, &rcRegion);
+}
+
+void ConsoleOutput::Render(SMALL_RECT rect)
+{
+    COORD dwBufferSize = { MAXCOLS, MAXLINES };
+    COORD dwBufferCoord = { rect.Left, rect.Top };
+    SMALL_RECT rcRegion = { m_origin.x+rect.Left, m_origin.y+rect.Top, m_origin.x+rect.Right, m_origin.y+rect.Bottom };
+    WriteConsoleOutput(hConsole, (CHAR_INFO *)m_buffer, dwBufferSize, dwBufferCoord, &rcRegion);
+}
+
+void ConsoleOutput::ApplyMove()
+{
+    Coord pos = translated_position();
+    COORD p = { pos.x, pos.y };
+    SetConsoleCursorPosition(hConsole, p);
 }
 
 Coord ConsoleOutput::translated_position()
