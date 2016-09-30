@@ -23,8 +23,7 @@
 #include "pack.h"
 #include "monster.h"
 
-#define NONE 100
-
+//mdk: IS_MISL has no effect
 static struct init_weps
 {
     char *iw_dam;   //Damage when wielded
@@ -33,17 +32,17 @@ static struct init_weps
     int iw_flags;   //Miscellaneous flags
 } init_dam[MAXWEAPONS + 1] =
 {
-  "2d4", "1d3", NONE,     0,               //Mace
-  "3d4", "1d2", NONE,     0,               //Long sword
-  "1d1", "1d1", NONE,     0,               //Bow
+  "2d4", "1d3", NONE,     0,                 //Mace
+  "3d4", "1d2", NONE,     0,                 //Long sword
+  "1d1", "1d1", NONE,     0,                 //Bow
   "1d1", "2d3", BOW,      IS_MANY | IS_MISL, //Arrow
-  "1d6", "1d4", NONE,     IS_MISL,         //Dagger
-  "4d4", "1d2", NONE,     0,               //2h sword
+  "1d6", "1d4", NONE,     IS_MISL,           //Dagger
+  "4d4", "1d2", NONE,     0,                 //2h sword
   "1d1", "1d3", NONE,     IS_MANY | IS_MISL, //Dart
-  "1d1", "1d1", NONE,     0,               //Crossbow
+  "1d1", "1d1", NONE,     0,                 //Crossbow
   "1d2", "2d5", CROSSBOW, IS_MANY | IS_MISL, //Crossbow bolt
-  "2d3", "1d6", NONE,     IS_MISL,         //Spear
-  "6d6", "6d6", NONE,     0                //Dragon flame (not accessible to player) //todo: check ice monster
+  "2d3", "1d6", NONE,     IS_MISL,           //Spear
+  "6d6", "6d6", NONE,     0                  //Dragon flame (not accessible to player) //todo: check ice monster
 };
 
 

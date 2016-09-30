@@ -42,6 +42,7 @@ namespace
 #define ___  1
 #define XX  10
 
+    //mdk: IS_REGEN has no effect
     struct MonsterEntry monsters[26] =
     {
         // Name           CARRY                        FLAG    str,  exp,lvl,amr, hpt, dmg

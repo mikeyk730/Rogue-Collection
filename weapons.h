@@ -1,6 +1,8 @@
 #pragma once
 #include "item.h"
 
+#define NONE 100
+
 struct Monster;
 
 struct Weapon : public Item
