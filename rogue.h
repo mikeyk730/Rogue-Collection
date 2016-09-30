@@ -56,6 +56,7 @@ typedef unsigned char byte;
 #define AMULET    (0x0c)
 #define RING      (0xf8) //(0x09)
 #define WEAPON    (0x18)
+#define MISSILE   '*'
 
 //todo: figure out what this does:
 #define UNSET       '@'

@@ -80,16 +80,18 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
             *damage_plus += get_ring(RIGHT)->get_ring_level();
         else if (is_ring_on_hand(RIGHT, R_ADDHIT))
             *hit_plus += get_ring(RIGHT)->get_ring_level();
-
-
-        //if we've used the right weapon to launch the projectile, we get benefits
-        if (hurl && weapon->is_projectile() && weapon->launcher() == current_weapon->which)
-        {
-            *damage_string = weapon->get_throw_damage();
-            *hit_plus += current_weapon->get_hit_plus();
-            *damage_plus += current_weapon->get_damage_plus();
-        }
     }
+
+    //if we've used the right weapon to launch the projectile, we use the throw 
+    //damage of the projectile, and get the plusses from the launcher.
+    if (hurl && weapon->is_projectile() && current_weapon && weapon->launcher() == current_weapon->which)
+    {
+        *damage_string = weapon->get_throw_damage();
+        *hit_plus += current_weapon->get_hit_plus();
+        *damage_plus += current_weapon->get_damage_plus();
+    }
+
+    //mdk: we never use throw damage otherwise?
 }
 
 int Hero::calculate_armor() const
