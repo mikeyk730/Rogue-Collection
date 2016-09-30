@@ -289,12 +289,11 @@ Room* rnd_room()
     return &rooms[rm];
 }
 
-void find_empty_location(Coord* c, int consider_monsters)
-{
-    auto tile_getter = consider_monsters ? &Level::get_tile_or_monster : &Level::get_tile;
 
+void find_empty_location(Coord* c, bool consider_monsters)
+{
     do
     {
         rnd_pos(rnd_room(), c);
-    } while (!isfloor((game->level().*tile_getter)(*c)));
+    } while (!isfloor(game->level().get_tile(*c, consider_monsters)));
 }

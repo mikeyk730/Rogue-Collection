@@ -126,11 +126,15 @@ void do_motion(Item *obj, Coord delta)
             //It hasn't hit anything yet, so display it if alright.
             if (game->hero().can_see(obj->pos))
             {
-                under = game->level().get_tile(obj->pos);
+                //mdk:bugfix: thrown objects would replace xerox with floor when passing through
+                under = game->level().get_tile_or_monster(obj->pos);
+                //under = game->level().get_tile(obj->pos);
+
                 game->screen().mvaddch(obj->pos, obj->type);
                 tick_pause();
             }
-            else under = UNSET;
+            else 
+                under = UNSET;
             continue;
         }
         break;

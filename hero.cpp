@@ -472,11 +472,12 @@ Monster* Hero::fight(Coord monster_pos, Item *weapon, bool thrown)
 
     monster->start_run();
     //Let him know it was really a mimic (if it was one).
-    if (monster->is_disguised() && !this->is_blind())
+    if (monster->is_disguised() && !is_blind())
     {
         monster->disguise = monster->type;
-        if (thrown)
+        if (thrown) { //mdk: thrown objects miss a mimic
             return 0;
+        }
         msg("wait! That's a %s!", monster->get_name().c_str());
     }
     name = this->is_blind() ? "it" : monster->get_name();

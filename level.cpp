@@ -52,17 +52,20 @@ int INDEX(Coord p)
     return ((p.x*(maxrow() - 1)) + p.y - 1);
 }
 
-byte Level::get_tile(Coord p)
+byte Level::get_tile(Coord p, bool consider_monsters)
 {
+    if (consider_monsters)
+    {
+        Monster *monster = monster_at(p);
+        if (monster)
+            return monster->disguise;
+    }
     return the_level[INDEX(p)];
 }
 
 byte Level::get_tile_or_monster(Coord p)
 {
-    Monster *monster = monster_at(p);
-    if (monster)
-        return monster->disguise;
-    return get_tile(p);
+    return get_tile(p, true);
 }
 
 

@@ -24,4 +24,4 @@ Room* rnd_room();
 //get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
 Room* get_room_from_position(Coord cp);
 
-void find_empty_location(Coord* c, int consider_monsters);
+void find_empty_location(Coord* c, bool consider_monsters);

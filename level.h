@@ -15,7 +15,7 @@ struct Level {
 
     void clear_level();
 
-    byte get_tile(Coord p);
+    byte get_tile(Coord p, bool consider_monsters = false);
     byte get_tile_or_monster(Coord p);
     void set_tile(Coord p, byte c);
 
