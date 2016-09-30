@@ -475,7 +475,8 @@ Monster* Hero::fight(Coord monster_pos, Item *weapon, bool thrown)
     if (monster->is_disguised() && !is_blind())
     {
         monster->disguise = monster->type;
-        if (thrown) { //mdk: thrown objects miss a mimic
+        if (thrown) { //mdk: bolts awaken but miss a xerox.  thrown obejcts pass through (see do_motion())
+            msg("You've awakened a %s!", monster->get_name().c_str());
             return 0;
         }
         msg("wait! That's a %s!", monster->get_name().c_str());

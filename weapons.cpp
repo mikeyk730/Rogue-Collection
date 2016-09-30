@@ -121,6 +121,7 @@ void do_motion(Item *obj, Coord delta)
         //Get the new position
         obj->pos.y += delta.y;
         obj->pos.x += delta.x;
+        //mdk: mimics are not considered here, so thrown objects pass through
         if (step_ok(ch = game->level().get_tile_or_monster(obj->pos)) && ch != DOOR)
         {
             //It hasn't hit anything yet, so display it if alright.
