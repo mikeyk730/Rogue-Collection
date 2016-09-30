@@ -602,36 +602,34 @@ struct MagicBolt : public Weapon
     bool from_player;
 };
 
-bool bolt_vs_hero(MagicBolt* bolt, Coord* start)
+bool bolt_vs_hero(MagicBolt* bolt, Coord start)
 {
-    bool used = false;
-    if (!save(VS_MAGIC))
-    {
-        if (bolt->is_frost())
-        {
-            msg("You are frozen by a blast of frost.");
-            if (game->sleep_timer < 20)
-                game->sleep_timer += spread(7);
-        }
-        else {
-            game->log("battle", "Flame 6d6 damage to player");
-            if (!game->hero().decrease_hp(roll(6, 6), true)) {
-                if (bolt->from_player)
-                    death('b');
-                else
-                    death(game->level().monster_at(*start)->type);
-            }
-        }
-        used = true;
-        if (!bolt->is_frost())
-            msg("you are hit by the %s", bolt->Name().c_str());
-    }
-    else
+    if (save(VS_MAGIC)) {
         msg("the %s whizzes by you", bolt->Name().c_str());
-    return used;
+        return false;
+    }
+
+    if (bolt->is_frost())
+    {
+        msg("You are frozen by a blast of frost.");
+        if (game->sleep_timer < 20)
+            game->sleep_timer += spread(7);
+    }
+    else {
+        game->log("battle", "Flame 6d6 damage to player");
+        if (!game->hero().decrease_hp(roll(6, 6), true)) {
+            if (bolt->from_player)
+                death('b');
+            else
+                death(game->level().monster_at(start)->type);
+        }
+        msg("you are hit by the %s", bolt->Name().c_str());
+    }
+
+    return true;
 }
 
-bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Coord* start, Monster**victim)
+bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Monster**victim)
 {
     bool hit = false;
 
@@ -649,8 +647,10 @@ bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Coord* start, Monster**v
             *victim = projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
         }
     }
-    else if (!monster->is_disguised())
+    else if (monster->is_disguised())
     {
+        //todo:if throw items at xerox, they can land on top of him
+        //todo:bug: this can cause xerox running around while still disguised
         if (bolt->from_player)
             monster->start_run();
         msg("the %s whizzes past the %s", bolt->Name().c_str(), monster->get_name().c_str());
@@ -706,7 +706,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
             {
                 hero_is_target = true;
                 changed = !changed;
-                if (bolt_vs_monster(bolt, monster, start, &victim))
+                if (bolt_vs_monster(bolt, monster, &victim))
                 {
                     bolt_hit_something = true;
                     if (game->screen().mvinch(bolt->pos.y, bolt->pos.x) != dirch)
@@ -718,7 +718,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
             {
                 hero_is_target = false;
                 changed = !changed;
-                if (bolt_vs_hero(bolt, start)) {
+                if (bolt_vs_hero(bolt, *start)) {
                     bolt_hit_something = true;
                 }
             }
