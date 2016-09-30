@@ -241,6 +241,7 @@ void ConsoleOutput::winit(bool narrow_screen)
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;
     at_table = color_attr;
+    memset(m_buffer, ' ', sizeof(m_buffer));
     move_(c_row, c_col);
 }
 
@@ -252,18 +253,13 @@ void ConsoleOutput::forcebw()
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void ConsoleOutput::wdump()
 {
-    memcpy(m_backup, m_buffer, MAXCOLS*MAXLINES);
-    //CHAR_INFO buffer[MAXLINES][MAXCOLS];
-    //COORD dwBufferSize = { MAXCOLS, MAXLINES };
-    //COORD dwBufferCoord = { 0, 0 };
-    //SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
-    //ReadConsoleOutput(hConsole, (CHAR_INFO *)m_backup, dwBufferSize, dwBufferCoord, &rcRegion);
+    memcpy(m_backup, m_buffer, sizeof(m_buffer));
 }
 
 //wrestor(windex): restore the window saved on disk
 void ConsoleOutput::wrestor()
 {
-    memcpy(m_buffer, m_backup, MAXCOLS*MAXLINES);
+    memcpy(m_buffer, m_backup, sizeof(m_buffer));
     Render();
 }
 
