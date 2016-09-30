@@ -310,7 +310,7 @@ void Cheats::toggle_powers(const std::string & powers)
 
 void Cheats::apply_powers()
 {
-    game->hero().invunerable = (enabled() && invunerability());
+    game->hero().invulnerable = (enabled() && invulnerability());
     turn_see(!(enabled() && detect_monsters()));
     if (enabled() && see_invisible())
         show_invisible();
@@ -348,9 +348,9 @@ bool Cheats::jump_levels() const
     return is_enabled("jump_levels");
 }
 
-bool Cheats::invunerability() const
+bool Cheats::invulnerability() const
 {
-    return is_enabled("invunerability");
+    return is_enabled("invulnerability");
 }
 
 bool Cheats::no_hunger() const

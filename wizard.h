@@ -30,7 +30,7 @@ struct Cheats
     bool no_dark_rooms() const;
     bool slow_monster() const;
     bool haste_self() const;
-    bool invunerability() const;
+    bool invulnerability() const;
     bool no_hunger() const;
     bool no_hidden_doors() const;
     bool no_traps() const;

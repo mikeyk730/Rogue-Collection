@@ -75,7 +75,7 @@ struct Agent
     Room *room = 0;                   //Current room for thing
     std::list<Item*> pack;            //What the thing is carrying
     
-    bool invunerable = false;
+    bool invulnerable = false;
 
 private:
     bool is_flag_set(short flag) const;

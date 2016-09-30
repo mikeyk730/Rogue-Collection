@@ -666,7 +666,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
 {
     byte dirch, ch;
     Monster* monster;
-    bool hero_is_target, used, changed;
+    bool used, changed;
     int i, j;
     Coord pos;
     struct { Coord s_pos; byte s_under; } spotpos[BOLT_LENGTH * 2];
@@ -679,13 +679,12 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
     case 2: case -2: dirch = '\\'; break;
     }
     pos = *start;
-    hero_is_target = !bolt->from_player;
+    bool hero_is_target = !bolt->from_player;
     used = false;
     changed = false;
     for (i = 0; i < BOLT_LENGTH && !used; i++)
     {
-        pos.y += dir->y;
-        pos.x += dir->x;
+        pos = pos + *dir;
         ch = game->level().get_tile_or_monster(pos);
         spotpos[i].s_pos = pos;
         if ((spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x)) == dirch)
@@ -715,6 +714,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
                         spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
                 }
             }
+
             else if (hero_is_target && equal(pos, game->hero().pos))
             {
                 hero_is_target = false;
@@ -723,6 +723,8 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
                     used = true;
                 }
             }
+
+            //animate bolt
             if (bolt->is_frost() || bolt->is_ice())
                 game->screen().blue();
             else if (bolt->is_lightning())
@@ -734,12 +736,15 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
             game->screen().standend();
         }
     }
+
+    //animate bolt
     for (j = 0; j < i; j++)
     {
         tick_pause();
         if (spotpos[j].s_under)
             game->screen().mvaddch(spotpos[j].s_pos, spotpos[j].s_under);
     }
+
     return victim;
 }
 
