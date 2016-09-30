@@ -193,21 +193,44 @@ Monster* get_monster_in_direction(Coord dir, bool check_distant)
 
 struct MagicMissile : public Item
 {
-    MagicMissile() : Item(MISSILE, 0)
+    MagicMissile() : 
+        Item(MISSILE, 0)
     {
         throw_damage = "1d8";
         hit_plus = 1000;
         damage_plus = 1;
         flags = IS_MISL;
+        m_launcher = NONE;
 
-        if (game->hero().get_current_weapon() != NULL)
-            m_launcher = game->hero().get_current_weapon()->which;
+        bool use_throw_damage(game->get_environment("use_throw_damage") != "false");
+        if (!use_throw_damage) {
+            //mdk: this was a hack to get magic missles to use throw damage in the fight code.
+            //it's not needed with my change to use throw damage.
+            if (game->hero().get_current_weapon() != NULL) {
+                m_launcher = game->hero().get_current_weapon()->which;
+            }
+        }
     }
-    virtual Item* Clone() const { return new MagicMissile(*this); }
-    virtual std::string Name() const { return "magic missile"; }
-    virtual std::string InventoryName() const { return "magic missile"; }
-    virtual bool IsEvil() const { return false; }
-    virtual int Worth() const { return 0; }
+
+    virtual Item* Clone() const { 
+        return new MagicMissile(*this);
+    }
+
+    virtual std::string Name() const { 
+        return "magic missile"; 
+    }
+
+    virtual std::string InventoryName() const { 
+        return "magic missile";
+    }
+
+    virtual bool IsEvil() const { 
+        return false; 
+    }
+
+    virtual int Worth() const {
+        return 0; 
+    }
 };
 
 
