@@ -81,6 +81,7 @@ struct Item
 
 protected:
     Item(int type, int which);
+    Item(const Item&) = default;
 public:
     virtual ~Item();
 
