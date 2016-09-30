@@ -119,7 +119,7 @@ bool drop()
     if ((op = get_item("drop", 0)) == NULL) 
         return false;
 
-    if (!can_drop(op)) 
+    if (!can_drop(op, true)) 
         return true;
 
     //Take it out of the pack
@@ -142,42 +142,47 @@ bool drop()
 }
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
-bool can_drop(Item *op)
+bool can_drop(Item *op, bool unequip)
 {
-    if (op == NULL) return true;
-    if (op != game->hero().get_current_armor() && op != game->hero().get_current_weapon() && op != game->hero().get_ring(LEFT) && op != game->hero().get_ring(RIGHT)) return true;
+    if (op == NULL)
+        return true;
+    if (op != game->hero().get_current_armor() && op != game->hero().get_current_weapon() &&
+        op != game->hero().get_ring(LEFT) && op != game->hero().get_ring(RIGHT))
+        return true;
     if (op->is_cursed()) {
         msg("you can't.  It appears to be cursed");
         return false;
     }
-    if (op == game->hero().get_current_weapon())
-        game->hero().set_current_weapon(NULL);
-    else if (op == game->hero().get_current_armor()) {
-        //mdk: taking off/dropping/throwing current armor takes two turns
-        waste_time();
-        game->hero().set_current_armor(NULL);
-    }
-    else
-    {
-        int hand;
+    if (!unequip)
+        return true;
 
-        if (op != game->hero().get_ring(hand = LEFT)) 
-            if (op != game->hero().get_ring(hand = RIGHT))
-            {
-                debug("Candrop called with funny thing");
-                return true;
-            }
-        game->hero().set_ring(hand, NULL);
-        switch (op->which)
+    if (op == game->hero().get_current_weapon()) {
+        game->hero().set_current_weapon(NULL);
+        return true;
+    }
+
+    else if (op == game->hero().get_current_armor()) {
+        waste_time();  //mdk: taking off/dropping/throwing current armor takes two turns
+        game->hero().set_current_armor(NULL);
+        return true;
+    }
+
+    int hand;
+
+    if (op != game->hero().get_ring(hand = LEFT)) {
+        if (op != game->hero().get_ring(hand = RIGHT))
         {
-        case R_ADDSTR:
-            break;
-        case R_SEEINVIS:
-            unsee();
-            extinguish(unsee);
-            break;
+            debug("Candrop called with funny thing");
+            return true;
         }
     }
+    game->hero().set_ring(hand, NULL);
+    if (op->which == R_SEEINVIS) //todo: better place for this?  should be automatic
+    {
+        unsee();
+        extinguish(unsee);
+    }
+
     return true;
 }
 

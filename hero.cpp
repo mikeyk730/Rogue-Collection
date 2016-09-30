@@ -681,12 +681,12 @@ int Hero::is_wearing_ring(int ring) const
 bool Hero::wield()
 {
     //mdk: trying to wield weapon while old one is cursed counts as turn
-    if (!can_drop(get_current_weapon())) {
+    if (!can_drop(get_current_weapon(), false)) {
         return true;
     }
 
     Item* obj = get_item("wield", WEAPON);
-    if (!obj || is_in_use(obj) || obj->type == ARMOR)
+    if (!obj || obj->type == ARMOR || is_in_use(obj))
     {
         if (obj && obj->type == ARMOR)
             msg("you can't wield armor");
@@ -788,7 +788,7 @@ bool Hero::remove_ring()
 
     char packchar = pack_char(obj);
     //mdk: attempting to take off cursed ring counts as turn.
-    if (can_drop(obj))
+    if (can_drop(obj, true))
         msg("was wearing %s(%c)", obj->inventory_name(true).c_str(), packchar);
     return true;
 }
@@ -829,7 +829,7 @@ bool Hero::take_off_armor()
     }
 
     //mdk: trying to take off cursed armor counts as turn
-    if (!can_drop(get_current_armor()))
+    if (!can_drop(get_current_armor(), true))
         return true;
 
     set_current_armor(NULL);

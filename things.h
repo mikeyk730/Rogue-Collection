@@ -11,7 +11,7 @@ void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 bool drop();
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
-bool can_drop(Item *op);
+bool can_drop(Item *op, bool unequip);
 
 //pick_one: Pick an item out of a list of nitems possible magic items
 int pick_one(std::vector<MagicItem> magic);

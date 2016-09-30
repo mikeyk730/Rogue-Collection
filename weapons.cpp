@@ -82,7 +82,7 @@ bool throw_projectile()
     if ((obj = get_item("throw", WEAPON)) == NULL)
         return false;
 
-    if (!can_drop(obj) || is_in_use(obj)) //mdk: i think is_in_use is redundant since can_drop handles unequipping
+    if (!can_drop(obj, true))
         return true;
 
     //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  
