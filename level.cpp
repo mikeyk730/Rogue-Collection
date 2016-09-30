@@ -52,6 +52,12 @@ int INDEX(Coord p)
     return ((p.x*(maxrow() - 1)) + p.y - 1);
 }
 
+bool Level::is_floor_or_passage(Coord p, bool consider_monsters)
+{
+    int ch = get_tile(p, consider_monsters);
+    return (ch == FLOOR || ch == PASSAGE);
+}
+
 byte Level::get_tile(Coord p, bool consider_monsters)
 {
     if (consider_monsters)

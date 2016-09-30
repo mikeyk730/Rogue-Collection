@@ -149,9 +149,16 @@ void fall(Item *obj, bool pr)
     switch (fallpos(obj, &fpos))
     {
     case 1:
-        game->level().set_tile(fpos, obj->type);
+    {
+        bool location_is_empty(game->level().is_floor_or_passage(fpos, true));
+
         obj->pos = fpos;
-        if (game->hero().can_see(fpos))
+        game->level().set_tile(obj->pos, obj->type);
+        game->level().items.push_front(obj);
+
+        //mdk:bugfix: prevent a fallen item from appearing on top of a monster
+        //if (game->hero().can_see(fpos))
+        if (game->hero().can_see(fpos) && location_is_empty)
         {
             if ((game->level().get_flags(obj->pos)&F_PASS) || (game->level().get_flags(obj->pos)&F_MAZE))
                 game->screen().standout();
@@ -160,9 +167,8 @@ void fall(Item *obj, bool pr)
             if (game->level().monster_at(fpos) != NULL)
                 game->level().monster_at(fpos)->oldch = obj->type;
         }
-        game->level().items.push_front(obj);
         return;
-
+    }
     case 2:
         pr = 0;
     }
