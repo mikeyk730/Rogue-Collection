@@ -576,8 +576,9 @@ void drain()
 
 struct MagicBolt : public Weapon
 {
-    MagicBolt(std::string name) :
-        Weapon(MAGIC_BOLT, 30, 0)
+    MagicBolt(std::string name, bool from_player) :
+        Weapon(MAGIC_BOLT, 30, 0),
+        from_player(from_player)
     {
         m_name = name;
     }
@@ -598,22 +599,79 @@ struct MagicBolt : public Weapon
         return m_name == "bolt";
     }
 
+    bool from_player;
 };
+
+bool bolt_vs_hero(MagicBolt* bolt, Coord* start)
+{
+    bool used = false;
+    if (!save(VS_MAGIC))
+    {
+        if (bolt->is_frost())
+        {
+            msg("You are frozen by a blast of frost.");
+            if (game->sleep_timer < 20)
+                game->sleep_timer += spread(7);
+        }
+        else {
+            game->log("battle", "Flame 6d6 damage to player");
+            if (!game->hero().decrease_hp(roll(6, 6), true)) {
+                if (bolt->from_player)
+                    death('b');
+                else
+                    death(game->level().monster_at(*start)->type);
+            }
+        }
+        used = true;
+        if (!bolt->is_frost())
+            msg("you are hit by the %s", bolt->Name().c_str());
+    }
+    else
+        msg("the %s whizzes by you", bolt->Name().c_str());
+    return used;
+}
+
+bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Coord* start, Monster**victim)
+{
+    bool used = false;
+
+    Coord pos = monster->position();
+    if (monster->oldch != UNSET)
+        monster->oldch = game->level().get_tile(pos);
+    if (!save_throw(VS_MAGIC, monster) || bolt->is_frost())
+    {
+        bolt->pos = pos;
+        used = true;
+        if (bolt->is_flame() && monster->immune_to_fire())
+            msg("the flame bounces off the %s", monster->get_name().c_str());
+        else
+        {
+            *victim = projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
+        }
+    }
+    else if (!monster->is_disguised())
+    {
+        if (bolt->from_player)
+            monster->start_run();
+        msg("the %s whizzes past the %s", bolt->Name().c_str(), monster->get_name().c_str());
+    }
+
+    return used;
+}
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
 //shared between player and monsters (ice monster, dragon)
 //todo: player bolts don't disappear when kill a monster
-Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name1)
+Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
 {
     byte dirch, ch;
     Monster* monster;
-    bool hit_hero, used, changed;
+    bool hero_is_target, used, changed;
     int i, j;
     Coord pos;
     struct { Coord s_pos; byte s_under; } spotpos[BOLT_LENGTH * 2];
     Monster* victim = 0;
 
-    MagicBolt* bolt = new MagicBolt(name1);
     switch (dir->y + dir->x)
     {
     case 0: dirch = '/'; break;
@@ -621,7 +679,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name1)
     case 2: case -2: dirch = '\\'; break;
     }
     pos = *start;
-    hit_hero = (start != &game->hero().pos);
+    hero_is_target = !bolt->from_player;
     used = false;
     changed = false;
     for (i = 0; i < BOLT_LENGTH && !used; i++)
@@ -635,7 +693,8 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name1)
         switch (ch)
         {
         case DOOR: case HWALL: case VWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
-            if (!changed) hit_hero = !hit_hero;
+            if (!changed) 
+                hero_is_target = !hero_is_target;
             changed = false;
             dir->y = -dir->y;
             dir->x = -dir->x;
@@ -644,58 +703,25 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name1)
             break;
 
         default:
-            if (!hit_hero && (monster = game->level().monster_at(pos)) != NULL)
+            if (!hero_is_target && (monster = game->level().monster_at(pos)) != NULL)
             {
-                hit_hero = true;
+                hero_is_target = true;
                 changed = !changed;
-                if (monster->oldch != UNSET)
-                    monster->oldch = game->level().get_tile(pos);
-                if (!save_throw(VS_MAGIC, monster) || bolt->is_frost())
+                if (bolt_vs_monster(bolt, monster, start, &victim))
                 {
-                    bolt->pos = pos;
                     used = true;
-                    if (bolt->is_flame() && monster->immune_to_fire())
-                        msg("the flame bounces off the %s", monster->get_name().c_str());
-                    else
-                    {
-                        victim = projectile_hit(pos, bolt); //todo: look into this hack, monster projectiles treated as hero's weapon
-                        if (game->screen().mvinch(pos.y, pos.x) != dirch)
-                            spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
-                    }
-                }
-                else if (!monster->is_disguised())
-                {
-                    if (start == &game->hero().pos)
-                        monster->start_run();
-                    msg("the %s whizzes past the %s", bolt->Name().c_str(), get_monster_name(ch));
+                    //todo: technically shouldn't do when flame against dragon.  test this.
+                    if (game->screen().mvinch(pos.y, pos.x) != dirch)
+                        spotpos[i].s_under = game->screen().mvinch(pos.y, pos.x);
                 }
             }
-            else if (hit_hero && equal(pos, game->hero().pos))
+            else if (hero_is_target && equal(pos, game->hero().pos))
             {
-                hit_hero = false;
+                hero_is_target = false;
                 changed = !changed;
-                if (!save(VS_MAGIC))
-                {
-                    if (bolt->is_frost())
-                    {
-                        msg("You are frozen by a blast of frost.");
-                        if (game->sleep_timer < 20)
-                            game->sleep_timer += spread(7);
-                    }
-                    else {
-                        game->log("battle", "Flame 6d6 damage to player");
-                        if (!game->hero().decrease_hp(roll(6, 6), true)) {
-                            if (start == &game->hero().pos)
-                                death('b');
-                            else
-                                death(game->level().monster_at(*start)->type);
-                        }
-                    }
+                if (bolt_vs_hero(bolt, start)) {
                     used = true;
-                    if (!bolt->is_frost())
-                        msg("you are hit by the %s", bolt->Name().c_str());
                 }
-                else msg("the %s whizzes by you", bolt->Name().c_str());
             }
             if (bolt->is_frost() || bolt->is_ice())
                 game->screen().blue();
@@ -715,6 +741,11 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name1)
             game->screen().mvaddch(spotpos[j].s_pos, spotpos[j].s_under);
     }
     return victim;
+}
+
+Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name) {
+    bool from_player(start == &game->hero().pos);
+    return fire_bolt(start, dir, new MagicBolt(name, from_player)); //todo:who owns memory?
 }
 
 //charge_str: Return an appropriate string for a wand charge
