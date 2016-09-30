@@ -254,7 +254,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
     int defender_armor = defender->calculate_armor();
 
     std::ostringstream ss;
-    ss << get_name() << "[hp=" << get_hp() << "] " << damage_string << " attack on "
+    ss << get_name() << "[hp=" << get_hp() << "] " << damage_string << " "<<hplus<<","<<dplus<<" attack on "
         << defender->get_name() << "[hp=" << defender->get_hp() << "]";
     game->log("battle", ss.str());
 

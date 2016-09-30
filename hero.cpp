@@ -49,6 +49,13 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
         return;
     }
 
+    //Drain a staff of striking
+    //mdk: should this only happen when zapped?  currently happens during melee as well
+    if (weapon->type == STICK && weapon->which == WS_HIT)
+    {
+        weapon->drain_striking();
+    }
+
     *damage_string = weapon->get_damage();
     *hit_plus = weapon->get_hit_plus();
     *damage_plus = weapon->get_damage_plus();
@@ -81,15 +88,6 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
             *hit_plus += current_weapon->get_hit_plus();
             *damage_plus += current_weapon->get_damage_plus();
         }
-    }
-
-    //Drain a staff of striking
-    if (weapon->type == STICK && weapon->which == WS_HIT)
-    {
-        if (weapon->get_charges() == 0) {
-            *damage_string = "0d0";
-        }
-        weapon->drain_striking();
     }
 }
 

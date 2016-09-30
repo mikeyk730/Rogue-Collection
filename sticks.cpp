@@ -726,6 +726,9 @@ Stick::Stick(int which)
     {
     case WS_HIT:
         hit_plus = 100;
+        //mdk: i don't know why damage info is set, as they are overwritten the first time you
+        //zap a monster.  I don't know if the intention was to have separate zap/melee stats,
+        //but, as is, it's just odd.
         damage_plus = 3;
         damage = "1d8";
         break;

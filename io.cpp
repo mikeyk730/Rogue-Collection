@@ -139,6 +139,7 @@ void addmsg(const char *format, ...)
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
 void endmsg()
 {
+    game->log("msg", msgbuf);
     if (save_msg)
         strcpy(game->last_message, msgbuf);
     if (game->msg_position) {
