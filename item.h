@@ -27,7 +27,7 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 #define SPEAR       9
 #define MAXWEAPONS  10 
 
-#define FLAME       10  //weapons not accessible to the player
+#define MAGIC_BOLT  10  //weapons not accessible to the player
 
 //Armor types
 #define LEATHER          0

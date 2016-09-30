@@ -315,11 +315,6 @@ char Item::launcher() const
     return m_launcher;
 }
 
-void Weapon::set_name(const std::string & name)
-{
-    m_name = name;
-}
-
 Room* Item::get_room()
 {
     return get_room_from_position(pos);

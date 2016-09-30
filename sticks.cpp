@@ -335,12 +335,12 @@ bool Stick::zap_magic_missile(Coord dir)
 {
     discover();
 
-    Item* bolt = new MagicMissile;
-    do_motion(bolt, dir);
+    Item* missile = new MagicMissile;
+    do_motion(missile, dir);
 
     Agent* monster;
-    if ((monster = game->level().monster_at(bolt->pos)) != NULL && !save_throw(VS_MAGIC, monster))
-        projectile_hit(bolt->pos, bolt);
+    if ((monster = game->level().monster_at(missile->pos)) != NULL && !save_throw(VS_MAGIC, monster))
+        projectile_hit(missile->pos, missile);
     else
         msg("the missile vanishes with a puff of smoke");
 
@@ -574,10 +574,36 @@ void drain()
     }
 }
 
+struct MagicBolt : public Weapon
+{
+    MagicBolt(std::string name) :
+        Weapon(MAGIC_BOLT, 30, 0)
+    {
+        m_name = name;
+    }
+
+    bool is_frost() const {
+        return m_name == "frost";
+    }
+
+    bool is_flame() const {
+        return m_name == "flame";
+    }
+
+    bool is_ice() const {
+        return m_name == "ice";
+    }
+
+    bool is_lightning() const {
+        return m_name == "bolt";
+    }
+
+};
+
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
 //shared between player and monsters (ice monster, dragon)
 //todo: player bolts don't disappear when kill a monster
-Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
+Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name1)
 {
     byte dirch, ch;
     Monster* monster;
@@ -585,12 +611,9 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
     int i, j;
     Coord pos;
     struct { Coord s_pos; byte s_under; } spotpos[BOLT_LENGTH * 2];
-    bool is_frost(name == "frost");
-    bool is_flame(name == "flame");
     Monster* victim = 0;
 
-    Weapon* bolt = new Weapon(FLAME, 30, 0);
-    bolt->set_name(name);
+    MagicBolt* bolt = new MagicBolt(name1);
     switch (dir->y + dir->x)
     {
     case 0: dirch = '/'; break;
@@ -617,7 +640,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
             dir->y = -dir->y;
             dir->x = -dir->x;
             i--;
-            msg("the %s bounces", name.c_str());
+            msg("the %s bounces", bolt->Name().c_str());
             break;
 
         default:
@@ -627,11 +650,11 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
                 changed = !changed;
                 if (monster->oldch != UNSET)
                     monster->oldch = game->level().get_tile(pos);
-                if (!save_throw(VS_MAGIC, monster) || is_frost)
+                if (!save_throw(VS_MAGIC, monster) || bolt->is_frost())
                 {
                     bolt->pos = pos;
                     used = true;
-                    if (is_flame && monster->immune_to_fire())
+                    if (bolt->is_flame() && monster->immune_to_fire())
                         msg("the flame bounces off the %s", monster->get_name().c_str());
                     else
                     {
@@ -644,7 +667,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
                 {
                     if (start == &game->hero().pos)
                         monster->start_run();
-                    msg("the %s whizzes past the %s", name.c_str(), get_monster_name(ch));
+                    msg("the %s whizzes past the %s", bolt->Name().c_str(), get_monster_name(ch));
                 }
             }
             else if (hit_hero && equal(pos, game->hero().pos))
@@ -653,7 +676,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
                 changed = !changed;
                 if (!save(VS_MAGIC))
                 {
-                    if (is_frost)
+                    if (bolt->is_frost())
                     {
                         msg("You are frozen by a blast of frost.");
                         if (game->sleep_timer < 20)
@@ -669,14 +692,14 @@ Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name)
                         }
                     }
                     used = true;
-                    if (!is_frost)
-                        msg("you are hit by the %s", name.c_str());
+                    if (!bolt->is_frost())
+                        msg("you are hit by the %s", bolt->Name().c_str());
                 }
-                else msg("the %s whizzes by you", name.c_str());
+                else msg("the %s whizzes by you", bolt->Name().c_str());
             }
-            if (is_frost || name == "ice")
+            if (bolt->is_frost() || bolt->is_ice())
                 game->screen().blue();
-            else if (name == "bolt")
+            else if (bolt->is_lightning())
                 game->screen().yellow();
             else
                 game->screen().red();

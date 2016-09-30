@@ -16,10 +16,8 @@ struct Weapon : public Item
     virtual bool IsEvil() const;
     virtual int Worth() const;
 
-    void set_name(const std::string& name);
-
     bool zap_vorpalized_weapon(Coord dir);
-private:
+protected:
     std::string m_name;
 };
 
