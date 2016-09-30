@@ -245,7 +245,6 @@ void ConsoleOutput::forcebw()
     at_table = monoc_attr;
 }
 
-CHAR_INFO buffer[MAXLINES][MAXCOLS];
 
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void ConsoleOutput::wdump()
@@ -253,7 +252,7 @@ void ConsoleOutput::wdump()
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { 0, 0 };
     SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
-    ReadConsoleOutput(hConsole, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
+    ReadConsoleOutput(hConsole, (CHAR_INFO *)m_buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
 //wrestor(windex): restore the window saved on disk
@@ -262,7 +261,7 @@ void ConsoleOutput::wrestor()
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { 0, 0 };
     SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
-    WriteConsoleOutput(hConsole, (CHAR_INFO *)buffer, dwBufferSize, dwBufferCoord, &rcRegion);
+    WriteConsoleOutput(hConsole, (CHAR_INFO *)m_buffer, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
 //Some general drawing routines

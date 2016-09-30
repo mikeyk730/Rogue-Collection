@@ -103,4 +103,5 @@ private:
     Coord translated_position();
 
     HANDLE hConsole;
+    CHAR_INFO m_buffer[MAXLINES][MAXCOLS];
 };
