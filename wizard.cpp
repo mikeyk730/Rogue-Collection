@@ -57,7 +57,7 @@ void whatis()
     //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
     obj->set_revealed();
 
-    msg(obj->inventory_name(false).c_str());
+    msg(obj->inventory_name(game->hero(), false).c_str());
 }
 
 int get_which(int type, int limit)
@@ -191,7 +191,7 @@ namespace
             std::ostringstream ss;
 
             Coord pos = item->position();
-            ss << item->inventory_name(false);
+            ss << item->inventory_name(game->hero(), false);
             if (coord)
                 ss << " at (" << pos.x << "," << pos.y << ")";
 

@@ -12,7 +12,17 @@
 
 Item::Item(int type, int which)
 {
-    initialize(type, which);
+    m_type = type;
+    m_which = which;
+    m_launcher = NONE;
+    m_hit_plus = 0;
+    m_damage_plus = 0;
+    m_damage = "0d0";
+    m_throw_damage = "0d0";
+    m_charges = 0;
+    m_count = 1;
+    m_group = 0;
+    m_flags = 0;
 }
 
 Item::~Item()
@@ -20,17 +30,17 @@ Item::~Item()
 }
 
 //inv_name: Return the name of something as it would appear in an inventory.
-std::string Item::inventory_name(bool lowercase) const
+std::string Item::inventory_name(const Hero& hero, bool lowercase) const
 {
     std::string name = InventoryName();
 
-    if (this == game->hero().get_current_armor())
+    if (this == hero.get_current_armor())
         name += " (being worn)";
-    if (this == game->hero().get_current_weapon())
+    if (this == hero.get_current_weapon())
         name += " (weapon in hand)";
-    if (this == game->hero().get_ring(LEFT))
+    if (this == hero.get_ring(LEFT))
         name += " (on left hand)";
-    else if (this == game->hero().get_ring(RIGHT))
+    else if (this == hero.get_ring(RIGHT))
         name += " (on right hand)";
 
     if (lowercase && isupper(name[0]))
@@ -80,21 +90,6 @@ void Item::use_charge()
 {
     if (--m_charges < 1)
         m_charges = 0;
-}
-
-void Item::initialize(int type, int which)
-{
-    this->m_type = type;
-    this->m_which = which;
-    this->m_launcher = NONE;
-    this->m_hit_plus = 0;
-    this->m_damage_plus = 0;
-    this->m_damage = "0d0";
-    this->m_throw_damage = "0d0";
-    this->m_charges = 0;
-    this->m_count = 1;
-    this->m_group = 0;
-    this->m_flags = 0;
 }
 
 bool Item::is_flag_set(short flag) const {

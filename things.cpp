@@ -114,7 +114,7 @@ bool drop()
     game->level().items.push_front(op);
     op->m_position = game->hero().m_position;
     game->level().set_tile(op->m_position, op->m_type);
-    msg("dropped %s", op->inventory_name(true).c_str());
+    msg("dropped %s", op->inventory_name(game->hero(), true).c_str());
 
     return true;
 }

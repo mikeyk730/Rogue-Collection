@@ -571,7 +571,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
 
     //Notify the user
     if (!silent)
-        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(true).c_str(), pack_char(obj));
+        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
 }
 
 bool Hero::add_to_list(Item** obj, bool from_floor)
@@ -721,7 +721,7 @@ bool Hero::wield()
     }
 
     set_current_weapon(obj);
-    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", obj->inventory_name(true).c_str(), pack_char(obj));
+    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;
 }
 
@@ -789,7 +789,7 @@ bool Hero::put_on_ring()
         break;
     }
     
-    msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(true).c_str(), pack_char(obj));
+    msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;
 }
 
@@ -816,7 +816,7 @@ bool Hero::remove_ring()
     char packchar = pack_char(obj);
     //mdk: attempting to take off cursed ring counts as turn.
     if (can_drop(obj, true))
-        msg("was wearing %s(%c)", obj->inventory_name(true).c_str(), packchar);
+        msg("was wearing %s(%c)", obj->inventory_name(*this, true).c_str(), packchar);
     return true;
 }
 
@@ -842,7 +842,7 @@ bool Hero::wear_armor()
     waste_time(); //mdk: putting on armor takes 2 turns
 
     set_current_armor(armor);
-    msg("you are now wearing %s", armor->inventory_name(true).c_str());
+    msg("you are now wearing %s", armor->inventory_name(*this, true).c_str());
     return true;
 }
 
@@ -860,6 +860,6 @@ bool Hero::take_off_armor()
         return true;
 
     set_current_armor(NULL);
-    msg("you used to be wearing %c) %s", pack_char(obj), obj->inventory_name(true).c_str());
+    msg("you used to be wearing %c) %s", pack_char(obj), obj->inventory_name(*this, true).c_str());
     return true;
 }

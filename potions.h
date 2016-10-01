@@ -1,7 +1,7 @@
 #pragma once
 #include "item.h"
 
-struct Agent;
+struct Monster;
 
 struct Potion : public Item
 {

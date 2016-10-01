@@ -1,7 +1,7 @@
 #pragma once
 #include "rogue.h"
 
-struct Monster;
+struct Hero;
 struct Room;
 struct ItemClass;
 
@@ -86,7 +86,7 @@ public:
     virtual ~Item();
 
     //Return the name of something as it would appear in an inventory.
-    std::string inventory_name(bool lowercase) const;
+    std::string inventory_name(const Hero& hero, bool lowercase) const;
     std::string name() const;
     bool is_magic() const;
     bool is_evil() const;
@@ -129,8 +129,8 @@ public:
     int m_count;                     //Count for plural objects
 protected:
     char m_launcher;                 //What you need to launch it
-    char *m_damage;                  //Damage if used like sword
-    char *m_throw_damage;            //Damage if thrown
+    std::string m_damage;            //Damage if used like sword
+    std::string m_throw_damage;      //Damage if thrown
     int m_hit_plus;                  //Plusses to hit
     int m_damage_plus;               //Plusses to damage
     short m_charges;                 //How many zaps the stick or weapon has
@@ -146,7 +146,6 @@ private:
     virtual int Worth() const = 0;
 
     bool is_flag_set(short flag) const;
-    void initialize(int type, int which);
 };
 
 int does_item_group(int type);

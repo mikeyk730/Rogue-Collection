@@ -300,7 +300,7 @@ void total_winner()
         obj->discover();
 
         game->screen().move(c - 'a' + 1, 0);
-        game->screen().printw("%c) %5d  %s", c, worth, obj->inventory_name(false).c_str());
+        game->screen().printw("%c) %5d  %s", c, worth, obj->inventory_name(game->hero(), false).c_str());
         game->hero().adjust_purse(worth);
     }
     game->screen().move(c - 'a' + 1, 0);
