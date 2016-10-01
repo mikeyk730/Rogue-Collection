@@ -95,14 +95,11 @@ GameState::~GameState()
 void GameState::init_environment()
 {
     m_environment["name"] = "Rodney";
+    m_environment["fruit"] = "Slime Mold";
+    m_environment["macro"] = "v";
     m_environment["scorefile"] = "rogue.scr";
     m_environment["savefile"] = "rogue.sav";
-    m_environment["macro"] = "v";
-    m_environment["fruit"] = "Slime Mold";
-    m_environment["menu"] = "on";
-    m_environment["screen"] = "color";
-    m_environment["levelnames"] = "on";
-    m_environment["monstercfg"] = "monsters.opt";
+    m_environment["monsterfile"] = "rogue.mon";
 }
 
 void GameState::process_environment()
@@ -246,7 +243,7 @@ bool GameState::Options::monochrome() const
 
 bool GameState::Options::use_exp_level_names() const
 {
-    return game->get_environment("use_exp_level_names") == "true";
+    return game->get_environment("use_exp_level_names") != "false";
 }
 
 bool GameState::Options::zap_release_bugfix() const

@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
     //todo: process args
     bool replay = true;
-    //replay = false;
+    replay = false;
 
     std::ifstream infile("tests\\all_sticks.sav", std::ios::binary | std::ios::in);
     //std::ifstream infile("tests\\frost_kills_next_monster.sav", std::ios::binary | std::ios::in);
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
     
     if (!replay)
         setenv("rogue.opt");
-    load_monster_cfg(game->get_environment("monstercfg"));
+    load_monster_cfg(game->get_environment("monsterfile"));
 
     game->screen().winit(game->options.narrow_screen());
     if (game->options.monochrome())

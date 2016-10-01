@@ -10,12 +10,15 @@
     <Filter Include="Levels">
       <UniqueIdentifier>{1af15637-eb9d-44c6-abb9-8abf856e9253}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Agents">
-      <UniqueIdentifier>{2b654d38-84e8-461e-b7fc-d7c41883cf6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Unsorted">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{4dfc4264-197b-4440-a72a-a44c4b2c4b9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Agents">
+      <UniqueIdentifier>{2b654d38-84e8-461e-b7fc-d7c41883cf6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,9 +46,6 @@
     <ClCompile Include="list.cpp">
       <Filter>Unsorted</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Unsorted</Filter>
-    </ClCompile>
     <ClCompile Include="misc.cpp">
       <Filter>Unsorted</Filter>
     </ClCompile>
@@ -68,9 +68,6 @@
       <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="wizard.cpp">
-      <Filter>Unsorted</Filter>
-    </ClCompile>
-    <ClCompile Include="game_state.cpp">
       <Filter>Unsorted</Filter>
     </ClCompile>
     <ClCompile Include="random.cpp">
@@ -156,6 +153,12 @@
     </ClCompile>
     <ClCompile Include="stream_input.cpp">
       <Filter>IO</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="game_state.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -261,13 +264,7 @@
     <ClInclude Include="fight.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
-    <ClInclude Include="game_state.h">
-      <Filter>Unsorted</Filter>
-    </ClInclude>
     <ClInclude Include="list.h">
-      <Filter>Unsorted</Filter>
-    </ClInclude>
-    <ClInclude Include="main.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
     <ClInclude Include="misc.h">
@@ -308,6 +305,12 @@
     </ClInclude>
     <ClInclude Include="curses.h">
       <Filter>IO</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="game_state.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
