@@ -36,7 +36,7 @@ namespace
         std::string name;   //What to call the monster
         int carry;          //Probability of carrying something
         short flags;        //Things about the monster
-        struct Agent::Stats stats; //Initial stats
+        struct Agent::Stats stats; //Initial m_stats
         int confuse_roll;
         int exflags;        //Things about special roles
     };
@@ -110,15 +110,15 @@ void load_monster_cfg(const std::string& filename)
         ss >> m.name;
         ss >> m.carry;
         ss >> std::hex >> m.flags;
-        ss >> std::dec >> m.stats.m_str >> m.stats.m_exp >> m.stats.level >> m.stats.ac >> m.stats.hp;
-        ss >> m.stats.damage;
+        ss >> std::dec >> m.stats.m_str >> m.stats.m_exp >> m.stats.m_level >> m.stats.m_ac >> m.stats.m_hp;
+        ss >> m.stats.m_damage;
         ss >> std::dec >> m.confuse_roll;
         ss >> std::hex >> m.exflags;
 
         std::replace(m.name.begin(), m.name.end(), '_', ' ');
 
         monsters[type - 'A'] = m;
-        //printf("%c %s %d %x %d %d %d %d %d %s %x\n", type, m.name.c_str(), m.carry, m.flags, m.stats.str, m.stats.exp, m.stats.level, m.stats.ac, m.stats.hp, m.stats.damage.c_str(), m.exflags);
+        //printf("%c %s %d %x %d %d %d %d %d %s %x\n", type, m.name.c_str(), m.carry, m.m_flags, m.m_stats.str, m.m_stats.exp, m.m_stats.m_level, m.m_stats.m_ac, m.m_stats.m_hp, m.m_stats.m_damage.c_str(), m.exflags);
     }
 }
 
@@ -132,7 +132,7 @@ int Monster::get_carry_probability() const
     return monsters[type - 'A'].carry;
 }
 
-//randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
+//randmonster: Pick a monster to show up.  The lower the m_level, the meaner the monster.
 char randmonster(bool wander, int level)
 {
     int d;
@@ -172,16 +172,16 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     const MonsterEntry* defaults = &monsters[type - 'A'];
     monster->type = type;
     monster->disguise = type;
-    monster->pos = *position;
+    monster->m_position = *position;
     monster->invalidate_tile_beneath();
-    monster->room = get_room_from_position(*position);
-    monster->flags = defaults->flags;
+    monster->m_room = get_room_from_position(*position);
+    monster->m_flags = defaults->flags;
     monster->exflags = defaults->exflags;
-    monster->stats = defaults->stats;
-    monster->stats.level += level_add;
-    monster->stats.hp = monster->stats.max_hp = roll(monster->stats.level, 8);
-    monster->stats.ac -= level_add;
-    monster->stats.m_exp += level_add * 10 + exp_add(monster);
+    monster->m_stats = defaults->stats;
+    monster->m_stats.m_level += level_add;
+    monster->m_stats.m_hp = monster->m_stats.m_max_hp = roll(monster->m_stats.m_level, 8);
+    monster->m_stats.m_ac -= level_add;
+    monster->m_stats.m_exp += level_add * 10 + exp_add(monster);
     monster->turn = true;
     monster->value = 0;
     monster->confuse_roll = defaults->confuse_roll;
@@ -197,15 +197,15 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     return monster;
 }
 
-//expadd: Experience to add for this monster's level/hit points
+//expadd: Experience to add for this monster's m_level/hit points
 int exp_add(Monster *monster)
 {
-    int divisor = (monster->stats.level == 1) ? 8 : 6;
-    int value = monster->stats.max_hp / divisor;
+    int divisor = (monster->m_stats.m_level == 1) ? 8 : 6;
+    int value = monster->m_stats.m_max_hp / divisor;
 
-    if (monster->stats.level > 9)
+    if (monster->m_stats.m_level > 9)
         value *= 20;
-    else if (monster->stats.level > 6)
+    else if (monster->m_stats.m_level > 6)
         value *= 4;
 
     return value;
@@ -221,9 +221,9 @@ void create_wandering_monster()
     do
     {
         room = rnd_room();
-        if (room == game->hero().room) continue;
+        if (room == game->hero().m_room) continue;
         rnd_pos(room, &cp);
-    } while (!(room != game->hero().room && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic?
+    } while (!(room != game->hero().m_room && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic?
     monster = Monster::CreateMonster(randmonster(true, get_level()), &cp, get_level());
     if (game->invalid_position)
         debug("wanderer bailout");
@@ -241,13 +241,13 @@ Monster *wake_monster(Coord p)
     //Every time he sees mean monster, it might start chasing him
     if (!monster->is_running() && rnd(3) != 0 && monster->is_mean() && !monster->is_held() && !game->hero().is_wearing_ring(R_STEALTH))
     {
-        monster->start_run(&game->hero().pos, false);
+        monster->start_run(&game->hero().m_position, false);
     }
     if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
     {
         int dst;
-        Room* room = game->hero().room;
-        dst = distance(p, game->hero().pos);
+        Room* room = game->hero().m_room;
+        dst = distance(p, game->hero().m_position);
         if ((room != NULL && !(room->is_dark())) || dst < LAMP_DIST)
         {
             monster->set_found(true);
@@ -263,9 +263,9 @@ Monster *wake_monster(Coord p)
     //Let greedy ones guard gold
     if (monster->is_greedy() && !monster->is_running())
     {
-        Coord* dest = &game->hero().pos;
-        if (game->hero().room->gold_val)
-            dest = &game->hero().room->gold;
+        Coord* dest = &game->hero().m_position;
+        if (game->hero().m_room->gold_val)
+            dest = &game->hero().m_room->gold;
         monster->start_run(dest);
     }
     return monster;

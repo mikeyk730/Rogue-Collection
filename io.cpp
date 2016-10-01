@@ -147,7 +147,7 @@ void endmsg()
         game->screen().move(0, game->msg_position);
         more(" More "); 
     }
-    //All messages should start with uppercase, except ones that start with a pack addressing character
+    //All messages should start with uppercase, except ones that start with a m_pack addressing character
     if (islower(msgbuf[0]) && msgbuf[1] != ')') 
         msgbuf[0] = toupper(msgbuf[0]);
     putmsg(0, msgbuf);
@@ -268,7 +268,7 @@ char *unctrl(unsigned char ch)
     return chstr;
 }
 
-//update_status_bar: Display the important stats line.  Keep the cursor where it was.
+//update_status_bar: Display the important m_stats line.  Keep the cursor where it was.
 void update_status_bar()
 {
     int oy, ox;
@@ -295,12 +295,12 @@ void update_status_bar()
         s_hp = game->hero().get_hp();
         game->screen().move(PT(22, 23), 12);
         if (game->hero().get_hp() < 100) {
-            game->screen().printw("Hits:%2d(%2d) ", game->hero().get_hp(), game->hero().stats.max_hp);
+            game->screen().printw("Hits:%2d(%2d) ", game->hero().get_hp(), game->hero().m_stats.m_max_hp);
             //just in case they get wraithed with 3 digit max hits
             game->screen().addstr("  ");
         }
         else
-            game->screen().printw("Hits:%3d(%3d) ", game->hero().get_hp(), game->hero().stats.max_hp);
+            game->screen().printw("Hits:%3d(%3d) ", game->hero().get_hp(), game->hero().m_stats.m_max_hp);
     }
 
     //Str:
@@ -322,11 +322,11 @@ void update_status_bar()
     if (!game->options.use_exp_level_names())
     {
         game->screen().move(23, PT(22, 62));
-        game->screen().printw("Exp:%d/%d", game->hero().stats.level, game->hero().experience());
+        game->screen().printw("Exp:%d/%d", game->hero().m_stats.m_level, game->hero().experience());
     }
-    else if (s_elvl != game->hero().stats.level)
+    else if (s_elvl != game->hero().m_stats.m_level)
     {
-        s_elvl = game->hero().stats.level;
+        s_elvl = game->hero().m_stats.m_level;
         game->screen().move(23, PT(22, 62));
         game->screen().printw("%-12s", level_titles[s_elvl - 1]);
     }
@@ -372,7 +372,7 @@ void wait_for(char ch)
 void show_win(char *message)
 {
     game->screen().mvaddstr(0, 0, message);
-    game->screen().move(game->hero().pos.y, game->hero().pos.x);
+    game->screen().move(game->hero().m_position.y, game->hero().m_position.x);
     wait_for(' ');
 }
 

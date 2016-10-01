@@ -167,7 +167,7 @@ void Potion::quaff_see_invisible()
 void Potion::quaff_healing()
 {
     discover();
-    game->hero().increase_hp(roll(game->hero().stats.level, 4), true, false);
+    game->hero().increase_hp(roll(game->hero().m_stats.m_level, 4), true, false);
     sight();
     msg("you begin to feel better");
 }
@@ -186,7 +186,7 @@ void Potion::quaff_monster_detection()
 
 void Potion::quaff_magic_detection()
 {
-    //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
+    //Potion of magic detection.  Find everything interesting on the m_level and show him where they are. 
     //Also give hints as to whether he would want to use the object.
     bool discovered = false;
 
@@ -201,13 +201,13 @@ void Potion::quaff_magic_detection()
     }
     for (auto m = game->level().monsters.begin(); m != game->level().monsters.end(); ++m) {
         Agent* monster = *m;
-        for (auto i = monster->pack.begin(); i != monster->pack.end(); ++i)
+        for (auto i = monster->m_pack.begin(); i != monster->m_pack.end(); ++i)
         {
             Item* item = *i;
             if (item->is_magic())
             {
                 discovered = true;
-                game->screen().mvaddch(monster->pos, MAGIC);
+                game->screen().mvaddch(monster->m_position, MAGIC);
             }
         }
     }
@@ -231,7 +231,7 @@ void Potion::quaff_raise_level()
 void Potion::quaff_extra_healing()
 {
     discover();
-    game->hero().increase_hp(roll(game->hero().stats.level, 8), true, true);
+    game->hero().increase_hp(roll(game->hero().m_stats.m_level, 8), true, true);
     sight();
     msg("you begin to feel much better");
 }
@@ -282,7 +282,7 @@ void(Potion::*potion_functions[MAXPOTIONS])() = {
   &Potion::quaff_thirst_quenching
 };
 
-//quaff: Quaff a potion from the pack
+//quaff: Quaff a potion from the m_pack
 bool quaff()
 {
     Item *obj;
@@ -311,7 +311,7 @@ bool quaff()
     if (obj->count > 1)
         obj->count--;
     else {
-        game->hero().pack.remove(obj);
+        game->hero().m_pack.remove(obj);
         delete(obj);
     }
 
@@ -325,7 +325,7 @@ void show_invisible()
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster* monster) {
         if (monster->is_invisible() && game->hero().can_see_monster(monster))
         {
-            game->screen().mvaddch(monster->pos, monster->disguise);
+            game->screen().mvaddch(monster->m_position, monster->disguise);
         }
     });
 }
@@ -335,7 +335,7 @@ void turn_see_wrapper(int turn_off)
     turn_see(turn_off != 0);
 }
 
-//turn_see: Put on or off seeing monsters on this level
+//turn_see: Put on or off seeing monsters on this m_level
 bool turn_see(bool turn_off)
 {
     bool add_new = false;
@@ -345,7 +345,7 @@ bool turn_see(bool turn_off)
         bool can_see;
         byte was_there;
 
-        game->screen().move(monster->pos.y, monster->pos.x);
+        game->screen().move(monster->m_position.y, monster->m_position.x);
         can_see = (game->hero().can_see_monster(monster) || (was_there = game->screen().curch()) == monster->type);
         if (turn_off)
         {
@@ -392,9 +392,9 @@ void affect_monster(Item *potion, Monster *monster)
         break;
 
     case P_RAISE:
-        monster->stats.max_hp += 8;
+        monster->m_stats.m_max_hp += 8;
         monster->increase_hp(8, false, false);
-        monster->stats.level++;
+        monster->m_stats.m_level++;
         break;
 
     case P_HASTE:

@@ -177,9 +177,9 @@ void Scroll::read_hold_monster()
     Monster* monster;
 
     const int COLS = game->screen().columns();
-    for (x = game->hero().pos.x - 3; x <= game->hero().pos.x + 3; x++) {
+    for (x = game->hero().m_position.x - 3; x <= game->hero().m_position.x + 3; x++) {
         if (x >= 0 && x < COLS) {
-            for (y = game->hero().pos.y - 3; y <= game->hero().pos.y + 3; y++) {
+            for (y = game->hero().m_position.y - 3; y <= game->hero().m_position.y + 3; y++) {
                 if ((y > 0 && y < maxrow()) && ((monster = game->level().monster_at({ x, y })) != NULL))
                 {
                     monster->hold();
@@ -258,9 +258,9 @@ void Scroll::read_food_detection()
 void Scroll::read_teleportation()
 {
     //Scroll of teleportation: Make him disappear and reappear
-    Room* original_room = game->hero().room;
+    Room* original_room = game->hero().m_room;
     game->hero().teleport();
-    if (original_room != game->hero().room)
+    if (original_room != game->hero().m_room)
         discover();
 }
 
@@ -279,7 +279,7 @@ void Scroll::read_create_monster()
     Agent* monster;
     Coord position;
 
-    if (plop_monster(game->hero().pos.y, game->hero().pos.x, &position)) {
+    if (plop_monster(game->hero().m_position.y, game->hero().m_position.x, &position)) {
         monster = Monster::CreateMonster(randmonster(false, get_level()), &position, get_level());
     }
     else
@@ -302,7 +302,7 @@ void Scroll::read_remove_curse()
 
 void Scroll::read_aggravate_monsters()
 {
-    //This scroll aggravates all the monsters on the current level and sets them running towards the hero
+    //This scroll aggravates all the monsters on the current m_level and sets them running towards the hero
     aggravate_monsters();
     ifterse("you hear a humming noise", "you hear a high pitched humming noise");
 }
@@ -342,7 +342,7 @@ void(Scroll::*scroll_functions[MAXSCROLLS])() =
   &Scroll::read_vorpalize_weapon
 };
 
-//read_scroll: Read a scroll from the pack and do the appropriate thing
+//read_scroll: Read a scroll from the m_pack and do the appropriate thing
 bool read_scroll()
 {
     Item *item = get_item("read", SCROLL);
@@ -376,7 +376,7 @@ bool read_scroll()
     if (scroll->count > 1)
         scroll->count--;
     else {
-        game->hero().pack.remove(scroll);
+        game->hero().m_pack.remove(scroll);
         delete(scroll);
     }
     return true;

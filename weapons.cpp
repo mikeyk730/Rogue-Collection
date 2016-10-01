@@ -29,7 +29,7 @@ static struct init_weps
     char *iw_dam;   //Damage when wielded
     char *iw_hrl;   //Damage when thrown
     char iw_launch; //Launching weapon
-    int iw_flags;   //Miscellaneous flags
+    int iw_flags;   //Miscellaneous m_flags
 } init_dam[MAXWEAPONS + 1] =
 {
   "2d4", "1d3", NONE,     0,                 //Mace
@@ -87,7 +87,7 @@ bool throw_projectile()
     //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  
     //Otherwise, create a new item with a count of one.
     if (obj->count <= 1) {
-        game->hero().pack.remove(obj);
+        game->hero().m_pack.remove(obj);
     }
     else
     {
@@ -104,19 +104,19 @@ bool throw_projectile()
     return true;
 }
 
-//do_motion: Do the actual motion on the screen done by an object travelling across the room
+//do_motion: Do the actual motion on the screen done by an object travelling across the m_room
 void do_motion(Item *obj, Coord delta)
 {
     byte under = UNSET;
 
     //Come fly with us ...
-    obj->pos = game->hero().pos;
+    obj->pos = game->hero().m_position;
     for (;;)
     {
         int ch;
 
         //Erase the old one
-        if (under != UNSET && !equal(obj->pos, game->hero().pos) && game->hero().can_see(obj->pos))
+        if (under != UNSET && !equal(obj->pos, game->hero().m_position) && game->hero().can_see(obj->pos))
             game->screen().mvaddch(obj->pos, under);
         //Get the new position
         obj->pos.y += delta.y;
@@ -131,7 +131,7 @@ void do_motion(Item *obj, Coord delta)
             {
                 //mdk:bugfix: xerox tile was replaced with floor after object passed
                 under = game->level().get_tile_or_monster(obj->pos, false);
-                //under = game->level().get_tile(obj->pos);
+                //under = game->m_level().get_tile(obj->m_position);
 
                 game->screen().mvaddch(obj->pos, obj->type);
                 tick_pause();
@@ -235,8 +235,8 @@ int fallpos(Item *obj, Coord *newpos)
         {
             Coord pos = { x, y };
             //check to make certain the spot is empty, if it is, put the object there, set it in the 
-            //level list and re-draw the room if he can see it
-            if (pos == game->hero().pos || offmap(pos)) 
+            //m_level list and re-draw the m_room if he can see it
+            if (pos == game->hero().m_position || offmap(pos)) 
                 continue;
 
             int ch = game->level().get_tile(pos);
@@ -347,7 +347,7 @@ void Item::vorpalize()
     {
         msg("your %s vanishes in a puff of smoke", Name().c_str());
         game->hero().set_current_weapon(0);
-        game->hero().pack.remove(this);
+        game->hero().m_pack.remove(this);
         delete this; //careful not to do anything afterwards
         return;
     }

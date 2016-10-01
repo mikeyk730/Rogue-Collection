@@ -237,7 +237,7 @@ bool dispatch_command(int ch)
         break;
     case 'i':
         counts_as_turn = false;
-        inventory(game->hero().pack, 0, "");
+        inventory(game->hero().m_pack, 0, "");
         break;
     case 'd':
         counts_as_turn = drop();
@@ -346,8 +346,8 @@ bool dispatch_command(int ch)
         {
             Coord lookat;
 
-            lookat.y = game->hero().pos.y + d.y;
-            lookat.x = game->hero().pos.x + d.x;
+            lookat.y = game->hero().m_position.y + d.y;
+            lookat.x = game->hero().m_position.x + d.x;
             if (game->level().get_tile(lookat) != TRAP)
                 msg("no trap there.");
             else msg("you found %s", tr_name(game->level().get_trap_type(lookat)));

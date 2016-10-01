@@ -5,10 +5,10 @@ struct Monster;
 
 const char* get_monster_name(char monster);
 
-//randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
+//randmonster: Pick a monster to show up.  The lower the m_level, the meaner the monster.
 char randmonster(bool wander, int level);
 
-//expadd: Experience to add for this monster's level/hit points
+//expadd: Experience to add for this monster's m_level/hit points
 int exp_add(Monster *monster);
 
 //create_wandering_monster: Create a new wandering monster and aim it at the player

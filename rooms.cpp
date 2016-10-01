@@ -1,4 +1,4 @@
-//Create the layout for the new level
+//Create the layout for the new m_level
 //rooms.c     1.4 (A.I. Design)       12/16/84
 
 #include <ctype.h>
@@ -21,7 +21,7 @@
 #include "monster.h"
 #include "gold.h"
 
-Room rooms[MAXROOMS]; //One for each room -- A level
+Room rooms[MAXROOMS]; //One for each m_room -- A m_level
 
 bool isfloor(byte c) {
     return ((c) == FLOOR || (c) == PASSAGE);
@@ -42,17 +42,17 @@ void do_rooms()
 
     endline = maxrow() + 1;
     old_lev = get_level();
-    //bsze is the maximum room size
+    //bsze is the maximum m_room size
     const int COLS = game->screen().columns();
     bsze.x = COLS / 3;
     bsze.y = endline / 3;
-    //Clear things for a new level
+    //Clear things for a new m_level
     for (i = 0; i < MAXROOMS; i++) {
         room = &rooms[i];
         room->index = i;
         room->reset();
     }
-    //Put the gone rooms, if any, on the level
+    //Put the gone rooms, if any, on the m_level
     left_out = rnd(4);
     for (i = 0; i < left_out; i++)
     {
@@ -63,19 +63,19 @@ void do_rooms()
         if (room->index > 2 && get_level() > 10 && rnd(20) < get_level() - 9)
             room->set_maze();
     }
-    //dig and populate all the rooms on the level
+    //dig and populate all the rooms on the m_level
     for (i = 0, room = rooms; i < MAXROOMS; room++, i++)
     {
-        //Find upper left corner of box that this room goes in
+        //Find upper left corner of box that this m_room goes in
         top.x = (i % 3)*bsze.x + 1;
         top.y = i / 3 * bsze.y;
         if (room->is_gone())
         {
-            //If the gone room is a maze room, draw the maze and set the size equal to the maximum possible.
+            //If the gone m_room is a maze m_room, draw the maze and set the size equal to the maximum possible.
             if (room->is_maze()) { room->pos.x = top.x; room->pos.y = top.y; draw_maze(room); }
             else
             {
-                //Place a gone room.  Make certain that there is a blank line for passage drawing.
+                //Place a gone m_room.  Make certain that there is a blank line for passage drawing.
                 do
                 {
                     room->pos.x = top.x + rnd(bsze.x - 2) + 1;
@@ -90,7 +90,7 @@ void do_rooms()
         if (rnd(10) < (get_level() - 1) && !game->wizard().no_dark_rooms()) {
             room->set_dark(true);
         }
-        //Find a place and size for a random room
+        //Find a place and size for a random m_room
         do
         {
             room->size.x = rnd(bsze.x - 4) + 4;
@@ -132,7 +132,7 @@ void do_rooms()
     }
 }
 
-//draw_room: Draw a box around a room and lay down the floor
+//draw_room: Draw a box around a m_room and lay down the floor
 void draw_room(struct Room *room)
 {
     int y, x;
@@ -170,21 +170,21 @@ void horiz(struct Room *room, int starty)
         game->level().set_tile({ x,starty }, HWALL);
 }
 
-//rnd_pos: Pick a random spot in a room
+//rnd_pos: Pick a random spot in a m_room
 void rnd_pos(struct Room *room, Coord *cp)
 {
     cp->x = room->pos.x + rnd(room->size.x - 2) + 1;
     cp->y = room->pos.y + rnd(room->size.y - 2) + 1;
 }
 
-//enter_room: Code that is executed whenever you appear in a room
+//enter_room: Code that is executed whenever you appear in a m_room
 void enter_room(Coord cp)
 {
     struct Room *room;
     int y, x;
     Monster* monster;
 
-    room = game->hero().room = get_room_from_position(cp);
+    room = game->hero().m_room = get_room_from_position(cp);
     if (game->invalid_position || (room->is_gone() && (room->is_maze()) == 0))
     {
         debug("in a gone room");
@@ -210,15 +210,15 @@ void enter_room(Coord cp)
         }
 }
 
-//leave_room: Code for when we exit a room
+//leave_room: Code for when we exit a m_room
 void leave_room(Coord cp)
 {
     int y, x;
     struct Room *room;
     byte ch;
 
-    room = game->hero().room;
-    game->hero().room = game->level().get_passage(cp);
+    room = game->hero().m_room;
+    game->hero().m_room = game->level().get_passage(cp);
 
     byte floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
     if (room->is_maze())
@@ -259,7 +259,7 @@ void leave_room(Coord cp)
     door_open(room);
 }
 
-//get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
+//get_room_from_position: Find what m_room some coordinates are in. NULL means they aren't in any m_room.
 Room* get_room_from_position(Coord pos)
 {
     struct Room *room;
@@ -279,7 +279,7 @@ Room* get_room_from_position(Coord pos)
     return NULL;
 }
 
-//rnd_room: Pick a room that is really there
+//rnd_room: Pick a m_room that is really there
 Room* rnd_room()
 {
     int rm;

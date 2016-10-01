@@ -181,23 +181,23 @@ void Monster::invalidate_tile_beneath()
     m_tile_beneath = UNSET;
 }
 
-//give_pack: Give a pack to a monster if it deserves one
+//give_pack: Give a m_pack to a monster if it deserves one
 void Monster::give_pack()
 {
-    if (rnd(100) < this->get_carry_probability())
-        this->pack.push_front(Item::CreateItem());
+    if (rnd(100) < get_carry_probability())
+        m_pack.push_front(Item::CreateItem());
 }
 
 //do_chase: Make one thing chase another.
 Monster* Monster::do_chase()
 {
     //If gold has been taken, target the hero
-    if (is_greedy() && room->gold_val == 0)
-        m_destination = &game->hero().pos;
+    if (is_greedy() && m_room->gold_val == 0)
+        m_destination = &game->hero().m_position;
 
-    //Find room of the target
-    Room* destination_room = game->hero().room;
-    if (m_destination != &game->hero().pos)
+    //Find m_room of the target
+    Room* destination_room = game->hero().m_room;
+    if (m_destination != &game->hero().m_position)
         destination_room = get_room_from_position(*m_destination);
     if (destination_room == NULL)
         return 0;
@@ -207,22 +207,22 @@ Monster* Monster::do_chase()
     Coord tempdest; //Temporary destination for chaser
 
 
-    Room* monster_room = this->room; //Find room of chaser
+    Room* monster_room = m_room; //Find m_room of chaser
                                      //We don't count doors as inside rooms for this routine
-    bool door = game->level().get_tile(pos) == DOOR;
+    bool door = game->level().get_tile(m_position) == DOOR;
 
 
     bool repeat;
     do {
         repeat = false;
-        //If the object of our desire is in a different room, and we are not in a maze,
+        //If the object of our desire is in a different m_room, and we are not in a maze,
         //run to the door nearest to our goal.
         if (monster_room != destination_room && (monster_room->is_maze()) == 0)
         {
             //loop through doors
             for (int i = 0; i < monster_room->num_exits; i++)
             {
-                dist = distance(*(this->m_destination), monster_room->exits[i]);
+                dist = distance(*(m_destination), monster_room->exits[i]);
                 if (dist < mindist) {
                     tempdest = monster_room->exits[i];
                     mindist = dist;
@@ -230,7 +230,7 @@ Monster* Monster::do_chase()
             }
             if (door)
             {
-                monster_room = game->level().get_passage(pos);
+                monster_room = game->level().get_passage(m_position);
                 door = false;
                 repeat = true;
                 continue;
@@ -238,19 +238,19 @@ Monster* Monster::do_chase()
         }
         else
         {
-            tempdest = *this->m_destination;
+            tempdest = *m_destination;
             //For monsters which can fire bolts at the poor hero, we check to see if 
             // (a) the hero is on a straight line from it, and 
             // (b) that it is within shooting distance, but outside of striking range.
-            if ((this->shoots_fire() || this->shoots_ice()) &&
-                (this->pos.y == game->hero().pos.y || this->pos.x == game->hero().pos.x || abs(this->pos.y - game->hero().pos.y) == abs(this->pos.x - game->hero().pos.x)) &&
-                ((dist = distance(this->pos, game->hero().pos)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !this->powers_cancelled() && rnd(DRAGONSHOT) == 0)
+            if ((shoots_fire() || shoots_ice()) &&
+                (m_position.y == game->hero().m_position.y || m_position.x == game->hero().m_position.x || abs(m_position.y - game->hero().m_position.y) == abs(m_position.x - game->hero().m_position.x)) &&
+                ((dist = distance(m_position, game->hero().m_position)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !powers_cancelled() && rnd(DRAGONSHOT) == 0)
             {
                 game->modifiers.m_running = false;
                 Coord delta;
-                delta.y = sign(game->hero().pos.y - this->pos.y);
-                delta.x = sign(game->hero().pos.x - this->pos.x);
-                return fire_bolt(&this->pos, &delta, this->shoots_fire() ? "flame" : "frost");
+                delta.y = sign(game->hero().m_position.y - m_position.y);
+                delta.x = sign(game->hero().m_position.x - m_position.x);
+                return fire_bolt(&m_position, &delta, shoots_fire() ? "flame" : "frost");
             }
         }
 
@@ -259,25 +259,25 @@ Monster* Monster::do_chase()
     //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
     Coord next_position;
     chase(&tempdest, &next_position);
-    if (equal(next_position, game->hero().pos)) {
+    if (equal(next_position, game->hero().m_position)) {
         return attack_player();
     }
-    else if (equal(next_position, *this->m_destination))
+    else if (equal(next_position, *m_destination))
     {
-        //mdk: aggressive orcs pick up gold in a room, then chase the player.  It looks
+        //mdk: aggressive orcs pick up gold in a m_room, then chase the player.  It looks
         //as if this could have been the original intended behavior, so I added it as
         //an option.
         bool orc_aggressive(game->options.aggressive_orcs());
 
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
             Item* obj = *(it++);
-            if (orc_aggressive && (*this->m_destination == obj->pos) ||
-                !orc_aggressive && (this->m_destination == &obj->pos))
+            if (orc_aggressive && (*m_destination == obj->pos) ||
+                !orc_aggressive && (m_destination == &obj->pos))
             {
                 byte oldchar;
                 game->level().items.remove(obj);
-                this->pack.push_front(obj);
-                oldchar = (this->room->is_gone()) ? PASSAGE : FLOOR;
+                m_pack.push_front(obj);
+                oldchar = (m_room->is_gone()) ? PASSAGE : FLOOR;
                 game->level().set_tile(obj->pos, oldchar);
                 if (game->hero().can_see(obj->pos))
                     game->screen().mvaddch(obj->pos, oldchar);
@@ -286,7 +286,7 @@ Monster* Monster::do_chase()
             }
         }
     }
-    if (this->is_stationary())
+    if (is_stationary())
         return 0;
     //If the chasing thing moved, update the screen
     do_screen_update(next_position);
@@ -297,37 +297,37 @@ void Monster::do_screen_update(Coord next_position)
 {
     if (has_tile_beneath())
     {
-        if (tile_beneath() == ' ' && game->hero().can_see(pos) && game->level().get_tile(pos) == FLOOR)
-            game->screen().mvaddch(pos, (char)FLOOR);
-        else if (tile_beneath() == FLOOR && !game->hero().can_see(pos) && !game->hero().detects_others())
-            game->screen().mvaddch(pos, ' ');
+        if (tile_beneath() == ' ' && game->hero().can_see(m_position) && game->level().get_tile(m_position) == FLOOR)
+            game->screen().mvaddch(m_position, (char)FLOOR);
+        else if (tile_beneath() == FLOOR && !game->hero().can_see(m_position) && !game->hero().detects_others())
+            game->screen().mvaddch(m_position, ' ');
         else
-            game->screen().mvaddch(pos, tile_beneath());
+            game->screen().mvaddch(m_position, tile_beneath());
     }
 
-    Room *orig_room = room;
-    if (!equal(next_position, pos))
+    Room *orig_room = m_room;
+    if (!equal(next_position, m_position))
     {
-        if ((room = get_room_from_position(next_position)) == NULL) {
-            room = orig_room;
+        if ((m_room = get_room_from_position(next_position)) == NULL) {
+            m_room = orig_room;
             return;
         }
-        if (orig_room != room)
+        if (orig_room != m_room)
             m_destination = obtain_target();
-        pos = next_position;
+        m_position = next_position;
     }
 
     if (game->hero().can_see_monster(this))
     {
         if (game->level().is_passage(next_position))
             game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
+        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of m_level??
         game->screen().mvaddch(next_position, disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
+        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of m_level??
         game->screen().mvaddch(next_position, type);
     }
     else
@@ -348,16 +348,16 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
     byte ch;
     int plcnt = 1;
 
-    chaser_pos = &this->pos;
+    chaser_pos = &m_position;
     //If the thing is confused, let it move randomly. Phantoms are slightly confused all of the time, and bats are quite confused all the time
-    if (this->is_monster_confused_this_turn())
+    if (is_monster_confused_this_turn())
     {
         //get a valid random move
         rndmove(this, next_position);
         dist = distance(*next_position, *chasee_pos);
         //Small chance that it will become un-confused
         if (rnd(30) == 17)
-            this->set_confused(false);
+            set_confused(false);
     }
     //Otherwise, find the empty spot next to the chaser that is closest to the chasee.
     else
@@ -408,11 +408,11 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
 //obtain_target: find the proper destination for the monster
 Coord* Monster::obtain_target()
 {
-    // if we're in the same room as the player, or can see the player, then we go after the player
-    // if we have a chance to carry an item, we may go after an unclaimed item in the same room
+    // if we're in the same m_room as the player, or can see the player, then we go after the player
+    // if we have a chance to carry an item, we may go after an unclaimed item in the same m_room
     int carry_prob;
-    if ((carry_prob = this->get_carry_probability()) <= 0 || this->in_same_room_as(&game->hero()) || game->hero().can_see_monster(this))
-        return &game->hero().pos;
+    if ((carry_prob = get_carry_probability()) <= 0 || in_same_room_as(&game->hero()) || game->hero().can_see_monster(this))
+        return &game->hero().m_position;
 
     for (auto i = game->level().items.begin(); i != game->level().items.end(); ++i)
     {
@@ -420,7 +420,7 @@ Coord* Monster::obtain_target()
         if (is_scare_monster_scroll(obj))
             continue;
 
-        if (this->in_same_room_as(obj) && rnd(100) < carry_prob)
+        if (in_same_room_as(obj) && rnd(100) < carry_prob)
         {
             // don't go after the same object as another monster
             Agent* monster = 0;
@@ -434,7 +434,7 @@ Coord* Monster::obtain_target()
                 return &obj->pos;
         }
     }
-    return &game->hero().pos;
+    return &game->hero().m_position;
 }
 
 bool aquator_attack()
@@ -479,7 +479,7 @@ void flytrap_attack(Monster* mp)
     game->hero().set_is_held(true);
     std::ostringstream ss;
     ss << ++(mp->value) << "d1";
-    mp->stats.damage = ss.str();
+    mp->m_stats.m_damage = ss.str();
 }
 
 // return true if attack succeeded
@@ -502,10 +502,10 @@ bool nymph_attack(Monster* mp)
 {
     const char *she_stole = "she stole %s!";
 
-    //Nymphs steal a magic item, look through the pack and pick out one we like.
+    //Nymphs steal a magic item, look through the m_pack and pick out one we like.
     Item* item = NULL;
     int nobj = 0;
-    for (auto it = game->hero().pack.begin(); it != game->hero().pack.end(); ++it) {
+    for (auto it = game->hero().m_pack.begin(); it != game->hero().m_pack.end(); ++it) {
         Item* obj = *it;
         if (obj != game->hero().get_current_armor() && obj != game->hero().get_current_weapon() &&
             obj != game->hero().get_ring(LEFT) && obj != game->hero().get_ring(RIGHT) &&
@@ -524,7 +524,7 @@ bool nymph_attack(Monster* mp)
         item->count = oc;
     }
     else {
-        game->hero().pack.remove(item);
+        game->hero().m_pack.remove(item);
         msg(she_stole, item->inventory_name(true).c_str());
         delete item;
     }
@@ -533,7 +533,7 @@ bool nymph_attack(Monster* mp)
 
 bool vampire_wraith_attack(Monster* monster)
 {
-    //Wraiths might drain energy levels, and Vampires can steal max_hp
+    //Wraiths might drain energy levels, and Vampires can steal m_max_hp
     if (rnd(100) < (monster->drains_exp() ? 15 : 30)) // vampires are twice as likely to connect
     {
         int damage;
@@ -548,8 +548,8 @@ bool vampire_wraith_attack(Monster* monster)
         else
             damage = roll(1, 5); //vampires only half as strong
 
-        game->hero().stats.max_hp -= damage;
-        if (game->hero().stats.max_hp < 1)
+        game->hero().m_stats.m_max_hp -= damage;
+        if (game->hero().m_stats.m_max_hp < 1)
             death(monster->type);
         game->hero().decrease_hp(damage, false);
 

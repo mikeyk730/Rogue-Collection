@@ -5,7 +5,7 @@ struct Monster;
 struct Room;
 struct ItemClass;
 
-//flags for objects
+//m_flags for objects
 const short IS_CURSED = 0x0001; //object is cursed
 const short IS_KNOW = 0x0002; //player knows details about the object
 const short DID_FLASH = 0x0004; //has the vorpal weapon flashed
@@ -104,7 +104,7 @@ protected:
     char *damage;                  //Damage if used like sword
     char *throw_damage;            //Damage if thrown
     int hit_plus;                  //Plusses to hit
-    int damage_plus;               //Plusses to damage
+    int damage_plus;               //Plusses to m_damage
     short armor_class;
     short gold_value;
     short charges;

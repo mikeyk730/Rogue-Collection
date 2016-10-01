@@ -13,7 +13,7 @@ Item* find_obj(Coord p, bool expect_item);
 //add_haste: Add a haste to the player
 int add_haste(bool potion);
 
-//aggravate_monsters: Aggravate all the monsters on this level
+//aggravate_monsters: Aggravate all the monsters on this m_level
 void aggravate_monsters();
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
@@ -51,10 +51,10 @@ int offmap(Coord p);
 //search: Player gropes about him to find hidden things.
 void search();
 
-//go_down_stairs: He wants to go down a level
+//go_down_stairs: He wants to go down a m_level
 void go_down_stairs();
 
-//go_up_stairs: He wants to go up a level
+//go_up_stairs: He wants to go up a m_level
 void go_up_stairs();
 
 //call: Allow a user to call a potion, scroll, or ring something

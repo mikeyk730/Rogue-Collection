@@ -9,14 +9,14 @@
 #include "item.h"
 
 bool Agent::is_flag_set(short flag) const {
-    return ((flags & flag) != 0);
+    return ((m_flags & flag) != 0);
 }
 
 void Agent::set_flag(short flag, bool enable) {
     if (enable)
-        flags |= flag;
+        m_flags |= flag;
     else
-        flags &= ~flag;
+        m_flags &= ~flag;
 }
 
 bool Agent::is_flying() const {
@@ -146,14 +146,14 @@ Agent::Agent()
 void Agent::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
     int* hit_plus, std::string* damage_string, int* damage_plus)
 {
-    *damage_string = stats.damage;
+    *damage_string = m_stats.m_damage;
     *hit_plus = 0;
     *damage_plus = 0;
 }
 
 int Agent::calculate_armor() const
 {
-    return stats.ac;
+    return m_stats.m_ac;
 }
 
 int Agent::armor_for_display() const
@@ -164,83 +164,83 @@ int Agent::armor_for_display() const
 
 int Agent::calculate_strength() const
 {
-    return stats.m_str;
+    return m_stats.m_str;
 }
 
 int Agent::calculate_max_strength() const
 {
-    return stats.m_max_str;
+    return m_stats.m_max_str;
 }
 
 void Agent::restore_strength()
 {
-    stats.m_str = stats.m_max_str;
+    m_stats.m_str = m_stats.m_max_str;
 }
 
 void Agent::adjust_strength(int amt)
 {
-    stats.m_str += amt;
-    if (stats.m_str > 31)
-        stats.m_str = 31;
-    if (stats.m_str > stats.m_max_str)
-        stats.m_max_str = stats.m_str;
+    m_stats.m_str += amt;
+    if (m_stats.m_str > 31)
+        m_stats.m_str = 31;
+    if (m_stats.m_str > m_stats.m_max_str)
+        m_stats.m_max_str = m_stats.m_str;
 }
 
 int Agent::level() const
 {
-    return stats.level;
+    return m_stats.m_level;
 }
 
 int Agent::experience() const
 {
-    return stats.m_exp;
+    return m_stats.m_exp;
 }
 
 void Agent::gain_experience(int exp)
 {
-    stats.m_exp += exp;
+    m_stats.m_exp += exp;
 }
 
 std::string Agent::damage_string() const
 {
-    return stats.damage;
+    return m_stats.m_damage;
 }
 
 int Agent::get_hp() const {
-    return stats.hp;
+    return m_stats.m_hp;
 }
 
 bool Agent::decrease_hp(int n, bool can_kill) {
     if (invulnerable)
         return true;
 
-    stats.hp -= n;
-    if (!can_kill && stats.hp <= 0)
-        stats.hp = 1;
-    return stats.hp > 0;
+    m_stats.m_hp -= n;
+    if (!can_kill && m_stats.m_hp <= 0)
+        m_stats.m_hp = 1;
+    return m_stats.m_hp > 0;
 }
 
 void Agent::increase_hp(int n, bool max_bonus, bool second_max_bonus) {
-    stats.hp += n;
+    m_stats.m_hp += n;
 
-    if (max_bonus && stats.hp > stats.max_hp)
-        ++stats.max_hp;
-    if (second_max_bonus && stats.hp > stats.max_hp + stats.level + 1)
-        ++stats.max_hp;
+    if (max_bonus && m_stats.m_hp > m_stats.m_max_hp)
+        ++m_stats.m_max_hp;
+    if (second_max_bonus && m_stats.m_hp > m_stats.m_max_hp + m_stats.m_level + 1)
+        ++m_stats.m_max_hp;
 
-    if (stats.hp > stats.max_hp) {
-        stats.hp = stats.max_hp;
+    if (m_stats.m_hp > m_stats.m_max_hp) {
+        m_stats.m_hp = m_stats.m_max_hp;
     }
 }
 
 int Agent::drain_hp() {
-    stats.hp /= 2;
-    return stats.hp;
+    m_stats.m_hp /= 2;
+    return m_stats.m_hp;
 }
 
 Coord Agent::position() const
 {
-    return pos;
+    return m_position;
 }
 
 bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
@@ -270,7 +270,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
         if ((cp = strchr(cp, 'd')) == NULL)
             break;
         int nsides = atoi(++cp);
-        if (attempt_swing(stats.level, defender_armor, hplus + str_plus(calculate_strength())))
+        if (attempt_swing(m_stats.m_level, defender_armor, hplus + str_plus(calculate_strength())))
         {
             did_hit = true;
 
@@ -278,7 +278,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
             int str_bonus = add_dam(calculate_strength());
             int damage = dplus + r + str_bonus;
 
-            bool half_damage(defender == &game->hero() && max_level() == 1); //make it easier on level one
+            bool half_damage(defender == &game->hero() && max_level() == 1); //make it easier on m_level one
             if (half_damage) {
                 damage = (damage + 1) / 2;
             }
@@ -299,10 +299,10 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
 
 bool Agent::in_same_room_as(Agent* other)
 {
-    return room == other->room;
+    return m_room == other->m_room;
 }
 
 bool Agent::in_same_room_as(Item * obj)
 {
-    return room == obj->get_room();
+    return m_room == obj->get_room();
 }

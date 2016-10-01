@@ -29,7 +29,7 @@
 
 namespace
 {
-    // Each level is twice the previous
+    // Each m_level is twice the previous
     const long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240,
         20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
 }
@@ -44,7 +44,7 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
     int* hit_plus, std::string* damage_string, int* damage_plus)
 {
     if (weapon == NULL) {
-        *damage_string = stats.damage;
+        *damage_string = m_stats.m_damage;
         *damage_plus = 0;
         *hit_plus = 0;
         return;
@@ -83,14 +83,14 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
     }
 
     if (hurl) {
-        //mdk: the original code never used throw damage except for arrows and crossbow bolts.
+        //mdk: the original code never used throw m_damage except for arrows and crossbow bolts.
         //I've decided to use it for weapons that don't require a launcher too.  IS_MISL is
         //still meaningless.
         if (game->options.use_throw_damage() && weapon->launcher() == NONE) {
             *damage_string = weapon->get_throw_damage();
         }
         //if we've used the right weapon to launch the projectile, we use the throw 
-        //damage of the projectile, and get the plusses from the launcher.
+        //m_damage of the projectile, and get the plusses from the launcher.
         else if (current_weapon && weapon->launcher() == current_weapon->which)
         {
             *damage_string = weapon->get_throw_damage();
@@ -102,7 +102,7 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
 
 int Hero::calculate_armor() const
 {
-    int armor = stats.ac;
+    int armor = m_stats.m_ac;
 
     if (get_current_armor() != NULL)
         armor = get_current_armor()->get_armor_class();
@@ -116,12 +116,12 @@ int Hero::calculate_armor() const
 
 int Hero::calculate_strength() const
 {
-    return calculate_strength_impl(stats.m_str);
+    return calculate_strength_impl(m_stats.m_str);
 }
 
 int Hero::calculate_max_strength() const
 {
-    return calculate_strength_impl(stats.m_max_str);
+    return calculate_strength_impl(m_stats.m_max_str);
 }
 
 int Hero::calculate_strength_impl(int strength) const
@@ -168,9 +168,9 @@ bool Hero::eat()
     }
 
     if (--obj->count < 1) {
-        pack.remove(obj);
+        m_pack.remove(obj);
         if (obj == get_current_weapon())
-            set_current_weapon(NULL); //todo: this should be done automatically when removing from pack
+            set_current_weapon(NULL); //todo: this should be done automatically when removing from m_pack
         delete obj;
     }
     ingest();
@@ -247,7 +247,7 @@ void Hero::digest()
 //init_player: Roll up the rogue
 void Hero::init_player()
 {
-    stats = { 16, 0, 1, 10, 12, "1d4", 12, 16 };
+    m_stats = { 16, 0, 1, 10, 12, "1d4", 12, 16 };
     food_left = HUNGER_TIME;
 
     //Give the rogue his weaponry.  First a mace.
@@ -294,18 +294,18 @@ void Hero::teleport()
     struct Room* rm;
     Coord c;
 
-    game->screen().mvaddch(pos, game->level().get_tile(pos));
+    game->screen().mvaddch(m_position, game->level().get_tile(m_position));
     do {
         rm = rnd_room();
         rnd_pos(rm, &c);
     } while (!(step_ok(game->level().get_tile_or_monster(c)))); //todo:bug: can we teleport onto a xerox?
-    if (rm != room) {
-        leave_room(pos);
-        pos = c;
-        enter_room(pos);
+    if (rm != m_room) {
+        leave_room(m_position);
+        m_position = c;
+        enter_room(m_position);
     }
-    else { pos = c; look(true); }
-    game->screen().mvaddch(pos, PLAYER);
+    else { m_position = c; look(true); }
+    game->screen().mvaddch(m_position, PLAYER);
     //turn off IS_HELD in case teleportation was done while fighting a Flytrap
     if (is_held()) {
         set_is_held(false);
@@ -323,7 +323,7 @@ void Hero::teleport()
     set_confused(true);
 }
 
-//check_level: Check to see if the guy has gone up a level.
+//check_level: Check to see if the guy has gone up a m_level.
 void Hero::check_level()
 {
     int i, add, olevel;
@@ -332,12 +332,12 @@ void Hero::check_level()
         if (e_levels[i] > experience())
             break;
     i++;
-    olevel = stats.level;
-    stats.level = i;
+    olevel = m_stats.m_level;
+    m_stats.m_level = i;
     if (i > olevel)
     {
         add = roll(i - olevel, 10);
-        stats.max_hp += add;
+        m_stats.m_max_hp += add;
         increase_hp(add, false, false);
         if (game->options.use_exp_level_names())
             msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
@@ -346,10 +346,10 @@ void Hero::check_level()
     }
 }
 
-//raise_level: The guy just magically went up a level.
+//raise_level: The guy just magically went up a m_level.
 void Hero::raise_level()
 {
-    stats.m_exp = e_levels[stats.level - 1] + 1L;
+    m_stats.m_exp = e_levels[m_stats.m_level - 1] + 1L;
     check_level();
 }
 
@@ -361,13 +361,13 @@ void Hero::gain_experience(int exp)
 
 void Hero::reduce_level()
 {
-    --stats.level;
-    if (stats.level == 0) {
-        stats.m_exp = 0;
-        stats.level = 1;
+    --m_stats.m_level;
+    if (m_stats.m_level == 0) {
+        m_stats.m_exp = 0;
+        m_stats.m_level = 1;
     }
     else {
-        stats.m_exp = e_levels[stats.level - 1] + 1;
+        m_stats.m_exp = e_levels[m_stats.m_level - 1] + 1;
     }
 }
 
@@ -382,8 +382,8 @@ bool Hero::can_see_monster(Monster *monster)
     if (monster->is_invisible() && !sees_invisible())
         return false;
 
-    if (distance(monster->pos, pos) >= LAMP_DIST &&
-        (monster->room != room || monster->room->is_dark() || monster->room->is_maze()))
+    if (distance(monster->m_position, m_position) >= LAMP_DIST &&
+        (monster->m_room != m_room || monster->m_room->is_dark() || monster->m_room->is_maze()))
         return false;
 
     //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
@@ -403,10 +403,10 @@ int Hero::can_see(Coord p)
     if (is_blind())
         return false;
     //if the coordinate is close.
-    if (distance(p, pos) < LAMP_DIST)
+    if (distance(p, m_position) < LAMP_DIST)
         return true;
-    //if the coordinate is in the same room as the hero, and the room is lit
-    return (room == get_room_from_position(p) && !room->is_dark());
+    //if the coordinate is in the same m_room as the hero, and the m_room is lit
+    return (m_room == get_room_from_position(p) && !m_room->is_dark());
 }
 
 void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
@@ -424,7 +424,7 @@ void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
         if (!thrown)
         {
             if (--weapon->count == 0) {
-                pack.remove(weapon);
+                m_pack.remove(weapon);
                 delete weapon;
             }
             set_current_weapon(NULL);
@@ -529,21 +529,21 @@ void Hero::set_current_armor(Armor* armor)
 int Hero::get_pack_size()
 {
     int count = 0;
-    for (auto it = pack.begin(); it != pack.end(); ++it) {
+    for (auto it = m_pack.begin(); it != m_pack.end(); ++it) {
         Item* item = *it;
         count += item->group ? 1 : item->count;
     }
     return count;
 }
 
-//add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+//add_to_pack: Pick up an object and add it to the m_pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
 void Hero::add_to_pack(Item *obj, bool silent)
 {
     bool from_floor = false;
     if (!obj)
     {   
         from_floor = true;
-        obj = find_obj(pos, true);
+        obj = find_obj(m_position, true);
         if (!obj)
             return;
     }
@@ -557,7 +557,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
         for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
             Monster* monster = *it;
             if (monster->m_destination && (*monster->m_destination == obj->pos))
-                monster->m_destination = &pos;
+                monster->m_destination = &m_position;
         }
     }
 
@@ -572,9 +572,9 @@ void Hero::add_to_pack(Item *obj, bool silent)
 
 bool Hero::add_to_list(Item** obj, bool from_floor)
 {
-    auto it = pack.begin();
+    auto it = m_pack.begin();
 
-    //Link it into the pack.  Search the pack for a object of similar type
+    //Link it into the m_pack.  Search the m_pack for a object of similar type
     //if there isn't one, stuff it at the beginning, if there is, look for one
     //that is exactly the same and just increment the count if there is.
     //Food is always put at the beginning for ease of access, but it
@@ -583,17 +583,17 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     //increment the count.
     if ((*obj)->group)
     {
-        for (auto it = pack.begin(); it != pack.end(); ++it) {
+        for (auto it = m_pack.begin(); it != m_pack.end(); ++it) {
             Item* op = *it;
             if (op->group == (*obj)->group)
             {
-                //Put it in the pack and notify the user
+                //Put it in the m_pack and notify the user
                 op->count += (*obj)->count;
                 if (from_floor) {
-                    byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
+                    byte floor = (m_room->is_gone()) ? PASSAGE : FLOOR;
                     game->level().items.remove((*obj));
-                    game->screen().mvaddch(pos, floor);
-                    game->level().set_tile(pos, floor);
+                    game->screen().mvaddch(m_position, floor);
+                    game->level().set_tile(m_position, floor);
                 }
                 delete *obj;
                 *obj = op;
@@ -602,7 +602,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
         }
     }
 
-    //Check if there is room
+    //Check if there is m_room
     if (get_pack_size() >= MAXPACK - 1) {
         msg("you can't carry anything else");
         return false;
@@ -612,11 +612,11 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     if (is_scare_monster_scroll(*obj)) {
         if ((*obj)->is_found())
         {
-            byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
+            byte floor = (m_room->is_gone()) ? PASSAGE : FLOOR;
             game->level().items.remove(*obj);
             delete *obj;
-            game->screen().mvaddch(pos, floor);
-            game->level().set_tile(pos, floor);
+            game->screen().mvaddch(m_position, floor);
+            game->level().set_tile(m_position, floor);
             msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
             return false;
         }
@@ -624,30 +624,30 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     }
 
     if (from_floor) {
-        byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
+        byte floor = (m_room->is_gone()) ? PASSAGE : FLOOR;
         game->level().items.remove(*obj);
-        game->screen().mvaddch(pos, floor);
-        game->level().set_tile(pos, floor);
+        game->screen().mvaddch(m_position, floor);
+        game->level().set_tile(m_position, floor);
     }
 
     //Search for an object of the same type
     bool found_type = false;
-    for (; it != pack.end(); ++it) {
+    for (; it != m_pack.end(); ++it) {
         if ((*it)->type == (*obj)->type) {
             found_type = true;
             break;
         }
     }
-    //Put it at the end of the pack since it is a new type
+    //Put it at the end of the m_pack since it is a new type
     if (!found_type) {
-        ((*obj)->type == FOOD) ? pack.push_front(*obj) :
-            pack.push_back(*obj);
+        ((*obj)->type == FOOD) ? m_pack.push_front(*obj) :
+            m_pack.push_back(*obj);
         return true;
     }
 
     //Search for an object which is exactly the same
     bool exact = false;
-    for (; it != pack.end(); ++it) {
+    for (; it != m_pack.end(); ++it) {
         if ((*it)->type != (*obj)->type)
             break;
         if ((*it)->which == (*obj)->which) {
@@ -664,11 +664,11 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
         return true;
     }
 
-    pack.insert(it, *obj);
+    m_pack.insert(it, *obj);
     return true;
 }
 
-//pick_up_gold: Add gold to the pack
+//pick_up_gold: Add gold to the m_pack
 void Hero::pick_up_gold(int value)
 {
     adjust_purse(value);
@@ -677,7 +677,7 @@ void Hero::pick_up_gold(int value)
 
 bool Hero::has_amulet()
 {
-    for (auto i = pack.begin(); i != pack.end(); ++i) {
+    for (auto i = m_pack.begin(); i != m_pack.end(); ++i) {
         if ((*i)->type == AMULET)
             return true;
     }

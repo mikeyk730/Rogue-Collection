@@ -41,7 +41,7 @@ int new_slime(Monster *slime)
 
     ret = 0;
     slime->set_dirty(true);
-    if (plop_monster((ty = slime->pos.y), (tx = slime->pos.x), &sp) == 0)
+    if (plop_monster((ty = slime->m_position.y), (tx = slime->m_position.x), &sp) == 0)
     {
         //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.
         for (y = ty - 1; y <= ty + 1; y++)
@@ -69,7 +69,7 @@ bool plop_monster(int r, int c, Coord *cp)
         {
             Coord pos = { x, y };
             //Don't put a monster on top of the player.
-            if (pos == game->hero().pos || offmap({ x,y }))
+            if (pos == game->hero().m_position || offmap({ x,y }))
                 continue;
             //Or anything else nasty
             if (step_ok(ch = game->level().get_tile_or_monster(pos)))//todo:bug: on mimic?

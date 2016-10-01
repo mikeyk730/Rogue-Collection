@@ -98,12 +98,12 @@ void display_miss_msg(const char *er, const char *ee)
 //save_throw: See if a creature save against something
 int save_throw(int which, Agent *monster)
 {
-    int need = 14 + which - monster->stats.level / 2;
+    int need = 14 + which - monster->m_stats.m_level / 2;
     int r = roll(1, 20);
     bool save(r >= need);
 
     std::ostringstream ss;
-    ss << "1d20 save throw " << (save ? "success" : "failed") << " " << r << " ? " << need << " (14+w:" << which << "-lvl:" << monster->stats.level << "/2)";
+    ss << "1d20 save throw " << (save ? "success" : "failed") << " " << r << " ? " << need << " (14+w:" << which << "-lvl:" << monster->m_stats.m_level << "/2)";
     game->log("battle", ss.str());
 
     return save;
@@ -135,7 +135,7 @@ int str_plus(unsigned int str)
     return add;
 }
 
-//add_dam: Compute additional damage done for exceptionally high or low strength
+//add_dam: Compute additional m_damage done for exceptionally high or low strength
 int add_dam(unsigned int str)
 {
     int add = 6;
@@ -160,11 +160,11 @@ void display_throw_msg(Item *item, const char *name, char *does, char *did)
 //remove: Remove a monster from the screen
 void remove_monster(Monster* monster, bool waskill)
 {
-    Coord* monster_pos = &monster->pos;
-    for (auto it = monster->pack.begin(); it != monster->pack.end();) {
+    Coord* monster_pos = &monster->m_position;
+    for (auto it = monster->m_pack.begin(); it != monster->m_pack.end();) {
         Item* obj = *(it++);
-        obj->pos = monster->pos;
-        monster->pack.remove(obj);
+        obj->pos = monster->m_position;
+        monster->m_pack.remove(obj);
         if (waskill)
             fall(obj, false);
         else
@@ -195,7 +195,7 @@ void killed_by_hero(Monster* monster, bool print)
         if (save(VS_MAGIC))
             value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();
         Item *gold = new Gold(value);
-        monster->pack.push_front(gold);
+        monster->m_pack.push_front(gold);
     }
 
     if (print)

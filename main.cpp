@@ -76,7 +76,7 @@ int main(int argc, char **argv)
     init_things(); //Set up probabilities of things    
     setup();
     game->screen().drop_curtain();
-    game->level().new_level(false); //Draw current level
+    game->level().new_level(false); //Draw current m_level
     //Start up daemons and fuses
     daemon(doctor, 0);
     fuse(swander, 0, WANDER_TIME);
@@ -129,8 +129,8 @@ void playit(char *sname)
         game->screen().cursor(false);
     }
     else {
-        game->oldpos = game->hero().pos;
-        game->oldrp = get_room_from_position(game->hero().pos);
+        game->oldpos = game->hero().m_position;
+        game->oldrp = get_room_from_position(game->hero().m_position);
     }
 
     while (true)

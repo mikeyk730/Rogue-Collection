@@ -40,7 +40,7 @@ Coord west(Coord p)
     return{ p.x - 1, p.y };
 }
 
-//conn: Draw a corridor from a room in a certain direction.
+//conn: Draw a corridor from a m_room in a certain direction.
 void conn(int r1, int r2)
 {
     struct Room *room_from, *room_to;
@@ -63,8 +63,8 @@ void conn(int r1, int r2)
     //Set up the movement variables, in two cases: first drawing one down.
     if (direc == 'd')
     {
-        rmt = rm + 3; //room # of m_destination
-        room_to = &rooms[rmt]; //room pointer of m_destination
+        rmt = rm + 3; //m_room # of m_destination
+        room_to = &rooms[rmt]; //m_room pointer of m_destination
         del.x = 0; //direction of move
         del.y = 1;
         //If we are drawing from/to regular or maze rooms, we have to pick the spot we draw from/to
@@ -162,16 +162,16 @@ void conn(int r1, int r2)
     }
 }
 
-//do_passages: Draw all the passages on a level.
+//do_passages: Draw all the passages on a m_level.
 void do_passages()
 {
     int i, j;
     int roomcount;
     static struct rdes
     {
-        char conn[MAXROOMS]; //possible to connect to room i?
-        char isconn[MAXROOMS]; //connection been made to room i?
-        char ingraph; //this room in graph already?
+        char conn[MAXROOMS]; //possible to connect to m_room i?
+        char isconn[MAXROOMS]; //connection been made to m_room i?
+        char ingraph; //this m_room in graph already?
     } rdes[MAXROOMS] =
     {
       { {0, 1, 0, 1, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0, 0}, 0},
@@ -186,27 +186,27 @@ void do_passages()
     };
     struct rdes *r1, *r2;
 
-    //reinitialize room graph description
+    //reinitialize m_room graph description
     for (r1 = rdes; r1 < &rdes[MAXROOMS]; r1++)
     {
         for (j = 0; j < MAXROOMS; j++) r1->isconn[j] = false;
         r1->ingraph = false;
     }
-    //starting with one room, connect it to a random adjacent room and then pick a new room to start with.
+    //starting with one m_room, connect it to a random adjacent m_room and then pick a new m_room to start with.
     roomcount = 1;
     r1 = &rdes[rnd(MAXROOMS)];
     r1->ingraph = true;
     do
     {
-        //find a room to connect with
+        //find a m_room to connect with
         j = 0;
         for (i = 0; i < MAXROOMS; i++) if (r1->conn[i] && !rdes[i].ingraph && rnd(++j) == 0) r2 = &rdes[i];
-        //if no adjacent rooms are outside the graph, pick a new room to look from
+        //if no adjacent rooms are outside the graph, pick a new m_room to look from
         if (j == 0)
         {
             do r1 = &rdes[rnd(MAXROOMS)]; while (!r1->ingraph);
         }
-        //otherwise, connect new room to the graph, and draw a tunnel to it
+        //otherwise, connect new m_room to the graph, and draw a tunnel to it
         else
         {
             r2->ingraph = true;
@@ -221,8 +221,8 @@ void do_passages()
     //attempt to add passages to the graph a random number of times so that there isn't always just one unique passage through it.
     for (roomcount = rnd(5); roomcount > 0; roomcount--)
     {
-        r1 = &rdes[rnd(MAXROOMS)]; //a random room to look from
-        //find an adjacent room not already connected
+        r1 = &rdes[rnd(MAXROOMS)]; //a random m_room to look from
+        //find an adjacent m_room not already connected
         j = 0;
         for (i = 0; i < MAXROOMS; i++) if (r1->conn[i] && !r1->isconn[i] && rnd(++j) == 0) r2 = &rdes[i];
         //if there is one, connect it and look for the next added passage
@@ -238,7 +238,7 @@ void do_passages()
     passnum();
 }
 
-//door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
+//door: Add a door or possibly a secret door.  Also enters the door in the exits array of the m_room.
 void add_door(struct Room *rm, Coord *cp)
 {
     int xit;

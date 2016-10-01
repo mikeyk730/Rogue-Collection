@@ -21,7 +21,7 @@
 //doctor: A healing daemon that restores hit points after rest
 void doctor()
 {
-    int lvl = game->hero().stats.level;
+    int lvl = game->hero().m_stats.m_level;
     int original_hp = game->hero().get_hp();
 
     game->turns_since_heal++;
@@ -82,7 +82,7 @@ void unsee()
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
         th = *it;
         if (th->is_invisible() && game->hero().can_see_monster(th) && th->has_tile_beneath())
-            game->screen().mvaddch(th->pos, th->tile_beneath());
+            game->screen().mvaddch(th->m_position, th->tile_beneath());
     }
     game->hero().set_sees_invisible(false);
 }
@@ -94,8 +94,8 @@ void sight()
     {
         extinguish(sight);
         game->hero().set_blind(false);
-        if (!game->hero().room->is_gone())
-            enter_room(game->hero().pos);
+        if (!game->hero().m_room->is_gone())
+            enter_room(game->hero().m_position);
         msg("the veil of darkness lifts");
     }
 }
@@ -130,7 +130,7 @@ void runners()
         if (!monster->is_held() && monster->is_running())
         {
             Monster* victim = 0;
-            int dist = distance(game->hero().pos, monster->pos);
+            int dist = distance(game->hero().m_position, monster->m_position);
             if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->turn) {
                 victim = monster->do_chase();
                 if (victim == monster) {
@@ -149,7 +149,7 @@ void runners()
             }
 
             // flying monsters get an extra turn to close the distance
-            dist = distance(game->hero().pos, monster->pos);
+            dist = distance(game->hero().m_position, monster->m_position);
             if (!victim && monster->is_flying() && dist > 3) {
                 Monster* victim = monster->do_chase();
                 if (victim == monster) {

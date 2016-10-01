@@ -60,11 +60,11 @@ void look(bool wakeup)
     int sy, sx, sumhero, diffhero;
     const int COLS = game->screen().columns();
 
-    room = game->hero().room;
-    pfl = game->level().get_flags(game->hero().pos);
-    pch = game->level().get_tile(game->hero().pos);
+    room = game->hero().m_room;
+    pfl = game->level().get_flags(game->hero().m_position);
+    pch = game->level().get_tile(game->hero().m_position);
     //if the hero has moved
-    if (!equal(game->oldpos, game->hero().pos))
+    if (!equal(game->oldpos, game->hero().m_position))
     {
         if (!game->hero().is_blind())
         {
@@ -72,7 +72,7 @@ void look(bool wakeup)
                 for (y = game->oldpos.y - 1; y <= (game->oldpos.y + 1); y++)
                 {
                     Coord pos = { x, y };
-                    if ((pos == game->hero().pos) || offmap(pos)) continue;
+                    if ((pos == game->hero().m_position) || offmap(pos)) continue;
                     game->screen().move(y, x);
                     ch = game->screen().curch();
                     if (ch == FLOOR)
@@ -89,16 +89,16 @@ void look(bool wakeup)
                     }
                 }
         }
-        game->oldpos = game->hero().pos;
+        game->oldpos = game->hero().m_position;
         game->oldrp = room;
     }
-    ey = game->hero().pos.y + 1;
-    ex = game->hero().pos.x + 1;
-    sx = game->hero().pos.x - 1;
-    sy = game->hero().pos.y - 1;
+    ey = game->hero().m_position.y + 1;
+    ex = game->hero().m_position.x + 1;
+    sx = game->hero().m_position.x - 1;
+    sy = game->hero().m_position.y - 1;
     if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && game->modifiers.is_running()) {
-        sumhero = game->hero().pos.y + game->hero().pos.x;
-        diffhero = game->hero().pos.y - game->hero().pos.x;
+        sumhero = game->hero().m_position.y + game->hero().m_position.x;
+        diffhero = game->hero().m_position.y - game->hero().m_position.x;
     }
     for (y = sy; y <= ey; y++) if (y > 0 && y < maxrow()) {
         for (x = sx; x <= ex; x++)
@@ -106,9 +106,9 @@ void look(bool wakeup)
             if (x <= 0 || x >= COLS) continue;
             if (!game->hero().is_blind())
             {
-                if (y == game->hero().pos.y && x == game->hero().pos.x) continue;
+                if (y == game->hero().m_position.y && x == game->hero().m_position.x) continue;
             }
-            else if (y != game->hero().pos.y || x != game->hero().pos.x) continue;
+            else if (y != game->hero().m_position.y || x != game->hero().m_position.x) continue;
             //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
             fp = game->level().get_flags({ x, y });
             ch = game->level().get_tile({ x, y });
@@ -156,11 +156,11 @@ void look(bool wakeup)
                     switch (ch)
                     {
                     case DOOR:
-                        if (x == game->hero().pos.x || y == game->hero().pos.y)
+                        if (x == game->hero().m_position.x || y == game->hero().m_position.y)
                             game->modifiers.m_running = false;
                         break;
                     case PASSAGE:
-                        if (x == game->hero().pos.x || y == game->hero().pos.y)
+                        if (x == game->hero().m_position.x || y == game->hero().m_position.y)
                             passcount++;
                         break;
                     case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
@@ -174,9 +174,9 @@ void look(bool wakeup)
     }
     if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && passcount > 1)
         game->modifiers.m_running = false;
-    game->screen().move(game->hero().pos.y, game->hero().pos.x);
+    game->screen().move(game->hero().m_position.y, game->hero().m_position.x);
     //todo:check logic
-    if ((game->level().is_passage(game->hero().pos)) || (game->was_trapped > 1) || (game->level().is_maze(game->hero().pos)))
+    if ((game->level().is_passage(game->hero().m_position)) || (game->was_trapped > 1) || (game->level().is_maze(game->hero().m_position)))
         game->screen().standout();
     game->screen().addch(PLAYER);
     game->screen().standend();
@@ -223,7 +223,7 @@ int add_haste(bool potion)
     }
 }
 
-//aggravate_monsters: Aggravate all the monsters on this level
+//aggravate_monsters: Aggravate all the monsters on this m_level
 void aggravate_monsters()
 {
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster *monster) {
@@ -437,23 +437,23 @@ void search()
     if (game->hero().is_blind())
         return;
 
-    int ey = game->hero().pos.y + 1;
-    int ex = game->hero().pos.x + 1;
-    for (int y = game->hero().pos.y - 1; y <= ey; y++) {
-        for (int x = game->hero().pos.x - 1; x <= ex; x++)
+    int ey = game->hero().m_position.y + 1;
+    int ex = game->hero().m_position.x + 1;
+    for (int y = game->hero().m_position.y - 1; y <= ey; y++) {
+        for (int x = game->hero().m_position.x - 1; x <= ex; x++)
         {
             Coord pos = { x, y };
-            if ((pos == game->hero().pos) || offmap(pos))
+            if ((pos == game->hero().m_position) || offmap(pos))
                 continue;
             game->level().search(pos);
         }
     }
 }
 
-//go_down_stairs: He wants to go down a level
+//go_down_stairs: He wants to go down a m_level
 void go_down_stairs()
 {
-    if (game->level().get_tile(game->hero().pos) != STAIRS && !game->wizard().jump_levels())
+    if (game->level().get_tile(game->hero().m_position) != STAIRS && !game->wizard().jump_levels())
         msg("I see no way down");
     else {
         next_level();
@@ -461,10 +461,10 @@ void go_down_stairs()
     }
 }
 
-//go_up_stairs: He wants to go up a level
+//go_up_stairs: He wants to go up a m_level
 void go_up_stairs()
 {
-    if (game->level().get_tile(game->hero().pos) == STAIRS || game->wizard().jump_levels()) {
+    if (game->level().get_tile(game->hero().m_position) == STAIRS || game->wizard().jump_levels()) {
         if (game->hero().has_amulet() || game->wizard().jump_levels()) {
             if (prev_level() == 0)
                 total_winner();

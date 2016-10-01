@@ -184,7 +184,7 @@ Item* create_stick()
 
 Monster* get_monster_in_direction(Coord dir, bool check_distant)
 {
-    Coord pos = game->hero().pos + dir;
+    Coord pos = game->hero().m_position + dir;
     bool throws_affect_mimics(game->options.throws_affect_mimics());
     while (check_distant && step_ok(game->level().get_tile_or_monster(pos, throws_affect_mimics))) {
         pos = pos + dir;
@@ -204,8 +204,8 @@ struct MagicMissile : public Item
         m_launcher = NONE;
 
         if (!game->options.use_throw_damage()) {
-            //mdk: this was a hack to get magic missles to use throw damage in the fight code.
-            //it's not needed with my change to use throw damage.
+            //mdk: this was a hack to get magic missles to use throw m_damage in the fight code.
+            //it's not needed with my change to use throw m_damage.
             if (game->hero().get_current_weapon() != NULL) {
                 m_launcher = game->hero().get_current_weapon()->which;
             }
@@ -236,23 +236,23 @@ struct MagicMissile : public Item
 
 bool Stick::zap_light(Coord dir) 
 {
-    //Ready Kilowatt wand.  Light up the room
+    //Ready Kilowatt wand.  Light up the m_room
     if (game->hero().is_blind()) 
         msg("you feel a warm glow around you");
     else
     {
         discover();
-        if (game->hero().room->is_gone()) 
+        if (game->hero().m_room->is_gone()) 
             msg("the corridor glows and then fades");
         else 
             msg("the room is lit by a shimmering blue light");
     }
 
-    if (!game->hero().room->is_gone())
+    if (!game->hero().m_room->is_gone())
     {
-        game->hero().room->set_dark(false);
-        //Light the room and put the player back up
-        enter_room(game->hero().pos);
+        game->hero().m_room->set_dark(false);
+        //Light the m_room and put the player back up
+        enter_room(game->hero().m_position);
     }
 
     return true;
@@ -277,21 +277,21 @@ bool Stick::zap_striking(Coord dir)
 
 bool Stick::zap_lightning(Coord dir)
 {
-    fire_bolt(&game->hero().pos, &dir, "bolt");
+    fire_bolt(&game->hero().m_position, &dir, "bolt");
     discover();
     return true;
 }
 
 bool Stick::zap_fire(Coord dir)
 {
-    fire_bolt(&game->hero().pos, &dir, "flame");
+    fire_bolt(&game->hero().m_position, &dir, "flame");
     discover();
     return true;
 }
 
 bool Stick::zap_cold(Coord dir)
 {
-    fire_bolt(&game->hero().pos, &dir, "ice");
+    fire_bolt(&game->hero().m_position, &dir, "ice");
     discover();
     return true;
 }
@@ -306,7 +306,7 @@ bool Stick::zap_polymorph(Coord dir)
     if (monster->can_hold())
         game->hero().set_is_held(false);
 
-    //restore the level tile, as the new monster may be invisible
+    //restore the m_level tile, as the new monster may be invisible
     Coord p = monster->position();
     if (game->hero().can_see_monster(monster))
         game->screen().mvaddch(p, game->level().get_tile(p));
@@ -314,14 +314,14 @@ bool Stick::zap_polymorph(Coord dir)
     //create a random monster
     Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, get_level());
     new_monster->set_tile_beneath(monster->tile_beneath());
-    new_monster->pack = monster->pack;
+    new_monster->m_pack = monster->m_pack;
     if (new_monster->type != monster->type)
         discover();
     if (game->hero().can_see_monster(new_monster))
         game->screen().mvaddch(p, new_monster->type);
 
     //the monster chases the player
-    new_monster->start_run(&game->hero().pos);
+    new_monster->start_run(&game->hero().m_position);
 
     //destroy the original
     game->level().monsters.remove(monster);
@@ -377,7 +377,7 @@ bool Stick::zap_slow_monster(Coord dir)
 
 bool Stick::zap_drain_life(Coord dir) 
 {
-    //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
+    //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the m_room (or next to hero if he is in a passage)
     if (game->hero().get_hp() < 2) {
         msg("you are too weak to use it");
         return false;
@@ -406,14 +406,14 @@ bool Stick::zap_teleport_away(Coord dir)
     Coord new_pos;
     monster->invalidate_tile_beneath();
     find_empty_location(&new_pos, true);
-    monster->pos = new_pos;
+    monster->m_position = new_pos;
 
     //the monster can no longer hold the player
     if (monster->can_hold())
         game->hero().set_is_held(false);
 
     //the monster chases the player
-    monster->start_run(&game->hero().pos);
+    monster->start_run(&game->hero().m_position);
 
     return true;
 }
@@ -429,7 +429,7 @@ bool Stick::zap_teleport_to(Coord dir)
         game->screen().mvaddch(monster->position(), monster->tile_beneath());
 
     //move the monster to beside the player
-    monster->pos = game->hero().pos + dir;
+    monster->m_position = game->hero().m_position + dir;
 
     //mdk:bugfix: originally zapping a flytrap would release the hold,
     //but this doesn't make sense
@@ -438,7 +438,7 @@ bool Stick::zap_teleport_to(Coord dir)
         game->hero().set_is_held(false);
 
     //the monster chases the player
-    monster->start_run(&game->hero().pos);
+    monster->start_run(&game->hero().m_position);
 
     return true;
 }
@@ -458,7 +458,7 @@ bool Stick::zap_cancellation(Coord dir)
     monster->reveal_disguise();
 
     //the monster chases the player
-    monster->start_run(&game->hero().pos);
+    monster->start_run(&game->hero().m_position);
 
     return true;
 }
@@ -485,7 +485,7 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
             game->hero().set_is_held(false);
 
         //the monster chases the player
-        monster->start_run(&game->hero().pos);
+        monster->start_run(&game->hero().m_position);
     }
     return true;
 }
@@ -540,15 +540,15 @@ void drain()
 
     //First count how many things we need to spread the hit points among
     cnt = 0;
-    if (game->level().get_tile(game->hero().pos) == DOOR)
-        room = game->level().get_passage(game->hero().pos);
+    if (game->level().get_tile(game->hero().m_position) == DOOR)
+        room = game->level().get_passage(game->hero().m_position);
     else room = NULL;
-    in_passage = game->hero().room->is_gone();
+    in_passage = game->hero().m_room->is_gone();
     dp = drainee;
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
         monster = *it;
-        if (monster->room == game->hero().room || monster->room == room ||
-            (in_passage && game->level().get_tile(monster->pos) == DOOR && game->level().get_passage(monster->pos) == game->hero().room)) {
+        if (monster->m_room == game->hero().m_room || monster->m_room == room ||
+            (in_passage && game->level().get_tile(monster->m_position) == DOOR && game->level().get_passage(monster->m_position) == game->hero().m_room)) {
             *dp++ = monster;
         }
     }
@@ -711,7 +711,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
                 }
             }
 
-            else if (hero_is_target && equal(bolt->pos, game->hero().pos))
+            else if (hero_is_target && equal(bolt->pos, game->hero().m_position))
             {
                 hero_is_target = false;
                 changed = !changed;
@@ -745,7 +745,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
 }
 
 Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name) {
-    bool from_player(start == &game->hero().pos);
+    bool from_player(start == &game->hero().m_position);
     return fire_bolt(start, dir, new MagicBolt(name, from_player)); //todo:who owns memory?
 }
 
@@ -804,8 +804,8 @@ Stick::Stick(int which)
     {
     case WS_HIT:
         hit_plus = 100;
-        //mdk: i don't know why damage info is set, as they are overwritten the first time you
-        //zap a monster.  I don't know if the intention was to have separate zap/melee stats,
+        //mdk: i don't know why m_damage info is set, as they are overwritten the first time you
+        //zap a monster.  I don't know if the intention was to have separate zap/melee m_stats,
         //but, as is, it's just odd.
         damage_plus = 3;
         damage = "1d8";

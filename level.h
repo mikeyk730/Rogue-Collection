@@ -7,10 +7,10 @@ struct Room;
 struct Level {
     void new_level(int do_implode);
 
-    //put_things: Put potions and scrolls on this level
+    //put_things: Put potions and scrolls on this m_level
     void put_things();
 
-    //treas_room: Add a treasure room
+    //treas_room: Add a treasure m_room
     void treas_room();
 
     void clear_level();
@@ -41,8 +41,8 @@ struct Level {
     void draw_char(Coord p);
 
 
-    std::list<Item*> items; //List of objects on this level
-    std::list<Monster*> monsters; //List of monsters on the level
+    std::list<Item*> items; //List of objects on this m_level
+    std::list<Monster*> monsters; //List of monsters on the m_level
 private:
     byte the_level[(MAXLINES - 3)*MAXCOLS];
     byte the_flags[(MAXLINES - 3)*MAXCOLS];

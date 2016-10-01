@@ -51,12 +51,12 @@ int diag_ok(const Coord orig_pos, const Coord new_pos)
 
 void finish_do_move(int fl)
 {
-    game->level().draw_char(game->hero().pos);
+    game->level().draw_char(game->hero().m_position);
     if ((fl&F_PASS) && (game->level().get_tile(game->oldpos) == DOOR || (game->level().is_maze(game->oldpos))))
         leave_room(new_position);
     if ((fl&F_MAZE) && (game->level().is_maze(game->oldpos)) == 0)
         enter_room(new_position);
-    game->hero().pos = new_position;
+    game->hero().m_position = new_position;
 }
 
 bool is_passage_or_door(Coord p)
@@ -67,11 +67,11 @@ bool is_passage_or_door(Coord p)
 bool continue_vertical() {
     int dy;
 
-    Coord n = north(game->hero().pos);
-    Coord s = south(game->hero().pos);
+    Coord n = north(game->hero().m_position);
+    Coord s = south(game->hero().m_position);
 
-    bool up = (game->hero().pos.y > 1 && is_passage_or_door(n));
-    bool down = (game->hero().pos.y < maxrow() - 1 && is_passage_or_door(s));
+    bool up = (game->hero().m_position.y > 1 && is_passage_or_door(n));
+    bool down = (game->hero().m_position.y < maxrow() - 1 && is_passage_or_door(s));
 
     if (!(up^down))
         return false;
@@ -85,8 +85,8 @@ bool continue_vertical() {
         dy = 1;
     }
 
-    new_position.y = game->hero().pos.y + dy;
-    new_position.x = game->hero().pos.x;
+    new_position.y = game->hero().m_position.y + dy;
+    new_position.x = game->hero().m_position.x;
     return true;
 }
 
@@ -95,11 +95,11 @@ bool continue_horizontal()
     int dx;
     const int COLS = game->screen().columns();
 
-    Coord w = west(game->hero().pos);
-    Coord e = east(game->hero().pos);
+    Coord w = west(game->hero().m_position);
+    Coord e = east(game->hero().m_position);
 
-    bool left = (game->hero().pos.x > 1 && is_passage_or_door(w));
-    bool right = (game->hero().pos.x < COLS - 2 && is_passage_or_door(e));
+    bool left = (game->hero().m_position.x > 1 && is_passage_or_door(w));
+    bool right = (game->hero().m_position.x < COLS - 2 && is_passage_or_door(e));
 
     if (!(left^right))
         return false;
@@ -113,8 +113,8 @@ bool continue_horizontal()
         dx = 1;
     }
 
-    new_position.y = game->hero().pos.y;
-    new_position.x = game->hero().pos.x + dx;
+    new_position.y = game->hero().m_position.y;
+    new_position.x = game->hero().m_position.x + dx;
     return true;
 }
 
@@ -122,7 +122,7 @@ bool this_move_counts; //todo: remove
 
 bool do_hit_boundary()
 {
-    if (game->modifiers.is_running() && is_gone(game->hero().room) && !game->hero().is_blind())
+    if (game->modifiers.is_running() && is_gone(game->hero().m_room) && !game->hero().is_blind())
     {
         switch (game->run_character)
         {
@@ -153,20 +153,20 @@ bool do_move_impl(bool can_pickup)
     //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
     if (offmap(new_position))
         return !do_hit_boundary();
-    if (!diag_ok(game->hero().pos, new_position)) {
+    if (!diag_ok(game->hero().m_position, new_position)) {
         this_move_counts = false;
         game->modifiers.m_running = false;
         return false;
     }
     //If you are running and the move does not get you anywhere stop running
-    if (game->modifiers.is_running() && equal(game->hero().pos, new_position)) {
+    if (game->modifiers.is_running() && equal(game->hero().m_position, new_position)) {
         this_move_counts = false;
         game->modifiers.m_running = false;
     }
     fl = game->level().get_flags(new_position);
     ch = game->level().get_tile_or_monster(new_position);
-    //When the hero is on the door do not allow him to run until he enters the room all the way
-    if ((game->level().get_tile(game->hero().pos) == DOOR) && (ch == FLOOR))
+    //When the hero is on the door do not allow him to run until he enters the m_room all the way
+    if ((game->level().get_tile(game->hero().m_position) == DOOR) && (ch == FLOOR))
         game->modifiers.m_running = false;
     if (!(fl&F_REAL) && ch == FLOOR) {
         ch = TRAP;
@@ -184,7 +184,7 @@ bool do_move_impl(bool can_pickup)
 
     case DOOR:
         game->modifiers.m_running = false;
-        if (game->level().is_passage(game->hero().pos))
+        if (game->level().is_passage(game->hero().m_position))
             enter_room(new_position);
         finish_do_move(fl);
         return false;
@@ -200,7 +200,7 @@ bool do_move_impl(bool can_pickup)
 
     case FLOOR:
         if (!(fl&F_REAL))
-            handle_trap(game->hero().pos);
+            handle_trap(game->hero().m_position);
         finish_do_move(fl);
         return false;
 
@@ -227,7 +227,7 @@ bool do_move(Coord delta, bool can_pickup)
 
     game->modifiers.m_first_move = false;
 
-    //if something went wrong, bail out on this level
+    //if something went wrong, bail out on this m_level
     if (game->invalid_position) {
         game->invalid_position = false;
         msg("the crack widens ... ");
@@ -247,7 +247,7 @@ bool do_move(Coord delta, bool can_pickup)
         rndmove(&game->hero(), &new_position);
     else
     {
-        new_position = game->hero().pos + delta;
+        new_position = game->hero().m_position + delta;
     }
 
     bool more;
@@ -259,7 +259,7 @@ bool do_move(Coord delta, bool can_pickup)
 }
 
 
-//door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
+//door_open: Called to illuminate a m_room.  If it is dark, remove anything that might move.
 void door_open(Room *room)
 {
     int j, k;
@@ -309,7 +309,7 @@ int handle_trap(Coord tc)
 
     case T_ARROW:
         game->log("battle", "Arrow trap 1d6 attack on player");
-        if (attempt_swing(game->hero().stats.level - 1, game->hero().stats.ac, 1))
+        if (attempt_swing(game->hero().m_stats.m_level - 1, game->hero().m_stats.m_ac, 1))
         {
             if (!game->hero().decrease_hp(roll(1, 6), true)) {
                 msg("an arrow killed you");
@@ -325,7 +325,7 @@ int handle_trap(Coord tc)
             if ((arrow = new Weapon(ARROW, 0, 0)) != NULL)
             {
                 arrow->count = 1;
-                arrow->pos = game->hero().pos;
+                arrow->pos = game->hero().m_position;
                 fall(arrow, false);
             }
             msg("an arrow shoots past you");
@@ -340,7 +340,7 @@ int handle_trap(Coord tc)
 
     case T_DART:
         game->log("battle", "Dart trap 1d4 attack on player");
-        if (attempt_swing(game->hero().stats.level + 1, game->hero().stats.ac, 1))
+        if (attempt_swing(game->hero().m_stats.m_level + 1, game->hero().m_stats.m_ac, 1))
         {
             if (!game->hero().decrease_hp(roll(1, 4), true)) {
                 msg("a poisoned dart killed you");
@@ -381,23 +381,23 @@ void rndmove(Agent *who, Coord *newmv)
     Item *obj;
     const int COLS = game->screen().columns();
 
-    y = newmv->y = who->pos.y + rnd(3) - 1;
-    x = newmv->x = who->pos.x + rnd(3) - 1;
+    y = newmv->y = who->m_position.y + rnd(3) - 1;
+    x = newmv->x = who->m_position.x + rnd(3) - 1;
     //Now check to see if that's a legal move.  If not, don't move. (I.e., bump into the wall or whatever)
-    if (y == who->pos.y && x == who->pos.x) return;
+    if (y == who->m_position.y && x == who->m_position.x) return;
     if ((y < 1 || y >= maxrow()) || (x < 0 || x >= COLS)) {
-        (*newmv) = who->pos;
+        (*newmv) = who->m_position;
         return;
     }
-    else if (!diag_ok(who->pos, *newmv)) {
-        (*newmv) = who->pos;
+    else if (!diag_ok(who->m_position, *newmv)) {
+        (*newmv) = who->m_position;
         return;
     }
     else
     {
         ch = game->level().get_tile_or_monster({ x, y });
         if (!step_ok(ch)) {
-            (*newmv) = who->pos;
+            (*newmv) = who->m_position;
             return;
         }
         if (ch == SCROLL)
@@ -408,7 +408,7 @@ void rndmove(Agent *who, Coord *newmv)
                     break;
             }
             if (is_scare_monster_scroll(obj)) {
-                (*newmv) = who->pos;
+                (*newmv) = who->m_position;
                 return;
             }
         }

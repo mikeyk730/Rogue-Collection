@@ -161,7 +161,7 @@ Monster* Level::monster_at(Coord p, bool include_disguised)
     Monster* monster;
     for (auto it = monsters.begin(); it != monsters.end(); ++it) {
         monster = *it;
-        if (monster->pos.x == p.x && monster->pos.y == p.y)
+        if (monster->m_position.x == p.x && monster->m_position.y == p.y)
         {
             if (monster->is_disguised() && !include_disguised)
                 return nullptr;
@@ -177,9 +177,9 @@ void Level::draw_char(Coord p)
 }
 
 
-#define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
-#define MAXTREAS  10 //maximum number of treasures in a treasure room
-#define MINTREAS  2 //minimum number of treasures in a treasure room
+#define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure m_room
+#define MAXTREAS  10 //maximum number of treasures in a treasure m_room
+#define MINTREAS  2 //minimum number of treasures in a treasure m_room
 #define MAXTRIES  10 //max number of tries to put down a monster
 
 void Level::new_level(int do_implode)
@@ -188,18 +188,18 @@ void Level::new_level(int do_implode)
     Agent *monster;
     Coord pos;
 
-    //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
+    //Monsters only get displayed when you move so start a m_level by having the poor guy rest. God forbid he lands next to a monster!
 
-    //Clean things off from last level
+    //Clean things off from last m_level
     clear_level();
 
-    //Free up the monsters on the last level
+    //Free up the monsters on the last m_level
     for (auto it = monsters.begin(); it != monsters.end(); ++it) {
         monster = *it;
-        free_item_list(monster->pack);
+        free_item_list(monster->m_pack);
     }
     free_agent_list(monsters);
-    //Throw away stuff left on the previous level (if anything)
+    //Throw away stuff left on the previous m_level (if anything)
     free_item_list(items);
 
     do_rooms(); //Draw rooms
@@ -236,21 +236,21 @@ void Level::new_level(int do_implode)
     }
     do
     {
-        find_empty_location(&game->hero().pos, true);
-    } while (!(get_flags(game->hero().pos) & F_REAL));  //don't place hero on a trap
+        find_empty_location(&game->hero().m_position, true);
+    } while (!(get_flags(game->hero().m_position) & F_REAL));  //don't place hero on a trap
 
     reset_msg_position();  //todo: rest probably belongs somewhere else
     //unhold when you go down just in case
     game->hero().set_is_held(false);
-    enter_room(game->hero().pos);
-    game->screen().mvaddch(game->hero().pos, PLAYER);
-    game->oldpos = game->hero().pos;
-    game->oldrp = game->hero().room;
+    enter_room(game->hero().m_position);
+    game->screen().mvaddch(game->hero().m_position, PLAYER);
+    game->oldpos = game->hero().m_position;
+    game->oldrp = game->hero().m_room;
     if (game->hero().detects_others())
         turn_see(false);
 }
 
-//put_things: Put potions and scrolls on this level
+//put_things: Put potions and scrolls on this m_level
 void Level::put_things()
 {
     int i = 0;
@@ -279,7 +279,7 @@ void Level::put_things()
             treas_room();
     }
 
-    //Do MAXOBJ attempts to put things on a level
+    //Do MAXOBJ attempts to put things on a m_level
     for (; i < MAXOBJ; i++) {
         if (rnd(100) < 35)
         {
@@ -294,7 +294,7 @@ void Level::put_things()
     }
 }
 
-//treas_room: Add a treasure room
+//treas_room: Add a treasure m_room
 void Level::treas_room()
 {
     int nm;
@@ -318,7 +318,7 @@ void Level::treas_room()
         items.push_front(item);
         set_tile(pos, item->type);
     }
-    //fill up room with monsters from the next level down
+    //fill up m_room with monsters from the next m_level down
     if ((nm = rnd(spots) + MINTREAS) < num_monst + 2) nm = num_monst + 2;
     spots = (room->size.y - 2)*(room->size.x - 2);
     if (nm > spots) nm = spots;
@@ -334,7 +334,7 @@ void Level::treas_room()
             monster = Monster::CreateMonster(randmonster(false, get_level() + 1), &pos, get_level() + 1);
             if (game->invalid_position)
                 debug("treasure roomm bailout");
-            monster->set_is_mean(true); //no sloughers in THIS room
+            monster->set_is_mean(true); //no sloughers in THIS m_room
             monster->give_pack();
 
         }

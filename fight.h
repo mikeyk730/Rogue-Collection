@@ -25,7 +25,7 @@ int save(int which);
 //str_plus: Compute bonus/penalties for strength on the "to hit" roll
 int str_plus(unsigned int str);
 
-//add_dam: Compute additional damage done for exceptionally high or low strength
+//add_dam: Compute additional m_damage done for exceptionally high or low strength
 int add_dam(unsigned int str);
 
 //display_throw_msg: A projectile hit or missed a monster

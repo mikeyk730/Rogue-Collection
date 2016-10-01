@@ -95,7 +95,7 @@ bool isfloor(byte c);
 
 //Various flag bits
 
-//Flags for level map
+//Flags for m_level map
 #define F_PASS   0x040 //is a passageway
 #define F_MAZE   0x020 //have seen this corridor before
 #define F_REAL   0x010 //what you see is what you get

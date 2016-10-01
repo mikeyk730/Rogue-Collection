@@ -26,7 +26,7 @@ Item* create_weapon();
 //throw_projectile: Fire a projectile in a given direction
 bool throw_projectile();
 
-//do_motion: Do the actual motion on the screen done by an object travelling across the room
+//do_motion: Do the actual motion on the screen done by an object travelling across the m_room
 void do_motion(Item *obj, Coord delta);
 
 //fall: Drop an item someplace around here.

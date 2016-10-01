@@ -109,7 +109,7 @@ bool drop()
     byte ch;
     Item *nobj, *op;
 
-    ch = game->level().get_tile(game->hero().pos);
+    ch = game->level().get_tile(game->hero().m_position);
     if (ch != FLOOR && ch != PASSAGE) {
         //mdk: trying to drop item into occupied space counts as turn
         msg("there is something there already");
@@ -122,7 +122,7 @@ bool drop()
     if (!can_drop(op, true)) 
         return true;
 
-    //Take it out of the pack
+    //Take it out of the m_pack
     if (op->count >= 2 && op->type != WEAPON)
     {
         op->count--;
@@ -131,10 +131,10 @@ bool drop()
         op = nobj;
     }
     else
-        game->hero().pack.remove(op);
-    //Link it into the level object list
+        game->hero().m_pack.remove(op);
+    //Link it into the m_level object list
     game->level().items.push_front(op);
-    op->pos = game->hero().pos;
+    op->pos = game->hero().m_position;
     game->level().set_tile(op->pos, op->type);
     msg("dropped %s", op->inventory_name(true).c_str());
 

@@ -36,7 +36,7 @@
 //whatis: What a certain object is
 void whatis()
 {
-    if (game->hero().pack.empty()) {
+    if (game->hero().m_pack.empty()) {
         msg("You don't have anything in your pack to identify");
         return;
     }
@@ -219,8 +219,8 @@ namespace
             ss << "exp:" << left << setw(5) << monster->experience() << " ";
             ss << "dmg:" << left << setw(4) << monster->damage_string();
             add_line("", ss.str().c_str(), "");
-            if (!monster->pack.empty()) {
-                add_debug_items(monster->pack, false, "    * %s");
+            if (!monster->m_pack.empty()) {
+                add_debug_items(monster->m_pack, false, "    * %s");
             }
         }
     }
