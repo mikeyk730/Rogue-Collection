@@ -385,15 +385,21 @@ void rndmove(Agent *who, Coord *newmv)
     x = newmv->x = who->pos.x + rnd(3) - 1;
     //Now check to see if that's a legal move.  If not, don't move. (I.e., bump into the wall or whatever)
     if (y == who->pos.y && x == who->pos.x) return;
-    if ((y < 1 || y >= maxrow()) || (x < 0 || x >= COLS))
-        goto bad;
-    else if (!diag_ok(who->pos, *newmv))
-        goto bad;
+    if ((y < 1 || y >= maxrow()) || (x < 0 || x >= COLS)) {
+        (*newmv) = who->pos;
+        return;
+    }
+    else if (!diag_ok(who->pos, *newmv)) {
+        (*newmv) = who->pos;
+        return;
+    }
     else
     {
         ch = game->level().get_tile_or_monster({ x, y });
-        if (!step_ok(ch))
-            goto bad;
+        if (!step_ok(ch)) {
+            (*newmv) = who->pos;
+            return;
+        }
         if (ch == SCROLL)
         {
             for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it) {
@@ -401,14 +407,10 @@ void rndmove(Agent *who, Coord *newmv)
                 if (y == obj->pos.y && x == obj->pos.x)
                     break;
             }
-            if (is_scare_monster_scroll(obj))
-                goto bad;
+            if (is_scare_monster_scroll(obj)) {
+                (*newmv) = who->pos;
+                return;
+            }
         }
     }
-    return;
-
-bad:
-
-    (*newmv) = who->pos;
-    return;
 }
