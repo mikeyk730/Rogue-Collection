@@ -243,6 +243,11 @@ const char *vowelstr(const char *str)
     }
 }
 
+std::string vowelstr(const std::string & str)
+{
+    return vowelstr(str.c_str());
+}
+
 //is_in_use: See if the object is one of the currently used items
 int is_in_use(Item *obj)
 {
