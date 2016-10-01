@@ -16,6 +16,8 @@
 #include "hero.h"
 #include "room.h"
 #include "monster.h"
+#include "weapons.h"
+#include "gold.h"
 
 Item *pack_obj(byte ch, byte *chp)
 {
@@ -41,11 +43,12 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
     for (auto it = game->hero().m_pack.begin(); it != game->hero().m_pack.end(); ++it, ch++)
     {
         Item* item = *it;
+        Weapon* weapon = dynamic_cast<Weapon*>(item);
         //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
         if (type && type != item->m_type &&
             !(type == CALLABLE && (item->m_type == SCROLL || item->m_type == POTION || item->m_type == RING || item->m_type == STICK)) &&
             !(type == WEAPON && item->m_type == POTION) &&
-            !(type == STICK && item->is_vorpalized() && item->get_charges())) //todo: does this work?
+            !(weapon && weapon->is_vorpalized() && item->get_charges())) //todo: does this work?
             continue;
         n_objs++;
         sprintf(inv_temp, "%c) %%s", ch);
@@ -148,13 +151,14 @@ void pick_up(byte ch)
         Room* room = game->hero().m_room;
         Coord pos = game->hero().position();
         Item* obj = find_obj(pos, true);
-        if (obj == NULL)
+        Gold* gold = dynamic_cast<Gold*>(obj);
+        if (gold == NULL)
             return;
 
-        game->hero().pick_up_gold(obj->get_gold_value());
+        game->hero().pick_up_gold(gold->get_gold_value());
         room->gold_val = 0;
-        game->level().items.remove(obj);
-        delete obj;
+        game->level().items.remove(gold);
+        delete gold;
 
         byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
         game->screen().mvaddch(pos, floor);

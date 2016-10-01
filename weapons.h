@@ -1,8 +1,6 @@
 #pragma once
 #include "item.h"
 
-#define NONE 100
-
 struct Monster;
 
 struct Weapon : public Item
@@ -13,10 +11,19 @@ struct Weapon : public Item
     virtual Item* Clone() const;
     virtual std::string Name() const;
     virtual std::string InventoryName() const;
+    virtual bool IsMagic() const;
     virtual bool IsEvil() const;
     virtual int Worth() const;
 
     bool zap_vorpalized_weapon(Coord dir);
+
+    void enchant_weapon();
+    void vorpalize();
+    bool is_vorpalized() const;
+    bool is_vorpalized_against(Monster* monster) const;
+    std::string get_vorpalized_name() const;
+
+    char enemy = 0;   //If it is enchanted, who it hates
 protected:
     std::string m_name;
 };

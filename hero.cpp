@@ -40,10 +40,10 @@ Hero::Hero() :
     init_player();
 }
 
-void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
+void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
     int* hit_plus, std::string* damage_string, int* damage_plus)
 {
-    if (weapon == NULL) {
+    if (object == NULL) {
         *damage_string = m_stats.m_damage;
         *damage_plus = 0;
         *hit_plus = 0;
@@ -52,25 +52,26 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
 
     //Drain a staff of striking
     //mdk: should this only happen when zapped?  currently happens during melee as well
-    if (weapon->m_type == STICK && weapon->m_which == WS_HIT)
+    if (object->m_type == STICK && object->m_which == WS_HIT)
     {
-        weapon->drain_striking();
+        object->drain_striking();
     }
 
-    *damage_string = weapon->get_damage();
-    *hit_plus = weapon->get_hit_plus();
-    *damage_plus = weapon->get_damage_plus();
+    *damage_string = object->get_damage();
+    *hit_plus = object->get_hit_plus();
+    *damage_plus = object->get_damage_plus();
 
-    //vorpally enchanted weapon adds +4,+4 against target
-    if (weapon->is_vorpalized_against(dynamic_cast<Monster*>(defender))) {
+    //vorpally enchanted object adds +4,+4 against target
+    Weapon* weapon = dynamic_cast<Weapon*>(object);
+    if (weapon && weapon->is_vorpalized_against(dynamic_cast<Monster*>(defender))) {
         *hit_plus += 4;
         *damage_plus += 4;
     }
 
     Item* current_weapon = get_current_weapon();
-    if (weapon == current_weapon)
+    if (object == current_weapon)
     {
-        //rings can boost the wielded weapon
+        //rings can boost the wielded object
         if (is_ring_on_hand(LEFT, R_ADDDAM))
             *damage_plus += get_ring(LEFT)->get_ring_level();
         else if (is_ring_on_hand(LEFT, R_ADDHIT))
@@ -86,14 +87,14 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
         //mdk: the original code never used throw damage except for arrows and crossbow bolts.
         //I've decided to use it for weapons that don't require a launcher too.  IS_MISL is
         //still meaningless.
-        if (game->options.use_throw_damage() && weapon->launcher() == NONE) {
-            *damage_string = weapon->get_throw_damage();
+        if (game->options.use_throw_damage() && object->launcher() == NONE) {
+            *damage_string = object->get_throw_damage();
         }
-        //if we've used the right weapon to launch the projectile, we use the throw 
+        //if we've used the right object to launch the projectile, we use the throw 
         //damage of the projectile, and get the plusses from the launcher.
-        else if (current_weapon && weapon->launcher() == current_weapon->m_which)
+        else if (current_weapon && object->launcher() == current_weapon->m_which)
         {
-            *damage_string = weapon->get_throw_damage();
+            *damage_string = object->get_throw_damage();
             *hit_plus += current_weapon->get_hit_plus();
             *damage_plus += current_weapon->get_damage_plus();
         }
@@ -386,9 +387,10 @@ bool Hero::can_see_monster(Monster *monster)
         (monster->m_room != m_room || monster->m_room->is_dark() || monster->m_room->is_maze()))
         return false;
 
-    //If we are seeing the enemy of a vorpally enchanted weapon for the first time, 
-    //give the player a hint as to what that weapon is good for.
-    Item* weapon = get_current_weapon();
+    //If we are seeing the enemy of a vorpally enchanted object for the first time, 
+    //give the player a hint as to what that object is good for.
+    Item* item = get_current_weapon();
+    Weapon* weapon = dynamic_cast<Weapon*>(item);
     if (weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
     {
         weapon->set_flashed();
@@ -700,10 +702,10 @@ int Hero::is_wearing_ring(int ring) const
     return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
 }
 
-//wield: Pull out a certain weapon
+//wield: Pull out a certain object
 bool Hero::wield()
 {
-    //mdk: trying to wield weapon while old one is cursed counts as turn
+    //mdk: trying to wield object while old one is cursed counts as turn
     if (!can_drop(get_current_weapon(), false)) {
         return true;
     }

@@ -2,11 +2,6 @@
 
 Amulet::Amulet() : Item(AMULET, 0)
 {
-    this->m_hit_plus = 0;
-    this->m_damage_plus = 0;
-    this->m_damage = "0d0";
-    this->m_throw_damage = "0d0";
-    this->armor_class = 11;
 }
 
 Item * Amulet::Clone() const
@@ -22,6 +17,11 @@ std::string Amulet::Name() const
 std::string Amulet::InventoryName() const
 {
     return "The Amulet of Yendor";
+}
+
+bool Amulet::IsMagic() const
+{
+    return true;
 }
 
 bool Amulet::IsEvil() const

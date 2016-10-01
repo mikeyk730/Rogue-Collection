@@ -22,12 +22,22 @@ std::string Gold::InventoryName() const
     return prbuf;
 }
 
+bool Gold::IsMagic() const
+{
+    return false;
+}
+
 bool Gold::IsEvil() const
 {
     return false;
 }
 
 int Gold::Worth() const
+{
+    return gold_value;
+}
+
+int Gold::get_gold_value() const
 {
     return gold_value;
 }

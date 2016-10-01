@@ -4,8 +4,7 @@
 #include "item.h"
 #include "agent.h"
 #include "rogue.h"
-#include "armor.h"
-#include "weapons.h"
+#include "rooms.h"
 
 Item::Item(int type, int which)
 {
@@ -59,33 +58,6 @@ void Item::randomize_damage()
     }
 }
 
-int Item::get_armor_class() const
-{
-    return armor_class;
-}
-
-int Item::armor_class_for_display() const
-{
-    int a = get_armor_class();
-    return (-((a)-11));
-}
-
-void Item::enchant_armor()
-{
-    armor_class--;
-    remove_curse();
-}
-
-void Item::weaken_armor()
-{
-    armor_class++;
-}
-
-int Item::get_gold_value() const
-{
-    return gold_value;
-}
-
 void Item::initialize(int type, int which)
 {
     this->m_type = type;
@@ -95,13 +67,10 @@ void Item::initialize(int type, int which)
     this->m_damage_plus = 0;
     this->m_damage = "0d0";
     this->m_throw_damage = "0d0";
-    this->armor_class = 11;
-    this->gold_value = 0;
     this->m_charges = 0;
     this->m_count = 1;
     this->m_group = 0;
     this->m_flags = 0;
-    this->enemy = 0;
 }
 
 bool Item::is_flag_set(short flag) const {
@@ -158,19 +127,24 @@ void Item::set_flashed() {
     m_flags |= DID_FLASH;
 }
 
-//is_magic: Returns true if an object radiates magic
-bool Item::is_magic()
+std::string Item::get_throw_damage() const
 {
-    switch (m_type)
-    {
-    case ARMOR:
-        return get_armor_class() != get_default_class(m_which);
-    case WEAPON:
-        return get_hit_plus() != 0 || get_damage_plus() != 0;
-    case POTION: case SCROLL: case STICK: case RING: case AMULET:
-        return true;
-    }
-    return false;
+    return m_throw_damage;
+}
+
+std::string Item::get_damage() const
+{
+    return m_damage;
+}
+
+char Item::launcher() const
+{
+    return m_launcher;
+}
+
+Room* Item::get_room()
+{
+    return get_room_from_position(m_position);
 }
 
 int does_item_group(int type)

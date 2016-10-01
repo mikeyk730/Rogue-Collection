@@ -74,6 +74,8 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 #define WS_CANCEL     13
 #define MAXSTICKS     14
 
+#define NONE 100
+
 struct Item
 {
     static Item* CreateItem();
@@ -87,6 +89,7 @@ public:
     virtual Item* Clone() const = 0;
     virtual std::string Name() const = 0;
     virtual std::string InventoryName() const = 0;
+    virtual bool IsMagic() const = 0;
     virtual bool IsEvil() const = 0;
     virtual int Worth() const = 0;
 
@@ -105,19 +108,13 @@ protected:
     char *m_throw_damage;            //Damage if thrown
     int m_hit_plus;                  //Plusses to hit
     int m_damage_plus;               //Plusses to damage
-    short armor_class;
-    short gold_value;
-    short m_charges;
+    short m_charges;                 //How many zaps the stick or weapon has
     short m_flags;                   //Information about objects
-    char enemy;                    //If it is enchanted, who it hates
 public:
     int m_group;                     //Group number for this object
 public:
     void discover();
     void call_it();
-
-    //is_magic: Returns true if an object radiates magic
-    bool is_magic();
 
     Coord position() const;
     void set_position(Coord p);
@@ -148,24 +145,10 @@ public:
     void drain_striking();
     void randomize_damage();
 
-    //armor-specific
-    int get_armor_class() const;
-    int armor_class_for_display() const;
-    void enchant_armor();
-    void weaken_armor();
-
-    //gold-specific
-    int get_gold_value() const;
-
     //weapon-specific functions
     int get_hit_plus() const;
     int get_damage_plus() const;
     void initialize_weapon(byte type);
-    void enchant_weapon();
-    void vorpalize();
-    bool is_vorpalized() const;
-    bool is_vorpalized_against(Monster* monster) const;
-    std::string get_vorpalized_name() const;
     std::string get_throw_damage() const;
     std::string get_damage() const;
     char launcher() const;

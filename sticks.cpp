@@ -224,6 +224,10 @@ struct MagicMissile : public Item
         return "magic missile";
     }
 
+    virtual bool IsMagic() const {
+        return true;
+    }
+
     virtual bool IsEvil() const { 
         return false; 
     }
@@ -830,6 +834,11 @@ std::string Stick::Name() const
 std::string Stick::InventoryName() const
 {
     return item_class()->get_inventory_name(this);
+}
+
+bool Stick::IsMagic() const
+{
+    return true;
 }
 
 bool Stick::IsEvil() const

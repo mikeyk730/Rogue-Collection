@@ -266,8 +266,9 @@ void Scroll::read_teleportation()
 
 void Scroll::read_enchant_weapon()
 {
-    Item* weapon = game->hero().get_current_weapon();
-    if (weapon == NULL || weapon->m_type != WEAPON) {
+    Item* item = game->hero().get_current_weapon();
+    Weapon* weapon = dynamic_cast<Weapon*>(item);
+    if (!weapon) {
         msg("you feel a strange sense of loss");
         return;
     }
@@ -315,8 +316,9 @@ void Scroll::read_blank_paper()
 void Scroll::read_vorpalize_weapon()
 {
     //If he isn't wielding a weapon I get to chortle again!
-    Item* weapon = game->hero().get_current_weapon();
-    if (!weapon || weapon->m_type != WEAPON) {
+    Item* item = game->hero().get_current_weapon();
+    Weapon* weapon = dynamic_cast<Weapon*>(item);
+    if (!weapon) {
         msg(laugh, short_msgs() ? "" : in_dist);
         return;
     }
@@ -438,6 +440,11 @@ std::string Scroll::Name() const
 std::string Scroll::InventoryName() const
 {
     return item_class()->get_inventory_name(this);
+}
+
+bool Scroll::IsMagic() const
+{
+    return true;
 }
 
 bool Scroll::IsEvil() const

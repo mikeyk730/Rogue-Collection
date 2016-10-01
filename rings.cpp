@@ -205,6 +205,11 @@ std::string Ring::InventoryName() const
     return item_class()->get_inventory_name(this);
 }
 
+bool Ring::IsMagic() const
+{
+    return true;
+}
+
 bool Ring::IsEvil() const
 {
     switch (m_which)

@@ -509,7 +509,7 @@ bool nymph_attack(Monster* mp)
         Item* obj = *it;
         if (obj != game->hero().get_current_armor() && obj != game->hero().get_current_weapon() &&
             obj != game->hero().get_ring(LEFT) && obj != game->hero().get_ring(RIGHT) &&
-            obj->is_magic() && rnd(++nobj) == 0)
+            obj->IsMagic() && rnd(++nobj) == 0)
             item = obj;
     }
     if (item == NULL)

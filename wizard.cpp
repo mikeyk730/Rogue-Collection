@@ -55,8 +55,7 @@ void whatis()
     obj->discover();
 
     //If it is vorpally enchanted, then reveal what type of monster it is vorpally enchanted against
-    if (obj->is_vorpalized())
-        obj->set_revealed();
+    obj->set_revealed();
 
     msg(obj->inventory_name(false).c_str());
 }

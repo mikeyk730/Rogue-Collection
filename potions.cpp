@@ -193,7 +193,7 @@ void Potion::quaff_magic_detection()
     for (auto i = game->level().items.begin(); i != game->level().items.end(); ++i)
     {
         Item* item = *i;
-        if (item->is_magic())
+        if (item->IsMagic())
         {
             discovered = true;
             game->screen().mvaddch(item->m_position, goodch(item));
@@ -204,7 +204,7 @@ void Potion::quaff_magic_detection()
         for (auto i = monster->m_pack.begin(); i != monster->m_pack.end(); ++i)
         {
             Item* item = *i;
-            if (item->is_magic())
+            if (item->IsMagic())
             {
                 discovered = true;
                 game->screen().mvaddch(monster->m_position, MAGIC);
@@ -459,6 +459,11 @@ std::string Potion::Name() const
 std::string Potion::InventoryName() const
 {
     return item_class()->get_inventory_name(this);
+}
+
+bool Potion::IsMagic() const
+{
+    return true;
 }
 
 bool Potion::IsEvil() const

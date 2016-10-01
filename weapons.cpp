@@ -286,54 +286,12 @@ std::string Weapon::InventoryName() const
     return prbuf;
 }
 
-void Item::enchant_weapon()
+bool Weapon::IsMagic() const
 {
-    this->remove_curse();
-    if (rnd(2) == 0)
-        this->m_hit_plus++;
-    else
-        this->m_damage_plus++;
-    ifterse("your %s glows blue", "your %s glows blue for a moment", Name().c_str());
+    return get_hit_plus() != 0 || get_damage_plus() != 0;
 }
 
-bool Item::is_vorpalized() const
-{
-    return enemy != 0;
-}
-
-bool Item::is_vorpalized_against(Monster* monster) const
-{
-    if (!monster)
-        return false;
-    return enemy == monster->type;
-}
-
-std::string Item::get_vorpalized_name() const
-{
-    return get_monster_name(enemy);
-}
-
-std::string Item::get_throw_damage() const
-{
-    return m_throw_damage;
-}
-
-std::string Item::get_damage() const
-{
-    return m_damage;
-}
-
-char Item::launcher() const
-{
-    return m_launcher;
-}
-
-Room* Item::get_room()
-{
-    return get_room_from_position(m_position);
-}
-
-void Item::vorpalize()
+void Weapon::vorpalize()
 {
     //Extra Vorpal Enchant Weapon
     //    Give weapon +1,+1
@@ -419,4 +377,31 @@ int Weapon::Worth() const
     }
     worth *= 3 * (get_hit_plus() + get_damage_plus()) + m_count;
     return worth;
+}
+
+void Weapon::enchant_weapon()
+{
+    this->remove_curse();
+    if (rnd(2) == 0)
+        this->m_hit_plus++;
+    else
+        this->m_damage_plus++;
+    ifterse("your %s glows blue", "your %s glows blue for a moment", Name().c_str());
+}
+
+bool Weapon::is_vorpalized() const
+{
+    return enemy != 0;
+}
+
+bool Weapon::is_vorpalized_against(Monster* monster) const
+{
+    if (!monster)
+        return false;
+    return enemy == monster->type;
+}
+
+std::string Weapon::get_vorpalized_name() const
+{
+    return get_monster_name(enemy);
 }

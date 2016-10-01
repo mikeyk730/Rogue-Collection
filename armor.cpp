@@ -95,6 +95,11 @@ std::string Armor::InventoryName() const
     return prbuf;
 }
 
+bool Armor::IsMagic() const
+{
+    return get_armor_class() != get_default_class(m_which);
+}
+
 Armor::Armor(int which) :
     Item(ARMOR, which)
 {
@@ -150,3 +155,26 @@ int Armor::Worth() const
     worth += (10 * (get_default_class(m_which) - get_armor_class()));
     return worth;
 }
+
+int Armor::get_armor_class() const
+{
+    return armor_class;
+}
+
+int Armor::armor_class_for_display() const
+{
+    int a = get_armor_class();
+    return (-((a)-11));
+}
+
+void Armor::enchant_armor()
+{
+    armor_class--;
+    remove_curse();
+}
+
+void Armor::weaken_armor()
+{
+    armor_class++;
+}
+

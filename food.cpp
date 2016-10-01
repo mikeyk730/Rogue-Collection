@@ -45,6 +45,11 @@ std::string Food::InventoryName() const
     return prbuf;
 }
 
+bool Food::IsMagic() const
+{
+    return false;
+}
+
 bool Food::IsEvil() const
 {
     return false;
