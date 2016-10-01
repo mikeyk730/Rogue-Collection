@@ -30,7 +30,7 @@ Coord new_position;
 //do_run: Start the hero running
 bool do_run(byte ch) //todo: understand running
 {
-    game->modifiers.m_running = true;
+    game->m_running = true;
     game->run_character = ch;
     return false;
 }
@@ -122,7 +122,7 @@ bool this_move_counts; //todo: remove
 
 bool do_hit_boundary()
 {
-    if (game->modifiers.is_running() && is_gone(game->hero().m_room) && !game->hero().is_blind())
+    if (game->is_running() && is_gone(game->hero().m_room) && !game->hero().is_blind())
     {
         switch (game->run_character)
         {
@@ -141,7 +141,7 @@ bool do_hit_boundary()
         }
     }
     this_move_counts = false;
-    stop_player_running();
+    game->stop_running();
     return true;
 }
 
@@ -154,13 +154,13 @@ bool do_move_impl(bool can_pickup)
         return !do_hit_boundary();
     if (!diag_ok(game->hero().m_position, new_position)) {
         this_move_counts = false;
-        stop_player_running();
+        game->stop_running();
         return false;
     }
     //If you are running and the move does not get you anywhere stop running
-    if (game->modifiers.is_running() && equal(game->hero().m_position, new_position)) {
+    if (game->is_running() && equal(game->hero().m_position, new_position)) {
         this_move_counts = false;
-        stop_player_running();
+        game->stop_running();
     }
 
     bool is_real = game->level().is_real(new_position);
@@ -170,7 +170,7 @@ bool do_move_impl(bool can_pickup)
     ch = game->level().get_tile_or_monster(new_position);
     //When the hero is on the door do not allow him to run until he enters the room all the way
     if ((game->level().get_tile(game->hero().m_position) == DOOR) && (ch == FLOOR))
-        stop_player_running();
+        game->stop_running();
     if (!(is_real) && ch == FLOOR) {
         ch = TRAP;
         game->level().set_tile(new_position, TRAP);
@@ -186,7 +186,7 @@ bool do_move_impl(bool can_pickup)
         return !do_hit_boundary();
 
     case DOOR:
-        stop_player_running();
+        game->stop_running();
         if (game->level().is_passage(game->hero().m_position))
             enter_room(new_position);
         finish_do_move(is_passage, is_maze);
@@ -208,12 +208,12 @@ bool do_move_impl(bool can_pickup)
         return false;
 
     default:
-        stop_player_running();
+        game->stop_running();
         if (isupper(ch) || game->level().monster_at(new_position))
             game->hero().fight(new_position, game->hero().get_current_weapon(), false);
         else
         {
-            stop_player_running();
+            game->stop_running();
             finish_do_move(is_passage, is_maze);
 
             if (ch != STAIRS && can_pickup)
@@ -228,7 +228,7 @@ bool do_move(Coord delta, bool can_pickup) //todo:understand
 {
     this_move_counts = true;
 
-    game->modifiers.m_first_move = false;
+    game->m_first_move = false;
 
     //if something went wrong, bail out on this level
     if (game->invalid_position) {
@@ -292,7 +292,7 @@ int handle_trap(Coord tc)
     const int COLS = game->screen().columns();
 
     game->repeat_cmd_count = false;
-    stop_player_running();
+    game->stop_running();
     game->level().set_tile(tc, TRAP);
     tr = game->level().get_trap_type(tc);
     game->was_trapped = 1;

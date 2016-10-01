@@ -117,7 +117,7 @@ int process_prefixes(int ch)
     case ' ':
         break;
     case ESCAPE:
-        game->modifiers.m_stop_at_door = false;
+        game->m_stop_at_door = false;
         game->repeat_cmd_count = 0;
         show_count();
         break;
@@ -137,8 +137,8 @@ int read_command()
     bool was_fast_play_enabled = game->modifiers.scroll_lock();
     game->modifiers.m_fast_mode = game->modifiers.scroll_lock();
     look(true);
-    if (!game->modifiers.is_running())
-        game->modifiers.m_stop_at_door = false;
+    if (!game->is_running())
+        game->m_stop_at_door = false;
     game->can_pickup_this_turn = true;
     game->repeat_last_action = false;
 
@@ -154,7 +154,7 @@ int read_command()
     else
     {
         game->repeat_cmd_count = 0;
-        if (game->modifiers.is_running()) {
+        if (game->is_running()) {
             command = game->run_character;
             game->can_pickup_this_turn = game->last_turn.could_pickup;
         }
@@ -174,11 +174,11 @@ int read_command()
     switch (command)
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-        if (game->modifiers.fast_mode() && !game->modifiers.is_running())
+        if (game->modifiers.fast_mode() && !game->is_running())
         {
             if (!game->hero().is_blind()) {
-                game->modifiers.m_stop_at_door = true;
-                game->modifiers.m_first_move = true;
+                game->m_stop_at_door = true;
+                game->m_first_move = true;
             }
             command = toupper(command);
         }
@@ -420,8 +420,8 @@ void execcom()
         int ch = read_command();
         is_turn = dispatch_command(ch);
 
-        if (!game->modifiers.is_running())
-            game->modifiers.m_stop_at_door = false;
+        if (!game->is_running())
+            game->m_stop_at_door = false;
 
     } while (!is_turn);
 }

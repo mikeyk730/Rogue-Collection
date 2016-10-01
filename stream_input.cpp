@@ -75,8 +75,6 @@ char StreamInput::ReadCharA()
     {
         game->modifiers.m_fast_mode = (f[0] == ON);
         game->modifiers.m_fast_play_enabled = f[1] == ON;
-        game->modifiers.m_stop_at_door = f[2] == ON;
-        game->modifiers.m_running = f[3] == ON;
     }
 
     char c = 0;

@@ -477,13 +477,13 @@ void SIG2()
         tspot = 75;
     }
 
-    if (game->allow_fast_play() && scrl != scroll_lock_on) {
+    if (game->is_replay() && scrl != scroll_lock_on) {
         if (game->modifiers.scroll_lock() != scroll_lock_on)
         {
             game->modifiers.m_fast_play_enabled = scroll_lock_on;
             game->repeat_cmd_count = 0;
             show_count();
-            stop_player_running();
+            game->stop_running();
         }
 
         scrl = scroll_lock_on;
@@ -501,7 +501,7 @@ void SIG2()
         numl = num_lock_on;
         game->repeat_cmd_count = 0;
         show_count();
-        stop_player_running();
+        game->stop_running();
         game->screen().move(LINES - 1, nspot);
         if (numl) {
             game->screen().bold();

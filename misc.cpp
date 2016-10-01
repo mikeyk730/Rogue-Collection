@@ -96,7 +96,7 @@ void look(bool wakeup) //todo: learn this function
     ex = game->hero().m_position.x + 1;
     sx = game->hero().m_position.x - 1;
     sy = game->hero().m_position.y - 1;
-    if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && game->modifiers.is_running()) {
+    if (game->stop_at_door() && !game->first_move() && game->is_running()) {
         sumhero = game->hero().m_position.y + game->hero().m_position.x;
         diffhero = game->hero().m_position.y - game->hero().m_position.x;
     }
@@ -124,8 +124,8 @@ void look(bool wakeup) //todo: learn this function
                 else if ((fp&F_PASS) && (fp&F_PNUM) != (pfl & F_PNUM)) continue;
                 if ((monster = game->level().monster_at({ x, y })) != NULL) if (game->hero().detects_others() && monster->is_invisible())
                 {
-                    if (game->modifiers.stop_at_door() && !game->modifiers.first_move())
-                        stop_player_running();
+                    if (game->stop_at_door() && !game->first_move())
+                        game->stop_running();
                     continue;
                 }
                 else
@@ -140,7 +140,7 @@ void look(bool wakeup) //todo: learn this function
                 game->screen().move(y, x);
                 game->screen().addch(ch);
                 game->screen().standend();
-                if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && game->modifiers.is_running())
+                if (game->stop_at_door() && !game->first_move() && game->is_running())
                 {
                     switch (game->run_character)
                     {
@@ -157,7 +157,7 @@ void look(bool wakeup) //todo: learn this function
                     {
                     case DOOR:
                         if (x == game->hero().m_position.x || y == game->hero().m_position.y)
-                            stop_player_running();
+                            game->stop_running();
                         break;
                     case PASSAGE:
                         if (x == game->hero().m_position.x || y == game->hero().m_position.y)
@@ -166,14 +166,14 @@ void look(bool wakeup) //todo: learn this function
                     case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
                         break;
                     default:
-                        stop_player_running();
+                        game->stop_running();
                         break;
                     }
                 }
         }
     }
-    if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && passcount > 1)
-        stop_player_running();
+    if (game->stop_at_door() && !game->first_move() && passcount > 1)
+        game->stop_running();
     game->screen().move(game->hero().m_position.y, game->hero().m_position.x);
     //todo:check logic
     if ((game->level().is_passage(game->hero().m_position)) || (game->was_trapped > 1) || (game->level().is_maze(game->hero().m_position)))

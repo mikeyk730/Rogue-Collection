@@ -41,7 +41,7 @@ struct GameState
 
     Cheats& wizard();
 
-    bool allow_fast_play() const; //todo:kill this
+    bool is_replay() const; //todo:kill this
     bool m_allow_fast_play = true;
 
     CommandModifiers modifiers;
@@ -62,6 +62,7 @@ struct GameState
 
     struct Options
     {
+        bool stop_running_at_doors() const;
         bool throws_affect_mimics() const;
         bool show_inventory_menu() const;
         bool narrow_screen() const;
@@ -74,7 +75,17 @@ struct GameState
 
     } options;
 
+    bool is_running() const { return m_running; } // todo:move to Hero?
+    void stop_running() { m_running = false; }
+    bool stop_at_door() const { return m_stop_at_door; }
+    bool first_move() const { return m_first_move; }
+
+
     // uncategorized state.  //todo: categorize it.
+    bool m_running = false;       //True if player is running //todo: i really need to understand this one
+    bool m_stop_at_door = false;  //Stop running when we pass a door
+    bool m_first_move = false;     //First move after setting stop_at_door
+
     int bear_trap_turns = 0;     //Number of turns held in place
     int sleep_timer = 0;         //Number of turns asleep
     int no_food = 0;             //Number of levels without food
@@ -116,7 +127,3 @@ private:
 
     Cheats cheats;
  };
-
-inline void stop_player_running() {
-    game->modifiers.m_running = false;
-}

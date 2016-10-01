@@ -211,7 +211,7 @@ Cheats & GameState::wizard()
     return cheats;
 }
 
-bool GameState::allow_fast_play() const
+bool GameState::is_replay() const
 {
     return m_allow_fast_play;
 }
@@ -220,6 +220,11 @@ bool GameState::allow_fast_play() const
 //monster config
 //all extern/global variables
 //all static variables
+
+bool GameState::Options::stop_running_at_doors() const
+{
+    return game->get_environment("stop_running_at_doors") != "false"; //todo: change to == "true"
+}
 
 bool GameState::Options::throws_affect_mimics() const
 {

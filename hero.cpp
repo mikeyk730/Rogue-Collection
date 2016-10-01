@@ -217,7 +217,7 @@ void Hero::digest()
             return;
         game->sleep_timer += rnd(8) + 4;
         set_running(false);
-        stop_player_running();
+        game->stop_running();
         game->repeat_cmd_count = 0;
         hungry_state = 3;
         msg("%syou faint from lack of food", noterse("you feel very weak. "));
@@ -315,7 +315,7 @@ void Hero::teleport()
     }
     game->bear_trap_turns = 0;
     game->repeat_cmd_count = 0;
-    stop_player_running();
+    game->stop_running();
     clear_typeahead_buffer();
 
     //Teleportation can be a confusing experience (unless you really are a wizard)
