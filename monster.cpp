@@ -24,7 +24,7 @@
 
 namespace
 {
-    Coord ch_ret; //Where chasing takes you //todo:eliminate statics
+    Coord next_position; //Where chasing takes you //todo:eliminate statics
 }
 
 bool Monster::can_divide() const
@@ -257,10 +257,10 @@ over:
     }
     //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
     this->chase(&tempdest);
-    if (equal(ch_ret, game->hero().pos)) {
+    if (equal(next_position, game->hero().pos)) {
         return attack_player();
     }
-    else if (equal(ch_ret, *this->dest))
+    else if (equal(next_position, *this->dest))
     {
         //mdk: aggressive orcs pick up gold in a room, then chase the player.  It looks
         //as if this could have been the original intended behavior, so I added it as
@@ -287,11 +287,11 @@ over:
     if (this->is_stationary())
         return 0;
     //If the chasing thing moved, update the screen
-    do_screen_update();
+    do_screen_update(next_position);
     return 0;
 }
 
-void Monster::do_screen_update()
+void Monster::do_screen_update(Coord next_position1)
 {
     if (has_tile_beneath())
     {
@@ -304,29 +304,29 @@ void Monster::do_screen_update()
     }
 
     Room *orig_room = room;
-    if (!equal(ch_ret, pos))
+    if (!equal(next_position1, pos))
     {
-        if ((room = get_room_from_position(ch_ret)) == NULL) {
+        if ((room = get_room_from_position(next_position1)) == NULL) {
             room = orig_room;
             return;
         }
         if (orig_room != room)
             dest = find_dest();
-        pos = ch_ret;
+        pos = next_position1;
     }
 
     if (game->hero().can_see_monster(this))
     {
-        if (game->level().is_passage(ch_ret))
+        if (game->level().is_passage(next_position1))
             game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(ch_ret.y, ch_ret.x)); //todo: why get from screen instead of level??
-        game->screen().mvaddch(ch_ret, disguise);
+        set_tile_beneath(game->screen().mvinch(next_position1.y, next_position1.x)); //todo: why get from screen instead of level??
+        game->screen().mvaddch(next_position1, disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(ch_ret.y, ch_ret.x)); //todo: why get from screen instead of level??
-        game->screen().mvaddch(ch_ret, type);
+        set_tile_beneath(game->screen().mvinch(next_position1.y, next_position1.x)); //todo: why get from screen instead of level??
+        game->screen().mvaddch(next_position1, type);
     }
     else
         invalidate_tile_beneath();
@@ -351,8 +351,8 @@ void Monster::chase(Coord *chasee_pos)
     if (this->is_monster_confused_this_turn())
     {
         //get a valid random move
-        rndmove(this, &ch_ret);
-        dist = distance(ch_ret, *chasee_pos);
+        rndmove(this, &next_position);
+        dist = distance(next_position, *chasee_pos);
         //Small chance that it will become un-confused
         if (rnd(30) == 17)
             this->set_confused(false);
@@ -364,7 +364,7 @@ void Monster::chase(Coord *chasee_pos)
 
         //This will eventually hold where we move to get closer. If we can't find an empty spot, we stay where we are.
         dist = distance(*chaser_pos, *chasee_pos);
-        ch_ret = *chaser_pos;
+        next_position = *chaser_pos;
         ey = chaser_pos->y + 1;
         ex = chaser_pos->x + 1;
         for (x = chaser_pos->x - 1; x <= ex; x++)
@@ -395,8 +395,8 @@ void Monster::chase(Coord *chasee_pos)
                     }
                     //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
                     thisdist = distance({ x, y }, *chasee_pos);
-                    if (thisdist < dist) { plcnt = 1; ch_ret = try_pos; dist = thisdist; }
-                    else if (thisdist == dist && rnd(++plcnt) == 0) { ch_ret = try_pos; dist = thisdist; }
+                    if (thisdist < dist) { plcnt = 1; next_position = try_pos; dist = thisdist; }
+                    else if (thisdist == dist && rnd(++plcnt) == 0) { next_position = try_pos; dist = thisdist; }
                 }
             }
         }

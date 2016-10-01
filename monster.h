@@ -50,7 +50,7 @@ struct Monster : public Agent
 
     //do_chase: Make one thing chase another.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
     Monster* do_chase();
-    void do_screen_update();
+    void do_screen_update(Coord);
 
     //attack: The monster attacks the player.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
     Monster* attack_player();
