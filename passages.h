@@ -1,9 +1,6 @@
 //do_passages: Draw all the passages on a level.
 void do_passages();
 
-//door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
-void add_door(struct Room *rm, Coord *cp);
-
 void psplat(Coord p);
 
 //passnum: Assign a number to each passageway

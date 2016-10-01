@@ -72,17 +72,17 @@ void do_rooms()
         if (room->is_gone())
         {
             //If the gone room is a maze room, draw the maze and set the size equal to the maximum possible.
-            if (room->is_maze()) { room->pos.x = top.x; room->pos.y = top.y; draw_maze(room); }
+            if (room->is_maze()) { room->m_ul_corner.x = top.x; room->m_ul_corner.y = top.y; draw_maze(room); }
             else
             {
                 //Place a gone room.  Make certain that there is a blank line for passage drawing.
                 do
                 {
-                    room->pos.x = top.x + rnd(bsze.x - 2) + 1;
-                    room->pos.y = top.y + rnd(bsze.y - 2) + 1;
-                    room->size.x = -COLS;
-                    room->size.x = -endline;
-                } while (!(room->pos.y > 0 && room->pos.y < endline - 1));
+                    room->m_ul_corner.x = top.x + rnd(bsze.x - 2) + 1;
+                    room->m_ul_corner.y = top.y + rnd(bsze.y - 2) + 1;
+                    room->m_size.x = -COLS;
+                    room->m_size.x = -endline;
+                } while (!(room->m_ul_corner.y > 0 && room->m_ul_corner.y < endline - 1));
             }
             continue;
         }
@@ -93,32 +93,32 @@ void do_rooms()
         //Find a place and size for a random room
         do
         {
-            room->size.x = rnd(bsze.x - 4) + 4;
-            room->size.y = rnd(bsze.y - 4) + 4;
-            room->pos.x = top.x + rnd(bsze.x - room->size.x);
-            room->pos.y = top.y + rnd(bsze.y - room->size.y);
-        } while (room->pos.y == 0);
+            room->m_size.x = rnd(bsze.x - 4) + 4;
+            room->m_size.y = rnd(bsze.y - 4) + 4;
+            room->m_ul_corner.x = top.x + rnd(bsze.x - room->m_size.x);
+            room->m_ul_corner.y = top.y + rnd(bsze.y - room->m_size.y);
+        } while (room->m_ul_corner.y == 0);
         draw_room(room);
         //Put the gold in
         if ((rnd(2) == 0) && (!game->hero().had_amulet() || (get_level() >= max_level())))
         {
-            room->gold_val = rnd_gold();
-            Item *gold = new Gold(room->gold_val);
+            room->m_gold_val = rnd_gold();
+            Item *gold = new Gold(room->m_gold_val);
             game->level().items.push_front(gold);
 
             while (1)
             {
                 byte gch;
-                rnd_pos(room, &room->gold);
-                gch = game->level().get_tile(room->gold);
+                rnd_pos(room, &room->m_gold_position);
+                gch = game->level().get_tile(room->m_gold_position);
                 if (isfloor(gch))
                     break;
             }
-            game->level().set_tile(room->gold, GOLD);
-            gold->set_position(room->gold);
+            game->level().set_tile(room->m_gold_position, GOLD);
+            gold->set_position(room->m_gold_position);
         }
         //Put the monster in
-        if (rnd(100) < (room->gold_val > 0 ? 80 : 25))
+        if (rnd(100) < (room->m_gold_val > 0 ? 80 : 25))
         {
             byte mch;
             do {
@@ -138,17 +138,17 @@ void draw_room(struct Room *room)
     int y, x;
 
     //Here we draw normal rooms, one side at a time
-    vert(room, room->pos.x); //Draw left side
-    vert(room, room->pos.x + room->size.x - 1); //Draw right side
-    horiz(room, room->pos.y); //Draw top
-    horiz(room, room->pos.y + room->size.y - 1); //Draw bottom
-    game->level().set_tile(room->pos, ULWALL);
-    game->level().set_tile({ room->pos.x + room->size.x - 1,room->pos.y }, URWALL);
-    game->level().set_tile({ room->pos.x,room->pos.y + room->size.y - 1 }, LLWALL);
-    game->level().set_tile({ room->pos.x + room->size.x - 1,room->pos.y + room->size.y - 1 }, LRWALL);
+    vert(room, room->m_ul_corner.x); //Draw left side
+    vert(room, room->m_ul_corner.x + room->m_size.x - 1); //Draw right side
+    horiz(room, room->m_ul_corner.y); //Draw top
+    horiz(room, room->m_ul_corner.y + room->m_size.y - 1); //Draw bottom
+    game->level().set_tile(room->m_ul_corner, ULWALL);
+    game->level().set_tile({ room->m_ul_corner.x + room->m_size.x - 1,room->m_ul_corner.y }, URWALL);
+    game->level().set_tile({ room->m_ul_corner.x,room->m_ul_corner.y + room->m_size.y - 1 }, LLWALL);
+    game->level().set_tile({ room->m_ul_corner.x + room->m_size.x - 1,room->m_ul_corner.y + room->m_size.y - 1 }, LRWALL);
     //Put the floor down
-    for (y = room->pos.y + 1; y < room->pos.y + room->size.y - 1; y++)
-        for (x = room->pos.x + 1; x < room->pos.x + room->size.x - 1; x++)
+    for (y = room->m_ul_corner.y + 1; y < room->m_ul_corner.y + room->m_size.y - 1; y++)
+        for (x = room->m_ul_corner.x + 1; x < room->m_ul_corner.x + room->m_size.x - 1; x++)
             game->level().set_tile({ x, y }, FLOOR);
 }
 
@@ -157,7 +157,7 @@ void vert(struct Room *room, int startx)
 {
     int y;
 
-    for (y = room->pos.y + 1; y <= room->size.y + room->pos.y - 1; y++)
+    for (y = room->m_ul_corner.y + 1; y <= room->m_size.y + room->m_ul_corner.y - 1; y++)
         game->level().set_tile({ startx,y }, VWALL);
 }
 
@@ -166,15 +166,15 @@ void horiz(struct Room *room, int starty)
 {
     int x;
 
-    for (x = room->pos.x; x <= room->pos.x + room->size.x - 1; x++)
+    for (x = room->m_ul_corner.x; x <= room->m_ul_corner.x + room->m_size.x - 1; x++)
         game->level().set_tile({ x,starty }, HWALL);
 }
 
 //rnd_pos: Pick a random spot in a room
 void rnd_pos(struct Room *room, Coord *cp)
 {
-    cp->x = room->pos.x + rnd(room->size.x - 2) + 1;
-    cp->y = room->pos.y + rnd(room->size.y - 2) + 1;
+    cp->x = room->m_ul_corner.x + rnd(room->m_size.x - 2) + 1;
+    cp->y = room->m_ul_corner.y + rnd(room->m_size.y - 2) + 1;
 }
 
 //enter_room: Code that is executed whenever you appear in a room
@@ -192,10 +192,10 @@ void enter_room(Coord cp)
     }
     door_open(room);
     if (!(room->is_dark()) && !game->hero().is_blind() && !(room->is_maze()))
-        for (y = room->pos.y; y < room->size.y + room->pos.y; y++)
+        for (y = room->m_ul_corner.y; y < room->m_size.y + room->m_ul_corner.y; y++)
         {
-            game->screen().move(y, room->pos.x);
-            for (x = room->pos.x; x < room->size.x + room->pos.x; x++)
+            game->screen().move(y, room->m_ul_corner.x);
+            for (x = room->m_ul_corner.x; x < room->m_size.x + room->m_ul_corner.x; x++)
             {
                 Coord pos = { x, y };
                 //Displaying monsters is all handled in the chase code now
@@ -224,8 +224,8 @@ void leave_room(Coord cp)
     if (room->is_maze())
         floor = PASSAGE;
 
-    for (y = room->pos.y + 1; y < room->size.y + room->pos.y - 1; y++) {
-        for (x = room->pos.x + 1; x < room->size.x + room->pos.x - 1; x++) {
+    for (y = room->m_ul_corner.y + 1; y < room->m_size.y + room->m_ul_corner.y - 1; y++) {
+        for (x = room->m_ul_corner.x + 1; x < room->m_size.x + room->m_ul_corner.x - 1; x++) {
             switch (ch = game->screen().mvinch(y, x))
             {
             case ' ': case PASSAGE: case TRAP: case STAIRS:
@@ -265,10 +265,10 @@ Room* get_room_from_position(Coord pos)
     struct Room *room;
 
     for (room = rooms; room <= &rooms[MAXROOMS - 1]; room++)
-        if (pos.x < room->pos.x + room->size.x &&
-            room->pos.x <= pos.x &&
-            pos.y < room->pos.y + room->size.y
-            && room->pos.y <= pos.y)
+        if (pos.x < room->m_ul_corner.x + room->m_size.x &&
+            room->m_ul_corner.x <= pos.x &&
+            pos.y < room->m_ul_corner.y + room->m_size.y
+            && room->m_ul_corner.y <= pos.y)
             return room;
 
     if (game->level().is_passage(pos))

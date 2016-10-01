@@ -70,20 +70,20 @@ void conn(int r1, int r2)
         //If we are drawing from/to regular or maze rooms, we have to pick the spot we draw from/to
         if ((room_from->is_gone()) == 0 || (room_from->is_maze()))
         {
-            spos.y = room_from->pos.y + room_from->size.y - 1;
+            spos.y = room_from->m_ul_corner.y + room_from->m_size.y - 1;
             do {
-                spos.x = room_from->pos.x + rnd(room_from->size.x - 2) + 1;
+                spos.x = room_from->m_ul_corner.x + rnd(room_from->m_size.x - 2) + 1;
             } while (game->level().get_tile(spos) == ' ');
         }
-        else { spos.x = room_from->pos.x; spos.y = room_from->pos.y; }
-        epos.y = room_to->pos.y;
+        else { spos.x = room_from->m_ul_corner.x; spos.y = room_from->m_ul_corner.y; }
+        epos.y = room_to->m_ul_corner.y;
         if ((room_to->is_gone()) == 0 || (room_to->is_maze()))
         {
             do {
-                epos.x = room_to->pos.x + rnd(room_to->size.x - 2) + 1;
+                epos.x = room_to->m_ul_corner.x + rnd(room_to->m_size.x - 2) + 1;
             } while (game->level().get_tile(epos) == ' ');
         }
-        else epos.x = room_to->pos.x;
+        else epos.x = room_to->m_ul_corner.x;
         distance = abs(spos.y - epos.y) - 1; //distance to move
         turn_delta.y = 0; //direction to turn
         turn_delta.x = (spos.x < epos.x ? 1 : -1);
@@ -98,23 +98,23 @@ void conn(int r1, int r2)
         del.y = 0;
         if ((room_from->is_gone()) == 0 || (room_from->is_maze()))
         {
-            spos.x = room_from->pos.x + room_from->size.x - 1;
+            spos.x = room_from->m_ul_corner.x + room_from->m_size.x - 1;
             do {
-                spos.y = room_from->pos.y + rnd(room_from->size.y - 2) + 1;
+                spos.y = room_from->m_ul_corner.y + rnd(room_from->m_size.y - 2) + 1;
             } while (game->level().get_tile(spos) == ' ');
         }
         else {
-            spos.x = room_from->pos.x;
-            spos.y = room_from->pos.y;
+            spos.x = room_from->m_ul_corner.x;
+            spos.y = room_from->m_ul_corner.y;
         }
-        epos.x = room_to->pos.x;
+        epos.x = room_to->m_ul_corner.x;
         if ((room_to->is_gone()) == 0 || (room_to->is_maze()))
         {
             do {
-                epos.y = room_to->pos.y + rnd(room_to->size.y - 2) + 1;
+                epos.y = room_to->m_ul_corner.y + rnd(room_to->m_size.y - 2) + 1;
             } while (game->level().get_tile(epos) == ' ');
         }
-        else epos.y = room_to->pos.y;
+        else epos.y = room_to->m_ul_corner.y;
         distance = abs(spos.x - epos.x) - 1;
         turn_delta.y = (spos.y < epos.y ? 1 : -1);
         turn_delta.x = 0;
@@ -125,11 +125,11 @@ void conn(int r1, int r2)
     turn_spot = rnd(distance - 1) + 1;
     //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
     if (!(room_from->is_gone()))
-        add_door(room_from, &spos);
+        room_from->add_door(spos);
     else
         psplat(spos);
     if (!(room_to->is_gone()))
-        add_door(room_to, &epos);
+        room_to->add_door(epos);
     else
         psplat(epos);
     //Get ready to move...
@@ -239,20 +239,20 @@ void do_passages()
 }
 
 //door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
-void add_door(struct Room *rm, Coord *cp)
+void Room::add_door(Coord p)
 {
-    int xit;
-
+    //Set 1 in 5 doors to be hidden, fewer on the earlier levels
     if (rnd(10) + 1 < get_level() && rnd(5) == 0 && !game->wizard().no_hidden_doors())
     {
-        game->level().set_tile(*cp, (cp->y == rm->pos.y || cp->y == rm->pos.y + rm->size.y - 1) ? HWALL : VWALL);
-        game->level().unset_flag(*cp, F_REAL);
+        game->level().set_tile(p, (p.y == m_ul_corner.y || p.y == m_ul_corner.y + m_size.y - 1) ? HWALL : VWALL);
+        game->level().unset_flag(p, F_REAL);
     }
-    else
-        game->level().set_tile(*cp, DOOR);
-    xit = rm->num_exits++;
-    rm->exits[xit].y = cp->y;
-    rm->exits[xit].x = cp->x;
+    else {
+        game->level().set_tile(p, DOOR);
+    }
+
+    int i = m_num_exits++;
+    m_exits[i] = p;
 }
 
 //add_pass: Add the passages to the current window (wizard command)
@@ -275,11 +275,11 @@ void passnum()
 
     pnum = 0;
     newpnum = false;
-    for (room = passages; room < &passages[MAXPASS]; room++) room->num_exits = 0;
-    for (room = rooms; room < &rooms[MAXROOMS]; room++) for (i = 0; i < room->num_exits; i++)
+    for (room = passages; room < &passages[MAXPASS]; room++) room->m_num_exits = 0;
+    for (room = rooms; room < &rooms[MAXROOMS]; room++) for (i = 0; i < room->m_num_exits; i++)
     {
         newpnum++;
-        numpass(room->exits[i]);
+        numpass(room->m_exits[i]);
     }
 }
 
@@ -297,8 +297,8 @@ void numpass(Coord p)
     if ((ch = game->level().get_tile(p)) == DOOR || (!game->level().is_real(p) && ch != FLOOR))
     {
         room = &passages[pnum];
-        room->exits[room->num_exits].y = p.y;
-        room->exits[room->num_exits++].x = p.x;
+        room->m_exits[room->m_num_exits].y = p.y;
+        room->m_exits[room->m_num_exits++].x = p.x;
     }
     else if (!game->level().is_passage(p))
         return;

@@ -264,8 +264,8 @@ Monster *wake_monster(Coord p)
     if (monster->is_greedy() && !monster->is_running())
     {
         Coord* dest = &game->hero().m_position;
-        if (game->hero().m_room->gold_val)
-            dest = &game->hero().m_room->gold;
+        if (game->hero().m_room->m_gold_val)
+            dest = &game->hero().m_room->m_gold_position;
         monster->start_run(dest);
     }
     return monster;

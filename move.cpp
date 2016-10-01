@@ -49,12 +49,12 @@ int diag_ok(const Coord orig_pos, const Coord new_pos)
 }
 
 
-void finish_do_move(int fl)
+void finish_do_move(bool is_passage, bool is_maze)
 {
     game->level().draw_char(game->hero().m_position);
-    if ((fl&F_PASS) && (game->level().get_tile(game->oldpos) == DOOR || (game->level().is_maze(game->oldpos))))
+    if (is_passage && (game->level().get_tile(game->oldpos) == DOOR || (game->level().is_maze(game->oldpos))))
         leave_room(new_position);
-    if ((fl&F_MAZE) && (game->level().is_maze(game->oldpos)) == 0)
+    if (is_maze && (game->level().is_maze(game->oldpos)) == 0)
         enter_room(new_position);
     game->hero().m_position = new_position;
 }
@@ -148,7 +148,6 @@ bool do_hit_boundary()
 bool do_move_impl(bool can_pickup)
 {
     byte ch;
-    int fl;
 
     //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
     if (offmap(new_position))
@@ -163,12 +162,16 @@ bool do_move_impl(bool can_pickup)
         this_move_counts = false;
         game->modifiers.m_running = false;
     }
-    fl = game->level().get_flags(new_position);
+
+    bool is_real = game->level().is_real(new_position);
+    bool is_passage = game->level().is_passage(new_position);
+    bool is_maze = game->level().is_maze(new_position);
+
     ch = game->level().get_tile_or_monster(new_position);
     //When the hero is on the door do not allow him to run until he enters the room all the way
     if ((game->level().get_tile(game->hero().m_position) == DOOR) && (ch == FLOOR))
         game->modifiers.m_running = false;
-    if (!(fl&F_REAL) && ch == FLOOR) {
+    if (!(is_real) && ch == FLOOR) {
         ch = TRAP;
         game->level().set_tile(new_position, TRAP);
         game->level().set_flag(new_position, F_REAL);
@@ -186,7 +189,7 @@ bool do_move_impl(bool can_pickup)
         game->modifiers.m_running = false;
         if (game->level().is_passage(game->hero().m_position))
             enter_room(new_position);
-        finish_do_move(fl);
+        finish_do_move(is_passage, is_maze);
         return false;
 
     case TRAP:
@@ -195,13 +198,13 @@ bool do_move_impl(bool can_pickup)
             return false;
 
     case PASSAGE:
-        finish_do_move(fl);
+        finish_do_move(is_passage, is_maze);
         return false;
 
     case FLOOR:
-        if (!(fl&F_REAL))
+        if (!(is_real))
             handle_trap(game->hero().m_position);
-        finish_do_move(fl);
+        finish_do_move(is_passage, is_maze);
         return false;
 
     default:
@@ -211,7 +214,7 @@ bool do_move_impl(bool can_pickup)
         else
         {
             game->modifiers.m_running = false;
-            finish_do_move(fl);
+            finish_do_move(is_passage, is_maze);
 
             if (ch != STAIRS && can_pickup)
                 pick_up(ch);
@@ -267,8 +270,8 @@ void door_open(Room *room)
     Monster* monster;
 
     if (!(room->is_gone()) && !game->hero().is_blind())
-        for (j = room->pos.y; j < room->pos.y + room->size.y; j++)
-            for (k = room->pos.x; k < room->pos.x + room->size.x; k++)
+        for (j = room->m_ul_corner.y; j < room->m_ul_corner.y + room->m_size.y; j++)
+            for (k = room->m_ul_corner.x; k < room->m_ul_corner.x + room->m_size.x; k++)
             {
                 ch = game->level().get_tile_or_monster({ k,j });
                 if (isupper(ch))

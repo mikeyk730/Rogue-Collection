@@ -192,7 +192,7 @@ void Monster::give_pack()
 Monster* Monster::do_chase()
 {
     //If gold has been taken, target the hero
-    if (is_greedy() && m_room->gold_val == 0)
+    if (is_greedy() && m_room->m_gold_val == 0)
         m_destination = &game->hero().m_position;
 
     //Find room of the target
@@ -220,11 +220,11 @@ Monster* Monster::do_chase()
         if (monster_room != destination_room && (monster_room->is_maze()) == 0)
         {
             //loop through doors
-            for (int i = 0; i < monster_room->num_exits; i++)
+            for (int i = 0; i < monster_room->m_num_exits; i++)
             {
-                dist = distance(*(m_destination), monster_room->exits[i]);
+                dist = distance(*(m_destination), monster_room->m_exits[i]);
                 if (dist < mindist) {
-                    tempdest = monster_room->exits[i];
+                    tempdest = monster_room->m_exits[i];
                     mindist = dist;
                 }
             }

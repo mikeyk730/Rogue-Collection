@@ -2,7 +2,7 @@
 #include "room.h"
 
 bool Room::is_flag_set(short flag) const {
-    return (flags & flag) != 0;
+    return (m_flags & flag) != 0;
 }
 
 bool Room::is_dark() const {
@@ -15,17 +15,17 @@ bool Room::is_gone() const {
     return is_flag_set(IS_GONE);
 }
 void Room::set_maze() {
-    flags |= IS_MAZE;
+    m_flags |= IS_MAZE;
 }
 void Room::set_gone() {
-    flags |= IS_GONE;
+    m_flags |= IS_GONE;
 }
 void Room::set_dark(bool enable) {
     if (enable)
-        flags |= IS_DARK;
+        m_flags |= IS_DARK;
     else
-        flags &= ~IS_DARK;
+        m_flags &= ~IS_DARK;
 }
 void Room::reset() {
-    gold_val = num_exits = flags = 0;
+    m_gold_val = m_num_exits = m_flags = 0;
 }

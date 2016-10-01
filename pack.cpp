@@ -156,7 +156,7 @@ void pick_up(byte ch)
             return;
 
         game->hero().pick_up_gold(gold->get_gold_value());
-        room->gold_val = 0;
+        room->m_gold_val = 0;
         game->level().items.remove(gold);
         delete gold;
 

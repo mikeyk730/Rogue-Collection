@@ -237,7 +237,7 @@ void Level::new_level(int do_implode)
     do
     {
         find_empty_location(&game->hero().m_position, true);
-    } while (!(get_flags(game->hero().m_position) & F_REAL));  //don't place hero on a trap
+    } while (!(is_real(game->hero().m_position)));  //don't place hero on a trap
 
     reset_msg_position();  //todo: rest probably belongs somewhere else
     //unhold when you go down just in case
@@ -305,7 +305,7 @@ void Level::treas_room()
     Coord pos;
 
     room = rnd_room();
-    spots = (room->size.y - 2)*(room->size.x - 2) - MINTREAS;
+    spots = (room->m_size.y - 2)*(room->m_size.x - 2) - MINTREAS;
     if (spots > (MAXTREAS - MINTREAS)) spots = (MAXTREAS - MINTREAS);
     num_monst = nm = rnd(spots) + MINTREAS;
     while (nm--)
@@ -320,7 +320,7 @@ void Level::treas_room()
     }
     //fill up room with monsters from the next level down
     if ((nm = rnd(spots) + MINTREAS) < num_monst + 2) nm = num_monst + 2;
-    spots = (room->size.y - 2)*(room->size.x - 2);
+    spots = (room->m_size.y - 2)*(room->m_size.x - 2);
     if (nm > spots) nm = spots;
     while (nm--)
     {
