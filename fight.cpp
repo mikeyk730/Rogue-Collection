@@ -172,18 +172,18 @@ void remove_monster(Monster* monster, bool waskill)
     }
     if (game->level().get_tile(*monster_pos) == PASSAGE)
         game->screen().standout();
-    if (monster->oldch == FLOOR && !game->hero().can_see(*monster_pos))
+    if (monster->tile_beneath() == FLOOR && !game->hero().can_see(*monster_pos))
         game->screen().mvaddch(*monster_pos, ' ');
-    else if (monster->oldch != UNSET)
-        game->screen().mvaddch(*monster_pos, monster->oldch);
+    else if (monster->tile_beneath() != UNSET)
+        game->screen().mvaddch(*monster_pos, monster->tile_beneath());
     game->screen().standend();
 
     game->level().monsters.remove(monster);
     delete monster;
 }
 
-//killed: Called to put a monster to death
-void killed(Monster* monster, bool print)
+//killed_by_hero: Called to put a monster to death
+void killed_by_hero(Monster* monster, bool print)
 {
     //If the monster was a flytrap, un-hold him
     if (monster->can_hold()) {

@@ -154,6 +154,37 @@ bool Monster::is_seeking(Item * obj)
     return dest == &obj->pos;
 }
 
+bool Monster::has_tile_beneath() const
+{
+    return m_tile_beneath != UNSET;
+}
+
+byte Monster::tile_beneath() const
+{
+    return m_tile_beneath;
+}
+
+void Monster::set_tile_beneath(byte c)
+{
+    m_tile_beneath = c;
+}
+
+void Monster::reload_tile_beneath()
+{
+    Coord p = position();
+    m_tile_beneath = game->level().get_tile(p);
+}
+
+void Monster::render()
+{
+    game->screen().mvaddch(position(), disguise);
+}
+
+void Monster::invalidate_tile_beneath()
+{
+    m_tile_beneath = UNSET;
+}
+
 //give_pack: Give a pack to a monster if it deserves one
 void Monster::give_pack()
 {
@@ -257,14 +288,14 @@ over:
     if (this->is_stationary())
         return 0;
     //If the chasing thing moved, update the screen
-    if (this->oldch != UNSET)
+    if (this->tile_beneath() != UNSET)
     {
-        if (this->oldch == ' ' && game->hero().can_see(this->pos) && game->level().get_tile(this->pos) == FLOOR)
+        if (this->tile_beneath() == ' ' && game->hero().can_see(this->pos) && game->level().get_tile(this->pos) == FLOOR)
             game->screen().mvaddch(this->pos, (char)FLOOR);
-        else if (this->oldch == FLOOR && !game->hero().can_see(this->pos) && !game->hero().detects_others())
+        else if (this->tile_beneath() == FLOOR && !game->hero().can_see(this->pos) && !game->hero().detects_others())
             game->screen().mvaddch(this->pos, ' ');
         else
-            game->screen().mvaddch(this->pos, this->oldch);
+            game->screen().mvaddch(this->pos, this->tile_beneath());
     }
     oroom = this->room;
     if (!equal(ch_ret, this->pos))
@@ -280,19 +311,19 @@ over:
     if (game->hero().can_see_monster(this))
     {
         if (game->level().get_flags(ch_ret)&F_PASS) game->screen().standout();
-        this->oldch = game->screen().mvinch(ch_ret.y, ch_ret.x);
+        set_tile_beneath(game->screen().mvinch(ch_ret.y, ch_ret.x)); //todo: why get from screen instead of level??
         game->screen().mvaddch(ch_ret, this->disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
-        this->oldch = game->screen().mvinch(ch_ret.y, ch_ret.x);
+        set_tile_beneath(game->screen().mvinch(ch_ret.y, ch_ret.x)); //todo: why get from screen instead of level??
         game->screen().mvaddch(ch_ret, this->type);
     }
     else
-        this->oldch = UNSET;
-    if (this->oldch == FLOOR && oroom->is_dark())
-        this->oldch = ' ';
+        invalidate_tile_beneath();
+    if (tile_beneath() == FLOOR && oroom->is_dark())
+        set_tile_beneath(' ');
     game->screen().standend();
     return 0;
 }

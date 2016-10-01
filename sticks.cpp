@@ -313,7 +313,7 @@ bool Stick::zap_polymorph(Coord dir)
 
     //create a random monster
     Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, get_level());
-    new_monster->oldch = monster->oldch;
+    new_monster->set_tile_beneath(monster->tile_beneath());
     new_monster->pack = monster->pack;
     if (new_monster->type != monster->type)
         discover();
@@ -400,11 +400,11 @@ bool Stick::zap_teleport_away(Coord dir)
     
     //erase the monster from the screen
     if (game->hero().can_see_monster(monster))
-        game->screen().mvaddch(monster->position(), monster->oldch);
+        game->screen().mvaddch(monster->position(), monster->tile_beneath());
 
     //pick a new location for the monster
     Coord new_pos;
-    monster->oldch = UNSET;
+    monster->invalidate_tile_beneath();
     find_empty_location(&new_pos, true);
     monster->pos = new_pos;
 
@@ -426,7 +426,7 @@ bool Stick::zap_teleport_to(Coord dir)
 
     //erase the monster from the screen
     if (game->hero().can_see_monster(monster))
-        game->screen().mvaddch(monster->position(), monster->oldch);
+        game->screen().mvaddch(monster->position(), monster->tile_beneath());
 
     //move the monster to beside the player
     monster->pos = game->hero().pos + dir;
@@ -473,7 +473,7 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
     if (is_vorpalized_against(monster))
     {
         msg("the %s vanishes in a puff of smoke", monster->get_name().c_str());
-        killed(monster, false);
+        killed_by_hero(monster, false);
     }
     else {
         msg("you hear a maniacal chuckle in the distance.");
@@ -563,7 +563,7 @@ void drain()
     {
         monster = *dp;
         if (!monster->decrease_hp(cnt, true))
-            killed(monster, game->hero().can_see_monster(monster));
+            killed_by_hero(monster, game->hero().can_see_monster(monster));
         else
             monster->start_run();
     }
@@ -629,8 +629,9 @@ bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Monster**victim)
     bool hit = false;
 
     Coord pos = monster->position();
-    if (monster->oldch != UNSET)
-        monster->oldch = game->level().get_tile(pos);
+    //todo: test code removal
+    //if (monster->tile_beneath() != UNSET)
+    //    monster->tile_beneath() = game->level().get_tile(pos);
 
     if (!save_throw(VS_MAGIC, monster) || bolt->is_frost())
     {

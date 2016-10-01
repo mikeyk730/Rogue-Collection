@@ -150,8 +150,8 @@ void Scroll::read_magic_mapping()
             }
         case DOOR: case PASSAGE: case STAIRS:
             if ((monster = game->level().monster_at({ x, y })) != NULL)
-                if (monster->oldch == ' ')
-                    monster->oldch = ch;
+                if (monster->tile_beneath() == ' ')
+                    monster->set_tile_beneath(ch);
             break;
         default: ch = ' ';
         }

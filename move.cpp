@@ -264,7 +264,7 @@ void door_open(Room *room)
 {
     int j, k;
     byte ch;
-    Monster* item;
+    Monster* monster;
 
     if (!(room->is_gone()) && !game->hero().is_blind())
         for (j = room->pos.y; j < room->pos.y + room->size.y; j++)
@@ -273,9 +273,9 @@ void door_open(Room *room)
                 ch = game->level().get_tile_or_monster({ k,j });
                 if (isupper(ch))
                 {
-                    item = wake_monster({ k,j });
-                    if (item->oldch == ' ' && !(room->is_dark()) && !game->hero().is_blind())
-                        item->oldch = game->level().get_tile({ k,j });
+                    monster = wake_monster({ k,j });
+                    if (monster->tile_beneath() == ' ' && !(room->is_dark()) && !game->hero().is_blind())
+                        monster->reload_tile_beneath();
                 }
             }
 }

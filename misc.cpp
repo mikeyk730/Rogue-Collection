@@ -129,7 +129,8 @@ void look(bool wakeup)
             else
             {
                 if (wakeup) wake_monster({ x,y });
-                if (monster->oldch != ' ' || (!(room->is_dark()) && !game->hero().is_blind())) monster->oldch = game->level().get_tile({ x, y });
+                if (monster->tile_beneath() != ' ' || (!(room->is_dark()) && !game->hero().is_blind())) 
+                    monster->reload_tile_beneath();
                 if (game->hero().can_see_monster(monster)) ch = monster->disguise;
             }
             //The current character used for IBM ARMOR doesn't look right in Inverse

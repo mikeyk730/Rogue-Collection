@@ -440,7 +440,7 @@ void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
     }
 
     if (monster->get_hp() <= 0)
-        killed(monster, true);
+        killed_by_hero(monster, true);
     else if (did_confuse && !is_blind())
         msg("the %s appears confused", name);
 }

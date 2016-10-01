@@ -78,11 +78,18 @@ struct Monster : public Agent
 
     bool is_seeking(Item* obj);
 
+    bool has_tile_beneath() const;
+    byte tile_beneath() const;
+    void invalidate_tile_beneath();
+    void set_tile_beneath(byte c);
+    void reload_tile_beneath();
+    void render();
+
     char type = 0;                    //What it is
     int exflags = 0;                  //More state;
     Coord *dest = 0;                  //Where it is running to
     char turn = 0;                    //If slowed, is it a turn to move
-    byte oldch = 0;                   //Character that was where it was
+    byte m_tile_beneath = 0;          //Tile that is underneath the monster
     byte disguise = 0;                //What mimic looks like
     int value = 0;
     int confuse_roll = 0;

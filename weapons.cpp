@@ -159,7 +159,7 @@ void fall(Item *obj, bool pr)
         game->level().set_tile(obj->pos, obj->type);
         game->level().items.push_front(obj);
         if (game->level().monster_at(fpos))
-            game->level().monster_at(fpos)->oldch = obj->type;
+            game->level().monster_at(fpos)->set_tile_beneath(obj->type);
 
         //mdk:bugfix: prevent a fallen item from appearing on top of a monster
         //if (game->hero().can_see(fpos))

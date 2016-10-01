@@ -197,13 +197,14 @@ void enter_room(Coord cp)
             game->screen().move(y, room->pos.x);
             for (x = room->pos.x; x < room->size.x + room->pos.x; x++)
             {
+                Coord pos = { x, y };
                 //Displaying monsters is all handled in the chase code now
-                monster = game->level().monster_at({ x, y });
+                monster = game->level().monster_at(pos);
                 if (monster == NULL || !game->hero().can_see_monster(monster))
-                    game->screen().addch(game->level().get_tile({ x, y }));
+                    game->screen().addch(game->level().get_tile(pos));
                 else {
-                    monster->oldch = game->level().get_tile({ x,y });
-                    game->screen().addch(monster->disguise);
+                    monster->reload_tile_beneath();
+                    monster->render();
                 }
             }
         }
@@ -247,7 +248,7 @@ void leave_room(Coord cp)
                     else {
                         Monster* m = game->level().monster_at({ x, y });
                         if (m) {
-                            m->oldch = UNSET;
+                            m->invalidate_tile_beneath();
                         }
                     }
                 }

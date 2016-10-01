@@ -349,14 +349,20 @@ bool turn_see(bool turn_off)
         can_see = (game->hero().can_see_monster(monster) || (was_there = game->screen().curch()) == monster->type);
         if (turn_off)
         {
-            if (!game->hero().can_see_monster(monster) && monster->oldch != UNSET)
-                game->screen().addch(monster->oldch);
+            if (!game->hero().can_see_monster(monster) && monster->tile_beneath() != UNSET)
+                game->screen().addch(monster->tile_beneath());
         }
         else
         {
-            if (!can_see) { game->screen().standout(); monster->oldch = was_there; }
+            if (!can_see) { 
+                game->screen().standout(); 
+                monster->set_tile_beneath(was_there);
+            }
             game->screen().addch(monster->type);
-            if (!can_see) { game->screen().standend(); add_new++; }
+            if (!can_see) {
+                game->screen().standend();
+                add_new++; 
+            }
         }
 
     });

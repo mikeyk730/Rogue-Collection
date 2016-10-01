@@ -34,5 +34,5 @@ void display_throw_msg(Item *weapon, const char *mname, char *does, char *did);
 //remove: Remove a monster from the screen
 void remove_monster(Monster* monster, bool waskill);
 
-//killed: Called to put a monster to death
-void killed(Monster* monster, bool print);
+//killed_by_hero: Called to put a monster to death
+void killed_by_hero(Monster* monster, bool print);

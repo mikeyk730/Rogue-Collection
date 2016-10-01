@@ -14,22 +14,21 @@
 #include "hero.h"
 #include "monster.h"
 
-static Coord slimy;
+static Coord slime_pos;
 
 //Slime_split: Called when it has been decided that A slime should divide itself
 
 void slime_split(Monster* monster)
 {
-    Monster *nslime;
-
     if (new_slime(monster) == 0)
         return;
+
     msg("The %s divides.  Ick!", monster->get_name().c_str());
-    nslime = Monster::CreateMonster(monster->type, &slimy, get_level());
-    if (game->hero().can_see(slimy))
+    Monster* nslime = Monster::CreateMonster(monster->type, &slime_pos, get_level());
+    if (game->hero().can_see(slime_pos))
     {
-        nslime->oldch = game->level().get_tile(slimy);
-        game->screen().mvaddch(slimy, monster->type);
+        nslime->reload_tile_beneath();
+        nslime->render();
     }
     nslime->start_run();
 }
@@ -54,7 +53,7 @@ int new_slime(Monster *slime)
                     if (new_slime(ntp)) { y = ty + 2; x = tx + 2; }
                 }
     }
-    else { ret = 1; slimy = sp; }
+    else { ret = 1; slime_pos = sp; }
     slime->set_dirty(false);
     return ret;
 }
