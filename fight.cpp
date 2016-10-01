@@ -174,7 +174,7 @@ void remove_monster(Monster* monster, bool waskill)
         game->screen().standout();
     if (monster->tile_beneath() == FLOOR && !game->hero().can_see(*monster_pos))
         game->screen().mvaddch(*monster_pos, ' ');
-    else if (monster->tile_beneath() != UNSET)
+    else if (monster->has_tile_beneath())
         game->screen().mvaddch(*monster_pos, monster->tile_beneath());
     game->screen().standend();
 

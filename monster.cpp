@@ -288,7 +288,7 @@ over:
     if (this->is_stationary())
         return 0;
     //If the chasing thing moved, update the screen
-    if (this->tile_beneath() != UNSET)
+    if (this->has_tile_beneath())
     {
         if (this->tile_beneath() == ' ' && game->hero().can_see(this->pos) && game->level().get_tile(this->pos) == FLOOR)
             game->screen().mvaddch(this->pos, (char)FLOOR);

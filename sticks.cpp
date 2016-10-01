@@ -630,8 +630,8 @@ bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Monster**victim)
 
     Coord pos = monster->position();
     //todo: test code removal
-    //if (monster->tile_beneath() != UNSET)
-    //    monster->tile_beneath() = game->level().get_tile(pos);
+    //if (monster->has_tile_beneath())
+    //    monster->reload_tile_beneath();
 
     if (!save_throw(VS_MAGIC, monster) || bolt->is_frost())
     {

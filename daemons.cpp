@@ -81,7 +81,7 @@ void unsee()
 
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
         th = *it;
-        if (th->is_invisible() && game->hero().can_see_monster(th) && th->tile_beneath() != UNSET)
+        if (th->is_invisible() && game->hero().can_see_monster(th) && th->has_tile_beneath())
             game->screen().mvaddch(th->pos, th->tile_beneath());
     }
     game->hero().set_sees_invisible(false);
