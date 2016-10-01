@@ -44,8 +44,6 @@
 #include "level.h"
 #include "rooms.h"
 
-int bwflag = false;
-
 //main: The main program, of course
 int main(int argc, char **argv)
 {
@@ -67,12 +65,10 @@ int main(int argc, char **argv)
     
     if (!replay)
         setenv("rogue.opt");
-    if ("bw" == game->get_environment("scorefile"))
-        bwflag = true;
     load_monster_cfg(game->get_environment("monstercfg"));
 
-    game->screen().winit(game->get_environment("width") == "40");
-    if (bwflag)
+    game->screen().winit(game->options.narrow_screen());
+    if (game->options.monochrome())
         game->screen().forcebw();
 
     credits();
@@ -127,7 +123,7 @@ void playit(char *sname)
     if (sname)
     {
         restore_game(sname);
-        if (bwflag)
+        if (game->options.monochrome())
             game->screen().forcebw();
         setup();
         game->screen().cursor(false);

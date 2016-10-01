@@ -203,8 +203,7 @@ struct MagicMissile : public Item
         flags = IS_MISL;
         m_launcher = NONE;
 
-        bool use_throw_damage(game->get_environment("use_throw_damage") != "false");
-        if (!use_throw_damage) {
+        if (!game->options.use_throw_damage()) {
             //mdk: this was a hack to get magic missles to use throw damage in the fight code.
             //it's not needed with my change to use throw damage.
             if (game->hero().get_current_weapon() != NULL) {
@@ -271,7 +270,7 @@ bool Stick::zap_striking(Coord dir)
     //mdk:bugfix: originally the stick would be drained here, but it
     //also gets drained in Hero::fight.  I don't think the double 
     //draining was intentional.
-    bool double_drain(game->get_environment("double_drain") == "bug_on");
+    bool double_drain(!game->options.striking_charge_bugfix());
 
     return double_drain ? true : false;
 }
@@ -434,7 +433,7 @@ bool Stick::zap_teleport_to(Coord dir)
 
     //mdk:bugfix: originally zapping a flytrap would release the hold,
     //but this doesn't make sense
-    bool zap_release(game->get_environment("zap_release") == "bug_on");
+    bool zap_release(!game->options.zap_release_bugfix());
     if (zap_release && monster->can_hold())
         game->hero().set_is_held(false);
 
@@ -481,7 +480,7 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
 
         //mdk:bugfix: originally zapping a flytrap would release the hold,
         //but this doesn't make sense
-        bool zap_release(game->get_environment("zap_release") == "bug_on");
+        bool zap_release(!game->options.zap_release_bugfix());
         if (zap_release && monster->can_hold())
             game->hero().set_is_held(false);
 

@@ -24,7 +24,6 @@ struct GameState
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);
     void process_environment();
-    bool use_level_names() const;
 
     void log(const std::string& category, const std::string& msg);
 
@@ -64,6 +63,15 @@ struct GameState
     struct Options
     {
         bool throws_affect_mimics() const;
+        bool show_inventory_menu() const;
+        bool narrow_screen() const;
+        bool monochrome() const;
+        bool use_exp_level_names() const;
+        bool zap_release_bugfix() const;
+        bool striking_charge_bugfix() const;
+        bool use_throw_damage() const;
+        bool aggressive_orcs() const;
+
     } options;
 
     // uncategorized state.  //todo: categorize it.

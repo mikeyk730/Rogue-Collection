@@ -209,7 +209,7 @@ void Scroll::read_identify()
     //Identify, let the rogue figure something out
     discover();
     msg("this scroll is an identify scroll");
-    if ("on" == game->get_environment("menu"))
+    if (game->options.show_inventory_menu())
         more(" More ");
     whatis();
 }

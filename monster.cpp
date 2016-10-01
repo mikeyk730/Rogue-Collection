@@ -232,10 +232,10 @@ over:
     }
     else if (equal(ch_ret, *this->dest))
     {
-        //mdk: aggressive orcs pick up gold in a room, then chase the player.  It
-        //looks as if this were the original intended behavior, so I added it as
+        //mdk: aggressive orcs pick up gold in a room, then chase the player.  It looks
+        //as if this could have been the original intended behavior, so I added it as
         //an option.
-        bool orc_aggressive(game->get_environment("orc_type") == "aggressive");
+        bool orc_aggressive(game->options.aggressive_orcs());
 
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
             obj = *(it++);

@@ -142,11 +142,6 @@ void GameState::set_environment(const std::string& key, const std::string& value
     m_environment[key] = value;
 }
 
-bool GameState::use_level_names() const
-{
-    return "on" == game->get_environment("levelnames");
-}
-
 void GameState::log(const std::string & category, const std::string & msg)
 {
     m_log.push_back(std::make_pair(category, msg));
@@ -232,4 +227,44 @@ bool GameState::allow_fast_play() const
 bool GameState::Options::throws_affect_mimics() const
 {
     return game->get_environment("throws_affect_mimics") == "true";
+}
+
+bool GameState::Options::show_inventory_menu() const
+{
+    return game->get_environment("menu") != "false";
+}
+
+bool GameState::Options::narrow_screen() const
+{
+    return game->get_environment("narrow_screen") == "true";
+}
+
+bool GameState::Options::monochrome() const
+{
+    return game->get_environment("monochrome") == "true";
+}
+
+bool GameState::Options::use_exp_level_names() const
+{
+    return game->get_environment("use_exp_level_names") == "true";
+}
+
+bool GameState::Options::zap_release_bugfix() const
+{
+    return game->get_environment("zap_release_bugfix") != "false";
+}
+
+bool GameState::Options::striking_charge_bugfix() const
+{
+    return game->get_environment("striking_charge_bugfix") != "false";
+}
+
+bool GameState::Options::use_throw_damage() const
+{
+    return game->get_environment("use_throw_damage") != "false";
+}
+
+bool GameState::Options::aggressive_orcs() const
+{
+    return game->get_environment("orc_type") == "aggressive";
 }

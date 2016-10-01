@@ -86,8 +86,7 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
         //mdk: the original code never used throw damage except for arrows and crossbow bolts.
         //I've decided to use it for weapons that don't require a launcher too.  IS_MISL is
         //still meaningless.
-        bool use_throw_damage(game->get_environment("use_throw_damage") != "false");
-        if (use_throw_damage && weapon->launcher() == NONE) {
+        if (game->options.use_throw_damage() && weapon->launcher() == NONE) {
             *damage_string = weapon->get_throw_damage();
         }
         //if we've used the right weapon to launch the projectile, we use the throw 
@@ -340,7 +339,7 @@ void Hero::check_level()
         add = roll(i - olevel, 10);
         stats.max_hp += add;
         increase_hp(add, false, false);
-        if (game->use_level_names())
+        if (game->options.use_exp_level_names())
             msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
         else
             msg("Welcome to level %d", i);

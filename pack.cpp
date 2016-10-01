@@ -77,7 +77,7 @@ Item* get_item(const std::string& purpose, int type)
         }
     }
 
-    bool show_menu(game->get_environment("menu") == "on");
+    bool show_menu(game->options.show_inventory_menu());
     for (;;)
     {
         byte ch;

@@ -311,7 +311,7 @@ void update_status_bar()
     game->screen().printw("Armor:%-2d", game->hero().armor_for_display());
 
     //Exp:
-    if (!game->use_level_names())
+    if (!game->options.use_exp_level_names())
     {
         game->screen().move(23, PT(22, 62));
         game->screen().printw("Exp:%d/%d", game->hero().stats.level, game->hero().experience());
