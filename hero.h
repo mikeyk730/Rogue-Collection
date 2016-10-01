@@ -49,6 +49,9 @@ public:
 
     //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
     void add_to_pack(Item *obj, bool silent);
+private:
+    bool add_to_list(Item** obj, bool from_floor);
+public:
     int get_pack_size();
 
     //teleport: Bamf the hero someplace else

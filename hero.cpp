@@ -539,20 +539,41 @@ int Hero::get_pack_size()
 //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
 void Hero::add_to_pack(Item *obj, bool silent)
 {
-    Monster* monster;
-    bool from_floor;
-    byte floor;
+    bool from_floor = false;
+    if (!obj)
+    {   
+        from_floor = true;
+        obj = find_obj(pos, true);
+        if (!obj)
+            return;
+    }
 
+    if (!add_to_list(&obj, from_floor))
+        return;
+
+    //If this was the object of something's desire, that monster will get mad and run at the hero
+    //todo where used?
+    if (from_floor) {
+        for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+            Monster* monster = *it;
+            if (monster->m_destination && (*monster->m_destination == obj->pos))
+                monster->m_destination = &pos;
+        }
+    }
+
+    if (obj->type == AMULET) {
+        m_had_amulet = true;
+    }
+
+    //Notify the user
+    if (!silent)
+        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(true).c_str(), pack_char(obj));
+}
+
+bool Hero::add_to_list(Item** obj, bool from_floor)
+{
     auto it = pack.begin();
 
-    if (obj == NULL)
-    {
-        from_floor = true;
-        if ((obj = find_obj(pos, true)) == NULL)
-            return;
-        floor = (room->is_gone()) ? PASSAGE : FLOOR;
-    }
-    else from_floor = false;
     //Link it into the pack.  Search the pack for a object of similar type
     //if there isn't one, stuff it at the beginning, if there is, look for one
     //that is exactly the same and just increment the count if there is.
@@ -560,102 +581,91 @@ void Hero::add_to_pack(Item *obj, bool silent)
     //is not ordered so that you can't tell good food from bad.  First check
     //to see if there is something in the same group and if there is then
     //increment the count.
-
-    if (obj->group)
+    if ((*obj)->group)
     {
         for (auto it = pack.begin(); it != pack.end(); ++it) {
             Item* op = *it;
-            if (op->group == obj->group)
+            if (op->group == (*obj)->group)
             {
                 //Put it in the pack and notify the user
-                op->count += obj->count;
+                op->count += (*obj)->count;
                 if (from_floor) {
-                    game->level().items.remove(obj);
+                    byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
+                    game->level().items.remove((*obj));
                     game->screen().mvaddch(pos, floor);
                     game->level().set_tile(pos, floor);
                 }
-                delete obj;
-                obj = op;
-                goto picked_up;
+                delete *obj;
+                *obj = op;
+                return true;
             }
         }
     }
+
     //Check if there is room
     if (get_pack_size() >= MAXPACK - 1) {
         msg("you can't carry anything else");
-        return;
+        return false;
     }
+
     //Check for and deal with scare monster scrolls
-    if (is_scare_monster_scroll(obj)) {
-        if (obj->is_found())
+    if (is_scare_monster_scroll(*obj)) {
+        if ((*obj)->is_found())
         {
-            game->level().items.remove(obj);
-            delete obj;
+            byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
+            game->level().items.remove(*obj);
+            delete *obj;
             game->screen().mvaddch(pos, floor);
             game->level().set_tile(pos, floor);
             msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
-            return;
+            return false;
         }
-        else obj->set_found();
+        else (*obj)->set_found();
     }
+
     if (from_floor) {
-        game->level().items.remove(obj);
+        byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
+        game->level().items.remove(*obj);
         game->screen().mvaddch(pos, floor);
         game->level().set_tile(pos, floor);
     }
 
-    //todo: fuck this code is infuriating
-
     //Search for an object of the same type
     bool found_type = false;
     for (; it != pack.end(); ++it) {
-        if ((*it)->type == obj->type) {
+        if ((*it)->type == (*obj)->type) {
             found_type = true;
             break;
         }
     }
     //Put it at the end of the pack since it is a new type
     if (!found_type) {
-        (obj->type == FOOD) ? pack.push_front(obj) :
-            pack.push_back(obj);
-        goto picked_up;
+        ((*obj)->type == FOOD) ? pack.push_front(*obj) :
+            pack.push_back(*obj);
+        return true;
     }
+
     //Search for an object which is exactly the same
     bool exact = false;
     for (; it != pack.end(); ++it) {
-        if ((*it)->type != obj->type)
+        if ((*it)->type != (*obj)->type)
             break;
-        if ((*it)->which == obj->which) {
+        if ((*it)->which == (*obj)->which) {
             exact = true;
             break;
         }
     }
     //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
-    if (exact && does_item_group(obj->type))
+    if (exact && does_item_group((*obj)->type))
     {
         (*it)->count++;
-        delete(obj);
-        obj = (*it);
-        goto picked_up;
+        delete *obj;
+        *obj = (*it);
+        return true;
     }
 
-    pack.insert(it, obj);
-
-picked_up:
-    //If this was the object of something's desire, that monster will get mad and run at the hero
-    if (from_floor) {
-        for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
-            monster = *it;
-            if (monster->m_destination && (monster->m_destination->x == obj->pos.x) && (monster->m_destination->y == obj->pos.y))
-                monster->m_destination = &pos;
-        }
-    }
-    if (obj->type == AMULET) {
-        m_had_amulet = true;
-    }
-    //Notify the user
-    if (!silent)
-        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(true).c_str(), pack_char(obj));
+    pack.insert(it, *obj);
+    return true;
 }
 
 //pick_up_gold: Add gold to the pack
