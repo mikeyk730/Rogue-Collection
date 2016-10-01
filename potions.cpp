@@ -346,7 +346,7 @@ bool turn_see(bool turn_off)
         byte was_there;
 
         game->screen().move(monster->m_position.y, monster->m_position.x);
-        can_see = (game->hero().can_see_monster(monster) || (was_there = game->screen().curch()) == monster->type);
+        can_see = (game->hero().can_see_monster(monster) || (was_there = game->screen().curch()) == monster->m_type);
         if (turn_off)
         {
             if (!game->hero().can_see_monster(monster) && monster->has_tile_beneath())
@@ -358,7 +358,7 @@ bool turn_see(bool turn_off)
                 game->screen().standout(); 
                 monster->set_tile_beneath(was_there);
             }
-            game->screen().addch(monster->type);
+            game->screen().addch(monster->m_type);
             if (!can_see) {
                 game->screen().standend();
                 add_new++; 

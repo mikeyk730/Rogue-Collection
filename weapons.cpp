@@ -388,7 +388,7 @@ bool Weapon::is_vorpalized_against(Monster* monster) const
 {
     if (!monster)
         return false;
-    return enemy == monster->type;
+    return enemy == monster->m_type;
 }
 
 std::string Weapon::get_vorpalized_name() const

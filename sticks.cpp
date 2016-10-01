@@ -319,10 +319,10 @@ bool Stick::zap_polymorph(Coord dir)
     Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, get_level());
     new_monster->set_tile_beneath(monster->tile_beneath());
     new_monster->m_pack = monster->m_pack;
-    if (new_monster->type != monster->type)
+    if (new_monster->m_type != monster->m_type)
         discover();
     if (game->hero().can_see_monster(new_monster))
-        game->screen().mvaddch(p, new_monster->type);
+        game->screen().mvaddch(p, new_monster->m_type);
 
     //the monster chases the player
     new_monster->start_run(&game->hero().m_position);
@@ -373,7 +373,7 @@ bool Stick::zap_slow_monster(Coord dir)
             monster->set_is_fast(false);
         else
             monster->set_is_slow(true);
-        monster->turn = true;
+        monster->m_turn = true;
         monster->start_run();
     }
     return true;
@@ -620,7 +620,7 @@ bool bolt_vs_hero(MagicBolt* bolt, Coord start)
             if (bolt->from_player)
                 death('b');
             else
-                death(game->level().monster_at(start)->type);
+                death(game->level().monster_at(start)->m_type);
         }
         msg("you are hit by the %s", bolt->name().c_str());
     }

@@ -129,7 +129,7 @@ const char* get_monster_name(char monster)
 
 int Monster::get_carry_probability() const
 {
-    return monsters[type - 'A'].carry;
+    return monsters[m_type - 'A'].carry;
 }
 
 //randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
@@ -170,21 +170,20 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     int level_add = (level <= AMULETLEVEL) ? 0 : level - AMULETLEVEL;
     
     const MonsterEntry* defaults = &monsters[type - 'A'];
-    monster->type = type;
+    monster->m_type = type;
     monster->disguise = type;
     monster->m_position = *position;
     monster->invalidate_tile_beneath();
     monster->m_room = get_room_from_position(*position);
     monster->m_flags = defaults->flags;
-    monster->exflags = defaults->exflags;
+    monster->m_ex_flags = defaults->exflags;
     monster->m_stats = defaults->stats;
     monster->m_stats.m_level += level_add;
     monster->m_stats.m_hp = monster->m_stats.m_max_hp = roll(monster->m_stats.m_level, 8);
     monster->m_stats.m_ac -= level_add;
     monster->m_stats.m_exp += level_add * 10 + exp_add(monster);
-    monster->turn = true;
-    monster->value = 0;
-    monster->confuse_roll = defaults->confuse_roll;
+    monster->m_turn = true;
+    monster->m_confused_chance = defaults->confuse_roll;
 
     if (monster->is_mimic())
         set_disguise(monster);

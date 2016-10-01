@@ -24,7 +24,7 @@ void slime_split(Monster* monster)
         return;
 
     msg("The %s divides.  Ick!", monster->get_name().c_str());
-    Monster* nslime = Monster::CreateMonster(monster->type, &slime_pos, get_level());
+    Monster* nslime = Monster::CreateMonster(monster->m_type, &slime_pos, get_level());
     if (game->hero().can_see(slime_pos))
     {
         nslime->reload_tile_beneath();
@@ -46,7 +46,7 @@ int new_slime(Monster *slime)
         //There were no open spaces next to this slime, look for other slimes that might have open spaces next to them.
         for (y = ty - 1; y <= ty + 1; y++)
             for (x = tx - 1; x <= tx + 1; x++)
-                if (game->level().get_tile_or_monster({ x, y }) == slime->type && (ntp = game->level().monster_at({ x, y })))
+                if (game->level().get_tile_or_monster({ x, y }) == slime->m_type && (ntp = game->level().monster_at({ x, y })))
                 {
                     if (ntp->is_dirty())
                         continue; //Already done this one

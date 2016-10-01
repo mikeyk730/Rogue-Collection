@@ -25,23 +25,23 @@
  
 bool Monster::can_divide() const
 {
-    return (exflags & EX_DIVIDES) != 0;
+    return (m_ex_flags & EX_DIVIDES) != 0;
 }
 
 bool Monster::is_stationary() const {
-    return (exflags & EX_STATIONARY) != 0;
+    return (m_ex_flags & EX_STATIONARY) != 0;
 }
 
 bool Monster::can_hold() const {
-    return (exflags & EX_HOLDS) != 0;
+    return (m_ex_flags & EX_HOLDS) != 0;
 }
 
 bool Monster::hold_attacks() const {
-    return (exflags & EX_HOLD_ATTACKS) != 0;
+    return (m_ex_flags & EX_HOLD_ATTACKS) != 0;
 }
 
 bool Monster::shoots_fire() const {
-    return (exflags & EX_SHOOTS_FIRE) != 0;
+    return (m_ex_flags & EX_SHOOTS_FIRE) != 0;
 }
 
 bool Monster::immune_to_fire() const {
@@ -49,74 +49,74 @@ bool Monster::immune_to_fire() const {
 }
 
 bool Monster::shoots_ice() const {
-    return (exflags & EX_SHOOTS_ICE) != 0;
+    return (m_ex_flags & EX_SHOOTS_ICE) != 0;
 }
 
 bool Monster::causes_confusion() const {
-    return (exflags & EX_CONFUSES) != 0;
+    return (m_ex_flags & EX_CONFUSES) != 0;
 }
 
 bool Monster::is_mimic() const {
-    return (exflags & EX_MIMICS) != 0;
+    return (m_ex_flags & EX_MIMICS) != 0;
 }
 
 bool Monster::is_disguised() const {
-    return is_mimic() && type != disguise;
+    return is_mimic() && m_type != disguise;
 }
 
 bool Monster::drops_gold() const {
-    return (exflags & EX_DROPS_GOLD) != 0;
+    return (m_ex_flags & EX_DROPS_GOLD) != 0;
 }
 
 bool Monster::steals_gold() const {
-    return (exflags & EX_STEALS_GOLD) != 0;
+    return (m_ex_flags & EX_STEALS_GOLD) != 0;
 }
 
 bool Monster::steals_magic() const {
-    return (exflags & EX_STEALS_MAGIC) != 0;
+    return (m_ex_flags & EX_STEALS_MAGIC) != 0;
 }
 
 bool Monster::drains_life() const {
-    return (exflags & EX_DRAINS_MAXHP) != 0;
+    return (m_ex_flags & EX_DRAINS_MAXHP) != 0;
 }
 
 bool Monster::drains_exp() const {
-    return (exflags & EX_DRAINS_EXP) != 0;
+    return (m_ex_flags & EX_DRAINS_EXP) != 0;
 }
 
 bool Monster::drains_strength() const {
-    return (exflags & EX_DRAINS_STR) != 0;
+    return (m_ex_flags & EX_DRAINS_STR) != 0;
 }
 
 bool Monster::rusts_armor() const {
-    return (exflags & EX_RUSTS_ARMOR) != 0;
+    return (m_ex_flags & EX_RUSTS_ARMOR) != 0;
 }
 
 bool Monster::dies_from_attack() const {
-    return (exflags & EX_SUICIDES) != 0;
+    return (m_ex_flags & EX_SUICIDES) != 0;
 }
 
 std::string Monster::get_name()
 {
-    return get_monster_name(type);
+    return get_monster_name(m_type);
 }
 
 bool Monster::is_monster_confused_this_turn() const {
     return ((is_confused() && rnd(5) != 0) ||
         // Phantoms are slightly confused all of the time, and bats are quite confused all the time
-        confuse_roll && rnd(confuse_roll) == 0);
+        m_confused_chance && rnd(m_confused_chance) == 0);
 }
 
 void Monster::reveal_disguise() {
-    disguise = type;
+    disguise = m_type;
 }
 
 void Monster::set_dirty(bool enable) {
-    value = enable ? 1 : 0;
+    m_dirty = enable ? 1 : 0;
 }
 
 bool Monster::is_dirty() {
-    return value == 1;
+    return m_dirty == 1;
 }
 
 void Monster::hold()
@@ -328,7 +328,7 @@ void Monster::do_screen_update(Coord next_position)
     {
         game->screen().standout();
         set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
-        game->screen().mvaddch(next_position, type);
+        game->screen().mvaddch(next_position, m_type);
     }
     else
         invalidate_tile_beneath();
@@ -478,7 +478,7 @@ void flytrap_attack(Monster* mp)
     //Flytrap stops the poor guy from moving
     game->hero().set_is_held(true);
     std::ostringstream ss;
-    ss << ++(mp->value) << "d1";
+    ss << ++(mp->m_flytrap_count) << "d1";
     mp->m_stats.m_damage = ss.str();
 }
 
@@ -541,7 +541,7 @@ bool vampire_wraith_attack(Monster* monster)
         if (monster->drains_exp())
         {
             if (game->hero().experience() == 0)
-                death(monster->type); //All levels gone
+                death(monster->m_type); //All levels gone
             game->hero().reduce_level();
             damage = roll(1, 10);
         }
@@ -550,7 +550,7 @@ bool vampire_wraith_attack(Monster* monster)
 
         game->hero().m_stats.m_max_hp -= damage;
         if (game->hero().m_stats.m_max_hp < 1)
-            death(monster->type);
+            death(monster->m_type);
         game->hero().decrease_hp(damage, false);
 
         msg("you suddenly feel weaker");
@@ -570,14 +570,14 @@ Monster* Monster::attack_player()
     game->repeat_cmd_count = game->turns_since_heal = 0;
 
     if (is_disguised() && !game->hero().is_blind())
-        disguise = type;
+        disguise = m_type;
     name = game->hero().is_blind() ? "it" : get_name();
 
     if (attack(&game->hero(), NULL, false))
     {
         display_hit_msg(name.c_str(), NULL);
         if (game->hero().get_hp() <= 0)
-            death(type); //Bye bye life ...
+            death(m_type); //Bye bye life ...
 
         //todo: modify code, so enemy can have more than one power
         if (!powers_cancelled()) {
@@ -621,8 +621,8 @@ Monster* Monster::attack_player()
     {
         if (hold_attacks())
         {
-            if (!game->hero().decrease_hp(value, true))
-                death(type); //Bye bye life ...
+            if (!game->hero().decrease_hp(m_flytrap_count, true))
+                death(m_type); //Bye bye life ...
         }
         display_miss_msg(name.c_str(), NULL);
     }

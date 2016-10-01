@@ -131,7 +131,10 @@ void runners()
         {
             Monster* victim = 0;
             int dist = distance(game->hero().m_position, monster->m_position);
-            if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->turn) {
+
+            //normal turn. slow monsters only get a chance every other turn
+            //mdk: slimes are slow when far from the player
+            if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->m_turn) {
                 victim = monster->do_chase();
                 if (victim == monster) {
                     it = next;
@@ -139,7 +142,7 @@ void runners()
                 }
             }
 
-            // fast monsters get an extra turn
+            //fast monsters get an extra turn
             if (!victim && monster->is_fast()) {
                 victim = monster->do_chase();
                 if (victim == monster) {
@@ -148,7 +151,7 @@ void runners()
                 }
             }
 
-            // flying monsters get an extra turn to close the distance
+            //flying monsters get an extra turn when far away to close the distance
             dist = distance(game->hero().m_position, monster->m_position);
             if (!victim && monster->is_flying() && dist > 3) {
                 Monster* victim = monster->do_chase();
@@ -157,7 +160,7 @@ void runners()
                     continue;
                 }
             }
-            monster->turn ^= true;
+            monster->m_turn ^= true;
         }
         ++it;
     }
