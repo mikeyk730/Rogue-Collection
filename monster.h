@@ -60,7 +60,7 @@ struct Monster : public Agent
     void reveal_disguise();
 
     //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
-    void chase(Coord *chasee_pos);
+    void chase(Coord *chasee_pos, Coord* next_position);
 
     //slime specific
     void set_dirty(bool enable);

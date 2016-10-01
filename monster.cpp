@@ -22,11 +22,7 @@
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
-namespace
-{
-    Coord next_position; //Where chasing takes you //todo:eliminate statics
-}
-
+ 
 bool Monster::can_divide() const
 {
     return (exflags & EX_DIVIDES) != 0;
@@ -195,6 +191,8 @@ void Monster::give_pack()
 //do_chase: Make one thing chase another.
 Monster* Monster::do_chase()
 {
+    Coord next_position; //Where chasing takes you
+
     //If gold has been taken, target the hero
     if (is_greedy() && room->gold_val == 0)
         dest = &game->hero().pos;
@@ -256,7 +254,7 @@ over:
         }
     }
     //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
-    this->chase(&tempdest);
+    chase(&tempdest, &next_position);
     if (equal(next_position, game->hero().pos)) {
         return attack_player();
     }
@@ -291,7 +289,7 @@ over:
     return 0;
 }
 
-void Monster::do_screen_update(Coord next_position1)
+void Monster::do_screen_update(Coord next_position)
 {
     if (has_tile_beneath())
     {
@@ -304,29 +302,29 @@ void Monster::do_screen_update(Coord next_position1)
     }
 
     Room *orig_room = room;
-    if (!equal(next_position1, pos))
+    if (!equal(next_position, pos))
     {
-        if ((room = get_room_from_position(next_position1)) == NULL) {
+        if ((room = get_room_from_position(next_position)) == NULL) {
             room = orig_room;
             return;
         }
         if (orig_room != room)
             dest = find_dest();
-        pos = next_position1;
+        pos = next_position;
     }
 
     if (game->hero().can_see_monster(this))
     {
-        if (game->level().is_passage(next_position1))
+        if (game->level().is_passage(next_position))
             game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(next_position1.y, next_position1.x)); //todo: why get from screen instead of level??
-        game->screen().mvaddch(next_position1, disguise);
+        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
+        game->screen().mvaddch(next_position, disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(next_position1.y, next_position1.x)); //todo: why get from screen instead of level??
-        game->screen().mvaddch(next_position1, type);
+        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
+        game->screen().mvaddch(next_position, type);
     }
     else
         invalidate_tile_beneath();
@@ -338,7 +336,7 @@ void Monster::do_screen_update(Coord next_position1)
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
-void Monster::chase(Coord *chasee_pos)
+void Monster::chase(Coord *chasee_pos, Coord* next_position)
 {
     int x, y;
     int dist, thisdist;
@@ -351,8 +349,8 @@ void Monster::chase(Coord *chasee_pos)
     if (this->is_monster_confused_this_turn())
     {
         //get a valid random move
-        rndmove(this, &next_position);
-        dist = distance(next_position, *chasee_pos);
+        rndmove(this, next_position);
+        dist = distance(*next_position, *chasee_pos);
         //Small chance that it will become un-confused
         if (rnd(30) == 17)
             this->set_confused(false);
@@ -364,7 +362,7 @@ void Monster::chase(Coord *chasee_pos)
 
         //This will eventually hold where we move to get closer. If we can't find an empty spot, we stay where we are.
         dist = distance(*chaser_pos, *chasee_pos);
-        next_position = *chaser_pos;
+        *next_position = *chaser_pos;
         ey = chaser_pos->y + 1;
         ex = chaser_pos->x + 1;
         for (x = chaser_pos->x - 1; x <= ex; x++)
@@ -395,8 +393,8 @@ void Monster::chase(Coord *chasee_pos)
                     }
                     //If we didn't find any scrolls at this place or it wasn't a scare scroll, then this place counts
                     thisdist = distance({ x, y }, *chasee_pos);
-                    if (thisdist < dist) { plcnt = 1; next_position = try_pos; dist = thisdist; }
-                    else if (thisdist == dist && rnd(++plcnt) == 0) { next_position = try_pos; dist = thisdist; }
+                    if (thisdist < dist) { plcnt = 1; *next_position = try_pos; dist = thisdist; }
+                    else if (thisdist == dist && rnd(++plcnt) == 0) { *next_position = try_pos; dist = thisdist; }
                 }
             }
         }
