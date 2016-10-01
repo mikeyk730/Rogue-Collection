@@ -48,7 +48,7 @@ char *tr_name(byte type)
 }
 
 //look: A quick glance all around the player
-void look(bool wakeup)
+void look(bool wakeup) //todo: learn this function
 {
     int x, y;
     byte ch, pch;
@@ -125,7 +125,7 @@ void look(bool wakeup)
                 if ((monster = game->level().monster_at({ x, y })) != NULL) if (game->hero().detects_others() && monster->is_invisible())
                 {
                     if (game->modifiers.stop_at_door() && !game->modifiers.first_move())
-                        game->modifiers.m_running = false;
+                        stop_player_running();
                     continue;
                 }
                 else
@@ -157,7 +157,7 @@ void look(bool wakeup)
                     {
                     case DOOR:
                         if (x == game->hero().m_position.x || y == game->hero().m_position.y)
-                            game->modifiers.m_running = false;
+                            stop_player_running();
                         break;
                     case PASSAGE:
                         if (x == game->hero().m_position.x || y == game->hero().m_position.y)
@@ -166,14 +166,14 @@ void look(bool wakeup)
                     case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
                         break;
                     default:
-                        game->modifiers.m_running = false;
+                        stop_player_running();
                         break;
                     }
                 }
         }
     }
     if (game->modifiers.stop_at_door() && !game->modifiers.first_move() && passcount > 1)
-        game->modifiers.m_running = false;
+        stop_player_running();
     game->screen().move(game->hero().m_position.y, game->hero().m_position.x);
     //todo:check logic
     if ((game->level().is_passage(game->hero().m_position)) || (game->was_trapped > 1) || (game->level().is_maze(game->hero().m_position)))
@@ -354,6 +354,7 @@ int spread(int nm)
 //step_ok: Returns true if it is ok to step on ch
 int step_ok(int ch)
 {
+    //return false if wall or monster
     switch (ch)
     {
     case ' ': case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
@@ -363,8 +364,8 @@ int step_ok(int ch)
     }
 }
 
-//goodch: Decide how good an object is and return the correct character for printing.
-int goodch(Item *obj)
+//get_magic_char: Decide how good an object is and return the correct character for printing.
+int get_magic_char(Item *obj)
 {
     if (obj->is_cursed() || obj->is_evil())
         return BMAGIC;
@@ -427,7 +428,7 @@ int distance(Coord a, Coord b)
 
 int equal(Coord a, Coord b)
 {
-    return (a.x == b.x && a.y == b.y);
+    return a == b;
 }
 
 int offmap(Coord p)

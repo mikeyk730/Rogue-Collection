@@ -189,7 +189,7 @@ void Monster::give_pack()
 }
 
 //do_chase: Make one thing chase another.
-Monster* Monster::do_chase()
+Monster* Monster::do_chase() //todo: understand
 {
     //If gold has been taken, target the hero
     if (is_greedy() && m_room->m_gold_val == 0)
@@ -246,7 +246,7 @@ Monster* Monster::do_chase()
                 (m_position.y == game->hero().m_position.y || m_position.x == game->hero().m_position.x || abs(m_position.y - game->hero().m_position.y) == abs(m_position.x - game->hero().m_position.x)) &&
                 ((dist = distance(m_position, game->hero().m_position)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !powers_cancelled() && rnd(DRAGONSHOT) == 0)
             {
-                game->modifiers.m_running = false;
+                stop_player_running();
                 Coord delta;
                 delta.y = sign(game->hero().m_position.y - m_position.y);
                 delta.x = sign(game->hero().m_position.x - m_position.x);
@@ -566,7 +566,7 @@ Monster* Monster::attack_player()
     bool attack_success = false; // todo:set this everywhere
 
     //Since this is an attack, stop running and any healing that was going on at the time.
-    game->modifiers.m_running = false;
+    stop_player_running();
     game->repeat_cmd_count = game->turns_since_heal = 0;
 
     if (is_disguised() && !game->hero().is_blind())

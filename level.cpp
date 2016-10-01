@@ -137,13 +137,15 @@ void Level::search(Coord pos)
             if (rnd(5) != 0) break;
             set_tile(pos, DOOR);
             set_flag(pos, F_REAL);
-            game->repeat_cmd_count = game->modifiers.m_running = false;
+            game->repeat_cmd_count = false;
+            stop_player_running();
             break;
         case FLOOR:
             if (rnd(2) != 0) break;
             set_tile(pos, TRAP);
             set_flag(pos, F_REAL);
-            game->repeat_cmd_count = game->modifiers.m_running = false;
+            game->repeat_cmd_count = false;
+            stop_player_running();
             msg("you found %s", tr_name(get_trap_type(pos)));
             break;
         }

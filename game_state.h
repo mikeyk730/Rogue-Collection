@@ -116,3 +116,7 @@ private:
 
     Cheats cheats;
  };
+
+inline void stop_player_running() {
+    game->modifiers.m_running = false;
+}

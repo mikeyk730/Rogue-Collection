@@ -37,8 +37,8 @@ int spread(int nm);
 //step_ok: Returns true if it is ok to step on ch
 int step_ok(int ch);
 
-//goodch: Decide how good an object is and return the correct character for printing.
-int goodch(Item *obj);
+//get_magic_char: Decide how good an object is and return the correct character for printing.
+int get_magic_char(Item *obj);
 
 //help: prints out help screens
 void help(const char*const* helpscr);

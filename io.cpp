@@ -483,7 +483,7 @@ void SIG2()
             game->modifiers.m_fast_play_enabled = scroll_lock_on;
             game->repeat_cmd_count = 0;
             show_count();
-            game->modifiers.m_running = false;
+            stop_player_running();
         }
 
         scrl = scroll_lock_on;
@@ -501,7 +501,7 @@ void SIG2()
         numl = num_lock_on;
         game->repeat_cmd_count = 0;
         show_count();
-        game->modifiers.m_running = false;
+        stop_player_running();
         game->screen().move(LINES - 1, nspot);
         if (numl) {
             game->screen().bold();

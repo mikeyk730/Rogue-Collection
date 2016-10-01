@@ -196,7 +196,7 @@ void Potion::quaff_magic_detection()
         if (item->is_magic())
         {
             discovered = true;
-            game->screen().mvaddch(item->m_position, goodch(item));
+            game->screen().mvaddch(item->m_position, get_magic_char(item));
         }
     }
     for (auto m = game->level().monsters.begin(); m != game->level().monsters.end(); ++m) {
