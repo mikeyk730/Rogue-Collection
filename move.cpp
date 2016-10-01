@@ -224,8 +224,11 @@ bool do_move_impl(bool can_pickup)
 }
 
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
-bool do_move(Coord delta, bool can_pickup) //todo:understand
+bool do_move(byte ch, bool can_pickup) //todo:understand
 {
+    Coord delta;
+    find_dir(ch, &delta);
+
     this_move_counts = true;
 
     game->m_first_move = false;

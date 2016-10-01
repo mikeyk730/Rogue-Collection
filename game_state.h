@@ -16,7 +16,7 @@ struct OutputInterface;
 struct GameState
 {
     GameState(int seed);
-    GameState(Random* random, std::istream& in);
+    GameState(Random* random, const std::string& filename);
     ~GameState();
 
     void save_game(const std::string& filename);
@@ -41,10 +41,11 @@ struct GameState
 
     Cheats& wizard();
 
-    bool is_replay() const; //todo:kill this
-    bool m_allow_fast_play = true;
+    bool in_replay() const;
+    bool m_in_replay = false;
 
-    CommandModifiers modifiers;
+    bool fast_play() const;
+    void set_fast_play(bool enable);
 
     struct LastTurnState
     {
@@ -109,6 +110,8 @@ private:
 
     long m_seed = 0; //Random number seed
     int m_restore_count = 0;
+    bool m_fast_play_enabled = false; //If 'Fast Play' has been enabled
+
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 
     std::unique_ptr<Random> m_random; //Random number generator

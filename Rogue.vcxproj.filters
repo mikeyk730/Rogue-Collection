@@ -282,9 +282,6 @@
     <ClInclude Include="rip.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
-    <ClInclude Include="rogue.h">
-      <Filter>Unsorted</Filter>
-    </ClInclude>
     <ClInclude Include="save.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
@@ -310,6 +307,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="game_state.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="rogue.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>

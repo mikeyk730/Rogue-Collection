@@ -49,24 +49,26 @@ GameState::GameState(int seed) :
     init_environment();
 }
 
-GameState::GameState(Random* random, std::istream& in) :
-    m_output_interface(new ConsoleOutput({ 0,0 })),
-    m_allow_fast_play(false),
+GameState::GameState(Random* random, const std::string& filename) :
+    m_output_interface(new ConsoleOutput({ 0, 0 })),
+    m_in_replay(true),
     m_log_stream("log.txt")
 {
+    std::unique_ptr<std::istream> in(new std::ifstream(filename, std::ios::binary | std::ios::in));
+
     int version = 0;
-    read(in, &version);
+    read(*in, &version);
 
     if (version == 1 || version == 2) {
-        read(in, &m_seed);
-        read(in, &m_restore_count);
+        read(*in, &m_seed);
+        read(*in, &m_restore_count);
 
         int length = 0;
-        read(in, &length);
+        read(*in, &length);
         while (length-- > 0) {
             std::string key, value;
-            read_string(in, &key);
-            read_string(in, &value);
+            read_string(*in, &key);
+            read_string(*in, &value);
             m_environment[key] = value;
         }
         process_environment();
@@ -80,7 +82,7 @@ GameState::GameState(Random* random, std::istream& in) :
 
     ++m_restore_count;
     random->set_seed(m_seed);
-    m_input_interface.reset(new CapturedInput(new ComboInput(new StreamInput(in, version), new KeyboardInput())));
+    m_input_interface.reset(new CapturedInput(new ComboInput(new StreamInput(std::move(in), version), new KeyboardInput())));
     m_level.reset(new Level);
     m_hero.reset(new Hero);
     m_scrolls.reset(new ScrollInfo);
@@ -211,9 +213,19 @@ Cheats & GameState::wizard()
     return cheats;
 }
 
-bool GameState::is_replay() const
+bool GameState::in_replay() const
 {
-    return m_allow_fast_play;
+    return m_in_replay;
+}
+
+bool GameState::fast_play() const
+{
+    return m_fast_play_enabled; 
+}
+
+void GameState::set_fast_play(bool enable)
+{
+    m_fast_play_enabled = enable;
 }
 
 //todo:
@@ -223,7 +235,7 @@ bool GameState::is_replay() const
 
 bool GameState::Options::stop_running_at_doors() const
 {
-    return game->get_environment("stop_running_at_doors") != "false"; //todo: change to == "true"
+    return game->get_environment("stop_running_at_doors") == "true";
 }
 
 bool GameState::Options::throws_affect_mimics() const

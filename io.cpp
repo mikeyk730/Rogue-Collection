@@ -477,18 +477,18 @@ void SIG2()
         tspot = 75;
     }
 
-    if (game->is_replay() && scrl != scroll_lock_on) {
-        if (game->modifiers.scroll_lock() != scroll_lock_on)
-        {
-            game->modifiers.m_fast_play_enabled = scroll_lock_on;
-            game->repeat_cmd_count = 0;
-            show_count();
-            game->stop_running();
-        }
+    if (!game->in_replay() && game->fast_play() != scroll_lock_on)
+    {
+        game->set_fast_play(scroll_lock_on);
+        game->repeat_cmd_count = 0;
+        show_count();
+        game->stop_running();
+    }
 
-        scrl = scroll_lock_on;
+    if ( scrl != game->fast_play()) {
+        scrl = game->fast_play();
         game->screen().move(LINES - 1, 0);
-        if (game->modifiers.scroll_lock()) {
+        if (game->fast_play()) {
             game->screen().bold();
             game->screen().addstr("Fast Play");
             game->screen().standend();

@@ -159,16 +159,6 @@ extern const char *const flash, *const intense;
 
 //Now all the global variables
 
-struct CommandModifiers
-{
-    //todo: which do i need to serialize?
-    bool scroll_lock() const { return m_fast_play_enabled; }
-    bool fast_mode() const { return m_fast_mode; }
-    
-    bool m_fast_mode = false;      //Run until you see something
-    bool m_fast_play_enabled = false;     //Toggle for find (see above)
-};
-
 extern char prbuf[];
 extern Random* g_random;
 extern GameState* game;

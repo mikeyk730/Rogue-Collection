@@ -166,13 +166,12 @@ int getkey()
     if (key != 0 && key != 0xE0) return key;
 
     key = _getch();
-    if (is_shift_pressed() && is_direction_key(key))
-        game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
-
     for (x = xtab; x < xtab + (sizeof xtab) / sizeof *xtab; x++)
     {
         if (key == x->keycode)
         {
+            if (is_shift_pressed() && is_direction_key(key))
+                return toupper(x->keyis);
             return x->keyis;
         }
     }

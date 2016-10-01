@@ -36,19 +36,19 @@ namespace
 }
 
 
-StreamInput::StreamInput(std::istream& in, int version) :
-    m_stream(in),
+StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version) :
+    m_stream(std::move(in)),
     m_shared_data(new ThreadData)
 {
     if (version < 2) {
         m_version = 'A';
     }
     else {
-        read<char>(in, &m_version);
+        read(*m_stream, &m_version);
     }
 
-    m_stream.peek();
-    if (!m_stream || m_stream.eof()) {
+    m_stream->peek();
+    if (!m_stream || m_stream->eof()) {
         OnStreamEnd();
     }
     else {
@@ -67,23 +67,63 @@ bool StreamInput::HasMoreInput()
     return !m_shared_data->m_canceled && !m_shared_data->m_stream_empty;
 }
 
+bool is_direction(byte ch)
+{
+    switch (ch) {
+    case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
+        return true;
+    default:
+        return false;
+    }
+}
+
 char StreamInput::ReadCharA()
 {
-    unsigned char f[4];
-    m_stream.read((char*)f, 4);
+    game->set_environment("stop_running_at_doors", "true");
+
+    unsigned char f[5];
+    m_stream->read((char*)f, 5);
+
+    byte fast_mode(f[0]);
+    byte fast_play(f[1]);
+    char c(f[4]);
+
     if (m_stream)
     {
-        game->modifiers.m_fast_mode = (f[0] == ON);
-        game->modifiers.m_fast_play_enabled = f[1] == ON;
+        game->set_fast_play(fast_play == ON);
+        if (fast_mode == ON)
+        {
+            if (is_direction(c)) {
+                c = toupper(c);
+            }
+        }
+
+        if (c == 0) //shouldn't happen
+        {
+            printf("\a");
+        }
     }
 
-    char c = 0;
-    m_stream.read(&c, 1);
+    return c;
+}
 
-    if (m_stream && c == 0) //shouldn't happen
+char StreamInput::ReadCharC()
+{
+    unsigned char info[2];
+    m_stream->read((char*)info, 2);
+
+    byte fast_play(info[0]);
+    char c(info[1]);
+
+    if (m_stream)
     {
-        printf("\a");
+        game->set_fast_play(fast_play ? true : false);
+        if (c == 0)
+        {
+            printf("\a"); //todo: shouldn't happen, validate
+        }
     }
+
     return c;
 }
 
@@ -98,10 +138,14 @@ char StreamInput::GetNextChar()
     if (!m_stream || m_shared_data->m_canceled)
         return 0;
 
-    char c = ReadCharA();
+    char c;
+    if (m_version >= 'A' && m_version <= 'B')
+        c = ReadCharA();
+    else
+        c = ReadCharC();
 
-    m_stream.peek();
-    if (!m_stream || m_stream.eof()) {
+    m_stream->peek();
+    if (!m_stream || m_stream->eof()) {
         OnStreamEnd();
     }
     return c;
@@ -112,7 +156,7 @@ std::string StreamInput::ReadStringA()
     std::ostringstream ss;
 
     char c = 0;
-    m_stream.read(&c, 1);
+    m_stream->read(&c, 1);
 
     if (m_stream && c != 0) //shouldn't happen
     {
@@ -120,7 +164,7 @@ std::string StreamInput::ReadStringA()
     }
 
     for (int i = 0; m_stream && i < 255; ++i) {
-        m_stream.read(&c, 1);
+        m_stream->read(&c, 1);
         if (c == 0)
             break;
         ss << c;
@@ -136,7 +180,7 @@ std::string StreamInput::ReadStringA()
 std::string StreamInput::ReadStringB()
 {
     int size;
-    read<int>(m_stream, &size);
+    read(*m_stream, &size);
 
     char buf[256];
     memset(buf, 0, 256);
@@ -145,7 +189,7 @@ std::string StreamInput::ReadStringB()
         assert(false);
         size = 255;
     }
-    m_stream.read(buf, size);
+    m_stream->read(buf, size);
 
     return buf;
 }
@@ -167,8 +211,8 @@ std::string StreamInput::GetNextString(int size)
     else
         s = ReadStringB();
 
-    m_stream.peek();
-    if (!m_stream || m_stream.eof()) {
+    m_stream->peek();
+    if (!m_stream || m_stream->eof()) {
         OnStreamEnd();
     }
 
@@ -182,7 +226,7 @@ void StreamInput::Serialize(std::ostream& out)
 void StreamInput::OnStreamEnd()
 {
     m_shared_data->m_stream_empty = true;
-    game->m_allow_fast_play = true; //todo: this isn't set if canceled, have game poll for this. this crashes now if save not found
+    game->m_in_replay = false; //todo: this isn't set if canceled, have game poll for this. this crashes now if save not found
 }
 
 void StreamInput::ThreadData::PausePlayback()
@@ -216,7 +260,7 @@ void StreamInput::ThreadData::CancelPlayback()
     m_steps = 0;
     m_step_cv.notify_all();
 
-    game->m_allow_fast_play = true; //todo: remove
+    game->m_in_replay = false; //todo: remove
 }
 
 void StreamInput::ThreadData::OnEmptyStream()

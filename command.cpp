@@ -88,7 +88,7 @@ int com_char()
     return translate_command(ch);
 }
 
-int process_prefixes(int ch)
+int process_prefixes(int ch, bool* fast_mode)
 {
     int junk;
     int command = 0;
@@ -103,7 +103,7 @@ int process_prefixes(int ch)
         break;
 
     case 'f': // f: toggle fast mode for this turn
-        game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
+        *fast_mode = !*fast_mode;
         break;
     case 'g': // g + direction: move onto an item without picking it up
         game->can_pickup_this_turn = false;
@@ -134,8 +134,7 @@ int read_command()
 {
     int command, ch;
 
-    bool was_fast_play_enabled = game->modifiers.scroll_lock();
-    game->modifiers.m_fast_mode = game->modifiers.scroll_lock();
+    bool fast_mode = false;
     look(true);
     if (!game->is_running())
         game->m_stop_at_door = false;
@@ -149,7 +148,6 @@ int read_command()
     if (game->repeat_cmd_count > 0) {
         game->can_pickup_this_turn = game->last_turn.could_pickup;
         command = game->last_turn.command;
-        game->modifiers.m_fast_mode = false;
     }
     else
     {
@@ -163,18 +161,18 @@ int read_command()
             for (command = 0; command == 0;)
             {
                 ch = com_char();
-                if (was_fast_play_enabled != game->modifiers.scroll_lock())
-                    game->modifiers.m_fast_mode = !game->modifiers.m_fast_mode;
-                command = process_prefixes(ch);
+                command = process_prefixes(ch, &fast_mode);
             }
+            fast_mode ^= game->fast_play();
         }
     }
     if (game->repeat_cmd_count)
-        game->modifiers.m_fast_mode = false;
+        fast_mode = false;
+
     switch (command)
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-        if (game->modifiers.fast_mode() && !game->is_running())
+        if (fast_mode && !game->is_running())
         {
             if (!game->hero().is_blind()) {
                 game->m_stop_at_door = true;
@@ -183,7 +181,16 @@ int read_command()
             command = toupper(command);
         }
 
-    case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N': case 'q': case 'r': case 's': case 'z': case 't': case '.':
+    case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
+        if (game->options.stop_running_at_doors() && !game->is_running())
+        {
+            if (!game->hero().is_blind()) {
+                game->m_stop_at_door = true;
+                game->m_first_move = true;
+            }
+        }
+    
+    case 'q': case 'r': case 's': case 'z': case 't': case '.':
 
     case CTRL('D'): case 'C':
 
@@ -196,6 +203,7 @@ int read_command()
     game->last_turn.count = game->repeat_cmd_count;
     game->last_turn.command = command;
     game->last_turn.could_pickup = game->can_pickup_this_turn;
+
     return command;
 }
 
@@ -220,9 +228,7 @@ bool dispatch_command(int ch)
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
     {
-        Coord mv;
-        find_dir(ch, &mv);
-        counts_as_turn = do_move(mv, game->can_pickup_this_turn);
+        counts_as_turn = do_move(ch, game->can_pickup_this_turn);
         break;
     }
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':

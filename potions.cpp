@@ -285,34 +285,33 @@ void(Potion::*potion_functions[MAXPOTIONS])() = {
 //quaff: Quaff a potion from the pack
 bool quaff()
 {
-    Item *obj;
-
-    if ((obj = get_item("quaff", POTION)) == NULL) 
+    Item* item = get_item("quaff", POTION);
+    if (!item) 
         return false;
 
     //Make certain that it is something that we want to drink
-    Potion* potion = dynamic_cast<Potion*>(obj);
-    if (!obj) {
+    Potion* potion = dynamic_cast<Potion*>(item);
+    if (!potion) {
         //mdk: trying to drink non-potion counts as turn
         msg("yuk! Why would you want to drink that?");
         return true;
     }
 
-    if (obj == game->hero().get_current_weapon())
+    if (potion == game->hero().get_current_weapon()) //todo: make happen when remove from pack
         game->hero().set_current_weapon(NULL);
 
     //Calculate the effect it has on the poor guy.
-    (potion->*potion_functions[obj->m_which])();
+    (potion->*potion_functions[potion->m_which])();
 
     update_status_bar();
     potion->call_it();
 
     //Throw the item away
-    if (obj->m_count > 1)
-        obj->m_count--;
+    if (potion->m_count > 1)
+        potion->m_count--;
     else {
-        game->hero().m_pack.remove(obj);
-        delete(obj);
+        game->hero().m_pack.remove(potion);
+        delete potion;
     }
 
     return true;

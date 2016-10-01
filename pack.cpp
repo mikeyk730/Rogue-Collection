@@ -47,8 +47,8 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
         //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
         if (type && type != item->m_type &&
             !(type == CALLABLE && (item->m_type == SCROLL || item->m_type == POTION || item->m_type == RING || item->m_type == STICK)) &&
-            !(type == WEAPON && item->m_type == POTION) &&
-            !(weapon && weapon->is_vorpalized() && item->charges())) //todo: does this work?
+            !(type == WEAPON && item->m_type == POTION) && //show potions when wielding
+            !(type == STICK && weapon && weapon->is_vorpalized() && item->charges())) //show vorpalized weapon when zapping
             continue;
         n_objs++;
         sprintf(inv_temp, "%c) %%s", ch);

@@ -51,20 +51,19 @@ int main(int argc, char **argv)
     g_random = new Random(seed);
 
     //todo: process args
-    bool replay = true;
-    //replay = false;
-
-    //std::ifstream infile("tests\\all_sticks.sav", std::ios::binary | std::ios::in);
-    std::ifstream infile("saves\\level7.sav", std::ios::binary | std::ios::in);
-    if (replay && infile) {
-        game = new GameState(g_random, infile);
+    std::string filename;
+    //filename = "tests\\all_sticks.sav";
+    //filename = "saves\\level7.sav";
+    filename = "rogue.sav";
+    
+    if (!filename.empty()) {
+        game = new GameState(g_random, filename);
     }
     else {
         game = new GameState(seed);
+        setenv("rogue.opt");
     }
     
-    if (!replay)
-        setenv("rogue.opt");
     load_monster_cfg(game->get_environment("monsterfile"));
 
     game->screen().winit(game->options.narrow_screen());

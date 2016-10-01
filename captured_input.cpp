@@ -7,7 +7,7 @@
 
 namespace
 {
-    const char s_version = 'B';
+    const char s_version = 'C';
 }
 
 CapturedInput::CapturedInput(InputInterface* d)
@@ -27,10 +27,7 @@ char CapturedInput::GetNextChar()
         m_save_pending = true;
     }
     else {
-        m_stream.push_back(game->modifiers.fast_mode() ? ON : OFF);
-        m_stream.push_back(game->modifiers.scroll_lock() ? ON : OFF);
-        m_stream.push_back(game->stop_at_door() ? ON : OFF);
-        m_stream.push_back(game->is_running() ? ON : OFF);
+        m_stream.push_back(game->fast_play() ? 1 : 0);
         m_stream.push_back(c);
     }
     return c;

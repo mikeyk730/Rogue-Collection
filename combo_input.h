@@ -16,7 +16,7 @@ struct ComboInput : public InputInterface
 
     virtual void Serialize(std::ostream& out);
 
-    void MaybeSwap();
+    bool Swap();
 
 private:
     std::unique_ptr<InputInterface> m_active;
