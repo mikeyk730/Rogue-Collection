@@ -66,8 +66,8 @@ struct Monster : public Agent
     void set_dirty(bool enable);
     bool is_dirty();
 
-    //find_dest: find the proper destination for the monster
-    Coord *find_dest();
+    //obtain_target: find the proper destination for the monster
+    Coord *obtain_target();
 
     //start_run: Set a monster running after something
     void start_run();
@@ -88,7 +88,7 @@ struct Monster : public Agent
 
     char type = 0;                    //What it is
     int exflags = 0;                  //More state;
-    Coord *dest = 0;                  //Where it is running to
+    Coord *m_destination = 0;                  //Where it is running to
     char turn = 0;                    //If slowed, is it a turn to move
     byte m_tile_beneath = 0;          //Tile that is underneath the monster
     byte disguise = 0;                //What mimic looks like

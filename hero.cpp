@@ -646,8 +646,8 @@ picked_up:
     if (from_floor) {
         for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
             monster = *it;
-            if (monster->dest && (monster->dest->x == obj->pos.x) && (monster->dest->y == obj->pos.y))
-                monster->dest = &pos;
+            if (monster->m_destination && (monster->m_destination->x == obj->pos.x) && (monster->m_destination->y == obj->pos.y))
+                monster->m_destination = &pos;
         }
     }
     if (obj->type == AMULET) {

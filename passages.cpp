@@ -63,8 +63,8 @@ void conn(int r1, int r2)
     //Set up the movement variables, in two cases: first drawing one down.
     if (direc == 'd')
     {
-        rmt = rm + 3; //room # of dest
-        room_to = &rooms[rmt]; //room pointer of dest
+        rmt = rm + 3; //room # of m_destination
+        room_to = &rooms[rmt]; //room pointer of m_destination
         del.x = 0; //direction of move
         del.y = 1;
         //If we are drawing from/to regular or maze rooms, we have to pick the spot we draw from/to

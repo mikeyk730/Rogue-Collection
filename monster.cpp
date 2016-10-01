@@ -130,7 +130,7 @@ void Monster::start_run(Coord* c, bool reveal_mimic)
     //Start the beastie running
     set_running(true);
     set_is_held(false);
-    dest = c;
+    m_destination = c;
     
     //mdk:bugfix: originally some actions (aggravate monsters, drain life) could cause
     //a mimic to start running while still disguised
@@ -142,12 +142,12 @@ void Monster::start_run(Coord* c, bool reveal_mimic)
 //start_run: Set a monster running after something
 void Monster::start_run()
 {
-    start_run(find_dest(), false);
+    start_run(obtain_target(), false);
 }
 
 bool Monster::is_seeking(Item * obj)
 {
-    return dest == &obj->pos;
+    return m_destination == &obj->pos;
 }
 
 bool Monster::has_tile_beneath() const
@@ -195,12 +195,12 @@ Monster* Monster::do_chase()
 
     //If gold has been taken, target the hero
     if (is_greedy() && room->gold_val == 0)
-        dest = &game->hero().pos;
+        m_destination = &game->hero().pos;
 
     //Find room of the target
     Room* destination_room = game->hero().room;
-    if (dest != &game->hero().pos)
-        destination_room = get_room_from_position(*dest);
+    if (m_destination != &game->hero().pos)
+        destination_room = get_room_from_position(*m_destination);
     if (destination_room == NULL)
         return 0;
 
@@ -223,7 +223,7 @@ over:
         //loop through doors
         for (i = 0; i < monster_room->num_exits; i++)
         {
-            dist = distance(*(this->dest), monster_room->exits[i]);
+            dist = distance(*(this->m_destination), monster_room->exits[i]);
             if (dist < mindist) {
                 tempdest = monster_room->exits[i];
                 mindist = dist;
@@ -238,7 +238,7 @@ over:
     }
     else
     {
-        tempdest = *this->dest;
+        tempdest = *this->m_destination;
         //For monsters which can fire bolts at the poor hero, we check to see if 
         // (a) the hero is on a straight line from it, and 
         // (b) that it is within shooting distance, but outside of striking range.
@@ -258,7 +258,7 @@ over:
     if (equal(next_position, game->hero().pos)) {
         return attack_player();
     }
-    else if (equal(next_position, *this->dest))
+    else if (equal(next_position, *this->m_destination))
     {
         //mdk: aggressive orcs pick up gold in a room, then chase the player.  It looks
         //as if this could have been the original intended behavior, so I added it as
@@ -267,8 +267,8 @@ over:
 
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
             obj = *(it++);
-            if (orc_aggressive && (*this->dest == obj->pos) ||
-                !orc_aggressive && (this->dest == &obj->pos))
+            if (orc_aggressive && (*this->m_destination == obj->pos) ||
+                !orc_aggressive && (this->m_destination == &obj->pos))
             {
                 byte oldchar;
                 game->level().items.remove(obj);
@@ -277,7 +277,7 @@ over:
                 game->level().set_tile(obj->pos, oldchar);
                 if (game->hero().can_see(obj->pos))
                     game->screen().mvaddch(obj->pos, oldchar);
-                dest = find_dest();
+                m_destination = obtain_target();
                 break;
             }
         }
@@ -309,7 +309,7 @@ void Monster::do_screen_update(Coord next_position)
             return;
         }
         if (orig_room != room)
-            dest = find_dest();
+            m_destination = obtain_target();
         pos = next_position;
     }
 
@@ -401,8 +401,8 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
     }
 }
 
-//find_dest: find the proper destination for the monster
-Coord* Monster::find_dest()
+//obtain_target: find the proper destination for the monster
+Coord* Monster::obtain_target()
 {
     // if we're in the same room as the player, or can see the player, then we go after the player
     // if we have a chance to carry an item, we may go after an unclaimed item in the same room
