@@ -165,7 +165,7 @@ void fall(Item *obj, bool pr)
         //if (game->hero().can_see(fpos))
         if (game->hero().can_see(fpos) && location_is_empty)
         {
-            if ((game->level().get_flags(obj->pos)&F_PASS) || (game->level().get_flags(obj->pos)&F_MAZE))
+            if ((game->level().is_passage(obj->pos)) || (game->level().is_maze(obj->pos)))
                 game->screen().standout();
             game->screen().mvaddch(fpos, obj->type);
             game->screen().standend();

@@ -172,7 +172,7 @@ struct CommandModifiers
     bool m_fast_mode = false;      //Run until you see something
     bool m_fast_play_enabled = false;     //Toggle for find (see above)
     bool m_first_move = false;     //First move after setting stop_at_door
-    bool m_running = false;       //True if player is running
+    bool m_running = false;       //True if player is running //todo: i really need to understand this one
 };
 
 extern char prbuf[];

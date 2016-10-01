@@ -31,6 +31,8 @@ struct Level {
     int get_passage_num(Coord p);
     int get_trap_type(Coord p);
 
+    void search(Coord pos);
+
     Room* get_passage(Coord pos);
 
     //monster_at: returns pointer to monster at coordinate. if no monster there return NULL

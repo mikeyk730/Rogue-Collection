@@ -302,6 +302,7 @@ void Monster::do_screen_update()
         else
             game->screen().mvaddch(pos, tile_beneath());
     }
+
     Room *orig_room = room;
     if (!equal(ch_ret, pos))
     {
@@ -313,9 +314,11 @@ void Monster::do_screen_update()
             dest = find_dest();
         pos = ch_ret;
     }
+
     if (game->hero().can_see_monster(this))
     {
-        if (game->level().get_flags(ch_ret)&F_PASS) game->screen().standout();
+        if (game->level().is_passage(ch_ret))
+            game->screen().standout();
         set_tile_beneath(game->screen().mvinch(ch_ret.y, ch_ret.x)); //todo: why get from screen instead of level??
         game->screen().mvaddch(ch_ret, disguise);
     }
@@ -327,8 +330,10 @@ void Monster::do_screen_update()
     }
     else
         invalidate_tile_beneath();
+
     if (tile_beneath() == FLOOR && orig_room->is_dark())
         set_tile_beneath(' ');
+
     game->screen().standend();
 }
 

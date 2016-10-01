@@ -128,6 +128,28 @@ int Level::get_trap_type(Coord p)
     return get_flags(p) & F_TMASK;
 }
 
+void Level::search(Coord pos)
+{
+    if (!is_real(pos)) {
+        switch (get_tile(pos))
+        {
+        case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+            if (rnd(5) != 0) break;
+            set_tile(pos, DOOR);
+            set_flag(pos, F_REAL);
+            game->repeat_cmd_count = game->modifiers.m_running = false;
+            break;
+        case FLOOR:
+            if (rnd(2) != 0) break;
+            set_tile(pos, TRAP);
+            set_flag(pos, F_REAL);
+            game->repeat_cmd_count = game->modifiers.m_running = false;
+            msg("you found %s", tr_name(get_trap_type(pos)));
+            break;
+        }
+    }
+}
+
 Room * Level::get_passage(Coord pos)
 {
     return &passages[get_passage_num(pos)];
