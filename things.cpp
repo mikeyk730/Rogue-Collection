@@ -73,28 +73,6 @@ ItemClass* Item::item_class() const
     return game->item_class(m_type);
 }
 
-//inv_name: Return the name of something as it would appear in an inventory.
-std::string Item::inventory_name(bool lowercase)
-{
-    std::string name = InventoryName();
-
-    if (this == game->hero().get_current_armor())
-        name += " (being worn)";
-    if (this == game->hero().get_current_weapon())
-        name += " (weapon in hand)";
-    if (this == game->hero().get_ring(LEFT))
-        name += " (on left hand)";
-    else if (this == game->hero().get_ring(RIGHT))
-        name += " (on right hand)";
-
-    if (lowercase && isupper(name[0]))
-        name[0] = tolower(name[0]);
-    else if (!lowercase && islower(name[0]))
-        name[0] = toupper(name[0]);
-
-    return name;
-}
-
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
 {
     va_list argptr;

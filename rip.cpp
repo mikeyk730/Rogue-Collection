@@ -295,7 +295,7 @@ void total_winner()
     for (auto it = game->hero().m_pack.begin(); it != game->hero().m_pack.end(); c++, ++it)
     {
         obj = *it;
-        worth = obj->Worth();
+        worth = obj->worth();
         if (worth < 0) worth = 0;
         obj->discover();
 

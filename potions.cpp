@@ -193,7 +193,7 @@ void Potion::quaff_magic_detection()
     for (auto i = game->level().items.begin(); i != game->level().items.end(); ++i)
     {
         Item* item = *i;
-        if (item->IsMagic())
+        if (item->is_magic())
         {
             discovered = true;
             game->screen().mvaddch(item->m_position, goodch(item));
@@ -204,7 +204,7 @@ void Potion::quaff_magic_detection()
         for (auto i = monster->m_pack.begin(); i != monster->m_pack.end(); ++i)
         {
             Item* item = *i;
-            if (item->IsMagic())
+            if (item->is_magic())
             {
                 discovered = true;
                 game->screen().mvaddch(monster->m_position, MAGIC);

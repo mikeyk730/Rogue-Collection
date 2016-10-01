@@ -59,9 +59,9 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
         stick->drain_striking();
     }
 
-    *damage_string = object->get_damage();
-    *hit_plus = object->get_hit_plus();
-    *damage_plus = object->get_damage_plus();
+    *damage_string = object->melee_damage();
+    *hit_plus = object->hit_plus();
+    *damage_plus = object->damage_plus();
 
     //vorpally enchanted object adds +4,+4 against target
     Weapon* weapon = dynamic_cast<Weapon*>(object);
@@ -90,15 +90,15 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
         //I've decided to use it for weapons that don't require a launcher too.  IS_MISL is
         //still meaningless.
         if (game->options.use_throw_damage() && object->launcher() == NONE) {
-            *damage_string = object->get_throw_damage();
+            *damage_string = object->throw_damage();
         }
         //if we've used the right object to launch the projectile, we use the throw 
         //damage of the projectile, and get the plusses from the launcher.
         else if (current_weapon && object->launcher() == current_weapon->m_which)
         {
-            *damage_string = object->get_throw_damage();
-            *hit_plus += current_weapon->get_hit_plus();
-            *damage_plus += current_weapon->get_damage_plus();
+            *damage_string = object->throw_damage();
+            *hit_plus += current_weapon->hit_plus();
+            *damage_plus += current_weapon->damage_plus();
         }
     }
 }
@@ -396,7 +396,7 @@ bool Hero::can_see_monster(Monster *monster)
     if (weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
     {
         weapon->set_flashed();
-        msg(flash, weapon->Name().c_str(), short_msgs() ? "" : intense);
+        msg(flash, weapon->name().c_str(), short_msgs() ? "" : intense);
     }
     return true;
 }

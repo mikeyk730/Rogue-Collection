@@ -304,5 +304,5 @@ bool Agent::in_same_room_as(Agent* other)
 
 bool Agent::in_same_room_as(Item * obj)
 {
-    return m_room == obj->get_room();
+    return m_room == obj->room();
 }

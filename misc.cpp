@@ -361,7 +361,7 @@ int step_ok(int ch)
 //goodch: Decide how good an object is and return the correct character for printing.
 int goodch(Item *obj)
 {
-    if (obj->is_cursed() || obj->IsEvil())
+    if (obj->is_cursed() || obj->is_evil())
         return BMAGIC;
     return MAGIC;
 }

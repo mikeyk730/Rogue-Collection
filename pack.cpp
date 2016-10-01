@@ -48,7 +48,7 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
         if (type && type != item->m_type &&
             !(type == CALLABLE && (item->m_type == SCROLL || item->m_type == POTION || item->m_type == RING || item->m_type == STICK)) &&
             !(type == WEAPON && item->m_type == POTION) &&
-            !(weapon && weapon->is_vorpalized() && item->get_charges())) //todo: does this work?
+            !(weapon && weapon->is_vorpalized() && item->charges())) //todo: does this work?
             continue;
         n_objs++;
         sprintf(inv_temp, "%c) %%s", ch);

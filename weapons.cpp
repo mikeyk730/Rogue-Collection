@@ -176,7 +176,7 @@ void fall(Item *obj, bool pr)
         pr = 0;
     }
     if (pr)
-        msg("the %s vanishes%s.", obj->Name().c_str(), noterse(" as it hits the ground"));
+        msg("the %s vanishes%s.", obj->name().c_str(), noterse(" as it hits the ground"));
     delete obj;
 }
 
@@ -278,7 +278,7 @@ std::string Weapon::InventoryName() const
 
 bool Weapon::IsMagic() const
 {
-    return get_hit_plus() != 0 || get_damage_plus() != 0;
+    return hit_plus() != 0 || damage_plus() != 0;
 }
 
 void Weapon::vorpalize()
@@ -346,7 +346,7 @@ std::string Weapon::Name() const
 
 bool Weapon::IsEvil() const
 {
-    return (get_hit_plus() < 0 || get_damage_plus() < 0);
+    return (hit_plus() < 0 || damage_plus() < 0);
 }
 
 int Weapon::Worth() const
@@ -365,7 +365,7 @@ int Weapon::Worth() const
     case BOLT: worth = 1; break;
     case SPEAR: worth = 5; break;
     }
-    worth *= 3 * (get_hit_plus() + get_damage_plus()) + m_count;
+    worth *= 3 * (hit_plus() + damage_plus()) + m_count;
     return worth;
 }
 

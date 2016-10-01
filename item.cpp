@@ -5,6 +5,10 @@
 #include "agent.h"
 #include "rogue.h"
 #include "rooms.h"
+#include "game_state.h"
+#include "hero.h"
+#include "rings.h"
+#include "armor.h"
 
 Item::Item(int type, int which)
 {
@@ -13,6 +17,48 @@ Item::Item(int type, int which)
 
 Item::~Item()
 {
+}
+
+//inv_name: Return the name of something as it would appear in an inventory.
+std::string Item::inventory_name(bool lowercase) const
+{
+    std::string name = InventoryName();
+
+    if (this == game->hero().get_current_armor())
+        name += " (being worn)";
+    if (this == game->hero().get_current_weapon())
+        name += " (weapon in hand)";
+    if (this == game->hero().get_ring(LEFT))
+        name += " (on left hand)";
+    else if (this == game->hero().get_ring(RIGHT))
+        name += " (on right hand)";
+
+    if (lowercase && isupper(name[0]))
+        name[0] = tolower(name[0]);
+    else if (!lowercase && islower(name[0]))
+        name[0] = toupper(name[0]);
+
+    return name;
+}
+
+std::string Item::name() const
+{
+    return Name();
+}
+
+bool Item::is_magic() const
+{
+    return IsMagic();
+}
+
+bool Item::is_evil() const
+{
+    return IsEvil();
+}
+
+int Item::worth() const
+{
+    return Worth();
 }
 
 Coord Item::position() const
@@ -25,7 +71,7 @@ void Item::set_position(Coord p)
     m_position = p;
 }
 
-int Item::get_charges() const
+int Item::charges() const
 {
     return m_charges;
 }
@@ -63,10 +109,6 @@ bool Item::is_cursed() const
 {
     return is_flag_set(IS_CURSED);
 }
-bool Item::is_projectile() const
-{
-    return is_flag_set(IS_MISL);
-}
 bool Item::does_group() const
 {
     return is_flag_set(IS_MANY);
@@ -98,12 +140,12 @@ void Item::set_found() {
     m_flags |= IS_FOUND;
 }
 
-std::string Item::get_throw_damage() const
+std::string Item::throw_damage() const
 {
     return m_throw_damage;
 }
 
-std::string Item::get_damage() const
+std::string Item::melee_damage() const
 {
     return m_damage;
 }
@@ -113,7 +155,7 @@ char Item::launcher() const
     return m_launcher;
 }
 
-Room* Item::get_room()
+Room* Item::room() const
 {
     return get_room_from_position(m_position);
 }
@@ -123,12 +165,12 @@ int does_item_group(int type)
     return (type == POTION || type == SCROLL || type == FOOD || type == GOLD);
 }
 
-int Item::get_hit_plus() const
+int Item::hit_plus() const
 {
     return m_hit_plus;
 }
 
-int Item::get_damage_plus() const
+int Item::damage_plus() const
 {
     return m_damage_plus;
 }

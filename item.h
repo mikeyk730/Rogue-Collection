@@ -78,24 +78,50 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 struct Item
 {
     static Item* CreateItem();
-
 protected:
     Item(int type, int which);
     Item(const Item&) = default;
 public:
+    virtual Item* Clone() const = 0;
     virtual ~Item();
 
-    virtual Item* Clone() const = 0;
-    virtual std::string Name() const = 0;
-    virtual std::string InventoryName() const = 0;
-    virtual bool IsMagic() const = 0;
-    virtual bool IsEvil() const = 0;
-    virtual int Worth() const = 0;
+    //Return the name of something as it would appear in an inventory.
+    std::string inventory_name(bool lowercase) const;
+    std::string name() const;
+    bool is_magic() const;
+    bool is_evil() const;
+    int worth() const;
 
+    Coord position() const;
+    void set_position(Coord p);
+
+    int hit_plus() const;
+    int damage_plus() const;
+    std::string melee_damage() const;
+    std::string throw_damage() const;
+    char launcher() const;
+
+    int charges() const;
+    void use_charge();
+
+    bool does_group() const;
+
+    void set_cursed();
+    bool is_cursed() const;
+    void remove_curse();
+
+    void call_it();
+    void discover();
+    void set_known();
+    bool is_known() const;
+
+    bool is_found() const;
+    void set_found();
+    bool is_revealed() const;
+    void set_revealed();
+
+    Room* room() const;
     ItemClass* item_class() const;
-
-    //inv_name: Return the name of something as it would appear in an inventory.
-    std::string inventory_name(bool lowercase);
 
     int m_type;                      //What kind of object it is
     Coord m_position;                //Where it lives on the screen
@@ -111,41 +137,16 @@ protected:
     short m_flags;                   //Information about objects
 public:
     int m_group;                     //Group number for this object
-public:
-    void discover();
-    void call_it();
 
-    Coord position() const;
-    void set_position(Coord p);
-
-    void initialize(int type, int which);
+private:
+    virtual std::string InventoryName() const = 0;
+    virtual std::string Name() const = 0;
+    virtual bool IsMagic() const = 0;
+    virtual bool IsEvil() const = 0;
+    virtual int Worth() const = 0;
 
     bool is_flag_set(short flag) const;
-
-    bool is_known() const;
-    bool is_cursed() const;
-    bool is_projectile() const;
-    bool does_group() const;
-    bool is_revealed() const;
-    bool is_found() const;
-
-    void remove_curse();
-
-    void set_known();
-    void set_cursed();
-    void set_revealed();
-    void set_found();
-
-    int get_charges() const;
-    void use_charge();
-
-    int get_hit_plus() const;
-    int get_damage_plus() const;
-    std::string get_damage() const;
-    std::string get_throw_damage() const;
-    char launcher() const;
-
-    Room* get_room();
+    void initialize(int type, int which);
 };
 
 int does_item_group(int type);

@@ -507,7 +507,7 @@ bool do_zap()
 
     Stick* stick = dynamic_cast<Stick*>(item);
     Weapon* weapon = dynamic_cast<Weapon*>(item);
-    if (!(stick || weapon && weapon->is_vorpalized() && weapon->get_charges())) {
+    if (!(stick || weapon && weapon->is_vorpalized() && weapon->charges())) {
         //mdk: zapping with non-stick doesn't count as turn
         msg("you can't zap with that!");
         return false;
@@ -522,7 +522,7 @@ bool do_zap()
     }
 
     // Zap the appropriate stick
-    if (stick->get_charges() == 0) {
+    if (stick->charges() == 0) {
         msg("nothing happens");
     }
     else if ((stick->*stick_functions[stick->m_which])(delta)) {
@@ -604,7 +604,7 @@ struct MagicBolt : public Weapon
 bool bolt_vs_hero(MagicBolt* bolt, Coord start)
 {
     if (save(VS_MAGIC)) {
-        msg("the %s whizzes by you", bolt->Name().c_str());
+        msg("the %s whizzes by you", bolt->name().c_str());
         return false;
     }
 
@@ -622,7 +622,7 @@ bool bolt_vs_hero(MagicBolt* bolt, Coord start)
             else
                 death(game->level().monster_at(start)->type);
         }
-        msg("you are hit by the %s", bolt->Name().c_str());
+        msg("you are hit by the %s", bolt->name().c_str());
     }
 
     return true;
@@ -651,7 +651,7 @@ bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Monster**victim)
     {
         if (bolt->from_player)
             monster->start_run();
-        msg("the %s whizzes past the %s", bolt->Name().c_str(), monster->get_name().c_str());
+        msg("the %s whizzes past the %s", bolt->name().c_str(), monster->get_name().c_str());
     }
 
     return hit;
@@ -696,7 +696,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
             dir->y = -dir->y;
             dir->x = -dir->x;
             i--;
-            msg("the %s bounces", bolt->Name().c_str());
+            msg("the %s bounces", bolt->name().c_str());
             break;
 
         default:
@@ -759,7 +759,7 @@ const char *get_charge_string(const Item *obj)
     static char buf[20];
 
     if (!obj->is_known() && !game->wizard().reveal_items()) buf[0] = '\0';
-    else sprintf(buf, " [%d charges]", obj->get_charges());
+    else sprintf(buf, " [%d charges]", obj->charges());
     return buf;
 }
 
@@ -849,7 +849,7 @@ bool Stick::IsEvil() const
 int Stick::Worth() const
 {
     int worth = item_class()->get_value(m_which);
-    worth += 20 * get_charges();
+    worth += 20 * charges();
     if (!is_known())
         worth /= 2;
     return worth;
