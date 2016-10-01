@@ -209,7 +209,6 @@ Monster* Monster::do_chase()
 
     int mindist = 32767, i, dist;
     Item *obj;
-    Room *oroom;
     Coord tempdest; //Temporary destination for chaser
 
 
@@ -288,44 +287,49 @@ over:
     if (this->is_stationary())
         return 0;
     //If the chasing thing moved, update the screen
-    if (this->has_tile_beneath())
+    do_screen_update();
+    return 0;
+}
+
+void Monster::do_screen_update()
+{
+    if (has_tile_beneath())
     {
-        if (this->tile_beneath() == ' ' && game->hero().can_see(this->pos) && game->level().get_tile(this->pos) == FLOOR)
-            game->screen().mvaddch(this->pos, (char)FLOOR);
-        else if (this->tile_beneath() == FLOOR && !game->hero().can_see(this->pos) && !game->hero().detects_others())
-            game->screen().mvaddch(this->pos, ' ');
+        if (tile_beneath() == ' ' && game->hero().can_see(pos) && game->level().get_tile(pos) == FLOOR)
+            game->screen().mvaddch(pos, (char)FLOOR);
+        else if (tile_beneath() == FLOOR && !game->hero().can_see(pos) && !game->hero().detects_others())
+            game->screen().mvaddch(pos, ' ');
         else
-            game->screen().mvaddch(this->pos, this->tile_beneath());
+            game->screen().mvaddch(pos, tile_beneath());
     }
-    oroom = this->room;
-    if (!equal(ch_ret, this->pos))
+    Room *orig_room = room;
+    if (!equal(ch_ret, pos))
     {
-        if ((this->room = get_room_from_position(ch_ret)) == NULL) {
-            this->room = oroom;
-            return 0;
+        if ((room = get_room_from_position(ch_ret)) == NULL) {
+            room = orig_room;
+            return;
         }
-        if (oroom != this->room)
+        if (orig_room != room)
             dest = find_dest();
-        this->pos = ch_ret;
+        pos = ch_ret;
     }
     if (game->hero().can_see_monster(this))
     {
         if (game->level().get_flags(ch_ret)&F_PASS) game->screen().standout();
         set_tile_beneath(game->screen().mvinch(ch_ret.y, ch_ret.x)); //todo: why get from screen instead of level??
-        game->screen().mvaddch(ch_ret, this->disguise);
+        game->screen().mvaddch(ch_ret, disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
         set_tile_beneath(game->screen().mvinch(ch_ret.y, ch_ret.x)); //todo: why get from screen instead of level??
-        game->screen().mvaddch(ch_ret, this->type);
+        game->screen().mvaddch(ch_ret, type);
     }
     else
         invalidate_tile_beneath();
-    if (tile_beneath() == FLOOR && oroom->is_dark())
+    if (tile_beneath() == FLOOR && orig_room->is_dark())
         set_tile_beneath(' ');
     game->screen().standend();
-    return 0;
 }
 
 //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
