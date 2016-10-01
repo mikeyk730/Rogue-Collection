@@ -2,10 +2,10 @@
 
 Amulet::Amulet() : Item(AMULET, 0)
 {
-    this->hit_plus = 0;
-    this->damage_plus = 0;
-    this->damage = "0d0";
-    this->throw_damage = "0d0";
+    this->m_hit_plus = 0;
+    this->m_damage_plus = 0;
+    this->m_damage = "0d0";
+    this->m_throw_damage = "0d0";
     this->armor_class = 11;
 }
 

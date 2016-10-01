@@ -324,8 +324,8 @@ int handle_trap(Coord tc)
 
             if ((arrow = new Weapon(ARROW, 0, 0)) != NULL)
             {
-                arrow->count = 1;
-                arrow->pos = game->hero().m_position;
+                arrow->m_count = 1;
+                arrow->m_position = game->hero().m_position;
                 fall(arrow, false);
             }
             msg("an arrow shoots past you");
@@ -404,7 +404,7 @@ void rndmove(Agent *who, Coord *newmv)
         {
             for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it) {
                 obj = *it;
-                if (y == obj->pos.y && x == obj->pos.x)
+                if (y == obj->m_position.y && x == obj->m_position.x)
                     break;
             }
             if (is_scare_monster_scroll(obj)) {

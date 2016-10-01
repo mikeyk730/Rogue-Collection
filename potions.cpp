@@ -196,7 +196,7 @@ void Potion::quaff_magic_detection()
         if (item->is_magic())
         {
             discovered = true;
-            game->screen().mvaddch(item->pos, goodch(item));
+            game->screen().mvaddch(item->m_position, goodch(item));
         }
     }
     for (auto m = game->level().monsters.begin(); m != game->level().monsters.end(); ++m) {
@@ -282,7 +282,7 @@ void(Potion::*potion_functions[MAXPOTIONS])() = {
   &Potion::quaff_thirst_quenching
 };
 
-//quaff: Quaff a potion from the m_pack
+//quaff: Quaff a potion from the pack
 bool quaff()
 {
     Item *obj;
@@ -302,14 +302,14 @@ bool quaff()
         game->hero().set_current_weapon(NULL);
 
     //Calculate the effect it has on the poor guy.
-    (potion->*potion_functions[obj->which])();
+    (potion->*potion_functions[obj->m_which])();
 
     update_status_bar();
     potion->call_it();
 
     //Throw the item away
-    if (obj->count > 1)
-        obj->count--;
+    if (obj->m_count > 1)
+        obj->m_count--;
     else {
         game->hero().m_pack.remove(obj);
         delete(obj);
@@ -376,7 +376,7 @@ void affect_monster(Item *potion, Monster *monster)
 {
     msg("the flask shatters.");
 
-    switch (potion->which)
+    switch (potion->m_which)
     {
     case P_CONFUSE: case P_BLIND:
         monster->set_confused(true);
@@ -431,7 +431,7 @@ std::string PotionInfo::get_inventory_name(int which, int count) const
 
 std::string PotionInfo::get_inventory_name(const Item * obj) const
 {
-    return get_inventory_name(obj->which, obj->count);
+    return get_inventory_name(obj->m_which, obj->m_count);
 }
 
 std::string PotionInfo::get_inventory_name(int which) const
@@ -463,14 +463,14 @@ std::string Potion::InventoryName() const
 
 bool Potion::IsEvil() const
 {
-    return (which == P_CONFUSE || which == P_PARALYZE || which == P_POISON || which == P_BLIND);
+    return (m_which == P_CONFUSE || m_which == P_PARALYZE || m_which == P_POISON || m_which == P_BLIND);
 }
 
 int Potion::Worth() const
 {
-    int worth = item_class()->get_value(which);
-    worth *= count;
-    if (!item_class()->is_discovered(which)) 
+    int worth = item_class()->get_value(m_which);
+    worth *= m_count;
+    if (!item_class()->is_discovered(m_which)) 
         worth /= 2;
     return worth;
 }

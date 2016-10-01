@@ -10,7 +10,7 @@ const short IS_CURSED = 0x0001; //object is cursed
 const short IS_KNOW = 0x0002; //player knows details about the object
 const short DID_FLASH = 0x0004; //has the vorpal weapon flashed
 //const short IS_EGO   = 0x0008; //weapon has control of player
-const short IS_MISL = 0x0010; //object is a projectile type
+const short IS_MISL = 0x0010; //object is a projectile m_type
 const short IS_MANY = 0x0020; //object comes in groups
 const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 
@@ -95,23 +95,23 @@ public:
     //inv_name: Return the name of something as it would appear in an inventory.
     std::string inventory_name(bool lowercase);
 
-    int type;                      //What kind of object it is
-    Coord pos;                     //Where it lives on the screen
-    int which;                     //Which object of a type it is
-    int count;                     //Count for plural objects
+    int m_type;                      //What kind of object it is
+    Coord m_position;                //Where it lives on the screen
+    int m_which;                     //Which object of a m_type it is
+    int m_count;                     //Count for plural objects
 protected:
     char m_launcher;                 //What you need to launch it
-    char *damage;                  //Damage if used like sword
-    char *throw_damage;            //Damage if thrown
-    int hit_plus;                  //Plusses to hit
-    int damage_plus;               //Plusses to m_damage
+    char *m_damage;                  //Damage if used like sword
+    char *m_throw_damage;            //Damage if thrown
+    int m_hit_plus;                  //Plusses to hit
+    int m_damage_plus;               //Plusses to m_damage
     short armor_class;
     short gold_value;
-    short charges;
-    short flags;                   //Information about objects
+    short m_charges;
+    short m_flags;                   //Information about objects
     char enemy;                    //If it is enchanted, who it hates
 public:
-    int group;                     //Group number for this object
+    int m_group;                     //Group number for this object
 public:
     void discover();
     void call_it();

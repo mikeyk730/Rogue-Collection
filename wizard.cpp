@@ -150,7 +150,7 @@ void summon_object()
         break;
     }
 
-    //todo:if (obj->type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
+    //todo:if (obj->m_type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
 
     game->hero().add_to_pack(obj, false);
 }
@@ -314,7 +314,7 @@ void Cheats::toggle_powers(const std::string & powers)
 
 void Cheats::apply_powers()
 {
-    game->hero().invulnerable = (enabled() && invulnerability());
+    game->hero().m_invulnerable = (enabled() && invulnerability());
     turn_see(!(enabled() && detect_monsters()));
     if (enabled() && see_invisible())
         show_invisible();

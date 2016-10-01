@@ -87,7 +87,7 @@ std::string Armor::InventoryName() const
     char *pb = prbuf;
 
     if (is_known() || game->wizard().reveal_items())
-        chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(which) - get_armor_class(), 0, (char)ARMOR),
+        chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(m_which) - get_armor_class(), 0, (char)ARMOR),
             Name().c_str(), armor_class_for_display());
     else
         sprintf(pb, "%s", Name().c_str());
@@ -124,18 +124,18 @@ Item * Armor::Clone() const
 
 std::string Armor::Name() const
 {
-    return a_names[which];
+    return a_names[m_which];
 }
 
 bool Armor::IsEvil() const
 {
-    return get_armor_class() > get_default_class(which);
+    return get_armor_class() > get_default_class(m_which);
 }
 
 int Armor::Worth() const
 {
     int worth = 0;
-    switch (which)
+    switch (m_which)
     {
     case LEATHER: worth = 20; break;
     case RING_MAIL: worth = 25; break;
@@ -147,6 +147,6 @@ int Armor::Worth() const
     case PLATE_MAIL: worth = 150; break;
     }
     worth += (9 - get_armor_class()) * 100;
-    worth += (10 * (get_default_class(which) - get_armor_class()));
+    worth += (10 * (get_default_class(m_which) - get_armor_class()));
     return worth;
 }

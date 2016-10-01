@@ -86,19 +86,19 @@ bool throw_projectile()
 
     //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  
     //Otherwise, create a new item with a count of one.
-    if (obj->count <= 1) {
+    if (obj->m_count <= 1) {
         game->hero().m_pack.remove(obj);
     }
     else
     {
-        obj->count--;
+        obj->m_count--;
         nitem = obj->Clone();
-        nitem->count = 1;
+        nitem->m_count = 1;
         obj = nitem;
     }
     do_motion(obj, delta);
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-    if (game->level().monster_at(obj->pos) == NULL || !projectile_hit(obj->pos, obj))
+    if (game->level().monster_at(obj->m_position) == NULL || !projectile_hit(obj->m_position, obj))
         fall(obj, true);
 
     return true;
@@ -110,30 +110,30 @@ void do_motion(Item *obj, Coord delta)
     byte under = UNSET;
 
     //Come fly with us ...
-    obj->pos = game->hero().m_position;
+    obj->m_position = game->hero().m_position;
     for (;;)
     {
         int ch;
 
         //Erase the old one
-        if (under != UNSET && !equal(obj->pos, game->hero().m_position) && game->hero().can_see(obj->pos))
-            game->screen().mvaddch(obj->pos, under);
+        if (under != UNSET && !equal(obj->m_position, game->hero().m_position) && game->hero().can_see(obj->m_position))
+            game->screen().mvaddch(obj->m_position, under);
         //Get the new position
-        obj->pos.y += delta.y;
-        obj->pos.x += delta.x;
+        obj->m_position.y += delta.y;
+        obj->m_position.x += delta.x;
         //mdk: Originally thrown items would pass through mimics.  With =throws_affect_mimics= they
         //have a chance to hit.
         bool hit_mimics(game->options.throws_affect_mimics());
-        if (step_ok(ch = game->level().get_tile_or_monster(obj->pos, hit_mimics)) && ch != DOOR)
+        if (step_ok(ch = game->level().get_tile_or_monster(obj->m_position, hit_mimics)) && ch != DOOR)
         {
             //It hasn't hit anything yet, so display it if alright.
-            if (game->hero().can_see(obj->pos))
+            if (game->hero().can_see(obj->m_position))
             {
                 //mdk:bugfix: xerox tile was replaced with floor after object passed
-                under = game->level().get_tile_or_monster(obj->pos, false);
+                under = game->level().get_tile_or_monster(obj->m_position, false);
                 //under = game->m_level().get_tile(obj->m_position);
 
-                game->screen().mvaddch(obj->pos, obj->type);
+                game->screen().mvaddch(obj->m_position, obj->m_type);
                 tick_pause();
             }
             else 
@@ -155,19 +155,19 @@ void fall(Item *obj, bool pr)
     {
         bool location_is_empty(game->level().is_floor_or_passage(fpos));
 
-        obj->pos = fpos;
-        game->level().set_tile(obj->pos, obj->type);
+        obj->m_position = fpos;
+        game->level().set_tile(obj->m_position, obj->m_type);
         game->level().items.push_front(obj);
         if (game->level().monster_at(fpos))
-            game->level().monster_at(fpos)->set_tile_beneath(obj->type);
+            game->level().monster_at(fpos)->set_tile_beneath(obj->m_type);
 
         //mdk:bugfix: prevent a fallen item from appearing on top of a monster
         //if (game->hero().can_see(fpos))
         if (game->hero().can_see(fpos) && location_is_empty)
         {
-            if ((game->level().is_passage(obj->pos)) || (game->level().is_maze(obj->pos)))
+            if ((game->level().is_passage(obj->m_position)) || (game->level().is_maze(obj->m_position)))
                 game->screen().standout();
-            game->screen().mvaddch(fpos, obj->type);
+            game->screen().mvaddch(fpos, obj->m_type);
             game->screen().standend();
         }
         return;
@@ -182,12 +182,12 @@ void fall(Item *obj, bool pr)
 
 int Item::get_hit_plus() const
 {
-    return hit_plus;
+    return m_hit_plus;
 }
 
 int Item::get_damage_plus() const
 {
-    return damage_plus;
+    return m_damage_plus;
 }
 
 void Item::initialize_weapon(byte type)
@@ -195,16 +195,16 @@ void Item::initialize_weapon(byte type)
     static int group = 2;
 
     init_weps* defaults = &init_dam[type];
-    this->damage = defaults->iw_dam;
-    this->throw_damage = defaults->iw_hrl;
+    this->m_damage = defaults->iw_dam;
+    this->m_throw_damage = defaults->iw_hrl;
     this->m_launcher = defaults->iw_launch;
-    this->flags = defaults->iw_flags;
+    this->m_flags = defaults->iw_flags;
     if (this->does_group()) {
-        this->count = rnd(8) + 8;
-        this->group = group++;
+        this->m_count = rnd(8) + 8;
+        this->m_group = group++;
     }
     else
-        this->count = 1;
+        this->m_count = 1;
 }
 
 //projectile_hit: Does the projectile hit the monster?
@@ -229,9 +229,9 @@ int fallpos(Item *obj, Coord *newpos)
 {
    int cnt = 0;
 
-    for (int y = obj->pos.y - 1; y <= obj->pos.y + 1; y++)
+    for (int y = obj->m_position.y - 1; y <= obj->m_position.y + 1; y++)
     {
-        for (int x = obj->pos.x - 1; x <= obj->pos.x + 1; x++)
+        for (int x = obj->m_position.x - 1; x <= obj->m_position.x + 1; x++)
         {
             Coord pos = { x, y };
             //check to make certain the spot is empty, if it is, put the object there, set it in the 
@@ -251,9 +251,9 @@ int fallpos(Item *obj, Coord *newpos)
 
             if (step_ok(ch)) {
                 Item* floor_item = find_obj(pos, false);
-                if (floor_item && floor_item->type == obj->type && floor_item->group && floor_item->group == obj->group)
+                if (floor_item && floor_item->m_type == obj->m_type && floor_item->m_group && floor_item->m_group == obj->m_group)
                 {
-                    floor_item->count += obj->count;
+                    floor_item->m_count += obj->m_count;
                     return 2;
                 }
             }
@@ -266,16 +266,16 @@ std::string Weapon::InventoryName() const
 {
     char *pb = prbuf;
 
-    if (this->count > 1)
-        sprintf(pb, "%d ", this->count);
+    if (this->m_count > 1)
+        sprintf(pb, "%d ", this->m_count);
     else
         sprintf(pb, "A%s ", vowelstr(Name().c_str()));
     pb = &prbuf[strlen(prbuf)];
     if (this->is_known() || game->wizard().reveal_items())
-        sprintf(pb, "%s %s", num(this->hit_plus, this->damage_plus, WEAPON), Name().c_str());
+        sprintf(pb, "%s %s", num(this->m_hit_plus, this->m_damage_plus, WEAPON), Name().c_str());
     else
         sprintf(pb, "%s", Name().c_str());
-    if (this->count > 1) strcat(pb, "s");
+    if (this->m_count > 1) strcat(pb, "s");
     if (this->is_vorpalized() && (this->is_revealed() || game->wizard().reveal_items()))
     {
         strcat(pb, " of ");
@@ -290,9 +290,9 @@ void Item::enchant_weapon()
 {
     this->remove_curse();
     if (rnd(2) == 0)
-        this->hit_plus++;
+        this->m_hit_plus++;
     else
-        this->damage_plus++;
+        this->m_damage_plus++;
     ifterse("your %s glows blue", "your %s glows blue for a moment", Name().c_str());
 }
 
@@ -315,12 +315,12 @@ std::string Item::get_vorpalized_name() const
 
 std::string Item::get_throw_damage() const
 {
-    return throw_damage;
+    return m_throw_damage;
 }
 
 std::string Item::get_damage() const
 {
-    return damage;
+    return m_damage;
 }
 
 char Item::launcher() const
@@ -330,7 +330,7 @@ char Item::launcher() const
 
 Room* Item::get_room()
 {
-    return get_room_from_position(pos);
+    return get_room_from_position(m_position);
 }
 
 void Item::vorpalize()
@@ -353,9 +353,9 @@ void Item::vorpalize()
     }
 
     enemy = pick_vorpal_monster();
-    hit_plus++;
-    damage_plus++;
-    charges = 1;
+    m_hit_plus++;
+    m_damage_plus++;
+    m_charges = 1;
     msg(flash, Name().c_str(), short_msgs() ? "" : intense);
 }
 
@@ -368,10 +368,10 @@ Weapon::Weapon(int which) :
     int k;
     if ((k = rnd(100)) < 10) {
         set_cursed();
-        hit_plus -= rnd(3) + 1;
+        m_hit_plus -= rnd(3) + 1;
     }
     else if (k < 15)
-        hit_plus += rnd(3) + 1;
+        m_hit_plus += rnd(3) + 1;
 }
 
 Weapon::Weapon(int which, int hit, int damage) :
@@ -380,9 +380,9 @@ Weapon::Weapon(int which, int hit, int damage) :
 {
     initialize_weapon(which);
 
-    hit_plus = hit;
-    damage_plus = damage;
-    if (hit_plus < 0 || damage_plus < 0)
+    m_hit_plus = hit;
+    m_damage_plus = damage;
+    if (m_hit_plus < 0 || m_damage_plus < 0)
         set_cursed();
 }
 
@@ -404,7 +404,7 @@ bool Weapon::IsEvil() const
 int Weapon::Worth() const
 {
     int worth = 0;
-    switch (which)
+    switch (m_which)
     {
     case MACE: worth = 8; break;
     case SWORD: worth = 15; break;
@@ -417,6 +417,6 @@ int Weapon::Worth() const
     case BOLT: worth = 1; break;
     case SPEAR: worth = 5; break;
     }
-    worth *= 3 * (get_hit_plus() + get_damage_plus()) + count;
+    worth *= 3 * (get_hit_plus() + get_damage_plus()) + m_count;
     return worth;
 }

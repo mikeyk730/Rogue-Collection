@@ -34,13 +34,13 @@ std::string Food::InventoryName() const
 
     char *pb = prbuf;
 
-    if (which == 1)
-        if (count == 1)
+    if (m_which == 1)
+        if (m_count == 1)
             sprintf(pb, "A%s %s", vowelstr(fruit.c_str()), fruit.c_str());
-        else sprintf(pb, "%d %ss", count, fruit.c_str());
-    else if (count == 1)
+        else sprintf(pb, "%d %ss", m_count, fruit.c_str());
+    else if (m_count == 1)
         strcpy(pb, "Some food");
-    else sprintf(pb, "%d rations of food", count);
+    else sprintf(pb, "%d rations of food", m_count);
 
     return prbuf;
 }
@@ -52,5 +52,5 @@ bool Food::IsEvil() const
 
 int Food::Worth() const
 {
-    return 2 * count;
+    return 2 * m_count;
 }

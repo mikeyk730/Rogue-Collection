@@ -147,7 +147,7 @@ void endmsg()
         game->screen().move(0, game->msg_position);
         more(" More "); 
     }
-    //All messages should start with uppercase, except ones that start with a m_pack addressing character
+    //All messages should start with uppercase, except ones that start with a pack addressing character
     if (islower(msgbuf[0]) && msgbuf[1] != ')') 
         msgbuf[0] = toupper(msgbuf[0]);
     putmsg(0, msgbuf);

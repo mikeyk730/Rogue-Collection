@@ -191,7 +191,7 @@ Item* find_obj(Coord p, bool expect_item)
 {
     for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it) {
         Item* op = *it;
-        if (op->pos.y == p.y && op->pos.x == p.x)
+        if (op->m_position.y == p.y && op->m_position.x == p.x)
             return op;
     }
     if (expect_item) {
@@ -490,20 +490,20 @@ void call()
         return;
     }
 
-    if (item_class->is_discovered(obj->which)) {
+    if (item_class->is_discovered(obj->m_which)) {
         msg("that has already been identified");
         return;
     }
 
-    std::string called = item_class->get_guess(obj->which);
+    std::string called = item_class->get_guess(obj->m_which);
     if (called.empty())
-        called = item_class->get_identifier(obj->which);
+        called = item_class->get_identifier(obj->m_which);
     msg("Was called \"%s\"", called.c_str());
 
     msg("what do you want to call it? ");
     getinfo(prbuf, MAXNAME);
     if (*prbuf && *prbuf != ESCAPE)
-        item_class->set_guess(obj->which, prbuf);
+        item_class->set_guess(obj->m_which, prbuf);
     msg("");
 }
 

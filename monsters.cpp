@@ -118,7 +118,7 @@ void load_monster_cfg(const std::string& filename)
         std::replace(m.name.begin(), m.name.end(), '_', ' ');
 
         monsters[type - 'A'] = m;
-        //printf("%c %s %d %x %d %d %d %d %d %s %x\n", type, m.name.c_str(), m.carry, m.m_flags, m.m_stats.str, m.m_stats.exp, m.m_stats.m_level, m.m_stats.m_ac, m.m_stats.m_hp, m.m_stats.m_damage.c_str(), m.exflags);
+        //printf("%c %s %d %x %d %d %d %d %d %s %x\n", m_type, m.name.c_str(), m.carry, m.m_flags, m.m_stats.str, m.m_stats.exp, m.m_stats.m_level, m.m_stats.m_ac, m.m_stats.m_hp, m.m_stats.m_damage.c_str(), m.exflags);
     }
 }
 
@@ -227,7 +227,7 @@ void create_wandering_monster()
     monster = Monster::CreateMonster(randmonster(true, get_level()), &cp, get_level());
     if (game->invalid_position)
         debug("wanderer bailout");
-    //debug("started a wandering %s", monsters[tp->type-'A'].m_name);
+    //debug("started a wandering %s", monsters[tp->m_type-'A'].m_name);
     monster->start_run();
 }
 

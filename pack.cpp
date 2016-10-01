@@ -1,5 +1,5 @@
-//Routines to deal with the m_pack
-//m_pack.c      1.4 (A.I. Design)       12/14/84
+//Routines to deal with the pack
+//pack.c      1.4 (A.I. Design)       12/14/84
 
 #include <stdio.h>
 
@@ -30,7 +30,7 @@ Item *pack_obj(byte ch, byte *chp)
 }
 
 
-//inventory: List what is in the m_pack
+//inventory: List what is in the pack
 int inventory(std::list<Item *>& list, int type, const char *lstr)
 {
     byte ch = 'a';
@@ -42,9 +42,9 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
     {
         Item* item = *it;
         //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
-        if (type && type != item->type &&
-            !(type == CALLABLE && (item->type == SCROLL || item->type == POTION || item->type == RING || item->type == STICK)) &&
-            !(type == WEAPON && item->type == POTION) &&
+        if (type && type != item->m_type &&
+            !(type == CALLABLE && (item->m_type == SCROLL || item->m_type == POTION || item->m_type == RING || item->m_type == STICK)) &&
+            !(type == WEAPON && item->m_type == POTION) &&
             !(type == STICK && item->is_vorpalized() && item->get_charges())) //todo: does this work?
             continue;
         n_objs++;
@@ -59,16 +59,16 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
     return (end_line(lstr));
 }
 
-//get_item: Pick something out of a m_pack for a purpose
+//get_item: Pick something out of a pack for a purpose
 Item* get_item(const std::string& purpose, int type)
 {
     if (game->hero().m_pack.empty()) {
-        //mdk:bugfix: previously, trying to do something with an empty m_pack would count as a turn
+        //mdk:bugfix: previously, trying to do something with an empty pack would count as a turn
         msg("you aren't carrying anything");
         return NULL;
     }
 
-    //if we are doing something AGAIN, and the m_pack hasn't changed then don't ask just give him the same thing he got on the last command.
+    //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
     if (game->repeat_last_action && purpose != "identify") {
         byte och = 0;
         Item* item = pack_obj(game->last_turn.item_letter, &och);
@@ -127,7 +127,7 @@ Item* get_item(const std::string& purpose, int type)
     }
 }
 
-//pack_char: Return which character would address a m_pack object
+//pack_char: Return which character would address a pack object
 int pack_char(Item *obj)
 {
     byte c = 'a';
@@ -140,7 +140,7 @@ int pack_char(Item *obj)
     return '?';
 }
 
-//pick_up: Add something to characters m_pack.
+//pick_up: Add something to characters pack.
 void pick_up(byte ch)
 {
     if (ch == GOLD)

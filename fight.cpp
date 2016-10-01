@@ -135,7 +135,7 @@ int str_plus(unsigned int str)
     return add;
 }
 
-//add_dam: Compute additional m_damage done for exceptionally high or low strength
+//add_dam: Compute additional damage done for exceptionally high or low strength
 int add_dam(unsigned int str)
 {
     int add = 6;
@@ -163,7 +163,7 @@ void remove_monster(Monster* monster, bool waskill)
     Coord* monster_pos = &monster->m_position;
     for (auto it = monster->m_pack.begin(); it != monster->m_pack.end();) {
         Item* obj = *(it++);
-        obj->pos = monster->m_position;
+        obj->m_position = monster->m_position;
         monster->m_pack.remove(obj);
         if (waskill)
             fall(obj, false);

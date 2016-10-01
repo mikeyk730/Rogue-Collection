@@ -52,7 +52,7 @@ void command()
         do_daemons();
         for (ntimes = LEFT; ntimes <= RIGHT; ntimes++)
             if (game->hero().get_ring(ntimes))
-                switch (game->hero().get_ring(ntimes)->which)
+                switch (game->hero().get_ring(ntimes)->m_which)
                 {
                 case R_SEARCH:
                     search();

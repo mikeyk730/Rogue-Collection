@@ -63,7 +63,7 @@ struct Agent
         int m_level;            //Level of mastery
         int m_ac;               //Armor class
         int m_hp;               //Hit points
-        std::string m_damage;   //String describing m_damage done
+        std::string m_damage;   //String describing damage done
         int m_max_hp;           //Max hit points
         unsigned int m_max_str; //Max strength
     };
@@ -74,7 +74,7 @@ struct Agent
     Room *m_room = 0;                 //Current m_room for thing
     std::list<Item*> m_pack;          //What the thing is carrying
     
-    bool invulnerable = false;
+    bool m_invulnerable = false;
 
 private:
     bool is_flag_set(short flag) const;

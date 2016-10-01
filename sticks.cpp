@@ -197,17 +197,17 @@ struct MagicMissile : public Item
     MagicMissile() : 
         Item(MISSILE, 0)
     {
-        throw_damage = "1d8";
-        hit_plus = 1000;
-        damage_plus = 1;
-        flags = IS_MISL;
+        m_throw_damage = "1d8";
+        m_hit_plus = 1000;
+        m_damage_plus = 1;
+        m_flags = IS_MISL;
         m_launcher = NONE;
 
         if (!game->options.use_throw_damage()) {
-            //mdk: this was a hack to get magic missles to use throw m_damage in the fight code.
-            //it's not needed with my change to use throw m_damage.
+            //mdk: this was a hack to get magic missles to use throw damage in the fight code.
+            //it's not needed with my change to use throw damage.
             if (game->hero().get_current_weapon() != NULL) {
-                m_launcher = game->hero().get_current_weapon()->which;
+                m_launcher = game->hero().get_current_weapon()->m_which;
             }
         }
     }
@@ -338,8 +338,8 @@ bool Stick::zap_magic_missile(Coord dir)
     do_motion(missile, dir);
 
     Agent* monster;
-    if ((monster = game->level().monster_at(missile->pos)) != NULL && !save_throw(VS_MAGIC, monster))
-        projectile_hit(missile->pos, missile);
+    if ((monster = game->level().monster_at(missile->m_position)) != NULL && !save_throw(VS_MAGIC, monster))
+        projectile_hit(missile->m_position, missile);
     else
         msg("the missile vanishes with a puff of smoke");
 
@@ -504,7 +504,7 @@ bool do_zap()
     Stick* stick = dynamic_cast<Stick*>(item);
     Weapon* weapon = dynamic_cast<Weapon*>(item);
     if (!(stick || weapon && weapon->is_vorpalized() && weapon->get_charges())) {
-        //mdk: zapping with non-stick doesn't count as turn
+        //mdk: zapping with non-stick doesn't m_count as turn
         msg("you can't zap with that!");
         return false;
     }
@@ -521,7 +521,7 @@ bool do_zap()
     if (stick->get_charges() == 0) {
         msg("nothing happens");
     }
-    else if ((stick->*stick_functions[stick->which])(delta)) {
+    else if ((stick->*stick_functions[stick->m_which])(delta)) {
         stick->use_charge();
     }
 
@@ -670,18 +670,18 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
     case 1: case -1: dirch = (dir->y == 0 ? '-' : '|'); break;
     case 2: case -2: dirch = '\\'; break;
     }
-    bolt->pos = *start;
+    bolt->m_position = *start;
     bool hero_is_target = !bolt->from_player;
     bolt_hit_something = false;
     changed = false;
     for (i = 0; i < BOLT_LENGTH && !bolt_hit_something; i++)
     {
-        bolt->pos = bolt->pos + *dir;
+        bolt->m_position = bolt->m_position + *dir;
 
         bool throws_affect_mimics(game->options.throws_affect_mimics());
-        ch = game->level().get_tile_or_monster(bolt->pos, throws_affect_mimics);
-        spotpos[i].s_pos = bolt->pos;
-        if ((spotpos[i].s_under = game->screen().mvinch(bolt->pos.y, bolt->pos.x)) == dirch)
+        ch = game->level().get_tile_or_monster(bolt->m_position, throws_affect_mimics);
+        spotpos[i].s_pos = bolt->m_position;
+        if ((spotpos[i].s_under = game->screen().mvinch(bolt->m_position.y, bolt->m_position.x)) == dirch)
             spotpos[i].s_under = 0;
         switch (ch)
         {
@@ -698,20 +698,20 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
         default:
             if (!hero_is_target)
             {
-                monster = game->level().monster_at(bolt->pos, throws_affect_mimics);
+                monster = game->level().monster_at(bolt->m_position, throws_affect_mimics);
                 if (monster) {
                     hero_is_target = true;
                     changed = !changed;
                     if (bolt_vs_monster(bolt, monster, &victim))
                     {
                         bolt_hit_something = true;
-                        if (game->screen().mvinch(bolt->pos.y, bolt->pos.x) != dirch)
-                            spotpos[i].s_under = game->screen().mvinch(bolt->pos.y, bolt->pos.x);
+                        if (game->screen().mvinch(bolt->m_position.y, bolt->m_position.x) != dirch)
+                            spotpos[i].s_under = game->screen().mvinch(bolt->m_position.y, bolt->m_position.x);
                     }
                 }
             }
 
-            else if (hero_is_target && equal(bolt->pos, game->hero().m_position))
+            else if (hero_is_target && equal(bolt->m_position, game->hero().m_position))
             {
                 hero_is_target = false;
                 changed = !changed;
@@ -728,7 +728,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
             else
                 game->screen().red();
             tick_pause();
-            game->screen().mvaddch(bolt->pos, dirch);
+            game->screen().mvaddch(bolt->m_position, dirch);
             game->screen().standend();
         }
     }
@@ -779,7 +779,7 @@ std::string StickInfo::get_inventory_name(int which, const std::string& charge) 
 
 std::string StickInfo::get_inventory_name(const Item * obj) const
 {
-    return get_inventory_name(obj->which, get_charge_string(obj));
+    return get_inventory_name(obj->m_which, get_charge_string(obj));
 }
 
 std::string StickInfo::get_inventory_name(int which) const
@@ -793,25 +793,25 @@ Stick::Stick(int which)
 {
     StickInfo* sticks = dynamic_cast<StickInfo*>(item_class());
     if (sticks->is_staff(which))
-        damage = "2d3";  //mdk: A staff is more powerful than a wand for striking 
+        m_damage = "2d3";  //mdk: A staff is more powerful than a wand for striking 
     else
-        damage = "1d1";
+        m_damage = "1d1";
 
-    throw_damage = "1d1";
-    charges = 3 + rnd(5);
+    m_throw_damage = "1d1";
+    m_charges = 3 + rnd(5);
 
     switch (which)
     {
     case WS_HIT:
-        hit_plus = 100;
-        //mdk: i don't know why m_damage info is set, as they are overwritten the first time you
+        m_hit_plus = 100;
+        //mdk: i don't know why damage info is set, as they are overwritten the first time you
         //zap a monster.  I don't know if the intention was to have separate zap/melee m_stats,
         //but, as is, it's just odd.
-        damage_plus = 3;
-        damage = "1d8";
+        m_damage_plus = 3;
+        m_damage = "1d8";
         break;
     case WS_LIGHT:
-        charges = 10 + rnd(10);
+        m_charges = 10 + rnd(10);
         break;
     }
 }
@@ -824,7 +824,7 @@ Item * Stick::Clone() const
 std::string Stick::Name() const
 {
     StickInfo* sticks = dynamic_cast<StickInfo*>(item_class());
-    return sticks->get_type(which);
+    return sticks->get_type(m_which);
 }
 
 std::string Stick::InventoryName() const
@@ -834,12 +834,12 @@ std::string Stick::InventoryName() const
 
 bool Stick::IsEvil() const
 {
-    return (which == WS_HASTE_M || which == WS_TELTO);
+    return (m_which == WS_HASTE_M || m_which == WS_TELTO);
 }
 
 int Stick::Worth() const
 {
-    int worth = item_class()->get_value(which);
+    int worth = item_class()->get_value(m_which);
     worth += 20 * get_charges();
     if (!is_known())
         worth /= 2;

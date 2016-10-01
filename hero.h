@@ -47,7 +47,7 @@ public:
     int is_ring_on_hand(int h, int r) const;
     int is_wearing_ring(int r) const;
 
-    //add_to_pack: Pick up an object and add it to the m_pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+    //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
     void add_to_pack(Item *obj, bool silent);
 private:
     bool add_to_list(Item** obj, bool from_floor);
@@ -77,7 +77,7 @@ public:
     void do_hit(Item* weapon, int thrown, Monster* monster, const char* name);
     void do_miss(Item* weapon, int thrown, Monster* monster, const char* name);
 
-    //pick_up_gold: Add gold to the m_pack
+    //pick_up_gold: Add gold to the pack
     void pick_up_gold(int value);
 
     //true if player currently has amulet

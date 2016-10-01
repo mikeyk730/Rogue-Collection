@@ -54,14 +54,14 @@ void Item::discover()
 {
     set_known();
     if (item_class())
-        item_class()->discover(which);
+        item_class()->discover(m_which);
 }
 
 void Item::call_it()
 {
     ItemClass* items = item_class();
     if (items) {
-        items->call_it(which);
+        items->call_it(m_which);
     }
 }
 
@@ -70,7 +70,7 @@ ItemClass* Item::item_class() const
     //todo: change class layout, so we don't need to poke into game
     //this is problematic because we couldn't, for example, start
     //the hero off with a stick
-    return game->item_class(type);
+    return game->item_class(m_type);
 }
 
 //inv_name: Return the name of something as it would appear in an inventory.
@@ -122,20 +122,20 @@ bool drop()
     if (!can_drop(op, true)) 
         return true;
 
-    //Take it out of the m_pack
-    if (op->count >= 2 && op->type != WEAPON)
+    //Take it out of the pack
+    if (op->m_count >= 2 && op->m_type != WEAPON)
     {
-        op->count--;
+        op->m_count--;
         nobj = op->Clone();
-        nobj->count = 1;
+        nobj->m_count = 1;
         op = nobj;
     }
     else
         game->hero().m_pack.remove(op);
     //Link it into the m_level object list
     game->level().items.push_front(op);
-    op->pos = game->hero().m_position;
-    game->level().set_tile(op->pos, op->type);
+    op->m_position = game->hero().m_position;
+    game->level().set_tile(op->m_position, op->m_type);
     msg("dropped %s", op->inventory_name(true).c_str());
 
     return true;
@@ -177,7 +177,7 @@ bool can_drop(Item *op, bool unequip)
         }
     }
     game->hero().set_ring(hand, NULL);
-    if (op->which == R_SEEINVIS) //todo: better place for this?  should be automatic
+    if (op->m_which == R_SEEINVIS) //todo: better place for this?  should be automatic
     {
         unsee();
         extinguish(unsee);

@@ -288,8 +288,8 @@ void Level::put_things()
             items.push_front(cur);
             //Put it somewhere
             find_empty_location(&tp, false);
-            set_tile(tp, cur->type);
-            cur->pos = tp;
+            set_tile(tp, cur->m_type);
+            cur->m_position = tp;
         }
     }
 }
@@ -314,9 +314,9 @@ void Level::treas_room()
             rnd_pos(room, &pos);
         } while (!isfloor(get_tile(pos)));
         item = Item::CreateItem();
-        item->pos = pos;
+        item->m_position = pos;
         items.push_front(item);
-        set_tile(pos, item->type);
+        set_tile(pos, item->m_type);
     }
     //fill up m_room with monsters from the next m_level down
     if ((nm = rnd(spots) + MINTREAS) < num_monst + 2) nm = num_monst + 2;

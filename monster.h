@@ -74,7 +74,7 @@ struct Monster : public Agent
     void start_run(Coord* c, bool reveal_mimic = true);
     void hold();
 
-    //give_pack: Give a m_pack to a monster if it deserves one
+    //give_pack: Give a pack to a monster if it deserves one
     void give_pack();
 
     bool is_seeking(Item* obj);

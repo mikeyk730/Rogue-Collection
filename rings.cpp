@@ -100,7 +100,7 @@ Item* create_ring()
 int ring_eat(int hand)
 {
     if (game->hero().get_ring(hand) == NULL) return 0;
-    switch (game->hero().get_ring(hand)->which)
+    switch (game->hero().get_ring(hand)->m_which)
     {
     case R_REGEN: return 2;
     case R_SUSTSTR: case R_SUSTARM: case R_PROTECT: case R_ADDSTR: case R_STEALTH: return 1;
@@ -118,7 +118,7 @@ char *ring_num(const Ring *obj)
     if (!obj->is_known() && !game->wizard().reveal_items())
         return "";
 
-    switch (obj->which)
+    switch (obj->m_which)
     {
     case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
         ring_buf[0] = ' ';
@@ -149,7 +149,7 @@ std::string RingInfo::get_inventory_name(int which, const std::string& bonus) co
 std::string RingInfo::get_inventory_name(const Item * obj) const
 {
     const Ring* ring = dynamic_cast<const Ring*>(obj);
-    return get_inventory_name(obj->which, ring_num(ring));
+    return get_inventory_name(obj->m_which, ring_num(ring));
 }
 
 std::string RingInfo::get_inventory_name(int which) const
@@ -207,7 +207,7 @@ std::string Ring::InventoryName() const
 
 bool Ring::IsEvil() const
 {
-    switch (which)
+    switch (m_which)
     {
     case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
         return (get_ring_level() < 0);
@@ -220,8 +220,8 @@ bool Ring::IsEvil() const
 
 int Ring::Worth() const
 {
-    int worth = item_class()->get_value(which);
-    if (which == R_ADDSTR || which == R_ADDDAM || which == R_PROTECT || which == R_ADDHIT) {
+    int worth = item_class()->get_value(m_which);
+    if (m_which == R_ADDSTR || m_which == R_ADDDAM || m_which == R_PROTECT || m_which == R_ADDHIT) {
         if (get_ring_level() > 0)
             worth += get_ring_level() * 100;
         else 

@@ -52,7 +52,7 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
 
     //Drain a staff of striking
     //mdk: should this only happen when zapped?  currently happens during melee as well
-    if (weapon->type == STICK && weapon->which == WS_HIT)
+    if (weapon->m_type == STICK && weapon->m_which == WS_HIT)
     {
         weapon->drain_striking();
     }
@@ -83,15 +83,15 @@ void Hero::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
     }
 
     if (hurl) {
-        //mdk: the original code never used throw m_damage except for arrows and crossbow bolts.
+        //mdk: the original code never used throw damage except for arrows and crossbow bolts.
         //I've decided to use it for weapons that don't require a launcher too.  IS_MISL is
         //still meaningless.
         if (game->options.use_throw_damage() && weapon->launcher() == NONE) {
             *damage_string = weapon->get_throw_damage();
         }
         //if we've used the right weapon to launch the projectile, we use the throw 
-        //m_damage of the projectile, and get the plusses from the launcher.
-        else if (current_weapon && weapon->launcher() == current_weapon->which)
+        //damage of the projectile, and get the plusses from the launcher.
+        else if (current_weapon && weapon->launcher() == current_weapon->m_which)
         {
             *damage_string = weapon->get_throw_damage();
             *hit_plus += current_weapon->get_hit_plus();
@@ -162,20 +162,20 @@ bool Hero::eat()
         return false;
 
     //mdk: attempting to eat non-food counts as turn
-    if (obj->type != FOOD) {
+    if (obj->m_type != FOOD) {
         msg("ugh, you would get ill if you ate that");
         return true;
     }
 
-    if (--obj->count < 1) {
+    if (--obj->m_count < 1) {
         m_pack.remove(obj);
         if (obj == get_current_weapon())
-            set_current_weapon(NULL); //todo: this should be done automatically when removing from m_pack
+            set_current_weapon(NULL); //todo: this should be done automatically when removing from pack
         delete obj;
     }
     ingest();
 
-    if (obj->which == 1) {
+    if (obj->m_which == 1) {
         msg("my, that was a yummy %s", game->get_environment("fruit").c_str());
     }
     else if (rnd(100) > 70) {
@@ -264,7 +264,7 @@ void Hero::init_player()
 
     //Now some arrows
     obj = new Weapon(ARROW, 0, 0);
-    obj->count = rnd(15) + 25;
+    obj->m_count = rnd(15) + 25;
     obj->set_known();
     add_to_pack(obj, true);
 
@@ -418,12 +418,12 @@ void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
     else
         display_hit_msg(NULL, name);
 
-    if (weapon && weapon->type == POTION)
+    if (weapon && weapon->m_type == POTION)
     {
         affect_monster(weapon, monster);
         if (!thrown)
         {
-            if (--weapon->count == 0) {
+            if (--weapon->m_count == 0) {
                 m_pack.remove(weapon);
                 delete weapon;
             }
@@ -484,7 +484,7 @@ Monster* Hero::fight(Coord monster_pos, Item *weapon, bool thrown)
 
     name = this->is_blind() ? "it" : monster->get_name();
 
-    if (attack(monster, weapon, thrown) || (weapon && weapon->type == POTION))
+    if (attack(monster, weapon, thrown) || (weapon && weapon->m_type == POTION))
     {
         do_hit(weapon, thrown, monster, name.c_str());
         return monster;
@@ -531,12 +531,12 @@ int Hero::get_pack_size()
     int count = 0;
     for (auto it = m_pack.begin(); it != m_pack.end(); ++it) {
         Item* item = *it;
-        count += item->group ? 1 : item->count;
+        count += item->m_group ? 1 : item->m_count;
     }
     return count;
 }
 
-//add_to_pack: Pick up an object and add it to the m_pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+//add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
 void Hero::add_to_pack(Item *obj, bool silent)
 {
     bool from_floor = false;
@@ -556,12 +556,12 @@ void Hero::add_to_pack(Item *obj, bool silent)
     if (from_floor) {
         for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
             Monster* monster = *it;
-            if (monster->m_destination && (*monster->m_destination == obj->pos))
+            if (monster->m_destination && (*monster->m_destination == obj->m_position))
                 monster->m_destination = &m_position;
         }
     }
 
-    if (obj->type == AMULET) {
+    if (obj->m_type == AMULET) {
         m_had_amulet = true;
     }
 
@@ -574,21 +574,21 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
 {
     auto it = m_pack.begin();
 
-    //Link it into the m_pack.  Search the m_pack for a object of similar type
+    //Link it into the pack.  Search the pack for a object of similar type
     //if there isn't one, stuff it at the beginning, if there is, look for one
     //that is exactly the same and just increment the count if there is.
     //Food is always put at the beginning for ease of access, but it
     //is not ordered so that you can't tell good food from bad.  First check
     //to see if there is something in the same group and if there is then
     //increment the count.
-    if ((*obj)->group)
+    if ((*obj)->m_group)
     {
         for (auto it = m_pack.begin(); it != m_pack.end(); ++it) {
             Item* op = *it;
-            if (op->group == (*obj)->group)
+            if (op->m_group == (*obj)->m_group)
             {
-                //Put it in the m_pack and notify the user
-                op->count += (*obj)->count;
+                //Put it in the pack and notify the user
+                op->m_count += (*obj)->m_count;
                 if (from_floor) {
                     byte floor = (m_room->is_gone()) ? PASSAGE : FLOOR;
                     game->level().items.remove((*obj));
@@ -633,14 +633,14 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     //Search for an object of the same type
     bool found_type = false;
     for (; it != m_pack.end(); ++it) {
-        if ((*it)->type == (*obj)->type) {
+        if ((*it)->m_type == (*obj)->m_type) {
             found_type = true;
             break;
         }
     }
-    //Put it at the end of the m_pack since it is a new type
+    //Put it at the end of the pack since it is a new type
     if (!found_type) {
-        ((*obj)->type == FOOD) ? m_pack.push_front(*obj) :
+        ((*obj)->m_type == FOOD) ? m_pack.push_front(*obj) :
             m_pack.push_back(*obj);
         return true;
     }
@@ -648,17 +648,17 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     //Search for an object which is exactly the same
     bool exact = false;
     for (; it != m_pack.end(); ++it) {
-        if ((*it)->type != (*obj)->type)
+        if ((*it)->m_type != (*obj)->m_type)
             break;
-        if ((*it)->which == (*obj)->which) {
+        if ((*it)->m_which == (*obj)->m_which) {
             exact = true;
             break;
         }
     }
     //If we found an exact match.  If it is a potion, food, or a scroll, increase the count, otherwise put it with its clones.
-    if (exact && does_item_group((*obj)->type))
+    if (exact && does_item_group((*obj)->m_type))
     {
-        (*it)->count++;
+        (*it)->m_count++;
         delete *obj;
         *obj = (*it);
         return true;
@@ -668,7 +668,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     return true;
 }
 
-//pick_up_gold: Add gold to the m_pack
+//pick_up_gold: Add gold to the pack
 void Hero::pick_up_gold(int value)
 {
     adjust_purse(value);
@@ -678,7 +678,7 @@ void Hero::pick_up_gold(int value)
 bool Hero::has_amulet()
 {
     for (auto i = m_pack.begin(); i != m_pack.end(); ++i) {
-        if ((*i)->type == AMULET)
+        if ((*i)->m_type == AMULET)
             return true;
     }
     return false;
@@ -692,7 +692,7 @@ bool Hero::had_amulet()
 
 int Hero::is_ring_on_hand(int hand, int ring) const
 {
-    return (get_ring(hand) != NULL && get_ring(hand)->which == ring);
+    return (get_ring(hand) != NULL && get_ring(hand)->m_which == ring);
 }
 
 int Hero::is_wearing_ring(int ring) const
@@ -709,9 +709,9 @@ bool Hero::wield()
     }
 
     Item* obj = get_item("wield", WEAPON);
-    if (!obj || obj->type == ARMOR || is_in_use(obj))
+    if (!obj || obj->m_type == ARMOR || is_in_use(obj))
     {
-        if (obj && obj->type == ARMOR)
+        if (obj && obj->m_type == ARMOR)
             msg("you can't wield armor");
         return false;
     }
@@ -775,7 +775,7 @@ bool Hero::put_on_ring()
     set_ring(ring, obj);
 
     //Calculate the effect it has on the poor guy.
-    switch (obj->which)
+    switch (obj->m_which)
     {
     case R_SEEINVIS:
         show_invisible();

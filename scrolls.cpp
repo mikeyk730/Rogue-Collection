@@ -231,19 +231,19 @@ void Scroll::read_food_detection()
     for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
     {
         Item* item = *it;
-        if (item->type == FOOD)
+        if (item->m_type == FOOD)
         {
             discovered = true;
             game->screen().standout();
-            game->screen().mvaddch(item->pos, FOOD);
+            game->screen().mvaddch(item->m_position, FOOD);
             game->screen().standend();
         }
         //as a bonus this will detect amulets as well
-        else if (item->type == AMULET)
+        else if (item->m_type == AMULET)
         {
             discovered = true;
             game->screen().standout();
-            game->screen().mvaddch(item->pos, AMULET);
+            game->screen().mvaddch(item->m_position, AMULET);
             game->screen().standend();
         }
     }
@@ -267,7 +267,7 @@ void Scroll::read_teleportation()
 void Scroll::read_enchant_weapon()
 {
     Item* weapon = game->hero().get_current_weapon();
-    if (weapon == NULL || weapon->type != WEAPON) {
+    if (weapon == NULL || weapon->m_type != WEAPON) {
         msg("you feel a strange sense of loss");
         return;
     }
@@ -316,7 +316,7 @@ void Scroll::read_vorpalize_weapon()
 {
     //If he isn't wielding a weapon I get to chortle again!
     Item* weapon = game->hero().get_current_weapon();
-    if (!weapon || weapon->type != WEAPON) {
+    if (!weapon || weapon->m_type != WEAPON) {
         msg(laugh, short_msgs() ? "" : in_dist);
         return;
     }
@@ -342,7 +342,7 @@ void(Scroll::*scroll_functions[MAXSCROLLS])() =
   &Scroll::read_vorpalize_weapon
 };
 
-//read_scroll: Read a scroll from the m_pack and do the appropriate thing
+//read_scroll: Read a scroll from the pack and do the appropriate thing
 bool read_scroll()
 {
     Item *item = get_item("read", SCROLL);
@@ -361,8 +361,8 @@ bool read_scroll()
         game->hero().set_current_weapon(NULL);
 
     //Call the function for this scroll
-    if (scroll->which >= 0 && scroll->which < MAXSCROLLS)
-        (scroll->*scroll_functions[scroll->which])();
+    if (scroll->m_which >= 0 && scroll->m_which < MAXSCROLLS)
+        (scroll->*scroll_functions[scroll->m_which])();
     else {
         msg("what a puzzling scroll!");
         return true;
@@ -373,8 +373,8 @@ bool read_scroll()
     scroll->call_it();
 
     //Get rid of the thing
-    if (scroll->count > 1)
-        scroll->count--;
+    if (scroll->m_count > 1)
+        scroll->m_count--;
     else {
         game->hero().m_pack.remove(scroll);
         delete(scroll);
@@ -384,8 +384,8 @@ bool read_scroll()
 
 int is_scare_monster_scroll(Item* item)
 {
-    return item && item->type == SCROLL &&
-        item->which == S_SCARE;
+    return item && item->m_type == SCROLL &&
+        item->m_which == S_SCARE;
 }
 
 std::string ScrollInfo::get_inventory_name(int which, int count) const
@@ -412,7 +412,7 @@ std::string ScrollInfo::get_inventory_name(int which, int count) const
 
 std::string ScrollInfo::get_inventory_name(const Item * obj) const
 {
-    return get_inventory_name(obj->which, obj->count);
+    return get_inventory_name(obj->m_which, obj->m_count);
 }
 
 std::string ScrollInfo::get_inventory_name(int which) const
@@ -442,15 +442,15 @@ std::string Scroll::InventoryName() const
 
 bool Scroll::IsEvil() const
 {
-    return (which == S_SLEEP || which == S_CREATE || which == S_AGGR);
+    return (m_which == S_SLEEP || m_which == S_CREATE || m_which == S_AGGR);
 
 }
 
 int Scroll::Worth() const
 {
-    int worth = item_class()->get_value(which);
-    worth *= count;
-    if (!item_class()->is_discovered(which))
+    int worth = item_class()->get_value(m_which);
+    worth *= m_count;
+    if (!item_class()->is_discovered(m_which))
         worth /= 2;
     return worth;
 }

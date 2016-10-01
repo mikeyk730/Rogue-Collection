@@ -147,7 +147,7 @@ void Monster::start_run()
 
 bool Monster::is_seeking(Item * obj)
 {
-    return m_destination == &obj->pos;
+    return m_destination == &obj->m_position;
 }
 
 bool Monster::has_tile_beneath() const
@@ -181,7 +181,7 @@ void Monster::invalidate_tile_beneath()
     m_tile_beneath = UNSET;
 }
 
-//give_pack: Give a m_pack to a monster if it deserves one
+//give_pack: Give a pack to a monster if it deserves one
 void Monster::give_pack()
 {
     if (rnd(100) < get_carry_probability())
@@ -271,16 +271,16 @@ Monster* Monster::do_chase()
 
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
             Item* obj = *(it++);
-            if (orc_aggressive && (*m_destination == obj->pos) ||
-                !orc_aggressive && (m_destination == &obj->pos))
+            if (orc_aggressive && (*m_destination == obj->m_position) ||
+                !orc_aggressive && (m_destination == &obj->m_position))
             {
                 byte oldchar;
                 game->level().items.remove(obj);
                 m_pack.push_front(obj);
                 oldchar = (m_room->is_gone()) ? PASSAGE : FLOOR;
-                game->level().set_tile(obj->pos, oldchar);
-                if (game->hero().can_see(obj->pos))
-                    game->screen().mvaddch(obj->pos, oldchar);
+                game->level().set_tile(obj->m_position, oldchar);
+                if (game->hero().can_see(obj->m_position))
+                    game->screen().mvaddch(obj->m_position, oldchar);
                 m_destination = obtain_target();
                 break;
             }
@@ -388,7 +388,7 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
                         for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
                         {
                             obj = *it;
-                            if (equal(try_pos, obj->pos))
+                            if (equal(try_pos, obj->m_position))
                                 break;
                             obj = 0;
                         }
@@ -431,7 +431,7 @@ Coord* Monster::obtain_target()
                 }
             }
             if (monster == NULL)
-                return &obj->pos;
+                return &obj->m_position;
         }
     }
     return &game->hero().m_position;
@@ -440,7 +440,7 @@ Coord* Monster::obtain_target()
 bool aquator_attack()
 {
     //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-    if (game->hero().get_current_armor() && game->hero().get_current_armor()->get_armor_class() < 9 && game->hero().get_current_armor()->which != LEATHER)
+    if (game->hero().get_current_armor() && game->hero().get_current_armor()->get_armor_class() < 9 && game->hero().get_current_armor()->m_which != LEATHER)
         if (game->hero().is_wearing_ring(R_SUSTARM))
             msg("the rust vanishes instantly");
         else {
@@ -502,7 +502,7 @@ bool nymph_attack(Monster* mp)
 {
     const char *she_stole = "she stole %s!";
 
-    //Nymphs steal a magic item, look through the m_pack and pick out one we like.
+    //Nymphs steal a magic item, look through the pack and pick out one we like.
     Item* item = NULL;
     int nobj = 0;
     for (auto it = game->hero().m_pack.begin(); it != game->hero().m_pack.end(); ++it) {
@@ -515,13 +515,13 @@ bool nymph_attack(Monster* mp)
     if (item == NULL)
         return false;
 
-    if (item->count > 1 && item->group == 0)
+    if (item->m_count > 1 && item->m_group == 0)
     {
         int oc;
-        oc = item->count--;
-        item->count = 1;
+        oc = item->m_count--;
+        item->m_count = 1;
         msg(she_stole, item->inventory_name(true).c_str());
-        item->count = oc;
+        item->m_count = oc;
     }
     else {
         game->hero().m_pack.remove(item);

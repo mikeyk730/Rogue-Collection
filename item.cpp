@@ -5,6 +5,7 @@
 #include "agent.h"
 #include "rogue.h"
 #include "armor.h"
+#include "weapons.h"
 
 Item::Item(int type, int which)
 {
@@ -17,44 +18,44 @@ Item::~Item()
 
 Coord Item::position() const
 {
-    return pos;
+    return m_position;
 }
 
 void Item::set_position(Coord p)
 {
-    pos = p;
+    m_position = p;
 }
 
 int Item::get_charges() const
 {
-    return charges;
+    return m_charges;
 }
 
 void Item::use_charge()
 {
-    if (--charges < 1)
-        charges = 0;
+    if (--m_charges < 1)
+        m_charges = 0;
 }
 
 void Item::drain_striking()
 {
-    if (--charges < 0) {
-        damage = "0d0";
-        hit_plus = 0;
-        damage_plus = 0;
-        charges = 0;
+    if (--m_charges < 0) {
+        m_damage = "0d0";
+        m_hit_plus = 0;
+        m_damage_plus = 0;
+        m_charges = 0;
     }
 }
 
 void Item::randomize_damage()
 {
     if (rnd(20) == 0) {
-        damage = "3d8";
-        damage_plus = 9;
+        m_damage = "3d8";
+        m_damage_plus = 9;
     }
     else {
-        damage = "2d8";
-        damage_plus = 4;
+        m_damage = "2d8";
+        m_damage_plus = 4;
     }
 }
 
@@ -87,23 +88,24 @@ int Item::get_gold_value() const
 
 void Item::initialize(int type, int which)
 {
-    this->type = type;
-    this->which = which;
-    this->hit_plus = 0;
-    this->damage_plus = 0;
-    this->damage = "0d0";
-    this->throw_damage = "0d0";
+    this->m_type = type;
+    this->m_which = which;
+    this->m_launcher = NONE;
+    this->m_hit_plus = 0;
+    this->m_damage_plus = 0;
+    this->m_damage = "0d0";
+    this->m_throw_damage = "0d0";
     this->armor_class = 11;
     this->gold_value = 0;
-    this->charges = 0;
-    this->count = 1;
-    this->group = 0;
-    this->flags = 0;
+    this->m_charges = 0;
+    this->m_count = 1;
+    this->m_group = 0;
+    this->m_flags = 0;
     this->enemy = 0;
 }
 
 bool Item::is_flag_set(short flag) const {
-    return (flags & flag) != 0;
+    return (m_flags & flag) != 0;
 }
 
 bool Item::is_known() const
@@ -137,32 +139,32 @@ bool Item::is_found() const
 
 void Item::remove_curse()
 {
-    flags &= ~IS_CURSED;
+    m_flags &= ~IS_CURSED;
 }
 
 void Item::set_known() {
-    flags |= IS_KNOW;
+    m_flags |= IS_KNOW;
 }
 void Item::set_cursed() {
-    flags |= IS_CURSED;
+    m_flags |= IS_CURSED;
 }
 void Item::set_revealed() {
-    flags |= IS_REVEAL;
+    m_flags |= IS_REVEAL;
 }
 void Item::set_found() {
-    flags |= IS_FOUND;
+    m_flags |= IS_FOUND;
 }
 void Item::set_flashed() {
-    flags |= DID_FLASH;
+    m_flags |= DID_FLASH;
 }
 
 //is_magic: Returns true if an object radiates magic
 bool Item::is_magic()
 {
-    switch (type)
+    switch (m_type)
     {
     case ARMOR:
-        return get_armor_class() != get_default_class(which);
+        return get_armor_class() != get_default_class(m_which);
     case WEAPON:
         return get_hit_plus() != 0 || get_damage_plus() != 0;
     case POTION: case SCROLL: case STICK: case RING: case AMULET:

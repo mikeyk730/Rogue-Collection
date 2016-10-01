@@ -211,7 +211,7 @@ int Agent::get_hp() const {
 }
 
 bool Agent::decrease_hp(int n, bool can_kill) {
-    if (invulnerable)
+    if (m_invulnerable)
         return true;
 
     m_stats.m_hp -= n;
