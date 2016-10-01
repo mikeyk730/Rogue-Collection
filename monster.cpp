@@ -211,13 +211,12 @@ Monster* Monster::do_chase()
                                      //We don't count doors as inside rooms for this routine
     bool door = game->level().get_tile(pos) == DOOR;
 
-    //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
-
 
     bool repeat;
     do {
         repeat = false;
-
+        //If the object of our desire is in a different room, and we are not in a maze,
+        //run to the door nearest to our goal.
         if (monster_room != destination_room && (monster_room->is_maze()) == 0)
         {
             //loop through doors
