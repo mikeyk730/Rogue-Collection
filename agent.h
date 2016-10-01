@@ -5,13 +5,13 @@
 struct Item;
 struct Room;
 
-//m_flags for creatures
+//flags for creatures
 const short IS_BLIND = 0x0001; //creature is blind
 const short SEE_MONST = 0x0002; //hero can detect unseen monsters
 const short IS_RUN = 0x0004; //creature is running at the player
 const short IS_FOUND = 0x0008; //creature has been seen (used for objects)
 const short IS_INVIS = 0x0010; //creature is invisible
-const short IS_MEAN = 0x0020; //creature can wake when player enters m_room
+const short IS_MEAN = 0x0020; //creature can wake when player enters room
 const short IS_GREED = 0x0040; //creature runs to protect gold
 const short IS_HELD = 0x0080; //creature has been held
 const short IS_HUH = 0x0100; //creature is confused
@@ -71,7 +71,7 @@ struct Agent
     Coord m_position = { 0, 0 };      //Position
     short m_flags = 0;                //State word
     Stats m_stats;                    //Physical description
-    Room *m_room = 0;                 //Current m_room for thing
+    Room *m_room = 0;                 //Current room for thing
     std::list<Item*> m_pack;          //What the thing is carrying
     
     bool m_invulnerable = false;

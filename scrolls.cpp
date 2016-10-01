@@ -302,7 +302,7 @@ void Scroll::read_remove_curse()
 
 void Scroll::read_aggravate_monsters()
 {
-    //This scroll aggravates all the monsters on the current m_level and sets them running towards the hero
+    //This scroll aggravates all the monsters on the current level and sets them running towards the hero
     aggravate_monsters();
     ifterse("you hear a humming noise", "you hear a high pitched humming noise");
 }

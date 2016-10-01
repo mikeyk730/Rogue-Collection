@@ -39,7 +39,7 @@ bool quaff();
 //show_invisible: Turn on the ability to see invisible
 void show_invisible();
 
-//turn_see: Put on or off seeing monsters on this m_level
+//turn_see: Put on or off seeing monsters on this level
 bool turn_see(bool turn_off);
 void turn_see_wrapper(int turn_off);
 

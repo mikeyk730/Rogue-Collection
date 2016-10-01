@@ -268,7 +268,7 @@ char *unctrl(unsigned char ch)
     return chstr;
 }
 
-//update_status_bar: Display the important m_stats line.  Keep the cursor where it was.
+//update_status_bar: Display the important stats line.  Keep the cursor where it was.
 void update_status_bar()
 {
     int oy, ox;

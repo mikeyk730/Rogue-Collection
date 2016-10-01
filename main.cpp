@@ -76,7 +76,7 @@ int main(int argc, char **argv)
     init_things(); //Set up probabilities of things    
     setup();
     game->screen().drop_curtain();
-    game->level().new_level(false); //Draw current m_level
+    game->level().new_level(false); //Draw current level
     //Start up daemons and fuses
     daemon(doctor, 0);
     fuse(swander, 0, WANDER_TIME);

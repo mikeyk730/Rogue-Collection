@@ -29,7 +29,7 @@ static struct init_weps
     char *iw_dam;   //Damage when wielded
     char *iw_hrl;   //Damage when thrown
     char iw_launch; //Launching weapon
-    int iw_flags;   //Miscellaneous m_flags
+    int iw_flags;   //Miscellaneous flags
 } init_dam[MAXWEAPONS + 1] =
 {
   "2d4", "1d3", NONE,     0,                 //Mace
@@ -104,7 +104,7 @@ bool throw_projectile()
     return true;
 }
 
-//do_motion: Do the actual motion on the screen done by an object travelling across the m_room
+//do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(Item *obj, Coord delta)
 {
     byte under = UNSET;
@@ -235,7 +235,7 @@ int fallpos(Item *obj, Coord *newpos)
         {
             Coord pos = { x, y };
             //check to make certain the spot is empty, if it is, put the object there, set it in the 
-            //m_level list and re-draw the m_room if he can see it
+            //level list and re-draw the room if he can see it
             if (pos == game->hero().m_position || offmap(pos)) 
                 continue;
 

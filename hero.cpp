@@ -29,7 +29,7 @@
 
 namespace
 {
-    // Each m_level is twice the previous
+    // Each level is twice the previous
     const long e_levels[20] = { 10, 20, 40, 80, 160, 320, 640, 1280, 2560, 5120, 10240,
         20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
 }
@@ -323,7 +323,7 @@ void Hero::teleport()
     set_confused(true);
 }
 
-//check_level: Check to see if the guy has gone up a m_level.
+//check_level: Check to see if the guy has gone up a level.
 void Hero::check_level()
 {
     int i, add, olevel;
@@ -346,7 +346,7 @@ void Hero::check_level()
     }
 }
 
-//raise_level: The guy just magically went up a m_level.
+//raise_level: The guy just magically went up a level.
 void Hero::raise_level()
 {
     m_stats.m_exp = e_levels[m_stats.m_level - 1] + 1L;
@@ -405,7 +405,7 @@ int Hero::can_see(Coord p)
     //if the coordinate is close.
     if (distance(p, m_position) < LAMP_DIST)
         return true;
-    //if the coordinate is in the same m_room as the hero, and the m_room is lit
+    //if the coordinate is in the same room as the hero, and the room is lit
     return (m_room == get_room_from_position(p) && !m_room->is_dark());
 }
 
@@ -602,7 +602,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
         }
     }
 
-    //Check if there is m_room
+    //Check if there is room
     if (get_pack_size() >= MAXPACK - 1) {
         msg("you can't carry anything else");
         return false;

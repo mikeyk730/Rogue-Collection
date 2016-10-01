@@ -132,7 +132,7 @@ int Monster::get_carry_probability() const
     return monsters[type - 'A'].carry;
 }
 
-//randmonster: Pick a monster to show up.  The lower the m_level, the meaner the monster.
+//randmonster: Pick a monster to show up.  The lower the level, the meaner the monster.
 char randmonster(bool wander, int level)
 {
     int d;
@@ -197,7 +197,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     return monster;
 }
 
-//expadd: Experience to add for this monster's m_level/hit points
+//expadd: Experience to add for this monster's level/hit points
 int exp_add(Monster *monster)
 {
     int divisor = (monster->m_stats.m_level == 1) ? 8 : 6;

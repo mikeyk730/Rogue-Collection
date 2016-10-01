@@ -236,7 +236,7 @@ struct MagicMissile : public Item
 
 bool Stick::zap_light(Coord dir) 
 {
-    //Ready Kilowatt wand.  Light up the m_room
+    //Ready Kilowatt wand.  Light up the room
     if (game->hero().is_blind()) 
         msg("you feel a warm glow around you");
     else
@@ -251,7 +251,7 @@ bool Stick::zap_light(Coord dir)
     if (!game->hero().m_room->is_gone())
     {
         game->hero().m_room->set_dark(false);
-        //Light the m_room and put the player back up
+        //Light the room and put the player back up
         enter_room(game->hero().m_position);
     }
 
@@ -306,7 +306,7 @@ bool Stick::zap_polymorph(Coord dir)
     if (monster->can_hold())
         game->hero().set_is_held(false);
 
-    //restore the m_level tile, as the new monster may be invisible
+    //restore the level tile, as the new monster may be invisible
     Coord p = monster->position();
     if (game->hero().can_see_monster(monster))
         game->screen().mvaddch(p, game->level().get_tile(p));
@@ -377,7 +377,7 @@ bool Stick::zap_slow_monster(Coord dir)
 
 bool Stick::zap_drain_life(Coord dir) 
 {
-    //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the m_room (or next to hero if he is in a passage)
+    //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
     if (game->hero().get_hp() < 2) {
         msg("you are too weak to use it");
         return false;
@@ -504,7 +504,7 @@ bool do_zap()
     Stick* stick = dynamic_cast<Stick*>(item);
     Weapon* weapon = dynamic_cast<Weapon*>(item);
     if (!(stick || weapon && weapon->is_vorpalized() && weapon->get_charges())) {
-        //mdk: zapping with non-stick doesn't m_count as turn
+        //mdk: zapping with non-stick doesn't count as turn
         msg("you can't zap with that!");
         return false;
     }
@@ -805,7 +805,7 @@ Stick::Stick(int which)
     case WS_HIT:
         m_hit_plus = 100;
         //mdk: i don't know why damage info is set, as they are overwritten the first time you
-        //zap a monster.  I don't know if the intention was to have separate zap/melee m_stats,
+        //zap a monster.  I don't know if the intention was to have separate zap/melee stats,
         //but, as is, it's just odd.
         m_damage_plus = 3;
         m_damage = "1d8";

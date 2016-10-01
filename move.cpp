@@ -165,7 +165,7 @@ bool do_move_impl(bool can_pickup)
     }
     fl = game->level().get_flags(new_position);
     ch = game->level().get_tile_or_monster(new_position);
-    //When the hero is on the door do not allow him to run until he enters the m_room all the way
+    //When the hero is on the door do not allow him to run until he enters the room all the way
     if ((game->level().get_tile(game->hero().m_position) == DOOR) && (ch == FLOOR))
         game->modifiers.m_running = false;
     if (!(fl&F_REAL) && ch == FLOOR) {
@@ -227,7 +227,7 @@ bool do_move(Coord delta, bool can_pickup)
 
     game->modifiers.m_first_move = false;
 
-    //if something went wrong, bail out on this m_level
+    //if something went wrong, bail out on this level
     if (game->invalid_position) {
         game->invalid_position = false;
         msg("the crack widens ... ");
@@ -259,7 +259,7 @@ bool do_move(Coord delta, bool can_pickup)
 }
 
 
-//door_open: Called to illuminate a m_room.  If it is dark, remove anything that might move.
+//door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
 void door_open(Room *room)
 {
     int j, k;

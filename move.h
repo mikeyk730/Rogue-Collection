@@ -12,7 +12,7 @@ bool do_run(byte ch);
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
 bool do_move(Coord delta, bool can_pickup);
 
-//door_open: Called to illuminate a m_room.  If it is dark, remove anything that might move.
+//door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
 void door_open(Room *room);
 
 //handle_trap: The guy stepped on a trap.... Make him pay.

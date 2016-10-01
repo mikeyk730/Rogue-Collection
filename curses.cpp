@@ -158,7 +158,7 @@ int ConsoleOutput::addch(byte chr)
     old_attr = ch_attr;
     if (at_table == color_attr)
     {
-        //if it is inside a m_room
+        //if it is inside a room
         if (ch_attr == 7) switch (chr)
         {
         case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:

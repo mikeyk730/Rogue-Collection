@@ -186,7 +186,7 @@ void Potion::quaff_monster_detection()
 
 void Potion::quaff_magic_detection()
 {
-    //Potion of magic detection.  Find everything interesting on the m_level and show him where they are. 
+    //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
     //Also give hints as to whether he would want to use the object.
     bool discovered = false;
 
@@ -335,7 +335,7 @@ void turn_see_wrapper(int turn_off)
     turn_see(turn_off != 0);
 }
 
-//turn_see: Put on or off seeing monsters on this m_level
+//turn_see: Put on or off seeing monsters on this level
 bool turn_see(bool turn_off)
 {
     bool add_new = false;

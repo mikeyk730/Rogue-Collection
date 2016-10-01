@@ -195,7 +195,7 @@ Monster* Monster::do_chase()
     if (is_greedy() && m_room->gold_val == 0)
         m_destination = &game->hero().m_position;
 
-    //Find m_room of the target
+    //Find room of the target
     Room* destination_room = game->hero().m_room;
     if (m_destination != &game->hero().m_position)
         destination_room = get_room_from_position(*m_destination);
@@ -207,7 +207,7 @@ Monster* Monster::do_chase()
     Coord tempdest; //Temporary destination for chaser
 
 
-    Room* monster_room = m_room; //Find m_room of chaser
+    Room* monster_room = m_room; //Find room of chaser
                                      //We don't count doors as inside rooms for this routine
     bool door = game->level().get_tile(m_position) == DOOR;
 
@@ -215,7 +215,7 @@ Monster* Monster::do_chase()
     bool repeat;
     do {
         repeat = false;
-        //If the object of our desire is in a different m_room, and we are not in a maze,
+        //If the object of our desire is in a different room, and we are not in a maze,
         //run to the door nearest to our goal.
         if (monster_room != destination_room && (monster_room->is_maze()) == 0)
         {
@@ -264,7 +264,7 @@ Monster* Monster::do_chase()
     }
     else if (equal(next_position, *m_destination))
     {
-        //mdk: aggressive orcs pick up gold in a m_room, then chase the player.  It looks
+        //mdk: aggressive orcs pick up gold in a room, then chase the player.  It looks
         //as if this could have been the original intended behavior, so I added it as
         //an option.
         bool orc_aggressive(game->options.aggressive_orcs());
@@ -321,13 +321,13 @@ void Monster::do_screen_update(Coord next_position)
     {
         if (game->level().is_passage(next_position))
             game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of m_level??
+        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
         game->screen().mvaddch(next_position, disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of m_level??
+        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
         game->screen().mvaddch(next_position, type);
     }
     else
@@ -408,8 +408,8 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
 //obtain_target: find the proper destination for the monster
 Coord* Monster::obtain_target()
 {
-    // if we're in the same m_room as the player, or can see the player, then we go after the player
-    // if we have a chance to carry an item, we may go after an unclaimed item in the same m_room
+    // if we're in the same room as the player, or can see the player, then we go after the player
+    // if we have a chance to carry an item, we may go after an unclaimed item in the same room
     int carry_prob;
     if ((carry_prob = get_carry_probability()) <= 0 || in_same_room_as(&game->hero()) || game->hero().can_see_monster(this))
         return &game->hero().m_position;
@@ -533,7 +533,7 @@ bool nymph_attack(Monster* mp)
 
 bool vampire_wraith_attack(Monster* monster)
 {
-    //Wraiths might drain energy levels, and Vampires can steal m_max_hp
+    //Wraiths might drain energy levels, and Vampires can steal max hp
     if (rnd(100) < (monster->drains_exp() ? 15 : 30)) // vampires are twice as likely to connect
     {
         int damage;

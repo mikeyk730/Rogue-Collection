@@ -132,7 +132,7 @@ bool drop()
     }
     else
         game->hero().m_pack.remove(op);
-    //Link it into the m_level object list
+    //Link it into the level object list
     game->level().items.push_front(op);
     op->m_position = game->hero().m_position;
     game->level().set_tile(op->m_position, op->m_type);

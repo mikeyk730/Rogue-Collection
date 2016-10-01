@@ -223,7 +223,7 @@ int add_haste(bool potion)
     }
 }
 
-//aggravate_monsters: Aggravate all the monsters on this m_level
+//aggravate_monsters: Aggravate all the monsters on this level
 void aggravate_monsters()
 {
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster *monster) {
@@ -450,7 +450,7 @@ void search()
     }
 }
 
-//go_down_stairs: He wants to go down a m_level
+//go_down_stairs: He wants to go down a level
 void go_down_stairs()
 {
     if (game->level().get_tile(game->hero().m_position) != STAIRS && !game->wizard().jump_levels())
@@ -461,7 +461,7 @@ void go_down_stairs()
     }
 }
 
-//go_up_stairs: He wants to go up a m_level
+//go_up_stairs: He wants to go up a level
 void go_up_stairs()
 {
     if (game->level().get_tile(game->hero().m_position) == STAIRS || game->wizard().jump_levels()) {

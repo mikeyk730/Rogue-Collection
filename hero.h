@@ -68,10 +68,10 @@ public:
 
     void reduce_level();
 
-    //check_level: Check to see if the guy has gone up a m_level.
+    //check_level: Check to see if the guy has gone up a level.
     void check_level();
 
-    //raise_level: The guy just magically went up a m_level.
+    //raise_level: The guy just magically went up a level.
     void raise_level();
 
     void do_hit(Item* weapon, int thrown, Monster* monster, const char* name);

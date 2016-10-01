@@ -89,7 +89,7 @@ struct GameState
     int msg_position = 0;  //Where cursor is on top line
     int repeat_cmd_count = 0;  //Number of times to repeat command
     Coord oldpos; //Position before last look() call
-    struct Room *oldrp; //m_room of oldpos
+    struct Room *oldrp; //room of oldpos
     std::string typeahead;
     std::string macro;
 
