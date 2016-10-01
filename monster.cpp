@@ -191,8 +191,6 @@ void Monster::give_pack()
 //do_chase: Make one thing chase another.
 Monster* Monster::do_chase()
 {
-    Coord next_position; //Where chasing takes you
-
     //If gold has been taken, target the hero
     if (is_greedy() && room->gold_val == 0)
         m_destination = &game->hero().pos;
@@ -205,8 +203,7 @@ Monster* Monster::do_chase()
         return 0;
 
 
-    int mindist = 32767, i, dist;
-    Item *obj;
+    int mindist = 32767, dist;
     Coord tempdest; //Temporary destination for chaser
 
 
@@ -216,44 +213,52 @@ Monster* Monster::do_chase()
 
     //If the object of our desire is in a different room, and we are not in a maze, run to the door nearest to our goal.
 
-over:
 
-    if (monster_room != destination_room && (monster_room->is_maze()) == 0)
-    {
-        //loop through doors
-        for (i = 0; i < monster_room->num_exits; i++)
+    bool repeat;
+    do {
+        repeat = false;
+
+        if (monster_room != destination_room && (monster_room->is_maze()) == 0)
         {
-            dist = distance(*(this->m_destination), monster_room->exits[i]);
-            if (dist < mindist) {
-                tempdest = monster_room->exits[i];
-                mindist = dist;
+            //loop through doors
+            for (int i = 0; i < monster_room->num_exits; i++)
+            {
+                dist = distance(*(this->m_destination), monster_room->exits[i]);
+                if (dist < mindist) {
+                    tempdest = monster_room->exits[i];
+                    mindist = dist;
+                }
+            }
+            if (door)
+            {
+                monster_room = game->level().get_passage(pos);
+                door = false;
+                repeat = true;
+                continue;
             }
         }
-        if (door)
+        else
         {
-            monster_room = game->level().get_passage(pos);
-            door = false;
-            goto over;
+            tempdest = *this->m_destination;
+            //For monsters which can fire bolts at the poor hero, we check to see if 
+            // (a) the hero is on a straight line from it, and 
+            // (b) that it is within shooting distance, but outside of striking range.
+            if ((this->shoots_fire() || this->shoots_ice()) &&
+                (this->pos.y == game->hero().pos.y || this->pos.x == game->hero().pos.x || abs(this->pos.y - game->hero().pos.y) == abs(this->pos.x - game->hero().pos.x)) &&
+                ((dist = distance(this->pos, game->hero().pos)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !this->powers_cancelled() && rnd(DRAGONSHOT) == 0)
+            {
+                game->modifiers.m_running = false;
+                Coord delta;
+                delta.y = sign(game->hero().pos.y - this->pos.y);
+                delta.x = sign(game->hero().pos.x - this->pos.x);
+                return fire_bolt(&this->pos, &delta, this->shoots_fire() ? "flame" : "frost");
+            }
         }
-    }
-    else
-    {
-        tempdest = *this->m_destination;
-        //For monsters which can fire bolts at the poor hero, we check to see if 
-        // (a) the hero is on a straight line from it, and 
-        // (b) that it is within shooting distance, but outside of striking range.
-        if ((this->shoots_fire() || this->shoots_ice()) &&
-            (this->pos.y == game->hero().pos.y || this->pos.x == game->hero().pos.x || abs(this->pos.y - game->hero().pos.y) == abs(this->pos.x - game->hero().pos.x)) &&
-            ((dist = distance(this->pos, game->hero().pos)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !this->powers_cancelled() && rnd(DRAGONSHOT) == 0)
-        {
-            game->modifiers.m_running = false;
-            Coord delta;
-            delta.y = sign(game->hero().pos.y - this->pos.y);
-            delta.x = sign(game->hero().pos.x - this->pos.x);
-            return fire_bolt(&this->pos, &delta, this->shoots_fire() ? "flame" : "frost");
-        }
-    }
+
+    } while (repeat);
+
     //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
+    Coord next_position;
     chase(&tempdest, &next_position);
     if (equal(next_position, game->hero().pos)) {
         return attack_player();
@@ -266,7 +271,7 @@ over:
         bool orc_aggressive(game->options.aggressive_orcs());
 
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
-            obj = *(it++);
+            Item* obj = *(it++);
             if (orc_aggressive && (*this->m_destination == obj->pos) ||
                 !orc_aggressive && (this->m_destination == &obj->pos))
             {
