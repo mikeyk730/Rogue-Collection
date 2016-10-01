@@ -268,7 +268,7 @@ bool Stick::zap_striking(Coord dir)
     if (!monster)
         return true;
 
-    randomize_damage();
+    set_striking_damage();
     game->hero().fight(monster->position(), this, false);
 
     //mdk:bugfix: originally the stick would be drained here, but it
@@ -853,5 +853,27 @@ int Stick::Worth() const
     if (!is_known())
         worth /= 2;
     return worth;
+}
+
+void Stick::drain_striking()
+{
+    if (--m_charges < 0) {
+        m_damage = "0d0";
+        m_hit_plus = 0;
+        m_damage_plus = 0;
+        m_charges = 0;
+    }
+}
+
+void Stick::set_striking_damage()
+{
+    if (rnd(20) == 0) {
+        m_damage = "3d8";
+        m_damage_plus = 9;
+    }
+    else {
+        m_damage = "2d8";
+        m_damage_plus = 4;
+    }
 }
 

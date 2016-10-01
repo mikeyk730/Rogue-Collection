@@ -8,7 +8,6 @@ struct ItemClass;
 //flags for objects
 const short IS_CURSED = 0x0001; //object is cursed
 const short IS_KNOW = 0x0002; //player knows details about the object
-const short DID_FLASH = 0x0004; //has the vorpal weapon flashed
 //const short IS_EGO   = 0x0008; //weapon has control of player
 const short IS_MISL = 0x0010; //object is a projectile type
 const short IS_MANY = 0x0020; //object comes in groups
@@ -125,7 +124,6 @@ public:
 
     bool is_known() const;
     bool is_cursed() const;
-    bool did_flash() const;
     bool is_projectile() const;
     bool does_group() const;
     bool is_revealed() const;
@@ -137,20 +135,14 @@ public:
     void set_cursed();
     void set_revealed();
     void set_found();
-    void set_flashed();
 
-    //stick-specific
     int get_charges() const;
     void use_charge();
-    void drain_striking();
-    void randomize_damage();
 
-    //weapon-specific functions
     int get_hit_plus() const;
     int get_damage_plus() const;
-    void initialize_weapon(byte type);
-    std::string get_throw_damage() const;
     std::string get_damage() const;
+    std::string get_throw_damage() const;
     char launcher() const;
 
     Room* get_room();

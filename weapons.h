@@ -15,17 +15,24 @@ struct Weapon : public Item
     virtual bool IsEvil() const;
     virtual int Worth() const;
 
-    bool zap_vorpalized_weapon(Coord dir);
-
     void enchant_weapon();
+
     void vorpalize();
+    bool zap_vorpalized_weapon(Coord dir);
     bool is_vorpalized() const;
-    bool is_vorpalized_against(Monster* monster) const;
+    bool is_vorpalized_against(Monster* monster) const;    
+    bool did_flash() const;
+    void set_flashed();
     std::string get_vorpalized_name() const;
 
-    char enemy = 0;   //If it is enchanted, who it hates
+private:
+    void initialize_weapon(byte type);
+
 protected:
     std::string m_name;
+private:
+    char enemy = 0; 
+    bool m_flashed = false;
 };
 
 Item* create_weapon();

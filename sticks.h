@@ -28,6 +28,9 @@ struct Stick : public Item
     bool zap_teleport_away(Coord dir);
     bool zap_teleport_to(Coord dir);
     bool zap_cancellation(Coord dir);
+
+    void drain_striking();
+    void set_striking_damage();
 };
 
 Item* create_stick();

@@ -36,28 +36,6 @@ void Item::use_charge()
         m_charges = 0;
 }
 
-void Item::drain_striking()
-{
-    if (--m_charges < 0) {
-        m_damage = "0d0";
-        m_hit_plus = 0;
-        m_damage_plus = 0;
-        m_charges = 0;
-    }
-}
-
-void Item::randomize_damage()
-{
-    if (rnd(20) == 0) {
-        m_damage = "3d8";
-        m_damage_plus = 9;
-    }
-    else {
-        m_damage = "2d8";
-        m_damage_plus = 4;
-    }
-}
-
 void Item::initialize(int type, int which)
 {
     this->m_type = type;
@@ -84,10 +62,6 @@ bool Item::is_known() const
 bool Item::is_cursed() const
 {
     return is_flag_set(IS_CURSED);
-}
-bool Item::did_flash() const
-{
-    return is_flag_set(DID_FLASH);
 }
 bool Item::is_projectile() const
 {
@@ -123,9 +97,6 @@ void Item::set_revealed() {
 void Item::set_found() {
     m_flags |= IS_FOUND;
 }
-void Item::set_flashed() {
-    m_flags |= DID_FLASH;
-}
 
 std::string Item::get_throw_damage() const
 {
@@ -150,4 +121,14 @@ Room* Item::get_room()
 int does_item_group(int type)
 {
     return (type == POTION || type == SCROLL || type == FOOD || type == GOLD);
+}
+
+int Item::get_hit_plus() const
+{
+    return m_hit_plus;
+}
+
+int Item::get_damage_plus() const
+{
+    return m_damage_plus;
 }

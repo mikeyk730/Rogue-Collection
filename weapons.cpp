@@ -180,17 +180,7 @@ void fall(Item *obj, bool pr)
     delete obj;
 }
 
-int Item::get_hit_plus() const
-{
-    return m_hit_plus;
-}
-
-int Item::get_damage_plus() const
-{
-    return m_damage_plus;
-}
-
-void Item::initialize_weapon(byte type)
+void Weapon::initialize_weapon(byte type)
 {
     static int group = 2;
 
@@ -404,4 +394,14 @@ bool Weapon::is_vorpalized_against(Monster* monster) const
 std::string Weapon::get_vorpalized_name() const
 {
     return get_monster_name(enemy);
+}
+
+bool Weapon::did_flash() const
+{
+    return m_flashed;
+}
+
+void Weapon::set_flashed()
+{
+    m_flashed = true;
 }

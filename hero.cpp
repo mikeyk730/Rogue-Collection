@@ -26,6 +26,7 @@
 #include "slime.h"
 #include "scrolls.h"
 #include "things.h"
+#include "sticks.h"
 
 namespace
 {
@@ -52,9 +53,10 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
 
     //Drain a staff of striking
     //mdk: should this only happen when zapped?  currently happens during melee as well
-    if (object->m_type == STICK && object->m_which == WS_HIT)
+    Stick* stick = dynamic_cast<Stick*>(object);
+    if (stick && stick->m_which == WS_HIT)
     {
-        object->drain_striking();
+        stick->drain_striking();
     }
 
     *damage_string = object->get_damage();
