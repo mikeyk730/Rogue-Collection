@@ -88,8 +88,8 @@ GameState::GameState(Random* random, const std::string& filename) :
         init_environment();
     }
 
-    ++m_restore_count;
     random->set_seed(m_seed);
+    ++m_restore_count;
 
     m_input_interface.reset(new CapturedInput(new ComboInput(new StreamInput(std::move(in), version), new KeyboardInput())));
     m_input_interface->OnReplayEnd(std::bind(&GameState::set_replay_end, this));
@@ -114,6 +114,8 @@ void GameState::init_environment()
     m_environment["scorefile"] = "rogue.scr";
     m_environment["savefile"] = "rogue.sav";
     m_environment["monsterfile"] = "rogue.mon";
+
+    process_environment();
 }
 
 void GameState::process_environment()

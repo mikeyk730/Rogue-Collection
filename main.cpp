@@ -50,12 +50,13 @@ int main(int argc, char **argv)
     int seed = get_seed();
     g_random = new Random(seed);
 
-    //todo: process args
     std::string filename;
     //filename = "tests\\all_sticks.sav";
     //filename = "saves\\level7.sav";
     //filename = "rogue.sav";
-    filename = "level1.sav";
+    //filename = "level1.sav";
+    if (argc > 1)
+        filename = argv[1];
     
     if (!filename.empty()) {
         game = new GameState(g_random, filename);
