@@ -226,31 +226,27 @@ void leave_room(Coord cp)
 
     for (y = room->m_ul_corner.y + 1; y < room->m_size.y + room->m_ul_corner.y - 1; y++) {
         for (x = room->m_ul_corner.x + 1; x < room->m_size.x + room->m_ul_corner.x - 1; x++) {
-            switch (ch = game->screen().mvinch(y, x))
+            Coord pos = { x, y };
+            //mdk:bugfix: previously phantoms could leave a dark spot on the map
+            //I've moved this code from the default case in the switch below so 
+            //invisible monsters are considered.
+            Monster* m = game->level().monster_at(pos);
+            if (m) {
+                m->invalidate_tile_beneath();
+            }
+
+            switch (ch = game->screen().mvinch(pos.y, pos.x))
             {
             case ' ': case PASSAGE: case TRAP: case STAIRS:
                 break;
 
-            case FLOOR:
-                if (floor == ' ')
-                    game->screen().addch(' ');
-                break;
-
             default:
                 //to check for monster, we have to strip out standout bit
-                if (isupper(toascii(ch))) {
-                    if (game->hero().detects_others()) {
-                        game->screen().standout();
-                        game->screen().addch(ch);
-                        game->screen().standend();
-                        break;
-                    }
-                    else {
-                        Monster* m = game->level().monster_at({ x, y });
-                        if (m) {
-                            m->invalidate_tile_beneath();
-                        }
-                    }
+                if (isupper(toascii(ch)) && game->hero().detects_others()) {
+                    game->screen().standout();
+                    game->screen().addch(ch);
+                    game->screen().standend();
+                    break;
                 }
                 game->screen().addch(floor);
             }
