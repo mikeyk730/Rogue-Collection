@@ -80,6 +80,18 @@ namespace
 }
 
 
+Command::Command()
+{
+}
+
+int Command::decrement_count()
+{
+    --count;
+    if (count < 0)
+        count = 0;
+    return count;
+}
+
 bool Command::is_move() const
 {
     switch (ch) {
@@ -150,7 +162,7 @@ int translate_command(int ch)
     return ch;
 }
 
-int com_char()
+int get_translated_char()
 {
     int ch;
     ch = readchar();
@@ -164,29 +176,28 @@ void process_prefixes(int ch, Command* command, bool* fast_mode)
     {
     case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
     {
-        int junk = game->repeat_cmd_count * 10;
-        if ((junk += ch - '0') > 0 && junk < 10000)
-            game->repeat_cmd_count = junk;
-        show_count();
+        int n = command->count * 10;
+        if ((n += ch - '0') > 0 && n < 10000)
+            command->count = n;
+        show_count(command->count);
         break;
     }
     case 'f': // f: toggle fast mode for this turn
         *fast_mode = !*fast_mode;
         break;
     case 'g': // g + direction: move onto an item without picking it up
-        command->m_can_pick_up = false;
+        command->can_pick_up = false;
         break;
     case 'a': //a: repeat last command
         *command = game->last_turn.command;
-        game->repeat_cmd_count = game->last_turn.count; //todo: should Command have count?
         game->repeat_last_action = true;
         break;
     case ' ':
         break;
     case ESCAPE:
-        game->m_stop_at_door = false;
-        game->reset_command_count();
-        show_count();
+        game->m_stop_at_door = false; //todo: why is this here?
+        command->count = 0;
+        show_count(command->count);
         break;
     default:
         command->ch = ch;
@@ -194,91 +205,93 @@ void process_prefixes(int ch, Command* command, bool* fast_mode)
     }
 }
 
-//Read a command, setting things up according to prefix like devices. Return the command character to be executed.
-Command get_command()
+void get_command_from_user(Command* command)
 {
-    Command command;
-
     bool fast_mode = false;
-    look(true);
-    if (!game->is_running())
-        game->m_stop_at_door = false;
-    command.m_can_pick_up = true;
-    game->repeat_last_action = false;
 
-    --game->repeat_cmd_count;
-    //only update the screen when the count has changed
-    if (game->repeat_cmd_count || game->last_turn.count)
-        show_count();
-
-    if (game->repeat_cmd_count > 0) {
-        command = game->last_turn.command;
-    }
-    else
+    while (command->ch == 0)
     {
-        game->reset_command_count();
-        if (game->is_running()) {
-            command.ch = game->run_character;
-            command.m_can_pick_up = game->last_turn.command.m_can_pick_up;
-        }
-        else
-        {
-            for (command.ch = 0; command.ch == 0;)
-            {
-                int ch = com_char();
-                process_prefixes(ch, &command, &fast_mode);
-            }
-            fast_mode ^= game->fast_play();
-        }
+        int ch = get_translated_char();
+        process_prefixes(ch, command, &fast_mode);
     }
-    if (game->repeat_cmd_count)
+
+    fast_mode ^= game->fast_play();
+    if (command->count)
         fast_mode = false;
 
-    switch (command.ch)
+    switch (command->ch)
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-        if (fast_mode && !game->is_running())
+        if (fast_mode)
         {
             if (!game->hero().is_blind()) {
                 game->m_stop_at_door = true;
                 game->m_first_move = true;
             }
-            command.ch = toupper(command.ch);
+            command->ch = toupper(command->ch);
         }
+        break;
 
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
-        if (game->options.stop_running_at_doors() && !game->is_running())
+        if (game->options.stop_running_at_doors())
         {
             if (!game->hero().is_blind()) {
                 game->m_stop_at_door = true;
                 game->m_first_move = true;
             }
         }
-    
-    case 'q': case 'r': case 's': case 'z': case 't': case '.':
+        break;
 
-    case CTRL('D'): case 'C':
-
+        //actions that are repeatable
+    case 'q': case 'r': case 's': case 'z': case 't': case '.': case 'C':
         break;
 
     default:
-        game->reset_command_count();
+        command->count = 0;
+    }
+}
+
+//Read a command, setting things up according to prefix like devices. Return the command character to be executed.
+Command get_command()
+{
+    game->repeat_last_action = false;
+    look(true);
+
+    if (!game->is_running())
+        game->m_stop_at_door = false;
+    
+    Command command;
+    command.count = game->last_turn.command.count;
+    show_count(command.count);
+
+    // If we have a repeat count, use the last command
+    if (command.count > 0) {
+        command = game->last_turn.command;
+    }
+    // If we're running, use the global run character which indicates the direction
+    // the hero should go next
+    else if (game->is_running()) {
+        command = game->last_turn.command;
+        command.ch = game->run_character;
+    }
+    // Otherwise get the command from the user
+    else {
+        get_command_from_user(&command);
     }
 
-    game->last_turn.count = game->repeat_cmd_count;
     game->last_turn.command = command;
-
+    game->last_turn.command.decrement_count();
     return command;
 }
 
-void show_count()
+void show_count(int n)
 {
     const int COLS = game->screen().columns();
     const int LINES = game->screen().lines();
 
     game->screen().move(LINES - 2, COLS - 4);
-    if (game->repeat_cmd_count > 0)
-        game->screen().printw("%-4d", game->repeat_cmd_count);
+    if (n > 0)
+        game->screen().printw("%-4d", n);
     else
         game->screen().addstr("    ");
 }
@@ -306,7 +319,7 @@ bool dispatch_command(Command c)
     }
 
     msg("illegal command '%s'", unctrl(c.ch));
-    game->reset_command_count();
+    game->cancel_repeating_cmd();
     return false;
 }
 

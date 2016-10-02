@@ -101,9 +101,9 @@ GameState::GameState(Random* random, const std::string& filename) :
 GameState::~GameState()
 { }
 
-void GameState::reset_command_count()
+void GameState::cancel_repeating_cmd()
 {
-    repeat_cmd_count = 0;
+    last_turn.command.count = 0;
 }
 
 void GameState::init_environment()

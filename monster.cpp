@@ -569,7 +569,7 @@ Monster* Monster::attack_player()
 
     //Since this is an attack, stop running and any healing that was going on at the time.
     game->stop_running();
-    game->reset_command_count();
+    game->cancel_repeating_cmd();
     game->turns_since_heal = 0;
 
     if (is_disguised() && !game->hero().is_blind())
@@ -631,7 +631,7 @@ Monster* Monster::attack_player()
     }
 
     clear_typeahead_buffer();
-    game->reset_command_count();
+    game->cancel_repeating_cmd();
     update_status_bar();
 
     return 0;

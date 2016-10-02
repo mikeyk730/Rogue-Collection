@@ -51,9 +51,7 @@ struct GameState
     struct LastTurnState
     {
         //State about the last command, needed to support commands like 'a' (repeat last action)
-
-        Command command;         //Last command executed
-        int count;                //Count of last command executed
+        Command command;          //Last command executed
 
         Coord input_direction;     //Direction the player specified for the last throw, zap, etc.
         Item* item_used = nullptr; //Last item used (quaffed, zapped, thrown, dropped, etc.)
@@ -81,7 +79,7 @@ struct GameState
     bool stop_at_door() const { return m_stop_at_door; }
     bool first_move() const { return m_first_move; }
 
-    void reset_command_count();
+    void cancel_repeating_cmd();
 
     // uncategorized state.  //todo: categorize it.
     bool m_running = false;       //True if player is running //todo: i really need to understand this one
@@ -92,14 +90,13 @@ struct GameState
     int sleep_timer = 0;         //Number of turns asleep
     int no_food = 0;             //Number of levels without food
     int turns_since_heal = 0;    //Number of turns_since_heal turns
-    bool repeat_last_action;    //The last command is repeated
+    bool repeat_last_action;     //The last command is repeated
     int was_trapped = 0;   //Was a trap sprung
     bool invalid_position = false;
     char run_character; //Direction player is running
     char last_message[BUFSIZE];     //The last message printed
     int maxrow;            //Last Line used for map
     int msg_position = 0;  //Where cursor is on top line
-    int repeat_cmd_count = 0;  //Number of times to repeat command
     Coord oldpos; //Position before last look() call
     struct Room *oldrp; //room of oldpos
     std::string typeahead;

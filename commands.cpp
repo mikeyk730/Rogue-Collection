@@ -81,7 +81,7 @@ bool do_id_trap()
         if (game->level().get_tile(lookat) != TRAP)
             msg("no trap there.");
         else 
-            ("you found %s", tr_name(game->level().get_trap_type(lookat)));
+            msg("you found %s", tr_name(game->level().get_trap_type(lookat)));
     }
     return false;
 }

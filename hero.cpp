@@ -218,7 +218,7 @@ void Hero::digest()
         game->sleep_timer += rnd(8) + 4;
         set_running(false);
         game->stop_running();
-        game->reset_command_count();
+        game->cancel_repeating_cmd();
         hungry_state = 3;
         msg("%syou faint from lack of food", noterse("you feel very weak. "));
     }
@@ -314,7 +314,7 @@ void Hero::teleport()
         set_is_held(false);
     }
     game->bear_trap_turns = 0;
-    game->reset_command_count();
+    game->cancel_repeating_cmd();
     game->stop_running();
     clear_typeahead_buffer();
 
@@ -470,7 +470,7 @@ Monster* Hero::fight(Coord monster_pos, Item *weapon, bool thrown)
         return 0;
 
     //Since we are fighting, things are not quiet so no healing takes place.  Cancel any command counts so player can recover.
-    game->reset_command_count();
+    game->cancel_repeating_cmd();
     game->turns_since_heal = 0;
 
     if (monster->is_disguised())

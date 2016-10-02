@@ -258,7 +258,7 @@ bool do_move(Command c) //todo:understand
 
     bool more;
     do {
-        more = do_move_impl(c.m_can_pick_up);
+        more = do_move_impl(c.can_pick_up);
     } while (more);
 
     return this_move_counts;
@@ -294,7 +294,7 @@ int handle_trap(Coord tc)
     byte tr;
     const int COLS = game->screen().columns();
 
-    game->reset_command_count();
+    game->cancel_repeating_cmd();
     game->stop_running();
     game->level().set_tile(tc, TRAP);
     tr = game->level().get_trap_type(tc);

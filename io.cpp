@@ -480,8 +480,7 @@ void SIG2()
     if (!game->in_replay() && game->fast_play() != scroll_lock_on)
     {
         game->set_fast_play(scroll_lock_on);
-        game->reset_command_count();
-        show_count();
+        game->cancel_repeating_cmd();
         game->stop_running();
     }
 
@@ -499,8 +498,8 @@ void SIG2()
     if (numl != num_lock_on)
     {
         numl = num_lock_on;
-        game->reset_command_count();
-        show_count();
+        game->cancel_repeating_cmd();
+        //show_count();
         game->stop_running();
         game->screen().move(LINES - 1, nspot);
         if (numl) {
