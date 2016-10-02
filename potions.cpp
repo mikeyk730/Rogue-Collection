@@ -239,7 +239,9 @@ void Potion::quaff_extra_healing()
 void Potion::quaff_haste_self()
 {
     discover();
-    if (add_haste(true)) msg("you feel yourself moving much faster");
+    if (game->hero().add_haste(true)) {
+        msg("you feel yourself moving much faster");
+    }
 }
 
 void Potion::quaff_restore_strength()

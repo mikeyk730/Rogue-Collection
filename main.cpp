@@ -52,8 +52,8 @@ int main(int argc, char **argv)
 
     std::string filename;
     //filename = "tests\\empty.sav";
-    filename = "saves\\level9.sav";
-    //filename = "invis_bug.sav";
+    //filename = "saves\\level9.sav";
+    //filename = "haste.sav";
     if (argc > 1)
         filename = argv[1];
     

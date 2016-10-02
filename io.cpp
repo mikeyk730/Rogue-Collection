@@ -1,6 +1,7 @@
 //Various input/output functions
 //io.c         1.4             (A.I. Design) 12/10/84
-
+#include <ctime>
+#include <chrono>
 #include <sstream>
 #include <stdio.h>
 #include <ctype.h>
@@ -461,7 +462,7 @@ void SIG2()
         caps_lock_on = is_caps_lock_on(),
         scroll_lock_on = is_scroll_lock_on();
     static int bighand, littlehand;
-    int showtime = false, spare;
+    int showtime = false;
 
     const int COLS = game->screen().columns();
     const int LINES = game->screen().lines();
@@ -522,12 +523,18 @@ void SIG2()
     }
     if (showtime)
     {
-        showtime = false;
-        //work around the compiler buggie boos
-        spare = littlehand % 10;
+        auto now = std::chrono::system_clock::now();
+        auto time = std::chrono::system_clock::to_time_t(now);
+        tm local_time = *localtime(&time);
+
+        bighand = local_time.tm_hour % 12;
+        if (bighand == 0)
+            bighand = 12;
+        littlehand = local_time.tm_min;
+
         game->screen().move(24, tspot);
         game->screen().bold();
-        game->screen().printw("%2d:%1d%1d", bighand ? bighand : 12, littlehand / 10, spare);
+        game->screen().printw("%2d:%2d", bighand, littlehand);
         game->screen().standend();
     }
 }

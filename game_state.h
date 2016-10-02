@@ -61,17 +61,19 @@ struct GameState
 
     struct Options
     {
-        bool stop_running_at_doors() const;
-        bool throws_affect_mimics() const;
         bool show_inventory_menu() const;
         bool narrow_screen() const;
         bool monochrome() const;
         bool use_exp_level_names() const;
+        bool stop_running_at_doors() const;
+
+        //behavior changing options
+        bool haste_self_bugfix() const;
         bool zap_release_bugfix() const;
         bool striking_charge_bugfix() const;
         bool use_throw_damage() const;
         bool aggressive_orcs() const;
-
+        bool throws_affect_mimics() const;
     } options;
 
     bool is_running() const { return m_running; } // todo:move to Hero?

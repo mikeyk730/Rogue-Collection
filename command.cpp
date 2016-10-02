@@ -113,13 +113,13 @@ bool Command::is_run() const
 
 void advance_game()
 {
-    int ntimes;
-    if (game->hero().is_fast())
-        ntimes = rnd(2) + 2;
-    else 
-        ntimes = 1;
+    int num_hero_actions = 1;
+    //mdk:bugfix:  The hero was meant to get 2-3 actions when hasted, but he
+    //always got 1 in the original because of a bug.
+    if (game->hero().is_fast() && game->options.haste_self_bugfix())
+        num_hero_actions = rnd(2) + 2;
 
-    while (ntimes--)
+    while (num_hero_actions--)
     {
         update_status_bar();
         SIG2();
@@ -130,12 +130,15 @@ void advance_game()
                 game->sleep_timer = 0;
             }
         }
-        else execcom();
-        do_fuses();
-        do_daemons();
-        for (ntimes = LEFT; ntimes <= RIGHT; ntimes++) {
-            if (game->hero().get_ring(ntimes)) {
-                switch (game->hero().get_ring(ntimes)->m_which)
+        else {
+            execcom();
+        }
+
+        //mdk: The ring code used to come after running fuses/daemons, but it simplified
+        //the logic to move it.  I don't think that's an issue
+        for (int i = LEFT; i <= RIGHT; i++) {
+            if (game->hero().get_ring(i)) {
+                switch (game->hero().get_ring(i)->m_which)
                 {
                 case R_SEARCH:
                     do_search();
@@ -148,6 +151,8 @@ void advance_game()
             }
         }
     }
+    do_fuses();
+    do_daemons();
 }
 
 //handle aliases for commands

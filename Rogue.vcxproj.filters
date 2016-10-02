@@ -22,9 +22,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="command.cpp">
-      <Filter>Unsorted</Filter>
-    </ClCompile>
     <ClCompile Include="daemon.cpp">
       <Filter>Unsorted</Filter>
     </ClCompile>
@@ -160,8 +157,11 @@
     <ClCompile Include="game_state.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="command.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="commands.cpp">
-      <Filter>Unsorted</Filter>
+      <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -249,9 +249,6 @@
     <ClInclude Include="mach_dep.h">
       <Filter>IO</Filter>
     </ClInclude>
-    <ClInclude Include="command.h">
-      <Filter>Unsorted</Filter>
-    </ClInclude>
     <ClInclude Include="daemon.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
@@ -313,7 +310,10 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="commands.h">
-      <Filter>Unsorted</Filter>
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="command.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

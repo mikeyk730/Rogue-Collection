@@ -10,6 +10,23 @@
 #define DAEMON  -1
 #define MAXDAEMONS  20
 
+//todo: log/add debug screen for fuses
+/*
+mdk: 
+fuses used in original code:
+  -unconfuse
+  -nohaste
+  -swander
+  -unsee
+  -turn_see
+  -sight
+daemons used in original code:
+  -rollwand
+  -doctor
+  -stomach
+  -runners
+*/
+
 struct delayed_action
 {
     void(*d_func)(int);
