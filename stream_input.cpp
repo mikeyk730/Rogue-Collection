@@ -75,12 +75,14 @@ char StreamInput::ReadCharA()
     unsigned char f[5];
     m_stream->read((char*)f, 5);
 
-    byte fast_mode(f[0]);
-    byte fast_play(f[1]);
-    char c(f[4]);
+    char c = 0;
 
     if (*m_stream)
     {
+        byte fast_mode(f[0]);
+        byte fast_play(f[1]);
+        c = f[4];
+
         NotifyFastPlayChanged(fast_play == ON);
         if (fast_mode == ON)
         {
@@ -103,11 +105,13 @@ char StreamInput::ReadCharC()
     unsigned char info[2];
     m_stream->read((char*)info, 2);
 
-    byte fast_play(info[0]);
-    char c(info[1]);
+    char c = 0;
 
     if (*m_stream)
     {
+        byte fast_play(info[0]);
+        c = info[1];
+
         NotifyFastPlayChanged(fast_play ? true : false);
         if (c == 0)
         {
@@ -126,16 +130,16 @@ char StreamInput::GetNextChar()
     }
     --m_shared_data->m_steps;
 
-    if (!*m_stream || m_shared_data->m_canceled) {
-        OnStreamEnd();
-        return 0;
-    }
-
     char c;
     if (m_version >= 'A' && m_version <= 'B')
         c = ReadCharA();
     else
         c = ReadCharC();
+
+    if (!*m_stream || m_shared_data->m_canceled) {
+        OnStreamEnd();
+        return 0;
+    }
 
     return c;
 }
@@ -173,12 +177,15 @@ std::string StreamInput::ReadStringB()
 
     char buf[256];
     memset(buf, 0, 256);
-    if (size > 255)
-    {
-        assert(false);
-        size = 255;
+
+    if (*m_stream) {
+        if (size > 255)
+        {
+            assert(false);
+            size = 255;
+        }
+        m_stream->read(buf, size);
     }
-    m_stream->read(buf, size);
 
     return buf;
 }
@@ -191,17 +198,16 @@ std::string StreamInput::GetNextString(int size)
     }
     --m_shared_data->m_steps;
 
-    if (!*m_stream || m_shared_data->m_canceled) {
-        OnStreamEnd();
-        return "";
-    }
-
     std::string s;
     if (m_version == 'A')
         s = ReadStringA();
     else
         s = ReadStringB();
 
+    if (!*m_stream || m_shared_data->m_canceled) {
+        OnStreamEnd();
+        return "";
+    }
 
     return s;
 }

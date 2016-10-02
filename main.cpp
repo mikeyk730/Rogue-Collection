@@ -54,7 +54,8 @@ int main(int argc, char **argv)
     std::string filename;
     //filename = "tests\\all_sticks.sav";
     //filename = "saves\\level7.sav";
-    filename = "rogue.sav";
+    //filename = "rogue.sav";
+    filename = "level1.sav";
     
     if (!filename.empty()) {
         game = new GameState(g_random, filename);
