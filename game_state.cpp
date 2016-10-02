@@ -21,12 +21,11 @@ using std::placeholders::_1;
 //todo: option to fix +4 bug
 
 -------------------------------------------------------------------------------
-haste_self_bugfix(true, false): false
+haste_self_bugfix(true, false): true
 -------------------------------------------------------------------------------
 The potion of haste self does not work in the original code.  It's meant to 
 give you 2-3 actions per turn, but a bug prevented this from ever happening.
-I've kept the original behavior by default, but added an option to enable the
-fix.
+I've fixed the bug, but added an option to disable the fix.
 
 -------------------------------------------------------------------------------
 throws_affect_mimics(true, false): false
@@ -297,7 +296,7 @@ bool GameState::Options::use_exp_level_names() const
 
 bool GameState::Options::haste_self_bugfix() const
 {
-    return game->get_environment("haste_self_bugfix") == "true";
+    return game->get_environment("haste_self_bugfix") != "false";
 }
 
 bool GameState::Options::zap_release_bugfix() const
