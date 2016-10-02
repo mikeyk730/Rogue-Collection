@@ -39,11 +39,9 @@ StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version) :
     m_stream(std::move(in)),
     m_shared_data(new ThreadData)
 {
-    if (version <= 1) {
-        m_version = 'A';
-    }
-    else {
-        read(*m_stream, &m_version);
+    read(*m_stream, &m_version);
+    if (m_version < 'C') {
+        throw std::runtime_error("Unsupported save version: " + m_version);
     }
 
     std::thread t(ThreadProc, m_shared_data);
@@ -60,47 +58,7 @@ bool StreamInput::HasMoreInput()
     return !m_shared_data->m_canceled && !m_shared_data->m_stream_empty;
 }
 
-bool is_direction(byte ch)
-{
-    switch (ch) {
-    case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-        return true;
-    default:
-        return false;
-    }
-}
-
-char StreamInput::ReadCharA()
-{
-    unsigned char f[5];
-    m_stream->read((char*)f, 5);
-
-    char c = 0;
-
-    if (*m_stream)
-    {
-        byte fast_mode(f[0]);
-        byte fast_play(f[1]);
-        c = f[4];
-
-        NotifyFastPlayChanged(fast_play == ON);
-        if (fast_mode == ON)
-        {
-            if (is_direction(c)) {
-                c = toupper(c);
-            }
-        }
-
-        if (c == 0) //shouldn't happen
-        {
-            printf("\a");
-        }
-    }
-
-    return c;
-}
-
-char StreamInput::ReadCharC()
+char StreamInput::ReadChar()
 {
     unsigned char info[2];
     m_stream->read((char*)info, 2);
@@ -113,7 +71,7 @@ char StreamInput::ReadCharC()
         c = info[1];
 
         NotifyFastPlayChanged(fast_play ? true : false);
-        if (c == 0)
+        if (*m_stream && c == 0)
         {
             printf("\a"); //todo: shouldn't happen, validate
         }
@@ -130,11 +88,7 @@ char StreamInput::GetNextChar()
     }
     --m_shared_data->m_steps;
 
-    char c;
-    if (m_version >= 'A' && m_version <= 'B')
-        c = ReadCharA();
-    else
-        c = ReadCharC();
+    char c = ReadChar();
 
     if (!*m_stream || m_shared_data->m_canceled) {
         OnStreamEnd();
@@ -144,33 +98,7 @@ char StreamInput::GetNextChar()
     return c;
 }
 
-std::string StreamInput::ReadStringA()
-{
-    std::ostringstream ss;
-
-    char c = 0;
-    m_stream->read(&c, 1);
-
-    if (*m_stream && c != 0) //shouldn't happen
-    {
-        printf("\a");
-    }
-
-    for (int i = 0; *m_stream && i < 255; ++i) {
-        m_stream->read(&c, 1);
-        if (c == 0)
-            break;
-        ss << c;
-    }
-
-    if (ss.str().size() > 150) { //shouldn't happen
-        printf("\a");
-    }
-
-    return ss.str();
-}
-
-std::string StreamInput::ReadStringB()
+std::string StreamInput::ReadString()
 {
     int size;
     read(*m_stream, &size);
@@ -198,11 +126,7 @@ std::string StreamInput::GetNextString(int size)
     }
     --m_shared_data->m_steps;
 
-    std::string s;
-    if (m_version == 'A')
-        s = ReadStringA();
-    else
-        s = ReadStringB();
+    std::string s = ReadString();
 
     if (!*m_stream || m_shared_data->m_canceled) {
         OnStreamEnd();

@@ -13,7 +13,7 @@
 //main.c      1.4 (A.I. Design) 11/28/84
 
 #include <memory>
-#include <fstream>
+#include <iostream>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -52,18 +52,23 @@ int main(int argc, char **argv)
 
     std::string filename;
     //filename = "tests\\all_sticks.sav";
-    //filename = "saves\\level7.sav";
-    //filename = "rogue.sav";
-    //filename = "level1.sav";
+    //filename = "saves\\level9.sav";
     if (argc > 1)
         filename = argv[1];
     
-    if (!filename.empty()) {
-        game = new GameState(g_random, filename);
+    try {
+        if (!filename.empty()) {
+            game = new GameState(g_random, filename);
+        }
+        else {
+            game = new GameState(seed);
+            setenv("rogue.opt");
+        }
     }
-    else {
-        game = new GameState(seed);
-        setenv("rogue.opt");
+    catch (const std::runtime_error& e)
+    {
+        std::cout << e.what() << std::endl;
+        exit(1);
     }
     
     load_monster_cfg(game->get_environment("monsterfile"));

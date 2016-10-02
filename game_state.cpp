@@ -57,36 +57,29 @@ GameState::GameState(Random* random, const std::string& filename) :
     m_log_stream("log.txt")
 {
     std::unique_ptr<std::istream> in(new std::ifstream(filename, std::ios::binary | std::ios::in));
+    if (!*in) {
+        throw std::runtime_error("Couldn't open " + filename);
+    }
 
     int version = 0;
     read(*in, &version);
 
-    if (version >= 1 && version <= 3) {
-        if (version <= 2) {
-            //the game code used to handle running different. Version 2
-            //saves are broken, but this can get them to work somewhat.
-            set_environment("stop_running_at_doors", "true");
-        }
-        read(*in, &m_seed);
-        read(*in, &m_restore_count);
+    if (version < 3) {
+        throw std::runtime_error("Unsupported save version " + filename);
+    }
 
-        int length = 0;
-        read(*in, &length);
-        while (length-- > 0) {
-            std::string key, value;
-            read_string(*in, &key);
-            read_string(*in, &value);
-            m_environment[key] = value;
-        }
-        process_environment();
+    read(*in, &m_seed);
+    read(*in, &m_restore_count);
+
+    int length = 0;
+    read(*in, &length);
+    while (length-- > 0) {
+        std::string key, value;
+        read_string(*in, &key);
+        read_string(*in, &value);
+        m_environment[key] = value;
     }
-    else
-    {
-        // original code didn't write a version, so what we've already read is the seed
-        m_seed = version;
-        version = 0;
-        init_environment();
-    }
+    process_environment();
 
     random->set_seed(m_seed);
     ++m_restore_count;

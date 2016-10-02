@@ -20,10 +20,8 @@ struct StreamInput : public InputInterface
 
 private:
     void OnStreamEnd();
-    char ReadCharA();
-    char ReadCharC();
-    std::string ReadStringA();
-    std::string ReadStringB();
+    char ReadChar();
+    std::string ReadString();
 
     void NotifyReplayEnd();
     void NotifyFastPlayChanged(bool enable);

@@ -58,6 +58,8 @@ int get_year()
 //score: Figure score and post it.
 void score(int amount, int flags, char monst)
 {
+    game->save_game("lastgame.sav");
+
     struct LeaderboardEntry his_score, top_ten[TOPSCORES];
     int rank = 0;
     char response = ' ';
