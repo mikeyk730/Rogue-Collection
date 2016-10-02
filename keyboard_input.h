@@ -8,4 +8,6 @@ struct KeyboardInput : public InputInterface
     virtual std::string GetNextString(int size);
 
     virtual void Serialize(std::ostream& out);
+    virtual void OnReplayEnd(const std::function<void()>& handler);
+    virtual void OnFastPlayChanged(const std::function<void(bool)>& handler);
 };

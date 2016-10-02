@@ -4,7 +4,6 @@
 #include <conio.h>
 #include <thread>
 #include "mach_dep.h"
-#include "game_state.h"
 #include "stream_input.h"
 #include "rogue.h"
 
@@ -40,21 +39,15 @@ StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version) :
     m_stream(std::move(in)),
     m_shared_data(new ThreadData)
 {
-    if (version < 2) {
+    if (version <= 1) {
         m_version = 'A';
     }
     else {
         read(*m_stream, &m_version);
     }
 
-    m_stream->peek();
-    if (!m_stream || m_stream->eof()) {
-        OnStreamEnd();
-    }
-    else {
-        std::thread t(ThreadProc, m_shared_data);
-        t.detach();
-    }
+    std::thread t(ThreadProc, m_shared_data);
+    t.detach();
 }
 
 StreamInput::~StreamInput()
@@ -79,8 +72,6 @@ bool is_direction(byte ch)
 
 char StreamInput::ReadCharA()
 {
-    game->set_environment("stop_running_at_doors", "true");
-
     unsigned char f[5];
     m_stream->read((char*)f, 5);
 
@@ -88,9 +79,9 @@ char StreamInput::ReadCharA()
     byte fast_play(f[1]);
     char c(f[4]);
 
-    if (m_stream)
+    if (*m_stream)
     {
-        game->set_fast_play(fast_play == ON);
+        NotifyFastPlayChanged(fast_play == ON);
         if (fast_mode == ON)
         {
             if (is_direction(c)) {
@@ -115,9 +106,9 @@ char StreamInput::ReadCharC()
     byte fast_play(info[0]);
     char c(info[1]);
 
-    if (m_stream)
+    if (*m_stream)
     {
-        game->set_fast_play(fast_play ? true : false);
+        NotifyFastPlayChanged(fast_play ? true : false);
         if (c == 0)
         {
             printf("\a"); //todo: shouldn't happen, validate
@@ -135,8 +126,10 @@ char StreamInput::GetNextChar()
     }
     --m_shared_data->m_steps;
 
-    if (!m_stream || m_shared_data->m_canceled)
+    if (!*m_stream || m_shared_data->m_canceled) {
+        OnStreamEnd();
         return 0;
+    }
 
     char c;
     if (m_version >= 'A' && m_version <= 'B')
@@ -144,10 +137,6 @@ char StreamInput::GetNextChar()
     else
         c = ReadCharC();
 
-    m_stream->peek();
-    if (!m_stream || m_stream->eof()) {
-        OnStreamEnd();
-    }
     return c;
 }
 
@@ -158,12 +147,12 @@ std::string StreamInput::ReadStringA()
     char c = 0;
     m_stream->read(&c, 1);
 
-    if (m_stream && c != 0) //shouldn't happen
+    if (*m_stream && c != 0) //shouldn't happen
     {
         printf("\a");
     }
 
-    for (int i = 0; m_stream && i < 255; ++i) {
+    for (int i = 0; *m_stream && i < 255; ++i) {
         m_stream->read(&c, 1);
         if (c == 0)
             break;
@@ -202,8 +191,10 @@ std::string StreamInput::GetNextString(int size)
     }
     --m_shared_data->m_steps;
 
-    if (!m_stream || m_shared_data->m_canceled)
+    if (!*m_stream || m_shared_data->m_canceled) {
+        OnStreamEnd();
         return "";
+    }
 
     std::string s;
     if (m_version == 'A')
@@ -211,10 +202,6 @@ std::string StreamInput::GetNextString(int size)
     else
         s = ReadStringB();
 
-    m_stream->peek();
-    if (!m_stream || m_stream->eof()) {
-        OnStreamEnd();
-    }
 
     return s;
 }
@@ -226,7 +213,7 @@ void StreamInput::Serialize(std::ostream& out)
 void StreamInput::OnStreamEnd()
 {
     m_shared_data->m_stream_empty = true;
-    game->m_in_replay = false; //todo: this isn't set if canceled, have game poll for this. this crashes now if save not found
+    NotifyReplayEnd();
 }
 
 void StreamInput::ThreadData::PausePlayback()
@@ -259,14 +246,34 @@ void StreamInput::ThreadData::CancelPlayback()
     m_paused = false;
     m_steps = 0;
     m_step_cv.notify_all();
-
-    game->m_in_replay = false; //todo: remove
 }
 
 void StreamInput::ThreadData::OnEmptyStream()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_stream_empty = true;
+}
+
+void StreamInput::OnReplayEnd(const std::function<void()>& handler)
+{
+    m_on_end = handler;
+}
+
+void StreamInput::OnFastPlayChanged(const std::function<void(bool)>& handler)
+{
+    m_on_fast_play = handler;
+}
+
+void StreamInput::NotifyReplayEnd()
+{
+    if (m_on_end)
+        m_on_end();
+}
+
+void StreamInput::NotifyFastPlayChanged(bool enable)
+{
+    if (m_on_fast_play)
+        m_on_fast_play(enable);
 }
 
 //todo:

@@ -12,7 +12,9 @@
 #include "level.h"
 #include "console_output.h"
 #include "mach_dep.h"
+#include "io.h"
 
+using std::placeholders::_1;
 
 /*
 -------------------------------------------------------------------------------
@@ -31,7 +33,7 @@ is 'false' then zaps and throws will pass through a disguised mimic
 
 namespace
 {
-    const int s_serial_version = 2;
+    const int s_serial_version = 3;
 }
 
 GameState::GameState(int seed) :
@@ -59,7 +61,12 @@ GameState::GameState(Random* random, const std::string& filename) :
     int version = 0;
     read(*in, &version);
 
-    if (version == 1 || version == 2) {
+    if (version >= 1 && version <= 3) {
+        if (version <= 2) {
+            //the game code used to handle running different. Version 2
+            //saves are broken, but this can get them to work somewhat.
+            set_environment("stop_running_at_doors", "true");
+        }
         read(*in, &m_seed);
         read(*in, &m_restore_count);
 
@@ -77,12 +84,17 @@ GameState::GameState(Random* random, const std::string& filename) :
     {
         // original code didn't write a version, so what we've already read is the seed
         m_seed = version;
+        version = 0;
         init_environment();
     }
 
     ++m_restore_count;
     random->set_seed(m_seed);
+
     m_input_interface.reset(new CapturedInput(new ComboInput(new StreamInput(std::move(in), version), new KeyboardInput())));
+    m_input_interface->OnReplayEnd(std::bind(&GameState::set_replay_end, this));
+    m_input_interface->OnFastPlayChanged(std::bind(&GameState::set_fast_play, this, _1));
+
     m_level.reset(new Level);
     m_hero.reset(new Hero);
     m_scrolls.reset(new ScrollInfo);
@@ -216,6 +228,13 @@ Cheats & GameState::wizard()
 bool GameState::in_replay() const
 {
     return m_in_replay;
+}
+
+void GameState::set_replay_end()
+{
+    reset_msg_position();
+    msg("Replay ended");
+    m_in_replay = false;
 }
 
 bool GameState::fast_play() const

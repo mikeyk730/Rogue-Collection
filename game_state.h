@@ -42,7 +42,7 @@ struct GameState
     Cheats& wizard();
 
     bool in_replay() const;
-    bool m_in_replay = false;
+    void set_replay_end();
 
     bool fast_play() const;
     void set_fast_play(bool enable);
@@ -111,6 +111,8 @@ private:
     long m_seed = 0; //Random number seed
     int m_restore_count = 0;
     bool m_fast_play_enabled = false; //If 'Fast Play' has been enabled
+    bool m_in_replay = false;  //If we are currently replaying a saved game
+
 
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 
