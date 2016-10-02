@@ -198,7 +198,7 @@ int process_prefixes(int ch, bool* fast_mode)
 }
 
 //Read a command, setting things up according to prefix like devices. Return the command character to be executed.
-int read_command()
+int get_command()
 {
     int command, ch;
 
@@ -289,12 +289,13 @@ void show_count()
 
 bool dispatch_command(int ch)
 {
+    //handle directional movement commands
     if (is_move_command(ch))
         return do_move(ch, game->can_pickup_this_turn);
     else if (is_run_command(ch))
         return do_run(ch);
 
-    //try executing the command
+    //try executing the command from the map
     auto i = s_commands.find(ch);
     if (i != s_commands.end()) {
         return (*i->second)();
@@ -319,8 +320,8 @@ void execcom()
     bool counts_as_turn;
     do
     {
-        int ch = read_command();
-        counts_as_turn = dispatch_command(ch);
+        int c = get_command();
+        counts_as_turn = dispatch_command(c);
 
         //todo: why is this here?
         if (!game->is_running())
