@@ -101,6 +101,11 @@ GameState::GameState(Random* random, const std::string& filename) :
 GameState::~GameState()
 { }
 
+void GameState::reset_command_count()
+{
+    repeat_cmd_count = 0;
+}
+
 void GameState::init_environment()
 {
     m_environment["name"] = "Rodney";

@@ -309,7 +309,7 @@ int readchar()
     ch = game->input_interface().GetNextChar();
 
     if (ch == ESCAPE) 
-        game->repeat_cmd_count = 0;
+        game->reset_command_count();
     return ch;
 }
 

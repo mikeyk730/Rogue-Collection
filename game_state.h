@@ -6,6 +6,7 @@
 #include "rogue.h"
 #include "item_class.h"
 #include "wizard.h"
+#include "command.h"
 
 struct Random;
 struct InputInterface;
@@ -51,9 +52,8 @@ struct GameState
     {
         //State about the last command, needed to support commands like 'a' (repeat last action)
 
-        byte command;             //Last command executed
+        Command command;         //Last command executed
         int count;                //Count of last command executed
-        bool could_pickup;        //Could the player pickup items (was 'g' not pressed last turn)
 
         Coord input_direction;     //Direction the player specified for the last throw, zap, etc.
         Item* item_used = nullptr; //Last item used (quaffed, zapped, thrown, dropped, etc.)
@@ -81,6 +81,7 @@ struct GameState
     bool stop_at_door() const { return m_stop_at_door; }
     bool first_move() const { return m_first_move; }
 
+    void reset_command_count();
 
     // uncategorized state.  //todo: categorize it.
     bool m_running = false;       //True if player is running //todo: i really need to understand this one
@@ -91,7 +92,6 @@ struct GameState
     int sleep_timer = 0;         //Number of turns asleep
     int no_food = 0;             //Number of levels without food
     int turns_since_heal = 0;    //Number of turns_since_heal turns
-    bool can_pickup_this_turn = 0;  //Will the rogue pick up an item if he steps on it
     bool repeat_last_action;    //The last command is repeated
     int was_trapped = 0;   //Was a trap sprung
     bool invalid_position = false;

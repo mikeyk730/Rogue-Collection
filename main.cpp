@@ -181,7 +181,7 @@ bool do_quit()
         update_status_bar();
         game->screen().move(oy, ox);
         reset_msg_position();
-        game->repeat_cmd_count = 0;
+        game->reset_command_count();
     }
     should_quit = false;
 

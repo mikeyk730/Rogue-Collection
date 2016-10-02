@@ -28,10 +28,10 @@
 Coord new_position;
 
 //do_run: Start the hero running
-bool do_run(byte ch) //todo: understand running
+bool do_run(Command c) //todo: understand running
 {
     game->m_running = true;
-    game->run_character = tolower(ch);
+    game->run_character = tolower(c.ch);
     return false;
 }
 
@@ -224,10 +224,10 @@ bool do_move_impl(bool can_pickup)
 }
 
 //do_move: Check to see that a move is legal.  If it is handle the consequences (fighting, picking up, etc.)
-bool do_move(byte ch, bool can_pickup) //todo:understand
+bool do_move(Command c) //todo:understand
 {
     Coord delta;
-    find_dir(ch, &delta);
+    find_dir(c.ch, &delta);
 
     this_move_counts = true;
 
@@ -258,7 +258,7 @@ bool do_move(byte ch, bool can_pickup) //todo:understand
 
     bool more;
     do {
-        more = do_move_impl(can_pickup);
+        more = do_move_impl(c.m_can_pick_up);
     } while (more);
 
     return this_move_counts;
@@ -294,7 +294,7 @@ int handle_trap(Coord tc)
     byte tr;
     const int COLS = game->screen().columns();
 
-    game->repeat_cmd_count = false;
+    game->reset_command_count();
     game->stop_running();
     game->level().set_tile(tc, TRAP);
     tr = game->level().get_trap_type(tc);

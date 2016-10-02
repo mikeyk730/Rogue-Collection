@@ -77,25 +77,27 @@ namespace
         { 'X', do_show_map },
         { CTRL('P'), do_toggle_powers },
     };
-
-    bool is_move_command(int ch)
-    {
-        switch (ch) {
-        case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-            return true;
-        }
-        return false;
-    }
-
-    bool is_run_command(int ch)
-    {
-        switch (ch) {
-        case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
-            return true;
-        }
-        return false;
-    }
 }
+
+
+bool Command::is_move() const
+{
+    switch (ch) {
+    case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
+        return true;
+    }
+    return false;
+}
+
+bool Command::is_run() const
+{
+    switch (ch) {
+    case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
+        return true;
+    }
+    return false;
+}
+
 
 void command()
 {
@@ -156,80 +158,75 @@ int com_char()
     return translate_command(ch);
 }
 
-int process_prefixes(int ch, bool* fast_mode)
+void process_prefixes(int ch, Command* command, bool* fast_mode)
 {
-    int junk;
-    int command = 0;
-
     switch (ch)
     {
     case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-        junk = game->repeat_cmd_count * 10;
+    {
+        int junk = game->repeat_cmd_count * 10;
         if ((junk += ch - '0') > 0 && junk < 10000)
             game->repeat_cmd_count = junk;
         show_count();
         break;
-
+    }
     case 'f': // f: toggle fast mode for this turn
         *fast_mode = !*fast_mode;
         break;
     case 'g': // g + direction: move onto an item without picking it up
-        game->can_pickup_this_turn = false;
+        command->m_can_pick_up = false;
         break;
     case 'a': //a: repeat last command
-        command = game->last_turn.command;
-        game->repeat_cmd_count = game->last_turn.count;
-        game->can_pickup_this_turn = game->last_turn.could_pickup;
+        *command = game->last_turn.command;
+        game->repeat_cmd_count = game->last_turn.count; //todo: should Command have count?
         game->repeat_last_action = true;
         break;
     case ' ':
         break;
     case ESCAPE:
         game->m_stop_at_door = false;
-        game->repeat_cmd_count = 0;
+        game->reset_command_count();
         show_count();
         break;
     default:
-        command = ch;
+        command->ch = ch;
         break;
     }
-
-    return command;
 }
 
 //Read a command, setting things up according to prefix like devices. Return the command character to be executed.
-int get_command()
+Command get_command()
 {
-    int command, ch;
+    Command command;
 
     bool fast_mode = false;
     look(true);
     if (!game->is_running())
         game->m_stop_at_door = false;
-    game->can_pickup_this_turn = true;
+    command.m_can_pick_up = true;
     game->repeat_last_action = false;
 
     --game->repeat_cmd_count;
+    //only update the screen when the count has changed
     if (game->repeat_cmd_count || game->last_turn.count)
         show_count();
 
     if (game->repeat_cmd_count > 0) {
-        game->can_pickup_this_turn = game->last_turn.could_pickup;
         command = game->last_turn.command;
     }
     else
     {
-        game->repeat_cmd_count = 0;
+        game->reset_command_count();
         if (game->is_running()) {
-            command = game->run_character;
-            game->can_pickup_this_turn = game->last_turn.could_pickup;
+            command.ch = game->run_character;
+            command.m_can_pick_up = game->last_turn.command.m_can_pick_up;
         }
         else
         {
-            for (command = 0; command == 0;)
+            for (command.ch = 0; command.ch == 0;)
             {
-                ch = com_char();
-                command = process_prefixes(ch, &fast_mode);
+                int ch = com_char();
+                process_prefixes(ch, &command, &fast_mode);
             }
             fast_mode ^= game->fast_play();
         }
@@ -237,7 +234,7 @@ int get_command()
     if (game->repeat_cmd_count)
         fast_mode = false;
 
-    switch (command)
+    switch (command.ch)
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
         if (fast_mode && !game->is_running())
@@ -246,7 +243,7 @@ int get_command()
                 game->m_stop_at_door = true;
                 game->m_first_move = true;
             }
-            command = toupper(command);
+            command.ch = toupper(command.ch);
         }
 
     case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
@@ -265,12 +262,11 @@ int get_command()
         break;
 
     default:
-        game->repeat_cmd_count = 0;
+        game->reset_command_count();
     }
 
     game->last_turn.count = game->repeat_cmd_count;
     game->last_turn.command = command;
-    game->last_turn.could_pickup = game->can_pickup_this_turn;
 
     return command;
 }
@@ -287,30 +283,30 @@ void show_count()
         game->screen().addstr("    ");
 }
 
-bool dispatch_command(int ch)
+bool dispatch_command(Command c)
 {
     //handle directional movement commands
-    if (is_move_command(ch))
-        return do_move(ch, game->can_pickup_this_turn);
-    else if (is_run_command(ch))
-        return do_run(ch);
+    if (c.is_move())
+        return do_move(c);
+    else if (c.is_run())
+        return do_run(c);
 
     //try executing the command from the map
-    auto i = s_commands.find(ch);
+    auto i = s_commands.find(c.ch);
     if (i != s_commands.end()) {
         return (*i->second)();
     }
 
     //if we're a wizard look at wizard commands too
     if (game->wizard().enabled()) {
-        auto i = s_wizard_commands.find(ch);
+        auto i = s_wizard_commands.find(c.ch);
         if (i != s_wizard_commands.end()) {
             return (*i->second)();
         }
     }
 
-    msg("illegal command '%s'", unctrl(ch));
-    game->repeat_cmd_count = 0;
+    msg("illegal command '%s'", unctrl(c.ch));
+    game->reset_command_count();
     return false;
 }
 
@@ -320,7 +316,7 @@ void execcom()
     bool counts_as_turn;
     do
     {
-        int c = get_command();
+        Command c = get_command();
         counts_as_turn = dispatch_command(c);
 
         //todo: why is this here?
