@@ -13,9 +13,6 @@ struct CapturedInput : public InputInterface
 
     virtual void Serialize(std::ostream& out);
 
-    virtual void OnReplayEnd(const std::function<void()>& handler);
-    virtual void OnFastPlayChanged(const std::function<void(bool)>& handler);
-
     std::unique_ptr<InputInterface> m_delegate;
     std::vector<char> m_stream;
 

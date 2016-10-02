@@ -369,14 +369,6 @@ std::string KeyboardInput::GetNextString(int size) {
 void KeyboardInput::Serialize(std::ostream& out)
 { }
 
-void KeyboardInput::OnReplayEnd(const std::function<void()>& handler)
-{
-}
-
-void KeyboardInput::OnFastPlayChanged(const std::function<void(bool)>& handler)
-{
-}
-
 std::ostream& write_string(std::ostream& out, const std::string& s) {
     write(out, s.length());
     out.write(s.c_str(), s.length());

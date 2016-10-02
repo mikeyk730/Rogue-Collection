@@ -34,18 +34,6 @@ void ComboInput::Serialize(std::ostream & out)
 {
 }
 
-void ComboInput::OnReplayEnd(const std::function<void()>& handler)
-{
-    m_active->OnReplayEnd(handler);
-    m_backup->OnReplayEnd(handler);
-}
-
-void ComboInput::OnFastPlayChanged(const std::function<void(bool)>& handler)
-{
-    m_active->OnFastPlayChanged(handler);
-    m_backup->OnFastPlayChanged(handler);
-}
-
 bool ComboInput::Swap()
 {
     if (!m_active->HasMoreInput() && m_backup) {

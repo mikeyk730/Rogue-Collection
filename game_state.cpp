@@ -84,9 +84,11 @@ GameState::GameState(Random* random, const std::string& filename) :
     random->set_seed(m_seed);
     ++m_restore_count;
 
-    m_input_interface.reset(new CapturedInput(new ComboInput(new StreamInput(std::move(in), version), new KeyboardInput())));
-    m_input_interface->OnReplayEnd(std::bind(&GameState::set_replay_end, this));
-    m_input_interface->OnFastPlayChanged(std::bind(&GameState::set_fast_play, this, _1));
+    auto replay_interface = new StreamInput(std::move(in), version);
+    replay_interface->OnReplayEnd(std::bind(&GameState::set_replay_end, this));
+    replay_interface->OnFastPlayChanged(std::bind(&GameState::set_fast_play, this, _1));
+
+    m_input_interface.reset(new CapturedInput(new ComboInput(replay_interface, new KeyboardInput())));
 
     m_level.reset(new Level);
     m_hero.reset(new Hero);

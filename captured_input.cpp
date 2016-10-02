@@ -57,13 +57,3 @@ void CapturedInput::Serialize(std::ostream& out)
     write<char>(out, s_version);
     out.write((const char*)&m_stream[0], m_stream.size());
 }
-
-void CapturedInput::OnReplayEnd(const std::function<void()>& handler)
-{
-    m_delegate->OnReplayEnd(handler);
-}
-
-void CapturedInput::OnFastPlayChanged(const std::function<void(bool)>& handler)
-{
-    m_delegate->OnFastPlayChanged(handler);
-}

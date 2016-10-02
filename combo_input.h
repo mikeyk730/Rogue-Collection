@@ -16,9 +16,6 @@ struct ComboInput : public InputInterface
 
     virtual void Serialize(std::ostream& out);
 
-    virtual void OnReplayEnd(const std::function<void()>& handler);
-    virtual void OnFastPlayChanged(const std::function<void(bool)>& handler);
-
     bool Swap();
 
 private:

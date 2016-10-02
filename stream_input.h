@@ -15,8 +15,9 @@ struct StreamInput : public InputInterface
     virtual std::string GetNextString(int size);
 
     virtual void Serialize(std::ostream& out);
-    virtual void OnReplayEnd(const std::function<void()>& handler);
-    virtual void OnFastPlayChanged(const std::function<void(bool)>& handler);
+    
+    void OnReplayEnd(const std::function<void()>& handler);
+    void OnFastPlayChanged(const std::function<void(bool)>& handler);
 
 private:
     void OnStreamEnd();

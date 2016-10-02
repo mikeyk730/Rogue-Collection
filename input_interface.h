@@ -12,7 +12,4 @@ struct InputInterface
     virtual std::string GetNextString(int size) = 0;
 
     virtual void Serialize(std::ostream& out) = 0;
-
-    virtual void OnReplayEnd(const std::function<void()>& handler) = 0;
-    virtual void OnFastPlayChanged(const std::function<void(bool)>& handler) = 0;
 };
