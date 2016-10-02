@@ -204,26 +204,6 @@ Item* find_obj(Coord p, bool expect_item)
     return NULL;
 }
 
-//add_haste: Add a haste to the player
-int add_haste(bool potion)
-{
-    if (game->hero().is_fast())
-    {
-        game->sleep_timer += rnd(8);
-        game->hero().set_running(false);
-        extinguish(nohaste);
-        game->hero().set_is_fast(false);
-        msg("you faint from exhaustion");
-        return false;
-    }
-    else
-    {
-        game->hero().set_is_fast(true);
-        if (potion) fuse(nohaste, 0, rnd(4) + 10);
-        return true;
-    }
-}
-
 //aggravate_monsters: Aggravate all the monsters on this level
 void aggravate_monsters()
 {

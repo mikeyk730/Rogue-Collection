@@ -92,7 +92,7 @@ int main(int argc, char **argv)
     msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
     game->screen().raise_curtain();
 
-    playit(0);
+    playit();
     delete game;
 }
 
@@ -125,23 +125,14 @@ int roll(int number, int sides)
 }
 
 //playit: The main loop of the program.  Loop until the game is over, refreshing things and looking at the proper times.
-void playit(char *sname)
+void playit()
 {
-    if (sname)
-    {
-        restore_game(sname);
-        if (game->options.monochrome())
-            game->screen().forcebw();
-        setup();
-        game->screen().cursor(false);
-    }
-    else {
-        game->oldpos = game->hero().m_position;
-        game->oldrp = get_room_from_position(game->hero().m_position);
-    }
+    game->oldpos = game->hero().m_position;
+    game->oldrp = get_room_from_position(game->hero().m_position);
 
     while (true)
-        command(); //Command execution
+        advance_game();
+
     endit();
 }
 

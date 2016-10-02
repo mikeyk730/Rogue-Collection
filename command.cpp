@@ -64,6 +64,7 @@ namespace
         { '?', do_command_help },
         { '!', do_fakedos },
         { 'o', do_options },
+
         { CTRL('T'), do_toggle_terse },
         { CTRL('F'), do_play_macro },
         { CTRL('R'), do_repeat_msg },
@@ -110,14 +111,14 @@ bool Command::is_run() const
     return false;
 }
 
-
-void command()
+void advance_game()
 {
     int ntimes;
-
     if (game->hero().is_fast())
         ntimes = rnd(2) + 2;
-    else ntimes = 1;
+    else 
+        ntimes = 1;
+
     while (ntimes--)
     {
         update_status_bar();
@@ -132,8 +133,8 @@ void command()
         else execcom();
         do_fuses();
         do_daemons();
-        for (ntimes = LEFT; ntimes <= RIGHT; ntimes++)
-            if (game->hero().get_ring(ntimes))
+        for (ntimes = LEFT; ntimes <= RIGHT; ntimes++) {
+            if (game->hero().get_ring(ntimes)) {
                 switch (game->hero().get_ring(ntimes)->m_which)
                 {
                 case R_SEARCH:
@@ -144,17 +145,19 @@ void command()
                         game->hero().teleport();
                     break;
                 }
+            }
+        }
     }
 }
 
-//allow multiple keys to be mapped to the same command
+//handle aliases for commands
 int translate_command(int ch)
 {
     switch (ch)
     {
-    case '\b': 
+    case '\b':
         return 'h';
-    case '+': 
+    case '+':
         return 't';
     case '-':
         return 'z';
@@ -174,7 +177,8 @@ void process_prefixes(int ch, Command* command, bool* fast_mode)
 {
     switch (ch)
     {
-    case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+    case '0': case '1': case '2': case '3': case '4': 
+    case '5': case '6': case '7': case '8': case '9':
     {
         int n = command->count * 10;
         if ((n += ch - '0') > 0 && n < 10000)
@@ -185,14 +189,14 @@ void process_prefixes(int ch, Command* command, bool* fast_mode)
     case 'f': // f: toggle fast mode for this turn
         *fast_mode = !*fast_mode;
         break;
-    case 'g': // g + direction: move onto an item without picking it up
+    case 'g': // g: move onto an item without picking it up
         command->can_pick_up = false;
         break;
     case 'a': //a: repeat last command
         *command = game->last_turn.command;
         game->repeat_last_action = true;
         break;
-    case ' ':
+    case ' ': //eat spaces
         break;
     case ESCAPE:
         game->m_stop_at_door = false; //todo: why is this here?

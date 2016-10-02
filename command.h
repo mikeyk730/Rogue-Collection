@@ -14,7 +14,7 @@ struct Command
     bool is_run() const;
 };
 
-void command();
+void advance_game();
 
 int get_translated_char();
 

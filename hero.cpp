@@ -863,3 +863,24 @@ bool Hero::take_off_armor()
     msg("you used to be wearing %c) %s", pack_char(obj), obj->inventory_name(*this, true).c_str());
     return true;
 }
+
+//add_haste: Add a haste to the player
+int Hero::add_haste(bool is_temporary)
+{
+    if (is_fast())
+    {
+        game->sleep_timer += rnd(8);
+        set_running(false);
+        extinguish(nohaste);
+        set_is_fast(false);
+        msg("you faint from exhaustion");
+        return false;
+    }
+    else
+    {
+        set_is_fast(true);
+        if (is_temporary)
+            fuse(nohaste, 0, rnd(4) + 10);
+        return true;
+    }
+}

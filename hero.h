@@ -100,6 +100,9 @@ public:
     //take_off_armor: Get the armor off of the player's back
     bool take_off_armor();
 
+    //add_haste: Add a haste to the player
+    int add_haste(bool is_temporary);
+
 private:
 
     int m_purse = 0;
