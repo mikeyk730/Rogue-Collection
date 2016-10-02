@@ -316,14 +316,15 @@ bool dispatch_command(int ch)
 
 void execcom()
 {
-    bool is_turn;
+    bool counts_as_turn;
     do
     {
         int ch = read_command();
-        is_turn = dispatch_command(ch);
+        counts_as_turn = dispatch_command(ch);
 
+        //todo: why is this here?
         if (!game->is_running())
             game->m_stop_at_door = false;
 
-    } while (!is_turn);
+    } while (!counts_as_turn);
 }
