@@ -324,7 +324,7 @@ void show_invisible()
     std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster* monster) {
         if (monster->is_invisible() && game->hero().can_see_monster(monster))
         {
-            game->screen().mvaddch(monster->m_position, monster->disguise);
+            game->screen().mvaddch(monster->m_position, monster->m_disguise);
         }
     });
 }

@@ -61,7 +61,7 @@ bool Monster::is_mimic() const {
 }
 
 bool Monster::is_disguised() const {
-    return is_mimic() && m_type != disguise;
+    return is_mimic() && m_type != m_disguise;
 }
 
 bool Monster::drops_gold() const {
@@ -108,7 +108,7 @@ bool Monster::is_monster_confused_this_turn() const {
 }
 
 void Monster::reveal_disguise() {
-    disguise = m_type;
+    m_disguise = m_type;
 }
 
 void Monster::set_dirty(bool enable) {
@@ -173,7 +173,7 @@ void Monster::reload_tile_beneath()
 
 void Monster::render()
 {
-    game->screen().mvaddch(position(), disguise);
+    game->screen().mvaddch(position(), m_disguise);
 }
 
 void Monster::invalidate_tile_beneath()
@@ -322,12 +322,14 @@ void Monster::do_screen_update(Coord next_position)
         if (game->level().is_passage(next_position))
             game->screen().standout();
         set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
-        game->screen().mvaddch(next_position, disguise);
+        //set_tile_beneath(game->level().get_tile(next_position));
+        game->screen().mvaddch(next_position, m_disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
         set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
+        //set_tile_beneath(game->level().get_tile(next_position));
         game->screen().mvaddch(next_position, m_type);
     }
     else
@@ -570,7 +572,7 @@ Monster* Monster::attack_player()
     game->repeat_cmd_count = game->turns_since_heal = 0;
 
     if (is_disguised() && !game->hero().is_blind())
-        disguise = m_type;
+        m_disguise = m_type;
     name = game->hero().is_blind() ? "it" : get_name();
 
     if (attack(&game->hero(), NULL, false))

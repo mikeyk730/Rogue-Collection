@@ -57,6 +57,7 @@ struct Monster : public Agent
 
     int get_carry_probability() const;
 
+    void set_disguise(); //choose a random disguise
     void reveal_disguise();
 
     //chase: Find the spot for the chaser(er) to move closer to the chasee(ee). Returns true if we want to keep on chasing later. false if we reach the goal.
@@ -91,7 +92,7 @@ struct Monster : public Agent
     Coord *m_destination = 0;         //Where it is running to
     char m_turn = 0;                  //If slowed, is it a turn to move
     byte m_tile_beneath = 0;          //Tile that is underneath the monster
-    byte disguise = 0;                //What mimic looks like
+    byte m_disguise = 0;              //What mimic looks like
     int m_confused_chance = 0;        //Monster is confused 1 in every =m_confused_chance= turns
     int m_dirty = 0;
     int m_flytrap_count = 0;

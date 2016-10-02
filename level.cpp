@@ -66,7 +66,7 @@ byte Level::get_tile(Coord p, bool consider_monsters, bool mimic_as_monster)
         if (monster) {
             if (mimic_as_monster)
                 return monster->m_type;
-            return monster->disguise;
+            return monster->m_disguise;
         }
     }
     return the_level[INDEX(p)];

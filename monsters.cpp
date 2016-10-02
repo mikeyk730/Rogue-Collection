@@ -147,19 +147,19 @@ char randmonster(bool wander, int level)
     return mons[d];
 }
 
-void set_disguise(Monster* X)
+void Monster::set_disguise()
 {
     switch (rnd(get_level() >= AMULETLEVEL ? 9 : 8))
     {
-    case 0: X->disguise = GOLD; break;
-    case 1: X->disguise = POTION; break;
-    case 2: X->disguise = SCROLL; break;
-    case 3: X->disguise = STAIRS; break;
-    case 4: X->disguise = WEAPON; break;
-    case 5: X->disguise = ARMOR; break;
-    case 6: X->disguise = RING; break;
-    case 7: X->disguise = STICK; break;
-    case 8: X->disguise = AMULET; break;
+    case 0: m_disguise = GOLD; break;
+    case 1: m_disguise = POTION; break;
+    case 2: m_disguise = SCROLL; break;
+    case 3: m_disguise = STAIRS; break;
+    case 4: m_disguise = WEAPON; break;
+    case 5: m_disguise = ARMOR; break;
+    case 6: m_disguise = RING; break;
+    case 7: m_disguise = STICK; break;
+    case 8: m_disguise = AMULET; break;
     }
 }
 
@@ -171,7 +171,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     
     const MonsterEntry* defaults = &monsters[type - 'A'];
     monster->m_type = type;
-    monster->disguise = type;
+    monster->m_disguise = type;
     monster->m_position = *position;
     monster->invalidate_tile_beneath();
     monster->m_room = get_room_from_position(*position);
@@ -186,7 +186,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     monster->m_confused_chance = defaults->confuse_roll;
 
     if (monster->is_mimic())
-        set_disguise(monster);
+        monster->set_disguise();
 
     game->level().monsters.push_front(monster);
 
