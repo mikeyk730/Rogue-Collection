@@ -31,7 +31,7 @@ Coord new_position;
 bool do_run(byte ch) //todo: understand running
 {
     game->m_running = true;
-    game->run_character = ch;
+    game->run_character = tolower(ch);
     return false;
 }
 

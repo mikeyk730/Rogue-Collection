@@ -12,8 +12,8 @@ int roll(int number, int sides);
 //playit: The main loop of the program.  Loop until the game is over, refreshing things and looking at the proper times.
 void playit(char *sname);
 
-//quit: Have player make certain, then exit.
-void quit();
+//do_quit: Have player make certain, then exit.
+bool do_quit();
 
 //leave: Leave quickly, but courteously
 void leave();

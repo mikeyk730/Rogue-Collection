@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 
     std::string filename;
     //filename = "tests\\empty.sav";
-    //filename = "saves\\blevel5.sav";
+    filename = "saves\\level9.sav";
     //filename = "invis_bug.sav";
     if (argc > 1)
         filename = argv[1];
@@ -145,8 +145,8 @@ void playit(char *sname)
     endit();
 }
 
-//quit: Have player make certain, then exit.
-void quit()
+//do_quit: Have player make certain, then exit.
+bool do_quit()
 {
     int oy, ox;
     byte answer;
@@ -184,6 +184,8 @@ void quit()
         game->repeat_cmd_count = 0;
     }
     should_quit = false;
+
+    return false;
 }
 
 //leave: Leave quickly, but courteously

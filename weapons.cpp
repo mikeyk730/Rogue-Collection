@@ -68,8 +68,8 @@ Item* create_weapon()
     return new Weapon(which);
 }
 
-//throw_projectile: Fire a projectile in a given direction
-bool throw_projectile()
+//do_throw_item: Fire a projectile in a given direction
+bool do_throw_item()
 {
     Coord delta;
     if (!get_dir(&delta))

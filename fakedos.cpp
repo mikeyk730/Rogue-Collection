@@ -5,14 +5,14 @@
 #include "rogue.h"
 #include "game_state.h"
 #include "output_interface.h"
-#include "fakedos.h"
 #include "mach_dep.h"
 #include "io.h"
 #include "strings.h"
+#include "commands.h"
 
 int dodos(char *com);
 
-void fakedos()
+bool do_fakedos()
 {
     char comline[132];
     char *comhead;
@@ -31,6 +31,8 @@ void fakedos()
     } while (dodos(comhead));
     game->screen().cursor(false);
     game->screen().wrestor();
+
+    return false;
 }
 
 //execute a dos like command

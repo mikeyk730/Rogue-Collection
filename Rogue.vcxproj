@@ -83,6 +83,7 @@
     <ClCompile Include="captured_input.cpp" />
     <ClCompile Include="combo_input.cpp" />
     <ClCompile Include="command.cpp" />
+    <ClCompile Include="commands.cpp" />
     <ClCompile Include="curses.cpp" />
     <ClCompile Include="daemon.cpp" />
     <ClCompile Include="daemons.cpp" />
@@ -130,12 +131,12 @@
     <ClInclude Include="armor.h" />
     <ClInclude Include="captured_input.h" />
     <ClInclude Include="command.h" />
+    <ClInclude Include="commands.h" />
     <ClInclude Include="console_output.h" />
     <ClInclude Include="curses.h" />
     <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />
     <ClInclude Include="env.h" />
-    <ClInclude Include="fakedos.h" />
     <ClInclude Include="fight.h" />
     <ClInclude Include="combo_input.h" />
     <ClInclude Include="gold.h" />

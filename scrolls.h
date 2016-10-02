@@ -33,5 +33,5 @@ struct Scroll : public Item
 
 Item* create_scroll();
 
-bool read_scroll();
+bool do_read_scroll();
 int is_scare_monster_scroll(Item* item);

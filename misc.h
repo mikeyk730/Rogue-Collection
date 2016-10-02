@@ -49,17 +49,17 @@ int equal(Coord a, Coord b);
 
 int offmap(Coord p);
 
-//search: Player gropes about him to find hidden things.
-void search();
+//do_search: Player gropes about him to find hidden things.
+bool do_search();
 
-//go_down_stairs: He wants to go down a level
-void go_down_stairs();
+//do_go_down_stairs: He wants to go down a level
+bool do_go_down_stairs();
 
-//go_up_stairs: He wants to go up a level
-void go_up_stairs();
+//do_go_up_stairs: He wants to go up a level
+bool do_go_up_stairs();
 
-//call: Allow a user to call a potion, scroll, or ring something
-void call();
+//do_call: Allow a user to call a potion, scroll, or ring something
+bool do_call();
 
 //prompt player for definition of macro
-void record_macro();
+bool do_record_macro();

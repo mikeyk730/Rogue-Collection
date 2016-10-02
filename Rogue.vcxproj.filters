@@ -160,6 +160,9 @@
     <ClCompile Include="game_state.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="commands.cpp">
+      <Filter>Unsorted</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="armor.h">
@@ -258,9 +261,6 @@
     <ClInclude Include="env.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
-    <ClInclude Include="fakedos.h">
-      <Filter>Unsorted</Filter>
-    </ClInclude>
     <ClInclude Include="fight.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
@@ -311,6 +311,9 @@
     </ClInclude>
     <ClInclude Include="rogue.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="commands.h">
+      <Filter>Unsorted</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

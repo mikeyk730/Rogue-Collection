@@ -7,8 +7,8 @@ void init_things();
 
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
 
-//drop: Put something down
-bool drop();
+//do_drop: Put something down
+bool do_drop();
 
 //can_drop: Do special checks for dropping or unweilding|unwearing|unringing
 bool can_drop(Item *op, bool unequip);
@@ -17,8 +17,8 @@ bool can_drop(Item *op, bool unequip);
 int pick_one(std::vector<MagicItem> magic);
 int pick_one(struct MagicItem *magic, int nitems);
 
-//discovered: list what the player has discovered in this game of a certain type
-void discovered();
+//do_discovered: list what the player has discovered in this game of a certain type
+bool do_discovered();
 
 //print_disc: Print what we've discovered of type 'type'
 void print_disc(byte type);

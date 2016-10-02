@@ -438,11 +438,11 @@ int offmap(Coord p)
     return (p.y < 1 || p.y >= maxrow() || p.x < 0 || p.x >= COLS);
 }
 
-//search: Player gropes about him to find hidden things.
-void search()
+//do_search: Player gropes about him to find hidden things.
+bool do_search()
 {
     if (game->hero().is_blind())
-        return;
+        return true;
 
     int ey = game->hero().m_position.y + 1;
     int ex = game->hero().m_position.x + 1;
@@ -455,10 +455,12 @@ void search()
             game->level().search(pos);
         }
     }
+
+    return true;
 }
 
-//go_down_stairs: He wants to go down a level
-void go_down_stairs()
+//do_go_down_stairs: He wants to go down a level
+bool do_go_down_stairs()
 {
     if (game->level().get_tile(game->hero().m_position) != STAIRS && !game->wizard().jump_levels())
         msg("I see no way down");
@@ -466,10 +468,11 @@ void go_down_stairs()
         next_level();
         game->level().new_level(true);
     }
+    return false;
 }
 
-//go_up_stairs: He wants to go up a level
-void go_up_stairs()
+//do_go_up_stairs: He wants to go up a level
+bool do_go_up_stairs()
 {
     if (game->level().get_tile(game->hero().m_position) == STAIRS || game->wizard().jump_levels()) {
         if (game->hero().has_amulet() || game->wizard().jump_levels()) {
@@ -482,24 +485,26 @@ void go_up_stairs()
             msg("your way is magically blocked");
     }
     else msg("I see no way up");
+
+    return false;
 }
 
-//call: Allow a user to call a potion, scroll, or ring something
-void call()
+//do_call: Allow a user to call a potion, scroll, or ring something
+bool do_call()
 {
     Item *obj = get_item("call", CALLABLE);
     if (!obj)
-        return;
+        return false;
 
     ItemClass* item_class = obj->item_class();
     if (!item_class){
         msg("you can't call that anything");
-        return;
+        return false;
     }
 
     if (item_class->is_discovered(obj->m_which)) {
         msg("that has already been identified");
-        return;
+        return false;
     }
 
     std::string called = item_class->get_guess(obj->m_which);
@@ -512,10 +517,12 @@ void call()
     if (*prbuf && *prbuf != ESCAPE)
         item_class->set_guess(obj->m_which, prbuf);
     msg("");
+
+    return false;
 }
 
 //prompt player for definition of macro
-void record_macro()
+bool do_record_macro()
 {
     char buffer[MACROSZ];
     char* buf = buffer;
@@ -529,7 +536,10 @@ void record_macro()
             if (*cp != CTRL('F'))
                 *buf++ = *cp;
         } while (*cp++);
+
         msg("");
         clear_typeahead_buffer();
         game->macro = buffer;
+
+        return false;
 }

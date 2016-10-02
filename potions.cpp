@@ -282,8 +282,8 @@ void(Potion::*potion_functions[MAXPOTIONS])() = {
   &Potion::quaff_thirst_quenching
 };
 
-//quaff: Quaff a potion from the pack
-bool quaff()
+//do_quaff: Quaff a potion from the pack
+bool do_quaff()
 {
     Item* item = get_item("quaff", POTION);
     if (!item) 

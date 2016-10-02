@@ -37,8 +37,8 @@ private:
 
 Item* create_weapon();
 
-//throw_projectile: Fire a projectile in a given direction
-bool throw_projectile();
+//do_throw_item: Fire a projectile in a given direction
+bool do_throw_item();
 
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(Item *obj, Coord delta);

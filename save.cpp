@@ -13,8 +13,8 @@ void do_save(const char* filename)
     msg("");
 }
 
-//save_game: Implement the "save game" command
-void save_game()
+//do_save_game: Implement the "save game" command
+bool do_save_game()
 {
     char savename[20];
 
@@ -28,6 +28,8 @@ void save_game()
     if (*savename == 0)
         strcpy(savename, game->get_environment("savefile").c_str());
     do_save(savename);
+
+    return false;
 }
 
 void restore_game(const char *filename)

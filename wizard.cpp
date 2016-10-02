@@ -75,7 +75,7 @@ char get_bless_char() {
 }
 
 //summon_object: Wizard command for getting anything he wants
-void summon_object()
+bool do_summon_object()
 {
     int which;
     Item* obj;
@@ -152,6 +152,7 @@ void summon_object()
     //todo:if (obj->m_type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
 
     game->hero().add_to_pack(obj, false);
+    return false;
 }
 
 //show_map: Print out the map for the wizard

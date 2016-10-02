@@ -1,6 +1,7 @@
 //Read and execute the user commands
 //command.c   1.44    (A.I. Design)   2/14/85
 
+#include <map>
 #include <ctype.h>
 #include "rogue.h"
 #include "game_state.h"
@@ -11,7 +12,6 @@
 #include "io.h"
 #include "wizard.h"
 #include "misc.h"
-#include "fakedos.h"
 #include "save.h"
 #include "armor.h"
 #include "weapons.h"
@@ -28,6 +28,74 @@
 #include "level.h"
 #include "food.h"
 #include "hero.h"
+#include "commands.h"
+
+namespace
+{
+    std::map<int, bool(*)()> s_commands =
+    {
+        //proper actions
+        { 'e', do_eat },
+        { 'w', do_wield },
+        { 'W', do_wear_armor },
+        { 'T', do_take_off_armor },
+        { 'P', do_put_on_ring },
+        { 'R', do_remove_ring },
+        { 't', do_throw_item },
+        { 'z', do_zap },
+        { 'q', do_quaff },
+        { 'r', do_read_scroll },
+        { 'd', do_drop },
+        { 's', do_search },
+        { '.', do_rest },
+        { '>', do_go_down_stairs },
+        { '<', do_go_up_stairs },
+
+        //informational/utility actions
+        { 'i', do_inventory },
+        { 'c', do_call },
+        { 'D', do_discovered },
+        { '^', do_id_trap },
+        { 'F', do_record_macro },
+        { 'S', do_save_game },
+        { 'Q', do_quit },
+        { 'v', do_print_version },
+        { '/', do_object_help },
+        { '?', do_command_help },
+        { '!', do_fakedos },
+        { 'o', do_options },
+        { CTRL('T'), do_toggle_terse },
+        { CTRL('F'), do_play_macro },
+        { CTRL('R'), do_repeat_msg },
+        { CTRL('L'), do_clear_screen },
+        { CTRL('W'), do_toggle_wizard },
+    };
+
+    //commands that are recognized only in wizard mode
+    std::map<int, bool(*)()> s_wizard_commands = {
+        { 'C', do_summon_object },
+        { 'X', do_show_map },
+        { CTRL('P'), do_toggle_powers },
+    };
+
+    bool is_move_command(int ch)
+    {
+        switch (ch) {
+        case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
+            return true;
+        }
+        return false;
+    }
+
+    bool is_run_command(int ch)
+    {
+        switch (ch) {
+        case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
+            return true;
+        }
+        return false;
+    }
+}
 
 void command()
 {
@@ -55,7 +123,7 @@ void command()
                 switch (game->hero().get_ring(ntimes)->m_which)
                 {
                 case R_SEARCH:
-                    search();
+                    do_search();
                     break;
                 case R_TELEPORT:
                     if (rnd(50) == 17)
@@ -221,202 +289,30 @@ void show_count()
 
 bool dispatch_command(int ch)
 {
-    bool counts_as_turn = true;
+    if (is_move_command(ch))
+        return do_move(ch, game->can_pickup_this_turn);
+    else if (is_run_command(ch))
+        return do_run(ch);
 
-    //todo: replace switch with call into map<char,bool(*)()>
-    switch (ch)
-    {
-    case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-    {
-        counts_as_turn = do_move(ch, game->can_pickup_this_turn);
-        break;
+    //try executing the command
+    auto i = s_commands.find(ch);
+    if (i != s_commands.end()) {
+        return (*i->second)();
     }
-    case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
-        counts_as_turn = do_run(tolower(ch));
-        break;
-    case 't':
-        counts_as_turn = throw_projectile();
-        break;
-    case 'Q':
-        counts_as_turn = false;
-        quit();
-        break;
-    case 'i':
-        counts_as_turn = false;
-        inventory(game->hero().m_pack, 0, "");
-        break;
-    case 'd':
-        counts_as_turn = drop();
-        break;
-    case 'q':
-        counts_as_turn = quaff();
-        break;
-    case 'r':
-        counts_as_turn = read_scroll();
-        break;
-    case 'e':
-        counts_as_turn = game->hero().eat();
-        break;
-    case 'w':
-        counts_as_turn = game->hero().wield();
-        break;
-    case 'W':
-        counts_as_turn = game->hero().wear_armor();
-        break;
-    case 'T':
-        counts_as_turn = game->hero().take_off_armor();
-        break;
-    case 'P':
-        counts_as_turn = game->hero().put_on_ring();
-        break;
-    case 'R':
-        counts_as_turn = game->hero().remove_ring();
-        break;
-    case 'c':
-        counts_as_turn = false;
-        call();
-        break;
-    case '>':
-        counts_as_turn = false;
-        go_down_stairs();
-        break;
-    case '<':
-        counts_as_turn = false;
-        go_up_stairs();
-        break;
-    case '/':
-        counts_as_turn = false;
-        help(helpobjs);
-        break;
-    case '?':
-        counts_as_turn = false;
-        help(helpcoms);
-        break;
-    case '!':
-        counts_as_turn = false;
-        fakedos();
-        break;
-    case 's':
-        counts_as_turn = true;
-        search();
-        break;
-    case 'z':
-        counts_as_turn = do_zap();
-        break;
-    case 'D':
-        counts_as_turn = false;
-        discovered();
-        break;
-    case CTRL('T'):
-    {
-        bool new_value = !in_brief_mode();
-        set_brief_mode(new_value);
-        msg(new_value ? "Ok, I'll be brief" : "Goodie, I can use big words again!");
-        counts_as_turn = false;
-        break;
-    }
-    case 'F':
-        counts_as_turn = false;
-        record_macro();
-        break;
-    case CTRL('F'):
-    {
-        counts_as_turn = false;
-        std::string macro = game->macro;
-        std::reverse(macro.begin(), macro.end());
-        game->typeahead = macro;
-    }
-        break;
-    case CTRL('R'):
-        counts_as_turn = false;
-        msg(game->last_message);
-        break;
-    case 'v':
-        counts_as_turn = false;
-        msg("Rogue version %d.%d", REV, VER);
-        break;
-    case 'S':
-        counts_as_turn = false;
-        save_game();
-        break;
-    case '.':
-        counts_as_turn = true;
-        doctor(); 
-        break;
 
-    case '^':
-    {
-        counts_as_turn = false;
-        Coord d;
-        if (get_dir(&d))
-        {
-            Coord lookat;
-
-            lookat.y = game->hero().m_position.y + d.y;
-            lookat.x = game->hero().m_position.x + d.x;
-            if (game->level().get_tile(lookat) != TRAP)
-                msg("no trap there.");
-            else msg("you found %s", tr_name(game->level().get_trap_type(lookat)));
-        }
-        break;
-    }
-    case 'o':
-        counts_as_turn = false;
-        msg("i don't have any options, oh my!");
-        break;
-    case CTRL('L'):
-        counts_as_turn = false;
-        msg("the screen looks fine to me");
-        break;
-
-    case CTRL('W'):
-        counts_as_turn = false;
-        game->wizard().toggle();
-        break;
-
-    default:
-        if (game->wizard().enabled()) {
-            switch (ch) {
-                //Wizard commands
-            case 'C':
-                counts_as_turn = false;
-                summon_object();
-                break;
-            case 'X':
-                counts_as_turn = false; 
-                show_map(true); 
-                break;
-            case 'Z':
-                counts_as_turn = false; 
-                show_map(false);
-                break;
-            case CTRL('P'):
-            {
-                counts_as_turn = false;
-                char b[255];
-                msg("Enter power: ");
-                getinfo(b, 128);
-                if (*b != ESCAPE)
-                    game->wizard().toggle_powers(b);
-                clear_msg();
-                break;
-            }
-            default:
-                counts_as_turn = false;
-                msg("illegal command '%s'", unctrl(ch));
-                game->repeat_cmd_count = 0;
-            }
-        }
-        else {
-            counts_as_turn = false;
-            msg("illegal command '%s'", unctrl(ch));
-            game->repeat_cmd_count = 0;
-            break;
+    //if we're a wizard look at wizard commands too
+    if (game->wizard().enabled()) {
+        auto i = s_wizard_commands.find(ch);
+        if (i != s_wizard_commands.end()) {
+            return (*i->second)();
         }
     }
 
-    return counts_as_turn;
+    msg("illegal command '%s'", unctrl(ch));
+    game->repeat_cmd_count = 0;
+    return false;
 }
+
 
 void execcom()
 {

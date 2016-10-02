@@ -81,8 +81,8 @@ void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
     va_end(argptr);
 }
 
-//drop: Put something down
-bool drop()
+//do_drop: Put something down
+bool do_drop()
 {
     byte ch;
     Item *nobj, *op;
@@ -237,11 +237,13 @@ int pick_one(struct MagicItem *magic, int nitems)
     return magic - start;
 }
 
-//discovered: list what the player has discovered in this game of a certain type
-void discovered()
+//do_discovered: list what the player has discovered in this game of a certain type
+bool do_discovered()
 {
-    if (game->wizard().enabled())
-        return debug_screen();
+    if (game->wizard().enabled()) {
+        debug_screen();
+        return false;
+    }
 
     print_disc(POTION);
     add_line("", " ", 0);
@@ -251,6 +253,8 @@ void discovered()
     add_line("", " ", 0);
     print_disc(STICK);
     end_line("");
+
+    return false;
 }
 
 //print_disc: Print what we've discovered of type 'type'
