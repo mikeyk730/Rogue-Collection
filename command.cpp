@@ -127,10 +127,14 @@ void advance_game()
         {
             if (--game->sleep_timer <= 0) {
                 msg("you can move again");
+                if (game->options.hit_plus_bugfix())
+                    game->hero().set_running(true);
                 game->sleep_timer = 0;
             }
         }
         else {
+            if (game->options.hit_plus_bugfix())
+                game->hero().set_running(true);
             execcom();
         }
 

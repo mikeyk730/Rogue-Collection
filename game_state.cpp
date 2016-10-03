@@ -17,33 +17,39 @@
 using std::placeholders::_1;
 
 /*
-
-//todo: option to fix +4 bug
-
--------------------------------------------------------------------------------
-haste_self_bugfix(true, false): true
--------------------------------------------------------------------------------
-The potion of haste self does not work in the original code.  It's meant to 
-give you 2-3 actions per turn, but a bug prevented this from ever happening.
-I've fixed the bug, but added an option to disable the fix.
-
--------------------------------------------------------------------------------
-throws_affect_mimics(true, false): false
--------------------------------------------------------------------------------
-In the original code, a thrown objects would always pass through a disguised 
-mimic.  A zapped bolt would reveal a mimic, but only hit him if the player were 
-blind.  In many cases the mimic would start chasing you while still disguised.
-
-I've simplified this.  If 'throws_affect_mimics' is 'true' you can zap and throw
-items at a disguised mimic just like any other monster.  If 'throws_affect_mimics'
-is 'false' then zaps and throws will pass through a disguised mimic
-
+;------------------------------------------------------------------------------
+; hit_plus_bugfix(true, false): true
+;------------------------------------------------------------------------------
+; During a fight, an attacker gets a +4 hit bonus if the defender is sleeping 
+; or held.  In the original code, the player was always considered asleep, so 
+; monsters always had an increased probability of hitting the player.  I've 
+; fixed the bug by default, but added an option to disable the fix.
+;
+;------------------------------------------------------------------------------
+; haste_self_bugfix(true, false): true
+;------------------------------------------------------------------------------
+; The potion of haste self does not work in the original code.  It's meant to 
+; give you 2-3 actions per turn, but a bug prevented this from ever happening.
+; I've fixed the bug by default, but added an option to disable the fix.
+;
+;------------------------------------------------------------------------------
+; throws_affect_mimics(true, false): false
+;------------------------------------------------------------------------------
+; In the original code, a thrown objects would always pass through a disguised 
+; mimic.  A zapped bolt would reveal a mimic, but only hit him if the player 
+; were blind.  In many cases the mimic would start chasing you while still 
+; disguised.
+;
+; I've simplified this.  If 'throws_affect_mimics' is 'true' you can zap and 
+; throw items at a disguised mimic just like any other monster.  If it is 
+; set to 'false' then zaps and thrown items will pass through a disguised mimic
+;
 */
 
 
 namespace
 {
-    const int s_serial_version = 3;
+    const int s_serial_version = 4;
 }
 
 GameState::GameState(int seed) :
@@ -76,6 +82,10 @@ GameState::GameState(Random* random, const std::string& filename) :
 
     if (version < 3) {
         throw std::runtime_error("Unsupported save version " + filename);
+    }
+    else if (version < 4) {
+        //the game engine has since enabled this bugfix by default
+        set_environment("hit_plus_bugfix", "false");
     }
 
     read(*in, &m_seed);
@@ -297,6 +307,11 @@ bool GameState::Options::use_exp_level_names() const
 bool GameState::Options::haste_self_bugfix() const
 {
     return game->get_environment("haste_self_bugfix") != "false";
+}
+
+bool GameState::Options::hit_plus_bugfix() const
+{
+    return game->get_environment("hit_plus_bugfix") != "false";
 }
 
 bool GameState::Options::zap_release_bugfix() const

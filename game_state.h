@@ -69,6 +69,7 @@ struct GameState
 
         //behavior changing options
         bool haste_self_bugfix() const;
+        bool hit_plus_bugfix() const;
         bool zap_release_bugfix() const;
         bool striking_charge_bugfix() const;
         bool use_throw_damage() const;
