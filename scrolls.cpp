@@ -155,7 +155,8 @@ void Scroll::read_magic_mapping()
                     if (monster->tile_beneath() == ' ')
                         monster->set_tile_beneath(ch);
                 break;
-            default: ch = ' ';
+            default: 
+                ch = ' ';
             }
             if (ch == DOOR)
             {

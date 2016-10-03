@@ -410,8 +410,8 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
 //obtain_target: find the proper destination for the monster
 Coord* Monster::obtain_target()
 {
-    // if we're in the same room as the player, or can see the player, then we go after the player
-    // if we have a chance to carry an item, we may go after an unclaimed item in the same room
+    // if we're in the same room as the player, or can see the player, then we go after the player.
+    // if we have a chance to carry an item, we may go after an unclaimed item in the same room.
     int carry_prob;
     if ((carry_prob = get_carry_probability()) <= 0 || in_same_room_as(&game->hero()) || game->hero().can_see_monster(this))
         return &game->hero().m_position;

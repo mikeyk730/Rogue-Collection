@@ -155,18 +155,14 @@ void draw_room(struct Room *room)
 //vert: Draw a vertical line
 void vert(struct Room *room, int startx)
 {
-    int y;
-
-    for (y = room->m_ul_corner.y + 1; y <= room->m_size.y + room->m_ul_corner.y - 1; y++)
+    for (int y = room->m_ul_corner.y + 1; y <= room->m_size.y + room->m_ul_corner.y - 1; y++)
         game->level().set_tile({ startx,y }, VWALL);
 }
 
 //horiz: Draw a horizontal line
 void horiz(struct Room *room, int starty)
 {
-    int x;
-
-    for (x = room->m_ul_corner.x; x <= room->m_ul_corner.x + room->m_size.x - 1; x++)
+    for (int x = room->m_ul_corner.x; x <= room->m_ul_corner.x + room->m_size.x - 1; x++)
         game->level().set_tile({ x,starty }, HWALL);
 }
 
