@@ -319,7 +319,7 @@ void Cheats::apply_powers()
     if (enabled() && see_invisible())
         show_invisible();
     else
-        unsee();
+        unsee_invisible();
 }
 
 bool Cheats::is_enabled(const std::string& power) const

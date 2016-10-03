@@ -155,7 +155,7 @@ void Potion::quaff_gain_strength()
 void Potion::quaff_see_invisible()
 {
     if (!game->hero().sees_invisible()) {
-        fuse(unsee, 0, SEE_DURATION);
+        fuse(unsee_invisible, 0, SEE_DURATION);
         look(false);
         show_invisible();
     }

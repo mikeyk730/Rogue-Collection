@@ -14,17 +14,18 @@
 /*
 mdk: 
 fuses used in original code:
-  -unconfuse
-  -nohaste
-  -swander
-  -unsee
-  -turn_see
-  -sight
-daemons used in original code:
-  -rollwand
-  -doctor
-  -stomach
-  -runners
+  -unconfuse: stop being confused
+  -nohaste: stop haste
+  -unsee: stop seeing invisible
+  -turn_see: stop detecting monsters
+  -sight: regain sight
+  -swander: start a rollwand daemon
+
+  daemons used in original code:
+  -doctor: heal the player
+  -stomach: consume food
+  -runners: give monsters a turn
+  -rollwand: create wandering monster
 */
 
 struct delayed_action

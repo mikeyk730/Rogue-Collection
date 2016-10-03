@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     daemon(doctor, 0);
     fuse(start_wander, 0, WANDER_TIME);
     daemon(stomach, 0);
-    daemon(runners, 0);
+    daemon(run_monsters, 0);
 
     msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
     game->screen().raise_curtain();

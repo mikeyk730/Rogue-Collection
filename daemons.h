@@ -4,14 +4,14 @@ void doctor();
 //Swander: Called when it is time to start rolling for wandering monsters
 void start_wander();
 
-//rollwand: Called to roll to see if a wandering monster starts up
-void rollwand();
+//roll_for_wanderer: Called to roll to see if a wandering monster starts up
+void roll_for_wanderer();
 
 //unconfuse: Release the poor player from his confusion
 void unconfuse();
 
-//unsee: Turn off the ability to see invisible
-void unsee();
+//unsee_invisible: Turn off the ability to see invisible
+void unsee_invisible();
 
 //sight: He gets his sight back
 void sight();
@@ -22,6 +22,6 @@ void nohaste();
 //stomach: Digest the hero's food
 void stomach();
 
-//runners: Make all the running monsters move.
-void runners();
+//run_monsters: Make all the running monsters move.
+void run_monsters();
 

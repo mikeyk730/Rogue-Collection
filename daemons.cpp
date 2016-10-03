@@ -48,11 +48,11 @@ void doctor()
 //Swander: Called when it is time to start rolling for wandering monsters
 void start_wander()
 {
-    daemon(rollwand, 0);
+    daemon(roll_for_wanderer, 0);
 }
 
-//rollwand: Called to roll to see if a wandering monster starts up
-void rollwand()
+//roll_for_wanderer: Called to roll to see if a wandering monster starts up
+void roll_for_wanderer()
 {
     static int between = 0;
 
@@ -60,7 +60,7 @@ void rollwand()
     {
         if (roll(1, 6) == 4) {
             create_wandering_monster();
-            extinguish(rollwand);
+            extinguish(roll_for_wanderer);
             fuse(start_wander, 0, WANDER_TIME);
         }
         between = 0;
@@ -74,8 +74,8 @@ void unconfuse()
     msg("you feel less confused now");
 }
 
-//unsee: Turn off the ability to see invisible
-void unsee()
+//unsee_invisible: Turn off the ability to see invisible
+void unsee_invisible()
 {
     Monster *th;
 
@@ -113,8 +113,8 @@ void stomach()
     game->hero().digest();
 }
 
-//runners: Make all the running monsters move.
-void runners()
+//run_monsters: Make all the running monsters move.
+void run_monsters()
 {
     //Todo: Major refactor needed.  Monsters can die during do_chase.  Leprechauns
     //and Nymphs disappear as part of their attack.  Ice Monsters and Dragons can

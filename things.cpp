@@ -157,8 +157,8 @@ bool can_drop(Item *op, bool unequip)
     game->hero().set_ring(hand, NULL);
     if (op->m_which == R_SEEINVIS) //todo: better place for this?  should be automatic
     {
-        unsee();
-        extinguish(unsee);
+        unsee_invisible();
+        extinguish(unsee_invisible);
     }
 
     return true;
