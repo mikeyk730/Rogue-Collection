@@ -478,7 +478,7 @@ bool rattlesnake_attack()
 void flytrap_attack(Monster* mp)
 {
     //Flytrap stops the poor guy from moving
-    game->hero().set_is_held(true);
+    game->hero().set_held_by(mp);
     std::ostringstream ss;
     ss << ++(mp->m_flytrap_count) << "d1";
     mp->m_stats.m_damage = ss.str();

@@ -64,7 +64,8 @@ bool is_passage_or_door(Coord p)
     return (game->level().is_passage(p) || game->level().get_tile(p) == DOOR);
 }
 
-bool continue_vertical() {
+bool continue_vertical() 
+{
     int dy;
 
     Coord n = north(game->hero().m_position);
@@ -152,6 +153,7 @@ bool do_move_impl(bool can_pickup)
     //Check if he tried to move off the screen or make an illegal diagonal move, and stop him if he did. fudge it for 40/80 jll -- 2/7/84
     if (offmap(new_position))
         return !do_hit_boundary();
+
     if (!diag_ok(game->hero().m_position, new_position)) {
         this_move_counts = false;
         game->stop_running();
@@ -176,9 +178,13 @@ bool do_move_impl(bool can_pickup)
         game->level().set_tile(new_position, TRAP);
         game->level().set_flag(new_position, F_REAL);
     }
-    else if (game->hero().is_held() && ch != 'F') { //TODO: can only attack the monster holding you, remove direct check for 'F'
-        msg("you are being held");
-        return false;
+    else if (game->hero().is_held()) {
+        //mdk: When you're held, you can only attack your captor
+        Monster* monster = game->level().monster_at(new_position);
+        if (!monster || !game->hero().is_held_by(monster)) {
+            msg("you are being held");
+            return false;
+        }
     }
     switch (ch)
     {

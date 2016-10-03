@@ -308,10 +308,9 @@ void Hero::teleport()
     }
     else { m_position = c; look(true); }
     game->screen().mvaddch(m_position, PLAYER);
+
     //turn off IS_HELD in case teleportation was done while fighting a Flytrap
-    if (is_held()) {
-        set_is_held(false);
-    }
+    clear_hold();
     
     reset_trap_turns();
     game->cancel_repeating_cmd();
@@ -944,4 +943,21 @@ bool Hero::decrement_trap_turns()
         return true;
     }
     return false;
+}
+
+bool Hero::is_held_by(Agent * a) const
+{
+    return m_held_by == a;
+}
+
+void Hero::set_held_by(Agent * a)
+{
+    m_held_by = a;
+    set_is_held(true);
+}
+
+void Hero::clear_hold()
+{
+    m_held_by = 0;
+    set_is_held(false);
 }

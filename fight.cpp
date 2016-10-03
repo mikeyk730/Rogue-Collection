@@ -186,8 +186,8 @@ void remove_monster(Monster* monster, bool waskill)
 void killed_by_hero(Monster* monster, bool print)
 {
     //If the monster was a flytrap, un-hold him
-    if (monster->can_hold()) {
-        game->hero().set_is_held(false);
+    if (game->hero().is_held_by(monster)) {
+        game->hero().clear_hold();
     }
 
     if (monster->drops_gold()) {

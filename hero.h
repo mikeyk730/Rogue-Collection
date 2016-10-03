@@ -114,6 +114,10 @@ public:
     void reset_trap_turns();
     bool decrement_trap_turns();
 
+    bool is_held_by(Agent* a) const;
+    void set_held_by(Agent* a);
+    void clear_hold();
+
 private:
     int m_purse = 0;
     bool m_had_amulet = false;
@@ -128,5 +132,6 @@ private:
 
     int m_sleep_turns = 0;    //Number of turns to sleep
     int m_trap_turns = 0;     //Number of turns stuck in place
+    Agent* m_held_by = 0;     //The agent holding the player
 };
 

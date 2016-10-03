@@ -307,8 +307,9 @@ bool Stick::zap_polymorph(Coord dir)
         return true;
 
     //cancel the holding effect as the monster is changing
-    if (monster->can_hold())
-        game->hero().set_is_held(false);
+    if (game->hero().is_held_by(monster)) {
+        game->hero().clear_hold();
+    }
 
     //restore the level tile, as the new monster may be invisible
     Coord p = monster->position();
@@ -413,8 +414,9 @@ bool Stick::zap_teleport_away(Coord dir)
     monster->m_position = new_pos;
 
     //the monster can no longer hold the player
-    if (monster->can_hold())
-        game->hero().set_is_held(false);
+    if (game->hero().is_held_by(monster)) {
+        game->hero().clear_hold();
+    }
 
     //the monster chases the player
     monster->start_run(&game->hero().m_position);
@@ -435,12 +437,6 @@ bool Stick::zap_teleport_to(Coord dir)
     //move the monster to beside the player
     monster->m_position = game->hero().m_position + dir;
 
-    //mdk:bugfix: originally zapping a flytrap would release the hold,
-    //but this doesn't make sense
-    bool zap_release(!game->options.zap_release_bugfix());
-    if (zap_release && monster->can_hold())
-        game->hero().set_is_held(false);
-
     //the monster chases the player
     monster->start_run(&game->hero().m_position);
 
@@ -453,8 +449,9 @@ bool Stick::zap_cancellation(Coord dir)
     if (!monster)
         return true;
     
-    if (monster->can_hold())    
-        game->hero().set_is_held(false);
+    if (game->hero().is_held_by(monster)) {
+        game->hero().clear_hold();
+    }
 
     monster->set_cancelled(true);
     monster->set_invisible(false);
@@ -481,12 +478,6 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
     }
     else {
         msg("you hear a maniacal chuckle in the distance.");
-
-        //mdk:bugfix: originally zapping a flytrap would release the hold,
-        //but this doesn't make sense
-        bool zap_release(!game->options.zap_release_bugfix());
-        if (zap_release && monster->can_hold())
-            game->hero().set_is_held(false);
 
         //the monster chases the player
         monster->start_run(&game->hero().m_position);

@@ -314,11 +314,6 @@ bool GameState::Options::hit_plus_bugfix() const
     return game->get_environment("hit_plus_bugfix") != "false";
 }
 
-bool GameState::Options::zap_release_bugfix() const
-{
-    return game->get_environment("zap_release_bugfix") != "false";
-}
-
 bool GameState::Options::striking_charge_bugfix() const
 {
     return game->get_environment("striking_charge_bugfix") != "false";
