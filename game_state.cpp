@@ -279,6 +279,11 @@ void GameState::set_fast_play(bool enable)
     m_fast_play_enabled = enable;
 }
 
+void GameState::set_custom_monsters()
+{
+    m_custom_monsters = true;
+}
+
 //todo:
 //monster config
 //all extern/global variables

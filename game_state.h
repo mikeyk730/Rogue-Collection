@@ -48,6 +48,8 @@ struct GameState
     bool fast_play() const;
     void set_fast_play(bool enable);
 
+    void set_custom_monsters();
+
     struct LastTurnState
     {
         //State about the last command, needed to support commands like 'a' (repeat last action)
@@ -108,8 +110,9 @@ private:
     long m_seed = 0; //Random number seed
     int m_restore_count = 0;
     bool m_fast_play_enabled = false; //If 'Fast Play' has been enabled
-    bool m_in_replay = false;  //If we are currently replaying a saved game
-    bool m_show_replay = true;
+    bool m_in_replay = false;         //If we are currently replaying a saved game
+    bool m_show_replay = true;        //If we render the game during a replay
+    bool m_custom_monsters = false;   //If the standard monsters have been altered
 
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 

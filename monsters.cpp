@@ -93,6 +93,8 @@ void load_monster_cfg(const std::string& filename)
         if (line.empty() || line[0] == '#')
             continue;
 
+        game->set_custom_monsters();
+
         if (line.substr(0, 7) == "l_order") {
             std::string l = line.substr(9, 26);
             l.copy(lvl_mons, 26);
@@ -119,6 +121,30 @@ void load_monster_cfg(const std::string& filename)
 
         monsters[type - 'A'] = m;
         //printf("%c %s %d %x %d %d %d %d %d %s %x\n", m_type, m.name.c_str(), m.carry, m.m_flags, m.m_stats.str, m.m_stats.exp, m.m_stats.m_level, m.m_stats.m_ac, m.m_stats.m_hp, m.m_stats.m_damage.c_str(), m.exflags);
+    }
+}
+
+void save_monster_cfg(const std::string & filename)
+{
+    using std::endl;
+
+    std::ofstream file(filename, std::ios::out);
+    file << "l_order=" << lvl_mons << endl;
+    file << "w_order=" << wand_mons << endl;
+    for (int i = 0; i < 26; ++i) {
+        MonsterEntry* m = &monsters[i];
+
+        std::string name = m->name;
+        std::replace(name.begin(), name.end(), ' ', '_');
+
+        file << char('A' + i) << " ";
+        file << name << " ";
+        file << m->carry << " ";
+        file << std::hex << m->flags << " ";
+        file << std::dec << m->stats.m_str << " " << m->stats.m_exp << " " << m->stats.m_level << " " << m->stats.m_ac << " " << m->stats.m_hp << " ";
+        file << m->stats.m_damage << " ";
+        file << std::dec << m->confuse_roll << " ";
+        file << std::hex << m->exflags << endl;
     }
 }
 

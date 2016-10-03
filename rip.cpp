@@ -59,6 +59,7 @@ int get_year()
 void score(int amount, int flags, char monst)
 {
     game->save_game("lastgame.sav");
+    save_monster_cfg("lastgame.mon");
 
     struct LeaderboardEntry his_score, top_ten[TOPSCORES];
     int rank = 0;
