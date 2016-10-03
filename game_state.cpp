@@ -127,6 +127,11 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
 GameState::~GameState()
 { }
 
+bool GameState::in_smart_run_mode() const
+{
+    return in_run_cmd() && stop_at_door() && !first_move();
+}
+
 void GameState::cancel_repeating_cmd()
 {
     last_turn.command.count = 0;

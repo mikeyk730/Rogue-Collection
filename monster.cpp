@@ -245,7 +245,7 @@ Monster* Monster::do_chase() //todo: understand
                 (m_position.y == game->hero().m_position.y || m_position.x == game->hero().m_position.x || abs(m_position.y - game->hero().m_position.y) == abs(m_position.x - game->hero().m_position.x)) &&
                 ((dist = distance(m_position, game->hero().m_position)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !powers_cancelled() && rnd(DRAGONSHOT) == 0)
             {
-                game->stop_running();
+                game->stop_run_cmd();
                 Coord delta;
                 delta.y = sign(game->hero().m_position.y - m_position.y);
                 delta.x = sign(game->hero().m_position.x - m_position.x);
@@ -566,7 +566,7 @@ Monster* Monster::attack_player()
     bool attack_success = false;
 
     //Since this is an attack, stop running and any healing that was going on at the time.
-    game->stop_running();
+    game->stop_run_cmd();
     game->cancel_repeating_cmd();
     game->turns_since_heal = 0;
 

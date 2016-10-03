@@ -478,7 +478,7 @@ void handle_key_state()
     {
         game->set_fast_play(scroll_lock_on);
         game->cancel_repeating_cmd();
-        game->stop_running();
+        game->stop_run_cmd();
     }
 
     if ( scrl != game->fast_play()) {
@@ -497,7 +497,7 @@ void handle_key_state()
         numl = num_lock_on;
         game->cancel_repeating_cmd();
         //show_count();
-        game->stop_running();
+        game->stop_run_cmd();
         game->screen().move(LINES - 1, nspot);
         if (numl) {
             game->screen().bold();

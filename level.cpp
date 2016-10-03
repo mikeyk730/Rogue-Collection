@@ -120,14 +120,14 @@ void Level::search(Coord pos)
             set_tile(pos, DOOR);
             set_flag(pos, F_REAL);
             game->cancel_repeating_cmd();
-            game->stop_running();
+            game->stop_run_cmd();
             break;
         case FLOOR:
             if (rnd(2) != 0) break;
             set_tile(pos, TRAP);
             set_flag(pos, F_REAL);
             game->cancel_repeating_cmd();
-            game->stop_running();
+            game->stop_run_cmd();
             msg("you found %s", tr_name(get_trap_type(pos)));
             break;
         }
@@ -282,7 +282,9 @@ void Level::new_level(int do_implode)
     } while (!(is_real(game->hero().m_position)));  //don't place hero on a trap
 
     reset_msg_position();  //todo: rest probably belongs somewhere else
+    //todo:makre sure same things happen as in teleport
     //unhold when you go down just in case
+    game->hero().reset_trap_turns();
     game->hero().clear_hold();
     enter_room(game->hero().m_position);
     game->screen().mvaddch(game->hero().m_position, PLAYER);

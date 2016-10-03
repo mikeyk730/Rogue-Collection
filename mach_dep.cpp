@@ -342,7 +342,8 @@ bool is_shift_pressed()
 
 void beep()
 {
-    Beep(750, 300);
+    if (!game->in_replay())
+        Beep(750, 300);
 }
 
 void tick_pause()

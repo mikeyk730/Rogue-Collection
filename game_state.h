@@ -78,8 +78,9 @@ struct GameState
         bool throws_affect_mimics() const;
     } options;
 
+    bool in_smart_run_mode() const;
     bool in_run_cmd() const { return m_running; }
-    void stop_running() { m_running = false; }
+    void stop_run_cmd() { m_running = false; }
     bool stop_at_door() const { return m_stop_at_door; }
     bool first_move() const { return m_first_move; }
 
@@ -93,7 +94,6 @@ struct GameState
     int no_food = 0;             //Number of levels without food
     int turns_since_heal = 0;    //Number of turns_since_heal turns
     bool repeat_last_action;     //The last command is repeated
-    int was_trapped = 0;   //Was a trap sprung
     bool invalid_position = false;
     char run_character; //Direction player is running
     char last_message[BUFSIZE];     //The last message printed

@@ -118,6 +118,11 @@ public:
     void set_held_by(Agent* a);
     void clear_hold();
 
+    void set_sprung_trap(int type);
+    bool sprung_trap() const;
+    bool sprung_teleport_trap() const;
+    void reset_sprung();
+
 private:
     int m_purse = 0;
     bool m_had_amulet = false;
@@ -130,6 +135,7 @@ private:
     Item* m_weapon = 0;       //Which weapon he is wielding
     Ring* m_rings[2] = {0,0}; //Which rings are being worn
 
+    int m_trap_type = NTRAPS; //
     int m_sleep_turns = 0;    //Number of turns to sleep
     int m_trap_turns = 0;     //Number of turns stuck in place
     Agent* m_held_by = 0;     //The agent holding the player

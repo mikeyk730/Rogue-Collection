@@ -142,7 +142,7 @@ bool do_hit_boundary()
         }
     }
     this_move_counts = false;
-    game->stop_running();
+    game->stop_run_cmd();
     return true;
 }
 
@@ -156,13 +156,13 @@ bool do_move_impl(bool can_pickup)
 
     if (!diag_ok(game->hero().m_position, new_position)) {
         this_move_counts = false;
-        game->stop_running();
+        game->stop_run_cmd();
         return false;
     }
     //If you are running and the move does not get you anywhere stop running
     if (game->in_run_cmd() && equal(game->hero().m_position, new_position)) {
         this_move_counts = false;
-        game->stop_running();
+        game->stop_run_cmd();
     }
 
     bool is_real = game->level().is_real(new_position);
@@ -172,7 +172,7 @@ bool do_move_impl(bool can_pickup)
     ch = game->level().get_tile_or_monster(new_position);
     //When the hero is on the door do not allow him to run until he enters the room all the way
     if ((game->level().get_tile(game->hero().m_position) == DOOR) && (ch == FLOOR))
-        game->stop_running();
+        game->stop_run_cmd();
     if (!(is_real) && ch == FLOOR) {
         ch = TRAP;
         game->level().set_tile(new_position, TRAP);
@@ -192,7 +192,7 @@ bool do_move_impl(bool can_pickup)
         return !do_hit_boundary();
 
     case DOOR:
-        game->stop_running();
+        game->stop_run_cmd();
         if (game->level().is_passage(game->hero().m_position))
             enter_room(new_position);
         finish_do_move(is_passage, is_maze);
@@ -214,12 +214,12 @@ bool do_move_impl(bool can_pickup)
         return false;
 
     default:
-        game->stop_running();
+        game->stop_run_cmd();
         if (isupper(ch) || game->level().monster_at(new_position))
             game->hero().fight(new_position, game->hero().get_current_weapon(), false);
         else
         {
-            game->stop_running();
+            game->stop_run_cmd();
             finish_do_move(is_passage, is_maze);
 
             if (ch != STAIRS && can_pickup)
@@ -296,10 +296,10 @@ int handle_trap(Coord tc)
     const int COLS = game->screen().columns();
 
     game->cancel_repeating_cmd();
-    game->stop_running();
+    game->stop_run_cmd();
     game->level().set_tile(tc, TRAP);
     tr = game->level().get_trap_type(tc);
-    game->was_trapped = 1;
+    game->hero().set_sprung_trap(tr);
     switch (tr)
     {
     case T_DOOR:
@@ -344,7 +344,6 @@ int handle_trap(Coord tc)
     case T_TELEP:
         game->hero().teleport();
         game->screen().mvaddch(tc, TRAP); //since the hero's leaving, look() won't put it on for us
-        game->was_trapped++;//todo:look at this
         break;
 
     case T_DART:

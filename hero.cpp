@@ -216,7 +216,7 @@ void Hero::digest()
         if (get_sleep_turns() || rnd(5) != 0)
             return;
         increase_sleep_turns(rnd(8) + 4);
-        game->stop_running();
+        game->stop_run_cmd();
         game->cancel_repeating_cmd();
         hungry_state = 3;
         msg("%syou faint from lack of food", noterse("you feel very weak. "));
@@ -314,7 +314,7 @@ void Hero::teleport()
     
     reset_trap_turns();
     game->cancel_repeating_cmd();
-    game->stop_running();
+    game->stop_run_cmd();
     clear_typeahead_buffer();
 
     //Teleportation can be a confusing experience (unless you really are a wizard)
@@ -961,4 +961,24 @@ void Hero::clear_hold()
 {
     m_held_by = 0;
     set_is_held(false);
+}
+
+void Hero::set_sprung_trap(int type)
+{
+    m_trap_type = type;
+}
+
+bool Hero::sprung_trap() const
+{
+    return m_trap_type != NTRAPS;
+}
+
+bool Hero::sprung_teleport_trap() const
+{
+    return m_trap_type == T_TELEP;
+}
+
+void Hero::reset_sprung()
+{
+    m_trap_type = NTRAPS;
 }
