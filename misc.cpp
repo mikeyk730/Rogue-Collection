@@ -122,19 +122,21 @@ void look(bool wakeup) //todo: learn this function
                 }
             //Not in same passage
                 else if ((fp&F_PASS) && (fp&F_PNUM) != (pfl & F_PNUM)) continue;
-                if ((monster = game->level().monster_at({ x, y })) != NULL) if (game->hero().detects_others() && monster->is_invisible())
-                {
-                    if (game->stop_at_door() && !game->first_move())
-                        game->stop_running();
-                    continue;
-                }
-                else
-                {
-                    if (wakeup) wake_monster({ x,y });
-                    if (monster->tile_beneath() != ' ' || (!(room->is_dark()) && !game->hero().is_blind()))
-                        monster->reload_tile_beneath();
-                    if (game->hero().can_see_monster(monster)) 
-                        ch = monster->m_disguise;
+                if ((monster = game->level().monster_at({ x, y })) != NULL) {
+                    if (game->hero().detects_others() && monster->is_invisible())
+                    {
+                        if (game->stop_at_door() && !game->first_move())
+                            game->stop_running();
+                        continue;
+                    }
+                    else
+                    {
+                        if (wakeup) wake_monster({ x,y });
+                        if (monster->tile_beneath() != ' ' || (!(room->is_dark()) && !game->hero().is_blind()))
+                            monster->reload_tile_beneath();
+                        if (game->hero().can_see_monster(monster))
+                            ch = monster->m_disguise;
+                    }
                 }
                 //The current character used for IBM ARMOR doesn't look right in Inverse
                 if ((ch != PASSAGE) && (fp&(F_PASS | F_MAZE))) if (ch != ARMOR) game->screen().standout();
