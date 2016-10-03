@@ -275,11 +275,15 @@ void passnum()
 
     pnum = 0;
     newpnum = false;
-    for (room = passages; room < &passages[MAXPASS]; room++) room->m_num_exits = 0;
-    for (room = rooms; room < &rooms[MAXROOMS]; room++) for (i = 0; i < room->m_num_exits; i++)
-    {
-        newpnum++;
-        numpass(room->m_exits[i]);
+    for (room = passages; room < &passages[MAXPASS]; room++)
+        room->m_num_exits = 0;
+
+    for (room = rooms; room < &rooms[MAXROOMS]; room++) {
+        for (i = 0; i < room->m_num_exits; i++)
+        {
+            newpnum++;
+            numpass(room->m_exits[i]);
+        }
     }
 }
 
@@ -297,8 +301,7 @@ void numpass(Coord p)
     if ((ch = game->level().get_tile(p)) == DOOR || (!game->level().is_real(p) && ch != FLOOR))
     {
         room = &passages[pnum];
-        room->m_exits[room->m_num_exits].y = p.y;
-        room->m_exits[room->m_num_exits++].x = p.x;
+        room->m_exits[room->m_num_exits++] = p;
     }
     else if (!game->level().is_passage(p))
         return;

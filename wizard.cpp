@@ -169,7 +169,12 @@ bool do_reveal_level()
                 if (monster->tile_beneath() == ' ')
                     monster->set_tile_beneath(ch);
 
+            int real = game->level().is_real(p);
+            if (!real)
+                game->screen().standout();
             game->screen().mvaddch(p, ch);
+            if (!real)
+                game->screen().standend();
         }
     }
     return false;
@@ -177,8 +182,8 @@ bool do_reveal_level()
 
 bool do_show_map()
 {
-    game->level().show_map();
-    //do_reveal_level();
+    //game->level().show_map();
+    do_reveal_level();
     //show_map(true);
     return false;
 }
