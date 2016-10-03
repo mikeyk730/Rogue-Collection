@@ -103,12 +103,15 @@ public:
     //add_haste: Add a haste to the player
     int add_haste(bool is_temporary);
 
-private:
+    void set_num_actions(int actions);
+    bool decrement_num_actions();
 
+private:
     int m_purse = 0;
     bool m_had_amulet = false;
     int hungry_state = 0;    //How hungry is he
     int food_left = 0;       //Amount of food in hero's stomach
+    int m_num_actions = 0;
     std::string m_name;
 
     Armor* m_armor = 0;       //What a well dresssed rogue wears

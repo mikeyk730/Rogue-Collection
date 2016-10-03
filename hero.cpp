@@ -884,3 +884,17 @@ int Hero::add_haste(bool is_temporary)
         return true;
     }
 }
+
+void Hero::set_num_actions(int actions)
+{
+    m_num_actions = actions;
+}
+
+bool Hero::decrement_num_actions()
+{
+    if (m_num_actions > 0) {
+        --m_num_actions;
+        return true;
+    }
+    return false;
+}

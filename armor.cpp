@@ -78,8 +78,10 @@ Item* create_armor()
 //waste_time: Do nothing but let other things happen
 void waste_time()
 {
-    do_daemons();
-    do_fuses();
+    if (!game->hero().decrement_num_actions()) {
+        do_daemons();
+        do_fuses();
+    }
 }
 
 std::string Armor::InventoryName() const

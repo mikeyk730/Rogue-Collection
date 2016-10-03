@@ -113,13 +113,13 @@ bool Command::is_run() const
 
 void advance_game()
 {
-    int num_hero_actions = 1;
+    game->hero().set_num_actions(1);
     //mdk:bugfix:  The hero was meant to get 2-3 actions when hasted, but he
     //always got 1 in the original because of a bug.
     if (game->hero().is_fast() && game->options.haste_self_bugfix())
-        num_hero_actions = rnd(2) + 2;
+        game->hero().set_num_actions(rnd(2) + 2);
 
-    while (num_hero_actions--)
+    while (game->hero().decrement_num_actions())
     {
         update_status_bar();
         SIG2();
