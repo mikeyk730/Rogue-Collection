@@ -347,7 +347,8 @@ void beep()
 
 void tick_pause()
 {
-    Sleep(50);
+    if(!game->in_replay())
+        Sleep(75);
 }
 
 bool KeyboardInput::HasMoreInput()

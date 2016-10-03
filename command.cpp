@@ -141,8 +141,10 @@ void advance_game()
     {
         update_status_bar();
         handle_key_state();
-        if (!game->hero().decrement_sleep_timer())
-        {
+        if (game->hero().decrement_sleep_timer()) {
+            tick_pause();
+        }
+        else {
             //mdk:bugfix: the player was never set as running, so treated as asleep in battle
             if (game->options.hit_plus_bugfix())
                 game->hero().set_running(true);
