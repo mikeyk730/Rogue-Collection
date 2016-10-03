@@ -29,7 +29,7 @@ struct OutputInterface
 
     virtual void set_attr(int bute) = 0;
 
-    virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5) = 0;
+    //virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5) = 0;
 
     //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
     virtual void winit(bool) = 0;
@@ -45,16 +45,16 @@ struct OutputInterface
     //Some general drawing routines
     virtual void box(int ul_r, int ul_c, int lr_r, int lr_c) = 0;
 
-    virtual void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c) = 0;
+    //virtual void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c) = 0;
 
     //center a string according to how many columns there really are
     virtual void center(int row, const char *string) = 0;
 
     virtual void printw(const char *msg, ...) = 0;
 
-    virtual void scroll_up(int start_row, int end_row, int nlines) = 0;
+    //virtual void scroll_up(int start_row, int end_row, int nlines) = 0;
 
-    virtual void scroll_dn(int start_row, int end_row, int nlines) = 0;
+    //virtual void scroll_dn(int start_row, int end_row, int nlines) = 0;
 
     virtual void scroll() = 0;
 
@@ -64,7 +64,7 @@ struct OutputInterface
     virtual void repchr(int chr, int cnt) = 0;
 
     //try to fixup screen after we get a control break
-    virtual void fixup() = 0;
+    //virtual void fixup() = 0;
 
     //Clear the screen in an interesting fashion
     virtual void implode() = 0;
@@ -83,5 +83,5 @@ struct OutputInterface
     virtual int lines() const = 0;
     virtual int columns() const = 0;
 
-    virtual bool small_screen_mode() const = 0;
+    //virtual bool small_screen_mode() const = 0;
  };

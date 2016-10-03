@@ -81,15 +81,14 @@ int is_direction_key(int key)
 }
 
 //setup: Get starting setup for all games
-void setup()
-{ 
-    //TODO:now
-    set_small_screen_mode(false);
-    const int COLS = game->screen().columns();
-    if (COLS == 40) {
-        set_small_screen_mode(true);
-    }
-    set_brief_mode(in_small_screen_mode());
+void setup_screen()
+{
+    bool narrow_screen(game->options.narrow_screen());
+    game->screen().winit(narrow_screen);
+    if (game->options.monochrome())
+        game->screen().forcebw();
+
+    set_small_screen_mode(narrow_screen);
 }
 
 //clear_typeahead_buffer: Flush typeahead for traps, etc.
@@ -287,7 +286,7 @@ char ex_getkey()
 byte readchar_impl() {
     //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
     do
-        SIG2();
+        handle_key_state();
     while (!_kbhit()); //Rogue spends a lot of time here
     //Now read a character and translate it if it appears in the translation table
     return getkey();
@@ -300,7 +299,7 @@ int readchar()
     byte ch;
 
     if (!game->typeahead.empty()) { 
-        SIG2();
+        handle_key_state();
         ch = game->typeahead.back();
         game->typeahead.pop_back();
         return ch;

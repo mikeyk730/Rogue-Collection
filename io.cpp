@@ -32,8 +32,7 @@ static char *formats = "scud%", *bp, left_justify;
 static int min_width, max_width;
 static char ibuf[6];
 
-bool save_msg = true;       //Remember last msg
-bool terse = false; //todo: small_screen_mode / 40 chars 
+bool terse = false;
 bool expert = false;
 
 bool short_msgs()
@@ -41,7 +40,7 @@ bool short_msgs()
     return in_small_screen_mode() || in_brief_mode();
 }
 
-void set_small_screen_mode(bool enable) //todo:todo
+void set_small_screen_mode(bool enable)
 {
     terse = enable;
 }
@@ -141,8 +140,7 @@ void addmsg(const char *format, ...)
 void endmsg()
 {
     game->log("msg", msgbuf);
-    if (save_msg)
-        strcpy(game->last_message, msgbuf);
+    strcpy(game->last_message, msgbuf);
     if (game->msg_position) {
         look(false); 
         game->screen().move(0, game->msg_position);
@@ -280,7 +278,7 @@ void update_status_bar()
 
     const int COLS = game->screen().columns();
 
-    SIG2();
+    handle_key_state();
     game->screen().getrc(&oy, &ox);
     game->screen().yellow();
     //Level:
@@ -453,8 +451,7 @@ void str_attr(char *str)
     }
 }
 
-//key_state:
-void SIG2()
+void handle_key_state()
 {
     static bool numl = false, capsl = false, scrl = false;
     static int nspot, cspot, tspot;

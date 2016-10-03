@@ -73,6 +73,6 @@ void backspace();
 void str_attr(char *str);
 
 //key_state:
-void SIG2();
+void handle_key_state();
 
 char *noterse(char *str);

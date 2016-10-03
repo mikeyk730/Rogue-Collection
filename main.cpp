@@ -65,6 +65,8 @@ int main(int argc, char **argv)
             game = new GameState(seed);
             setenv("rogue.opt");
         }
+
+        load_monster_cfg(game->get_environment("monsterfile"));
     }
     catch (const std::runtime_error& e)
     {
@@ -72,27 +74,25 @@ int main(int argc, char **argv)
         exit(1);
     }
     
-    load_monster_cfg(game->get_environment("monsterfile"));
-
-    game->screen().winit(game->options.narrow_screen());
-    if (game->options.monochrome())
-        game->screen().forcebw();
-
+    setup_screen();
     credits();
 
     init_things(); //Set up probabilities of things    
-    setup();
+
     game->screen().drop_curtain();
     game->level().new_level(false); //Draw current level
+
     //Start up daemons and fuses
     daemon(doctor, 0);
-    fuse(swander, 0, WANDER_TIME);
+    fuse(start_wander, 0, WANDER_TIME);
     daemon(stomach, 0);
     daemon(runners, 0);
+
     msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
     game->screen().raise_curtain();
 
     playit();
+
     delete game;
 }
 
@@ -124,8 +124,9 @@ void playit()
     game->oldpos = game->hero().m_position;
     game->oldrp = get_room_from_position(game->hero().m_position);
 
-    while (true)
+    while (true) {
         advance_game();
+    }
 }
 
 //do_quit: Have player make certain, then exit.

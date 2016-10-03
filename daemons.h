@@ -2,7 +2,7 @@
 void doctor();
 
 //Swander: Called when it is time to start rolling for wandering monsters
-void swander();
+void start_wander();
 
 //rollwand: Called to roll to see if a wandering monster starts up
 void rollwand();

@@ -1,5 +1,5 @@
 //setup: Get starting setup for all games
-void setup();
+void setup_screen();
 
 //clear_typeahead_buffer: Flush typeahead for traps, etc.
 void clear_typeahead_buffer();

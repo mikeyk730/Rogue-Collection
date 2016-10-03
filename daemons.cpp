@@ -46,7 +46,7 @@ void doctor()
 }
 
 //Swander: Called when it is time to start rolling for wandering monsters
-void swander()
+void start_wander()
 {
     daemon(rollwand, 0);
 }
@@ -61,7 +61,7 @@ void rollwand()
         if (roll(1, 6) == 4) {
             create_wandering_monster();
             extinguish(rollwand);
-            fuse(swander, 0, WANDER_TIME);
+            fuse(start_wander, 0, WANDER_TIME);
         }
         between = 0;
     }

@@ -343,8 +343,6 @@ void Level::treas_room()
     }
 }
 
-
-
 int get_level()
 {
     return s_level;
@@ -376,7 +374,7 @@ int rnd_gold()
 int maxrow()
 {
     int lines = game->screen().lines();
-    if (game->screen().small_screen_mode())
+    if (in_small_screen_mode())
         return lines - 3;
     return lines - 2;
 }
