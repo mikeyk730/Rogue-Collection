@@ -194,8 +194,8 @@ bool do_reveal_level()
 
 bool do_show_map()
 {
-    //game->level().show_map();
-    do_reveal_level();
+    game->level().show_map();
+    //do_reveal_level();
     //show_map(true);
     return false;
 }

@@ -12,8 +12,8 @@
 #include "io.h"
 #include "level.h"
 
-static int pnum;
-static byte newpnum;
+static int pnum; //todo: eliminate static
+static byte newpnum; //todo: eliminate static
 
 Coord north(Coord p)
 {
