@@ -134,6 +134,7 @@ Coord east(Coord p);
 Coord west(Coord p);
 
 bool operator==(const Coord& c1, const Coord& c2);
+bool operator!=(const Coord& c1, const Coord& c2);
 Coord operator+(const Coord& c1, const Coord& c2);
 
 //Stuff about magic items

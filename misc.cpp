@@ -47,6 +47,47 @@ char *tr_name(byte type)
     return NULL;
 }
 
+void darken_position(Coord pos, int hero_passage)
+{
+    //blot out floor if in a dark room
+    byte ch = game->screen().mvinch(pos);
+    if (ch == FLOOR)
+    {
+        if (game->oldrp->is_dark() && !game->oldrp->is_gone())
+            game->screen().addch(' ');
+    }
+    //darken passage
+    //mdk:bugfix: originally items dropped beside a door and inside a passage would never be erased
+    bool maze_or_passage = game->level().is_maze(pos) || game->level().is_passage(pos);
+    if (maze_or_passage && ch != STAIRS) {
+        //mdk:bugfix: this code originally blotted out detected monsters with a passage.
+        //I added the check below to correct this.
+        if (!(isupper(toascii(ch)) && game->hero().detects_others())) {
+            game->screen().addch(PASSAGE);
+        }
+    }
+}
+
+void darken_area()
+{
+    if (game->hero().is_blind())
+        return;
+
+    Coord hero_pos = game->hero().m_position;
+    int hero_passage = game->level().get_passage_num(hero_pos);
+
+    for (int x = game->oldpos.x - 1; x <= (game->oldpos.x + 1); x++) {
+        for (int y = game->oldpos.y - 1; y <= (game->oldpos.y + 1); y++)
+        {
+            Coord pos = { x, y };
+            if (pos == hero_pos || offmap(pos))
+                continue;
+
+            darken_position(pos, hero_passage);
+        }
+    }
+}
+
 //look: A quick glance all around the player
 void look(bool wakeup) //todo: learn this function
 {
@@ -61,33 +102,10 @@ void look(bool wakeup) //todo: learn this function
     bool hero_in_maze = game->level().is_maze(game->hero().m_position);
     int hero_passage_number = game->level().get_passage_num(game->hero().m_position);
 
-
-    //if the hero has moved and isn't blind
-    if (!equal(game->oldpos, game->hero().m_position) && !game->hero().is_blind()) {
-        for (x = game->oldpos.x - 1; x <= (game->oldpos.x + 1); x++) {
-            for (y = game->oldpos.y - 1; y <= (game->oldpos.y + 1); y++)
-            {
-                Coord pos = { x, y };
-                if ((pos == game->hero().m_position) || offmap(pos))
-                    continue;
-
-                byte ch = game->screen().mvinch(pos);
-                if (ch == FLOOR)
-                {
-                    if (game->oldrp->is_dark() && !game->oldrp->is_gone())
-                        game->screen().addch(' ');
-                }
-                else
-                {
-                    byte fp = game->level().get_flags(pos);
-                    int passage_number = game->level().get_passage_num(pos);
-                    //if the maze or passage (that the hero is in!!) needs to be redrawn (passages once drawn always stay on) do it now.
-                    if (((fp&F_MAZE) || (fp&F_PASS)) && (ch != PASSAGE) && (ch != STAIRS) && (passage_number == hero_passage_number))
-                        game->screen().addch(PASSAGE);
-                }
-            }
-        }
-        
+    //if the hero has moved
+    if (game->oldpos != game->hero().m_position) {
+        darken_area();
+        //save the old room and position
         game->oldpos = game->hero().m_position;
         game->oldrp = game->hero().m_room;
     }
@@ -102,38 +120,39 @@ void look(bool wakeup) //todo: learn this function
         diffhero = game->hero().m_position.y - game->hero().m_position.x;
     }
 
-    for (y = sy; y <= ey; y++) if (y > 0 && y < maxrow()) {
-        for (x = sx; x <= ex; x++)
-        {
-            if (x <= 0 || x >= COLS) continue;
-
-            Coord pos = { x, y };
-
-            if (!game->hero().is_blind())
+    for (y = sy; y <= ey; y++) {
+        if (y > 0 && y < maxrow()) {
+            for (x = sx; x <= ex; x++)
             {
-                if (y == game->hero().m_position.y && x == game->hero().m_position.x) continue;
-            }
-            else if (y != game->hero().m_position.y || x != game->hero().m_position.x) continue;
-            //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
-            
-            bool is_passage = game->level().is_passage(pos);
-            bool is_maze = game->level().is_maze(pos);
-            int passage_number = game->level().get_passage_num(pos);
-            byte ch = game->level().get_tile(pos);
-            
-            //No Doors
-            byte pch = game->level().get_tile(game->hero().m_position);
-            if (pch != DOOR && ch != DOOR)
-                //Either hero or other in a passage
-                if (hero_in_passage != is_passage)
+                if (x <= 0 || x >= COLS) continue;
+
+                Coord pos = { x, y };
+
+                if (!game->hero().is_blind())
                 {
-                    //Neither is in a maze
-                    if (!hero_in_maze && !is_maze)
-                        continue;
+                    if (y == game->hero().m_position.y && x == game->hero().m_position.x) continue;
                 }
+                else if (y != game->hero().m_position.y || x != game->hero().m_position.x) continue;
+                //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
+
+                bool is_passage = game->level().is_passage(pos);
+                bool is_maze = game->level().is_maze(pos);
+                int passage_number = game->level().get_passage_num(pos);
+                byte ch = game->level().get_tile(pos);
+
+                //No Doors
+                byte pch = game->level().get_tile(game->hero().m_position);
+                if (pch != DOOR && ch != DOOR)
+                    //Either hero or other in a passage
+                    if (hero_in_passage != is_passage)
+                    {
+                        //Neither is in a maze
+                        if (!hero_in_maze && !is_maze)
+                            continue;
+                    }
                 //Not in same passage
-                else if (is_passage && passage_number != hero_passage_number)
-                    continue;
+                    else if (is_passage && passage_number != hero_passage_number)
+                        continue;
                 if ((monster = game->level().monster_at(pos)) != NULL) {
                     if (game->hero().detects_others() && monster->is_invisible())
                     {
@@ -151,8 +170,8 @@ void look(bool wakeup) //todo: learn this function
                     }
                 }
                 //The current character used for IBM ARMOR doesn't look right in Inverse
-                if ((ch != PASSAGE) && (is_passage || is_maze)) 
-                    if (ch != ARMOR) 
+                if ((ch != PASSAGE) && (is_passage || is_maze))
+                    if (ch != ARMOR)
                         game->screen().standout();
 
                 game->screen().mvaddch(pos, ch);
@@ -187,6 +206,7 @@ void look(bool wakeup) //todo: learn this function
                         break;
                     }
                 }
+            }
         }
     }
     if (game->stop_at_door() && !game->first_move() && passcount > 1)
