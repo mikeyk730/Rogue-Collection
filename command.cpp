@@ -111,6 +111,24 @@ bool Command::is_run() const
     return false;
 }
 
+void do_rings()
+{
+    for (int i = LEFT; i <= RIGHT; i++) {
+        if (game->hero().get_ring(i)) {
+            switch (game->hero().get_ring(i)->m_which)
+            {
+            case R_SEARCH:
+                do_search(); //mdk: we search even if asleep!
+                break;
+            case R_TELEPORT:
+                if (rnd(50) == 17)
+                    game->hero().teleport();
+                break;
+            }
+        }
+    }
+}
+
 void advance_game()
 {
     game->hero().set_num_actions(1);
@@ -123,40 +141,16 @@ void advance_game()
     {
         update_status_bar();
         SIG2();
-        if (game->sleep_timer)
+        if (!game->hero().decrement_sleep_timer())
         {
-            if (--game->sleep_timer <= 0) {
-                msg("you can move again");
-                //mdk:bugfix: the player was never set as running, so always treated as asleep
-                if (game->options.hit_plus_bugfix())
-                    game->hero().set_running(true);
-                game->sleep_timer = 0;
-            }
-        }
-        else {
-            //mdk:bugfix: the player was never set as running, so always treated as asleep
+            //mdk:bugfix: the player was never set as running, so treated as asleep in battle
             if (game->options.hit_plus_bugfix())
                 game->hero().set_running(true);
 
-            execcom();
+            execute_player_command();
         }
 
-        //mdk: The ring code used to come after running fuses/daemons, but it simplified
-        //the logic to move it.  I don't think that's an issue
-        for (int i = LEFT; i <= RIGHT; i++) {
-            if (game->hero().get_ring(i)) {
-                switch (game->hero().get_ring(i)->m_which)
-                {
-                case R_SEARCH:
-                    do_search(); //mdk: we search even if asleep!
-                    break;
-                case R_TELEPORT:
-                    if (rnd(50) == 17)
-                        game->hero().teleport();
-                    break;
-                }
-            }
-        }
+        do_rings();  //mdk: This used to come after running fuses/daemons
     }
     do_fuses();
     do_daemons();
@@ -273,7 +267,7 @@ Command get_command()
     game->repeat_last_action = false;
     look(true);
 
-    if (!game->is_running())
+    if (!game->in_run_cmd())
         game->m_stop_at_door = false;
     
     Command command;
@@ -286,7 +280,7 @@ Command get_command()
     }
     // If we're running, use the global run character which indicates the direction
     // the hero should go next
-    else if (game->is_running()) {
+    else if (game->in_run_cmd()) {
         command = game->last_turn.command;
         command.ch = game->run_character;
     }
@@ -340,7 +334,7 @@ bool dispatch_command(Command c)
 }
 
 
-void execcom()
+void execute_player_command()
 {
     bool counts_as_turn;
     do
@@ -349,7 +343,7 @@ void execcom()
         counts_as_turn = dispatch_command(c);
 
         //todo: why is this here?
-        if (!game->is_running())
+        if (!game->in_run_cmd())
             game->m_stop_at_door = false;
 
     } while (!counts_as_turn);

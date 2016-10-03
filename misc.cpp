@@ -96,7 +96,7 @@ void look(bool wakeup) //todo: learn this function
     ex = game->hero().m_position.x + 1;
     sx = game->hero().m_position.x - 1;
     sy = game->hero().m_position.y - 1;
-    if (game->stop_at_door() && !game->first_move() && game->is_running()) {
+    if (game->stop_at_door() && !game->first_move() && game->in_run_cmd()) {
         sumhero = game->hero().m_position.y + game->hero().m_position.x;
         diffhero = game->hero().m_position.y - game->hero().m_position.x;
     }
@@ -141,7 +141,7 @@ void look(bool wakeup) //todo: learn this function
                 game->screen().move(y, x);
                 game->screen().addch(ch);
                 game->screen().standend();
-                if (game->stop_at_door() && !game->first_move() && game->is_running())
+                if (game->stop_at_door() && !game->first_move() && game->in_run_cmd())
                 {
                     switch (game->run_character)
                     {

@@ -122,7 +122,7 @@ bool this_move_counts; //todo: remove
 
 bool do_hit_boundary()
 {
-    if (game->is_running() && is_gone(game->hero().m_room) && !game->hero().is_blind())
+    if (game->in_run_cmd() && is_gone(game->hero().m_room) && !game->hero().is_blind())
     {
         switch (game->run_character)
         {
@@ -158,7 +158,7 @@ bool do_move_impl(bool can_pickup)
         return false;
     }
     //If you are running and the move does not get you anywhere stop running
-    if (game->is_running() && equal(game->hero().m_position, new_position)) {
+    if (game->in_run_cmd() && equal(game->hero().m_position, new_position)) {
         this_move_counts = false;
         game->stop_running();
     }
@@ -311,8 +311,7 @@ int handle_trap(Coord tc)
         break;
 
     case T_SLEEP:
-        game->sleep_timer += SLEEP_TIME;
-        game->hero().set_running(false);
+        game->hero().increase_sleep_timer(SLEEP_TIME);
         msg("a %smist envelops you and you fall asleep", noterse("strange white "));
         break;
 

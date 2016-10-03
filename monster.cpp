@@ -456,8 +456,8 @@ bool aquator_attack()
 void ice_monster_attack()
 {
     //When an Ice Monster hits you, you get unfrozen faster
-    if (game->sleep_timer > 1)
-        game->sleep_timer--;
+    if (game->hero().get_sleep_timer() > 1)
+        game->hero().decrement_sleep_timer();
 }
 
 bool rattlesnake_attack()

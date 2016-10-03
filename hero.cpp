@@ -189,7 +189,7 @@ bool Hero::eat()
         msg("yum, that tasted good");
     }
 
-    if (game->sleep_timer)
+    if (get_sleep_timer())
         msg("You feel bloated and fall asleep");
 
     return true;
@@ -200,7 +200,7 @@ void Hero::ingest()
     if (food_left < 0)
         food_left = 0;
     if (food_left > (STOMACH_SIZE - 20))
-        game->sleep_timer += 2 + rnd(5);
+        increase_sleep_timer(2 + rnd(5));
     if ((food_left += HUNGER_TIME - 200 + rnd(400)) > STOMACH_SIZE)
         food_left = STOMACH_SIZE;
     hungry_state = 0;
@@ -213,10 +213,9 @@ void Hero::digest()
         if (food_left-- < -STARVE_TIME)
             death('s');
         //the hero is fainting
-        if (game->sleep_timer || rnd(5) != 0)
+        if (get_sleep_timer() || rnd(5) != 0)
             return;
-        game->sleep_timer += rnd(8) + 4;
-        set_running(false);
+        increase_sleep_timer(rnd(8) + 4);
         game->stop_running();
         game->cancel_repeating_cmd();
         hungry_state = 3;
@@ -869,8 +868,7 @@ int Hero::add_haste(bool is_temporary)
 {
     if (is_fast())
     {
-        game->sleep_timer += rnd(8);
-        set_running(false);
+        increase_sleep_timer(rnd(8));
         extinguish(nohaste);
         set_is_fast(false);
         msg("you faint from exhaustion");
@@ -897,4 +895,32 @@ bool Hero::decrement_num_actions()
         return true;
     }
     return false;
+}
+
+int Hero::get_sleep_timer() const
+{
+    return m_sleep_timer;
+}
+
+void Hero::increase_sleep_timer(int time)
+{
+    m_sleep_timer += time;
+    if (m_sleep_timer)
+        set_running(false);
+}
+
+bool Hero::decrement_sleep_timer()
+{
+    if (m_sleep_timer <= 0)
+        return false;
+
+    --m_sleep_timer;
+    if (m_sleep_timer == 0) {
+        //mdk:bugfix: the player was never set as running, so treated as asleep in battle
+        if (game->options.hit_plus_bugfix())
+            set_running(true);
+        msg("you can move again");
+    }
+
+    return true;
 }

@@ -193,8 +193,7 @@ void Scroll::read_sleep()
 {
     //Scroll which makes you fall asleep
     discover();
-    game->sleep_timer += rnd(SLEEP_TIME) + 4;
-    game->hero().set_running(false);
+    game->hero().increase_sleep_timer(rnd(SLEEP_TIME) + 4);
     msg("you fall asleep");
 }
 

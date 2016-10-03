@@ -77,7 +77,7 @@ struct GameState
         bool throws_affect_mimics() const;
     } options;
 
-    bool is_running() const { return m_running; } // todo:move to Hero?
+    bool in_run_cmd() const { return m_running; }
     void stop_running() { m_running = false; }
     bool stop_at_door() const { return m_stop_at_door; }
     bool first_move() const { return m_first_move; }
@@ -90,7 +90,6 @@ struct GameState
     bool m_first_move = false;     //First move after setting stop_at_door
 
     int bear_trap_turns = 0;     //Number of turns held in place
-    int sleep_timer = 0;         //Number of turns asleep
     int no_food = 0;             //Number of levels without food
     int turns_since_heal = 0;    //Number of turns_since_heal turns
     bool repeat_last_action;     //The last command is repeated

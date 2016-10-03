@@ -106,6 +106,10 @@ public:
     void set_num_actions(int actions);
     bool decrement_num_actions();
 
+    int get_sleep_timer() const;
+    void increase_sleep_timer(int time);
+    bool decrement_sleep_timer();
+
 private:
     int m_purse = 0;
     bool m_had_amulet = false;
@@ -115,7 +119,9 @@ private:
     std::string m_name;
 
     Armor* m_armor = 0;       //What a well dresssed rogue wears
-    Item* m_weapon = 0;      //Which weapon he is wielding
+    Item* m_weapon = 0;       //Which weapon he is wielding
     Ring* m_rings[2] = {0,0}; //Which rings are being worn
+
+    int m_sleep_timer = 0;    //Number of turns to sleep
 };
 

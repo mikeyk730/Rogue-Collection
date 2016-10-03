@@ -132,8 +132,6 @@ void playit()
 
     while (true)
         advance_game();
-
-    endit();
 }
 
 //do_quit: Have player make certain, then exit.

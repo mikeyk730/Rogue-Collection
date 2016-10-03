@@ -129,8 +129,7 @@ void Potion::quaff_confusion()
 void Potion::quaff_paralysis()
 {
     discover();
-    game->sleep_timer = HOLD_TIME;
-    game->hero().set_running(false);
+    game->hero().increase_sleep_timer(HOLD_TIME);
     msg("you can't move");
 }
 

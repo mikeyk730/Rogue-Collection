@@ -23,4 +23,4 @@ Command get_command();
 
 void show_count(int n);
 
-void execcom();
+void execute_player_command();
