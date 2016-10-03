@@ -173,11 +173,11 @@ void Potion::quaff_healing()
 
 void Potion::quaff_monster_detection()
 {
-    fuse(turn_see_wrapper, true, HUH_DURATION);
+    fuse(disable_detect_monsters, true, HUH_DURATION);
     if (game->level().monsters.empty())
         msg("you have a strange feeling%s.", noterse(" for a moment"));
     else {
-        if (turn_see(false))
+        if (detect_monsters(true))
             discover();
         msg("");
     }
@@ -330,24 +330,24 @@ void show_invisible()
     });
 }
 
-void turn_see_wrapper(int turn_off)
+void disable_detect_monsters(int disable)
 {
-    turn_see(turn_off != 0);
+    detect_monsters(!disable);
 }
 
-//turn_see: Put on or off seeing monsters on this level
-bool turn_see(bool turn_off)
+//detect_monsters: Put on or off seeing monsters on this level
+bool detect_monsters(bool enable)
 {
     bool add_new = false;
 
-    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [turn_off, &add_new](Monster* monster) {
+    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [enable, &add_new](Monster* monster) {
 
         bool can_see;
         byte was_there;
 
         game->screen().move(monster->m_position.y, monster->m_position.x);
         can_see = (game->hero().can_see_monster(monster) || (was_there = game->screen().curch()) == monster->m_type);
-        if (turn_off)
+        if (!enable)
         {
             if (!game->hero().can_see_monster(monster) && monster->has_tile_beneath())
                 game->screen().addch(monster->tile_beneath());
@@ -367,7 +367,7 @@ bool turn_see(bool turn_off)
 
     });
 
-    game->hero().set_detects_others(!turn_off);
+    game->hero().set_detects_others(enable);
     return add_new;
 }
 

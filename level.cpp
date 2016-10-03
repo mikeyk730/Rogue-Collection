@@ -289,7 +289,7 @@ void Level::new_level(int do_implode)
     game->oldpos = game->hero().m_position;
     game->oldrp = game->hero().m_room;
     if (game->hero().detects_others())
-        turn_see(false);
+        detect_monsters(true);
 }
 
 //put_things: Put potions and scrolls on this level

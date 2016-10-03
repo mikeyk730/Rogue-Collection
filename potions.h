@@ -40,9 +40,9 @@ bool do_quaff();
 //show_invisible: Turn on the ability to see invisible
 void show_invisible();
 
-//turn_see: Put on or off seeing monsters on this level
-bool turn_see(bool turn_off);
-void turn_see_wrapper(int turn_off);
+//detect_monsters: Put on or off seeing monsters on this level
+bool detect_monsters(bool enable);
+void disable_detect_monsters(int disable);
 
 //th_effect: Compute the effect of this potion hitting a monster.
 void affect_monster(Item *obj, Monster *monster);

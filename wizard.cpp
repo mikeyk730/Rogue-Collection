@@ -171,7 +171,7 @@ bool do_show_map()
 {
     game->level().show_map(true);
     game->level().illuminate_rooms();
-    turn_see(false);
+    detect_monsters(true);
     return false;
 }
 
@@ -341,7 +341,7 @@ void Cheats::toggle_powers(const std::string & powers)
 void Cheats::apply_powers()
 {
     game->hero().m_invulnerable = (enabled() && invulnerability());
-    turn_see(!(enabled() && detect_monsters()));
+    ::detect_monsters(enabled() && detect_monsters());
     if (enabled() && see_invisible())
         show_invisible();
     else
