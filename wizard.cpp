@@ -83,6 +83,9 @@ bool do_summon_object()
     unsaved_msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK, RING, WEAPON, ARMOR, AMULET, FOOD);
     switch (readchar())
     {
+    case ESCAPE:
+        msg("");
+        return false;
     case '!':
         which = get_which(POTION, MAXPOTIONS - 1);
         obj = new Potion(which);
@@ -148,8 +151,6 @@ bool do_summon_object()
         obj = new Food(which);
         break;
     }
-
-    //todo:if (obj->m_type==GOLD) {msg("how much?"); get_num(&obj->gold_value);}
 
     game->hero().add_to_pack(obj, false);
     return false;
@@ -283,14 +284,6 @@ int get_num(short *place)
 
 Cheats::Cheats()
 {
-    //todo: should be empty
-    //m_detect_monsters = true;
-    //m_see_invisible = true;
-    //m_no_traps = true;
-    //m_no_hidden_doors = true;
-    //m_no_ring_hunger = true;
-    //m_no_hunger = true;
-    //m_no_dark_rooms = true;
 }
 
 void Cheats::toggle()
