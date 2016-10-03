@@ -160,7 +160,6 @@
     <ClInclude Include="monsters.h" />
     <ClInclude Include="move.h" />
     <ClInclude Include="pack.h" />
-    <ClInclude Include="passages.h" />
     <ClInclude Include="potions.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="rings.h" />

@@ -24,7 +24,6 @@
 
 #define PT(i,j)  ((COLS==40)?i:j)
 
-extern unsigned tick;
 char msgbuf[BUFSIZE];
 
 static int newpos = 0;

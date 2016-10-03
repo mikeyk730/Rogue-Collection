@@ -14,29 +14,11 @@
 #include "output_interface.h"
 #include "game_state.h"
 #include "hero.h"
-#include "passages.h"
 #include "pack.h"
 #include "things.h"
 #include "potions.h"
 #include "monster.h"
 #include "amulet.h"
-
-//One for each passage
-Room passages[MAXPASS] =
-{
-  { 0, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 1, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 2, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 3, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 4, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 5, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 6, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 7, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 8, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 9, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 10, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 },
-  { 11, {0, 0}, {0, 0}, {0, 0}, 0, IS_GONE | IS_DARK, 0, 0 }
-};
 
 int s_level = 1;
 int s_max_level = 1;
@@ -222,6 +204,10 @@ void Level::show_map()
 #define MAXTREAS  10 //maximum number of treasures in a treasure room
 #define MINTREAS  2 //minimum number of treasures in a treasure room
 #define MAXTRIES  10 //max number of tries to put down a monster
+
+Level::Level()
+{
+}
 
 void Level::new_level(int do_implode)
 {

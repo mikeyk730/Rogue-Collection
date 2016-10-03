@@ -9,13 +9,9 @@
 #include "main.h"
 #include "output_interface.h"
 #include "misc.h"
-#include "passages.h"
 #include "io.h"
 #include "level.h"
 #include "game_state.h"
-
-extern Room rooms[];
-extern Room passages[];
 
 static int pnum;
 static byte newpnum;
@@ -41,7 +37,7 @@ Coord west(Coord p)
 }
 
 //conn: Draw a corridor from a room in a certain direction.
-void conn(int r1, int r2)
+void Level::conn(int r1, int r2)
 {
     struct Room *room_from, *room_to;
     int rmt, rm;
@@ -163,7 +159,7 @@ void conn(int r1, int r2)
 }
 
 //do_passages: Draw all the passages on a level.
-void do_passages()
+void Level::do_passages()
 {
     int i, j;
     int roomcount;
@@ -255,20 +251,8 @@ void Room::add_door(Coord p)
     m_exits[i] = p;
 }
 
-//add_pass: Add the passages to the current window (wizard command)
-void add_pass()
-{
-    int y, x, ch;
-    const int COLS = game->screen().columns();
-
-    for (y = 1; y < maxrow(); y++)
-        for (x = 0; x < COLS; x++)
-            if ((ch = game->level().get_tile({ x, y })) == DOOR || ch == PASSAGE)
-                game->screen().mvaddch({ x, y }, ch);
-}
-
 //passnum: Assign a number to each passageway
-void passnum()
+void Level::passnum()
 {
     struct Room *room;
     int i;
@@ -288,7 +272,7 @@ void passnum()
 }
 
 //numpass: Number a passageway square and its brethren
-void numpass(Coord p)
+void Level::numpass(Coord p)
 {
     struct Room *room;
     byte ch;
@@ -313,8 +297,8 @@ void numpass(Coord p)
     numpass(west(p));
 }
 
-void psplat(Coord p)
+void Level::psplat(Coord p)
 {
-    game->level().set_tile(p, PASSAGE);
-    game->level().set_flag(p, F_PASS);
+    set_tile(p, PASSAGE);
+    set_flag(p, F_PASS);
 }

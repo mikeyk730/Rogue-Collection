@@ -1,3 +1,4 @@
+#pragma once
 #include "rogue.h"
 
 //flags for rooms

@@ -174,7 +174,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     monster->m_disguise = type;
     monster->m_position = *position;
     monster->invalidate_tile_beneath();
-    monster->m_room = get_room_from_position(*position);
+    monster->m_room = game->level().get_room_from_position(*position);
     monster->m_flags = defaults->flags;
     monster->m_ex_flags = defaults->exflags;
     monster->m_stats = defaults->stats;
@@ -219,7 +219,7 @@ void create_wandering_monster()
 
     do
     {
-        room = rnd_room();
+        room = game->level().rnd_room();
         if (room == game->hero().m_room) continue;
         rnd_pos(room, &cp);
     } while (!(room != game->hero().m_room && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic?

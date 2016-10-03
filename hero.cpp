@@ -298,7 +298,7 @@ void Hero::teleport()
 
     game->screen().mvaddch(m_position, game->level().get_tile(m_position));
     do {
-        rm = rnd_room();
+        rm = game->level().rnd_room();
         rnd_pos(rm, &c);
     } while (!(step_ok(game->level().get_tile_or_monster(c)))); //todo:bug: can we teleport onto a xerox?
     if (rm != m_room) {
@@ -409,7 +409,7 @@ int Hero::can_see(Coord p)
     if (distance(p, m_position) < LAMP_DIST)
         return true;
     //if the coordinate is in the same room as the hero, and the room is lit
-    return (m_room == get_room_from_position(p) && !m_room->is_dark());
+    return (m_room == game->level().get_room_from_position(p) && !m_room->is_dark());
 }
 
 void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)

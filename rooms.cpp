@@ -21,14 +21,12 @@
 #include "monster.h"
 #include "gold.h"
 
-Room rooms[MAXROOMS]; //One for each room -- A level
-
 bool isfloor(byte c) {
     return ((c) == FLOOR || (c) == PASSAGE);
 }
 
 //do_rooms: Create rooms and corridors with a connectivity graph
-void do_rooms()
+void Level::do_rooms()
 {
     int i;
     struct Room *room;
@@ -180,7 +178,7 @@ void enter_room(Coord cp)
     int y, x;
     Monster* monster;
 
-    room = game->hero().m_room = get_room_from_position(cp);
+    room = game->hero().m_room = game->level().get_room_from_position(cp);
     if (game->invalid_position || (room->is_gone() && (room->is_maze()) == 0))
     {
         debug("in a gone room");
@@ -254,7 +252,7 @@ void leave_room(Coord cp)
 }
 
 //get_room_from_position: Find what room some coordinates are in. NULL means they aren't in any room.
-Room* get_room_from_position(Coord pos)
+Room* Level::get_room_from_position(Coord pos)
 {
     struct Room *room;
 
@@ -274,7 +272,7 @@ Room* get_room_from_position(Coord pos)
 }
 
 //rnd_room: Pick a room that is really there
-Room* rnd_room()
+Room* Level::rnd_room()
 {
     int rm;
     do {
@@ -289,6 +287,6 @@ void find_empty_location(Coord* c, bool consider_monsters)
 {
     do
     {
-        rnd_pos(rnd_room(), c);
+        rnd_pos(game->level().rnd_room(), c);
     } while (!isfloor(game->level().get_tile(*c, consider_monsters)));
 }

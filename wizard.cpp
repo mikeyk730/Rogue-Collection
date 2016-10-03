@@ -155,6 +155,18 @@ bool do_summon_object()
     return false;
 }
 
+//add_pass: Add the passages to the current window (wizard command)
+void add_pass()
+{
+    int y, x, ch;
+    const int COLS = game->screen().columns();
+
+    for (y = 1; y < maxrow(); y++)
+        for (x = 0; x < COLS; x++)
+            if ((ch = game->level().get_tile({ x, y })) == DOOR || ch == PASSAGE)
+                game->screen().mvaddch({ x, y }, ch);
+}
+
 bool do_reveal_level()
 {
     const int COLS = game->screen().columns();

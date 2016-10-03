@@ -216,9 +216,6 @@
     <ClInclude Include="rooms.h">
       <Filter>Levels</Filter>
     </ClInclude>
-    <ClInclude Include="passages.h">
-      <Filter>Levels</Filter>
-    </ClInclude>
     <ClInclude Include="maze.h">
       <Filter>Levels</Filter>
     </ClInclude>

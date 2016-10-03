@@ -122,7 +122,7 @@ int roll(int number, int sides)
 void playit()
 {
     game->oldpos = game->hero().m_position;
-    game->oldrp = get_room_from_position(game->hero().m_position);
+    game->oldrp = game->level().get_room_from_position(game->hero().m_position);
 
     while (true) {
         advance_game();

@@ -9,6 +9,7 @@
 #include "hero.h"
 #include "rings.h"
 #include "armor.h"
+#include "level.h"
 
 Item::Item(int type, int which)
 {
@@ -152,7 +153,7 @@ char Item::launcher() const
 
 Room* Item::room() const
 {
-    return get_room_from_position(m_position);
+    return game->level().get_room_from_position(m_position);
 }
 
 int does_item_group(int type)

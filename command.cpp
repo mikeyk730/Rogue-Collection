@@ -17,7 +17,6 @@
 #include "weapons.h"
 #include "sticks.h"
 #include "output_interface.h"
-#include "passages.h"
 #include "mach_dep.h"
 #include "move.h"
 #include "rings.h"

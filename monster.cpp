@@ -198,7 +198,7 @@ Monster* Monster::do_chase() //todo: understand
     //Find room of the target
     Room* destination_room = game->hero().m_room;
     if (m_destination != &game->hero().m_position)
-        destination_room = get_room_from_position(*m_destination);
+        destination_room = game->level().get_room_from_position(*m_destination);
     if (destination_room == NULL)
         return 0;
 
@@ -308,7 +308,7 @@ void Monster::do_screen_update(Coord next_position)
     Room *orig_room = m_room;
     if (!equal(next_position, m_position))
     {
-        if ((m_room = get_room_from_position(next_position)) == NULL) {
+        if ((m_room = game->level().get_room_from_position(next_position)) == NULL) {
             m_room = orig_room;
             return;
         }
