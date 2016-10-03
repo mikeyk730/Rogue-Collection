@@ -249,10 +249,10 @@ bool do_move(Command c) //todo:understand
     }
 
     //Do a confused move (maybe)
-    if (game->hero().is_confused() && rnd(5) != 0)
+    if (game->hero().is_confused() && rnd(5) != 0) {
         rndmove(&game->hero(), &new_position);
-    else
-    {
+    }
+    else {
         new_position = game->hero().m_position + delta;
     }
 
@@ -268,22 +268,17 @@ bool do_move(Command c) //todo:understand
 //door_open: Called to illuminate a room.  If it is dark, remove anything that might move.
 void door_open(Room *room)
 {
-    int j, k;
-    byte ch;
-    Monster* monster;
+    if (room->is_gone() || game->hero().is_blind())
+        return;
 
-    if (!(room->is_gone()) && !game->hero().is_blind()) {
-        for (j = room->m_ul_corner.y; j < room->m_ul_corner.y + room->m_size.y; j++) {
-            for (k = room->m_ul_corner.x; k < room->m_ul_corner.x + room->m_size.x; k++)
-            {
-                ch = game->level().get_tile_or_monster({ k,j });
-                if (isupper(ch))
-                {
-                    monster = wake_monster({ k,j });
-                    if (monster->tile_beneath() == ' ' && !(room->is_dark()) && !game->hero().is_blind())
-                        monster->reload_tile_beneath();
-                }
-            }
+    for (int j = room->m_ul_corner.y; j < room->m_ul_corner.y + room->m_size.y; j++)
+    {
+        for (int k = room->m_ul_corner.x; k < room->m_ul_corner.x + room->m_size.x; k++)
+        {
+            Coord pos = { k, j };
+            Monster* monster = wake_monster(pos);
+            if (monster->tile_beneath() == ' ' && !room->is_dark())
+                monster->reload_tile_beneath();
         }
     }
 }
