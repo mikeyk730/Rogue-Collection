@@ -96,12 +96,15 @@ void look_do_something(const Coord pos, const bool wakeup, int* passcount)
     bool hero_in_maze = game->level().is_maze(game->hero().m_position);
     int hero_passage_number = game->level().get_passage_num(game->hero().m_position);
 
+    //bail if this is the hero's position, unless he's blind
     if (!game->hero().is_blind())
     {
-        if (pos.y == game->hero().m_position.y && pos.x == game->hero().m_position.x) return;
+        if (pos == game->hero().m_position) 
+            return;
     }
-    else if (pos.y != game->hero().m_position.y || pos.x != game->hero().m_position.x) return;
-    //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
+    //bail if position isn't in line of sight of hero, no diagonals
+    else if (pos.y != game->hero().m_position.y || pos.x != game->hero().m_position.x) 
+        return;
 
     bool is_passage = game->level().is_passage(pos);
     bool is_maze = game->level().is_maze(pos);
@@ -132,7 +135,8 @@ void look_do_something(const Coord pos, const bool wakeup, int* passcount)
         }
         else
         {
-            if (wakeup) wake_monster(pos);
+            if (wakeup) 
+                wake_monster(pos);
             if (monster->tile_beneath() != ' ' || (!(game->hero().m_room->is_dark()) && !game->hero().is_blind()))
                 monster->reload_tile_beneath();
             if (game->hero().can_see_monster(monster))
@@ -219,6 +223,15 @@ void look(bool wakeup) //todo: learn this function
                 continue;
             Coord pos = { x, y };
             look_do_something(pos, wakeup, &passcount);
+
+            /* could replace loop with:
+            look_do_something(north(pos), wakeup, &passcount);
+            look_do_something(west(pos), wakeup, &passcount);
+            if (game->hero().is_blind())
+                look_do_something(pos, wakeup, &passcount);
+            look_do_something(east(pos), wakeup, &passcount);
+            look_do_something(south(pos), wakeup, &passcount);
+            */
         }
     }
 
