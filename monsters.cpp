@@ -222,7 +222,7 @@ void create_wandering_monster()
         room = game->level().rnd_room();
         if (room == game->hero().m_room) continue;
         rnd_pos(room, &cp);
-    } while (!(room != game->hero().m_room && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic?
+    } while (!(room != game->hero().m_room && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic? //todo:inf loop if all spaces full
     monster = Monster::CreateMonster(randmonster(true, get_level()), &cp, get_level());
     if (game->invalid_position)
         debug("wanderer bailout");

@@ -189,7 +189,7 @@ bool Hero::eat()
         msg("yum, that tasted good");
     }
 
-    if (get_sleep_timer())
+    if (get_sleep_turns())
         msg("You feel bloated and fall asleep");
 
     return true;
@@ -200,7 +200,7 @@ void Hero::ingest()
     if (food_left < 0)
         food_left = 0;
     if (food_left > (STOMACH_SIZE - 20))
-        increase_sleep_timer(2 + rnd(5));
+        increase_sleep_turns(2 + rnd(5));
     if ((food_left += HUNGER_TIME - 200 + rnd(400)) > STOMACH_SIZE)
         food_left = STOMACH_SIZE;
     hungry_state = 0;
@@ -213,9 +213,9 @@ void Hero::digest()
         if (food_left-- < -STARVE_TIME)
             death('s');
         //the hero is fainting
-        if (get_sleep_timer() || rnd(5) != 0)
+        if (get_sleep_turns() || rnd(5) != 0)
             return;
-        increase_sleep_timer(rnd(8) + 4);
+        increase_sleep_turns(rnd(8) + 4);
         game->stop_running();
         game->cancel_repeating_cmd();
         hungry_state = 3;
@@ -312,7 +312,8 @@ void Hero::teleport()
     if (is_held()) {
         set_is_held(false);
     }
-    game->bear_trap_turns = 0;
+    
+    reset_trap_turns();
     game->cancel_repeating_cmd();
     game->stop_running();
     clear_typeahead_buffer();
@@ -868,7 +869,7 @@ int Hero::add_haste(bool is_temporary)
 {
     if (is_fast())
     {
-        increase_sleep_timer(rnd(8));
+        increase_sleep_turns(rnd(8));
         extinguish(nohaste);
         set_is_fast(false);
         msg("you faint from exhaustion");
@@ -897,25 +898,25 @@ bool Hero::decrement_num_actions()
     return false;
 }
 
-int Hero::get_sleep_timer() const
+int Hero::get_sleep_turns() const
 {
-    return m_sleep_timer;
+    return m_sleep_turns;
 }
 
-void Hero::increase_sleep_timer(int time)
+void Hero::increase_sleep_turns(int time)
 {
-    m_sleep_timer += time;
-    if (m_sleep_timer)
+    m_sleep_turns += time;
+    if (m_sleep_turns)
         set_running(false);
 }
 
-bool Hero::decrement_sleep_timer()
+bool Hero::decrement_sleep_turns()
 {
-    if (m_sleep_timer <= 0)
+    if (m_sleep_turns <= 0)
         return false;
 
-    --m_sleep_timer;
-    if (m_sleep_timer == 0) {
+    --m_sleep_turns;
+    if (m_sleep_turns == 0) {
         //mdk:bugfix: the player was never set as running, so treated as asleep in battle
         if (game->options.hit_plus_bugfix())
             set_running(true);
@@ -923,4 +924,24 @@ bool Hero::decrement_sleep_timer()
     }
 
     return true;
+}
+
+void Hero::set_trap_turns(int turns)
+{
+    m_trap_turns = turns;
+}
+
+void Hero::reset_trap_turns()
+{
+    m_trap_turns = 0;
+}
+
+bool Hero::decrement_trap_turns()
+{
+    if (m_trap_turns > 0)
+    {
+        --m_trap_turns;
+        return true;
+    }
+    return false;
 }

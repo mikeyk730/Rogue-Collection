@@ -141,7 +141,7 @@ void advance_game()
     {
         update_status_bar();
         handle_key_state();
-        if (game->hero().decrement_sleep_timer()) {
+        if (game->hero().decrement_sleep_turns()) {
             tick_pause();
         }
         else {

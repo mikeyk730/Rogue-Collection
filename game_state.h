@@ -89,7 +89,6 @@ struct GameState
     bool m_stop_at_door = false;  //Stop running when we pass a door
     bool m_first_move = false;     //First move after setting stop_at_door
 
-    int bear_trap_turns = 0;     //Number of turns held in place
     int no_food = 0;             //Number of levels without food
     int turns_since_heal = 0;    //Number of turns_since_heal turns
     bool repeat_last_action;     //The last command is repeated

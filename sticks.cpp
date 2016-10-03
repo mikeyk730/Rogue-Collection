@@ -611,8 +611,8 @@ bool bolt_vs_hero(MagicBolt* bolt, Coord start)
     if (bolt->is_frost())
     {
         msg("You are frozen by a blast of frost.");
-        if (game->hero().get_sleep_timer() < 20)
-            game->hero().increase_sleep_timer(spread(7));
+        if (game->hero().get_sleep_turns() < 20)
+            game->hero().increase_sleep_turns(spread(7));
     }
     else {
         game->log("battle", "Flame 6d6 damage to player");

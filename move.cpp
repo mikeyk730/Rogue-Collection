@@ -237,13 +237,13 @@ bool do_move(Command c) //todo:understand
     if (game->invalid_position) {
         game->invalid_position = false;
         msg("the crack widens ... ");
+        game->save_game("crack_widens.sav");
         descend("");
         return this_move_counts;
     }
 
     //skip the turn if the hero is stuck in a bear trap
-    if (game->bear_trap_turns) {
-        game->bear_trap_turns--;
+    if (game->hero().decrement_trap_turns()) {
         msg("you are still stuck in the bear trap");
         return this_move_counts;
     }
@@ -306,12 +306,12 @@ int handle_trap(Coord tc)
         break;
 
     case T_BEAR:
-        game->bear_trap_turns += BEAR_TIME;
+        game->hero().set_trap_turns(BEAR_TIME);
         msg("you are caught in a bear trap");
         break;
 
     case T_SLEEP:
-        game->hero().increase_sleep_timer(SLEEP_TIME);
+        game->hero().increase_sleep_turns(SLEEP_TIME);
         msg("a %smist envelops you and you fall asleep", noterse("strange white "));
         break;
 

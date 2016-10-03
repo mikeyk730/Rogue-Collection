@@ -106,9 +106,13 @@ public:
     void set_num_actions(int actions);
     bool decrement_num_actions();
 
-    int get_sleep_timer() const;
-    void increase_sleep_timer(int time);
-    bool decrement_sleep_timer();
+    int get_sleep_turns() const;
+    void increase_sleep_turns(int time);
+    bool decrement_sleep_turns();
+
+    void set_trap_turns(int turns);
+    void reset_trap_turns();
+    bool decrement_trap_turns();
 
 private:
     int m_purse = 0;
@@ -122,6 +126,7 @@ private:
     Item* m_weapon = 0;       //Which weapon he is wielding
     Ring* m_rings[2] = {0,0}; //Which rings are being worn
 
-    int m_sleep_timer = 0;    //Number of turns to sleep
+    int m_sleep_turns = 0;    //Number of turns to sleep
+    int m_trap_turns = 0;     //Number of turns stuck in place
 };
 
