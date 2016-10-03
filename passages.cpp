@@ -11,7 +11,6 @@
 #include "misc.h"
 #include "io.h"
 #include "level.h"
-#include "game_state.h"
 
 static int pnum;
 static byte newpnum;
@@ -69,7 +68,7 @@ void Level::conn(int r1, int r2)
             spos.y = room_from->m_ul_corner.y + room_from->m_size.y - 1;
             do {
                 spos.x = room_from->m_ul_corner.x + rnd(room_from->m_size.x - 2) + 1;
-            } while (game->level().get_tile(spos) == ' ');
+            } while (get_tile(spos) == ' ');
         }
         else { spos.x = room_from->m_ul_corner.x; spos.y = room_from->m_ul_corner.y; }
         epos.y = room_to->m_ul_corner.y;
@@ -77,7 +76,7 @@ void Level::conn(int r1, int r2)
         {
             do {
                 epos.x = room_to->m_ul_corner.x + rnd(room_to->m_size.x - 2) + 1;
-            } while (game->level().get_tile(epos) == ' ');
+            } while (get_tile(epos) == ' ');
         }
         else epos.x = room_to->m_ul_corner.x;
         distance = abs(spos.y - epos.y) - 1; //distance to move
@@ -97,7 +96,7 @@ void Level::conn(int r1, int r2)
             spos.x = room_from->m_ul_corner.x + room_from->m_size.x - 1;
             do {
                 spos.y = room_from->m_ul_corner.y + rnd(room_from->m_size.y - 2) + 1;
-            } while (game->level().get_tile(spos) == ' ');
+            } while (get_tile(spos) == ' ');
         }
         else {
             spos.x = room_from->m_ul_corner.x;
@@ -108,7 +107,7 @@ void Level::conn(int r1, int r2)
         {
             do {
                 epos.y = room_to->m_ul_corner.y + rnd(room_to->m_size.y - 2) + 1;
-            } while (game->level().get_tile(epos) == ' ');
+            } while (get_tile(epos) == ' ');
         }
         else epos.y = room_to->m_ul_corner.y;
         distance = abs(spos.x - epos.x) - 1;
@@ -121,11 +120,11 @@ void Level::conn(int r1, int r2)
     turn_spot = rnd(distance - 1) + 1;
     //Draw in the doors on either side of the passage or just put #'s if the rooms are gone.
     if (!(room_from->is_gone()))
-        room_from->add_door(spos);
+        room_from->add_door(spos, *this);
     else
         psplat(spos);
     if (!(room_to->is_gone()))
-        room_to->add_door(epos);
+        room_to->add_door(epos, *this);
     else
         psplat(epos);
     //Get ready to move...
@@ -234,23 +233,6 @@ void Level::do_passages()
     passnum();
 }
 
-//door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
-void Room::add_door(Coord p)
-{
-    //Set 1 in 5 doors to be hidden, fewer on the earlier levels
-    if (rnd(10) + 1 < get_level() && rnd(5) == 0 && !game->wizard().no_hidden_doors())
-    {
-        game->level().set_tile(p, (p.y == m_ul_corner.y || p.y == m_ul_corner.y + m_size.y - 1) ? HWALL : VWALL);
-        game->level().unset_flag(p, F_REAL);
-    }
-    else {
-        game->level().set_tile(p, DOOR);
-    }
-
-    int i = m_num_exits++;
-    m_exits[i] = p;
-}
-
 //passnum: Assign a number to each passageway
 void Level::passnum()
 {
@@ -278,18 +260,18 @@ void Level::numpass(Coord p)
     byte ch;
 
     if (offmap(p)) return;
-    if (game->level().get_passage_num(p))
+    if (get_passage_num(p))
         return;
     if (newpnum) { pnum++; newpnum = false; }
     //check to see if it is a door or secret door, i.e., a new exit, or a numberable type of place
-    if ((ch = game->level().get_tile(p)) == DOOR || (!game->level().is_real(p) && ch != FLOOR))
+    if ((ch = get_tile(p)) == DOOR || (!is_real(p) && ch != FLOOR))
     {
         room = &passages[pnum];
         room->m_exits[room->m_num_exits++] = p;
     }
-    else if (!game->level().is_passage(p))
+    else if (!is_passage(p))
         return;
-    game->level().set_flag(p, pnum);
+    set_flag(p, pnum);
     //recurse on the surrounding places
     numpass(south(p));
     numpass(north(p));

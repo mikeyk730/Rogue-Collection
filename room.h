@@ -1,6 +1,8 @@
 #pragma once
 #include "rogue.h"
 
+struct Level;
+
 //flags for rooms
 const short IS_DARK = 0x0001; //room is dark
 const short IS_GONE = 0x0002; //room is gone (a corridor)
@@ -9,7 +11,7 @@ const short IS_MAZE = 0x0004; //room is a maze
 //Room structure
 struct Room
 {
-    int index;
+    int m_index;
     Coord m_ul_corner;      //Upper left corner
     Coord m_size;           //Size of room
     Coord m_gold_position;  //Where the gold is
@@ -29,6 +31,6 @@ struct Room
     void reset();
 
     //door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
-    void add_door(Coord cp);
+    void add_door(Coord cp, Level& level);
 
 };

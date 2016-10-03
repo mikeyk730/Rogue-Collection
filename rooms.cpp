@@ -47,7 +47,7 @@ void Level::do_rooms()
     //Clear things for a new level
     for (i = 0; i < MAXROOMS; i++) {
         room = &rooms[i];
-        room->index = i;
+        room->m_index = i;
         room->reset();
     }
     //Put the gone rooms, if any, on the level
@@ -58,7 +58,7 @@ void Level::do_rooms()
             room = rnd_room();
         } while (room->is_maze());
         room->set_gone();
-        if (room->index > 2 && get_level() > 10 && rnd(20) < get_level() - 9)
+        if (room->m_index > 2 && get_level() > 10 && rnd(20) < get_level() - 9)
             room->set_maze();
     }
     //dig and populate all the rooms on the level

@@ -1,5 +1,8 @@
 #pragma once
 #include "room.h"
+#include "level.h"
+#include "main.h"
+#include "game_state.h"
 
 bool Room::is_flag_set(short flag) const {
     return (m_flags & flag) != 0;
@@ -28,4 +31,22 @@ void Room::set_dark(bool enable) {
 }
 void Room::reset() {
     m_gold_val = m_num_exits = m_flags = 0;
+}
+
+//todo: shouldn't need to poke into game->
+//door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
+void Room::add_door(Coord p, Level& level)
+{
+    //Set 1 in 5 doors to be hidden, fewer on the earlier levels
+    if (rnd(10) + 1 < get_level() && rnd(5) == 0 && !game->wizard().no_hidden_doors())
+    {
+        level.set_tile(p, (p.y == m_ul_corner.y || p.y == m_ul_corner.y + m_size.y - 1) ? HWALL : VWALL);
+        level.unset_flag(p, F_REAL);
+    }
+    else {
+        level.set_tile(p, DOOR);
+    }
+
+    int i = m_num_exits++;
+    m_exits[i] = p;
 }
