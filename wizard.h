@@ -12,7 +12,7 @@ int get_num(short *place);
 //show_map: Print out the map for the wizard
 void show_map(bool show_monsters);
 
-bool do_reveal_level();
+bool do_raise_level();
 
 void debug_screen();
 

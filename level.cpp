@@ -160,7 +160,7 @@ void Level::draw_char(Coord p)
     game->screen().mvaddch(p, get_tile(p));
 }
 
-void Level::show_map()
+void Level::show_map(bool reveal_interior)
 {
     int x, y;
     byte ch;
@@ -179,15 +179,30 @@ void Level::show_map()
                     set_tile(p, DOOR);
                     unset_flag(p, F_REAL);
                 }
+                break;
+            case FLOOR:
+                if (!reveal_interior)
+                    ch = ' ';
+                else if (!(is_real(p))) {
+                    ch = TRAP;
+                    set_tile(p, TRAP);
+                    unset_flag(p, F_REAL);
+                }
+                break;
             case DOOR: case PASSAGE: case STAIRS:
+                break;
+            default:
+                if (!reveal_interior)
+                    ch = ' ';
+            }
+
+            if (ch != ' ') {
                 if ((monster = monster_at(p)) != NULL)
                     if (monster->tile_beneath() == ' ')
                         monster->set_tile_beneath(ch);
-                break;
-            default:
-                ch = ' ';
             }
-            if (ch == DOOR)
+
+            if (!reveal_interior && ch == DOOR)
             {
                 game->screen().move(y, x);
                 if (game->screen().curch() != DOOR)
@@ -367,6 +382,13 @@ void Level::treas_room()
         }
     }
 }
+
+void Level::illuminate_rooms()
+{
+    for (Room* room = rooms; room < &rooms[MAXROOMS]; room++)
+        room->set_dark(false);
+}
+
 
 int get_level()
 {

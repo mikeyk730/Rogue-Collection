@@ -132,7 +132,7 @@ void Scroll::read_magic_mapping()
     //Scroll of magic mapping.
     discover();
     msg("oh, now this scroll has a map on it");
-    game->level().show_map();
+    game->level().show_map(false);
 }
 
 void Scroll::read_hold_monster()

@@ -76,6 +76,7 @@ namespace
         { 'C', do_summon_object },
         { 'X', do_show_map },
         { CTRL('P'), do_toggle_powers },
+        { CTRL('U'), do_raise_level }
     };
 }
 

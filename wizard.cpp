@@ -167,36 +167,11 @@ void add_pass()
                 game->screen().mvaddch({ x, y }, ch);
 }
 
-bool do_reveal_level()
-{
-    const int COLS = game->screen().columns();
-    for (int y = 1; y < maxrow(); y++) {
-        for (int x = 0; x < COLS; x++)
-        {
-            Coord p = { x, y };
-            byte ch = game->level().get_tile(p);
-
-            Monster* monster;
-            if ((monster = game->level().monster_at(p)) != NULL)
-                if (monster->tile_beneath() == ' ')
-                    monster->set_tile_beneath(ch);
-
-            int real = game->level().is_real(p);
-            if (!real)
-                game->screen().standout();
-            game->screen().mvaddch(p, ch);
-            if (!real)
-                game->screen().standend();
-        }
-    }
-    return false;
-}
-
 bool do_show_map()
 {
-    game->level().show_map();
-    //do_reveal_level();
-    //show_map(true);
+    game->level().show_map(true);
+    game->level().illuminate_rooms();
+    turn_see(false);
     return false;
 }
 
@@ -222,6 +197,12 @@ void show_map(bool show_monsters)
 
     show_win("---More (level map)---");
     game->screen().wrestor();
+}
+
+bool do_raise_level()
+{
+    game->hero().raise_level();
+    return false;
 }
 
 namespace

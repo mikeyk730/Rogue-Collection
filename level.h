@@ -45,13 +45,14 @@ struct Level {
 
     void draw_char(Coord p);
 
-    void show_map();
+    void show_map(bool reveal_all);
 
     //do_rooms: Create rooms and corridors with a connectivity graph
     void do_rooms();
 
     //do_passages: Draw all the passages on a level.
     void do_passages();
+    void illuminate_rooms();
 
     Room* rnd_room();
 
