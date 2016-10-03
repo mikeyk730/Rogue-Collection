@@ -16,7 +16,6 @@ struct OutputInterface
     virtual void clrtoeol() = 0;
     virtual void mvaddstr(int r, int c, const char *s) = 0;
     virtual void mvaddch(int r, int c, char chr) = 0;
-    virtual int mvinch(int r, int c) = 0;
     virtual int addch(byte chr) = 0;
     virtual void addstr(const char *s) = 0;
     virtual void set_attr(int bute) = 0;
@@ -57,6 +56,7 @@ struct OutputInterface
 
     //mdk: expanded interface below
     virtual void mvaddch(Coord p, byte c) = 0;
+    virtual int mvinch(Coord p) = 0;
 
     virtual int lines() const = 0;
     virtual int columns() const = 0;

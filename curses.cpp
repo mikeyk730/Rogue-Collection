@@ -423,6 +423,11 @@ void ConsoleOutput::mvaddch(Coord p, byte c)
     mvaddch(p.y, p.x, c);
 }
 
+int ConsoleOutput::mvinch(Coord p)
+{
+    return mvinch(p.y, p.x);
+}
+
 int ConsoleOutput::lines() const
 {
     return LINES;

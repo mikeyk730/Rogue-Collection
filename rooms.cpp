@@ -221,7 +221,8 @@ void leave_room(Coord cp)
 
     for (y = room->m_ul_corner.y + 1; y < room->m_size.y + room->m_ul_corner.y - 1; y++) {
         for (x = room->m_ul_corner.x + 1; x < room->m_size.x + room->m_ul_corner.x - 1; x++) {
-            switch (ch = game->screen().mvinch(y, x))
+            Coord pos = { x, y };
+            switch (ch = game->screen().mvinch(pos))
             {
             case ' ': case PASSAGE: case TRAP: case STAIRS:
                 break;
@@ -238,7 +239,7 @@ void leave_room(Coord cp)
                     //mdk:bugfix: phantoms could leave a blank spot on the map because
                     //the code was detecting monsters by the character on the screen.
                     //I moved this code slightly so invisible monsters are considered.
-                    Monster* m = game->level().monster_at({ x, y });
+                    Monster* m = game->level().monster_at(pos);
                     if (m) {
                         m->invalidate_tile_beneath();
                     }

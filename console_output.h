@@ -80,6 +80,7 @@ struct ConsoleOutput : public OutputInterface
     virtual char curch();
 
     virtual void mvaddch(Coord p, byte c);
+    virtual int mvinch(Coord p);
 
     virtual int lines() const;
     virtual int columns() const;

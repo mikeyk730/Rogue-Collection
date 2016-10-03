@@ -676,7 +676,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
         bool throws_affect_mimics(game->options.throws_affect_mimics());
         ch = game->level().get_tile_or_monster(bolt->m_position, throws_affect_mimics);
         spotpos[i].s_pos = bolt->m_position;
-        if ((spotpos[i].s_under = game->screen().mvinch(bolt->m_position.y, bolt->m_position.x)) == dirch)
+        if ((spotpos[i].s_under = game->screen().mvinch(bolt->m_position)) == dirch)
             spotpos[i].s_under = 0;
         switch (ch)
         {
@@ -700,8 +700,8 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
                     if (bolt_vs_monster(bolt, monster, &victim))
                     {
                         bolt_hit_something = true;
-                        if (game->screen().mvinch(bolt->m_position.y, bolt->m_position.x) != dirch)
-                            spotpos[i].s_under = game->screen().mvinch(bolt->m_position.y, bolt->m_position.x);
+                        if (game->screen().mvinch(bolt->m_position) != dirch)
+                            spotpos[i].s_under = game->screen().mvinch(bolt->m_position);
                     }
                 }
             }
