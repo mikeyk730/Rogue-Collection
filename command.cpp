@@ -127,14 +127,17 @@ void advance_game()
         {
             if (--game->sleep_timer <= 0) {
                 msg("you can move again");
+                //mdk:bugfix: the player was never set as running, so always treated as asleep
                 if (game->options.hit_plus_bugfix())
                     game->hero().set_running(true);
                 game->sleep_timer = 0;
             }
         }
         else {
+            //mdk:bugfix: the player was never set as running, so always treated as asleep
             if (game->options.hit_plus_bugfix())
                 game->hero().set_running(true);
+
             execcom();
         }
 
@@ -145,7 +148,7 @@ void advance_game()
                 switch (game->hero().get_ring(i)->m_which)
                 {
                 case R_SEARCH:
-                    do_search();
+                    do_search(); //mdk: we search even if asleep!
                     break;
                 case R_TELEPORT:
                     if (rnd(50) == 17)
