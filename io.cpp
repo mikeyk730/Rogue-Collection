@@ -369,7 +369,7 @@ void wait_for(char ch)
 //show_win: Function used to display a window and wait before returning
 void show_win(char *message)
 {
-    game->screen().mvaddstr(0, 0, message);
+    game->screen().mvaddstr({ 0, 0 }, message);
     game->screen().move(game->hero().m_position.y, game->hero().m_position.x);
     wait_for(' ');
 }

@@ -81,6 +81,7 @@ struct ConsoleOutput : public OutputInterface
 
     virtual void mvaddch(Coord p, byte c);
     virtual int mvinch(Coord p);
+    virtual void mvaddstr(Coord p, const std::string& s);
 
     virtual int lines() const;
     virtual int columns() const;

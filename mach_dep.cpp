@@ -142,7 +142,7 @@ void credits()
     game->screen().mvaddch({ 0,22 }, (char)204);
     game->screen().mvaddch({ COLS - 1,22 }, (char)185);
     game->screen().standend();
-    game->screen().mvaddstr(23, 2, "Rogue's Name? ");
+    game->screen().mvaddstr({ 2, 23 }, "Rogue's Name? ");
 
     game->screen().high();
     getinfo(tname, 23);

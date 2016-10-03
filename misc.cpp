@@ -52,13 +52,11 @@ void look(bool wakeup) //todo: learn this function
 {
     int x, y;
     Monster* monster;
-    struct Room *room;
     int ey, ex;
     int passcount = 0;
     int sy, sx, sumhero, diffhero;
     const int COLS = game->screen().columns();
 
-    room = game->hero().m_room;
     bool hero_in_passage = game->level().is_passage(game->hero().m_position);
     bool hero_in_maze = game->level().is_maze(game->hero().m_position);
     int hero_passage_number = game->level().get_passage_num(game->hero().m_position);
@@ -91,7 +89,7 @@ void look(bool wakeup) //todo: learn this function
         }
         
         game->oldpos = game->hero().m_position;
-        game->oldrp = room;
+        game->oldrp = game->hero().m_room;
     }
 
     ey = game->hero().m_position.y + 1;
@@ -146,7 +144,7 @@ void look(bool wakeup) //todo: learn this function
                     else
                     {
                         if (wakeup) wake_monster(pos);
-                        if (monster->tile_beneath() != ' ' || (!(room->is_dark()) && !game->hero().is_blind()))
+                        if (monster->tile_beneath() != ' ' || (!(game->hero().m_room->is_dark()) && !game->hero().is_blind()))
                             monster->reload_tile_beneath();
                         if (game->hero().can_see_monster(monster))
                             ch = monster->m_disguise;
@@ -157,8 +155,7 @@ void look(bool wakeup) //todo: learn this function
                     if (ch != ARMOR) 
                         game->screen().standout();
 
-                game->screen().move(y, x);
-                game->screen().addch(ch);
+                game->screen().mvaddch(pos, ch);
                 game->screen().standend();
                 if (game->stop_at_door() && !game->first_move() && game->in_run_cmd())
                 {
@@ -194,11 +191,10 @@ void look(bool wakeup) //todo: learn this function
     }
     if (game->stop_at_door() && !game->first_move() && passcount > 1)
         game->stop_running();
-    game->screen().move(game->hero().m_position.y, game->hero().m_position.x);
     //todo:check logic
     if ((game->level().is_passage(game->hero().m_position)) || (game->was_trapped > 1) || (game->level().is_maze(game->hero().m_position)))
         game->screen().standout();
-    game->screen().addch(PLAYER);
+    game->screen().mvaddch(game->hero().m_position, PLAYER);
     game->screen().standend();
     if (game->was_trapped) {
         beep();
@@ -398,17 +394,16 @@ void help(const char*const* helpscr)
             if (hcount % 2) hcol = 40;
             if (hrow == 22 && hcol == 40) isfull = true;
         }
-        game->screen().move(hrow, hcol);
-        game->screen().addstr(*helpscr++);
+        game->screen().mvaddstr({ hcol, hrow }, *helpscr++);
         //decide if we need print a continue type message
         if ((*helpscr == 0) || isfull)
         {
             if (*helpscr == 0)
-                game->screen().mvaddstr(24, 0, "--press space to continue--");
+                game->screen().mvaddstr({ 0, 24 }, "--press space to continue--");
             else if (in_small_screen_mode())
-                game->screen().mvaddstr(24, 0, "--Space for more, Esc to continue--");
+                game->screen().mvaddstr({ 0, 24 }, "--Space for more, Esc to continue--");
             else
-                game->screen().mvaddstr(24, 0, "--Press space for more, Esc to continue--");
+                game->screen().mvaddstr({ 0, 24 }, "--Press space for more, Esc to continue--");
             do {
                 answer = readchar();
             } while (answer != ' ' && answer != ESCAPE);

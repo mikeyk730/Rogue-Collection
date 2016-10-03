@@ -155,10 +155,10 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
 
     game->screen().clear();
     game->screen().high();
-    game->screen().mvaddstr(0, 0, "Guildmaster's Hall Of Fame:");
+    game->screen().mvaddstr({ 0, 0 }, "Guildmaster's Hall Of Fame:");
     game->screen().standend();
     game->screen().yellow();
-    game->screen().mvaddstr(2, 0, "Gold");
+    game->screen().mvaddstr({ 0, 2 }, "Gold");
     for (i = 0; i < TOPSCORES; i++, top10++)
     {
         altmsg = NULL;
@@ -290,10 +290,10 @@ void total_winner()
     game->screen().printw("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
     game->screen().printw("a great profit and are admitted to the fighters guild.\n");
 
-    game->screen().mvaddstr(LINES - 1, 0, "--Press space to continue--");
+    game->screen().mvaddstr({ 0, LINES - 1 }, "--Press space to continue--");
     wait_for(' ');
     game->screen().clear();
-    game->screen().mvaddstr(0, 0, "   Worth  Item");
+    game->screen().mvaddstr({ 0, 0 }, "   Worth  Item");
     oldpurse = game->hero().get_purse();
     for (auto it = game->hero().m_pack.begin(); it != game->hero().m_pack.end(); c++, ++it)
     {

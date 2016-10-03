@@ -428,6 +428,11 @@ int ConsoleOutput::mvinch(Coord p)
     return mvinch(p.y, p.x);
 }
 
+void ConsoleOutput::mvaddstr(Coord p, const std::string & s)
+{
+    mvaddstr(p.y, p.x, s.c_str());
+}
+
 int ConsoleOutput::lines() const
 {
     return LINES;
