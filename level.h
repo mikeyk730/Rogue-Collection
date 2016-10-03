@@ -40,6 +40,8 @@ struct Level {
 
     void draw_char(Coord p);
 
+    void show_map();
+
 
     std::list<Item*> items; //List of objects on this level
     std::list<Monster*> monsters; //List of monsters on the level

@@ -130,45 +130,9 @@ void Scroll::read_monster_confusion()
 void Scroll::read_magic_mapping()
 {
     //Scroll of magic mapping.
-    int x, y;
-    byte ch;
-    Monster* monster;
-
     discover();
     msg("oh, now this scroll has a map on it");
-    //Take all the things we want to keep hidden out of the window
-    const int COLS = game->screen().columns();
-    for (y = 1; y < maxrow(); y++) {
-        for (x = 0; x < COLS; x++)
-        {
-            Coord p = { x, y };
-            switch (ch = game->level().get_tile(p))
-            {
-            case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-                if (!(game->level().is_real(p))) {
-                    ch = DOOR;
-                    game->level().set_tile(p, DOOR);
-                    game->level().unset_flag(p, F_REAL);
-                }
-            case DOOR: case PASSAGE: case STAIRS:
-                if ((monster = game->level().monster_at(p)) != NULL)
-                    if (monster->tile_beneath() == ' ')
-                        monster->set_tile_beneath(ch);
-                break;
-            default: 
-                ch = ' ';
-            }
-            if (ch == DOOR)
-            {
-                game->screen().move(y, x);
-                if (game->screen().curch() != DOOR)
-                    game->screen().standout();
-            }
-            if (ch != ' ')
-                game->screen().mvaddch(p, ch);
-            game->screen().standend();
-        }
-    }
+    game->level().show_map();
 }
 
 void Scroll::read_hold_monster()

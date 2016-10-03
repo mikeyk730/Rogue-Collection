@@ -178,6 +178,45 @@ void Level::draw_char(Coord p)
     game->screen().mvaddch(p, get_tile(p));
 }
 
+void Level::show_map()
+{
+    int x, y;
+    byte ch;
+    Monster* monster;
+
+    const int COLS = game->screen().columns();
+    for (y = 1; y < maxrow(); y++) {
+        for (x = 0; x < COLS; x++)
+        {
+            Coord p = { x, y };
+            switch (ch = get_tile(p))
+            {
+            case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+                if (!(is_real(p))) {
+                    ch = DOOR;
+                    set_tile(p, DOOR);
+                    unset_flag(p, F_REAL);
+                }
+            case DOOR: case PASSAGE: case STAIRS:
+                if ((monster = monster_at(p)) != NULL)
+                    if (monster->tile_beneath() == ' ')
+                        monster->set_tile_beneath(ch);
+                break;
+            default:
+                ch = ' ';
+            }
+            if (ch == DOOR)
+            {
+                game->screen().move(y, x);
+                if (game->screen().curch() != DOOR)
+                    game->screen().standout();
+            }
+            if (ch != ' ')
+                game->screen().mvaddch(p, ch);
+            game->screen().standend();
+        }
+    }
+}
 
 #define TREAS_ROOM  20 //one chance in TREAS_ROOM for a treasure room
 #define MAXTREAS  10 //maximum number of treasures in a treasure room

@@ -187,7 +187,7 @@ void enter_room(Coord cp)
         return;
     }
     door_open(room);
-    if (!(room->is_dark()) && !game->hero().is_blind() && !(room->is_maze()))
+    if (!(room->is_dark()) && !game->hero().is_blind() && !(room->is_maze())) {
         for (y = room->m_ul_corner.y; y < room->m_size.y + room->m_ul_corner.y; y++)
         {
             game->screen().move(y, room->m_ul_corner.x);
@@ -204,6 +204,7 @@ void enter_room(Coord cp)
                 }
             }
         }
+    }
 }
 
 //leave_room: Code for when we exit a room

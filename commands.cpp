@@ -104,12 +104,6 @@ bool do_toggle_wizard()
     return false;
 }
 
-bool do_show_map()
-{
-    show_map(true);
-    return false;
-}
-
 bool do_toggle_powers()
 {
     char b[255];

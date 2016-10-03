@@ -155,6 +155,34 @@ bool do_summon_object()
     return false;
 }
 
+bool do_reveal_level()
+{
+    const int COLS = game->screen().columns();
+    for (int y = 1; y < maxrow(); y++) {
+        for (int x = 0; x < COLS; x++)
+        {
+            Coord p = { x, y };
+            byte ch = game->level().get_tile(p);
+
+            Monster* monster;
+            if ((monster = game->level().monster_at(p)) != NULL)
+                if (monster->tile_beneath() == ' ')
+                    monster->set_tile_beneath(ch);
+
+            game->screen().mvaddch(p, ch);
+        }
+    }
+    return false;
+}
+
+bool do_show_map()
+{
+    game->level().show_map();
+    //do_reveal_level();
+    //show_map(true);
+    return false;
+}
+
 //show_map: Print out the map for the wizard
 void show_map(bool show_monsters)
 {
