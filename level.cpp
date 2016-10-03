@@ -389,6 +389,33 @@ void Level::illuminate_rooms()
         room->set_dark(false);
 }
 
+bool Level::reveal_magic()
+{
+    bool discovered = false;
+    for (auto i = items.begin(); i != items.end(); ++i)
+    {
+        Item* item = *i;
+        if (item->is_magic())
+        {
+            discovered = true;
+            game->screen().mvaddch(item->m_position, get_magic_char(item));
+        }
+    }
+    for (auto m = monsters.begin(); m != monsters.end(); ++m) {
+        Agent* monster = *m;
+        for (auto i = monster->m_pack.begin(); i != monster->m_pack.end(); ++i)
+        {
+            Item* item = *i;
+            if (item->is_magic())
+            {
+                discovered = true;
+                game->screen().mvaddch(monster->m_position, MAGIC);
+            }
+        }
+    }
+    return discovered;
+}
+
 
 int get_level()
 {

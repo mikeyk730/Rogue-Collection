@@ -54,6 +54,8 @@ struct Level {
     void do_passages();
     void illuminate_rooms();
 
+    bool reveal_magic(); //Show all magic items on the level
+
     Room* rnd_room();
 
     std::list<Item*> items; //List of objects on this level

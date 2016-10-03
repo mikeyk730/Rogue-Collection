@@ -187,31 +187,7 @@ void Potion::quaff_magic_detection()
 {
     //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
     //Also give hints as to whether he would want to use the object.
-    bool discovered = false;
-
-    for (auto i = game->level().items.begin(); i != game->level().items.end(); ++i)
-    {
-        Item* item = *i;
-        if (item->is_magic())
-        {
-            discovered = true;
-            game->screen().mvaddch(item->m_position, get_magic_char(item));
-        }
-    }
-    for (auto m = game->level().monsters.begin(); m != game->level().monsters.end(); ++m) {
-        Agent* monster = *m;
-        for (auto i = monster->m_pack.begin(); i != monster->m_pack.end(); ++i)
-        {
-            Item* item = *i;
-            if (item->is_magic())
-            {
-                discovered = true;
-                game->screen().mvaddch(monster->m_position, MAGIC);
-            }
-        }
-    }
-
-    if (discovered) {
+    if (game->level().reveal_magic()) {
         discover();
         msg("You sense the presence of magic.");
     }
