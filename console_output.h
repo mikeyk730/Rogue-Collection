@@ -4,6 +4,7 @@
 struct ConsoleOutput : public OutputInterface
 {
     ConsoleOutput(Coord origin);
+    ~ConsoleOutput();
 
     virtual void clear();
 

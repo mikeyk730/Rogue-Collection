@@ -91,7 +91,12 @@ void ConsoleOutput::putchr_(int c, int attr)
 ConsoleOutput::ConsoleOutput(Coord origin) :
     m_origin(origin)
 {
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE); //todo:leaking this
+    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+}
+
+ConsoleOutput::~ConsoleOutput()
+{
+    CloseHandle(hConsole);
 }
 
 //clear screen
