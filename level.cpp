@@ -281,7 +281,9 @@ void Level::new_level(int do_implode)
         find_empty_location(&game->hero().m_position, true);
     } while (!(is_real(game->hero().m_position)));  //don't place hero on a trap
 
-    reset_msg_position();  //todo: rest probably belongs somewhere else
+    reset_msg_position();
+    
+    //todo: rest probably belongs somewhere else
     //todo:makre sure same things happen as in teleport
     //unhold when you go down just in case
     game->hero().reset_trap_turns();

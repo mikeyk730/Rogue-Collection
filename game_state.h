@@ -63,13 +63,17 @@ struct GameState
 
     struct Options
     {
+        //control options
         bool show_inventory_menu() const;
+        bool stop_running_at_doors() const;
+
+        //graphics options
         bool narrow_screen() const;
         bool monochrome() const;
         bool use_exp_level_names() const;
-        bool stop_running_at_doors() const;
+        bool show_torch() const;
 
-        //behavior changing options
+        //rule changing options
         bool haste_self_bugfix() const;
         bool hit_plus_bugfix() const;
         bool striking_charge_bugfix() const;
