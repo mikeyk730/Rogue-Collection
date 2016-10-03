@@ -1,6 +1,3 @@
-//endit: Exit the program abnormally.
-void endit();
-
 int get_seed();
 
 //rnd: Pick a very random number.

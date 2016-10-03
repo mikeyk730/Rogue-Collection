@@ -96,12 +96,6 @@ int main(int argc, char **argv)
     delete game;
 }
 
-//endit: Exit the program abnormally.
-void endit()
-{
-    fatal("Ok, if you want to exit that badly, I'll have to allow it\n");
-}
-
 //rnd: Pick a very random number.
 int rnd(int range)
 {
