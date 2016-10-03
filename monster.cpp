@@ -125,24 +125,18 @@ void Monster::hold()
     set_is_held(true);
 }
 
-void Monster::start_run(Coord* c, bool reveal_mimic)
+void Monster::start_run(Coord* c)
 {
     //Start the beastie running
     set_running(true);
     set_is_held(false);
     m_destination = c;
-    
-    //mdk:bugfix: originally some actions (aggravate monsters, drain life) could cause
-    //a mimic to start running while still disguised
-    if (reveal_mimic) {
-        reveal_disguise();
-    }
 }
 
 //start_run: Set a monster running after something
 void Monster::start_run()
 {
-    start_run(obtain_target(), false);
+    start_run(obtain_target());
 }
 
 bool Monster::is_seeking(Item * obj)
@@ -191,6 +185,11 @@ void Monster::give_pack()
 //do_chase: Make one thing chase another.
 Monster* Monster::do_chase() //todo: understand
 {
+    //moving monsters tell no lies
+    //mdk:bugfix: originally some actions (aggravate monsters, drain life) could cause
+    //a mimic to start running while still disguised
+    reveal_disguise();
+
     //If gold has been taken, target the hero
     if (is_greedy() && m_room->m_gold_val == 0)
         m_destination = &game->hero().m_position;
@@ -321,15 +320,14 @@ void Monster::do_screen_update(Coord next_position)
     {
         if (game->level().is_passage(next_position))
             game->screen().standout();
-        //set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
-        set_tile_beneath(game->level().get_tile(next_position));
+        //mdk:tile is fetched from screen so detected monster doesn't reveal level 
+        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x));
         game->screen().mvaddch(next_position, m_disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
-        //set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
-        set_tile_beneath(game->level().get_tile(next_position));
+        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x));
         game->screen().mvaddch(next_position, m_type);
     }
     else

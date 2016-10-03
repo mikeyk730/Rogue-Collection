@@ -478,7 +478,8 @@ Monster* Hero::fight(Coord monster_pos, Item *weapon, bool thrown)
         if (thrown && !throws_affect_mimics) {
             return 0;
         }
-        //Let him know it was really a mimic (if it was one).
+        monster->reveal_disguise();
+        //Let him know it was really a mimic
         if (!is_blind())
             msg("wait! That's a %s!", monster->get_name().c_str());
     }

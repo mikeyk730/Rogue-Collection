@@ -21,7 +21,7 @@ bool do_save_game()
     msg("");
     reset_msg_position();
     if (in_small_screen_mode())
-        game->screen().addstr("Save file ? ");
+        game->screen().addstr("Save file? ");
     else
         game->screen().printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", game->get_environment("savefile").c_str());
     getinfo(savename, 19);

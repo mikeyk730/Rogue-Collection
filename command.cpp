@@ -134,7 +134,7 @@ void advance_game()
     game->hero().set_num_actions(1);
     //mdk:bugfix:  The hero was meant to get 2-3 actions when hasted, but he
     //always got 1 in the original because of a bug.
-    if (game->hero().is_fast() && game->options.haste_self_bugfix())
+    if (game->hero().is_fast() && game->options.haste_self_bugfix() || game->wizard().haste_self())
         game->hero().set_num_actions(rnd(2) + 2);
 
     while (game->hero().decrement_num_actions())

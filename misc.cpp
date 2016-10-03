@@ -459,7 +459,7 @@ bool do_go_up_stairs()
             if (prev_level() == 0)
                 total_winner();
             game->level().new_level(true);
-            msg("you feel a wrenching sensation in your gut");
+            msg("you feel a wrenching sensation%s", noterse(" in your gut"));
         }
         else
             msg("your way is magically blocked");

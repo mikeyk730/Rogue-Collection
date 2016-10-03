@@ -72,7 +72,7 @@ struct Monster : public Agent
 
     //start_run: Set a monster running after something
     void start_run();
-    void start_run(Coord* c, bool reveal_mimic = true);
+    void start_run(Coord* c);
     void hold();
 
     //give_pack: Give a pack to a monster if it deserves one

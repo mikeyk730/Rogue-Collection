@@ -98,10 +98,12 @@ void load_monster_cfg(const std::string& filename)
         if (line.substr(0, 7) == "l_order") {
             std::string l = line.substr(9, 26);
             l.copy(lvl_mons, 26);
+            continue;
         }
         else if (line.substr(0, 7) == "w_order") {
             std::string w = line.substr(9, 26);
             w.copy(wand_mons, 26);
+            continue;
         }
 
         std::istringstream ss(line);
@@ -266,7 +268,7 @@ Monster *wake_monster(Coord p)
     //Every time he sees mean monster, it might start chasing him
     if (!monster->is_running() && rnd(3) != 0 && monster->is_mean() && !monster->is_held() && !game->hero().is_wearing_ring(R_STEALTH))
     {
-        monster->start_run(&game->hero().m_position, false);
+        monster->start_run(&game->hero().m_position);
     }
     if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
     {

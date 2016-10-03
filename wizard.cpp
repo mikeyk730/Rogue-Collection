@@ -371,6 +371,11 @@ bool Cheats::jump_levels() const
     return is_enabled("jump_levels");
 }
 
+bool Cheats::haste_self() const
+{
+    return is_enabled("haste_self");
+}
+
 bool Cheats::invulnerability() const
 {
     return is_enabled("invulnerability");
