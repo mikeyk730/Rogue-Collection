@@ -283,7 +283,7 @@ void door_open(Room *room)
         {
             Coord pos = { k, j };
             Monster* monster = wake_monster(pos);
-            if (monster->tile_beneath() == ' ' && !room->is_dark())
+            if (monster && monster->tile_beneath() == ' ' && !room->is_dark())
                 monster->reload_tile_beneath();
         }
     }
