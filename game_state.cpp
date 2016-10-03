@@ -67,9 +67,10 @@ GameState::GameState(int seed) :
     init_environment();
 }
 
-GameState::GameState(Random* random, const std::string& filename) :
+GameState::GameState(Random* random, const std::string& filename, bool show_replay) :
     m_output_interface(new ConsoleOutput({ 0, 0 })),
     m_in_replay(true),
+    m_show_replay(show_replay),
     m_log_stream("log.txt")
 {
     std::unique_ptr<std::istream> in(new std::ifstream(filename, std::ios::binary | std::ios::in));
@@ -116,6 +117,11 @@ GameState::GameState(Random* random, const std::string& filename) :
     m_potions.reset(new PotionInfo);
     m_rings.reset(new RingInfo);
     m_sticks.reset(new StickInfo);
+
+    if (!m_show_replay)
+    {
+        screen().StopRendering();
+    }
 }
 
 GameState::~GameState()
@@ -254,6 +260,10 @@ bool GameState::in_replay() const
 
 void GameState::set_replay_end()
 {
+    if (!m_show_replay)
+    {
+        screen().ResumeRendering();
+    }
     reset_msg_position();
     msg("Replay ended");
     m_in_replay = false;

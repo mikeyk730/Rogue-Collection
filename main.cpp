@@ -56,10 +56,12 @@ int main(int argc, char **argv)
     //filename = "sleep.sav";
     if (argc > 1)
         filename = argv[1];
+
+    bool show_replay = true;
     
     try {
         if (!filename.empty()) {
-            game = new GameState(g_random, filename);
+            game = new GameState(g_random, filename, show_replay);
         }
         else {
             game = new GameState(seed);

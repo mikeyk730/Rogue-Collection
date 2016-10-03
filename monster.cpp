@@ -321,15 +321,15 @@ void Monster::do_screen_update(Coord next_position)
     {
         if (game->level().is_passage(next_position))
             game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
-        //set_tile_beneath(game->level().get_tile(next_position));
+        //set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
+        set_tile_beneath(game->level().get_tile(next_position));
         game->screen().mvaddch(next_position, m_disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
-        set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
-        //set_tile_beneath(game->level().get_tile(next_position));
+        //set_tile_beneath(game->screen().mvinch(next_position.y, next_position.x)); //todo: why get from screen instead of level??
+        set_tile_beneath(game->level().get_tile(next_position));
         game->screen().mvaddch(next_position, m_type);
     }
     else
@@ -565,7 +565,7 @@ bool vampire_wraith_attack(Monster* monster)
 Monster* Monster::attack_player()
 {
     std::string name;
-    bool attack_success = false; // todo:set this everywhere
+    bool attack_success = false;
 
     //Since this is an attack, stop running and any healing that was going on at the time.
     game->stop_running();

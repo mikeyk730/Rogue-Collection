@@ -84,6 +84,9 @@ struct ConsoleOutput : public OutputInterface
     virtual int lines() const;
     virtual int columns() const;
 
+    virtual void StopRendering();
+    virtual void ResumeRendering();
+
     virtual bool small_screen_mode() const;
 
 private:
@@ -93,6 +96,7 @@ private:
     void Render();
     void Render(SMALL_RECT rect);
     void ApplyMove();
+    void ApplyCursor();
 
     //screen size
     short LINES = 25;
@@ -107,10 +111,14 @@ private:
     short c_row;
     short c_col;
 
+    bool m_cursor;
+
     Coord m_origin;
     Coord translated_position();
 
     HANDLE hConsole;
     CHAR_INFO m_buffer[MAXLINES][MAXCOLS];
     CHAR_INFO m_backup[MAXLINES][MAXCOLS];
+
+    bool should_render = true;
 };

@@ -17,7 +17,7 @@ struct OutputInterface;
 struct GameState
 {
     GameState(int seed);
-    GameState(Random* random, const std::string& filename);
+    GameState(Random* random, const std::string& filename, bool show_replay);
     ~GameState();
 
     void save_game(const std::string& filename);
@@ -109,7 +109,7 @@ private:
     int m_restore_count = 0;
     bool m_fast_play_enabled = false; //If 'Fast Play' has been enabled
     bool m_in_replay = false;  //If we are currently replaying a saved game
-
+    bool m_show_replay = true;
 
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 

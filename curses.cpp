@@ -106,18 +106,13 @@ void ConsoleOutput::clear()
 }
 
 //Turn cursor on and off
-bool ConsoleOutput::cursor(bool ison)
+bool ConsoleOutput::cursor(bool enable)
 {
-    bool oldstate;
-    CONSOLE_CURSOR_INFO info;
-
-    GetConsoleCursorInfo(hConsole, &info);
-    if (info.bVisible == (ison ? TRUE : FALSE))
-        return ison;
-    oldstate = info.bVisible == TRUE;
-    info.bVisible = ison;
-    SetConsoleCursorInfo(hConsole, &info);
-    return (oldstate);
+    bool was_enabled = m_cursor;
+    m_cursor = enable;
+    if(enable != was_enabled)
+        ApplyCursor();
+    return was_enabled;
 }
 
 //get curent cursor position
@@ -443,8 +438,16 @@ bool ConsoleOutput::small_screen_mode() const
     return COLS == 40;
 }
 
+Coord ConsoleOutput::translated_position()
+{
+    return{ c_col + m_origin.x, c_row + m_origin.y };
+}
+
 void ConsoleOutput::Render()
 {
+    if(!should_render)
+        return;
+
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { 0, 0 };
     SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
@@ -453,6 +456,9 @@ void ConsoleOutput::Render()
 
 void ConsoleOutput::Render(SMALL_RECT rect)
 {
+    if (!should_render)
+        return;
+
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
     COORD dwBufferCoord = { rect.Left, rect.Top };
     SMALL_RECT rcRegion = { m_origin.x+rect.Left, m_origin.y+rect.Top, m_origin.x+rect.Right, m_origin.y+rect.Bottom };
@@ -461,12 +467,34 @@ void ConsoleOutput::Render(SMALL_RECT rect)
 
 void ConsoleOutput::ApplyMove()
 {
+    if (!should_render)
+        return;
+
     Coord pos = translated_position();
     COORD p = { pos.x, pos.y };
     SetConsoleCursorPosition(hConsole, p);
 }
 
-Coord ConsoleOutput::translated_position()
+void ConsoleOutput::ApplyCursor()
 {
-    return{ c_col + m_origin.x, c_row + m_origin.y };
+    if (!should_render)
+        return;
+
+    CONSOLE_CURSOR_INFO info;
+    info.bVisible = m_cursor;
+    info.dwSize = 25;
+    SetConsoleCursorInfo(hConsole, &info);
+}
+
+void ConsoleOutput::StopRendering()
+{
+    should_render = false;
+}
+
+void ConsoleOutput::ResumeRendering()
+{
+    should_render = true;
+    ApplyMove();
+    Render();
+    ApplyCursor();
 }

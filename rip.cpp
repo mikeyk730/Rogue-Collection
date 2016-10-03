@@ -68,7 +68,7 @@ void score(int amount, int flags, char monst)
     if (amount || flags || monst)
     {
         game->screen().move(LINES - 1, 0);
-        game->screen().cursor(true);
+        //game->screen().cursor(true);
         game->screen().printw("[Press Enter to see rankings]");
         clear_typeahead_buffer();
         wait_for('\r');
