@@ -88,19 +88,113 @@ void darken_area()
     }
 }
 
-//look: A quick glance all around the player
-void look(bool wakeup) //todo: learn this function
+void look_do_something(const Coord pos, const bool wakeup, int* passcount)
 {
-    int x, y;
     Monster* monster;
-    int ey, ex;
-    int passcount = 0;
-    int sy, sx, sumhero, diffhero;
-    const int COLS = game->screen().columns();
 
     bool hero_in_passage = game->level().is_passage(game->hero().m_position);
     bool hero_in_maze = game->level().is_maze(game->hero().m_position);
     int hero_passage_number = game->level().get_passage_num(game->hero().m_position);
+
+    if (!game->hero().is_blind())
+    {
+        if (pos.y == game->hero().m_position.y && pos.x == game->hero().m_position.x) return;
+    }
+    else if (pos.y != game->hero().m_position.y || pos.x != game->hero().m_position.x) return;
+    //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
+
+    bool is_passage = game->level().is_passage(pos);
+    bool is_maze = game->level().is_maze(pos);
+    int passage_number = game->level().get_passage_num(pos);
+    byte ch = game->level().get_tile(pos);
+
+    //No Doors
+    byte pch = game->level().get_tile(game->hero().m_position);
+    if (pch != DOOR && ch != DOOR) {
+        //Either hero or other in a passage
+        if (hero_in_passage != is_passage)
+        {
+            //Neither is in a maze
+            if (!hero_in_maze && !is_maze)
+                return;
+        }
+        //Not in same passage
+        else if (is_passage && passage_number != hero_passage_number) {
+            return;
+        }
+    }
+    if ((monster = game->level().monster_at(pos)) != NULL) {
+        if (game->hero().detects_others() && monster->is_invisible())
+        {
+            if (game->stop_at_door() && !game->first_move())
+                game->stop_running();
+            return;
+        }
+        else
+        {
+            if (wakeup) wake_monster(pos);
+            if (monster->tile_beneath() != ' ' || (!(game->hero().m_room->is_dark()) && !game->hero().is_blind()))
+                monster->reload_tile_beneath();
+            if (game->hero().can_see_monster(monster))
+                ch = monster->m_disguise;
+        }
+    }
+    //The current character used for IBM ARMOR doesn't look right in Inverse
+    if ((ch != PASSAGE) && (is_passage || is_maze))
+        if (ch != ARMOR)
+            game->screen().standout();
+
+    game->screen().mvaddch(pos, ch);
+    game->screen().standend();
+
+    const int ey = game->hero().m_position.y + 1;
+    const int ex = game->hero().m_position.x + 1;
+    const int sx = game->hero().m_position.x - 1;
+    const int sy = game->hero().m_position.y - 1;
+
+    int sumhero, diffhero; //todo: can be uninitialized
+    if (game->stop_at_door() && !game->first_move() && game->in_run_cmd()) {
+        sumhero = game->hero().m_position.y + game->hero().m_position.x;
+        diffhero = game->hero().m_position.y - game->hero().m_position.x;
+    }
+
+    if (game->stop_at_door() && !game->first_move() && game->in_run_cmd())
+    {
+        switch (game->run_character)
+        {
+        case 'h': if (pos.x == ex) return; break;
+        case 'j': if (pos.y == sy) return; break;
+        case 'k': if (pos.y == ey) return; break;
+        case 'l': if (pos.x == sx) return; break;
+        case 'y': if ((pos.y + pos.x) - sumhero >= 1) return; break;
+        case 'u': if ((pos.y - pos.x) - diffhero >= 1) return; break;
+        case 'n': if ((pos.y + pos.x) - sumhero <= -1) return; break;
+        case 'b': if ((pos.y - pos.x) - diffhero <= -1) return; break;
+        }
+        switch (ch)
+        {
+        case DOOR:
+            if (pos.x == game->hero().m_position.x || pos.y == game->hero().m_position.y)
+                game->stop_running();
+            break;
+        case PASSAGE:
+            if (pos.x == game->hero().m_position.x || pos.y == game->hero().m_position.y)
+                (*passcount)++;
+            break;
+        case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
+            break;
+        default:
+            game->stop_running();
+            break;
+        }
+    }
+}
+
+//look: A quick glance all around the player
+void look(bool wakeup) //todo: learn this function
+{
+    const int COLS = game->screen().columns();
+
 
     //if the hero has moved
     if (game->oldpos != game->hero().m_position) {
@@ -110,105 +204,24 @@ void look(bool wakeup) //todo: learn this function
         game->oldrp = game->hero().m_room;
     }
 
-    ey = game->hero().m_position.y + 1;
-    ex = game->hero().m_position.x + 1;
-    sx = game->hero().m_position.x - 1;
-    sy = game->hero().m_position.y - 1;
+    int passcount = 0;
 
-    if (game->stop_at_door() && !game->first_move() && game->in_run_cmd()) {
-        sumhero = game->hero().m_position.y + game->hero().m_position.x;
-        diffhero = game->hero().m_position.y - game->hero().m_position.x;
-    }
+    int ey = game->hero().m_position.y + 1;
+    int ex = game->hero().m_position.x + 1;
+    int sx = game->hero().m_position.x - 1;
+    int sy = game->hero().m_position.y - 1;
 
-    for (y = sy; y <= ey; y++) {
-        if (y > 0 && y < maxrow()) {
-            for (x = sx; x <= ex; x++)
-            {
-                if (x <= 0 || x >= COLS) continue;
-
-                Coord pos = { x, y };
-
-                if (!game->hero().is_blind())
-                {
-                    if (y == game->hero().m_position.y && x == game->hero().m_position.x) continue;
-                }
-                else if (y != game->hero().m_position.y || x != game->hero().m_position.x) continue;
-                //THIS REPLICATES THE moat() MACRO.  IF MOAT IS CHANGED, THIS MUST BE CHANGED ALSO ?? What does this really mean ??
-
-                bool is_passage = game->level().is_passage(pos);
-                bool is_maze = game->level().is_maze(pos);
-                int passage_number = game->level().get_passage_num(pos);
-                byte ch = game->level().get_tile(pos);
-
-                //No Doors
-                byte pch = game->level().get_tile(game->hero().m_position);
-                if (pch != DOOR && ch != DOOR)
-                    //Either hero or other in a passage
-                    if (hero_in_passage != is_passage)
-                    {
-                        //Neither is in a maze
-                        if (!hero_in_maze && !is_maze)
-                            continue;
-                    }
-                //Not in same passage
-                    else if (is_passage && passage_number != hero_passage_number)
-                        continue;
-                if ((monster = game->level().monster_at(pos)) != NULL) {
-                    if (game->hero().detects_others() && monster->is_invisible())
-                    {
-                        if (game->stop_at_door() && !game->first_move())
-                            game->stop_running();
-                        continue;
-                    }
-                    else
-                    {
-                        if (wakeup) wake_monster(pos);
-                        if (monster->tile_beneath() != ' ' || (!(game->hero().m_room->is_dark()) && !game->hero().is_blind()))
-                            monster->reload_tile_beneath();
-                        if (game->hero().can_see_monster(monster))
-                            ch = monster->m_disguise;
-                    }
-                }
-                //The current character used for IBM ARMOR doesn't look right in Inverse
-                if ((ch != PASSAGE) && (is_passage || is_maze))
-                    if (ch != ARMOR)
-                        game->screen().standout();
-
-                game->screen().mvaddch(pos, ch);
-                game->screen().standend();
-                if (game->stop_at_door() && !game->first_move() && game->in_run_cmd())
-                {
-                    switch (game->run_character)
-                    {
-                    case 'h': if (x == ex) continue; break;
-                    case 'j': if (y == sy) continue; break;
-                    case 'k': if (y == ey) continue; break;
-                    case 'l': if (x == sx) continue; break;
-                    case 'y': if ((y + x) - sumhero >= 1) continue; break;
-                    case 'u': if ((y - x) - diffhero >= 1) continue; break;
-                    case 'n': if ((y + x) - sumhero <= -1) continue; break;
-                    case 'b': if ((y - x) - diffhero <= -1) continue; break;
-                    }
-                    switch (ch)
-                    {
-                    case DOOR:
-                        if (x == game->hero().m_position.x || y == game->hero().m_position.y)
-                            game->stop_running();
-                        break;
-                    case PASSAGE:
-                        if (x == game->hero().m_position.x || y == game->hero().m_position.y)
-                            passcount++;
-                        break;
-                    case FLOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
-                        break;
-                    default:
-                        game->stop_running();
-                        break;
-                    }
-                }
-            }
+    for (int y = sy; y <= ey; y++) {
+        if (!(y > 0 && y < maxrow()))
+            continue;
+        for (int x = sx; x <= ex; x++){
+            if (x <= 0 || x >= COLS) 
+                continue;
+            Coord pos = { x, y };
+            look_do_something(pos, wakeup, &passcount);
         }
     }
+
     if (game->stop_at_door() && !game->first_move() && passcount > 1)
         game->stop_running();
     //todo:check logic
