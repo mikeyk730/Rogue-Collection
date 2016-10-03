@@ -416,6 +416,38 @@ bool Level::reveal_magic()
     return discovered;
 }
 
+bool Level::detect_monsters(bool enable)
+{
+    bool revealed = false;
+
+    for (auto i = monsters.begin(); i != monsters.end(); ++i) {
+        Monster* monster(*i);
+
+        if (enable)
+        {
+            byte screen_tile = game->screen().mvinch(monster->m_position);
+            if (!game->hero().can_see_monster(monster) && screen_tile != monster->m_type) {
+                revealed = true;
+                monster->set_tile_beneath(screen_tile);
+                game->screen().standout();
+            }
+            game->screen().addch(monster->m_type);
+            game->screen().standend();
+        }
+        else {
+            //if we can't see the monster, replace it with whatever is beneath it
+            if (!game->hero().can_see_monster(monster) && monster->has_tile_beneath())
+                game->screen().addch(monster->tile_beneath());
+        }
+    }
+    return revealed;
+}
+
+bool Level::has_monsters() const
+{
+    return !monsters.empty();
+}
+
 
 int get_level()
 {

@@ -54,7 +54,9 @@ struct Level {
     void do_passages();
     void illuminate_rooms();
 
-    bool reveal_magic(); //Show all magic items on the level
+    bool reveal_magic();  //Show all magic items on the level
+    bool detect_monsters(bool enable);
+    bool has_monsters() const;
 
     Room* rnd_room();
 
