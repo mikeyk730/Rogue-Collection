@@ -253,7 +253,7 @@ ItemClass* GameState::item_class(int type)
     return 0;
 }
 
-Cheats & GameState::wizard()
+Cheats& GameState::wizard()
 {
     return cheats;
 }

@@ -282,9 +282,10 @@ void Level::new_level(int do_implode)
     } while (!(is_real(game->hero().m_position)));  //don't place hero on a trap
 
     reset_msg_position();
-    
     enter_room(game->hero().m_position);
     game->screen().mvaddch(game->hero().m_position, PLAYER);
+
+    game->wizard().on_new_level();
     game->hero().on_new_level();
 }
 

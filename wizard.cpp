@@ -334,11 +334,18 @@ void Cheats::toggle_powers(const std::string & powers)
 void Cheats::apply_powers()
 {
     game->hero().m_invulnerable = (enabled() && invulnerability());
-    ::detect_monsters(enabled() && detect_monsters());
+    ::detect_monsters(enabled() && (detect_monsters() || see_all()));
     if (enabled() && see_invisible())
         show_invisible();
     else
         unsee_invisible();
+    if (enabled() && see_all())
+        do_show_map();
+}
+
+void Cheats::on_new_level()
+{
+    apply_powers();
 }
 
 bool Cheats::is_enabled(const std::string& power) const
@@ -369,6 +376,11 @@ bool Cheats::show_food_counter() const
 bool Cheats::jump_levels() const
 {
     return is_enabled("jump_levels");
+}
+
+bool Cheats::see_all() const
+{
+    return is_enabled("see_all");
 }
 
 bool Cheats::haste_self() const

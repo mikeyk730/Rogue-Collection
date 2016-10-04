@@ -28,6 +28,7 @@ struct Cheats
     void toggle_powers(const std::string& powers);
 
     void apply_powers();
+    void on_new_level();
 
     bool detect_monsters() const;
     bool no_dark_rooms() const;
@@ -45,6 +46,7 @@ struct Cheats
     bool see_invisible() const;
     bool show_food_counter() const;
     bool jump_levels() const;
+    bool see_all() const;
 
 private:
     bool is_enabled(const std::string& power) const;
