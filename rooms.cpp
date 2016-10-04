@@ -209,18 +209,20 @@ void enter_room(Coord cp)
 //leave_room: Code for when we exit a room
 void leave_room(Coord cp)
 {
-    int y, x;
     byte ch;
 
     Room* room = game->hero().room();
     game->hero().set_room(game->level().get_passage(cp));
 
-    byte floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
+    if(game->wizard().see_all())
+        return;
+
+    byte floor = (room->is_dark() && !game->hero().is_blind()) ? ' ' : FLOOR;
     if (room->is_maze())
         floor = PASSAGE;
 
-    for (y = room->m_ul_corner.y + 1; y < room->m_size.y + room->m_ul_corner.y - 1; y++) {
-        for (x = room->m_ul_corner.x + 1; x < room->m_size.x + room->m_ul_corner.x - 1; x++) {
+    for (int y = room->m_ul_corner.y + 1; y < room->m_size.y + room->m_ul_corner.y - 1; y++) {
+        for (int x = room->m_ul_corner.x + 1; x < room->m_size.x + room->m_ul_corner.x - 1; x++) {
             Coord pos = { x, y };
             switch (ch = game->screen().mvinch(pos))
             {
@@ -244,7 +246,7 @@ void leave_room(Coord cp)
                         m->invalidate_tile_beneath();
                     }
                 }
-                
+
                 game->screen().addch(floor);
             }
         }

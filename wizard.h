@@ -13,6 +13,7 @@ int get_num(short *place);
 void show_map(bool show_monsters);
 
 bool do_raise_level();
+bool do_toggle_detect();
 
 void debug_screen();
 

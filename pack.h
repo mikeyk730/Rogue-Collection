@@ -12,6 +12,4 @@ int pack_char(Item *obj);
 //inventory: List what is in the pack
 int inventory(std::list<Item *>& list, int type, const char *lstr);
 
-//pick_up: Add something to characters pack.
-void pick_up(byte ch);
 

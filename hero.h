@@ -49,6 +49,9 @@ public:
     int is_ring_on_hand(int h, int r) const;
     int is_wearing_ring(int r) const;
 
+    //pick_up: Add something to characters pack.
+    void pick_up(byte ch);
+
     //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
     void add_to_pack(Item *obj, bool silent);
 private:

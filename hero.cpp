@@ -1,5 +1,4 @@
-#include <string.h>
-
+#include <sstream>
 #include "rogue.h"
 #include "game_state.h"
 #include "hero.h"
@@ -418,6 +417,9 @@ bool Hero::can_see_monster(Monster *monster)
 //can_see: Returns true if the hero can see a certain coordinate.
 int Hero::can_see(Coord p)
 {
+    if (game->wizard().see_all())
+        return true;
+
     if (is_blind())
         return false;
     //if the coordinate is close.
@@ -569,17 +571,6 @@ void Hero::add_to_pack(Item *obj, bool silent)
 
     if (!add_to_list(&obj, from_floor))
         return;
-
-    //If this was the object of something's desire, that monster will get mad and run at the hero
-    //todo where used?
-    if (from_floor) {
-        for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
-            game->save_game("hero_upsets_monster.sav");
-            Monster* monster = *it;
-            if (monster->is_going_to(obj->position()))
-                monster->set_destination(this);
-        }
-    }
 
     if (obj->m_type == AMULET) {
         m_had_amulet = true;

@@ -2,6 +2,7 @@
 //pack.c      1.4 (A.I. Design)       12/14/84
 
 #include <stdio.h>
+#include <sstream>
 
 #include "rogue.h"
 #include "game_state.h"
@@ -144,27 +145,36 @@ int pack_char(Item *obj)
 }
 
 //pick_up: Add something to characters pack.
-void pick_up(byte ch)
+void Hero::pick_up(byte ch)
 {
+    //If this was the object of something's desire, that monster will get mad and run at the hero
+    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+        Monster* monster = *it;
+        if (monster->is_going_to(position())) {
+            std::ostringstream ss;
+            ss << monster->get_name() << " " << monster->position() << " item may be taken";
+            game->log("monster", ss.str());
+            monster->set_destination(this);
+        }
+    }
+
     if (ch == GOLD)
     {
-        Room* room = game->hero().room();
-        Coord pos = game->hero().position();
-        Item* obj = find_obj(pos, true);
+        Item* obj = find_obj(position(), true);
         Gold* gold = dynamic_cast<Gold*>(obj);
         if (gold == NULL)
             return;
 
-        game->hero().pick_up_gold(gold->get_gold_value());
-        room->m_gold_val = 0;
+        pick_up_gold(gold->get_gold_value());
+        room()->m_gold_val = 0;
         game->level().items.remove(gold);
         delete gold;
 
-        byte floor = (room->is_gone()) ? PASSAGE : FLOOR;
-        game->screen().mvaddch(pos, floor);
-        game->level().set_tile(pos, floor);
+        byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
+        game->screen().mvaddch(position(), floor);
+        game->level().set_tile(position(), floor);
     }
     else {
-        game->hero().add_to_pack(NULL, false);
+        add_to_pack(NULL, false);
     }
 }

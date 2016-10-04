@@ -76,7 +76,8 @@ namespace
         { 'C', do_summon_object },
         { 'X', do_show_map },
         { CTRL('P'), do_toggle_powers },
-        { CTRL('U'), do_raise_level }
+        { CTRL('U'), do_raise_level },
+        { CTRL('D'), do_toggle_detect }
     };
 }
 
@@ -163,8 +164,8 @@ int translate_command(int ch)
 {
     switch (ch)
     {
-    case '\b':
-        return 'h';
+    //case '\b':
+    //    return 'h';
     case '+':
         return 't';
     case '-':

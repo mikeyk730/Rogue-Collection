@@ -223,7 +223,7 @@ bool do_move_impl(bool can_pickup)
             finish_do_move(is_passage, is_maze);
 
             if (ch != STAIRS && can_pickup)
-                pick_up(ch);
+                game->hero().pick_up(ch);
         }
     }
     return false;

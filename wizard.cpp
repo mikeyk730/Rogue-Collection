@@ -206,6 +206,12 @@ bool do_raise_level()
     return false;
 }
 
+bool do_toggle_detect()
+{
+    game->wizard().toggle_powers("detect_monsters");
+    return false;
+}
+
 namespace
 {
     using std::left;
