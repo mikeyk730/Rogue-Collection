@@ -63,7 +63,7 @@ GameState::GameState(int seed) :
     m_potions(new PotionInfo),
     m_rings(new RingInfo),
     m_sticks(new StickInfo),
-    m_log_stream("log.txt")
+    m_log_stream("lastgame.log")
 {
     init_environment();
 }
@@ -72,7 +72,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     m_output_interface(new ConsoleOutput({ 0, 0 })),
     m_in_replay(true),
     m_show_replay(show_replay),
-    m_log_stream("log.txt")
+    m_log_stream("lastgame.log")
 {
     std::unique_ptr<std::istream> in(new std::ifstream(filename, std::ios::binary | std::ios::in));
     if (!*in) {
