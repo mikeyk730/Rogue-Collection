@@ -122,8 +122,8 @@ bool do_drop()
         game->hero().m_pack.remove(op);
     //Link it into the level object list
     game->level().items.push_front(op);
-    op->m_position = game->hero().position();
-    game->level().set_tile(op->m_position, op->m_type);
+    op->set_position(game->hero().position());
+    game->level().set_tile(op->position(), op->m_type);
     msg("dropped %s", op->inventory_name(game->hero(), true).c_str());
 
     return true;

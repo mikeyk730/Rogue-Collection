@@ -72,7 +72,7 @@ int Item::worth() const
     return Worth();
 }
 
-Coord Item::position() const
+const Coord Item::position() const
 {
     return m_position;
 }

@@ -79,11 +79,16 @@ struct Monster : public Agent
     //give_pack: Give a pack to a monster if it deserves one
     void give_pack();
 
-    void set_destination(Coord* d);
-    Coord* destination() const;
-    bool is_going_to(Coord c);
-    bool is_seeking(Item* obj);
+    void set_destination(Agent* a);
+    void set_destination(Item* i);
     bool is_seeking(Agent* a);
+    bool is_seeking(Item* i);
+    bool is_going_to(Coord c);
+
+    Coord* destination() const;
+    void set_destination(Coord* d);
+
+    
 
     bool has_tile_beneath() const;
     byte tile_beneath() const;

@@ -98,7 +98,7 @@ bool do_throw_item()
     }
     do_motion(obj, delta);
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-    if (game->level().monster_at(obj->m_position) == NULL || !projectile_hit(obj->m_position, obj))
+    if (game->level().monster_at(obj->position()) == NULL || !projectile_hit(obj->position(), obj))
         fall(obj, true);
 
     return true;
@@ -110,30 +110,29 @@ void do_motion(Item *obj, Coord delta)
     byte under = UNSET;
 
     //Come fly with us ...
-    obj->m_position = game->hero().position();
+    obj->set_position(game->hero().position());
     for (;;)
     {
         int ch;
 
         //Erase the old one
-        if (under != UNSET && !equal(obj->m_position, game->hero().position()) && game->hero().can_see(obj->m_position))
-            game->screen().mvaddch(obj->m_position, under);
+        if (under != UNSET && !equal(obj->position(), game->hero().position()) && game->hero().can_see(obj->position()))
+            game->screen().mvaddch(obj->position(), under);
         //Get the new position
-        obj->m_position.y += delta.y;
-        obj->m_position.x += delta.x;
+        obj->set_position(obj->position() + delta);
         //mdk: Originally thrown items would pass through mimics.  With =throws_affect_mimics= they
         //have a chance to hit.
         bool hit_mimics(game->options.throws_affect_mimics());
-        if (step_ok(ch = game->level().get_tile_or_monster(obj->m_position, hit_mimics)) && ch != DOOR)
+        if (step_ok(ch = game->level().get_tile_or_monster(obj->position(), hit_mimics)) && ch != DOOR)
         {
             //It hasn't hit anything yet, so display it if alright.
-            if (game->hero().can_see(obj->m_position))
+            if (game->hero().can_see(obj->position()))
             {
                 //mdk:bugfix: xerox tile was replaced with floor after object passed
-                under = game->level().get_tile_or_monster(obj->m_position, false);
-                //under = game->m_level().get_tile(obj->m_position);
+                under = game->level().get_tile_or_monster(obj->position(), false);
+                //under = game->m_level().get_tile(obj->position());
 
-                game->screen().mvaddch(obj->m_position, obj->m_type);
+                game->screen().mvaddch(obj->position(), obj->m_type);
                 tick_pause();
             }
             else 
@@ -155,8 +154,8 @@ void fall(Item *obj, bool pr)
     {
         bool location_is_empty(game->level().is_floor_or_passage(fpos));
 
-        obj->m_position = fpos;
-        game->level().set_tile(obj->m_position, obj->m_type);
+        obj->set_position(fpos);
+        game->level().set_tile(obj->position(), obj->m_type);
         game->level().items.push_front(obj);
         if (game->level().monster_at(fpos))
             game->level().monster_at(fpos)->set_tile_beneath(obj->m_type);
@@ -165,7 +164,7 @@ void fall(Item *obj, bool pr)
         //if (game->hero().can_see(fpos))
         if (game->hero().can_see(fpos) && location_is_empty)
         {
-            if ((game->level().is_passage(obj->m_position)) || (game->level().is_maze(obj->m_position)))
+            if ((game->level().is_passage(obj->position())) || (game->level().is_maze(obj->position())))
                 game->screen().standout();
             game->screen().mvaddch(fpos, obj->m_type);
             game->screen().standend();
@@ -219,9 +218,9 @@ int fallpos(Item *obj, Coord *newpos)
 {
    int cnt = 0;
 
-    for (int y = obj->m_position.y - 1; y <= obj->m_position.y + 1; y++)
+    for (int y = obj->position().y - 1; y <= obj->position().y + 1; y++)
     {
-        for (int x = obj->m_position.x - 1; x <= obj->m_position.x + 1; x++)
+        for (int x = obj->position().x - 1; x <= obj->position().x + 1; x++)
         {
             Coord pos = { x, y };
             //check to make certain the spot is empty, if it is, put the object there, set it in the 

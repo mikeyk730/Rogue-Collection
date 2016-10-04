@@ -260,7 +260,7 @@ Item* find_obj(Coord p, bool expect_item)
 {
     for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it) {
         Item* op = *it;
-        if (op->m_position.y == p.y && op->m_position.x == p.x)
+        if (op->position().y == p.y && op->position().x == p.x)
             return op;
     }
     if (expect_item) {

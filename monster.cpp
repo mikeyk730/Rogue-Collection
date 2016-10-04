@@ -138,7 +138,7 @@ void Monster::start_run(bool obtain)
 void Monster::start_run(Agent* a)
 {
     start_run(false);
-    a->set_as_target_of(this);
+    set_destination(a);
 }
 
 bool Monster::is_seeking(Item * obj)
@@ -204,6 +204,16 @@ void Monster::give_pack()
         m_pack.push_front(Item::CreateItem());
 }
 
+void Monster::set_destination(Agent * a)
+{
+    a->set_as_target_of(this);
+}
+
+void Monster::set_destination(Item * i)
+{
+    i->set_as_target_of(this);
+}
+
 //do_chase: Make one thing chase another.
 Monster* Monster::do_chase() //todo: understand
 {
@@ -214,7 +224,7 @@ Monster* Monster::do_chase() //todo: understand
 
     //If gold has been taken, target the hero
     if (is_greedy() && room()->m_gold_val == 0) {
-        game->hero().set_as_target_of(this);
+        set_destination(&game->hero());
     }
 
     //Find room of the target
@@ -244,7 +254,7 @@ Monster* Monster::do_chase() //todo: understand
             //loop through doors
             for (int i = 0; i < monster_room->m_num_exits; i++)
             {
-                dist = distance(*(m_destination), monster_room->m_exits[i]);
+                dist = distance(*m_destination, monster_room->m_exits[i]);
                 if (dist < mindist) {
                     tempdest = monster_room->m_exits[i];
                     mindist = dist;
@@ -293,16 +303,16 @@ Monster* Monster::do_chase() //todo: understand
 
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
             Item* obj = *(it++);
-            if (orc_aggressive && (*m_destination == obj->m_position) ||
-                !orc_aggressive && (m_destination == &obj->m_position))
+            if (orc_aggressive && is_going_to(obj->position()) ||
+                !orc_aggressive && is_seeking(obj))
             {
                 byte oldchar;
                 game->level().items.remove(obj);
                 m_pack.push_front(obj);
                 oldchar = (room()->is_gone()) ? PASSAGE : FLOOR;
-                game->level().set_tile(obj->m_position, oldchar);
-                if (game->hero().can_see(obj->m_position))
-                    game->screen().mvaddch(obj->m_position, oldchar);
+                game->level().set_tile(obj->position(), oldchar);
+                if (game->hero().can_see(obj->position()))
+                    game->screen().mvaddch(obj->position(), oldchar);
                 obtain_target();
                 break;
             }
@@ -412,7 +422,7 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
                         for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
                         {
                             obj = *it;
-                            if (equal(try_pos, obj->m_position))
+                            if (equal(try_pos, obj->position()))
                                 break;
                             obj = 0;
                         }
@@ -436,7 +446,7 @@ void Monster::obtain_target()
     // if we have a chance to carry an item, we may go after an unclaimed item in the same room.
     int carry_prob;
     if ((carry_prob = get_carry_probability()) <= 0 || in_same_room_as(&game->hero()) || game->hero().can_see_monster(this)) {
-        game->hero().set_as_target_of(this);
+        set_destination(&game->hero());
         return;
     }
 
@@ -457,12 +467,12 @@ void Monster::obtain_target()
                 }
             }
             if (monster == NULL) {
-                obj->set_as_target_of(this);
+                set_destination(obj);
                 return;
             }
         }
     }
-    game->hero().set_as_target_of(this);
+    set_destination(&game->hero());
 }
 
 bool aquator_attack()

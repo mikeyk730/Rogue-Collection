@@ -331,7 +331,7 @@ void Level::put_things()
             //Put it somewhere
             find_empty_location(&tp, false);
             set_tile(tp, cur->m_type);
-            cur->m_position = tp;
+            cur->set_position(tp);
         }
     }
 }
@@ -356,7 +356,7 @@ void Level::treas_room()
             rnd_pos(room, &pos);
         } while (!isfloor(get_tile(pos)));
         item = Item::CreateItem();
-        item->m_position = pos;
+        item->set_position(pos);
         items.push_front(item);
         set_tile(pos, item->m_type);
     }
@@ -398,7 +398,7 @@ bool Level::reveal_magic()
         if (item->is_magic())
         {
             discovered = true;
-            game->screen().mvaddch(item->m_position, get_magic_char(item));
+            game->screen().mvaddch(item->position(), get_magic_char(item));
         }
     }
     for (auto m = monsters.begin(); m != monsters.end(); ++m) {

@@ -163,7 +163,7 @@ void remove_monster(Monster* monster, bool waskill)
     Coord monster_pos = monster->position();
     for (auto it = monster->m_pack.begin(); it != monster->m_pack.end();) {
         Item* obj = *(it++);
-        obj->m_position = monster->position();
+        obj->set_position(monster->position());
         monster->m_pack.remove(obj);
         if (waskill)
             fall(obj, false);

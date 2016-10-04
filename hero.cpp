@@ -576,7 +576,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
         for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
             Monster* monster = *it;
             if (monster->is_going_to(obj->position()))
-                set_as_target_of(monster);
+                monster->set_destination(this);
         }
     }
 

@@ -93,7 +93,7 @@ public:
     bool is_evil() const;
     int worth() const;
 
-    Coord position() const;
+    const Coord position() const;
     void set_position(Coord p);
 
     int hit_plus() const;
@@ -128,10 +128,10 @@ public:
     bool is_target_of(Monster* m);
 
     int m_type;                      //What kind of object it is
-    Coord m_position;                //Where it lives on the screen
     int m_which;                     //Which object of a type it is
     int m_count;                     //Count for plural objects
 protected:
+    Coord m_position;                //Where it lives on the screen
     char m_launcher;                 //What you need to launch it
     std::string m_damage;            //Damage if used like sword
     std::string m_throw_damage;      //Damage if thrown

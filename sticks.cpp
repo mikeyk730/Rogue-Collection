@@ -343,8 +343,8 @@ bool Stick::zap_magic_missile(Coord dir)
     do_motion(missile, dir);
 
     Agent* monster;
-    if ((monster = game->level().monster_at(missile->m_position)) != NULL && !save_throw(VS_MAGIC, monster))
-        projectile_hit(missile->m_position, missile);
+    if ((monster = game->level().monster_at(missile->position())) != NULL && !save_throw(VS_MAGIC, monster))
+        projectile_hit(missile->position(), missile);
     else
         msg("the missile vanishes with a puff of smoke");
 
@@ -665,18 +665,18 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
     case 1: case -1: dirch = (dir->y == 0 ? '-' : '|'); break;
     case 2: case -2: dirch = '\\'; break;
     }
-    bolt->m_position = start;
+    bolt->set_position(start);
     bool hero_is_target = !bolt->from_player;
     bolt_hit_something = false;
     changed = false;
     for (i = 0; i < BOLT_LENGTH && !bolt_hit_something; i++)
     {
-        bolt->m_position = bolt->m_position + *dir;
+        bolt->set_position(bolt->position() + *dir);
 
         bool throws_affect_mimics(game->options.throws_affect_mimics());
-        ch = game->level().get_tile_or_monster(bolt->m_position, throws_affect_mimics);
-        spotpos[i].s_pos = bolt->m_position;
-        if ((spotpos[i].s_under = game->screen().mvinch(bolt->m_position)) == dirch)
+        ch = game->level().get_tile_or_monster(bolt->position(), throws_affect_mimics);
+        spotpos[i].s_pos = bolt->position();
+        if ((spotpos[i].s_under = game->screen().mvinch(bolt->position())) == dirch)
             spotpos[i].s_under = 0;
         switch (ch)
         {
@@ -693,20 +693,20 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
         default:
             if (!hero_is_target)
             {
-                monster = game->level().monster_at(bolt->m_position, throws_affect_mimics);
+                monster = game->level().monster_at(bolt->position(), throws_affect_mimics);
                 if (monster) {
                     hero_is_target = true;
                     changed = !changed;
                     if (bolt_vs_monster(bolt, monster, &victim))
                     {
                         bolt_hit_something = true;
-                        if (game->screen().mvinch(bolt->m_position) != dirch)
-                            spotpos[i].s_under = game->screen().mvinch(bolt->m_position);
+                        if (game->screen().mvinch(bolt->position()) != dirch)
+                            spotpos[i].s_under = game->screen().mvinch(bolt->position());
                     }
                 }
             }
 
-            else if (hero_is_target && equal(bolt->m_position, game->hero().position()))
+            else if (hero_is_target && equal(bolt->position(), game->hero().position()))
             {
                 hero_is_target = false;
                 changed = !changed;
@@ -723,7 +723,7 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
             else
                 game->screen().red();
             tick_pause();
-            game->screen().mvaddch(bolt->m_position, dirch);
+            game->screen().mvaddch(bolt->position(), dirch);
             game->screen().standend();
         }
     }

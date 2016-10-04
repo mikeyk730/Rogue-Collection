@@ -199,7 +199,7 @@ void Scroll::read_food_detection()
         {
             discovered = true;
             game->screen().standout();
-            game->screen().mvaddch(item->m_position, FOOD);
+            game->screen().mvaddch(item->position(), FOOD);
             game->screen().standend();
         }
         //as a bonus this will detect amulets as well
@@ -207,7 +207,7 @@ void Scroll::read_food_detection()
         {
             discovered = true;
             game->screen().standout();
-            game->screen().mvaddch(item->m_position, AMULET);
+            game->screen().mvaddch(item->position(), AMULET);
             game->screen().standend();
         }
     }
