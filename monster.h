@@ -78,7 +78,11 @@ struct Monster : public Agent
     //give_pack: Give a pack to a monster if it deserves one
     void give_pack();
 
+    void set_destination(Coord* d);
+    Coord* destination() const;
+    bool is_going_to(Coord c);
     bool is_seeking(Item* obj);
+    bool is_seeking(Agent* a);
 
     bool has_tile_beneath() const;
     byte tile_beneath() const;
@@ -89,7 +93,9 @@ struct Monster : public Agent
 
     char m_type = 0;                  //What it is
     int m_ex_flags = 0;               //Extra state;
+private:
     Coord *m_destination = 0;         //Where it is running to
+public:
     char m_turn = 0;                  //If slowed, is it a turn to move
     byte m_tile_beneath = 0;          //Tile that is underneath the monster
     byte m_disguise = 0;              //What mimic looks like

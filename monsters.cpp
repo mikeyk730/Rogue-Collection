@@ -87,6 +87,9 @@ namespace
 //todo: validation, move to better location
 void load_monster_cfg(const std::string& filename)
 {
+    if (filename.empty())
+        return;
+
     std::ifstream file(filename, std::ios::in);
     std::string line;
     while (std::getline(file, line)) {

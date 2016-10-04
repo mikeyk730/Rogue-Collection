@@ -184,7 +184,7 @@ Item* create_stick()
 
 Monster* get_monster_in_direction(Coord dir, bool check_distant)
 {
-    Coord pos = game->hero().m_position + dir;
+    Coord pos = game->hero().position() + dir;
     bool throws_affect_mimics(game->options.throws_affect_mimics());
     while (check_distant && step_ok(game->level().get_tile_or_monster(pos, throws_affect_mimics))) {
         pos = pos + dir;
@@ -246,17 +246,17 @@ bool Stick::zap_light(Coord dir)
     else
     {
         discover();
-        if (game->hero().m_room->is_gone()) 
+        if (game->hero().room()->is_gone()) 
             msg("the corridor glows and then fades");
         else 
             msg("the room is lit by a shimmering blue light");
     }
 
-    if (!game->hero().m_room->is_gone())
+    if (!game->hero().room()->is_gone())
     {
-        game->hero().m_room->set_dark(false);
+        game->hero().room()->set_dark(false);
         //Light the room and put the player back up
-        enter_room(game->hero().m_position);
+        enter_room(game->hero().position());
     }
 
     return true;

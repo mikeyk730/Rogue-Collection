@@ -110,13 +110,13 @@ void do_motion(Item *obj, Coord delta)
     byte under = UNSET;
 
     //Come fly with us ...
-    obj->m_position = game->hero().m_position;
+    obj->m_position = game->hero().position();
     for (;;)
     {
         int ch;
 
         //Erase the old one
-        if (under != UNSET && !equal(obj->m_position, game->hero().m_position) && game->hero().can_see(obj->m_position))
+        if (under != UNSET && !equal(obj->m_position, game->hero().position()) && game->hero().can_see(obj->m_position))
             game->screen().mvaddch(obj->m_position, under);
         //Get the new position
         obj->m_position.y += delta.y;
@@ -226,7 +226,7 @@ int fallpos(Item *obj, Coord *newpos)
             Coord pos = { x, y };
             //check to make certain the spot is empty, if it is, put the object there, set it in the 
             //level list and re-draw the room if he can see it
-            if (pos == game->hero().m_position || offmap(pos)) 
+            if (pos == game->hero().position() || offmap(pos)) 
                 continue;
 
             int ch = game->level().get_tile(pos);

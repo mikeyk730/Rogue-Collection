@@ -2,6 +2,7 @@
 #include <list>
 #include "rogue.h"
 
+struct Monster;
 struct Item;
 struct Room;
 
@@ -50,11 +51,17 @@ struct Agent
     int drain_hp();
 
     Coord position() const;
+    Room* room() const;
+    void enter_room(Room* r);
+
     int level() const;
     std::string damage_string() const;
 
     bool attack(Agent *defender, Item *weapon, bool hurl);
 
+    void set_as_target_of(Monster* m);
+    bool is_target_of(Monster* m);
+    
     //Structure describing a fighting being
     struct Stats
     {
@@ -68,10 +75,12 @@ struct Agent
         unsigned int m_max_str; //Max strength
     };
 
-    Coord m_position = { 0, 0 };      //Position
     short m_flags = 0;                //State word
     Stats m_stats;                    //Physical description
+//private:
+    Coord m_position = { 0, 0 };      //Position
     Room *m_room = 0;                 //Current room for thing
+public:
     std::list<Item*> m_pack;          //What the thing is carrying
     
     bool m_invulnerable = false;

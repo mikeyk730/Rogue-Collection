@@ -174,11 +174,12 @@ void rnd_pos(struct Room *room, Coord *cp)
 //enter_room: Code that is executed whenever you appear in a room
 void enter_room(Coord cp)
 {
-    struct Room *room;
     int y, x;
     Monster* monster;
 
-    room = game->hero().m_room = game->level().get_room_from_position(cp);
+    Room* room = game->level().get_room_from_position(cp);
+    game->hero().enter_room(room);
+
     if (game->invalid_position || (room->is_gone() && (room->is_maze()) == 0))
     {
         debug("in a gone room");

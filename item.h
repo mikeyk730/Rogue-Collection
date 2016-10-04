@@ -1,6 +1,7 @@
 #pragma once
 #include "rogue.h"
 
+struct Monster;
 struct Hero;
 struct Room;
 struct ItemClass;
@@ -122,6 +123,9 @@ public:
 
     Room* room() const;
     ItemClass* item_class() const;
+
+    void set_as_target_of(Monster* m);
+    bool is_target_of(Monster* m);
 
     int m_type;                      //What kind of object it is
     Coord m_position;                //Where it lives on the screen

@@ -316,7 +316,7 @@ void Hero::teleport()
     if (rm != m_room) {
         leave_room(m_position);
         m_position = c;
-        enter_room(m_position);
+        ::enter_room(m_position);
     }
     else { m_position = c; look(true); }
     game->screen().mvaddch(m_position, PLAYER);
@@ -572,8 +572,8 @@ void Hero::add_to_pack(Item *obj, bool silent)
     if (from_floor) {
         for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
             Monster* monster = *it;
-            if (monster->m_destination && (*monster->m_destination == obj->m_position))
-                monster->m_destination = &m_position;
+            if (monster->is_going_to(obj->position()))
+                set_as_target_of(monster);
         }
     }
 
@@ -1012,6 +1012,6 @@ bool Hero::has_moved() const
 
 void Hero::update_position()
 {
-    m_previous_position = m_position;
-    m_previous_room = m_room;
+    m_previous_position = position();
+    m_previous_room = room();
 }

@@ -7,6 +7,7 @@
 #include "hero.h"
 #include "level.h"
 #include "item.h"
+#include "monster.h"
 
 bool Agent::is_flag_set(short flag) const {
     return ((m_flags & flag) != 0);
@@ -243,6 +244,16 @@ Coord Agent::position() const
     return m_position;
 }
 
+Room* Agent::room() const
+{
+    return m_room;
+}
+
+void Agent::enter_room(Room* r)
+{
+    m_room = r;
+}
+
 bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
 {
     std::string damage_string;
@@ -295,6 +306,16 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
         cp++;
     }
     return did_hit;
+}
+
+void Agent::set_as_target_of(Monster * m)
+{
+    m->set_destination(&m_position);
+}
+
+bool Agent::is_target_of(Monster * m)
+{
+    return m->destination() == &m_position;
 }
 
 bool Agent::in_same_room_as(Agent* other)

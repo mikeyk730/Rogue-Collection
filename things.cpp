@@ -73,6 +73,16 @@ ItemClass* Item::item_class() const
     return game->item_class(m_type);
 }
 
+void Item::set_as_target_of(Monster * m)
+{
+    m->set_destination(&m_position);
+}
+
+bool Item::is_target_of(Monster * m)
+{
+    return m->destination() == &m_position;
+}
+
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
 {
     va_list argptr;
@@ -87,7 +97,7 @@ bool do_drop()
     byte ch;
     Item *nobj, *op;
 
-    ch = game->level().get_tile(game->hero().m_position);
+    ch = game->level().get_tile(game->hero().position());
     if (ch != FLOOR && ch != PASSAGE) {
         //mdk: trying to drop item into occupied space counts as turn
         msg("there is something there already");
@@ -112,7 +122,7 @@ bool do_drop()
         game->hero().m_pack.remove(op);
     //Link it into the level object list
     game->level().items.push_front(op);
-    op->m_position = game->hero().m_position;
+    op->m_position = game->hero().position();
     game->level().set_tile(op->m_position, op->m_type);
     msg("dropped %s", op->inventory_name(game->hero(), true).c_str());
 

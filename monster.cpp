@@ -141,7 +141,27 @@ void Monster::start_run()
 
 bool Monster::is_seeking(Item * obj)
 {
-    return m_destination == &obj->m_position;
+    return obj->is_target_of(this);
+}
+
+bool Monster::is_seeking(Agent * a)
+{
+    return a->is_target_of(this);
+}
+
+bool Monster::is_going_to(Coord c)
+{
+    return m_destination && *m_destination == c;
+}
+
+void Monster::set_destination(Coord * d)
+{
+    m_destination = d;
+}
+
+Coord * Monster::destination() const
+{
+    return m_destination;
 }
 
 bool Monster::has_tile_beneath() const
