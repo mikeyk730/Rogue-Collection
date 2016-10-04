@@ -58,7 +58,7 @@ void darken_position(Coord pos, int hero_passage)
     //darken passage
     //mdk:bugfix: originally items dropped beside a door and inside a passage would never be erased
     bool maze_or_passage = game->level().is_maze(pos) || game->level().is_passage(pos);
-    if (maze_or_passage && ch != STAIRS) {
+    if (maze_or_passage && ch != STAIRS && !game->wizard().see_all()) {
         //mdk:bugfix: this code originally blotted out detected monsters with a passage.
         //I added the check below to correct this.
         if (!(isupper(toascii(ch)) && game->hero().detects_others())) {
