@@ -27,7 +27,6 @@
 #include "rings.h"
 #include "armor.h"
 #include "pack.h"
-#include "env.h"
 #include "monster.h"
 #include "gold.h"
 

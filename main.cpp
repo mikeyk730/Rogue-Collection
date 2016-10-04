@@ -54,38 +54,86 @@ namespace
     }
 }
 
+struct Args
+{
+    std::string savefile;
+    std::string monsterfile;
+    std::string optfile;
+    bool show_replay;
+    bool print_score;
+    bool bw;
+};
+
+Args process_args(int argc, char**argv)
+{
+    Args a = Args();
+    a.show_replay = true;
+    a.optfile = "rogue.opt";
+
+    for (int i = 1; i < argc; ++i) {
+        std::string s(argv[i]);
+        if (s == "/r") {
+            a.savefile = "rogue.sav";
+        }
+        else if (s == "/bw") {
+            a.bw = true;
+        }
+        else if (s == "/s") {
+            a.print_score = true;
+        }
+        else if (s == "/q") {
+            a.show_replay = false;
+        }
+        else if (s == "/m") {
+            if (++i < argc)
+                a.monsterfile = argv[i];
+        }
+        else if (s == "/o") {
+            if (++i < argc)
+                a.optfile = argv[i];
+        }
+        else {
+            a.savefile = s;
+        }
+    }
+    return a;
+}
+
 //main: The main program, of course
 int main(int argc, char **argv)
 {
     int seed = get_seed();
     g_random = new Random(seed);
 
-    std::string filename;
-    //filename = "tests\\orc.sav";
-    //filename = "tests\\monster_picks_up_item.sav";
-    //filename = "saves\\level9.sav";
-    //filename = "rogue.sav";
-    if (argc > 1)
-        filename = argv[1];
+    Args args = process_args(argc, argv);
 
-    bool show_replay = true;
-    
+    //a.savefile = "tests\\orc.sav";
+    //a.savefile = "tests\\monster_picks_up_item.sav";
+    //a.savefile = "saves\\level9.sav";
+    //a.savefile = "rogue.sav";
+     
     try {
-        if (!filename.empty()) {
-            game = new GameState(g_random, filename, show_replay);
+        if (!args.savefile.empty()) {
+            game = new GameState(g_random, args.savefile, args.show_replay);
         }
         else {
             game = new GameState(seed);
-            setenv("rogue.opt");
+            setenv(args.optfile.c_str());
         }
-
-        load_monster_cfg(game->get_environment("monsterfile"));
+        load_monster_cfg(args.monsterfile);
     }
     catch (const std::runtime_error& e)
     {
         std::cout << e.what() << std::endl;
         exit(1);
     }
+
+    if (args.print_score) {
+        score(0, 0, 0);
+        return 0;
+    }
+    if (args.bw)
+        game->set_environment("screen", "bw");
     
     setup_screen();
     credits();

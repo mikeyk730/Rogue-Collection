@@ -19,7 +19,6 @@
 #include "hero.h"
 #include "level.h"
 #include "pack.h"
-#include "env.h"
 #include "agent.h"
 
 #define PT(i,j)  ((COLS==40)?i:j)
