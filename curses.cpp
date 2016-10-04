@@ -112,6 +112,8 @@ bool ConsoleOutput::cursor(bool enable)
 {
     bool was_enabled = m_cursor;
     m_cursor = enable;
+    if (m_cursor)
+        ApplyMove();
     if(enable != was_enabled)
         ApplyCursor();
     return was_enabled;
@@ -414,7 +416,8 @@ void ConsoleOutput::raise_curtain()
 void ConsoleOutput::move(short y, short x)
 {
     move_(y, x);
-    ApplyMove();
+    if(m_cursor)
+        ApplyMove();
 }
 
 void ConsoleOutput::move_(short y, short x)

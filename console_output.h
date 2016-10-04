@@ -113,7 +113,7 @@ private:
     short c_row;
     short c_col;
 
-    bool m_cursor;
+    bool m_cursor = false;
     bool m_curtain_down = false;
 
     Coord m_origin;
