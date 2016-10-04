@@ -271,7 +271,7 @@ Monster *wake_monster(Coord p)
     //Every time he sees mean monster, it might start chasing him
     if (!monster->is_running() && rnd(3) != 0 && monster->is_mean() && !monster->is_held() && !game->hero().is_wearing_ring(R_STEALTH))
     {
-        monster->start_run(&game->hero().m_position);
+        monster->start_run(&game->hero());
     }
     if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
     {
@@ -293,10 +293,12 @@ Monster *wake_monster(Coord p)
     //Let greedy ones guard gold
     if (monster->is_greedy() && !monster->is_running())
     {
-        Coord* dest = &game->hero().m_position;
-        if (game->hero().m_room->m_gold_val)
-            dest = &game->hero().m_room->m_gold_position;
-        monster->start_run(dest);
+        if (game->hero().m_room->m_gold_val) {
+            monster->set_destination(&game->hero().m_room->m_gold_position);
+            monster->start_run(false);
+        }
+        else
+            monster->start_run(&game->hero());
     }
     return monster;
 }

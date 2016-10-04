@@ -326,7 +326,7 @@ bool Stick::zap_polymorph(Coord dir)
         game->screen().mvaddch(p, new_monster->m_type);
 
     //the monster chases the player
-    new_monster->start_run(&game->hero().m_position);
+    new_monster->start_run(&game->hero());
 
     //destroy the original
     game->level().monsters.remove(monster);
@@ -419,7 +419,7 @@ bool Stick::zap_teleport_away(Coord dir)
     }
 
     //the monster chases the player
-    monster->start_run(&game->hero().m_position);
+    monster->start_run(&game->hero());
 
     return true;
 }
@@ -438,7 +438,7 @@ bool Stick::zap_teleport_to(Coord dir)
     monster->m_position = game->hero().m_position + dir;
 
     //the monster chases the player
-    monster->start_run(&game->hero().m_position);
+    monster->start_run(&game->hero());
 
     return true;
 }
@@ -459,7 +459,7 @@ bool Stick::zap_cancellation(Coord dir)
     monster->reveal_disguise();
 
     //the monster chases the player
-    monster->start_run(&game->hero().m_position);
+    monster->start_run(&game->hero());
 
     return true;
 }
@@ -480,7 +480,7 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
         msg("you hear a maniacal chuckle in the distance.");
 
         //the monster chases the player
-        monster->start_run(&game->hero().m_position);
+        monster->start_run(&game->hero());
     }
     return true;
 }

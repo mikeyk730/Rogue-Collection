@@ -68,11 +68,13 @@ struct Monster : public Agent
     bool is_dirty();
 
     //obtain_target: find the proper destination for the monster
-    Coord *obtain_target();
+    void obtain_target();
 
     //start_run: Set a monster running after something
-    void start_run();
-    void start_run(Coord* c);
+    void start_run(bool obtain = true);
+    void start_run(Item* i);
+    void start_run(Agent* a);
+
     void hold();
 
     //give_pack: Give a pack to a monster if it deserves one

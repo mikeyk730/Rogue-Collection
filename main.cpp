@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     g_random = new Random(seed);
 
     std::string filename;
-    //filename = "tests\\empty.sav";
+    filename = "tests\\monster_picks_up_item.sav";
     //filename = "saves\\level9.sav";
     //filename = "monster_item.sav";
     if (argc > 1)

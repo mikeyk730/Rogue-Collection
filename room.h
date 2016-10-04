@@ -14,6 +14,7 @@ struct Room
     int m_index;
     Coord m_ul_corner;      //Upper left corner
     Coord m_size;           //Size of room
+   //todo: get rid of gold members
     Coord m_gold_position;  //Where the gold is
     int m_gold_val;         //How much the gold is worth
     short m_flags;          //Info about the room

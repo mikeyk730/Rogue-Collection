@@ -11,6 +11,8 @@
 #include "main.h"
 #include "misc.h"
 
+#pragma warning(disable:4838)
+
 //Globals for curses
 #define BX_UL               0
 #define BX_UR               1

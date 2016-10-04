@@ -125,18 +125,26 @@ void Monster::hold()
     set_is_held(true);
 }
 
-void Monster::start_run(Coord* c)
+//start_run: Set a monster running after something
+void Monster::start_run(bool obtain)
 {
     //Start the beastie running
     set_running(true);
     set_is_held(false);
-    m_destination = c;
+    if (obtain)
+        obtain_target();
 }
 
-//start_run: Set a monster running after something
-void Monster::start_run()
+void Monster::start_run(Item* i)
 {
-    start_run(obtain_target());
+    start_run(false);
+    i->set_as_target_of(this);
+}
+
+void Monster::start_run(Agent* a)
+{
+    start_run(false);
+    a->set_as_target_of(this);
 }
 
 bool Monster::is_seeking(Item * obj)
@@ -300,7 +308,7 @@ Monster* Monster::do_chase() //todo: understand
                 game->level().set_tile(obj->m_position, oldchar);
                 if (game->hero().can_see(obj->m_position))
                     game->screen().mvaddch(obj->m_position, oldchar);
-                m_destination = obtain_target();
+                obtain_target();
                 break;
             }
         }
@@ -332,7 +340,7 @@ void Monster::do_screen_update(Coord next_position)
             return;
         }
         if (orig_room != m_room)
-            m_destination = obtain_target();
+            obtain_target();
         m_position = next_position;
     }
 
@@ -426,13 +434,15 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
 }
 
 //obtain_target: find the proper destination for the monster
-Coord* Monster::obtain_target()
+void Monster::obtain_target()
 {
     // if we're in the same room as the player, or can see the player, then we go after the player.
     // if we have a chance to carry an item, we may go after an unclaimed item in the same room.
     int carry_prob;
-    if ((carry_prob = get_carry_probability()) <= 0 || in_same_room_as(&game->hero()) || game->hero().can_see_monster(this))
-        return &game->hero().m_position;
+    if ((carry_prob = get_carry_probability()) <= 0 || in_same_room_as(&game->hero()) || game->hero().can_see_monster(this)) {
+        game->hero().set_as_target_of(this);
+        return;
+    }
 
     for (auto i = game->level().items.begin(); i != game->level().items.end(); ++i)
     {
@@ -450,11 +460,13 @@ Coord* Monster::obtain_target()
                     break;
                 }
             }
-            if (monster == NULL)
-                return &obj->m_position;
+            if (monster == NULL) {
+                obj->set_as_target_of(this);
+                return;
+            }
         }
     }
-    return &game->hero().m_position;
+    game->hero().set_as_target_of(this);
 }
 
 bool aquator_attack()
