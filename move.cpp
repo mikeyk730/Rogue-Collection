@@ -52,9 +52,9 @@ int diag_ok(const Coord orig_pos, const Coord new_pos)
 void finish_do_move(bool is_passage, bool is_maze)
 {
     game->level().draw_char(game->hero().m_position);
-    if (is_passage && (game->level().get_tile(game->oldpos) == DOOR || (game->level().is_maze(game->oldpos))))
+    if (is_passage && (game->level().get_tile(game->hero().previous_position()) == DOOR || (game->level().is_maze(game->hero().previous_position()))))
         leave_room(new_position);
-    if (is_maze && (game->level().is_maze(game->oldpos)) == 0)
+    if (is_maze && (game->level().is_maze(game->hero().previous_position())) == 0)
         enter_room(new_position);
     game->hero().m_position = new_position;
 }

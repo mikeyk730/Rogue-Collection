@@ -150,6 +150,11 @@ struct Array
   char storage[MAXNAME+1];
 };
 
+//rnd: Pick a very random number.
+int rnd(int range);
+
+//roll: Roll a number of dice
+int roll(int number, int sides);
 
 //External variables
 

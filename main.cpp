@@ -44,6 +44,16 @@
 #include "level.h"
 #include "rooms.h"
 
+namespace 
+{
+    int get_seed()
+    {
+        int t = (int)time(0);
+        srand(t);
+        return t;
+    }
+}
+
 //main: The main program, of course
 int main(int argc, char **argv)
 {
@@ -93,7 +103,9 @@ int main(int argc, char **argv)
     msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
     game->screen().raise_curtain();
 
-    playit();
+    while (true) {
+        advance_game();
+    }
 
     delete game;
 }
@@ -104,13 +116,6 @@ int rnd(int range)
     return g_random->rnd(range);
 }
 
-int get_seed()
-{
-    int t = (int)time(0);
-    srand(t);
-    return t;
-}
-
 //roll: Roll a number of dice
 int roll(int number, int sides)
 {
@@ -118,17 +123,6 @@ int roll(int number, int sides)
     while (number--)
         dtotal += rnd(sides) + 1;
     return dtotal;
-}
-
-//playit: The main loop of the program.  Loop until the game is over, refreshing things and looking at the proper times.
-void playit()
-{
-    game->oldpos = game->hero().m_position;
-    game->oldrp = game->level().get_room_from_position(game->hero().m_position);
-
-    while (true) {
-        advance_game();
-    }
 }
 
 //do_quit: Have player make certain, then exit.

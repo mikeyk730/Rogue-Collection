@@ -30,6 +30,8 @@ public:
     //init_player: Roll up the rogue
     void init_player();
 
+    void on_new_level();
+
     virtual std::string get_name();
     void set_name(const std::string& name);
 
@@ -123,6 +125,11 @@ public:
     bool sprung_teleport_trap() const;
     void reset_sprung();
 
+    Coord previous_position() const;
+    Room* previous_room() const;
+    bool has_moved() const;
+    void update_position();
+
 private:
     int m_purse = 0;
     bool m_had_amulet = false;
@@ -139,5 +146,8 @@ private:
     int m_sleep_turns = 0;    //Number of turns to sleep
     int m_trap_turns = 0;     //Number of turns stuck in place
     Agent* m_held_by = 0;     //The agent holding the player
+
+    Room* m_previous_room = 0;
+    Coord m_previous_position = { 0, 0 };
 };
 

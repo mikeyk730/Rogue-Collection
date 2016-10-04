@@ -283,17 +283,9 @@ void Level::new_level(int do_implode)
 
     reset_msg_position();
     
-    //todo: rest probably belongs somewhere else
-    //todo:makre sure same things happen as in teleport
-    //unhold when you go down just in case
-    game->hero().reset_trap_turns();
-    game->hero().clear_hold();
     enter_room(game->hero().m_position);
     game->screen().mvaddch(game->hero().m_position, PLAYER);
-    game->oldpos = game->hero().m_position;
-    game->oldrp = game->hero().m_room;
-    if (game->hero().detects_others())
-        detect_monsters(true);
+    game->hero().on_new_level();
 }
 
 //put_things: Put potions and scrolls on this level

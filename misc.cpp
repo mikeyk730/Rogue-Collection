@@ -53,7 +53,8 @@ void darken_position(Coord pos, int hero_passage)
     byte ch = game->screen().mvinch(pos);
     if (ch == FLOOR)
     {
-        if (game->oldrp->is_dark() && !game->oldrp->is_gone())
+        Room* old_room = game->hero().previous_room();
+        if (old_room->is_dark() && !old_room->is_gone())
             game->screen().addch(' ');
     }
     //darken passage
@@ -76,8 +77,9 @@ void darken_area()
     Coord hero_pos = game->hero().m_position;
     int hero_passage = game->level().get_passage_num(hero_pos);
 
-    for (int x = game->oldpos.x - 1; x <= (game->oldpos.x + 1); x++) {
-        for (int y = game->oldpos.y - 1; y <= (game->oldpos.y + 1); y++)
+    Coord old_pos = game->hero().previous_position();
+    for (int x = old_pos.x - 1; x <= (old_pos.x + 1); x++) {
+        for (int y = old_pos.y - 1; y <= (old_pos.y + 1); y++)
         {
             Coord pos = { x, y };
             if (pos == hero_pos || offmap(pos))
@@ -90,28 +92,30 @@ void darken_area()
 
 void reveal_position(const Coord pos, const bool wakeup, int* passcount)
 {
-    bool hero_in_passage = game->level().is_passage(game->hero().m_position);
-    bool hero_in_maze = game->level().is_maze(game->hero().m_position);
-    int hero_passage_number = game->level().get_passage_num(game->hero().m_position);
+    Coord hero_pos = game->hero().position();
 
     //we can reveal the 8 directions around the player if he has sight, but 
     //only the player's position if he's blind
-    if (!game->hero().is_blind() && pos == game->hero().m_position) {
+    if (!game->hero().is_blind() && pos == hero_pos) {
         return;
     }
-    else if (game->hero().is_blind() && pos != game->hero().m_position) {
+    else if (game->hero().is_blind() && pos != hero_pos) {
         return;
     }
-
+    
     bool is_passage = game->level().is_passage(pos);
     bool is_maze = game->level().is_maze(pos);
     int passage_number = game->level().get_passage_num(pos);
 
     byte tile = game->level().get_tile(pos);
-    byte tile_under_hero = game->level().get_tile(game->hero().m_position);
+    byte tile_under_hero = game->level().get_tile(hero_pos);
 
     //No Doors
     if (tile_under_hero != DOOR && tile != DOOR) {
+        bool hero_in_passage = game->level().is_passage(hero_pos);
+        bool hero_in_maze = game->level().is_maze(hero_pos);
+        int hero_passage_number = game->level().get_passage_num(hero_pos);
+
         //Either hero or other in a passage
         if (hero_in_passage != is_passage)
         {
@@ -156,13 +160,13 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
     // determine whether we need to stop a running player
     if (game->in_smart_run_mode()) 
     {
-        const int ey = game->hero().m_position.y + 1;
-        const int ex = game->hero().m_position.x + 1;
-        const int sx = game->hero().m_position.x - 1;
-        const int sy = game->hero().m_position.y - 1;
+        const int ey = hero_pos.y + 1;
+        const int ex = hero_pos.x + 1;
+        const int sx = hero_pos.x - 1;
+        const int sy = hero_pos.y - 1;
 
-        int sumhero = game->hero().m_position.y + game->hero().m_position.x;
-        int diffhero = game->hero().m_position.y - game->hero().m_position.x;
+        int sumhero = hero_pos.y + hero_pos.x;
+        int diffhero = hero_pos.y - hero_pos.x;
 
         switch (game->run_character)
         {
@@ -179,12 +183,12 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
         {
         case DOOR:
             //stop at a door
-            if (pos.x == game->hero().m_position.x || pos.y == game->hero().m_position.y)
+            if (pos.x == hero_pos.x || pos.y == hero_pos.y)
                 game->stop_run_cmd();
             break;
         case PASSAGE:
             //stop at a branching passage
-            if (pos.x == game->hero().m_position.x || pos.y == game->hero().m_position.y) {
+            if (pos.x == hero_pos.x || pos.y == hero_pos.y) {
                 ++(*passcount);
                 if (*passcount > 1) {
                     game->stop_run_cmd();
@@ -206,10 +210,11 @@ void reveal_area(bool wakeup)
 {
     int passcount = 0;
 
-    int ey = game->hero().m_position.y + 1;
-    int ex = game->hero().m_position.x + 1;
-    int sx = game->hero().m_position.x - 1;
-    int sy = game->hero().m_position.y - 1;
+    Coord hero_pos = game->hero().position();
+    int ey = hero_pos.y + 1;
+    int ex = hero_pos.x + 1;
+    int sx = hero_pos.x - 1;
+    int sy = hero_pos.y - 1;
     const int COLS = game->screen().columns();
     for (int y = sy; y <= ey; y++) {
         if (!(y > 0 && y < maxrow()))
@@ -227,21 +232,20 @@ void reveal_area(bool wakeup)
 void look(bool wakeup) //todo: learn this function
 {
     //if the hero has moved
-    if (game->oldpos != game->hero().m_position) {
+    if (game->hero().has_moved()) {
         //darken the area around his old position (except for current position)
         darken_area();
-        //save the old room and position
-        game->oldpos = game->hero().m_position;
-        game->oldrp = game->hero().m_room;
+        game->hero().update_position();  //save the old room and position
     }
 
     //reveal the area around the player
     reveal_area(wakeup);
 
-    // draw the player.  highlight him if he's in a maze/passage or hit a teleport trap
-    if (game->level().is_passage(game->hero().m_position) || game->level().is_maze(game->hero().m_position) || game->hero().sprung_teleport_trap())
+    // draw the player -- highlight him if he's in a maze/passage or hit a teleport trap
+    Coord hero_pos = game->hero().position();
+    if (game->level().is_passage(hero_pos) || game->level().is_maze(hero_pos) || game->hero().sprung_teleport_trap())
         game->screen().standout();
-    game->screen().mvaddch(game->hero().m_position, PLAYER);
+    game->screen().mvaddch(hero_pos, PLAYER);
     game->screen().standend();
 
     // todo: why not when trap is sprung?
@@ -487,13 +491,14 @@ bool do_search()
     if (game->hero().is_blind())
         return true;
 
-    int ey = game->hero().m_position.y + 1;
-    int ex = game->hero().m_position.x + 1;
-    for (int y = game->hero().m_position.y - 1; y <= ey; y++) {
-        for (int x = game->hero().m_position.x - 1; x <= ex; x++)
+    Coord hero_pos = game->hero().position();
+    int ey = hero_pos.y + 1;
+    int ex = hero_pos.x + 1;
+    for (int y = hero_pos.y - 1; y <= ey; y++) {
+        for (int x = hero_pos.x - 1; x <= ex; x++)
         {
             Coord pos = { x, y };
-            if ((pos == game->hero().m_position) || offmap(pos))
+            if ((pos == hero_pos) || offmap(pos))
                 continue;
             game->level().search(pos);
         }

@@ -280,6 +280,18 @@ void Hero::init_player()
     add_to_pack(obj, true);
 }
 
+void Hero::on_new_level()
+{
+    update_position();
+
+    //todo:makre sure same things happen as in teleport
+    clear_hold();
+    reset_trap_turns();
+
+    if (detects_others()) //todo: did potion carry over in orig?
+        detect_monsters(true);
+}
+
 int Hero::get_hungry_state()
 {
     return hungry_state;
@@ -981,4 +993,25 @@ bool Hero::sprung_teleport_trap() const
 void Hero::reset_sprung()
 {
     m_trap_type = NTRAPS;
+}
+
+Coord Hero::previous_position() const
+{
+    return m_previous_position;
+}
+
+Room * Hero::previous_room() const
+{
+    return m_previous_room;
+}
+
+bool Hero::has_moved() const
+{
+    return m_position == m_previous_position;
+}
+
+void Hero::update_position()
+{
+    m_previous_position = m_position;
+    m_previous_room = m_room;
 }
