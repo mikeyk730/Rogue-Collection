@@ -322,6 +322,7 @@ bool Stick::zap_polymorph(Coord dir)
     new_monster->m_pack = monster->m_pack;
     if (new_monster->m_type != monster->m_type)
         discover();
+
     if (game->hero().can_see_monster(new_monster))
         game->screen().mvaddch(p, new_monster->m_type);
 

@@ -58,6 +58,9 @@ struct Level {
     bool detect_monsters(bool enable);
     bool has_monsters() const;
 
+    //aggravate_monsters: Aggravate all the monsters on this level
+    void aggravate_monsters();
+
     Room* rnd_room();
 
     std::list<Item*> items; //List of objects on this level

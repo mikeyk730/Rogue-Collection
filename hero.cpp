@@ -574,6 +574,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
     //todo where used?
     if (from_floor) {
         for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+            game->save_game("hero_upsets_monster.sav");
             Monster* monster = *it;
             if (monster->is_going_to(obj->position()))
                 monster->set_destination(this);
@@ -800,7 +801,7 @@ bool Hero::put_on_ring()
         show_invisible();
         break;
     case R_AGGR:
-        aggravate_monsters();
+        game->level().aggravate_monsters();
         break;
     }
     

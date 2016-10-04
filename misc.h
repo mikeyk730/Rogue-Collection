@@ -10,9 +10,6 @@ void look(bool wakeup);
 //find_obj: Find the unclaimed object at y, x
 Item* find_obj(Coord p, bool expect_item);
 
-//aggravate_monsters: Aggravate all the monsters on this level
-void aggravate_monsters();
-
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
 const char *vowelstr(const char *str);
 std::string vowelstr(const std::string& str);

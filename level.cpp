@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <sstream>
+#include <algorithm>
 
 #include "rogue.h"
 #include "game_state.h"
@@ -425,10 +426,10 @@ bool Level::detect_monsters(bool enable)
 
     for (auto i = monsters.begin(); i != monsters.end(); ++i) {
         Monster* monster(*i);
+        byte screen_tile = game->screen().mvinch(monster->position());
 
         if (enable)
         {
-            byte screen_tile = game->screen().mvinch(monster->position());
             if (!game->hero().can_see_monster(monster) && screen_tile != monster->m_type) {
                 revealed = true;
                 monster->set_tile_beneath(screen_tile);
@@ -462,4 +463,12 @@ int maxrow()
     if (in_small_screen_mode())
         return lines - 3;
     return lines - 2;
+}
+
+//aggravate_monsters: Aggravate all the monsters on this level
+void Level::aggravate_monsters()
+{
+    std::for_each(monsters.begin(), monsters.end(), [](Monster *monster) {
+        monster->start_run();
+    });
 }

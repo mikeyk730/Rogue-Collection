@@ -1,7 +1,5 @@
 //All sorts of miscellaneous routines
 //misc.c       1.4             (A.I. Design)   12/14/84
-
-#include <algorithm>
 #include <sstream>
 #include <stdio.h>
 
@@ -270,14 +268,6 @@ Item* find_obj(Coord p, bool expect_item)
         debug(ss.str().c_str());
     }
     return NULL;
-}
-
-//aggravate_monsters: Aggravate all the monsters on this level
-void aggravate_monsters()
-{
-    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster *monster) {
-        monster->start_run();
-    });
 }
 
 //vowelstr: For printfs: if string starts with a vowel, return "n" for an "an".
