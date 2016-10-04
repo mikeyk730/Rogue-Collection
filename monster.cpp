@@ -46,11 +46,16 @@ bool Monster::shoots_fire() const {
 }
 
 bool Monster::immune_to_fire() const {
-    return shoots_fire();
+    return (m_ex_flags & EX_FIRE_IMMUNITY) != 0;
 }
 
 bool Monster::shoots_ice() const {
     return (m_ex_flags & EX_SHOOTS_ICE) != 0;
+}
+
+bool Monster::unfreezes_player() const
+{
+    return (m_ex_flags & EX_UNFREEZES) != 0;
 }
 
 bool Monster::causes_confusion() const {
@@ -100,6 +105,16 @@ bool Monster::dies_from_attack() const {
 bool Monster::guards_gold() const
 {
     return (m_ex_flags & EX_GUARDS_GOLD) != 0;
+}
+
+bool Monster::slow_when_far() const
+{
+    return (m_ex_flags & EX_SLOW_WHEN_FAR) != 0;
+}
+
+bool Monster::no_miss_msgs() const
+{
+    return (m_ex_flags & EX_NO_MISS_MSGS) != 0;
 }
 
 std::string Monster::get_name()
@@ -623,7 +638,7 @@ Monster* Monster::attack_player()
             {
                 flytrap_attack(this);
             }
-            else if (shoots_ice())
+            else if (unfreezes_player())
             {
                 ice_monster_attack();
             }
@@ -655,14 +670,17 @@ Monster* Monster::attack_player()
             }
         }
     }
-    else if (!shoots_ice())
+    else
     {
         if (hold_attacks())
         {
             if (!game->hero().decrease_hp(m_flytrap_count, true))
                 death(m_type); //Bye bye life ...
         }
-        display_miss_msg(name.c_str(), NULL);
+
+        if (!no_miss_msgs()) { // mdk:no messages when the ice monster misses
+            display_miss_msg(name.c_str(), NULL);
+        }
     }
 
     clear_typeahead_buffer();

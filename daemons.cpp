@@ -134,7 +134,7 @@ void run_monsters()
 
             //normal turn. slow monsters only get a chance every other turn
             //mdk: slimes are slow when far from the player
-            if (!(monster->is_slow() || (monster->can_divide() && dist > 3)) || monster->m_turn) {
+            if (!(monster->is_slow() || (monster->slow_when_far() && dist > 3)) || monster->m_turn) {
                 victim = monster->do_chase();
                 if (victim == monster) {
                     it = next;
