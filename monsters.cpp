@@ -84,12 +84,12 @@ namespace
     char wand_mons[] = "KEBHISORZ CAQ YTW PUGM VJ ";
 }
 
-void load_monster_cfg_entry(const std::string& line)
+void GameState::load_monster_cfg_entry(const std::string& line)
 {
     if (line.empty() || line[0] == '#')
         return;
 
-    game->set_monster_data(line);
+    set_monster_data(line);
 
     if (line.substr(0, 7) == "l_order") {
         std::string l = line.substr(9, 26);
@@ -128,7 +128,7 @@ void load_monster_cfg(const std::string& filename)
     std::ifstream file(filename, std::ios::in);
     std::string line;
     while (std::getline(file, line)) {
-        load_monster_cfg_entry(line);
+        game->load_monster_cfg_entry(line);
     }
 }
 

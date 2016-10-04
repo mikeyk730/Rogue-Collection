@@ -48,6 +48,7 @@ struct GameState
     bool fast_play() const;
     void set_fast_play(bool enable);
 
+    void load_monster_cfg_entry(const std::string& line);
     void set_monster_data(std::string s);
 
     int get_level();
