@@ -281,21 +281,21 @@ bool Stick::zap_striking(Coord dir)
 
 bool Stick::zap_lightning(Coord dir)
 {
-    fire_bolt(&game->hero().m_position, &dir, "bolt");
+    fire_bolt(game->hero().position(), &dir, "bolt");
     discover();
     return true;
 }
 
 bool Stick::zap_fire(Coord dir)
 {
-    fire_bolt(&game->hero().m_position, &dir, "flame");
+    fire_bolt(game->hero().position(), &dir, "flame");
     discover();
     return true;
 }
 
 bool Stick::zap_cold(Coord dir)
 {
-    fire_bolt(&game->hero().m_position, &dir, "ice");
+    fire_bolt(game->hero().position(), &dir, "ice");
     discover();
     return true;
 }
@@ -650,7 +650,7 @@ bool bolt_vs_monster(MagicBolt* bolt, Monster* monster, Monster**victim)
 
 //fire_bolt: Fire a bolt in a given direction from a specific starting place
 //shared between player and monsters (ice monster, dragon)
-Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
+Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
 {
     byte dirch, ch;
     Monster* monster;
@@ -665,7 +665,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
     case 1: case -1: dirch = (dir->y == 0 ? '-' : '|'); break;
     case 2: case -2: dirch = '\\'; break;
     }
-    bolt->m_position = *start;
+    bolt->m_position = start;
     bool hero_is_target = !bolt->from_player;
     bolt_hit_something = false;
     changed = false;
@@ -710,7 +710,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
             {
                 hero_is_target = false;
                 changed = !changed;
-                if (bolt_vs_hero(bolt, *start)) {
+                if (bolt_vs_hero(bolt, start)) {
                     bolt_hit_something = true;
                 }
             }
@@ -739,8 +739,8 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
     return victim;
 }
 
-Monster* fire_bolt(Coord *start, Coord *dir, const std::string& name) {
-    bool from_player(start == &game->hero().m_position);
+Monster* fire_bolt(Coord start, Coord *dir, const std::string& name) {
+    bool from_player(start == game->hero().position());
     return fire_bolt(start, dir, new MagicBolt(name, from_player)); //todo:who owns memory?
 }
 

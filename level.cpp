@@ -276,10 +276,13 @@ void Level::new_level(int do_implode)
             }
         }
     }
+
+    Coord hero_position;
     do
     {
-        find_empty_location(&game->hero().m_position, true);
-    } while (!(is_real(game->hero().position())));  //don't place hero on a trap
+        find_empty_location(&hero_position, true);
+    } while (!is_real(hero_position));  //don't place hero on a trap
+    game->hero().set_position(hero_position);
 
     reset_msg_position();
     enter_room(game->hero().position());

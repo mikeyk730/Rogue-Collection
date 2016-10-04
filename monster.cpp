@@ -272,7 +272,7 @@ Monster* Monster::do_chase() //todo: understand
                 Coord delta;
                 delta.y = sign(game->hero().position().y - position().y);
                 delta.x = sign(game->hero().position().x - position().x);
-                return fire_bolt(&m_position, &delta, shoots_fire() ? "flame" : "frost");
+                return fire_bolt(position(), &delta, shoots_fire() ? "flame" : "frost");
             }
         }
 

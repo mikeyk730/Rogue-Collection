@@ -78,8 +78,8 @@ struct Agent
 
     short m_flags = 0;                //State word
     Stats m_stats;                    //Physical description
-    Coord m_position = { 0, 0 };      //Position
 private:
+    Coord m_position = { 0, 0 };      //Position
     Room *m_room = 0;                 //Current room for thing
 public:
     std::list<Item*> m_pack;          //What the thing is carrying
