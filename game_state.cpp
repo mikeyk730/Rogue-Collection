@@ -347,3 +347,27 @@ bool GameState::Options::use_throw_damage() const
 {
     return game->get_environment("use_throw_damage") != "false";
 }
+
+int GameState::get_level()
+{
+    return m_level_number;
+}
+
+int GameState::next_level()
+{
+    ++m_level_number;
+    if (m_level_number > m_max_level)
+        m_max_level = m_level_number;
+    return m_level_number;
+}
+
+int GameState::prev_level()
+{
+    return --m_level_number;
+}
+
+int GameState::max_level()
+{
+    return m_max_level;
+}
+

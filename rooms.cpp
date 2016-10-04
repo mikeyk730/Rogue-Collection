@@ -39,7 +39,7 @@ void Level::do_rooms()
     int endline;
 
     endline = maxrow() + 1;
-    old_lev = get_level();
+    old_lev = game->get_level();
     //bsze is the maximum room size
     const int COLS = game->screen().columns();
     bsze.x = COLS / 3;
@@ -58,7 +58,7 @@ void Level::do_rooms()
             room = rnd_room();
         } while (room->is_maze());
         room->set_gone();
-        if (room->m_index > 2 && get_level() > 10 && rnd(20) < get_level() - 9)
+        if (room->m_index > 2 && game->get_level() > 10 && rnd(20) < game->get_level() - 9)
             room->set_maze();
     }
     //dig and populate all the rooms on the level
@@ -85,7 +85,7 @@ void Level::do_rooms()
             continue;
         }
         // dark rooms more common as we go down
-        if (rnd(10) < (get_level() - 1) && !game->wizard().no_dark_rooms()) {
+        if (rnd(10) < (game->get_level() - 1) && !game->wizard().no_dark_rooms()) {
             room->set_dark(true);
         }
         //Find a place and size for a random room
@@ -98,7 +98,7 @@ void Level::do_rooms()
         } while (room->m_ul_corner.y == 0);
         draw_room(room);
         //Put the gold in
-        if ((rnd(2) == 0) && (!game->hero().had_amulet() || (get_level() >= max_level())))
+        if ((rnd(2) == 0) && (!game->hero().had_amulet() || (game->get_level() >= game->max_level())))
         {
             room->m_gold_val = rnd_gold();
             Item *gold = new Gold(room->m_gold_val);
@@ -123,7 +123,7 @@ void Level::do_rooms()
                 rnd_pos(room, &mp);
                 mch = game->level().get_tile_or_monster(mp);
             } while (!isfloor(mch));
-            monster = Monster::CreateMonster(randmonster(false, get_level()), &mp, get_level());
+            monster = Monster::CreateMonster(randmonster(false, game->get_level()), &mp, game->get_level());
             monster->give_pack();
 
         }

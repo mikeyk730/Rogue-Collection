@@ -281,11 +281,11 @@ void update_status_bar()
     game->screen().getrc(&oy, &ox);
     game->screen().yellow();
     //Level:
-    if (s_level != get_level())
+    if (s_level != game->get_level())
     {
-        s_level = get_level();
+        s_level = game->get_level();
         game->screen().move(PT(22, 23), 0);
-        game->screen().printw("Level:%-4d", get_level());
+        game->screen().printw("Level:%-4d", game->get_level());
     }
     //Hits:
     if (s_hp != game->hero().get_hp())

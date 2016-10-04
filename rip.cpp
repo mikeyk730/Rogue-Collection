@@ -104,7 +104,7 @@ void score(int amount, int flags, char monst)
         strcpy(his_score.name, game->hero().get_name().c_str());
         his_score.gold = amount;
         his_score.fate = flags ? flags : monst;
-        his_score.level = max_level();
+        his_score.level = game->max_level();
         his_score.rank = game->hero().m_stats.m_level;
         rank = add_scores(&his_score, &top_ten[0]);
     }

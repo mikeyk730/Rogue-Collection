@@ -170,6 +170,11 @@ bool Monster::is_going_to(Coord c)
 void Monster::set_destination(Coord * d)
 {
     m_destination = d;
+
+    std::ostringstream ss;
+    ss << get_name() << " " << position() << " setting target " << *d;
+    game->log("monster", ss.str());
+
 }
 
 Coord * Monster::destination() const
@@ -218,11 +223,20 @@ void Monster::give_pack()
 void Monster::set_destination(Agent * a)
 {
     a->set_as_target_of(this);
+
+    std::ostringstream ss;
+    ss << get_name() << " " << position() << " setting target " << a->position() << " " << a->get_name();
+    game->log("monster", ss.str());
 }
 
 void Monster::set_destination(Item * i)
 {
     i->set_as_target_of(this);
+
+    std::ostringstream ss;
+    ss << get_name() << " " << position() << " setting target " << i->position() << " " << i->name();
+    game->log("monster", ss.str());
+
 }
 
 //do_chase: Make one thing chase another.
@@ -302,22 +316,30 @@ Monster* Monster::do_chase() //todo: understand
     //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
     Coord next_position;
     chase(&tempdest, &next_position);
-    if (equal(next_position, game->hero().position())) {
+
+    if (next_position == game->hero().position()) {
         return attack_player();
     }
-    else if (equal(next_position, *m_destination))
+    else if (next_position == *m_destination)
     {
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
             Item* obj = *(it++);
-
-            //mdk: it looks like the intent of the original code was for orcs to
-            //pick up gold and then chase the player, instead of just guarding it.
-            //I'm keeping the original behavior for now.
-            if (guards_gold() && dynamic_cast<Gold*>(obj))
-                break;
-
             if (is_going_to(obj->position()))
             {
+                std::ostringstream ss;
+                ss << get_name() << " " << position() << " reached target " << obj->position();
+                game->log("monster", ss.str());
+
+                //mdk: it looks like the intent of the original code was for orcs to
+                //pick up gold and then chase the player, instead of just guarding it.
+                //I'm keeping the original behavior for now.
+                if (guards_gold() && dynamic_cast<Gold*>(obj))
+                    break;
+
+                ss.str(std::string());
+                ss << get_name() << " " << position() << " obtaining " << obj->name();
+                game->log("monster", ss.str());
+
                 byte oldchar;
                 game->level().items.remove(obj);
                 m_pack.push_front(obj);
@@ -330,6 +352,7 @@ Monster* Monster::do_chase() //todo: understand
             }
         }
     }
+
     if (is_stationary())
         return 0;
     //If the chasing thing moved, update the screen

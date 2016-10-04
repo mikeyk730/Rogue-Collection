@@ -24,7 +24,7 @@ void slime_split(Monster* monster)
         return;
 
     msg("The %s divides.  Ick!", monster->get_name().c_str());
-    Monster* nslime = Monster::CreateMonster(monster->m_type, &slime_pos, get_level());
+    Monster* nslime = Monster::CreateMonster(monster->m_type, &slime_pos, game->get_level());
     if (game->hero().can_see(slime_pos))
     {
         nslime->reload_tile_beneath();

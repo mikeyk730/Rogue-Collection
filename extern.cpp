@@ -155,6 +155,12 @@ Coord operator+(const Coord & c1, const Coord & c2)
     return{ c1.x + c2.x, c1.y + c2.y };
 }
 
+std::ostream & operator<<(std::ostream & os, Coord c)
+{
+    os << "{" << c.x << "," << c.y << "}";
+    return os;
+}
+
 char prbuf[MAXSTR];    //Printing buffer used everywhere
 
 Random* g_random;

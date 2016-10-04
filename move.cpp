@@ -368,7 +368,7 @@ int handle_trap(Coord tc)
 
 void descend(char *mesg)
 {
-    next_level();
+    game->next_level();
     if (*mesg == 0) msg(" ");
     game->level().new_level(true);
     msg("");

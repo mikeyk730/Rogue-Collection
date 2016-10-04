@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <sstream>
 
 #include "rogue.h"
 #include "game_state.h"
@@ -19,9 +20,6 @@
 #include "potions.h"
 #include "monster.h"
 #include "amulet.h"
-
-int s_level = 1;
-int s_max_level = 1;
 
 void Level::clear_level()
 {
@@ -244,8 +242,13 @@ void Level::new_level(int do_implode)
     //Throw away stuff left on the previous level (if anything)
     free_item_list(items);
 
+    std::ostringstream ss;
+    ss << "Entering level " << game->get_level();
+    game->log("level", ss.str());
+
+
     do_rooms(); //Draw rooms
-    if (max_level() == 1)
+    if (game->max_level() == 1)
     {
         game->screen().clear();
     }
@@ -261,9 +264,9 @@ void Level::new_level(int do_implode)
     set_tile(pos, STAIRS);
 
     //Place the traps
-    if (rnd(10) < get_level())
+    if (rnd(10) < game->get_level())
     {
-        ntraps = rnd(get_level() / 4) + 1;
+        ntraps = rnd(game->get_level() / 4) + 1;
         if (ntraps > MAXTRAPS) ntraps = MAXTRAPS;
         i = ntraps;
         while (i--)
@@ -300,13 +303,13 @@ void Level::put_things()
 
     //Once you have found the amulet, the only way to get new stuff is to go down into the dungeon.
     //This is real unfair - I'm going to allow one thing, that way the poor guy will get some food.
-    if (game->hero().had_amulet() && get_level() < max_level())
+    if (game->hero().had_amulet() && game->get_level() < game->max_level())
         i = MAXOBJ - 1;
     else
     {
         //If he is really deep in the dungeon and he hasn't found the amulet yet, put it somewhere on the ground
         //Check this first so if we are out of memory the guy has a hope of getting the amulet
-        if (get_level() >= AMULETLEVEL && !game->hero().had_amulet()) //mdk: amulet doesn't appear again if you lose it
+        if (game->get_level() >= AMULETLEVEL && !game->hero().had_amulet()) //mdk: amulet doesn't appear again if you lose it
         {
             Item* amulet = new Amulet();
             items.push_front(amulet);
@@ -373,7 +376,7 @@ void Level::treas_room()
         }
         if (spots != MAXTRIES)
         {
-            monster = Monster::CreateMonster(randmonster(false, get_level() + 1), &pos, get_level() + 1);
+            monster = Monster::CreateMonster(randmonster(false, game->get_level() + 1), &pos, game->get_level() + 1);
             if (game->invalid_position)
                 debug("treasure roomm bailout");
             monster->set_is_mean(true); //no sloughers in THIS room
@@ -448,33 +451,9 @@ bool Level::has_monsters() const
     return !monsters.empty();
 }
 
-
-int get_level()
-{
-    return s_level;
-}
-
-int next_level()
-{
-    ++s_level;
-    if (s_level > s_max_level)
-        s_max_level = s_level;
-    return s_level;
-}
-
-int prev_level()
-{
-    return --s_level;
-}
-
-int max_level()
-{
-    return s_max_level;
-}
-
 int rnd_gold()
 {
-    return (rnd(50 + 10 * s_level) + 2);
+    return (rnd(50 + 10 * game->get_level()) + 2);
 }
 
 int maxrow()

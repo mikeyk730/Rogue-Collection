@@ -317,7 +317,7 @@ bool Stick::zap_polymorph(Coord dir)
         game->screen().mvaddch(p, game->level().get_tile(p));
 
     //create a random monster
-    Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, get_level());
+    Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, game->get_level());
     new_monster->set_tile_beneath(monster->tile_beneath());
     new_monster->m_pack = monster->m_pack;
     if (new_monster->m_type != monster->m_type)

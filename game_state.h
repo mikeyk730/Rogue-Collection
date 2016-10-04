@@ -50,6 +50,11 @@ struct GameState
 
     void set_custom_monsters();
 
+    int get_level();
+    int next_level();
+    int prev_level();
+    int max_level();
+
     struct LastTurnState
     {
         //State about the last command, needed to support commands like 'a' (repeat last action)
@@ -114,6 +119,8 @@ private:
     bool m_in_replay = false;         //If we are currently replaying a saved game
     bool m_show_replay = true;        //If we render the game during a replay
     bool m_custom_monsters = false;   //If the standard monsters have been altered
+    int m_level_number = 1;           //Which floor of the dungeon we're on
+    int m_max_level = 1;              //Maximum floor reached
 
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 

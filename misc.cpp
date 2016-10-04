@@ -513,7 +513,7 @@ bool do_go_down_stairs()
     if (game->level().get_tile(game->hero().position()) != STAIRS && !game->wizard().jump_levels())
         msg("I see no way down");
     else {
-        next_level();
+        game->next_level();
         game->level().new_level(true);
     }
     return false;
@@ -524,7 +524,7 @@ bool do_go_up_stairs()
 {
     if (game->level().get_tile(game->hero().position()) == STAIRS || game->wizard().jump_levels()) {
         if (game->hero().has_amulet() || game->wizard().jump_levels()) {
-            if (prev_level() == 0)
+            if (game->prev_level() == 0)
                 total_winner();
             game->level().new_level(true);
             msg("you feel a wrenching sensation%s", noterse(" in your gut"));

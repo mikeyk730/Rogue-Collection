@@ -95,10 +95,6 @@ private:
     void psplat(Coord p);
 };
 
-int get_level();
-int next_level();
-int prev_level();
-int max_level();
 
 int rnd_gold();
 int maxrow();

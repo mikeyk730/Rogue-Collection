@@ -180,7 +180,7 @@ char randmonster(bool wander, int level)
 
 void Monster::set_disguise()
 {
-    switch (rnd(get_level() >= AMULETLEVEL ? 9 : 8))
+    switch (rnd(game->get_level() >= AMULETLEVEL ? 9 : 8))
     {
     case 0: m_disguise = GOLD; break;
     case 1: m_disguise = POTION; break;
@@ -254,7 +254,7 @@ void create_wandering_monster()
         if (room == game->hero().room()) continue;
         rnd_pos(room, &cp);
     } while (!(room != game->hero().room() && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic? //todo:inf loop if all spaces full
-    monster = Monster::CreateMonster(randmonster(true, get_level()), &cp, get_level());
+    monster = Monster::CreateMonster(randmonster(true, game->get_level()), &cp, game->get_level());
     if (game->invalid_position)
         debug("wanderer bailout");
     //debug("started a wandering %s", monsters[tp->m_type-'A'].m_name);

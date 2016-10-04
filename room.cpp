@@ -38,7 +38,7 @@ void Room::reset() {
 void Room::add_door(Coord p, Level& level)
 {
     //Set 1 in 5 doors to be hidden, fewer on the earlier levels
-    if (rnd(10) + 1 < get_level() && rnd(5) == 0 && !game->wizard().no_hidden_doors())
+    if (rnd(10) + 1 < game->get_level() && rnd(5) == 0 && !game->wizard().no_hidden_doors())
     {
         level.set_tile(p, (p.y == m_ul_corner.y || p.y == m_ul_corner.y + m_size.y - 1) ? HWALL : VWALL);
         level.unset_flag(p, F_REAL);
