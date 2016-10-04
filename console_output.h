@@ -114,6 +114,7 @@ private:
     short c_col;
 
     bool m_cursor;
+    bool m_curtain_down = false;
 
     Coord m_origin;
     Coord translated_position();

@@ -396,11 +396,19 @@ void ConsoleOutput::drop_curtain()
     }
     move_(0, 0);
     standend();
+    m_curtain_down = true;
 }
 
 void ConsoleOutput::raise_curtain()
 {
-    //todo
+    m_curtain_down = false;
+
+    for (short r = LINES - 2; r > 0; r--)
+    {
+        Render({1, r, (short)COLS-2, r});
+        Sleep(20);
+    }
+    Render();
 }
 
 void ConsoleOutput::move(short y, short x)
@@ -457,7 +465,7 @@ Coord ConsoleOutput::translated_position()
 
 void ConsoleOutput::Render()
 {
-    if(!should_render)
+    if(!should_render || m_curtain_down)
         return;
 
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
@@ -468,7 +476,7 @@ void ConsoleOutput::Render()
 
 void ConsoleOutput::Render(SMALL_RECT rect)
 {
-    if (!should_render)
+    if (!should_render || m_curtain_down)
         return;
 
     COORD dwBufferSize = { MAXCOLS, MAXLINES };
@@ -479,7 +487,7 @@ void ConsoleOutput::Render(SMALL_RECT rect)
 
 void ConsoleOutput::ApplyMove()
 {
-    if (!should_render)
+    if (!should_render || m_curtain_down)
         return;
 
     Coord pos = translated_position();
@@ -489,7 +497,7 @@ void ConsoleOutput::ApplyMove()
 
 void ConsoleOutput::ApplyCursor()
 {
-    if (!should_render)
+    if (!should_render || m_curtain_down)
         return;
 
     CONSOLE_CURSOR_INFO info;
