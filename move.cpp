@@ -51,12 +51,12 @@ int diag_ok(const Coord orig_pos, const Coord new_pos)
 
 void finish_do_move(bool is_passage, bool is_maze)
 {
-    game->level().draw_char(game->hero().m_position);
+    game->level().draw_char(game->hero().position());
     if (is_passage && (game->level().get_tile(game->hero().previous_position()) == DOOR || (game->level().is_maze(game->hero().previous_position()))))
         leave_room(new_position);
     if (is_maze && (game->level().is_maze(game->hero().previous_position())) == 0)
         enter_room(new_position);
-    game->hero().m_position = new_position;
+    game->hero().set_position(new_position);
 }
 
 bool is_passage_or_door(Coord p)
@@ -68,11 +68,11 @@ bool continue_vertical()
 {
     int dy;
 
-    Coord n = north(game->hero().m_position);
-    Coord s = south(game->hero().m_position);
+    Coord n = north(game->hero().position());
+    Coord s = south(game->hero().position());
 
-    bool up = (game->hero().m_position.y > 1 && is_passage_or_door(n));
-    bool down = (game->hero().m_position.y < maxrow() - 1 && is_passage_or_door(s));
+    bool up = (game->hero().position().y > 1 && is_passage_or_door(n));
+    bool down = (game->hero().position().y < maxrow() - 1 && is_passage_or_door(s));
 
     if (!(up^down))
         return false;
@@ -86,8 +86,8 @@ bool continue_vertical()
         dy = 1;
     }
 
-    new_position.y = game->hero().m_position.y + dy;
-    new_position.x = game->hero().m_position.x;
+    new_position.y = game->hero().position().y + dy;
+    new_position.x = game->hero().position().x;
     return true;
 }
 
@@ -96,11 +96,11 @@ bool continue_horizontal()
     int dx;
     const int COLS = game->screen().columns();
 
-    Coord w = west(game->hero().m_position);
-    Coord e = east(game->hero().m_position);
+    Coord w = west(game->hero().position());
+    Coord e = east(game->hero().position());
 
-    bool left = (game->hero().m_position.x > 1 && is_passage_or_door(w));
-    bool right = (game->hero().m_position.x < COLS - 2 && is_passage_or_door(e));
+    bool left = (game->hero().position().x > 1 && is_passage_or_door(w));
+    bool right = (game->hero().position().x < COLS - 2 && is_passage_or_door(e));
 
     if (!(left^right))
         return false;
@@ -114,8 +114,8 @@ bool continue_horizontal()
         dx = 1;
     }
 
-    new_position.y = game->hero().m_position.y;
-    new_position.x = game->hero().m_position.x + dx;
+    new_position.y = game->hero().position().y;
+    new_position.x = game->hero().position().x + dx;
     return true;
 }
 
@@ -154,13 +154,13 @@ bool do_move_impl(bool can_pickup)
     if (offmap(new_position))
         return !do_hit_boundary();
 
-    if (!diag_ok(game->hero().m_position, new_position)) {
+    if (!diag_ok(game->hero().position(), new_position)) {
         this_move_counts = false;
         game->stop_run_cmd();
         return false;
     }
     //If you are running and the move does not get you anywhere stop running
-    if (game->in_run_cmd() && equal(game->hero().m_position, new_position)) {
+    if (game->in_run_cmd() && equal(game->hero().position(), new_position)) {
         this_move_counts = false;
         game->stop_run_cmd();
     }
@@ -171,7 +171,7 @@ bool do_move_impl(bool can_pickup)
 
     ch = game->level().get_tile_or_monster(new_position);
     //When the hero is on the door do not allow him to run until he enters the room all the way
-    if ((game->level().get_tile(game->hero().m_position) == DOOR) && (ch == FLOOR))
+    if ((game->level().get_tile(game->hero().position()) == DOOR) && (ch == FLOOR))
         game->stop_run_cmd();
     if (!(is_real) && ch == FLOOR) {
         ch = TRAP;
@@ -193,7 +193,7 @@ bool do_move_impl(bool can_pickup)
 
     case DOOR:
         game->stop_run_cmd();
-        if (game->level().is_passage(game->hero().m_position))
+        if (game->level().is_passage(game->hero().position()))
             enter_room(new_position);
         finish_do_move(is_passage, is_maze);
         return false;
@@ -209,7 +209,7 @@ bool do_move_impl(bool can_pickup)
 
     case FLOOR:
         if (!(is_real))
-            handle_trap(game->hero().m_position);
+            handle_trap(game->hero().position());
         finish_do_move(is_passage, is_maze);
         return false;
 
@@ -259,7 +259,7 @@ bool do_move(Command c) //todo:understand
         rndmove(&game->hero(), &new_position);
     }
     else {
-        new_position = game->hero().m_position + delta;
+        new_position = game->hero().position() + delta;
     }
 
     bool more;
@@ -334,7 +334,7 @@ int handle_trap(Coord tc)
             if ((arrow = new Weapon(ARROW, 0, 0)) != NULL)
             {
                 arrow->m_count = 1;
-                arrow->m_position = game->hero().m_position;
+                arrow->m_position = game->hero().position();
                 fall(arrow, false);
             }
             msg("an arrow shoots past you");
@@ -389,23 +389,23 @@ void rndmove(Agent *who, Coord *newmv)
     Item *obj;
     const int COLS = game->screen().columns();
 
-    y = newmv->y = who->m_position.y + rnd(3) - 1;
-    x = newmv->x = who->m_position.x + rnd(3) - 1;
+    y = newmv->y = who->position().y + rnd(3) - 1;
+    x = newmv->x = who->position().x + rnd(3) - 1;
     //Now check to see if that's a legal move.  If not, don't move. (I.e., bump into the wall or whatever)
-    if (y == who->m_position.y && x == who->m_position.x) return;
+    if (y == who->position().y && x == who->position().x) return;
     if ((y < 1 || y >= maxrow()) || (x < 0 || x >= COLS)) {
-        (*newmv) = who->m_position;
+        (*newmv) = who->position();
         return;
     }
-    else if (!diag_ok(who->m_position, *newmv)) {
-        (*newmv) = who->m_position;
+    else if (!diag_ok(who->position(), *newmv)) {
+        (*newmv) = who->position();
         return;
     }
     else
     {
         ch = game->level().get_tile_or_monster({ x, y });
         if (!step_ok(ch)) {
-            (*newmv) = who->m_position;
+            (*newmv) = who->position();
             return;
         }
         if (ch == SCROLL)
@@ -416,7 +416,7 @@ void rndmove(Agent *who, Coord *newmv)
                     break;
             }
             if (is_scare_monster_scroll(obj)) {
-                (*newmv) = who->m_position;
+                (*newmv) = who->position();
                 return;
             }
         }

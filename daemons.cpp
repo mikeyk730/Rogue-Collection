@@ -82,7 +82,7 @@ void unsee_invisible()
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
         th = *it;
         if (th->is_invisible() && game->hero().can_see_monster(th) && th->has_tile_beneath())
-            game->screen().mvaddch(th->m_position, th->tile_beneath());
+            game->screen().mvaddch(th->position(), th->tile_beneath());
     }
     game->hero().set_sees_invisible(false);
 }
@@ -95,7 +95,7 @@ void sight()
         extinguish(sight);
         game->hero().set_blind(false);
         if (!game->hero().room()->is_gone())
-            enter_room(game->hero().m_position);
+            enter_room(game->hero().position());
         msg("the veil of darkness lifts");
     }
 }
@@ -130,7 +130,7 @@ void run_monsters()
         if (!monster->is_held() && monster->is_running())
         {
             Monster* victim = 0;
-            int dist = distance(game->hero().m_position, monster->m_position);
+            int dist = distance(game->hero().position(), monster->position());
 
             //normal turn. slow monsters only get a chance every other turn
             //mdk: slimes are slow when far from the player
@@ -152,7 +152,7 @@ void run_monsters()
             }
 
             //flying monsters get an extra turn when far away to close the distance
-            dist = distance(game->hero().m_position, monster->m_position);
+            dist = distance(game->hero().position(), monster->position());
             if (!victim && monster->is_flying() && dist > 3) {
                 Monster* victim = monster->do_chase();
                 if (victim == monster) {

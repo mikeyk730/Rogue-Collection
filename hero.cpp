@@ -308,18 +308,21 @@ void Hero::teleport()
     struct Room* rm;
     Coord c;
 
-    game->screen().mvaddch(m_position, game->level().get_tile(m_position));
+    game->screen().mvaddch(position(), game->level().get_tile(position()));
     do {
         rm = game->level().rnd_room();
         rnd_pos(rm, &c);
     } while (!(step_ok(game->level().get_tile_or_monster(c)))); //todo:bug: can we teleport onto a xerox?
     if (rm != room()) {
-        leave_room(m_position);
-        m_position = c;
-        enter_room(m_position);
+        leave_room(position());
+        set_position(c);
+        enter_room(position());
     }
-    else { m_position = c; look(true); }
-    game->screen().mvaddch(m_position, PLAYER);
+    else { 
+        set_position(c); 
+        look(true); 
+    }
+    game->screen().mvaddch(position(), PLAYER);
 
     //turn off IS_HELD in case teleportation was done while fighting a Flytrap
     clear_hold();
@@ -396,7 +399,7 @@ bool Hero::can_see_monster(Monster *monster)
     if (monster->is_invisible() && !sees_invisible())
         return false;
 
-    if (distance(monster->m_position, m_position) >= LAMP_DIST &&
+    if (distance(monster->position(), position()) >= LAMP_DIST &&
         (monster->room() != room() || monster->room()->is_dark() || monster->room()->is_maze()))
         return false;
 
@@ -418,7 +421,7 @@ int Hero::can_see(Coord p)
     if (is_blind())
         return false;
     //if the coordinate is close.
-    if (distance(p, m_position) < LAMP_DIST)
+    if (distance(p, position()) < LAMP_DIST)
         return true;
     //if the coordinate is in the same room as the hero, and the room is lit
     return (room() == game->level().get_room_from_position(p) && !room()->is_dark());
@@ -559,7 +562,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
     if (!obj)
     {   
         from_floor = true;
-        obj = find_obj(m_position, true);
+        obj = find_obj(position(), true);
         if (!obj)
             return;
     }
@@ -608,8 +611,8 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
                 if (from_floor) {
                     byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
                     game->level().items.remove((*obj));
-                    game->screen().mvaddch(m_position, floor);
-                    game->level().set_tile(m_position, floor);
+                    game->screen().mvaddch(position(), floor);
+                    game->level().set_tile(position(), floor);
                 }
                 delete *obj;
                 *obj = op;
@@ -631,8 +634,8 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
             byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
             game->level().items.remove(*obj);
             delete *obj;
-            game->screen().mvaddch(m_position, floor);
-            game->level().set_tile(m_position, floor);
+            game->screen().mvaddch(position(), floor);
+            game->level().set_tile(position(), floor);
             msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
             return false;
         }
@@ -642,8 +645,8 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     if (from_floor) {
         byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
         game->level().items.remove(*obj);
-        game->screen().mvaddch(m_position, floor);
-        game->level().set_tile(m_position, floor);
+        game->screen().mvaddch(position(), floor);
+        game->level().set_tile(position(), floor);
     }
 
     //Search for an object of the same type
@@ -1007,7 +1010,7 @@ Room * Hero::previous_room() const
 
 bool Hero::has_moved() const
 {
-    return m_position != m_previous_position;
+    return position() != m_previous_position;
 }
 
 void Hero::update_position()

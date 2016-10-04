@@ -160,22 +160,22 @@ void display_throw_msg(Item *item, const char *name, char *does, char *did)
 //remove: Remove a monster from the screen
 void remove_monster(Monster* monster, bool waskill)
 {
-    Coord* monster_pos = &monster->m_position;
+    Coord monster_pos = monster->position();
     for (auto it = monster->m_pack.begin(); it != monster->m_pack.end();) {
         Item* obj = *(it++);
-        obj->m_position = monster->m_position;
+        obj->m_position = monster->position();
         monster->m_pack.remove(obj);
         if (waskill)
             fall(obj, false);
         else
             delete(obj);
     }
-    if (game->level().get_tile(*monster_pos) == PASSAGE)
+    if (game->level().get_tile(monster_pos) == PASSAGE)
         game->screen().standout();
-    if (monster->tile_beneath() == FLOOR && !game->hero().can_see(*monster_pos))
-        game->screen().mvaddch(*monster_pos, ' ');
+    if (monster->tile_beneath() == FLOOR && !game->hero().can_see(monster_pos))
+        game->screen().mvaddch(monster_pos, ' ');
     else if (monster->has_tile_beneath())
-        game->screen().mvaddch(*monster_pos, monster->tile_beneath());
+        game->screen().mvaddch(monster_pos, monster->tile_beneath());
     game->screen().standend();
 
     game->level().monsters.remove(monster);

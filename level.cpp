@@ -145,7 +145,7 @@ Monster* Level::monster_at(Coord p, bool include_disguised)
     Monster* monster;
     for (auto it = monsters.begin(); it != monsters.end(); ++it) {
         monster = *it;
-        if (monster->m_position.x == p.x && monster->m_position.y == p.y)
+        if (monster->position().x == p.x && monster->position().y == p.y)
         {
             if (monster->is_disguised() && !include_disguised)
                 return nullptr;
@@ -279,11 +279,11 @@ void Level::new_level(int do_implode)
     do
     {
         find_empty_location(&game->hero().m_position, true);
-    } while (!(is_real(game->hero().m_position)));  //don't place hero on a trap
+    } while (!(is_real(game->hero().position())));  //don't place hero on a trap
 
     reset_msg_position();
-    enter_room(game->hero().m_position);
-    game->screen().mvaddch(game->hero().m_position, PLAYER);
+    enter_room(game->hero().position());
+    game->screen().mvaddch(game->hero().position(), PLAYER);
 
     game->wizard().on_new_level();
     game->hero().on_new_level();
@@ -406,7 +406,7 @@ bool Level::reveal_magic()
             if (item->is_magic())
             {
                 discovered = true;
-                game->screen().mvaddch(monster->m_position, MAGIC);
+                game->screen().mvaddch(monster->position(), MAGIC);
             }
         }
     }
@@ -422,7 +422,7 @@ bool Level::detect_monsters(bool enable)
 
         if (enable)
         {
-            byte screen_tile = game->screen().mvinch(monster->m_position);
+            byte screen_tile = game->screen().mvinch(monster->position());
             if (!game->hero().can_see_monster(monster) && screen_tile != monster->m_type) {
                 revealed = true;
                 monster->set_tile_beneath(screen_tile);

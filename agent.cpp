@@ -239,9 +239,14 @@ int Agent::drain_hp() {
     return m_stats.m_hp;
 }
 
-Coord Agent::position() const
+const Coord Agent::position() const
 {
     return m_position;
+}
+
+void Agent::set_position(Coord c)
+{
+    m_position = c;
 }
 
 Room* Agent::room() const

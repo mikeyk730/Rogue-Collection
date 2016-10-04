@@ -50,7 +50,8 @@ struct Agent
     bool decrease_hp(int n, bool can_kill);
     int drain_hp();
 
-    Coord position() const;
+    const Coord position() const;
+    void set_position(Coord c);
     Room* room() const;
     void set_room(Room* r);
 

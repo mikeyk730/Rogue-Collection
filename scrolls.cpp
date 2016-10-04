@@ -142,9 +142,9 @@ void Scroll::read_hold_monster()
     Monster* monster;
 
     const int COLS = game->screen().columns();
-    for (x = game->hero().m_position.x - 3; x <= game->hero().m_position.x + 3; x++) {
+    for (x = game->hero().position().x - 3; x <= game->hero().position().x + 3; x++) {
         if (x >= 0 && x < COLS) {
-            for (y = game->hero().m_position.y - 3; y <= game->hero().m_position.y + 3; y++) {
+            for (y = game->hero().position().y - 3; y <= game->hero().position().y + 3; y++) {
                 if ((y > 0 && y < maxrow()) && ((monster = game->level().monster_at({ x, y })) != NULL))
                 {
                     monster->hold();
@@ -244,7 +244,7 @@ void Scroll::read_create_monster()
     Agent* monster;
     Coord position;
 
-    if (plop_monster(game->hero().m_position.y, game->hero().m_position.x, &position)) {
+    if (plop_monster(game->hero().position().y, game->hero().position().x, &position)) {
         monster = Monster::CreateMonster(randmonster(false, get_level()), &position, get_level());
     }
     else

@@ -411,7 +411,7 @@ bool Stick::zap_teleport_away(Coord dir)
     Coord new_pos;
     monster->invalidate_tile_beneath();
     find_empty_location(&new_pos, true);
-    monster->m_position = new_pos;
+    monster->set_position(new_pos); //todo: update room?
 
     //the monster can no longer hold the player
     if (game->hero().is_held_by(monster)) {
@@ -435,7 +435,7 @@ bool Stick::zap_teleport_to(Coord dir)
         game->screen().mvaddch(monster->position(), monster->tile_beneath());
 
     //move the monster to beside the player
-    monster->m_position = game->hero().m_position + dir;
+    monster->set_position(game->hero().position() + dir);
 
     //the monster chases the player
     monster->start_run(&game->hero());
@@ -535,15 +535,15 @@ void drain()
 
     //First count how many things we need to spread the hit points among
     cnt = 0;
-    if (game->level().get_tile(game->hero().m_position) == DOOR)
-        room = game->level().get_passage(game->hero().m_position);
+    if (game->level().get_tile(game->hero().position()) == DOOR)
+        room = game->level().get_passage(game->hero().position());
     else room = NULL;
     in_passage = game->hero().room()->is_gone();
     dp = drainee;
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
         monster = *it;
         if (monster->room() == game->hero().room() || monster->room() == room ||
-            (in_passage && game->level().get_tile(monster->m_position) == DOOR && game->level().get_passage(monster->m_position) == game->hero().room())) {
+            (in_passage && game->level().get_tile(monster->position()) == DOOR && game->level().get_passage(monster->position()) == game->hero().room())) {
             *dp++ = monster;
         }
     }
@@ -706,7 +706,7 @@ Monster* fire_bolt(Coord *start, Coord *dir, MagicBolt* bolt)
                 }
             }
 
-            else if (hero_is_target && equal(bolt->m_position, game->hero().m_position))
+            else if (hero_is_target && equal(bolt->m_position, game->hero().position()))
             {
                 hero_is_target = false;
                 changed = !changed;

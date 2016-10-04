@@ -370,7 +370,7 @@ void wait_for(char ch)
 void show_win(char *message)
 {
     game->screen().mvaddstr({ 0, 0 }, message);
-    game->screen().move(game->hero().m_position.y, game->hero().m_position.x);
+    game->screen().move(game->hero().position().y, game->hero().position().x);
     wait_for(' ');
 }
 

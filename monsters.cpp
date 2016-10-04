@@ -203,7 +203,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     const MonsterEntry* defaults = &monsters[type - 'A'];
     monster->m_type = type;
     monster->m_disguise = type;
-    monster->m_position = *position;
+    monster->set_position(*position);
     monster->invalidate_tile_beneath();
     monster->set_room(game->level().get_room_from_position(*position));
     monster->m_flags = defaults->flags;
@@ -277,7 +277,7 @@ Monster *wake_monster(Coord p)
     {
         int dst;
         Room* room = game->hero().room();
-        dst = distance(p, game->hero().m_position);
+        dst = distance(p, game->hero().position());
         if ((room != NULL && !(room->is_dark())) || dst < LAMP_DIST)
         {
             monster->set_found(true);

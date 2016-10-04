@@ -213,12 +213,13 @@ Monster* Monster::do_chase() //todo: understand
     reveal_disguise();
 
     //If gold has been taken, target the hero
-    if (is_greedy() && room()->m_gold_val == 0)
-        m_destination = &game->hero().m_position;
+    if (is_greedy() && room()->m_gold_val == 0) {
+        game->hero().set_as_target_of(this);
+    }
 
     //Find room of the target
     Room* destination_room = game->hero().room();
-    if (m_destination != &game->hero().m_position)
+    if (*m_destination != game->hero().position())
         destination_room = game->level().get_room_from_position(*m_destination);
     if (destination_room == NULL)
         return 0;
@@ -230,7 +231,7 @@ Monster* Monster::do_chase() //todo: understand
 
     Room* monster_room = room(); //Find room of chaser
                                      //We don't count doors as inside rooms for this routine
-    bool door = game->level().get_tile(m_position) == DOOR;
+    bool door = game->level().get_tile(position()) == DOOR;
 
 
     bool repeat;
@@ -251,7 +252,7 @@ Monster* Monster::do_chase() //todo: understand
             }
             if (door)
             {
-                monster_room = game->level().get_passage(m_position);
+                monster_room = game->level().get_passage(position());
                 door = false;
                 repeat = true;
                 continue;
@@ -264,13 +265,13 @@ Monster* Monster::do_chase() //todo: understand
             // (a) the hero is on a straight line from it, and 
             // (b) that it is within shooting distance, but outside of striking range.
             if ((shoots_fire() || shoots_ice()) &&
-                (m_position.y == game->hero().m_position.y || m_position.x == game->hero().m_position.x || abs(m_position.y - game->hero().m_position.y) == abs(m_position.x - game->hero().m_position.x)) &&
-                ((dist = distance(m_position, game->hero().m_position)) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !powers_cancelled() && rnd(DRAGONSHOT) == 0)
+                (position().y == game->hero().position().y || position().x == game->hero().position().x || abs(position().y - game->hero().position().y) == abs(position().x - game->hero().position().x)) &&
+                ((dist = distance(position(), game->hero().position())) > 2 && dist <= BOLT_LENGTH*BOLT_LENGTH) && !powers_cancelled() && rnd(DRAGONSHOT) == 0)
             {
                 game->stop_run_cmd();
                 Coord delta;
-                delta.y = sign(game->hero().m_position.y - m_position.y);
-                delta.x = sign(game->hero().m_position.x - m_position.x);
+                delta.y = sign(game->hero().position().y - position().y);
+                delta.x = sign(game->hero().position().x - position().x);
                 return fire_bolt(&m_position, &delta, shoots_fire() ? "flame" : "frost");
             }
         }
@@ -280,7 +281,7 @@ Monster* Monster::do_chase() //todo: understand
     //This now contains what we want to run to this time so we run to it. If we hit it we either want to fight it or stop running
     Coord next_position;
     chase(&tempdest, &next_position);
-    if (equal(next_position, game->hero().m_position)) {
+    if (equal(next_position, game->hero().position())) {
         return attack_player();
     }
     else if (equal(next_position, *m_destination))
@@ -318,16 +319,16 @@ void Monster::do_screen_update(Coord next_position)
 {
     if (has_tile_beneath())
     {
-        if (tile_beneath() == ' ' && game->hero().can_see(m_position) && game->level().get_tile(m_position) == FLOOR)
-            game->screen().mvaddch(m_position, (char)FLOOR);
-        else if (tile_beneath() == FLOOR && !game->hero().can_see(m_position) && !game->hero().detects_others())
-            game->screen().mvaddch(m_position, ' ');
+        if (tile_beneath() == ' ' && game->hero().can_see(position()) && game->level().get_tile(position()) == FLOOR)
+            game->screen().mvaddch(position(), (char)FLOOR);
+        else if (tile_beneath() == FLOOR && !game->hero().can_see(position()) && !game->hero().detects_others())
+            game->screen().mvaddch(position(), ' ');
         else
-            game->screen().mvaddch(m_position, tile_beneath());
+            game->screen().mvaddch(position(), tile_beneath());
     }
 
     Room *orig_room = room();
-    if (!equal(next_position, m_position))
+    if (!equal(next_position, position()))
     {
         Room* next_room = game->level().get_room_from_position(next_position);
         if (!next_room) {
@@ -336,7 +337,7 @@ void Monster::do_screen_update(Coord next_position)
         set_room(next_room);
         if (orig_room != room())
             obtain_target();
-        m_position = next_position;
+        set_position(next_position);
     }
 
     if (game->hero().can_see_monster(this))
@@ -367,11 +368,11 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
 {
     int x, y;
     int dist, thisdist;
-    Coord *chaser_pos;
+    Coord chaser_pos;
     byte ch;
     int plcnt = 1;
 
-    chaser_pos = &m_position;
+    chaser_pos = position();
     //If the thing is confused, let it move randomly. Phantoms are slightly confused all of the time, and bats are quite confused all the time
     if (is_monster_confused_this_turn())
     {
@@ -388,19 +389,19 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
         int ey, ex;
 
         //This will eventually hold where we move to get closer. If we can't find an empty spot, we stay where we are.
-        dist = distance(*chaser_pos, *chasee_pos);
-        *next_position = *chaser_pos;
-        ey = chaser_pos->y + 1;
-        ex = chaser_pos->x + 1;
-        for (x = chaser_pos->x - 1; x <= ex; x++)
+        dist = distance(chaser_pos, *chasee_pos);
+        *next_position = chaser_pos;
+        ey = chaser_pos.y + 1;
+        ex = chaser_pos.x + 1;
+        for (x = chaser_pos.x - 1; x <= ex; x++)
         {
-            for (y = chaser_pos->y - 1; y <= ey; y++)
+            for (y = chaser_pos.y - 1; y <= ey; y++)
             {
                 Coord try_pos;
 
                 try_pos.x = x;
                 try_pos.y = y;
-                if (offmap({ x,y }) || !diag_ok(*chaser_pos, try_pos)) continue;
+                if (offmap({ x,y }) || !diag_ok(chaser_pos, try_pos)) continue;
                 ch = game->level().get_tile_or_monster({ x,y }); //todo:bug: can chaser step on mimic?
                 if (step_ok(ch))
                 {

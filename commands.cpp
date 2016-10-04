@@ -77,7 +77,7 @@ bool do_id_trap()
     Coord d;
     if (get_dir(&d))
     {
-        Coord lookat = game->hero().m_position + d;
+        Coord lookat = game->hero().position() + d;
         if (game->level().get_tile(lookat) != TRAP)
             msg("no trap there.");
         else 

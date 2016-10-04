@@ -74,7 +74,7 @@ void darken_area()
     if (game->hero().is_blind())
         return;
 
-    Coord hero_pos = game->hero().m_position;
+    Coord hero_pos = game->hero().position();
     int hero_passage = game->level().get_passage_num(hero_pos);
 
     Coord old_pos = game->hero().previous_position();
@@ -510,7 +510,7 @@ bool do_search()
 //do_go_down_stairs: He wants to go down a level
 bool do_go_down_stairs()
 {
-    if (game->level().get_tile(game->hero().m_position) != STAIRS && !game->wizard().jump_levels())
+    if (game->level().get_tile(game->hero().position()) != STAIRS && !game->wizard().jump_levels())
         msg("I see no way down");
     else {
         next_level();
@@ -522,7 +522,7 @@ bool do_go_down_stairs()
 //do_go_up_stairs: He wants to go up a level
 bool do_go_up_stairs()
 {
-    if (game->level().get_tile(game->hero().m_position) == STAIRS || game->wizard().jump_levels()) {
+    if (game->level().get_tile(game->hero().position()) == STAIRS || game->wizard().jump_levels()) {
         if (game->hero().has_amulet() || game->wizard().jump_levels()) {
             if (prev_level() == 0)
                 total_winner();
