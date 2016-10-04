@@ -62,7 +62,7 @@ namespace
         { "leprechaun",       0,                          0,  { XX,   10,  3,  8, ___, "1d2"             }, 0, EX_STEALS_GOLD | EX_DROPS_GOLD | EX_SUICIDES },
         { "medusa",          40,                    IS_MEAN,  { XX,  200,  8,  2, ___, "3d4/3d4/2d5"     }, 0, EX_CONFUSES },
         { "nymph",          100,                          0,  { XX,   37,  3,  9, ___, "0d0"             }, 0, EX_STEALS_MAGIC | EX_SUICIDES },
-        { "orc",             15,                   IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             }, 0, 0 },
+        { "orc",             15,                   IS_GREED,  { XX,    5,  1,  6, ___, "1d8"             }, 0, EX_GUARDS_GOLD },
         { "phantom",          0,                   IS_INVIS,  { XX,  120,  8,  3, ___, "4d4"             }, 5, 0 },
         { "quagga",          30,                    IS_MEAN,  { XX,   32,  3,  2, ___, "1d2/1d2/1d4"     }, 0, 0 },
         { "rattlesnake",      0,                    IS_MEAN,  { XX,    9,  2,  3, ___, "1d6"             }, 0, EX_DRAINS_STR },

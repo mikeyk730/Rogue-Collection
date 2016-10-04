@@ -78,7 +78,6 @@ struct GameState
         bool hit_plus_bugfix() const;
         bool striking_charge_bugfix() const;
         bool use_throw_damage() const;
-        bool aggressive_orcs() const;
         bool throws_affect_mimics() const;
     } options;
 

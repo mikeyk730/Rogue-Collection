@@ -347,9 +347,3 @@ bool GameState::Options::use_throw_damage() const
 {
     return game->get_environment("use_throw_damage") != "false";
 }
-
-bool GameState::Options::aggressive_orcs() const
-{
-    return true;
-    return game->get_environment("orc_type") == "aggressive";
-}

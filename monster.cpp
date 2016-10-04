@@ -19,6 +19,7 @@
 #include "mach_dep.h"
 #include "rings.h"
 #include "armor.h"
+#include "gold.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -94,6 +95,11 @@ bool Monster::rusts_armor() const {
 
 bool Monster::dies_from_attack() const {
     return (m_ex_flags & EX_SUICIDES) != 0;
+}
+
+bool Monster::guards_gold() const
+{
+    return (m_ex_flags & EX_GUARDS_GOLD) != 0;
 }
 
 std::string Monster::get_name()
@@ -296,15 +302,16 @@ Monster* Monster::do_chase() //todo: understand
     }
     else if (equal(next_position, *m_destination))
     {
-        //mdk: aggressive orcs pick up gold in a room, then chase the player.  It looks
-        //as if this could have been the original intended behavior, so I added it as
-        //an option.
-        bool orc_aggressive(game->options.aggressive_orcs());
-
         for (auto it = game->level().items.begin(); it != game->level().items.end(); ) {
             Item* obj = *(it++);
-            if (orc_aggressive && is_going_to(obj->position()) ||
-                !orc_aggressive && is_seeking(obj))
+
+            //mdk: it looks like the intent of the original code was for orcs to
+            //pick up gold and then chase the player, instead of just guarding it.
+            //I'm keeping the original behavior for now.
+            if (guards_gold() && dynamic_cast<Gold*>(obj))
+                break;
+
+            if (is_going_to(obj->position()))
             {
                 byte oldchar;
                 game->level().items.remove(obj);
@@ -513,8 +520,6 @@ bool rattlesnake_attack()
 
 void flytrap_attack(Monster* mp)
 {
-    //Flytrap stops the poor guy from moving
-    game->hero().set_held_by(mp);
     std::ostringstream ss;
     ss << ++(mp->m_flytrap_count) << "d1";
     mp->m_stats.m_damage = ss.str();
@@ -620,6 +625,10 @@ Monster* Monster::attack_player()
 
         //todo: modify code, so enemy can have more than one power
         if (!powers_cancelled()) {
+            if (can_hold())
+            {
+                game->hero().set_held_by(this);  //Flytrap stops the poor guy from moving
+            }
             if (hold_attacks())
             {
                 flytrap_attack(this);

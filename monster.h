@@ -2,22 +2,25 @@
 
 #include "agent.h"
 
-const int EX_DIVIDES = 0x0001;
-const int EX_SHOOTS_ICE = 0x0002;
-const int EX_SHOOTS_FIRE = 0x0004;
-const int EX_RUSTS_ARMOR = 0x0008;
-const int EX_HOLDS = 0x0010;
-const int EX_STATIONARY = 0x0020;
-const int EX_MIMICS = 0x0040;
-const int EX_CONFUSES = 0x0080;
-const int EX_STEALS_GOLD = 0x0100;
-const int EX_STEALS_MAGIC = 0x0200;
-const int EX_DRAINS_STR = 0x0400;
-const int EX_DRAINS_EXP = 0x0800;
-const int EX_DRAINS_MAXHP = 0x1000;
-const int EX_HOLD_ATTACKS = 0x2000;
-const int EX_SUICIDES = 0x4000;
-const int EX_DROPS_GOLD = 0x8000;
+const int EX_DIVIDES      =  0x0001; //can divide into two (slime)
+const int EX_SHOOTS_ICE   =  0x0002; //can shoot frost to freeze player (ice monster)
+const int EX_SHOOTS_FIRE  =  0x0004; //can shoot a bolt of fire (dragon)
+const int EX_RUSTS_ARMOR  =  0x0008; //has attack that reduces armor (aquator)
+const int EX_HOLDS        =  0x0010; //attack causes the player to be held (flytrap)
+const int EX_STATIONARY   =  0x0020; //does not move (venus flytrap)
+const int EX_MIMICS       =  0x0040; //disguises itself as an item (xerox)
+const int EX_CONFUSES     =  0x0080; //can confuse the opponent on sight (medusa)
+const int EX_STEALS_GOLD  =  0x0100; //has attack that steals gold (lephrachaun)
+const int EX_STEALS_MAGIC =  0x0200; //has attack that steals magic item (nymph)
+const int EX_DRAINS_STR   =  0x0400; //has attack that drains strength (rattlesnake)
+const int EX_DRAINS_EXP   =  0x0800; //has attack that drains experience (wraith)
+const int EX_DRAINS_MAXHP =  0x1000; //had attack that drains max hp (vampire)
+const int EX_HOLD_ATTACKS =  0x2000; //increases attack strength during battle (flytrap)
+const int EX_SUICIDES     =  0x4000; //dies after a successful attack (nymph and leprachaun)
+const int EX_DROPS_GOLD   =  0x8000; //drops gold on death (leprachaun)
+const int EX_GUARDS_GOLD  = 0x10000; //guards gold rather than picking it up (orc)
+
+//todo:separate flag for slowness (slime)
 
 struct Monster : public Agent
 {
@@ -45,6 +48,7 @@ struct Monster : public Agent
     bool drains_strength() const;
     bool rusts_armor() const;
     bool dies_from_attack() const;
+    bool guards_gold() const;
 
     bool is_monster_confused_this_turn() const;
 
