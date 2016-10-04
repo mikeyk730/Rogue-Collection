@@ -135,12 +135,6 @@ void Monster::start_run(bool obtain)
         obtain_target();
 }
 
-void Monster::start_run(Item* i)
-{
-    start_run(false);
-    i->set_as_target_of(this);
-}
-
 void Monster::start_run(Agent* a)
 {
     start_run(false);

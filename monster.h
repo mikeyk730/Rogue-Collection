@@ -72,7 +72,6 @@ struct Monster : public Agent
 
     //start_run: Set a monster running after something
     void start_run(bool obtain = true);
-    void start_run(Item* i);
     void start_run(Agent* a);
 
     void hold();
