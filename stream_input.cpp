@@ -40,7 +40,7 @@ StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version) :
     m_shared_data(new ThreadData)
 {
     read(*m_stream, &m_version);
-    if (m_version < 'C') {
+    if (m_version < 'C' || m_version > 'C') {
         throw std::runtime_error("Unsupported save version: " + m_version);
     }
 

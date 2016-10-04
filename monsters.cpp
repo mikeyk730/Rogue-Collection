@@ -84,6 +84,41 @@ namespace
     char wand_mons[] = "KEBHISORZ CAQ YTW PUGM VJ ";
 }
 
+void load_monster_cfg_entry(const std::string& line)
+{
+    if (line.empty() || line[0] == '#')
+        return;
+
+    game->set_monster_data(line);
+
+    if (line.substr(0, 7) == "l_order") {
+        std::string l = line.substr(9, 26);
+        l.copy(lvl_mons, 26);
+        return;
+    }
+    else if (line.substr(0, 7) == "w_order") {
+        std::string w = line.substr(9, 26);
+        w.copy(wand_mons, 26);
+        return;
+    }
+
+    std::istringstream ss(line);
+
+    char type;
+    MonsterEntry m = MonsterEntry();
+    ss >> type;
+    ss >> m.name;
+    ss >> std::dec >> m.carry;
+    ss >> std::hex >> m.flags;
+    ss >> std::dec >> m.stats.m_str >> m.stats.m_exp >> m.stats.m_level >> m.stats.m_ac >> m.stats.m_hp;
+    ss >> m.stats.m_damage;
+    ss >> std::dec >> m.confuse_roll;
+    ss >> std::hex >> m.exflags;
+
+    std::replace(m.name.begin(), m.name.end(), '_', ' ');
+    monsters[type - 'A'] = m;
+}
+
 //todo: validation, move to better location
 void load_monster_cfg(const std::string& filename)
 {
@@ -93,37 +128,7 @@ void load_monster_cfg(const std::string& filename)
     std::ifstream file(filename, std::ios::in);
     std::string line;
     while (std::getline(file, line)) {
-        if (line.empty() || line[0] == '#')
-            continue;
-        
-        game->set_custom_monsters();
-
-        if (line.substr(0, 7) == "l_order") {
-            std::string l = line.substr(9, 26);
-            l.copy(lvl_mons, 26);
-            continue;
-        }
-        else if (line.substr(0, 7) == "w_order") {
-            std::string w = line.substr(9, 26);
-            w.copy(wand_mons, 26);
-            continue;
-        }
-
-        std::istringstream ss(line);
-
-        char type;
-        MonsterEntry m = MonsterEntry();
-        ss >> type;
-        ss >> m.name;
-        ss >> std::dec >> m.carry;
-        ss >> std::hex >> m.flags;
-        ss >> std::dec >> m.stats.m_str >> m.stats.m_exp >> m.stats.m_level >> m.stats.m_ac >> m.stats.m_hp;
-        ss >> m.stats.m_damage;
-        ss >> std::dec >> m.confuse_roll;
-        ss >> std::hex >> m.exflags;
-
-        std::replace(m.name.begin(), m.name.end(), '_', ' ');
-        monsters[type - 'A'] = m;
+        load_monster_cfg_entry(line);
     }
 }
 

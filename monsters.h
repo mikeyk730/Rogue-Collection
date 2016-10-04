@@ -21,4 +21,5 @@ Monster *wake_monster(Coord p);
 char pick_vorpal_monster();
 
 void load_monster_cfg(const std::string& filename);
+void load_monster_cfg_entry(const std::string& line);
 void save_monster_cfg(const std::string& filename);

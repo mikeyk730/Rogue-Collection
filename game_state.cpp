@@ -13,6 +13,7 @@
 #include "console_output.h"
 #include "mach_dep.h"
 #include "io.h"
+#include "monsters.h"
 
 using std::placeholders::_1;
 
@@ -49,7 +50,7 @@ using std::placeholders::_1;
 
 namespace
 {
-    const int s_serial_version = 4;
+    const int s_serial_version = 5;
 }
 
 GameState::GameState(int seed) :
@@ -81,7 +82,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     int version = 0;
     read(*in, &version);
 
-    if (version < 3) {
+    if (version < 3 || version > s_serial_version) {
         throw std::runtime_error("Unsupported save version " + filename);
     }
     else if (version < 4) {
@@ -92,15 +93,25 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     read(*in, &m_seed);
     read(*in, &m_restore_count);
 
-    int length = 0;
-    read(*in, &length);
-    while (length-- > 0) {
+    int env_length = 0;
+    read(*in, &env_length);
+    while (env_length-- > 0) {
         std::string key, value;
         read_string(*in, &key);
         read_string(*in, &value);
         m_environment[key] = value;
     }
     process_environment();
+
+    if (version >= 5) {
+        int mon_length = 0;
+        read(*in, &mon_length);
+        while (mon_length-- > 0) {
+            std::string line;
+            read_string(*in, &line);
+            load_monster_cfg_entry(line);
+        }
+    }
 
     random->set_seed(m_seed);
     ++m_restore_count;
@@ -166,6 +177,11 @@ void GameState::save_game(const std::string& filename)
     for (auto i = m_environment.begin(); i != m_environment.end(); ++i) {
         write_string(file, i->first);
         write_string(file, i->second);
+    }
+
+    write(file, m_monster_data.size());
+    for (auto i = m_monster_data.begin(); i != m_monster_data.end(); ++i) {
+        write_string(file, *i);
     }
 
     m_input_interface->Serialize(file);
@@ -283,9 +299,9 @@ void GameState::set_fast_play(bool enable)
     m_fast_play_enabled = enable;
 }
 
-void GameState::set_custom_monsters()
+void GameState::set_monster_data(std::string s)
 {
-    m_custom_monsters = true;
+    m_monster_data.push_back(std::move(s));
 }
 
 //todo:

@@ -48,7 +48,7 @@ struct GameState
     bool fast_play() const;
     void set_fast_play(bool enable);
 
-    void set_custom_monsters();
+    void set_monster_data(std::string s);
 
     int get_level();
     int next_level();
@@ -118,7 +118,6 @@ private:
     bool m_fast_play_enabled = false; //If 'Fast Play' has been enabled
     bool m_in_replay = false;         //If we are currently replaying a saved game
     bool m_show_replay = true;        //If we render the game during a replay
-    bool m_custom_monsters = false;   //If the standard monsters have been altered
     int m_level_number = 1;           //Which floor of the dungeon we're on
     int m_max_level = 1;              //Maximum floor reached
 
@@ -137,6 +136,7 @@ private:
 
     std::vector<std::pair<std::string, std::string>> m_log;
     std::ofstream m_log_stream;
+    std::vector<std::string> m_monster_data;
 
     Cheats cheats;
  };
