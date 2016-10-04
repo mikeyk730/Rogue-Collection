@@ -107,7 +107,10 @@ ScrollInfo::ScrollInfo()
         *--cp = '\0';
         //I'm tired of thinking about this one so just in case .....
         prbuf[MAXNAME] = 0;
-        m_identifier.push_back(prbuf);
+        std::string scroll_name(prbuf);
+        if (scroll_name.back() == ' ')
+            scroll_name.pop_back();
+        m_identifier.push_back(scroll_name);
 
         if (i > 0)
             m_magic_props[i].prob += m_magic_props[i - 1].prob;
