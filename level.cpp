@@ -430,9 +430,11 @@ bool Level::detect_monsters(bool enable)
 
         if (enable)
         {
-            if (!game->hero().can_see_monster(monster) && screen_tile != monster->m_type) {
-                revealed = true;
-                monster->set_tile_beneath(screen_tile);
+            if (!game->hero().can_see_monster(monster)) {
+                if (screen_tile != monster->m_type) {
+                    revealed = true;
+                    monster->set_tile_beneath(screen_tile);
+                }
                 game->screen().standout();
             }
             game->screen().addch(monster->m_type);
