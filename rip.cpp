@@ -58,6 +58,7 @@ int get_year()
 //score: Figure score and post it.
 void score(int amount, int flags, char monst)
 {
+    game->screen().cursor(true);
     struct LeaderboardEntry his_score, top_ten[TOPSCORES];
     int rank = 0;
     char response = ' ';
@@ -76,7 +77,8 @@ void score(int amount, int flags, char monst)
     while ((sc_fd = _open(game->get_environment("scorefile").c_str(), 0)) < 0)
     {
         game->screen().printw("\n");
-        if (game->wizard().did_cheat() || (amount == 0)) return;
+        if (game->wizard().did_cheat() || (amount == 0)) 
+            return;
         str_attr("No scorefile: %Create %Retry %Abort");
 
         bool reread;
@@ -119,7 +121,6 @@ void score(int amount, int flags, char monst)
     game->screen().printw("[Press Enter to quit]");
     clear_typeahead_buffer();
     wait_for('\r');
-    game->screen().cursor(true);
 }
 
 void get_scores(struct LeaderboardEntry *top10)
