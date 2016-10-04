@@ -111,10 +111,9 @@ int main(int argc, char **argv)
 
     Args args = process_args(argc, argv);
 
-    //args.savefile = "tests\\orc.sav";
-    //args.savefile = "tests\\monster_picks_up_item.sav";
-    //args.savefile = "saves\\level9.sav";
-    //args.savefile = "steal_gold_v5.sav";
+    //args.savefile = "tests\\all_sticks_setup.rsf";
+    //args.savefile = "saves\\level9.rsf";
+    //args.savefile = "rogue.sav";
      
     try {
         if (!args.savefile.empty()) {

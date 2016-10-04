@@ -94,6 +94,7 @@ ConsoleOutput::ConsoleOutput(Coord origin) :
     m_origin(origin)
 {
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    ApplyCursor();
 }
 
 ConsoleOutput::~ConsoleOutput()
