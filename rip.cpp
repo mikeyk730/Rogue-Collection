@@ -58,9 +58,6 @@ int get_year()
 //score: Figure score and post it.
 void score(int amount, int flags, char monst)
 {
-    game->save_game("lastgame.sav");
-    save_monster_cfg("lastgame.mon");
-
     struct LeaderboardEntry his_score, top_ten[TOPSCORES];
     int rank = 0;
     char response = ' ';
@@ -68,8 +65,10 @@ void score(int amount, int flags, char monst)
 
     if (amount || flags || monst)
     {
+        game->save_game("lastgame.sav");
+        save_monster_cfg("lastgame.mon");
+
         game->screen().move(LINES - 1, 0);
-        //game->screen().cursor(true);
         game->screen().printw("[Press Enter to see rankings]");
         clear_typeahead_buffer();
         wait_for('\r');
@@ -121,6 +120,7 @@ void score(int amount, int flags, char monst)
     game->screen().printw("[Press Enter to quit]");
     clear_typeahead_buffer();
     wait_for('\r');
+    game->screen().cursor(true);
 }
 
 void get_scores(struct LeaderboardEntry *top10)

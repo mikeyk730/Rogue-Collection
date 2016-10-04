@@ -128,14 +128,16 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    if (args.print_score) {
-        score(0, 0, 0);
-        return 0;
-    }
     if (args.bw)
         game->set_environment("screen", "bw");
     
     setup_screen();
+
+    if (args.print_score) {
+        score(0, 0, 0);
+        return 0;
+    }
+
     credits();
 
     init_things(); //Set up probabilities of things    

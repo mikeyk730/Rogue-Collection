@@ -310,12 +310,12 @@ bool GameState::Options::show_inventory_menu() const
 
 bool GameState::Options::narrow_screen() const
 {
-    return game->get_environment("narrow_screen") == "true";
+    return game->get_environment("screen_size") == "narrow";
 }
 
 bool GameState::Options::monochrome() const
 {
-    return game->get_environment("monochrome") == "true";
+    return game->get_environment("screen") == "bw";
 }
 
 bool GameState::Options::use_exp_level_names() const
