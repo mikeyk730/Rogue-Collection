@@ -85,14 +85,9 @@ struct Monster : public Agent
 
     void set_destination(Agent* a);
     void set_destination(Item* i);
-    bool is_seeking(Agent* a);
-    bool is_seeking(Item* i);
-    bool is_going_to(Coord c);
-
-    Coord* destination() const;
     void set_destination(Coord* d);
-
-    
+    bool is_going_to(Coord c);
+    Coord* destination() const;
 
     bool has_tile_beneath() const;
     byte tile_beneath() const;

@@ -61,7 +61,6 @@ struct Agent
     bool attack(Agent *defender, Item *weapon, bool hurl);
 
     void set_as_target_of(Monster* m);
-    bool is_target_of(Monster* m);
     
     //Structure describing a fighting being
     struct Stats

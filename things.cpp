@@ -78,11 +78,6 @@ void Item::set_as_target_of(Monster * m)
     m->set_destination(&m_position);
 }
 
-bool Item::is_target_of(Monster * m)
-{
-    return m->destination() == &m_position;
-}
-
 void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
 {
     va_list argptr;

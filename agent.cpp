@@ -318,11 +318,6 @@ void Agent::set_as_target_of(Monster * m)
     m->set_destination(&m_position);
 }
 
-bool Agent::is_target_of(Monster * m)
-{
-    return m->destination() == &m_position;
-}
-
 bool Agent::in_same_room_as(Agent* other)
 {
     return m_room == other->m_room;

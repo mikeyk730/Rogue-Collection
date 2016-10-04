@@ -125,7 +125,6 @@ public:
     ItemClass* item_class() const;
 
     void set_as_target_of(Monster* m);
-    bool is_target_of(Monster* m);
 
     int m_type;                      //What kind of object it is
     int m_which;                     //Which object of a type it is

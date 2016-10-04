@@ -147,16 +147,6 @@ void Monster::start_run(Agent* a)
     set_destination(a);
 }
 
-bool Monster::is_seeking(Item * obj)
-{
-    return obj->is_target_of(this);
-}
-
-bool Monster::is_seeking(Agent * a)
-{
-    return a->is_target_of(this);
-}
-
 bool Monster::is_going_to(Coord c)
 {
     return m_destination && *m_destination == c;
@@ -468,7 +458,7 @@ void Monster::obtain_target()
             // don't go after the same object as another monster
             Agent* monster = 0;
             for (auto m = game->level().monsters.begin(); m != game->level().monsters.end(); ++m) {
-                if ((*m)->is_seeking(obj)) {
+                if ((*m)->is_going_to(obj->position())) {
                     monster = *m;
                     break;
                 }
