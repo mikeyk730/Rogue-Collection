@@ -1007,7 +1007,7 @@ Room * Hero::previous_room() const
 
 bool Hero::has_moved() const
 {
-    return m_position == m_previous_position;
+    return m_position != m_previous_position;
 }
 
 void Hero::update_position()
