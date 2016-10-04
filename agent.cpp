@@ -249,7 +249,7 @@ Room* Agent::room() const
     return m_room;
 }
 
-void Agent::enter_room(Room* r)
+void Agent::set_room(Room* r)
 {
     m_room = r;
 }

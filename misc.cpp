@@ -141,7 +141,7 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
         {
             if (wakeup) 
                 wake_monster(pos);
-            if (monster->tile_beneath() != ' ' || (!game->hero().m_room->is_dark() && !game->hero().is_blind()))
+            if (monster->tile_beneath() != ' ' || (!game->hero().room()->is_dark() && !game->hero().is_blind()))
                 monster->reload_tile_beneath();
             if (game->hero().can_see_monster(monster))
                 tile = monster->m_disguise;

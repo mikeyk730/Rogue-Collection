@@ -123,7 +123,7 @@ bool this_move_counts; //todo: remove
 
 bool do_hit_boundary()
 {
-    if (game->in_run_cmd() && is_gone(game->hero().m_room) && !game->hero().is_blind())
+    if (game->in_run_cmd() && is_gone(game->hero().room()) && !game->hero().is_blind())
     {
         switch (game->run_character)
         {

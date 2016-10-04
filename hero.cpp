@@ -313,10 +313,10 @@ void Hero::teleport()
         rm = game->level().rnd_room();
         rnd_pos(rm, &c);
     } while (!(step_ok(game->level().get_tile_or_monster(c)))); //todo:bug: can we teleport onto a xerox?
-    if (rm != m_room) {
+    if (rm != room()) {
         leave_room(m_position);
         m_position = c;
-        ::enter_room(m_position);
+        enter_room(m_position);
     }
     else { m_position = c; look(true); }
     game->screen().mvaddch(m_position, PLAYER);
@@ -397,7 +397,7 @@ bool Hero::can_see_monster(Monster *monster)
         return false;
 
     if (distance(monster->m_position, m_position) >= LAMP_DIST &&
-        (monster->m_room != m_room || monster->m_room->is_dark() || monster->m_room->is_maze()))
+        (monster->room() != room() || monster->room()->is_dark() || monster->room()->is_maze()))
         return false;
 
     //If we are seeing the enemy of a vorpally enchanted object for the first time, 
@@ -421,7 +421,7 @@ int Hero::can_see(Coord p)
     if (distance(p, m_position) < LAMP_DIST)
         return true;
     //if the coordinate is in the same room as the hero, and the room is lit
-    return (m_room == game->level().get_room_from_position(p) && !m_room->is_dark());
+    return (room() == game->level().get_room_from_position(p) && !room()->is_dark());
 }
 
 void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
@@ -606,7 +606,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
                 //Put it in the pack and notify the user
                 op->m_count += (*obj)->m_count;
                 if (from_floor) {
-                    byte floor = (m_room->is_gone()) ? PASSAGE : FLOOR;
+                    byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
                     game->level().items.remove((*obj));
                     game->screen().mvaddch(m_position, floor);
                     game->level().set_tile(m_position, floor);
@@ -628,7 +628,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     if (is_scare_monster_scroll(*obj)) {
         if ((*obj)->is_found())
         {
-            byte floor = (m_room->is_gone()) ? PASSAGE : FLOOR;
+            byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
             game->level().items.remove(*obj);
             delete *obj;
             game->screen().mvaddch(m_position, floor);
@@ -640,7 +640,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     }
 
     if (from_floor) {
-        byte floor = (m_room->is_gone()) ? PASSAGE : FLOOR;
+        byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
         game->level().items.remove(*obj);
         game->screen().mvaddch(m_position, floor);
         game->level().set_tile(m_position, floor);

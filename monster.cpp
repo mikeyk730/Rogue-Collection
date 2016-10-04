@@ -213,11 +213,11 @@ Monster* Monster::do_chase() //todo: understand
     reveal_disguise();
 
     //If gold has been taken, target the hero
-    if (is_greedy() && m_room->m_gold_val == 0)
+    if (is_greedy() && room()->m_gold_val == 0)
         m_destination = &game->hero().m_position;
 
     //Find room of the target
-    Room* destination_room = game->hero().m_room;
+    Room* destination_room = game->hero().room();
     if (m_destination != &game->hero().m_position)
         destination_room = game->level().get_room_from_position(*m_destination);
     if (destination_room == NULL)
@@ -228,7 +228,7 @@ Monster* Monster::do_chase() //todo: understand
     Coord tempdest; //Temporary destination for chaser
 
 
-    Room* monster_room = m_room; //Find room of chaser
+    Room* monster_room = room(); //Find room of chaser
                                      //We don't count doors as inside rooms for this routine
     bool door = game->level().get_tile(m_position) == DOOR;
 
@@ -298,7 +298,7 @@ Monster* Monster::do_chase() //todo: understand
                 byte oldchar;
                 game->level().items.remove(obj);
                 m_pack.push_front(obj);
-                oldchar = (m_room->is_gone()) ? PASSAGE : FLOOR;
+                oldchar = (room()->is_gone()) ? PASSAGE : FLOOR;
                 game->level().set_tile(obj->m_position, oldchar);
                 if (game->hero().can_see(obj->m_position))
                     game->screen().mvaddch(obj->m_position, oldchar);
@@ -326,14 +326,15 @@ void Monster::do_screen_update(Coord next_position)
             game->screen().mvaddch(m_position, tile_beneath());
     }
 
-    Room *orig_room = m_room;
+    Room *orig_room = room();
     if (!equal(next_position, m_position))
     {
-        if ((m_room = game->level().get_room_from_position(next_position)) == NULL) {
-            m_room = orig_room;
+        Room* next_room = game->level().get_room_from_position(next_position);
+        if (!next_room) {
             return;
         }
-        if (orig_room != m_room)
+        set_room(next_room);
+        if (orig_room != room())
             obtain_target();
         m_position = next_position;
     }

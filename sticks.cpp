@@ -538,12 +538,12 @@ void drain()
     if (game->level().get_tile(game->hero().m_position) == DOOR)
         room = game->level().get_passage(game->hero().m_position);
     else room = NULL;
-    in_passage = game->hero().m_room->is_gone();
+    in_passage = game->hero().room()->is_gone();
     dp = drainee;
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
         monster = *it;
-        if (monster->m_room == game->hero().m_room || monster->m_room == room ||
-            (in_passage && game->level().get_tile(monster->m_position) == DOOR && game->level().get_passage(monster->m_position) == game->hero().m_room)) {
+        if (monster->room() == game->hero().room() || monster->room() == room ||
+            (in_passage && game->level().get_tile(monster->m_position) == DOOR && game->level().get_passage(monster->m_position) == game->hero().room())) {
             *dp++ = monster;
         }
     }

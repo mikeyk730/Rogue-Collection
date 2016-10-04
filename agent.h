@@ -52,7 +52,7 @@ struct Agent
 
     Coord position() const;
     Room* room() const;
-    void enter_room(Room* r);
+    void set_room(Room* r);
 
     int level() const;
     std::string damage_string() const;
@@ -77,8 +77,8 @@ struct Agent
 
     short m_flags = 0;                //State word
     Stats m_stats;                    //Physical description
-//private:
     Coord m_position = { 0, 0 };      //Position
+private:
     Room *m_room = 0;                 //Current room for thing
 public:
     std::list<Item*> m_pack;          //What the thing is carrying

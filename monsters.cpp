@@ -205,7 +205,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     monster->m_disguise = type;
     monster->m_position = *position;
     monster->invalidate_tile_beneath();
-    monster->m_room = game->level().get_room_from_position(*position);
+    monster->set_room(game->level().get_room_from_position(*position));
     monster->m_flags = defaults->flags;
     monster->m_ex_flags = defaults->exflags;
     monster->m_stats = defaults->stats;
@@ -251,9 +251,9 @@ void create_wandering_monster()
     do
     {
         room = game->level().rnd_room();
-        if (room == game->hero().m_room) continue;
+        if (room == game->hero().room()) continue;
         rnd_pos(room, &cp);
-    } while (!(room != game->hero().m_room && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic? //todo:inf loop if all spaces full
+    } while (!(room != game->hero().room() && step_ok(game->level().get_tile_or_monster(cp))));  //todo:bug: can start on mimic? //todo:inf loop if all spaces full
     monster = Monster::CreateMonster(randmonster(true, get_level()), &cp, get_level());
     if (game->invalid_position)
         debug("wanderer bailout");
@@ -276,7 +276,7 @@ Monster *wake_monster(Coord p)
     if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
     {
         int dst;
-        Room* room = game->hero().m_room;
+        Room* room = game->hero().room();
         dst = distance(p, game->hero().m_position);
         if ((room != NULL && !(room->is_dark())) || dst < LAMP_DIST)
         {
@@ -293,8 +293,8 @@ Monster *wake_monster(Coord p)
     //Let greedy ones guard gold
     if (monster->is_greedy() && !monster->is_running())
     {
-        if (game->hero().m_room->m_gold_val) {
-            monster->set_destination(&game->hero().m_room->m_gold_position);
+        if (game->hero().room()->m_gold_val) {
+            monster->set_destination(&game->hero().room()->m_gold_position);
             monster->start_run(false);
         }
         else

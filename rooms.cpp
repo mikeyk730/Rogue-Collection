@@ -178,7 +178,7 @@ void enter_room(Coord cp)
     Monster* monster;
 
     Room* room = game->level().get_room_from_position(cp);
-    game->hero().enter_room(room);
+    game->hero().set_room(room);
 
     if (game->invalid_position || (room->is_gone() && (room->is_maze()) == 0))
     {
@@ -210,11 +210,10 @@ void enter_room(Coord cp)
 void leave_room(Coord cp)
 {
     int y, x;
-    struct Room *room;
     byte ch;
 
-    room = game->hero().m_room;
-    game->hero().m_room = game->level().get_passage(cp);
+    Room* room = game->hero().room();
+    game->hero().set_room(game->level().get_passage(cp));
 
     byte floor = ((room->is_dark()) && !game->hero().is_blind()) ? ' ' : FLOOR;
     if (room->is_maze())

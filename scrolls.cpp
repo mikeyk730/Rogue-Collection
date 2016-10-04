@@ -222,9 +222,9 @@ void Scroll::read_food_detection()
 void Scroll::read_teleportation()
 {
     //Scroll of teleportation: Make him disappear and reappear
-    Room* original_room = game->hero().m_room;
+    Room* original_room = game->hero().room();
     game->hero().teleport();
-    if (original_room != game->hero().m_room)
+    if (original_room != game->hero().room())
         discover();
 }
 

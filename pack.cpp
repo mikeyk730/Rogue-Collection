@@ -148,7 +148,7 @@ void pick_up(byte ch)
 {
     if (ch == GOLD)
     {
-        Room* room = game->hero().m_room;
+        Room* room = game->hero().room();
         Coord pos = game->hero().position();
         Item* obj = find_obj(pos, true);
         Gold* gold = dynamic_cast<Gold*>(obj);
