@@ -177,11 +177,6 @@ void Monster::set_destination(Coord * d)
 
 }
 
-Coord * Monster::destination() const
-{
-    return m_destination;
-}
-
 bool Monster::has_tile_beneath() const
 {
     return m_tile_beneath != UNSET;
