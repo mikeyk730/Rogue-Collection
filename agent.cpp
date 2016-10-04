@@ -9,11 +9,11 @@
 #include "item.h"
 #include "monster.h"
 
-bool Agent::is_flag_set(short flag) const {
+bool Agent::is_flag_set(int flag) const {
     return ((m_flags & flag) != 0);
 }
 
-void Agent::set_flag(short flag, bool enable) {
+void Agent::set_flag(int flag, bool enable) {
     if (enable)
         m_flags |= flag;
     else

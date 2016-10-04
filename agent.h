@@ -7,22 +7,22 @@ struct Item;
 struct Room;
 
 //flags for creatures
-const short IS_BLIND = 0x0001; //creature is blind
-const short SEE_MONST = 0x0002; //hero can detect unseen monsters
-const short IS_RUN = 0x0004; //creature is running at the player
-const short IS_FOUND = 0x0008; //creature has been seen (used for objects)
-const short IS_INVIS = 0x0010; //creature is invisible
-const short IS_MEAN = 0x0020; //creature can wake when player enters room
-const short IS_GREED = 0x0040; //creature runs to protect gold
-const short IS_HELD = 0x0080; //creature has been held
-const short IS_HUH = 0x0100; //creature is confused
-const short IS_REGEN = 0x0200; //creature can regenerate
-const short CAN_HUH = 0x0400; //creature can confuse
-const short CAN_SEE = 0x0800; //creature can see invisible creatures
-const short IS_CANC = 0x1000; //creature has special qualities cancelled
-const short IS_SLOW = 0x2000; //creature has been slowed
-const short IS_HASTE = 0x4000; //creature has been hastened
-const short IS_FLY = (short)0x8000; //creature is of the flying type
+const int IS_BLIND  = 0x0001; //creature is blind
+const int SEE_MONST = 0x0002; //hero can detect unseen monsters
+const int IS_RUN    = 0x0004; //creature is running at the player
+const int IS_FOUND  = 0x0008; //creature has been seen (used for objects)
+const int IS_INVIS  = 0x0010; //creature is invisible
+const int IS_MEAN   = 0x0020; //creature can wake when player enters room
+const int IS_GREED  = 0x0040; //creature runs to protect gold
+const int IS_HELD   = 0x0080; //creature has been held
+const int IS_HUH    = 0x0100; //creature is confused
+const int IS_REGEN  = 0x0200; //creature can regenerate
+const int CAN_HUH   = 0x0400; //creature can confuse
+const int CAN_SEE   = 0x0800; //creature can see invisible creatures
+const int IS_CANC   = 0x1000; //creature has special qualities cancelled
+const int IS_SLOW   = 0x2000; //creature has been slowed
+const int IS_HASTE  = 0x4000; //creature has been hastened
+const int IS_FLY    = 0x8000; //creature is of the flying type
 
 //Structure for monsters and player
 struct Agent
@@ -75,7 +75,7 @@ struct Agent
         unsigned int m_max_str; //Max strength
     };
 
-    short m_flags = 0;                //State word
+    int m_flags = 0;                  //State word
     Stats m_stats;                    //Physical description
 private:
     Coord m_position = { 0, 0 };      //Position
@@ -86,8 +86,8 @@ public:
     bool m_invulnerable = false;
 
 private:
-    bool is_flag_set(short flag) const;
-    void set_flag(short flag, bool enable);
+    bool is_flag_set(int flag) const;
+    void set_flag(int flag, bool enable);
 
 public:
     bool is_flying() const;

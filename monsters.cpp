@@ -35,7 +35,7 @@ namespace
     {
         std::string name;   //What to call the monster
         int carry;          //Probability of carrying something
-        short flags;        //Things about the monster
+        int flags;          //Things about the monster
         struct Agent::Stats stats; //Initial m_stats
         int confuse_roll;
         int exflags;        //Things about special roles
@@ -112,7 +112,7 @@ void load_monster_cfg(const std::string& filename)
         std::istringstream ss(line);
 
         char type;
-        MonsterEntry m;
+        MonsterEntry m = MonsterEntry();
         ss >> type;
         ss >> m.name;
         ss >> std::dec >> m.carry;
@@ -123,9 +123,7 @@ void load_monster_cfg(const std::string& filename)
         ss >> std::hex >> m.exflags;
 
         std::replace(m.name.begin(), m.name.end(), '_', ' ');
-
         monsters[type - 'A'] = m;
-        //printf("%c %s %d %x %d %d %d %d %d %s %x\n", m_type, m.name.c_str(), m.carry, m.m_flags, m.m_stats.str, m.m_stats.exp, m.m_stats.m_level, m.m_stats.m_ac, m.m_stats.m_hp, m.m_stats.m_damage.c_str(), m.exflags);
     }
 }
 
