@@ -147,9 +147,13 @@ int pack_char(Item *obj)
 //pick_up: Add something to characters pack.
 void Hero::pick_up(byte ch)
 {
-    //If this was the object of something's desire, that monster will get mad and run at the hero
+    //mdk:bugfix: this code used to be inside add_to_pack, so it wasn't run when picking up
+    //gold. The result was a dangling m_destination pointer when you stole a monster's
+    //gold which could crash.
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
         Monster* monster = *it;
+
+        //If this was the object of something's desire, that monster will get mad and run at the hero
         if (monster->is_going_to(position())) {
             std::ostringstream ss;
             ss << monster->get_name() << " " << monster->position() << " item may be taken";
