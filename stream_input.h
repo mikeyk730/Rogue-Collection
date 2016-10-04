@@ -7,7 +7,7 @@
 
 struct StreamInput : public InputInterface
 {
-    StreamInput(std::unique_ptr<std::istream> in, int version);
+    StreamInput(std::unique_ptr<std::istream> in, int version, bool start_paused);
     ~StreamInput();
 
     virtual bool HasMoreInput();

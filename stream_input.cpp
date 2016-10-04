@@ -35,7 +35,7 @@ namespace
 }
 
 
-StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version) :
+StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version, bool start_paused) :
     m_stream(std::move(in)),
     m_shared_data(new ThreadData)
 {
@@ -44,6 +44,7 @@ StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version) :
         throw std::runtime_error("Unsupported save version: " + m_version);
     }
 
+    m_shared_data->m_paused = start_paused;
     std::thread t(ThreadProc, m_shared_data);
     t.detach();
 }

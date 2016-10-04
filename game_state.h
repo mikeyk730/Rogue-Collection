@@ -17,7 +17,7 @@ struct OutputInterface;
 struct GameState
 {
     GameState(int seed);
-    GameState(Random* random, const std::string& filename, bool show_replay);
+    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused);
     ~GameState();
 
     void save_game(const std::string& filename);

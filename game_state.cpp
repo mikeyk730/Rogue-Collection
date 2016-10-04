@@ -68,7 +68,7 @@ GameState::GameState(int seed) :
     init_environment();
 }
 
-GameState::GameState(Random* random, const std::string& filename, bool show_replay) :
+GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused) :
     m_output_interface(new ConsoleOutput({ 0, 0 })),
     m_in_replay(true),
     m_show_replay(show_replay),
@@ -116,7 +116,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     random->set_seed(m_seed);
     ++m_restore_count;
 
-    std::unique_ptr<StreamInput> replay_interface(new StreamInput(std::move(in), version));
+    std::unique_ptr<StreamInput> replay_interface(new StreamInput(std::move(in), version, start_paused));
     replay_interface->OnReplayEnd(std::bind(&GameState::set_replay_end, this));
     replay_interface->OnFastPlayChanged(std::bind(&GameState::set_fast_play, this, _1));
 

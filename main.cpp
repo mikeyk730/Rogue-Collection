@@ -61,6 +61,7 @@ struct Args
     std::string optfile;
     bool show_replay;
     bool print_score;
+    bool start_paused;
     bool bw;
 };
 
@@ -83,6 +84,9 @@ Args process_args(int argc, char**argv)
         }
         else if (s == "/q") {
             a.show_replay = false;
+        }
+        else if (s == "/p") {
+            a.start_paused = true;
         }
         else if (s == "/m") {
             if (++i < argc)
@@ -114,7 +118,7 @@ int main(int argc, char **argv)
      
     try {
         if (!args.savefile.empty()) {
-            game = new GameState(g_random, args.savefile, args.show_replay);
+            game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused);
         }
         else {
             game = new GameState(seed);
