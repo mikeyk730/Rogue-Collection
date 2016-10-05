@@ -123,6 +123,9 @@ int main(int argc, char **argv)
             game = new GameState(seed);
             setenv(args.optfile.c_str());
         }
+        if (game->options.act_like_v1_1()) {
+            set_monsters_v1_1();
+        }
         load_monster_cfg(args.monsterfile);
     }
     catch (const std::runtime_error& e)

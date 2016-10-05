@@ -3,10 +3,10 @@
 #include "agent.h"
 
 const int EX_DIVIDES       =   0x0001; //can divide into two (slime)
-const int EX_SHOOTS_ICE    =   0x0002; //can shoot frost to freeze player (ice monster)
+const int EX_SHOOTS_ICE    =   0x0002; //can shoot frost to freeze player (ice monster v1.4)
 const int EX_SHOOTS_FIRE   =   0x0004; //can shoot a bolt of fire (dragon)
 const int EX_RUSTS_ARMOR   =   0x0008; //has attack that reduces armor (aquator)
-const int EX_HOLDS         =   0x0010; //attack causes the player to be held (flytrap)
+const int EX_HOLDS         =   0x0010; //attack causes the player to be held (venus flytrap)
 const int EX_STATIONARY    =   0x0020; //does not move (venus flytrap)
 const int EX_MIMICS        =   0x0040; //disguises itself as an item (xerox)
 const int EX_CONFUSES      =   0x0080; //can confuse the opponent on sight (medusa)
@@ -15,14 +15,15 @@ const int EX_STEALS_MAGIC  =   0x0200; //has attack that steals magic item (nymp
 const int EX_DRAINS_STR    =   0x0400; //has attack that drains strength (rattlesnake)
 const int EX_DRAINS_EXP    =   0x0800; //has attack that drains experience (wraith)
 const int EX_DRAINS_MAXHP  =   0x1000; //had attack that drains max hp (vampire)
-const int EX_HOLD_ATTACKS  =   0x2000; //increases attack strength during battle (flytrap)
+const int EX_INCREASE_DMG  =   0x2000; //increases attack damage during battle (venus flytrap)
 const int EX_SUICIDES      =   0x4000; //dies after a successful attack (nymph and leprachaun)
 const int EX_DROPS_GOLD    =   0x8000; //drops gold on death (leprachaun)
 const int EX_GUARDS_GOLD   =  0x10000; //guards gold rather than picking it up (orc)
 const int EX_SLOW_WHEN_FAR =  0X20000; //moves slowly when far away from the player (slime)
 const int EX_FIRE_IMMUNITY =  0X40000; //not injured by flames (dragon)
-const int EX_UNFREEZES     =  0x80000; //attack unfreezes the player faster (ice monster)
-const int EX_NO_MISS_MSGS  = 0x100000; //don't display a msg when an attack misses (ice monster)
+const int EX_UNFREEZES     =  0x80000; //attack unfreezes the player faster (ice monster v1.4)
+const int EX_FREEZES       = 0x100000; //attack freezes the player (ice monster v1.1)
+const int EX_NO_FIGHT_MSG  = 0x200000; //don't display a msg when an attack misses (ice monster v1.1)
 
 //todo:separate flag for slowness (slime)
 
@@ -36,12 +37,13 @@ struct Monster : public Agent
     //special features
     bool is_stationary() const;
     bool can_hold() const;
-    bool hold_attacks() const;
+    bool increases_dmg() const;
     bool can_divide() const;
     bool shoots_fire() const;
     bool immune_to_fire() const;
     bool shoots_ice() const;
     bool unfreezes_player() const;
+    bool freezes_player() const;
     bool causes_confusion() const;
     bool is_mimic() const;
     bool is_disguised() const;
@@ -55,7 +57,7 @@ struct Monster : public Agent
     bool dies_from_attack() const;
     bool guards_gold() const;
     bool slow_when_far() const;
-    bool no_miss_msgs() const;
+    bool no_fight_msg() const;
 
     bool is_monster_confused_this_turn() const;
 
@@ -65,6 +67,14 @@ struct Monster : public Agent
 
     //attack: The monster attacks the player.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
     Monster* attack_player();
+    bool hold_attack();
+    bool freeze_attack();
+    bool rust_attack();
+    bool steal_gold_attack();
+    bool steal_item_attack();
+    bool drain_strength_attack();
+    bool drain_life_attack();
+    bool drain_exp_attack();
 
     int get_carry_probability() const;
 

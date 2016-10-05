@@ -37,8 +37,8 @@ bool Monster::can_hold() const {
     return (m_ex_flags & EX_HOLDS) != 0;
 }
 
-bool Monster::hold_attacks() const {
-    return (m_ex_flags & EX_HOLD_ATTACKS) != 0;
+bool Monster::increases_dmg() const {
+    return (m_ex_flags & EX_INCREASE_DMG) != 0;
 }
 
 bool Monster::shoots_fire() const {
@@ -56,6 +56,11 @@ bool Monster::shoots_ice() const {
 bool Monster::unfreezes_player() const
 {
     return (m_ex_flags & EX_UNFREEZES) != 0;
+}
+
+bool Monster::freezes_player() const
+{
+    return (m_ex_flags & EX_FREEZES) != 0;
 }
 
 bool Monster::causes_confusion() const {
@@ -112,9 +117,9 @@ bool Monster::slow_when_far() const
     return (m_ex_flags & EX_SLOW_WHEN_FAR) != 0;
 }
 
-bool Monster::no_miss_msgs() const
+bool Monster::no_fight_msg() const
 {
-    return (m_ex_flags & EX_NO_MISS_MSGS) != 0;
+    return (m_ex_flags & EX_NO_FIGHT_MSG) != 0;
 }
 
 std::string Monster::get_name()
@@ -505,7 +510,22 @@ void Monster::obtain_target()
     set_destination(&game->hero());
 }
 
-bool aquator_attack()
+void increase_damage_stats(Monster* mp)
+{
+    std::ostringstream ss;
+    ss << ++(mp->m_flytrap_count) << "d1";
+    mp->m_stats.m_damage = ss.str();
+}
+
+void thaw_player()
+{
+    //When an Ice Monster hits you, you get unfrozen faster
+    if (game->hero().get_sleep_turns() > 1)
+        game->hero().decrement_sleep_turns();
+}
+
+
+bool Monster::rust_attack()
 {
     //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
     if (game->hero().get_current_armor() && game->hero().get_current_armor()->get_armor_class() < 9 && game->hero().get_current_armor()->m_which != LEATHER)
@@ -519,14 +539,18 @@ bool aquator_attack()
         return false;
 }
 
-void ice_monster_attack()
+bool Monster::freeze_attack()
 {
-    //When an Ice Monster hits you, you get unfrozen faster
-    if (game->hero().get_sleep_turns() > 1)
-        game->hero().decrement_sleep_turns();
+    //mdk: i've had to guess on the implementation based on playing the original
+    if (!game->hero().get_sleep_turns()) {
+        msg("You are frozen by the %s", get_name().c_str());
+        game->hero().increase_sleep_turns(rnd(20)+1);
+        return true;
+    }
+    return false;
 }
 
-bool rattlesnake_attack()
+bool Monster::drain_strength_attack()
 {
     //Rattlesnakes have poisonous bites
     if (!save(VS_POISON))
@@ -541,15 +565,8 @@ bool rattlesnake_attack()
     return false;
 }
 
-void flytrap_attack(Monster* mp)
-{
-    std::ostringstream ss;
-    ss << ++(mp->m_flytrap_count) << "d1";
-    mp->m_stats.m_damage = ss.str();
-}
-
 // return true if attack succeeded
-bool leprechaun_attack(Monster* mp)
+bool Monster::steal_gold_attack()
 {
     //Leprechaun steals some gold
     long lastpurse;
@@ -564,7 +581,7 @@ bool leprechaun_attack(Monster* mp)
     return true;
 }
 
-bool nymph_attack(Monster* mp)
+bool Monster::steal_item_attack()
 {
     const char *she_stole = "she stole %s!";
 
@@ -597,6 +614,7 @@ bool nymph_attack(Monster* mp)
     return true;
 }
 
+//common function for vampires and wraiths
 bool vampire_wraith_attack(Monster* monster)
 {
     //Wraiths might drain energy levels, and Vampires can steal max hp
@@ -625,6 +643,24 @@ bool vampire_wraith_attack(Monster* monster)
     return false;
 }
 
+bool Monster::drain_life_attack()
+{
+    return vampire_wraith_attack(this);
+}
+
+bool Monster::drain_exp_attack()
+{
+    return vampire_wraith_attack(this);
+}
+
+bool Monster::hold_attack()
+{
+    game->hero().set_held_by(this);  //Flytrap stops the poor guy from moving
+    return true;
+}
+
+
+
 //attack: The monster attacks the player
 Monster* Monster::attack_player()
 {
@@ -642,43 +678,52 @@ Monster* Monster::attack_player()
 
     if (attack(&game->hero(), NULL, false))
     {
-        display_hit_msg(name.c_str(), NULL);
+        if (!no_fight_msg()) {
+            display_hit_msg(name.c_str(), NULL);
+        }
         if (game->hero().get_hp() <= 0)
             death(m_type); //Bye bye life ...
 
         //todo: modify code, so enemy can have more than one power
         if (!powers_cancelled()) {
-            if (can_hold())
-            {
-                game->hero().set_held_by(this);  //Flytrap stops the poor guy from moving
+            if (increases_dmg()) {
+                increase_damage_stats(this);
             }
-            if (hold_attacks())
-            {
-                flytrap_attack(this);
+            if (unfreezes_player()) {
+                thaw_player();
             }
-            else if (unfreezes_player())
+
+            //special attacks
+            if (can_hold()) {
+                attack_success = hold_attack();
+            }
+            else if (freezes_player())
             {
-                ice_monster_attack();
+                attack_success = freeze_attack();
             }
             else if (rusts_armor())
             {
-                attack_success = aquator_attack();
+                attack_success = rust_attack();
             }
             else if (steals_gold())
             {
-                attack_success = leprechaun_attack(this);
+                attack_success = steal_gold_attack();
             }
             else if (steals_magic())
             {
-                attack_success = nymph_attack(this);
+                attack_success = steal_item_attack();
             }
             else if (drains_strength())
             {
-                attack_success = rattlesnake_attack();
+                attack_success = drain_strength_attack();
             }
-            else if (drains_life() || drains_exp())
+            else if (drains_life())
             {
-                attack_success = vampire_wraith_attack(this);
+                attack_success = drain_life_attack();
+            }
+            else if (drains_exp())
+            {
+                attack_success = drain_exp_attack();
             }
 
             if (attack_success && dies_from_attack())
@@ -690,13 +735,16 @@ Monster* Monster::attack_player()
     }
     else
     {
-        if (hold_attacks())
+        if (increases_dmg())
         {
             if (!game->hero().decrease_hp(m_flytrap_count, true))
                 death(m_type); //Bye bye life ...
         }
 
-        if (!no_miss_msgs()) { // mdk:no messages when the ice monster misses
+        // mdk:bugfix: Originally there were no messages when the ice monster missed.
+        // I think this goes back to v1.1 when ice monsters didn't have a regular 
+        // attack
+        if (!no_fight_msg()) {
             display_miss_msg(name.c_str(), NULL);
         }
     }

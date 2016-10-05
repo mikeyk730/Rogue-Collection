@@ -319,6 +319,11 @@ bool GameState::Options::throws_affect_mimics() const
     return game->get_environment("throws_affect_mimics") == "true";
 }
 
+bool GameState::Options::act_like_v1_1() const
+{
+    return game->get_environment("version") == "1.1";
+}
+
 bool GameState::Options::show_inventory_menu() const
 {
     return game->get_environment("menu") != "false";

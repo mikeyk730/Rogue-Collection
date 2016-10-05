@@ -30,6 +30,11 @@
 
 namespace
 {
+    int to_index(char type)
+    {
+        return type - 'A';
+    }
+
     //Array containing information on all the various types of monsters
     struct MonsterEntry
     {
@@ -53,10 +58,10 @@ namespace
         { "centaur",         15,                          0,  { XX,   25,  4,  4, ___, "1d6/1d6"         }, 0, 0 },
         { "dragon",         100,                    IS_MEAN,  { XX, 6800, 10, -1, ___, "1d8/1d8/3d10"    }, 0, EX_SHOOTS_FIRE | EX_FIRE_IMMUNITY },
         { "emu",              0,                    IS_MEAN,  { XX,    2,  1,  7, ___, "1d2"             }, 0, 0 },
-        { "venus flytrap",    0,                    IS_MEAN,  { XX,   80,  8,  3, ___, "0d1"             }, 0, EX_HOLDS | EX_STATIONARY | EX_HOLD_ATTACKS },
+        { "venus flytrap",    0,                    IS_MEAN,  { XX,   80,  8,  3, ___, "0d1"             }, 0, EX_HOLDS | EX_STATIONARY | EX_INCREASE_DMG },
         { "griffin",         20, IS_MEAN | IS_FLY | IS_REGEN, { XX, 2000, 13,  2, ___, "4d3/3d5/4d3"     }, 0, 0 },
         { "hobgoblin",        0,                    IS_MEAN,  { XX,    3,  1,  5, ___, "1d8"             }, 0, 0 },
-        { "ice monster",      0,                    IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, 0, EX_SHOOTS_ICE | EX_UNFREEZES | EX_NO_MISS_MSGS },
+        { "ice monster",      0,                    IS_MEAN,  { XX,   15,  1,  9, ___, "1d2"             }, 0, EX_SHOOTS_ICE | EX_UNFREEZES },
         { "jabberwock",      70,                          0,  { XX, 4000, 15,  6, ___, "2d12/2d4"        }, 0, 0 },
         { "kestral",          0,           IS_MEAN | IS_FLY,  { XX,    1,  1,  7, ___, "1d4"             }, 0, 0 },
         { "leprechaun",       0,                          0,  { XX,   10,  3,  8, ___, "1d2"             }, 0, EX_STEALS_GOLD | EX_DROPS_GOLD | EX_SUICIDES },
@@ -76,13 +81,33 @@ namespace
         { "zombie",           0,                    IS_MEAN,  { XX,    6,  2,  8, ___, "1d8"             }, 0, 0 }
     };
 
-#undef ___
-#undef XX
-
     //List of monsters in rough order of vorpalness
     char  lvl_mons[] = "K BHISOR LCA NYTWFP GMXVJD";
     char wand_mons[] = "KEBHISORZ CAQ YTW PUGM VJ ";
 }
+
+void set_monsters_v1_1()
+{
+    //mdk: In v1.1 all monsters can be placed in the level.  Snakes come earlier
+    memcpy(lvl_mons,  "KEBSHIORZLCAQNYTWFPUGMXVJD", 26);
+    memcpy(wand_mons, "KEBSH ORZ CAQ YTW PUGM VJ ", 26);
+
+    //Changes to monsters in v1.1
+    //  -Bat isn't flying
+    //  -Centaurs give less exp
+    //  -Ice monsters aren't mean, and they don't do damage.  they freeze during their attack, but can't shoot frost
+    //  -Leprachauns do less damage
+    //  -Snakes don't divide.  they aren't slow when far.  they have different exp, lvl, amr.
+
+    monsters[to_index('B')] = MonsterEntry{ "bat",          0,        0,  { XX,   1,  1,  3, ___, "1d2"     }, 2, 0 };
+    monsters[to_index('C')] = MonsterEntry{ "centaur",     15,        0,  { XX,  15,  4,  4, ___, "1d6/1d6" }, 0, 0 };
+    monsters[to_index('I')] = MonsterEntry{ "ice monster",  0,        0,  { XX,   5,  1,  9, ___, "0d0"     }, 0, EX_FREEZES | EX_NO_FIGHT_MSG };
+    monsters[to_index('L')] = MonsterEntry{ "leprechaun",   0,        0,  { XX,  10,  3,  8, ___, "1d1"     }, 0, EX_STEALS_GOLD | EX_DROPS_GOLD | EX_SUICIDES };
+    monsters[to_index('S')] = MonsterEntry{ "snake",        0,  IS_MEAN,  { XX,   2,  1,  5, ___, "1d3"     }, 0, 0 };
+}
+
+#undef ___
+#undef XX
 
 void GameState::load_monster_cfg_entry(const std::string& line)
 {

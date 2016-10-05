@@ -85,6 +85,7 @@ struct GameState
         bool striking_charge_bugfix() const;
         bool use_throw_damage() const;
         bool throws_affect_mimics() const;
+        bool act_like_v1_1() const;
     } options;
 
     bool in_smart_run_mode() const;

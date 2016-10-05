@@ -20,5 +20,7 @@ Monster *wake_monster(Coord p);
 //pick_vorpal_monster: Choose a sort of monster for the enemy of a vorpally enchanted weapon
 char pick_vorpal_monster();
 
+void set_monsters_v1_1();
+
 void load_monster_cfg(const std::string& filename);
 void save_monster_cfg(const std::string& filename);
