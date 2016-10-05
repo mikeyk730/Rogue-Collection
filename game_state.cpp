@@ -134,7 +134,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
 
     if (!m_show_replay)
     {
-        screen().StopRendering();
+        screen().stop_rendering();
     }
 }
 
@@ -285,7 +285,7 @@ void GameState::set_replay_end()
 {
     if (!m_show_replay)
     {
-        screen().ResumeRendering();
+        screen().resume_rendering();
     }
     reset_msg_position();
     msg("Replay ended");

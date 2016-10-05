@@ -77,16 +77,16 @@ namespace
 
 void ConsoleOutput::putchr(int c, int attr)
 {
-    putchr_(c, attr);
-    Render({ c_col, c_row, c_col, c_row });
+    putchr_unrendered(c, attr);
+    Render({ m_col, m_row, m_col, m_row });
 }
 
-void ConsoleOutput::putchr_(int c, int attr)
+void ConsoleOutput::putchr_unrendered(int c, int attr)
 {
     CHAR_INFO ci;
     ci.Attributes = attr;
     ci.Char.AsciiChar = c;
-    m_buffer[c_row*COLS+c_col] = ci;
+    m_buffer[m_row*COLS+m_col] = ci;
 }
 
 ConsoleOutput::ConsoleOutput() 
@@ -120,8 +120,8 @@ bool ConsoleOutput::cursor(bool enable)
 //get curent cursor position
 void ConsoleOutput::getrc(int *r, int *c)
 {
-    *r = c_row;
-    *c = c_col;
+    *r = m_row;
+    *c = m_col;
 }
 
 //clrtoeol
@@ -134,20 +134,20 @@ void ConsoleOutput::clrtoeol()
 
 void ConsoleOutput::mvaddstr(int r, int c, const char *s)
 {
-    move_(r, c);
+    move(r, c);
     addstr(s);
 }
 
 void ConsoleOutput::mvaddch(int r, int c, char chr)
 {
-    move_(r, c);
+    move(r, c);
     addch(chr);
 }
 
 //todo: get rid of entirely
 int ConsoleOutput::mvinch(int r, int c)
 {
-    move_(r, c);
+    move(r, c);
     return curch();
 }
 
@@ -157,62 +157,62 @@ int ConsoleOutput::addch(byte chr)
     int r, c;
     byte old_attr;
 
-    old_attr = ch_attr;
+    old_attr = m_attr;
     if (at_table == color_attr)
     {
         //if it is inside a room
-        if (ch_attr == 7) switch (chr)
+        if (m_attr == 7) switch (chr)
         {
         case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-            ch_attr = 6; //brown
+            m_attr = 6; //brown
             break;
         case FLOOR:
-            ch_attr = 10; //light green
+            m_attr = 10; //light green
             break;
         case STAIRS:
-            ch_attr = 160; //black on green
+            m_attr = 160; //black on green
             break;
         case TRAP:
-            ch_attr = 5; //magenta
+            m_attr = 5; //magenta
             break;
         case GOLD: case PLAYER:
-            ch_attr = 14; //yellow
+            m_attr = 14; //yellow
             break;
         case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-            ch_attr = 9;
+            m_attr = 9;
             break;
         case FOOD:
-            ch_attr = 4;
+            m_attr = 4;
             break;
         }
         //if inside a passage or a maze
-        else if (ch_attr == 112) switch (chr)
+        else if (m_attr == 112) switch (chr)
         {
         case FOOD:
-            ch_attr = 116; //red
+            m_attr = 116; //red
             break;
         case GOLD: case PLAYER:
-            ch_attr = 126; //yellow on white
+            m_attr = 126; //yellow on white
             break;
         case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-            ch_attr = 113; //blue on white
+            m_attr = 113; //blue on white
             break;
         }
-        else if (ch_attr == 15 && chr == STAIRS) ch_attr = 160;
+        else if (m_attr == 15 && chr == STAIRS) m_attr = 160;
     }
     getrc(&r, &c);
     if (chr == '\n')
     {
-        if (r == LINES - 1) { scroll_up(0, LINES - 1, 1); move_(LINES - 1, 0); }
-        else move_(r + 1, 0);
-        ch_attr = old_attr;
-        return c_row;
+        if (r == LINES - 1) { scroll_up(0, LINES - 1, 1); move(LINES - 1, 0); }
+        else move(r + 1, 0);
+        m_attr = old_attr;
+        return m_row;
     }
-    putchr(chr, ch_attr);
+    putchr(chr, m_attr);
     move(r, c + 1);
-    ch_attr = old_attr;
+    m_attr = old_attr;
     //if you have gone off the screen scroll the whole window
-    return (c_row);
+    return (m_row);
 }
 
 void ConsoleOutput::addstr(const char *s)
@@ -222,8 +222,8 @@ void ConsoleOutput::addstr(const char *s)
 
 void ConsoleOutput::set_attr(int bute)
 {
-    if (bute < MAXATTR) ch_attr = at_table[bute];
-    else ch_attr = bute;
+    if (bute < MAXATTR) m_attr = at_table[bute];
+    else m_attr = bute;
 }
 
 void ConsoleOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
@@ -231,10 +231,10 @@ void ConsoleOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, 
     int row, col;
 
     getrc(&row, &col);
-    move_(mline, 0);
+    move(mline, 0);
     clrtoeol();
     printw(msg, a1, a2, a3, a4, a5);
-    move_(row, col);
+    move(row, col);
 }
 
 //winit(win_name): initialize window
@@ -251,7 +251,7 @@ void ConsoleOutput::winit(bool narrow_screen, Coord origin)
     m_backup = new CHAR_INFO[LINES*COLS];
     memset(m_buffer, ' ', sizeof(CHAR_INFO)*LINES*COLS);
 
-    move_(c_row, c_col);
+    move(m_row, m_col);
 }
 
 void ConsoleOutput::forcebw()
@@ -288,9 +288,9 @@ void ConsoleOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, 
     wason = cursor(false);
     getrc(&r, &c);
     //draw horizontal boundary
-    move_(ul_r, ul_c + 1);
+    move(ul_r, ul_c + 1);
     repchr(box[BX_HT], i = (lr_c - ul_c - 1));
-    move_(lr_r, ul_c + 1);
+    move(lr_r, ul_c + 1);
     repchr(box[BX_HB], i);
     //draw vertical boundary
     for (i = ul_r + 1; i < lr_r; i++) { mvaddch(i, ul_c, box[BX_VW]); mvaddch(i, lr_c, box[BX_VW]); }
@@ -299,7 +299,7 @@ void ConsoleOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, 
     mvaddch(ul_r, lr_c, box[BX_UR]);
     mvaddch(lr_r, ul_c, box[BX_LL]);
     mvaddch(lr_r, lr_c, box[BX_LR]);
-    move_(r, c);
+    move(r, c);
     cursor(wason);
 }
 
@@ -322,12 +322,12 @@ void ConsoleOutput::printw(const char *format, ...)
 
 void ConsoleOutput::scroll_up(int start_row, int end_row, int nlines)
 {
-    move_(end_row, c_col);
+    move(end_row, m_col);
 }
 
 void ConsoleOutput::scroll_dn(int start_row, int end_row, int nlines)
 {
-    move_(start_row, c_col);
+    move(start_row, m_col);
 }
 
 void ConsoleOutput::scroll()
@@ -343,20 +343,20 @@ void ConsoleOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
     {
         for (c = ul_col; c <= lr_col; ++c)
         {
-            move_(r, c);
-            putchr_(' ', ch_attr);
+            move(r, c);
+            putchr_unrendered(' ', m_attr);
         }
     }
-    move_(ul_row, ul_col);
+    move(ul_row, ul_col);
     Render({ (SHORT)ul_col, (SHORT)ul_row, (SHORT)lr_col, (SHORT)lr_row });
 }
 
 void ConsoleOutput::repchr(int chr, int cnt)
 {
-    SMALL_RECT r = { c_col, c_row, (SHORT)(c_col + cnt - 1), c_row };
+    SMALL_RECT r = { m_col, m_row, (SHORT)(m_col + cnt - 1), m_row };
     while (cnt-- > 0) { 
-        putchr_(chr, ch_attr);
-        c_col++;
+        putchr_unrendered(chr, m_attr);
+        m_col++;
     }
     Render(r);
 }
@@ -364,7 +364,7 @@ void ConsoleOutput::repchr(int chr, int cnt)
 //try to fixup screen after we get a control break
 void ConsoleOutput::fixup()
 {
-    blot_out(c_row, c_col, c_row, c_col + 1);
+    blot_out(m_row, m_col, m_row, m_col + 1);
 }
 
 //Clear the screen in an interesting fashion
@@ -380,8 +380,8 @@ void ConsoleOutput::implode()
         Sleep(25);
         for (j = r + 1; j <= er - 1; j++)
         {
-            move_(j, c + 1); repchr(' ', cinc - 1);
-            move_(j, ec - cinc + 1); repchr(' ', cinc - 1);
+            move(j, c + 1); repchr(' ', cinc - 1);
+            move(j, ec - cinc + 1); repchr(' ', cinc - 1);
         }
         vbox(spc_box, r, c, er, ec);
     }
@@ -397,11 +397,11 @@ void ConsoleOutput::drop_curtain()
     yellow();
     for (r = 1; r < LINES - 1; r++)
     {
-        move_(r, 1);
+        move(r, 1);
         repchr(0xb1, COLS - 2);
         Sleep(20);
     }
-    move_(0, 0);
+    move(0, 0);
     standend();
     m_curtain_down = true;
 }
@@ -420,20 +420,15 @@ void ConsoleOutput::raise_curtain()
 
 void ConsoleOutput::move(short y, short x)
 {
-    move_(y, x);
+    m_row = y;
+    m_col = x;
     if(m_cursor)
         ApplyMove();
 }
 
-void ConsoleOutput::move_(short y, short x)
-{
-    c_row = y;
-    c_col = x;
-}
-
 char ConsoleOutput::curch()
 {
-    return m_buffer[c_row*COLS+c_col].Char.AsciiChar;
+    return m_buffer[m_row*COLS+m_col].Char.AsciiChar;
 }
 
 void ConsoleOutput::mvaddch(Coord p, byte c)
@@ -461,20 +456,14 @@ int ConsoleOutput::columns() const
     return COLS;
 }
 
-bool ConsoleOutput::small_screen_mode() const
+void ConsoleOutput::stop_rendering()
 {
-    return COLS == 40;
+    m_should_render = false;
 }
 
-
-void ConsoleOutput::StopRendering()
+void ConsoleOutput::resume_rendering()
 {
-    should_render = false;
-}
-
-void ConsoleOutput::ResumeRendering()
-{
-    should_render = true;
+    m_should_render = true;
     ApplyMove();
     Render();
     ApplyCursor();
@@ -482,28 +471,32 @@ void ConsoleOutput::ResumeRendering()
 
 void ConsoleOutput::Render()
 {
-    if (!should_render || m_curtain_down)
+    if (!m_should_render || m_curtain_down)
         return;
+
     m_screen->Draw(m_buffer);
 }
 
-void ConsoleOutput::Render(SMALL_RECT rect)
+void ConsoleOutput::Render(_SMALL_RECT rect)
 {
-    if (!should_render || m_curtain_down)
+    if (!m_should_render || m_curtain_down)
         return;
+
     m_screen->Draw(m_buffer, rect);
 }
 
 void ConsoleOutput::ApplyMove()
 {
-    if (!should_render || m_curtain_down)
+    if (!m_should_render || m_curtain_down)
         return;
-    m_screen->MoveCursor({ c_col, c_row });
+
+    m_screen->MoveCursor({ m_col, m_row });
 }
 
 void ConsoleOutput::ApplyCursor()
 {
-    if (!should_render || m_curtain_down)
+    if (!m_should_render || m_curtain_down)
         return;
+
     m_screen->SetCursor(m_cursor);
 }

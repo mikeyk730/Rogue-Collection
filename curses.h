@@ -1,6 +1,9 @@
 #pragma once
 #include <memory>
-#include "screen_interface.h"
+
+struct ScreenInterface;
+struct _SMALL_RECT;
+struct _CHAR_INFO;
 
 #define BX_SIZE 7
 
@@ -22,12 +25,8 @@
 #define high()              set_attr(15)
 #define bold()              set_attr(16)
 
-
 struct ConsoleOutput
 {
-    ConsoleOutput();
-    ~ConsoleOutput();
-
     void clear();
 
     void putchr(int c, int attr);
@@ -101,7 +100,11 @@ struct ConsoleOutput
 
     char curch();
 
+public:
     //mdk: extended interface
+    ConsoleOutput();
+    ~ConsoleOutput();
+
     void mvaddch(Coord p, byte c);
     int mvinch(Coord p);
     void mvaddstr(Coord p, const std::string& s);
@@ -109,17 +112,14 @@ struct ConsoleOutput
     int lines() const;
     int columns() const;
 
-    void StopRendering();
-    void ResumeRendering();
-
-    bool small_screen_mode() const;
+    void stop_rendering();
+    void resume_rendering();
 
 private:
-    void putchr_(int c, int attr);
-    void move_(short y, short x);
+    void putchr_unrendered(int c, int attr);
 
     void Render();
-    void Render(SMALL_RECT rect);
+    void Render(_SMALL_RECT rect);
     void ApplyMove();
     void ApplyCursor();
 
@@ -127,21 +127,20 @@ private:
     short LINES = 25;
     short COLS = 80;
 
-    int ch_attr = 0x7;
-
     //points to either color or monochrom attribute table
     const byte *at_table;
 
     //cursor position
-    short c_row;
-    short c_col;
+    short m_row;
+    short m_col;
 
+    int m_attr = 0x7;
     bool m_cursor = false;
     bool m_curtain_down = false;
+    bool m_should_render = true;
 
-    CHAR_INFO* m_buffer = 0;
-    CHAR_INFO* m_backup = 0;
+    _CHAR_INFO* m_buffer = 0;
+    _CHAR_INFO* m_backup = 0;
 
-    bool should_render = true;
     std::unique_ptr<ScreenInterface> m_screen;
 };
