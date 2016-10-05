@@ -744,7 +744,7 @@ Monster* Monster::attack_player()
         // mdk:bugfix: Originally there were no messages when the ice monster missed.
         // I think this goes back to v1.1 when ice monsters didn't have a regular 
         // attack
-        if (!no_fight_msg()) {
+        if (!no_fight_msg() && !(shoots_ice() && !game->options.ice_monster_miss_bugfix())) {
             display_miss_msg(name.c_str(), NULL);
         }
     }

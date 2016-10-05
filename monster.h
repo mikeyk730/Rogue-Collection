@@ -23,7 +23,7 @@ const int EX_SLOW_WHEN_FAR =  0X20000; //moves slowly when far away from the pla
 const int EX_FIRE_IMMUNITY =  0X40000; //not injured by flames (dragon)
 const int EX_UNFREEZES     =  0x80000; //attack unfreezes the player faster (ice monster v1.4)
 const int EX_FREEZES       = 0x100000; //attack freezes the player (ice monster v1.1)
-const int EX_NO_FIGHT_MSG  = 0x200000; //don't display a msg when an attack misses (ice monster v1.1)
+const int EX_NO_FIGHT_MSG  = 0x200000; //don't display hit/miss msgs during attack (ice monster v1.1)
 
 //todo:separate flag for slowness (slime)
 

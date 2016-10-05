@@ -50,7 +50,7 @@ using std::placeholders::_1;
 
 namespace
 {
-    const int s_serial_version = 5;
+    const int s_serial_version = 6;
 }
 
 GameState::GameState(int seed) :
@@ -89,7 +89,10 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
         //the game engine has since enabled this bugfix by default
         set_environment("hit_plus_bugfix", "false");
     }
-
+    else if (version < 6) {
+        //the game engine has since enabled this bugfix by default
+        set_environment("ice_monster_miss_bugfix", "false");
+    }
     read(*in, &m_seed);
     read(*in, &m_restore_count);
 
@@ -362,6 +365,11 @@ bool GameState::Options::hit_plus_bugfix() const
 bool GameState::Options::striking_charge_bugfix() const
 {
     return game->get_environment("striking_charge_bugfix") != "false";
+}
+
+bool GameState::Options::ice_monster_miss_bugfix() const
+{
+    return game->get_environment("ice_monster_miss_bugfix") != "false";
 }
 
 bool GameState::Options::use_throw_damage() const
