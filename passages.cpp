@@ -7,7 +7,7 @@
 #include "room.h"
 #include "maze.h"
 #include "main.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "misc.h"
 #include "io.h"
 #include "level.h"

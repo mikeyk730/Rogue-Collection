@@ -12,7 +12,7 @@
 #include "rogue.h"
 #include "game_state.h"
 #include "rip.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "io.h"
 #include "mach_dep.h"
 #include "things.h"

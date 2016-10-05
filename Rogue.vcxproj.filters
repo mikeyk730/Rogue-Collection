@@ -4,9 +4,6 @@
     <Filter Include="Items">
       <UniqueIdentifier>{51d6bbdd-c714-4215-b927-56eda1c78ca6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IO">
-      <UniqueIdentifier>{8520dfc8-83cc-4780-acdc-b05eaae9ff6e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Levels">
       <UniqueIdentifier>{1af15637-eb9d-44c6-abb9-8abf856e9253}</UniqueIdentifier>
     </Filter>
@@ -19,6 +16,12 @@
     </Filter>
     <Filter Include="Agents">
       <UniqueIdentifier>{2b654d38-84e8-461e-b7fc-d7c41883cf6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Output">
+      <UniqueIdentifier>{8520dfc8-83cc-4780-acdc-b05eaae9ff6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{acdbf271-fb4b-455c-a681-9f64a7e53788}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -112,20 +115,11 @@
     <ClCompile Include="monsters.cpp">
       <Filter>Agents</Filter>
     </ClCompile>
-    <ClCompile Include="captured_input.cpp">
-      <Filter>IO</Filter>
-    </ClCompile>
-    <ClCompile Include="combo_input.cpp">
-      <Filter>IO</Filter>
-    </ClCompile>
     <ClCompile Include="io.cpp">
-      <Filter>IO</Filter>
-    </ClCompile>
-    <ClCompile Include="mach_dep.cpp">
-      <Filter>IO</Filter>
+      <Filter>Output</Filter>
     </ClCompile>
     <ClCompile Include="curses.cpp">
-      <Filter>IO</Filter>
+      <Filter>Output</Filter>
     </ClCompile>
     <ClCompile Include="item_class.cpp">
       <Filter>Items</Filter>
@@ -148,9 +142,6 @@
     <ClCompile Include="slime.cpp">
       <Filter>Agents</Filter>
     </ClCompile>
-    <ClCompile Include="stream_input.cpp">
-      <Filter>IO</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -162,6 +153,21 @@
     </ClCompile>
     <ClCompile Include="commands.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="windows_console.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="mach_dep.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="stream_input.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="combo_input.cpp">
+      <Filter>Input</Filter>
+    </ClCompile>
+    <ClCompile Include="captured_input.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -223,28 +229,7 @@
       <Filter>Levels</Filter>
     </ClInclude>
     <ClInclude Include="io.h">
-      <Filter>IO</Filter>
-    </ClInclude>
-    <ClInclude Include="input_interface.h">
-      <Filter>IO</Filter>
-    </ClInclude>
-    <ClInclude Include="console_output.h">
-      <Filter>IO</Filter>
-    </ClInclude>
-    <ClInclude Include="stream_input.h">
-      <Filter>IO</Filter>
-    </ClInclude>
-    <ClInclude Include="output_interface.h">
-      <Filter>IO</Filter>
-    </ClInclude>
-    <ClInclude Include="captured_input.h">
-      <Filter>IO</Filter>
-    </ClInclude>
-    <ClInclude Include="combo_input.h">
-      <Filter>IO</Filter>
-    </ClInclude>
-    <ClInclude Include="mach_dep.h">
-      <Filter>IO</Filter>
+      <Filter>Output</Filter>
     </ClInclude>
     <ClInclude Include="daemon.h">
       <Filter>Unsorted</Filter>
@@ -288,14 +273,11 @@
     <ClInclude Include="wizard.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
-    <ClInclude Include="keyboard_input.h">
-      <Filter>IO</Filter>
-    </ClInclude>
     <ClInclude Include="item_class.h">
       <Filter>Items</Filter>
     </ClInclude>
     <ClInclude Include="curses.h">
-      <Filter>IO</Filter>
+      <Filter>Output</Filter>
     </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Core</Filter>
@@ -311,6 +293,30 @@
     </ClInclude>
     <ClInclude Include="command.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="screen_interface.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="windows_console.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="keyboard_input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input_interface.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="mach_dep.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="stream_input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="combo_input.h">
+      <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="captured_input.h">
+      <Filter>Input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

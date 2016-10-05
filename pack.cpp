@@ -9,7 +9,7 @@
 #include "pack.h"
 #include "io.h"
 #include "misc.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "list.h"
 #include "things.h"
 #include "mach_dep.h"

@@ -9,7 +9,7 @@
 #include "pack.h"
 #include "list.h"
 #include "weapons.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "io.h"
 #include "things.h"
 #include "fight.h"

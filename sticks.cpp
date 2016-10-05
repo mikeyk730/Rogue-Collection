@@ -10,7 +10,7 @@
 #include "monsters.h"
 #include "pack.h"
 #include "io.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "main.h"
 #include "fight.h"
 #include "rooms.h"

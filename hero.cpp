@@ -12,7 +12,7 @@
 #include "rings.h"
 #include "agent.h"
 #include "food.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "level.h"
 #include "rooms.h"
 #include "daemon.h"

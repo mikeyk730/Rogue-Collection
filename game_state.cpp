@@ -10,7 +10,7 @@
 #include "combo_input.h"
 #include "hero.h"
 #include "level.h"
-#include "console_output.h"
+#include "curses.h"
 #include "mach_dep.h"
 #include "io.h"
 #include "monsters.h"
@@ -56,7 +56,7 @@ namespace
 GameState::GameState(int seed) :
     m_seed(seed),
     m_input_interface(new CapturedInput(new KeyboardInput())),
-    m_output_interface(new ConsoleOutput({ 0,0 })),
+    m_output_interface(new ConsoleOutput()),
     m_level(new Level),
     m_hero(new Hero),
     m_scrolls(new ScrollInfo),
@@ -69,7 +69,7 @@ GameState::GameState(int seed) :
 }
 
 GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused) :
-    m_output_interface(new ConsoleOutput({ 0, 0 })),
+    m_output_interface(new ConsoleOutput()),
     m_in_replay(true),
     m_show_replay(show_replay),
     m_log_stream("lastgame.log")
@@ -217,7 +217,7 @@ InputInterface& GameState::input_interface()
     return *m_input_interface;
 }
 
-OutputInterface & GameState::screen()
+ConsoleOutput& GameState::screen()
 {
     return *m_output_interface;
 }

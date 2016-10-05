@@ -18,7 +18,7 @@
 #include "scrolls.h"
 #include "potions.h"
 #include "weapons.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "main.h"
 #include "armor.h"
 #include "daemon.h"

@@ -4,7 +4,7 @@
 
 #include "rogue.h"
 #include "game_state.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "mach_dep.h"
 #include "io.h"
 #include "strings.h"

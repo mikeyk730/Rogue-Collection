@@ -5,7 +5,7 @@
 #include "rogue.h"
 #include "move.h"
 #include "weapons.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "io.h"
 #include "rip.h"
 #include "wizard.h"
