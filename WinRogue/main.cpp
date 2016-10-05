@@ -1,8 +1,11 @@
 #include <iostream>
 #include <memory>
+#include <vector>
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "res_path.h"
+#include "..\rogue.h"
+
 
 const int H_PIXELS_PER_CHAR = 8;
 const int V_PIXELS_PER_CHAR = 16;
@@ -12,11 +15,6 @@ const int SCALE = 1;
 const int WINDOW_X = H_PIXELS_PER_CHAR * COLS * SCALE;
 const int WINDOW_Y = V_PIXELS_PER_CHAR * LINES * SCALE;
 
-struct Coord
-{
-    int x;
-    int y;
-};
 
 namespace SDL
 {
@@ -27,6 +25,21 @@ namespace SDL
         typedef std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)> Surface;
         typedef std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)> Texture;
         typedef std::unique_ptr<TTF_Font, void(*)(TTF_Font*)> Font;
+    }
+
+    namespace Colors
+    {
+        SDL_Color black()    { return {   0,   0,   0, 255 }; }
+        SDL_Color white()    { return { 255, 255, 255, 255 }; }
+        SDL_Color grey()     { return { 170, 170, 170, 255 }; }
+        SDL_Color red()      { return { 170,   0,   0, 255 }; }
+        SDL_Color green()    { return {   0, 170,   0, 255 }; }
+        SDL_Color l_green()  { return {  85,  255, 85, 255 }; }
+        SDL_Color blue()     { return {   0,   0, 170, 255 }; }
+        SDL_Color l_blue()   { return {  85,  85, 255, 255 }; }
+        SDL_Color magenta()  { return { 170,   0, 170, 255 }; }
+        SDL_Color yellow()   { return { 255, 255,  25, 255 }; }
+        SDL_Color brown()    { return { 170,  85,   0, 255 }; }
     }
 }
 
@@ -207,8 +220,79 @@ void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord posit
 
 void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect clip)
 {
-    render_texture_at(texture, renderer, position, &clip);
+  render_texture_at(texture, renderer, position, &clip);
 }
+
+SDL_Rect get_rect(int i)
+{
+    SDL_Rect r;
+    r.x = 9 * (i % 32);
+    r.y = 16 * (i / 32);
+    r.h = 16;
+    r.w = 8;
+    return r;
+}
+
+SDL::Scoped::Texture texture_for_byte(byte chr, bool in_room, SDL_Surface* surface, SDL_Renderer* renderer)
+{
+    SDL_Rect r = get_rect(chr);
+    using namespace SDL::Colors;
+
+        //if it is inside a room
+        if (in_room) switch (chr)
+        {
+        case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+            return painted_texture(surface, &r, brown(), black(), renderer);
+            break;
+        case FLOOR:
+            return painted_texture(surface, &r, l_green(), black(), renderer);
+            break;
+        case STAIRS:
+            return painted_texture(surface, &r, black(), green(), renderer);
+            break;
+        case TRAP:
+            return painted_texture(surface, &r, magenta(), black(), renderer);
+            break;
+        case GOLD: case PLAYER:
+            return painted_texture(surface, &r, yellow(), black(), renderer);
+            break;
+        case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+            return painted_texture(surface, &r, l_blue(), black(), renderer);
+            break;
+        case FOOD:
+            return painted_texture(surface, &r, red(), black(), renderer);
+            break;
+        default:
+            return painted_texture(surface, &r, grey(), black(), renderer);
+        }
+        //if inside a passage or a maze
+        else switch (chr)
+        {
+        case FOOD:
+            return painted_texture(surface, &r, red(), grey(), renderer);
+            break;
+        case GOLD: case PLAYER:
+            return painted_texture(surface, &r, yellow(), grey(), renderer);
+            break;
+        case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+            return painted_texture(surface, &r, blue(), grey(), renderer);
+            break;
+        case STAIRS:
+            return painted_texture(surface, &r, black(), grey(), renderer);
+            break;
+        default:
+            return painted_texture(surface, &r, black(), grey(), renderer);
+        }
+}
+
+void add(int c, int i, SDL_Surface* tiles, SDL_Renderer* renderer) {
+    auto t1 = texture_for_byte(c, true, tiles, renderer);
+    auto t2 = texture_for_byte(c, false, tiles, renderer);
+
+    render_texture_at(t1.release(), renderer, { 8 * i, 0 }, nullptr);
+    render_texture_at(t2.release(), renderer, { 8 * i, 16 }, nullptr);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -222,7 +306,7 @@ int main(int argc, char** argv)
         //if (TTF_Init() != 0)
         //    throw_error("TTF_Init");
 
-        Window win(SDL_CreateWindow("Rogue", 100, 50, WINDOW_X, WINDOW_Y, SDL_WINDOW_SHOWN), SDL_DestroyWindow);
+        Window win(SDL_CreateWindow("Rogue", 100, 50, 8*78, 32, SDL_WINDOW_SHOWN), SDL_DestroyWindow);
         if (win == nullptr)
             throw_error("SDL_CreateWindow");
 
@@ -232,8 +316,16 @@ int main(int argc, char** argv)
 
         Surface tiles(load_bmp(getResourcePath("") + "dos24.bmp"));
 
-        Texture yellow(painted_texture(tiles.get(), 0, { 255,225,0,255 }, { 0,0,0,255 }, renderer.get()));
-        Texture blue_standout(painted_texture(tiles.get(), 0, { 0,0,255,255 }, { 0xc0,0xc0,0xc0,255 }, renderer.get()));
+        using namespace SDL::Colors;
+        Texture standard(create_texture(tiles.get(), renderer.get()));
+        Texture v1(painted_texture(tiles.get(), 0, grey(), black(), renderer.get()));
+        Texture v2(painted_texture(tiles.get(), 0, l_blue(), black(), renderer.get()));
+        Texture v3(painted_texture(tiles.get(), 0, red(), black(), renderer.get()));
+        Texture v4(painted_texture(tiles.get(), 0, red(), grey(), renderer.get()));
+        Texture v5(painted_texture(tiles.get(), 0, black(), grey(), renderer.get()));
+        Texture v6(painted_texture(tiles.get(), 0, black(), green(), renderer.get()));
+        Texture v7(painted_texture(tiles.get(), 0, blue(), grey(), renderer.get()));
+        Texture v8(painted_texture(tiles.get(), 0, green(), black(), renderer.get()));
 
         SDL_StartTextInput();
 
@@ -257,16 +349,32 @@ int main(int argc, char** argv)
             }
 
             SDL_RenderClear(renderer.get());
-            for (int i = 0; i < 256; ++i) {
-                SDL_Rect r;
-                r.x = 9 * (i % 32);
-                r.y = 16 * (i / 32);
-                r.h = 16;
-                r.w = 8;
 
-                render_texture_at(yellow.get(), renderer.get(), { 16 + 8 * (i % 32), 16 + 16 * (i / 32) }, r);
-                render_texture_at(blue_standout.get(), renderer.get(), { 16 + 8 * (i % 32), 180 + 16 * (i / 32) }, r);
+            //render_texture_at(standard.get(), renderer.get(), { 300,16 }, 0);
+            /*
+            for (int i = 0; i < 256; ++i) {
+            SDL_Rect r = get_rect(i);
+            render_texture_at(v1.get(), renderer.get(), { 8 * i, 0 }, r);
+            render_texture_at(v2.get(), renderer.get(), { 8 * i, 16 }, r);
+            render_texture_at(v3.get(), renderer.get(), { 8 * i, 16 * 2 }, r);
+            render_texture_at(v4.get(), renderer.get(), { 8 * i, 16 * 3 }, r);
+            render_texture_at(v5.get(), renderer.get(), { 8 * i, 16 * 4 }, r);
+            render_texture_at(v6.get(), renderer.get(), { 8 * i, 16 * 5 }, r);
+            render_texture_at(v7.get(), renderer.get(), { 8 * i, 16 * 6 }, r);
+            render_texture_at(v8.get(), renderer.get(), { 8 * i, 16 * 7 }, r);
+            }*/
+
+            int n = 0;
+            std::vector<int> v = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
+                PLAYER, ULWALL, URWALL, LLWALL, LRWALL, HWALL, VWALL, FLOOR, FLOOR, DOOR, STAIRS, TRAP, AMULET, FOOD, GOLD, POTION, RING,
+                SCROLL, STICK, WEAPON, WEAPON,WEAPON,WEAPON,WEAPON,WEAPON,WEAPON,WEAPON,WEAPON,WEAPON,ARMOR, ARMOR, ARMOR, ARMOR, ARMOR,
+                ARMOR, ARMOR, ARMOR, '$', '+', '\\', '/', '-', '|', '\\', '/', '-', '|', '\\', '/', '-', '|','*'};
+            for (auto i = v.begin(); i != v.end(); ++i)
+            {
+                add(*i, n++, tiles.get(), renderer.get());
             }
+
+
             SDL_RenderPresent(renderer.get());
         }
 
