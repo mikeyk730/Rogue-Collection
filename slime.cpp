@@ -4,7 +4,7 @@
 #include "rogue.h"
 #include "slime.h"
 #include "misc.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "io.h"
 #include "monsters.h"
 #include "main.h"

@@ -11,7 +11,7 @@
 #include "io.h"
 #include "misc.h"
 #include "rip.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "rings.h"
 #include "hero.h"
 #include "room.h"

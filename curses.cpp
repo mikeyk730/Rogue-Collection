@@ -6,12 +6,11 @@
 #include <Windows.h>
 
 #include "rogue.h"
-#include "console_output.h"
+#include "curses.h"
 #include "mach_dep.h"
 #include "main.h"
 #include "misc.h"
-
-#pragma warning(disable:4838)
+#include "windows_console.h"
 
 //Globals for curses
 #define BX_UL               0
@@ -87,19 +86,17 @@ void ConsoleOutput::putchr_(int c, int attr)
     CHAR_INFO ci;
     ci.Attributes = attr;
     ci.Char.AsciiChar = c;
-    m_buffer[c_row][c_col] = ci;
+    m_buffer[c_row*COLS+c_col] = ci;
 }
 
-ConsoleOutput::ConsoleOutput(Coord origin) :
-    m_origin(origin)
+ConsoleOutput::ConsoleOutput() 
 {
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    ApplyCursor();
 }
 
 ConsoleOutput::~ConsoleOutput()
 {
-    CloseHandle(hConsole);
+    delete[] m_buffer;
+    delete[] m_backup;
 }
 
 //clear screen
@@ -241,12 +238,19 @@ void ConsoleOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, 
 }
 
 //winit(win_name): initialize window
-void ConsoleOutput::winit(bool narrow_screen)
+void ConsoleOutput::winit(bool narrow_screen, Coord origin)
 {
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;
     at_table = color_attr;
-    memset(m_buffer, ' ', sizeof(m_buffer));
+
+    m_screen.reset(new WindowsConsole(origin, { COLS, LINES }));
+    m_screen->SetCursor(false);
+
+    m_buffer = new CHAR_INFO[LINES*COLS];
+    m_backup = new CHAR_INFO[LINES*COLS];
+    memset(m_buffer, ' ', sizeof(CHAR_INFO)*LINES*COLS);
+
     move_(c_row, c_col);
 }
 
@@ -258,13 +262,13 @@ void ConsoleOutput::forcebw()
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void ConsoleOutput::wdump()
 {
-    memcpy(m_backup, m_buffer, sizeof(m_buffer));
+    memcpy(m_backup, m_buffer, sizeof(CHAR_INFO)*LINES*COLS);
 }
 
 //wrestor(windex): restore the window saved on disk
 void ConsoleOutput::wrestor()
 {
-    memcpy(m_buffer, m_backup, sizeof(m_buffer));
+    memcpy(m_buffer, m_backup, sizeof(CHAR_INFO)*LINES*COLS);
     Render();
 }
 
@@ -349,7 +353,7 @@ void ConsoleOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 
 void ConsoleOutput::repchr(int chr, int cnt)
 {
-    SMALL_RECT r = { c_col, c_row, c_col + cnt - 1, c_row };
+    SMALL_RECT r = { c_col, c_row, (SHORT)(c_col + cnt - 1), c_row };
     while (cnt-- > 0) { 
         putchr_(chr, ch_attr);
         c_col++;
@@ -429,7 +433,7 @@ void ConsoleOutput::move_(short y, short x)
 
 char ConsoleOutput::curch()
 {
-    return m_buffer[c_row][c_col].Char.AsciiChar;
+    return m_buffer[c_row*COLS+c_col].Char.AsciiChar;
 }
 
 void ConsoleOutput::mvaddch(Coord p, byte c)
@@ -462,53 +466,6 @@ bool ConsoleOutput::small_screen_mode() const
     return COLS == 40;
 }
 
-Coord ConsoleOutput::translated_position()
-{
-    return{ c_col + m_origin.x, c_row + m_origin.y };
-}
-
-void ConsoleOutput::Render()
-{
-    if(!should_render || m_curtain_down)
-        return;
-
-    COORD dwBufferSize = { MAXCOLS, MAXLINES };
-    COORD dwBufferCoord = { 0, 0 };
-    SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + COLS - 1, m_origin.y + LINES - 1 };
-    WriteConsoleOutput(hConsole, (CHAR_INFO *)m_buffer, dwBufferSize, dwBufferCoord, &rcRegion);
-}
-
-void ConsoleOutput::Render(SMALL_RECT rect)
-{
-    if (!should_render || m_curtain_down)
-        return;
-
-    COORD dwBufferSize = { MAXCOLS, MAXLINES };
-    COORD dwBufferCoord = { rect.Left, rect.Top };
-    SMALL_RECT rcRegion = { m_origin.x+rect.Left, m_origin.y+rect.Top, m_origin.x+rect.Right, m_origin.y+rect.Bottom };
-    WriteConsoleOutput(hConsole, (CHAR_INFO *)m_buffer, dwBufferSize, dwBufferCoord, &rcRegion);
-}
-
-void ConsoleOutput::ApplyMove()
-{
-    if (!should_render || m_curtain_down)
-        return;
-
-    Coord pos = translated_position();
-    COORD p = { pos.x, pos.y };
-    SetConsoleCursorPosition(hConsole, p);
-}
-
-void ConsoleOutput::ApplyCursor()
-{
-    if (!should_render || m_curtain_down)
-        return;
-
-    CONSOLE_CURSOR_INFO info;
-    info.bVisible = m_cursor;
-    info.dwSize = 25;
-    SetConsoleCursorInfo(hConsole, &info);
-}
 
 void ConsoleOutput::StopRendering()
 {
@@ -521,4 +478,32 @@ void ConsoleOutput::ResumeRendering()
     ApplyMove();
     Render();
     ApplyCursor();
+}
+
+void ConsoleOutput::Render()
+{
+    if (!should_render || m_curtain_down)
+        return;
+    m_screen->Draw(m_buffer);
+}
+
+void ConsoleOutput::Render(SMALL_RECT rect)
+{
+    if (!should_render || m_curtain_down)
+        return;
+    m_screen->Draw(m_buffer, rect);
+}
+
+void ConsoleOutput::ApplyMove()
+{
+    if (!should_render || m_curtain_down)
+        return;
+    m_screen->MoveCursor({ c_col, c_row });
+}
+
+void ConsoleOutput::ApplyCursor()
+{
+    if (!should_render || m_curtain_down)
+        return;
+    m_screen->SetCursor(m_cursor);
 }

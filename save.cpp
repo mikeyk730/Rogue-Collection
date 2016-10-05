@@ -5,7 +5,7 @@
 #include "game_state.h"
 #include "save.h"
 #include "io.h"
-#include "output_interface.h"
+#include "curses.h"
 
 void do_save(const char* filename)
 {

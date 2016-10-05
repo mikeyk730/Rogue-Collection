@@ -25,7 +25,7 @@
 #include "daemons.h"
 #include "daemon.h"
 #include "mach_dep.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "io.h"
 #include "misc.h"
 #include "rip.h"

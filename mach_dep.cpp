@@ -9,7 +9,7 @@
 #include <conio.h>
 
 #include "rogue.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "mach_dep.h"
 #include "io.h"
 #include "hero.h"
@@ -84,7 +84,7 @@ int is_direction_key(int key)
 void setup_screen()
 {
     bool narrow_screen(game->options.narrow_screen());
-    game->screen().winit(narrow_screen);
+    game->screen().winit(narrow_screen, {0,0});
     if (game->options.monochrome())
         game->screen().forcebw();
 

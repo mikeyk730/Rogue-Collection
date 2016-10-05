@@ -12,7 +12,7 @@ struct Random;
 struct InputInterface;
 struct Hero;
 struct Level;
-struct OutputInterface;
+struct ConsoleOutput;
 
 struct GameState
 {
@@ -30,7 +30,7 @@ struct GameState
 
     Random& random();
     InputInterface& input_interface();
-    OutputInterface& screen();
+    ConsoleOutput& screen();
     Level& level();
     Hero& hero();
     
@@ -128,7 +128,7 @@ private:
 
     std::unique_ptr<Random> m_random; //Random number generator
     std::unique_ptr<InputInterface> m_input_interface; //Interface for getting game input
-    std::unique_ptr<OutputInterface> m_output_interface;
+    std::unique_ptr<ConsoleOutput> m_output_interface;
     std::unique_ptr<Level> m_level;
     std::unique_ptr<Hero> m_hero;
     

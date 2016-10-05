@@ -10,7 +10,7 @@
 #include "game_state.h"
 #include "daemons.h"
 #include "pack.h"
-#include "output_interface.h"
+#include "curses.h"
 #include "io.h"
 #include "wizard.h"
 #include "daemon.h"
