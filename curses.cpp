@@ -7,7 +7,6 @@
 
 #include "rogue.h"
 #include "curses.h"
-#include "mach_dep.h"
 #include "main.h"
 #include "misc.h"
 #include "windows_console.h"
@@ -239,7 +238,7 @@ void ConsoleOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, 
 }
 
 //winit(win_name): initialize window
-void ConsoleOutput::winit(bool narrow_screen, Coord origin)
+void ConsoleOutput::winit(bool narrow_screen)
 {
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;

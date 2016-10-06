@@ -3,7 +3,7 @@
 #include <cstdio>
 #include <conio.h>
 #include <thread>
-#include "mach_dep.h"
+#include "io.h"
 #include "stream_input.h"
 #include "rogue.h"
 

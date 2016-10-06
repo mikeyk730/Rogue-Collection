@@ -3,7 +3,7 @@
 #include "captured_input.h"
 #include "rogue.h"
 #include "game_state.h"
-#include "mach_dep.h"
+#include "io.h"
 
 namespace
 {

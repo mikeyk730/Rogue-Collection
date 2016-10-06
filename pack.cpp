@@ -12,7 +12,6 @@
 #include "curses.h"
 #include "list.h"
 #include "things.h"
-#include "mach_dep.h"
 #include "level.h"
 #include "hero.h"
 #include "room.h"

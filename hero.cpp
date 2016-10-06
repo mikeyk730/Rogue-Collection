@@ -17,7 +17,6 @@
 #include "rooms.h"
 #include "daemon.h"
 #include "daemons.h"
-#include "mach_dep.h"
 #include "monster.h"
 #include "room.h"
 #include "fight.h"

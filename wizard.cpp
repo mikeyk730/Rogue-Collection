@@ -19,7 +19,6 @@
 #include "rooms.h"
 #include "misc.h"
 #include "monsters.h"
-#include "mach_dep.h"
 #include "sticks.h"
 #include "rings.h"
 #include "scrolls.h"

@@ -14,7 +14,6 @@
 #include "rip.h"
 #include "curses.h"
 #include "io.h"
-#include "mach_dep.h"
 #include "things.h"
 #include "misc.h"
 #include "monsters.h"

@@ -3,6 +3,9 @@
 #include "console_keyboard_input.h"
 #include "rogue.h"
 #include "io.h"
+#include "game_state.h"
+#include "curses.h"
+#include "mach_dep.h"
 
 #define C_LEFT    0x4b
 #define C_RIGHT   0x4d
@@ -93,6 +96,55 @@ int getkey()
     return 0;
 }
 
+void backspace()
+{
+    int x, y;
+    game->screen().getrc(&x, &y);
+    if (--y < 0) y = 0;
+    game->screen().move(x, y);
+    game->screen().addch(' ');
+    game->screen().move(x, y);
+}
+
+//This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
+int getinfo_impl(char *str, int size)
+{
+    char *retstr, ch;
+    int readcnt = 0;
+    bool wason;
+    int ret = 1;
+
+    retstr = str;
+    *str = 0;
+    wason = game->screen().cursor(true);
+    while (ret == 1) switch (ch = getkey())
+    {
+    case ESCAPE:
+        while (str != retstr) { backspace(); readcnt--; str--; }
+        ret = *str = ESCAPE;
+        str[1] = 0;
+        game->screen().cursor(wason);
+        break;
+    case '\b':
+        if (str != retstr) { backspace(); readcnt--; str--; }
+        break;
+    default:
+        if (readcnt >= size) { beep(); break; }
+        readcnt++;
+        game->screen().addch(ch);
+        *str++ = ch;
+        if ((ch & 0x80) == 0) break;
+    case '\n':
+    case '\r':
+        *str = 0;
+        game->screen().cursor(wason);
+        ret = ch;
+        break;
+    }
+    return ret;
+}
+
+
 byte readchar_impl() {
     //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
     do
@@ -106,8 +158,6 @@ BOOL CtrlHandler(DWORD fdwCtrlType)
 {
     return TRUE;
 }
-
-
 
 ConsoleKeyboardInput::ConsoleKeyboardInput()
 {

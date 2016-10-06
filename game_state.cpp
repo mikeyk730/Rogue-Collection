@@ -11,7 +11,6 @@
 #include "hero.h"
 #include "level.h"
 #include "curses.h"
-#include "mach_dep.h"
 #include "io.h"
 #include "monsters.h"
 

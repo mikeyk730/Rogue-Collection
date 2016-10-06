@@ -22,7 +22,6 @@
 #include "slime.h"
 #include "potions.h"
 #include "misc.h"
-#include "mach_dep.h"
 #include "level.h"
 #include "rings.h"
 #include "armor.h"

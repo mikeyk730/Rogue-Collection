@@ -46,11 +46,14 @@ void wait_for(char ch);
 //show_win: Function used to display a window and wait before returning
 void show_win(char *message);
 
+//readchar: Return the next input character, from the macro or from the keyboard.
+int readchar();
+
 //This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
 int getinfo(char *str, int size);
-int getinfo_impl(char *str, int size);
 
-void backspace();
+//clear_typeahead_buffer: Flush typeahead for traps, etc.
+void clear_typeahead_buffer();
 
 //str_attr: format a string with attributes.
 //
@@ -76,3 +79,18 @@ void str_attr(char *str);
 void handle_key_state();
 
 char *noterse(char *str);
+
+template <typename T>
+std::ostream& write(std::ostream& out, T t) {
+    out.write((char*)&t, sizeof(T));
+    return out;
+}
+
+template <typename T>
+std::istream& read(std::istream& in, T* t) {
+    in.read((char*)t, sizeof(T));
+    return in;
+}
+
+std::ostream& write_string(std::ostream& out, const std::string& s);
+std::istream& read_string(std::istream& in, std::string* s);

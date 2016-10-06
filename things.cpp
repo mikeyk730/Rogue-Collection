@@ -22,7 +22,6 @@
 #include "main.h"
 #include "armor.h"
 #include "daemon.h"
-#include "mach_dep.h"
 #include "level.h"
 #include "food.h"
 #include "hero.h"

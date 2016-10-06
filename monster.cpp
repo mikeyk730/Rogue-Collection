@@ -16,7 +16,6 @@
 #include "fight.h"
 #include "io.h"
 #include "rip.h"
-#include "mach_dep.h"
 #include "rings.h"
 #include "armor.h"
 #include "gold.h"

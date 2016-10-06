@@ -14,7 +14,6 @@
 #include "main.h"
 #include "io.h"
 #include "things.h"
-#include "mach_dep.h"
 #include "weapons.h"
 #include "hero.h"
 

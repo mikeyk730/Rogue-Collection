@@ -1,6 +1,7 @@
 //Various input/output functions
 //io.c         1.4             (A.I. Design) 12/10/84
 #include <ctime>
+#include <cassert>
 #include <chrono>
 #include <sstream>
 #include <stdio.h>
@@ -12,7 +13,6 @@
 #include "io.h"
 #include "curses.h"
 #include "misc.h"
-#include "mach_dep.h"
 #include "strings.h"
 #include "command.h"
 #include "rings.h"
@@ -374,52 +374,30 @@ void show_win(char *message)
     wait_for(' ');
 }
 
-//This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
-int getinfo_impl(char *str, int size)
+int getinfo(char *str, int size)
 {
-    char *retstr, ch;
-    int readcnt = 0;
-    bool wason;
-    int ret = 1;
-
-    retstr = str;
-    *str = 0;
-    wason = game->screen().cursor(true);
-    while (ret == 1) switch (ch = getkey())
-    {
-    case ESCAPE:
-        while (str != retstr) { backspace(); readcnt--; str--; }
-        ret = *str = ESCAPE;
-        str[1] = 0;
-        game->screen().cursor(wason);
-        break;
-    case '\b':
-        if (str != retstr) { backspace(); readcnt--; str--; }
-        break;
-    default:
-        if (readcnt >= size) { beep(); break; }
-        readcnt++;
-        game->screen().addch(ch);
-        *str++ = ch;
-        if ((ch & 0x80) == 0) break;
-    case '\n':
-    case '\r':
-        *str = 0;
-        game->screen().cursor(wason);
-        ret = ch;
-        break;
-    }
-    return ret;
+    std::string s = game->input_interface().GetNextString(size);
+    strcpy_s(str, size, s.c_str());
+    return s[0]; //todo
 }
 
-void backspace()
+//readchar: Return the next input character, from the macro or from the keyboard.
+int readchar()
 {
-    int x, y;
-    game->screen().getrc(&x, &y);
-    if (--y < 0) y = 0;
-    game->screen().move(x, y);
-    game->screen().addch(' ');
-    game->screen().move(x, y);
+    byte ch;
+
+    if (!game->typeahead.empty()) {
+        handle_key_state();
+        ch = game->typeahead.back();
+        game->typeahead.pop_back();
+        return ch;
+    }
+
+    ch = game->input_interface().GetNextChar();
+
+    if (ch == ESCAPE)
+        game->cancel_repeating_cmd();
+    return ch;
 }
 
 //str_attr: format a string with attributes.
@@ -538,4 +516,29 @@ void handle_key_state()
 char *noterse(char *str)
 {
     return (short_msgs() ? "" : str);
+}
+
+//clear_typeahead_buffer: Flush typeahead for traps, etc.
+void clear_typeahead_buffer()
+{
+    game->typeahead.clear();
+}
+
+std::ostream& write_string(std::ostream& out, const std::string& s) {
+    write(out, s.length());
+    out.write(s.c_str(), s.length());
+    return out;
+}
+
+std::istream& read_string(std::istream& in, std::string* s) {
+    int length;
+    read(in, &length);
+    assert(length < 255);
+
+    char buf[255];
+    memset(buf, 0, 255);
+    in.read(buf, length);
+    *s = buf;
+
+    return in;
 }
