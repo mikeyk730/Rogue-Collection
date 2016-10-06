@@ -8,11 +8,16 @@
 
 struct ComboInput : public InputInterface
 {
-    ComboInput(InputInterface* primary, InputInterface* backup);
+    ComboInput(std::unique_ptr<InputInterface> primary, std::unique_ptr<InputInterface> backup);
 
     virtual bool HasMoreInput();
     virtual char GetNextChar();
     virtual std::string GetNextString(int size);
+
+    virtual bool IsCapsLockOn();
+    virtual bool IsNumLockOn();
+    virtual bool IsScrollLockOn();
+
 
     virtual void Serialize(std::ostream& out);
 

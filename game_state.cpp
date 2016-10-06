@@ -4,9 +4,9 @@
 #include "game_state.h"
 #include "random.h"
 #include "input_interface.h"
+#include "screen_interface.h"
 #include "stream_input.h"
 #include "captured_input.h"
-#include "keyboard_input.h"
 #include "combo_input.h"
 #include "hero.h"
 #include "level.h"
@@ -53,10 +53,10 @@ namespace
     const int s_serial_version = 6;
 }
 
-GameState::GameState(int seed, ScreenInterface* screen) :
+GameState::GameState(int seed, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input) :
     m_seed(seed),
-    m_input_interface(new CapturedInput(new KeyboardInput())),
-    m_output_interface(new ConsoleOutput(screen)),
+    m_input_interface(new CapturedInput(std::move(input))),
+    m_output_interface(new ConsoleOutput(std::move(screen))),
     m_level(new Level),
     m_hero(new Hero),
     m_scrolls(new ScrollInfo),
@@ -68,8 +68,8 @@ GameState::GameState(int seed, ScreenInterface* screen) :
     init_environment();
 }
 
-GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, ScreenInterface* screen) :
-    m_output_interface(new ConsoleOutput(screen)),
+GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input) :
+    m_output_interface(new ConsoleOutput(std::move(screen))),
     m_in_replay(true),
     m_show_replay(show_replay),
     m_log_stream("lastgame.log")
@@ -119,11 +119,15 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     random->set_seed(m_seed);
     ++m_restore_count;
 
+    //Handles replay from save file
     std::unique_ptr<StreamInput> replay_interface(new StreamInput(std::move(in), version, start_paused));
     replay_interface->OnReplayEnd(std::bind(&GameState::set_replay_end, this));
     replay_interface->OnFastPlayChanged(std::bind(&GameState::set_fast_play, this, _1));
+    
+    //Handles switching to keyboard input when replay is finished
+    std::unique_ptr<ComboInput> combo(new ComboInput(std::move(replay_interface), std::move(input)));
 
-    m_input_interface.reset(new CapturedInput(new ComboInput(replay_interface.release(), new KeyboardInput())));
+    m_input_interface.reset(new CapturedInput(std::move(combo)));
 
     m_level.reset(new Level);
     m_hero.reset(new Hero);

@@ -1,11 +1,17 @@
 #pragma once
 #include "input_interface.h"
 
-struct KeyboardInput : public InputInterface
+struct ConsoleKeyboardInput : public InputInterface
 {
+    ConsoleKeyboardInput();
+
     virtual bool HasMoreInput();
     virtual char GetNextChar();
     virtual std::string GetNextString(int size);
+
+    virtual bool IsCapsLockOn();
+    virtual bool IsNumLockOn();
+    virtual bool IsScrollLockOn();
 
     virtual void Serialize(std::ostream& out);
 };

@@ -17,8 +17,8 @@ struct ScreenInterface;
 
 struct GameState
 {
-    GameState(int seed, ScreenInterface* screen);
-    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, ScreenInterface* screen);
+    GameState(int seed, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input);
+    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input);
     ~GameState();
 
     void save_game(const std::string& filename);

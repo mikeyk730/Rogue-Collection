@@ -14,6 +14,10 @@ struct StreamInput : public InputInterface
     virtual char GetNextChar();
     virtual std::string GetNextString(int size);
 
+    virtual bool IsCapsLockOn();
+    virtual bool IsNumLockOn();
+    virtual bool IsScrollLockOn();
+
     virtual void Serialize(std::ostream& out);
     
     void OnReplayEnd(const std::function<void()>& handler);

@@ -89,9 +89,9 @@ void ConsoleOutput::putchr_unrendered(int c, int attr)
     m_buffer[m_row*COLS+m_col] = ci;
 }
 
-ConsoleOutput::ConsoleOutput(ScreenInterface* screen) 
+ConsoleOutput::ConsoleOutput(std::unique_ptr<ScreenInterface> screen) :
+    m_screen(std::move(screen))
 {
-    m_screen = screen;
 }
 
 ConsoleOutput::~ConsoleOutput()

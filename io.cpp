@@ -20,6 +20,7 @@
 #include "level.h"
 #include "pack.h"
 #include "agent.h"
+#include "input_interface.h"
 
 #define PT(i,j)  ((COLS==40)?i:j)
 
@@ -453,9 +454,9 @@ void handle_key_state()
 {
     static bool numl = false, capsl = false, scrl = false;
     static int nspot, cspot, tspot;
-    bool num_lock_on = is_num_lock_on(),
-        caps_lock_on = is_caps_lock_on(),
-        scroll_lock_on = is_scroll_lock_on();
+    bool num_lock_on = game->input_interface().IsNumLockOn(),
+        caps_lock_on = game->input_interface().IsCapsLockOn(),
+        scroll_lock_on = game->input_interface().IsScrollLockOn();
     static int bighand, littlehand;
     int showtime = false;
 

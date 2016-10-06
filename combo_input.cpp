@@ -1,8 +1,8 @@
 #include "combo_input.h"
 
-ComboInput::ComboInput(InputInterface * primary, InputInterface * backup) :
-    m_active(primary),
-    m_backup(backup)
+ComboInput::ComboInput(std::unique_ptr<InputInterface> primary, std::unique_ptr<InputInterface> backup) :
+    m_active(std::move(primary)),
+    m_backup(std::move(backup))
 {
     Swap();
 }
@@ -28,6 +28,21 @@ std::string ComboInput::GetNextString(int size)
         return m_active->GetNextString(size);
     }
     return s;
+}
+
+bool ComboInput::IsCapsLockOn()
+{
+    return m_active->IsCapsLockOn();
+}
+
+bool ComboInput::IsNumLockOn()
+{
+    return m_active->IsNumLockOn();
+}
+
+bool ComboInput::IsScrollLockOn()
+{
+    return m_active->IsScrollLockOn();
 }
 
 void ComboInput::Serialize(std::ostream & out)

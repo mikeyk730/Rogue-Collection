@@ -10,8 +10,8 @@ namespace
     const char s_version = 'C';
 }
 
-CapturedInput::CapturedInput(InputInterface* d)
-    : m_delegate(d)
+CapturedInput::CapturedInput(std::unique_ptr<InputInterface> d)
+    : m_delegate(std::move(d))
 { }
 
 bool CapturedInput::HasMoreInput()
@@ -50,6 +50,21 @@ std::string CapturedInput::GetNextString(int max_size)
     }
     m_save_pending = false;
     return s;
+}
+
+bool CapturedInput::IsCapsLockOn()
+{
+    return m_delegate->IsCapsLockOn();
+}
+
+bool CapturedInput::IsNumLockOn()
+{
+    return m_delegate->IsNumLockOn();
+}
+
+bool CapturedInput::IsScrollLockOn()
+{
+    return m_delegate->IsScrollLockOn();
 }
 
 void CapturedInput::Serialize(std::ostream& out)

@@ -84,6 +84,7 @@
     <ClCompile Include="combo_input.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="commands.cpp" />
+    <ClCompile Include="console_keyboard_input.cpp" />
     <ClCompile Include="console_rogue.cpp" />
     <ClCompile Include="curses.cpp" />
     <ClCompile Include="daemon.cpp" />
@@ -152,7 +153,7 @@
     <ClInclude Include="input_interface.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="item.h" />
-    <ClInclude Include="keyboard_input.h" />
+    <ClInclude Include="console_keyboard_input.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="mach_dep.h" />

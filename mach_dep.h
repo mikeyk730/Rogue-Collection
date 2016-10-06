@@ -11,11 +11,6 @@ int getkey();
 //readchar: Return the next input character, from the macro or from the keyboard.
 int readchar();
 
-bool is_caps_lock_on();
-bool is_scroll_lock_on();
-bool is_num_lock_on();
-bool is_shift_pressed();
-
 void beep();
 void tick_pause();
 

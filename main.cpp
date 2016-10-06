@@ -43,6 +43,8 @@
 #include "random.h"
 #include "level.h"
 #include "rooms.h"
+#include "input_interface.h"
+#include "screen_interface.h"
 
 namespace 
 {
@@ -104,7 +106,7 @@ Args process_args(int argc, char**argv)
 }
 
 //game_main: The main program, of course
-int game_main(int argc, char **argv, ScreenInterface* screen)
+int game_main(int argc, char **argv, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input)
 {
     int seed = get_seed();
     g_random = new Random(seed);
@@ -117,10 +119,10 @@ int game_main(int argc, char **argv, ScreenInterface* screen)
      
     try {
         if (!args.savefile.empty()) {
-            game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, screen);
+            game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, std::move(screen), std::move(input));
         }
         else {
-            game = new GameState(seed, screen);
+            game = new GameState(seed, std::move(screen), std::move(input));
             setenv(args.optfile.c_str());
         }
         if (game->options.act_like_v1_1()) {
@@ -250,3 +252,6 @@ void fatal(char *format, ...)
     game->screen().printw(dest);
     exit(0);
 }
+
+ScreenInterface::~ScreenInterface() {}
+InputInterface::~InputInterface() {}

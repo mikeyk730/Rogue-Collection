@@ -1,4 +1,7 @@
+#include <memory>
+
 struct ScreenInterface;
+struct InputInterface;
 
 //do_quit: Have player make certain, then exit.
 bool do_quit();
@@ -10,4 +13,4 @@ void leave();
 void fatal(char *msg, ...);
 
 //game_main: The main program, of course
-int game_main(int argc, char **argv, ScreenInterface* screen);
+int game_main(int argc, char **argv, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input);
