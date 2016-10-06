@@ -233,21 +233,30 @@ void SdlWindow::Impl::Run()
         for (int x = rect.Left; x <= rect.Right; ++x) {
             for (int y = rect.Top; y <= rect.Bottom; ++y) {
                 auto p = get_screen_pos({ x, y });
-                auto c = data[y*m_dimensions.x + x];
+                auto info = data[y*m_dimensions.x + x];
+                int c = (unsigned char)info.Char.AsciiChar;
 
-                //todo: how to determine text or monster?
-                if (c.Char.AsciiChar >= 0x20 && c.Char.AsciiChar < 128)
+                //todo: how to correctly determine text or monster/passage/wall?
+                //the code below works for original tile set, but not others
+                if (c >= 0x20 && c < 128 || 
+                    c == PASSAGE || c == HWALL || c == VWALL || c == LLWALL || c == LRWALL || c == URWALL || c == ULWALL ||
+                    c == 0xcc || c == 0xb9 || //double line drawing
+                    c == 0xda || c == 0xb3 || c == 0xc0 || c == 0xc4 || c == 0xbf || c == 0xd9 || //line drawing
+                    c == 0x11 || c == 0x19 || c == 0x1a || c == 0x1b) //used in help
                 {
-                    int i = get_text_index(c.Attributes);
-                    auto r = get_text_rect(c.Char.AsciiChar, i);
+                    int i = get_text_index(info.Attributes);
+                    auto r = get_text_rect(c, i);
                     render_texture_at(m_text, m_renderer, p, r);
                 }
                 else {
-                    auto i = tile_index(c.Char.AsciiChar);
+                    auto i = tile_index(info.Char.AsciiChar);
                     if (i != -1) {
-                        bool inv = use_inverse(c.Attributes);
+                        bool inv = use_inverse(info.Attributes);
                         auto r = get_tile_rect(i, inv);
                         render_texture_at(m_tiles, m_renderer, p, r);
+                    }
+                    else {
+                        bool m = true;
                     }
                 }
             }

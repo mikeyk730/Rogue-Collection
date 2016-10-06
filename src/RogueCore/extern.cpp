@@ -92,7 +92,7 @@ const char* const helpobjs[MAXHELPO] =
   "\xe7: a magic staff",
   "\xad: a potion",
   "\xf8: a magic ring",
-  "\xb2: a passage",
+  "\xb1: a passage",
 
   //make sure in 40 or 80 column none of line draw set connects. this is currently in column 1 for 80
 
