@@ -14,7 +14,7 @@ WindowsConsole::~WindowsConsole()
     CloseHandle(hConsole);
 }
 
-void WindowsConsole::Draw(CHAR_INFO* info)
+void WindowsConsole::Draw(_CHAR_INFO* info)
 {
     COORD dwBufferSize = { m_dimensions.x, m_dimensions.y };
     COORD dwBufferCoord = { 0, 0 };
@@ -22,7 +22,7 @@ void WindowsConsole::Draw(CHAR_INFO* info)
     WriteConsoleOutput(hConsole, info, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
-void WindowsConsole::Draw(CHAR_INFO* info, SMALL_RECT rect)
+void WindowsConsole::Draw(_CHAR_INFO* info, _SMALL_RECT rect)
 {
     COORD dwBufferSize = { m_dimensions.x, m_dimensions.y };
     COORD dwBufferCoord = { rect.Left, rect.Top };

@@ -133,6 +133,7 @@
     <ClInclude Include="captured_input.h" />
     <ClInclude Include="command.h" />
     <ClInclude Include="commands.h" />
+    <ClInclude Include="coord.h" />
     <ClInclude Include="curses.h" />
     <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />

@@ -318,5 +318,8 @@
     <ClInclude Include="captured_input.h">
       <Filter>Input</Filter>
     </ClInclude>
+    <ClInclude Include="coord.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
