@@ -210,7 +210,7 @@ SDL::Scoped::Surface load_text(const std::string& s, TTF_Font* font, SDL_Color c
 }
 
 
-SDL_Rect get_rect(int i)
+SDL_Rect get_rect(unsigned char i)
 {
     SDL_Rect r;
     r.x = 9 * (i % 32);
@@ -315,10 +315,31 @@ void output_tilemap(SDL_Surface* tiles, SDL_Renderer* renderer)
 std::string get_print_chars()
 {
     std::string s;
-    for (int i = 0x20; i < 128; ++i) {
+    for (int i = 0; i < 256; ++i) {
         s.push_back(i);
     }
+    s.push_back(PASSAGE);
+    s.push_back(0xcc);
+    s.push_back(0xb9);
+    s.push_back('A');
     return s;
+}
+
+void screenshot(SDL_Renderer* renderer, SDL_Window* window, int x, int y) {
+    // Create an empty RGB surface that will be used to create the screenshot bmp file
+    SDL_Surface* pScreenShot = SDL_CreateRGBSurface(0, x, y, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+
+    if (pScreenShot)
+    {
+        // Read the pixels from the current render target and save them onto the surface
+        SDL_RenderReadPixels(renderer, NULL, SDL_GetWindowPixelFormat(window), pScreenShot->pixels, pScreenShot->pitch);
+
+        // Create the bmp screenshot file
+        SDL_SaveBMP(pScreenShot, "Screenshot.bmp");
+
+        // Destroy the screenshot surface
+        SDL_FreeSurface(pScreenShot);
+    }
 }
 
 
@@ -327,67 +348,67 @@ void test()
     using namespace SDL::Scoped;
 
     try {
-
-        if (SDL_Init(SDL_INIT_VIDEO) != 0) //todo:scope guard this
-            throw_error("SDL_Init");
-
         if (TTF_Init() != 0)
             throw_error("TTF_Init");
 
-        Window win(SDL_CreateWindow("Rogue", 100, 50, 8 * 128, WINDOW_Y, SDL_WINDOW_SHOWN), SDL_DestroyWindow);
-        if (win == nullptr)
+        Window window(SDL_CreateWindow("Rogue", 100, 50, 8 * 256, 16*16, SDL_WINDOW_SHOWN), SDL_DestroyWindow);
+        if (window == nullptr)
             throw_error("SDL_CreateWindow");
 
-        Renderer renderer(SDL_CreateRenderer(win.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
+        Renderer renderer(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
         if (renderer == nullptr)
             throw_error("SDL_CreateRenderer");
 
-        Surface tiles(load_bmp(getResourcePath("") + "dos24.bmp"));
+        Surface tiles(load_bmp(getResourcePath("") + "dos.bmp"));
         Font font(load_font("C:\\WINDOWS\\Fonts\\CONSOLA.TTF", 19));
 
         using namespace SDL::Colors;
         std::vector<Texture> textures;
-        /*
-        textures.push_back(std::move(create_texture(tiles.get(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, green(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, cyan(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, red(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, magenta(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, brown(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, d_grey(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, l_blue(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, l_grey(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, l_red(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, l_magenta(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, yellow(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, grey(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, blue(), black(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, black(), grey(), renderer.get())));
-        textures.push_back(std::move(painted_texture(tiles.get(), 0, white(), black(), renderer.get())));
-        */
 
         auto s = get_print_chars();
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), grey(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), green(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), cyan(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), red(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), magenta(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), brown(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), d_grey(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), l_blue(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), l_grey(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), l_red(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), l_magenta(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), yellow(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), grey(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), blue(), black()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), black(), grey()).get(), renderer.get())));
-        textures.push_back(std::move(create_texture(load_text(s, font.get(), white(), black()).get(), renderer.get())));
 
+        bool text = false;        
+        if (!text) {
+            textures.push_back(std::move(create_texture(tiles.get(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, green(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, cyan(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, red(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, magenta(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, brown(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, d_grey(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, l_blue(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, l_grey(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, l_red(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, l_magenta(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, yellow(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, grey(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, blue(), black(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, black(), grey(), renderer.get())));
+            textures.push_back(std::move(painted_texture(tiles.get(), 0, white(), black(), renderer.get())));
+        }
+        else
+        {
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), grey(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), green(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), cyan(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), red(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), magenta(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), brown(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), d_grey(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), l_blue(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), l_grey(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), l_red(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), l_magenta(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), yellow(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), grey(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), blue(), black()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), black(), grey()).get(), renderer.get())));
+            textures.push_back(std::move(create_texture(load_text(s, font.get(), white(), black()).get(), renderer.get())));
+        }
 
         SDL_StartTextInput();
 
-        output_tilemap(tiles.get(), renderer.get());
+        //output_tilemap(tiles.get(), renderer.get());
 
         char key = 1;
         //Our event structure
@@ -410,24 +431,30 @@ void test()
 
             SDL_RenderClear(renderer.get());
 
-            //render_texture_at(standard.get(), renderer.get(), { 16, 48 }, 0);
-            //for (int i = 0x20, n = 0; i < 128; ++i, ++n) {
-            //    SDL_Rect r = get_rect(i);
-            //    int k = 0;
-            //    for (auto it = textures.begin(); it != textures.end(); ++it)
-            //        render_texture_at((*it).get(), renderer.get(), { 8*n, 16*k++}, r);
-            //}
+            if (!text) {
+                for (int i = 0; i < s.length(); ++i) {
+                    SDL_Rect r = get_rect(s[i]);
+                    int k = 0;
+                    for (auto it = textures.begin(); it != textures.end(); ++it)
+                        render_texture_at((*it).get(), renderer.get(), { 8 * i, 16 * k++ }, r);
+                }
+            }
+            else {
 
-            int k = 0;
-            int w, h;
-            SDL_QueryTexture(textures[0].get(), NULL, NULL, &w, &h);
+                int k = 0;
+                int w, h;
+                SDL_QueryTexture(textures[0].get(), NULL, NULL, &w, &h);
 
-            for (auto it = textures.begin(); it != textures.end(); ++it) {
-                render_texture_at(it->get(), renderer.get(), { 0, h * k++ }, nullptr);
-                SDL_SetWindowSize(win.get(), w, 16 * h);
+                for (auto it = textures.begin(); it != textures.end(); ++it) {
+                    render_texture_at(it->get(), renderer.get(), { 0, h * k++ }, nullptr);
+                    SDL_SetWindowSize(window.get(), w, 16 * h);
+                }
             }
 
             SDL_RenderPresent(renderer.get());
+
+            screenshot(renderer.get(), window.get(), 8 * 256, 16 * 16);
+            for (;;);
         }
 
         SDL_Quit();

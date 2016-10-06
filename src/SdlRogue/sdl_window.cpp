@@ -14,7 +14,7 @@ struct SdlWindow::Impl
     const int TILE_COUNT = 78;
     const int TILE_STATES = 2;
 
-    const int TEXT_COUNT = 96;
+    const int TEXT_COUNT = 256;
     const int TEXT_STATES = 16;
 
     Impl();
@@ -175,7 +175,6 @@ inline int SdlWindow::Impl::get_text_index(unsigned short attr)
 
 inline SDL_Rect SdlWindow::Impl::get_text_rect(int c, int i)
 {
-    c -= 0x20;
     SDL_Rect r;
     r.h = m_tile_height;
     r.w = m_tile_width;
