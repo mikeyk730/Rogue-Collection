@@ -1,10 +1,10 @@
 #pragma once
 #include <memory>
 #include "RogueCore\display_interface.h"
-#include "RogueCore\coord.h"
 
 struct _CHAR_INFO;
 struct _SMALL_RECT;
+struct Coord;
 
 struct SdlWindow : public DisplayInterface
 {

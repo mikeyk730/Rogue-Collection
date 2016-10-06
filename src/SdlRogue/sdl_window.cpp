@@ -7,6 +7,7 @@
 #include "utility.h"
 #include "res_path.h"
 #include "RogueCore/rogue.h"
+#include "RogueCore/coord.h"
 
 struct SdlWindow::Impl
 {
@@ -101,7 +102,17 @@ private:
 
 SdlWindow::Impl::Impl()
 {
-    m_window = SDL_CreateWindow("Rogue", 100, 100, 8 * 80, 16 * 25, SDL_WINDOW_SHOWN);
+    m_dimensions = { 80, 25 };
+    SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "tiles.bmp"));
+    //SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "sprites.bmp"));
+    m_tile_height = tiles->h / TILE_STATES;
+    m_tile_width = tiles->w / TILE_COUNT;
+
+    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + "text.bmp"));
+    assert(m_tile_height == text->h / TEXT_STATES);
+    assert(m_tile_width == text->w / TEXT_COUNT);
+
+    m_window = SDL_CreateWindow("Rogue", 100, 100, m_tile_width * m_dimensions.x, m_tile_height * m_dimensions.y, SDL_WINDOW_SHOWN);
     if (m_window == nullptr)
         throw_error("SDL_CreateWindow");
 
@@ -109,14 +120,7 @@ SdlWindow::Impl::Impl()
     if (m_renderer == nullptr)
         throw_error("SDL_CreateRenderer");
 
-    SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "tiles.bmp"));
-    m_tile_height = tiles->h / TILE_STATES;
-    m_tile_width = tiles->w / TILE_COUNT;
     m_tiles = create_texture(tiles.get(), m_renderer).release();
-
-    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + "text.bmp"));
-    assert(m_tile_height == text->h / TEXT_STATES);
-    assert(m_tile_width == text->w / TEXT_COUNT);
     m_text = create_texture(text.get(), m_renderer).release();
 }
 
@@ -130,6 +134,8 @@ SdlWindow::Impl::~Impl()
 
 int SdlWindow::Impl::tile_index(unsigned char c)
 {
+    if (c >= 'A' && c <= 'Z')
+        return c - 'A';
     auto i = m_index.find(c);
     if (i != m_index.end())
         return i->second;
