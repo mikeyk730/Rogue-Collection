@@ -5,8 +5,8 @@
 
 int main(int argc, char **argv)
 {
-    std::unique_ptr<DisplayInterface> output(new WindowsConsole({ 0, 0 }));
-    std::unique_ptr<InputInterface> input(new ConsoleKeyboardInput());
+    std::shared_ptr<DisplayInterface> output(new WindowsConsole({ 0, 0 }));
+    std::shared_ptr<InputInterface> input(new ConsoleKeyboardInput());
 
-    game_main(argc, argv, std::move(output), std::move(input));
+    game_main(argc, argv, output, input);
 }
