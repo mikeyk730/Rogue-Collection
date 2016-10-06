@@ -1,22 +1,8 @@
-#pragma once
-#ifndef RES_PATH_H
-#define RES_PATH_H
-
 #include <iostream>
-#include <string>
-#include <SDL.h>
+#include "utility.h"
+#include "SDL.h"
+#include "RogueCore\coord.h"
 
-/*
-* Get the resource path for resources located in res/subDir
-* It's assumed the project directory is structured like:
-* bin/
-*  the executable
-* res/
-*  Lesson1/
-*  Lesson2/
-*
-* Paths returned will be Lessons/res/subDir
-*/
 std::string getResourcePath(const std::string &subDir = "") {
     //We need to choose the path separator properly based on which
     //platform we're running on, since Windows uses a different
@@ -50,4 +36,41 @@ std::string getResourcePath(const std::string &subDir = "") {
     return subDir.empty() ? baseRes : baseRes + subDir + PATH_SEP;
 }
 
-#endif
+
+SDL::Scoped::Surface load_bmp(const std::string& filename)
+{
+    SDL::Scoped::Surface bmp(SDL_LoadBMP(filename.c_str()), SDL_FreeSurface);
+    if (bmp == nullptr)
+        throw_error("SDL_LoadBMP");
+
+    return std::move(bmp);
+}
+
+SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer)
+{
+    SDL::Scoped::Texture texture(SDL_CreateTextureFromSurface(renderer, surface), SDL_DestroyTexture);
+    if (texture == nullptr)
+        throw_error("CreateTextureFromSurface");
+    return std::move(texture);
+}
+
+void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect* clip)
+{
+    SDL_Rect r;
+    r.x = position.x;
+    r.y = position.y;
+    if (clip != nullptr)
+    {
+        r.w = clip->w;
+        r.h = clip->h;
+    }
+    else {
+        SDL_QueryTexture(texture, NULL, NULL, &r.w, &r.h);
+    }
+    SDL_RenderCopy(renderer, texture, clip, &r);
+}
+
+void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect clip)
+{
+    render_texture_at(texture, renderer, position, &clip);
+}

@@ -4,6 +4,7 @@
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "res_path.h"
+#include "utility.h"
 
 #define PASSAGE   (0xb1)
 #define DOOR      (0xce)
@@ -30,7 +31,7 @@
 #define LLWALL  (0xc8)
 #define LRWALL  (0xbc)
 
-#include "..\coord.h"
+#include "RogueCore\coord.h"
 
 const int H_PIXELS_PER_CHAR = 8;
 const int V_PIXELS_PER_CHAR = 16;
@@ -43,15 +44,6 @@ const int WINDOW_Y = V_PIXELS_PER_CHAR * LINES * SCALE;
 
 namespace SDL
 {
-    namespace Scoped
-    {
-        typedef std::unique_ptr<SDL_Window, void(*)(SDL_Window*)> Window;
-        typedef std::unique_ptr<SDL_Renderer, void(*)(SDL_Renderer*)> Renderer;
-        typedef std::unique_ptr<SDL_Surface, void(*)(SDL_Surface*)> Surface;
-        typedef std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)> Texture;
-        typedef std::unique_ptr<TTF_Font, void(*)(TTF_Font*)> Font;
-    }
-
     namespace Colors
     {
         SDL_Color black()    { return {   0,   0,   0, 255 }; } //from dosbox
@@ -75,6 +67,7 @@ namespace SDL
 
 void throw_error(const std::string &msg)
 {
+    std::cerr << SDL_GetError() << std::endl;
     throw std::runtime_error(msg + " error: " + SDL_GetError());
 }
 
@@ -147,23 +140,6 @@ void putpixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
     }
 }
 
-SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer)
-{
-    SDL::Scoped::Texture texture(SDL_CreateTextureFromSurface(renderer, surface), SDL_DestroyTexture);
-    if (texture == nullptr)
-        throw_error("CreateTextureFromSurface");
-    return std::move(texture);
-}
-
-SDL::Scoped::Surface load_bmp(const std::string& filename)
-{
-    SDL::Scoped::Surface bmp(SDL_LoadBMP(filename.c_str()), SDL_FreeSurface);
-    if (bmp == nullptr)
-        throw_error("SDL_LoadBMP");
-
-    return std::move(bmp);
-}
-
 void paint_surface(SDL_Surface* surface, SDL_Color fg, SDL_Color bg)
 {
     int n = surface->w * surface->h;
@@ -232,26 +208,6 @@ SDL::Scoped::Surface load_text(const std::string& s, TTF_Font* font, SDL_Color c
     return std::move(surface);
 }
 
-void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect* clip)
-{
-    SDL_Rect r;
-    r.x = position.x;
-    r.y = position.y;
-    if (clip != nullptr)
-    {
-        r.w = clip->w;
-        r.h = clip->h;
-    }
-    else {
-        SDL_QueryTexture(texture, NULL, NULL, &r.w, &r.h);
-    }
-    SDL_RenderCopy(renderer, texture, clip, &r);
-}
-
-void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect clip)
-{
-  render_texture_at(texture, renderer, position, &clip);
-}
 
 SDL_Rect get_rect(int i)
 {
@@ -483,16 +439,20 @@ void test()
 
 
 #include <memory>
-#include "..\windows_console.h"
-#include "..\console_keyboard_input.h"
-#include "..\main.h"
+#include "sdl_keyboard_input.h"
+#include "sdl_window.h"
+#include "RogueCore\main.h"
 
 int main(int argc, char **argv)
 {
-    std::unique_ptr<DisplayInterface> output(new WindowsConsole({ 0, 0 }));
-    std::unique_ptr<InputInterface> input(new ConsoleKeyboardInput());
+    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+        throw_error("SDL_Init");
+
+    std::unique_ptr<DisplayInterface> output(new SdlWindow());
+    std::unique_ptr<InputInterface> input(new SdlKeyboardInput());
 
     game_main(argc, argv, std::move(output), std::move(input));
 
+    SDL_Quit();  //todo: never reached since game_main never returns
     return 0;
 }
