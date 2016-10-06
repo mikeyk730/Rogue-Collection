@@ -228,9 +228,9 @@ SDL::Scoped::Font load_font(const std::string& filename, int size)
     return std::move(font);
 }
 
-SDL::Scoped::Surface load_text(const std::string& s, TTF_Font* font, SDL_Color color)
+SDL::Scoped::Surface load_text(const std::string& s, TTF_Font* font, SDL_Color color, SDL_Color bg)
 {
-    SDL::Scoped::Surface surface(TTF_RenderText_Blended(font, s.c_str(), color), SDL_FreeSurface);
+    SDL::Scoped::Surface surface(TTF_RenderText_Shaded(font, s.c_str(), color, bg), SDL_FreeSurface);
     if (surface == nullptr)
         throw_error("TTF_RenderText");
 
@@ -268,56 +268,73 @@ SDL_Rect get_rect(int i)
     return r;
 }
 
-SDL::Scoped::Texture texture_for_byte(int chr, bool in_room, SDL_Surface* surface, SDL_Renderer* renderer)
+std::pair<SDL_Color, SDL_Color> color_for_byte(int chr, bool in_room)
 {
-    SDL_Rect r = get_rect(chr);
     using namespace SDL::Colors;
 
         //if it is inside a room
         if (in_room) switch (chr)
         {
         case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-            return painted_texture(surface, &r, brown(), black(), renderer);
+            return std::make_pair(brown(), black());
             break;
         case FLOOR:
-            return painted_texture(surface, &r, l_green(), black(), renderer);
+            return std::make_pair(l_green(), black());
             break;
         case STAIRS:
-            return painted_texture(surface, &r, black(), green(), renderer);
+            return std::make_pair(black(), green());
             break;
         case TRAP:
-            return painted_texture(surface, &r, magenta(), black(), renderer);
+            return std::make_pair(magenta(), black());
             break;
         case GOLD: case PLAYER:
-            return painted_texture(surface, &r, yellow(), black(), renderer);
+            return std::make_pair(yellow(), black());
             break;
         case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-            return painted_texture(surface, &r, l_blue(), black(), renderer);
+            return std::make_pair(l_blue(), black());
             break;
         case FOOD:
-            return painted_texture(surface, &r, red(), black(), renderer);
+            return std::make_pair(red(), black());
             break;
         default:
-            return painted_texture(surface, &r, grey(), black(), renderer);
+            return std::make_pair(grey(), black());
         }
         //if inside a passage or a maze
         else switch (chr)
         {
         case FOOD:
-            return painted_texture(surface, &r, red(), grey(), renderer);
+            return std::make_pair(red(), grey());
             break;
         case GOLD: case PLAYER:
-            return painted_texture(surface, &r, yellow(), grey(), renderer);
+            return std::make_pair(yellow(), grey());
             break;
         case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-            return painted_texture(surface, &r, blue(), grey(), renderer);
+            return std::make_pair(blue(), grey());
             break;
         case STAIRS:
-            return painted_texture(surface, &r, black(), grey(), renderer);
+            return std::make_pair(black(), grey());
             break;
         default:
-            return painted_texture(surface, &r, black(), grey(), renderer);
+            return std::make_pair(black(), grey());
         }
+}
+
+
+SDL::Scoped::Texture texture_for_byte(int chr, bool in_room, SDL_Surface* surface, SDL_Renderer* renderer)
+{
+    SDL_Rect r = get_rect(chr);
+    auto p = color_for_byte(chr, in_room);
+    return painted_texture(surface, &r, p.first, p.second, renderer);
+}
+
+
+
+void add_txt(int c, int i, SDL_Surface* tiles, SDL_Renderer* renderer) {
+    auto t1 = texture_for_byte(c, true, tiles, renderer);
+    auto t2 = texture_for_byte(c, false, tiles, renderer);
+
+    render_texture_at(t1.release(), renderer, { 8 * i, 0 }, nullptr);
+    render_texture_at(t2.release(), renderer, { 8 * i, 16 }, nullptr);
 }
 
 void add(int c, int i, SDL_Surface* tiles, SDL_Renderer* renderer) {
@@ -343,24 +360,29 @@ void output_tilemap(SDL_Surface* tiles, SDL_Renderer* renderer)
     SDL_RenderPresent(renderer);
 }
 
+std::string get_print_chars()
+{
+    std::string s;
+    for (int i = 0x20; i < 128; ++i) {
+        s.push_back(i);
+    }
+    return s;
+}
 
-int main(int argc, char** argv)
+
+void test()
 {
     using namespace SDL::Scoped;
-
-    int a;
-    std::cin >> a;
-    std::cout << a;
 
     try {
 
         if (SDL_Init(SDL_INIT_VIDEO) != 0) //todo:scope guard this
             throw_error("SDL_Init");
 
-        //if (TTF_Init() != 0)
-        //    throw_error("TTF_Init");
+        if (TTF_Init() != 0)
+            throw_error("TTF_Init");
 
-        Window win(SDL_CreateWindow("Rogue", 100, 50, 8*128, WINDOW_Y, SDL_WINDOW_SHOWN), SDL_DestroyWindow);
+        Window win(SDL_CreateWindow("Rogue", 100, 50, 8 * 128, WINDOW_Y, SDL_WINDOW_SHOWN), SDL_DestroyWindow);
         if (win == nullptr)
             throw_error("SDL_CreateWindow");
 
@@ -369,9 +391,11 @@ int main(int argc, char** argv)
             throw_error("SDL_CreateRenderer");
 
         Surface tiles(load_bmp(getResourcePath("") + "dos24.bmp"));
+        Font font(load_font("C:\\WINDOWS\\Fonts\\CONSOLA.TTF", 19));
 
         using namespace SDL::Colors;
         std::vector<Texture> textures;
+        /*
         textures.push_back(std::move(create_texture(tiles.get(), renderer.get())));
         textures.push_back(std::move(painted_texture(tiles.get(), 0, green(), black(), renderer.get())));
         textures.push_back(std::move(painted_texture(tiles.get(), 0, cyan(), black(), renderer.get())));
@@ -388,7 +412,26 @@ int main(int argc, char** argv)
         textures.push_back(std::move(painted_texture(tiles.get(), 0, blue(), black(), renderer.get())));
         textures.push_back(std::move(painted_texture(tiles.get(), 0, black(), grey(), renderer.get())));
         textures.push_back(std::move(painted_texture(tiles.get(), 0, white(), black(), renderer.get())));
-        //textures.push_back(std::move(painted_texture(tiles.get(), 0, black(), grey(), renderer.get())));
+        */
+
+        auto s = get_print_chars();
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), grey(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), green(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), cyan(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), red(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), magenta(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), brown(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), d_grey(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), l_blue(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), l_grey(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), l_red(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), l_magenta(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), yellow(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), grey(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), blue(), black()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), black(), grey()).get(), renderer.get())));
+        textures.push_back(std::move(create_texture(load_text(s, font.get(), white(), black()).get(), renderer.get())));
+
 
         SDL_StartTextInput();
 
@@ -416,14 +459,22 @@ int main(int argc, char** argv)
             SDL_RenderClear(renderer.get());
 
             //render_texture_at(standard.get(), renderer.get(), { 16, 48 }, 0);
-            for (int i = 0x20, n = 0; i < 128; ++i, ++n) {
-                SDL_Rect r = get_rect(i);
-                int k = 0;
-                for (auto it = textures.begin(); it != textures.end(); ++it)
-                    render_texture_at((*it).get(), renderer.get(), { 8*n, 16*k++}, r);
+            //for (int i = 0x20, n = 0; i < 128; ++i, ++n) {
+            //    SDL_Rect r = get_rect(i);
+            //    int k = 0;
+            //    for (auto it = textures.begin(); it != textures.end(); ++it)
+            //        render_texture_at((*it).get(), renderer.get(), { 8*n, 16*k++}, r);
+            //}
+
+            int k = 0;
+            int w, h;
+            SDL_QueryTexture(textures[0].get(), NULL, NULL, &w, &h);
+
+            for (auto it = textures.begin(); it != textures.end(); ++it) {
+                render_texture_at(it->get(), renderer.get(), { 0, h * k++ }, nullptr);
+                SDL_SetWindowSize(win.get(), w, 16 * h);
             }
 
-            
             SDL_RenderPresent(renderer.get());
         }
 
@@ -433,6 +484,10 @@ int main(int argc, char** argv)
     {
         std::cout << e.what();
     }
+}
 
+int main(int argc, char** argv)
+{
+    test();
     return 0;
 }
