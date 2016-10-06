@@ -102,7 +102,7 @@ struct ConsoleOutput
 
 public:
     //mdk: extended interface
-    ConsoleOutput();
+    ConsoleOutput(ScreenInterface* screen);
     ~ConsoleOutput();
 
     void mvaddch(Coord p, byte c);
@@ -142,5 +142,5 @@ private:
     _CHAR_INFO* m_buffer = 0;
     _CHAR_INFO* m_backup = 0;
 
-    std::unique_ptr<ScreenInterface> m_screen;
+    ScreenInterface* m_screen;
 };

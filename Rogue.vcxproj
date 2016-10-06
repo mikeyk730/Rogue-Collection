@@ -84,6 +84,7 @@
     <ClCompile Include="combo_input.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="commands.cpp" />
+    <ClCompile Include="console_rogue.cpp" />
     <ClCompile Include="curses.cpp" />
     <ClCompile Include="daemon.cpp" />
     <ClCompile Include="daemons.cpp" />

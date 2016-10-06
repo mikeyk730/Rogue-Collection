@@ -169,6 +169,9 @@
     <ClCompile Include="captured_input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="console_rogue.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="armor.h">

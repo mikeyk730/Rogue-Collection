@@ -53,10 +53,10 @@ namespace
     const int s_serial_version = 6;
 }
 
-GameState::GameState(int seed) :
+GameState::GameState(int seed, ScreenInterface* screen) :
     m_seed(seed),
     m_input_interface(new CapturedInput(new KeyboardInput())),
-    m_output_interface(new ConsoleOutput()),
+    m_output_interface(new ConsoleOutput(screen)),
     m_level(new Level),
     m_hero(new Hero),
     m_scrolls(new ScrollInfo),
@@ -68,8 +68,8 @@ GameState::GameState(int seed) :
     init_environment();
 }
 
-GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused) :
-    m_output_interface(new ConsoleOutput()),
+GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, ScreenInterface* screen) :
+    m_output_interface(new ConsoleOutput(screen)),
     m_in_replay(true),
     m_show_replay(show_replay),
     m_log_stream("lastgame.log")
@@ -134,7 +134,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
 
     if (!m_show_replay)
     {
-        screen().stop_rendering();
+        this->screen().stop_rendering();
     }
 }
 

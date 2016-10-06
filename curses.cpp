@@ -89,8 +89,9 @@ void ConsoleOutput::putchr_unrendered(int c, int attr)
     m_buffer[m_row*COLS+m_col] = ci;
 }
 
-ConsoleOutput::ConsoleOutput() 
+ConsoleOutput::ConsoleOutput(ScreenInterface* screen) 
 {
+    m_screen = screen;
 }
 
 ConsoleOutput::~ConsoleOutput()
@@ -244,7 +245,6 @@ void ConsoleOutput::winit(bool narrow_screen, Coord origin)
     COLS = narrow_screen ? 40 : 80;
     at_table = color_attr;
 
-    m_screen.reset(new WindowsConsole(origin, { COLS, LINES }));
     m_screen->SetCursor(false);
 
     m_buffer = new CHAR_INFO[LINES*COLS];
@@ -474,7 +474,7 @@ void ConsoleOutput::Render()
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->Draw(m_buffer);
+    m_screen->Draw(m_buffer, { COLS, LINES });
 }
 
 void ConsoleOutput::Render(_SMALL_RECT rect)
@@ -482,7 +482,7 @@ void ConsoleOutput::Render(_SMALL_RECT rect)
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->Draw(m_buffer, rect);
+    m_screen->Draw(m_buffer, { COLS, LINES }, rect);
 }
 
 void ConsoleOutput::ApplyMove()

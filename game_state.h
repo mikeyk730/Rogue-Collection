@@ -13,11 +13,12 @@ struct InputInterface;
 struct Hero;
 struct Level;
 struct ConsoleOutput;
+struct ScreenInterface;
 
 struct GameState
 {
-    GameState(int seed);
-    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused);
+    GameState(int seed, ScreenInterface* screen);
+    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, ScreenInterface* screen);
     ~GameState();
 
     void save_game(const std::string& filename);

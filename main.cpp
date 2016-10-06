@@ -103,8 +103,8 @@ Args process_args(int argc, char**argv)
     return a;
 }
 
-//main: The main program, of course
-int main(int argc, char **argv)
+//game_main: The main program, of course
+int game_main(int argc, char **argv, ScreenInterface* screen)
 {
     int seed = get_seed();
     g_random = new Random(seed);
@@ -117,10 +117,10 @@ int main(int argc, char **argv)
      
     try {
         if (!args.savefile.empty()) {
-            game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused);
+            game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, screen);
         }
         else {
-            game = new GameState(seed);
+            game = new GameState(seed, screen);
             setenv(args.optfile.c_str());
         }
         if (game->options.act_like_v1_1()) {
