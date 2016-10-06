@@ -1,11 +1,18 @@
 #include <cassert>
 #include <map>
+#include <thread>
 #include <Windows.h> //todo: change interface to avoid char_info and small_rect
 #include "SDL.h"
 #include "sdl_window.h"
 #include "utility.h"
 #include "res_path.h"
 #include "RogueCore/rogue.h"
+
+namespace
+{
+    //void ThreadProc()
+    //{}
+}
 
 struct SdlWindow::Impl
 {
@@ -34,6 +41,9 @@ struct SdlWindow::Impl
         assert(m_tile_height == text->h / TEXT_STATES);
         assert(m_tile_width == text->w / TEXT_COUNT);
         m_text = create_texture(text.get(), m_renderer).release();
+
+        //std::thread t(ThreadProc);
+        //t.detach();
     }
 
     int tile_index(unsigned char c)
@@ -88,6 +98,21 @@ struct SdlWindow::Impl
 
     void Draw(_CHAR_INFO * info, Coord dimensions, _SMALL_RECT rect)
     {
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+               // quit = true;
+            }
+            else if (e.type == SDL_TEXTINPUT) {
+                std::cout << "ch:" << e.text.text << std::endl;
+                //key = e.text.text[0];
+            }
+            else if (e.type == SDL_KEYUP) {
+                //handle esc, backspace, directions, numpad, function keys, return, ctrl-modified, ins, del
+                //how to read scroll lock, etc?
+            }
+        }
+
         //SDL_RenderClear(m_renderer);
         for (int x = rect.Left; x <= rect.Right; ++x) {
             for (int y = rect.Top; y <= rect.Bottom; ++y) {
@@ -192,6 +217,7 @@ void SdlWindow::Draw(_CHAR_INFO * info, Coord dimensions)
 
 void SdlWindow::Draw(_CHAR_INFO * info, Coord dimensions, _SMALL_RECT r)
 {
+    //if (r.Top == r.Bottom&&r.Left == r.Right) return;
     m_impl->Draw(info, dimensions, r);
 }
 

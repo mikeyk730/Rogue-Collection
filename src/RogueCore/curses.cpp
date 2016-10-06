@@ -76,16 +76,12 @@ namespace
 
 void Curses::putchr(int c, int attr)
 {
-    putchr_unrendered(c, attr);
-    Render({ m_col, m_row, m_col, m_row });
-}
-
-void Curses::putchr_unrendered(int c, int attr)
-{
     CHAR_INFO ci;
     ci.Attributes = attr;
     ci.Char.AsciiChar = c;
     m_buffer[m_row*COLS+m_col] = ci;
+    if (!disable_render)
+        Render({ m_col, m_row, m_col, m_row });
 }
 
 Curses::Curses(std::unique_ptr<DisplayInterface> output) :
@@ -217,7 +213,25 @@ int Curses::addch(byte chr)
 
 void Curses::addstr(const char *s)
 {
-    while (*s) addch(*s++);
+    bool was_disabled = disable_render;
+    disable_render = true;
+
+    int i;
+    for (i = 0; s[i]; ++i)
+    {
+        addch(s[i]);
+    }
+    disable_render = was_disabled;
+    if (!disable_render) {
+        if (i > 0) {
+            SMALL_RECT r;
+            r.Top = m_row;
+            r.Bottom = m_row;
+            r.Left = m_col - i;
+            r.Right = m_col - 1;
+            Render(r);
+        }
+    }
 }
 
 void Curses::set_attr(int bute)
@@ -280,6 +294,9 @@ void Curses::box(int ul_r, int ul_c, int lr_r, int lr_c)
 //box: draw a box given the upper left coordinate and the lower right
 void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
+    bool was_disabled = disable_render;
+    disable_render = true;
+
     int i;
     bool wason;
     int r, c;
@@ -300,6 +317,10 @@ void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_
     mvaddch(lr_r, lr_c, box[BX_LR]);
     move(r, c);
     cursor(wason);
+
+    disable_render = was_disabled;
+    if (!disable_render)
+        Render({ (SHORT)ul_c, (SHORT)ul_r, (SHORT)lr_c, (SHORT)lr_r });
 }
 
 //center a string according to how many columns there really are
@@ -337,27 +358,37 @@ void Curses::scroll()
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
 void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
+    bool was_disabled = disable_render;
+    disable_render = true;
+
     int r, c;
     for (r = ul_row; r <= lr_row; ++r)
     {
         for (c = ul_col; c <= lr_col; ++c)
         {
             move(r, c);
-            putchr_unrendered(' ', m_attr);
+            putchr(' ', m_attr);
         }
     }
     move(ul_row, ul_col);
-    Render({ (SHORT)ul_col, (SHORT)ul_row, (SHORT)lr_col, (SHORT)lr_row });
+    disable_render = was_disabled;
+    if (!disable_render)
+        Render({ (SHORT)ul_col, (SHORT)ul_row, (SHORT)lr_col, (SHORT)lr_row });
 }
 
 void Curses::repchr(int chr, int cnt)
 {
+    bool was_disabled = disable_render;
+    disable_render = true;
+
     SMALL_RECT r = { m_col, m_row, (SHORT)(m_col + cnt - 1), m_row };
     while (cnt-- > 0) { 
-        putchr_unrendered(chr, m_attr);
+        putchr(chr, m_attr);
         m_col++;
     }
-    Render(r);
+    disable_render = was_disabled;
+    if (!disable_render)
+        Render(r);
 }
 
 //try to fixup screen after we get a control break

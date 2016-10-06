@@ -161,6 +161,7 @@ void GameState::init_environment()
     m_environment["macro"] = "v";
     m_environment["scorefile"] = "rogue.scr";
     m_environment["savefile"] = "rogue.sav";
+    m_environment["powers"] = "jump_levels,reveal_items";
 
     process_environment();
 }

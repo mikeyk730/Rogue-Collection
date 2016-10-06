@@ -116,8 +116,6 @@ public:
     void resume_rendering();
 
 private:
-    void putchr_unrendered(int c, int attr);
-
     void Render();
     void Render(_SMALL_RECT rect);
     void ApplyMove();
@@ -143,4 +141,5 @@ private:
     _CHAR_INFO* m_backup = 0;
 
     std::unique_ptr<DisplayInterface> m_screen;
+    bool disable_render = false;
 };
