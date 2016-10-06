@@ -102,7 +102,7 @@ struct Curses
 
 public:
     //mdk: extended interface
-    Curses(std::unique_ptr<DisplayInterface> output);
+    Curses(std::shared_ptr<DisplayInterface> output);
     ~Curses();
 
     void mvaddch(Coord p, byte c);
@@ -140,6 +140,6 @@ private:
     _CHAR_INFO* m_buffer = 0;
     _CHAR_INFO* m_backup = 0;
 
-    std::unique_ptr<DisplayInterface> m_screen;
+    std::shared_ptr<DisplayInterface> m_screen;
     bool disable_render = false;
 };

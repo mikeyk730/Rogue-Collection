@@ -8,7 +8,7 @@
 
 struct ComboInput : public InputInterface
 {
-    ComboInput(std::unique_ptr<InputInterface> primary, std::unique_ptr<InputInterface> backup);
+    ComboInput(std::shared_ptr<InputInterface> primary, std::shared_ptr<InputInterface> backup);
 
     virtual bool HasMoreInput();
     virtual char GetNextChar();
@@ -24,6 +24,6 @@ struct ComboInput : public InputInterface
     bool Swap();
 
 private:
-    std::unique_ptr<InputInterface> m_active;
-    std::unique_ptr<InputInterface> m_backup;
+    std::shared_ptr<InputInterface> m_active;
+    std::shared_ptr<InputInterface> m_backup;
 };

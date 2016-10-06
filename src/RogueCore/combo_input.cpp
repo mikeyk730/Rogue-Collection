@@ -1,8 +1,8 @@
 #include "combo_input.h"
 
-ComboInput::ComboInput(std::unique_ptr<InputInterface> primary, std::unique_ptr<InputInterface> backup) :
-    m_active(std::move(primary)),
-    m_backup(std::move(backup))
+ComboInput::ComboInput(std::shared_ptr<InputInterface> primary, std::shared_ptr<InputInterface> backup) :
+    m_active(primary),
+    m_backup(backup)
 {
     Swap();
 }

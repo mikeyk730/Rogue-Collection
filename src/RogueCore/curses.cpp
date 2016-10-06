@@ -84,8 +84,8 @@ void Curses::putchr(int c, int attr)
         Render({ m_col, m_row, m_col, m_row });
 }
 
-Curses::Curses(std::unique_ptr<DisplayInterface> output) :
-    m_screen(std::move(output))
+Curses::Curses(std::shared_ptr<DisplayInterface> output) :
+    m_screen(output)
 {
 }
 
@@ -258,6 +258,7 @@ void Curses::winit(bool narrow_screen)
     COLS = narrow_screen ? 40 : 80;
     at_table = color_attr;
 
+    m_screen->SetDimensions({ COLS, LINES });
     m_screen->SetCursor(false);
 
     m_buffer = new CHAR_INFO[LINES*COLS];
@@ -504,7 +505,7 @@ void Curses::Render()
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->Draw(m_buffer, { COLS, LINES });
+    m_screen->Draw(m_buffer);
 }
 
 void Curses::Render(_SMALL_RECT rect)
@@ -512,7 +513,7 @@ void Curses::Render(_SMALL_RECT rect)
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->Draw(m_buffer, { COLS, LINES }, rect);
+    m_screen->Draw(m_buffer, rect);
 }
 
 void Curses::ApplyMove()

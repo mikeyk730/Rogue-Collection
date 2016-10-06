@@ -10,8 +10,8 @@ namespace
     const char s_version = 'C';
 }
 
-CapturedInput::CapturedInput(std::unique_ptr<InputInterface> d)
-    : m_delegate(std::move(d))
+CapturedInput::CapturedInput(std::shared_ptr<InputInterface> d)
+    : m_delegate(d)
 { }
 
 bool CapturedInput::HasMoreInput()

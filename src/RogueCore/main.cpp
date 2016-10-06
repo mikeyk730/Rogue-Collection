@@ -168,23 +168,23 @@ Args process_args(int argc, char**argv)
 
 
 //game_main: The main program, of course
-int game_main(int argc, char **argv, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input)
+int game_main(int argc, char **argv, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input)
 {
     int seed = get_seed();
     g_random = new Random(seed);
 
     Args args = process_args(argc, argv);
 
-    //args.savefile = "tests\\all_sticks_setup.rsf";
-    args.savefile = "..\\..\\saves\\level9.rsf";
+    //args.savefile = "..\\..\\tests\\narrow_bw.rsf";
+    //args.savefile = "..\\..\\saves\\level9.rsf";
     //args.savefile = "rogue.sav";
 
     try {
         if (!args.savefile.empty()) {
-            game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, std::move(output), std::move(input));
+            game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, output, input);
         }
         else {
-            game = new GameState(seed, std::move(output), std::move(input));
+            game = new GameState(seed, output, input);
             setenv(args.optfile.c_str());
         }
         if (game->options.act_like_v1_1()) {

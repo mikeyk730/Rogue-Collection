@@ -52,10 +52,10 @@ namespace
     const int s_serial_version = 6;
 }
 
-GameState::GameState(int seed, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input) :
+GameState::GameState(int seed, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input) :
     m_seed(seed),
-    m_input_interface(new CapturedInput(std::move(input))),
-    m_curses(new Curses(std::move(output))),
+    m_input_interface(new CapturedInput(input)),
+    m_curses(new Curses(output)),
     m_level(new Level),
     m_hero(new Hero),
     m_scrolls(new ScrollInfo),
@@ -67,8 +67,8 @@ GameState::GameState(int seed, std::unique_ptr<DisplayInterface> output, std::un
     init_environment();
 }
 
-GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input) :
-    m_curses(new Curses(std::move(output))),
+GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input) :
+    m_curses(new Curses(output)),
     m_in_replay(true),
     m_show_replay(show_replay),
     m_log_stream("lastgame.log")
@@ -124,7 +124,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     replay_interface->OnFastPlayChanged(std::bind(&GameState::set_fast_play, this, _1));
     
     //Handles switching to keyboard input when replay is finished
-    std::unique_ptr<ComboInput> combo(new ComboInput(std::move(replay_interface), std::move(input)));
+    std::unique_ptr<ComboInput> combo(new ComboInput(std::move(replay_interface), input));
 
     m_input_interface.reset(new CapturedInput(std::move(combo)));
 

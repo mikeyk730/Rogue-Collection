@@ -13,4 +13,4 @@ void leave();
 void fatal(char *msg, ...);
 
 //game_main: The main program, of course
-int game_main(int argc, char **argv, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input);
+int game_main(int argc, char **argv, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input);

@@ -5,7 +5,7 @@
 
 struct CapturedInput : public InputInterface
 {
-    CapturedInput(std::unique_ptr<InputInterface> d);
+    CapturedInput(std::shared_ptr<InputInterface> d);
 
     virtual bool HasMoreInput();
     virtual char GetNextChar();
@@ -18,7 +18,7 @@ struct CapturedInput : public InputInterface
 
     virtual void Serialize(std::ostream& out);
 
-    std::unique_ptr<InputInterface> m_delegate;
+    std::shared_ptr<InputInterface> m_delegate;
     std::vector<char> m_stream;
 
     bool m_save_pending = false;

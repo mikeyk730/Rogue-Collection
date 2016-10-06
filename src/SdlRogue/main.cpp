@@ -1,5 +1,6 @@
 #include <iostream>
 #include <memory>
+#include <thread>
 #include <vector>
 #include "SDL.h"
 #include "SDL_ttf.h"
@@ -443,16 +444,25 @@ void test()
 #include "sdl_window.h"
 #include "RogueCore\main.h"
 
+void run_game(int argc, char **argv, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input)
+{
+    game_main(argc, argv, output, input);
+}
+
 int main(int argc, char **argv)
 {
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw_error("SDL_Init");
 
-    std::unique_ptr<DisplayInterface> output(new SdlWindow());
-    std::unique_ptr<InputInterface> input(new SdlKeyboardInput());
+    std::shared_ptr<SdlWindow> output(new SdlWindow());
+    std::shared_ptr<SdlKeyboardInput> input(new SdlKeyboardInput());
 
-    game_main(argc, argv, std::move(output), std::move(input));
+    //start rogue engine on a background thread
+    std::thread rogue(run_game, argc, argv, output, input);
+    rogue.detach();
 
-    SDL_Quit();  //todo: never reached since game_main never returns
+    output->Run();
+
+    SDL_Quit();
     return 0;
 }

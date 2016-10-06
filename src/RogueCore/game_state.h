@@ -17,8 +17,8 @@ struct DisplayInterface;
 
 struct GameState
 {
-    GameState(int seed, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input);
-    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input);
+    GameState(int seed, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input);
+    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input);
     ~GameState();
 
     void save_game(const std::string& filename);
@@ -128,7 +128,7 @@ private:
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 
     std::unique_ptr<Random> m_random; //Random number generator
-    std::unique_ptr<InputInterface> m_input_interface; //Interface for getting game input
+    std::shared_ptr<InputInterface> m_input_interface; //Interface for getting game input
     std::unique_ptr<Curses> m_curses;
     std::unique_ptr<Level> m_level;
     std::unique_ptr<Hero> m_hero;
