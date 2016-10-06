@@ -12,7 +12,7 @@ struct SdlWindow : public DisplayInterface
     ~SdlWindow();
 
     void Run();
-    void ShutDown();
+    void Quit();
 
     virtual void SetDimensions(Coord dimensions);
     virtual void Draw(_CHAR_INFO* info);

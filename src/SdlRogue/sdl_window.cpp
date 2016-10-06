@@ -204,11 +204,12 @@ inline void SdlWindow::Impl::Draw(_CHAR_INFO * info, _SMALL_RECT rect)
 
 void SdlWindow::Impl::Run()
 {
-    while (1) {
-        SDL_Event e;
+    SDL_Event e;
+    bool quit = false;
+    while (!quit) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
-                //quit = true;
+                quit = true;
             }
             else if (e.type == SDL_TEXTINPUT) {
                 std::cout << "ch:" << e.text.text << std::endl;
@@ -233,8 +234,9 @@ void SdlWindow::Impl::Run()
         for (int x = rect.Left; x <= rect.Right; ++x) {
             for (int y = rect.Top; y <= rect.Bottom; ++y) {
                 auto p = get_screen_pos({ x, y });
-
                 auto c = data[y*m_dimensions.x + x];
+
+                //todo: how to determine text or monster?
                 if (c.Char.AsciiChar >= 0x20 && c.Char.AsciiChar < 128)
                 {
                     int i = get_text_index(c.Attributes);
@@ -253,6 +255,13 @@ void SdlWindow::Impl::Run()
         }
         SDL_RenderPresent(m_renderer);
     }
+}
+
+void SdlWindow::Impl::Quit()
+{
+    SDL_Event sdlevent;
+    sdlevent.type = SDL_QUIT;
+    SDL_PushEvent(&sdlevent);
 }
 
 SMALL_RECT SdlWindow::Impl::full_rect() const
@@ -288,6 +297,11 @@ SdlWindow::~SdlWindow()
 void SdlWindow::Run()
 {
     m_impl->Run();
+}
+
+void SdlWindow::Quit()
+{
+    m_impl->Quit();
 }
 
 void SdlWindow::SetDimensions(Coord dimensions)
