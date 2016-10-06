@@ -30,12 +30,7 @@
 #define LLWALL  (0xc8)
 #define LRWALL  (0xbc)
 
-struct Coord
-{
-    int x;
-    int y;
-};
-
+#include "..\coord.h"
 
 const int H_PIXELS_PER_CHAR = 8;
 const int V_PIXELS_PER_CHAR = 16;
@@ -486,8 +481,18 @@ void test()
     }
 }
 
-int main(int argc, char** argv)
+
+#include <memory>
+#include "..\windows_console.h"
+#include "..\console_keyboard_input.h"
+#include "..\main.h"
+
+int main(int argc, char **argv)
 {
-    test();
+    std::unique_ptr<DisplayInterface> output(new WindowsConsole({ 0, 0 }));
+    std::unique_ptr<InputInterface> input(new ConsoleKeyboardInput());
+
+    game_main(argc, argv, std::move(output), std::move(input));
+
     return 0;
 }

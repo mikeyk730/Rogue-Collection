@@ -9,7 +9,7 @@
 #include "curses.h"
 #include "main.h"
 #include "misc.h"
-#include "windows_console.h"
+#include "display_interface.h"
 
 //Globals for curses
 #define BX_UL               0

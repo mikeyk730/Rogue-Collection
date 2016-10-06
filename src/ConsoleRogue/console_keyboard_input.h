@@ -1,5 +1,5 @@
 #pragma once
-#include "input_interface.h"
+#include "RogueCore\input_interface.h"
 
 struct ConsoleKeyboardInput : public InputInterface
 {

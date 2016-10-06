@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="console_keyboard_input.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="console_rogue.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="windows_console.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="windows_console.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="console_keyboard_input.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{21d3f82b-db7d-4481-a473-687ad5c63851}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

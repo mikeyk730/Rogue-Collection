@@ -23,9 +23,6 @@
     <Filter Include="Input">
       <UniqueIdentifier>{acdbf271-fb4b-455c-a681-9f64a7e53788}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Console">
-      <UniqueIdentifier>{4ae5c125-00f0-457a-a6c3-980d3435d889}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="daemon.cpp">
@@ -169,15 +166,6 @@
     <ClCompile Include="captured_input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="console_rogue.cpp">
-      <Filter>Console</Filter>
-    </ClCompile>
-    <ClCompile Include="windows_console.cpp">
-      <Filter>Console</Filter>
-    </ClCompile>
-    <ClCompile Include="console_keyboard_input.cpp">
-      <Filter>Console</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="armor.h">
@@ -320,12 +308,6 @@
     </ClInclude>
     <ClInclude Include="coord.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="windows_console.h">
-      <Filter>Console</Filter>
-    </ClInclude>
-    <ClInclude Include="console_keyboard_input.h">
-      <Filter>Console</Filter>
     </ClInclude>
     <ClInclude Include="display_interface.h">
       <Filter>Output</Filter>

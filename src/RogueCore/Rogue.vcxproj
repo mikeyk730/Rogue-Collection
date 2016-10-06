@@ -14,16 +14,18 @@
     <ProjectGuid>{E26D8B74-2734-44D9-B418-B00E890E4073}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Rogue</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>RogueCore</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -84,8 +86,6 @@
     <ClCompile Include="combo_input.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="commands.cpp" />
-    <ClCompile Include="console_keyboard_input.cpp" />
-    <ClCompile Include="console_rogue.cpp" />
     <ClCompile Include="curses.cpp" />
     <ClCompile Include="daemon.cpp" />
     <ClCompile Include="daemons.cpp" />
@@ -125,7 +125,6 @@
     <ClCompile Include="strings.cpp" />
     <ClCompile Include="things.cpp" />
     <ClCompile Include="weapons.cpp" />
-    <ClCompile Include="windows_console.cpp" />
     <ClCompile Include="wizard.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,7 +152,6 @@
     <ClInclude Include="input_interface.h" />
     <ClInclude Include="io.h" />
     <ClInclude Include="item.h" />
-    <ClInclude Include="console_keyboard_input.h" />
     <ClInclude Include="level.h" />
     <ClInclude Include="list.h" />
     <ClInclude Include="mach_dep.h" />
@@ -177,7 +175,6 @@
     <ClInclude Include="strings.h" />
     <ClInclude Include="things.h" />
     <ClInclude Include="weapons.h" />
-    <ClInclude Include="windows_console.h" />
     <ClInclude Include="wizard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
