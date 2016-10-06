@@ -1,10 +1,10 @@
 #pragma once
 
 #include <Windows.h>
-#include "screen_interface.h"
+#include "display_interface.h"
 #include "coord.h"
 
-struct WindowsConsole : public ScreenInterface
+struct WindowsConsole : public DisplayInterface
 {
     WindowsConsole(Coord origin);
     ~WindowsConsole();

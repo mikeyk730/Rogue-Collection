@@ -12,13 +12,13 @@ struct Random;
 struct InputInterface;
 struct Hero;
 struct Level;
-struct ConsoleOutput;
-struct ScreenInterface;
+struct Curses;
+struct DisplayInterface;
 
 struct GameState
 {
-    GameState(int seed, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input);
-    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input);
+    GameState(int seed, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input);
+    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input);
     ~GameState();
 
     void save_game(const std::string& filename);
@@ -31,7 +31,7 @@ struct GameState
 
     Random& random();
     InputInterface& input_interface();
-    ConsoleOutput& screen();
+    Curses& screen();
     Level& level();
     Hero& hero();
     
@@ -129,7 +129,7 @@ private:
 
     std::unique_ptr<Random> m_random; //Random number generator
     std::unique_ptr<InputInterface> m_input_interface; //Interface for getting game input
-    std::unique_ptr<ConsoleOutput> m_output_interface;
+    std::unique_ptr<Curses> m_curses;
     std::unique_ptr<Level> m_level;
     std::unique_ptr<Hero> m_hero;
     

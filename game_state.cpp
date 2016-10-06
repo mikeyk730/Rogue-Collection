@@ -4,7 +4,7 @@
 #include "game_state.h"
 #include "random.h"
 #include "input_interface.h"
-#include "screen_interface.h"
+#include "display_interface.h"
 #include "stream_input.h"
 #include "captured_input.h"
 #include "combo_input.h"
@@ -52,10 +52,10 @@ namespace
     const int s_serial_version = 6;
 }
 
-GameState::GameState(int seed, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input) :
+GameState::GameState(int seed, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input) :
     m_seed(seed),
     m_input_interface(new CapturedInput(std::move(input))),
-    m_output_interface(new ConsoleOutput(std::move(screen))),
+    m_curses(new Curses(std::move(output))),
     m_level(new Level),
     m_hero(new Hero),
     m_scrolls(new ScrollInfo),
@@ -67,8 +67,8 @@ GameState::GameState(int seed, std::unique_ptr<ScreenInterface> screen, std::uni
     init_environment();
 }
 
-GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::unique_ptr<ScreenInterface> screen, std::unique_ptr<InputInterface> input) :
-    m_output_interface(new ConsoleOutput(std::move(screen))),
+GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::unique_ptr<DisplayInterface> output, std::unique_ptr<InputInterface> input) :
+    m_curses(new Curses(std::move(output))),
     m_in_replay(true),
     m_show_replay(show_replay),
     m_log_stream("lastgame.log")
@@ -223,9 +223,9 @@ InputInterface& GameState::input_interface()
     return *m_input_interface;
 }
 
-ConsoleOutput& GameState::screen()
+Curses& GameState::screen()
 {
-    return *m_output_interface;
+    return *m_curses;
 }
 
 Hero& GameState::hero()

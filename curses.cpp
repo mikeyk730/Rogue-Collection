@@ -74,13 +74,13 @@ namespace
     const byte spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 }
 
-void ConsoleOutput::putchr(int c, int attr)
+void Curses::putchr(int c, int attr)
 {
     putchr_unrendered(c, attr);
     Render({ m_col, m_row, m_col, m_row });
 }
 
-void ConsoleOutput::putchr_unrendered(int c, int attr)
+void Curses::putchr_unrendered(int c, int attr)
 {
     CHAR_INFO ci;
     ci.Attributes = attr;
@@ -88,25 +88,25 @@ void ConsoleOutput::putchr_unrendered(int c, int attr)
     m_buffer[m_row*COLS+m_col] = ci;
 }
 
-ConsoleOutput::ConsoleOutput(std::unique_ptr<ScreenInterface> screen) :
-    m_screen(std::move(screen))
+Curses::Curses(std::unique_ptr<DisplayInterface> output) :
+    m_screen(std::move(output))
 {
 }
 
-ConsoleOutput::~ConsoleOutput()
+Curses::~Curses()
 {
     delete[] m_buffer;
     delete[] m_backup;
 }
 
 //clear screen
-void ConsoleOutput::clear()
+void Curses::clear()
 {
     blot_out(0, 0, LINES - 1, COLS - 1);
 }
 
 //Turn cursor on and off
-bool ConsoleOutput::cursor(bool enable)
+bool Curses::cursor(bool enable)
 {
     bool was_enabled = m_cursor;
     m_cursor = enable;
@@ -118,41 +118,41 @@ bool ConsoleOutput::cursor(bool enable)
 }
 
 //get curent cursor position
-void ConsoleOutput::getrc(int *r, int *c)
+void Curses::getrc(int *r, int *c)
 {
     *r = m_row;
     *c = m_col;
 }
 
 //clrtoeol
-void ConsoleOutput::clrtoeol()
+void Curses::clrtoeol()
 {
     int r, c;
     getrc(&r, &c);
     blot_out(r, c, r, COLS - 1);
 }
 
-void ConsoleOutput::mvaddstr(int r, int c, const char *s)
+void Curses::mvaddstr(int r, int c, const char *s)
 {
     move(r, c);
     addstr(s);
 }
 
-void ConsoleOutput::mvaddch(int r, int c, char chr)
+void Curses::mvaddch(int r, int c, char chr)
 {
     move(r, c);
     addch(chr);
 }
 
 //todo: get rid of entirely
-int ConsoleOutput::mvinch(int r, int c)
+int Curses::mvinch(int r, int c)
 {
     move(r, c);
     return curch();
 }
 
 //put the character on the screen and update the character position
-int ConsoleOutput::addch(byte chr)
+int Curses::addch(byte chr)
 {
     int r, c;
     byte old_attr;
@@ -215,18 +215,18 @@ int ConsoleOutput::addch(byte chr)
     return (m_row);
 }
 
-void ConsoleOutput::addstr(const char *s)
+void Curses::addstr(const char *s)
 {
     while (*s) addch(*s++);
 }
 
-void ConsoleOutput::set_attr(int bute)
+void Curses::set_attr(int bute)
 {
     if (bute < MAXATTR) m_attr = at_table[bute];
     else m_attr = bute;
 }
 
-void ConsoleOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
+void Curses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 {
     int row, col;
 
@@ -238,7 +238,7 @@ void ConsoleOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, 
 }
 
 //winit(win_name): initialize window
-void ConsoleOutput::winit(bool narrow_screen)
+void Curses::winit(bool narrow_screen)
 {
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;
@@ -253,32 +253,32 @@ void ConsoleOutput::winit(bool narrow_screen)
     move(m_row, m_col);
 }
 
-void ConsoleOutput::forcebw()
+void Curses::forcebw()
 {
     at_table = monoc_attr;
 }
 
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
-void ConsoleOutput::wdump()
+void Curses::wdump()
 {
     memcpy(m_backup, m_buffer, sizeof(CHAR_INFO)*LINES*COLS);
 }
 
 //wrestor(windex): restore the window saved on disk
-void ConsoleOutput::wrestor()
+void Curses::wrestor()
 {
     memcpy(m_buffer, m_backup, sizeof(CHAR_INFO)*LINES*COLS);
     Render();
 }
 
 //Some general drawing routines
-void ConsoleOutput::box(int ul_r, int ul_c, int lr_r, int lr_c)
+void Curses::box(int ul_r, int ul_c, int lr_r, int lr_c)
 {
     vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
 }
 
 //box: draw a box given the upper left coordinate and the lower right
-void ConsoleOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
+void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
     int i;
     bool wason;
@@ -303,12 +303,12 @@ void ConsoleOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, 
 }
 
 //center a string according to how many columns there really are
-void ConsoleOutput::center(int row, const char *string)
+void Curses::center(int row, const char *string)
 {
     mvaddstr(row, (COLS - strlen(string)) / 2, string);
 }
 
-void ConsoleOutput::printw(const char *format, ...)
+void Curses::printw(const char *format, ...)
 {
     char dest[1024 * 16];
     va_list argptr;
@@ -319,23 +319,23 @@ void ConsoleOutput::printw(const char *format, ...)
     addstr(dest);
 }
 
-void ConsoleOutput::scroll_up(int start_row, int end_row, int nlines)
+void Curses::scroll_up(int start_row, int end_row, int nlines)
 {
     move(end_row, m_col);
 }
 
-void ConsoleOutput::scroll_dn(int start_row, int end_row, int nlines)
+void Curses::scroll_dn(int start_row, int end_row, int nlines)
 {
     move(start_row, m_col);
 }
 
-void ConsoleOutput::scroll()
+void Curses::scroll()
 {
     scroll_up(0, 24, 1);
 }
 
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
-void ConsoleOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
+void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
     int r, c;
     for (r = ul_row; r <= lr_row; ++r)
@@ -350,7 +350,7 @@ void ConsoleOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
     Render({ (SHORT)ul_col, (SHORT)ul_row, (SHORT)lr_col, (SHORT)lr_row });
 }
 
-void ConsoleOutput::repchr(int chr, int cnt)
+void Curses::repchr(int chr, int cnt)
 {
     SMALL_RECT r = { m_col, m_row, (SHORT)(m_col + cnt - 1), m_row };
     while (cnt-- > 0) { 
@@ -361,13 +361,13 @@ void ConsoleOutput::repchr(int chr, int cnt)
 }
 
 //try to fixup screen after we get a control break
-void ConsoleOutput::fixup()
+void Curses::fixup()
 {
     blot_out(m_row, m_col, m_row, m_col + 1);
 }
 
 //Clear the screen in an interesting fashion
-void ConsoleOutput::implode()
+void Curses::implode()
 {
     int j, r, c, cinc = COLS / 10 / 2, er, ec;
 
@@ -387,7 +387,7 @@ void ConsoleOutput::implode()
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
-void ConsoleOutput::drop_curtain()
+void Curses::drop_curtain()
 {
     int r;
     cursor(false);
@@ -405,7 +405,7 @@ void ConsoleOutput::drop_curtain()
     m_curtain_down = true;
 }
 
-void ConsoleOutput::raise_curtain()
+void Curses::raise_curtain()
 {
     m_curtain_down = false;
 
@@ -417,7 +417,7 @@ void ConsoleOutput::raise_curtain()
     Render();
 }
 
-void ConsoleOutput::move(short y, short x)
+void Curses::move(short y, short x)
 {
     m_row = y;
     m_col = x;
@@ -425,42 +425,42 @@ void ConsoleOutput::move(short y, short x)
         ApplyMove();
 }
 
-char ConsoleOutput::curch()
+char Curses::curch()
 {
     return m_buffer[m_row*COLS+m_col].Char.AsciiChar;
 }
 
-void ConsoleOutput::mvaddch(Coord p, byte c)
+void Curses::mvaddch(Coord p, byte c)
 {
     mvaddch(p.y, p.x, c);
 }
 
-int ConsoleOutput::mvinch(Coord p)
+int Curses::mvinch(Coord p)
 {
     return mvinch(p.y, p.x);
 }
 
-void ConsoleOutput::mvaddstr(Coord p, const std::string & s)
+void Curses::mvaddstr(Coord p, const std::string & s)
 {
     mvaddstr(p.y, p.x, s.c_str());
 }
 
-int ConsoleOutput::lines() const
+int Curses::lines() const
 {
     return LINES;
 }
 
-int ConsoleOutput::columns() const
+int Curses::columns() const
 {
     return COLS;
 }
 
-void ConsoleOutput::stop_rendering()
+void Curses::stop_rendering()
 {
     m_should_render = false;
 }
 
-void ConsoleOutput::resume_rendering()
+void Curses::resume_rendering()
 {
     m_should_render = true;
     ApplyMove();
@@ -468,7 +468,7 @@ void ConsoleOutput::resume_rendering()
     ApplyCursor();
 }
 
-void ConsoleOutput::Render()
+void Curses::Render()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -476,7 +476,7 @@ void ConsoleOutput::Render()
     m_screen->Draw(m_buffer, { COLS, LINES });
 }
 
-void ConsoleOutput::Render(_SMALL_RECT rect)
+void Curses::Render(_SMALL_RECT rect)
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -484,7 +484,7 @@ void ConsoleOutput::Render(_SMALL_RECT rect)
     m_screen->Draw(m_buffer, { COLS, LINES }, rect);
 }
 
-void ConsoleOutput::ApplyMove()
+void Curses::ApplyMove()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -492,7 +492,7 @@ void ConsoleOutput::ApplyMove()
     m_screen->MoveCursor({ m_col, m_row });
 }
 
-void ConsoleOutput::ApplyCursor()
+void Curses::ApplyCursor()
 {
     if (!m_should_render || m_curtain_down)
         return;

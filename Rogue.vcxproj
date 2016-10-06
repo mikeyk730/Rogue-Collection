@@ -145,7 +145,7 @@
     <ClInclude Include="gold.h" />
     <ClInclude Include="item_class.h" />
     <ClInclude Include="monster.h" />
-    <ClInclude Include="screen_interface.h" />
+    <ClInclude Include="display_interface.h" />
     <ClInclude Include="stream_input.h" />
     <ClInclude Include="food.h" />
     <ClInclude Include="game_state.h" />

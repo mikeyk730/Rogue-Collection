@@ -303,9 +303,6 @@
     <ClInclude Include="command.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="screen_interface.h">
-      <Filter>Output</Filter>
-    </ClInclude>
     <ClInclude Include="input_interface.h">
       <Filter>Input</Filter>
     </ClInclude>
@@ -329,6 +326,9 @@
     </ClInclude>
     <ClInclude Include="console_keyboard_input.h">
       <Filter>Console</Filter>
+    </ClInclude>
+    <ClInclude Include="display_interface.h">
+      <Filter>Output</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

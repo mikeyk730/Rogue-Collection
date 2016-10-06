@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-struct ScreenInterface;
+struct DisplayInterface;
 struct _SMALL_RECT;
 struct _CHAR_INFO;
 
@@ -25,7 +25,7 @@ struct _CHAR_INFO;
 #define high()              set_attr(15)
 #define bold()              set_attr(16)
 
-struct ConsoleOutput
+struct Curses
 {
     void clear();
 
@@ -102,8 +102,8 @@ struct ConsoleOutput
 
 public:
     //mdk: extended interface
-    ConsoleOutput(std::unique_ptr<ScreenInterface> screen);
-    ~ConsoleOutput();
+    Curses(std::unique_ptr<DisplayInterface> output);
+    ~Curses();
 
     void mvaddch(Coord p, byte c);
     int mvinch(Coord p);
@@ -142,5 +142,5 @@ private:
     _CHAR_INFO* m_buffer = 0;
     _CHAR_INFO* m_backup = 0;
 
-    std::unique_ptr<ScreenInterface> m_screen;
+    std::unique_ptr<DisplayInterface> m_screen;
 };
