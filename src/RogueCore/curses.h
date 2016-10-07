@@ -3,7 +3,7 @@
 
 struct DisplayInterface;
 struct Region;
-struct _CHAR_INFO;
+struct CharInfo;
 
 #define BX_SIZE 7
 
@@ -137,8 +137,8 @@ private:
     bool m_curtain_down = false;
     bool m_should_render = true;
 
-    _CHAR_INFO* m_buffer = 0;
-    _CHAR_INFO* m_backup = 0;
+    CharInfo* m_buffer = 0;
+    CharInfo* m_backup = 0;
 
     std::shared_ptr<DisplayInterface> m_screen;
     bool disable_render = false;

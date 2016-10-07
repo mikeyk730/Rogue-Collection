@@ -3,7 +3,6 @@
 #include <vector>
 #include <deque>
 #include <mutex>
-#include <Windows.h> //todo: change interface to avoid char_info
 #include "SDL.h"
 #include "sdl_rogue.h"
 #include "utility.h"
@@ -29,14 +28,14 @@ struct SdlRogue::Impl
     ~Impl();
 
     void SetDimensions(Coord dimensions);
-    void Draw(_CHAR_INFO * info);
-    void Draw(_CHAR_INFO * info, Region rect);
+    void Draw(CharInfo * info);
+    void Draw(CharInfo * info, Region rect);
     void Run();
     void Quit();
 
 private:
     void Render();
-    void RenderRegion(CHAR_INFO* data, Coord dimensions, Region rect);
+    void RenderRegion(CharInfo* data, Coord dimensions, Region rect);
 
     Coord get_screen_pos(Coord buffer_pos);
 
@@ -64,7 +63,7 @@ private:
 
     struct ThreadData
     {
-        CHAR_INFO* m_data = 0;
+        CharInfo* m_data = 0;
         Coord m_dimensions = { 0, 0 };
         std::vector<Region> m_render_regions;
     };
@@ -231,7 +230,7 @@ void SdlRogue::Impl::Render()
 {
     std::vector<Region> regions;
     Coord dimensions;
-    CHAR_INFO* temp = 0;
+    CharInfo* temp = 0;
     {
         std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -242,13 +241,13 @@ void SdlRogue::Impl::Render()
         if (m_shared_data.m_render_regions.empty())
             return;
 
-        temp = new CHAR_INFO[dimensions.x*dimensions.y];
+        temp = new CharInfo[dimensions.x*dimensions.y];
         memcpy(temp, m_shared_data.m_data, shared_data_size());
 
         regions = m_shared_data.m_render_regions;
         m_shared_data.m_render_regions.clear();
     }
-    std::unique_ptr<CHAR_INFO[]> data(temp);
+    std::unique_ptr<CharInfo[]> data(temp);
 
     for (auto i = regions.begin(); i != regions.end(); ++i)
     {
@@ -258,7 +257,7 @@ void SdlRogue::Impl::Render()
     SDL_RenderPresent(m_renderer);
 }
 
-void SdlRogue::Impl::RenderRegion(CHAR_INFO* data, Coord dimensions, Region rect)
+void SdlRogue::Impl::RenderRegion(CharInfo* data, Coord dimensions, Region rect)
 {
     for (int x = rect.Left; x <= rect.Right; ++x) {
         for (int y = rect.Top; y <= rect.Bottom; ++y) {
@@ -334,12 +333,12 @@ void SdlRogue::Impl::SetDimensions(Coord dimensions)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_shared_data.m_dimensions = dimensions;
-        m_shared_data.m_data = new CHAR_INFO[dimensions.x*dimensions.y];
+        m_shared_data.m_data = new CharInfo[dimensions.x*dimensions.y];
     }
     SDL_SetWindowSize(m_window, m_tile_width*dimensions.x, m_tile_height*dimensions.y);
 }
 
-void SdlRogue::Impl::Draw(_CHAR_INFO * info)
+void SdlRogue::Impl::Draw(CharInfo * info)
 {
     Region r;
     {
@@ -351,7 +350,7 @@ void SdlRogue::Impl::Draw(_CHAR_INFO * info)
     Draw(info, r);
 }
 
-inline void SdlRogue::Impl::Draw(_CHAR_INFO * info, Region rect)
+inline void SdlRogue::Impl::Draw(CharInfo * info, Region rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -400,7 +399,7 @@ void SdlRogue::Impl::Quit()
 
 int SdlRogue::Impl::shared_data_size() const
 {
-    return sizeof(CHAR_INFO) * m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y;
+    return sizeof(CharInfo) * m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y;
 }
 
 Region SdlRogue::Impl::shared_data_full_region()
@@ -442,12 +441,12 @@ void SdlRogue::SetDimensions(Coord dimensions)
     m_impl->SetDimensions(dimensions);
 }
 
-void SdlRogue::Draw(_CHAR_INFO * info)
+void SdlRogue::Draw(CharInfo * info)
 {
     m_impl->Draw(info);
 }
 
-void SdlRogue::Draw(_CHAR_INFO * info, Region r)
+void SdlRogue::Draw(CharInfo * info, Region r)
 {
     m_impl->Draw(info, r);
 }

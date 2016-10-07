@@ -18,20 +18,20 @@ void WindowsConsole::SetDimensions(Coord dimensions)
     m_dimensions = dimensions;
 }
 
-void WindowsConsole::Draw(_CHAR_INFO* info)
+void WindowsConsole::Draw(CharInfo* info)
 {
     COORD dwBufferSize = { m_dimensions.x, m_dimensions.y };
     COORD dwBufferCoord = { 0, 0 };
     SMALL_RECT rcRegion = { m_origin.x, m_origin.y, m_origin.x + m_dimensions.x - 1, m_origin.y + m_dimensions.y - 1 };
-    WriteConsoleOutput(hConsole, info, dwBufferSize, dwBufferCoord, &rcRegion);
+    WriteConsoleOutput(hConsole, (CHAR_INFO*)info, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
-void WindowsConsole::Draw(_CHAR_INFO* info, Region rect)
+void WindowsConsole::Draw(CharInfo* info, Region rect)
 {
     COORD dwBufferSize = { m_dimensions.x, m_dimensions.y };
     COORD dwBufferCoord = { rect.Left, rect.Top };
     SMALL_RECT rcRegion = { m_origin.x + rect.Left, m_origin.y + rect.Top, m_origin.x + rect.Right, m_origin.y + rect.Bottom };
-    WriteConsoleOutput(hConsole, info, dwBufferSize, dwBufferCoord, &rcRegion);
+    WriteConsoleOutput(hConsole, (CHAR_INFO*)info, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
 void WindowsConsole::MoveCursor(Coord pos)

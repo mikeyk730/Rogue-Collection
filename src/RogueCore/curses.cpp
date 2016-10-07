@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <Windows.h> //todo: change interface to avoid char_info
 
 #include "rogue.h"
 #include "curses.h"
 #include "main.h"
 #include "misc.h"
 #include "display_interface.h"
+#include "mach_dep.h"
 
 //Globals for curses
 #define BX_UL               0
@@ -76,7 +76,7 @@ namespace
 
 void Curses::putchr(int c, int attr)
 {
-    CHAR_INFO ci;
+    CharInfo ci;
     ci.Attributes = attr;
     ci.Char.AsciiChar = c;
     m_buffer[m_row*COLS+m_col] = ci;
@@ -261,9 +261,9 @@ void Curses::winit(bool narrow_screen)
     m_screen->SetDimensions({ COLS, LINES });
     m_screen->SetCursor(false);
 
-    m_buffer = new CHAR_INFO[LINES*COLS];
-    m_backup = new CHAR_INFO[LINES*COLS];
-    memset(m_buffer, ' ', sizeof(CHAR_INFO)*LINES*COLS);
+    m_buffer = new CharInfo[LINES*COLS];
+    m_backup = new CharInfo[LINES*COLS];
+    memset(m_buffer, ' ', sizeof(CharInfo)*LINES*COLS);
 
     move(m_row, m_col);
 }
@@ -276,13 +276,13 @@ void Curses::forcebw()
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void Curses::wdump()
 {
-    memcpy(m_backup, m_buffer, sizeof(CHAR_INFO)*LINES*COLS);
+    memcpy(m_backup, m_buffer, sizeof(CharInfo)*LINES*COLS);
 }
 
 //wrestor(windex): restore the window saved on disk
 void Curses::wrestor()
 {
-    memcpy(m_buffer, m_backup, sizeof(CHAR_INFO)*LINES*COLS);
+    memcpy(m_buffer, m_backup, sizeof(CharInfo)*LINES*COLS);
     Render();
 }
 
@@ -321,7 +321,7 @@ void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_
 
     disable_render = was_disabled;
     if (!disable_render)
-        Render({ (SHORT)ul_c, (SHORT)ul_r, (SHORT)lr_c, (SHORT)lr_r });
+        Render({ ul_c, ul_r, lr_c, lr_r });
 }
 
 //center a string according to how many columns there really are
@@ -374,7 +374,7 @@ void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
     move(ul_row, ul_col);
     disable_render = was_disabled;
     if (!disable_render)
-        Render({ (SHORT)ul_col, (SHORT)ul_row, (SHORT)lr_col, (SHORT)lr_row });
+        Render({ ul_col, ul_row, lr_col, lr_row });
 }
 
 void Curses::repchr(int chr, int cnt)
@@ -382,7 +382,7 @@ void Curses::repchr(int chr, int cnt)
     bool was_disabled = disable_render;
     disable_render = true;
 
-    Region r = { m_col, m_row, (SHORT)(m_col + cnt - 1), m_row };
+    Region r = { m_col, m_row, m_col + cnt - 1, m_row };
     while (cnt-- > 0) { 
         putchr(chr, m_attr);
         m_col++;
@@ -408,7 +408,7 @@ void Curses::implode()
     for (r = 0, c = 0, ec = COLS - 1; r < 10; r++, c += cinc, er--, ec -= cinc)
     {
         vbox(sng_box, r, c, er, ec);
-        Sleep(25);
+        sleep(25);
         for (j = r + 1; j <= er - 1; j++)
         {
             move(j, c + 1); repchr(' ', cinc - 1);
@@ -430,7 +430,7 @@ void Curses::drop_curtain()
     {
         move(r, 1);
         repchr(0xb1, COLS - 2);
-        Sleep(20);
+        sleep(20);
     }
     move(0, 0);
     standend();
@@ -441,10 +441,10 @@ void Curses::raise_curtain()
 {
     m_curtain_down = false;
 
-    for (short r = LINES - 2; r > 0; r--)
+    for (int r = LINES - 2; r > 0; r--)
     {
-        Render({1, r, (short)COLS-2, r});
-        Sleep(20);
+        Render({1, r, COLS-2, r});
+        sleep(20);
     }
     Render();
 }

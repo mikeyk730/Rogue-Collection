@@ -28,5 +28,29 @@ bool is_scroll_lock_on()
 {
     return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
 }
+#elif
+
+void beep()
+{
+}
+
+void sleep(int ms)
+{
+}
+
+bool is_caps_lock_on()
+{
+    return false;
+}
+
+bool is_num_lock_on()
+{
+    return false;
+}
+
+bool is_scroll_lock_on()
+{
+    return false;
+}
 
 #endif

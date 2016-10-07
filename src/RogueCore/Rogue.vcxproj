@@ -138,6 +138,7 @@
     <ClInclude Include="curses.h" />
     <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />
+    <ClInclude Include="display_interface_types.h" />
     <ClInclude Include="env.h" />
     <ClInclude Include="fight.h" />
     <ClInclude Include="combo_input.h" />

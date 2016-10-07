@@ -312,5 +312,8 @@
     <ClInclude Include="display_interface.h">
       <Filter>Output</Filter>
     </ClInclude>
+    <ClInclude Include="display_interface_types.h">
+      <Filter>Output</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
