@@ -6,7 +6,6 @@
 #include "SDL.h"
 #include "sdl_window.h"
 #include "utility.h"
-#include "res_path.h"
 #include "RogueCore/rogue.h"
 #include "RogueCore/coord.h"
 
@@ -35,6 +34,8 @@ private:
 
     Coord get_screen_pos(Coord buffer_pos);
 
+    bool render_as_text(int c);
+
     int tile_index(unsigned char c);
     bool use_inverse(unsigned short attr);
     SDL_Rect get_tile_rect(int i, bool use_inverse);
@@ -53,6 +54,7 @@ private:
 
     int m_tile_height = 0;
     int m_tile_width = 0;
+    bool m_force_text = false;
 
     struct ThreadData
     {
@@ -118,7 +120,7 @@ SdlWindow::Impl::Impl()
     assert(m_tile_height == text->h / TEXT_STATES);
     assert(m_tile_width == text->w / TEXT_COUNT);
 
-    m_window = SDL_CreateWindow("Rogue", 100, 100, m_tile_width * 80, m_tile_height * 25, SDL_WINDOW_SHOWN);
+    m_window = SDL_CreateWindow("Rogue", 600, 100, m_tile_width * 80, m_tile_height * 25, SDL_WINDOW_SHOWN);
     if (m_window == nullptr)
         throw_error("SDL_CreateWindow");
 
@@ -173,26 +175,24 @@ void SdlWindow::Impl::RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT
 
             //todo: how to correctly determine text or monster/passage/wall?
             //the code below works for original tile set, but not others
-            if (c >= 0x20 && c < 128 ||
-                c == PASSAGE || c == HWALL || c == VWALL || c == LLWALL || c == LRWALL || c == URWALL || c == ULWALL ||
-                c == 0xcc || c == 0xb9 || //double line drawing
-                c == 0xda || c == 0xb3 || c == 0xc0 || c == 0xc4 || c == 0xbf || c == 0xd9 || //line drawing
-                c == 0x11 || c == 0x19 || c == 0x1a || c == 0x1b) //used in help
+            if (render_as_text(c))
             {
-                int i = get_text_index(info.Attributes);
+                short attr = info.Attributes;
+                if (use_inverse(attr))
+                    attr = 112;
+                int i = get_text_index(attr);
                 auto r = get_text_rect(c, i);
                 render_texture_at(m_text, m_renderer, p, r);
             }
             else {
                 auto i = tile_index(info.Char.AsciiChar);
-                if (i != -1) {
-                    bool inv = use_inverse(info.Attributes);
-                    auto r = get_tile_rect(i, inv);
-                    render_texture_at(m_tiles, m_renderer, p, r);
+                if (i == -1)
+                {
+                    continue;
                 }
-                else {
-                    throw_error(std::string("Unsupported char ") + (char)c);
-                }
+                bool inv = use_inverse(info.Attributes);
+                auto r = get_tile_rect(i, inv);
+                render_texture_at(m_tiles, m_renderer, p, r);
             }
         }
     }
@@ -204,6 +204,18 @@ inline Coord SdlWindow::Impl::get_screen_pos(Coord buffer_pos)
     p.x = buffer_pos.x * m_tile_width;
     p.y = buffer_pos.y * m_tile_height;
     return p;
+}
+
+bool SdlWindow::Impl::render_as_text(int c)
+{ 
+    if (m_force_text)
+        return true;
+
+    return (c >= 0x20 && c < 128 ||
+        c == PASSAGE || c == HWALL || c == VWALL || c == LLWALL || c == LRWALL || c == URWALL || c == ULWALL ||
+        c == 0xcc || c == 0xb9 || //double line drawing
+        c == 0xda || c == 0xb3 || c == 0xc0 || c == 0xc4 || c == 0xbf || c == 0xd9 || //line drawing
+        c == 0x11 || c == 0x19 || c == 0x1a || c == 0x1b);
 }
 
 inline int SdlWindow::Impl::get_text_index(unsigned short attr)
@@ -273,7 +285,6 @@ void SdlWindow::Impl::Run()
                 quit = true;
             }
             else if (e.type == SDL_TEXTINPUT) {
-                std::cout << "ch:" << e.text.text << std::endl;
                 //key = e.text.text[0];
             }
             else if (e.type == SDL_KEYUP) {

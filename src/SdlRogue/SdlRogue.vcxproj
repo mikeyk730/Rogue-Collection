@@ -164,7 +164,6 @@
     <ClInclude Include="utility.h" />
     <ClInclude Include="sdl_keyboard_input.h" />
     <ClInclude Include="sdl_window.h" />
-    <ClInclude Include="res_path.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

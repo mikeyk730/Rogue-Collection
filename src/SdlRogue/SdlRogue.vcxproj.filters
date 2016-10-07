@@ -6,9 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="res_path.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="sdl_keyboard_input.h">
       <Filter>Source</Filter>
     </ClInclude>
