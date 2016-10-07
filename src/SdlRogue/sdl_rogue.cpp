@@ -116,11 +116,13 @@ private:
 
     //todo: 2 classes
 public:
-    char GetNextChar(bool);
+    char GetNextChar(bool do_key_state);
     virtual std::string GetNextString(int size);
 private:
     void HandleEventText(const SDL_Event& e);
     void HandleEventKeyDown(const SDL_Event& e);
+    void HandleEventKeyUp(const SDL_Event& e);
+
     SDL_Keycode TranslateNumPad(SDL_Keycode keycode, uint16_t modifiers);
     char TranslateKey(SDL_Keycode keycode, uint16_t modifiers);
 
@@ -382,7 +384,7 @@ void SdlRogue::Impl::Run()
                 HandleEventKeyDown(e);
             }
             else if (e.type == SDL_KEYUP) {
-                m_input_cv.notify_all();
+                HandleEventKeyUp(e);
             }
         }
         Render();
@@ -496,7 +498,7 @@ char SdlRogue::Impl::GetNextChar(bool do_key_state)
 {
     std::unique_lock<std::mutex> lock(m_input_mutex);
     while (m_buffer.empty()) {
-        if(do_key_state)
+        if (do_key_state)
             handle_key_state();
         m_input_cv.wait(lock);
     }
@@ -562,11 +564,11 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
     m_input_cv.notify_all();
 }
 
-//
-
 char ApplyShift(char c, uint16_t modifiers)
 {
-    if ((modifiers & KMOD_SHIFT) != 0)
+    bool caps((modifiers & KMOD_CAPS) != 0);
+    bool shift((modifiers & KMOD_SHIFT) != 0);
+    if (caps ^ shift)
         return toupper(c);
     return c;
 }
@@ -641,4 +643,13 @@ void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
     std::lock_guard<std::mutex> lock(m_input_mutex);
     m_buffer.push_back(c);
     m_input_cv.notify_all();
+}
+
+void SdlRogue::Impl::HandleEventKeyUp(const SDL_Event & e)
+{
+    if (e.key.keysym.sym == SDLK_SCROLLLOCK ||
+        e.key.keysym.sym == SDLK_CAPSLOCK ||
+        e.key.keysym.sym == SDLK_NUMLOCKCLEAR){
+        m_input_cv.notify_all();
+    }
 }
