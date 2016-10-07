@@ -21,6 +21,7 @@
 #include "pack.h"
 #include "agent.h"
 #include "input_interface.h"
+#include "mach_dep.h"
 
 #define PT(i,j)  ((COLS==40)?i:j)
 
@@ -522,6 +523,12 @@ char *noterse(char *str)
 void clear_typeahead_buffer()
 {
     game->typeahead.clear();
+}
+
+void tick_pause()
+{
+    if (!game->in_replay())
+        sleep(50);
 }
 
 std::ostream& write_string(std::ostream& out, const std::string& s) {

@@ -6,6 +6,7 @@
 #include "io.h"
 #include "stream_input.h"
 #include "rogue.h"
+#include "mach_dep.h"
 
 namespace
 {
@@ -96,6 +97,10 @@ char StreamInput::GetNextChar()
         return 0;
     }
 
+    int time = m_shared_data->m_throttle;
+    lock.unlock();
+    sleep(time);
+
     return c;
 }
 
@@ -133,6 +138,10 @@ std::string StreamInput::GetNextString(int size)
         OnStreamEnd();
         return "";
     }
+
+    int time = m_shared_data->m_throttle;
+    lock.unlock();
+    sleep(time);
 
     return s;
 }

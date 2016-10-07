@@ -9,8 +9,7 @@ void beep()
         Beep(750, 300);
 }
 
-void tick_pause()
+void sleep(int ms)
 {
-    if(!game->in_replay())
-        Sleep(50);
+    Sleep(ms);
 }

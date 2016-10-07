@@ -1,5 +1,6 @@
 #include <cassert>
 #include <map>
+#include <vector>
 #include <mutex>
 #include <Windows.h> //todo: change interface to avoid char_info and small_rect
 #include "SDL.h"
@@ -11,6 +12,8 @@
 
 struct SdlWindow::Impl
 {
+    const Coord EMPTY_COORD = { 0, 0 };
+
     const int TILE_COUNT = 78;
     const int TILE_STATES = 2;
 
@@ -27,6 +30,8 @@ struct SdlWindow::Impl
     void Quit();
 
 private:
+    void RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT rect);
+
     Coord get_screen_pos(Coord buffer_pos);
 
     int tile_index(unsigned char c);
@@ -36,8 +41,8 @@ private:
     int get_text_index(unsigned short attr);
     SDL_Rect get_text_rect(int c, int i);
 
-    SMALL_RECT full_rect() const;
-    int data_size() const;
+    int shared_data_size() const;       //must have mutex before calling
+    SMALL_RECT shared_data_full_rect(); //must have mutex before calling
 
 private:
     SDL_Window* m_window = 0;
@@ -50,11 +55,12 @@ private:
 
     struct ThreadData
     {
-        CHAR_INFO* m_data;
+        CHAR_INFO* m_data = 0;
+        Coord m_dimensions = { 0, 0 };
+        std::vector<SMALL_RECT> m_render_regions;
     };
     ThreadData m_shared_data;
     std::mutex m_mutex;
-    Coord m_dimensions;
 
     std::map<int, int> m_attr_index = {
         {  7,  0 },
@@ -102,7 +108,6 @@ private:
 
 SdlWindow::Impl::Impl()
 {
-    m_dimensions = { 80, 25 };
     SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "tiles.bmp"));
     //SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "sprites.bmp"));
     m_tile_height = tiles->h / TILE_STATES;
@@ -112,7 +117,7 @@ SdlWindow::Impl::Impl()
     assert(m_tile_height == text->h / TEXT_STATES);
     assert(m_tile_width == text->w / TEXT_COUNT);
 
-    m_window = SDL_CreateWindow("Rogue", 100, 100, m_tile_width * m_dimensions.x, m_tile_height * m_dimensions.y, SDL_WINDOW_SHOWN);
+    m_window = SDL_CreateWindow("Rogue", 100, 100, m_tile_width * 80, m_tile_height * 25, SDL_WINDOW_SHOWN);
     if (m_window == nullptr)
         throw_error("SDL_CreateWindow");
 
@@ -157,6 +162,41 @@ inline SDL_Rect SdlWindow::Impl::get_tile_rect(int i, bool use_inverse)
     return r;
 }
 
+void SdlWindow::Impl::RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT rect)
+{
+    for (int x = rect.Left; x <= rect.Right; ++x) {
+        for (int y = rect.Top; y <= rect.Bottom; ++y) {
+            auto p = get_screen_pos({ x, y });
+            auto info = data[y*dimensions.x + x];
+            int c = (unsigned char)info.Char.AsciiChar;
+
+            //todo: how to correctly determine text or monster/passage/wall?
+            //the code below works for original tile set, but not others
+            if (c >= 0x20 && c < 128 ||
+                c == PASSAGE || c == HWALL || c == VWALL || c == LLWALL || c == LRWALL || c == URWALL || c == ULWALL ||
+                c == 0xcc || c == 0xb9 || //double line drawing
+                c == 0xda || c == 0xb3 || c == 0xc0 || c == 0xc4 || c == 0xbf || c == 0xd9 || //line drawing
+                c == 0x11 || c == 0x19 || c == 0x1a || c == 0x1b) //used in help
+            {
+                int i = get_text_index(info.Attributes);
+                auto r = get_text_rect(c, i);
+                render_texture_at(m_text, m_renderer, p, r);
+            }
+            else {
+                auto i = tile_index(info.Char.AsciiChar);
+                if (i != -1) {
+                    bool inv = use_inverse(info.Attributes);
+                    auto r = get_tile_rect(i, inv);
+                    render_texture_at(m_tiles, m_renderer, p, r);
+                }
+                else {
+                    throw_error(std::string("Unsupported char ") + (char)c);
+                }
+            }
+        }
+    }
+}
+
 inline Coord SdlWindow::Impl::get_screen_pos(Coord buffer_pos)
 {
     Coord p;
@@ -185,20 +225,36 @@ inline SDL_Rect SdlWindow::Impl::get_text_rect(int c, int i)
 
 void SdlWindow::Impl::SetDimensions(Coord dimensions)
 {
-    m_dimensions = dimensions;
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_shared_data.m_data = new CHAR_INFO[m_dimensions.x*m_dimensions.y];
+    m_shared_data.m_dimensions = dimensions;
+    m_shared_data.m_data = new CHAR_INFO[dimensions.x*dimensions.y];
 }
 
 void SdlWindow::Impl::Draw(_CHAR_INFO * info)
 {
-    Draw(info, full_rect());
+    SMALL_RECT r;
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        r = shared_data_full_rect();
+    }
+    Draw(info, r);
 }
 
 inline void SdlWindow::Impl::Draw(_CHAR_INFO * info, _SMALL_RECT rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    memcpy(m_shared_data.m_data, info, data_size());
+
+    //If we're behind on rendering, render the full screen without worrying about
+    //the individual rects.
+    if (m_shared_data.m_render_regions.size() > 50) {
+        m_shared_data.m_render_regions.clear();
+        m_shared_data.m_render_regions.push_back(shared_data_full_rect());
+    }
+    else {
+        m_shared_data.m_render_regions.push_back(rect);
+    }
+
+    memcpy(m_shared_data.m_data, info, shared_data_size());
 }
 
 void SdlWindow::Impl::Run()
@@ -220,47 +276,32 @@ void SdlWindow::Impl::Run()
             }
         }
 
-        CHAR_INFO* temp = new CHAR_INFO[m_dimensions.x*m_dimensions.y];
+        std::vector<SMALL_RECT> regions;
+        Coord dimensions;
+        CHAR_INFO* temp = 0;
         {
             std::lock_guard<std::mutex> lock(m_mutex);
-            memcpy(temp, m_shared_data.m_data, data_size());
+
+            dimensions = m_shared_data.m_dimensions;
+            if (dimensions == EMPTY_COORD)
+                continue;
+
+            if (m_shared_data.m_render_regions.empty())
+                continue;
+
+            temp = new CHAR_INFO[dimensions.x*dimensions.y];
+            memcpy(temp, m_shared_data.m_data, shared_data_size());
+
+            regions = m_shared_data.m_render_regions;
+            m_shared_data.m_render_regions.clear();
         }
         std::unique_ptr<CHAR_INFO[]> data(temp);
 
-        auto rect = full_rect();
-
-        SDL_RenderClear(m_renderer);
-        for (int x = rect.Left; x <= rect.Right; ++x) {
-            for (int y = rect.Top; y <= rect.Bottom; ++y) {
-                auto p = get_screen_pos({ x, y });
-                auto info = data[y*m_dimensions.x + x];
-                int c = (unsigned char)info.Char.AsciiChar;
-
-                //todo: how to correctly determine text or monster/passage/wall?
-                //the code below works for original tile set, but not others
-                if (c >= 0x20 && c < 128 || 
-                    c == PASSAGE || c == HWALL || c == VWALL || c == LLWALL || c == LRWALL || c == URWALL || c == ULWALL ||
-                    c == 0xcc || c == 0xb9 || //double line drawing
-                    c == 0xda || c == 0xb3 || c == 0xc0 || c == 0xc4 || c == 0xbf || c == 0xd9 || //line drawing
-                    c == 0x11 || c == 0x19 || c == 0x1a || c == 0x1b) //used in help
-                {
-                    int i = get_text_index(info.Attributes);
-                    auto r = get_text_rect(c, i);
-                    render_texture_at(m_text, m_renderer, p, r);
-                }
-                else {
-                    auto i = tile_index(info.Char.AsciiChar);
-                    if (i != -1) {
-                        bool inv = use_inverse(info.Attributes);
-                        auto r = get_tile_rect(i, inv);
-                        render_texture_at(m_tiles, m_renderer, p, r);
-                    }
-                    else {
-                        bool m = true;
-                    }
-                }
-            }
+        for (auto i = regions.begin(); i != regions.end(); ++i)
+        {
+            RenderRegion(data.get(), dimensions, *i);
         }
+
         SDL_RenderPresent(m_renderer);
     }
 }
@@ -272,20 +313,19 @@ void SdlWindow::Impl::Quit()
     SDL_PushEvent(&sdlevent);
 }
 
-SMALL_RECT SdlWindow::Impl::full_rect() const
+int SdlWindow::Impl::shared_data_size() const
+{
+    return sizeof(CHAR_INFO) * m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y;
+}
+
+SMALL_RECT SdlWindow::Impl::shared_data_full_rect()
 {
     SMALL_RECT r;
     r.Left = 0;
     r.Top = 0;
-    r.Right = m_dimensions.x - 1;
-    r.Bottom = m_dimensions.y - 1;
-
+    r.Right = short(m_shared_data.m_dimensions.x - 1);
+    r.Bottom = short(m_shared_data.m_dimensions.y - 1);
     return r;
-}
-
-int SdlWindow::Impl::data_size() const
-{
-    return sizeof(CHAR_INFO) * m_dimensions.x * m_dimensions.y;
 }
 
 

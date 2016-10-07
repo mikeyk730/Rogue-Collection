@@ -53,6 +53,7 @@ public:
         bool m_canceled = false;
         int m_steps = 0;
         bool m_stream_empty = false;
+        int m_throttle = 0;
     };
 
 private:
