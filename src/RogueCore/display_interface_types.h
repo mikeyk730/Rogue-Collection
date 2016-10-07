@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef _WIN32
+#include <Windows.h>
+typedef CHAR_INFO CharInfo;
+#elif
 struct CharInfo {
     union {
         wchar_t UnicodeChar;
@@ -7,6 +11,7 @@ struct CharInfo {
     } Char;
     short Attributes;
 };
+#endif
 
 struct Region
 {

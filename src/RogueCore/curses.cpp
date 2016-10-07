@@ -231,7 +231,7 @@ public:
 
 private:
     void MoveAddCharacter(int r, int c, char chr, bool is_text);
-    int AddCharacter(int c, bool is_text);
+    int AddCharacter(byte c, bool is_text);
     void PutCharacter(int c, int attr, bool is_text);
 
     void Render();
@@ -359,7 +359,7 @@ int Curses::addch(byte chr)
     return AddCharacter(chr, true);
 }
 
-int Curses::AddCharacter(int chr, bool is_text)
+int Curses::AddCharacter(byte chr, bool is_text)
 {
     int r, c;
     byte old_attr;
