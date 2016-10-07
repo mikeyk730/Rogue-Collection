@@ -569,15 +569,15 @@ bool do_record_macro()
     char *cp = prbuf;
 
     msg("F9 was %s, enter new macro: ", game->macro.c_str());
-    if (getinfo(prbuf, MACROSZ - 1) != ESCAPE)
+    if (getinfo(prbuf, MACROSZ - 1) != ESCAPE) {
         do {
             if (*cp != CTRL('F'))
                 *buf++ = *cp;
         } while (*cp++);
 
-        msg("");
         clear_typeahead_buffer();
         game->macro = buffer;
-
-        return false;
+    }
+    msg("");
+    return false;
 }

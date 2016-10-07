@@ -120,10 +120,52 @@ public:
 private:
     void HandleEventText(const SDL_Event& e);
     void HandleEventKeyDown(const SDL_Event& e);
+    SDL_Keycode TranslateNumPad(SDL_Keycode keycode, uint16_t modifiers);
+    char TranslateKey(SDL_Keycode keycode, uint16_t modifiers);
+
 
     std::deque<unsigned char> m_buffer;
     std::mutex m_input_mutex;
     std::condition_variable m_input_cv;
+
+    std::map<SDL_Keycode, SDL_Keycode> m_numpad = {
+        { SDLK_KP_0, SDLK_INSERT },
+        { SDLK_KP_1, SDLK_END },
+        { SDLK_KP_2, SDLK_DOWN },
+        { SDLK_KP_3, SDLK_PAGEDOWN },
+        { SDLK_KP_4, SDLK_LEFT },
+        { SDLK_KP_6, SDLK_RIGHT },
+        { SDLK_KP_7, SDLK_HOME },
+        { SDLK_KP_8, SDLK_UP },
+        { SDLK_KP_9, SDLK_PAGEUP },
+        { SDLK_KP_ENTER, SDLK_RETURN },
+    };
+
+    std::map<SDL_Keycode, unsigned char> m_keymap = {
+        { SDLK_RETURN,   '\r' },
+        { SDLK_BACKSPACE,'\b' },
+        { SDLK_ESCAPE,    ESCAPE },
+        { SDLK_HOME,     'y' },
+        { SDLK_UP,       'k' },
+        { SDLK_PAGEUP,   'u' },
+        { SDLK_LEFT,     'h' },
+        { SDLK_RIGHT,    'l' },
+        { SDLK_END,      'b' },
+        { SDLK_DOWN,     'j' },
+        { SDLK_PAGEDOWN, 'n' },
+        { SDLK_INSERT,   '>' },
+        { SDLK_DELETE,   's' },
+        { SDLK_F1,       '?' },
+        { SDLK_F2,       '/' },
+        { SDLK_F3,       'a' },
+        { SDLK_F4,       CTRL('R') },
+        { SDLK_F5,       'c' },
+        { SDLK_F6,       'D' },
+        { SDLK_F7,       'i' },
+        { SDLK_F8,       '^' },
+        { SDLK_F9,       CTRL('F') },
+        { SDLK_F10,      '!' },
+    };
 };
 
 SdlRogue::Impl::Impl()
@@ -514,25 +556,79 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
     m_input_cv.notify_all();
 }
 
-char TranslateKey(const SDL_Event & e)
-{
-    //handle esc, backspace, directions, numpad, function keys, return, ctrl-modified, ins, del
-    //how to read scroll lock, etc?
-    switch (e.key.keysym.sym)
-    {
-    case SDLK_LEFT:
-        return 'h';
-    case SDLK_RETURN:
-        return '\r';
-    }
+//
 
+char ApplyShift(char c, uint16_t modifiers)
+{
+    if ((modifiers & KMOD_SHIFT) != 0)
+        return toupper(c);
+    return c;
+}
+
+bool IsLetterKey(SDL_Keycode keycode)
+{
+    return (keycode >= 'a' && keycode <= 'z');
+}
+
+bool IsDirectionKey(SDL_Keycode keycode)
+{
+    switch (keycode)
+    {
+    case 'h':
+    case 'j':
+    case 'k':
+    case 'l':
+    case 'y':
+    case 'u':
+    case 'b':
+    case 'n':
+        return true;
+    }
+    return false;
+}
+
+SDL_Keycode SdlRogue::Impl::TranslateNumPad(SDL_Keycode keycode, uint16_t modifiers)
+{
+    if ((modifiers & KMOD_NUM) == 0){
+        auto i = m_numpad.find(keycode);
+        if (i != m_numpad.end())
+        {
+            return i->second;
+        }
+    }
+    return keycode;
+}
+
+char SdlRogue::Impl::TranslateKey(SDL_Keycode keycode, uint16_t modifiers)
+{
+    if (modifiers & KMOD_CTRL) {
+        if (IsLetterKey(keycode)) {
+            return CTRL(keycode);
+        }
+    }
+    else if (modifiers & KMOD_ALT) {
+        if (keycode == SDLK_F9) {
+            return 'F';
+        }
+    }
+    else {
+        auto i = m_keymap.find(keycode);
+        if (i != m_keymap.end())
+        {
+            char c = i->second;
+            if (IsDirectionKey(c))
+                return ApplyShift(c, modifiers);
+            return c;
+        }
+    }
 
     return 0;
 }
 
 void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
 {
-    char c = TranslateKey(e);
+    auto keycode = TranslateNumPad(e.key.keysym.sym, e.key.keysym.mod);
+    char c = TranslateKey(keycode, e.key.keysym.mod);
     if (c == 0)
         return;
 
