@@ -370,21 +370,21 @@ inline void SdlRogue::Impl::Draw(CharInfo * info, Region rect)
 void SdlRogue::Impl::Run()
 {
     SDL_Event e;
-    bool quit = false;
-    while (!quit) {
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) {
-                quit = true;
-            }
-            else if (e.type == SDL_TEXTINPUT) {
-                HandleEventText(e);
-            }
-            else if (e.type == SDL_KEYDOWN) {
-                HandleEventKeyDown(e);
-            }
-            else if (e.type == SDL_KEYUP) {
-                HandleEventKeyUp(e);
-            }
+    while (SDL_WaitEvent(&e)) {
+        if (e.type == SDL_QUIT) {
+            return;
+        }
+        else if (e.type == SDL_TEXTEDITING) {
+            continue;
+        }
+        else if (e.type == SDL_TEXTINPUT) {
+            HandleEventText(e);
+        }
+        else if (e.type == SDL_KEYDOWN) {
+            HandleEventKeyDown(e);
+        }
+        else if (e.type == SDL_KEYUP) {
+            HandleEventKeyUp(e);
         }
         Render();
     }
@@ -444,11 +444,17 @@ void SdlRogue::SetDimensions(Coord dimensions)
 void SdlRogue::Draw(CharInfo * info)
 {
     m_impl->Draw(info);
+    SDL_Event sdlevent;
+    sdlevent.type = SDL_USEREVENT;
+    SDL_PushEvent(&sdlevent);
 }
 
 void SdlRogue::Draw(CharInfo * info, Region r)
 {
     m_impl->Draw(info, r);
+    SDL_Event sdlevent;
+    sdlevent.type = SDL_USEREVENT;
+    SDL_PushEvent(&sdlevent);
 }
 
 void SdlRogue::MoveCursor(Coord pos)
