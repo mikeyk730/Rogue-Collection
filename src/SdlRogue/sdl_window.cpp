@@ -240,15 +240,26 @@ void SdlWindow::Impl::Draw(_CHAR_INFO * info)
     Draw(info, r);
 }
 
+bool equal(SMALL_RECT r1, SMALL_RECT r2)
+{
+    return (r1.Left == r2.Left &&
+        r1.Top == r2.Top &&
+        r1.Right == r2.Right &&
+        r1.Bottom == r2.Bottom);
+}
+
 inline void SdlWindow::Impl::Draw(_CHAR_INFO * info, _SMALL_RECT rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    //If we're behind on rendering, render the full screen without worrying about
-    //the individual rects.
-    if (m_shared_data.m_render_regions.size() > 50) {
+    auto full_region = shared_data_full_rect();
+
+    //If we're adding a full render to the queue, we can ignore any previous regions.
+    //If we're behind on rendering, clear the queue and do a single full render.
+    if (equal(rect, full_region) || m_shared_data.m_render_regions.size() > 50)
+    {
         m_shared_data.m_render_regions.clear();
-        m_shared_data.m_render_regions.push_back(shared_data_full_rect());
+        m_shared_data.m_render_regions.push_back(full_region);
     }
     else {
         m_shared_data.m_render_regions.push_back(rect);
