@@ -37,17 +37,17 @@ struct SdlRogue::Impl
 private:
     void Render();
     void RenderRegion(CharInfo* info, bool* text_mask, Coord dimensions, Region rect);
+    void RenderText(CharInfo info, SDL_Rect r);
+    void RenderTile(CharInfo info, SDL_Rect r);
 
     Coord get_screen_pos(Coord buffer_pos);
-
-    bool render_as_text(int c, int y);
 
     int tile_index(unsigned char c);
     bool use_inverse(unsigned short attr);
     SDL_Rect get_tile_rect(int i, bool use_inverse);
 
     int get_text_index(unsigned short attr);
-    SDL_Rect get_text_rect(int c, int i);
+    SDL_Rect get_text_rect(unsigned char c, int i);
 
     int shared_data_size() const;         //must have mutex before calling
     Region shared_data_full_region();     //must have mutex before calling
@@ -64,9 +64,6 @@ private:
 
     TileConfig m_text_cfg;
     Coord m_text_dimensions = { 0, 0 };
-
-    bool m_force_text = false;
-    bool m_force_tile = false;
 
     struct ThreadData
     {
@@ -191,7 +188,7 @@ SdlRogue::Impl::Impl()
 {
     m_tile_cfg = pc_tiles;
     m_tile_cfg = atari_tiles;
-    //m_force_tile = true;
+
     SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + m_tile_cfg.filename));
     m_tile_dimensions.x = tiles->w / m_tile_cfg.count;
     m_tile_dimensions.y = tiles->h / m_tile_cfg.states;
@@ -288,42 +285,54 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensi
 {
     for (int x = rect.Left; x <= rect.Right; ++x) {
         for (int y = rect.Top; y <= rect.Bottom; ++y) {
-            auto p = get_screen_pos({ x, y });
-            auto info = data[y*dimensions.x + x];
-            int c = (unsigned char)info.Char.AsciiChar;
+            Coord p = get_screen_pos({ x, y });
+
+            // We always render using the tile size.  Text will be scaled if it doesn't match
+            SDL_Rect r;
+            r.x = p.x;
+            r.y = p.y;
+            r.w = m_tile_dimensions.x;
+            r.h = m_tile_dimensions.y;
+
+            CharInfo info = data[y*dimensions.x + x];
 
             //todo: how to correctly determine text or monster/passage/wall?
             //the code below works for original tile set, but not others
             if (text_mask[y*dimensions.x + x])
             {
-                short attr = info.Attributes;
-                if (use_inverse(attr))
-                    attr = 112;
-                int i = get_text_index(attr);
-                auto r = get_text_rect(c, i);
-                render_texture_at(m_text, m_renderer, p, r);
+                RenderText(info, r);
             }
             else {
-                auto i = tile_index(info.Char.AsciiChar);
-                if (i == -1)
-                {
-                    //draw a black tile if we don't have a tile for this character
-                    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
-                    SDL_Rect rectangle;
-                    rectangle.x = p.x;
-                    rectangle.y = p.y;
-                    rectangle.w = m_tile_dimensions.x;
-                    rectangle.h = m_tile_dimensions.y;
-                    SDL_RenderFillRect(m_renderer, &rectangle);
-
-                    continue;
-                }
-                bool inv = (m_tile_cfg.states > 1) && use_inverse(info.Attributes);
-                auto r = get_tile_rect(i, inv);
-                render_texture_at(m_tiles, m_renderer, p, r);
+                RenderTile(info, r);
             }
         }
     }
+}
+
+void SdlRogue::Impl::RenderText(CharInfo info, SDL_Rect r)
+{
+    short attr = info.Attributes;
+    if (use_inverse(attr))
+        attr = 112;
+    int i = get_text_index(attr);
+    SDL_Rect clip = get_text_rect(info.Char.AsciiChar, i);
+
+    SDL_RenderCopy(m_renderer, m_text, &clip, &r);
+}
+
+void SdlRogue::Impl::RenderTile(CharInfo info, SDL_Rect r)
+{
+    auto i = tile_index(info.Char.AsciiChar);
+    if (i == -1)
+    {
+        //draw a black tile if we don't have a tile for this character
+        SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+        SDL_RenderFillRect(m_renderer, &r);
+        return;
+    }
+    bool inv = (m_tile_cfg.states > 1) && use_inverse(info.Attributes);
+    SDL_Rect clip = get_tile_rect(i, inv);
+    SDL_RenderCopy(m_renderer, m_tiles, &clip, &r);
 }
 
 inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
@@ -334,28 +343,6 @@ inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
     return p;
 }
 
-bool SdlRogue::Impl::render_as_text(int c, int y)
-{ 
-    if (m_force_tile)
-        return false;
-
-    if (m_force_text)
-        return true;
-
-    /*
-    int limit = m_shared_data.m_dimensions.y - 2;
-    if (shared_data_is_narrow())
-        --limit;
-    return !(y > 0 && y < limit);
-    */
-
-    return (c >= 0x20 && c < 128 ||
-        c == PASSAGE || c == HWALL || c == VWALL || c == LLWALL || c == LRWALL || c == URWALL || c == ULWALL ||
-        c == 0xcc || c == 0xb9 || //double line drawing
-        c == 0xda || c == 0xb3 || c == 0xc0 || c == 0xc4 || c == 0xbf || c == 0xd9 || //line drawing
-        c == 0x11 || c == 0x19 || c == 0x1a || c == 0x1b);
-}
-
 inline int SdlRogue::Impl::get_text_index(unsigned short attr)
 {
     auto i = m_attr_index.find(attr);
@@ -364,7 +351,7 @@ inline int SdlRogue::Impl::get_text_index(unsigned short attr)
     return 0;
 }
 
-inline SDL_Rect SdlRogue::Impl::get_text_rect(int c, int i)
+inline SDL_Rect SdlRogue::Impl::get_text_rect(unsigned char c, int i)
 {
     SDL_Rect r;
     r.h = m_text_dimensions.y;
