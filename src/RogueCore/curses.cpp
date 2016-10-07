@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <Windows.h>
+#include <Windows.h> //todo: change interface to avoid char_info
 
 #include "rogue.h"
 #include "curses.h"
@@ -224,7 +224,7 @@ void Curses::addstr(const char *s)
     disable_render = was_disabled;
     if (!disable_render) {
         if (i > 0) {
-            SMALL_RECT r;
+            Region r;
             r.Top = m_row;
             r.Bottom = m_row;
             r.Left = m_col - i;
@@ -382,7 +382,7 @@ void Curses::repchr(int chr, int cnt)
     bool was_disabled = disable_render;
     disable_render = true;
 
-    SMALL_RECT r = { m_col, m_row, (SHORT)(m_col + cnt - 1), m_row };
+    Region r = { m_col, m_row, (SHORT)(m_col + cnt - 1), m_row };
     while (cnt-- > 0) { 
         putchr(chr, m_attr);
         m_col++;
@@ -508,7 +508,7 @@ void Curses::Render()
     m_screen->Draw(m_buffer);
 }
 
-void Curses::Render(_SMALL_RECT rect)
+void Curses::Render(Region rect)
 {
     if (!m_should_render || m_curtain_down)
         return;

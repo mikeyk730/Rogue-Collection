@@ -2,7 +2,7 @@
 #include <memory>
 
 struct DisplayInterface;
-struct _SMALL_RECT;
+struct Region;
 struct _CHAR_INFO;
 
 #define BX_SIZE 7
@@ -117,7 +117,7 @@ public:
 
 private:
     void Render();
-    void Render(_SMALL_RECT rect);
+    void Render(Region rect);
     void ApplyMove();
     void ApplyCursor();
 

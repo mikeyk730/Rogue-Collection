@@ -4,7 +4,7 @@
 #include "RogueCore/input_interface.h"
 
 struct _CHAR_INFO;
-struct _SMALL_RECT;
+struct Region;
 struct Coord;
 
 struct SdlRogue : public DisplayInterface, public InputInterface
@@ -18,7 +18,7 @@ struct SdlRogue : public DisplayInterface, public InputInterface
     //display interface
     virtual void SetDimensions(Coord dimensions);
     virtual void Draw(_CHAR_INFO* info);
-    virtual void Draw(_CHAR_INFO* info, _SMALL_RECT rect);
+    virtual void Draw(_CHAR_INFO* info, Region rect);
     virtual void MoveCursor(Coord pos);
     virtual void SetCursor(bool enable);
 

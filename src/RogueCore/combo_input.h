@@ -3,7 +3,6 @@
 #include <iostream>
 #include <mutex>
 #include <condition_variable>
-#include <windows.h>
 #include "input_interface.h"
 
 struct ComboInput : public InputInterface

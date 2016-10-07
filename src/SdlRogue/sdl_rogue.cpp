@@ -3,7 +3,7 @@
 #include <vector>
 #include <deque>
 #include <mutex>
-#include <Windows.h> //todo: change interface to avoid char_info and small_rect
+#include <Windows.h> //todo: change interface to avoid char_info
 #include "SDL.h"
 #include "sdl_rogue.h"
 #include "utility.h"
@@ -30,13 +30,13 @@ struct SdlRogue::Impl
 
     void SetDimensions(Coord dimensions);
     void Draw(_CHAR_INFO * info);
-    void Draw(_CHAR_INFO * info, _SMALL_RECT rect);
+    void Draw(_CHAR_INFO * info, Region rect);
     void Run();
     void Quit();
 
 private:
     void Render();
-    void RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT rect);
+    void RenderRegion(CHAR_INFO* data, Coord dimensions, Region rect);
 
     Coord get_screen_pos(Coord buffer_pos);
 
@@ -50,7 +50,7 @@ private:
     SDL_Rect get_text_rect(int c, int i);
 
     int shared_data_size() const;         //must have mutex before calling
-    SMALL_RECT shared_data_full_region(); //must have mutex before calling
+    Region shared_data_full_region(); //must have mutex before calling
 
 private:
     SDL_Window* m_window = 0;
@@ -66,7 +66,7 @@ private:
     {
         CHAR_INFO* m_data = 0;
         Coord m_dimensions = { 0, 0 };
-        std::vector<SMALL_RECT> m_render_regions;
+        std::vector<Region> m_render_regions;
     };
     ThreadData m_shared_data;
     std::mutex m_mutex;
@@ -229,7 +229,7 @@ inline SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
 
 void SdlRogue::Impl::Render()
 {
-    std::vector<SMALL_RECT> regions;
+    std::vector<Region> regions;
     Coord dimensions;
     CHAR_INFO* temp = 0;
     {
@@ -258,7 +258,7 @@ void SdlRogue::Impl::Render()
     SDL_RenderPresent(m_renderer);
 }
 
-void SdlRogue::Impl::RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT rect)
+void SdlRogue::Impl::RenderRegion(CHAR_INFO* data, Coord dimensions, Region rect)
 {
     for (int x = rect.Left; x <= rect.Right; ++x) {
         for (int y = rect.Top; y <= rect.Bottom; ++y) {
@@ -341,7 +341,7 @@ void SdlRogue::Impl::SetDimensions(Coord dimensions)
 
 void SdlRogue::Impl::Draw(_CHAR_INFO * info)
 {
-    SMALL_RECT r;
+    Region r;
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         //If we're adding a full render to the queue, we can ignore any previous regions.
@@ -351,7 +351,7 @@ void SdlRogue::Impl::Draw(_CHAR_INFO * info)
     Draw(info, r);
 }
 
-inline void SdlRogue::Impl::Draw(_CHAR_INFO * info, _SMALL_RECT rect)
+inline void SdlRogue::Impl::Draw(_CHAR_INFO * info, Region rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -403,9 +403,9 @@ int SdlRogue::Impl::shared_data_size() const
     return sizeof(CHAR_INFO) * m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y;
 }
 
-SMALL_RECT SdlRogue::Impl::shared_data_full_region()
+Region SdlRogue::Impl::shared_data_full_region()
 {
-    SMALL_RECT r;
+    Region r;
     r.Left = 0;
     r.Top = 0;
     r.Right = short(m_shared_data.m_dimensions.x - 1);
@@ -447,7 +447,7 @@ void SdlRogue::Draw(_CHAR_INFO * info)
     m_impl->Draw(info);
 }
 
-void SdlRogue::Draw(_CHAR_INFO * info, _SMALL_RECT r)
+void SdlRogue::Draw(_CHAR_INFO * info, Region r)
 {
     m_impl->Draw(info, r);
 }

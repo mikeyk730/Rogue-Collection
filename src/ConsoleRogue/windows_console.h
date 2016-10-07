@@ -10,7 +10,7 @@ struct WindowsConsole : public DisplayInterface
 
     virtual void SetDimensions(Coord dimensions);
     virtual void Draw(_CHAR_INFO* info);
-    virtual void Draw(_CHAR_INFO* info, _SMALL_RECT rect);
+    virtual void Draw(_CHAR_INFO* info, Region rect);
     virtual void MoveCursor(Coord pos);
     virtual void SetCursor(bool enable);
 

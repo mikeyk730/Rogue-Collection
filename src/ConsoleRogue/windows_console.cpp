@@ -26,7 +26,7 @@ void WindowsConsole::Draw(_CHAR_INFO* info)
     WriteConsoleOutput(hConsole, info, dwBufferSize, dwBufferCoord, &rcRegion);
 }
 
-void WindowsConsole::Draw(_CHAR_INFO* info, _SMALL_RECT rect)
+void WindowsConsole::Draw(_CHAR_INFO* info, Region rect)
 {
     COORD dwBufferSize = { m_dimensions.x, m_dimensions.y };
     COORD dwBufferCoord = { rect.Left, rect.Top };
