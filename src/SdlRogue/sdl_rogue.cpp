@@ -50,7 +50,7 @@ private:
     SDL_Rect get_text_rect(int c, int i);
 
     int shared_data_size() const;         //must have mutex before calling
-    Region shared_data_full_region(); //must have mutex before calling
+    Region shared_data_full_region();     //must have mutex before calling
 
 private:
     SDL_Window* m_window = 0;
@@ -351,10 +351,10 @@ inline int SdlRogue::Impl::get_text_index(unsigned short attr)
 inline SDL_Rect SdlRogue::Impl::get_text_rect(int c, int i)
 {
     SDL_Rect r;
-    r.h = m_tile_dimensions.y;
-    r.w = m_tile_dimensions.x;
-    r.x = c*m_tile_dimensions.x;
-    r.y = i*m_tile_dimensions.y;
+    r.h = m_text_dimensions.y;
+    r.w = m_text_dimensions.x;
+    r.x = c*m_text_dimensions.x;
+    r.y = i*m_text_dimensions.y;
     return r;
 }
 
