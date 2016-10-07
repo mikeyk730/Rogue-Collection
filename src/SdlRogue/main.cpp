@@ -31,7 +31,7 @@
 #define LLWALL  (0xc8)
 #define LRWALL  (0xbc)
 
-#include "RogueCore\coord.h"
+#include "RogueCore/coord.h"
 
 const int H_PIXELS_PER_CHAR = 8;
 const int V_PIXELS_PER_CHAR = 16;
@@ -396,7 +396,7 @@ void test()
 #include <memory>
 #include "sdl_keyboard_input.h"
 #include "sdl_window.h"
-#include "RogueCore\main.h"
+#include "RogueCore/main.h"
 
 void run_game(int argc, char **argv, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input)
 {
@@ -408,11 +408,10 @@ int main(int argc, char **argv)
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
         throw_error("SDL_Init");
 
-    std::shared_ptr<SdlWindow> output(new SdlWindow());
-    std::shared_ptr<SdlKeyboardInput> input(new SdlKeyboardInput());
+    std::shared_ptr<SdlRogue> output(new SdlRogue());
 
     //start rogue engine on a background thread
-    std::thread rogue(run_game, argc, argv, output, input);
+    std::thread rogue(run_game, argc, argv, output, output);
     rogue.detach();
 
     output->Run();

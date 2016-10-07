@@ -1,6 +1,7 @@
 #include <cassert>
 #include <map>
 #include <vector>
+#include <deque>
 #include <mutex>
 #include <Windows.h> //todo: change interface to avoid char_info and small_rect
 #include "SDL.h"
@@ -8,8 +9,11 @@
 #include "utility.h"
 #include "RogueCore/rogue.h"
 #include "RogueCore/coord.h"
+#include "RogueCore/mach_dep.h"
+#include "RogueCore/game_state.h"
+#include "RogueCore/curses.h"
 
-struct SdlWindow::Impl
+struct SdlRogue::Impl
 {
     const Coord EMPTY_COORD = { 0, 0 };
     const unsigned int MAX_QUEUE_SIZE = 50;
@@ -30,6 +34,7 @@ struct SdlWindow::Impl
     void Quit();
 
 private:
+    void Render();
     void RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT rect);
 
     Coord get_screen_pos(Coord buffer_pos);
@@ -107,9 +112,21 @@ private:
         { WEAPON, 45 },
         { ARMOR,  55 },
     };    
+
+    //todo: 2 classes
+public:
+    char GetNextChar();
+    virtual std::string GetNextString(int size);
+private:
+    void HandleEventText(const SDL_Event& e);
+    void HandleEventKeyDown(const SDL_Event& e);
+
+    std::deque<unsigned char> m_buffer;
+    std::mutex m_input_mutex;
+    std::condition_variable m_input_cv;
 };
 
-SdlWindow::Impl::Impl()
+SdlRogue::Impl::Impl()
 {
     SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "tiles.bmp"));
     //SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "sprites.bmp"));
@@ -120,7 +137,7 @@ SdlWindow::Impl::Impl()
     assert(m_tile_height == text->h / TEXT_STATES);
     assert(m_tile_width == text->w / TEXT_COUNT);
 
-    m_window = SDL_CreateWindow("Rogue", 600, 100, m_tile_width * 80, m_tile_height * 25, SDL_WINDOW_SHOWN);
+    m_window = SDL_CreateWindow("Rogue", 100, 100, m_tile_width * 80, m_tile_height * 25, SDL_WINDOW_SHOWN);
     if (m_window == nullptr)
         throw_error("SDL_CreateWindow");
 
@@ -132,7 +149,7 @@ SdlWindow::Impl::Impl()
     m_text = create_texture(text.get(), m_renderer).release();
 }
 
-SdlWindow::Impl::~Impl()
+SdlRogue::Impl::~Impl()
 {
     SDL_DestroyTexture(m_text);
     SDL_DestroyTexture(m_tiles);
@@ -140,7 +157,7 @@ SdlWindow::Impl::~Impl()
     SDL_DestroyWindow(m_window);
 }
 
-int SdlWindow::Impl::tile_index(unsigned char c)
+int SdlRogue::Impl::tile_index(unsigned char c)
 {
     if (c >= 'A' && c <= 'Z')
         return c - 'A';
@@ -150,12 +167,12 @@ int SdlWindow::Impl::tile_index(unsigned char c)
     return -1;
 }
 
-bool SdlWindow::Impl::use_inverse(unsigned short attr)
+bool SdlRogue::Impl::use_inverse(unsigned short attr)
 {
     return attr > 100 && attr != 160;
 }
 
-inline SDL_Rect SdlWindow::Impl::get_tile_rect(int i, bool use_inverse)
+inline SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
 {
     SDL_Rect r;
     r.h = m_tile_height;
@@ -165,7 +182,38 @@ inline SDL_Rect SdlWindow::Impl::get_tile_rect(int i, bool use_inverse)
     return r;
 }
 
-void SdlWindow::Impl::RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT rect)
+void SdlRogue::Impl::Render()
+{
+    std::vector<SMALL_RECT> regions;
+    Coord dimensions;
+    CHAR_INFO* temp = 0;
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+
+        dimensions = m_shared_data.m_dimensions;
+        if (dimensions == EMPTY_COORD)
+            return;
+
+        if (m_shared_data.m_render_regions.empty())
+            return;
+
+        temp = new CHAR_INFO[dimensions.x*dimensions.y];
+        memcpy(temp, m_shared_data.m_data, shared_data_size());
+
+        regions = m_shared_data.m_render_regions;
+        m_shared_data.m_render_regions.clear();
+    }
+    std::unique_ptr<CHAR_INFO[]> data(temp);
+
+    for (auto i = regions.begin(); i != regions.end(); ++i)
+    {
+        RenderRegion(data.get(), dimensions, *i);
+    }
+
+    SDL_RenderPresent(m_renderer);
+}
+
+void SdlRogue::Impl::RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT rect)
 {
     for (int x = rect.Left; x <= rect.Right; ++x) {
         for (int y = rect.Top; y <= rect.Bottom; ++y) {
@@ -198,7 +246,7 @@ void SdlWindow::Impl::RenderRegion(CHAR_INFO* data, Coord dimensions, SMALL_RECT
     }
 }
 
-inline Coord SdlWindow::Impl::get_screen_pos(Coord buffer_pos)
+inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
 {
     Coord p;
     p.x = buffer_pos.x * m_tile_width;
@@ -206,7 +254,7 @@ inline Coord SdlWindow::Impl::get_screen_pos(Coord buffer_pos)
     return p;
 }
 
-bool SdlWindow::Impl::render_as_text(int c)
+bool SdlRogue::Impl::render_as_text(int c)
 { 
     if (m_force_text)
         return true;
@@ -218,7 +266,7 @@ bool SdlWindow::Impl::render_as_text(int c)
         c == 0x11 || c == 0x19 || c == 0x1a || c == 0x1b);
 }
 
-inline int SdlWindow::Impl::get_text_index(unsigned short attr)
+inline int SdlRogue::Impl::get_text_index(unsigned short attr)
 {
     auto i = m_attr_index.find(attr);
     if (i != m_attr_index.end())
@@ -226,7 +274,7 @@ inline int SdlWindow::Impl::get_text_index(unsigned short attr)
     return 0;
 }
 
-inline SDL_Rect SdlWindow::Impl::get_text_rect(int c, int i)
+inline SDL_Rect SdlRogue::Impl::get_text_rect(int c, int i)
 {
     SDL_Rect r;
     r.h = m_tile_height;
@@ -236,7 +284,7 @@ inline SDL_Rect SdlWindow::Impl::get_text_rect(int c, int i)
     return r;
 }
 
-void SdlWindow::Impl::SetDimensions(Coord dimensions)
+void SdlRogue::Impl::SetDimensions(Coord dimensions)
 {
     {
         std::lock_guard<std::mutex> lock(m_mutex);
@@ -246,7 +294,7 @@ void SdlWindow::Impl::SetDimensions(Coord dimensions)
     SDL_SetWindowSize(m_window, m_tile_width*dimensions.x, m_tile_height*dimensions.y);
 }
 
-void SdlWindow::Impl::Draw(_CHAR_INFO * info)
+void SdlRogue::Impl::Draw(_CHAR_INFO * info)
 {
     SMALL_RECT r;
     {
@@ -258,7 +306,7 @@ void SdlWindow::Impl::Draw(_CHAR_INFO * info)
     Draw(info, r);
 }
 
-inline void SdlWindow::Impl::Draw(_CHAR_INFO * info, _SMALL_RECT rect)
+inline void SdlRogue::Impl::Draw(_CHAR_INFO * info, _SMALL_RECT rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -275,7 +323,7 @@ inline void SdlWindow::Impl::Draw(_CHAR_INFO * info, _SMALL_RECT rect)
     memcpy(m_shared_data.m_data, info, shared_data_size());
 }
 
-void SdlWindow::Impl::Run()
+void SdlRogue::Impl::Run()
 {
     SDL_Event e;
     bool quit = false;
@@ -285,57 +333,29 @@ void SdlWindow::Impl::Run()
                 quit = true;
             }
             else if (e.type == SDL_TEXTINPUT) {
-                //key = e.text.text[0];
+                HandleEventText(e);
             }
-            else if (e.type == SDL_KEYUP) {
-                //handle esc, backspace, directions, numpad, function keys, return, ctrl-modified, ins, del
-                //how to read scroll lock, etc?
+            else if (e.type == SDL_KEYDOWN) {
+                HandleEventKeyDown(e);
             }
         }
-
-        std::vector<SMALL_RECT> regions;
-        Coord dimensions;
-        CHAR_INFO* temp = 0;
-        {
-            std::lock_guard<std::mutex> lock(m_mutex);
-
-            dimensions = m_shared_data.m_dimensions;
-            if (dimensions == EMPTY_COORD)
-                continue;
-
-            if (m_shared_data.m_render_regions.empty())
-                continue;
-
-            temp = new CHAR_INFO[dimensions.x*dimensions.y];
-            memcpy(temp, m_shared_data.m_data, shared_data_size());
-
-            regions = m_shared_data.m_render_regions;
-            m_shared_data.m_render_regions.clear();
-        }
-        std::unique_ptr<CHAR_INFO[]> data(temp);
-
-        for (auto i = regions.begin(); i != regions.end(); ++i)
-        {
-            RenderRegion(data.get(), dimensions, *i);
-        }
-
-        SDL_RenderPresent(m_renderer);
+        Render();
     }
 }
 
-void SdlWindow::Impl::Quit()
+void SdlRogue::Impl::Quit()
 {
     SDL_Event sdlevent;
     sdlevent.type = SDL_QUIT;
     SDL_PushEvent(&sdlevent);
 }
 
-int SdlWindow::Impl::shared_data_size() const
+int SdlRogue::Impl::shared_data_size() const
 {
     return sizeof(CHAR_INFO) * m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y;
 }
 
-SMALL_RECT SdlWindow::Impl::shared_data_full_region()
+SMALL_RECT SdlRogue::Impl::shared_data_full_region()
 {
     SMALL_RECT r;
     r.Left = 0;
@@ -350,44 +370,173 @@ SMALL_RECT SdlWindow::Impl::shared_data_full_region()
 
 
 
-SdlWindow::SdlWindow() :
+SdlRogue::SdlRogue() :
     m_impl(new Impl())
 {
 }
 
-SdlWindow::~SdlWindow()
+SdlRogue::~SdlRogue()
 {
 }
 
-void SdlWindow::Run()
+void SdlRogue::Run()
 {
     m_impl->Run();
 }
 
-void SdlWindow::Quit()
+void SdlRogue::Quit()
 {
     m_impl->Quit();
 }
 
-void SdlWindow::SetDimensions(Coord dimensions)
+void SdlRogue::SetDimensions(Coord dimensions)
 {
     m_impl->SetDimensions(dimensions);
 }
 
-void SdlWindow::Draw(_CHAR_INFO * info)
+void SdlRogue::Draw(_CHAR_INFO * info)
 {
     m_impl->Draw(info);
 }
 
-void SdlWindow::Draw(_CHAR_INFO * info, _SMALL_RECT r)
+void SdlRogue::Draw(_CHAR_INFO * info, _SMALL_RECT r)
 {
     m_impl->Draw(info, r);
 }
 
-void SdlWindow::MoveCursor(Coord pos)
+void SdlRogue::MoveCursor(Coord pos)
 {
 }
 
-void SdlWindow::SetCursor(bool enable)
+void SdlRogue::SetCursor(bool enable)
 {
+}
+
+bool SdlRogue::HasMoreInput()
+{
+    return true;
+}
+
+char SdlRogue::GetNextChar()
+{
+    return m_impl->GetNextChar();
+}
+
+std::string SdlRogue::GetNextString(int size)
+{
+    return m_impl->GetNextString(size);
+}
+
+bool SdlRogue::IsCapsLockOn()
+{
+    return false;
+}
+
+bool SdlRogue::IsNumLockOn()
+{
+    return false;
+}
+
+bool SdlRogue::IsScrollLockOn()
+{
+    return false;
+}
+
+void SdlRogue::Serialize(std::ostream & out)
+{
+}
+
+char SdlRogue::Impl::GetNextChar()
+{
+    std::unique_lock<std::mutex> lock(m_input_mutex);
+    while (m_buffer.empty()) {
+        m_input_cv.wait(lock);
+    }
+
+    char c = m_buffer.front();
+    m_buffer.pop_front();
+
+    return c;
+}
+
+namespace 
+{
+    void backspace()
+    {
+        int x, y;
+        game->screen().getrc(&x, &y);
+        if (--y < 0) y = 0;
+        game->screen().move(x, y);
+        game->screen().addch(' ');
+        game->screen().move(x, y);
+    }
+}
+
+std::string SdlRogue::Impl::GetNextString(int size)
+{
+    std::string s;
+
+    while (true)
+    {
+        char c = GetNextChar();
+        switch (c)
+        {
+        case ESCAPE:
+            s.clear();
+            s.push_back(ESCAPE);
+            return s;
+        case '\b':
+            if (!s.empty()) {
+                backspace();
+                s.pop_back();
+            }
+            break;
+        default:
+            if (s.size() >= unsigned int(size)) {
+                beep();
+                break;
+            }
+            game->screen().addch(c);
+            s.push_back(c);
+            break;
+        case '\n':
+        case '\r':
+            return s;
+        }
+    }
+}
+
+void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
+{
+    std::lock_guard<std::mutex> lock(m_input_mutex);
+    //todo: when does string have more than 1 char?
+    m_buffer.push_back(e.text.text[0]);
+    m_input_cv.notify_all();
+}
+
+char TranslateKey(const SDL_Event & e)
+{
+    //handle esc, backspace, directions, numpad, function keys, return, ctrl-modified, ins, del
+    //how to read scroll lock, etc?
+    switch (e.key.keysym.sym)
+    {
+    case SDLK_LEFT:
+        return 'h';
+    case SDLK_RETURN:
+        return '\r';
+    }
+
+
+    return 0;
+}
+
+void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
+{
+    char c = TranslateKey(e);
+    if (c == 0)
+        return;
+
+    std::lock_guard<std::mutex> lock(m_input_mutex);
+    m_buffer.push_back(c);
+    m_input_cv.notify_all();
 }

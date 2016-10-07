@@ -377,7 +377,7 @@ void show_win(char *message)
 
 int getinfo(char *str, int size)
 {
-    std::string s = game->input_interface().GetNextString(size);
+    std::string s = game->input_interface().GetNextString(size-1);
     strcpy_s(str, size, s.c_str());
     return s[0]; //todo
 }

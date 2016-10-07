@@ -1,11 +1,11 @@
 #include <conio.h>
 #include <Windows.h>
 #include "sdl_keyboard_input.h"
-#include "RogueCore\rogue.h"
-#include "RogueCore\io.h"
-#include "RogueCore\game_state.h"
-#include "RogueCore\curses.h"
-#include "RogueCore\mach_dep.h"
+#include "RogueCore/rogue.h"
+#include "RogueCore/io.h"
+#include "RogueCore/game_state.h"
+#include "RogueCore/curses.h"
+#include "RogueCore/mach_dep.h"
 
 #define C_LEFT    0x4b
 #define C_RIGHT   0x4d
