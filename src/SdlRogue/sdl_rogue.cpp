@@ -42,7 +42,7 @@ private:
 
     Coord get_screen_pos(Coord buffer_pos);
 
-    int tile_index(unsigned char c);
+    int tile_index(unsigned char c, unsigned short attr);
     bool use_inverse(unsigned short attr);
     SDL_Rect get_tile_rect(int i, bool use_inverse);
 
@@ -116,6 +116,13 @@ private:
         { STICK,  44 },
         { WEAPON, 45 },
         { ARMOR,  55 },
+        { MAGIC,  63 },
+        { BMAGIC, 64 },
+        { '\\',   65 },
+        { '/',    66 },
+        { '-',    67 },
+        { '|',    68 },
+        { '*',    77 },
     };    
 
     //todo: 2 classes
@@ -187,7 +194,7 @@ namespace
 SdlRogue::Impl::Impl()
 {
     m_tile_cfg = pc_tiles;
-    m_tile_cfg = atari_tiles;
+    //m_tile_cfg = atari_tiles;
 
     SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + m_tile_cfg.filename));
     m_tile_dimensions.x = tiles->w / m_tile_cfg.count;
@@ -218,14 +225,24 @@ SdlRogue::Impl::~Impl()
     SDL_DestroyWindow(m_window);
 }
 
-int SdlRogue::Impl::tile_index(unsigned char c)
+int SdlRogue::Impl::tile_index(unsigned char c, unsigned short attr)
 {
     if (c >= 'A' && c <= 'Z')
         return c - 'A';
+
     auto i = m_index.find(c);
-    if (i != m_index.end())
-        return i->second;
-    return -1;
+    if (i == m_index.end())
+        return -1;
+
+    int index = i->second;
+    if (index >= 65 && index <= 68) //different color bolts use different tiles
+    {
+        if (attr & 0x02) //yellow
+            index += 8;
+        else if (attr & 0x04) //red
+            index += 4;
+    }
+    return index;
 }
 
 bool SdlRogue::Impl::use_inverse(unsigned short attr)
@@ -322,7 +339,7 @@ void SdlRogue::Impl::RenderText(CharInfo info, SDL_Rect r)
 
 void SdlRogue::Impl::RenderTile(CharInfo info, SDL_Rect r)
 {
-    auto i = tile_index(info.Char.AsciiChar);
+    auto i = tile_index(info.Char.AsciiChar, info.Attributes);
     if (i == -1)
     {
         //draw a black tile if we don't have a tile for this character

@@ -175,7 +175,7 @@ int game_main(int argc, char **argv, std::shared_ptr<DisplayInterface> output, s
 
     Args args = process_args(argc, argv);
 
-    //args.savefile = "tests\\narrow_bw.rsf";
+    //args.savefile = "etc\\tests\\all_sticks_setup.rsf";
     //args.savefile = "saves\\level9.rsf";
     //args.savefile = "rogue.sav";
 
