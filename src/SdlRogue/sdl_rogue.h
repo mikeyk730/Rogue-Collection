@@ -17,8 +17,8 @@ struct SdlRogue : public DisplayInterface, public InputInterface
 
     //display interface
     virtual void SetDimensions(Coord dimensions);
-    virtual void Draw(CharInfo* info);
-    virtual void Draw(CharInfo* info, Region rect);
+    virtual void Draw(CharInfo* info, bool* text_mask);
+    virtual void Draw(CharInfo* info, bool* text_mask, Region rect);
     virtual void MoveCursor(Coord pos);
     virtual void SetCursor(bool enable);
 

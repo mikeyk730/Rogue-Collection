@@ -29,18 +29,18 @@ struct SdlRogue::Impl
     ~Impl();
 
     void SetDimensions(Coord dimensions);
-    void Draw(CharInfo * info);
-    void Draw(CharInfo * info, Region rect);
+    void Draw(CharInfo * info, bool* text_mask);
+    void Draw(CharInfo * info, bool* text_mask, Region rect);
     void Run();
     void Quit();
 
 private:
     void Render();
-    void RenderRegion(CharInfo* data, Coord dimensions, Region rect);
+    void RenderRegion(CharInfo* info, bool* text_mask, Coord dimensions, Region rect);
 
     Coord get_screen_pos(Coord buffer_pos);
 
-    bool render_as_text(int c);
+    bool render_as_text(int c, int y);
 
     int tile_index(unsigned char c);
     bool use_inverse(unsigned short attr);
@@ -51,6 +51,7 @@ private:
 
     int shared_data_size() const;         //must have mutex before calling
     Region shared_data_full_region();     //must have mutex before calling
+    bool shared_data_is_narrow();         //must have mutex before calling
 
 private:
     SDL_Window* m_window = 0;
@@ -70,6 +71,7 @@ private:
     struct ThreadData
     {
         CharInfo* m_data = 0;
+        bool* m_text_mask = 0;
         Coord m_dimensions = { 0, 0 };
         std::vector<Region> m_render_regions;
     };
@@ -248,7 +250,10 @@ void SdlRogue::Impl::Render()
 {
     std::vector<Region> regions;
     Coord dimensions;
-    CharInfo* temp = 0;
+    std::unique_ptr<CharInfo[]> data;
+    std::unique_ptr<bool[]> text_mask;
+
+    //locked region
     {
         std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -259,23 +264,27 @@ void SdlRogue::Impl::Render()
         if (m_shared_data.m_render_regions.empty())
             return;
 
-        temp = new CharInfo[dimensions.x*dimensions.y];
+        CharInfo* temp = new CharInfo[dimensions.x*dimensions.y];
         memcpy(temp, m_shared_data.m_data, shared_data_size());
+        data.reset(temp);
+
+        bool* temp2 = new bool[dimensions.x*dimensions.y];
+        memcpy(temp2, m_shared_data.m_text_mask, dimensions.x*dimensions.y*sizeof(bool));
+        text_mask.reset(temp2);
 
         regions = m_shared_data.m_render_regions;
         m_shared_data.m_render_regions.clear();
     }
-    std::unique_ptr<CharInfo[]> data(temp);
 
     for (auto i = regions.begin(); i != regions.end(); ++i)
     {
-        RenderRegion(data.get(), dimensions, *i);
+        RenderRegion(data.get(), text_mask.get(), dimensions, *i);
     }
 
     SDL_RenderPresent(m_renderer);
 }
 
-void SdlRogue::Impl::RenderRegion(CharInfo* data, Coord dimensions, Region rect)
+void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensions, Region rect)
 {
     for (int x = rect.Left; x <= rect.Right; ++x) {
         for (int y = rect.Top; y <= rect.Bottom; ++y) {
@@ -285,7 +294,7 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, Coord dimensions, Region rect)
 
             //todo: how to correctly determine text or monster/passage/wall?
             //the code below works for original tile set, but not others
-            if (render_as_text(c))
+            if (text_mask[y*dimensions.x + x])
             {
                 short attr = info.Attributes;
                 if (use_inverse(attr))
@@ -325,13 +334,20 @@ inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
     return p;
 }
 
-bool SdlRogue::Impl::render_as_text(int c)
+bool SdlRogue::Impl::render_as_text(int c, int y)
 { 
     if (m_force_tile)
         return false;
 
     if (m_force_text)
         return true;
+
+    /*
+    int limit = m_shared_data.m_dimensions.y - 2;
+    if (shared_data_is_narrow())
+        --limit;
+    return !(y > 0 && y < limit);
+    */
 
     return (c >= 0x20 && c < 128 ||
         c == PASSAGE || c == HWALL || c == VWALL || c == LLWALL || c == LRWALL || c == URWALL || c == ULWALL ||
@@ -364,11 +380,12 @@ void SdlRogue::Impl::SetDimensions(Coord dimensions)
         std::lock_guard<std::mutex> lock(m_mutex);
         m_shared_data.m_dimensions = dimensions;
         m_shared_data.m_data = new CharInfo[dimensions.x*dimensions.y];
+        m_shared_data.m_text_mask = new bool[dimensions.x*dimensions.y];
     }
     SDL_SetWindowSize(m_window, m_tile_dimensions.x*dimensions.x, m_tile_dimensions.y*dimensions.y);
 }
 
-void SdlRogue::Impl::Draw(CharInfo * info)
+void SdlRogue::Impl::Draw(CharInfo * info, bool* text_mask)
 {
     Region r;
     {
@@ -377,10 +394,10 @@ void SdlRogue::Impl::Draw(CharInfo * info)
         m_shared_data.m_render_regions.clear();
         r = shared_data_full_region();
     }
-    Draw(info, r);
+    Draw(info, text_mask, r);
 }
 
-inline void SdlRogue::Impl::Draw(CharInfo * info, Region rect)
+inline void SdlRogue::Impl::Draw(CharInfo * info, bool* text_mask, Region rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -395,6 +412,7 @@ inline void SdlRogue::Impl::Draw(CharInfo * info, Region rect)
     }
 
     memcpy(m_shared_data.m_data, info, shared_data_size());
+    memcpy(m_shared_data.m_text_mask, text_mask, m_shared_data.m_dimensions.x*m_shared_data.m_dimensions.y*sizeof(bool));
 }
 
 void SdlRogue::Impl::Run()
@@ -444,6 +462,11 @@ Region SdlRogue::Impl::shared_data_full_region()
     return r;
 }
 
+bool SdlRogue::Impl::shared_data_is_narrow()
+{
+    return m_shared_data.m_dimensions.x == 40;
+}
+
 
 
 
@@ -473,17 +496,17 @@ void SdlRogue::SetDimensions(Coord dimensions)
     m_impl->SetDimensions(dimensions);
 }
 
-void SdlRogue::Draw(CharInfo * info)
+void SdlRogue::Draw(CharInfo * info, bool* text_mask)
 {
-    m_impl->Draw(info);
+    m_impl->Draw(info, text_mask);
     SDL_Event sdlevent;
     sdlevent.type = SDL_USEREVENT;
     SDL_PushEvent(&sdlevent);
 }
 
-void SdlRogue::Draw(CharInfo * info, Region r)
+void SdlRogue::Draw(CharInfo * info, bool* text_mask, Region r)
 {
-    m_impl->Draw(info, r);
+    m_impl->Draw(info, text_mask, r);
     SDL_Event sdlevent;
     sdlevent.type = SDL_USEREVENT;
     SDL_PushEvent(&sdlevent);

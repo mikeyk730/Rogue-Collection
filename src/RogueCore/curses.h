@@ -21,7 +21,7 @@
 #define high()              set_attr(15)
 #define bold()              set_attr(16)
 
-struct Curses;
+struct IExCurses;
 struct DisplayInterface;
 
 struct OutputShim
@@ -80,6 +80,12 @@ public:
 
     char curch();
 
+    int lines() const;
+    int columns() const;
+
+    void stop_rendering();
+    void resume_rendering();
+
     void add_text(Coord p, byte c);
     int add_text(byte c);
 
@@ -89,11 +95,5 @@ public:
     int mvinch(Coord p);
     void mvaddstr(Coord p, const std::string& s);
 
-    int lines() const;
-    int columns() const;
-
-    void stop_rendering();
-    void resume_rendering();
-
-    std::unique_ptr<Curses> m_curses;
+    std::unique_ptr<IExCurses> m_curses;
 };

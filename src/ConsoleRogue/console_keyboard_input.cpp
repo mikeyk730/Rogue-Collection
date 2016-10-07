@@ -102,7 +102,7 @@ void backspace()
     game->screen().getrc(&x, &y);
     if (--y < 0) y = 0;
     game->screen().move(x, y);
-    game->screen().addch(' ');
+    game->screen().add_text(' ');
     game->screen().move(x, y);
 }
 
@@ -131,7 +131,7 @@ int getinfo_impl(char *str, int size)
     default:
         if (readcnt >= size) { beep(); break; }
         readcnt++;
-        game->screen().addch(ch);
+        game->screen().add_text(ch);
         *str++ = ch;
         if ((ch & 0x80) == 0) break;
     case '\n':

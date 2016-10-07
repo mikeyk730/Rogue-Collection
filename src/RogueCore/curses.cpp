@@ -74,92 +74,166 @@ namespace
     const byte spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 }
 
-struct Curses
+struct ICurses
 {
-    void clear();
-
-    void putchr(int c, int attr);
+    virtual void clear() = 0;
+    virtual void putchr(int c, int attr) = 0;
 
     //Turn cursor on and off
-    bool cursor(bool ison);
+    virtual bool cursor(bool ison) = 0;
 
     //get current cursor position
-    void getrc(int *r, int *c);
+    virtual void getrc(int *r, int *c) = 0;
 
-    void clrtoeol();
-
-    void mvaddstr(int r, int c, const char *s);
-
-    void mvaddch(int r, int c, char chr);
-
-    int mvinch(int r, int c);
-
-    int addch(byte chr);
-
-    void addstr(const char *s);
-
-    void set_attr(int bute);
-
-    void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
+    virtual void clrtoeol() = 0;
+    virtual void mvaddstr(int r, int c, const char *s) = 0;
+    virtual void mvaddch(int r, int c, char chr) = 0;
+    virtual int mvinch(int r, int c) = 0;
+    virtual int addch(byte chr) = 0;
+    virtual void addstr(const char *s) = 0;
+    virtual void set_attr(int bute) = 0;
+    virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5) = 0;
 
     //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
-    void winit(bool narrow);
+    virtual void winit(bool narrow) = 0;
 
-    void forcebw();
+    virtual void forcebw() = 0;
 
     //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
-    void wdump();
+    virtual void wdump() = 0;
 
     //wrestor(windex): restore the window saved on disk
-    void wrestor();
+    virtual void wrestor() = 0;
 
     //Some general drawing routines
-    void box(int ul_r, int ul_c, int lr_r, int lr_c);
-
-    void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
+    virtual void box(int ul_r, int ul_c, int lr_r, int lr_c) = 0;
+    virtual void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c) = 0;
 
     //center a string according to how many columns there really are
-    void center(int row, const char *string);
+    virtual void center(int row, const char *string) = 0;
 
-    void printw(const char *msg, ...);
-
-    void scroll_up(int start_row, int end_row, int nlines);
-
-    void scroll_dn(int start_row, int end_row, int nlines);
-
-    void scroll();
+    virtual void printw(const char *msg, ...) = 0;
+    virtual void scroll_up(int start_row, int end_row, int nlines) = 0;
+    virtual void scroll_dn(int start_row, int end_row, int nlines) = 0;
+    virtual void scroll() = 0;
 
     //blot_out region (upper left row, upper left column) (lower right row, lower right column)
-    void blot_out(int ul_row, int ul_col, int lr_row, int lr_col);
+    virtual void blot_out(int ul_row, int ul_col, int lr_row, int lr_col) = 0;
 
-    void repchr(int chr, int cnt);
+    virtual void repchr(int chr, int cnt) = 0;
 
     //try to fixup screen after we get a control break
-    void fixup();
+    virtual void fixup() = 0;
 
     //Clear the screen in an interesting fashion
-    void implode();
+    virtual void implode() = 0;
 
     //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
-    void drop_curtain();
+    virtual void drop_curtain() = 0;
+    virtual void raise_curtain() = 0;
 
-    void raise_curtain();
+    virtual void move(short y, short x) = 0;
+    virtual char curch() = 0;
 
-    void move(short y, short x);
+    virtual int lines() const = 0;
+    virtual int columns() const = 0;
+};
 
-    char curch();
+struct IExCurses : public ICurses
+{
+    virtual void add_text(short y, short x, byte c) = 0;
+    virtual int add_text(byte c) = 0;
 
-public:
+    virtual void add_tile(short y, short x, byte c) = 0;
+    virtual int add_tile(byte c) = 0;
+
+    virtual void stop_rendering() = 0;
+    virtual void resume_rendering() = 0;
+};
+
+struct Curses : public IExCurses
+{
     Curses(std::shared_ptr<DisplayInterface> output);
     ~Curses();
 
-    int lines() const;
-    int columns() const;
+public:
+    virtual void clear();
+    virtual void putchr(int c, int attr);
 
-    void stop_rendering();
-    void resume_rendering();
+    //Turn cursor on and off
+    virtual bool cursor(bool ison);
+
+    //get current cursor position
+    virtual void getrc(int *r, int *c);
+
+    virtual void clrtoeol();
+    virtual void mvaddstr(int r, int c, const char *s);
+    virtual void mvaddch(int r, int c, char chr);
+    virtual int mvinch(int r, int c);
+    virtual int addch(byte chr);
+    virtual void addstr(const char *s);
+    virtual void set_attr(int bute);
+    virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
+
+    //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
+    virtual void winit(bool narrow);
+
+    virtual void forcebw();
+
+    //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
+    virtual void wdump();
+
+    //wrestor(windex): restore the window saved on disk
+    virtual void wrestor();
+
+    //Some general drawing routines
+    virtual void box(int ul_r, int ul_c, int lr_r, int lr_c);
+    virtual void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
+
+    //center a string according to how many columns there really are
+    virtual void center(int row, const char *string);
+
+    virtual void printw(const char *msg, ...);
+    virtual void scroll_up(int start_row, int end_row, int nlines);
+    virtual void scroll_dn(int start_row, int end_row, int nlines);
+    virtual void scroll();
+
+    //blot_out region (upper left row, upper left column) (lower right row, lower right column)
+    virtual void blot_out(int ul_row, int ul_col, int lr_row, int lr_col);
+
+    virtual void repchr(int chr, int cnt);
+
+    //try to fixup screen after we get a control break
+    virtual void fixup();
+
+    //Clear the screen in an interesting fashion
+    virtual void implode();
+
+    //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
+    virtual void drop_curtain();
+    virtual void raise_curtain();
+
+    virtual void move(short y, short x);
+    virtual char curch();
+
+    virtual int lines() const;
+    virtual int columns() const;
+
+public:
+    virtual void add_text(short y, short x, byte c);
+    virtual int add_text(byte c);
+
+    virtual void add_tile(short y, short x, byte c);
+    virtual int add_tile(byte c);
+
+    virtual void stop_rendering();
+    virtual void resume_rendering();
 
 private:
+    void MoveAddCharacter(int r, int c, char chr, bool is_text);
+    int AddCharacter(int c, bool is_text);
+    void PutCharacter(int c, int attr, bool is_text);
+
     void Render();
     void Render(Region rect);
     void ApplyMove();
@@ -181,8 +255,13 @@ private:
     bool m_curtain_down = false;
     bool m_should_render = true;
 
-    CharInfo* m_buffer = 0;
-    CharInfo* m_backup = 0;
+    struct Data
+    {
+        CharInfo* buffer = 0;
+        bool* text_mask = 0;
+    };
+    Data m_data;
+    Data m_backup_data;
 
     std::shared_ptr<DisplayInterface> m_screen;
     bool disable_render = false;
@@ -190,10 +269,16 @@ private:
 
 void Curses::putchr(int c, int attr)
 {
+    PutCharacter(c, attr, true);
+}
+
+void Curses::PutCharacter(int c, int attr, bool is_text)
+{
     CharInfo ci;
     ci.Attributes = attr;
     ci.Char.AsciiChar = c;
-    m_buffer[m_row*COLS+m_col] = ci;
+    m_data.buffer[m_row*COLS+m_col] = ci;
+    m_data.text_mask[m_row*COLS + m_col] = is_text;
     if (!disable_render)
         Render({ m_col, m_row, m_col, m_row });
 }
@@ -205,8 +290,10 @@ Curses::Curses(std::shared_ptr<DisplayInterface> output) :
 
 Curses::~Curses()
 {
-    delete[] m_buffer;
-    delete[] m_backup;
+    delete[] m_data.buffer;
+    delete[] m_data.text_mask;
+    delete[] m_backup_data.buffer;
+    delete[] m_backup_data.text_mask;
 }
 
 //clear screen
@@ -248,10 +335,15 @@ void Curses::mvaddstr(int r, int c, const char *s)
     addstr(s);
 }
 
-void Curses::mvaddch(int r, int c, char chr)
+void Curses::MoveAddCharacter(int r, int c, char chr, bool is_text)
 {
     move(r, c);
-    addch(chr);
+    AddCharacter(chr, is_text);
+}
+
+void Curses::mvaddch(int r, int c, char chr)
+{
+    MoveAddCharacter(r, c, chr, true);
 }
 
 //todo: get rid of entirely
@@ -263,6 +355,11 @@ int Curses::mvinch(int r, int c)
 
 //put the character on the screen and update the character position
 int Curses::addch(byte chr)
+{
+    return AddCharacter(chr, true);
+}
+
+int Curses::AddCharacter(int chr, bool is_text)
 {
     int r, c;
     byte old_attr;
@@ -318,7 +415,7 @@ int Curses::addch(byte chr)
         m_attr = old_attr;
         return m_row;
     }
-    putchr(chr, m_attr);
+    PutCharacter(chr, m_attr, is_text);
     move(r, c + 1);
     m_attr = old_attr;
     //if you have gone off the screen scroll the whole window
@@ -333,7 +430,7 @@ void Curses::addstr(const char *s)
     int i;
     for (i = 0; s[i]; ++i)
     {
-        addch(s[i]);
+        AddCharacter(s[i], true);
     }
     disable_render = was_disabled;
     if (!disable_render) {
@@ -375,9 +472,13 @@ void Curses::winit(bool narrow_screen)
     m_screen->SetDimensions({ COLS, LINES });
     m_screen->SetCursor(false);
 
-    m_buffer = new CharInfo[LINES*COLS];
-    m_backup = new CharInfo[LINES*COLS];
-    memset(m_buffer, ' ', sizeof(CharInfo)*LINES*COLS);
+    m_data.buffer = new CharInfo[LINES*COLS];
+    m_data.text_mask = new bool[LINES*COLS];
+    memset(m_data.buffer, ' ', sizeof(CharInfo)*LINES*COLS);
+    memset(m_data.text_mask, true, sizeof(bool)*LINES*COLS);
+
+    m_backup_data.buffer = new CharInfo[LINES*COLS];
+    m_backup_data.text_mask = new bool[LINES*COLS];
 
     move(m_row, m_col);
 }
@@ -390,13 +491,15 @@ void Curses::forcebw()
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void Curses::wdump()
 {
-    memcpy(m_backup, m_buffer, sizeof(CharInfo)*LINES*COLS);
+    memcpy(m_backup_data.buffer, m_data.buffer, sizeof(CharInfo)*LINES*COLS);
+    memcpy(m_backup_data.text_mask, m_data.text_mask, sizeof(bool)*LINES*COLS);
 }
 
 //wrestor(windex): restore the window saved on disk
 void Curses::wrestor()
 {
-    memcpy(m_buffer, m_backup, sizeof(CharInfo)*LINES*COLS);
+    memcpy(m_data.buffer, m_backup_data.buffer, sizeof(CharInfo)*LINES*COLS);
+    memcpy(m_data.text_mask, m_backup_data.text_mask, sizeof(bool)*LINES*COLS);
     Render();
 }
 
@@ -424,12 +527,15 @@ void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_
     move(lr_r, ul_c + 1);
     repchr(box[BX_HB], i);
     //draw vertical boundary
-    for (i = ul_r + 1; i < lr_r; i++) { mvaddch(i, ul_c, box[BX_VW]); mvaddch(i, lr_c, box[BX_VW]); }
+    for (i = ul_r + 1; i < lr_r; i++) {
+        MoveAddCharacter(i, ul_c, box[BX_VW], true);
+        MoveAddCharacter(i, lr_c, box[BX_VW], true);
+    }
     //draw corners
-    mvaddch(ul_r, ul_c, box[BX_UL]);
-    mvaddch(ul_r, lr_c, box[BX_UR]);
-    mvaddch(lr_r, ul_c, box[BX_LL]);
-    mvaddch(lr_r, lr_c, box[BX_LR]);
+    MoveAddCharacter(ul_r, ul_c, box[BX_UL], true);
+    MoveAddCharacter(ul_r, lr_c, box[BX_UR], true);
+    MoveAddCharacter(lr_r, ul_c, box[BX_LL], true);
+    MoveAddCharacter(lr_r, lr_c, box[BX_LR], true);
     move(r, c);
     cursor(wason);
 
@@ -482,7 +588,7 @@ void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
         for (c = ul_col; c <= lr_col; ++c)
         {
             move(r, c);
-            putchr(' ', m_attr);
+            PutCharacter(' ', m_attr, true);
         }
     }
     move(ul_row, ul_col);
@@ -498,7 +604,7 @@ void Curses::repchr(int chr, int cnt)
 
     Region r = { m_col, m_row, m_col + cnt - 1, m_row };
     while (cnt-- > 0) { 
-        putchr(chr, m_attr);
+        PutCharacter(chr, m_attr, true);
         m_col++;
     }
     disable_render = was_disabled;
@@ -573,7 +679,27 @@ void Curses::move(short y, short x)
 
 char Curses::curch()
 {
-    return m_buffer[m_row*COLS+m_col].Char.AsciiChar;
+    return m_data.buffer[m_row*COLS+m_col].Char.AsciiChar;
+}
+
+void Curses::add_text(short y, short x, byte c)
+{
+    MoveAddCharacter(y, x, c, true);
+}
+
+int Curses::add_text(byte c)
+{
+    return AddCharacter(c, true);
+}
+
+void Curses::add_tile(short y, short x, byte c)
+{
+    MoveAddCharacter(y, x, c, false);
+}
+
+int Curses::add_tile(byte c)
+{
+    return AddCharacter(c, false);
 }
 
 int Curses::lines() const
@@ -604,7 +730,7 @@ void Curses::Render()
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->Draw(m_buffer);
+    m_screen->Draw(m_data.buffer, m_data.text_mask);
 }
 
 void Curses::Render(Region rect)
@@ -612,7 +738,7 @@ void Curses::Render(Region rect)
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->Draw(m_buffer, rect);
+    m_screen->Draw(m_data.buffer, m_data.text_mask, rect);
 }
 
 void Curses::ApplyMove()
@@ -748,22 +874,22 @@ char OutputShim::curch()
 
 void OutputShim::add_text(Coord p, byte c)
 {
-    m_curses->mvaddch(p.y, p.x, c);
+    m_curses->add_text(p.y, p.x, c);
 }
 
 int OutputShim::add_text(byte c)
 {
-    return m_curses->addch(c);
+    return m_curses->add_text(c);
 }
 
 void OutputShim::add_tile(Coord p, byte c)
 {
-    m_curses->mvaddch(p.y, p.x, c);
+    m_curses->add_tile(p.y, p.x, c);
 }
 
 int OutputShim::add_tile(byte c)
 {
-    return m_curses->addch(c);
+    return m_curses->add_tile(c);
 }
 
 int OutputShim::mvinch(Coord p)
