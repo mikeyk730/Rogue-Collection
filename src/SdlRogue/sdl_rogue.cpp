@@ -13,16 +13,17 @@
 #include "RogueCore/game_state.h"
 #include "RogueCore/curses.h"
 
+struct TileConfig
+{
+    std::string filename;
+    int count;
+    int states;
+};
+
 struct SdlRogue::Impl
 {
     const Coord EMPTY_COORD = { 0, 0 };
     const unsigned int MAX_QUEUE_SIZE = 50;
-
-    const int TILE_COUNT = 78;
-    const int TILE_STATES = 2;
-
-    const int TEXT_COUNT = 256;
-    const int TEXT_STATES = 16;
 
     Impl();
     ~Impl();
@@ -57,9 +58,14 @@ private:
     SDL_Texture* m_tiles = 0;
     SDL_Texture* m_text = 0;
 
-    int m_tile_height = 0;
-    int m_tile_width = 0;
+    TileConfig m_tile_cfg;
+    Coord m_tile_dimensions = { 0, 0 };
+
+    TileConfig m_text_cfg;
+    Coord m_text_dimensions = { 0, 0 };
+
     bool m_force_text = false;
+    bool m_force_tile = false;
 
     struct ThreadData
     {
@@ -170,18 +176,30 @@ private:
     };
 };
 
+namespace
+{
+    TileConfig pc_tiles = { "tiles.bmp", 78, 2 };
+    TileConfig pc_text = { "text.bmp", 256, 16 };
+
+    TileConfig atari_tiles = { "atari.bmp", 78, 1 };
+}
+
+
 SdlRogue::Impl::Impl()
 {
-    SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "tiles.bmp"));
-    //SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + "sprites.bmp"));
-    m_tile_height = tiles->h / TILE_STATES;
-    m_tile_width = tiles->w / TILE_COUNT;
+    m_tile_cfg = pc_tiles;
+    //m_tile_cfg = atari_tiles;
+    //m_force_tile = true;
+    SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + m_tile_cfg.filename));
+    m_tile_dimensions.x = tiles->w / m_tile_cfg.count;
+    m_tile_dimensions.y = tiles->h / m_tile_cfg.states;
 
-    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + "text.bmp"));
-    assert(m_tile_height == text->h / TEXT_STATES);
-    assert(m_tile_width == text->w / TEXT_COUNT);
+    m_text_cfg = pc_text;
+    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + m_text_cfg.filename));
+    m_text_dimensions.x = text->w / m_text_cfg.count;
+    m_text_dimensions.y = text->h / m_text_cfg.states;
 
-    m_window = SDL_CreateWindow("Rogue", 100, 100, m_tile_width * 80, m_tile_height * 25, SDL_WINDOW_SHOWN);
+    m_window = SDL_CreateWindow("Rogue", 100, 100, m_tile_dimensions.x * 80, m_tile_dimensions.y * 25, SDL_WINDOW_SHOWN);
     if (m_window == nullptr)
         throw_error("SDL_CreateWindow");
 
@@ -219,10 +237,10 @@ bool SdlRogue::Impl::use_inverse(unsigned short attr)
 inline SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
 {
     SDL_Rect r;
-    r.h = m_tile_height;
-    r.w = m_tile_width;
-    r.x = i*m_tile_width;
-    r.y = use_inverse ? m_tile_height : 0;
+    r.h = m_tile_dimensions.y;
+    r.w = m_tile_dimensions.x;
+    r.x = i*m_tile_dimensions.x;
+    r.y = use_inverse ? m_tile_dimensions.y : 0;
     return r;
 }
 
@@ -280,9 +298,18 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, Coord dimensions, Region rect)
                 auto i = tile_index(info.Char.AsciiChar);
                 if (i == -1)
                 {
+                    //draw a black tile if we don't have a tile for this character
+                    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+                    SDL_Rect rectangle;
+                    rectangle.x = p.x;
+                    rectangle.y = p.y;
+                    rectangle.w = m_tile_dimensions.x;
+                    rectangle.h = m_tile_dimensions.y;
+                    SDL_RenderFillRect(m_renderer, &rectangle);
+
                     continue;
                 }
-                bool inv = use_inverse(info.Attributes);
+                bool inv = (m_tile_cfg.states > 1) && use_inverse(info.Attributes);
                 auto r = get_tile_rect(i, inv);
                 render_texture_at(m_tiles, m_renderer, p, r);
             }
@@ -293,13 +320,16 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, Coord dimensions, Region rect)
 inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
 {
     Coord p;
-    p.x = buffer_pos.x * m_tile_width;
-    p.y = buffer_pos.y * m_tile_height;
+    p.x = buffer_pos.x * m_tile_dimensions.x;
+    p.y = buffer_pos.y * m_tile_dimensions.y;
     return p;
 }
 
 bool SdlRogue::Impl::render_as_text(int c)
 { 
+    if (m_force_tile)
+        return false;
+
     if (m_force_text)
         return true;
 
@@ -321,10 +351,10 @@ inline int SdlRogue::Impl::get_text_index(unsigned short attr)
 inline SDL_Rect SdlRogue::Impl::get_text_rect(int c, int i)
 {
     SDL_Rect r;
-    r.h = m_tile_height;
-    r.w = m_tile_width;
-    r.x = c*m_tile_width;
-    r.y = i*m_tile_height;
+    r.h = m_tile_dimensions.y;
+    r.w = m_tile_dimensions.x;
+    r.x = c*m_tile_dimensions.x;
+    r.y = i*m_tile_dimensions.y;
     return r;
 }
 
@@ -335,7 +365,7 @@ void SdlRogue::Impl::SetDimensions(Coord dimensions)
         m_shared_data.m_dimensions = dimensions;
         m_shared_data.m_data = new CharInfo[dimensions.x*dimensions.y];
     }
-    SDL_SetWindowSize(m_window, m_tile_width*dimensions.x, m_tile_height*dimensions.y);
+    SDL_SetWindowSize(m_window, m_tile_dimensions.x*dimensions.x, m_tile_dimensions.y*dimensions.y);
 }
 
 void SdlRogue::Impl::Draw(CharInfo * info)
