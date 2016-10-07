@@ -13,6 +13,7 @@
 struct SdlWindow::Impl
 {
     const Coord EMPTY_COORD = { 0, 0 };
+    const unsigned int MAX_QUEUE_SIZE = 50;
 
     const int TILE_COUNT = 78;
     const int TILE_STATES = 2;
@@ -41,8 +42,8 @@ private:
     int get_text_index(unsigned short attr);
     SDL_Rect get_text_rect(int c, int i);
 
-    int shared_data_size() const;       //must have mutex before calling
-    SMALL_RECT shared_data_full_rect(); //must have mutex before calling
+    int shared_data_size() const;         //must have mutex before calling
+    SMALL_RECT shared_data_full_region(); //must have mutex before calling
 
 private:
     SDL_Window* m_window = 0;
@@ -225,9 +226,12 @@ inline SDL_Rect SdlWindow::Impl::get_text_rect(int c, int i)
 
 void SdlWindow::Impl::SetDimensions(Coord dimensions)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_shared_data.m_dimensions = dimensions;
-    m_shared_data.m_data = new CHAR_INFO[dimensions.x*dimensions.y];
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_shared_data.m_dimensions = dimensions;
+        m_shared_data.m_data = new CHAR_INFO[dimensions.x*dimensions.y];
+    }
+    SDL_SetWindowSize(m_window, m_tile_width*dimensions.x, m_tile_height*dimensions.y);
 }
 
 void SdlWindow::Impl::Draw(_CHAR_INFO * info)
@@ -237,7 +241,7 @@ void SdlWindow::Impl::Draw(_CHAR_INFO * info)
         std::lock_guard<std::mutex> lock(m_mutex);
         //If we're adding a full render to the queue, we can ignore any previous regions.
         m_shared_data.m_render_regions.clear();
-        r = shared_data_full_rect();
+        r = shared_data_full_region();
     }
     Draw(info, r);
 }
@@ -247,10 +251,10 @@ inline void SdlWindow::Impl::Draw(_CHAR_INFO * info, _SMALL_RECT rect)
     std::lock_guard<std::mutex> lock(m_mutex);
 
     //If we're behind on rendering, clear the queue and do a single full render.
-    if (m_shared_data.m_render_regions.size() > 50)
+    if (m_shared_data.m_render_regions.size() > MAX_QUEUE_SIZE)
     {
         m_shared_data.m_render_regions.clear();
-        m_shared_data.m_render_regions.push_back(shared_data_full_rect());
+        m_shared_data.m_render_regions.push_back(shared_data_full_region());
     }
     else {
         m_shared_data.m_render_regions.push_back(rect);
@@ -320,7 +324,7 @@ int SdlWindow::Impl::shared_data_size() const
     return sizeof(CHAR_INFO) * m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y;
 }
 
-SMALL_RECT SdlWindow::Impl::shared_data_full_rect()
+SMALL_RECT SdlWindow::Impl::shared_data_full_region()
 {
     SMALL_RECT r;
     r.Left = 0;

@@ -318,10 +318,6 @@ std::string get_print_chars()
     for (int i = 0; i < 256; ++i) {
         s.push_back(i);
     }
-    s.push_back(PASSAGE);
-    s.push_back(0xcc);
-    s.push_back(0xb9);
-    s.push_back('A');
     return s;
 }
 
@@ -432,11 +428,11 @@ void test()
             SDL_RenderClear(renderer.get());
 
             if (!text) {
-                for (int i = 0; i < s.length(); ++i) {
+                for (size_t i = 0; i < s.length(); ++i) {
                     SDL_Rect r = get_rect(s[i]);
                     int k = 0;
                     for (auto it = textures.begin(); it != textures.end(); ++it)
-                        render_texture_at((*it).get(), renderer.get(), { 8 * i, 16 * k++ }, r);
+                        render_texture_at((*it).get(), renderer.get(), { 8 * int(i), 16 * k++ }, r);
                 }
             }
             else {
