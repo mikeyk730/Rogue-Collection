@@ -5,7 +5,7 @@
 #include <mutex>
 #include <Windows.h> //todo: change interface to avoid char_info and small_rect
 #include "SDL.h"
-#include "sdl_window.h"
+#include "sdl_rogue.h"
 #include "utility.h"
 #include "RogueCore/rogue.h"
 #include "RogueCore/coord.h"

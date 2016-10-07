@@ -394,7 +394,7 @@ void test()
 
 
 #include <memory>
-#include "sdl_window.h"
+#include "sdl_rogue.h"
 #include "RogueCore/main.h"
 
 void run_game(int argc, char **argv, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input)

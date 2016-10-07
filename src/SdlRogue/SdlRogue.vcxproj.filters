@@ -6,10 +6,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sdl_window.h">
+    <ClInclude Include="utility.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="utility.h">
+    <ClInclude Include="sdl_rogue.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
@@ -17,10 +17,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="sdl_window.cpp">
+    <ClCompile Include="utility.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="utility.cpp">
+    <ClCompile Include="sdl_rogue.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
