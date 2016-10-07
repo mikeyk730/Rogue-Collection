@@ -386,7 +386,9 @@ void SdlRogue::Impl::Run()
         else if (e.type == SDL_KEYUP) {
             HandleEventKeyUp(e);
         }
-        Render();
+        else if (e.type == SDL_USEREVENT) {
+            Render();
+        }
     }
 }
 
