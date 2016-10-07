@@ -105,6 +105,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\x86\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RogueCore.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
+xcopy "$(SolutionDir)lib\sdl\lib\x86\SDL2.dll" "$(OutDir)." /F /R /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -123,6 +127,10 @@
       <AdditionalDependencies>RogueCore.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\x64\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
+xcopy "$(SolutionDir)lib\sdl\lib\x64\SDL2.dll" "$(OutDir)." /F /R /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -145,6 +153,10 @@
       <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\x86\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>RogueCore.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
+xcopy "$(SolutionDir)lib\sdl\lib\x86\SDL2.dll" "$(OutDir)." /F /R /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -167,6 +179,10 @@
       <AdditionalDependencies>RogueCore.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\x64\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
+xcopy "$(SolutionDir)lib\sdl\lib\x64\SDL2.dll" "$(OutDir)." /F /R /Y /I</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
