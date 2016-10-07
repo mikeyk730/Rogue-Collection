@@ -424,7 +424,7 @@ void str_attr(char *str)
     while (*str)
     {
         if (*str == '%') { str++; game->screen().standout(); }
-        game->screen().addch(*str++);
+        game->screen().add_text(*str++);
         game->screen().standend();
     }
 }

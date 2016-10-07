@@ -117,7 +117,7 @@ void do_motion(Item *obj, Coord delta)
 
         //Erase the old one
         if (under != UNSET && !equal(obj->position(), game->hero().position()) && game->hero().can_see(obj->position()))
-            game->screen().mvaddch(obj->position(), under);
+            game->screen().add_tile(obj->position(), under);
         //Get the new position
         obj->set_position(obj->position() + delta);
         //mdk: Originally thrown items would pass through mimics.  With =throws_affect_mimics= they
@@ -132,7 +132,7 @@ void do_motion(Item *obj, Coord delta)
                 under = game->level().get_tile_or_monster(obj->position(), false);
                 //under = game->m_level().get_tile(obj->position());
 
-                game->screen().mvaddch(obj->position(), obj->m_type);
+                game->screen().add_tile(obj->position(), obj->m_type);
                 tick_pause();
             }
             else 
@@ -166,7 +166,7 @@ void fall(Item *obj, bool pr)
         {
             if ((game->level().is_passage(obj->position())) || (game->level().is_maze(obj->position())))
                 game->screen().standout();
-            game->screen().mvaddch(fpos, obj->m_type);
+            game->screen().add_tile(fpos, obj->m_type);
             game->screen().standend();
         }
         return;

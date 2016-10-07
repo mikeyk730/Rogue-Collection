@@ -53,7 +53,7 @@ void darken_position(Coord pos, int hero_passage)
     {
         Room* old_room = game->hero().previous_room();
         if (old_room->is_dark() && !old_room->is_gone())
-            game->screen().addch(' ');
+            game->screen().add_tile(' ');
     }
     //darken passage
     //mdk:bugfix: originally items dropped beside a door and inside a passage would never be erased
@@ -62,7 +62,7 @@ void darken_position(Coord pos, int hero_passage)
         //mdk:bugfix: this code originally blotted out detected monsters with a passage.
         //I added the check below to correct this.
         if (!(isupper(toascii(ch)) && game->hero().detects_others())) {
-            game->screen().addch(PASSAGE);
+            game->screen().add_tile(PASSAGE);
         }
     }
 }
@@ -152,7 +152,7 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
             game->screen().standout();
         }
     }
-    game->screen().mvaddch(pos, tile);
+    game->screen().add_tile(pos, tile);
     game->screen().standend();
 
     // determine whether we need to stop a running player
@@ -243,7 +243,7 @@ void look(bool wakeup) //todo: learn this function
     Coord hero_pos = game->hero().position();
     if (game->level().is_passage(hero_pos) || game->level().is_maze(hero_pos) || game->hero().sprung_teleport_trap())
         game->screen().standout();
-    game->screen().mvaddch(hero_pos, PLAYER);
+    game->screen().add_tile(hero_pos, PLAYER);
     game->screen().standend();
 
     // todo: why not when trap is sprung?

@@ -196,7 +196,7 @@ void enter_room(Coord cp)
                 //Displaying monsters is all handled in the chase code now
                 monster = game->level().monster_at(pos);
                 if (monster == NULL || !game->hero().can_see_monster(monster))
-                    game->screen().addch(game->level().get_tile(pos));
+                    game->screen().add_tile(game->level().get_tile(pos));
                 else {
                     monster->reload_tile_beneath();
                     monster->render();
@@ -233,7 +233,7 @@ void leave_room(Coord cp)
                 //to check for monster, we have to strip out standout bit
                 if (isupper(toascii(ch)) && game->hero().detects_others()) {
                     game->screen().standout();
-                    game->screen().addch(ch);
+                    game->screen().add_tile(ch);
                     game->screen().standend();
                     break;
                 }
@@ -247,7 +247,7 @@ void leave_room(Coord cp)
                     }
                 }
 
-                game->screen().addch(floor);
+                game->screen().add_tile(floor);
             }
         }
     }

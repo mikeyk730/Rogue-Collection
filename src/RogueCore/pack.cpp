@@ -174,7 +174,7 @@ void Hero::pick_up(byte ch)
         delete gold;
 
         byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
-        game->screen().mvaddch(position(), floor);
+        game->screen().add_tile(position(), floor);
         game->level().set_tile(position(), floor);
     }
     else {

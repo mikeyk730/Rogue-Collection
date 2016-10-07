@@ -342,7 +342,7 @@ int handle_trap(Coord tc)
 
     case T_TELEP:
         game->hero().teleport();
-        game->screen().mvaddch(tc, TRAP); //since the hero's leaving, look() won't put it on for us
+        game->screen().add_tile(tc, TRAP); //since the hero's leaving, look() won't put it on for us
         break;
 
     case T_DART:

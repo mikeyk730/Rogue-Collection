@@ -98,8 +98,8 @@ void credits()
     game->screen().brown();
     game->screen().move(22, 1);
     game->screen().repchr(205, COLS - 2);
-    game->screen().mvaddch({ 0,22 }, (char)204);
-    game->screen().mvaddch({ COLS - 1,22 }, (char)185);
+    game->screen().add_text({ 0,22 }, (char)204);
+    game->screen().add_text({ COLS - 1,22 }, (char)185);
     game->screen().standend();
     game->screen().mvaddstr({ 2, 23 }, "Rogue's Name? ");
 
@@ -112,8 +112,8 @@ void credits()
 
     game->screen().blot_out(23, 0, 24, COLS - 1);
     game->screen().brown();
-    game->screen().mvaddch({ 0,22 }, (char)0xc8);
-    game->screen().mvaddch({ COLS - 1,22 }, (char)0xbc);
+    game->screen().add_text({ 0,22 }, (char)0xc8);
+    game->screen().add_text({ COLS - 1,22 }, (char)0xbc);
     game->screen().standend();
 }
 

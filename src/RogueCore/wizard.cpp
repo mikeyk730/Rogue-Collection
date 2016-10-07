@@ -164,7 +164,7 @@ void add_pass()
     for (y = 1; y < maxrow(); y++)
         for (x = 0; x < COLS; x++)
             if ((ch = game->level().get_tile({ x, y })) == DOOR || ch == PASSAGE)
-                game->screen().mvaddch({ x, y }, ch);
+                game->screen().add_tile({ x, y }, ch);
 }
 
 bool do_show_map()
@@ -189,7 +189,7 @@ void show_map(bool show_monsters)
             int real = game->level().is_real(c);
             if (!real)
                 game->screen().standout();
-            game->screen().mvaddch(c, tile);
+            game->screen().add_tile(c, tile);
             if (!real)
                 game->screen().standend();
         }

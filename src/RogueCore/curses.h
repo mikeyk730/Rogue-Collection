@@ -27,10 +27,11 @@ struct CharInfo;
 
 struct Curses
 {
+public:
     void clear();
-
+private:
     void putchr(int c, int attr);
-
+public:
     //Turn cursor on and off
     bool cursor(bool ison);
 
@@ -38,7 +39,7 @@ struct Curses
     void getrc(int *r, int *c);
 
     void clrtoeol();
-
+private:
     void mvaddstr(int r, int c, const char *s);
 
     void mvaddch(int r, int c, char chr);
@@ -46,13 +47,13 @@ struct Curses
     int mvinch(int r, int c);
 
     int addch(byte chr);
-
+public:
     void addstr(const char *s);
 
     void set_attr(int bute);
-
+private:
     void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
-
+public:
     //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
     void winit(bool narrow);
 
@@ -66,28 +67,29 @@ struct Curses
 
     //Some general drawing routines
     void box(int ul_r, int ul_c, int lr_r, int lr_c);
-
+private:
     void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
-
+public:
     //center a string according to how many columns there really are
     void center(int row, const char *string);
 
     void printw(const char *msg, ...);
-
+private:
     void scroll_up(int start_row, int end_row, int nlines);
 
     void scroll_dn(int start_row, int end_row, int nlines);
 
     void scroll();
-
+public:
     //blot_out region (upper left row, upper left column) (lower right row, lower right column)
     void blot_out(int ul_row, int ul_col, int lr_row, int lr_col);
 
     void repchr(int chr, int cnt);
-
+private:
     //try to fixup screen after we get a control break
     void fixup();
 
+public:
     //Clear the screen in an interesting fashion
     void implode();
 
@@ -101,11 +103,16 @@ struct Curses
     char curch();
 
 public:
-    //mdk: extended interface
+    //todo: break out into own interface implemented in terms of curses
     Curses(std::shared_ptr<DisplayInterface> output);
     ~Curses();
 
-    void mvaddch(Coord p, byte c);
+    void add_text(Coord p, byte c);
+    int add_text(byte c);
+
+    void add_tile(Coord p, byte c);
+    int add_tile(byte c);
+
     int mvinch(Coord p);
     void mvaddstr(Coord p, const std::string& s);
 

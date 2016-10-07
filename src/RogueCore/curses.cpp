@@ -462,9 +462,24 @@ char Curses::curch()
     return m_buffer[m_row*COLS+m_col].Char.AsciiChar;
 }
 
-void Curses::mvaddch(Coord p, byte c)
+void Curses::add_text(Coord p, byte c)
 {
     mvaddch(p.y, p.x, c);
+}
+
+int Curses::add_text(byte c)
+{
+    return addch(c);
+}
+
+void Curses::add_tile(Coord p, byte c)
+{
+    mvaddch(p.y, p.x, c);
+}
+
+int Curses::add_tile(byte c)
+{
+    return addch(c);
 }
 
 int Curses::mvinch(Coord p)

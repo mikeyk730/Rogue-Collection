@@ -306,7 +306,7 @@ void Hero::teleport()
     struct Room* rm;
     Coord c;
 
-    game->screen().mvaddch(position(), game->level().get_tile(position()));
+    game->screen().add_tile(position(), game->level().get_tile(position()));
     do {
         rm = game->level().rnd_room();
         rnd_pos(rm, &c);
@@ -320,7 +320,7 @@ void Hero::teleport()
         set_position(c); 
         look(true); 
     }
-    game->screen().mvaddch(position(), PLAYER);
+    game->screen().add_tile(position(), PLAYER);
 
     //turn off IS_HELD in case teleportation was done while fighting a Flytrap
     clear_hold();
@@ -602,7 +602,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
                 if (from_floor) {
                     byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
                     game->level().items.remove((*obj));
-                    game->screen().mvaddch(position(), floor);
+                    game->screen().add_tile(position(), floor);
                     game->level().set_tile(position(), floor);
                 }
                 delete *obj;
@@ -625,7 +625,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
             byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
             game->level().items.remove(*obj);
             delete *obj;
-            game->screen().mvaddch(position(), floor);
+            game->screen().add_tile(position(), floor);
             game->level().set_tile(position(), floor);
             msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
             return false;
@@ -636,7 +636,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     if (from_floor) {
         byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
         game->level().items.remove(*obj);
-        game->screen().mvaddch(position(), floor);
+        game->screen().add_tile(position(), floor);
         game->level().set_tile(position(), floor);
     }
 

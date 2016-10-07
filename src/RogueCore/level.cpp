@@ -156,7 +156,7 @@ Monster* Level::monster_at(Coord p, bool include_disguised)
 
 void Level::draw_char(Coord p)
 {
-    game->screen().mvaddch(p, get_tile(p));
+    game->screen().add_tile(p, get_tile(p));
 }
 
 void Level::show_map(bool reveal_interior)
@@ -208,7 +208,7 @@ void Level::show_map(bool reveal_interior)
                     game->screen().standout();
             }
             if (ch != ' ')
-                game->screen().mvaddch(p, ch);
+                game->screen().add_tile(p, ch);
             game->screen().standend();
         }
     }
@@ -290,7 +290,7 @@ void Level::new_level(int do_implode)
 
     reset_msg_position();
     enter_room(game->hero().position());
-    game->screen().mvaddch(game->hero().position(), PLAYER);
+    game->screen().add_tile(game->hero().position(), PLAYER);
 
     game->wizard().on_new_level();
     game->hero().on_new_level();
@@ -402,7 +402,7 @@ bool Level::reveal_magic()
         if (item->is_magic())
         {
             discovered = true;
-            game->screen().mvaddch(item->position(), get_magic_char(item));
+            game->screen().add_tile(item->position(), get_magic_char(item));
         }
     }
     for (auto m = monsters.begin(); m != monsters.end(); ++m) {
@@ -413,7 +413,7 @@ bool Level::reveal_magic()
             if (item->is_magic())
             {
                 discovered = true;
-                game->screen().mvaddch(monster->position(), MAGIC);
+                game->screen().add_tile(monster->position(), MAGIC);
             }
         }
     }
@@ -437,13 +437,13 @@ bool Level::detect_monsters(bool enable)
                 }
                 game->screen().standout();
             }
-            game->screen().addch(monster->m_type);
+            game->screen().add_tile(monster->m_type);
             game->screen().standend();
         }
         else {
             //if we can't see the monster, replace it with whatever is beneath it
             if (!game->hero().can_see_monster(monster) && monster->has_tile_beneath())
-                game->screen().addch(monster->tile_beneath());
+                game->screen().add_tile(monster->tile_beneath());
         }
     }
     return revealed;

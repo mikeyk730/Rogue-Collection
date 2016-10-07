@@ -204,7 +204,7 @@ void Monster::reload_tile_beneath()
 
 void Monster::render()
 {
-    game->screen().mvaddch(position(), m_disguise);
+    game->screen().add_tile(position(), m_disguise);
 }
 
 void Monster::invalidate_tile_beneath()
@@ -345,7 +345,7 @@ Monster* Monster::do_chase() //todo: understand
                 oldchar = (room()->is_gone()) ? PASSAGE : FLOOR;
                 game->level().set_tile(obj->position(), oldchar);
                 if (game->hero().can_see(obj->position()))
-                    game->screen().mvaddch(obj->position(), oldchar);
+                    game->screen().add_tile(obj->position(), oldchar);
                 obtain_target();
                 break;
             }
@@ -364,11 +364,11 @@ void Monster::do_screen_update(Coord next_position)
     if (has_tile_beneath())
     {
         if (tile_beneath() == ' ' && game->hero().can_see(position()) && game->level().get_tile(position()) == FLOOR)
-            game->screen().mvaddch(position(), (char)FLOOR);
+            game->screen().add_tile(position(), (char)FLOOR);
         else if (tile_beneath() == FLOOR && !game->hero().can_see(position()) && !game->hero().detects_others())
-            game->screen().mvaddch(position(), ' ');
+            game->screen().add_tile(position(), ' ');
         else
-            game->screen().mvaddch(position(), tile_beneath());
+            game->screen().add_tile(position(), tile_beneath());
     }
 
     Room *orig_room = room();
@@ -390,13 +390,13 @@ void Monster::do_screen_update(Coord next_position)
             game->screen().standout();
         //mdk:tile is fetched from screen so detected monster doesn't reveal level 
         set_tile_beneath(game->screen().mvinch(next_position));
-        game->screen().mvaddch(next_position, m_disguise);
+        game->screen().add_tile(next_position, m_disguise);
     }
     else if (game->hero().detects_others())
     {
         game->screen().standout();
         set_tile_beneath(game->screen().mvinch(next_position));
-        game->screen().mvaddch(next_position, m_type);
+        game->screen().add_tile(next_position, m_type);
     }
     else
         invalidate_tile_beneath();

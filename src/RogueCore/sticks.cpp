@@ -314,7 +314,7 @@ bool Stick::zap_polymorph(Coord dir)
     //restore the level tile, as the new monster may be invisible
     Coord p = monster->position();
     if (game->hero().can_see_monster(monster))
-        game->screen().mvaddch(p, game->level().get_tile(p));
+        game->screen().add_tile(p, game->level().get_tile(p));
 
     //create a random monster
     Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, game->get_level());
@@ -324,7 +324,7 @@ bool Stick::zap_polymorph(Coord dir)
         discover();
 
     if (game->hero().can_see_monster(new_monster))
-        game->screen().mvaddch(p, new_monster->m_type);
+        game->screen().add_tile(p, new_monster->m_type);
 
     //the monster chases the player
     new_monster->start_run(&game->hero());
@@ -406,7 +406,7 @@ bool Stick::zap_teleport_away(Coord dir)
     
     //erase the monster from the screen
     if (game->hero().can_see_monster(monster))
-        game->screen().mvaddch(monster->position(), monster->tile_beneath());
+        game->screen().add_tile(monster->position(), monster->tile_beneath());
 
     //pick a new location for the monster
     Coord new_pos;
@@ -433,7 +433,7 @@ bool Stick::zap_teleport_to(Coord dir)
 
     //erase the monster from the screen
     if (game->hero().can_see_monster(monster))
-        game->screen().mvaddch(monster->position(), monster->tile_beneath());
+        game->screen().add_tile(monster->position(), monster->tile_beneath());
 
     //move the monster to beside the player
     monster->set_position(game->hero().position() + dir);
@@ -724,7 +724,7 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
             else
                 game->screen().red();
             tick_pause();
-            game->screen().mvaddch(bolt->position(), dirch);
+            game->screen().add_tile(bolt->position(), dirch);
             game->screen().standend();
         }
     }
@@ -734,7 +734,7 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
     {
         tick_pause();
         if (spotpos[j].s_under)
-            game->screen().mvaddch(spotpos[j].s_pos, spotpos[j].s_under);
+            game->screen().add_tile(spotpos[j].s_pos, spotpos[j].s_under);
     }
 
     return victim;

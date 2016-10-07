@@ -188,7 +188,7 @@ namespace
 SdlRogue::Impl::Impl()
 {
     m_tile_cfg = pc_tiles;
-    //m_tile_cfg = atari_tiles;
+    m_tile_cfg = atari_tiles;
     //m_force_tile = true;
     SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + m_tile_cfg.filename));
     m_tile_dimensions.x = tiles->w / m_tile_cfg.count;
@@ -554,7 +554,7 @@ namespace
         game->screen().getrc(&x, &y);
         if (--y < 0) y = 0;
         game->screen().move(x, y);
-        game->screen().addch(' ');
+        game->screen().add_text(' ');
         game->screen().move(x, y);
     }
 }
@@ -583,7 +583,7 @@ std::string SdlRogue::Impl::GetNextString(int size)
                 beep();
                 break;
             }
-            game->screen().addch(c);
+            game->screen().add_text(c);
             s.push_back(c);
             break;
         case '\n':
