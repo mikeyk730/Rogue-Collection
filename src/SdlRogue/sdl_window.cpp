@@ -9,6 +9,7 @@
 #include "utility.h"
 #include "RogueCore/rogue.h"
 #include "RogueCore/coord.h"
+#include "RogueCore/io.h"
 #include "RogueCore/mach_dep.h"
 #include "RogueCore/game_state.h"
 #include "RogueCore/curses.h"
@@ -115,7 +116,7 @@ private:
 
     //todo: 2 classes
 public:
-    char GetNextChar();
+    char GetNextChar(bool);
     virtual std::string GetNextString(int size);
 private:
     void HandleEventText(const SDL_Event& e);
@@ -380,6 +381,9 @@ void SdlRogue::Impl::Run()
             else if (e.type == SDL_KEYDOWN) {
                 HandleEventKeyDown(e);
             }
+            else if (e.type == SDL_KEYUP) {
+                m_input_cv.notify_all();
+            }
         }
         Render();
     }
@@ -461,7 +465,7 @@ bool SdlRogue::HasMoreInput()
 
 char SdlRogue::GetNextChar()
 {
-    return m_impl->GetNextChar();
+    return m_impl->GetNextChar(true);
 }
 
 std::string SdlRogue::GetNextString(int size)
@@ -471,27 +475,29 @@ std::string SdlRogue::GetNextString(int size)
 
 bool SdlRogue::IsCapsLockOn()
 {
-    return false;
+    return is_caps_lock_on();
 }
 
 bool SdlRogue::IsNumLockOn()
 {
-    return false;
+    return is_num_lock_on();
 }
 
 bool SdlRogue::IsScrollLockOn()
 {
-    return false;
+    return is_scroll_lock_on();
 }
 
 void SdlRogue::Serialize(std::ostream & out)
 {
 }
 
-char SdlRogue::Impl::GetNextChar()
+char SdlRogue::Impl::GetNextChar(bool do_key_state)
 {
     std::unique_lock<std::mutex> lock(m_input_mutex);
     while (m_buffer.empty()) {
+        if(do_key_state)
+            handle_key_state();
         m_input_cv.wait(lock);
     }
 
@@ -520,7 +526,7 @@ std::string SdlRogue::Impl::GetNextString(int size)
 
     while (true)
     {
-        char c = GetNextChar();
+        char c = GetNextChar(false);
         switch (c)
         {
         case ESCAPE:

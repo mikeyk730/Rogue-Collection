@@ -394,7 +394,6 @@ void test()
 
 
 #include <memory>
-#include "sdl_keyboard_input.h"
 #include "sdl_window.h"
 #include "RogueCore/main.h"
 

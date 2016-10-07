@@ -155,14 +155,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="sdl_keyboard_input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sdl_window.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utility.h" />
-    <ClInclude Include="sdl_keyboard_input.h" />
     <ClInclude Include="sdl_window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

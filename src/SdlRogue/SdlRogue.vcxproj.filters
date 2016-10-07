@@ -6,9 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sdl_keyboard_input.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="sdl_window.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -18,9 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="sdl_keyboard_input.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="sdl_window.cpp">

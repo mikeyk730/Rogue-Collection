@@ -182,17 +182,17 @@ std::string ConsoleKeyboardInput::GetNextString(int size) {
 
 bool ConsoleKeyboardInput::IsCapsLockOn()
 {
-    return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
+    return is_caps_lock_on();
 }
 
 bool ConsoleKeyboardInput::IsNumLockOn()
 {
-    return LOBYTE(GetKeyState(VK_NUMLOCK)) != 0;
+    return is_num_lock_on();
 }
 
 bool ConsoleKeyboardInput::IsScrollLockOn()
 {
-    return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
+    return is_scroll_lock_on();
 }
 
 void ConsoleKeyboardInput::Serialize(std::ostream& out)

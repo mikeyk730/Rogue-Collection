@@ -56,6 +56,7 @@ int getinfo(char *str, int size);
 void clear_typeahead_buffer();
 
 void tick_pause();
+void alert();
 
 //str_attr: format a string with attributes.
 //

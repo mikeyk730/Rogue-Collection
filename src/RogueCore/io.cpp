@@ -531,6 +531,12 @@ void tick_pause()
         sleep(50);
 }
 
+void alert()
+{
+    if (!game->in_replay())
+        beep();
+}
+
 std::ostream& write_string(std::ostream& out, const std::string& s) {
     write(out, s.length());
     out.write(s.c_str(), s.length());

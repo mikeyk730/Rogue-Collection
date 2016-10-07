@@ -248,7 +248,7 @@ void look(bool wakeup) //todo: learn this function
 
     // todo: why not when trap is sprung?
     if (game->hero().sprung_trap()) {
-        beep();
+        alert();
         game->hero().reset_sprung();
     }
 }
