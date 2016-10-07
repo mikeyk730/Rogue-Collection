@@ -105,6 +105,12 @@ void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
     }
 }
 
+void throw_error(const std::string &msg)
+{
+    std::cerr << SDL_GetError() << std::endl;
+    throw std::runtime_error(msg + " error: " + SDL_GetError());
+}
+
 SDL::Scoped::Surface load_bmp(const std::string& filename)
 {
     SDL::Scoped::Surface bmp(SDL_LoadBMP(filename.c_str()), SDL_FreeSurface);
