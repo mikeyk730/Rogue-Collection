@@ -1,10 +1,6 @@
 #pragma once
 #include <memory>
 
-struct DisplayInterface;
-struct Region;
-struct CharInfo;
-
 #define BX_SIZE 7
 
 #define standend()          set_attr(0)
@@ -25,13 +21,17 @@ struct CharInfo;
 #define high()              set_attr(15)
 #define bold()              set_attr(16)
 
-struct Curses
+struct Curses;
+struct DisplayInterface;
+
+struct OutputShim
 {
 public:
+    OutputShim(std::shared_ptr<DisplayInterface> output);
+    ~OutputShim();
+
     void clear();
-private:
-    void putchr(int c, int attr);
-public:
+
     //Turn cursor on and off
     bool cursor(bool ison);
 
@@ -39,21 +39,11 @@ public:
     void getrc(int *r, int *c);
 
     void clrtoeol();
-private:
-    void mvaddstr(int r, int c, const char *s);
 
-    void mvaddch(int r, int c, char chr);
-
-    int mvinch(int r, int c);
-
-    int addch(byte chr);
-public:
     void addstr(const char *s);
 
     void set_attr(int bute);
-private:
-    void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
-public:
+
     //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
     void winit(bool narrow);
 
@@ -67,29 +57,17 @@ public:
 
     //Some general drawing routines
     void box(int ul_r, int ul_c, int lr_r, int lr_c);
-private:
-    void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
-public:
+
     //center a string according to how many columns there really are
     void center(int row, const char *string);
 
-    void printw(const char *msg, ...);
-private:
-    void scroll_up(int start_row, int end_row, int nlines);
+    void printw(const char* format, ...);
 
-    void scroll_dn(int start_row, int end_row, int nlines);
-
-    void scroll();
-public:
     //blot_out region (upper left row, upper left column) (lower right row, lower right column)
     void blot_out(int ul_row, int ul_col, int lr_row, int lr_col);
 
     void repchr(int chr, int cnt);
-private:
-    //try to fixup screen after we get a control break
-    void fixup();
 
-public:
     //Clear the screen in an interesting fashion
     void implode();
 
@@ -101,11 +79,6 @@ public:
     void move(short y, short x);
 
     char curch();
-
-public:
-    //todo: break out into own interface implemented in terms of curses
-    Curses(std::shared_ptr<DisplayInterface> output);
-    ~Curses();
 
     void add_text(Coord p, byte c);
     int add_text(byte c);
@@ -122,31 +95,5 @@ public:
     void stop_rendering();
     void resume_rendering();
 
-private:
-    void Render();
-    void Render(Region rect);
-    void ApplyMove();
-    void ApplyCursor();
-
-    //screen size
-    short LINES = 25;
-    short COLS = 80;
-
-    //points to either color or monochrom attribute table
-    const byte *at_table;
-
-    //cursor position
-    short m_row;
-    short m_col;
-
-    int m_attr = 0x7;
-    bool m_cursor = false;
-    bool m_curtain_down = false;
-    bool m_should_render = true;
-
-    CharInfo* m_buffer = 0;
-    CharInfo* m_backup = 0;
-
-    std::shared_ptr<DisplayInterface> m_screen;
-    bool disable_render = false;
+    std::unique_ptr<Curses> m_curses;
 };

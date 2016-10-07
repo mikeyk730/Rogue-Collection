@@ -55,7 +55,7 @@ namespace
 GameState::GameState(int seed, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input) :
     m_seed(seed),
     m_input_interface(new CapturedInput(input)),
-    m_curses(new Curses(output)),
+    m_curses(new OutputShim(output)),
     m_level(new Level),
     m_hero(new Hero),
     m_scrolls(new ScrollInfo),
@@ -68,7 +68,7 @@ GameState::GameState(int seed, std::shared_ptr<DisplayInterface> output, std::sh
 }
 
 GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input) :
-    m_curses(new Curses(output)),
+    m_curses(new OutputShim(output)),
     m_in_replay(true),
     m_show_replay(show_replay),
     m_log_stream("lastgame.log")
@@ -224,7 +224,7 @@ InputInterface& GameState::input_interface()
     return *m_input_interface;
 }
 
-Curses& GameState::screen()
+OutputShim& GameState::screen()
 {
     return *m_curses;
 }

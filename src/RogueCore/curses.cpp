@@ -74,6 +74,120 @@ namespace
     const byte spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 }
 
+struct Curses
+{
+    void clear();
+
+    void putchr(int c, int attr);
+
+    //Turn cursor on and off
+    bool cursor(bool ison);
+
+    //get current cursor position
+    void getrc(int *r, int *c);
+
+    void clrtoeol();
+
+    void mvaddstr(int r, int c, const char *s);
+
+    void mvaddch(int r, int c, char chr);
+
+    int mvinch(int r, int c);
+
+    int addch(byte chr);
+
+    void addstr(const char *s);
+
+    void set_attr(int bute);
+
+    void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
+
+    //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
+    void winit(bool narrow);
+
+    void forcebw();
+
+    //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
+    void wdump();
+
+    //wrestor(windex): restore the window saved on disk
+    void wrestor();
+
+    //Some general drawing routines
+    void box(int ul_r, int ul_c, int lr_r, int lr_c);
+
+    void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
+
+    //center a string according to how many columns there really are
+    void center(int row, const char *string);
+
+    void printw(const char *msg, ...);
+
+    void scroll_up(int start_row, int end_row, int nlines);
+
+    void scroll_dn(int start_row, int end_row, int nlines);
+
+    void scroll();
+
+    //blot_out region (upper left row, upper left column) (lower right row, lower right column)
+    void blot_out(int ul_row, int ul_col, int lr_row, int lr_col);
+
+    void repchr(int chr, int cnt);
+
+    //try to fixup screen after we get a control break
+    void fixup();
+
+    //Clear the screen in an interesting fashion
+    void implode();
+
+    //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
+    void drop_curtain();
+
+    void raise_curtain();
+
+    void move(short y, short x);
+
+    char curch();
+
+public:
+    Curses(std::shared_ptr<DisplayInterface> output);
+    ~Curses();
+
+    int lines() const;
+    int columns() const;
+
+    void stop_rendering();
+    void resume_rendering();
+
+private:
+    void Render();
+    void Render(Region rect);
+    void ApplyMove();
+    void ApplyCursor();
+
+    //screen size
+    short LINES = 25;
+    short COLS = 80;
+
+    //points to either color or monochrom attribute table
+    const byte *at_table;
+
+    //cursor position
+    short m_row;
+    short m_col;
+
+    int m_attr = 0x7;
+    bool m_cursor = false;
+    bool m_curtain_down = false;
+    bool m_should_render = true;
+
+    CharInfo* m_buffer = 0;
+    CharInfo* m_backup = 0;
+
+    std::shared_ptr<DisplayInterface> m_screen;
+    bool disable_render = false;
+};
+
 void Curses::putchr(int c, int attr)
 {
     CharInfo ci;
@@ -462,36 +576,6 @@ char Curses::curch()
     return m_buffer[m_row*COLS+m_col].Char.AsciiChar;
 }
 
-void Curses::add_text(Coord p, byte c)
-{
-    mvaddch(p.y, p.x, c);
-}
-
-int Curses::add_text(byte c)
-{
-    return addch(c);
-}
-
-void Curses::add_tile(Coord p, byte c)
-{
-    mvaddch(p.y, p.x, c);
-}
-
-int Curses::add_tile(byte c)
-{
-    return addch(c);
-}
-
-int Curses::mvinch(Coord p)
-{
-    return mvinch(p.y, p.x);
-}
-
-void Curses::mvaddstr(Coord p, const std::string & s)
-{
-    mvaddstr(p.y, p.x, s.c_str());
-}
-
 int Curses::lines() const
 {
     return LINES;
@@ -545,4 +629,169 @@ void Curses::ApplyCursor()
         return;
 
     m_screen->SetCursor(m_cursor);
+}
+
+OutputShim::OutputShim(std::shared_ptr<DisplayInterface> output) 
+    : m_curses(new Curses(output))
+{
+}
+
+OutputShim::~OutputShim()
+{
+}
+
+void OutputShim::clear()
+{
+    m_curses->clear();
+}
+
+bool OutputShim::cursor(bool ison)
+{
+    return m_curses->cursor(ison);
+}
+
+void OutputShim::getrc(int * r, int * c)
+{
+    m_curses->getrc(r, c);
+}
+
+void OutputShim::clrtoeol()
+{
+    m_curses->clrtoeol();
+}
+
+void OutputShim::addstr(const char * s)
+{
+    m_curses->addstr(s);
+}
+
+void OutputShim::set_attr(int bute)
+{
+    m_curses->set_attr(bute);
+}
+
+void OutputShim::winit(bool narrow)
+{
+    m_curses->winit(narrow);
+}
+
+void OutputShim::forcebw()
+{
+    m_curses->forcebw();
+}
+
+void OutputShim::wdump()
+{
+    m_curses->wdump();
+}
+
+void OutputShim::wrestor()
+{
+    m_curses->wrestor();
+}
+
+void OutputShim::box(int ul_r, int ul_c, int lr_r, int lr_c)
+{
+    m_curses->box(ul_r, ul_c, lr_r, lr_c);
+}
+
+void OutputShim::center(int row, const char * string)
+{
+    m_curses->center(row, string);
+}
+
+void OutputShim::printw(const char * format, ...)
+{
+    char msg[1024 * 16];
+    va_list argptr;
+    va_start(argptr, format);
+    vsprintf(msg, format, argptr);
+    va_end(argptr);
+
+    m_curses->printw(msg);
+}
+
+void OutputShim::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
+{
+    m_curses->blot_out(ul_row, ul_col, lr_row, lr_col);
+}
+
+void OutputShim::repchr(int chr, int cnt)
+{
+    m_curses->repchr(chr, cnt);
+}
+
+void OutputShim::implode()
+{
+    m_curses->implode();
+}
+
+void OutputShim::drop_curtain()
+{
+    m_curses->drop_curtain();
+}
+
+void OutputShim::raise_curtain()
+{
+    m_curses->raise_curtain();
+}
+
+void OutputShim::move(short y, short x)
+{
+    m_curses->move(y, x);
+}
+
+char OutputShim::curch()
+{
+    return m_curses->curch();
+}
+
+void OutputShim::add_text(Coord p, byte c)
+{
+    m_curses->mvaddch(p.y, p.x, c);
+}
+
+int OutputShim::add_text(byte c)
+{
+    return m_curses->addch(c);
+}
+
+void OutputShim::add_tile(Coord p, byte c)
+{
+    m_curses->mvaddch(p.y, p.x, c);
+}
+
+int OutputShim::add_tile(byte c)
+{
+    return m_curses->addch(c);
+}
+
+int OutputShim::mvinch(Coord p)
+{
+    return m_curses->mvinch(p.y, p.x);
+}
+
+void OutputShim::mvaddstr(Coord p, const std::string & s)
+{
+    m_curses->mvaddstr(p.y, p.x, s.c_str());
+}
+
+int OutputShim::lines() const
+{
+    return m_curses->lines();
+}
+
+int OutputShim::columns() const
+{
+    return m_curses->columns();
+}
+
+void OutputShim::stop_rendering()
+{
+    m_curses->stop_rendering();
+}
+
+void OutputShim::resume_rendering()
+{
+    m_curses->resume_rendering();
 }
