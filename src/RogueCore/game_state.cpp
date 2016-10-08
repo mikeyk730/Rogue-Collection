@@ -26,13 +26,6 @@ using std::placeholders::_1;
 ; fixed the bug by default, but added an option to disable the fix.
 ;
 ;------------------------------------------------------------------------------
-; haste_self_bugfix(true, false): true
-;------------------------------------------------------------------------------
-; The potion of haste self does not work in the original code.  It's meant to 
-; give you 2-3 actions per turn, but a bug prevented this from ever happening.
-; I've fixed the bug by default, but added an option to disable the fix.
-;
-;------------------------------------------------------------------------------
 ; throws_affect_mimics(true, false): false
 ;------------------------------------------------------------------------------
 ; In the original code, a thrown objects would always pass through a disguised 
@@ -356,19 +349,9 @@ bool GameState::Options::show_torch() const
     return game->get_environment("torch") == "true";
 }
 
-bool GameState::Options::haste_self_bugfix() const
-{
-    return game->get_environment("haste_self_bugfix") != "false";
-}
-
 bool GameState::Options::hit_plus_bugfix() const
 {
     return game->get_environment("hit_plus_bugfix") != "false";
-}
-
-bool GameState::Options::striking_charge_bugfix() const
-{
-    return game->get_environment("striking_charge_bugfix") != "false";
 }
 
 bool GameState::Options::ice_monster_miss_bugfix() const

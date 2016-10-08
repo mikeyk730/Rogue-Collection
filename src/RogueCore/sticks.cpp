@@ -271,12 +271,11 @@ bool Stick::zap_striking(Coord dir)
     set_striking_damage();
     game->hero().fight(monster->position(), this, false);
 
-    //mdk:bugfix: originally the stick would be drained here, but it
-    //also gets drained in Hero::fight.  I don't think the double 
-    //draining was intentional.
-    bool double_drain(!game->options.striking_charge_bugfix());
-
-    return double_drain ? true : false;
+    //mdk:bugfix: originally the stick would be drained here.  Since it
+    //also gets drained in Hero::fight, it would use 2 charges per use.
+    //I'm returning 'false' to fix the bug.  This problem was introduced
+    //in Unix Rogue 5.2.
+    return false;
 }
 
 bool Stick::zap_lightning(Coord dir)
@@ -800,11 +799,11 @@ Stick::Stick(int which)
     {
     case WS_HIT:
         m_hit_plus = 100;
-        //mdk: i don't know why damage info is set, as they are overwritten the first time you
-        //zap a monster.  I don't know if the intention was to have separate zap/melee stats,
-        //but, as is, it's just odd.
-        m_damage_plus = 3;
-        m_damage = "1d8";
+        //mdk:bugfix: The striking staff was made more powerful in the PC version.
+        //The new stats were updated above, but neglected here.  This would only
+        //come into play if the staff were wielded before the first zap.
+        m_damage_plus = 4; //originally 3
+        m_damage = "2d8";  //originally 1d8
         break;
     case WS_LIGHT:
         m_charges = 10 + rnd(10);

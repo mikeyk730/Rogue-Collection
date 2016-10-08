@@ -133,9 +133,10 @@ void do_rings()
 void advance_game()
 {
     game->hero().set_num_actions(1);
-    //mdk:bugfix:  The hero was meant to get 2-3 actions when hasted, but he
-    //always got 1 in the original because of a bug.
-    if (game->hero().is_fast() && game->options.haste_self_bugfix() || game->wizard().haste_self())
+    //mdk:bugfix: The potion of haste self does not work in the original code.  It's meant to 
+    //give you 2 - 3 actions per turn, but a bug prevented this from ever happening.
+    //This bug isn't in Unix Rogue, where the player gets 2 turns while hasted
+    if (game->hero().is_fast() || game->wizard().haste_self())
         game->hero().set_num_actions(rnd(2) + 2);
 
     while (game->hero().decrement_num_actions())
@@ -156,7 +157,6 @@ void advance_game()
 
             execute_player_command();
         }
-
         do_rings();  //mdk: This used to come after running fuses/daemons
     }
     do_fuses();
