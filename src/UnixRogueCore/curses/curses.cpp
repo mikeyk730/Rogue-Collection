@@ -3,7 +3,6 @@ extern "C" {
 }
 #include <cstdarg>
 #include "output_shim.h"
-#include "coord.h"
 
 extern "C"
 {
@@ -13,7 +12,7 @@ extern "C"
 
 namespace
 {
-    OutputShim* shim = 0;
+    IExCurses* shim = 0;
 }
 
 int COLS;
@@ -23,7 +22,7 @@ void init_curses(int r, int c, std::shared_ptr<DisplayInterface> output)
 {
     LINES = r;
     COLS = c;
-    shim = new OutputShim(output);
+    shim = CreateCurses(output);
     shim->winit(false);
 }
 
@@ -62,25 +61,15 @@ int	move(int r, int c)
     return OK;
 }
 
-int refresh(void)
-{
-    return 0;
-}
-
-int waddstr(WINDOW *, const char *)
-{
-    return 0;
-}
-
 int	mvaddch(int r, int c, chtype ch)
 {
-    shim->add_text({ c, r }, ch);
+    shim->add_text(r, c, ch);
     return OK;
 }
 
 int mvaddstr(int r, int c, const char* s)
 {
-    shim->mvaddstr({ c, r }, s);
+    shim->mvaddstr(r, c, s);
     return OK;
 }
 
@@ -88,7 +77,7 @@ int	mvprintw(int r, int c, const char* f, ...)
 {
     char buf[1024 * 16];
     va_list argptr;
-    va_start(argptr, buf);
+    va_start(argptr, f);
     vsprintf(buf, f, argptr);
     va_end(argptr);
 
@@ -113,7 +102,7 @@ int printw(const char* f, ...)
 {
     char buf[1024 * 16];
     va_list argptr;
-    va_start(argptr, buf);
+    va_start(argptr, f);
     vsprintf(buf, f, argptr);
     va_end(argptr);
 
@@ -121,37 +110,36 @@ int printw(const char* f, ...)
     return OK;
 }
 
+chtype inch(void)
+{
+    //mdk: doesn't return attributes
+    return shim->curch();
+}
+
+
+
+
+
+
+
+
+
+
+//todo: 
+
+int refresh(void)
+{
+    //mdk: should be required to do any drawing
+    //other functions should manipuate data only
+    return 0;
+}
+
 int raw(void)
 {
     return 0;
 }
 
-//todo: 
-
-WINDOW	*curscr;
-WINDOW	*stdscr;
-
-int	clearok(WINDOW *, bool)
-{
-    return OK;
-}
-
-int	delwin(WINDOW *)
-{
-    return OK;
-}
-
-void keypad(WINDOW *, bool)
-{
-
-}
-
 char killchar(void)
-{
-    return 0;
-}
-
-int leaveok(WINDOW *, bool)
 {
     return 0;
 }
@@ -174,6 +162,76 @@ char erasechar(void)
 int flushinp(void)
 {
     return OK;
+}
+
+int nocbreak(void)
+{
+    return 0;
+}
+
+int noecho(void)
+{
+    return 0;
+}
+
+int baudrate(void)
+{
+    return 0;
+}
+
+char* unctrl(chtype c)
+{
+    return nullptr;
+}
+
+chtype mvinch(int, int)
+{
+    return chtype();
+}
+
+int halfdelay(int)
+{
+    return 0;
+}
+
+
+
+WINDOW	*curscr;
+WINDOW	*stdscr;
+
+WINDOW * initscr(void)
+{
+    return nullptr;
+}
+
+WINDOW * newwin(int, int, int, int)
+{
+    return nullptr;
+}
+
+int waddstr(WINDOW *, const char *)
+{
+    return 0;
+}
+
+int	clearok(WINDOW *, bool)
+{
+    return 0;
+}
+
+int	delwin(WINDOW *)
+{
+    return 0;
+}
+
+void keypad(WINDOW *, bool)
+{
+
+}
+
+int leaveok(WINDOW *, bool)
+{
+    return 0;
 }
 
 int getcury(WINDOW *)
@@ -241,53 +299,7 @@ int wrefresh(WINDOW *)
     return 0;
 }
 
-chtype inch(void)
-{
-    return chtype();
-}
-
-int nocbreak(void)
-{
-    return 0;
-}
-
-int noecho(void)
-{
-    return 0;
-}
-
 int idlok(WINDOW *, bool)
-{
-    return 0;
-}
-
-WINDOW * initscr(void)
-{
-    return nullptr;
-}
-
-
-int baudrate(void)
-{
-    return 0;
-}
-
-char * unctrl(chtype c)
-{
-    return nullptr;
-}
-
-chtype mvinch(int, int)
-{
-    return chtype();
-}
-
-WINDOW * newwin(int, int, int, int)
-{
-    return nullptr;
-}
-
-int halfdelay(int)
 {
     return 0;
 }
