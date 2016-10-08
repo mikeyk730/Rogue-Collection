@@ -54,8 +54,8 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
         return;
     }
 
-    //Drain a staff of striking
-    //mdk: should this only happen when zapped?  currently happens during melee as well
+    //mdk: Zapping a stick of striking calls Hero::fight to handle the damage,
+    //so the draining is done here.
     Stick* stick = dynamic_cast<Stick*>(object);
     if (stick && stick->m_which == WS_HIT)
     {
@@ -91,7 +91,7 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
     if (hurl) {
         //mdk: the original code never used throw damage except for arrows and crossbow bolts.
         //This bug was introduced in the PC port, as the behavior is correct in Unix Rogue 5.2.
-        if (game->options.use_throw_damage() && object->launcher() == NO_WEAPON) {
+        if (object->launcher() == NO_WEAPON) {
             *damage_string = object->throw_damage();
         }
         //if we've used the right object to launch the projectile, we use the throw 

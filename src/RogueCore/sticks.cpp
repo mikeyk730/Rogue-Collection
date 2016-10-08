@@ -202,14 +202,6 @@ struct MagicMissile : public Item
         m_damage_plus = 1;
         m_flags = IS_MISL;
         m_launcher = NO_WEAPON;
-
-        if (!game->options.use_throw_damage()) {
-            //mdk: this was a hack to get magic missles to use throw damage in the fight code.
-            //it's not needed with my change to use throw damage.
-            if (game->hero().get_current_weapon() != NULL) {
-                m_launcher = game->hero().get_current_weapon()->m_which;
-            }
-        }
     }
 
     virtual Item* Clone() const { 

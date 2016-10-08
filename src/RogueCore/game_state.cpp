@@ -359,11 +359,6 @@ bool GameState::Options::ice_monster_miss_bugfix() const
     return game->get_environment("ice_monster_miss_bugfix") != "false";
 }
 
-bool GameState::Options::use_throw_damage() const
-{
-    return game->get_environment("use_throw_damage") != "false";
-}
-
 int GameState::get_level()
 {
     return m_level_number;

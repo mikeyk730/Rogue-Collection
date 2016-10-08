@@ -387,7 +387,7 @@ void Monster::do_screen_update(Coord next_position)
     {
         if (game->level().is_passage(next_position))
             game->screen().standout();
-        //mdk:tile is fetched from screen so detected monster doesn't reveal level 
+        //mdk:tile is fetched from screen so a detected monster doesn't reveal level 
         set_tile_beneath(game->screen().mvinch(next_position));
         game->screen().add_tile(next_position, m_disguise);
     }
