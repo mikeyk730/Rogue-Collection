@@ -539,11 +539,16 @@ bool Monster::rust_attack()
 
 bool Monster::freeze_attack()
 {
-    if (!game->hero().get_sleep_turns())
+    if (game->hero().get_sleep_turns() == 0)
     {
-        ifterse("you are frozen%s", " by the %s", get_name().c_str());
+        ifterse("you are frozen", "you are frozen by the %s", get_name().c_str());
     }
-    game->hero().increase_sleep_turns(rnd(2) + 2);
+    int turns = rnd(2) + 1; //todo: in unix this is rnd(2) + 2, but that basically freezes forever
+    game->hero().increase_sleep_turns(turns);
+
+    std::ostringstream ss;
+    ss << get_name().c_str() << " freezes you for " << turns << " turns (" << game->hero().get_sleep_turns() << ")";
+    game->log("battle", ss.str());
     return true;
 }
 
