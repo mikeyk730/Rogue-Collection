@@ -7,6 +7,13 @@ struct Room;
 struct Item;
 struct Monster;
 
+//Flags for level map
+#define F_PASS   0x040 //is a passageway
+#define F_MAZE   0x020 //have seen this corridor before
+#define F_REAL   0x010 //the level tile is actual (not set for secret doors or traps)
+#define F_PNUM   0x00f //passage number mask
+#define F_TMASK  0x007 //trap number mask
+
 struct Level {
     Level();
 

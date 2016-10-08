@@ -23,8 +23,10 @@
 #include "hero.h"
 #include "monster.h"
 
+#define BEAR_TIME    spread(3)
+
 //Used to hold the new hero position
-Coord new_position;
+Coord new_position; //todo:remove static
 
 //do_run: Start the hero running
 bool do_run(Command c) //todo: understand running

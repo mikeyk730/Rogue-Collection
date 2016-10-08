@@ -26,6 +26,11 @@
 #include "things.h"
 #include "sticks.h"
 
+#define HUNGER_TIME  spread(1300)
+#define MORE_TIME    150
+#define STOMACH_SIZE 2000
+#define STARVE_TIME  850
+
 namespace
 {
     // Each level is twice the previous

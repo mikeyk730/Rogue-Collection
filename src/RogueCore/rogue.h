@@ -63,16 +63,11 @@ struct GameState;
 #define CALLABLE  -1
 
 //Various constants
-#define BEAR_TIME    spread(3)
 #define SLEEP_TIME   spread(5)
-#define HOLD_TIME    spread(2)
 #define WANDER_TIME  spread(70)
 #define HUH_DURATION spread(20)
 #define SEE_DURATION spread(300)
-#define HUNGER_TIME  spread(1300)
-#define MORE_TIME    150
-#define STOMACH_SIZE 2000
-#define STARVE_TIME  850
+
 #define ESCAPE       27
 #define LEFT         0
 #define RIGHT        1
@@ -85,13 +80,6 @@ struct GameState;
 #define VS_MAGIC         03
 
 //Various flag bits
-
-//Flags for level map
-#define F_PASS   0x040 //is a passageway
-#define F_MAZE   0x020 //have seen this corridor before
-#define F_REAL   0x010 //the level tile is actual (not set for secret doors or traps)
-#define F_PNUM   0x00f //passage number mask
-#define F_TMASK  0x007 //trap number mask
 
 //Trap types
 #define T_DOOR   00

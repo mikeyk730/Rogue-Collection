@@ -24,6 +24,8 @@
 #include "level.h"
 #include "monster.h"
 
+#define HOLD_TIME    spread(2)
+
 #define P_CONFUSE   0
 #define P_PARALYZE  1
 #define P_POISON    2
