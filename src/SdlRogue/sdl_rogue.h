@@ -6,9 +6,22 @@
 struct Region;
 struct Coord;
 
+struct TileConfig
+{
+    std::string filename;
+    int count;
+    int states;
+};
+
+struct TextConfig
+{
+    std::string filename;
+    std::vector<int> colors;
+};
+
 struct SdlRogue : public DisplayInterface, public InputInterface
 {
-    SdlRogue();
+    SdlRogue(const TextConfig& text, TileConfig* tiles);
     ~SdlRogue();
 
     void Run();

@@ -13,19 +13,12 @@
 #include "RogueCore/game_state.h"
 #include "RogueCore/curses.h"
 
-struct TileConfig
-{
-    std::string filename;
-    int count;
-    int states;
-};
-
 struct SdlRogue::Impl
 {
     const Coord EMPTY_COORD = { 0, 0 };
     const unsigned int MAX_QUEUE_SIZE = 50;
 
-    Impl();
+    Impl(const TextConfig& text, TileConfig* tiles);
     ~Impl();
 
     void SetDimensions(Coord dimensions);
@@ -59,11 +52,10 @@ private:
     SDL_Texture* m_tiles = 0;
     SDL_Texture* m_text = 0;
 
-    TileConfig m_tile_cfg;
-    Coord m_tile_dimensions = { 0, 0 };
-
-    TileConfig m_text_cfg;
+    Coord m_block_size = { 0, 0 };
+    int m_tile_states = 0;
     Coord m_text_dimensions = { 0, 0 };
+    std::map<int, int> m_attr_index;
 
     struct ThreadData
     {
@@ -74,25 +66,6 @@ private:
     };
     ThreadData m_shared_data;
     std::mutex m_mutex;
-
-    std::map<int, int> m_attr_index = {
-        {  7,  0 },
-        {  2,  1 },
-        {  3,  2 },
-        {  4,  3 },
-        {  5,  4 },
-        {  6,  5 },
-        {  8,  6 },
-        {  9,  7 },
-        { 10,  8 },
-        { 12,  9 },
-        { 13, 10 },
-        { 14, 11 },
-        { 15, 12 },
-        {  1, 13 },
-        { 0x70, 14 },
-        { 15, 15 },
-    };
 
     std::map<int, int> m_index = {
         { PLAYER, 26 },
@@ -182,30 +155,9 @@ private:
     };
 };
 
-namespace
+SdlRogue::Impl::Impl(const TextConfig& text_cfg, TileConfig* tile_cfg)
 {
-    TileConfig pc_tiles = { "tiles.bmp", 78, 2 };
-    TileConfig pc_text = { "text.bmp", 256, 16 };
-
-    TileConfig atari_tiles = { "atari.bmp", 78, 1 };
-}
-
-
-SdlRogue::Impl::Impl()
-{
-    m_tile_cfg = pc_tiles;
-    //m_tile_cfg = atari_tiles;
-
-    SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + m_tile_cfg.filename));
-    m_tile_dimensions.x = tiles->w / m_tile_cfg.count;
-    m_tile_dimensions.y = tiles->h / m_tile_cfg.states;
-
-    m_text_cfg = pc_text;
-    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + m_text_cfg.filename));
-    m_text_dimensions.x = text->w / m_text_cfg.count;
-    m_text_dimensions.y = text->h / m_text_cfg.states;
-
-    m_window = SDL_CreateWindow("Rogue", 100, 100, m_tile_dimensions.x * 80, m_tile_dimensions.y * 25, SDL_WINDOW_SHOWN);
+    m_window = SDL_CreateWindow("Rogue", 100, 100, 100, 100, SDL_WINDOW_HIDDEN);
     if (m_window == nullptr)
         throw_error("SDL_CreateWindow");
 
@@ -213,8 +165,25 @@ SdlRogue::Impl::Impl()
     if (m_renderer == nullptr)
         throw_error("SDL_CreateRenderer");
 
-    m_tiles = create_texture(tiles.get(), m_renderer).release();
+    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + text_cfg.filename));
+    m_text_dimensions.x = text->w / 256;
+    m_text_dimensions.y = text->h / text_cfg.colors.size();
+    for (size_t i = 0; i < text_cfg.colors.size(); ++i)
+        m_attr_index[text_cfg.colors[i]] = i;
+    m_block_size = m_text_dimensions;
     m_text = create_texture(text.get(), m_renderer).release();
+
+    if (tile_cfg)
+    {
+        SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + tile_cfg->filename));
+        m_block_size.x = tiles->w / tile_cfg->count;
+        m_block_size.y = tiles->h / tile_cfg->states;
+        m_tile_states = tile_cfg->states;
+        m_tiles = create_texture(tiles.get(), m_renderer).release();
+    }
+
+    SDL_SetWindowSize(m_window, m_block_size.x * 80, m_block_size.y * 25);
+    SDL_ShowWindow(m_window);
 }
 
 SdlRogue::Impl::~Impl()
@@ -253,10 +222,10 @@ bool SdlRogue::Impl::use_inverse(unsigned short attr)
 inline SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
 {
     SDL_Rect r;
-    r.h = m_tile_dimensions.y;
-    r.w = m_tile_dimensions.x;
-    r.x = i*m_tile_dimensions.x;
-    r.y = use_inverse ? m_tile_dimensions.y : 0;
+    r.h = m_block_size.y;
+    r.w = m_block_size.x;
+    r.x = i*m_block_size.x;
+    r.y = use_inverse ? m_block_size.y : 0;
     return r;
 }
 
@@ -308,14 +277,14 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensi
             SDL_Rect r;
             r.x = p.x;
             r.y = p.y;
-            r.w = m_tile_dimensions.x;
-            r.h = m_tile_dimensions.y;
+            r.w = m_block_size.x;
+            r.h = m_block_size.y;
 
             CharInfo info = data[y*dimensions.x + x];
 
             //todo: how to correctly determine text or monster/passage/wall?
             //the code below works for original tile set, but not others
-            if (text_mask[y*dimensions.x + x])
+            if (!m_tiles || text_mask[y*dimensions.x + x])
             {
                 RenderText(info, r);
             }
@@ -328,10 +297,7 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensi
 
 void SdlRogue::Impl::RenderText(CharInfo info, SDL_Rect r)
 {
-    short attr = info.Attributes;
-    if (use_inverse(attr))
-        attr = 0x70;
-    int i = get_text_index(attr);
+    int i = get_text_index(info.Attributes);
     SDL_Rect clip = get_text_rect(info.Char.AsciiChar, i);
 
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
@@ -347,7 +313,7 @@ void SdlRogue::Impl::RenderTile(CharInfo info, SDL_Rect r)
         SDL_RenderFillRect(m_renderer, &r);
         return;
     }
-    bool inv = (m_tile_cfg.states > 1) && use_inverse(info.Attributes);
+    bool inv = (m_tile_states > 1 && use_inverse(info.Attributes));
     SDL_Rect clip = get_tile_rect(i, inv);
     SDL_RenderCopy(m_renderer, m_tiles, &clip, &r);
 }
@@ -355,8 +321,8 @@ void SdlRogue::Impl::RenderTile(CharInfo info, SDL_Rect r)
 inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
 {
     Coord p;
-    p.x = buffer_pos.x * m_tile_dimensions.x;
-    p.y = buffer_pos.y * m_tile_dimensions.y;
+    p.x = buffer_pos.x * m_block_size.x;
+    p.y = buffer_pos.y * m_block_size.y;
     return p;
 }
 
@@ -386,7 +352,7 @@ void SdlRogue::Impl::SetDimensions(Coord dimensions)
         m_shared_data.m_data = new CharInfo[dimensions.x*dimensions.y];
         m_shared_data.m_text_mask = new bool[dimensions.x*dimensions.y];
     }
-    SDL_SetWindowSize(m_window, m_tile_dimensions.x*dimensions.x, m_tile_dimensions.y*dimensions.y);
+    SDL_SetWindowSize(m_window, m_block_size.x*dimensions.x, m_block_size.y*dimensions.y);
 }
 
 void SdlRogue::Impl::Draw(CharInfo * info, bool* text_mask)
@@ -471,13 +437,8 @@ bool SdlRogue::Impl::shared_data_is_narrow()
     return m_shared_data.m_dimensions.x == 40;
 }
 
-
-
-
-
-
-SdlRogue::SdlRogue() :
-    m_impl(new Impl())
+SdlRogue::SdlRogue(const TextConfig& text, TileConfig* tiles) :
+    m_impl(new Impl(text, tiles))
 {
 }
 
