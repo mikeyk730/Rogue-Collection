@@ -65,7 +65,9 @@ void score(int amount, int flags, char monst)
 
     if (amount || flags || monst)
     {
-        game->save_game("lastgame.sav");
+        auto filename = game->get_environment("autosave");
+        if(!filename.empty())
+            game->save_game(filename);
 
         game->screen().move(LINES - 1, 0);
         game->screen().printw("[Press Enter to see rankings]");

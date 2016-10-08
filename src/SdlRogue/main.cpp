@@ -32,10 +32,11 @@ int main(int argc, char **argv)
             throw_error("SDL_Init");
 
         //output.reset(new SdlRogue(pc_text, 0));
-        //output.reset(new SdlRogue(pc_colored_text, 0));
         //output.reset(new SdlRogue(pc_text, &pc_tiles));
         //output.reset(new SdlRogue(pc_colored_text, &atari_tiles));
-        output.reset(new SdlRogue(pc_colored_text, &pc_tiles));
+        
+        output.reset(new SdlRogue(pc_colored_text, 0));
+        //output.reset(new SdlRogue(pc_colored_text, &pc_tiles));
     }
     catch (const std::runtime_error& e)
     {

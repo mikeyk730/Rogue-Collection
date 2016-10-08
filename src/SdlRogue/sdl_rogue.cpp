@@ -13,6 +13,34 @@
 #include "RogueCore/game_state.h"
 #include "RogueCore/curses.h"
 
+namespace
+{
+    bool use_unix_gfx = false;
+    std::map<int, int> unix_chars = {
+        { PASSAGE,   '#' },
+        { DOOR,      '+' },
+        { FLOOR,     '.' },
+        { PLAYER,    '@' },
+        { TRAP,      '^' },
+        { STAIRS,    '%' },
+        { GOLD,      '*' },
+        { POTION,    '!' },
+        { SCROLL,    '?' },
+        { FOOD,      ':' },
+        { STICK,     '/' },
+        { ARMOR,     ']' },
+        { AMULET,    ',' },
+        { RING,      '=' },
+        { WEAPON,    ')' },
+        { VWALL,     '|' },
+        { HWALL,     '-' },
+        { ULWALL,    '-' },
+        { URWALL,    '-' },
+        { LLWALL,    '-' },
+        { LRWALL,    '-' },
+    };
+}
+
 struct SdlRogue::Impl
 {
     const Coord EMPTY_COORD = { 0, 0 };
@@ -30,7 +58,7 @@ struct SdlRogue::Impl
 private:
     void Render();
     void RenderRegion(CharInfo* info, bool* text_mask, Coord dimensions, Region rect);
-    void RenderText(CharInfo info, SDL_Rect r);
+    void RenderText(CharInfo info, SDL_Rect r, bool is_text);
     void RenderTile(CharInfo info, SDL_Rect r);
 
     Coord get_screen_pos(Coord buffer_pos);
@@ -281,12 +309,13 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensi
             r.h = m_block_size.y;
 
             CharInfo info = data[y*dimensions.x + x];
+            bool is_text = text_mask[y*dimensions.x + x];
 
             //todo: how to correctly determine text or monster/passage/wall?
             //the code below works for original tile set, but not others
-            if (!m_tiles || text_mask[y*dimensions.x + x])
+            if (!m_tiles || is_text)
             {
-                RenderText(info, r);
+                RenderText(info, r, is_text);
             }
             else {
                 RenderTile(info, r);
@@ -295,10 +324,17 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensi
     }
 }
 
-void SdlRogue::Impl::RenderText(CharInfo info, SDL_Rect r)
+void SdlRogue::Impl::RenderText(CharInfo info, SDL_Rect r, bool is_text)
 {
+    unsigned char c = info.Char.AsciiChar;
+    if (!is_text && use_unix_gfx)
+    {
+        auto i = unix_chars.find(c);
+        if (i != unix_chars.end())
+            c = i->second;
+    }
     int i = get_text_index(info.Attributes);
-    SDL_Rect clip = get_text_rect(info.Char.AsciiChar, i);
+    SDL_Rect clip = get_text_rect(c, i);
 
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }

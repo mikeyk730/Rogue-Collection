@@ -1,5 +1,4 @@
 //Cursor motion stuff to simulate a "no refresh" version of curses
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -359,67 +358,65 @@ int Curses::addch(byte chr)
     return AddCharacter(chr, true);
 }
 
+int GetColor(int chr, int attr)
+{
+    //if it is inside a room
+    if (attr == 0x07) switch (chr)
+    {
+    case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+        return 0x06; //brown
+    case FLOOR:
+        return 0x0a; //light green
+    case STAIRS:
+        return 0xa0; //black on light green
+    case TRAP:
+        return 0x05; //magenta
+    case GOLD: case PLAYER:
+        return 0x0e; //yellow
+    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+        return 0x09; //light blue
+    case FOOD:
+        return 0x04; //red
+    }
+    //if inside a passage or a maze
+    else if (attr == 0x70) switch (chr)
+    {
+    case FOOD:
+        return 0x74; //red on grey
+    case GOLD: case PLAYER:
+        return 0x7e; //yellow on grey
+    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+        return 0x71; //blue on grey
+    }
+    // mdk: don't think used
+    //else if (m_attr == 0x0f && chr == STAIRS)
+    //    return 0xa0;
+
+    return attr;
+}
+
 int Curses::AddCharacter(byte chr, bool is_text)
 {
     int r, c;
-    byte old_attr;
-
-    old_attr = m_attr;
-    if (at_table == color_attr)
-    {
-        //if it is inside a room
-        if (m_attr == 0x07) switch (chr)
-        {
-        case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-            m_attr = 0x06; //brown
-            break;
-        case FLOOR:
-            m_attr = 0x0a; //light green
-            break;
-        case STAIRS:
-            m_attr = 0xa0; //black on light green
-            break;
-        case TRAP:
-            m_attr = 0x05; //magenta
-            break;
-        case GOLD: case PLAYER:
-            m_attr = 0x0e; //yellow
-            break;
-        case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-            m_attr = 0x09; //light blue
-            break;
-        case FOOD:
-            m_attr = 0x04; //red
-            break;
-        }
-        //if inside a passage or a maze
-        else if (m_attr == 0x70) switch (chr)
-        {
-        case FOOD:
-            m_attr = 0x74; //red on grey
-            break;
-        case GOLD: case PLAYER:
-            m_attr = 0x7e; //yellow on grey
-            break;
-        case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-            m_attr = 0x71; //blue on grey
-            break;
-        }
-        else if (m_attr == 0x0f && chr == STAIRS) 
-            m_attr = 0xa0;
-    }
     getrc(&r, &c);
     if (chr == '\n')
     {
-        if (r == LINES - 1) { scroll_up(0, LINES - 1, 1); move(LINES - 1, 0); }
-        else move(r + 1, 0);
-        m_attr = old_attr;
+        if (r == LINES - 1) {
+            scroll_up(0, LINES - 1, 1);
+            move(LINES - 1, 0);
+        }
+        else
+            move(r + 1, 0);
         return m_row;
     }
-    PutCharacter(chr, m_attr, is_text);
+
+    byte attr = m_attr;
+    if (at_table == color_attr)
+    {
+        attr = GetColor(chr, attr);
+    }
+    PutCharacter(chr, attr, is_text);
     move(r, c + 1);
-    m_attr = old_attr;
-    //if you have gone off the screen scroll the whole window
     return (m_row);
 }
 

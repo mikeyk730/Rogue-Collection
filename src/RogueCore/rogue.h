@@ -38,21 +38,22 @@ struct GameState;
 #define GOLD      (0x0f)
 #define POTION    (0xad)
 #define SCROLL    (0x0e) //originally (0x0d)
-#define MAGIC     '$'
-#define BMAGIC    '+'
 #define FOOD      (0x05)
 #define STICK     (0xe7)
 #define ARMOR     (0xdb) //originally (0x08)
 #define AMULET    (0x0c)
 #define RING      (0xf8) //originally (0x09)
 #define WEAPON    (0x18)
-#define MISSILE   '*'
 #define VWALL     (0xba)
 #define HWALL     (0xcd)
 #define ULWALL    (0xc9)
 #define URWALL    (0xbb)
 #define LLWALL    (0xc8)
 #define LRWALL    (0xbc)
+#define MISSILE   '*'
+#define MAGIC     '$'
+#define BMAGIC    '+'
+
 
 #define UNSET     '@'
 
