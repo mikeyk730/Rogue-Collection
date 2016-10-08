@@ -2,6 +2,14 @@
 #include <vector>
 #include "item.h"
 
+//Stuff about magic items
+struct MagicItem
+{
+    char *name;
+    int prob;
+    short worth;
+};
+
 //init_things: Initialize the probabilities for types of things
 void init_things();
 

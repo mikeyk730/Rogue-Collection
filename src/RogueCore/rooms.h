@@ -18,3 +18,5 @@ void enter_room(Coord cp);
 void leave_room(Coord cp);
 
 void find_empty_location(Coord* c, bool consider_monsters);
+
+bool isfloor(byte c);

@@ -1,5 +1,5 @@
 #include "item_class.h"
-#include "rogue.h"
+#include "things.h"
 #include "io.h"
 
 ItemClass::~ItemClass()

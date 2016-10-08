@@ -98,6 +98,5 @@ private:
     void psplat(Coord p);
 };
 
-
 int rnd_gold();
 int maxrow();

@@ -48,29 +48,26 @@ typedef unsigned char byte;
 #define STAIRS    (0xf0)
 #define GOLD      (0x0f)
 #define POTION    (0xad)
-#define SCROLL    (0x0e) //(0x0d)
+#define SCROLL    (0x0e) //originally (0x0d)
 #define MAGIC     '$'
 #define BMAGIC    '+'
 #define FOOD      (0x05)
 #define STICK     (0xe7)
-#define ARMOR     (0xdb) //(0x08)
+#define ARMOR     (0xdb) //originally (0x08)
 #define AMULET    (0x0c)
-#define RING      (0xf8) //(0x09)
+#define RING      (0xf8) //originally (0x09)
 #define WEAPON    (0x18)
 #define MISSILE   '*'
+#define VWALL     (0xba)
+#define HWALL     (0xcd)
+#define ULWALL    (0xc9)
+#define URWALL    (0xbb)
+#define LLWALL    (0xc8)
+#define LRWALL    (0xbc)
 
-//todo: figure out what this does:
 #define UNSET       '@'
+
 #define CALLABLE  -1
-
-bool isfloor(byte c);
-
-#define VWALL   (0xba)
-#define HWALL   (0xcd)
-#define ULWALL  (0xc9)
-#define URWALL  (0xbb)
-#define LLWALL  (0xc8)
-#define LRWALL  (0xbc)
 
 //Various constants
 #define BEAR_TIME    spread(3)
@@ -121,20 +118,6 @@ bool isfloor(byte c);
 
 #define ON  0xF1
 #define OFF 0xF0
-
-
-//Stuff about magic items
-struct MagicItem
-{
-  char *name;
-  int prob;
-  short worth;
-};
-
-struct Array
-{
-  char storage[MAXNAME+1];
-};
 
 //rnd: Pick a very random number.
 int rnd(int range);
