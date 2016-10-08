@@ -121,8 +121,8 @@ void do_motion(Item *obj, Coord delta)
             game->screen().add_tile(obj->position(), under);
         //Get the new position
         obj->set_position(obj->position() + delta);
-        //mdk: Originally thrown items would pass through mimics.  With =throws_affect_mimics= they
-        //have a chance to hit.
+        //mdk: Originally thrown items would pass through mimics.  With the 'throws_affect_mimics'
+        //option, they have a chance to hit.
         bool hit_mimics(game->options.throws_affect_mimics());
         if (step_ok(ch = game->level().get_tile_or_monster(obj->position(), hit_mimics)) && ch != DOOR)
         {

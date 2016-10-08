@@ -66,7 +66,7 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
 Item* get_item(const std::string& purpose, int type)
 {
     if (game->hero().m_pack.empty()) {
-        //mdk:bugfix: previously, trying to do something with an empty pack would count as a turn
+        //mdk:bugfix: Originally, trying to do something with an empty pack would count as a turn
         msg("you aren't carrying anything");
         return NULL;
     }
@@ -181,7 +181,7 @@ void Hero::pick_up(byte ch)
 {
     //mdk:bugfix: this code used to be inside add_to_pack, so it wasn't run when picking up
     //gold. The result was a dangling m_destination pointer when you stole a monster's
-    //gold which could crash.
+    //gold.  This could cause a crash.
     for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
         Monster* monster = *it;
 
