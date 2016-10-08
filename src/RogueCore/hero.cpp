@@ -90,9 +90,8 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
 
     if (hurl) {
         //mdk: the original code never used throw damage except for arrows and crossbow bolts.
-        //I've decided to use it for weapons that don't require a launcher too.  IS_MISL is
-        //still meaningless.
-        if (game->options.use_throw_damage() && object->launcher() == NONE) {
+        //This bug was introduced in the PC port, as the behavior is correct in Unix Rogue 5.2.
+        if (game->options.use_throw_damage() && object->launcher() == NO_WEAPON) {
             *damage_string = object->throw_damage();
         }
         //if we've used the right object to launch the projectile, we use the throw 
@@ -281,6 +280,8 @@ void Hero::init_player()
     //Give him some food too
     obj = new Food(0);
     add_to_pack(obj, true);
+
+    set_running(true);
 }
 
 void Hero::on_new_level()
@@ -928,7 +929,8 @@ bool Hero::decrement_sleep_turns()
 
     --m_sleep_turns;
     if (m_sleep_turns == 0) {
-        //mdk:bugfix: the player was never set as running, so treated as asleep in battle
+        //mdk:bugfix: the player was never set as running, so he's treated as asleep in battle.
+        //The code to restore the state here is correct in Unix Rogue 5.2.
         if (game->options.hit_plus_bugfix())
             set_running(true);
         msg("you can move again");

@@ -75,7 +75,7 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 #define WS_CANCEL     13
 #define MAXSTICKS     14
 
-#define NONE 100
+#define NO_WEAPON     -1
 
 struct Item
 {

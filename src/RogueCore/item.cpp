@@ -13,7 +13,7 @@ Item::Item(int type, int which)
 {
     m_type = type;
     m_which = which;
-    m_launcher = NONE;
+    m_launcher = NO_WEAPON;
     m_hit_plus = 0;
     m_damage_plus = 0;
     m_damage = "0d0";

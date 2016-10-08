@@ -146,9 +146,13 @@ void advance_game()
             tick_pause();
         }
         else {
-            //mdk:bugfix: the player was never set as running, so treated as asleep in battle
-            if (game->options.hit_plus_bugfix())
-                game->hero().set_running(true);
+            //mdk:bugfix: Originally the player was never set as running, so he'd
+            // be treated as asleep in battle.  I fixed this bug, but added an
+            // option to retain the buggy behavior.  Unix Rogue 5.2 handles this 
+            // better, but forgets to set the initial state, so the bug is present
+            // until the first time the player is asleep or frozen
+            if (!game->options.hit_plus_bugfix())
+                game->hero().set_running(false);
 
             execute_player_command();
         }

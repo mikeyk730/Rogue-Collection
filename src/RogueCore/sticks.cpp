@@ -201,7 +201,7 @@ struct MagicMissile : public Item
         m_hit_plus = 1000;
         m_damage_plus = 1;
         m_flags = IS_MISL;
-        m_launcher = NONE;
+        m_launcher = NO_WEAPON;
 
         if (!game->options.use_throw_damage()) {
             //mdk: this was a hack to get magic missles to use throw damage in the fight code.
