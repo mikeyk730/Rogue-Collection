@@ -3,7 +3,6 @@
 #include "RogueCore/display_interface.h"
 #include "RogueCore/input_interface.h"
 
-struct CharInfo;
 struct Region;
 struct Coord;
 
