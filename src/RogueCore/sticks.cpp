@@ -394,7 +394,7 @@ bool Stick::zap_drain_life(Coord dir)
 
 bool Stick::zap_nothing(Coord dir) 
 {
-    debug("what a bizarre schtick!");
+    msg("what a bizarre schtick!");
     return true;
 }
 

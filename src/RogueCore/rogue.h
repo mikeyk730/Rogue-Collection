@@ -24,12 +24,8 @@ struct GameState;
 
 //All the fun defines
 
-#define CTRL(ch)        (ch&037)
-#ifdef DEBUG
-#define debug           msg
-#else
-#define debug           if(0) msg
-#endif
+#define CTRL(ch)  (ch&037)
+#define ESCAPE    (0x1b)
 
 //Things that appear on the screens
 
@@ -58,21 +54,14 @@ struct GameState;
 #define LLWALL    (0xc8)
 #define LRWALL    (0xbc)
 
-#define UNSET       '@'
-
-#define CALLABLE  -1
+#define UNSET     '@'
 
 //Various constants
 #define SLEEP_TIME   spread(5)
 #define WANDER_TIME  spread(70)
 #define HUH_DURATION spread(20)
 #define SEE_DURATION spread(300)
-
-#define ESCAPE       27
-#define LEFT         0
-#define RIGHT        1
 #define BOLT_LENGTH  6
-#define LAMP_DIST    3
 
 //Save against things
 #define VS_POISON        00

@@ -12,6 +12,7 @@ void ifterse(const char *tfmt, const char *fmt, ...);
 
 //msg: Display a message at the top of the screen.
 void msg(const char *fmt, ...);
+void debug(const char *fmt, ...);
 //unsaved_msg: Same as above, but is replaced by a new msg instead of showing -More-
 void unsaved_msg(const char *fmt, ...);
 

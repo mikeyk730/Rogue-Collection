@@ -26,46 +26,46 @@ namespace
 {
     const byte color_attr[] =
     {
-      7, // 0 normal
-      2, // 1 green
-      3, // 2 cyan
-      4, // 3 red
-      5, // 4 magenta
-      6, // 5 brown
-      8, // 6 dark grey
-      9, // 7 light blue
-      10, // 8 light green
-      12, // 9 light red
-      13, //10 light magenta
-      14, //11 yellow
-      15, //12 uline
-      1, //13 blue
-      112, //14 reverse
-      15, //15 high intensity
-      112, //16 bold
-      0  //no more
+        0x07, // 0 normal
+        0x02, // 1 green
+        0x03, // 2 cyan
+        0x04, // 3 red
+        0x05, // 4 magenta
+        0x06, // 5 brown
+        0x08, // 6 dark grey
+        0x09, // 7 light blue
+        0x0a, // 8 light green
+        0x0c, // 9 light red
+        0x0d, //10 light magenta
+        0x0e, //11 yellow
+        0x0f, //12 uline
+        0x01, //13 blue
+        0x70, //14 reverse
+        0x0f, //15 high intensity
+        0x70, //16 bold
+        0     //no more
     };
 
     const byte monoc_attr[] =
     {
-      7, // 0 normal
-      7, // 1 green
-      7, // 2 cyan
-      7, // 3 red
-      7, // 4 magenta
-      7, // 5 brown
-      7, // 6 dark grey
-      7, // 7 light blue
-      7, // 8 light green
-      7, // 9 light red
-      7, //10 light magenta
-      7, //11 yellow
-      17, //12 uline
-      7, //13 blue
-      120, //14 reverse
-      7, //15 white/hight
-      120, //16 bold
-      0  //no more
+        0x07, // 0 normal
+        0x07, // 1 green
+        0x07, // 2 cyan
+        0x07, // 3 red
+        0x07, // 4 magenta
+        0x07, // 5 brown
+        0x07, // 6 dark grey
+        0x07, // 7 light blue
+        0x07, // 8 light green
+        0x07, // 9 light red
+        0x07, //10 light magenta
+        0x07, //11 yellow
+        0x07, //12 uline
+        0x07, //13 blue
+        0x78, //14 reverse
+        0x07, //15 white/hight
+        0x78, //16 bold
+        0     //no more
     };
 
     const byte dbl_box[BX_SIZE] = { 0xc9, 0xbb, 0xc8, 0xbc, 0xba, 0xcd, 0xcd };
@@ -368,44 +368,45 @@ int Curses::AddCharacter(byte chr, bool is_text)
     if (at_table == color_attr)
     {
         //if it is inside a room
-        if (m_attr == 7) switch (chr)
+        if (m_attr == 0x07) switch (chr)
         {
         case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-            m_attr = 6; //brown
+            m_attr = 0x06; //brown
             break;
         case FLOOR:
-            m_attr = 10; //light green
+            m_attr = 0x0a; //light green
             break;
         case STAIRS:
-            m_attr = 160; //black on green
+            m_attr = 0xa0; //black on light green
             break;
         case TRAP:
-            m_attr = 5; //magenta
+            m_attr = 0x05; //magenta
             break;
         case GOLD: case PLAYER:
-            m_attr = 14; //yellow
+            m_attr = 0x0e; //yellow
             break;
         case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-            m_attr = 9;
+            m_attr = 0x09; //light blue
             break;
         case FOOD:
-            m_attr = 4;
+            m_attr = 0x04; //red
             break;
         }
         //if inside a passage or a maze
-        else if (m_attr == 112) switch (chr)
+        else if (m_attr == 0x70) switch (chr)
         {
         case FOOD:
-            m_attr = 116; //red
+            m_attr = 0x74; //red on grey
             break;
         case GOLD: case PLAYER:
-            m_attr = 126; //yellow on white
+            m_attr = 0x7e; //yellow on grey
             break;
         case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-            m_attr = 113; //blue on white
+            m_attr = 0x71; //blue on grey
             break;
         }
-        else if (m_attr == 15 && chr == STAIRS) m_attr = 160;
+        else if (m_attr == 0x0f && chr == STAIRS) 
+            m_attr = 0xa0;
     }
     getrc(&r, &c);
     if (chr == '\n')

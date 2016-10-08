@@ -1,5 +1,4 @@
 #pragma once
-
 #include "agent.h"
 #include "rogue.h"
 
@@ -7,6 +6,10 @@ struct Monster;
 struct Item;
 struct Ring;
 struct Armor;
+
+#define LEFT         0
+#define RIGHT        1
+#define LAMP_DIST    3
 
 struct Hero : public Agent
 {

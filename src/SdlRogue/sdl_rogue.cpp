@@ -90,7 +90,7 @@ private:
         { 14, 11 },
         { 15, 12 },
         {  1, 13 },
-        {112, 14 },
+        { 0x70, 14 },
         { 15, 15 },
     };
 
@@ -330,7 +330,7 @@ void SdlRogue::Impl::RenderText(CharInfo info, SDL_Rect r)
 {
     short attr = info.Attributes;
     if (use_inverse(attr))
-        attr = 112;
+        attr = 0x70;
     int i = get_text_index(attr);
     SDL_Rect clip = get_text_rect(info.Char.AsciiChar, i);
 

@@ -97,6 +97,23 @@ void msg(const char *format, ...)
     endmsg();
 }
 
+void debug(const char* format, ...)
+{
+    char dest[1024 * 16];
+    va_list argptr;
+    va_start(argptr, format);
+    vsprintf(dest, format, argptr);
+    va_end(argptr);
+
+    game->log("debug", dest);
+
+#ifdef DEBUG
+    //otherwise add to the message and flush it out
+    doadd(dest);
+    endmsg();
+#endif
+}
+
 void unsaved_msg(const char * format, ...)
 {
     //if the string is "", just clear the line

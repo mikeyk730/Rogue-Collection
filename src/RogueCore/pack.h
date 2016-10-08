@@ -16,4 +16,5 @@ int pack_char(Item *obj);
 //inventory: List what is in the pack
 int inventory(std::list<Item *>& list, int type, const char *lstr);
 
-
+//do_call: Allow a user to call a potion, scroll, or ring something
+bool do_call();

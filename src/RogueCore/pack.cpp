@@ -1,9 +1,7 @@
 //Routines to deal with the pack
 //pack.c      1.4 (A.I. Design)       12/14/84
-
 #include <stdio.h>
 #include <sstream>
-
 #include "random.h"
 #include "game_state.h"
 #include "pack.h"
@@ -18,6 +16,8 @@
 #include "monster.h"
 #include "weapons.h"
 #include "gold.h"
+
+#define CALLABLE  -1
 
 Item *pack_obj(byte ch, byte *chp)
 {
@@ -142,6 +142,39 @@ int pack_char(Item *obj)
     }
     return '?';
 }
+
+//do_call: Allow a user to call a potion, scroll, or ring something
+bool do_call()
+{
+    Item *obj = get_item("call", CALLABLE);
+    if (!obj)
+        return false;
+
+    ItemClass* item_class = obj->item_class();
+    if (!item_class) {
+        msg("you can't call that anything");
+        return false;
+    }
+
+    if (item_class->is_discovered(obj->m_which)) {
+        msg("that has already been identified");
+        return false;
+    }
+
+    std::string called = item_class->get_guess(obj->m_which);
+    if (called.empty())
+        called = item_class->get_identifier(obj->m_which);
+    msg("Was called \"%s\"", called.c_str());
+
+    msg("what do you want to call it? ");
+    getinfo(prbuf, MAXNAME);
+    if (*prbuf && *prbuf != ESCAPE)
+        item_class->set_guess(obj->m_which, prbuf);
+    msg("");
+
+    return false;
+}
+
 
 //pick_up: Add something to characters pack.
 void Hero::pick_up(byte ch)

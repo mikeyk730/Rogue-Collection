@@ -53,8 +53,5 @@ bool do_go_down_stairs();
 //do_go_up_stairs: He wants to go up a level
 bool do_go_up_stairs();
 
-//do_call: Allow a user to call a potion, scroll, or ring something
-bool do_call();
-
 //prompt player for definition of macro
 bool do_record_macro();
