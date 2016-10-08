@@ -77,11 +77,11 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     if (version < 3 || version > s_serial_version) {
         throw std::runtime_error("Unsupported save version " + filename);
     }
-    else if (version < 4) {
+    if (version < 4) {
         //the game engine has since enabled this bugfix by default
         set_environment("hit_plus_bugfix", "false");
     }
-    else if (version < 6) {
+    if (version < 6) {
         //the game engine has since enabled this bugfix by default
         set_environment("ice_monster_miss_bugfix", "false");
     }

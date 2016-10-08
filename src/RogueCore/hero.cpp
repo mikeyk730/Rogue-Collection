@@ -172,12 +172,6 @@ bool Hero::eat()
         return true;
     }
 
-    if (--obj->m_count < 1) {
-        m_pack.remove(obj);
-        if (obj == get_current_weapon())
-            set_current_weapon(NULL); //todo: this should be done automatically when removing from pack
-        delete obj;
-    }
     ingest();
 
     if (obj->m_which == 1) {
@@ -193,6 +187,13 @@ bool Hero::eat()
 
     if (get_sleep_turns())
         msg("You feel bloated and fall asleep");
+
+    if (--obj->m_count < 1) {
+        m_pack.remove(obj);
+        if (obj == get_current_weapon())
+            set_current_weapon(NULL); //todo: this should be done automatically when removing from pack
+        delete obj;
+    }
 
     return true;
 }
