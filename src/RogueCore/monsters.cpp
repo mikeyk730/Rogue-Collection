@@ -49,7 +49,8 @@ namespace
 #define ___  1
 #define XX  10
 
-    //mdk: IS_REGEN has no effect
+    //mdk: IS_REGEN has no effect.  In Unix Rogue 3.6.3 it designated a 66% 
+    //chance to gain a hp
     struct MonsterEntry monsters[26] =
     {
         // Name           CARRY                        FLAG    str,  exp,lvl,amr, hpt, dmg

@@ -539,13 +539,12 @@ bool Monster::rust_attack()
 
 bool Monster::freeze_attack()
 {
-    //mdk: i've had to guess on the implementation based on playing the original
-    if (!game->hero().get_sleep_turns()) {
-        msg("You are frozen by the %s", get_name().c_str());
-        game->hero().increase_sleep_turns(rnd(20)+1);
-        return true;
+    if (!game->hero().get_sleep_turns())
+    {
+        ifterse("you are frozen%s", " by the %s", get_name().c_str());
     }
-    return false;
+    game->hero().increase_sleep_turns(rnd(2) + 2);
+    return true;
 }
 
 bool Monster::drain_strength_attack()
