@@ -1,4 +1,5 @@
 #include "item_class.h"
+#include "rogue.h"
 #include "things.h"
 #include "io.h"
 
@@ -50,14 +51,15 @@ void ItemClass::set_guess(int type, const std::string& guess)
 
 void ItemClass::call_it(int type)
 {
+    char buf[MAXNAME];
     if (is_discovered(type))
         set_guess(type, "");
     else if (get_guess(type).empty())
     {
         msg("%scall it? ", noterse("what do you want to "));
-        getinfo(prbuf, MAXNAME);
-        if (*prbuf != ESCAPE)
-            set_guess(type, prbuf);
+        getinfo(buf, MAXNAME);
+        if (*buf != ESCAPE)
+            set_guess(type, buf);
         msg("");
     }
 }

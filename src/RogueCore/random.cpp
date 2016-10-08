@@ -1,4 +1,5 @@
 #include "random.h"
+#include "rogue.h"
 
 Random::Random()
 { }
@@ -24,4 +25,19 @@ long Random::ran()
     seed *= 125;
     seed -= (seed / 2796203) * 2796203;
     return seed;
+}
+
+//rnd: Pick a very random number.
+int rnd(int range)
+{
+    return g_random->rnd(range);
+}
+
+//roll: Roll a number of dice
+int roll(int number, int sides)
+{
+    int dtotal = 0;
+    while (number--)
+        dtotal += rnd(sides) + 1;
+    return dtotal;
 }

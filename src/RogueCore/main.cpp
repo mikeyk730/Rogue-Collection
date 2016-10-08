@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "main.h"
 #include "daemons.h"
@@ -229,21 +229,6 @@ int game_main(int argc, char **argv, std::shared_ptr<DisplayInterface> output, s
     }
 
     delete game;
-}
-
-//rnd: Pick a very random number.
-int rnd(int range)
-{
-    return g_random->rnd(range);
-}
-
-//roll: Roll a number of dice
-int roll(int number, int sides)
-{
-    int dtotal = 0;
-    while (number--)
-        dtotal += rnd(sides) + 1;
-    return dtotal;
 }
 
 //do_quit: Have player make certain, then exit.

@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include "RogueCore/display_interface.h"
-#include "RogueCore/coord.h"
+#include "RogueCore/util.h"
 
 struct WindowsConsole : public DisplayInterface
 {

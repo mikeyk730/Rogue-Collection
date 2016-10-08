@@ -1,7 +1,7 @@
 //Maze drawing routines.  Based on the algorithm presented in the December 1981 Byte "How to Build a Maze" by David Matuszek.
 //maze.c      1.4     (A.I. Design)   12/14/84
 
-#include "rogue.h"
+#include "random.h"
 #include "maze.h"
 #include "main.h"
 #include "misc.h"

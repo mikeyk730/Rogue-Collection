@@ -2,7 +2,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "level.h"
 #include "misc.h"

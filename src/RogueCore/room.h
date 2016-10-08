@@ -1,5 +1,5 @@
 #pragma once
-#include "rogue.h"
+#include "util.h"
 
 struct Level;
 

@@ -1,7 +1,7 @@
 //Code for handling the various special properties of the slime
 //slime.c     1.0     (A.I. Design 1.42)      1/17/85
 
-#include "rogue.h"
+#include "random.h"
 #include "slime.h"
 #include "misc.h"
 #include "curses.h"

@@ -6,6 +6,7 @@
 #include "io.h"
 #include "stream_input.h"
 #include "rogue.h"
+#include "util.h"
 #include "mach_dep.h"
 
 namespace

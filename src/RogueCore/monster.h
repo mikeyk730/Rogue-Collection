@@ -1,6 +1,7 @@
 #pragma once
-
 #include "agent.h"
+
+struct Coord;
 
 const int EX_DIVIDES       =   0x0001; //can divide into two (slime)
 const int EX_SHOOTS_ICE    =   0x0002; //can shoot frost to freeze player (ice monster v1.4)

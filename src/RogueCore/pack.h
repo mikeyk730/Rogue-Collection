@@ -1,5 +1,9 @@
 #pragma once
-#include "item.h"
+#include <list>
+#include <string>
+#include "util.h"
+
+struct Item;
 
 Item *pack_obj(byte ch, byte *chp);
 

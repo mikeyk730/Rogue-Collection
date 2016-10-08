@@ -9,7 +9,7 @@
 #include <time.h>
 #include <sys/stat.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "rip.h"
 #include "curses.h"

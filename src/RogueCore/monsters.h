@@ -2,6 +2,7 @@
 #include <string>
 
 struct Monster;
+struct Coord;
 
 const char* get_monster_name(char monster);
 

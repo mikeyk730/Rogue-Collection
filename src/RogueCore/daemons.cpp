@@ -1,7 +1,7 @@
 //All the daemon and fuse functions are in here
 //@(#)daemons.c       5.1 (Berkeley) 5/11/82
 
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "daemons.h"
 #include "daemon.h"

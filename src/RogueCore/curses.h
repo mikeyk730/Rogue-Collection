@@ -1,5 +1,7 @@
 #pragma once
 #include <memory>
+#include <string>
+#include "util.h"
 
 #define BX_SIZE 7
 

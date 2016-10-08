@@ -1,7 +1,6 @@
-#pragma once
+#include "random.h"
 #include "room.h"
 #include "level.h"
-#include "main.h"
 #include "game_state.h"
 
 bool Room::is_flag_set(short flag) const {

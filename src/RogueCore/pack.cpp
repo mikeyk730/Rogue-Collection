@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <sstream>
 
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "pack.h"
 #include "io.h"

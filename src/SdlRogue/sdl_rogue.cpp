@@ -7,7 +7,7 @@
 #include "sdl_rogue.h"
 #include "utility.h"
 #include "RogueCore/rogue.h"
-#include "RogueCore/coord.h"
+#include "RogueCore/util.h"
 #include "RogueCore/io.h"
 #include "RogueCore/mach_dep.h"
 #include "RogueCore/game_state.h"

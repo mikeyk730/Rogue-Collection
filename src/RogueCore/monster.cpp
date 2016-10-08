@@ -1,6 +1,6 @@
 #include <sstream>
 #include "monster.h"
-#include "main.h"
+#include "random.h"
 #include "monsters.h"
 #include "item.h"
 #include "game_state.h"
@@ -22,7 +22,6 @@
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
- 
 bool Monster::can_divide() const
 {
     return (m_ex_flags & EX_DIVIDES) != 0;

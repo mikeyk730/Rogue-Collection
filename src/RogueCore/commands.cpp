@@ -1,5 +1,5 @@
 #include "commands.h"
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "hero.h"
 #include "pack.h"

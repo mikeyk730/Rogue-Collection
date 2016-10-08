@@ -1,9 +1,9 @@
 //Routines dealing specifically with rings
 //rings.c     1.4 (AI Design) 12/13/84
-
 #include <stdio.h>
 
 #include "rogue.h"
+#include "random.h"
 #include "agent.h"
 #include "item_class.h"
 #include "game_state.h"
@@ -11,7 +11,6 @@
 #include "pack.h"
 #include "misc.h"
 #include "potions.h"
-#include "main.h"
 #include "io.h"
 #include "things.h"
 #include "weapons.h"

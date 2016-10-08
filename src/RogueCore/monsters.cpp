@@ -6,7 +6,7 @@
 #include <string>
 #include <algorithm>
 
-#include "rogue.h"
+#include "random.h"
 #include "monsters.h"
 #include "daemons.h"
 #include "list.h"

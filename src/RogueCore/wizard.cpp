@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "daemons.h"
 #include "pack.h"

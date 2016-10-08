@@ -2,6 +2,8 @@
 
 #include <iosfwd>
 
+typedef unsigned char byte;
+
 //Coordinate data type
 struct Coord
 {

@@ -1,5 +1,6 @@
 #pragma once
 
+struct Coord;
 struct Monster;
 
 void slime_split(Monster* monster);

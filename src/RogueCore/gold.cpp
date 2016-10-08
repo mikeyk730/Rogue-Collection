@@ -1,4 +1,5 @@
 #include "gold.h"
+#include "rogue.h"
 
 Gold::Gold(int value) :
     Item(GOLD, 0)

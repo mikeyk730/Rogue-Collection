@@ -2,7 +2,7 @@
 //move.c      1.4 (A.I. Design)       12/22/84
 #include <ctype.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "move.h"
 #include "weapons.h"
 #include "curses.h"

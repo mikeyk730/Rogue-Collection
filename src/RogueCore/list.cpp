@@ -1,8 +1,8 @@
 //Functions for dealing with linked lists of goodies
-//Functions with names starting with an "_" have companion #defines in rogue.h which take the address of the first argument and pass it on.
+//Functions with names starting with an "_" have companion #defines in random.h which take the address of the first argument and pass it on.
 //list.c      1.4 (A.I. Design) 12/5/85
 
-#include "rogue.h"
+#include "random.h"
 #include "list.h"
 #include "io.h"
 #include "misc.h"

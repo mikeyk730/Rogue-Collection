@@ -3,7 +3,7 @@
 
 #include <ctype.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "main.h"
 #include "rooms.h"
 #include "monsters.h"

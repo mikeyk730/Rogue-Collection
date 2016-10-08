@@ -1,6 +1,7 @@
 #pragma once
 
 #include "agent.h"
+#include "rogue.h"
 
 struct Monster;
 struct Item;

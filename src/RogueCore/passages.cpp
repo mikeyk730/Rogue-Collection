@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "room.h"
 #include "maze.h"
 #include "main.h"

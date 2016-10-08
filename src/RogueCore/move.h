@@ -1,8 +1,9 @@
 #pragma once
-#include "command.h"
 
 struct Agent;
 struct Room;
+struct Coord;
+struct Command;
 
 //diag_ok: Check to see if the move is legal if it is diagonal
 int diag_ok(const Coord sp, const Coord ep);

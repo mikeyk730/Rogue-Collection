@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 #include <fstream>
-#include "rogue.h"
+#include "util.h"
 #include "item_class.h"
 #include "wizard.h"
 #include "command.h"
@@ -108,7 +108,7 @@ struct GameState
     bool repeat_last_action;     //The last command is repeated
     bool invalid_position = false;
     char run_character; //Direction player is running
-    char last_message[BUFSIZE];     //The last message printed
+    char last_message[128];     //The last message printed
     int maxrow;            //Last Line used for map
     int msg_position = 0;  //Where cursor is on top line
     std::string typeahead;

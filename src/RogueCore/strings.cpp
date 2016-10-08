@@ -1,6 +1,5 @@
 #include <ctype.h>
-
-#include "rogue.h"
+#include <cstring>
 #include "strings.h"
 
 char* stccpy(char *s1, char *s2, int count)

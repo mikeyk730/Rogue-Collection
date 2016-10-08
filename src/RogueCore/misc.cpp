@@ -3,7 +3,7 @@
 #include <sstream>
 #include <stdio.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "io.h"
 #include "daemons.h"

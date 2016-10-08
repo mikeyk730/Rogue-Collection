@@ -2,11 +2,6 @@
 //Rogue definitions and variable declarations
 //rogue.h      1.4 (AI Design) 12/14/84
 
-#include <string>
-#include <list>
-#include <string.h>
-#include "coord.h"
-
 struct Random;
 struct GameState;
 
@@ -14,8 +9,6 @@ struct GameState;
 
 #define REV  1
 #define VER  48
-
-typedef unsigned char byte;
 
 //Maximum number of different things
 
@@ -116,15 +109,6 @@ typedef unsigned char byte;
 #define MAXLINES  25 //maximum number of screen lines used
 #define MAXCOLS   80 //maximum number of screen columns used
 
-#define ON  0xF1
-#define OFF 0xF0
-
-//rnd: Pick a very random number.
-int rnd(int range);
-
-//roll: Roll a number of dice
-int roll(int number, int sides);
-
 //External variables
 
 //string constants
@@ -137,5 +121,3 @@ extern const char *const flash, *const intense;
 extern char prbuf[];
 extern Random* g_random;
 extern GameState* game;
-
-#define BUFSIZE             128

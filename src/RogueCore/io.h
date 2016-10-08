@@ -1,3 +1,5 @@
+#include <iostream>
+
 bool short_msgs();
 
 void set_small_screen_mode(bool enable);

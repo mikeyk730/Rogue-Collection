@@ -1,6 +1,9 @@
 #include <list>
+#include "rogue.h"
+#include "util.h"
 #include "room.h"
 
+struct Room;
 struct Item;
 struct Monster;
 

@@ -1,9 +1,7 @@
-#pragma once
-
 #include "main.h"
 #include "item.h"
 #include "agent.h"
-#include "rogue.h"
+#include "util.h"
 #include "rooms.h"
 #include "game_state.h"
 #include "hero.h"

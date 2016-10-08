@@ -1,7 +1,7 @@
 #include <iostream>
 #include "utility.h"
 #include "SDL.h"
-#include "RogueCore/coord.h"
+#include "RogueCore/util.h"
 
 std::string getResourcePath(const std::string &subDir) {
     //We need to choose the path separator properly based on which

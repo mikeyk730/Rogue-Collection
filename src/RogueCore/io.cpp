@@ -8,7 +8,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "io.h"
 #include "curses.h"
@@ -25,7 +25,7 @@
 
 #define PT(i,j)  ((COLS==40)?i:j)
 
-char msgbuf[BUFSIZE];
+char msgbuf[128];
 
 static int newpos = 0;
 static char *formats = "scud%", *bp, left_justify;

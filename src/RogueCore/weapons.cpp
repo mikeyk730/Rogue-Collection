@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "monsters.h"
 #include "pack.h"

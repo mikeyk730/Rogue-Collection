@@ -2,6 +2,7 @@
 #include "item.h"
 
 struct Monster;
+struct Coord;
 
 struct Weapon : public Item
 {

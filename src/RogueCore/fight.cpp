@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "hero.h"
 #include "fight.h"

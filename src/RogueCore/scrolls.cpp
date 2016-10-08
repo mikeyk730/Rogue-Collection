@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "item_class.h"
 #include "game_state.h"
 #include "scrolls.h"

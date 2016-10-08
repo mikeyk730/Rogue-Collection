@@ -1,3 +1,4 @@
+#pragma once
 struct Random
 {
     Random();
@@ -14,3 +15,9 @@ private:
 
     int seed;
 };
+
+//rnd: Pick a very random number.
+int rnd(int range);
+
+//roll: Roll a number of dice
+int roll(int number, int sides);

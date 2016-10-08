@@ -1,5 +1,6 @@
 #include <sstream>
 #include <algorithm>
+#include "random.h"
 #include "agent.h"
 #include "main.h"
 #include "fight.h"

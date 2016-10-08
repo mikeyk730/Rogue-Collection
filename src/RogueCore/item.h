@@ -1,5 +1,6 @@
 #pragma once
-#include "rogue.h"
+#include <string>
+#include "util.h"
 
 struct Monster;
 struct Hero;

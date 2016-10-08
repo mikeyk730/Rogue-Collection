@@ -1,6 +1,8 @@
 #include "amulet.h"
+#include "rogue.h"
 
-Amulet::Amulet() : Item(AMULET, 0)
+Amulet::Amulet() : 
+    Item(AMULET, 0)
 {
 }
 

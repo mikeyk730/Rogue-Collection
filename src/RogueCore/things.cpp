@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 
-#include "rogue.h"
+#include "random.h"
 #include "game_state.h"
 #include "things.h"
 #include "pack.h"
