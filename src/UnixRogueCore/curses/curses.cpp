@@ -5,6 +5,12 @@ extern "C" {
 #include "output_shim.h"
 #include "coord.h"
 
+extern "C"
+{
+    void init_curses(int r, int c, std::shared_ptr<DisplayInterface> output);
+    void shutdown_curses();
+}
+
 namespace
 {
     OutputShim* shim = 0;
@@ -13,14 +19,15 @@ namespace
 int COLS;
 int LINES;
 
-void init(int r, int c, std::shared_ptr<DisplayInterface> output)
+void init_curses(int r, int c, std::shared_ptr<DisplayInterface> output)
 {
     LINES = r;
     COLS = c;
     shim = new OutputShim(output);
+    shim->winit(false);
 }
 
-void shutdown()
+void shutdown_curses()
 {
     delete shim;
 }
@@ -102,7 +109,7 @@ int	standout(void)
     return OK;
 }
 
-int	 printw(const char* f, ...)
+int printw(const char* f, ...)
 {
     char buf[1024 * 16];
     va_list argptr;

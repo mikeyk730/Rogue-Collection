@@ -5,7 +5,7 @@ struct Coord;
 
 struct DisplayInterface
 {
-    virtual ~DisplayInterface();
+    virtual ~DisplayInterface() = 0;
 
     virtual void SetDimensions(Coord dimensions) = 0;
     virtual void Draw(CharInfo* buf, bool*) = 0;
