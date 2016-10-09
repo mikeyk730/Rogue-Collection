@@ -11,7 +11,7 @@
 #include "misc.h"
 #include "scrolls.h"
 #include "sticks.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "move.h"
 #include "fight.h"
 #include "io.h"

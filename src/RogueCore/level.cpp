@@ -13,7 +13,7 @@
 #include "list.h"
 #include "agent.h"
 #include "monsters.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "game_state.h"
 #include "hero.h"
 #include "pack.h"

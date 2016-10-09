@@ -12,7 +12,7 @@
 #include "random.h"
 #include "game_state.h"
 #include "rip.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "io.h"
 #include "things.h"
 #include "misc.h"

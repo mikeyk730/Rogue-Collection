@@ -11,7 +11,7 @@
 #include "daemon.h"
 #include "potions.h"
 #include "pack.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "io.h"
 #include "list.h"
 #include "misc.h"

@@ -11,7 +11,7 @@
 #include "random.h"
 #include "game_state.h"
 #include "io.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "misc.h"
 #include "strings.h"
 #include "command.h"

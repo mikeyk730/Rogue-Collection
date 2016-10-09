@@ -24,7 +24,7 @@
 #include "main.h"
 #include "daemons.h"
 #include "daemon.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "io.h"
 #include "misc.h"
 #include "rip.h"

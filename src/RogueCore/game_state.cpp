@@ -10,7 +10,7 @@
 #include "combo_input.h"
 #include "hero.h"
 #include "level.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "io.h"
 #include "monsters.h"
 

@@ -6,7 +6,7 @@
 #include <stdarg.h>
 
 #include "rogue.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "main.h"
 #include "misc.h"
 #include "display_interface.h"

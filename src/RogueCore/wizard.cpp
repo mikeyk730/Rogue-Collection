@@ -11,7 +11,7 @@
 #include "game_state.h"
 #include "daemons.h"
 #include "pack.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "io.h"
 #include "wizard.h"
 #include "daemon.h"

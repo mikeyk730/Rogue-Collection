@@ -18,7 +18,7 @@
 #include "rip.h"
 #include "things.h"
 #include "main.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "slime.h"
 #include "potions.h"
 #include "misc.h"

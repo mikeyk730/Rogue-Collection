@@ -4,7 +4,7 @@
 #include "random.h"
 #include "slime.h"
 #include "misc.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "io.h"
 #include "monsters.h"
 #include "main.h"

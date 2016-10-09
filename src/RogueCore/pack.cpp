@@ -7,7 +7,7 @@
 #include "pack.h"
 #include "io.h"
 #include "misc.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "list.h"
 #include "things.h"
 #include "level.h"

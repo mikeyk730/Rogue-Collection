@@ -5,7 +5,7 @@
 #include "random.h"
 #include "move.h"
 #include "weapons.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "io.h"
 #include "rip.h"
 #include "wizard.h"

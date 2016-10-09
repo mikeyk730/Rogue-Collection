@@ -4,7 +4,7 @@
 #include <stdarg.h>
 
 #include "rogue.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "main.h"
 #include "misc.h"
 #include "display_interface.h"
@@ -282,41 +282,44 @@ int Curses::addch(byte chr)
     return AddCharacter(chr, true);
 }
 
-int GetColor(int chr, int attr)
+namespace
 {
-    //if it is inside a room
-    if (attr == 0x07) switch (chr)
+    int GetColor(int chr, int attr)
     {
-    case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
-        return 0x06; //brown
-    case FLOOR:
-        return 0x0a; //light green
-    case STAIRS:
-        return 0xa0; //black on light green
-    case TRAP:
-        return 0x05; //magenta
-    case GOLD: case PLAYER:
-        return 0x0e; //yellow
-    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-        return 0x09; //light blue
-    case FOOD:
-        return 0x04; //red
-    }
-    //if inside a passage or a maze
-    else if (attr == 0x70) switch (chr)
-    {
-    case FOOD:
-        return 0x74; //red on grey
-    case GOLD: case PLAYER:
-        return 0x7e; //yellow on grey
-    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-        return 0x71; //blue on grey
-    }
-    // mdk: don't think used
-    //else if (m_attr == 0x0f && chr == STAIRS)
-    //    return 0xa0;
+        //if it is inside a room
+        if (attr == 0x07) switch (chr)
+        {
+        case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+            return 0x06; //brown
+        case FLOOR:
+            return 0x0a; //light green
+        case STAIRS:
+            return 0xa0; //black on light green
+        case TRAP:
+            return 0x05; //magenta
+        case GOLD: case PLAYER:
+            return 0x0e; //yellow
+        case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+            return 0x09; //light blue
+        case FOOD:
+            return 0x04; //red
+        }
+        //if inside a passage or a maze
+        else if (attr == 0x70) switch (chr)
+        {
+        case FOOD:
+            return 0x74; //red on grey
+        case GOLD: case PLAYER:
+            return 0x7e; //yellow on grey
+        case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+            return 0x71; //blue on grey
+        }
+        // mdk: don't think used
+        //else if (m_attr == 0x0f && chr == STAIRS)
+        //    return 0xa0;
 
-    return attr;
+        return attr;
+    }
 }
 
 int Curses::AddCharacter(byte chr, bool is_text)

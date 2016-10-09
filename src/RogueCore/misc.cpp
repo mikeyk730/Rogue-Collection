@@ -10,7 +10,7 @@
 #include "misc.h"
 #include "monsters.h"
 #include "pack.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "rip.h"
 #include "list.h"
 #include "mach_dep.h"

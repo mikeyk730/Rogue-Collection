@@ -8,7 +8,7 @@
 #include "rooms.h"
 #include "monsters.h"
 #include "list.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "maze.h"
 #include "move.h"
 #include "misc.h"

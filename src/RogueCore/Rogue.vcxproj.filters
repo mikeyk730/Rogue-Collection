@@ -276,9 +276,6 @@
     <ClInclude Include="item_class.h">
       <Filter>Items</Filter>
     </ClInclude>
-    <ClInclude Include="curses.h">
-      <Filter>Output</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -319,6 +316,9 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="icurses.h">
+      <Filter>Output</Filter>
+    </ClInclude>
+    <ClInclude Include="output_shim.h">
       <Filter>Output</Filter>
     </ClInclude>
   </ItemGroup>

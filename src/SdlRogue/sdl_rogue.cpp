@@ -11,7 +11,7 @@
 #include "RogueCore/io.h"
 #include "RogueCore/mach_dep.h"
 #include "RogueCore/game_state.h"
-#include "RogueCore/curses.h"
+#include "RogueCore/output_shim.h"
 
 namespace
 {

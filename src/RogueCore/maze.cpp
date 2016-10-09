@@ -10,7 +10,7 @@
 #include "level.h"
 #include "room.h"
 #include "game_state.h"
-#include "curses.h"
+#include "output_shim.h"
 
 #define MAXFRNT  100
 #define FRONTIER  'F'

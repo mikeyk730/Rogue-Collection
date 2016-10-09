@@ -206,7 +206,7 @@
     <ClInclude Include="commands.h" />
     <ClInclude Include="icurses.h" />
     <ClInclude Include="util.h" />
-    <ClInclude Include="curses.h" />
+    <ClInclude Include="output_shim.h" />
     <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />
     <ClInclude Include="display_interface_types.h" />

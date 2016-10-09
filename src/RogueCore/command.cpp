@@ -16,7 +16,7 @@
 #include "armor.h"
 #include "weapons.h"
 #include "sticks.h"
-#include "curses.h"
+#include "output_shim.h"
 #include "mach_dep.h"
 #include "move.h"
 #include "rings.h"
