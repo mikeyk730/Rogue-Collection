@@ -10,6 +10,7 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include <curses.h>
 #include <string.h>
 #include <ctype.h>
@@ -17,7 +18,7 @@
 
 #define	EQSTR(a, b)	(strcmp(a, b) == 0)
 
-char *h_names[] = {		/* strings for hitting */
+static const char *h_names[] = {		/* strings for hitting */
 	" scored an excellent hit on ",
 	" hit ",
 	" have injured ",
@@ -28,7 +29,7 @@ char *h_names[] = {		/* strings for hitting */
 	" swings and hits "
 };
 
-char *m_names[] = {		/* strings for missing */
+static const char *m_names[] = {		/* strings for missing */
 	" miss",
 	" swing and miss",
 	" barely miss",
@@ -59,24 +60,24 @@ static int add_dam[] = {
  * fight:
  *	The player attacks the monster.
  */
-fight(mp, weap, thrown)
-register coord *mp;
-register THING *weap;
-bool thrown;
+int
+fight(const coord *mp, const THING *weap, int thrown)
 {
-    register THING *tp;
-    register bool did_hit = TRUE;
-    register char *mname, ch;
+    THING *tp;
+    int did_hit = TRUE;
+    const char *mname;
+	int ch;
 
     /*
      * Find the monster we want to fight
      */
-#ifdef MASTER
     if ((tp = moat(mp->y, mp->x)) == NULL)
-	debug("Fight what @ %d,%d", mp->y, mp->x);
-#else
-    tp = moat(mp->y, mp->x);
+	{
+#ifdef MASTER
+		debug("Fight what @ %d,%d", mp->y, mp->x);
 #endif
+		return FALSE;
+	}
     /*
      * Since we are fighting, things are not quiet so no healing takes
      * place.
@@ -109,7 +110,7 @@ bool thrown;
 	if (thrown)
 	    thunk(weap, mname, terse);
 	else
-	    hit((char *) NULL, mname, terse);
+	    hit(NULL, mname, terse);
 	if (on(player, CANHUH))
 	{
 	    did_hit = TRUE;
@@ -129,7 +130,7 @@ bool thrown;
 	if (thrown)
 	    bounce(weap, mname, terse);
 	else
-	    miss((char *) NULL, mname, terse);
+	    miss(NULL, mname, terse);
     return did_hit;
 }
 
@@ -137,11 +138,11 @@ bool thrown;
  * attack:
  *	The monster attacks the player
  */
-attack(mp)
-register THING *mp;
+int
+attack(THING *mp)
 {
-    register char *mname;
-    register int oldhp;
+    const char *mname;
+    int oldhp;
 
     /*
      * Since this is an attack, stop running and any healing that was
@@ -163,13 +164,13 @@ register THING *mp;
     }
     mname = set_mname(mp);
     oldhp = pstats.s_hpt;
-    if (roll_em(mp, &player, (THING *) NULL, FALSE))
+    if (roll_em(mp, &player, NULL, FALSE))
     {
 	if (mp->t_type != 'I')
 	{
 	    if (has_hit)
 		addmsg(".  ");
-	    hit(mname, (char *) NULL, FALSE);
+	    hit(mname, NULL, FALSE);
 	}
 	else
 	    if (has_hit)
@@ -213,6 +214,7 @@ register THING *mp;
 		     * Rattlesnakes have poisonous bites
 		     */
 		    if (!save(VS_POISON))
+		    {
 			if (!ISWEARING(R_SUSTSTR))
 			{
 			    chg_str(-1);
@@ -222,10 +224,13 @@ register THING *mp;
 				msg("a bite has weakened you");
 			}
 			else if (!to_death)
+			{
 			    if (!terse)
 				msg("a bite momentarily weakens you");
 			    else
 				msg("bite has no effect");
+			}
+		    }
 		when 'W':
 		case 'V':
 		    /*
@@ -234,7 +239,7 @@ register THING *mp;
 		     */
 		    if (rnd(100) < (mp->t_type == 'W' ? 15 : 30))
 		    {
-			register int fewer;
+			int fewer;
 
 			if (mp->t_type == 'W')
 			{
@@ -272,7 +277,7 @@ register THING *mp;
 		    /*
 		     * Leperachaun steals some gold
 		     */
-		    register long lastpurse;
+		    int lastpurse;
 
 		    lastpurse = purse;
 		    purse -= GOLDCALC;
@@ -287,8 +292,8 @@ register THING *mp;
 		}
 		when 'N':
 		{
-		    register THING *obj, *steal;
-		    register int nobj;
+		    THING *obj, *steal;
+		    int nobj;
 
 		    /*
 		     * Nymph's steal a magic item, look through the pack
@@ -304,7 +309,7 @@ register THING *mp;
 		    {
 			remove_mon(&mp->t_pos, moat(mp->t_pos.y, mp->t_pos.x), FALSE);
                         mp=NULL;
-			leave_pack(steal, FALSE, FALSE);
+			steal = leave_pack(steal, TRUE, FALSE);
 			msg("she stole %s!", inv_name(steal, TRUE));
 			discard(steal);
 		    }
@@ -326,7 +331,7 @@ register THING *mp;
 	    if (pstats.s_hpt <= 0)
 		death(mp->t_type);	/* Bye bye life ... */
 	}
-	miss(mname, (char *) NULL, FALSE);
+	miss(mname, NULL, FALSE);
     }
     if (fight_flush && !to_death)
 	flush_type();
@@ -342,12 +347,11 @@ register THING *mp;
  * set_mname:
  *	return the monster name for the given monster
  */
-char *
-set_mname(tp)
-register THING *tp;
+const char *
+set_mname(const THING *tp)
 {
     int ch;
-    char *mname;
+    const char *mname;
     static char tbuf[MAXSTR] = { 't', 'h', 'e', ' ' };
 
     if (!see_monst(tp) && !on(player, SEEMONST))
@@ -355,7 +359,7 @@ register THING *tp;
     else if (on(player, ISHALU))
     {
 	move(tp->t_pos.y, tp->t_pos.x);
-	ch = toascii(inch());
+	ch = toascii(CCHAR(inch()));
 	if (!isupper(ch))
 	    ch = rnd(26);
 	else
@@ -372,8 +376,8 @@ register THING *tp;
  * swing:
  *	Returns true if the swing hits
  */
-swing(at_lvl, op_arm, wplus)
-int at_lvl, op_arm, wplus;
+int
+swing(int at_lvl, int op_arm, int wplus)
 {
     int res = rnd(20);
     int need = (20 - at_lvl) - op_arm;
@@ -385,18 +389,17 @@ int at_lvl, op_arm, wplus;
  * roll_em:
  *	Roll several attacks
  */
-bool
-roll_em(thatt, thdef, weap, hurl)
-THING *thatt, *thdef, *weap;
-bool hurl;
+int
+roll_em(const THING *thatt, THING *thdef, const THING *weap, int hurl)
 {
-    register struct stats *att, *def;
-    register char *cp;
-    register int ndice, nsides, def_arm;
-    register bool did_hit = FALSE;
-    register int hplus;
-    register int dplus;
-    register int damage;
+    const struct stats *att;
+    struct stats *def;
+    const char *cp;
+    int ndice, nsides, def_arm;
+    int did_hit = FALSE;
+    int hplus;
+    int dplus;
+    int damage;
 
     att = &thatt->t_stats;
     def = &thdef->t_stats;
@@ -423,6 +426,7 @@ bool hurl;
 	}
 	cp = weap->o_damage;
 	if (hurl)
+	{
 	    if ((weap->o_flags&ISMISL) && cur_weapon != NULL &&
 	      cur_weapon->o_which == weap->o_launch)
 	    {
@@ -432,6 +436,7 @@ bool hurl;
 	    }
 	    else if (weap->o_launch < 0)
 		cp = weap->o_hurldmg;
+	}
     }
     /*
      * If the creature being attacked is not running (alseep or held)
@@ -480,9 +485,7 @@ bool hurl;
  *	The print name of a combatant
  */
 char *
-prname(mname, upper)
-register char *mname;
-bool upper;
+prname(const char *mname, int upper)
 {
     static char tbuf[MAXSTR];
 
@@ -492,7 +495,7 @@ bool upper;
     else
 	strcpy(tbuf, mname);
     if (upper)
-	*tbuf = toupper(*tbuf);
+	*tbuf = (char) toupper(*tbuf);
     return tbuf;
 }
 
@@ -500,10 +503,8 @@ bool upper;
  * thunk:
  *	A missile hits a monster
  */
-thunk(weap, mname, noend)
-register THING *weap;
-register char *mname;
-register bool noend;
+void
+thunk(const THING *weap, const char *mname, int noend)
 {
     if (to_death)
 	return;
@@ -521,13 +522,11 @@ register bool noend;
  *	Print a message to indicate a succesful hit
  */
 
-hit(er, ee, noend)
-register char *er, *ee;
-bool noend;
+void
+hit(const char *er, const char *ee, int noend)
 {
     int i;
-    char *s;
-    extern char *h_names[];
+    const char *s;
 
     if (to_death)
 	return;
@@ -552,12 +551,10 @@ bool noend;
  * miss:
  *	Print a message to indicate a poor swing
  */
-miss(er, ee, noend)
-register char *er, *ee;
-bool noend;
+void
+miss(const char *er, const char *ee, int noend)
 {
     int i;
-    extern char *m_names[];
 
     if (to_death)
 	return;
@@ -579,10 +576,8 @@ bool noend;
  * bounce:
  *	A missile misses a monster
  */
-bounce(weap, mname, noend)
-register THING *weap;
-register char *mname;
-bool noend;
+void
+bounce(const THING *weap, const char *mname, int noend)
 {
     if (to_death)
 	return;
@@ -599,12 +594,10 @@ bool noend;
  * remove_mon:
  *	Remove a monster from the screen
  */
-remove_mon(mp, tp, waskill)
-register coord *mp;
-register THING *tp;
-bool waskill;
+void
+remove_mon(const coord *mp, THING *tp, int waskill)
 {
-    register THING *obj, *nexti;
+    THING *obj, *nexti;
 
     for (obj = tp->t_pack; obj != NULL; obj = nexti)
     {
@@ -633,11 +626,10 @@ bool waskill;
  * killed:
  *	Called to put a monster to death
  */
-killed(tp, pr)
-register THING *tp;
-bool pr;
+void
+killed(THING *tp, int pr)
 {
-    char *mname;
+    const char *mname;
 
     pstats.s_exp += tp->t_stats.s_exp;
 

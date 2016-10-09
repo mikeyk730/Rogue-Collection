@@ -10,6 +10,8 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
+#include <string.h>
 #include <curses.h>
 #include <ctype.h>
 #include "rogue.h"
@@ -18,13 +20,14 @@
  * command:
  *	Process the user commands
  */
-command()
+void
+command(void)
 {
-    register char ch;
-    register int ntimes = 1;			/* Number of player moves */
-    char *fp;
+    int ch;
+    int ntimes = 1;			/* Number of player moves */
+    int *fp;
     THING *mp;
-    static char countch, direction, newcount = FALSE;
+    static int countch, direction, newcount = FALSE;
 
     if (on(player, ISHASTE))
 	ntimes++;
@@ -76,7 +79,10 @@ command()
 		ch = readchar();
 		move_on = FALSE;
 		if (mpos != 0)		/* Erase message if its there */
-		    msg("");
+		{
+		    if (ch != '.')
+			msg("");
+		}
 	    }
 	}
 	else
@@ -219,8 +225,8 @@ over:
 		    }
 		    delta.y += hero.y;
 		    delta.x += hero.x;
-		    if (((mp = moat(delta.y, delta.x)) == NULL
-			|| (!see_monst(mp)) && !on(player, SEEMONST)))
+		    if ( ((mp = moat(delta.y, delta.x)) == NULL)
+			|| ((!see_monst(mp)) && !on(player, SEEMONST)))
 		    {
 			if (!terse)
 			    addmsg("I see ");
@@ -322,7 +328,8 @@ over:
 		    }
 		    else
 		    {
-			if (wizard = passwd()) 
+			wizard = passwd();
+			if (wizard) 
 			{
 			    noscore = TRUE;
 			    turn_see(FALSE);
@@ -374,9 +381,9 @@ over:
 			when CTRL('F'): show_map();
 			when CTRL('T'): teleport();
 			when CTRL('E'): msg("food left: %d", food_left);
-			when CTRL('C'): add_pass();
+			when CTRL('Q'): add_pass();
 			when CTRL('X'): turn_see(on(player, SEEMONST));
-			when CTRL('~'):
+			when '~':
 			{
 			    THING *item;
 
@@ -453,8 +460,8 @@ over:
  * illcom:
  *	What to do with an illegal command
  */
-illcom(ch)
-int ch;
+void
+illcom(int ch)
 {
     save_msg = FALSE;
     count = 0;
@@ -466,13 +473,14 @@ int ch;
  * search:
  *	player gropes about him to find hidden things.
  */
-search()
+void
+search(void)
 {
-    register int y, x;
-    register char *fp;
-    register int ey, ex;
+    int y, x;
+    int *fp;
+    int ey, ex;
     int probinc;
-    bool found;
+    int found;
 
     ey = hero.y + 1;
     ex = hero.x + 1;
@@ -529,11 +537,12 @@ foundone:
  * help:
  *	Give single character help, or the whole mess if he wants it
  */
-help()
+void
+help(void)
 {
-    register struct h_list *strp;
-    register char helpch;
-    register int numprint, cnt;
+    const struct h_list *strp;
+    int helpch;
+    int numprint, cnt;
     msg("character you want help for (* for all): ");
     helpch = readchar();
     mpos = 0;
@@ -584,7 +593,7 @@ help()
     wmove(hw, LINES - 1, 0);
     waddstr(hw, "--Press space to continue--");
     wrefresh(hw);
-    wait_for(' ');
+    wait_for(hw, ' ');
     clearok(stdscr, TRUE);
 /*
     refresh();
@@ -598,31 +607,32 @@ help()
  * identify:
  *	Tell the player what a certain thing is.
  */
-identify()
+void
+identify(void)
 {
-    register int ch;
-    register struct h_list *hp;
-    register char *str;
-    static struct h_list ident_list[] = {
-	'|',		"wall of a room",		FALSE,
-	'-',		"wall of a room",		FALSE,
-	GOLD,		"gold",				FALSE,
-	STAIRS,		"a staircase",			FALSE,
-	DOOR,		"door",				FALSE,
-	FLOOR,		"room floor",			FALSE,
-	PLAYER,		"you",				FALSE,
-	PASSAGE,	"passage",			FALSE,
-	TRAP,		"trap",				FALSE,
-	POTION,		"potion",			FALSE,
-	SCROLL,		"scroll",			FALSE,
-	FOOD,		"food",				FALSE,
-	WEAPON,		"weapon",			FALSE,
-	' ',		"solid rock",			FALSE,
-	ARMOR,		"armor",			FALSE,
-	AMULET,		"the Amulet of Yendor",		FALSE,
-	RING,		"ring",				FALSE,
-	STICK,		"wand or staff",		FALSE,
-	'\0'
+    int ch;
+    const struct h_list *hp;
+    const char *str;
+    const struct h_list ident_list[] = {
+	{'|',		"wall of a room",		FALSE},
+	{'-',		"wall of a room",		FALSE},
+	{GOLD,		"gold",				FALSE},
+	{STAIRS,	"a staircase",			FALSE},
+	{DOOR,		"door",				FALSE},
+	{FLOOR,		"room floor",			FALSE},
+	{PLAYER,	"you",				FALSE},
+	{PASSAGE,	"passage",			FALSE},
+	{TRAP,		"trap",				FALSE},
+	{POTION,	"potion",			FALSE},
+	{SCROLL,	"scroll",			FALSE},
+	{FOOD,		"food",				FALSE},
+	{WEAPON,	"weapon",			FALSE},
+	{' ',		"solid rock",			FALSE},
+	{ARMOR,		"armor",			FALSE},
+	{AMULET,	"the Amulet of Yendor",		FALSE},
+	{RING,		"ring",				FALSE},
+	{STICK,		"wand or staff",		FALSE},
+	{'\0'}
     };
 
     msg("what do you want identified? ");
@@ -652,7 +662,8 @@ identify()
  * d_level:
  *	He wants to go down a level
  */
-d_level()
+void
+d_level(void)
 {
     if (levit_check())
 	return;
@@ -670,7 +681,8 @@ d_level()
  * u_level:
  *	He wants to go up a level
  */
-u_level()
+void
+u_level(void)
 {
     if (levit_check())
 	return;
@@ -694,8 +706,8 @@ u_level()
  *	Check to see if she's levitating, and if she is, print an
  *	appropriate message.
  */
-bool
-levit_check()
+int
+levit_check(void)
 {
     if (!on(player, ISLEVIT))
 	return FALSE;
@@ -707,12 +719,14 @@ levit_check()
  * call:
  *	Allow a user to call a potion, scroll, or ring something
  */
-call()
+void
+call(void)
 {
-    register THING *obj;
-    register struct obj_info *op = NULL;
-    register char **guess, *elsewise = NULL;
-    register bool *know;
+    THING *obj;
+    struct obj_info *op = NULL;
+    char **guess;
+    const char *elsewise = NULL;
+    int *know;
 
     obj = get_item("call", CALLABLE);
     /*
@@ -755,7 +769,7 @@ norm:
 	msg("that has already been identified");
 	return;
     }
-    if (elsewise != NULL && elsewise == op->oi_guess)
+    if (elsewise != NULL && elsewise == *guess)
     {
 	if (!terse)
 	    addmsg("Was ");
@@ -774,19 +788,20 @@ norm:
     {
 	if (*guess != NULL)
 	    free(*guess);
-	*guess = malloc((unsigned int) strlen(prbuf) + 1);
-	strcpy(*guess, prbuf);
+	*guess = malloc(strlen(prbuf) + 1);
+	if (*guess != NULL)
+		strcpy(*guess, prbuf);
     }
+
+    msg("");
 }
 
 /*
  * current:
  *	Print the current weapon/armor
  */
-current(cur,how,where)
-register THING *cur;
-register char *how;
-register char *where;
+void
+current(const THING *cur, const char *how, const char *where)
 {
     after = FALSE;
     if (cur != NULL)

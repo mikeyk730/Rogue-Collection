@@ -12,17 +12,19 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include "rogue.h"
 
 #define TREAS_ROOM 20	/* one chance in TREAS_ROOM for a treasure room */
 #define MAXTREAS 10	/* maximum number of treasures in a treasure room */
 #define MINTREAS 2	/* minimum number of treasures in a treasure room */
 
-new_level()
+void
+new_level(void)
 {
     THING *tp;
     PLACE *pp;
-    char *sp;
+    int *sp;
     int i;
 
     player.t_flags &= ~ISHELD;	/* unhold when you go down just in case */
@@ -71,24 +73,25 @@ new_level()
 	     */
 	    do
 	    {
-		find_floor((struct room *) NULL, &stairs, FALSE, FALSE);
-	    } while (chat(stairs.y, stairs.x) != FLOOR);
+		find_floor(NULL, &stairs, FALSE, FALSE);
+	    } while ( (chat(stairs.y, stairs.x) != FLOOR) &&
+	              (flat(stairs.y, stairs.x) & F_REAL) );
 	    sp = &flat(stairs.y, stairs.x);
-	    *sp &= ~F_REAL;
+	    *sp &= ~(F_REAL | F_TMASK);
 	    *sp |= rnd(NTRAPS);
 	}
     }
     /*
      * Place the staircase down.
      */
-    find_floor((struct room *) NULL, &stairs, FALSE, FALSE);
+    find_floor(NULL, &stairs, FALSE, FALSE);
     chat(stairs.y, stairs.x) = STAIRS;
     seenstairs = FALSE;
 
     for (tp = mlist; tp != NULL; tp = next(tp))
 	tp->t_room = roomin(&tp->t_pos);
 
-    find_floor((struct room *) NULL, &hero, FALSE, TRUE);
+    find_floor(NULL, &hero, FALSE, TRUE);
     enter_room(&hero);
     mvaddch(hero.y, hero.x, PLAYER);
     if (on(player, SEEMONST))
@@ -102,7 +105,7 @@ new_level()
  *	Pick a room that is really there
  */
 int
-rnd_room()
+rnd_room(void)
 {
     int rm;
 
@@ -118,7 +121,8 @@ rnd_room()
  *	Put potions and scrolls on this level
  */
 
-put_things()
+void
+put_things(void)
 {
     int i;
     THING *obj;
@@ -148,7 +152,7 @@ put_things()
 	    /*
 	     * Put it somewhere
 	     */
-	    find_floor((struct room *) NULL, &obj->o_pos, FALSE, FALSE);
+	    find_floor(NULL, &obj->o_pos, FALSE, FALSE);
 	    chat(obj->o_pos.y, obj->o_pos.x) = obj->o_type;
 	}
     /*
@@ -168,7 +172,7 @@ put_things()
 	/*
 	 * Put it somewhere
 	 */
-	find_floor((struct room *) NULL, &obj->o_pos, FALSE, FALSE);
+	find_floor(NULL, &obj->o_pos, FALSE, FALSE);
 	chat(obj->o_pos.y, obj->o_pos.x) = AMULET;
     }
 }
@@ -180,13 +184,14 @@ put_things()
 #define MAXTRIES 10	/* max number of tries to put down a monster */
 
 
-treas_room()
+void
+treas_room(void)
 {
     int nm;
     THING *tp;
     struct room *rp;
     int spots, num_monst;
-    static coord mp;
+    coord mp;
 
     rp = &rooms[rnd_room()];
     spots = (rp->r_max.y - 2) * (rp->r_max.x - 2) - MINTREAS;

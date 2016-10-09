@@ -11,9 +11,9 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include <curses.h>
-#ifdef	attron
-#endif	/* attron */
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -23,11 +23,11 @@
  *	inventory.
  */
 char *
-inv_name(THING *obj, bool drop)
+inv_name(const THING *obj, int drop)
 {
     char *pb;
     struct obj_info *op;
-    char *sp;
+    const char *sp;
     int which;
 
     pb = prbuf;
@@ -126,10 +126,10 @@ inv_name(THING *obj, bool drop)
 	else if (obj == cur_ring[RIGHT])
 	    strcat(pb, " (on right hand)");
     }
-    if (drop && isupper(prbuf[0]))
-	prbuf[0] = tolower(prbuf[0]);
-    else if (!drop && islower(*prbuf))
-	*prbuf = toupper(*prbuf);
+    if (drop && isupper((int)prbuf[0]))
+	prbuf[0] = (char) tolower(prbuf[0]);
+    else if (!drop && islower((int)*prbuf))
+	*prbuf = (char) toupper(*prbuf);
     prbuf[MAXSTR-1] = '\0';
     return prbuf;
 }
@@ -139,9 +139,10 @@ inv_name(THING *obj, bool drop)
  *	Put something down
  */
 
-drop()
+void
+drop(void)
 {
-    char ch;
+    int ch;
     THING *obj;
 
     ch = chat(hero.y, hero.x);
@@ -172,8 +173,8 @@ drop()
  * dropcheck:
  *	Do special checks for dropping or unweilding|unwearing|unringing
  */
-bool
-dropcheck(THING *obj)
+int
+dropcheck(const THING *obj)
 {
     if (obj == NULL)
 	return TRUE;
@@ -214,7 +215,7 @@ dropcheck(THING *obj)
  *	Return a new thing
  */
 THING *
-new_thing()
+new_thing(void)
 {
     THING *cur;
     int r;
@@ -292,7 +293,7 @@ new_thing()
 #ifdef MASTER
 	otherwise:
 	    debug("Picked a bad kind of object");
-	    wait_for(' ');
+	    wait_for(stdscr, ' ');
 #endif
     }
     return cur;
@@ -303,10 +304,10 @@ new_thing()
  *	Pick an item out of a list of nitems possible objects
  */
 int
-pick_one(struct obj_info *info, int nitems)
+pick_one(const struct obj_info *info, int nitems)
 {
-    struct obj_info *end;
-    struct obj_info *start;
+    const struct obj_info *end;
+    const struct obj_info *start;
     int i;
 
     start = info;
@@ -325,7 +326,7 @@ pick_one(struct obj_info *info, int nitems)
 #endif
 	info = start;
     }
-    return info - start;
+    return (int)(info - start);
 }
 
 /*
@@ -334,15 +335,16 @@ pick_one(struct obj_info *info, int nitems)
  */
 static int line_cnt = 0;
 
-static bool newpage = FALSE;
+static int newpage = FALSE;
 
-static char *lastfmt, *lastarg;
+static const char *lastfmt, *lastarg;
 
 
-discovered()
+void
+discovered(void)
 {
-    char ch;
-    bool disc_list;
+    int ch;
+    int disc_list;
 
     do {
 	disc_list = FALSE;
@@ -388,6 +390,7 @@ discovered()
 	print_disc(ch);
 	end_line();
     }
+    msg("");
 }
 
 /*
@@ -398,12 +401,13 @@ discovered()
 #define MAX4(a,b,c,d)	(a > b ? (a > c ? (a > d ? a : d) : (c > d ? c : d)) : (b > c ? (b > d ? b : d) : (c > d ? c : d)))
 
 
-print_disc(char type)
+void
+print_disc(int type)
 {
     struct obj_info *info = NULL;
     int i, maxnum = 0, num_found;
-    static THING obj;
-    static short order[MAX4(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
+    THING obj;
+    int order[MAX4(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
     switch (type)
     {
@@ -445,7 +449,8 @@ print_disc(char type)
  *	Set up order for list
  */
 
-set_order(short *order, int numthings)
+void
+set_order(int *order, int numthings)
 {
     int i, r, t;
 
@@ -466,8 +471,8 @@ set_order(short *order, int numthings)
  *	Add a line to the list of discoveries
  */
 /* VARARGS1 */
-char
-add_line(char *fmt, char *arg)
+int
+add_line(const char *fmt, const char *arg)
 {
     WINDOW *tw, *sw;
     int x, y;
@@ -490,7 +495,7 @@ add_line(char *fmt, char *arg)
     else
     {
 	if (maxlen < 0)
-	    maxlen = strlen(prompt);
+	    maxlen = (int) strlen(prompt);
 	if (line_cnt >= LINES - 1 || fmt == NULL)
 	{
 	    if (inv_type == INV_OVER && fmt == NULL && !newpage)
@@ -511,13 +516,15 @@ add_line(char *fmt, char *arg)
 		 * if there are lines below, use 'em
 		 */
 		if (LINES > NUMLINES)
+		{
 		    if (NUMLINES + line_cnt > LINES)
 			mvwin(tw, LINES - (line_cnt + 1), COLS - maxlen - 3);
 		    else
 			mvwin(tw, NUMLINES, 0);
+		}
 		touchwin(tw);
 		wrefresh(tw);
-		wait_for(' ');
+		wait_for(tw, ' ');
                 if (md_hasclreol())
 		{
 		    werase(tw);
@@ -532,16 +539,14 @@ add_line(char *fmt, char *arg)
 		wmove(hw, LINES - 1, 0);
 		waddstr(hw, prompt);
 		wrefresh(hw);
-		wait_for(' ');
+		wait_for(hw, ' ');
 		clearok(curscr, TRUE);
 		wclear(hw);
-#ifdef	attron
 		touchwin(stdscr);
-#endif	/* attron */
 	    }
 	    newpage = TRUE;
 	    line_cnt = 0;
-	    maxlen = strlen(prompt);
+	    maxlen = (int) strlen(prompt);
 	}
 	if (fmt != NULL && !(line_cnt == 0 && *fmt == '\0'))
 	{
@@ -561,16 +566,19 @@ add_line(char *fmt, char *arg)
  *	End the list of lines
  */
 
-end_line()
+void
+end_line(void)
 {
     if (inv_type != INV_SLOW)
+    {
 	if (line_cnt == 1 && !newpage)
 	{
 	    mpos = 0;
 	    msg(lastfmt, lastarg);
 	}
 	else
-	    add_line((char *) NULL, NULL);
+	    add_line(NULL, NULL);
+    }
     line_cnt = 0;
     newpage = FALSE;
 }
@@ -579,8 +587,8 @@ end_line()
  * nothing:
  *	Set up prbuf so that message for "nothing found" is there
  */
-char *
-nothing(char type)
+const char *
+nothing(int type)
 {
     char *sp, *tystr = NULL;
 
@@ -608,8 +616,9 @@ nothing(char type)
  *	Give the proper name to a potion, stick, or ring
  */
 
-nameit(THING *obj, char *type, char *which, struct obj_info *op,
-    char *(*prfunc)(THING *))
+void
+nameit(const THING *obj, const char *type, const char *which, const struct obj_info *op,
+    const char *(*prfunc)(const THING *))
 {
     char *pb;
 
@@ -635,9 +644,10 @@ nameit(THING *obj, char *type, char *which, struct obj_info *op,
  * nullstr:
  *	Return a pointer to a null-length string
  */
-char *
-nullstr(THING *ignored)
+const char *
+nullstr(const THING *ignored)
 {
+    NOOP(ignored);
     return "";
 }
 
@@ -647,7 +657,8 @@ nullstr(THING *ignored)
  *	List possible potions, scrolls, etc. for wizard.
  */
 
-pr_list()
+void
+pr_list(void)
 {
     int ch;
 
@@ -658,6 +669,7 @@ pr_list()
 	addmsg(" of object do you want a list");
     msg("? ");
     ch = readchar();
+	msg("");
     switch (ch)
     {
 	case POTION:
@@ -682,9 +694,10 @@ pr_list()
  *	Print specific list of possible items to choose from
  */
 
-pr_spec(struct obj_info *info, int nitems)
+void
+pr_spec(const struct obj_info *info, int nitems)
 {
-    struct obj_info *endp;
+    const struct obj_info *endp;
     int i, lastprob;
 
     endp = &info[nitems];

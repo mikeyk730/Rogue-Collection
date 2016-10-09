@@ -13,11 +13,9 @@
  */
 
 #include <curses.h>
-#include <termios.h>
 #include <ctype.h>
+#include <string.h>
 #include "rogue.h"
-
-extern struct termios terminal;
 
 #define	EQSTR(a, b, c)	(strncmp(a, b, c) == 0)
 
@@ -148,7 +146,7 @@ WINDOW *win;
     {
 	wmove(win, oy, ox);
 	wrefresh(win);
-	switch (readchar())
+	switch (readcharw(win))
 	{
 	    case 't':
 	    case 'T':
@@ -198,12 +196,12 @@ WINDOW *win;
     /*
      * loop reading in the string, and put it in a temporary buffer
      */
-    for (sp = buf; (c = readchar()) != '\n' && c != '\r' && c != '\033';
+    for (sp = buf; (c = readcharw(win)) != '\n' && c != '\r' && c != '\033';
 	wclrtoeol(win), wrefresh(win))
     {
 	if (c == -1)
 	    continue;
-	else if (c == terminal.c_cc[VERASE])	/* process erase character */
+	else if (c == md_erasechar())	/* process erase character */
 	{
 	    if (sp > buf)
 	    {
@@ -215,7 +213,7 @@ WINDOW *win;
 	    }
 	    continue;
 	}
-	else if (c == terminal.c_cc[VKILL])     /* process kill character */
+	else if (c == md_killchar())     /* process kill character */
 	{
 	    sp = buf;
 	    wmove(win, oy, ox);

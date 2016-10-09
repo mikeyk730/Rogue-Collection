@@ -1,7 +1,7 @@
 /*
-    mdport.c - Machine Dependent Code for Porting Unix/Curses games
+    mdport.c - Machine Dependent Code
 
-    Copyright (C) 2005 Nicholas J. Kisseberth
+    Copyright (C) 2005-2008 Nicholas J. Kisseberth
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -29,94 +29,271 @@
     SUCH DAMAGE.
 */
 
+#include <stdlib.h>
+#include <string.h>
+
 #if defined(_WIN32)
 #include <Windows.h>
 #include <Lmcons.h>
-#include <process.h>
+#include <io.h>
+#include <conio.h>
+#pragma warning( disable: 4201 ) 
 #include <shlobj.h>
+#pragma warning( default: 4201 ) 
 #include <Shlwapi.h>
-#include <sys/types.h>
 #undef MOUSE_MOVED
-#elif defined(__DJGPP__)
-#include <process.h>
-#else
-#include <pwd.h>
-#include <sys/utsname.h>
-#include <unistd.h>
 #endif
 
 #include <curses.h>
-#ifdef MDK
-#define attron
+#include "extern.h"
+
+#if defined(HAVE_SYS_TYPES)
+#include <sys/types.h>
 #endif
 
-#if defined(__INTERIX) || defined(__MSYS__)
-#include <term.h>
+#if defined(HAVE_PROCESS_H)
+#include <process.h>
+#endif
+
+#if defined(HAVE_PWD_H)
+#include <pwd.h>
+#endif
+
+#if defined(HAVE_SYS_UTSNAME)
+#include <sys/utsname.h>
+#endif
+
+#if defined(HAVE_ARPA_INET_H)
+#include <arpa/inet.h> /* Solaris 2.8 required this for htonl() and ntohl() */
+#endif
+
+#if defined(HAVE_TERMIOS_H)
+#include <termios.h>
+#endif
+
+#if defined(HAVE_UNISTD_H)
+#ifndef __USE_GNU
+#define __USE_GNU
+#include <unistd.h>
+#undef __USE_GNU
 #else
-#ifdef NCURSES_VERSION
+#include <unistd.h>
+#endif
+#endif
+
+#include <curses.h> /* AIX requires curses.h be included before term.h */
+
+#if defined(HAVE_TERM_H)
+#include <term.h>
+#elif defined(HAVE_NCURSES_TERM_H)
 #include <ncurses/term.h>
 #endif
+
+#if defined(HAVE_WORKING_FORK)
+#include <sys/wait.h>
 #endif
 
-#include <stdio.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <limits.h>
 #include <sys/stat.h>
 #include <signal.h>
 #include "extern.h"
 
+#if !defined(PATH_MAX) && defined(_MAX_PATH)
+#define PATH_MAX _MAX_PATH
+#endif
+
+#if !defined(PATH_MAX) && defined(_PATH_MAX)
+#define PATH_MAX _PATH_MAX
+#endif
+
+#define NOOP(x) (x += 0)
+
 void
-md_init()
+md_init(void)
 {
-#ifdef __INTERIX
+#if defined(__INTERIX)
     char *term;
 
     term = getenv("TERM");
 
     if (term == NULL)
         setenv("TERM","interix");
-#endif
-#if defined(__DJGPP__) || defined(_WIN32)
+#elif defined(__DJGPP__)
+    _fmode = _O_BINARY;
+#elif defined(_WIN32)
     _fmode = _O_BINARY;
 #endif
-#if defined(__CYGWIN__) || defined(__MSYS__)
-    ESCDELAY=250;
-#endif
-}
 
-int
-md_hasclreol()
-{
-#ifndef	attron
-    return(!CE);
-#elif !defined(__PDCURSES__)
-    return(clr_eol != NULL);
+#if defined(HAVE_ESCDELAY) || defined(NCURSES_VERSION)
+    ESCDELAY=64;
+#endif
+
+#if defined(DUMP)
+	md_onsignal_default();
 #else
-    return(TRUE);
+	md_onsignal_exit();
 #endif
 }
 
-#ifdef	attron
-# define	_puts(s)	tputs(s, 0, md_putchar);
-# define	SO		enter_standout_mode
-# define	SE		exit_standout_mode
+void
+md_onsignal_default(void)
+{
+#ifdef SIGHUP
+    signal(SIGHUP, SIG_DFL);
 #endif
+#ifdef SIGQUIT
+    signal(SIGQUIT, SIG_DFL);
+#endif
+#ifdef SIGILL
+    signal(SIGILL, SIG_DFL);
+#endif
+#ifdef SIGTRAP
+    signal(SIGTRAP, SIG_DFL);
+#endif
+#ifdef SIGIOT
+    signal(SIGIOT, SIG_DFL);
+#endif
+#ifdef SIGEMT
+    signal(SIGEMT, SIG_DFL);
+#endif
+#ifdef SIGFPE
+    signal(SIGFPE, SIG_DFL);
+#endif
+#ifdef SIGBUS
+    signal(SIGBUS, SIG_DFL);
+#endif
+#ifdef SIGSEGV
+    signal(SIGSEGV, SIG_DFL);
+#endif
+#ifdef SIGSYS
+    signal(SIGSYS, SIG_DFL);
+#endif
+#ifdef SIGTERM
+    signal(SIGTERM, SIG_DFL);
+#endif
+}
+
+void
+md_onsignal_exit(void)
+{
+#ifdef SIGHUP
+    signal(SIGHUP, SIG_DFL);
+#endif
+#ifdef SIGQUIT
+    signal(SIGQUIT, exit);
+#endif
+#ifdef SIGILL
+    signal(SIGILL, exit);
+#endif
+#ifdef SIGTRAP
+    signal(SIGTRAP, exit);
+#endif
+#ifdef SIGIOT
+    signal(SIGIOT, exit);
+#endif
+#ifdef SIGEMT
+    signal(SIGEMT, exit);
+#endif
+#ifdef SIGFPE
+    signal(SIGFPE, exit);
+#endif
+#ifdef SIGBUS
+    signal(SIGBUS, exit);
+#endif
+#ifdef SIGSEGV
+    signal(SIGSEGV, exit);
+#endif
+#ifdef SIGSYS
+    signal(SIGSYS, exit);
+#endif
+#ifdef SIGTERM
+    signal(SIGTERM, exit);
+#endif
+}
+
+extern void auto_save(int sig);
+extern void endit(int sig);
+extern void quit(int sig);
+
+void
+md_onsignal_autosave(void)
+{
+
+#ifdef SIGHUP
+    signal(SIGHUP, auto_save);
+#endif
+#ifdef SIGQUIT
+	signal(SIGQUIT, endit);
+#endif
+#ifdef SIGILL
+    signal(SIGILL, auto_save);
+#endif
+#ifdef SIGTRAP
+    signal(SIGTRAP, auto_save);
+#endif
+#ifdef SIGIOT
+    signal(SIGIOT, auto_save);
+#endif
+#ifdef SIGEMT
+    signal(SIGEMT, auto_save);
+#endif
+#ifdef SIGFPE
+    signal(SIGFPE, auto_save);
+#endif
+#ifdef SIGBUS
+    signal(SIGBUS, auto_save);
+#endif
+#ifdef SIGSEGV
+    signal(SIGSEGV, auto_save);
+#endif
+#ifdef SIGSYS
+    signal(SIGSYS, auto_save);
+#endif
+#ifdef SIGTERM
+    signal(SIGTERM, auto_save);
+#endif
+#ifdef SIGINT
+    signal(SIGINT, quit);
+#endif
+}
 
 int
+md_hasclreol(void)
+{
+#if defined(clr_eol)
+#ifdef NCURSES_VERSION
+    if (cur_term == NULL)
+	return(0);
+    if (cur_term->type.Strings == NULL)
+	return(0);
+#endif
+    return((clr_eol != NULL) && (*clr_eol != 0));
+#elif defined(__PDCURSES__)
+    return(TRUE);
+#else
+    return((CE != NULL) && (*CE != 0));
+#endif
+}
+
+void
 md_putchar(int c)
 {
     putchar(c);
 }
 
+#ifdef _WIN32
 static int md_standout_mode = 0;
+#endif
 
-int
-md_raw_standout()
+void
+md_raw_standout(void)
 {
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
     HANDLE hStdout;
-    int fgattr,bgattr;
+    WORD fgattr,bgattr;
 
     if (md_standout_mode == 0)
     {
@@ -127,19 +304,19 @@ md_raw_standout()
         SetConsoleTextAttribute(hStdout,(fgattr << 4) | (bgattr >> 4));
         md_standout_mode = 1;
     }
-#elif !defined(__PDCURSES__)
-    _puts(SO);
+#elif defined(SO)
+    tputs(SO,0,md_putchar);
     fflush(stdout);
 #endif
 }
 
-int
-md_raw_standend()
+void
+md_raw_standend(void)
 {
 #ifdef _WIN32
     CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
     HANDLE hStdout;
-    int fgattr,bgattr;
+    WORD fgattr,bgattr;
 
     if (md_standout_mode == 1)
     {
@@ -150,18 +327,18 @@ md_raw_standend()
         SetConsoleTextAttribute(hStdout,(fgattr << 4) | (bgattr >> 4));
         md_standout_mode = 0;
     }
-#elif !defined(__PDCURSES__)
-    _puts(SE);
+#elif defined(SE)
+    tputs(SE,0,md_putchar);
     fflush(stdout);
 #endif
 }
 
 int
-md_unlink_open_file(char *file, int inf)
+md_unlink_open_file(const char *file, FILE *inf)
 {
 #ifdef _WIN32
-    close(inf);
-    chmod(file, 0600);
+    fclose(inf);
+    (void) _chmod(file, 0600);
     return( _unlink(file) );
 #else
     return(unlink(file));
@@ -172,7 +349,7 @@ int
 md_unlink(char *file)
 {
 #ifdef _WIN32
-    chmod(file, 0600);
+    (void) _chmod(file, 0600);
     return( _unlink(file) );
 #else
     return(unlink(file));
@@ -180,42 +357,84 @@ md_unlink(char *file)
 }
 
 int
-md_creat(char *file, int mode)
+md_chmod(const char *filename, int mode)
 {
-    int fd;
 #ifdef _WIN32
-    mode = _S_IREAD | _S_IWRITE;
-#endif
-    fd = open(file,O_CREAT | O_EXCL | O_WRONLY, mode);
-
-    return(fd);
-}
-
-
-int
-md_normaluser()
-{
-#ifndef _WIN32
-    setuid(getuid());
-    setgid(getgid());
+    return( _chmod(filename, mode) );
+#else
+    return( chmod(filename, mode) );
 #endif
 }
 
-int
-md_getuid()
+void
+md_normaluser(void)
 {
-#ifndef _WIN32
+#if defined(HAVE_GETGID) && defined(HAVE_GETUID)
+	gid_t realgid = getgid();
+	uid_t realuid = getuid();
+
+#if defined(HAVE_SETRESGID)
+    if (setresgid(-1, realgid, realgid) != 0) {
+#elif defined (HAVE_SETREGID) 
+    if (setregid(realgid, realgid) != 0) {
+#elif defined (HAVE_SETGID)
+	if (setgid(realgid) != 0) {
+#else
+	if (0) {
+#endif
+		perror("Could not drop setgid privileges.  Aborting.");
+		exit(1);
+    }
+
+#if defined(HAVE_SETRESUID)
+    if (setresuid(-1, realuid, realuid) != 0) {
+#elif defined(HAVE_SETREUID)
+    if (setreuid(realuid, realuid) != 0) {
+#elif defined(HAVE_SETUID)
+	if (setuid(realuid) != 0) {
+#else
+	if (0) {
+#endif
+	perror("Could not drop setuid privileges.  Aborting.");
+	exit(1);
+    }
+#endif
+}
+
+uid_t
+md_getuid(void)
+{
+#ifdef HAVE_GETUID
     return( getuid() );
 #else
     return(42);
 #endif
 }
 
+pid_t
+md_getpid(void)
+{
+#ifdef _WIN32
+    return( _getpid() );
+#else
+    return( getpid() );
+#endif
+}
+
 char *
-md_getusername()
+md_getusername(void)
 {
     static char login[80];
     char *l = NULL;
+
+    /* POSIX Shell has priority, then O/S specific methods */
+    if ( (l = getenv("LOGNAME")) != NULL )
+    {
+        strncpy(login,l,80);
+        login[79] = 0;
+        return(login);
+    }
+
 #ifdef _WIN32
     LPSTR mybuffer;
     DWORD size = UNLEN + 1;
@@ -224,8 +443,7 @@ md_getusername()
     mybuffer = buffer;
     GetUserName(mybuffer,&size);
     l = mybuffer;
-#endif
-#if !defined(_WIN32) && !defined(DJGPP)
+#elif defined(HAVE_GETPWUID)&& !defined(__DJGPP__)
     struct passwd *pw;
 
     pw = getpwuid(getuid());
@@ -246,7 +464,7 @@ md_getusername()
 }
 
 char *
-md_gethomedir()
+md_gethomedir(void)
 {
     static char homedir[PATH_MAX];
     char *h = NULL;
@@ -273,7 +491,9 @@ md_gethomedir()
 #endif
 
     if ( (h == NULL) || (*h == '\0') )
+    {
         if ( (h = getenv("HOME")) == NULL )
+	{
             if ( (h = getenv("HOMEDRIVE")) == NULL)
                 h = "";
             else
@@ -284,6 +504,8 @@ md_gethomedir()
                 if ( (h = getenv("HOMEPATH")) == NULL)
                     h = "";
             }
+	}
+    }
 
 
     len = strlen(homedir);
@@ -298,18 +520,18 @@ md_gethomedir()
     return(homedir);
 }
 
-int
+void
 md_sleep(int s)
 {
 #ifdef _WIN32
-    _sleep(s);
+    Sleep(s);
 #else
     sleep(s);
 #endif
 }
 
 char *
-md_getshell()
+md_getshell(void)
 {
     static char shell[PATH_MAX];
     char *s = NULL;
@@ -336,23 +558,17 @@ md_getshell()
 }
 
 int
-md_shellescape()
+md_shellescape(void)
 {
-#if (!defined(_WIN32) && !defined(__DJGPP__))
+#if defined(HAVE_WORKING_FORK)
     int ret_status;
     int pid;
     void (*myquit)(int);
     void (*myend)(int);
-#endif
     char *sh;
 
     sh = md_getshell();
 
-#if defined(_WIN32)
-    return(_spawnl(_P_WAIT,sh,"shell",NULL,0));
-#elif defined(__DJGPP__)
-    return ( spawnl(P_WAIT,sh,"shell",NULL,0) );
-#else
     while((pid = fork()) < 0)
         sleep(1);
 
@@ -361,15 +577,14 @@ md_shellescape()
         /*
          * Set back to original user, just in case
          */
-        setuid(getuid());
-        setgid(getgid());
-        execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", 0);
+        md_normaluser();
+        execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", NULL);
         perror("No shelly");
         _exit(-1);
     }
     else /* Application */
     {
-	myend = signal(SIGINT, SIG_IGN);
+    	myend = signal(SIGINT, SIG_IGN);
 #ifdef SIGQUIT
         myquit = signal(SIGQUIT, SIG_IGN);
 #endif  
@@ -381,8 +596,13 @@ md_shellescape()
         signal(SIGQUIT, myend);
 #endif
     }
-
     return(ret_status);
+#elif defined(HAVE__SPAWNL) 
+    return((int)_spawnl(_P_WAIT,md_getshell(),"shell",NULL,0));
+#elif defined(HAVE_SPAWNL)
+    return ( spawnl(P_WAIT,md_getshell(),"shell",NULL,0) );
+#else
+	return(0);
 #endif
 }
 
@@ -398,43 +618,7 @@ directory_exists(char *dirname)
 }
 
 char *
-md_getroguedir()
-{
-    static char path[1024];
-    char *end,*home;
-
-    if ( (home = getenv("ROGUEHOME")) != NULL)
-    {
-        if (*home)
-        {
-            strncpy(path, home, PATH_MAX - 20);
-
-            end = &path[strlen(path)-1];
-
-            while( (end >= path) && ((*end == '/') || (*end == '\\')))
-                *end-- = '\0';
-
-            if (directory_exists(path))
-                return(path);
-        }
-    }
-
-    if (directory_exists("/var/games/roguelike"))
-        return("/var/games/roguelike");
-    if (directory_exists("/var/lib/roguelike"))
-        return("/var/lib/roguelike");
-    if (directory_exists("/var/roguelike"))
-        return("/var/roguelike");
-    if (directory_exists("/usr/games/lib"))
-        return("/usr/games/lib");
-    if (directory_exists("/games/roguelik"))
-        return("/games/roguelik");
-
-    return("");
-}
-
-char *
-md_getrealname(int uid)
+md_getrealname(uid_t uid)
 {
     static char uidstr[20];
 #if !defined(_WIN32) && !defined(DJGPP)
@@ -448,24 +632,21 @@ md_getrealname(int uid)
 	else
 	    return(pp->pw_name);
 #else
-   sprintf(uidstr,"%d", uid);
+   sprintf(uidstr,"%ld", uid);
    return(uidstr);
 #endif
 }
 
-extern char *xcrypt(char *key, char *salt);
-
 char *
-md_crypt(char *key, char *salt)
+md_crypt(const char *key, const char *salt)
 {
     return( xcrypt(key,salt) );
 }
 
 char *
-md_getpass(prompt)
-char *prompt;
+md_getpass(char *prompt)
 {
-#ifdef _WIN32
+#ifndef HAVE_GETPASS
     static char password_buffer[9];
     char *p = password_buffer;
     int c, count = 0;
@@ -508,7 +689,7 @@ char *prompt;
 
         /* Add to password if it isn't full */
         if (p < password_buffer + max_length - 1)
-            *p++ = c;
+            *p++ = (char) c;
         else
             count++;
     }
@@ -518,43 +699,107 @@ char *prompt;
 
    return password_buffer;
 #else
-   return( (char *) getpass(prompt) );
+   return( getpass(prompt) );
 #endif
 }
 
-
-int md_endian = 0x01020304;
-
-unsigned long int
-md_ntohl(unsigned long int x)
+int
+md_erasechar(void)
 {
-#ifdef _WIN32
-    if ( *((char *)&md_endian) == 0x01 )
-        return(x);
-    else
-        return( ((x & 0x000000ffU) << 24) |
-                ((x & 0x0000ff00U) <<  8) |
-                ((x & 0x00ff0000U) >>  8) |
-                ((x & 0xff000000U) >> 24) );
+#ifdef HAVE_ERASECHAR
+    return( erasechar() ); /* process erase character */
+#elif defined(VERASE)
+    return(_tty.c_cc[VERASE]); /* process erase character */
 #else
-    return( ntohl(x) );
+    return(_tty.sg_erase); /* process erase character */
 #endif
 }
 
-unsigned long int
-md_htonl(unsigned long int x)
+int
+md_killchar(void)
 {
-#ifdef _WIN32
-    if ( *((char *)&md_endian) == 0x01 )
-        return(x);
-    else
-        return( ((x & 0x000000ffU) << 24) |
-                ((x & 0x0000ff00U) <<  8) |
-                ((x & 0x00ff0000U) >>  8) |
-                ((x & 0xff000000U) >> 24) );
+#ifdef HAVE_KILLCHAR
+    return( killchar() );
+#elif defined(VKILL)
+    return(_tty.c_cc[VKILL]);
 #else
-    return( htonl(x) );
+    return(_tty.sg_kill);
 #endif
+}
+
+int
+md_dsuspchar(void)
+{
+#if defined(VDSUSP)			/* POSIX has priority */
+    struct termios attr;
+    tcgetattr(STDIN_FILENO, &attr);
+    return( attr.c_cc[VDSUSP] );
+#elif defined(TIOCGLTC)
+    struct ltchars ltc;
+    ioctl(1, TIOCGLTC, &ltc);
+    return(ltc.t_dsuspc);
+#elif defined(_POSIX_VDISABLE)
+    return(_POSIX_VDISABLE);
+#else
+    return(0);
+#endif
+}
+
+int
+md_setdsuspchar(int c)
+{
+#if defined(VDSUSP)			/* POSIX has priority */
+    struct termios attr;
+    tcgetattr(STDIN_FILENO, &attr);
+    attr.c_cc[VDSUSP] = c;
+    tcgetattr(STDIN_FILENO, &attr);
+#elif defined(TIOCSLTC)
+    struct ltchars ltc;
+    ioctl(1, TIOCGLTC, &ltc);
+    ltc.t_dsuspc = c;
+    ioctl(1, TIOCSLTC, &ltc);
+#else
+    NOOP(c);
+#endif
+    return(0);
+}
+
+int
+md_suspchar(void)
+{
+#if defined(VSUSP)			/* POSIX has priority */
+    struct termios attr;
+    tcgetattr(STDIN_FILENO, &attr);
+    return( attr.c_cc[VSUSP] );
+#elif defined(TIOCGLTC)
+    struct ltchars ltc;
+    ioctl(1, TIOCGLTC, &ltc);
+    return(ltc.t_suspc);
+#elif defined(_POSIX_VDISABLE)
+    return(_POSIX_VDISABLE);
+#else
+    return(0);
+#endif
+}
+
+int
+md_setsuspchar(int c)
+{
+#if defined(VSUSP)			/* POSIX has priority */
+    struct termios attr;
+    tcgetattr(STDIN_FILENO, &attr);
+    attr.c_cc[VSUSP] = c;
+    tcgetattr(STDIN_FILENO, &attr);
+#elif defined(TIOCSLTC)
+    struct ltchars ltc;
+    ioctl(1, TIOCGLTC, &ltc);
+    ltc.t_suspc = c;
+    ioctl(1, TIOCSLTC, &ltc);
+#else
+    NOOP(c);
+#endif
+
+    return(0);
 }
 
 /*
@@ -843,38 +1088,88 @@ md_htonl(unsigned long int x)
 #define M_KEYPAD 2
 #define M_TRAIL  3
 
+int undo[5];
+int uindex = -1;
+
 int
-md_readchar()
+reread()
+{
+    int redo;
+
+    if (uindex < 0)
+        return 0;
+
+    redo = undo[0];
+    undo[0] = undo[1];
+    undo[1] = undo[2];
+    undo[2] = undo[3];
+    undo[3] = undo[4];
+    uindex--;
+    return redo;
+}
+
+void
+unread(int c)
+{
+    if (uindex >= 4)
+        abort();
+
+    undo[++uindex] = c;
+}
+
+int
+md_readchar(WINDOW *win)
 {
     int ch = 0;
     int lastch = 0;
     int mode = M_NORMAL;
     int mode2 = M_NORMAL;
+    int nodelayf = 0;
+    int count = 0;
 
-    while(1)
+    for(;;)
     {
-	ch = getch();
-
-	if (ch == ERR)	    /* timed out waiting for valid sequence */
-	{		    /* flush input so far and start over    */
-	    mode = M_NORMAL;
-    	    nocbreak();
-	    raw();
-	    ch = 27;
+        if (mode == M_NORMAL && uindex >= 0) 
+	{
+	    ch = reread();
 	    break;
 	}
+
+	ch = wgetch(win);
+
+        if (ch == ERR) /* timed out  or error */
+        {
+            if (nodelayf)               /* likely timed out, switch to */
+            {                           /* normal mode and block on    */
+                mode = M_NORMAL;        /* next read                   */
+                nodelayf = 0;
+                nodelay(win,0);
+            }
+            else if (count > 10)        /* after 10 errors assume      */
+                auto_save(0);           /* input stream is broken and  */
+            else                        /* auto save and exit          */
+                count++;
+
+            continue;
+        }
+
+        count = 0;                      /* reset input error count     */
 
 	if (mode == M_TRAIL)
 	{
 	    if (ch == '^')		/* msys console  : 7,5,6,8: modified*/
 		ch = CTRL( toupper(lastch) );
-
-	    if (ch == '~')		/* cygwin console: 1,5,6,4: normal  */
+            else if (ch == '~')		/* cygwin console: 1,5,6,4: normal  */
 		ch = tolower(lastch);   /* windows telnet: 1,5,6,4: normal  */
 					/* msys console  : 7,5,6,8: normal  */
-
-	    if (mode2 == M_ESC)		/* cygwin console: 1,5,6,4: modified*/
+	    else if (mode2 == M_ESC)		/* cygwin console: 1,5,6,4: modified*/
 		ch = CTRL( toupper(ch) );
+	    else
+	    {
+	    	mode = M_NORMAL;
+		unread(ch);
+		continue;
+	    }
 
 	    break;
 	}
@@ -884,12 +1179,14 @@ md_readchar()
 	    if (ch == 27)
 	    {
 		mode2 = M_ESC;
+		unread(ch);
 		continue;
 	    }
 
 	    if ((ch == 'F') || (ch == 'O') || (ch == '['))
 	    {
 		mode = M_KEYPAD;
+		unread(ch);
 		continue;
 	    }
 
@@ -907,7 +1204,10 @@ md_readchar()
 		case KEY_NPAGE: ch = CTRL('N'); break;
 		case KEY_END  : ch = CTRL('B'); break;
 
-		default: break;
+		default: mode = M_NORMAL;
+		         mode2 = M_NORMAL;
+			 unread(ch);
+		         continue;
 	    }
 
 	    break;
@@ -959,13 +1259,18 @@ md_readchar()
 	    }
 
 	    if (mode != M_KEYPAD)
+	    {
+	        unread(ch);
 		continue;
+	    }
 	}
 
 	if (ch == 27)
 	{
-	    halfdelay(1);
+	    nodelay(win,1);
 	    mode = M_ESC;
+	    nodelayf = 1;
+	    unread(ch);
 	    continue;
 	}
 
@@ -1069,13 +1374,134 @@ md_readchar()
 	    case ALT_PAD8   : ch = CTRL('K'); break;
 	    case ALT_PAD9   : ch = CTRL('U'); break;
 #endif
+#ifdef KEY_BACKSPACE /* NCURSES in Keypad mode sends this for Ctrl-H */
+            case KEY_BACKSPACE: ch = CTRL('H'); break;
+#endif
 	}
 
 	break;
     }
 
-    nocbreak();	    /* disable halfdelay mode if on */
-    raw();
+    if (nodelayf)
+	nodelay(win,0);
+
+    uindex = -1;
 
     return(ch & 0x7F);
 }
+
+#if defined(LOADAV) && defined(HAVE_NLIST_H) && defined(HAVE_NLIST)
+/*
+ * loadav:
+ *	Looking up load average in core (for system where the loadav()
+ *	system call isn't defined
+ */
+
+#include <nlist.h>
+
+struct nlist avenrun = {
+    "_avenrun"
+};
+
+void
+md_loadav(double *avg)
+{
+    int kmem;
+
+    if ((kmem = open("/dev/kmem", 0)) < 0)
+	goto bad;
+    nlist(NAMELIST, &avenrun);
+    if (avenrun.n_type == 0)
+    {
+	close(kmem);
+bad:
+	avg[0] = 0.0;
+	avg[1] = 0.0;
+	avg[2] = 0.0;
+	return;
+    }
+
+    lseek(kmem, avenrun.n_value, 0);
+    read(kmem, (char *) avg, 3 * sizeof (double));
+    close(kmem);
+}
+#else
+void
+md_loadav(double *avg)
+{
+#if defined(HAVE_LOADAV)
+	loadav(avg);
+#elif defined(HAVE_GETLOADAVG)
+	getloadavg(avg,3);
+#else
+	avg[0] = avg[1] = avg[2] = 0;
+#endif
+}
+#endif
+
+#ifndef NSIG
+#define NSIG 32
+#endif
+
+void
+md_ignoreallsignals(void)
+{
+	int i;
+
+	for (i = 0; i < NSIG; i++)
+		signal(i, SIG_IGN);
+}
+
+void
+md_tstphold(void)
+{
+#ifdef SIGTSTP
+    /*
+     * If a process can be suspended, this code wouldn't work
+     */
+# ifdef SIG_HOLD
+    signal(SIGTSTP, SIG_HOLD);
+# else
+    signal(SIGTSTP, SIG_IGN);
+# endif
+#endif
+}
+
+void
+md_tstpresume(void)
+{
+#ifdef SIGTSTP
+    signal(SIGTSTP, tstp);
+#endif
+}
+
+void
+md_tstpsignal(void)
+{
+#ifdef SIGTSTP
+    kill(0, SIGTSTP);		/* send actual signal and suspend process */
+#endif
+}
+
+#if defined(CHECKTIME)
+void
+md_start_checkout_timer(int time)
+{
+    int  checkout();
+
+#if defined(HAVE_ALARM) && defined(SIGALRM)
+    signal(SIGALRM, checkout);
+	alarm(time);
+#endif
+}
+
+void
+md_stop_checkout_timer(void)
+{
+#if defined(SIGALRM)
+    signal(SIGALRM, SIG_IGN);
+#endif
+}
+
+#endif
+

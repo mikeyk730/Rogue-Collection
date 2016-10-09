@@ -28,22 +28,30 @@
  *			for high load average.
  */
 
+/* Updated by Rogue Central @ coredumpcentral.org on 2014-05-27.
+ * Copyright (C) 2012 Rogue Central @ coredumpcentral.org. All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
+
 #include <limits.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <curses.h>
-#include "rogue.h"
+#include <time.h>
 #include <signal.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <string.h>
+#include "rogue.h"
+
+
+int num_checks;		/* times we've gone over in checkout() */
 
 #ifdef SCOREFILE
-static char lockfile[PATH_MAX]  = "rogue52.lck";
-static char scorefile[PATH_MAX] = "rogue52.scr";
+#ifdef LOCKFILE
+static char *lockfile = LOCKFILE;
 #endif
-
-#ifdef CHECKTIME
-static int num_checks;		/* times we've gone over in checkout() */
-#endif 
+#endif
 
 /*
  * init_check:
@@ -51,70 +59,18 @@ static int num_checks;		/* times we've gone over in checkout() */
  */
 init_check()
 {
-#if defined(MAXLOAD) || defined(MAXUSERS)
     if (too_much())
     {
 	printf("Sorry, %s, but the system is too loaded now.\n", whoami);
 	printf("Try again later.  Meanwhile, why not enjoy a%s %s?\n",
 	    vowelstr(fruit), fruit);
-	if (author())
+	/*This code removed by RRPF
+	 * if (author())
 	    printf("However, since you're a good guy, it's up to you\n");
-	else
+	else*/
 	    exit(1);
     }
-#endif
 }
-
-int
-directory_exists(char *dirname)
-{
-    struct stat sb;
-
-    if (stat(dirname, &sb) == 0) /* path exists */
-        return (S_ISDIR (sb.st_mode));
-
-    return(0);
-}
-
-
-char *
-roguehome()
-{
-    static char path[1024];
-    char *end,*home;
-
-    if ( (home = getenv("ROGUEHOME")) != NULL)
-    {
-        if (*home)
-        {
-            strncpy(path, home, PATH_MAX - 20);
-
-            end = &path[strlen(path)-1];
-
-
-            while( (end >= path) && ((*end == '/') || (*end == '\\')))
-                *end-- = '\0';
-        
-            if (directory_exists(path))
-                return(path);
-        }
-    }
-
-
-    if (directory_exists("/var/games/roguelike"))
-        return("/var/games/roguelike");
-    if (directory_exists("/var/lib/roguelike"))
-        return("/var/lib/roguelike");
-    if (directory_exists("/var/roguelike"))
-        return("/var/roguelike");
-    if (directory_exists("/usr/games/lib"))
-        return("/usr/games/lib");
-    if (directory_exists("/games/roguelik"))
-        return("/games/roguelik");
-
-    return(NULL);
-}
-
 
 /*
  * open_score:
@@ -123,27 +79,12 @@ roguehome()
  */
 open_score()
 {
-    char *homedir = roguehome();
-
-    if (homedir == NULL)
-        homedir = "";
-
-    strcpy(scorefile, homedir);
-    if (*scorefile)
-	strcat(scorefile,"/");
-    strcat(scorefile, "rogue52.scr");
-    strcpy(lockfile, homedir);
-    if (*lockfile)
-        strcat(lockfile,"/");
-    strcat(lockfile, "rogue52.lck");
 #ifdef SCOREFILE
-    fd = open(scorefile, O_RDWR | O_CREAT, 0666 );
+    fd = open(SCOREFILE, O_RDWR | O_CREAT, 0666 );
 #else
     fd = -1;
 #endif
-   
-    setuid(getuid());
-    setgid(getgid());
+    md_normaluser();
 }
 
 /*
@@ -166,10 +107,14 @@ setup()
     if (COLS > MAXCOLS)
 	COLS = MAXCOLS;
 
+#ifdef SIGHUP
     signal(SIGHUP, auto_save);
+#endif
 #ifndef DUMP
     signal(SIGILL, auto_save);
+#ifdef SIGTRAP
     signal(SIGTRAP, auto_save);
+#endif
 #ifdef SIGIOT
     signal(SIGIOT, auto_save);
 #endif
@@ -189,7 +134,9 @@ setup()
 
     signal(SIGINT, quit);
 #ifndef DUMP
+#ifdef SIGQUIT
     signal(SIGQUIT, endit);
+#endif
 #endif
 #ifdef CHECKTIME
     signal(SIGALRM, checkout);
@@ -206,7 +153,7 @@ setup()
  */
 start_score()
 {
-#ifdef CHECKTIME
+#ifdef SIGALRM
     signal(SIGALRM, SIG_IGN);
 #endif
 }
@@ -230,7 +177,6 @@ char *sp;
 #endif
 }
 
-#if defined(MAXLOAD) || defined(MAXUSERS)
 /*
  * too_much:
  *	See if the system is being used too much for this game
@@ -239,64 +185,74 @@ too_much()
 {
 #ifdef MAXLOAD
     double avec[3];
-#else
-    register int cnt;
+    
+    if (md_getloadavg(avec) == 0)
+        if (avec[2] > (MAXLOAD / 10.0))
+	    return(1);
 #endif
-
-#ifdef MAXLOAD
-    loadav(avec);
-    return (avec[1] > (MAXLOAD / 10.0));
-#else
-    return (ucount() > MAXUSERS);
+#ifdef MAXUSERS
+    if (md_ucount() > MAXUSERS)
+	return(1) ;
 #endif
+    return(0);
 }
 
 /*
  * author:
  *	See if a user is an author of the program
  */
+/* Function removed by RRPF 
 author()
 {
 #ifdef WIZARD
     if (wizard)
 	return TRUE;
 #endif
-    switch (getuid())
+    switch (md_getuid())
     {
-	case 162:
+	case 0:
 	    return TRUE;
 	default:
 	    return FALSE;
     }
-}
-#endif
+}*/
 
-#ifdef CHECKTIME
 /*
  * checkout:
  *	Check each CHECKTIME seconds to see if the load is too high
  */
-checkout()
+void
+checkout(int s)
 {
     static char *msgs[] = {
 	"The load is too high to be playing.  Please leave in %0.1f minutes",
 	"Please save your game.  You have %0.1f minutes",
 	"Last warning.  You have %0.1f minutes to leave",
     };
-    int checktime;
+    int checktime = 0;
 
+#ifdef SIGALRM
     signal(SIGALRM, checkout);
+#endif
+
     if (too_much())
     {
-	if (author())
+	/*This code removed for RRPF
+	 * if (author())
 	{
 	    num_checks = 1;
 	    chmsg("The load is rather high, O exaulted one");
 	}
-	else if (num_checks++ == 3)
+	else if (num_checks++ == 3)*/
 	    fatal("Sorry.  You took to long.  You are dead\n");
+
+#ifdef CHECKTIME
 	checktime = (CHECKTIME * 60) / num_checks;
+#endif
+#ifdef SIGALRM
 	alarm(checktime);
+#endif
+
 	chmsg(msgs[num_checks - 1], ((double) checktime / 60.0));
     }
     else
@@ -306,7 +262,11 @@ checkout()
 	    num_checks = 0;
 	    chmsg("The load has dropped back down.  You have a reprieve");
 	}
+#ifdef CHECKTIME
+#ifdef SIGALRM
 	alarm(CHECKTIME * 60);
+#endif
+#endif
     }
 }
 
@@ -328,69 +288,6 @@ int arg;
     else
 	msg(fmt, arg);
 }
-#endif
-
-#ifdef LOADAV
-
-#include <nlist.h>
-
-struct nlist avenrun = {
-    "_avenrun"
-};
-
-/*
- * loadav:
- *	Looking up load average in core (for system where the loadav()
- *	system call isn't defined
- */
-loadav(avg)
-register double *avg;
-{
-    register int kmem;
-
-    if ((kmem = open("/dev/kmem", 0)) < 0)
-	goto bad;
-    nlist(NAMELIST, &avenrun);
-    if (avenrun.n_type == 0)
-    {
-bad:
-	avg[0] = avg[1] = avg[2] = 0.0;
-	return;
-    }
-
-    lseek(kmem, (long) avenrun.n_value, 0);
-    read(kmem, (char *) avg, 3 * sizeof (double));
-}
-#endif
-
-#ifdef UCOUNT
-/*
- * ucount:
- *	Count number of users on the system
- */
-#include <utmp.h>
-
-struct utmp buf;
-
-ucount()
-{
-    register struct utmp *up;
-    register FILE *utmp;
-    register int count;
-
-    if ((utmp = fopen(UTMP, "r")) == NULL)
-	return 0;
-
-    up = &buf;
-    count = 0;
-
-    while (fread(up, 1, sizeof (*up), utmp) > 0)
-	if (buf.ut_name[0] != '\0')
-	    count++;
-    fclose(utmp);
-    return count;
-}
-#endif
 
 /*
  * lock_sc:
@@ -400,16 +297,16 @@ ucount()
 lock_sc()
 {
 #ifdef SCOREFILE
+#ifdef LOCKFILE
     register int cnt;
     static struct stat sbuf;
-    time_t time();
 
 over:
     if (creat(lockfile, 0000) > 0)
-	return TRUE;
+     	return TRUE;
     for (cnt = 0; cnt < 5; cnt++)
     {
-	sleep(1);
+	md_sleep(1);
 	if (creat(lockfile, 0000) > 0)
 	    return TRUE;
     }
@@ -420,7 +317,7 @@ over:
     }
     if (time(NULL) - sbuf.st_mtime > 10)
     {
-	if (unlink(lockfile) < 0)
+	if (md_unlink(lockfile) < 0)
 	    return FALSE;
 	goto over;
     }
@@ -442,14 +339,15 @@ over:
 		}
 		if (time(NULL) - sbuf.st_mtime > 10)
 		{
-		    if (unlink(lockfile) < 0)
+		    if (md_unlink(lockfile) < 0)
 			return FALSE;
 		}
-		sleep(1);
+		md_sleep(1);
 	    }
 	else
 	    return FALSE;
     }
+#endif
 #endif
 }
 
@@ -460,7 +358,9 @@ over:
 unlock_sc()
 {
 #ifdef SCOREFILE
-    unlink(lockfile);
+#ifdef LOCKFILE
+    md_unlink(lockfile);
+#endif
 #endif
 }
 

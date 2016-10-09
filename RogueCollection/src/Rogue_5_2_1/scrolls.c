@@ -105,8 +105,9 @@ read_scroll()
 			    continue;
 			/*
 			 * Or anything else nasty
+			 * Also avoid a mimic which is disguised as scroll
 			 */
-			if (step_ok(ch = winat(y, x)))
+			if (moat(y, x) == NULL && step_ok(ch = winat(y, x)))
 			{
 			    if (ch == SCROLL
 				&& find_obj(y, x)->o_which == S_SCARE)

@@ -17,9 +17,10 @@
  * doctor:
  *	A healing daemon that restors hit points after rest
  */
-doctor()
+void
+doctor(void)
 {
-    register int lv, ohp;
+    int lv, ohp;
 
     lv = pstats.s_lvl;
     ohp = pstats.s_hpt;
@@ -48,7 +49,8 @@ doctor()
  * Swander:
  *	Called when it is time to start rolling for wandering monsters
  */
-swander()
+void
+swander(void)
 {
     start_daemon(rollwand, 0, BEFORE);
 }
@@ -57,8 +59,9 @@ swander()
  * rollwand:
  *	Called to roll to see if a wandering monster starts up
  */
-int between = 0;
-rollwand()
+
+void
+rollwand(void)
 {
 
     if (++between >= 4)
@@ -77,7 +80,8 @@ rollwand()
  * unconfuse:
  *	Release the poor player from his confusion
  */
-unconfuse()
+void
+unconfuse(void)
 {
     player.t_flags &= ~ISHUH;
     msg("you feel less %s now", choose_str("trippy", "confused"));
@@ -87,9 +91,10 @@ unconfuse()
  * unsee:
  *	Turn off the ability to see invisible
  */
-unsee()
+void
+unsee(void)
 {
-    register THING *th;
+    THING *th;
 
     for (th = mlist; th != NULL; th = next(th))
 	if (on(*th, ISINVIS) && see_monst(th))
@@ -101,7 +106,8 @@ unsee()
  * sight:
  *	He gets his sight back
  */
-sight()
+void
+sight(void)
 {
     if (on(player, ISBLIND))
     {
@@ -118,7 +124,8 @@ sight()
  * nohaste:
  *	End the hasting
  */
-nohaste()
+void
+nohaste(void)
 {
     player.t_flags &= ~ISHASTE;
     msg("you feel yourself slowing down");
@@ -128,9 +135,10 @@ nohaste()
  * stomach:
  *	Digest the hero's food
  */
-stomach()
+void
+stomach(void)
 {
-    register int oldfood;
+    int oldfood;
     int orig_hungry = hungry_state;
 
     if (food_left <= 0)
@@ -182,10 +190,11 @@ stomach()
  * come_down:
  *	Take the hero down off her acid trip.
  */
-come_down()
+void
+come_down(void)
 {
-    register THING *tp;
-    register bool seemonst;
+    THING *tp;
+    int seemonst;
 
     if (!on(player, ISHALU))
 	return;
@@ -229,10 +238,11 @@ come_down()
  * visuals:
  *	change the characters for the player
  */
-visuals()
+void
+visuals(void)
 {
-    register THING *tp;
-    register bool seemonst;
+    THING *tp;
+    int seemonst;
 
     if (!after || (running && jump))
 	return;
@@ -276,7 +286,8 @@ visuals()
  * land:
  *	Land from a levitation potion
  */
-land()
+void
+land(void)
 {
     player.t_flags &= ~ISLEVIT;
     msg(choose_str("bummer!  You've hit the ground",

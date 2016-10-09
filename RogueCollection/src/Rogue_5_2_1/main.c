@@ -13,17 +13,17 @@
  *
  */
 
+/* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06.
+ * Copyright (C) 2012 Rogue Central @ coredumpcentral.org. All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
+
 #include <stdlib.h>
 #include <curses.h>
 #include <signal.h>
-#include <pwd.h>
-#include <termios.h>
 #include <limits.h>
-#ifdef __DJGPP__
-#include <process.h>
-#endif
+#include <string.h>
 #include "rogue.h"
-struct termios terminal;
 
 /*
  * main:
@@ -34,16 +34,18 @@ char **argv;
 char **envp;
 {
     register char *env;
-    register struct passwd *pw;
-    struct passwd *getpwuid();
-    char *getpass(), *xcrypt();
-    void quit();
     int lowtime;
 
+    md_init();
+
 #ifndef DUMP
+#ifdef SIGQUIT
     signal(SIGQUIT, exit);
+#endif
     signal(SIGILL, exit);
+#ifdef SIGTRAP
     signal(SIGTRAP, exit);
+#endif
 #ifdef SIGIOT
     signal(SIGIOT, exit);
 #endif
@@ -65,7 +67,9 @@ char **envp;
      * Check to see if he is a wizard
      */
     if (argc >= 2 && argv[1][0] == '\0')
-	if (strcmp(PASSWD, xcrypt(getpass("Wizard's password: "), "mT")) == 0)
+	/* Line below commented out and replaced -RRPF */
+	 /* if (strcmp(PASSWD, xcrypt(md_getpass("Wizard's password: "), "mT")) == 0) */
+	if(passwd() == TRUE)
 	{
 	    wizard = TRUE;
 	    player.t_flags |= SEEMONST;
@@ -77,28 +81,15 @@ char **envp;
     /*
      * get home and options from environment
      */
-    if ((env = getenv("HOME")) != NULL)
-	strcpy(home, env);
-    else if ((pw = getpwuid(getuid())) != NULL)
-	strcpy(home, pw->pw_dir);
-    else
-	home[0] = '\0';
-    strcat(home, "/");
-
+    strncpy(home, md_gethomedir(), PATH_MAX);
     strcpy(file_name, home);
-    strcat(file_name, "rogue.save");
+    /* Line below needs slash (added by RRPF) */
+    strcat(file_name, "/rogue52.sav");
 
     if ((env = getenv("ROGUEOPTS")) != NULL)
 	parse_opts(env);
     if (env == NULL || whoami[0] == '\0')
-	if ((pw = getpwuid(getuid())) == NULL)
-	{
-	    printf("Say, who the hell are you?\n");
-	    exit(1);
-	}
-	else
-	    strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
-
+	strucpy(whoami, md_getusername(md_getuid()), strlen(md_getusername(md_getuid())));
     if (env == NULL || fruit[0] == '\0')
 	strcpy(fruit, "slime-mold");
 
@@ -120,11 +111,16 @@ char **envp;
 	    exit(1);
 	}
     lowtime = (int) time(NULL);
+
 #ifdef WIZARD
-    if (wizard && getenv("SEED") != NULL)
-	dnum = atoi(getenv("SEED"));
-    else
+    noscore = wizard;
 #endif
+    if (getenv("SEED") != NULL)
+    {
+	dnum = atoi(getenv("SEED"));
+	noscore = TRUE;
+    }
+    else
 	dnum = lowtime + getpid();
 #ifdef WIZARD
     if (wizard)
@@ -141,10 +137,6 @@ char **envp;
     init_colors();			/* Set up colors of potions */
     init_stones();			/* Set up stone settings of rings */
     init_materials();			/* Set up materials of wands */
-
-#ifdef __INTERIX
-    setenv("TERM","interix",1);
-#endif
 
     initscr();				/* Start up cursor package */
 
@@ -181,9 +173,7 @@ char **envp;
      * Set up windows
      */
     hw = newwin(LINES, COLS, 0, 0);
-#ifdef WIZARD
-    noscore = wizard;
-#endif
+    keypad(stdscr,1);
     new_level();			/* Draw current level */
     /*
      * Start up daemons and fuses
@@ -243,7 +233,7 @@ register int number, sides;
 	dtotal += rnd(sides)+1;
     return dtotal;
 }
-#ifdef SIGTSTP
+
 /*
  * tstp:
  *	Handle stop and start signals
@@ -259,9 +249,11 @@ tstp(int a)
     endwin();
     clearok(curscr, TRUE);
     fflush(stdout);
+#ifdef SIGTSTP
     signal(SIGTSTP, SIG_DFL);
     kill(0, SIGTSTP);
     signal(SIGTSTP, tstp);
+#endif
     crmode();
     noecho();
     clearok(curscr, TRUE);
@@ -272,7 +264,6 @@ tstp(int a)
     curscr->_cury = oy;
     curscr->_curx = ox;
 }
-#endif
 
 /*
  * playit:
@@ -287,9 +278,7 @@ playit()
      * set up defaults for slow terminals
      */
 
-    tcgetattr(0,&terminal);
-
-    if (cfgetospeed(&terminal) < B1200)
+    if (baudrate() < 1200)
     {
         terse = TRUE;
         jump = TRUE;
@@ -353,7 +342,7 @@ quit(int a)
  *	Leave quickly, but curteously
  */
 void
-leave()
+leave(int sig)
 {
 /*
     if (!_endwin)
@@ -371,10 +360,6 @@ leave()
  */
 shell()
 {
-    register int pid;
-    register char *sh;
-    int ret_status;
-
     /*
      * Set the terminal back to original mode
      */
@@ -385,49 +370,9 @@ shell()
     putchar('\n');
     in_shell = TRUE;
     after = FALSE;
-    sh = getenv("SHELL");
-    fflush(stdout);
 
-    /*
-     * Fork and do a shell
-     */
+    md_shellescape();
 
-#ifndef __DJGPP__
-    while ((pid = fork()) < 0)
-	sleep(1);
-    if (pid == 0)
-    {
-	execl(sh == NULL ? "/bin/sh" : sh, "shell", "-i", 0);
-	perror("No shelly");
-	exit(-1);
-    }
-    else
-    {
-	void endit();
-
-
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-
-	while (wait(&ret_status) != pid)
-	    continue;
-
-	signal(SIGINT, quit);
-	signal(SIGQUIT, endit);
-    }
-#else
-    {
-        char shell[PATH_MAX];
-        if (sh && *sh)
-            strncpy(shell,sh,PATH_MAX);
-        else
-            sprintf(shell, "%s\\bin\\sh.exe", getenv("DJDIR"));
-
-        if (spawnl(P_WAIT,shell, "shell", "-i", 0) == -1)
-            msg("No shelly: %s", shell);
-
-    }
-#endif
     noecho();
     crmode();
     in_shell = FALSE;

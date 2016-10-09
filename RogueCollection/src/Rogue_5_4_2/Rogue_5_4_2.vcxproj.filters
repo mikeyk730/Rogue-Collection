@@ -26,7 +26,6 @@
     <ClCompile Include="rip.c" />
     <ClCompile Include="rooms.c" />
     <ClCompile Include="save.c" />
-    <ClCompile Include="scmisc.c" />
     <ClCompile Include="scrolls.c" />
     <ClCompile Include="state.c" />
     <ClCompile Include="sticks.c" />
@@ -35,8 +34,6 @@
     <ClCompile Include="weapons.c" />
     <ClCompile Include="wizard.c" />
     <ClCompile Include="xcrypt.c" />
-    <ClCompile Include="findpw.c" />
-    <ClCompile Include="scedit.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extern.h" />

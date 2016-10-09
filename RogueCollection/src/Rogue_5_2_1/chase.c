@@ -112,7 +112,7 @@ over:
 	    fire_bolt(&th->t_pos, &delta, "flame");
 	    running = FALSE;
 	    count = quiet = 0;
-	    return;
+	    return 0;
 	}
     }
     /*
@@ -176,7 +176,8 @@ over:
      */
     if (stoprun && ce(th->t_pos, *(th->t_dest)))
 	th->t_flags &= ~ISRUN;
-	return(0);
+    
+    return(0);
 }
 
 /*
@@ -220,6 +221,8 @@ coord *spot;
     /*
      * Start the beastie running
      */
+    if (tp == NULL)
+        return;
     tp->t_flags |= ISRUN;
     tp->t_flags &= ~ISHELD;
     tp->t_dest = find_dest(tp);
@@ -303,6 +306,11 @@ coord *ee;
 			if (obj != NULL && obj->o_which == S_SCARE)
 			    continue;
 		    }
+		    /*
+		     * It can also be a Mimic, which we shouldn't step on
+		     */
+		    if ((obj = moat(y, x)) != NULL && obj->t_type == 'M')
+		        continue;
 		    /*
 		     * If we didn't find any scrolls at this place or it
 		     * wasn't a scare scroll, then this place counts

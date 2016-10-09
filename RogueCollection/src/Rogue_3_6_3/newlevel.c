@@ -16,10 +16,11 @@
 
 #include <string.h>
 
+void
 new_level()
 {
-    register int rm, i;
-    register char ch;
+    int rm, i;
+    int ch = 0;
     coord stairs;
 
     if (level > max_level)
@@ -90,9 +91,10 @@ new_level()
  * Pick a room that is really there
  */
 
+int
 rnd_room()
 {
-    register int rm;
+    int rm;
 
     do
     {
@@ -106,12 +108,13 @@ rnd_room()
  *	put potions and scrolls on this level
  */
 
+void
 put_things()
 {
-    register int i;
-    register struct linked_list *item;
-    register struct object *cur;
-    register int rm;
+    int i;
+    struct linked_list *item;
+    struct object *cur;
+    int rm;
     coord tp;
 
     /*
@@ -139,8 +142,8 @@ put_things()
 	    /*
 	     * Put it somewhere
 	     */
-	    rm = rnd_room();
 	    do {
+	        rm = rnd_room();
 		rnd_pos(&rooms[rm], &tp);
 	    } until (winat(tp.y, tp.x) == FLOOR);
 	    mvaddch(tp.y, tp.x, cur->o_type);

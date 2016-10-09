@@ -15,7 +15,8 @@
 #include <time.h>
 #include <signal.h>
 #include <sys/types.h>
-#include <pwd.h>
+#include <string.h>
+#include <stdlib.h>
 #include "rogue.h"
 
 static char *rip[] = {
@@ -48,9 +49,8 @@ char monst;
     register int i;
     register struct sc_ent *sc2;
     register FILE *outf;
-    register char *killer;
     register int prflags = 0;
-    register void (*fp)();
+    register void (*fp)(int);
     register int uid;
     char scoreline[MAXSTR + 100];
 
@@ -70,11 +70,6 @@ char monst;
     void endit();
 
     start_score();
-
-    if (fd >= 0)
-	outf = (FILE *) fdopen(fd, "wb");
-    else
-	return;
 
     for (scp = top_ten; scp <= &top_ten[9]; scp++)
     {
@@ -109,9 +104,15 @@ char monst;
 	else if (strcmp(prbuf, "edit") == 0)
 	    prflags = 2;
 #endif
+    if (fd >= 0)
+        outf = md_fdopen(fd, "wb");
+    else
+        return;
+
     for(i=0; i<10; i++)
     {
         encread((char *) &top_ten[i].sc_name, MAXSTR, fd);
+	scoreline[0] = '\0';
         encread((char *) scoreline, 100, fd);
         sscanf(scoreline, "%d %d %hd %hd %hd", &top_ten[i].sc_flags, 
             &top_ten[i].sc_uid, &top_ten[i].sc_monster, &top_ten[i].sc_score,
@@ -123,7 +124,7 @@ char monst;
     sc2 = NULL;
     if (!noscore)
     {
-	uid = getuid();
+	uid = md_getuid();
 
 	for (scp = top_ten; scp <= &top_ten[9]; scp++)
 	    if (amount > scp->sc_score)
@@ -175,12 +176,13 @@ char monst;
 		printf(" by %s", killname((char) scp->sc_monster, TRUE));
 	    if (prflags == 1)
 	    {
-		struct passwd *pp, *getpwuid();
-
-		if ((pp = getpwuid(scp->sc_uid)) == NULL)
+		char *name;
+		name = md_getusername(scp->sc_uid);
+		   
+		if (name == NULL)
 		    printf(" (%d)", scp->sc_uid);
 		else
-		    printf(" (%s)", pp->pw_name);
+		    printf(" (%s)", name);
 		putchar('\n');
 	    }
 	    else if (prflags == 2)
@@ -280,7 +282,7 @@ register char monst;
 total_winner()
 {
     register THING *obj;
-    register int worth;
+    register int worth = 0;
     register char c;
     register int oldpurse;
 

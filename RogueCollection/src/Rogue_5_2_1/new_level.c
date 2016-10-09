@@ -13,6 +13,7 @@
 
 #include <time.h>
 #include <curses.h>
+#include <string.h>
 #include "rogue.h"
 
 #define TREAS_ROOM 20	/* one chance in TREAS_ROOM for a treasure room */
@@ -87,9 +88,9 @@ new_level()
 		rm = rnd_room();
 		rnd_pos(&rooms[rm], &stairs);
 		index = INDEX(stairs.y, stairs.x);
-	    } until (_level[index] == FLOOR);
+	    } until (_level[index] == FLOOR && (_flags[index] & F_REAL));
 	    sp = &_flags[index];
-	    *sp &= ~F_REAL;
+	    *sp &= ~(F_REAL | F_TMASK);
 	    *sp |= rnd(NTRAPS);
 	}
     }
@@ -158,8 +159,8 @@ put_things()
 	    /*
 	     * Put it somewhere
 	     */
-	    rm = rnd_room();
 	    do {
+	        rm = rnd_room();
 		rnd_pos(&rooms[rm], &tp);
 	    } until (chat(tp.y, tp.x) == FLOOR);
 	    chat(tp.y, tp.x) = cur->o_type;
@@ -181,8 +182,8 @@ put_things()
 	/*
 	 * Put it somewhere
 	 */
-	rm = rnd_room();
 	do {
+	    rm = rnd_room();
 	    rnd_pos(&rooms[rm], &tp);
 	} until (winat(tp.y, tp.x) == FLOOR);
 	chat(tp.y, tp.x) = AMULET;

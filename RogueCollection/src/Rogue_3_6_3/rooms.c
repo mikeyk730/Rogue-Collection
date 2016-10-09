@@ -10,16 +10,18 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include "curses.h"
 #include "rogue.h"
 
+void
 do_rooms()
 {
-    register int i;
-    register struct room *rp;
-    register struct linked_list *item;
-    register struct thing *tp;
-    register int left_out;
+    int i;
+    struct room *rp;
+    struct linked_list *item;
+    struct thing *tp;
+    int left_out;
     coord top;
     coord bsze;
     coord mp;
@@ -113,10 +115,10 @@ do_rooms()
  * Draw a box around a room
  */
 
-draw_room(rp)
-register struct room *rp;
+void
+draw_room(struct room *rp)
 {
-    register int j, k;
+    int j, k;
 
     move(rp->r_pos.y, rp->r_pos.x+1);
     vert(rp->r_max.y-2);				/* Draw left side */
@@ -146,8 +148,8 @@ register struct room *rp;
  *	draw a horizontal line
  */
 
-horiz(cnt)
-register int cnt;
+void
+horiz(int cnt)
 {
     while (cnt--)
 	addch('-');
@@ -158,10 +160,10 @@ register int cnt;
  *	draw a vertical line
  */
 
-vert(cnt)
-register int cnt;
+void
+vert(int cnt)
 {
-    register int x, y;
+    int x, y;
 
     getyx(stdscr, y, x);
     x--;
@@ -176,9 +178,8 @@ register int cnt;
  *	pick a random spot in a room
  */
 
-rnd_pos(rp, cp)
-register struct room *rp;
-register coord *cp;
+void
+rnd_pos(struct room *rp, coord *cp)
 {
     cp->x = rp->r_pos.x + rnd(rp->r_max.x-2) + 1;
     cp->y = rp->r_pos.y + rnd(rp->r_max.y-2) + 1;

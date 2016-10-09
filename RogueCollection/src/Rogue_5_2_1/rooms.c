@@ -257,7 +257,18 @@ register coord *cp;
 			    break;
 			}
 			else
-			    moat(y, x)->t_oldch = floor;
+                        {
+                            THING *tp = moat(y, x);
+
+                            if (tp != NULL)
+                                tp->t_oldch = floor;
+
+#ifdef WIZARD
+                            else
+                                msg("couldn't find monster in leave_room at (%d,%d)", y, x);
+#endif
+                        }
+
 		    addch(floor);
 	    }
     door_open(rp);

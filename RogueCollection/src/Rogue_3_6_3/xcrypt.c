@@ -1,32 +1,32 @@
 /*
- * FreeSec: libcrypt
+ *  FreeSec: libcrypt
  *
- * Copyright (C) 1994 David Burren
- * All rights reserved.
+ *  Copyright (C) 1994 David Burren
+ *  All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name(s) of the author(s) nor the names of other contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. Neither the name(s) of the author(s) nor the names of other contributors
+ *     may be used to endorse or promote products derived from this software
+ *     without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR(S) AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR(S) OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR(S) AND CONTRIBUTORS ``AS IS'' AND
+ *  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ *  ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR(S) OR CONTRIBUTORS BE LIABLE
+ *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ *  OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ *  SUCH DAMAGE.
  *
  *
  * This is an original implementation of the DES and the crypt(3) interfaces
@@ -48,12 +48,15 @@
  * only the crypt() interface. This is required to make binaries linked
  * against crypt.o exportable or re-exportable from the USA.
  */
-
+#ifndef HAVE_CRYPT
 #include <sys/types.h>
 #include <string.h>
 
-extern unsigned long int md_ntohl(unsigned long int x);
-extern unsigned long int md_htonl(unsigned long int x);
+static unsigned int _endian = 1;
+static char *_le = (char *) &_endian;
+
+#define xntohl(x) (!*_le?(x):((x)&0xffU)<<24|((x)&0xff00U)<<8|((x)&0xff0000U)>>8|((x)&0xff000000U)>>24)
+#define xhtonl(x) (!*_le?(x):((x)&0xffU)<<24|((x)&0xff00U)<<8|((x)&0xff0000U)>>8|((x)&0xff000000U)>>24)
 
 #define _PASSWORD_EFMT1 '_'
 
@@ -181,7 +184,7 @@ static unsigned char	ascii64[] =
 /*	  0123456789012345678901234567890123456789012345678901234567890123 */
 
 static __inline int
-ascii_to_bin(char ch)
+ascii_to_bin(int ch)
 {
 	if (ch > 'z')
 		return(0);
@@ -199,7 +202,7 @@ ascii_to_bin(char ch)
 }
 
 static void
-des_init()
+des_init(void)
 {
 	int	i, j, b, k, inbit, obit;
 	unsigned int	*p, *il, *ir, *fl, *fr;
@@ -234,7 +237,7 @@ des_init()
 	 * initialise the inverted key permutation.
 	 */
 	for (i = 0; i < 64; i++) {
-		init_perm[final_perm[i] = IP[i] - 1] = i;
+		init_perm[final_perm[i] = IP[i] - 1] = (unsigned char) i;
 		inv_key_perm[i] = 255;
 	}
 
@@ -243,7 +246,7 @@ des_init()
 	 * compression permutation.
 	 */
 	for (i = 0; i < 56; i++) {
-		inv_key_perm[key_perm[i] - 1] = i;
+		inv_key_perm[key_perm[i] - 1] = (unsigned char) i;
 		inv_comp_perm[i] = 255;
 	}
 
@@ -251,7 +254,7 @@ des_init()
 	 * Invert the key compression permutation.
 	 */
 	for (i = 0; i < 48; i++) {
-		inv_comp_perm[comp_perm[i] - 1] = i;
+		inv_comp_perm[comp_perm[i] - 1] = (unsigned char) i;
 	}
 
 	/*
@@ -313,7 +316,7 @@ des_init()
 	 * handling the output of the S-box arrays setup above.
 	 */
 	for (i = 0; i < 32; i++)
-		un_pbox[pbox[i] - 1] = i;
+		un_pbox[pbox[i] - 1] = (unsigned char) i;
 
 	for (b = 0; b < 4; b++)
 		for (i = 0; i < 256; i++) {
@@ -349,7 +352,7 @@ setup_salt(int salt)
 }
 
 static int
-des_setkey(const unsigned char *key)
+des_setkey(const char *key)
 {
 	unsigned int k0, k1, rawkey0, rawkey1;
 	int	shifts, round;
@@ -357,8 +360,8 @@ des_setkey(const unsigned char *key)
 	if (!des_initialised)
 		des_init();
 
-	rawkey0 = md_ntohl(*(unsigned int *) key);
-	rawkey1 = md_ntohl(*(unsigned int *) (key + 4));
+	rawkey0 = xntohl(*(unsigned int *) key);
+	rawkey1 = xntohl(*(unsigned int *) (key + 4));
 
 	if ((rawkey0 | rawkey1)
 	    && rawkey0 == old_rawkey0
@@ -546,7 +549,7 @@ do_des(unsigned int l_in, unsigned int r_in, unsigned int *l_out,
 }
 
 static int
-des_cipher(const unsigned char *in, unsigned char *out, int salt, int count)
+des_cipher(const char *in, char *out, int salt, int count)
 {
 	unsigned int l_out, r_out, rawl, rawr;
 	unsigned int x[2];
@@ -558,18 +561,18 @@ des_cipher(const unsigned char *in, unsigned char *out, int salt, int count)
 	setup_salt(salt);
 
 	memcpy(x, in, sizeof x);
-	rawl = md_ntohl(x[0]);
-	rawr = md_ntohl(x[1]);
+	rawl = xntohl(x[0]);
+	rawr = xntohl(x[1]);
 	retval = do_des(rawl, rawr, &l_out, &r_out, count);
 
-	x[0] = md_htonl(l_out);
-	x[1] = md_htonl(r_out);
+	x[0] = xhtonl(l_out);
+	x[1] = xhtonl(r_out);
 	memcpy(out, x, sizeof x);
 	return(retval);
 }
 
 char *
-xcrypt(const char *key, const char *setting)
+crypt(const char *key, const char *setting)
 {
 	int		i;
 	unsigned int	count, salt, l, r0, r1, keybuf[2];
@@ -588,7 +591,7 @@ xcrypt(const char *key, const char *setting)
 		if ((*q++ = *key << 1))
 			key++;
 	}
-	if (des_setkey((unsigned char *) keybuf))
+	if (des_setkey((const char *) keybuf))
 		return(NULL);
 
 	if (*setting == _PASSWORD_EFMT1) {
@@ -607,7 +610,7 @@ xcrypt(const char *key, const char *setting)
 			/*
 			 * Encrypt the key with itself.
 			 */
-			if (des_cipher((unsigned char*)keybuf, (unsigned char*)keybuf, 0, 1))
+			if (des_cipher((const char*)keybuf, (char*)keybuf, 0, 1))
 				return(NULL);
 			/*
 			 * And XOR with the next 8 characters of the key.
@@ -617,7 +620,7 @@ xcrypt(const char *key, const char *setting)
 					*key)
 				*q++ ^= *key++ << 1;
 
-			if (des_setkey((unsigned char *) keybuf))
+			if (des_setkey((const char *) keybuf))
 				return(NULL);
 		}
 		strncpy((char *)output, setting, 9);
@@ -682,3 +685,4 @@ xcrypt(const char *key, const char *setting)
 
 	return((char *)output);
 }
+#endif

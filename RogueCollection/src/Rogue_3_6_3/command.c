@@ -10,11 +10,19 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
-#include "curses.h"
+
+/* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06 and 2013-12-31.
+ * Copyright (C) 2012-2013 Rogue Central @ coredumpcentral.org. 
+ * All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
+
 #include <stdlib.h>
 #include <ctype.h>
 #include <signal.h>
 #include <string.h>
+#include "curses.h"
+#include "machdep.h"
 #include "rogue.h"
 
 /*
@@ -22,11 +30,12 @@
  *	Process the user commands
  */
 
+void
 command()
 {
-    register char ch;
-    register int ntimes = 1;			/* Number of player moves */
-    static char countch, direction, newcount = FALSE;
+    int ch;
+    int ntimes = 1;			/* Number of player moves */
+    static int countch, direction, newcount = FALSE;
 
 
     if (on(player, ISHASTE)) ntimes++;
@@ -216,6 +225,10 @@ command()
 		    after = FALSE;
 		    if (wizard) switch (ch)
 		    {
+			/* RRPF:
+			 * Commented-out commands were changed
+			 * on 2012-12-06 because of various
+			 * terminals and their keys */
 			case '@' : msg("@ %d,%d", hero.y, hero.x);
 			when 'C' : create_obj();
 			when CTRL('I') : inventory(lvl_obj, 0);
@@ -227,19 +240,21 @@ command()
 			when CTRL('T') : teleport();
 			when CTRL('E') : msg("food left: %d", food_left);
 			when CTRL('A') : msg("%d things in your pack", inpack);
-			when CTRL('C') : add_pass();
+			/*when CTRL('C') : add_pass();*/
+			when CTRL('B') : add_pass();
 			when CTRL('N') :
 			{
-			    register struct linked_list *item;
+			    struct linked_list *item;
 
 			    if ((item = get_item("charge", STICK)) != NULL)
 				((struct object *) ldata(item))->o_charges = 10000;
 			}
-			when CTRL('H') :
+			/*when CTRL('H') :*/
+			when CTRL('G') :
 			{
-			    register int i;
-			    register struct linked_list *item;
-			    register struct object *obj;
+			    int i;
+			    struct linked_list *item;
+			    struct object *obj;
 
 			    for (i = 0; i < 9; i++)
 				raise_level();
@@ -290,6 +305,8 @@ command()
 	    pick_up(take);
 	if (!running)
 	    door_stop = FALSE;
+	if (!after)     
+	    ntimes++;
     }
     /*
      * Kick off the rest if the daemons and fuses
@@ -351,10 +368,11 @@ quit(int p)
  *	Player gropes about him to find hidden things.
  */
 
+void
 search()
 {
-    register int x, y;
-    register char ch;
+    int x, y;
+    int ch;
 
     /*
      * Look all around the hero, if there is something hidden there,
@@ -376,7 +394,7 @@ search()
 		    break;
 		case TRAP:
 		{
-		    register struct trap *tp;
+		    struct trap *tp;
 
 		    if (mvwinch(cw, y, x) == TRAP)
 			break;
@@ -398,11 +416,12 @@ search()
  *	Give single character help, or the whole mess if he wants it
  */
 
+void
 help()
 {
-    register struct h_list *strp = helpstr;
-    register char helpch;
-    register int cnt;
+    struct h_list *strp = helpstr;
+    int helpch;
+    int cnt;
 
     msg("Character you want help for (* for all): ");
     helpch = readchar(cw);
@@ -457,9 +476,11 @@ help()
  *	Tell the player what a certain thing is.
  */
 
+void
 identify()
 {
-    register char ch, *str;
+    int ch;
+    char *str;
 
     msg("What do you want identified? ");
     ch = readchar(cw);
@@ -502,6 +523,7 @@ identify()
  *	He wants to go down a level
  */
 
+void
 d_level()
 {
     if (winat(hero.y, hero.x) != STAIRS)
@@ -518,6 +540,7 @@ d_level()
  *	He wants to go up a level
  */
 
+void
 u_level()
 {
     if (winat(hero.y, hero.x) == STAIRS)
@@ -539,6 +562,7 @@ u_level()
  * Let him escape for a while
  */
 
+void
 shell()
 {
     /*
@@ -567,12 +591,13 @@ shell()
 /*
  * allow a user to call a potion, scroll, or ring something
  */
+void
 call()
 {
-    register struct object *obj;
-    register struct linked_list *item;
-    register char **guess, *elsewise;
-    register bool *know;
+    struct object *obj;
+    struct linked_list *item;
+    char **guess, *elsewise;
+    int *know;
 
     item = get_item("call", CALLABLE);
     /*

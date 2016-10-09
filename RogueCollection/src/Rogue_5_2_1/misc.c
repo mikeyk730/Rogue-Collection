@@ -12,8 +12,9 @@
 
 #include <stdlib.h>
 #include <curses.h>
-#include "rogue.h"
 #include <ctype.h>
+#include <string.h>
+#include "rogue.h"
 
 /*
  * tr_name:
@@ -50,14 +51,14 @@ look(wakeup)
 bool wakeup;
 {
     register int x, y;
-    register char ch;
+    register unsigned char ch;
     register int index;
     register THING *tp;
     register struct room *rp;
     register int ey, ex;
     register int passcount = 0;
     register char pfl, *fp, pch;
-    register int sy, sx, sumhero, diffhero;
+    register int sy, sx, sumhero = 0, diffhero = 0;
     register int oldx, oldy;
 
     getyx(stdscr, oldy, oldx);
@@ -214,12 +215,10 @@ register int y, x;
 		return op;
     }
 #ifdef WIZARD
-	sprintf(prbuf, "Non-object %d,%d", y, x);
-	debug(prbuf);
-    return NULL;
-#else
-    /* NOTREACHED */
+    sprintf(prbuf, "Non-object %d,%d", y, x);
+    debug(prbuf);
 #endif
+    return NULL;
 }
 
 /*

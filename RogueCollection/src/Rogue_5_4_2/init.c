@@ -10,17 +10,20 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include <curses.h>
 #include <ctype.h>
+#include <string.h>
 #include "rogue.h"
 
 /*
  * init_player:
  *	Roll her up
  */
-init_player()
+void
+init_player(void)
 {
-    register THING *obj;
+    THING *obj;
 
     pstats = max_stats;
     food_left = HUNGERTIME;
@@ -75,7 +78,7 @@ init_player()
  * potions and scrolls
  */
 
-char *rainbow[] = {
+const char *rainbow[] = {
     "amber",
     "aquamarine",
     "black",
@@ -106,9 +109,8 @@ char *rainbow[] = {
 };
 
 #define NCOLORS (sizeof rainbow / sizeof (char *))
-int cNCOLORS = NCOLORS;
 
-static char *sylls[] = {
+static const char *sylls[] = {
     "a", "ab", "ag", "aks", "ala", "an", "app", "arg", "arze", "ash",
     "bek", "bie", "bit", "bjor", "blu", "bot", "bu", "byt", "comp",
     "con", "cos", "cre", "dalf", "dan", "den", "do", "e", "eep", "el",
@@ -127,7 +129,7 @@ static char *sylls[] = {
     "zok", "zon", "zum",
 };
 
-STONE stones[] = {
+const STONE stones[] = {
     { "agate",		 25},
     { "alexandrite",	 40},
     { "amethyst",	 50},
@@ -157,9 +159,8 @@ STONE stones[] = {
 };
 
 #define NSTONES (sizeof stones / sizeof (STONE))
-int cNSTONES = NSTONES;
 
-char *wood[] = {
+const char *wood[] = {
     "avocado wood",
     "balsa",
     "bamboo",
@@ -196,9 +197,8 @@ char *wood[] = {
 };
 
 #define NWOOD (sizeof wood / sizeof (char *))
-int cNWOOD = NWOOD;
 
-char *metal[] = {
+const char *metal[] = {
     "aluminum",
     "beryllium",
     "bone",
@@ -224,18 +224,21 @@ char *metal[] = {
 };
 
 #define NMETAL (sizeof metal / sizeof (char *))
-int cNMETAL = NMETAL;
-#define MAX3(a,b,c)	(a > b ? (a > c ? a : c) : (b > c ? b : c))
 
-static bool used[MAX3(NCOLORS, NSTONES, NWOOD)];
+int cNWOOD = NWOOD;
+int cNMETAL = NMETAL;
+int cNSTONES = NSTONES;
+int cNCOLORS = NCOLORS;
 
 /*
  * init_colors:
  *	Initialize the potion color scheme for this time
  */
-init_colors()
+void
+init_colors(void)
 {
-    register int i, j;
+    int i, j;
+    int used[NCOLORS];
 
     for (i = 0; i < NCOLORS; i++)
 	used[i] = FALSE;
@@ -255,11 +258,13 @@ init_colors()
  */
 #define MAXNAME	40	/* Max number of characters in a name */
 
-init_names()
+void
+init_names(void)
 {
-    register int nsyl;
-    register char *cp, *sp;
-    register int i, nwords;
+    int nsyl;
+    const char *sp;
+    char *cp;
+    int i, nwords;
 
     for (i = 0; i < MAXSCROLLS; i++)
     {
@@ -279,8 +284,9 @@ init_names()
 	    *cp++ = ' ';
 	}
 	*--cp = '\0';
-	s_names[i] = (char *) malloc((unsigned) strlen(prbuf)+1);
-	strcpy(s_names[i], prbuf);
+	s_names[i] = malloc(strlen(prbuf)+1);
+	if (s_names[i] != NULL)
+		strcpy(s_names[i], prbuf);
     }
 }
 
@@ -288,9 +294,11 @@ init_names()
  * init_stones:
  *	Initialize the ring stone setting scheme for this time
  */
-init_stones()
+void
+init_stones(void)
 {
-    register int i, j;
+    int used[NSTONES];
+    int i, j;
 
     for (i = 0; i < NSTONES; i++)
 	used[i] = FALSE;
@@ -309,11 +317,13 @@ init_stones()
  * init_materials:
  *	Initialize the construction materials for wands and staffs
  */
-init_materials()
+void
+init_materials(void)
 {
-    register int i, j;
-    register char *str;
-    static bool metused[NMETAL];
+    int i, j;
+    const char *str;
+    int metused[NMETAL];
+    int used[NWOOD];
 
     for (i = 0; i < NWOOD; i++)
 	used[i] = FALSE;
@@ -370,20 +380,18 @@ init_materials()
  * sumprobs:
  *	Sum up the probabilities for items appearing
  */
-sumprobs(info, bound
+void
+sumprobs(struct obj_info *info, int bound
 #ifdef MASTER
-	, name
+	, char *name
 #endif
 )
-struct obj_info *info;
-int bound;
-#ifdef MASTER
-char *name;
-#endif
 {
-    struct obj_info *endp, *start;
+#ifdef MASTER
+	struct obj_info *start = info;
+#endif
+    struct obj_info *endp;
 
-    start = info;
     endp = info + bound;
     while (++info < endp)
 	info->oi_prob += (info - 1)->oi_prob;
@@ -396,7 +404,8 @@ char *name;
  * init_probs:
  *	Initialize the probabilities for the various items
  */
-init_probs()
+void
+init_probs(void)
 {
     sumprobs(things, NT);
     sumprobs(pot_info, MP);
@@ -412,12 +421,10 @@ init_probs()
  * badcheck:
  *	Check to see if a series of probabilities sums to 100
  */
-badcheck(name, info, bound)
-char *name;
-register struct obj_info *info;
-register int bound;
+void
+badcheck(const char *name, const struct obj_info *info, int bound)
 {
-    register struct obj_info *end;
+    const struct obj_info *end;
 
     if (info[bound - 1].oi_prob == 100)
 	return;
@@ -436,9 +443,8 @@ register int bound;
  *	If he is halucinating, pick a random color name and return it,
  *	otherwise return the given color.
  */
-char *
-pick_color(col)
-char *col;
+const char *
+pick_color(const char *col)
 {
     return (on(player, ISHALU) ? rainbow[rnd(NCOLORS)] : col);
 }

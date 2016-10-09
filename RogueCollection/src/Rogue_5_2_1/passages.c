@@ -19,7 +19,7 @@
  */
 do_passages()
 {
-    register struct rdes *r1, *r2;
+    register struct rdes *r1, *r2 = NULL;
     register int i, j;
     register int roomcount;
     static struct rdes
@@ -128,12 +128,12 @@ do_passages()
 conn(r1, r2)
 int r1, r2;
 {
-    register struct room *rpf, *rpt;
+    register struct room *rpf, *rpt = NULL;
     register char rmt;
-    register int distance, turn_spot, turn_distance, index;
+    register int distance = 0, turn_spot = 0, turn_distance = 0, index;
     register int rm;
     register char direc;
-    coord del, curr, turn_delta, spos, epos;
+    coord del = {0,0}, curr, turn_delta = {0,0}, spos = {0,0}, epos = {0,0};
 
     if (r1 < r2)
     {

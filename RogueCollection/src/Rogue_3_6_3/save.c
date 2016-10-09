@@ -18,8 +18,8 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
-#include "rogue.h"
 #include "machdep.h"
+#include "rogue.h"
 
 typedef struct stat STAT;
 
@@ -27,10 +27,11 @@ extern char version[], encstr[];
 
 STAT sbuf;
 
+int
 save_game()
 {
-    register FILE *savef;
-    register int c;
+    FILE *savef;
+    int c;
     char buf[80];
 
     /*
@@ -87,8 +88,8 @@ gotfile:
 void
 auto_save(int p)
 {
-    register FILE *savef;
-    register int i;
+    FILE *savef;
+    int i;
 
     for (i = 0; i < NSIG; i++)
 	signal(i, SIG_IGN);
@@ -101,15 +102,15 @@ auto_save(int p)
 /*
  * write the saved game on the file
  */
-save_file(savef)
-register FILE *savef;
+int
+save_file(FILE *savef)
 {
     char buf[80];
     int ret;
 
     wmove(cw, LINES-1, 0);
     draw(cw);
-    fseek(savef, 0L, 0);
+    (void) fseek(savef, 0L, 0);
 
     memset(buf,0,80);
     strcpy(buf,version);
@@ -128,11 +129,10 @@ register FILE *savef;
     return(ret);
 }
 
-restore(file, envp)
-register char *file;
-char **envp;
+int
+restore(char *file, char **envp)
 {
-    register int inf;
+    FILE *inf;
     extern char **environ;
     char buf[80];
     int slines, scols;
@@ -140,7 +140,8 @@ char **envp;
 
     if (strcmp(file, "-r") == 0)
 	file = file_name;
-    if ((inf = open(file, 0)) < 0)
+
+    if ((inf = fopen(file, "r")) == NULL)
     {
 	perror(file);
 	return FALSE;
@@ -156,7 +157,7 @@ char **envp;
     }
 
     encread(buf, 80, inf);
-    sscanf(buf, "R%d %d\n", &rogue_version, &savefile_version);
+    (void) sscanf(buf, "R%d %d\n", &rogue_version, &savefile_version);
 
     if ((rogue_version != 36) && (savefile_version != 2))
     {
@@ -165,7 +166,7 @@ char **envp;
     }
 
     encread(buf,80,inf);
-    sscanf(buf,"%d x %d\n",&slines, &scols);
+    (void) sscanf(buf,"%d x %d\n",&slines, &scols);
 
     /*
      * we do not close the file so that we will have a hold of the
@@ -217,24 +218,46 @@ char **envp;
     setup();
     clearok(curscr, TRUE);
     touchwin(cw);
-    srand(getpid());
+    srand(md_getpid());
     status();
     playit();
     /*NOTREACHED*/
     return(0);
 }
 
+static int encerrno = 0;
+
+int
+encerror()
+{
+    return encerrno;
+}
+
+void
+encseterr(int err)
+{
+    encerrno = err;
+}
+
+int
+encclearerr()
+{
+    int n = encerrno;
+
+    encerrno = 0;
+
+    return(n);
+}
+
 /*
  * perform an encrypted write
  */
-encwrite(starta, size, outf)
-register void *starta;
-unsigned int size;
-register FILE *outf;
+size_t
+encwrite(const void *buf, size_t size, FILE *outf)
 {
-    register char *ep;
-    register char *start = starta;
-    unsigned int o_size = size;
+    char *ep;
+    const char *start = buf;
+    size_t o_size = size;
     ep = encstr;
 
     while (size)
@@ -252,17 +275,15 @@ register FILE *outf;
 /*
  * perform an encrypted read
  */
-encread(starta, size, inf)
-register void *starta;
-unsigned int size;
-register int inf;
+size_t
+encread(void *buf, size_t size, FILE *inf)
 {
-    register char *ep;
-    register int read_size;
-    register char *start = starta;
+    char *ep;
+    size_t read_size;
+    char *start = buf;
 
-    if ((read_size = read(inf, start, size)) == -1 || read_size == 0)
-	return read_size;
+    if ((read_size = fread(start,1,size,inf)) == 0)
+	return 0;
 
     ep = encstr;
 

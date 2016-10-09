@@ -10,9 +10,26 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <string.h>
 #include <curses.h>
 #include <ctype.h>
 #include "rogue.h"
+
+/*
+ * update_mdest:
+ *      Called after picking up an object, before discarding it.
+ *      If this was the object of something's desire, that monster will
+ *      get mad and run at the hero
+ */
+update_mdest(obj)
+register THING *obj;
+{
+    register THING *mp;
+
+    for (mp = mlist; mp != NULL; mp = next(mp))
+        if (mp->t_dest == &obj->o_pos)
+     mp->t_dest = &hero;
+}
 
 /*
  * add_pack:
@@ -21,10 +38,12 @@
  *	it off the ground.
  */
 
-add_pack(THING *obj, bool silent)
+void
+add_pack(THING *obj, int silent)
 {
     THING *op, *lp;
-    bool from_floor;
+    int from_floor;
+    int discarded = 0;
 
     from_floor = FALSE;
     if (obj == NULL)
@@ -43,6 +62,8 @@ add_pack(THING *obj, bool silent)
 	    detach(lvl_obj, obj);
 	    mvaddch(hero.y, hero.x, floor_ch());
 	    chat(hero.y, hero.x) = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
+            update_mdest(obj);
+            discarded = 1;
 	    discard(obj);
 	    msg("the scroll turns to dust as you pick it up");
 	    return;
@@ -72,14 +93,17 @@ add_pack(THING *obj, bool silent)
 			op = next(op);
 		}
 		if (op->o_type == obj->o_type && op->o_which == obj->o_which)
+		{
 		    if (ISMULT(op->o_type))
 		    {
 			if (!pack_room(from_floor, obj))
 			    return;
 			op->o_count++;
 dump_it:
+			update_mdest(obj);
 			discard(obj);
 			obj = op;
+                        discarded = 1;
 			lp = NULL;
 			goto out;
 		    }
@@ -109,12 +133,14 @@ dump_it:
 		    }
 		    else
 			lp = op;
+		}
 out:
 		break;
 	    }
 	}
 
 	if (lp != NULL)
+	{
 	    if (!pack_room(from_floor, obj))
 		return;
 	    else
@@ -126,6 +152,7 @@ out:
 		    prev(next(lp)) = obj;
 		next(lp) = obj;
 	    }
+	}
     }
 
     obj->o_flags |= ISFOUND;
@@ -134,9 +161,8 @@ out:
      * If this was the object of something's desire, that monster will
      * get mad and run at the hero.
      */
-    for (op = mlist; op != NULL; op = next(op))
-	if (op->t_dest = &obj->o_pos)
-	    op->t_dest = &hero;
+    if (!discarded)
+        update_mdest(obj);
 
     if (obj->o_type == AMULET)
 	amulet = TRUE;
@@ -156,8 +182,8 @@ out:
  *	See if there's room in the pack.  If not, print out an
  *	appropriate message
  */
-bool
-pack_room(bool from_floor, THING *obj)
+int
+pack_room(int from_floor, THING *obj)
 {
     if (++inpack > MAXPACK)
     {
@@ -188,7 +214,7 @@ pack_room(bool from_floor, THING *obj)
  *	take an item out of the pack
  */
 THING *
-leave_pack(THING *obj, bool newobj, bool all)
+leave_pack(THING *obj, int newobj, int all)
 {
     THING *nobj;
 
@@ -222,15 +248,15 @@ leave_pack(THING *obj, bool newobj, bool all)
  * pack_char:
  *	Return the next unused pack character.
  */
-char
-pack_char()
+int
+pack_char(void)
 {
-    bool *bp;
+    int *bp;
 
     for (bp = pack_used; *bp; bp++)
 	continue;
     *bp = TRUE;
-    return (bp - pack_used) + 'a';
+    return ((int)(bp - pack_used) + 'a');
 }
 
 /*
@@ -238,8 +264,8 @@ pack_char()
  *	List what is in the pack.  Return TRUE if there is something of
  *	the given type.
  */
-bool
-inventory(THING *list, int type)
+int
+inventory(const THING *list, int type)
 {
     static char inv_temp[MAXSTR];
 
@@ -285,7 +311,8 @@ inventory(THING *list, int type)
  *	Add something to characters pack.
  */
 
-pick_up(char ch)
+void
+pick_up(int ch)
 {
     THING *obj;
 
@@ -303,6 +330,7 @@ pick_up(char ch)
 		    return;
 		money(obj->o_goldval);
 		detach(lvl_obj, obj);
+		update_mdest(obj);
 		discard(obj);
 		proom->r_goldval = 0;
 		break;
@@ -318,7 +346,7 @@ pick_up(char ch)
 	    case AMULET:
 	    case RING:
 	    case STICK:
-		add_pack((THING *) NULL, FALSE);
+		add_pack(NULL, FALSE);
 		break;
 	}
 }
@@ -328,7 +356,8 @@ pick_up(char ch)
  *	Print out the message if you are just moving onto an object
  */
 
-move_msg(THING *obj)
+void
+move_msg(const THING *obj)
 {
     if (!terse)
 	addmsg("you ");
@@ -340,10 +369,11 @@ move_msg(THING *obj)
  *	Allow player to inventory a single item
  */
 
-picky_inven()
+void
+picky_inven(void)
 {
     THING *obj;
-    char mch;
+    int mch;
 
     if (pack == NULL)
 	msg("you aren't carrying anything");
@@ -373,10 +403,10 @@ picky_inven()
  *	Pick something out of a pack for a purpose
  */
 THING *
-get_item(char *purpose, int type)
+get_item(const char *purpose, int type)
 {
     THING *obj;
-    char ch;
+    int ch;
 
     if (pack == NULL)
 	msg("you aren't carrying anything");
@@ -426,8 +456,10 @@ get_item(char *purpose, int type)
 		msg("'%s' is not a valid item",unctrl(ch));
 		continue;
 	    }
-	    else 
+	    else {
+		msg("");
 		return obj;
+	    }
 	}
     }
     return NULL;
@@ -438,6 +470,7 @@ get_item(char *purpose, int type)
  *	Add or subtract gold from the pack
  */
 
+void
 money(int value)
 {
     purse += value;
@@ -455,8 +488,8 @@ money(int value)
  * floor_ch:
  *	Return the appropriate floor character for her room
  */
-char
-floor_ch()
+int
+floor_ch(void)
 {
     if (proom->r_flags & ISGONE)
 	return PASSAGE;
@@ -468,10 +501,10 @@ floor_ch()
  *	Return the character at hero's position, taking see_floor
  *	into account
  */
-char
-floor_at()
+int
+floor_at(void)
 {
-    char ch;
+    int ch;
 
     ch = chat(hero.y, hero.x);
     if (ch == FLOOR)
@@ -484,7 +517,8 @@ floor_at()
  *	Reset the last command when the current one is aborted
  */
 
-reset_last()
+void
+reset_last(void)
 {
     last_comm = l_last_comm;
     last_dir = l_last_dir;

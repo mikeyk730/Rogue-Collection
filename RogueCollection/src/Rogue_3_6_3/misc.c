@@ -20,10 +20,9 @@
  */
 
 char *
-tr_name(ch)
-char ch;
+tr_name(int ch)
 {
-    register char *s;
+    char *s = "";
 
     switch (ch)
     {
@@ -48,16 +47,16 @@ char ch;
  *	A quick glance all around the player
  */
 
-look(wakeup)
-bool wakeup;
+void
+look(int wakeup)
 {
-    register int x, y;
-    register char ch;
-    register int oldx, oldy;
-    register bool inpass;
-    register int passcount = 0;
-    register struct room *rp;
-    register int ey, ex;
+    int x, y;
+    int ch;
+    int oldx, oldy;
+    int inpass;
+    int passcount = 0;
+    struct room *rp;
+    int ey, ex;
 
     getyx(cw, oldy, oldx);
     if (oldrp != NULL && (oldrp->r_flags & ISDARK) && off(player, ISBLIND))
@@ -77,8 +76,8 @@ bool wakeup;
 		continue;
 	    if (isupper(mvwinch(mw, y, x)))
 	    {
-		register struct linked_list *it;
-		register struct thing *tp;
+		struct linked_list *it;
+		struct thing *tp;
 
 		if (wakeup)
 		    it = wake_monster(y, x);
@@ -88,7 +87,7 @@ bool wakeup;
 		if ((tp->t_oldch = mvinch(y, x)) == TRAP)
 		    tp->t_oldch =
 			(trap_at(y,x)->tr_flags&ISFOUND) ? TRAP : FLOOR;
-		if (tp->t_oldch == FLOOR && (rp->r_flags & ISDARK)
+		if (tp->t_oldch == FLOOR && (rp != NULL) && (rp->r_flags & ISDARK)
 		    && off(player, ISBLIND))
 			tp->t_oldch = ' ';
 	    }
@@ -173,12 +172,12 @@ bool wakeup;
  *	Figure out what a secret door looks like.
  */
 
-secretdoor(y, x)
-register int y, x;
+int
+secretdoor(int y, int x)
 {
-    register int i;
-    register struct room *rp;
-    register coord *cpp;
+    int i;
+    struct room *rp;
+    coord *cpp;
     static coord cp;
 
     cp.y = y;
@@ -200,12 +199,10 @@ register int y, x;
  */
 
 struct linked_list *
-find_obj(y, x)
-register int y;
-int x;
+find_obj(int y, int x)
 {
-    register struct linked_list *obj;
-    register struct object *op;
+    struct linked_list *obj;
+    struct object *op;
 
     for (obj = lvl_obj; obj != NULL; obj = next(obj))
     {
@@ -223,10 +220,11 @@ int x;
  *	She wants to eat something, so let her try
  */
 
+void
 eat()
 {
-    register struct linked_list *item;
-    register struct object *obj;
+    struct linked_list *item;
+    struct object *obj;
 
     if ((item = get_item("eat", FOOD)) == NULL)
 	return;
@@ -268,8 +266,8 @@ eat()
  * it keeps track of the highest it has been, just in case
  */
 
-chg_str(amt)
-register int amt;
+void
+chg_str(int amt)
 {
     if (amt == 0)
 	return;
@@ -322,8 +320,8 @@ register int amt;
  *	add a haste to the player
  */
 
-add_haste(potion)
-bool potion;
+void
+add_haste(int potion)
 {
     if (on(player, ISHASTE))
     {
@@ -344,9 +342,10 @@ bool potion;
  *	aggravate all the monsters on this level
  */
 
+void
 aggravate()
 {
-    register struct linked_list *mi;
+    struct linked_list *mi;
 
     for (mi = mlist; mi != NULL; mi = next(mi))
 	runto(&((struct thing *) ldata(mi))->t_pos, &hero);
@@ -356,8 +355,7 @@ aggravate()
  * for printfs: if string starts with a vowel, return "n" for an "an"
  */
 char *
-vowelstr(str)
-register char *str;
+vowelstr(char *str)
 {
     switch (*str)
     {
@@ -375,8 +373,8 @@ register char *str;
 /* 
  * see if the object is one of the currently used items
  */
-is_current(obj)
-register struct object *obj;
+int
+is_current(struct object *obj)
 {
     if (obj == NULL)
 	return FALSE;
@@ -392,10 +390,11 @@ register struct object *obj;
 /*
  * set up the direction co_ordinate for use in varios "prefix" commands
  */
+int
 get_dir()
 {
-    register char *prompt;
-    register bool gotit;
+    char *prompt;
+    int gotit;
 
     if (!terse)
 	msg(prompt = "Which direction? ");

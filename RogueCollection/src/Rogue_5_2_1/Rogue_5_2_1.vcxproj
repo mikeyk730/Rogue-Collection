@@ -56,10 +56,9 @@
   <ItemGroup>
     <ClInclude Include="extern.h" />
     <ClInclude Include="rogue.h" />
-    <ClInclude Include="score.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E85D0F19-D582-4240-8299-06ACCF51883B}</ProjectGuid>
+    <ProjectGuid>{5512251B-12A0-4CFD-8A13-0E57974206F0}</ProjectGuid>
     <RootNamespace>Rogue_5_4_2</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>

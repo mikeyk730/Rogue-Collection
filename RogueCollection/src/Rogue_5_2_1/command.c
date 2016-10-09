@@ -10,10 +10,18 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+/* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06 and again on
+ * 2013-12-31.
+ * Copyright (C) 2012-2013 Rogue Central @ coredumpcentral.org. 
+ * All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
+
 #include <stdlib.h>
 #include <curses.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 #include "rogue.h"
 
 char countch, direction, newcount = FALSE;
@@ -42,7 +50,7 @@ command()
 	 * set, someone's been poking in memeory
 	 */
 	if (on(player, ISSLOW|ISCANC|ISGREED|ISINVIS|ISMEAN|ISREGEN))
-	    auto_save();
+	    auto_save(-1);
 
 	look(TRUE);
 	if (!running)
@@ -252,6 +260,10 @@ command()
 #ifdef WIZARD
 		    if (wizard) switch (ch)
 		    {
+			    /* Some Wizard keys commented out & changed
+			     * to make the game functional in
+			     * various terminals -RRPF
+			     */ 
 			case '@' : msg("@ %d,%d", hero.y, hero.x);
 			when 'C' : create_obj();
 			when CTRL('I') : inventory(lvl_obj, 0);
@@ -262,7 +274,10 @@ command()
 			when CTRL('T') : teleport();
 			when CTRL('E') : msg("food left: %d", food_left);
 			when CTRL('A') : msg("%d things in your pack", inpack);
-			when CTRL('K') : add_pass();
+			/* This one was changed for consistency
+			 * to match RRPF's Rogue 3.6's documentation */
+			/*when CTRL('K') : add_pass();*/
+			when CTRL('B') : add_pass();
 			when CTRL('X') : turn_see(on(player, SEEMONST));
 			when CTRL('N') :
 			{
@@ -271,7 +286,8 @@ command()
 			    if ((item = get_item("charge", STICK)) != NULL)
 				item->o_charges = 10000;
 			}
-			when CTRL('H') :
+			/*when CTRL('H') :*/
+			when CTRL('G') :
 			{
 			    register int i;
 			    register THING *obj;

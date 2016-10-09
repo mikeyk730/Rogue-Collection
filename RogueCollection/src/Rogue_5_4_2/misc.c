@@ -10,16 +10,21 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include <curses.h>
-#include "rogue.h"
+#include <string.h>
 #include <ctype.h>
+#include "rogue.h"
 
 /*
  * look:
  *	A quick glance all around the player
  */
+#undef DEBUG
 
-look(bool wakeup)
+
+void
+look(int wakeup)
 {
     int x, y;
     chtype ch;
@@ -28,10 +33,10 @@ look(bool wakeup)
     struct room *rp;
     int ey, ex;
     int passcount;
-    char pfl, *fp, pch;
+    int pfl, *fp, pch;
     int sy, sx, sumhero = 0, diffhero = 0;
 # ifdef DEBUG
-    static bool done = FALSE;
+    static int done = FALSE;
 
     if (done)
 	return;
@@ -99,10 +104,12 @@ look(bool wakeup)
 		    if (wakeup)
 			wake_monster(y, x);
 		    if (see_monst(tp))
+		    {
 			if (on(player, ISHALU))
 			    ch = rnd(26) + 'A';
 			else
 			    ch = tp->t_disguise;
+		    }
 		}
 	    if (on(player, ISBLIND) && (y != hero.y || x != hero.x))
 		continue;
@@ -112,7 +119,7 @@ look(bool wakeup)
 	    if ((proom->r_flags & ISDARK) && !see_floor && ch == FLOOR)
 		ch = ' ';
 
-	    if (tp != NULL || ch != inch())
+	    if (tp != NULL || ch != CCHAR( inch() ))
 		addch(ch);
 
 	    if (door_stop && !firstmove && running)
@@ -180,7 +187,7 @@ look(bool wakeup)
  *	account whether or not the player is tripping.
  */
 int
-trip_ch(int y, int x, char ch)
+trip_ch(int y, int x, int ch)
 {
     if (on(player, ISHALU) && after)
 	switch (ch)
@@ -206,7 +213,8 @@ trip_ch(int y, int x, char ch)
  *	Erase the area shown by a lamp in a dark room.
  */
 
-erase_lamp(coord *pos, struct room *rp)
+void
+erase_lamp(const coord *pos, const struct room *rp)
 {
     int y, x, ey, sy, ex;
 
@@ -223,7 +231,7 @@ erase_lamp(coord *pos, struct room *rp)
 	    if (y == hero.y && x == hero.x)
 		continue;
 	    move(y, x);
-	    if (inch() == FLOOR)
+	    if (CCHAR( inch() ) == FLOOR)
 		addch(' ');
 	}
 }
@@ -232,8 +240,8 @@ erase_lamp(coord *pos, struct room *rp)
  * show_floor:
  *	Should we show the floor in her room at this time?
  */
-bool
-show_floor()
+int
+show_floor(void)
 {
     if ((proom->r_flags & (ISGONE|ISDARK)) == ISDARK && !on(player, ISBLIND))
 	return see_floor;
@@ -256,7 +264,8 @@ find_obj(int y, int x)
 		return obj;
     }
 #ifdef MASTER
-    msg(sprintf(prbuf, "Non-object %d,%d", y, x));
+    sprintf(prbuf, "Non-object %d,%d", y, x);
+    msg(prbuf);
     return NULL;
 #else
     /* NOTREACHED */
@@ -269,7 +278,8 @@ find_obj(int y, int x)
  *	She wants to eat something, so let her try
  */
 
-eat()
+void
+eat(void)
 {
     THING *obj;
 
@@ -309,7 +319,8 @@ eat()
  *	Check to see if the guy has gone up a level.
  */
 
-check_level()
+void
+check_level(void)
 {
     int i, add, olevel;
 
@@ -334,9 +345,10 @@ check_level()
  *	highest it has been, just in case
  */
 
+void
 chg_str(int amt)
 {
-    auto str_t comp;
+    int comp;
 
     if (amt == 0)
 	return;
@@ -354,7 +366,8 @@ chg_str(int amt)
  * add_str:
  *	Perform the actual add, checking upper and lower bound limits
  */
-add_str(str_t *sp, int amt)
+void
+add_str(int *sp, int amt)
 {
     if ((*sp += amt) < 3)
 	*sp = 3;
@@ -366,8 +379,8 @@ add_str(str_t *sp, int amt)
  * add_haste:
  *	Add a haste to the player
  */
-bool
-add_haste(bool potion)
+int
+add_haste(int potion)
 {
     if (on(player, ISHASTE))
     {
@@ -391,7 +404,8 @@ add_haste(bool potion)
  *	Aggravate all the monsters on this level
  */
 
-aggravate()
+void
+aggravate(void)
 {
     THING *mp;
 
@@ -405,7 +419,7 @@ aggravate()
  *	"an".
  */
 char *
-vowelstr(char *str)
+vowelstr(const char *str)
 {
     switch (*str)
     {
@@ -424,8 +438,8 @@ vowelstr(char *str)
  * is_current:
  *	See if the object is one of the currently used items
  */
-bool
-is_current(THING *obj)
+int
+is_current(const THING *obj)
 {
     if (obj == NULL)
 	return FALSE;
@@ -445,11 +459,11 @@ is_current(THING *obj)
  *      Set up the direction co_ordinate for use in varios "prefix"
  *	commands
  */
-bool
-get_dir()
+int
+get_dir(void)
 {
     char *prompt;
-    bool gotit;
+    int gotit;
     static coord last_delt= {0,0};
 
     if (again && last_dir != '\0')
@@ -477,7 +491,7 @@ get_dir()
 		when 'u': case'U': delta.y = -1; delta.x =  1;
 		when 'b': case'B': delta.y =  1; delta.x = -1;
 		when 'n': case'N': delta.y =  1; delta.x =  1;
-		when ESCAPE: last_dir = '\0'; reset_last(); return FALSE;
+		when ESCAPE: last_dir = '\0'; reset_last(); msg(""); return FALSE;
 		otherwise:
 		    mpos = 0;
 		    msg(prompt);
@@ -497,6 +511,7 @@ get_dir()
 	    delta.x = rnd(3) - 1;
 	} while (delta.y == 0 && delta.x == 0);
     mpos = 0;
+    msg("");
     return TRUE;
 }
 
@@ -528,6 +543,7 @@ spread(int nm)
  *	Call an object something after use.
  */
 
+void
 call_it(struct obj_info *info)
 {
     if (info->oi_know)
@@ -545,9 +561,11 @@ call_it(struct obj_info *info)
 	{
 	    if (info->oi_guess != NULL)
 		free(info->oi_guess);
-	    info->oi_guess = malloc((unsigned int) strlen(prbuf) + 1);
-	    strcpy(info->oi_guess, prbuf);
+	    info->oi_guess = malloc(strlen(prbuf) + 1);
+		if (info->oi_guess != NULL)
+			strcpy(info->oi_guess, prbuf);
 	}
+	msg("");
     }
 }
 
@@ -556,17 +574,17 @@ call_it(struct obj_info *info)
  *	Pick a random thing appropriate for this level
  */
 int
-rnd_thing()
+rnd_thing(void)
 {
     int i;
-    static char thing_list[] = {
+    int thing_list[] = {
 	POTION, SCROLL, RING, STICK, FOOD, WEAPON, ARMOR, STAIRS, GOLD, AMULET
     };
 
     if (level >= AMULETLEVEL)
-        i = rnd(sizeof thing_list / sizeof (char));
+        i = rnd(sizeof thing_list / sizeof (int));
     else
-        i = rnd(sizeof thing_list / sizeof (char) - 1);
+        i = rnd(sizeof thing_list / sizeof (int) - 1);
     return thing_list[i];
 }
 
@@ -575,8 +593,8 @@ rnd_thing()
  *	Choose the first or second string depending on whether it the
  *	player is tripping
  */
-char *
-choose_str(char *ts, char *ns)
+const char *
+choose_str(const char *ts, const char *ns)
 {
 	return (on(player, ISHALU) ? ts : ns);
 }

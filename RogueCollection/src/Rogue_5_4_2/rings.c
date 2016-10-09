@@ -18,7 +18,8 @@
  *	Put a ring on a hand
  */
 
-ring_on()
+void
+ring_on(void)
 {
     THING *obj;
     int ring;
@@ -89,7 +90,8 @@ ring_on()
  *	take off a ring
  */
 
-ring_off()
+void
+ring_off(void)
 {
     int ring;
     THING *obj;
@@ -125,7 +127,7 @@ ring_off()
  *	Which hand is the hero interested in?
  */
 int
-gethand()
+gethand(void)
 {
     int c;
 
@@ -158,7 +160,7 @@ ring_eat(int hand)
 {
     THING *ring;
     int eat;
-    static int uses[] = {
+    int uses[] = {
 	 1,	/* R_PROTECT */		 1,	/* R_ADDSTR */
 	 1,	/* R_SUSTSTR */		-3,	/* R_SEARCH */
 	-5,	/* R_SEEINVIS */	 0,	/* R_NOP */
@@ -181,8 +183,8 @@ ring_eat(int hand)
  * ring_num:
  *	Print ring bonuses
  */
-char *
-ring_num(THING *obj)
+const char *
+ring_num(const THING *obj)
 {
     static char buf[10];
 

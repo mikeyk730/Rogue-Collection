@@ -11,13 +11,15 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
-#include "curses.h"
+#include <stdlib.h>
+#include <errno.h>
 #include <time.h>
 #include <signal.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <string.h>
+#include "curses.h"
 #include "machdep.h"
 #include "rogue.h"
 
@@ -45,11 +47,11 @@ char	*killname();
  *	Do something really fun when he dies
  */
 
-death(monst)
-register char monst;
+void
+death(int monst)
 {
-    register char **dp = rip, *killer;
-    register struct tm *lt;
+    char **dp = rip, *killer;
+    struct tm *lt;
     time_t date;
     char buf[80];
 
@@ -78,9 +80,37 @@ register char monst;
  * score -- figure score and post it.
  */
 
+void
+open_score(void)
+{
+#ifdef SCOREFILE
+    char *scorefile = SCOREFILE;
+
+    if (scoreboard != NULL) {
+        rewind(scoreboard);
+        return;
+    }
+
+    scoreboard = fopen(scorefile, "r+");
+
+    if ((scoreboard == NULL) && (errno == ENOENT))
+    {
+        scoreboard = fopen(scorefile, "w+");
+        md_chmod(scorefile,0664);
+    }
+
+    if (scoreboard == NULL) {
+         fprintf(stderr, "Could not open %s for writing: %s\n", scorefile, strerror(errno));
+         fflush(stderr);
+    }
+#else
+    scoreboard = NULL;
+#endif
+}
+
 /* VARARGS2 */
-score(amount, flags, monst)
-char monst;
+void
+score(int amount, int flags, int monst)
 {
     static struct sc_ent {
 	int sc_score;
@@ -88,40 +118,30 @@ char monst;
 	int sc_flags;
 	int sc_level;
 	char sc_login[8];
-	char sc_monster;
+	int sc_monster;
     } top_ten[10];
-    register struct sc_ent *scp;
-    register int i;
-    register struct sc_ent *sc2;
-    register FILE *outf;
-    register char *killer;
-    register int prflags = 0;
-    register int fd;
+    struct sc_ent *scp;
+    int i;
+    struct sc_ent *sc2;
+    FILE *outf;
+    char *killer;
+    int prflags = 0;
     static char *reason[] = {
 	"killed",
 	"quit",
 	"A total winner",
     };
     char scoreline[100];
-    char score_file[PATH_MAX];
     int rogue_ver = 0, scorefile_ver = 0;
 
     /*
      * Open file and read list
      */
+
+    if (scoreboard == NULL)
+        return;
     
-    /* Get default score file */
-    strcpy(score_file, md_getroguedir());
-
-    if (*score_file)
-        strcat(score_file,"\\");
-
-    strcat(score_file, "rogue36.scr");
-
-    if ((fd = open(score_file, O_RDWR | O_CREAT, 0666 )) < 0)
-	return;
-
-    outf = (FILE *) fdopen(fd, "w");
+    outf = scoreboard;
 
     for (scp = top_ten; scp <= &top_ten[9]; scp++)
     {
@@ -149,16 +169,18 @@ char monst;
 	else if (strcmp(prbuf, "edit") == 0)
 	    prflags = 2;
 
-    encread((char *) scoreline, 100, fd);
-    sscanf(scoreline, "R%d %d\n", &rogue_ver, &scorefile_ver);
+    md_lockfile(outf);
+
+    encread(scoreline, 100, outf);
+    (void) sscanf(scoreline, "R%d %d\n", &rogue_ver, &scorefile_ver);
 
     if ((rogue_ver == 36) && (scorefile_ver == 2))
         for(i = 0; i < 10; i++)
 	{
-	    encread((char *) &top_ten[i].sc_name, 80, fd);
-	    encread((char *) &top_ten[i].sc_login, 8, fd);
-	    encread((char *) scoreline, 100, fd);
-	    sscanf(scoreline, " %d %d %d %d \n",
+	    encread(&top_ten[i].sc_name, 80, outf);
+	    encread(&top_ten[i].sc_login, 8, outf);
+	    encread(scoreline, 100, outf);
+	    (void) sscanf(scoreline, " %d %d %d %d \n",
 		&top_ten[i].sc_score,  &top_ten[i].sc_flags,
 		&top_ten[i].sc_level,  &top_ten[i].sc_monster);
 	}
@@ -231,31 +253,39 @@ char monst;
 		printf(".\n");
 	}
     }
-    fseek(outf, 0L, 0);
+
     /*
      * Update the list file
      */
+
+    rewind(outf);
+
     strcpy(scoreline, "R36 2\n");
     encwrite(scoreline, 100, outf);
+
     for(i = 0; i < 10; i++)
     {
-        encwrite((char *) &top_ten[i].sc_name, 80, outf);
-        encwrite((char *) &top_ten[i].sc_login, 8, outf);
+        encwrite(&top_ten[i].sc_name, 80, outf);
+        encwrite(&top_ten[i].sc_login, 8, outf);
         sprintf(scoreline, " %d %d %d %d \n",
-        top_ten[i].sc_score,  top_ten[i].sc_flags,
-        top_ten[i].sc_level,  top_ten[i].sc_monster);
-        encwrite((char *) scoreline, 100, outf);
+            top_ten[i].sc_score,  top_ten[i].sc_flags,
+            top_ten[i].sc_level,  top_ten[i].sc_monster);
+        encwrite(scoreline, 100, outf);
     }
+
+    md_unlockfile(outf);
+
     fclose(outf);
 }
 
+void 
 total_winner()
 {
-    register struct linked_list *item;
-    register struct object *obj;
-    register int worth;
-    register char c;
-    register int oldpurse;
+    struct linked_list *item;
+    struct object *obj;
+    int worth = 0;
+    int c;
+    int oldpurse;
 
     clear();
     standout();
@@ -275,7 +305,7 @@ total_winner()
     addstr("a great profit and are admitted to the fighters guild.\n");
     mvaddstr(LINES - 1, 0, "--Press space to continue--");
     refresh();
-    wait_for(' ');
+    wait_for(stdscr, ' ');
     clear();
     mvaddstr(0, 0, "   Worth  Item");
     oldpurse = purse;
@@ -319,6 +349,8 @@ total_winner()
 		    when PLATE_MAIL: worth = 400;
 		    otherwise: worth = 0;
 		}
+		if (obj->o_which >= MAXARMORS)
+                    break;
 		worth *= (1 + (10 * (a_class[obj->o_which] - obj->o_ac)));
 		obj->o_flags |= ISKNOW;
 	    when SCROLL:
@@ -357,8 +389,7 @@ total_winner()
 }
 
 char *
-killname(monst)
-register char monst;
+killname(int monst)
 {
     if (isupper(monst))
 	return monsters[monst-'A'].m_name;

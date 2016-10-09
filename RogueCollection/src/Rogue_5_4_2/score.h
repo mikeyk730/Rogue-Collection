@@ -11,13 +11,16 @@
  */
 
 struct sc_ent {
-    unsigned int sc_uid;
-    unsigned short sc_score;
+    uid_t sc_uid;
+    int sc_score;
     unsigned int sc_flags;
-    unsigned short sc_monster;
+    int sc_monster;
     char sc_name[MAXSTR];
-    unsigned short sc_level;
-    long sc_time;
+    int sc_level;
+    unsigned int sc_time;
 };
 
 typedef struct sc_ent SCORE;
+
+void	rd_score(SCORE *top_ten);
+void	wr_score(SCORE *top_ten);

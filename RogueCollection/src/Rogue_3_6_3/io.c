@@ -10,10 +10,12 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include "curses.h"
 #include <ctype.h>
 #include <stdarg.h>
 #include <string.h>
+#include "machdep.h"
 #include "rogue.h"
 
 /*
@@ -25,6 +27,7 @@ static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
 /*VARARGS1*/
+void
 msg(char *fmt, ...)
 {
     va_list ap;
@@ -50,6 +53,7 @@ msg(char *fmt, ...)
 /*
  * add things to the current message
  */
+void
 addmsg(char *fmt, ...)
 {
     va_list ap;
@@ -63,6 +67,7 @@ addmsg(char *fmt, ...)
  * Display a new msg (giving him a chance to see the previous one if it
  * is up there with the --More--)
  */
+void
 endmsg()
 {
     strncpy(huh, msgbuf, 80);
@@ -82,6 +87,7 @@ endmsg()
     draw(cw);
 }
 
+void
 doadd(char *fmt, va_list ap)
 {
     vsprintf(&msgbuf[newpos], fmt, ap);
@@ -93,7 +99,8 @@ doadd(char *fmt, va_list ap)
  *	returns true if it is ok to step on ch
  */
 
-step_ok(ch)
+int
+step_ok(int ch)
 {
     switch (ch)
     {
@@ -113,8 +120,8 @@ step_ok(ch)
  *	getchar.
  */
 
-readchar(win)
-WINDOW *win;
+int
+readchar(WINDOW *win)
 {
     int ch;
 
@@ -134,10 +141,11 @@ WINDOW *win;
  *	Display the important stats line.  Keep the cursor where it was.
  */
 
+void
 status()
 {
-    register int oy, ox, temp;
-    register char *pb;
+    int oy, ox, temp;
+    char *pb;
     static char buf[80];
     static int hpwidth = 0, s_hungry = -1;
     static int s_lvl = -1, s_pur, s_hp = -1, s_str, s_add, s_ac = 0;
@@ -169,7 +177,7 @@ status()
 	sprintf(pb, "/%d", pstats.s_str.st_add);
     }
     pb = &buf[strlen(buf)];
-    sprintf(pb, "  Ac: %-2d  Exp: %d/%ld",
+    sprintf(pb, "  Ac: %-2d  Exp: %d/%d",
 	cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm, pstats.s_lvl,
 	pstats.s_exp);
     /*
@@ -203,11 +211,10 @@ status()
  *	Sit around until the guy types the right key
  */
 
-wait_for(win, ch)
-WINDOW *win;
-register char ch;
+void
+wait_for(WINDOW *win, int ch)
 {
-    register char c;
+    int c;
 
     if (ch == '\n')
         while ((c = readchar(win)) != '\n' && c != '\r')
@@ -222,9 +229,8 @@ register char ch;
  *	function used to display a window and wait before returning
  */
 
-show_win(scr, message)
-register WINDOW *scr;
-char *message;
+void
+show_win(WINDOW *scr, char *message)
 {
     mvwaddstr(scr, 0, 0, message);
     touchwin(scr);
@@ -235,6 +241,7 @@ char *message;
     touchwin(cw);
 }
 
+void
 flush_type()
 {
 	flushinp();

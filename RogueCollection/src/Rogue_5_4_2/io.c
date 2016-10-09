@@ -4,8 +4,10 @@
  * @(#)io.c	4.32 (Berkeley) 02/05/99
  */
 
+#include <stdarg.h>
 #include <curses.h>
 #include <ctype.h>
+#include <string.h>
 #include "rogue.h"
 
 /*
@@ -18,7 +20,8 @@ static char msgbuf[2*MAXMSG+1];
 static int newpos = 0;
 
 /* VARARGS1 */
-msg(char *fmt, ...)
+int
+msg(const char *fmt, ...)
 {
     va_list args;
 
@@ -46,7 +49,8 @@ msg(char *fmt, ...)
  *	Add things to the current message
  */
 /* VARARGS1 */
-addmsg(char *fmt, ...)
+void
+addmsg(const char *fmt, ...)
 {
     va_list args;
 
@@ -60,9 +64,10 @@ addmsg(char *fmt, ...)
  *	Display a new msg (giving him a chance to see the previous one
  *	if it is up there with the --More--)
  */
-endmsg()
+int
+endmsg(void)
 {
-    char ch;
+    int ch;
 
     if (save_msg)
 	strcpy(huh, msgbuf);
@@ -72,7 +77,7 @@ endmsg()
 	mvaddstr(0, mpos, "--More--");
 	refresh();
 	if (!msg_esc)
-	    wait_for(' ');
+	    wait_for(stdscr, ' ');
 	else
 	{
 	    while ((ch = readchar()) != ' ')
@@ -90,8 +95,8 @@ endmsg()
      * All messages should start with uppercase, except ones that
      * start with a pack addressing character
      */
-    if (islower(msgbuf[0]) && !lower_msg && msgbuf[1] != ')')
-	msgbuf[0] = toupper(msgbuf[0]);
+    if (islower((int)msgbuf[0]) && !lower_msg && msgbuf[1] != ')')
+	msgbuf[0] = (char) toupper(msgbuf[0]);
     mvaddstr(0, 0, msgbuf);
     clrtoeol();
     mpos = newpos;
@@ -105,7 +110,8 @@ endmsg()
  * doadd:
  *	Perform an add onto the message buffer
  */
-doadd(char *fmt, va_list args)
+void
+doadd(const char *fmt, va_list args)
 {
     static char buf[MAXSTR];
 
@@ -116,14 +122,15 @@ doadd(char *fmt, va_list args)
     if (strlen(buf) + newpos >= MAXMSG)
         endmsg(); 
     strcat(msgbuf, buf);
-    newpos = strlen(msgbuf);
+    newpos = (int) strlen(msgbuf);
 }
 
 /*
  * step_ok:
  *	Returns true if it is ok to step on ch
  */
-step_ok(ch)
+int
+step_ok(int ch)
 {
     switch (ch)
     {
@@ -140,36 +147,56 @@ step_ok(ch)
  * readchar:
  *	Reads and returns a character, checking for gross input errors
  */
-readchar()
+
+int
+readchar(void)
 {
     int ch;
 
-    ch = md_readchar();
+    ch = md_readchar(stdscr);
 
-    if ((ch == 3) || (ch == 0))
+    if (ch == 3)
     {
-	quit(0);
+		quit(0);
         return(27);
     }
 
     return(ch);
 }
 
+int
+wreadchar(WINDOW *win)
+{
+    int ch;
+
+    ch = md_readchar(win);
+
+    if (ch == 3)
+    {
+		quit(0);
+        return(27);
+    }
+
+    return(ch);
+}
+
+
 /*
  * status:
  *	Display the important stats line.  Keep the cursor where it was.
  */
-status()
+void
+status(void)
 {
-    register int oy, ox, temp;
+    int oy, ox, temp;
     static int hpwidth = 0;
     static int s_hungry = 0;
     static int s_lvl = 0;
     static int s_pur = -1;
     static int s_hp = 0;
     static int s_arm = 0;
-    static str_t s_str = 0;
-    static long s_exp = 0;
+    static int s_str = 0;
+    static int s_exp = 0;
     static char *state_name[] =
     {
 	"", "Hungry", "Weak", "Faint"
@@ -210,17 +237,17 @@ status()
 
     if (stat_msg)
     {
-	move(0, 0);
-        msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%ld  %s",
-	    level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp, pstats.s_str,
-	    max_stats.s_str, 10 - s_arm, pstats.s_lvl, pstats.s_exp,
-	    state_name[hungry_state]);
+        move(0, 0);
+        msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
+        level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp, pstats.s_str,
+        max_stats.s_str, 10 - s_arm, pstats.s_lvl, pstats.s_exp,
+        state_name[hungry_state]);
     }
     else
     {
 	move(STATLINE, 0);
                 
-        printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%ld  %s",
+        printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
 	    level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp, pstats.s_str,
 	    max_stats.s_str, 10 - s_arm, pstats.s_lvl, pstats.s_exp,
 	    state_name[hungry_state]);
@@ -234,16 +261,16 @@ status()
  * wait_for
  *	Sit around until the guy types the right key
  */
-wait_for(ch)
-register int ch;
+void
+wait_for(WINDOW *win, int ch)
 {
-    register char c;
+    int c;
 
     if (ch == '\n')
-        while ((c = readchar()) != '\n' && c != '\r')
+        while ((c = wreadchar(win)) != '\n' && c != '\r')
 	    continue;
     else
-        while (readchar() != ch)
+        while (wreadchar(win) != ch)
 	    continue;
 }
 
@@ -251,8 +278,8 @@ register int ch;
  * show_win:
  *	Function used to display a window and wait before returning
  */
-show_win(message)
-char *message;
+void
+show_win(const char *message)
 {
     WINDOW *win;
 
@@ -260,11 +287,8 @@ char *message;
     wmove(win, 0, 0);
     waddstr(win, message);
     touchwin(win);
-    wmove(win, hero.y, hero.x);
     wrefresh(win);
-    wait_for(' ');
+    wait_for(win, ' ');
     clearok(curscr, TRUE);
-#ifdef	attron
     touchwin(stdscr);
-#endif	/* attron */
 }

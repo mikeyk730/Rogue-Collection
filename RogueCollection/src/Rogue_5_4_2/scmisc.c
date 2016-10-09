@@ -18,7 +18,6 @@
 # define	TRUE		1
 # define	FALSE		0
 # define	MAXSTR		80
-# define	bool		char
 # define	when		break;case
 # define	otherwise	break;default
 
@@ -28,15 +27,10 @@ typedef struct {
 
 char	*s_vowelstr();
 
-extern char	encstr[], frob;
-
 char *lockfile = "/tmp/.fredlock";
 
 char prbuf[MAXSTR];			/* buffer for sprintfs */
 
-#ifdef MDK
-static
-#endif
 MONST	monsters[] = {
 	{ "aquator" }, { "bat" }, { "centaur" }, { "dragon" }, { "emu" },
 	{ "venus flytrap" }, { "griffin" }, { "hobgoblin" }, { "ice monster" },
@@ -51,12 +45,11 @@ MONST	monsters[] = {
  *	lock the score file.  If it takes too long, ask the user if
  *	they care to wait.  Return TRUE if the lock is successful.
  */
-bool
-s_lock_sc()
+int
+s_lock_sc(void)
 {
     int cnt;
-    static struct stat sbuf;
-    time_t time();
+    struct stat sbuf;
 
 over:
     close(8);	/* just in case there are no files left */
@@ -84,7 +77,7 @@ over:
 	printf("The score file is very busy.  Do you want to wait longer\n");
 	printf("for it to become free so your score can get posted?\n");
 	printf("If so, type \"y\"\n");
-	fgets(prbuf, MAXSTR, stdin);
+	(void) fgets(prbuf, MAXSTR, stdin);
 	if (prbuf[0] == 'y')
 	    for (;;)
 	    {
@@ -111,8 +104,8 @@ over:
  * s_unlock_sc:
  *	Unlock the score file
  */
-
-s_unlock_sc()
+void
+s_unlock_sc(void)
 {
     md_unlink(lockfile);
 }
@@ -121,16 +114,15 @@ s_unlock_sc()
  * s_encwrite:
  *	Perform an encrypted write
  */
-
-s_encwrite(char *start, unsigned int size, FILE *outf)
+void
+s_encwrite(char *start, size_t size, FILE *outf)
 {
     char *e1, *e2, fb;
     int temp;
-    extern char statlist[];
 
     e1 = encstr;
     e2 = statlist;
-    fb = frob;
+    fb = 0;
 
     while (size--)
     {
@@ -149,14 +141,13 @@ s_encwrite(char *start, unsigned int size, FILE *outf)
  *	Perform an encrypted read
  */
 
-s_encread(char *start, unsigned int size, int inf)
+s_encread(char *start, size_t size, int inf)
 {
     char *e1, *e2, fb;
     int temp;
     int read_size;
-    extern char statlist[];
 
-    fb = frob;
+    fb = 0;
 
     if ((read_size = read(inf, start, size)) == 0 || read_size == -1)
 	return;
@@ -181,10 +172,10 @@ s_encread(char *start, unsigned int size, int inf)
  *	Convert a code to a monster name
  */
 char *
-s_killname(char monst, bool doart)
+s_killname(int monst, int doart)
 {
     char *sp;
-    bool article;
+    int article;
 
     article = TRUE;
     switch (monst)

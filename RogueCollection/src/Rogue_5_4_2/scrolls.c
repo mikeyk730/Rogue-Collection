@@ -19,17 +19,18 @@
  *	Read a scroll from the pack and do the appropriate thing
  */
 
-read_scroll()
+void
+read_scroll(void)
 {
     THING *obj;
     PLACE *pp;
     int y, x;
-    char ch;
+    int ch;
     int i;
-    bool discardit = FALSE;
+    int discardit = FALSE;
     struct room *cur_room;
     THING *orig_obj;
-    static coord mp;
+    coord mp;
 
     obj = get_item("read", SCROLL);
     if (obj == NULL)
@@ -123,8 +124,10 @@ read_scroll()
 			continue;
 		    /*
 		     * Or anything else nasty
+		     * Also avoid a xeroc which is disguised as scroll
 		     */
-		    else if (step_ok(ch = winat(y, x)))
+		    else if (moat(y, x) == NULL && step_ok(ch = winat(y, x)))
+		    {
 			if (ch == SCROLL
 			    && find_obj(y, x)->o_which == S_SCARE)
 				continue;
@@ -133,6 +136,7 @@ read_scroll()
 			    mp.y = y;
 			    mp.x = x;
 			}
+		    }
 	    if (i == 0)
 		msg("you hear a faint cry of anguish in the distance");
 	    else
@@ -146,7 +150,7 @@ read_scroll()
 	case S_ID_ARMOR:
 	case S_ID_R_OR_S:
 	{
-	    static char id_type[S_ID_R_OR_S + 1] =
+	    int id_type[S_ID_R_OR_S + 1] =
 		{ 0, 0, 0, 0, 0, POTION, SCROLL, WEAPON, ARMOR, R_OR_S };
 	    /*
 	     * Identify, let him figure something out
@@ -318,6 +322,7 @@ def:
  *	Uncurse an item
  */
 
+void
 uncurse(THING *obj)
 {
     if (obj != NULL)

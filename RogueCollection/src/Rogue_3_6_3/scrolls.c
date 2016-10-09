@@ -17,14 +17,15 @@
 #include <string.h>
 #include "rogue.h"
 
+void
 read_scroll()
 {
-    register struct object *obj;
-    register struct linked_list *item;
-    register struct room *rp;
-    register int i,j;
-    register char ch, nch;
-    register struct linked_list *titem;
+    struct object *obj;
+    struct linked_list *item;
+    struct room *rp;
+    int i,j;
+    int ch, nch;
+    struct linked_list *titem;
     char buf[80];
 
     item = get_item("read", SCROLL);
@@ -83,15 +84,15 @@ read_scroll()
 	     * from chasing after the hero.
 	     */
 	    {
-		register int x,y;
-		register struct linked_list *mon;
+		int x,y;
+		struct linked_list *mon;
 
 		for (x = hero.x-2; x <= hero.x+2; x++)
 		    for (y = hero.y-2; y <= hero.y+2; y++)
 			if (y > 0 && x > 0 && isupper(mvwinch(mw, y, x)))
 			    if ((mon = find_mons(y, x)) != NULL)
 			    {
-				register struct thing *th;
+				struct thing *th;
 
 				th = (struct thing *) ldata(mon);
 				th->t_flags &= ~ISRUN;
@@ -112,8 +113,8 @@ read_scroll()
 	     * otherwise give up
 	     */
 	    {
-		register int x, y;
-		register bool appear = 0;
+		int x, y;
+		int appear = 0;
 		coord mp;
 
 		/*
@@ -180,7 +181,7 @@ read_scroll()
 			case STAIRS:
 			    if (mvwinch(mw, i, j) != ' ')
 			    {
-				register struct thing *it;
+				struct thing *it;
 
 				it = (struct thing *) ldata(find_mons(i, j));
 				if ((it != NULL) && (it->t_oldch == ' '))

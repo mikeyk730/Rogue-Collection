@@ -11,7 +11,14 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+/* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06.
+ * Copyright (C) 2012 Rogue Central @ coredumpcentral.org. All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
+
+#include <stdlib.h>
 #include <curses.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -20,7 +27,8 @@
  *	What a certin object is
  */
 
-whatis(bool insist, int type)
+void
+whatis(int insist, int type)
 {
     THING *obj;
 
@@ -40,7 +48,7 @@ whatis(bool insist, int type)
 	    else if (obj == NULL)
 		msg("you must identify something");
 	    else if (type && obj->o_type != type &&
-	       !(type == R_OR_S && obj->o_type == RING || obj->o_type == STICK))
+	       !(type == R_OR_S && (obj->o_type == RING || obj->o_type == STICK)) )
 		    msg("you must identify a %s", type_name(type));
 	    else
 		break;
@@ -74,6 +82,7 @@ whatis(bool insist, int type)
  *	Set things up when we really know what a thing is
  */
 
+void
 set_know(THING *obj, struct obj_info *info)
 {
     char **guess;
@@ -92,19 +101,19 @@ set_know(THING *obj, struct obj_info *info)
  * type_name:
  *	Return a pointer to the name of the type
  */
-char *
+const char *
 type_name(int type)
 {
     struct h_list *hp;
-    static struct h_list tlist[] = {
-	POTION,	 "potion",		FALSE,
-	SCROLL,	 "scroll",		FALSE,
-	FOOD,	 "food",		FALSE,
-	R_OR_S,	 "ring, wand or staff",	FALSE,
-	RING,	 "ring",		FALSE,
-	STICK,	 "wand or staff",	FALSE,
-	WEAPON,	 "weapon",		FALSE,
-	ARMOR,	 "suit of armor",	FALSE,
+    struct h_list tlist[] = {
+	{POTION, "potion",		FALSE},
+	{SCROLL, "scroll",		FALSE},
+	{FOOD,	 "food",		FALSE},
+	{R_OR_S, "ring, wand or staff",	FALSE},
+	{RING,	 "ring",		FALSE},
+	{STICK,	 "wand or staff",	FALSE},
+	{WEAPON, "weapon",		FALSE},
+	{ARMOR,	 "suit of armor",	FALSE},
     };
 
     for (hp = tlist; hp->h_ch; hp++)
@@ -120,10 +129,11 @@ type_name(int type)
  *	wizard command for getting anything he wants
  */
 
-create_obj()
+void
+create_obj(void)
 {
     THING *obj;
-    char ch, bless;
+    int ch, bless;
 
     obj = new_item();
     msg("type of item: ");
@@ -191,12 +201,13 @@ create_obj()
  *	Bamf the hero someplace else
  */
 
-teleport()
+void
+teleport(void)
 {
-    static coord c;
+    coord c;
 
     mvaddch(hero.y, hero.x, floor_at());
-    find_floor((struct room *) NULL, &c, FALSE, TRUE);
+    find_floor(NULL, &c, FALSE, TRUE);
     if (roomin(&c) != proom)
     {
 	leave_room(&hero);
@@ -229,21 +240,31 @@ teleport()
  * passwd:
  *	See if user knows password
  */
-bool
-passwd()
+int
+passwd(void)
 {
-    char *sp, c;
-    static char buf[MAXSTR];
+    /* This function commented out and replaced by RRPF */
+    /*char *sp;
+    int c;
+    static char buf[MAXSTR];*/
+    char c;
 
     msg("wizard's Password:");
-    mpos = 0;
+    /*mpos = 0;
     sp = buf;
     while ((c = readchar()) != '\n' && c != '\r' && c != ESCAPE)
-	*sp++ = c;
+	if (c == md_killchar())
+	    sp = buf;
+	else if (c == md_erasechar() && sp > buf)
+	    sp--;
+	else
+	    *sp++ = (char) c;
     if (sp == buf)
 	return FALSE;
     *sp = '\0';
-    return (strcmp(PASSWD, md_crypt(buf, "mT")) == 0);
+    return (strcmp(PASSWD, md_crypt(buf, "mT")) == 0);*/
+    c = readchar();
+    return (tolower(c) == 'y');
 }
 
 /*
@@ -251,7 +272,8 @@ passwd()
  *	Print out the map for the wizard
  */
 
-show_map()
+void
+show_map(void)
 {
     int y, x, real;
 
@@ -259,11 +281,12 @@ show_map()
     for (y = 1; y < NUMLINES - 1; y++)
 	for (x = 0; x < NUMCOLS; x++)
 	{
-	    if (!(real = flat(y, x) & F_REAL))
+	    real = flat(y, x) & F_REAL;
+	    if (!real)
 		wstandout(hw);
 	    wmove(hw, y, x);
 	    waddch(hw, chat(y, x));
-	    if (!real)
+	    if (!(real & F_REAL))
 		wstandend(hw);
 	}
     show_win("---More (level map)---");

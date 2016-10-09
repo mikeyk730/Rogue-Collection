@@ -14,6 +14,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <string.h>
+#include <stdlib.h>
 #define KERNEL
 #include <signal.h>
 #undef KERNEL
@@ -117,13 +119,12 @@ gotfile:
  *	recieved
  */
 void
-auto_save()
+auto_save(int sig)
 {
     register FILE *savef;
-    register int i;
 
-    for (i = 0; i < NSIG; i++)
-	signal(i, SIG_IGN);
+    md_ignore_signals();
+
     if (file_name[0] != '\0' && (savef = fopen(file_name, "w")) != NULL)
 	save_file(savef);
     endwin();
@@ -146,7 +147,7 @@ register FILE *savef;
     close(fd);
     move(LINES-1, 0);
     refresh();
-    fstat(fileno(savef), &sbuf);
+    fstat(md_fileno(savef), &sbuf);
     /*
      * DO NOT DELETE.  This forces stdio to allocate the output buffer
      * so that malloc doesn't get confused on restart
@@ -178,7 +179,6 @@ register char *file;
 char **envp;
 {
     register int inf;
-    void (*func)();
     register bool syml;
     extern char **environ;
     char buf[MAXSTR];
@@ -192,10 +192,7 @@ char **envp;
     /*
      * If a process can be suspended, this code wouldn't work
      */
-# ifdef SIG_HOLD
-    func = signal(SIGTSTP, SIG_HOLD);
-# else
-# endif
+    signal(SIGTSTP, SIG_IGN);
 #endif
 
     if ((inf = open(file, 0)) < 0)
@@ -219,7 +216,7 @@ char **envp;
 #ifdef WIZARD
 	!wizard &&
 #endif
-	unlink(file) < 0)
+    md_unlink(file) < 0)
     {
 	printf("Cannot unlink file\n");
 	return FALSE;
@@ -239,23 +236,9 @@ char **envp;
      * inode for as long as possible
      */
 
-#ifdef WIZARD
-    if (!wizard)
-#endif
-	if (sbuf2.st_ino != sbuf.st_ino || sbuf2.st_dev != sbuf.st_dev)
-	{
-	    printf("Sorry, saved game is not in the same file.\n");
-	    return FALSE;
-	}
-	else if (sbuf2.st_ctime - sbuf.st_ctime > 15)
-	{
-	    printf("Sorry, file has been touched, so this score won't be recorded\n");
-	    noscore = TRUE;
-	}
+    initscr();
 
-	initscr();
-
-	if (slines > LINES) 
+    if (slines > LINES) 
     { 
         printf("Sorry, original game was played on a screen with %d lines.\n",slines); 
         printf("Current screen only has %d lines. Unable to restore game\n",LINES); 
@@ -269,9 +252,10 @@ char **envp;
         return(FALSE); 
     }
 
-	hw = newwin(LINES, COLS, 0, 0);
+    hw = newwin(LINES, COLS, 0, 0);
+    keypad(stdscr,1);
     
-	mpos = 0;
+    mpos = 0;
     mvprintw(0, 0, "%s: %s", file, ctime(&sbuf2.st_mtime));
 
     /*
@@ -288,6 +272,7 @@ char **envp;
 
     if (rs_restore_file(inf) == FALSE)
     {
+	endwin();
         printf("Cannot restore file\n");
         return(FALSE);
     }
@@ -304,7 +289,7 @@ char **envp;
     msg("file name: %s", file);
 	status();
     playit();
-    /*NOTREACHED*/
+    return 0;
 }
 
 /*

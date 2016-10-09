@@ -57,14 +57,12 @@ char	*charge_str(), *ctime(), *getenv(), *inv_name(),
 	*tr_name(),
 	*unctrol(), *vowelstr();
 
-void    leave(), quit(), tstp(), auto_save(), endit();
+void    leave(int), quit(int), tstp(), auto_save(int), endit(int);
 int	doctor(), nohaste(),
 	rollwand(), runners(), sight(), stomach(), swander(),
 	turn_see(), unconfuse(), unsee();
 
-#ifdef CHECKTIME
-int	checkout();
-#endif
+void	checkout();
 
 long	lseek();
 
@@ -87,3 +85,7 @@ extern bool  got_genocide;
 */
 #define O_BINARY 0
 #endif
+
+extern FILE *md_fdopen(int fd, char *mode);
+extern char *md_getusername(int uid);
+extern char *md_gethomedir();

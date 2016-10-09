@@ -15,11 +15,12 @@
 #include <string.h>
 #include "rogue.h"
 
+void
 ring_on()
 {
-    register struct object *obj;
-    register struct linked_list *item;
-    register int ring;
+    struct object *obj;
+    struct linked_list *item;
+    int ring;
     str_t save_max;
     char buf[80];
 
@@ -84,6 +85,10 @@ ring_on()
 	    break;
     }
     status();
+
+    if (obj->o_which >= MAXRINGS)
+        return;
+
     if (r_know[obj->o_which] && r_guess[obj->o_which])
     {
 	free(r_guess[obj->o_which]);
@@ -95,7 +100,7 @@ ring_on()
 	msg(terse ? "Call it: " : "What do you want to call it? ");
 	if (get_str(buf, cw) == NORM)
 	{
-	    r_guess[obj->o_which] = malloc((unsigned int) strlen(buf) + 1);
+	    r_guess[obj->o_which] = malloc(strlen(buf) + 1);
 	    if (r_guess[obj->o_which] != NULL)
 		strcpy(r_guess[obj->o_which], buf);
 	}
@@ -103,10 +108,11 @@ ring_on()
     }
 }
 
+void
 ring_off()
 {
-    register int ring;
-    register struct object *obj;
+    int ring;
+    struct object *obj;
 
     if (cur_ring[LEFT] == NULL && cur_ring[RIGHT] == NULL)
     {
@@ -134,9 +140,10 @@ ring_off()
 	msg("Was wearing %s", inv_name(obj, TRUE));
 }
 
+int
 gethand()
 {
-    register int c;
+    int c;
 
     for (;;)
     {
@@ -161,8 +168,8 @@ gethand()
 /*
  * how much food does this ring use up?
  */
-ring_eat(hand)
-register int hand;
+int
+ring_eat(int hand)
 {
     if (cur_ring[hand] == NULL)
 	return 0;
@@ -185,8 +192,7 @@ register int hand;
  * print ring bonuses
  */
 char *
-ring_num(obj)
-register struct object *obj;
+ring_num(struct object *obj)
 {
     static char buf[5];
 

@@ -16,10 +16,11 @@
  * wear:
  *	The player wants to wear something, so let him/her put it on.
  */
-wear()
+void
+wear(void)
 {
-    register THING *obj;
-    register char *sp;
+    THING *obj;
+    char *sp;
 
     if ((obj = get_item("wear", ARMOR)) == NULL)
 	return;
@@ -50,9 +51,10 @@ wear()
  * take_off:
  *	Get the armor off of the players back
  */
-take_off()
+void
+take_off(void)
 {
-    register THING *obj;
+    THING *obj;
 
     if ((obj = cur_armor) == NULL)
     {
@@ -77,7 +79,8 @@ take_off()
  * waste_time:
  *	Do nothing but let other things happen
  */
-waste_time()
+void
+waste_time(void)
 {
     do_daemons(BEFORE);
     do_fuses(BEFORE);

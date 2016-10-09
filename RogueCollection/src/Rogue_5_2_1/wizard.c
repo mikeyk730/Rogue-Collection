@@ -6,12 +6,15 @@
  * @(#)wizard.c	4.14 (Berkeley) 1/26/82
  */
 
-#include <curses.h>
-#include <termios.h>
-#include <ctype.h>
-#include "rogue.h"
+/* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06.
+ * Copyright (C) 2012 Rogue Central @ coredumpcentral.org. All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
 
-extern struct termios terminal;
+#include <curses.h>
+#include <ctype.h>
+#include <string.h>
+#include "rogue.h"
 
 /*
  * whatis:
@@ -197,23 +200,29 @@ teleport()
  */
 passwd()
 {
-    register char *sp, c;
+    /*register char *sp, c;
     char buf[MAXSTR], *xcrypt();
+    Only below needed - RRPF*/
+    char c;
 
     msg("wizard's Password:");
-    mpos = 0;
+    /* Commented out by RRPF
+     * and replaced with routine below
+     mpos = 0;
     sp = buf;
-    while ((c = getchar()) != '\n' && c != '\r' && c != ESCAPE)
-	if (c == terminal.c_cc[VKILL])
+    while ((c = readchar()) != '\n' && c != '\r' && c != ESCAPE)
+	if (c == md_killchar())
 	    sp = buf;
-	else if (c == terminal.c_cc[VERASE] && sp > buf)
+	else if (c == md_erasechar() && sp > buf)
 	    sp--;
 	else
 	    *sp++ = c;
     if (sp == buf)
 	return FALSE;
     *sp = '\0';
-    return (strcmp(PASSWD, xcrypt(buf, "mT")) == 0);
+    return (strcmp(PASSWD, xcrypt(buf, "mT")) == 0);*/
+    c = readchar();
+    return (tolower(c) == 'y');
 }
 
 /*

@@ -11,17 +11,16 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
 #define NO_WEAPON -1
 
-int group = 2;
-
-static struct init_weaps {
+static const struct init_weaps {
     char *iw_dam;	/* Damage when wielded */
     char *iw_hrl;	/* Damage when thrown */
-    char iw_launch;	/* Launching weapon */
+    int iw_launch;	/* Launching weapon */
     int iw_flags;	/* Miscellaneous flags */
 } init_dam[MAXWEAPONS] = {
     { "2x4",	"1x3",	NO_WEAPON,	0,		},	/* Mace */
@@ -40,6 +39,7 @@ static struct init_weaps {
  *	Fire a missile in a given direction
  */
 
+void
 missile(int ydelta, int xdelta)
 {
     THING *obj;
@@ -68,6 +68,7 @@ missile(int ydelta, int xdelta)
  *	across the room
  */
 
+void
 do_motion(THING *obj, int ydelta, int xdelta)
 {
     int ch;
@@ -115,10 +116,11 @@ do_motion(THING *obj, int ydelta, int xdelta)
  *	Drop an item someplace around here.
  */
 
-fall(THING *obj, bool pr)
+void
+fall(THING *obj, int pr)
 {
     PLACE *pp;
-    static coord fpos;
+    coord fpos;
 
     if (fallpos(&obj->o_pos, &fpos))
     {
@@ -126,10 +128,12 @@ fall(THING *obj, bool pr)
 	pp->p_ch = obj->o_type;
 	obj->o_pos = fpos;
 	if (cansee(fpos.y, fpos.x))
+	{
 	    if (pp->p_monst != NULL)
 		pp->p_monst->t_oldch = obj->o_type;
 	    else
 		mvaddch(fpos.y, fpos.x, obj->o_type);
+	}
 	attach(lvl_obj, obj);
 	return;
     }
@@ -151,9 +155,10 @@ fall(THING *obj, bool pr)
  *	Set up the initial goodies for a weapon
  */
 
-init_weapon(THING *weap, char which)
+void
+init_weapon(THING *weap, int which)
 {
-    struct init_weaps *iwp;
+    const struct init_weaps *iwp;
 
     weap->o_type = WEAPON;
     weap->o_which = which;
@@ -185,9 +190,10 @@ init_weapon(THING *weap, char which)
  * hit_monster:
  *	Does the missile hit the monster?
  */
-hit_monster(int y, int x, THING *obj)
+int
+hit_monster(int y, int x, const THING *obj)
 {
-    static coord mp;
+    coord mp;
 
     mp.y = y;
     mp.x = x;
@@ -198,8 +204,8 @@ hit_monster(int y, int x, THING *obj)
  * num:
  *	Figure out the plus number for armor/weapons
  */
-char *
-num(int n1, int n2, char type)
+const char *
+num(int n1, int n2, int type)
 {
     static char numbuf[10];
 
@@ -214,7 +220,8 @@ num(int n1, int n2, char type)
  *	Pull out a certain weapon
  */
 
-wield()
+void
+wield(void)
 {
     THING *obj, *oweapon;
     char *sp;
@@ -252,8 +259,8 @@ bad:
  * fallpos:
  *	Pick a random position around the give (y, x) coordinates
  */
-bool
-fallpos(coord *pos, coord *newpos)
+int
+fallpos(const coord *pos, coord *newpos)
 {
     int y, x, cnt, ch;
 

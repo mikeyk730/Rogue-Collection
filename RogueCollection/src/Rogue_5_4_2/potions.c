@@ -14,15 +14,15 @@
 #include <ctype.h>
 #include "rogue.h"
 
-typedef struct
+typedef struct PACT
 {
-    int pa_flags;
-    int (*pa_daemon)();
-    int pa_time;
-    char *pa_high, *pa_straight;
+    const int pa_flags;
+    void (*pa_daemon)();
+    const int pa_time;
+    const char *pa_high, *pa_straight;
 } PACT;
 
-static PACT p_actions[] =
+static const PACT p_actions[] =
 {
 	{ ISHUH,	unconfuse,	HUHDURATION,	/* P_CONFUSE */
 		"what a tripy feeling!",
@@ -55,11 +55,12 @@ static PACT p_actions[] =
  *	Quaff a potion from the pack
  */
 
-quaff()
+void
+quaff(void)
 {
     THING *obj, *tp, *mp;
-    bool discardit = FALSE;
-    bool show, trip;
+    int discardit = FALSE;
+    int show, trip;
 
     obj = get_item("quaff", POTION);
     /*
@@ -110,7 +111,7 @@ quaff()
 	    msg("you feel stronger, now.  What bulging muscles!");
 	when P_MFIND:
 	    player.t_flags |= SEEMONST;
-	    fuse(turn_see, TRUE, HUHDURATION, AFTER);
+	    fuse((void(*)())turn_see, TRUE, HUHDURATION, AFTER);
 	    if (!turn_see(FALSE))
 		msg("you have a %s feeling for a moment, then it passes",
 		    choose_str("normal", "strange"));
@@ -227,15 +228,15 @@ quaff()
  * is_magic:
  *	Returns true if an object radiates magic
  */
-bool
-is_magic(THING *obj)
+int
+is_magic(const THING *obj)
 {
     switch (obj->o_type)
     {
 	case ARMOR:
-	    return (obj->o_flags&ISPROT) || obj->o_arm != a_class[obj->o_which];
+	    return ((obj->o_flags&ISPROT) || obj->o_arm != a_class[obj->o_which]);
 	case WEAPON:
-	    return obj->o_hplus != 0 || obj->o_dplus != 0;
+	    return (obj->o_hplus != 0 || obj->o_dplus != 0);
 	case POTION:
 	case SCROLL:
 	case STICK:
@@ -251,7 +252,8 @@ is_magic(THING *obj)
  *	Turn on the ability to see invisible
  */
 
-invis_on()
+void
+invis_on(void)
 {
     THING *mp;
 
@@ -265,11 +267,11 @@ invis_on()
  * turn_see:
  *	Put on or off seeing monsters on this level
  */
-bool
-turn_see(bool turn_off)
+int
+turn_see(int turn_off)
 {
     THING *mp;
-    bool can_see, add_new;
+    int can_see, add_new;
 
     add_new = FALSE;
     for (mp = mlist; mp != NULL; mp = next(mp))
@@ -307,13 +309,13 @@ turn_see(bool turn_off)
  * seen_stairs:
  *	Return TRUE if the player has seen the stairs
  */
-bool
-seen_stairs()
+int
+seen_stairs(void)
 {
     THING	*tp;
 
     move(stairs.y, stairs.x);
-    if (inch() == STAIRS)			/* it's on the map */
+    if (CCHAR( inch() ) == STAIRS)			/* it's on the map */
 	return TRUE;
     if (ce(hero, stairs))			/* It's under him */
 	return TRUE;
@@ -338,7 +340,8 @@ seen_stairs()
  *	The guy just magically went up a level.
  */
 
-raise_level()
+void
+raise_level(void)
 {
     pstats.s_exp = e_levels[pstats.s_lvl-1] + 1L;
     check_level();
@@ -350,9 +353,10 @@ raise_level()
  *	turns on a flag
  */
 
-do_pot(int type, bool knowit)
+void
+do_pot(int type, int knowit)
 {
-    PACT *pp;
+    const PACT *pp;
     int t;
 
     pp = &p_actions[type];

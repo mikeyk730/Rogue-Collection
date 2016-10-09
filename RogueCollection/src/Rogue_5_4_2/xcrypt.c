@@ -52,9 +52,32 @@
 #include <sys/types.h>
 #include <string.h>
 
-#ifdef MASTER
-# include <stdio.h>
-#endif
+static unsigned int md_endian = 0x01020304;
+
+unsigned int
+xntohl(unsigned int x)
+{
+    if ( *((char *)&md_endian) == 0x01 )
+        return(x);
+    else
+        return( ((x & 0x000000ffU) << 24) |
+                ((x & 0x0000ff00U) <<  8) |
+                ((x & 0x00ff0000U) >>  8) |
+                ((x & 0xff000000U) >> 24) );
+}
+
+unsigned int
+xhtonl(unsigned int x)
+{
+    if ( *((char *)&md_endian) == 0x01 )
+        return(x);
+    else
+        return( ((x & 0x000000ffU) << 24) |
+                ((x & 0x0000ff00U) <<  8) |
+                ((x & 0x00ff0000U) >>  8) |
+                ((x & 0xff000000U) >> 24) );
+}
+
 #define _PASSWORD_EFMT1 '_'
 
 static unsigned char	IP[64] = {
@@ -181,8 +204,7 @@ static unsigned char	ascii64[] =
 /*	  0123456789012345678901234567890123456789012345678901234567890123 */
 
 static __inline int
-ascii_to_bin(ch)
-	char ch;
+ascii_to_bin(int ch)
 {
 	if (ch > 'z')
 		return(0);
@@ -200,7 +222,7 @@ ascii_to_bin(ch)
 }
 
 static void
-des_init()
+des_init(void)
 {
 	int	i, j, b, k, inbit, obit;
 	unsigned int	*p, *il, *ir, *fl, *fr;
@@ -235,7 +257,7 @@ des_init()
 	 * initialise the inverted key permutation.
 	 */
 	for (i = 0; i < 64; i++) {
-		init_perm[final_perm[i] = IP[i] - 1] = i;
+		init_perm[final_perm[i] = IP[i] - 1] = (unsigned char) i;
 		inv_key_perm[i] = 255;
 	}
 
@@ -244,7 +266,7 @@ des_init()
 	 * compression permutation.
 	 */
 	for (i = 0; i < 56; i++) {
-		inv_key_perm[key_perm[i] - 1] = i;
+		inv_key_perm[key_perm[i] - 1] = (unsigned char) i;
 		inv_comp_perm[i] = 255;
 	}
 
@@ -252,7 +274,7 @@ des_init()
 	 * Invert the key compression permutation.
 	 */
 	for (i = 0; i < 48; i++) {
-		inv_comp_perm[comp_perm[i] - 1] = i;
+		inv_comp_perm[comp_perm[i] - 1] = (unsigned char) i;
 	}
 
 	/*
@@ -314,7 +336,7 @@ des_init()
 	 * handling the output of the S-box arrays setup above.
 	 */
 	for (i = 0; i < 32; i++)
-		un_pbox[pbox[i] - 1] = i;
+		un_pbox[pbox[i] - 1] = (unsigned char) i;
 
 	for (b = 0; b < 4; b++)
 		for (i = 0; i < 256; i++) {
@@ -329,8 +351,7 @@ des_init()
 }
 
 static void
-setup_salt(salt)
-	int salt;
+setup_salt(int salt)
 {
 	unsigned int	obit, saltbit;
 	int	i;
@@ -351,8 +372,7 @@ setup_salt(salt)
 }
 
 static int
-des_setkey(key)
-	const char *key;
+des_setkey(const char *key)
 {
 	unsigned int k0, k1, rawkey0, rawkey1;
 	int	shifts, round;
@@ -360,8 +380,8 @@ des_setkey(key)
 	if (!des_initialised)
 		des_init();
 
-	rawkey0 = md_ntohl(*(unsigned int *) key);
-	rawkey1 = md_ntohl(*(unsigned int *) (key + 4));
+	rawkey0 = xntohl(*(unsigned int *) key);
+	rawkey1 = xntohl(*(unsigned int *) (key + 4));
 
 	if ((rawkey0 | rawkey1)
 	    && rawkey0 == old_rawkey0
@@ -432,9 +452,8 @@ des_setkey(key)
 }
 
 static int
-do_des(l_in, r_in, l_out, r_out, count)
-	unsigned int l_in, r_in, *l_out, *r_out;
-	int count;
+do_des(unsigned int l_in, unsigned int r_in, unsigned int *l_out, 
+       unsigned int *r_out, int count)
 {
 	/*
 	 *	l_in, r_in, l_out, and r_out are in pseudo-"big-endian" format.
@@ -550,11 +569,7 @@ do_des(l_in, r_in, l_out, r_out, count)
 }
 
 static int
-des_cipher(in, out, salt, count)
-	const char *in;
-	char *out;
-	int salt;
-	int count;
+des_cipher(const char *in, char *out, int salt, int count)
 {
 	unsigned int l_out, r_out, rawl, rawr;
 	unsigned int x[2];
@@ -566,20 +581,18 @@ des_cipher(in, out, salt, count)
 	setup_salt(salt);
 
 	memcpy(x, in, sizeof x);
-	rawl = md_ntohl(x[0]);
-	rawr = md_ntohl(x[1]);
+	rawl = xntohl(x[0]);
+	rawr = xntohl(x[1]);
 	retval = do_des(rawl, rawr, &l_out, &r_out, count);
 
-	x[0] = md_htonl(l_out);
-	x[1] = md_htonl(r_out);
+	x[0] = xhtonl(l_out);
+	x[1] = xhtonl(r_out);
 	memcpy(out, x, sizeof x);
 	return(retval);
 }
 
 char *
-xcrypt(key, setting)
-	const char *key;
-	const char *setting;
+xcrypt(const char *key, const char *setting)
 {
 	int		i;
 	unsigned int	count, salt, l, r0, r1, keybuf[2];
@@ -598,7 +611,7 @@ xcrypt(key, setting)
 		if ((*q++ = *key << 1))
 			key++;
 	}
-	if (des_setkey((unsigned char *) keybuf))
+	if (des_setkey((const char *) keybuf))
 		return(NULL);
 
 	if (*setting == _PASSWORD_EFMT1) {
@@ -617,7 +630,7 @@ xcrypt(key, setting)
 			/*
 			 * Encrypt the key with itself.
 			 */
-			if (des_cipher((unsigned char*)keybuf, (unsigned char*)keybuf, 0, 1))
+			if (des_cipher((const char*)keybuf, (char*)keybuf, 0, 1))
 				return(NULL);
 			/*
 			 * And XOR with the next 8 characters of the key.
@@ -627,7 +640,7 @@ xcrypt(key, setting)
 					*key)
 				*q++ ^= *key++ << 1;
 
-			if (des_setkey((unsigned char *) keybuf))
+			if (des_setkey((const char *) keybuf))
 				return(NULL);
 		}
 		strncpy((char *)output, setting, 9);

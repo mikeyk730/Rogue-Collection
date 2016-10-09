@@ -10,6 +10,7 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include <curses.h>
 #include "rogue.h"
 
@@ -21,12 +22,13 @@ static coord ch_ret;				/* Where chasing takes you */
  * runners:
  *	Make all the running monsters move.
  */
-runners()
+void
+runners(void)
 {
-    register THING *tp;
+    THING *tp;
     THING *next;
-    bool wastarget;
-    static coord orig_pos;
+    int wastarget;
+    coord orig_pos;
 
     for (tp = mlist; tp != NULL; tp = next)
     {
@@ -58,8 +60,8 @@ runners()
  * move_monst:
  *	Execute a single turn of running for a monster
  */
-move_monst(tp)
-register THING *tp;
+int
+move_monst(THING *tp)
 {
     if (!on(*tp, ISSLOW) || tp->t_turn)
 	if (do_chase(tp) == -1)
@@ -77,7 +79,7 @@ register THING *tp;
  *	all the relevant state.
  */
 void
-relocate(THING *th, coord *new_loc)
+relocate(THING *th, const coord *new_loc)
 {
     struct room *oroom;
 
@@ -109,16 +111,16 @@ relocate(THING *th, coord *new_loc)
  * do_chase:
  *	Make one thing chase another.
  */
-do_chase(th)
-register THING *th;
+int
+do_chase(THING *th)
 {
-    register coord *cp;
-    register struct room *rer, *ree;	/* room of chaser, room of chasee */
-    register int mindist = 32767, curdist;
-    register bool stoprun = FALSE;	/* TRUE means we are there */
-    register bool door;
-    register THING *obj;
-    static coord this;			/* Temporary destination for chaser */
+    coord *cp;
+    struct room *rer, *ree;	/* room of chaser, room of chasee */
+    int mindist = 32767, curdist;
+    int stoprun = FALSE;	/* TRUE means we are there */
+    int door;
+    THING *obj;
+    coord this;			/* Temporary destination for chaser */
 
     rer = th->t_room;		/* Find room of chaser */
     if (on(*th, ISGREED) && rer->r_goldval == 0)
@@ -229,32 +231,32 @@ over:
  * set_oldch:
  *	Set the oldch character for the monster
  */
-set_oldch(tp, cp)
-register THING *tp;
-register coord *cp;
+void
+set_oldch(THING *tp, const coord *cp)
 {
-    char sch;
+    int sch;
 
     if (ce(tp->t_pos, *cp))
         return;
 
     sch = tp->t_oldch;
-    tp->t_oldch = mvinch(cp->y,cp->x);
+    tp->t_oldch = CCHAR( mvinch(cp->y,cp->x) );
     if (!on(player, ISBLIND))
+    {
 	    if ((sch == FLOOR || tp->t_oldch == FLOOR) &&
 		(tp->t_room->r_flags & ISDARK))
 		    tp->t_oldch = ' ';
 	    else if (dist_cp(cp, &hero) <= LAMPDIST && see_floor)
 		tp->t_oldch = chat(cp->y, cp->x);
+    }
 }
 
 /*
  * see_monst:
  *	Return TRUE if the hero can see the monster
  */
-bool
-see_monst(mp)
-register THING *mp;
+int
+see_monst(const THING *mp)
 {
     int y, x;
 
@@ -280,21 +282,23 @@ register THING *mp;
  * runto:
  *	Set a monster running after the hero.
  */
-runto(runner)
-register coord *runner;
+void
+runto(const coord *runner)
 {
-    register THING *tp;
+    THING *tp;
 
     /*
      * If we couldn't find him, something is funny
      */
-#ifdef MASTER
     if ((tp = moat(runner->y, runner->x)) == NULL)
-	msg("couldn't find monster in runto at (%d,%d)", runner->y, runner->x);
-#else
-    tp = moat(runner->y, runner->x);
+	{
+#ifdef MASTER
+		msg("couldn't find monster in runto at (%d,%d)", runner->y, runner->x);
 #endif
-    /*
+		return;
+	}
+
+	/*
      * Start the beastie running
      */
     tp->t_flags |= ISRUN;
@@ -308,18 +312,16 @@ register coord *runner;
  *	chasee(ee).  Returns TRUE if we want to keep on chasing later
  *	FALSE if we reach the goal.
  */
-bool
-chase(tp,ee)
-THING *tp;
-coord *ee;
+int
+chase(THING *tp, const coord *ee)
 {
-    register THING *obj;
-    register int x, y;
-    register int curdist, thisdist;
-    register coord *er = &tp->t_pos;
-    register char ch;
-    register int plcnt = 1;
-    static coord tryp;
+    THING *obj;
+    int x, y;
+    int curdist, thisdist;
+    const coord *er = &tp->t_pos;
+    int ch;
+    int plcnt = 1;
+    coord tryp;
 
     /*
      * If the thing is confused, let it move randomly. Invisible
@@ -332,7 +334,7 @@ coord *ee;
 	/*
 	 * get a valid random move
 	 */
-	ch_ret = *rndmove(tp);
+	ch_ret = rndmove(tp);
 	curdist = dist_cp(&ch_ret, ee);
 	/*
 	 * Small chance that it will become un-confused 
@@ -346,7 +348,7 @@ coord *ee;
      */
     else
     {
-	register int ey, ex;
+	int ey, ex;
 	/*
 	 * This will eventually hold where we move to get closer
 	 * If we can't find an empty spot, we stay where we are.
@@ -422,12 +424,10 @@ coord *ee;
  *	in any room.
  */
 struct room *
-roomin(cp)
-register coord *cp;
+roomin(const coord *cp)
 {
-    register struct room *rp;
-    register char *fp;
-
+    struct room *rp;
+    int *fp;
 
     fp = &flat(cp->y, cp->x);
     if (*fp & F_PASS)
@@ -441,7 +441,7 @@ register coord *cp;
     msg("in some bizarre place (%d, %d)", unc(*cp));
 #ifdef MASTER
     abort();
-    /* NOTREACHED */
+    return NULL;
 #else
     return NULL;
 #endif
@@ -451,9 +451,8 @@ register coord *cp;
  * diag_ok:
  *	Check to see if the move is legal if it is diagonal
  */
-bool
-diag_ok(sp,ep)
-register coord *sp, *ep;
+int
+diag_ok(const coord *sp, const coord *ep)
 {
     if (ep->x < 0 || ep->x >= NUMCOLS || ep->y <= 0 || ep->y >= NUMLINES - 1)
 	return FALSE;
@@ -466,12 +465,11 @@ register coord *sp, *ep;
  * cansee:
  *	Returns true if the hero can see a certain coordinate.
  */
-bool
-cansee(y,x)
-register int y, x;
+int
+cansee(int y, int x)
 {
-    register struct room *rer;
-    static coord tp;
+    struct room *rer;
+    coord tp;
 
     if (on(player, ISBLIND))
 	return FALSE;
@@ -496,12 +494,11 @@ register int y, x;
  * find_dest:
  *	find the proper destination for the monster
  */
-coord *
-find_dest(tp)
-register THING *tp;
+const coord *
+find_dest(const THING *tp)
 {
-    register THING *obj;
-    register int prob;
+    THING *obj;
+    int prob;
 
     if ((prob = monsters[tp->t_type - 'A'].m_carry) <= 0 || tp->t_room == proom
 	|| see_monst(tp))
@@ -529,8 +526,7 @@ register THING *tp;
  *	our purposes, since it's only used comparitively.
  */
 int
-dist(y1,x1,y2,x2)
-register int y1, x1, y2, x2;
+dist(int y1, int x1, int y2, int x2)
 {
     return ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
@@ -540,8 +536,7 @@ register int y1, x1, y2, x2;
  *	Call dist() with appropriate arguments for coord pointers
  */
 int
-dist_cp(c1,c2)
-register coord *c1, *c2;
+dist_cp(const coord *c1, const coord *c2)
 {
     return dist(c1->y, c1->x, c2->y, c2->x);
 }

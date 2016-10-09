@@ -12,6 +12,7 @@
 
 #include <curses.h>
 #include <ctype.h>
+#include <string.h>
 #include "rogue.h"
 
 #define NONE 100
@@ -149,7 +150,7 @@ register bool pr;
 	attach(lvl_obj, obj);
 	return;
     }
-    discard(obj);
+
     if (pr)
 		msg("the %s vanishes as it hits the ground", 
 			/* BUGFIX: Identification trick */

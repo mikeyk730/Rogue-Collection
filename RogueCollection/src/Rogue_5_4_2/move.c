@@ -18,14 +18,14 @@
  * used to hold the new hero position
  */
 
-coord nh;
 
 /*
  * do_run:
  *	Start the hero running
  */
 
-do_run(char ch)
+void
+do_run(int ch)
 {
     running = TRUE;
     after = FALSE;
@@ -38,9 +38,11 @@ do_run(char ch)
  * consequences (fighting, picking up, etc.)
  */
 
+void
 do_move(int dy, int dx)
 {
-    char ch, fl;
+    int ch, fl;
+    coord nh;
 
     firstmove = FALSE;
     if (no_move)
@@ -54,7 +56,7 @@ do_move(int dy, int dx)
      */
     if (on(player, ISHUH) && rnd(5) != 0)
     {
-	nh = *rndmove(&player);
+	nh = rndmove(&player);
 	if (ce(nh, hero))
 	{
 	    after = FALSE;
@@ -108,7 +110,7 @@ hit_bound:
 	    if (passgo && running && (proom->r_flags & ISGONE)
 		&& !on(player, ISBLIND))
 	    {
-		bool	b1, b2;
+		int	b1, b2;
 
 		switch (runch)
 		{
@@ -202,7 +204,7 @@ move_stuff:
  * turn_ok:
  *	Decide whether it is legal to turn onto the given space
  */
-bool
+int
 turn_ok(int y, int x)
 {
     PLACE *pp;
@@ -217,7 +219,8 @@ turn_ok(int y, int x)
  *	Decide whether to refresh at a passage turning or not
  */
 
-turnref()
+void
+turnref(void)
 {
     PLACE *pp;
 
@@ -240,7 +243,8 @@ turnref()
  *	that might move.
  */
 
-door_open(struct room *rp)
+void
+door_open(const struct room *rp)
 {
     int y, x;
 
@@ -255,12 +259,12 @@ door_open(struct room *rp)
  * be_trapped:
  *	The guy stepped on a trap.... Make him pay.
  */
-char
-be_trapped(coord *tc)
+int
+be_trapped(const coord *tc)
 {
     PLACE *pp;
     THING *arrow;
-    char tr;
+    int tr;
 
     if (on(player, ISLEVIT))
 	return T_RUST;	/* anything that's not a door or teleport */
@@ -286,8 +290,8 @@ be_trapped(coord *tc)
                 when 1: msg("the light in here suddenly seems %s", rainbow[rnd(cNCOLORS)]);
                 when 2: msg("you feel a sting in the side of your neck");
                 when 3: msg("multi-colored lines swirl around you, then fade");
-                when 4: msg("a %s light flashes in your eyes");
-                when 5: msg("a spike shoots past your ear!", rainbow[rnd(cNCOLORS)]);
+                when 4: msg("a %s light flashes in your eyes", rainbow[rnd(cNCOLORS)]);
+                when 5: msg("a spike shoots past your ear!");
                 when 6: msg("%s sparks dance across your armor", rainbow[rnd(cNCOLORS)]);
                 when 7: msg("you suddenly feel very thirsty");
                 when 8: msg("you feel time speed up suddenly");
@@ -353,13 +357,13 @@ be_trapped(coord *tc)
  * rndmove:
  *	Move in a random direction if the monster/person is confused
  */
-coord *
-rndmove(THING *who)
+coord
+rndmove(const THING *who)
 {
     THING *obj;
     int x, y;
-    char ch;
-    static coord ret;  /* what we will be returning */
+    int ch;
+    coord ret;  /* what we will be returning */
 
     y = ret.y = who->t_pos.y + rnd(3) - 1;
     x = ret.x = who->t_pos.x + rnd(3) - 1;
@@ -368,7 +372,7 @@ rndmove(THING *who)
      * (I.e., bump into the wall or whatever)
      */
     if (y == who->t_pos.y && x == who->t_pos.x)
-	return &ret;
+	return ret;
     if (!diag_ok(&who->t_pos, &ret))
 	goto bad;
     else
@@ -385,11 +389,11 @@ rndmove(THING *who)
 		goto bad;
 	}
     }
-    return &ret;
+    return ret;
 
 bad:
     ret = who->t_pos;
-    return &ret;
+    return ret;
 }
 
 /*
@@ -398,6 +402,7 @@ bad:
  *	aren't wearing a magic ring.
  */
 
+void
 rust_armor(THING *arm)
 {
     if (arm == NULL || arm->o_type != ARMOR || arm->o_which == LEATHER ||

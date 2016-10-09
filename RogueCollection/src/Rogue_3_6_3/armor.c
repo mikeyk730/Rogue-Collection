@@ -17,6 +17,7 @@
  *	The player wants to wear something, so let him/her put it on.
  */
 
+void
 wear()
 {
     register struct linked_list *item;
@@ -54,6 +55,7 @@ wear()
  *	Get the armor off of the players back
  */
 
+void
 take_off()
 {
     register struct object *obj;
@@ -81,6 +83,7 @@ take_off()
  *	Do nothing but let other things happen
  */
 
+void
 waste_time()
 {
     do_daemons(BEFORE);

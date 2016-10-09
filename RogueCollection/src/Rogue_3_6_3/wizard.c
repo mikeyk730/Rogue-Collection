@@ -12,9 +12,16 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+/* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06.
+ * Copyright (C) 2012 Rogue Central @ coredumpcentral.org. All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
+
 #include "curses.h"
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
+#include "machdep.h"
 #include "rogue.h"
 
 /*
@@ -22,10 +29,11 @@
  *	What a certin object is
  */
 
+void
 whatis()
 {
-    register struct object *obj;
-    register struct linked_list *item;
+    struct object *obj;
+    struct linked_list *item;
 
     if ((item = get_item("identify", 0)) == NULL)
 	return;
@@ -74,11 +82,13 @@ whatis()
  *	Wizard command for getting anything he wants
  */
 
+void
 create_obj()
 {
-    register struct linked_list *item;
-    register struct object *obj;
-    register char ch, bless;
+    struct linked_list *item;
+    struct object *obj;
+    int bless;
+    int ch;
 
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
@@ -140,9 +150,10 @@ create_obj()
  *	Bamf the hero someplace else
  */
 
+int
 teleport()
 {
-    register int rm;
+    int rm;
     coord c;
 
     c = hero;
@@ -175,13 +186,17 @@ teleport()
  *	see if user knows password
  */
 
+int
 passwd()
 {
-    register char *sp, c;
-    char buf[80], *xcrypt();
+    /*char *sp, c;
+    char buf[80];
+    Only below is needed -RRPF*/
+    char c;
 
     msg("Wizard's Password:");
-    mpos = 0;
+    /* RRPF: Commented out bulk of function 
+     * mpos = 0;
     sp = buf;
     while ((c = readchar(cw)) != '\n' && c != '\r' && c != '\033')
 	if (c == md_killchar())
@@ -193,5 +208,8 @@ passwd()
     if (sp == buf)
 	return FALSE;
     *sp = '\0';
-    return (strcmp(PASSWD, xcrypt(buf, "mT")) == 0);
+    return (strcmp(PASSWD, crypt(buf, "mT")) == 0);*/
+    /* Added below by RRPF */
+    c = readchar(cw);
+    return (tolower(c) == 'y');
 }

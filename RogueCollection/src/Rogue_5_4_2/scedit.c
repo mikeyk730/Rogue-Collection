@@ -19,9 +19,6 @@
 # define	TRUE	1
 #endif
 # define	FALSE	0
-#ifndef bool
-# define	bool	char
-#endif
 # define	RN	(((seed = seed*11109+13849) >> 16) & 0xffff)
 
 # define	MAXSTR	80
@@ -30,8 +27,7 @@
 
 SCORE	top_ten[10];
 
-char	frob,
-	buf[BUFSIZ],
+char	buf[BUFSIZ],
 	*reason[] = {
 		"killed",
 		"quit",
@@ -39,18 +35,16 @@ char	frob,
 		"killed with amulet",
 	};
 
-int	seed,
-	inf;
+int	seed;
+FILE	*inf;
 
 struct passwd	*getpwnam();
-bool do_comm();
-int pr_score(SCORE *, bool);
+int do_comm();
+int pr_score(SCORE *, int);
 
 #ifndef MDK
 int
-main(ac, av)
-int	ac;
-char	**av;
+main(int ac, char *av[])
 {
 	char	*scorefile;
 	FILE	*outf;
@@ -59,13 +53,12 @@ char	**av;
 		scorefile = "rogue54.scr";
 	else
 		scorefile = av[1];
-	seed = getpid();
+	seed = md_getpid();
 
-	if ((inf = open(scorefile, 2)) < 0) {
+	if ((inf = fopen(scorefile, "r+")) < 0) {
 		perror(scorefile);
 		exit(1);
 	}
-	frob = 0;
 	s_encread((char *) top_ten, sizeof top_ten, inf);
 
 	while (do_comm())
@@ -79,19 +72,19 @@ char	**av;
  * do_comm:
  *	Get and execute a command
  */
-bool
-do_comm()
+int
+do_comm(void)
 {
 	char		*sp;
 	SCORE		*scp;
 	struct passwd	*pp;
 	static FILE	*outf = NULL;
-	static bool	written = TRUE;
+	static int written = TRUE;
 
 	printf("\nCommand: ");
 	while (isspace(buf[0] = getchar()) || buf[0] == '\n')
 		continue;
-	fgets(&buf[1], BUFSIZ, stdin);
+	(void) fget(s&buf[1], BUFSIZ, stdin);
 	buf[strlen(buf) - 1] = '\0';
 	switch (buf[0]) {
 	  case 'w':
@@ -108,7 +101,6 @@ do_comm()
 			void (*fp)(int);
 
 			fp = signal(SIGINT, SIG_IGN);
-			frob = 0;
 			s_encwrite((char *) top_ten, sizeof top_ten, outf);
 			s_unlock_sc();
 			signal(SIGINT, fp);
@@ -162,15 +154,16 @@ def:
  *	Add a score to the score file
  */
 
-add_score()
+void
+add_score(void)
 {
 	SCORE		*scp;
-    int id = -1;
+	uid_t id = 0;
 	int		i;
-	static SCORE	new;
+	SCORE	new;
 
 	printf("Name: ");
-	fgets(new.sc_name, MAXSTR, stdin);
+	(void) fgets(new.sc_name, MAXSTR, stdin);
 	new.sc_name[strlen(new.sc_name) - 1] = '\0';
 	do {
 		printf("reason: ");
@@ -185,7 +178,7 @@ add_score()
 	new.sc_flags -= '0';
 	do {
 		printf("User Id: ");
-		fgets(buf, BUFSIZ, stdin);
+		(void) fgets(buf, BUFSIZ, stdin);
 		buf[strlen(buf) - 1] = '\0';
         id = atoi(buf);
 	} while (id == -1);
@@ -219,7 +212,7 @@ add_score()
  *	Print out a score entry.  Return FALSE if last entry.
  */
 
-pr_score(SCORE *scp, bool num)
+pr_score(SCORE *scp, int num)
 {
 	if (scp->sc_score) {
 		if (num)
@@ -227,7 +220,7 @@ pr_score(SCORE *scp, bool num)
 		printf("\t%d\t%s: %s on level %d", scp->sc_score, scp->sc_name,
 		    reason[scp->sc_flags], scp->sc_level);
 		if (scp->sc_flags == 0)
-		    printf(" by %s", s_killname((char) scp->sc_monster, TRUE));
+		    printf(" by %s", s_killname(scp->sc_monster, TRUE));
 		
         printf(" (%s)", md_getrealname(scp->sc_uid));
 		putchar('\n');
@@ -243,7 +236,8 @@ pr_score(SCORE *scp, bool num)
 insert_score(SCORE *new)
 {
 	SCORE	*scp, *sc2;
-	int	flags, uid, amount;
+	int	flags, amount;
+	uid_t uid;
 
 	flags = new->sc_flags;
 	uid = new->sc_uid;
@@ -275,8 +269,8 @@ insert_score(SCORE *new)
  * del_score:
  *	Delete a score from the score list.
  */
-
-del_score()
+void
+del_score(void)
 {
 	SCORE	*scp;
 	int	i;
@@ -284,7 +278,7 @@ del_score()
 
 	for (;;) {
 		printf("Which score? ");
-		fgets(buf, BUFSIZ, stdin);
+		(void) fgets(buf, BUFSIZ, stdin);
 		if (buf[0] == '\n')
 			return;
 		sscanf(buf, "%d", &num);

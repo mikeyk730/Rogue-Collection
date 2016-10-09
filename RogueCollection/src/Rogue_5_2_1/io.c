@@ -12,6 +12,7 @@
 
 #include <curses.h>
 #include <ctype.h>
+#include <string.h>
 #include "rogue.h"
 #include <stdarg.h>
 
@@ -22,10 +23,9 @@
 static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
-/* VARARGS1 */
 msg(char *fmt, ...)
 {
-	va_list ap;
+    va_list ap;
     /*
      * if the string is "", just clear the line
      */
@@ -39,9 +39,9 @@ msg(char *fmt, ...)
     /*
      * otherwise add to the message and flush it out
      */
-	va_start(ap,fmt);
+    va_start(ap,fmt);
     doadd(fmt, ap);
-	va_end(ap);
+    va_end(ap);
     endmsg();
 }
 
@@ -49,14 +49,14 @@ msg(char *fmt, ...)
  * addmsg:
  *	Add things to the current message
  */
-/* VARARGS1 */
+
 addmsg(char *fmt, ...)
 {
-	va_list ap;
+    va_list ap;
 
-	va_start(ap, fmt);
+    va_start(ap, fmt);
     doadd(fmt, ap);
-	va_end(ap);
+    va_end(ap);
 }
 
 /*
@@ -64,10 +64,15 @@ addmsg(char *fmt, ...)
  *	Display a new msg (giving him a chance to see the previous one
  *	if it is up there with the --More--)
  */
+
 endmsg()
 {
     if (save_msg)
-	strcpy(huh, msgbuf);
+    {
+	strncpy(huh, msgbuf, 80);
+	huh[79] = 0;
+    }
+
     if (mpos)
     {
 	look(FALSE);
@@ -122,17 +127,32 @@ step_ok(ch)
  *	Flushes stdout so that screen is up to date and then returns
  *	getchar().
  */
+readcharw(win)
+WINDOW *win;
+{
+    int ch;
+
+    ch = md_readchar(win);
+
+    if ((ch == 3) || (ch == 0))
+    {
+	quit(0);
+	return(27);
+    }
+
+    return(ch);
+}
+
 readchar()
 {
-    fflush(stdout);
-    return( getch() );
+    return( readcharw(stdscr) );
 }
 
 char *
 unctrol(ch)
 char ch;
 {
-    return( unctrl(ch) );
+    return( (char *) unctrl(ch) );
 }
 
 /*
@@ -208,10 +228,10 @@ register char ch;
     register char c;
 
     if (ch == '\n')
-        while ((c = wgetch(win)) != '\n' && c != '\r')
+        while ((c = readcharw(win)) != '\n' && c != '\r')
 	    continue;
     else
-        while (wgetch(win) != ch)
+        while (readcharw(win) != ch)
 	    continue;
 }
 

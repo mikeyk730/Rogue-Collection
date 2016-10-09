@@ -10,6 +10,11 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+/* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06.
+ * Copyright (C) 2012 Rogue Central @ coredumpcentral.org. All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
+
 typedef struct { 
     const char *st_name;
     const int   st_value;
@@ -376,7 +381,7 @@ union thing {
 	union thing *_l_next, *_l_prev;	/* Next pointer in link */
 	coord _t_pos;			/* Position */
 	bool _t_turn;			/* If slowed, is it a turn to move */
-	char _t_type;			/* What it is */
+	unsigned char _t_type;		/* What it is */
 	char _t_disguise;		/* What mimic looks like */
 	char _t_oldch;			/* Character that was where it was */
 	coord *_t_dest;			/* Where it is running to */
@@ -480,3 +485,7 @@ THING	*find_mons(), *find_obj(), *get_item(), *new_item(),
 struct room	*roomin();
 
 #include "extern.h"
+
+#ifndef PATH_MAX
+#define PATH_MAX _MAX_PATH
+#endif

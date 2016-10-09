@@ -13,6 +13,7 @@
 
 #include <curses.h>
 #include <ctype.h>
+#include <string.h>
 #include "rogue.h"
 
 bool got_genocide = FALSE;
@@ -458,9 +459,9 @@ discovered()
 print_disc(type)
 char type;
 {
-    register bool *know;
-    register char **guess;
-    register int i, maxnum, num_found;
+    register bool *know = NULL;
+    register char **guess = NULL;
+    register int i, maxnum = 0, num_found;
     static THING obj;
     static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
 
@@ -593,7 +594,7 @@ char *
 nothing(type)
 register char type;
 {
-    register char *sp, *tystr;
+    register char *sp, *tystr = NULL;
 
     if (terse)
 	sprintf(prbuf, "Nothing");

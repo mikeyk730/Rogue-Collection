@@ -12,6 +12,7 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -20,6 +21,7 @@
  *	Set up a new stick
  */
 
+void
 fix_stick(THING *cur)
 {
     if (strcmp(ws_type[cur->o_which], "staff") == 0)
@@ -42,14 +44,14 @@ fix_stick(THING *cur)
  *	Perform a zap with a wand
  */
 
-do_zap()
+void
+do_zap(void)
 {
     THING *obj, *tp;
     int y, x;
     char *name;
-    char monster, oldch;
-    char omonst;
-    static THING bolt;
+    int monster, oldch;
+    THING bolt;
 
     if ((obj = get_item("zap with", STICK)) == NULL)
 	return;
@@ -112,7 +114,7 @@ do_zap()
 	    }
 	    if ((tp = moat(y, x)) != NULL)
 	    {
-		omonst = monster = tp->t_type;
+		monster = tp->t_type;
 		if (monster == 'F')
 		    player.t_flags &= ~ISHELD;
 		switch (obj->o_which) {
@@ -243,14 +245,15 @@ do_zap()
  *	Do drain hit points from player shtick
  */
 
-drain()
+void
+drain(void)
 {
     THING *mp;
     struct room *corp;
     THING **dp;
     int cnt;
-    bool inpass;
-    static THING *drainee[40];
+    int inpass;
+    THING *drainee[40];
 
     /*
      * First cnt how many things we need to spread the hit points among
@@ -267,7 +270,7 @@ drain()
 	    (inpass && chat(mp->t_pos.y, mp->t_pos.x) == DOOR &&
 	    &passages[flat(mp->t_pos.y, mp->t_pos.x) & F_PNUM] == proom))
 		*dp++ = mp;
-    if ((cnt = dp - drainee) == 0)
+    if ((cnt = (int)(dp - drainee)) == 0)
     {
 	msg("you have a tingling feeling");
 	return;
@@ -293,14 +296,15 @@ drain()
  *	Fire a bolt in a given direction from a specific starting place
  */
 
-fire_bolt(coord *start, coord *dir, char *name)
+void
+fire_bolt(const coord *start, coord *dir, const char *name)
 {
     coord *c1, *c2;
     THING *tp;
-    char dirch = 0, ch;
-    bool hit_hero, used, changed;
-    static coord pos;
-    static coord spotpos[BOLT_LENGTH];
+    int dirch = 0, ch;
+    int hit_hero, used, changed;
+    coord pos;
+    coord spotpos[BOLT_LENGTH];
     THING bolt;
 
     bolt.o_type = WEAPON;
@@ -319,7 +323,7 @@ fire_bolt(coord *start, coord *dir, char *name)
     hit_hero = (start != &hero);
     used = FALSE;
     changed = FALSE;
-    for (c1 = spotpos; c1 < &spotpos[BOLT_LENGTH] && !used; c1++)
+    for (c1 = spotpos; c1 <= &spotpos[BOLT_LENGTH-1] && !used; c1++)
     {
 	pos.y += dir->y;
 	pos.x += dir->x;
@@ -385,10 +389,12 @@ def:
 		    if (!save(VS_MAGIC))
 		    {
 			if ((pstats.s_hpt -= roll(6, 6)) <= 0)
+			{
 			    if (start == &hero)
 				death('b');
 			    else
 				death(moat(start->y, start->x)->t_type);
+			}
 			used = TRUE;
 			if (terse)
 			    msg("the %s hits", name);
@@ -410,8 +416,8 @@ def:
  * charge_str:
  *	Return an appropriate string for a wand charge
  */
-char *
-charge_str(THING *obj)
+const char *
+charge_str(const THING *obj)
 {
     static char buf[20];
 

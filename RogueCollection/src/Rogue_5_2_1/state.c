@@ -64,6 +64,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include "rogue.h"
 
 #define READSTAT ((format_error == 0) && (read_error == 0))
@@ -453,6 +454,13 @@ rs_read_char(int inf, char *c)
     
     return(READSTAT);
 }
+int
+rs_read_uchar(int inf, unsigned char *c)
+{
+    rs_read(inf, c, 1);
+    
+    return(READSTAT);
+}
 
 int
 rs_read_boolean(int inf, bool *i)
@@ -783,7 +791,6 @@ rs_read_string_index(int inf, const char *master[], int maxindex,
 int
 rs_read_strings(int inf, char **s, int count, int max)
 {
-    int len   = 0;
     int n     = 0;
     int value = 0;
     
@@ -872,8 +879,8 @@ rs_write_coord(FILE *savef, coord c)
 int
 rs_read_coord(int inf, coord *c)
 {
-    rs_read_char(inf,&c->x);
-    rs_read_char(inf,&c->y);
+    rs_read_shint(inf,&c->x);
+    rs_read_shint(inf,&c->y);
     
     return(READSTAT);
 }
@@ -1554,7 +1561,7 @@ rs_read_thing(int inf, THING *t)
         {
             rs_read_coord(inf,&t->_t._t_pos);
             rs_read_boolean(inf,&t->_t._t_turn);
-            rs_read_char(inf,&t->_t._t_type);
+            rs_read_uchar(inf,&t->_t._t_type);
             rs_read_char(inf,&t->_t._t_disguise);
             rs_read_char(inf,&t->_t._t_oldch);
             
@@ -1801,10 +1808,14 @@ int
 rs_write_rings(FILE *savef)
 {
     int i;
+    const char *stones_list[NSTONES];
+
+    for(i = 0; i < NSTONES; i++)
+        stones_list[i] = stones[i].st_name;
 
     for(i = 0; i < MAXRINGS; i++)
     {
-        rs_write_string_index(savef,(const char **)stones,NSTONES,r_stones[i]);
+        rs_write_string_index(savef,stones_list,NSTONES,r_stones[i]);
         rs_write_boolean(savef,r_know[i]);
         rs_write_string(savef,r_guess[i]);
     }
@@ -1816,10 +1827,14 @@ int
 rs_read_rings(int inf)
 {
     int i;
+    const char *stones_list[NSTONES];
+
+    for(i = 0; i < NSTONES; i++)
+        stones_list[i] = stones[i].st_name;
 
     for(i = 0; i < MAXRINGS; i++)
     {
-        rs_read_string_index(inf,(const char **)stones,NSTONES,&r_stones[i]);
+        rs_read_string_index(inf,stones_list,NSTONES,&r_stones[i]);
         rs_read_boolean(inf,&r_know[i]);
         rs_read_new_string(inf,&r_guess[i]);
     }
@@ -2044,7 +2059,6 @@ rs_save_file(FILE *savef)
 int
 rs_restore_file(int inf)
 {
-    int thingcount = 0;
     bool junk;
     int endian = 0x01020304;
     big_endian = ( *((char *)&endian) == 0x01 );

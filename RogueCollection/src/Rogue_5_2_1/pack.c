@@ -15,6 +15,22 @@
 #include "rogue.h"
 
 /*
+ * update_mdest:
+ *	Called after picking up an object, before discarding it.
+ *	If this was the object of something's desire, that monster will
+ *	get mad and run at the hero
+ */
+update_mdest(obj)
+register THING *obj;
+{
+    register THING *mp;
+
+    for (mp = mlist; mp != NULL; mp = next(mp))
+	if (mp->t_dest == &obj->o_pos)
+     mp->t_dest = &hero;
+}
+
+/*
  * add_pack:
  *	Pick up an object and add it to the pack.  If the argument is
  *	non-null use it as the linked_list pointer instead of gettting
@@ -24,9 +40,10 @@ add_pack(obj, silent)
 register THING *obj;
 bool silent;
 {
-    register THING *op, *lp;
+    register THING *op, *lp = NULL;
     register bool exact, from_floor;
     register char floor;
+    int discarded = 0;
 
     if (obj == NULL)
     {
@@ -64,8 +81,10 @@ bool silent;
 		    mvaddch(hero.y, hero.x, floor);
 		    chat(hero.y, hero.x) = floor;
 		}
+		update_mdest(obj);
 		discard(obj);
 		obj = op;
+		discarded = 1;
 		goto picked_up;
 	    }
 	}
@@ -159,8 +178,10 @@ bool silent;
 	if (exact && ISMULT(obj->o_type))
 	{
 	    op->o_count++;
+	    update_mdest(obj);
 	    discard(obj);
 	    obj = op;
+	    discarded = 1;
 	    goto picked_up;
 	}
 	if ((obj->l_prev = prev(op)) != NULL)
@@ -175,9 +196,8 @@ picked_up:
      * If this was the object of something's desire, that monster will
      * get mad and run at the hero
      */
-    for (op = mlist; op != NULL; op = next(op))
-	if (op->t_dest = &obj->o_pos)
-	    op->t_dest = &hero;
+    if (!discarded)
+        update_mdest(obj);
 
     if (obj->o_type == AMULET)
 	amulet = TRUE;
@@ -236,7 +256,7 @@ int type;
 pick_up(ch)
 char ch;
 {
-    register THING *obj;
+    register THING *obj, *mp;
 
     switch (ch)
     {
@@ -245,6 +265,7 @@ char ch;
 		return;
 	    money(obj->o_goldval);
 	    detach(lvl_obj, obj);
+	    update_mdest(obj);
 	    discard(obj);
 	    proom->r_goldval = 0;
 	    break;

@@ -13,12 +13,15 @@
 #include "curses.h"
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
+#include "machdep.h"
 #include "rogue.h"
 
-bool playing = TRUE, running = FALSE, wizard = FALSE;
-bool notify = TRUE, fight_flush = FALSE, terse = FALSE, door_stop = FALSE;
-bool jump = FALSE, slow_invent = FALSE, firstmove = FALSE, askme = FALSE;
-bool amulet = FALSE, in_shell = FALSE;
+int playing = TRUE, running = FALSE, wizard = FALSE;
+int notify = TRUE, fight_flush = FALSE, terse = FALSE, door_stop = FALSE;
+int jump = FALSE, slow_invent = FALSE, firstmove = FALSE, askme = FALSE;
+int amulet = FALSE;
+int in_shell = FALSE;
 struct linked_list *lvl_obj = NULL, *mlist = NULL;
 struct object *cur_weapon = NULL;
 int mpos = 0, no_move = 0, no_command = 0, level = 1, purse = 0, inpack = 0;
@@ -32,19 +35,19 @@ struct room *oldrp;
 struct stats max_stats; 
 struct object *cur_armor;
 struct object *cur_ring[2];
-bool after;
-bool waswizard;
+int after;
+int waswizard;
 coord oldpos;                            /* Position before last look() call */
 coord delta;                             /* Change indicated to get_dir()    */
 
-bool s_know[MAXSCROLLS];         /* Does he know what a scroll does */
-bool p_know[MAXPOTIONS];         /* Does he know what a potion does */
-bool r_know[MAXRINGS];                   /* Does he know what a ring does
+int s_know[MAXSCROLLS];         /* Does he know what a scroll does */
+int p_know[MAXPOTIONS];         /* Does he know what a potion does */
+int r_know[MAXRINGS];                   /* Does he know what a ring does
  */
-bool ws_know[MAXSTICKS];         /* Does he know what a stick does */
+int ws_know[MAXSTICKS];         /* Does he know what a stick does */
 
-char take;                               /* Thing the rogue is taking */
-char runch;                              /* Direction player is running */
+int  take;                               /* Thing the rogue is taking */
+int  runch;                              /* Direction player is running */
 char whoami[80];                 /* Name of player */
 char fruit[80];                          /* Favorite fruit */
 char huh[80];                            /* The last message printed */
@@ -60,8 +63,8 @@ char *r_guess[MAXRINGS];         /* Players guess at what ring is */
 char *ws_guess[MAXSTICKS];               /* Players guess at what wand is */
 char *ws_type[MAXSTICKS];                /* Is it a wand or a staff */
 char file_name[80];                      /* Save file name */
-char home[80];                           /* User's home directory */
-char prbuf[80];                          /* Buffer for sprintfs */
+char home[PATH_MAX];                     /* User's home directory */
+unsigned char prbuf[80];                 /* Buffer for sprintfs */
 int max_hp;                              /* Player's max hit points */
 int ntraps;                              /* Number of traps on this level */
 int max_level;                           /* Deepest player has gone */
@@ -108,6 +111,7 @@ struct monster monsters[26] = {
  *	roll up the rogue
  */
 
+void
 init_player()
 {
     pstats.s_lvl = 1;
@@ -162,7 +166,7 @@ char *rainbow[] = {
 };
 
 #define NCOLORS (sizeof rainbow / sizeof (char *))
-const int cNCOLORS = NCOLORS;
+int cNCOLORS = NCOLORS;
 
 char *sylls[] = {
     "a", "ab", "ag", "aks", "ala", "an", "ankh", "app", "arg", "arze",
@@ -208,7 +212,7 @@ char *stones[] = {
 };
 
 #define NSTONES (sizeof stones / sizeof (char *))
-const int cNSTONES = NSTONES;
+int cNSTONES = NSTONES;
 
 char *wood[] = {
     "avocado wood",
@@ -236,7 +240,7 @@ char *wood[] = {
 };
 
 #define NWOOD (sizeof wood / sizeof (char *))
-const int cNWOOD = NWOOD;
+int cNWOOD = NWOOD;
 
 char *metal[] = {
     "aluminium",
@@ -253,7 +257,7 @@ char *metal[] = {
 };
 
 #define NMETAL (sizeof metal / sizeof (char *))
-const int cNMETAL = NMETAL;
+int cNMETAL = NMETAL;
 
 struct magic_item things[NUMTHINGS] = {
     { "",			27 },	/* potion */
@@ -368,15 +372,16 @@ int a_chances[MAXARMORS] = {
 };
 
 #define MAX3(a,b,c)     (a > b ? (a > c ? a : c) : (b > c ? b : c))
-static bool used[MAX3(NCOLORS, NSTONES, NWOOD)];
+static int used[MAX3(NCOLORS, NSTONES, NWOOD)];
 
 /*
  * init_things
  *	Initialize the probabilities for types of things
  */
+void
 init_things()
 {
-    register struct magic_item *mp;
+    struct magic_item *mp;
 
     for (mp = &things[1]; mp <= &things[NUMTHINGS-1]; mp++)
 	mp->mi_prob += (mp-1)->mi_prob;
@@ -388,9 +393,10 @@ init_things()
  *	Initialize the potion color scheme for this time
  */
 
+void
 init_colors()
 {
-    register int i, j;
+    int i, j;
 
     for (i = 0; i < NCOLORS; i++)
 	used[i] = 0;
@@ -414,11 +420,12 @@ init_colors()
  *	Generate the names of the various scrolls
  */
 
+void
 init_names()
 {
-    register int nsyl;
-    register char *cp, *sp;
-    register int i, nwords;
+    int nsyl;
+    char *cp, *sp;
+    int i, nwords;
 
     for (i = 0; i < MAXSCROLLS; i++)
     {
@@ -436,7 +443,7 @@ init_names()
 	    *cp++ = ' ';
 	}
 	*--cp = '\0';
-	s_names[i] = (char *) new(strlen(prbuf)+1);
+	s_names[i] = (char *) _new(strlen(prbuf)+1);
 	s_know[i] = FALSE;
 	s_guess[i] = NULL;
 	strcpy(s_names[i], prbuf);
@@ -451,9 +458,10 @@ init_names()
  *	Initialize the ring stone setting scheme for this time
  */
 
+void
 init_stones()
 {
-    register int i, j;
+    int i, j;
 
     for (i = 0; i < NSTONES; i++)
 	used[i] = FALSE;
@@ -477,10 +485,11 @@ init_stones()
  *	Initialize the construction materials for wands and staffs
  */
 
+void
 init_materials()
 {
-    register int i, j;
-    static bool metused[NMETAL];
+    int i, j;
+    static int metused[NMETAL];
 
     for (i = 0; i < NWOOD; i++)
 	used[i] = FALSE;
@@ -521,12 +530,10 @@ init_materials()
     badcheck("sticks", ws_magic, MAXSTICKS);
 }
 
-badcheck(name, magic, bound)
-char *name;
-register struct magic_item *magic;
-register int bound;
+void
+badcheck(char *name, struct magic_item *magic, int bound)
 {
-    register struct magic_item *end;
+    struct magic_item *end;
 
     if (magic[bound - 1].mi_prob == 100)
 	return;

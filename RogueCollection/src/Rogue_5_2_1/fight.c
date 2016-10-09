@@ -12,6 +12,7 @@
 
 #include <curses.h>
 #include <ctype.h>
+#include <string.h>
 #include "rogue.h"
 
 long e_levels[] = {
@@ -260,8 +261,8 @@ register THING *mp;
 			else
 			{
 			    detach(pack, steal);
-			    discard(steal);
 			    msg("she stole %s!", inv_name(steal, TRUE));
+			    discard(steal);
 			}
 		    }
 		}
@@ -342,7 +343,6 @@ bool hurl;
     register int hplus;
     register int dplus;
     register int damage;
-    char *index();
 
     att = &thatt->t_stats;
     def = &thdef->t_stats;
@@ -412,7 +412,7 @@ bool hurl;
     for (;;)
     {
 	ndice = atoi(cp);
-	if ((cp = index(cp, 'd')) == NULL)
+	if ((cp = strchr(cp, 'd')) == NULL)
 	    break;
 	nsides = atoi(++cp);
 	if (swing(att->s_lvl, def_arm, hplus + str_plus(att->s_str)))
@@ -428,7 +428,7 @@ bool hurl;
 	    def->s_hpt -= max(0, damage);
 	    did_hit = TRUE;
 	}
-	if ((cp = index(cp, '/')) == NULL)
+	if ((cp = strchr(cp, '/')) == NULL)
 	    break;
 	cp++;
     }
@@ -468,7 +468,7 @@ bool upper;
 hit(er, ee)
 register char *er, *ee;
 {
-    register char *s;
+    register char *s = "";
 
     addmsg(prname(er, TRUE));
     if (terse)
@@ -494,7 +494,7 @@ register char *er, *ee;
 miss(er, ee)
 register char *er, *ee;
 {
-    register char *s;
+    register char *s = "";
 
     addmsg(prname(er, TRUE));
     switch (terse ? 0 : rnd(4))
@@ -716,7 +716,6 @@ bool pr;
     /*
      * Get rid of the monster.
      */
-    remove_monster(&tp->t_pos, tp, TRUE);
     if (pr)
     {
 	if (!terse)
@@ -731,6 +730,7 @@ bool pr;
 	    msg("%s", monsters[tp->t_type-'A'].m_name);
 	}
     }
+    remove_monster(&tp->t_pos, tp, TRUE);
     /*
      * Do adjustments if he went up a level
      */

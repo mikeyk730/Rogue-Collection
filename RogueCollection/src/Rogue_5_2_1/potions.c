@@ -230,7 +230,7 @@ register bool turn_off;
     for (mp = mlist; mp != NULL; mp = next(mp))
     {
 	move(mp->t_pos.y, mp->t_pos.x);
-	can_see = (see_monst(mp) || inch() == mp->t_type);
+	can_see = (see_monst(mp) || inch() == (unsigned char)mp->t_type);
 	if (turn_off)
 	{
 	    if (!can_see)

@@ -10,74 +10,73 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+/* All global variables are defined here, or in vers.c or init.c */
+
 #include <curses.h>
 #include "rogue.h"
 
-bool after;				/* True if we want after daemons */
-bool again;				/* Repeating the last command */
-bool noscore;				/* Was a wizard sometime */
-bool seenstairs;			/* Have seen the stairs (for lsd) */
-bool amulet = FALSE;			/* He found the amulet */
-bool door_stop = FALSE;			/* Stop running when we pass a door */
-bool fight_flush = FALSE;		/* True if toilet input */
-bool firstmove = FALSE;			/* First move after setting door_stop */
-bool got_ltc = FALSE;			/* We have gotten the local tty chars */
-bool has_hit = FALSE;			/* Has a "hit" message pending in msg */
-bool in_shell = FALSE;			/* True if executing a shell */
-bool inv_describe = TRUE;		/* Say which way items are being used */
-bool jump = FALSE;			/* Show running as series of jumps */
-bool kamikaze = FALSE;			/* to_death really to DEATH */
-bool lower_msg = FALSE;			/* Messages should start w/lower case */
-bool move_on = FALSE;			/* Next move shouldn't pick up items */
-bool msg_esc = FALSE;			/* Check for ESC from msg's --More-- */
-bool passgo = FALSE;			/* Follow passages */
-bool playing = TRUE;			/* True until he quits */
-bool q_comm = FALSE;			/* Are we executing a 'Q' command? */
-bool running = FALSE;			/* True if player is running */
-bool save_msg = TRUE;			/* Remember last msg */
-bool see_floor = TRUE;			/* Show the lamp illuminated floor */
-bool stat_msg = FALSE;			/* Should status() print as a msg() */
-bool terse = FALSE;			/* True if we should be short */
-bool to_death = FALSE;			/* Fighting is to the death! */
-bool tombstone = TRUE;			/* Print out tombstone at end */
+int  after;				/* True if we want after daemons */
+int  again;				/* Repeating the last command */
+int  noscore;				/* Was a wizard sometime */
+int  seenstairs;			/* Have seen the stairs (for lsd) */
+int  amulet = FALSE;			/* He found the amulet */
+int  door_stop = FALSE;			/* Stop running when we pass a door */
+int  fight_flush = FALSE;		/* True if toilet input */
+int  firstmove = FALSE;			/* First move after setting door_stop */
+int  got_ltc = FALSE;			/* We have gotten the local tty chars */
+int  has_hit = FALSE;			/* Has a "hit" message pending in msg */
+int  in_shell = FALSE;			/* True if executing a shell */
+int  inv_describe = TRUE;		/* Say which way items are being used */
+int  jump = FALSE;			/* Show running as series of jumps */
+int  kamikaze = FALSE;			/* to_death really to DEATH */
+int  lower_msg = FALSE;			/* Messages should start w/lower case */
+int  move_on = FALSE;			/* Next move shouldn't pick up items */
+int  msg_esc = FALSE;			/* Check for ESC from msg's --More-- */
+int  passgo = FALSE;			/* Follow passages */
+int  playing = TRUE;			/* True until he quits */
+int  q_comm = FALSE;			/* Are we executing a 'Q' command? */
+int  running = FALSE;			/* True if player is running */
+int  save_msg = TRUE;			/* Remember last msg */
+int  see_floor = TRUE;			/* Show the lamp illuminated floor */
+int  stat_msg = FALSE;			/* Should status() print as a msg() */
+int  terse = FALSE;				/* True if we should be short */
+int  to_death = FALSE;			/* Fighting is to the death! */
+int  tombstone = TRUE;			/* Print out tombstone at end */
 #ifdef MASTER
-bool wizard = FALSE;			/* True if allows wizard commands */
+int  wizard = FALSE;			/* True if allows wizard commands */
 #endif
-bool pack_used[26] = {			/* Is the character used in the pack? */
+int  pack_used[26] = {			/* Is the character used in the pack? */
     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE
 };
 
-char dir_ch;				/* Direction from last get_dir() call */
+int  dir_ch;				/* Direction from last get_dir() call */
 char file_name[MAXSTR];			/* Save file name */
 char huh[MAXSTR];			/* The last message printed */
-char *p_colors[MAXPOTIONS];		/* Colors of the potions */
+const char *p_colors[MAXPOTIONS];		/* Colors of the potions */
 char prbuf[2*MAXSTR];			/* buffer for sprintfs */
-char *r_stones[MAXRINGS];		/* Stone settings of the rings */
-char *release;				/* release number of program */
-char runch;				/* Direction player is running */
+const char *r_stones[MAXRINGS];		/* Stone settings of the rings */
+int  runch;				/* Direction player is running */
 char *s_names[MAXSCROLLS];		/* Names of the scrolls */
-char take;				/* Thing she is taking */
+int  take;				/* Thing she is taking */
 char whoami[MAXSTR];			/* Name of player */
-char *ws_made[MAXSTICKS];		/* What sticks are made of */
+const char *ws_made[MAXSTICKS];		/* What sticks are made of */
 char *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
-#ifdef TIOCSLTC
-char orig_dsusp;			/* Original dsusp char */
-#endif
+int  orig_dsusp;			/* Original dsusp char */
 char fruit[MAXSTR] =			/* Favorite fruit */
 		{ 's', 'l', 'i', 'm', 'e', '-', 'm', 'o', 'l', 'd', '\0' };
 char home[MAXSTR] = { '\0' };		/* User's home directory */
-char *inv_t_name[] = {
+const char *inv_t_name[] = {
 	"Overwrite",
 	"Slow",
 	"Clear"
 };
-char l_last_comm = '\0';		/* Last last_comm */
-char l_last_dir = '\0';			/* Last last_dir */
-char last_comm = '\0';			/* Last command typed */
-char last_dir = '\0';			/* Last direction given */
-char *tr_name[] = {			/* Names of the traps */
+int  l_last_comm = '\0';		/* Last last_comm */
+int  l_last_dir = '\0';			/* Last last_dir */
+int  last_comm = '\0';			/* Last command typed */
+int  last_dir = '\0';			/* Last direction given */
+const char *tr_name[] = {			/* Names of the traps */
 	"a trapdoor",
 	"an arrow trap",
 	"a sleeping gas trap",
@@ -99,7 +98,7 @@ int max_hit;				/* Max damage done to her in to_death */
 int max_level;				/* Deepest player has gone */
 int mpos = 0;				/* Where cursor is on top line */
 int no_food = 0;			/* Number of levels without food */
-int a_class[MAXARMORS] = {		/* Armor class for each armor type */
+const int a_class[MAXARMORS] = {		/* Armor class for each armor type */
 	8,	/* LEATHER */
 	7,	/* RING_MAIL */
 	7,	/* STUDDED_LEATHER */
@@ -111,7 +110,7 @@ int a_class[MAXARMORS] = {		/* Armor class for each armor type */
 };
 
 int count = 0;				/* Number of times to repeat command */
-int fd;					/* File descriptor for score file */
+FILE *scoreboard = NULL;		/* File descriptor for score file */
 int food_left;				/* Amount of food in hero's stomach */
 int lastscore = -1;			/* Score before this turn */
 int no_command = 0;			/* Number of turns asleep */
@@ -120,9 +119,9 @@ int purse = 0;				/* How much gold he has */
 int quiet = 0;				/* Number of quiet turns */
 int vf_hit = 0;				/* Number of time flytrap has hit */
 
-long dnum;				/* Dungeon number */
-long seed;				/* Random number seed */
-long e_levels[] = {
+unsigned int dnum;				/* Dungeon number */
+unsigned int seed;				/* Random number seed */
+const int e_levels[] = {
         10L,
 	20L,
 	40L,
@@ -172,18 +171,18 @@ struct room *oldrp;			/* Roomin(&oldpos) */
 struct room rooms[MAXROOMS];		/* One for each room -- A level */
 struct room passages[MAXPASS] =		/* One for each passage */
 {
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 },
-    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, 0 }
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} },
+    { {0, 0}, {0, 0}, {0, 0}, 0, ISGONE|ISDARK, 0, {{0,0}} }
 };
 
 #define ___ 1
@@ -324,75 +323,84 @@ struct obj_info ws_info[MAXSTICKS] = {
     { "cancellation",		 5, 280, NULL, FALSE },
 };
 
-struct h_list helpstr[] = {
-    '?',	"	prints help",				TRUE,
-    '/',	"	identify object",			TRUE,
-    'h',	"	left",					TRUE,
-    'j',	"	down",					TRUE,
-    'k',	"	up",					TRUE,
-    'l',	"	right",					TRUE,
-    'y',	"	up & left",				TRUE,
-    'u',	"	up & right",				TRUE,
-    'b',	"	down & left",				TRUE,
-    'n',	"	down & right",				TRUE,
-    'H',	"	run left",				FALSE,
-    'J',	"	run down",				FALSE,
-    'K',	"	run up",				FALSE,
-    'L',	"	run right",				FALSE,
-    'Y',	"	run up & left",				FALSE,
-    'U',	"	run up & right",			FALSE,
-    'B',	"	run down & left",			FALSE,
-    'N',	"	run down & right",			FALSE,
-    CTRL('H'),	"	run left until adjacent",		FALSE,
-    CTRL('J'),	"	run down until adjacent",		FALSE,
-    CTRL('K'),	"	run up until adjacent",			FALSE,
-    CTRL('L'),	"	run right until adjacent",		FALSE,
-    CTRL('Y'),	"	run up & left until adjacent",		FALSE,
-    CTRL('U'),	"	run up & right until adjacent",		FALSE,
-    CTRL('B'),	"	run down & left until adjacent",	FALSE,
-    CTRL('N'),	"	run down & right until adjacent",	FALSE,
-    '\0',	"	<SHIFT><dir>: run that way",		TRUE,
-    '\0',	"	<CTRL><dir>: run till adjacent",	TRUE,
-    'f',	"<dir>	fight till death or near death",	TRUE,
-    't',	"<dir>	throw something",			TRUE,
-    'm',	"<dir>	move onto without picking up",		TRUE,
-    'z',	"<dir>	zap a wand in a direction",		TRUE,
-    '^',	"<dir>	identify trap type",			TRUE,
-    's',	"	search for trap/secret door",		TRUE,
-    '>',	"	go down a staircase",			TRUE,
-    '<',	"	go up a staircase",			TRUE,
-    '.',	"	rest for a turn",			TRUE,
-    ',',	"	pick something up",			TRUE,
-    'i',	"	inventory",				TRUE,
-    'I',	"	inventory single item",			TRUE,
-    'q',	"	quaff potion",				TRUE,
-    'r',	"	read scroll",				TRUE,
-    'e',	"	eat food",				TRUE,
-    'w',	"	wield a weapon",			TRUE,
-    'W',	"	wear armor",				TRUE,
-    'T',	"	take armor off",			TRUE,
-    'P',	"	put on ring",				TRUE,
-    'R',	"	remove ring",				TRUE,
-    'd',	"	drop object",				TRUE,
-    'c',	"	call object",				TRUE,
-    'a',	"	repeat last command",			TRUE,
-    ')',	"	print current weapon",			TRUE,
-    ']',	"	print current armor",			TRUE,
-    '=',	"	print current rings",			TRUE,
-    '@',	"	print current stats",			TRUE,
-    'D',	"	recall what's been discovered",		TRUE,
-    'o',	"	examine/set options",			TRUE,
-    CTRL('R'),	"	redraw screen",				TRUE,
-    CTRL('P'),	"	repeat last message",			TRUE,
-    ESCAPE,	"	cancel command",			TRUE,
-    'S',	"	save game",				TRUE,
-    'Q',	"	quit",					TRUE,
-    '!',	"	shell escape",				TRUE,
-    'F',	"<dir>	fight till either of you dies",		TRUE,
-    'v',	"	print version number",			TRUE,
-    0,		NULL
+const struct h_list helpstr[] = {
+    {'?',	"	prints help",				TRUE},
+    {'/',	"	identify object",			TRUE},
+    {'h',	"	left",					TRUE},
+    {'j',	"	down",					TRUE},
+    {'k',	"	up",					TRUE},
+    {'l',	"	right",					TRUE},
+    {'y',	"	up & left",				TRUE},
+    {'u',	"	up & right",				TRUE},
+    {'b',	"	down & left",				TRUE},
+    {'n',	"	down & right",				TRUE},
+    {'H',	"	run left",				FALSE},
+    {'J',	"	run down",				FALSE},
+    {'K',	"	run up",				FALSE},
+    {'L',	"	run right",				FALSE},
+    {'Y',	"	run up & left",				FALSE},
+    {'U',	"	run up & right",			FALSE},
+    {'B',	"	run down & left",			FALSE},
+    {'N',	"	run down & right",			FALSE},
+    {CTRL('H'),	"	run left until adjacent",		FALSE},
+    {CTRL('J'),	"	run down until adjacent",		FALSE},
+    {CTRL('K'),	"	run up until adjacent",			FALSE},
+    {CTRL('L'),	"	run right until adjacent",		FALSE},
+    {CTRL('Y'),	"	run up & left until adjacent",		FALSE},
+    {CTRL('U'),	"	run up & right until adjacent",		FALSE},
+    {CTRL('B'),	"	run down & left until adjacent",	FALSE},
+    {CTRL('N'),	"	run down & right until adjacent",	FALSE},
+    {'\0',	"	<SHIFT><dir>: run that way",		TRUE},
+    {'\0',	"	<CTRL><dir>: run till adjacent",	TRUE},
+    {'f',	"<dir>	fight till death or near death",	TRUE},
+    {'t',	"<dir>	throw something",			TRUE},
+    {'m',	"<dir>	move onto without picking up",		TRUE},
+    {'z',	"<dir>	zap a wand in a direction",		TRUE},
+    {'^',	"<dir>	identify trap type",			TRUE},
+    {'s',	"	search for trap/secret door",		TRUE},
+    {'>',	"	go down a staircase",			TRUE},
+    {'<',	"	go up a staircase",			TRUE},
+    {'.',	"	rest for a turn",			TRUE},
+    {',',	"	pick something up",			TRUE},
+    {'i',	"	inventory",				TRUE},
+    {'I',	"	inventory single item",			TRUE},
+    {'q',	"	quaff potion",				TRUE},
+    {'r',	"	read scroll",				TRUE},
+    {'e',	"	eat food",				TRUE},
+    {'w',	"	wield a weapon",			TRUE},
+    {'W',	"	wear armor",				TRUE},
+    {'T',	"	take armor off",			TRUE},
+    {'P',	"	put on ring",				TRUE},
+    {'R',	"	remove ring",				TRUE},
+    {'d',	"	drop object",				TRUE},
+    {'c',	"	call object",				TRUE},
+    {'a',	"	repeat last command",			TRUE},
+    {')',	"	print current weapon",			TRUE},
+    {']',	"	print current armor",			TRUE},
+    {'=',	"	print current rings",			TRUE},
+    {'@',	"	print current stats",			TRUE},
+    {'D',	"	recall what's been discovered",		TRUE},
+    {'o',	"	examine/set options",			TRUE},
+    {CTRL('R'),	"	redraw screen",				TRUE},
+    {CTRL('P'),	"	repeat last message",			TRUE},
+    {ESCAPE,	"	cancel command",			TRUE},
+    {'S',	"	save game",				TRUE},
+    {'Q',	"	quit",					TRUE},
+    {'!',	"	shell escape",				TRUE},
+    {'F',	"<dir>	fight till either of you dies",		TRUE},
+    {'v',	"	print version number",			TRUE},
+    {0,		NULL }
+};
+int numscores;
+char *Numname;
+int allscore;
+int between;
+
+#define _X_ { EMPTY }
+
+struct delayed_action d_list[MAXDAEMONS] = {
+    _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_,
+    _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, 
 };
 
-#ifdef TIOCGLTC
-struct ltchars ltc;		/* needed to change ^Y to not be suspchar */
-#endif /* TIOCGLTC */
+int group = 2;

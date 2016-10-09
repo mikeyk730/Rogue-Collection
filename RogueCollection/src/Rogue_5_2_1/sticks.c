@@ -13,6 +13,7 @@
 
 #include <curses.h>
 #include <ctype.h>
+#include <string.h>
 #include "rogue.h"
 
 /*
@@ -145,7 +146,7 @@ do_zap()
 		}
 		else
 		{
-		    if (see_monst(tp))
+		    if (isupper(toascii(mvinch(y,x))))
 			mvaddch(y, x, tp->t_oldch);
 		    if (obj->o_which == WS_TELAWAY)
 		    {
@@ -154,6 +155,8 @@ do_zap()
 			    rm = rnd_room();
 			    rnd_pos(&rooms[rm], &tp->t_pos);
 			} until (winat(tp->t_pos.y, tp->t_pos.x) == FLOOR);
+			tp->t_room = roomin(&tp->t_pos);
+			tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
 			if (see_monst(tp))
 			    mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
 			else if (on(player, SEEMONST))
@@ -167,13 +170,14 @@ do_zap()
 		    {
 			tp->t_pos.y = hero.y + delta.y;
 			tp->t_pos.x = hero.x + delta.x;
+		    
+		        if (tp->t_pos.y != y || tp->t_pos.x != x)
+			    tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
 		    }
 		    moat(y, x) = NULL;
 		    moat(tp->t_pos.y, tp->t_pos.x) = tp;
 		    if (tp->t_type == 'F')
 			player.t_flags &= ~ISHELD;
-		    if (tp->t_pos.y != y || tp->t_pos.x != x)
-			tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
 		}
 		tp->t_dest = &hero;
 		tp->t_flags |= ISRUN;
@@ -334,6 +338,7 @@ char *name;
     strcpy(bolt.o_hurldmg,"6d6");
     bolt.o_hplus = 100;
     bolt.o_dplus = 0;
+    bolt.o_flags = 0;
     w_names[FLAME] = name;
     switch (dir->y + dir->x)
     {
@@ -354,6 +359,18 @@ char *name;
 	switch (ch)
 	{
 	    case DOOR:
+		/*
+ 		 * this code is necessary if the hero is on a door
+ 		 * and he fires at the wall the door is in, it would
+ 		 * otherwise loop infinitely
+ 		 * It is also needed if a dragon flames at the hero.
+ 		 * If the hero is at a door, the dragon flame would bounce
+ 		 * and could kill other monsters inadvertly.
+ 		 */
+ 		if (ce(hero, pos))
+ 		    goto def;
+ 		/* FALLTHROUGH */
+
 	    case '|':
 	    case '-':
 	    case ' ':
@@ -366,6 +383,7 @@ char *name;
 		msg("the %s bounces", name);
 		break;
 	    default:
+def:
 		if (!hit_hero && (tp = moat(pos.y, pos.x)) != NULL)
 		{
 		    hit_hero = TRUE;

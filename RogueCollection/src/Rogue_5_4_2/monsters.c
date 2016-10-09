@@ -11,18 +11,19 @@
  */
 
 #include <curses.h>
+#include <string.h>
 #include "rogue.h"
 #include <ctype.h>
 
 /*
  * List of monsters in rough order of vorpalness
  */
-static char lvl_mons[] =  {
+static const int lvl_mons[] =  {
     'K', 'E', 'B', 'S', 'H', 'I', 'R', 'O', 'Z', 'L', 'C', 'Q', 'A',
     'N', 'Y', 'F', 'T', 'W', 'P', 'X', 'U', 'M', 'V', 'G', 'J', 'D'
 };
 
-static char wand_mons[] = {
+static const int wand_mons[] = {
     'K', 'E', 'B', 'S', 'H',   0, 'R', 'O', 'Z',   0, 'C', 'Q', 'A',
       0, 'Y',   0, 'T', 'W', 'P',   0, 'U', 'M', 'V', 'G', 'J',   0
 };
@@ -32,11 +33,11 @@ static char wand_mons[] = {
  *	Pick a monster to show up.  The lower the level,
  *	the meaner the monster.
  */
-char
-randmonster(bool wander)
+int
+randmonster(int wander)
 {
     int d;
-    char *mons;
+    const int *mons;
 
     mons = (wander ? wand_mons : lvl_mons);
     do
@@ -55,7 +56,8 @@ randmonster(bool wander)
  *	Pick a new monster and add it to the list
  */
 
-new_monster(THING *tp, char type, coord *cp)
+void
+new_monster(THING *tp, int type, const coord *cp)
 {
     struct monster *mp;
     int lev_add;
@@ -67,7 +69,7 @@ new_monster(THING *tp, char type, coord *cp)
     tp->t_disguise = type;
     tp->t_pos = *cp;
     move(cp->y, cp->x);
-    tp->t_oldch = inch();
+    tp->t_oldch = CCHAR( inch() );
     tp->t_room = roomin(cp);
     moat(cp->y, cp->x) = tp;
     mp = &monsters[tp->t_type-'A'];
@@ -93,7 +95,7 @@ new_monster(THING *tp, char type, coord *cp)
  *	Experience to add for this monster's level/hit points
  */
 int
-exp_add(THING *tp)
+exp_add(const THING *tp)
 {
     int mod;
 
@@ -113,16 +115,26 @@ exp_add(THING *tp)
  *	Create a new wandering monster and aim it at the player
  */
 
-wanderer()
+void
+wanderer(void)
 {
     THING *tp;
-    static coord cp;
+    coord cp;
+    int cnt = 0;
 
     tp = new_item();
     do
     {
-	find_floor((struct room *) NULL, &cp, FALSE, TRUE);
-    } while (roomin(&cp) == proom);
+        /* Avoid endless loop when all rooms are filled with monsters
+	 * and the player room is not accessible to the monsters.
+	 */
+	if (cnt++ >= 500)
+	{
+	    discard(tp);
+	    return;
+	}
+	find_floor(NULL, &cp, FALSE, TRUE);
+    } while (roomin(&cp) == proom && moat(cp.y, cp.x) == NULL);
     new_monster(tp, randmonster(TRUE), &cp);
     if (on(player, SEEMONST))
     {
@@ -144,19 +156,21 @@ wanderer()
  * wake_monster:
  *	What to do when the hero steps next to a monster
  */
-THING *
+const THING *
 wake_monster(int y, int x)
 {
     THING *tp;
     struct room *rp;
-    char ch, *mname;
+	int ch;
+    const char *mname;
 
+	if ((tp = moat(y, x)) == NULL) {
 #ifdef MASTER
-    if ((tp = moat(y, x)) == NULL)
-	msg("can't find monster in wake_monster");
-#else
-    tp = moat(y, x);
+		msg("can't find monster in wake_monster");
 #endif
+		return NULL;
+	}
+
     ch = tp->t_type;
     /*
      * Every time he sees mean monster, it might start chasing him
@@ -209,6 +223,7 @@ wake_monster(int y, int x)
  *	Give a pack to a monster if it deserves one
  */
 
+void
 give_pack(THING *tp)
 {
     if (level >= max_level && rnd(100) < monsters[tp->t_type-'A'].m_carry)
@@ -220,7 +235,7 @@ give_pack(THING *tp)
  *	See if a creature save against something
  */
 int
-save_throw(int which, THING *tp)
+save_throw(int which, const THING *tp)
 {
     int need;
 

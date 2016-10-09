@@ -11,8 +11,9 @@
  */
 
 #include <curses.h>
-#include "rogue.h"
+#include <string.h>
 #include <ctype.h>
+#include "rogue.h"
 
 /*
  * List of monsters in rough order of vorpalness
@@ -133,11 +134,20 @@ wanderer()
     register int i;
     register struct room *rp;
     register THING *tp;
-    coord cp;
+    coord cp = {0,0};
+    register int cnt = 0;
 
     tp = new_item();
     do
     {
+        /* Avoid endless loop when all rooms are filled with monsters
+	 * and the player room is not accessible to the monsters.
+	 */
+	if (cnt++ >= 500)
+	{
+	    discard(tp);
+	    return;
+	}
 	i = rnd_room();
 	if ((rp = &rooms[i]) == proom)
 	    continue;

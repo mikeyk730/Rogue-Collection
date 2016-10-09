@@ -25,8 +25,8 @@ coord nh;
  *	Start the hero running
  */
 
-do_run(ch)
-char ch;
+void
+do_run(int ch)
 {
     running = TRUE;
     after = FALSE;
@@ -39,10 +39,10 @@ char ch;
  * consequences (fighting, picking up, etc.)
  */
 
-do_move(dy, dx)
-int dy, dx;
+void
+do_move(int dy, int dx)
 {
-    register char ch;
+    int ch;
 
     firstmove = FALSE;
     if (no_move)
@@ -137,13 +137,14 @@ move_stuff:
  * If it is dark, remove anything that might move.
  */
 
-light(cp)
-coord *cp;
+void
+light(coord *cp)
 {
-    register struct room *rp;
-    register int j, k;
-    register char ch, rch;
-    register struct linked_list *item;
+    struct room *rp;
+    int j, k;
+    int ch;
+    int rch;
+    struct linked_list *item;
 
     if ((rp = roomin(cp)) != NULL && !on(player, ISBLIND))
     {
@@ -205,12 +206,12 @@ coord *cp;
  *	returns what a certain thing will display as to the un-initiated
  */
 
-show(y, x)
-register int y, x;
+int
+show(int y, int x)
 {
-    register char ch = winat(y, x);
-    register struct linked_list *it;
-    register struct thing *tp;
+    int ch = winat(y, x);
+    struct linked_list *it;
+    struct thing *tp;
 
     if (ch == TRAP)
 	return (trap_at(y, x)->tr_flags & ISFOUND) ? TRAP : FLOOR;
@@ -235,11 +236,11 @@ register int y, x;
  *	The guy stepped on a trap.... Make him pay.
  */
 
-be_trapped(tc)
-register coord *tc;
+int
+be_trapped(coord *tc)
 {
-    register struct trap *tp;
-    register char ch;
+    struct trap *tp;
+    int ch;
 
     tp = trap_at(tc->y, tc->x);
     count = running = FALSE;
@@ -269,8 +270,8 @@ register coord *tc;
 	    }
 	    else
 	    {
-		register struct linked_list *item;
-		register struct object *arrow;
+		struct linked_list *item;
+		struct object *arrow;
 
 		msg("An arrow shoots past you.");
 		item = new_item(sizeof *arrow);
@@ -310,10 +311,9 @@ register coord *tc;
  */
 
 struct trap *
-trap_at(y, x)
-register int y, x;
+trap_at(int y, int x)
 {
-    register struct trap *tp, *ep;
+    struct trap *tp, *ep;
 
     ep = &traps[ntraps];
     for (tp = traps; tp < ep; tp++)
@@ -333,14 +333,13 @@ register int y, x;
  */
 
 coord *
-rndmove(who)
-struct thing *who;
+rndmove(struct thing *who)
 {
-    register int x, y;
-    register char ch;
-    register int ex, ey, nopen = 0;
-    register struct linked_list *item;
-    register struct object *obj;
+    int x, y;
+    int ch;
+    int ex, ey, nopen = 0;
+    struct linked_list *item;
+    struct object *obj;
     static coord ret;  /* what we will be returning */
     static coord dest;
 

@@ -20,10 +20,11 @@ coord ch_ret;				/* Where chasing takes you */
  *	Make all the running monsters move.
  */
 
+void
 runners()
 {
-    register struct linked_list *item;
-    register struct thing *tp;
+    struct linked_list *item;
+    struct thing *tp;
 
     for (item = mlist; item != NULL;)
     {
@@ -47,13 +48,13 @@ runners()
  *	Make one thing chase another.
  */
 
-do_chase(th)
-register struct thing *th;
+int
+do_chase(struct thing *th)
 {
-    register struct room *rer, *ree;	/* room of chaser, room of chasee */
-    register int mindist = 32767, i, dist;
-    register bool stoprun = FALSE;	/* TRUE means we are there */
-    register char sch;
+    struct room *rer, *ree;	/* room of chaser, room of chasee */
+    int mindist = 32767, i, dist;
+    int stoprun = FALSE;	/* TRUE means we are there */
+    int sch;
     coord this;				/* Temporary destination for chaser */
 
     rer = roomin(&th->t_pos);	/* Find room of chaser */
@@ -125,12 +126,11 @@ register struct thing *th;
  *	or stop it from running (for when it dies)
  */
 
-runto(runner, spot)
-register coord *runner;
-coord *spot;
+void
+runto(coord *runner, coord *spot)
 {
-    register struct linked_list *item;
-    register struct thing *tp;
+    struct linked_list *item;
+    struct thing *tp;
 
     /*
      * If we couldn't find him, something is funny
@@ -156,16 +156,15 @@ coord *spot;
  *	FALSE if we reach the goal.
  */
 
-chase(tp, ee)
-struct thing *tp;
-coord *ee;
+int
+chase(struct thing *tp, coord *ee)
 {
-    register int x, y;
-    register int dist, thisdist;
-    register struct linked_list *item;
-    register struct object *obj;
-    register coord *er = &tp->t_pos;
-    register char ch;
+    int x, y;
+    int dist, thisdist;
+    struct linked_list *item;
+    struct object *obj;
+    coord *er = &tp->t_pos;
+    int ch;
 
     /*
      * If the thing is confused, let it move randomly. Invisible
@@ -192,7 +191,7 @@ coord *ee;
      */
     else
     {
-	register int ey, ex;
+	int ey, ex;
 	/*
 	 * This will eventually hold where we move to get closer
 	 * If we can't find an empty spot, we stay where we are.
@@ -252,10 +251,9 @@ coord *ee;
  */
 
 struct room *
-roomin(cp)
-register coord *cp;
+roomin(coord *cp)
 {
-    register struct room *rp;
+    struct room *rp;
 
     for (rp = rooms; rp <= &rooms[MAXROOMS-1]; rp++)
 	if (inroom(rp, cp))
@@ -269,12 +267,10 @@ register coord *cp;
  */
 
 struct linked_list *
-find_mons(y, x)
-register int y;
-int x;
+find_mons(int y, int x)
 {
-    register struct linked_list *item;
-    register struct thing *th;
+    struct linked_list *item;
+    struct thing *th;
 
     for (item = mlist; item != NULL; item = next(item))
     {
@@ -290,8 +286,8 @@ int x;
  *	Check to see if the move is legal if it is diagonal
  */
 
-diag_ok(sp, ep)
-register coord *sp, *ep;
+int
+diag_ok(coord *sp, coord *ep)
 {
     if (ep->x == sp->x || ep->y == sp->y)
 	return TRUE;
@@ -303,10 +299,10 @@ register coord *sp, *ep;
  *	returns true if the hero can see a certain coordinate.
  */
 
-cansee(y, x)
-register int y, x;
+int
+cansee(int y, int x)
 {
-    register struct room *rer;
+    struct room *rer;
     coord tp;
 
     if (on(player, ISBLIND))

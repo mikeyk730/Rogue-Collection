@@ -24,18 +24,16 @@
     <ClCompile Include="command.c" />
     <ClCompile Include="daemon.c" />
     <ClCompile Include="daemons.c" />
-    <ClCompile Include="extern.c" />
     <ClCompile Include="fight.c" />
     <ClCompile Include="init.c" />
     <ClCompile Include="io.c" />
     <ClCompile Include="list.c" />
-    <ClCompile Include="mach_dep.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="mdport.c" />
     <ClCompile Include="misc.c" />
     <ClCompile Include="monsters.c" />
     <ClCompile Include="move.c" />
-    <ClCompile Include="new_level.c" />
+    <ClCompile Include="newlevel.c" />
     <ClCompile Include="options.c" />
     <ClCompile Include="pack.c" />
     <ClCompile Include="passages.c" />
@@ -54,12 +52,12 @@
     <ClCompile Include="xcrypt.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="extern.h" />
+    <ClInclude Include="machdep.h" />
+    <ClInclude Include="mdport.h" />
     <ClInclude Include="rogue.h" />
-    <ClInclude Include="score.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{E85D0F19-D582-4240-8299-06ACCF51883B}</ProjectGuid>
+    <ProjectGuid>{494B9490-564B-4EB9-A41D-B8A2A151115C}</ProjectGuid>
     <RootNamespace>Rogue_5_4_2</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>

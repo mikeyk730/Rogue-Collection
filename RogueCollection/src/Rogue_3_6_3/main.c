@@ -8,6 +8,11 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+/* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06.
+ * Copyright (C) 2012 Rogue Central @ coredumpcentral.org. All Rights Reserved.
+ * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
+ */
+
 #include "curses.h"
 #include <time.h>
 #include <signal.h>
@@ -18,22 +23,31 @@
 #include "machdep.h"
 #include "rogue.h"
 
-int num_checks;			/* times we've gone over in checkout() */
+int num_checks = 0;			/* times we've gone over in checkout() */
 WINDOW *cw;                              /* Window that the player sees */
 WINDOW *hw;                              /* Used for the help command */
 WINDOW *mw;                              /* Used to store mosnters */
+FILE   *scoreboard = NULL;
 
 main(argc, argv, envp)
 char **argv;
 char **envp;
 {
-    register char *env;
-    register struct linked_list *item;
-    register struct object *obj;
+    char *env;
+    struct linked_list *item;
+    struct object *obj;
     int lowtime;
     time_t now;
 
-    md_init();
+    md_init(MD_STRIP_CTRL_KEYPAD);
+
+    open_score();
+
+    /* 
+     * Drop setuid/setgid after opening the scoreboard file. 
+     */
+
+    md_normaluser();
 
     /*
      * check for print-score option
@@ -48,7 +62,8 @@ char **envp;
      * Check to see if he is a wizard
      */
     if (argc >= 2 && argv[1][0] == '\0')
-	if (strcmp(PASSWD, xcrypt(md_getpass("Wizard's password: "), "mT")) == 0)
+	/*if (strcmp(PASSWD, crypt(md_getpass("Wizard's password: "), "mT")) == 0) Replaced by RRPF with:*/
+	if(passwd() == TRUE)
 	{
 	    wizard = TRUE;
 	    argv++;
@@ -58,15 +73,18 @@ char **envp;
     /*
      * get home and options from environment
      */
-    strncpy(home, md_gethomedir(), PATH_MAX);
-
+    strcpy(home, md_gethomedir());
+    
+    if (strlen(home) > PATH_MAX - strlen("rogue36.sav") - 1)
+        *home = 0;
+    
     strcpy(file_name, home);
     strcat(file_name, "rogue36.sav");
 
     if ((env = getenv("ROGUEOPTS")) != NULL)
 	parse_opts(env);
     if (env == NULL || whoami[0] == '\0')
-	strucpy(whoami, md_getusername(md_getuid()), strlen(md_getusername(md_getuid())));
+	strucpy(whoami, md_getusername(), strlen(md_getusername()));
     if (env == NULL || fruit[0] == '\0')
 	strcpy(fruit, "slime-mold");
 
@@ -84,13 +102,27 @@ char **envp;
 
     time(&now);
     lowtime = (int) now;
-    dnum = (wizard && getenv("SEED") != NULL ?
-	atoi(getenv("SEED")) :
-	lowtime + getpid());
-    if (wizard)
+
+    env = getenv("SEED");
+
+    if (env)
+        seed = atoi(env);
+    else
+        seed = 0;
+
+    if (seed > 0)
+    {
+        waswizard = 1; /* don't save scores if SEED specified */
+        dnum = seed;
+    }
+    else
+        dnum = lowtime + md_getpid();
+
+    if (wizard || env)
 	printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
     else
 	printf("Hello %s, just a moment while I dig the dungeon...", whoami);
+
     fflush(stdout);
     seed = dnum;
     init_player();			/* Roll up the rogue */
@@ -210,8 +242,8 @@ endit(int p)
  *	Exit the program, printing a message.
  */
 
-fatal(s)
-char *s;
+void
+fatal(char *s)
 {
     clear();
     move(LINES-2, 0);
@@ -226,8 +258,8 @@ char *s;
  *	Pick a very random number.
  */
 
-rnd(range)
-register int range;
+int
+rnd(int range)
 {
     return range == 0 ? 0 : abs(RN) % range;
 }
@@ -237,10 +269,10 @@ register int range;
  *	roll a number of dice
  */
 
-roll(number, sides)
-register int number, sides;
+int
+roll(int number, int sides)
 {
-    register int dtotal = 0;
+    int dtotal = 0;
 
     while(number--)
 	dtotal += rnd(sides)+1;
@@ -272,6 +304,7 @@ tstp(int p)
     flush_type();	/* flush input */
 }
 
+void
 setup()
 {
 #ifdef SIGHUP
@@ -326,9 +359,10 @@ setup()
  * refreshing things and looking at the proper times.
  */
 
+void
 playit()
 {
-    register char *opts;
+    char *opts;
 
     /*
      * set up defaults for slow terminals
@@ -358,11 +392,12 @@ playit()
 /*
  * see if the system is being used too much for this game
  */
+int
 too_much()
 {
     double avec[3];
 
-    if (md_getloadavg(avec) == 0)
+    if (md_loadav(avec) == 0)
     	return (avec[2] > (MAXLOAD / 10.0));
     else
         return (md_ucount() > MAXUSERS);
@@ -371,6 +406,7 @@ too_much()
 /*
  * see if a user is an author of the program
  */
+int
 author()
 {
     switch (md_getuid())
@@ -381,8 +417,6 @@ author()
 	    return FALSE;
     }
 }
-
-int chmsg(char *fmt, ...);
 
 void
 checkout(int p)
@@ -398,10 +432,11 @@ checkout(int p)
 #endif
     if (too_much())
     {
-	if (num_checks == 3)
+	if (num_checks >= 3)
 	    fatal("Sorry.  You took to long.  You are dead\n");
 	checktime = CHECKTIME / (num_checks + 1);
-	chmsg(msgs[num_checks++], checktime);
+	if (num_checks < 3)
+		chmsg(msgs[num_checks++], checktime);
 #ifdef SIGALRM
 	alarm(checktime * 60);
 #endif
@@ -423,6 +458,7 @@ checkout(int p)
  * checkout()'s version of msg.  If we are in the middle of a shell, do a
  * printf instead of a msg to avoid the refresh.
  */
+void
 chmsg(char *fmt, ...)
 {
     va_list args;

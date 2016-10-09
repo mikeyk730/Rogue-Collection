@@ -10,6 +10,7 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#include <stdlib.h>
 #include <curses.h>
 #include "rogue.h"
 
@@ -22,6 +23,7 @@ int total = 0;			/* total dynamic memory bytes */
  *	takes an item out of whatever linked list it might be in
  */
 
+void
 _detach(THING **list, THING *item)
 {
     if (*list == item)
@@ -39,6 +41,7 @@ _detach(THING **list, THING *item)
  *	add an item to the head of a list
  */
 
+void
 _attach(THING **list, THING *item)
 {
     if (*list != NULL)
@@ -60,6 +63,7 @@ _attach(THING **list, THING *item)
  *	Throw the whole blamed thing away
  */
 
+void
 _free_list(THING **ptr)
 {
     THING *item;
@@ -77,12 +81,13 @@ _free_list(THING **ptr)
  *	Free up an item
  */
 
+void
 discard(THING *item)
 {
 #ifdef MASTER
     total--;
 #endif
-    free((char *) item);
+    free(item);
 }
 
 /*
@@ -90,19 +95,22 @@ discard(THING *item)
  *	Get a new item with a specified size
  */
 THING *
-new_item()
+new_item(void)
 {
     THING *item;
 
+	if ((item = calloc(1, sizeof *item)) == NULL) {
 #ifdef MASTER
-    if ((item = calloc(1, sizeof *item)) == NULL)
-	msg("ran out of memory after %d items", total);
-    else
-	total++;
-#else
-    item = calloc(1, sizeof *item);
+		msg("ran out of memory after %d items", total);
 #endif
-    item->l_next = NULL;
+		return NULL;
+	}
+
+#ifdef MASTER
+	total++;
+#endif
+
+	item->l_next = NULL;
     item->l_prev = NULL;
     return item;
 }
