@@ -91,10 +91,11 @@ namespace
 
 struct Curses : public IExCurses
 {
-    Curses(std::shared_ptr<DisplayInterface> output);
+    Curses(std::shared_ptr<DisplayInterface> output, bool require_refresh);
     ~Curses();
 
 public:
+    virtual void refresh();
     virtual void clear();
     virtual void putchr(int c, int attr);
 
@@ -114,7 +115,7 @@ public:
     virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
 
     //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
-    virtual void winit(bool narrow);
+    virtual void winit(int r, int c);
 
     virtual void forcebw();
 
@@ -203,7 +204,22 @@ private:
 
     std::shared_ptr<DisplayInterface> m_screen;
     bool disable_render = false;
+    bool m_require_refresh = false;
 };
+
+Curses::Curses(std::shared_ptr<DisplayInterface> output, bool require_refresh) :
+    m_screen(output),
+    m_require_refresh(require_refresh)
+{
+}
+
+Curses::~Curses()
+{
+    delete[] m_data.buffer;
+    delete[] m_data.text_mask;
+    delete[] m_backup_data.buffer;
+    delete[] m_backup_data.text_mask;
+}
 
 void Curses::putchr(int c, int attr)
 {
@@ -218,20 +234,12 @@ void Curses::PutCharacter(int c, int attr, bool is_text)
     m_data.buffer[m_row*COLS + m_col] = ci;
     m_data.text_mask[m_row*COLS + m_col] = is_text;
     if (!disable_render)
-        Render({ m_col, m_row, m_col, m_row });
+        if (!m_require_refresh) Render({ m_col, m_row, m_col, m_row });
 }
 
-Curses::Curses(std::shared_ptr<DisplayInterface> output) :
-    m_screen(output)
+void Curses::refresh()
 {
-}
-
-Curses::~Curses()
-{
-    delete[] m_data.buffer;
-    delete[] m_data.text_mask;
-    delete[] m_backup_data.buffer;
-    delete[] m_backup_data.text_mask;
+    Render();
 }
 
 //clear screen
@@ -378,7 +386,7 @@ void Curses::addstr(const char *s)
             r.Bottom = m_row;
             r.Left = m_col - i;
             r.Right = m_col - 1;
-            Render(r);
+            if (!m_require_refresh) Render(r);
         }
     }
 }
@@ -401,14 +409,16 @@ void Curses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 }
 
 //winit(win_name): initialize window
-void Curses::winit(bool narrow_screen)
+void Curses::winit(int r, int c)
 {
-    LINES = 25;
-    COLS = narrow_screen ? 40 : 80;
+    LINES = r;
+    COLS = c;
     at_table = color_attr;
 
-    m_screen->SetDimensions({ COLS, LINES });
-    m_screen->SetCursor(false);
+    if (m_screen) {
+        m_screen->SetDimensions({ COLS, LINES });
+        m_screen->SetCursor(false);
+    }
 
     m_data.buffer = new CharInfo[LINES*COLS];
     m_data.text_mask = new bool[LINES*COLS];
@@ -438,7 +448,7 @@ void Curses::wrestor()
 {
     memcpy(m_data.buffer, m_backup_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_data.text_mask, m_backup_data.text_mask, sizeof(bool)*LINES*COLS);
-    Render();
+    if (!m_require_refresh) Render();
 }
 
 //Some general drawing routines
@@ -479,7 +489,7 @@ void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_
 
     disable_render = was_disabled;
     if (!disable_render)
-        Render({ ul_c, ul_r, lr_c, lr_r });
+        if (!m_require_refresh) Render({ ul_c, ul_r, lr_c, lr_r });
 }
 
 //center a string according to how many columns there really are
@@ -532,7 +542,7 @@ void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
     move(ul_row, ul_col);
     disable_render = was_disabled;
     if (!disable_render)
-        Render({ ul_col, ul_row, lr_col, lr_row });
+        if (!m_require_refresh) Render({ ul_col, ul_row, lr_col, lr_row });
 }
 
 void Curses::repchr(int chr, int cnt)
@@ -547,7 +557,7 @@ void Curses::repchr(int chr, int cnt)
     }
     disable_render = was_disabled;
     if (!disable_render)
-        Render(r);
+        if (!m_require_refresh) Render(r);
 }
 
 //try to fixup screen after we get a control break
@@ -601,10 +611,10 @@ void Curses::raise_curtain()
 
     for (int r = LINES - 2; r > 0; r--)
     {
-        Render({ 1, r, COLS - 2, r });
+        if (!m_require_refresh) Render({ 1, r, COLS - 2, r });
         sleep(20);
     }
-    Render();
+    if (!m_require_refresh) Render();
 }
 
 void Curses::move(short y, short x)
@@ -659,13 +669,13 @@ void Curses::resume_rendering()
 {
     m_should_render = true;
     ApplyMove();
-    Render();
+    if (!m_require_refresh) Render();
     ApplyCursor();
 }
 
 void Curses::Render()
 {
-    if (!m_should_render || m_curtain_down)
+    if (!m_screen || !m_should_render || m_curtain_down)
         return;
 
     m_screen->Draw(m_data.buffer, m_data.text_mask);
@@ -673,7 +683,7 @@ void Curses::Render()
 
 void Curses::Render(Region rect)
 {
-    if (!m_should_render || m_curtain_down)
+    if (!m_screen || !m_should_render || m_curtain_down)
         return;
 
     m_screen->Draw(m_data.buffer, m_data.text_mask, rect);
@@ -681,7 +691,7 @@ void Curses::Render(Region rect)
 
 void Curses::ApplyMove()
 {
-    if (!m_should_render || m_curtain_down)
+    if (!m_screen || !m_should_render || m_curtain_down)
         return;
 
     m_screen->MoveCursor({ m_col, m_row });
@@ -689,13 +699,15 @@ void Curses::ApplyMove()
 
 void Curses::ApplyCursor()
 {
-    if (!m_should_render || m_curtain_down)
+    if (!m_screen || !m_should_render || m_curtain_down)
         return;
 
     m_screen->SetCursor(m_cursor);
 }
 
-IExCurses* CreateCurses(std::shared_ptr<DisplayInterface> output)
+IExCurses* CreateCurses(std::shared_ptr<DisplayInterface> output, int r, int c)
 {
-    return new Curses(output);
+    auto i = new Curses(output, true);
+    i->winit(r, c);
+    return i;
 }

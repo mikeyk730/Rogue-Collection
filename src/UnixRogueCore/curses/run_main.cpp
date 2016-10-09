@@ -1,4 +1,5 @@
 #include <memory>
+#include <functional>
 #include "display_interface.h"
 #include "coord.h"
 
@@ -21,15 +22,20 @@ private:
 
 extern "C"
 {
-    void init_curses(int r, int c, std::shared_ptr<DisplayInterface> output);
+    void init_curses(int r, int c, std::function<std::shared_ptr<DisplayInterface>(Coord)> factory);
     void shutdown_curses();
     int game_main(int argc, char **argv, char **envp);
 }
 
+std::shared_ptr<DisplayInterface> CreateConsole(Coord c)
+{
+    return std::shared_ptr<DisplayInterface>(new WindowsConsole(c));
+}
+
 int main(int argc, char**argv)
 {
-    std::shared_ptr<DisplayInterface> output(new WindowsConsole({ 0,0 }));
-    init_curses(25, 80, output);
+    std::function<std::shared_ptr<DisplayInterface>(Coord)> factory = CreateConsole;
+    init_curses(25, 80, factory);
     return game_main(argc, argv, 0);
 }
 

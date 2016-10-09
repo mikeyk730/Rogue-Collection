@@ -9,6 +9,7 @@ struct IExCurses;
 
 struct ICurses
 {
+    virtual void refresh() = 0;
     virtual void clear() = 0;
     virtual void putchr(int c, int attr) = 0;
 
@@ -28,7 +29,7 @@ struct ICurses
     virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5) = 0;
 
     //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
-    virtual void winit(bool narrow) = 0;
+    virtual void winit(int r, int c) = 0;
 
     virtual void forcebw() = 0;
 
@@ -84,4 +85,4 @@ struct IExCurses : public ICurses
     virtual void resume_rendering() = 0;
 };
 
-IExCurses* CreateCurses(std::shared_ptr<DisplayInterface> output);
+IExCurses* CreateCurses(std::shared_ptr<DisplayInterface> output, int r, int c);
