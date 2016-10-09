@@ -4,7 +4,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 
-void beep()
+void sound_beep()
 {
     Beep(750, 300);
 }

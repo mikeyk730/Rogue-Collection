@@ -1,10 +1,11 @@
-#include "icurses.h"
-
 //Cursor motion stuff to simulate a "no refresh" version of curses
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
+//#include <stdlib.h>
+//#include <stdio.h>
+//#include <stdarg.h>
+#undef MOUSE_MOVED
+#include <curses.h>
 
+#include "icurses.h"
 #include "rogue.h"
 #include "output_shim.h"
 #include "main.h"

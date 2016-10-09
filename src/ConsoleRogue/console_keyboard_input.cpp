@@ -129,7 +129,7 @@ int getinfo_impl(char *str, int size)
         if (str != retstr) { backspace(); readcnt--; str--; }
         break;
     default:
-        if (readcnt >= size) { beep(); break; }
+        if (readcnt >= size) { sound_beep(); break; }
         readcnt++;
         game->screen().add_text(ch);
         *str++ = ch;

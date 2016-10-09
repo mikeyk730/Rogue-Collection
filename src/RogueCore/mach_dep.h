@@ -1,6 +1,6 @@
 #pragma once
 
-void beep();
+void sound_beep();
 void sleep(int ms);
 
 bool is_caps_lock_on();

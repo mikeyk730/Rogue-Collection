@@ -304,7 +304,7 @@ void Weapon::vorpalize()
     m_hit_plus++;
     m_damage_plus++;
     m_charges = 1;
-    msg(flash, Name().c_str(), short_msgs() ? "" : intense);
+    msg(flash_msg, Name().c_str(), short_msgs() ? "" : intense);
 }
 
 Weapon::Weapon(int which) :

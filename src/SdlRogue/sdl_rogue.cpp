@@ -604,7 +604,7 @@ std::string SdlRogue::Impl::GetNextString(int size)
             break;
         default:
             if (s.size() >= unsigned int(size)) {
-                beep();
+                sound_beep();
                 break;
             }
             game->screen().add_text(c);

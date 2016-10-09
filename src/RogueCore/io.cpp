@@ -551,7 +551,7 @@ void tick_pause()
 void alert()
 {
     if (!game->in_replay())
-        beep();
+        sound_beep();
 }
 
 std::ostream& write_string(std::ostream& out, const std::string& s) {

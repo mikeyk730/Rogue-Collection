@@ -138,7 +138,7 @@ const char* const level_titles[] =
 };
 
 const char* const intense = " of intense white light";
-const char* const flash = "your %s gives off a flash%s";
+const char* const flash_msg = "your %s gives off a flash%s";
 
 bool operator==(const Coord& c1, const Coord& c2) 
 {
