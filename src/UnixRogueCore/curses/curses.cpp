@@ -14,15 +14,17 @@ extern "C"
 
 struct __window
 {
-    __window() {}
     __window(int nlines, int ncols, int begin_y, int begin_x);
 
-    std::unique_ptr<IExCurses> ptr = 0;
+    std::shared_ptr<IExCurses> ptr = 0;
+    Coord origin = { 0, 0 };
+    Coord dimensions = { 0, 0 };
+    bool subwindow = false;
 };
 
 namespace
 {
-    WINDOW s_stdscr;
+    std::shared_ptr<WINDOW> s_stdscr;
     std::function<std::shared_ptr<DisplayInterface>(Coord)> s_factory;
 
     //int s_baudrate = 1000; //terse
@@ -39,22 +41,23 @@ int LINES;
 __window::__window(int nlines, int ncols, int begin_y, int begin_x)
 {
     ptr.reset(CreateCurses(s_factory({ begin_x, begin_y }), nlines, ncols));
+    origin = { begin_x, begin_y };
+    dimensions = { ncols, nlines };
 }
 
 void init_curses(int r, int c, std::function<std::shared_ptr<DisplayInterface>(Coord)> factory)
 {
     LINES = r;
     COLS = c;
+    s_factory = factory; 
 
-    s_factory = factory;
-    s_stdscr.ptr.reset(CreateCurses(s_factory({ 0,0 }), LINES, COLS));
-    stdscr = &s_stdscr;
+    s_stdscr.reset(new WINDOW(LINES, COLS, 0, 0));
+    stdscr = s_stdscr.get();
 }
 
 void shutdown_curses()
 {
-    stdscr = 0;
-    s_stdscr.ptr.reset();
+    s_stdscr.reset();
 }
 
 int baudrate(void)
@@ -65,6 +68,15 @@ int baudrate(void)
 WINDOW* newwin(int nlines, int ncols, int begin_y, int begin_x)
 {
     return new WINDOW(nlines, ncols, begin_y, begin_x);
+}
+
+WINDOW* subwin(WINDOW* w, int nlines, int ncols, int begin_y, int begin_x)
+{
+    WINDOW* sub = new WINDOW(*w);
+    sub->origin = { begin_x - w->origin.x, begin_y - w->origin.y};
+    sub->dimensions = { ncols, nlines };
+    sub->subwindow = true;
+    return sub;
 }
 
 int	delwin(WINDOW* w)
@@ -105,6 +117,10 @@ chtype winch(WINDOW* w)
 
 int wmove(WINDOW* w, int r, int c)
 {
+    if (subwin) {
+        r += w->origin.y;
+        c += w->origin.x;
+    }
     w->ptr->move(r, c);
     return OK;
 }
@@ -327,10 +343,6 @@ WINDOW* initscr(void)
     return nullptr;
 }
 
-WINDOW* subwin(WINDOW *, int, int, int, int)
-{
-    return nullptr;
-}
 
 int	clearok(WINDOW *, bool)
 {
@@ -380,7 +392,6 @@ int idlok(WINDOW *, bool)
 {
     return 0;
 }
-
 
 int werase(WINDOW *)
 {
