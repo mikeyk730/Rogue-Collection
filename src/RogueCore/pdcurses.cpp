@@ -1,18 +1,21 @@
 //Cursor motion stuff to simulate a "no refresh" version of curses
-//#include <stdlib.h>
-//#include <stdio.h>
-//#include <stdarg.h>
-#undef MOUSE_MOVED
-#include <curses.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #include "icurses.h"
 #include "rogue.h"
 #include "output_shim.h"
+#undef standout
+#undef standend
 #include "main.h"
 #include "misc.h"
 #include "display_interface.h"
+#undef MOUSE_MOVED
 #include "mach_dep.h"
 #include "icurses.h"
+
+#include <curses.h>
 
 //Globals for curses
 #define BX_UL               0
