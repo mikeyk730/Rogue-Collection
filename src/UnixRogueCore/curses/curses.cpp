@@ -1,7 +1,9 @@
 extern "C" {
+#include <conio.h>
 #include "curses.h"
 }
 #include <cstdarg>
+
 #include <functional>
 #include "output_shim.h"
 #include "coord.h"
@@ -33,6 +35,7 @@ namespace
 
 
 WINDOW* stdscr;
+WINDOW* curscr;
 
 int COLS;
 int LINES;
@@ -53,6 +56,9 @@ void init_curses(int r, int c, std::function<std::shared_ptr<DisplayInterface>(C
 
     s_stdscr.reset(new WINDOW(LINES, COLS, 0, 0));
     stdscr = s_stdscr.get();
+
+    //todo: this should be the actual physical state of the screen -- we don't have that
+    curscr = stdscr;
 }
 
 void shutdown_curses()
@@ -60,9 +66,10 @@ void shutdown_curses()
     s_stdscr.reset();
 }
 
-int baudrate(void)
+WINDOW* initscr(void)
 {
-    return s_baudrate;
+    //we've already done out init
+    return stdscr;
 }
 
 WINDOW* newwin(int nlines, int ncols, int begin_y, int begin_x)
@@ -82,6 +89,10 @@ WINDOW* subwin(WINDOW* w, int nlines, int ncols, int begin_y, int begin_x)
 int	delwin(WINDOW* w)
 {
     delete w;
+    if (w == curscr || w == stdscr) {
+        curscr = 0;
+        stdscr = 0;
+    }
     return OK;
 }
 
@@ -107,6 +118,30 @@ int wclrtoeol(WINDOW* w)
 {
     w->ptr->clrtoeol();
     return OK;
+}
+
+int getcury(WINDOW* w)
+{
+    int r, c;
+    w->ptr->getrc(&r, &c);
+    return r;
+}
+
+int getcurx(WINDOW* w)
+{
+    int r, c;
+    w->ptr->getrc(&r, &c);
+    return c;
+}
+
+int getmaxy(WINDOW* w)
+{
+    return w->dimensions.y;
+}
+
+int getmaxx(WINDOW* w)
+{
+    return w->dimensions.x;
 }
 
 chtype winch(WINDOW* w)
@@ -154,7 +189,6 @@ int wstandout(WINDOW* w)
     w->ptr->set_attr(14);
     return OK;
 }
-
 
 int mvwaddch(WINDOW * w, int r, int c, chtype ch)
 {
@@ -271,7 +305,98 @@ int	standout(void)
 }
 
 
+int baudrate(void)
+{
+    return s_baudrate;
+}
 
+char *unctrl(chtype ch)
+{
+    static char chstr[9]; //Defined in curses library
+
+    if (isspace(ch))
+        strcpy(chstr, " ");
+    else if (!isprint(ch))
+        if (ch < ' ')
+            sprintf(chstr, "^%c", ch + '@');
+        else
+            sprintf(chstr, "\\x%x", ch);
+    else {
+        chstr[0] = ch;
+        chstr[1] = 0;
+    }
+    return chstr;
+}
+
+#define C_LEFT    0x4b
+#define C_RIGHT   0x4d
+#define C_UP      0x48
+#define C_DOWN    0x50
+#define C_HOME    0x47
+#define C_PGUP    0x49
+#define C_END     0x4f
+#define C_PGDN    0x51
+#define C_ESCAPE  0x1b
+#define C_INS     0x52
+#define C_DEL     0x53
+#define C_F1      0x3b
+#define C_F2      0x3c
+#define C_F3      0x3d
+#define C_F4      0x3e
+#define C_F5      0x3f
+#define C_F6      0x40
+#define C_F7      0x41
+#define C_F8      0x42
+#define C_F9      0x43
+#define C_F10     0x44
+#define ALT_F9    0x70
+
+#define CTRL(ch)  (ch&037)
+
+static struct xlate
+{
+    unsigned char keycode, keyis;
+} xtab[] =
+{
+    C_HOME,  'y',
+    C_UP,    'k',
+    C_PGUP,  'u',
+    C_LEFT,  'h',
+    C_RIGHT, 'l',
+    C_END,   'b',
+    C_DOWN,  'j',
+    C_PGDN,  'n',
+    C_INS,   '>',
+    C_DEL,   's',
+    C_F1,    '?',
+    C_F2,    '/',
+    C_F3,    'a',
+    C_F4,    CTRL('R'),
+    C_F5,    'c',
+    C_F6,    'D',
+    C_F7,    'i',
+    C_F8,    '^',
+    C_F9,    CTRL('F'),
+    C_F10,   '!',
+    ALT_F9,  'F'
+};
+
+int getkey()
+{
+    struct xlate *x;
+    int key = _getch();
+    if (key != 0 && key != 0xE0) return key;
+
+    key = _getch();
+    for (x = xtab; x < xtab + (sizeof xtab) / sizeof *xtab; x++)
+    {
+        if (key == x->keycode)
+        {
+            return x->keyis;
+        }
+    }
+    return 0;
+}
 
 
 
@@ -290,6 +415,12 @@ int raw(void)
     return 0;
 }
 
+
+int getch(void)
+{
+    return getkey();
+}
+
 char killchar(void)
 {
     return 0;
@@ -301,7 +432,7 @@ int mvcur(int, int, int, int)
 }
 
 int endwin(void)
-{
+ {
     return 0;
 }
 
@@ -325,24 +456,10 @@ int noecho(void)
     return 0;
 }
 
-char* unctrl(chtype c)
-{
-    return nullptr;
-}
-
 int halfdelay(int)
 {
     return 0;
 }
-
-WINDOW* curscr;
-
-
-WINDOW* initscr(void)
-{
-    return nullptr;
-}
-
 
 int	clearok(WINDOW *, bool)
 {
@@ -354,26 +471,6 @@ void keypad(WINDOW *, bool)
 }
 
 int leaveok(WINDOW *, bool)
-{
-    return 0;
-}
-
-int getcury(WINDOW *)
-{
-    return 0;
-}
-
-int getcurx(WINDOW *)
-{
-    return 0;
-}
-
-int getmaxy(WINDOW *)
-{
-    return 0;
-}
-
-int getmaxx(WINDOW *)
 {
     return 0;
 }

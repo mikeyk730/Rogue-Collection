@@ -5,6 +5,9 @@
 #include "output_shim.h"
 #include "display_interface.h"
 #include "coord.h"
+struct __window;
+typedef __window WINDOW;
+#include "..\rogue.h"
 
 namespace
 {
@@ -307,11 +310,15 @@ int Curses::addch(byte chr)
 
 int GetColor(int chr, int attr)
 {
-#ifdef mdkfoo
     //if it is inside a room
     if (attr == 0x07) switch (chr)
     {
-    case DOOR: case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+    case DOOR:
+#ifdef VWALL
+    case VWALL: case HWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL:
+#else
+    case '|': case '-':
+#endif
         return 0x06; //brown
     case FLOOR:
         return 0x0a; //light green
@@ -339,7 +346,6 @@ int GetColor(int chr, int attr)
     // mdk: don't think used
     //else if (m_attr == 0x0f && chr == STAIRS)
     //    return 0xa0;
-#endif
     return attr;
 }
 

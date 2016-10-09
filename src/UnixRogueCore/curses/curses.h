@@ -342,7 +342,7 @@ int	 delch(void);
 int	 deleteln(void);
 int	 echochar(const chtype);
 int	 erase(void);
-//int	 getch(void);
+int	 getch(void);
 int	 getnstr(char *, int);
 int	 getstr(char *);
 chtype	 inch(void);
