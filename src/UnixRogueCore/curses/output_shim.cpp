@@ -158,6 +158,8 @@ public:
     virtual void move(short y, short x);
     virtual char curch();
 
+    virtual void mvwin();
+
     virtual int lines() const;
     virtual int columns() const;
 
@@ -634,6 +636,11 @@ void Curses::move(short y, short x)
 char Curses::curch()
 {
     return m_data.buffer[m_row*COLS + m_col].Char.AsciiChar;
+}
+
+void Curses::mvwin()
+{
+    TokenOrigin
 }
 
 void Curses::add_text(short y, short x, byte c)

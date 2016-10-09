@@ -69,6 +69,8 @@ struct ICurses
     virtual void move(short y, short x) = 0;
     virtual char curch() = 0;
 
+    virtual void mvwin() = 0;
+
     virtual int lines() const = 0;
     virtual int columns() const = 0;
 };
