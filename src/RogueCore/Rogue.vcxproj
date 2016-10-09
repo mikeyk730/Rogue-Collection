@@ -180,6 +180,7 @@
     <ClCompile Include="move.cpp" />
     <ClCompile Include="pack.cpp" />
     <ClCompile Include="passages.cpp" />
+    <ClCompile Include="pdcurses.cpp" />
     <ClCompile Include="potions.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="rings.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="captured_input.h" />
     <ClInclude Include="command.h" />
     <ClInclude Include="commands.h" />
+    <ClInclude Include="icurses.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="curses.h" />
     <ClInclude Include="daemon.h" />

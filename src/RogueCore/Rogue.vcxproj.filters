@@ -166,6 +166,9 @@
     <ClCompile Include="captured_input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
+    <ClCompile Include="pdcurses.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="armor.h">
@@ -314,6 +317,9 @@
     </ClInclude>
     <ClInclude Include="util.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="icurses.h">
+      <Filter>Output</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

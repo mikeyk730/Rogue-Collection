@@ -1,3 +1,5 @@
+#include "icurses.h"
+
 //Cursor motion stuff to simulate a "no refresh" version of curses
 #include <stdlib.h>
 #include <stdio.h>
@@ -22,7 +24,7 @@
 
 #define MAXATTR  17
 
-namespace 
+namespace
 {
     const byte color_attr[] =
     {
@@ -74,10 +76,10 @@ namespace
     const byte spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 }
 
-struct Curses : public IExCurses
+struct PdCurses : public IExCurses
 {
-    Curses(std::shared_ptr<DisplayInterface> output);
-    ~Curses();
+    PdCurses(std::shared_ptr<DisplayInterface> output);
+    ~PdCurses();
 
 public:
     virtual void clear();
@@ -190,28 +192,28 @@ private:
     bool disable_render = false;
 };
 
-void Curses::putchr(int c, int attr)
+void PdCurses::putchr(int c, int attr)
 {
     PutCharacter(c, attr, true);
 }
 
-void Curses::PutCharacter(int c, int attr, bool is_text)
+void PdCurses::PutCharacter(int c, int attr, bool is_text)
 {
     CharInfo ci;
     ci.Attributes = attr;
     ci.Char.AsciiChar = c;
-    m_data.buffer[m_row*COLS+m_col] = ci;
+    m_data.buffer[m_row*COLS + m_col] = ci;
     m_data.text_mask[m_row*COLS + m_col] = is_text;
     if (!disable_render)
         Render({ m_col, m_row, m_col, m_row });
 }
 
-Curses::Curses(std::shared_ptr<DisplayInterface> output) :
+PdCurses::PdCurses(std::shared_ptr<DisplayInterface> output) :
     m_screen(output)
 {
 }
 
-Curses::~Curses()
+PdCurses::~PdCurses()
 {
     delete[] m_data.buffer;
     delete[] m_data.text_mask;
@@ -220,64 +222,64 @@ Curses::~Curses()
 }
 
 //clear screen
-void Curses::clear()
+void PdCurses::clear()
 {
     blot_out(0, 0, LINES - 1, COLS - 1);
 }
 
 //Turn cursor on and off
-bool Curses::cursor(bool enable)
+bool PdCurses::cursor(bool enable)
 {
     bool was_enabled = m_cursor;
     m_cursor = enable;
     if (m_cursor)
         ApplyMove();
-    if(enable != was_enabled)
+    if (enable != was_enabled)
         ApplyCursor();
     return was_enabled;
 }
 
 //get curent cursor position
-void Curses::getrc(int *r, int *c)
+void PdCurses::getrc(int *r, int *c)
 {
     *r = m_row;
     *c = m_col;
 }
 
 //clrtoeol
-void Curses::clrtoeol()
+void PdCurses::clrtoeol()
 {
     int r, c;
     getrc(&r, &c);
     blot_out(r, c, r, COLS - 1);
 }
 
-void Curses::mvaddstr(int r, int c, const char *s)
+void PdCurses::mvaddstr(int r, int c, const char *s)
 {
     move(r, c);
     addstr(s);
 }
 
-void Curses::MoveAddCharacter(int r, int c, char chr, bool is_text)
+void PdCurses::MoveAddCharacter(int r, int c, char chr, bool is_text)
 {
     move(r, c);
     AddCharacter(chr, is_text);
 }
 
-void Curses::mvaddch(int r, int c, char chr)
+void PdCurses::mvaddch(int r, int c, char chr)
 {
     MoveAddCharacter(r, c, chr, true);
 }
 
 //todo: get rid of entirely
-int Curses::mvinch(int r, int c)
+int PdCurses::mvinch(int r, int c)
 {
     move(r, c);
     return curch();
 }
 
 //put the character on the screen and update the character position
-int Curses::addch(byte chr)
+int PdCurses::addch(byte chr)
 {
     return AddCharacter(chr, true);
 }
@@ -319,7 +321,7 @@ int GetColor(int chr, int attr)
     return attr;
 }
 
-int Curses::AddCharacter(byte chr, bool is_text)
+int PdCurses::AddCharacter(byte chr, bool is_text)
 {
     int r, c;
     getrc(&r, &c);
@@ -344,7 +346,7 @@ int Curses::AddCharacter(byte chr, bool is_text)
     return (m_row);
 }
 
-void Curses::addstr(const char *s)
+void PdCurses::addstr(const char *s)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -367,13 +369,13 @@ void Curses::addstr(const char *s)
     }
 }
 
-void Curses::set_attr(int bute)
+void PdCurses::set_attr(int bute)
 {
     if (bute < MAXATTR) m_attr = at_table[bute];
     else m_attr = bute;
 }
 
-void Curses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
+void PdCurses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 {
     int row, col;
 
@@ -385,7 +387,7 @@ void Curses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 }
 
 //winit(win_name): initialize window
-void Curses::winit(bool narrow_screen)
+void PdCurses::winit(bool narrow_screen)
 {
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;
@@ -405,20 +407,20 @@ void Curses::winit(bool narrow_screen)
     move(m_row, m_col);
 }
 
-void Curses::forcebw()
+void PdCurses::forcebw()
 {
     at_table = monoc_attr;
 }
 
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
-void Curses::wdump()
+void PdCurses::wdump()
 {
     memcpy(m_backup_data.buffer, m_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_backup_data.text_mask, m_data.text_mask, sizeof(bool)*LINES*COLS);
 }
 
 //wrestor(windex): restore the window saved on disk
-void Curses::wrestor()
+void PdCurses::wrestor()
 {
     memcpy(m_data.buffer, m_backup_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_data.text_mask, m_backup_data.text_mask, sizeof(bool)*LINES*COLS);
@@ -426,13 +428,13 @@ void Curses::wrestor()
 }
 
 //Some general drawing routines
-void Curses::box(int ul_r, int ul_c, int lr_r, int lr_c)
+void PdCurses::box(int ul_r, int ul_c, int lr_r, int lr_c)
 {
     vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
 }
 
 //box: draw a box given the upper left coordinate and the lower right
-void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
+void PdCurses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -467,12 +469,12 @@ void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_
 }
 
 //center a string according to how many columns there really are
-void Curses::center(int row, const char *string)
+void PdCurses::center(int row, const char *string)
 {
     mvaddstr(row, (COLS - strlen(string)) / 2, string);
 }
 
-void Curses::printw(const char *format, ...)
+void PdCurses::printw(const char *format, ...)
 {
     char dest[1024 * 16];
     va_list argptr;
@@ -483,23 +485,23 @@ void Curses::printw(const char *format, ...)
     addstr(dest);
 }
 
-void Curses::scroll_up(int start_row, int end_row, int nlines)
+void PdCurses::scroll_up(int start_row, int end_row, int nlines)
 {
     move(end_row, m_col);
 }
 
-void Curses::scroll_dn(int start_row, int end_row, int nlines)
+void PdCurses::scroll_dn(int start_row, int end_row, int nlines)
 {
     move(start_row, m_col);
 }
 
-void Curses::scroll()
+void PdCurses::scroll()
 {
     scroll_up(0, 24, 1);
 }
 
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
-void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
+void PdCurses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -519,13 +521,13 @@ void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
         Render({ ul_col, ul_row, lr_col, lr_row });
 }
 
-void Curses::repchr(int chr, int cnt)
+void PdCurses::repchr(int chr, int cnt)
 {
     bool was_disabled = disable_render;
     disable_render = true;
 
     Region r = { m_col, m_row, m_col + cnt - 1, m_row };
-    while (cnt-- > 0) { 
+    while (cnt-- > 0) {
         PutCharacter(chr, m_attr, true);
         m_col++;
     }
@@ -535,13 +537,13 @@ void Curses::repchr(int chr, int cnt)
 }
 
 //try to fixup screen after we get a control break
-void Curses::fixup()
+void PdCurses::fixup()
 {
     blot_out(m_row, m_col, m_row, m_col + 1);
 }
 
 //Clear the screen in an interesting fashion
-void Curses::implode()
+void PdCurses::implode()
 {
     int j, r, c, cinc = COLS / 10 / 2, er, ec;
 
@@ -561,7 +563,7 @@ void Curses::implode()
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
-void Curses::drop_curtain()
+void PdCurses::drop_curtain()
 {
     int r;
     cursor(false);
@@ -579,67 +581,67 @@ void Curses::drop_curtain()
     m_curtain_down = true;
 }
 
-void Curses::raise_curtain()
+void PdCurses::raise_curtain()
 {
     m_curtain_down = false;
 
     for (int r = LINES - 2; r > 0; r--)
     {
-        Render({1, r, COLS-2, r});
+        Render({ 1, r, COLS - 2, r });
         sleep(20);
     }
     Render();
 }
 
-void Curses::move(short y, short x)
+void PdCurses::move(short y, short x)
 {
     m_row = y;
     m_col = x;
-    if(m_cursor)
+    if (m_cursor)
         ApplyMove();
 }
 
-char Curses::curch()
+char PdCurses::curch()
 {
-    return m_data.buffer[m_row*COLS+m_col].Char.AsciiChar;
+    return m_data.buffer[m_row*COLS + m_col].Char.AsciiChar;
 }
 
-void Curses::add_text(short y, short x, byte c)
+void PdCurses::add_text(short y, short x, byte c)
 {
     MoveAddCharacter(y, x, c, true);
 }
 
-int Curses::add_text(byte c)
+int PdCurses::add_text(byte c)
 {
     return AddCharacter(c, true);
 }
 
-void Curses::add_tile(short y, short x, byte c)
+void PdCurses::add_tile(short y, short x, byte c)
 {
     MoveAddCharacter(y, x, c, false);
 }
 
-int Curses::add_tile(byte c)
+int PdCurses::add_tile(byte c)
 {
     return AddCharacter(c, false);
 }
 
-int Curses::lines() const
+int PdCurses::lines() const
 {
     return LINES;
 }
 
-int Curses::columns() const
+int PdCurses::columns() const
 {
     return COLS;
 }
 
-void Curses::stop_rendering()
+void PdCurses::stop_rendering()
 {
     m_should_render = false;
 }
 
-void Curses::resume_rendering()
+void PdCurses::resume_rendering()
 {
     m_should_render = true;
     ApplyMove();
@@ -647,7 +649,7 @@ void Curses::resume_rendering()
     ApplyCursor();
 }
 
-void Curses::Render()
+void PdCurses::Render()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -655,7 +657,7 @@ void Curses::Render()
     m_screen->Draw(m_data.buffer, m_data.text_mask);
 }
 
-void Curses::Render(Region rect)
+void PdCurses::Render(Region rect)
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -663,7 +665,7 @@ void Curses::Render(Region rect)
     m_screen->Draw(m_data.buffer, m_data.text_mask, rect);
 }
 
-void Curses::ApplyMove()
+void PdCurses::ApplyMove()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -671,7 +673,7 @@ void Curses::ApplyMove()
     m_screen->MoveCursor({ m_col, m_row });
 }
 
-void Curses::ApplyCursor()
+void PdCurses::ApplyCursor()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -679,167 +681,8 @@ void Curses::ApplyCursor()
     m_screen->SetCursor(m_cursor);
 }
 
-//OutputShim::OutputShim(std::shared_ptr<DisplayInterface> output) 
-//    : m_curses(new Curses(output))
-//{
-//}
 
-OutputShim::~OutputShim()
+OutputShim::OutputShim(std::shared_ptr<DisplayInterface> output)
+    : m_curses(new PdCurses(output))
 {
-}
-
-void OutputShim::clear()
-{
-    m_curses->clear();
-}
-
-bool OutputShim::cursor(bool ison)
-{
-    return m_curses->cursor(ison);
-}
-
-void OutputShim::getrc(int * r, int * c)
-{
-    m_curses->getrc(r, c);
-}
-
-void OutputShim::clrtoeol()
-{
-    m_curses->clrtoeol();
-}
-
-void OutputShim::addstr(const char * s)
-{
-    m_curses->addstr(s);
-}
-
-void OutputShim::set_attr(int bute)
-{
-    m_curses->set_attr(bute);
-}
-
-void OutputShim::winit(bool narrow)
-{
-    m_curses->winit(narrow);
-}
-
-void OutputShim::forcebw()
-{
-    m_curses->forcebw();
-}
-
-void OutputShim::wdump()
-{
-    m_curses->wdump();
-}
-
-void OutputShim::wrestor()
-{
-    m_curses->wrestor();
-}
-
-void OutputShim::box(int ul_r, int ul_c, int lr_r, int lr_c)
-{
-    m_curses->box(ul_r, ul_c, lr_r, lr_c);
-}
-
-void OutputShim::center(int row, const char * string)
-{
-    m_curses->center(row, string);
-}
-
-void OutputShim::printw(const char * format, ...)
-{
-    char msg[1024 * 16];
-    va_list argptr;
-    va_start(argptr, format);
-    vsprintf(msg, format, argptr);
-    va_end(argptr);
-
-    m_curses->printw(msg);
-}
-
-void OutputShim::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
-{
-    m_curses->blot_out(ul_row, ul_col, lr_row, lr_col);
-}
-
-void OutputShim::repchr(int chr, int cnt)
-{
-    m_curses->repchr(chr, cnt);
-}
-
-void OutputShim::implode()
-{
-    m_curses->implode();
-}
-
-void OutputShim::drop_curtain()
-{
-    m_curses->drop_curtain();
-}
-
-void OutputShim::raise_curtain()
-{
-    m_curses->raise_curtain();
-}
-
-void OutputShim::move(short y, short x)
-{
-    m_curses->move(y, x);
-}
-
-char OutputShim::curch()
-{
-    return m_curses->curch();
-}
-
-void OutputShim::add_text(Coord p, byte c)
-{
-    m_curses->add_text(p.y, p.x, c);
-}
-
-int OutputShim::add_text(byte c)
-{
-    return m_curses->add_text(c);
-}
-
-void OutputShim::add_tile(Coord p, byte c)
-{
-    m_curses->add_tile(p.y, p.x, c);
-}
-
-int OutputShim::add_tile(byte c)
-{
-    return m_curses->add_tile(c);
-}
-
-int OutputShim::mvinch(Coord p)
-{
-    return m_curses->mvinch(p.y, p.x);
-}
-
-void OutputShim::mvaddstr(Coord p, const std::string & s)
-{
-    m_curses->mvaddstr(p.y, p.x, s.c_str());
-}
-
-int OutputShim::lines() const
-{
-    return m_curses->lines();
-}
-
-int OutputShim::columns() const
-{
-    return m_curses->columns();
-}
-
-void OutputShim::stop_rendering()
-{
-    m_curses->stop_rendering();
-}
-
-void OutputShim::resume_rendering()
-{
-    m_curses->resume_rendering();
 }

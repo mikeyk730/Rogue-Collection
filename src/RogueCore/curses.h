@@ -3,8 +3,6 @@
 #include <string>
 #include "util.h"
 
-#define BX_SIZE 7
-
 #define standend()          set_attr(0)
 #define green()             set_attr(1)
 #define red()               set_attr(3)
