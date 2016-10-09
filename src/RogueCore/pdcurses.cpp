@@ -208,6 +208,9 @@ void PdCurses::PutCharacter(int c, int attr, bool is_text)
     ci.Char.AsciiChar = c;
     m_data.buffer[m_row*COLS + m_col] = ci;
     m_data.text_mask[m_row*COLS + m_col] = is_text;
+    ::attron(COLOR_PAIR(attr));
+    ::addrawch(c);
+    ::attron(COLOR_PAIR(attr));
     if (!disable_render)
         Render({ m_col, m_row, m_col, m_row });
 }
@@ -393,6 +396,30 @@ void PdCurses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a
 //winit(win_name): initialize window
 void PdCurses::winit(bool narrow_screen)
 {
+    ::initscr();
+    ::keypad(::stdscr, TRUE);
+    ::noecho();
+    ::start_color();
+    ::init_pair(0x01, COLOR_BLUE, COLOR_BLACK);
+    ::init_pair(0x02, COLOR_GREEN, COLOR_BLACK);
+    ::init_pair(0x04, COLOR_RED, COLOR_BLACK);
+    ::init_pair(0x05, COLOR_MAGENTA, COLOR_BLACK);
+    ::init_pair(0x06, COLOR_YELLOW, COLOR_BLACK); //brown
+    ::init_pair(0x07, COLOR_WHITE, COLOR_BLACK);
+    ::init_pair(0x09, COLOR_BLUE, COLOR_BLACK); //lbue
+    ::init_pair(0x0A, COLOR_GREEN, COLOR_BLACK); //lgreen
+    ::init_pair(0x0D, COLOR_MAGENTA, COLOR_BLACK); //lmag
+    ::init_pair(0x0E, COLOR_YELLOW, COLOR_BLACK);
+    
+    ::init_pair(0x70, COLOR_BLACK, COLOR_WHITE);
+    ::init_pair(0x71, COLOR_BLUE, COLOR_WHITE);
+    ::init_pair(0x72, COLOR_GREEN, COLOR_WHITE);
+    ::init_pair(0x74, COLOR_RED, COLOR_WHITE);
+    ::init_pair(0x78, COLOR_BLACK, COLOR_WHITE); //dgrey
+    ::init_pair(0x7E, COLOR_YELLOW, COLOR_WHITE);
+
+    ::init_pair(0xA0, COLOR_BLACK, COLOR_GREEN);
+
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;
     at_table = color_attr;
@@ -419,6 +446,7 @@ void PdCurses::forcebw()
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void PdCurses::wdump()
 {
+    //todo copywin or putwin
     memcpy(m_backup_data.buffer, m_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_backup_data.text_mask, m_data.text_mask, sizeof(bool)*LINES*COLS);
 }
@@ -426,6 +454,7 @@ void PdCurses::wdump()
 //wrestor(windex): restore the window saved on disk
 void PdCurses::wrestor()
 {
+    //todo: copy win or getwin
     memcpy(m_data.buffer, m_backup_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_data.text_mask, m_backup_data.text_mask, sizeof(bool)*LINES*COLS);
     Render();
@@ -599,6 +628,7 @@ void PdCurses::raise_curtain()
 
 void PdCurses::move(short y, short x)
 {
+    ::move(y, x);
     m_row = y;
     m_col = x;
     if (m_cursor)
@@ -607,7 +637,8 @@ void PdCurses::move(short y, short x)
 
 char PdCurses::curch()
 {
-    return m_data.buffer[m_row*COLS + m_col].Char.AsciiChar;
+    return (char)::inch();
+    //return m_data.buffer[m_row*COLS + m_col].Char.AsciiChar;
 }
 
 void PdCurses::add_text(short y, short x, byte c)
@@ -659,6 +690,7 @@ void PdCurses::Render()
         return;
 
     m_screen->Draw(m_data.buffer, m_data.text_mask);
+    ::refresh();
 }
 
 void PdCurses::Render(Region rect)
@@ -667,6 +699,7 @@ void PdCurses::Render(Region rect)
         return;
 
     m_screen->Draw(m_data.buffer, m_data.text_mask, rect);
+    ::refresh();
 }
 
 void PdCurses::ApplyMove()
@@ -683,6 +716,7 @@ void PdCurses::ApplyCursor()
         return;
 
     m_screen->SetCursor(m_cursor);
+    ::curs_set(m_cursor);
 }
 
 

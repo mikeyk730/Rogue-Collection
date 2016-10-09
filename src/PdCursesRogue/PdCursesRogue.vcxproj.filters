@@ -6,21 +6,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="console_keyboard_input.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="console_rogue.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="windows_console.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="pdc_keyboard_input.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="console_keyboard_input.h">
+    <ClInclude Include="windows_console.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="windows_console.h">
+    <ClInclude Include="pdc_keyboard_input.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

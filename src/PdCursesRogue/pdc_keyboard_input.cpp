@@ -1,62 +1,41 @@
 #include <conio.h>
 #include <Windows.h>
-#include "console_keyboard_input.h"
+#undef MOUSE_MOVED
+#include <curses.h>
+#include "pdc_keyboard_input.h"
 #include "RogueCore/rogue.h"
 #include "RogueCore/io.h"
 #include "RogueCore/game_state.h"
 #include "RogueCore/output_shim.h"
 #include "RogueCore/mach_dep.h"
 
-#define C_LEFT    0x4b
-#define C_RIGHT   0x4d
-#define C_UP      0x48
-#define C_DOWN    0x50
-#define C_HOME    0x47
-#define C_PGUP    0x49
-#define C_END     0x4f
-#define C_PGDN    0x51
-#define C_ESCAPE  0x1b
-#define C_INS     0x52
-#define C_DEL     0x53
-#define C_F1      0x3b
-#define C_F2      0x3c
-#define C_F3      0x3d
-#define C_F4      0x3e
-#define C_F5      0x3f
-#define C_F6      0x40
-#define C_F7      0x41
-#define C_F8      0x42
-#define C_F9      0x43
-#define C_F10     0x44
-#define ALT_F9    0x70
-
 //Table for IBM extended key translation
 static struct xlate
 {
-    byte keycode, keyis; //todo: need to translate all of these
+    int keycode, keyis; //todo: need to translate all of these
 } xtab[] =
 {
-    C_HOME,  'y',
-    C_UP,    'k',
-    C_PGUP,  'u',
-    C_LEFT,  'h',
-    C_RIGHT, 'l',
-    C_END,   'b',
-    C_DOWN,  'j',
-    C_PGDN,  'n',
-    C_INS,   '>',
-    C_DEL,   's',
-    C_F1,    '?',
-    C_F2,    '/',
-    C_F3,    'a',
-    C_F4,    CTRL('R'),
-    C_F5,    'c',
-    C_F6,    'D',
-    C_F7,    'i',
-    C_F8,    '^',
-    C_F9,    CTRL('F'),
-    C_F10,   '!',
-    ALT_F9,  'F'
+    KEY_HOME,  'y',
+    KEY_UP,    'k',
+    KEY_PPAGE, 'u',
+    KEY_LEFT,  'h',
+    KEY_RIGHT, 'l',
+    KEY_END,   'b',
+    KEY_DOWN,  'j',
+    KEY_NPAGE, 'n',
+    KEY_IC,    '>',
+    KEY_DC,    's',
+/*    KEY_F1,    '?',
+    KEY_F2,    '/',
+    KEY_F3,    'a',
+    KEY_F4,    CTRL('R'),
+    KEY_F5,    'c',
+    KEY_F6,    'D',
+    KEY_F7,    'i',
+    KEY_F8,    '^',
+    KEY_F9,    CTRL('F'),
+    KEY_F10,   '!',
+    ALT_F9,  'F'*/
 };
 
 bool is_shift_pressed()
@@ -67,23 +46,20 @@ bool is_shift_pressed()
 
 int is_direction_key(int key)
 {
-    return key == C_HOME
-        || key == C_UP
-        || key == C_PGUP
-        || key == C_LEFT
-        || key == C_RIGHT
-        || key == C_END
-        || key == C_DOWN
-        || key == C_PGDN;
+    return key == KEY_HOME
+        || key == KEY_UP
+        || key == KEY_PPAGE
+        || key == KEY_LEFT
+        || key == KEY_RIGHT
+        || key == KEY_END
+        || key == KEY_DOWN
+        || key == KEY_NPAGE;
 }
 
 int getkey()
 {
     struct xlate *x;
-    int key = _getch();
-    if (key != 0 && key != 0xE0) return key;
-
-    key = _getch();
+    int key = getch();
     for (x = xtab; x < xtab + (sizeof xtab) / sizeof *xtab; x++)
     {
         if (key == x->keycode)
@@ -93,7 +69,7 @@ int getkey()
             return x->keyis;
         }
     }
-    return 0;
+    return key;
 }
 
 void backspace()
@@ -146,11 +122,11 @@ int getinfo_impl(char *str, int size)
 
 
 byte readchar_impl() {
-    //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
-    do
-        handle_key_state();
-    while (!_kbhit()); //Rogue spends a lot of time here
-                       //Now read a character and translate it if it appears in the translation table
+    ////while there are no characters in the type ahead buffer update the status line at the bottom of the screen
+    //do
+    //    handle_key_state();
+    //while (!_kbhit()); //Rogue spends a lot of time here
+    //                   //Now read a character and translate it if it appears in the translation table
     return getkey();
 }
 
