@@ -1,3 +1,4 @@
+#ifndef MDK
 #include <stdio.h>
 #include <values.h>
 
@@ -19,3 +20,4 @@ main() {
 	_doprnt(fmt, args, &junk);
 	printf("ostring=%s", ostring);
 	}
+#endif

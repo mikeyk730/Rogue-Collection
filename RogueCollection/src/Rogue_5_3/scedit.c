@@ -5,10 +5,14 @@
  */
 
 # include	<stdio.h>
+#ifndef MDK
 # include	<pwd.h>
+#endif
 # include	<signal.h>
 # include	<ctype.h>
+#ifndef MDK
 # include	<unctrl.h>
+#endif
 
 # define	TRUE	1
 # define	FALSE	0
@@ -40,9 +44,13 @@ char	**av; {
 	register char	*scorefile;
 	register FILE	*outf;
 
-	if (ac == 1)
-		scorefile = SCOREFILE;
-	else
+    if (ac == 1)
+#ifndef MDK
+        scorefile = SCOREFILE;
+#else
+        scorefile = "";
+#endif
+    else
 		scorefile = av[1];
 	Seed = getpid();
 

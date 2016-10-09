@@ -42,7 +42,9 @@ main(int argc, char **argv)
   epyx_yuck();
   init_ds();
   setenv(ENVFILE);
+#ifndef MDK
   protect(find_drive());
+#endif
   //Parse the screen environment variable.  if the string starts with "bw", then we force black and white mode.  If it ends with "fast" then we disable retrace checking
   if (strncmp(s_screen, "bw", 2)==0) bwflag = TRUE;
   if ((sl = strlen(s_screen))>=4 && strncmp(&s_screen[sl-4], "fast", 4)==0) do_force = TRUE;

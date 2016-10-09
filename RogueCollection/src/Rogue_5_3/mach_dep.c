@@ -27,6 +27,9 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef MDK
+#define attron
+#endif
 
 #ifdef SCOREFILE
 static char *lockfile = "/tmp/.roguelock";
@@ -92,7 +95,11 @@ setup()
     if (COLS > MAXCOLS)
 	COLS = MAXCOLS;
 
+#ifdef MDK
+#define DUMP
+#else
     signal(SIGHUP, auto_save);
+#endif
 #ifndef DUMP
     signal(SIGILL, auto_save);
     signal(SIGTRAP, auto_save);

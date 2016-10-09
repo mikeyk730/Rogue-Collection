@@ -126,6 +126,10 @@ show_count()
 
 execcom()
 {
+#ifdef MDK
+    refresh();
+#endif // MDK
+
   coord mv;
   int ch;
 
@@ -158,13 +162,15 @@ execcom()
       case 'D': after = FALSE; discovered(); break;
       case CTRL('T'): after = FALSE; msg((expert ^= 1)?"Ok, I'll be brief":"Goodie, I can use big words again!"); break;
       case 'F': after = FALSE; do_macro(macro, MACROSZ); break;
-      case CTRL('F'): after = FALSE; typeahead = macro; break;
+      case CTRL('F'): after = FALSE; typeahead1 = macro; break;
       case CTRL('R'): after = FALSE; msg(huh); break;
 
       case 'v':
         after = FALSE;
+#ifndef MDK
         if (strcmp(whoami, "The Grand Beeking")==0) addmsg("(%d)", csum());
         msg("Rogue version %d.%d (Mr. Mctesq was here)", revno, verno);
+#endif
       break;
 
       case 'S': after = FALSE; save_game(); break;

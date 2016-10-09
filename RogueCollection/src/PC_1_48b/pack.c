@@ -33,7 +33,11 @@ add_pack(THING *obj, bool silent)
   //is not ordered so that you can't tell good food from bad.  First check
   //to see if there is something in the same group and if there is then
   //increment the count.
+#ifdef MDK
+  floor = FLOOR;
+#else
   floor = (proom->r_flags&ISGONE)?PASSAGE:FLOOR;
+#endif
   if (obj->o_group)
   {
     for (op = pack; op!=NULL; op = next(op))

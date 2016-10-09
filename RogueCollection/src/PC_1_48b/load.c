@@ -15,6 +15,7 @@ static int blksize = 0x4000, lfd;
 
 epyx_yuck()
 {
+#ifndef MDK
   extern unsigned int tick;
   int type = get_mode();
 
@@ -32,6 +33,7 @@ epyx_yuck()
   video_mode(type);
   brk(store);
   tick = 0;
+#endif
 }
 
 scr_load()

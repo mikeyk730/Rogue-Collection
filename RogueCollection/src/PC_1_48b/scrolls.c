@@ -196,7 +196,7 @@ read_scroll()
           cur_weapon->o_hplus++;
           cur_weapon->o_dplus++;
           cur_weapon->o_charges = 1;
-          msg(flash, w_names[cur_weapon->o_which], terse || expert?"":intense);
+          msg(flash1, w_names[cur_weapon->o_which], terse || expert?"":intense);
         }
       }
     break;

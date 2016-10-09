@@ -6,13 +6,18 @@
  */
 
 #include <curses.h>
+#ifdef MDK
+#define attron
+#endif
 #ifdef	attron
 #include <term.h>
 #endif	attron
 #include <time.h>
 #include <signal.h>
 #include <sys/types.h>
+#ifndef MDK
 #include <pwd.h>
+#endif
 #include "rogue.h"
 #include "score.h"
 

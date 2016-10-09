@@ -11,11 +11,16 @@
  */
 
 #include <curses.h>
+#ifdef MDK
+#define attron
+#endif
 #ifdef	attron
 #include <term.h>
 #endif	attron
 #include <signal.h>
+#ifndef MDK
 #include <pwd.h>
+#endif
 #include "rogue.h"
 
 /*

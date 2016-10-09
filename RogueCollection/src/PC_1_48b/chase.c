@@ -137,7 +137,7 @@ see_monst(THING *mp)
   if (cur_weapon!=NULL && mp->t_type==cur_weapon->o_enemy && ((cur_weapon->o_flags&DIDFLASH)==0))
   {
     cur_weapon->o_flags |= DIDFLASH;
-    msg(flash, w_names[cur_weapon->o_which], terse || expert?"":intense);
+    msg(flash1, w_names[cur_weapon->o_which], terse || expert?"":intense);
   }
   return TRUE;
 }

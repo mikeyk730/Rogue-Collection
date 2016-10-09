@@ -463,11 +463,38 @@ struct magic_item things[NUMTHINGS] =
 //Common strings
 
 char nullstr[] = "";
-char *typeahead = nullstr;
+char *typeahead1 = nullstr;
 
 char *intense = " of intense white light";
-char *flash = "your %s gives off a flash%s";
+char *flash1 = "your %s gives off a flash%s";
 char *it = "it";
 char *you = "you";
 char *no_mem = "Not enough Memory";
 char *smsg = "\r\n*** Stack Overflow ***\r\n$";
+
+#ifdef MDK
+int tick;
+setmem(void*d, int s, unsigned char b)
+{
+    memset(d, b, s);
+}
+_halt() {}
+csum() {}
+int _lowmem;
+putchr(unsigned char c) { addch(c); }
+dmaout() {}
+dmain() {}
+sbrk() {}
+peekb() {}
+pokeb() {}
+int sysint;
+_Uend() {}
+int ctp_;
+int _dsval;
+no_char() { return 0; }
+int _csval;
+int out;
+int getds;
+int brk;
+index(const char *s, int i) { return strchr(s, i); }
+#endif

@@ -27,7 +27,11 @@ new_level()
 #endif
 
   //Clean things off from last level
+#ifndef MDK
   wsetmem(_level, ((MAXLINES-3)*MAXCOLS)>>1, '  ');
+#else
+  setmem(_level, ((MAXLINES - 3)*MAXCOLS), ' ');
+#endif
   setmem(_flags, (MAXLINES-3)*MAXCOLS, F_REAL);
   //Free up the monsters on the last level
   for (tp = mlist; tp!=NULL; tp = next(tp)) free_list(tp->t_pack);
@@ -91,6 +95,10 @@ new_level()
   bcopy(oldpos, hero);
   oldrp = proom;
   if (on(player, SEEMONST)) turn_see(FALSE);
+
+#ifdef MDK
+  refresh();
+#endif // MDK
 }
 
 //rnd_room: Pick a room that is really there

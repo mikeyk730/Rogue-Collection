@@ -3,8 +3,9 @@
 #include "rogue.h"
 
 //Globals for curses
-
+#ifndef MDK
 int LINES = 25, COLS = 80;
+#endif
 int is_saved = FALSE;
 int iscuron = TRUE;
 int ch_attr = 0x7;
@@ -75,16 +76,22 @@ byte sng_box[BX_SIZE] = {0xda, 0xbf, 0xc0, 0xd9, 0xb3, 0xc4, 0xc4};
 byte fat_box[BX_SIZE] = {0xdb, 0xdb, 0xdb, 0xdb, 0xdb, 0xdf, 0xdc};
 byte spc_box[BX_SIZE] = {0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
 
+#ifndef MDK
 //clear screen
 clear()
 {
   if (scr_ds==svwin_ds) wsetmem(savewin, LINES*COLS, 0x0720);
   else blot_out(0, 0, LINES-1, COLS-1);
 }
+#endif
 
 //Turn cursor on and off
 cursor(bool ison)
 {
+#ifdef MDK
+    curs_set(ison);
+    return;
+#endif
   int oldstate;
   int w_state;
 
@@ -122,6 +129,8 @@ real_rc(int pn, int *rp, int *cp)
   *rp = regs->dx>>8;
   *cp = regs->dx&0xff;
 }
+
+#ifndef MDK
 
 //clrtoeol
 clrtoeol()
@@ -220,6 +229,7 @@ addstr(char *s)
 {
   while (*s) addch(*s++);
 }
+#endif
 
 set_attr(int bute)
 {
@@ -249,9 +259,11 @@ set_cursor()
 //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
 winit(char drive)
 {
+#ifdef MDK
+    initscr();
+#else
   int i, cnt;
   extern int _dsval;
-
   //Get monitor type
   regs->ax = 15<<8;
   swint(SW_SCR, regs);
@@ -261,7 +273,9 @@ winit(char drive)
   LINES = 25;
   COLS = 80;
   scr_ds = 0xB800;
+#endif
   at_table = monoc_attr;
+#ifndef MDK
   switch (scr_type)
   {
     //It is a TV
@@ -292,6 +306,7 @@ winit(char drive)
   if (old_page_no!=page_no) clear();
   move(c_row, c_col);
   if (isjr()) no_check = TRUE;
+#endif
 }
 
 forcebw()
@@ -334,11 +349,13 @@ wclose()
   if (page_no!=old_page_no) switch_page(old_page_no);
 }
 
+#ifndef MDK
 //Some general drawing routines
 box(ul_r, ul_c, lr_r, lr_c)
 {
   vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
 }
+#endif
 
 //box: draw a box given the upper left coordinate and the lower right
 vbox(byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
@@ -370,6 +387,8 @@ center(int row, char *string)
   mvaddstr(row, (COLS-strlen(string))/2, string);
 }
 
+#ifndef MDK
+
 //printw(Ieeeee)
 printw(char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8)
 {
@@ -378,6 +397,7 @@ printw(char *msg, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8
   sprintf(pwbuf, msg, a1, a2, a3, a4, a5, a6, a7, a8);
   addstr(pwbuf);
 }
+#endif
 
 scroll_up(int start_row, int end_row, int nlines)
 {
@@ -399,20 +419,24 @@ scroll_dn(int start_row, int end_row, int nlines)
   move(start_row, c_col);
 }
 
+#ifndef MDK
 scroll()
 {
   scroll_up(0, 24, 1);
 }
+#endif
 
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
 blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
+#ifndef MDK
   regs->ax = 0x600;
   regs->bx = 0x700;
   regs->cx = (ul_row<<8)+ul_col;
   regs->dx = (lr_row<<8)+lr_col;
   swint(SW_SCR, regs);
   move(ul_row, ul_col);
+#endif
 }
 
 repchr(int chr, int cnt)
@@ -429,6 +453,7 @@ fixup()
 //Clear the screen in an interesting fashion
 implode()
 {
+#ifndef MDK
   int j, delay, r, c, cinc = COLS/10/2, er, ec;
 
   er = (COLS==80?LINES-3:LINES-4);
@@ -446,6 +471,7 @@ implode()
     }
     vbox(spc_box, r, c, er, ec);
   }
+#endif
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer

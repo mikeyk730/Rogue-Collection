@@ -185,10 +185,12 @@ command()
 			after = FALSE;
 		when 'D': after = FALSE; discovered();
 		when CTRL(R) : after = FALSE; msg(huh);
-		when CTRL(L) :
+#ifndef MDK
+        when CTRL(L) :
 		    after = FALSE;
 		    clearok(curscr,TRUE);
 		    wrefresh(curscr);
+#endif
 		when 'v' :
 		    after = FALSE;
 		    msg("rogue version %s. (mctesq was here)", release);

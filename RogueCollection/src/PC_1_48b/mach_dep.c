@@ -49,9 +49,12 @@ setup()
   maxrow = 23;
   if (COLS==40) {maxrow = 22; terse = TRUE;}
   expert = terse;
+#ifndef MDK
   //Vector CTRL-BREAK to call quit()
   COFF();
   ocb = set_ctrlb(0);
+#endif
+
 }
 
 clock_on()
@@ -74,6 +77,10 @@ no_clock()
 //returns a seed for a random number generator
 srand()
 {
+#ifdef MDK
+    return 1;
+#endif
+
 #ifdef DEBUG
   return ++dnum;
 #else
@@ -91,7 +98,7 @@ flush_type()
   regs->dx = 0xff; //set input flag
   swint(SW_DOS, regs);
 #endif CRASH_MACHINE
-  typeahead = "";
+  typeahead1 = "";
 }
 
 credits()
@@ -153,6 +160,10 @@ credits()
   mvaddch(22, 0, 0xc8);
   mvaddch(22, COLS-1, 0xbc);
   standend();
+#ifdef MDK
+  refresh();
+#endif // MDK
+
 }
 
 //readchar: Return the next input character, from the macro or from the keyboard.
@@ -161,7 +172,7 @@ readchar()
   struct xlate *x;
   byte ch;
 
-  if (*typeahead) {SIG2(); return(*typeahead++);}
+  if (*typeahead1) {SIG2(); return(*typeahead1++);}
   //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
   do SIG2(); while (no_char()); //Rogue spends a lot of time here
   //Now read a character and translate it if it appears in the translation table
@@ -190,6 +201,9 @@ bdos(int fnum, int dxval)
 //newmem - memory allocater - motto: allocate or die trying
 newmem(unsigned int nbytes, int clrflag)
 {
+#ifdef MDK
+    return malloc(nbytes);
+#endif
   char *newaddr;
 
   newaddr = sbrk(nbytes);

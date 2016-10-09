@@ -4,6 +4,9 @@
  * @(#)rogue.h	5.11 (Berkeley) 8/25/83
  */
 
+#ifdef MDK
+#define attron
+#endif
 /*
  * Maximum number of different things
  */

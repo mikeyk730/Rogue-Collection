@@ -31,6 +31,7 @@ Croot(char *cp, int first)
   exit(0);
 }
 
+#ifndef MDK
 exit(code)
 {
   (*cls_)();
@@ -42,3 +43,4 @@ exit(code)
   unsetup();
   _exit(code);
 }
+#endif

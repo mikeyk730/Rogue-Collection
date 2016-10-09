@@ -51,7 +51,11 @@ extern WINDOW	*hw;
 
 char	*brk(), *charge_str(), *ctime(), *getenv(), *inv_name(),
 	*killname(), *malloc(), *nothing(), *num(), *ring_num(),
-	*rnd_color(), *sbrk(), *sprintf(), *strcat(), *strcpy(),
+	*rnd_color(), *sbrk(), 
+#ifndef MDK
+    *sprintf(), 
+#endif
+    *strcat(), *strcpy(),
 	*tr_name(), *unctrl(), *vowelstr();
 
 int	auto_save(), come_down(), doctor(), endit(), leave(),

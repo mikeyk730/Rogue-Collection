@@ -1,6 +1,11 @@
 //Rogue definitions and variable declarations
 //rogue.h      1.4 (AI Design) 12/14/84
 
+#ifdef MDK
+#include <curses.h>
+#endif
+
+
 //Options set for PC rogue
 
 //copy protection
@@ -39,8 +44,11 @@
 #define ifterse4  ifterse
 
 //MANX C compiler funnies
-
+#ifndef MDK
 #define bcopy(a,b)  movmem(&(b),&(a),sizeof(a))
+#else
+#define bcopy(a,b)  memcpy(&(a),&(b),sizeof(a))
+#endif
 #define stpchr  index
 typedef unsigned char byte;
 typedef unsigned char bool;
@@ -536,7 +544,7 @@ extern bool amulet, after, again, askme, door_stop, expert, fastmode, faststate,
 
 extern bool p_know[], r_know[], s_know[], ws_know[];
 
-extern char *a_names[], file_name[], fruit[], *flash, *he_man[], *helpcoms[], *helpobjs[], home[], huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, *typeahead, take, *w_names[], whoami[], *ws_made[], *ws_type[];
+extern char *a_names[], file_name[], fruit[], *flash1, *he_man[], *helpcoms[], *helpobjs[], home[], huh[], macro[], *intense, outbuf[], *p_colors[], *prbuf, *r_stones[], *release, runch, *typeahead1, take, *w_names[], whoami[], *ws_made[], *ws_type[];
 
 extern byte *_level, *_flags;
 
@@ -589,9 +597,11 @@ extern int captains_log;
 #define NULL                0
 #define TRUE                1
 #define FALSE               0
+#ifndef MDK
 #define refresh             stub
 #define curscr              NULL
 #define stdscr              NULL
+#endif
 #define hw                  NULL
 #define BUFSIZ              128
 #define wmove(a,b,c)        move(b,c)
@@ -640,3 +650,25 @@ extern int captains_log;
 
 extern int scr_ds, old_page_no, no_check;
 extern byte dbl_box[BX_SIZE], sng_box[BX_SIZE], fat_box[BX_SIZE];
+
+#ifdef MDK
+struct room *roomin(coord *cp);
+char *nothing(byte type);
+unsee();
+unconfuse();
+char *killname(char monst, bool doart);
+THING *moat(int my, int mx);
+coord *find_dest(THING *tp);
+THING *find_obj(int y, int x);
+turn_see(bool turn_off);
+nohaste();
+doctor();
+swander();
+rollwand();
+runners();
+stomach();
+scrl(int msgline, char *str1, char *str2);
+char *unctrl(unsigned char ch);
+char *my_stccpy(a, b, c);
+#define curch() inch()
+#endif

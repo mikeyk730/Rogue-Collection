@@ -87,6 +87,7 @@ doadd(fmt, args)
 char *fmt;
 int *args;
 {
+#ifndef MDK
     static FILE junk;
 
     /*
@@ -101,6 +102,12 @@ int *args;
     _doprnt(fmt, args, &junk);	/**/
     putc('\0', &junk);
     newpos = strlen(msgbuf);
+#else
+    static char buf[MAXSTR];
+    vsprintf(buf, fmt, args);
+    strcat(msgbuf, buf);
+    newpos = strlen(msgbuf);
+#endif
 }
 
 /*

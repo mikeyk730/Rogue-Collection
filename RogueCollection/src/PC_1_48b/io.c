@@ -119,6 +119,7 @@ putmsg(int msgline, char *msg)
   } while (curlen>COLS);
 }
 
+#ifndef MDK
 //scrl: scroll a message across the line
 scrl(int msgline, char *str1, char *str2)
 {
@@ -139,6 +140,7 @@ scrl(int msgline, char *str1, char *str2)
     if (strlen(str1)<(COLS-1)) clrtoeol();
   }
 }
+#endif
 
 //unctrl: Print a readable version of a certain character
 char *unctrl(unsigned char ch)
@@ -476,6 +478,7 @@ char *my_stccpy(a, b, c)
   return a+strlen(a);
 }
 
+#ifndef MDK
 char *sprintf(char *buf, char *fmt, int arg)
 {
   char *cp, *init;
@@ -509,6 +512,7 @@ char *sprintf(char *buf, char *fmt, int arg)
   *buf = 0;
   return init;
 }
+#endif
 
 scan_num(char *cp)
 {

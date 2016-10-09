@@ -5,7 +5,9 @@
  */
 
 #include <curses.h>
+#ifndef MDK
 #include <unctrl.h>
+#endif
 #include <ctype.h>
 #include "rogue.h"
 
