@@ -1,4 +1,5 @@
 #include <sstream>
+#include <typeinfo>
 #include "random.h"
 #include "game_state.h"
 #include "hero.h"
@@ -175,6 +176,7 @@ bool Hero::eat()
     ingest();
 
     if (obj->m_which == 1) {
+        rnd(100); //mdk: maintain save compatibility after fixing bug
         msg("my, that was a yummy %s", game->get_environment("fruit").c_str());
     }
     else if (rnd(100) > 70) {
@@ -667,6 +669,8 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     for (; it != m_pack.end(); ++it) {
         if ((*it)->m_type != (*obj)->m_type)
             break;
+        if (typeid(**it) != typeid(**obj))
+            continue;
         if ((*it)->m_which == (*obj)->m_which) {
             exact = true;
             break;
