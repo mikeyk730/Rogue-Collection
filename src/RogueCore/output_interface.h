@@ -6,7 +6,6 @@
 struct OutputInterface
 {
     virtual void clear() = 0;
-    virtual void putchr(int c, int attr) = 0;
 
     //Turn cursor on and off
     virtual bool cursor(bool ison) = 0;
@@ -18,7 +17,6 @@ struct OutputInterface
     virtual void mvaddstr(int r, int c, const char *s) = 0;
     virtual void mvaddch(int r, int c, char chr) = 0;
     virtual int mvinch(int r, int c) = 0;
-    virtual int addch(unsigned char chr) = 0;
     virtual void addstr(const char *s) = 0;
     virtual void set_attr(int bute) = 0;
     virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5) = 0;
@@ -36,7 +34,6 @@ struct OutputInterface
 
     //Some general drawing routines
     virtual void box(int ul_r, int ul_c, int lr_r, int lr_c) = 0;
-    virtual void vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c) = 0;
 
     //center a string according to how many columns there really are
     virtual void center(int row, const char *string) = 0;
@@ -50,9 +47,6 @@ struct OutputInterface
     virtual void blot_out(int ul_row, int ul_col, int lr_row, int lr_col) = 0;
 
     virtual void repchr(int chr, int cnt) = 0;
-
-    //try to fixup screen after we get a control break
-    virtual void fixup() = 0;
 
     //Clear the screen in an interesting fashion
     virtual void implode() = 0;

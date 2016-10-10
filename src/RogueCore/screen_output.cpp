@@ -81,7 +81,6 @@ struct ScreenOutput : public OutputInterface
 
 public:
     virtual void clear();
-    virtual void putchr(int c, int attr);
 
     //Turn cursor on and off
     virtual bool cursor(bool ison);
@@ -93,7 +92,6 @@ public:
     virtual void mvaddstr(int r, int c, const char *s);
     virtual void mvaddch(int r, int c, char chr);
     virtual int mvinch(int r, int c);
-    virtual int addch(byte chr);
     virtual void addstr(const char *s);
     virtual void set_attr(int bute);
     virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
@@ -111,7 +109,6 @@ public:
 
     //Some general drawing routines
     virtual void box(int ul_r, int ul_c, int lr_r, int lr_c);
-    virtual void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
     //center a string according to how many columns there really are
     virtual void center(int row, const char *string);
@@ -125,9 +122,6 @@ public:
     virtual void blot_out(int ul_row, int ul_col, int lr_row, int lr_col);
 
     virtual void repchr(int chr, int cnt);
-
-    //try to fixup screen after we get a control break
-    virtual void fixup();
 
     //Clear the screen in an interesting fashion
     virtual void implode();
@@ -156,6 +150,10 @@ private:
     void MoveAddCharacter(int r, int c, char chr, bool is_text);
     int AddCharacter(byte c, bool is_text);
     void PutCharacter(int c, int attr, bool is_text);
+
+    void putchr(int c, int attr);
+    void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
+    int addch(byte chr);
 
     void Render();
     void Render(Region rect);
@@ -540,12 +538,6 @@ void ScreenOutput::repchr(int chr, int cnt)
     disable_render = was_disabled;
     if (!disable_render)
         Render(r);
-}
-
-//try to fixup screen after we get a control break
-void ScreenOutput::fixup()
-{
-    blot_out(m_row, m_col, m_row, m_col + 1);
 }
 
 //Clear the screen in an interesting fashion
