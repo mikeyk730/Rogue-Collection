@@ -28,7 +28,8 @@ namespace
 int main(int argc, char **argv)
 {
     std::shared_ptr<SdlRogue> sdl_rogue;
-    auto output = CreateScreenOutput(sdl_rogue);
+    std::shared_ptr<OutputInterface> output;
+    
     try {
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
             throw_error("SDL_Init");
@@ -39,6 +40,8 @@ int main(int argc, char **argv)
         
         sdl_rogue.reset(new SdlRogue(pc_colored_text, 0));
         //sdl_rogue.reset(new SdlRogue(pc_colored_text, &pc_tiles));
+
+        output = CreateScreenOutput(sdl_rogue);
     }
     catch (const std::runtime_error& e)
     {
