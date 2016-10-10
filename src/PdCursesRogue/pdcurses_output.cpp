@@ -90,7 +90,6 @@ public:
     virtual int mvinch(int r, int c);
     virtual void addstr(const char *s);
     virtual void set_attr(int bute);
-    virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
 
     //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
     virtual void winit(bool narrow);
@@ -143,11 +142,12 @@ public:
     virtual void resume_rendering();
 
 private:
-    void MoveAddCharacter(int r, int c, char chr);
-    void AddCharacter(unsigned char c);
-    void PutCharacter(int c, int attr);
-
-    void vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
+    //drawing routines that do not auto-render
+    void private_mvaddch(int r, int c, char chr);
+    void private_addch(unsigned char c);
+    void private_putchr(int c, int attr);
+    void private_repchr(int chr, int cnt);
+    void private_vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
     void Render();
     void ApplyCursor();
@@ -163,9 +163,6 @@ private:
     bool m_cursor = false;
     bool m_curtain_down = false;
     bool m_should_render = true;
-
-    std::shared_ptr<DisplayInterface> m_screen;
-    bool disable_render = false;
 
     WINDOW* m_backup_window;
 };
@@ -184,19 +181,71 @@ PdCursesOutput::~PdCursesOutput()
     //todo: kill curses?
 }
 
+namespace
+{
+    //upper half of byte is bg, lower is fg
+    //each group of 4 bits represent: is_light r g b
+    void init_color_pair(int attr)
+    {
+        ::init_pair(attr, attr & 0x0f, (attr & 0xf0) >> 4);
+    }
+}
+
+//winit(win_name): initialize window
+void PdCursesOutput::winit(bool narrow_screen)
+{
+    ::initscr();
+    ::keypad(::stdscr, TRUE);
+    ::noecho();
+    ::start_color();
+
+    ::init_color(0x00, 0, 0, 0); //black
+    ::init_color(0x01, 0, 0, 667); //blue
+    ::init_color(0x02, 0, 667, 0); //green
+    ::init_color(0x03, 0, 667, 667); //cyan
+    ::init_color(0x04, 667, 0, 0); //red
+    ::init_color(0x05, 667, 0, 667); //magenta
+    ::init_color(0x06, 667, 333, 0); //brown
+    ::init_color(0x07, 667, 667, 667); //grey
+    ::init_color(0x08, 250, 250, 250); //d_grey
+    ::init_color(0x09, 333, 333, 1000); //l_blue
+    ::init_color(0x0a, 333, 1000, 333); //l_green
+    ::init_color(0x0b, 100, 1000, 1000); //l_cyan
+    ::init_color(0x0c, 1000, 333, 333); //l_red
+    ::init_color(0x0d, 1000, 100, 1000); //l_magenta
+    ::init_color(0x0e, 1000, 1000, 100); //yellow
+    ::init_color(0x0f, 1000, 1000, 1000); //white
+
+    init_color_pair(0x01);
+    init_color_pair(0x02);
+    init_color_pair(0x04);
+    init_color_pair(0x05);
+    init_color_pair(0x06);
+    init_color_pair(0x07);
+    init_color_pair(0x09);
+    init_color_pair(0x0A);
+    init_color_pair(0x0D);
+    init_color_pair(0x0E);
+    init_color_pair(0x70);
+    init_color_pair(0x71);
+    init_color_pair(0x72);
+    init_color_pair(0x74);
+    init_color_pair(0x78);
+    init_color_pair(0x7E);
+    init_color_pair(0xA0);
+
+    LINES = 25;
+    COLS = narrow_screen ? 40 : 80;
+    at_table = color_attr;
+
+    //todo: set cursor false?
+}
+
 //clear screen
 void PdCursesOutput::clear()
 {
     ::clear();
-}
-
-void PdCursesOutput::PutCharacter(int c, int attr)
-{
-    ::attron(COLOR_PAIR(attr));
-    ::addrawch(c);
-    ::attron(COLOR_PAIR(attr));
-    if (!disable_render)
-        Render();
+    Render();
 }
 
 //Turn cursor on and off
@@ -220,30 +269,25 @@ void PdCursesOutput::getrc(int *r, int *c)
 void PdCursesOutput::clrtoeol()
 {
     ::clrtoeol();
-}
-
-void PdCursesOutput::mvaddstr(int r, int c, const char *s)
-{
-    move(r, c);
-    addstr(s);
-}
-
-void PdCursesOutput::MoveAddCharacter(int r, int c, char chr)
-{
-    move(r, c);
-    AddCharacter(chr);
+    Render();
 }
 
 void PdCursesOutput::mvaddch(int r, int c, char chr)
 {
-    MoveAddCharacter(r, c, chr);
+    private_mvaddch(r, c, chr);
+    Render();
+}
+
+void PdCursesOutput::private_mvaddch(int r, int c, char chr)
+{
+    move(r, c);
+    private_addch(chr);
 }
 
 //todo: get rid of entirely
 int PdCursesOutput::mvinch(int r, int c)
 {
-    move(r, c);
-    return curch();
+    return (char)::mvinch(r, c);
 }
 
 int GetColor(int chr, int attr)
@@ -283,7 +327,7 @@ int GetColor(int chr, int attr)
     return attr;
 }
 
-void PdCursesOutput::AddCharacter(unsigned char chr)
+void PdCursesOutput::private_addch(unsigned char chr)
 {
     int r, c;
     getrc(&r, &c);
@@ -303,102 +347,37 @@ void PdCursesOutput::AddCharacter(unsigned char chr)
     {
         attr = GetColor(chr, attr);
     }
-    PutCharacter(chr, attr);
+    private_putchr(chr, attr);
     move(r, c + 1);
     return;
 }
 
+void PdCursesOutput::private_putchr(int c, int attr)
+{
+    ::attron(COLOR_PAIR(attr));
+    ::addrawch(c);
+    ::attron(COLOR_PAIR(attr));
+}
+
+void PdCursesOutput::mvaddstr(int r, int c, const char *s)
+{
+    move(r, c);
+    addstr(s);
+}
+
 void PdCursesOutput::addstr(const char *s)
 {
-    bool was_disabled = disable_render;
-    disable_render = true;
-
-    int i;
-    for (i = 0; s[i]; ++i)
+    for (int i = 0; s[i]; ++i)
     {
-        AddCharacter(s[i]);
+        private_addch(s[i]);
     }
-    disable_render = was_disabled;
-    if (!disable_render) {
-        Render();
-    }
+    Render();
 }
 
 void PdCursesOutput::set_attr(int bute)
 {
     if (bute < MAXATTR) m_attr = at_table[bute];
     else m_attr = bute;
-}
-
-void PdCursesOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
-{
-    int row, col;
-
-    getrc(&row, &col);
-    move(mline, 0);
-    clrtoeol();
-    printw(msg, a1, a2, a3, a4, a5);
-    move(row, col);
-}
-
-namespace
-{
-    //upper half of byte is bg, lower is fg
-    //each group of 4 bits represent: is_light r g b
-    void init_color_pair(int attr)
-    {
-        ::init_pair(attr, attr & 0x0f, (attr & 0xf0)>>4);
-    }
-}
-
-//winit(win_name): initialize window
-void PdCursesOutput::winit(bool narrow_screen)
-{
-    ::initscr();
-    ::keypad(::stdscr, TRUE);
-    ::noecho();
-    ::start_color();
-
-    ::init_color(0x00,    0,    0,    0); //black
-    ::init_color(0x01,    0,    0,  667); //blue
-    ::init_color(0x02,    0,  667,    0); //green
-    ::init_color(0x03,    0,  667,  667); //cyan
-    ::init_color(0x04,  667,    0,    0); //red
-    ::init_color(0x05,  667,    0,  667); //magenta
-    ::init_color(0x06,  667,  333,    0); //brown
-    ::init_color(0x07,  667,  667,  667); //grey
-    ::init_color(0x08,  250,  250,  250); //d_grey
-    ::init_color(0x09,  333,  333, 1000); //l_blue
-    ::init_color(0x0a,  333, 1000,  333); //l_green
-    ::init_color(0x0b,  100, 1000, 1000); //l_cyan
-    ::init_color(0x0c, 1000,  333,  333); //l_red
-    ::init_color(0x0d, 1000,  100, 1000); //l_magenta
-    ::init_color(0x0e, 1000, 1000,  100); //yellow
-    ::init_color(0x0f, 1000, 1000, 1000); //white
-
-    init_color_pair(0x01);
-    init_color_pair(0x02);
-    init_color_pair(0x04);
-    init_color_pair(0x05);
-    init_color_pair(0x06);
-    init_color_pair(0x07);
-    init_color_pair(0x09);
-    init_color_pair(0x0A);
-    init_color_pair(0x0D);
-    init_color_pair(0x0E);
-    init_color_pair(0x70);
-    init_color_pair(0x71);
-    init_color_pair(0x72);
-    init_color_pair(0x74);
-    init_color_pair(0x78);
-    init_color_pair(0x7E);
-    init_color_pair(0xA0);
-
-    LINES = 25;
-    COLS = narrow_screen ? 40 : 80;
-    at_table = color_attr;
-
-    //todo: set cursor false?
 }
 
 void PdCursesOutput::forcebw()
@@ -425,15 +404,13 @@ void PdCursesOutput::wrestor()
 //Some general drawing routines
 void PdCursesOutput::box(int ul_r, int ul_c, int lr_r, int lr_c)
 {
-    vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
+    private_vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
+    Render();
 }
 
 //box: draw a box given the upper left coordinate and the lower right
-void PdCursesOutput::vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
+void PdCursesOutput::private_vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
-    bool was_disabled = disable_render;
-    disable_render = true;
-
     int i;
     bool wason;
     int r, c;
@@ -442,25 +419,21 @@ void PdCursesOutput::vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, 
     getrc(&r, &c);
     //draw horizontal boundary
     move(ul_r, ul_c + 1);
-    repchr(box[BX_HT], i = (lr_c - ul_c - 1));
+    private_repchr(box[BX_HT], i = (lr_c - ul_c - 1));
     move(lr_r, ul_c + 1);
-    repchr(box[BX_HB], i);
+    private_repchr(box[BX_HB], i);
     //draw vertical boundary
     for (i = ul_r + 1; i < lr_r; i++) {
-        MoveAddCharacter(i, ul_c, box[BX_VW]);
-        MoveAddCharacter(i, lr_c, box[BX_VW]);
+        private_mvaddch(i, ul_c, box[BX_VW]);
+        private_mvaddch(i, lr_c, box[BX_VW]);
     }
     //draw corners
-    MoveAddCharacter(ul_r, ul_c, box[BX_UL]);
-    MoveAddCharacter(ul_r, lr_c, box[BX_UR]);
-    MoveAddCharacter(lr_r, ul_c, box[BX_LL]);
-    MoveAddCharacter(lr_r, lr_c, box[BX_LR]);
+    private_mvaddch(ul_r, ul_c, box[BX_UL]);
+    private_mvaddch(ul_r, lr_c, box[BX_UR]);
+    private_mvaddch(lr_r, ul_c, box[BX_LL]);
+    private_mvaddch(lr_r, lr_c, box[BX_LR]);
     move(r, c);
     cursor(wason);
-
-    disable_render = was_disabled;
-    if (!disable_render)
-        Render();
 }
 
 //center a string according to how many columns there really are
@@ -498,52 +471,44 @@ void PdCursesOutput::scroll()
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
 void PdCursesOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
-    bool was_disabled = disable_render;
-    disable_render = true;
-
     int r, c;
     for (r = ul_row; r <= lr_row; ++r)
     {
         for (c = ul_col; c <= lr_col; ++c)
         {
             move(r, c);
-            PutCharacter(' ', m_attr);
+            private_putchr(' ', m_attr);
         }
     }
     move(ul_row, ul_col);
-    disable_render = was_disabled;
-    if (!disable_render)
-        Render();
+    Render();
 }
 
 void PdCursesOutput::repchr(int chr, int cnt)
 {
-    bool was_disabled = disable_render;
-    disable_render = true;
+    private_repchr(chr, cnt);
+    Render();
+}
 
+void PdCursesOutput::private_repchr(int chr, int cnt)
+{
     while (cnt-- > 0) {
-        PutCharacter(chr, m_attr);
+        private_putchr(chr, m_attr);
     }
-    disable_render = was_disabled;
-    if (!disable_render)
-        Render();
 }
 
 //Clear the screen in an interesting fashion
 void PdCursesOutput::implode()
 {
-
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
 void PdCursesOutput::drop_curtain()
 {
-
 }
 
 void PdCursesOutput::raise_curtain()
 {
-
 }
 
 void PdCursesOutput::move(short y, short x)
@@ -554,28 +519,31 @@ void PdCursesOutput::move(short y, short x)
 char PdCursesOutput::curch()
 {
     return (char)::inch();
-    //return m_data.buffer[m_row*COLS + m_col].Char.AsciiChar;
-}
-
-void PdCursesOutput::add_text(short y, short x, unsigned char c)
-{
-    MoveAddCharacter(y, x, c);
 }
 
 int PdCursesOutput::add_text(unsigned char c)
 {
-    AddCharacter(c);
+    private_addch(c);
+    Render();
     return OK;
+}
+
+void PdCursesOutput::add_text(short y, short x, unsigned char c)
+{
+    private_mvaddch(y, x, c);
+    Render();
 }
 
 void PdCursesOutput::add_tile(short y, short x, unsigned char c)
 {
-    MoveAddCharacter(y, x, c);
+    private_mvaddch(y, x, c);
+    Render();
 }
 
 int PdCursesOutput::add_tile(unsigned char c)
 {
-    AddCharacter(c);
+    private_addch(c);
+    Render();
     return OK;
 }
 

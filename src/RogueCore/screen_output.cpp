@@ -94,7 +94,6 @@ public:
     virtual int mvinch(int r, int c);
     virtual void addstr(const char *s);
     virtual void set_attr(int bute);
-    virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
 
     //winit(win_name): initialize window -- open disk window -- determine type of monitor -- determine screen memory location for dma
     virtual void winit(bool narrow);
@@ -364,17 +363,6 @@ void ScreenOutput::set_attr(int bute)
 {
     if (bute < MAXATTR) m_attr = at_table[bute];
     else m_attr = bute;
-}
-
-void ScreenOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
-{
-    int row, col;
-
-    getrc(&row, &col);
-    move(mline, 0);
-    clrtoeol();
-    printw(msg, a1, a2, a3, a4, a5);
-    move(row, col);
 }
 
 //winit(win_name): initialize window
