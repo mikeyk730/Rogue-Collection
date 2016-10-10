@@ -45,7 +45,7 @@ namespace
     const int s_serial_version = 6;
 }
 
-GameState::GameState(int seed, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input) :
+GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input) :
     m_seed(seed),
     m_input_interface(new CapturedInput(input)),
     m_curses(new OutputShim(output)),
@@ -60,7 +60,7 @@ GameState::GameState(int seed, std::shared_ptr<DisplayInterface> output, std::sh
     init_environment();
 }
 
-GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input) :
+GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input) :
     m_curses(new OutputShim(output)),
     m_in_replay(true),
     m_show_replay(show_replay),

@@ -15,12 +15,11 @@
 #define bold()              set_attr(16)
 
 struct OutputInterface;
-struct DisplayInterface;
 
 struct OutputShim
 {
 public:
-    OutputShim(std::shared_ptr<DisplayInterface> output);
+    OutputShim(std::shared_ptr<OutputInterface> output);
     ~OutputShim();
 
     void clear();
@@ -88,5 +87,5 @@ public:
     int mvinch(Coord p);
     void mvaddstr(Coord p, const std::string& s);
 
-    std::unique_ptr<OutputInterface> m_curses;
+    std::shared_ptr<OutputInterface> m_output_interface;
 };

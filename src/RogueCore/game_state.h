@@ -13,12 +13,12 @@ struct InputInterface;
 struct Hero;
 struct Level;
 struct OutputShim;
-struct DisplayInterface;
+struct OutputInterface;
 
 struct GameState
 {
-    GameState(int seed, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input);
-    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<DisplayInterface> output, std::shared_ptr<InputInterface> input);
+    GameState(int seed, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input);
+    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input);
     ~GameState();
 
     void save_game(const std::string& filename);

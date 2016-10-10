@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #define BX_SIZE 7
 
@@ -75,3 +76,7 @@ struct OutputInterface
     virtual void stop_rendering() = 0;
     virtual void resume_rendering() = 0;
 };
+
+struct DisplayInterface;
+
+std::shared_ptr<OutputInterface> CreateScreenOutput(std::shared_ptr<DisplayInterface> display);

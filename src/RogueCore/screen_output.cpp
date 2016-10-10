@@ -206,8 +206,13 @@ void ScreenOutput::PutCharacter(int c, int attr, bool is_text)
         Render({ m_col, m_row, m_col, m_row });
 }
 
-ScreenOutput::ScreenOutput(std::shared_ptr<DisplayInterface> output) :
-    m_screen(output)
+std::shared_ptr<OutputInterface> CreateScreenOutput(std::shared_ptr<DisplayInterface> display)
+{
+    return std::shared_ptr<OutputInterface>(new ScreenOutput(display));
+}
+
+ScreenOutput::ScreenOutput(std::shared_ptr<DisplayInterface> display) :
+    m_screen(display)
 {
 }
 
@@ -682,10 +687,10 @@ void ScreenOutput::ApplyCursor()
     m_screen->SetCursor(m_cursor);
 }
 
-//OutputShim::OutputShim(std::shared_ptr<DisplayInterface> output) 
-//    : m_curses(new Curses(output))
-//{
-//}
+OutputShim::OutputShim(std::shared_ptr<OutputInterface> output)
+    : m_output_interface(output)
+{
+}
 
 OutputShim::~OutputShim()
 {
@@ -693,62 +698,62 @@ OutputShim::~OutputShim()
 
 void OutputShim::clear()
 {
-    m_curses->clear();
+    m_output_interface->clear();
 }
 
 bool OutputShim::cursor(bool ison)
 {
-    return m_curses->cursor(ison);
+    return m_output_interface->cursor(ison);
 }
 
 void OutputShim::getrc(int * r, int * c)
 {
-    m_curses->getrc(r, c);
+    m_output_interface->getrc(r, c);
 }
 
 void OutputShim::clrtoeol()
 {
-    m_curses->clrtoeol();
+    m_output_interface->clrtoeol();
 }
 
 void OutputShim::addstr(const char * s)
 {
-    m_curses->addstr(s);
+    m_output_interface->addstr(s);
 }
 
 void OutputShim::set_attr(int bute)
 {
-    m_curses->set_attr(bute);
+    m_output_interface->set_attr(bute);
 }
 
 void OutputShim::winit(bool narrow)
 {
-    m_curses->winit(narrow);
+    m_output_interface->winit(narrow);
 }
 
 void OutputShim::forcebw()
 {
-    m_curses->forcebw();
+    m_output_interface->forcebw();
 }
 
 void OutputShim::wdump()
 {
-    m_curses->wdump();
+    m_output_interface->wdump();
 }
 
 void OutputShim::wrestor()
 {
-    m_curses->wrestor();
+    m_output_interface->wrestor();
 }
 
 void OutputShim::box(int ul_r, int ul_c, int lr_r, int lr_c)
 {
-    m_curses->box(ul_r, ul_c, lr_r, lr_c);
+    m_output_interface->box(ul_r, ul_c, lr_r, lr_c);
 }
 
 void OutputShim::center(int row, const char * string)
 {
-    m_curses->center(row, string);
+    m_output_interface->center(row, string);
 }
 
 void OutputShim::printw(const char * format, ...)
@@ -759,90 +764,90 @@ void OutputShim::printw(const char * format, ...)
     vsprintf(msg, format, argptr);
     va_end(argptr);
 
-    m_curses->printw(msg);
+    m_output_interface->printw(msg);
 }
 
 void OutputShim::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
-    m_curses->blot_out(ul_row, ul_col, lr_row, lr_col);
+    m_output_interface->blot_out(ul_row, ul_col, lr_row, lr_col);
 }
 
 void OutputShim::repchr(int chr, int cnt)
 {
-    m_curses->repchr(chr, cnt);
+    m_output_interface->repchr(chr, cnt);
 }
 
 void OutputShim::implode()
 {
-    m_curses->implode();
+    m_output_interface->implode();
 }
 
 void OutputShim::drop_curtain()
 {
-    m_curses->drop_curtain();
+    m_output_interface->drop_curtain();
 }
 
 void OutputShim::raise_curtain()
 {
-    m_curses->raise_curtain();
+    m_output_interface->raise_curtain();
 }
 
 void OutputShim::move(short y, short x)
 {
-    m_curses->move(y, x);
+    m_output_interface->move(y, x);
 }
 
 char OutputShim::curch()
 {
-    return m_curses->curch();
+    return m_output_interface->curch();
 }
 
 void OutputShim::add_text(Coord p, byte c)
 {
-    m_curses->add_text(p.y, p.x, c);
+    m_output_interface->add_text(p.y, p.x, c);
 }
 
 int OutputShim::add_text(byte c)
 {
-    return m_curses->add_text(c);
+    return m_output_interface->add_text(c);
 }
 
 void OutputShim::add_tile(Coord p, byte c)
 {
-    m_curses->add_tile(p.y, p.x, c);
+    m_output_interface->add_tile(p.y, p.x, c);
 }
 
 int OutputShim::add_tile(byte c)
 {
-    return m_curses->add_tile(c);
+    return m_output_interface->add_tile(c);
 }
 
 int OutputShim::mvinch(Coord p)
 {
-    return m_curses->mvinch(p.y, p.x);
+    return m_output_interface->mvinch(p.y, p.x);
 }
 
 void OutputShim::mvaddstr(Coord p, const std::string & s)
 {
-    m_curses->mvaddstr(p.y, p.x, s.c_str());
+    m_output_interface->mvaddstr(p.y, p.x, s.c_str());
 }
 
 int OutputShim::lines() const
 {
-    return m_curses->lines();
+    return m_output_interface->lines();
 }
 
 int OutputShim::columns() const
 {
-    return m_curses->columns();
+    return m_output_interface->columns();
 }
 
 void OutputShim::stop_rendering()
 {
-    m_curses->stop_rendering();
+    m_output_interface->stop_rendering();
 }
 
 void OutputShim::resume_rendering()
 {
-    m_curses->resume_rendering();
+    m_output_interface->resume_rendering();
 }
