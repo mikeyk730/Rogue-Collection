@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RogueCore", "src\RogueCore\Rogue.vcxproj", "{E26D8B74-2734-44D9-B418-B00E890E4073}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D21BCE89-8F41-465F-B577-94427FE70821} = {D21BCE89-8F41-465F-B577-94427FE70821}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleRogue", "src\ConsoleRogue\ConsoleRogue.vcxproj", "{D0B76666-16D4-485E-A5B8-6B4F40382DB3}"
 	ProjectSection(ProjectDependencies) = postProject

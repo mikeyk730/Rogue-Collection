@@ -159,7 +159,7 @@
     <ClCompile Include="combo_input.cpp" />
     <ClCompile Include="command.cpp" />
     <ClCompile Include="commands.cpp" />
-    <ClCompile Include="curses.cpp" />
+    <ClCompile Include="screen_output.cpp" />
     <ClCompile Include="daemon.cpp" />
     <ClCompile Include="daemons.cpp" />
     <ClCompile Include="env.cpp" />
@@ -184,7 +184,7 @@
     <ClCompile Include="move.cpp" />
     <ClCompile Include="pack.cpp" />
     <ClCompile Include="passages.cpp" />
-    <ClCompile Include="pdcurses.cpp" />
+    <ClCompile Include="pdcurses_output.cpp" />
     <ClCompile Include="potions.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="rings.cpp" />
@@ -208,7 +208,7 @@
     <ClInclude Include="captured_input.h" />
     <ClInclude Include="command.h" />
     <ClInclude Include="commands.h" />
-    <ClInclude Include="icurses.h" />
+    <ClInclude Include="output_interface.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="output_shim.h" />
     <ClInclude Include="daemon.h" />

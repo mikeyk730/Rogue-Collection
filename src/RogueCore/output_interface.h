@@ -2,7 +2,7 @@
 
 #define BX_SIZE 7
 
-struct ICurses
+struct OutputInterface
 {
     virtual void clear() = 0;
     virtual void putchr(int c, int attr) = 0;
@@ -65,10 +65,7 @@ struct ICurses
 
     virtual int lines() const = 0;
     virtual int columns() const = 0;
-};
 
-struct IExCurses : public ICurses
-{
     virtual void add_text(short y, short x, unsigned char c) = 0;
     virtual int add_text(unsigned char c) = 0;
 

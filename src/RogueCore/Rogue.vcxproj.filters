@@ -118,9 +118,6 @@
     <ClCompile Include="io.cpp">
       <Filter>Output</Filter>
     </ClCompile>
-    <ClCompile Include="curses.cpp">
-      <Filter>Output</Filter>
-    </ClCompile>
     <ClCompile Include="item_class.cpp">
       <Filter>Items</Filter>
     </ClCompile>
@@ -166,7 +163,10 @@
     <ClCompile Include="captured_input.cpp">
       <Filter>Input</Filter>
     </ClCompile>
-    <ClCompile Include="pdcurses.cpp">
+    <ClCompile Include="screen_output.cpp">
+      <Filter>Output</Filter>
+    </ClCompile>
+    <ClCompile Include="pdcurses_output.cpp">
       <Filter>Output</Filter>
     </ClCompile>
   </ItemGroup>
@@ -315,10 +315,10 @@
     <ClInclude Include="util.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="icurses.h">
+    <ClInclude Include="output_shim.h">
       <Filter>Output</Filter>
     </ClInclude>
-    <ClInclude Include="output_shim.h">
+    <ClInclude Include="output_interface.h">
       <Filter>Output</Filter>
     </ClInclude>
   </ItemGroup>

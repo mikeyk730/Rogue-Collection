@@ -9,7 +9,7 @@
 #include "misc.h"
 #include "display_interface.h"
 #include "mach_dep.h"
-#include "icurses.h"
+#include "output_interface.h"
 
 //Globals for curses
 #define BX_UL               0
@@ -74,10 +74,10 @@ namespace
     const byte spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 }
 
-struct Curses : public IExCurses
+struct ScreenOutput : public OutputInterface
 {
-    Curses(std::shared_ptr<DisplayInterface> output);
-    ~Curses();
+    ScreenOutput(std::shared_ptr<DisplayInterface> output);
+    ~ScreenOutput();
 
 public:
     virtual void clear();
@@ -190,12 +190,12 @@ private:
     bool disable_render = false;
 };
 
-void Curses::putchr(int c, int attr)
+void ScreenOutput::putchr(int c, int attr)
 {
     PutCharacter(c, attr, true);
 }
 
-void Curses::PutCharacter(int c, int attr, bool is_text)
+void ScreenOutput::PutCharacter(int c, int attr, bool is_text)
 {
     CharInfo ci;
     ci.Attributes = attr;
@@ -206,12 +206,12 @@ void Curses::PutCharacter(int c, int attr, bool is_text)
         Render({ m_col, m_row, m_col, m_row });
 }
 
-Curses::Curses(std::shared_ptr<DisplayInterface> output) :
+ScreenOutput::ScreenOutput(std::shared_ptr<DisplayInterface> output) :
     m_screen(output)
 {
 }
 
-Curses::~Curses()
+ScreenOutput::~ScreenOutput()
 {
     delete[] m_data.buffer;
     delete[] m_data.text_mask;
@@ -220,13 +220,13 @@ Curses::~Curses()
 }
 
 //clear screen
-void Curses::clear()
+void ScreenOutput::clear()
 {
     blot_out(0, 0, LINES - 1, COLS - 1);
 }
 
 //Turn cursor on and off
-bool Curses::cursor(bool enable)
+bool ScreenOutput::cursor(bool enable)
 {
     bool was_enabled = m_cursor;
     m_cursor = enable;
@@ -238,46 +238,46 @@ bool Curses::cursor(bool enable)
 }
 
 //get curent cursor position
-void Curses::getrc(int *r, int *c)
+void ScreenOutput::getrc(int *r, int *c)
 {
     *r = m_row;
     *c = m_col;
 }
 
 //clrtoeol
-void Curses::clrtoeol()
+void ScreenOutput::clrtoeol()
 {
     int r, c;
     getrc(&r, &c);
     blot_out(r, c, r, COLS - 1);
 }
 
-void Curses::mvaddstr(int r, int c, const char *s)
+void ScreenOutput::mvaddstr(int r, int c, const char *s)
 {
     move(r, c);
     addstr(s);
 }
 
-void Curses::MoveAddCharacter(int r, int c, char chr, bool is_text)
+void ScreenOutput::MoveAddCharacter(int r, int c, char chr, bool is_text)
 {
     move(r, c);
     AddCharacter(chr, is_text);
 }
 
-void Curses::mvaddch(int r, int c, char chr)
+void ScreenOutput::mvaddch(int r, int c, char chr)
 {
     MoveAddCharacter(r, c, chr, true);
 }
 
 //todo: get rid of entirely
-int Curses::mvinch(int r, int c)
+int ScreenOutput::mvinch(int r, int c)
 {
     move(r, c);
     return curch();
 }
 
 //put the character on the screen and update the character position
-int Curses::addch(byte chr)
+int ScreenOutput::addch(byte chr)
 {
     return AddCharacter(chr, true);
 }
@@ -322,7 +322,7 @@ namespace
     }
 }
 
-int Curses::AddCharacter(byte chr, bool is_text)
+int ScreenOutput::AddCharacter(byte chr, bool is_text)
 {
     int r, c;
     getrc(&r, &c);
@@ -347,7 +347,7 @@ int Curses::AddCharacter(byte chr, bool is_text)
     return (m_row);
 }
 
-void Curses::addstr(const char *s)
+void ScreenOutput::addstr(const char *s)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -370,13 +370,13 @@ void Curses::addstr(const char *s)
     }
 }
 
-void Curses::set_attr(int bute)
+void ScreenOutput::set_attr(int bute)
 {
     if (bute < MAXATTR) m_attr = at_table[bute];
     else m_attr = bute;
 }
 
-void Curses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
+void ScreenOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 {
     int row, col;
 
@@ -388,7 +388,7 @@ void Curses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 }
 
 //winit(win_name): initialize window
-void Curses::winit(bool narrow_screen)
+void ScreenOutput::winit(bool narrow_screen)
 {
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;
@@ -408,20 +408,20 @@ void Curses::winit(bool narrow_screen)
     move(m_row, m_col);
 }
 
-void Curses::forcebw()
+void ScreenOutput::forcebw()
 {
     at_table = monoc_attr;
 }
 
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
-void Curses::wdump()
+void ScreenOutput::wdump()
 {
     memcpy(m_backup_data.buffer, m_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_backup_data.text_mask, m_data.text_mask, sizeof(bool)*LINES*COLS);
 }
 
 //wrestor(windex): restore the window saved on disk
-void Curses::wrestor()
+void ScreenOutput::wrestor()
 {
     memcpy(m_data.buffer, m_backup_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_data.text_mask, m_backup_data.text_mask, sizeof(bool)*LINES*COLS);
@@ -429,13 +429,13 @@ void Curses::wrestor()
 }
 
 //Some general drawing routines
-void Curses::box(int ul_r, int ul_c, int lr_r, int lr_c)
+void ScreenOutput::box(int ul_r, int ul_c, int lr_r, int lr_c)
 {
     vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
 }
 
 //box: draw a box given the upper left coordinate and the lower right
-void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
+void ScreenOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -470,12 +470,12 @@ void Curses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_
 }
 
 //center a string according to how many columns there really are
-void Curses::center(int row, const char *string)
+void ScreenOutput::center(int row, const char *string)
 {
     mvaddstr(row, (COLS - strlen(string)) / 2, string);
 }
 
-void Curses::printw(const char *format, ...)
+void ScreenOutput::printw(const char *format, ...)
 {
     char dest[1024 * 16];
     va_list argptr;
@@ -486,23 +486,23 @@ void Curses::printw(const char *format, ...)
     addstr(dest);
 }
 
-void Curses::scroll_up(int start_row, int end_row, int nlines)
+void ScreenOutput::scroll_up(int start_row, int end_row, int nlines)
 {
     move(end_row, m_col);
 }
 
-void Curses::scroll_dn(int start_row, int end_row, int nlines)
+void ScreenOutput::scroll_dn(int start_row, int end_row, int nlines)
 {
     move(start_row, m_col);
 }
 
-void Curses::scroll()
+void ScreenOutput::scroll()
 {
     scroll_up(0, 24, 1);
 }
 
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
-void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
+void ScreenOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -522,7 +522,7 @@ void Curses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
         Render({ ul_col, ul_row, lr_col, lr_row });
 }
 
-void Curses::repchr(int chr, int cnt)
+void ScreenOutput::repchr(int chr, int cnt)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -538,13 +538,13 @@ void Curses::repchr(int chr, int cnt)
 }
 
 //try to fixup screen after we get a control break
-void Curses::fixup()
+void ScreenOutput::fixup()
 {
     blot_out(m_row, m_col, m_row, m_col + 1);
 }
 
 //Clear the screen in an interesting fashion
-void Curses::implode()
+void ScreenOutput::implode()
 {
     int j, r, c, cinc = COLS / 10 / 2, er, ec;
 
@@ -564,7 +564,7 @@ void Curses::implode()
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
-void Curses::drop_curtain()
+void ScreenOutput::drop_curtain()
 {
     int r;
     cursor(false);
@@ -582,7 +582,7 @@ void Curses::drop_curtain()
     m_curtain_down = true;
 }
 
-void Curses::raise_curtain()
+void ScreenOutput::raise_curtain()
 {
     m_curtain_down = false;
 
@@ -594,7 +594,7 @@ void Curses::raise_curtain()
     Render();
 }
 
-void Curses::move(short y, short x)
+void ScreenOutput::move(short y, short x)
 {
     m_row = y;
     m_col = x;
@@ -602,47 +602,47 @@ void Curses::move(short y, short x)
         ApplyMove();
 }
 
-char Curses::curch()
+char ScreenOutput::curch()
 {
     return m_data.buffer[m_row*COLS+m_col].Char.AsciiChar;
 }
 
-void Curses::add_text(short y, short x, byte c)
+void ScreenOutput::add_text(short y, short x, byte c)
 {
     MoveAddCharacter(y, x, c, true);
 }
 
-int Curses::add_text(byte c)
+int ScreenOutput::add_text(byte c)
 {
     return AddCharacter(c, true);
 }
 
-void Curses::add_tile(short y, short x, byte c)
+void ScreenOutput::add_tile(short y, short x, byte c)
 {
     MoveAddCharacter(y, x, c, false);
 }
 
-int Curses::add_tile(byte c)
+int ScreenOutput::add_tile(byte c)
 {
     return AddCharacter(c, false);
 }
 
-int Curses::lines() const
+int ScreenOutput::lines() const
 {
     return LINES;
 }
 
-int Curses::columns() const
+int ScreenOutput::columns() const
 {
     return COLS;
 }
 
-void Curses::stop_rendering()
+void ScreenOutput::stop_rendering()
 {
     m_should_render = false;
 }
 
-void Curses::resume_rendering()
+void ScreenOutput::resume_rendering()
 {
     m_should_render = true;
     ApplyMove();
@@ -650,7 +650,7 @@ void Curses::resume_rendering()
     ApplyCursor();
 }
 
-void Curses::Render()
+void ScreenOutput::Render()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -658,7 +658,7 @@ void Curses::Render()
     m_screen->Draw(m_data.buffer, m_data.text_mask);
 }
 
-void Curses::Render(Region rect)
+void ScreenOutput::Render(Region rect)
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -666,7 +666,7 @@ void Curses::Render(Region rect)
     m_screen->Draw(m_data.buffer, m_data.text_mask, rect);
 }
 
-void Curses::ApplyMove()
+void ScreenOutput::ApplyMove()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -674,7 +674,7 @@ void Curses::ApplyMove()
     m_screen->MoveCursor({ m_col, m_row });
 }
 
-void Curses::ApplyCursor()
+void ScreenOutput::ApplyCursor()
 {
     if (!m_should_render || m_curtain_down)
         return;

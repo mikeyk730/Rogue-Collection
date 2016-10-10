@@ -14,7 +14,7 @@
 #define high()              set_attr(15)
 #define bold()              set_attr(16)
 
-struct IExCurses;
+struct OutputInterface;
 struct DisplayInterface;
 
 struct OutputShim
@@ -88,5 +88,5 @@ public:
     int mvinch(Coord p);
     void mvaddstr(Coord p, const std::string& s);
 
-    std::unique_ptr<IExCurses> m_curses;
+    std::unique_ptr<OutputInterface> m_curses;
 };

@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "icurses.h"
+#include "output_interface.h"
 #include "rogue.h"
 #include "output_shim.h"
 #undef standout
@@ -13,7 +13,6 @@
 #include "display_interface.h"
 #undef MOUSE_MOVED
 #include "mach_dep.h"
-#include "icurses.h"
 
 #include <curses.h>
 
@@ -80,10 +79,10 @@ namespace
     const byte spc_box[BX_SIZE] = { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 }
 
-struct PdCurses : public IExCurses
+struct PdCursesOutput : public OutputInterface
 {
-    PdCurses(std::shared_ptr<DisplayInterface> output);
-    ~PdCurses();
+    PdCursesOutput(std::shared_ptr<DisplayInterface> output);
+    ~PdCursesOutput();
 
 public:
     virtual void clear();
@@ -198,12 +197,12 @@ private:
     WINDOW* m_backup_window;
 };
 
-void PdCurses::putchr(int c, int attr)
+void PdCursesOutput::putchr(int c, int attr)
 {
     PutCharacter(c, attr, true);
 }
 
-void PdCurses::PutCharacter(int c, int attr, bool is_text)
+void PdCursesOutput::PutCharacter(int c, int attr, bool is_text)
 {
     CharInfo ci;
     ci.Attributes = attr;
@@ -217,12 +216,12 @@ void PdCurses::PutCharacter(int c, int attr, bool is_text)
         Render({ m_col, m_row, m_col, m_row });
 }
 
-PdCurses::PdCurses(std::shared_ptr<DisplayInterface> output) :
+PdCursesOutput::PdCursesOutput(std::shared_ptr<DisplayInterface> output) :
     m_screen(output)
 {
 }
 
-PdCurses::~PdCurses()
+PdCursesOutput::~PdCursesOutput()
 {
     delete[] m_data.buffer;
     delete[] m_data.text_mask;
@@ -231,13 +230,13 @@ PdCurses::~PdCurses()
 }
 
 //clear screen
-void PdCurses::clear()
+void PdCursesOutput::clear()
 {
     blot_out(0, 0, LINES - 1, COLS - 1);
 }
 
 //Turn cursor on and off
-bool PdCurses::cursor(bool enable)
+bool PdCursesOutput::cursor(bool enable)
 {
     bool was_enabled = m_cursor;
     m_cursor = enable;
@@ -249,46 +248,46 @@ bool PdCurses::cursor(bool enable)
 }
 
 //get curent cursor position
-void PdCurses::getrc(int *r, int *c)
+void PdCursesOutput::getrc(int *r, int *c)
 {
     *r = m_row;
     *c = m_col;
 }
 
 //clrtoeol
-void PdCurses::clrtoeol()
+void PdCursesOutput::clrtoeol()
 {
     int r, c;
     getrc(&r, &c);
     blot_out(r, c, r, COLS - 1);
 }
 
-void PdCurses::mvaddstr(int r, int c, const char *s)
+void PdCursesOutput::mvaddstr(int r, int c, const char *s)
 {
     move(r, c);
     addstr(s);
 }
 
-void PdCurses::MoveAddCharacter(int r, int c, char chr, bool is_text)
+void PdCursesOutput::MoveAddCharacter(int r, int c, char chr, bool is_text)
 {
     move(r, c);
     AddCharacter(chr, is_text);
 }
 
-void PdCurses::mvaddch(int r, int c, char chr)
+void PdCursesOutput::mvaddch(int r, int c, char chr)
 {
     MoveAddCharacter(r, c, chr, true);
 }
 
 //todo: get rid of entirely
-int PdCurses::mvinch(int r, int c)
+int PdCursesOutput::mvinch(int r, int c)
 {
     move(r, c);
     return curch();
 }
 
 //put the character on the screen and update the character position
-int PdCurses::addch(byte chr)
+int PdCursesOutput::addch(byte chr)
 {
     return AddCharacter(chr, true);
 }
@@ -330,7 +329,7 @@ int GetColor(int chr, int attr)
     return attr;
 }
 
-int PdCurses::AddCharacter(byte chr, bool is_text)
+int PdCursesOutput::AddCharacter(byte chr, bool is_text)
 {
     int r, c;
     getrc(&r, &c);
@@ -355,7 +354,7 @@ int PdCurses::AddCharacter(byte chr, bool is_text)
     return (m_row);
 }
 
-void PdCurses::addstr(const char *s)
+void PdCursesOutput::addstr(const char *s)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -378,13 +377,13 @@ void PdCurses::addstr(const char *s)
     }
 }
 
-void PdCurses::set_attr(int bute)
+void PdCursesOutput::set_attr(int bute)
 {
     if (bute < MAXATTR) m_attr = at_table[bute];
     else m_attr = bute;
 }
 
-void PdCurses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
+void PdCursesOutput::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5)
 {
     int row, col;
 
@@ -406,7 +405,7 @@ namespace
 }
 
 //winit(win_name): initialize window
-void PdCurses::winit(bool narrow_screen)
+void PdCursesOutput::winit(bool narrow_screen)
 {
     ::initscr();
     ::keypad(::stdscr, TRUE);
@@ -466,13 +465,13 @@ void PdCurses::winit(bool narrow_screen)
     move(m_row, m_col);
 }
 
-void PdCurses::forcebw()
+void PdCursesOutput::forcebw()
 {
     at_table = monoc_attr;
 }
 
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
-void PdCurses::wdump()
+void PdCursesOutput::wdump()
 {
     m_backup_window = ::newwin(0, 0, 0, 0);
     ::overwrite(stdscr, m_backup_window);
@@ -483,7 +482,7 @@ void PdCurses::wdump()
 }
 
 //wrestor(windex): restore the window saved on disk
-void PdCurses::wrestor()
+void PdCursesOutput::wrestor()
 {
     ::overwrite(m_backup_window, stdscr);
     ::delwin(m_backup_window);
@@ -495,13 +494,13 @@ void PdCurses::wrestor()
 }
 
 //Some general drawing routines
-void PdCurses::box(int ul_r, int ul_c, int lr_r, int lr_c)
+void PdCursesOutput::box(int ul_r, int ul_c, int lr_r, int lr_c)
 {
     vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
 }
 
 //box: draw a box given the upper left coordinate and the lower right
-void PdCurses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
+void PdCursesOutput::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -536,12 +535,12 @@ void PdCurses::vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int l
 }
 
 //center a string according to how many columns there really are
-void PdCurses::center(int row, const char *string)
+void PdCursesOutput::center(int row, const char *string)
 {
     mvaddstr(row, (COLS - strlen(string)) / 2, string);
 }
 
-void PdCurses::printw(const char *format, ...)
+void PdCursesOutput::printw(const char *format, ...)
 {
     char dest[1024 * 16];
     va_list argptr;
@@ -552,23 +551,23 @@ void PdCurses::printw(const char *format, ...)
     addstr(dest);
 }
 
-void PdCurses::scroll_up(int start_row, int end_row, int nlines)
+void PdCursesOutput::scroll_up(int start_row, int end_row, int nlines)
 {
     move(end_row, m_col);
 }
 
-void PdCurses::scroll_dn(int start_row, int end_row, int nlines)
+void PdCursesOutput::scroll_dn(int start_row, int end_row, int nlines)
 {
     move(start_row, m_col);
 }
 
-void PdCurses::scroll()
+void PdCursesOutput::scroll()
 {
     scroll_up(0, 24, 1);
 }
 
 //blot_out region (upper left row, upper left column) (lower right row, lower right column)
-void PdCurses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
+void PdCursesOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -588,7 +587,7 @@ void PdCurses::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
         Render({ ul_col, ul_row, lr_col, lr_row });
 }
 
-void PdCurses::repchr(int chr, int cnt)
+void PdCursesOutput::repchr(int chr, int cnt)
 {
     bool was_disabled = disable_render;
     disable_render = true;
@@ -604,13 +603,13 @@ void PdCurses::repchr(int chr, int cnt)
 }
 
 //try to fixup screen after we get a control break
-void PdCurses::fixup()
+void PdCursesOutput::fixup()
 {
     blot_out(m_row, m_col, m_row, m_col + 1);
 }
 
 //Clear the screen in an interesting fashion
-void PdCurses::implode()
+void PdCursesOutput::implode()
 {
     int j, r, c, cinc = COLS / 10 / 2, er, ec;
 
@@ -630,7 +629,7 @@ void PdCurses::implode()
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
-void PdCurses::drop_curtain()
+void PdCursesOutput::drop_curtain()
 {
     int r;
     cursor(false);
@@ -648,7 +647,7 @@ void PdCurses::drop_curtain()
     m_curtain_down = true;
 }
 
-void PdCurses::raise_curtain()
+void PdCursesOutput::raise_curtain()
 {
     m_curtain_down = false;
 
@@ -660,7 +659,7 @@ void PdCurses::raise_curtain()
     Render();
 }
 
-void PdCurses::move(short y, short x)
+void PdCursesOutput::move(short y, short x)
 {
     ::move(y, x);
     m_row = y;
@@ -669,48 +668,48 @@ void PdCurses::move(short y, short x)
         ApplyMove();
 }
 
-char PdCurses::curch()
+char PdCursesOutput::curch()
 {
     return (char)::inch();
     //return m_data.buffer[m_row*COLS + m_col].Char.AsciiChar;
 }
 
-void PdCurses::add_text(short y, short x, byte c)
+void PdCursesOutput::add_text(short y, short x, byte c)
 {
     MoveAddCharacter(y, x, c, true);
 }
 
-int PdCurses::add_text(byte c)
+int PdCursesOutput::add_text(byte c)
 {
     return AddCharacter(c, true);
 }
 
-void PdCurses::add_tile(short y, short x, byte c)
+void PdCursesOutput::add_tile(short y, short x, byte c)
 {
     MoveAddCharacter(y, x, c, false);
 }
 
-int PdCurses::add_tile(byte c)
+int PdCursesOutput::add_tile(byte c)
 {
     return AddCharacter(c, false);
 }
 
-int PdCurses::lines() const
+int PdCursesOutput::lines() const
 {
     return LINES;
 }
 
-int PdCurses::columns() const
+int PdCursesOutput::columns() const
 {
     return COLS;
 }
 
-void PdCurses::stop_rendering()
+void PdCursesOutput::stop_rendering()
 {
     m_should_render = false;
 }
 
-void PdCurses::resume_rendering()
+void PdCursesOutput::resume_rendering()
 {
     m_should_render = true;
     ApplyMove();
@@ -718,7 +717,7 @@ void PdCurses::resume_rendering()
     ApplyCursor();
 }
 
-void PdCurses::Render()
+void PdCursesOutput::Render()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -727,7 +726,7 @@ void PdCurses::Render()
     ::refresh();
 }
 
-void PdCurses::Render(Region rect)
+void PdCursesOutput::Render(Region rect)
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -736,7 +735,7 @@ void PdCurses::Render(Region rect)
     ::refresh();
 }
 
-void PdCurses::ApplyMove()
+void PdCursesOutput::ApplyMove()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -744,7 +743,7 @@ void PdCurses::ApplyMove()
     m_screen->MoveCursor({ m_col, m_row });
 }
 
-void PdCurses::ApplyCursor()
+void PdCursesOutput::ApplyCursor()
 {
     if (!m_should_render || m_curtain_down)
         return;
@@ -755,6 +754,6 @@ void PdCurses::ApplyCursor()
 
 
 OutputShim::OutputShim(std::shared_ptr<DisplayInterface> output)
-    : m_curses(new PdCurses(output))
+    : m_curses(new PdCursesOutput(output))
 {
 }
