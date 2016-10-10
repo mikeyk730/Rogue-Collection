@@ -6,21 +6,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="windows_console.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="pdc_keyboard_input.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="pdcurses_output.cpp" />
     <ClCompile Include="main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="pdcurses_output.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="windows_console.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="pdc_keyboard_input.h">
       <Filter>Source</Filter>
     </ClInclude>

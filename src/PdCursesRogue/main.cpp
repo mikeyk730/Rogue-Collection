@@ -1,5 +1,4 @@
 #include <memory>
-#include "windows_console.h"
 #include "pdc_keyboard_input.h"
 #include "RogueCore/main.h"
 #include "RogueCore/output_interface.h"

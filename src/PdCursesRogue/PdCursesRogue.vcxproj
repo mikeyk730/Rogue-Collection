@@ -22,11 +22,9 @@
     <ClCompile Include="pdcurses_output.cpp" />
     <ClCompile Include="pdc_keyboard_input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="windows_console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pdc_keyboard_input.h" />
-    <ClInclude Include="windows_console.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{25CF5262-CC48-4884-A9DF-DC5534807CB4}</ProjectGuid>
