@@ -151,9 +151,7 @@ private:
     int AddCharacter(byte c, bool is_text);
     void PutCharacter(int c, int attr, bool is_text);
 
-    void putchr(int c, int attr);
     void vbox(const byte box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
-    int addch(byte chr);
 
     void Render();
     void Render(Region rect);
@@ -187,11 +185,6 @@ private:
     std::shared_ptr<DisplayInterface> m_screen;
     bool disable_render = false;
 };
-
-void ScreenOutput::putchr(int c, int attr)
-{
-    PutCharacter(c, attr, true);
-}
 
 void ScreenOutput::PutCharacter(int c, int attr, bool is_text)
 {
@@ -277,12 +270,6 @@ int ScreenOutput::mvinch(int r, int c)
 {
     move(r, c);
     return curch();
-}
-
-//put the character on the screen and update the character position
-int ScreenOutput::addch(byte chr)
-{
-    return AddCharacter(chr, true);
 }
 
 namespace

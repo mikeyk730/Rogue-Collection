@@ -77,7 +77,6 @@ struct PdCursesOutput : public OutputInterface
 
 public:
     virtual void clear();
-    virtual void putchr(int c, int attr);
 
     //Turn cursor on and off
     virtual bool cursor(bool ison);
@@ -89,7 +88,6 @@ public:
     virtual void mvaddstr(int r, int c, const char *s);
     virtual void mvaddch(int r, int c, char chr);
     virtual int mvinch(int r, int c);
-    virtual int addch(unsigned char chr);
     virtual void addstr(const char *s);
     virtual void set_attr(int bute);
     virtual void error(int mline, char *msg, int a1, int a2, int a3, int a4, int a5);
@@ -107,7 +105,6 @@ public:
 
     //Some general drawing routines
     virtual void box(int ul_r, int ul_c, int lr_r, int lr_c);
-    virtual void vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
     //center a string according to how many columns there really are
     virtual void center(int row, const char *string);
@@ -121,9 +118,6 @@ public:
     virtual void blot_out(int ul_row, int ul_col, int lr_row, int lr_col);
 
     virtual void repchr(int chr, int cnt);
-
-    //try to fixup screen after we get a control break
-    virtual void fixup();
 
     //Clear the screen in an interesting fashion
     virtual void implode();
@@ -149,12 +143,13 @@ public:
     virtual void resume_rendering();
 
 private:
-    void MoveAddCharacter(int r, int c, char chr, bool is_text);
-    int AddCharacter(unsigned char c, bool is_text);
-    void PutCharacter(int c, int attr, bool is_text);
+    void MoveAddCharacter(int r, int c, char chr);
+    void AddCharacter(unsigned char c);
+    void PutCharacter(int c, int attr);
+
+    void vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
     void Render();
-    void ApplyMove();
     void ApplyCursor();
 
     //screen size
@@ -163,10 +158,6 @@ private:
 
     //points to either color or monochrom attribute table
     const unsigned char *at_table;
-
-    //cursor position
-    short m_row;
-    short m_col;
 
     int m_attr = 0x7;
     bool m_cursor = false;
@@ -178,20 +169,6 @@ private:
 
     WINDOW* m_backup_window;
 };
-
-void PdCursesOutput::putchr(int c, int attr)
-{
-    PutCharacter(c, attr, true);
-}
-
-void PdCursesOutput::PutCharacter(int c, int attr, bool is_text)
-{
-    ::attron(COLOR_PAIR(attr));
-    ::addrawch(c);
-    ::attron(COLOR_PAIR(attr));
-    if (!disable_render)
-        Render();
-}
 
 std::shared_ptr<OutputInterface> CreateCursesOutput()
 {
@@ -210,7 +187,16 @@ PdCursesOutput::~PdCursesOutput()
 //clear screen
 void PdCursesOutput::clear()
 {
-    blot_out(0, 0, LINES - 1, COLS - 1);
+    ::clear();
+}
+
+void PdCursesOutput::PutCharacter(int c, int attr)
+{
+    ::attron(COLOR_PAIR(attr));
+    ::addrawch(c);
+    ::attron(COLOR_PAIR(attr));
+    if (!disable_render)
+        Render();
 }
 
 //Turn cursor on and off
@@ -218,8 +204,6 @@ bool PdCursesOutput::cursor(bool enable)
 {
     bool was_enabled = m_cursor;
     m_cursor = enable;
-    if (m_cursor)
-        ApplyMove();
     if (enable != was_enabled)
         ApplyCursor();
     return was_enabled;
@@ -228,16 +212,14 @@ bool PdCursesOutput::cursor(bool enable)
 //get curent cursor position
 void PdCursesOutput::getrc(int *r, int *c)
 {
-    *r = m_row;
-    *c = m_col;
+    *r = ::getcury(::stdscr);
+    *c = ::getcurx(::stdscr);
 }
 
 //clrtoeol
 void PdCursesOutput::clrtoeol()
 {
-    int r, c;
-    getrc(&r, &c);
-    blot_out(r, c, r, COLS - 1);
+    ::clrtoeol();
 }
 
 void PdCursesOutput::mvaddstr(int r, int c, const char *s)
@@ -246,15 +228,15 @@ void PdCursesOutput::mvaddstr(int r, int c, const char *s)
     addstr(s);
 }
 
-void PdCursesOutput::MoveAddCharacter(int r, int c, char chr, bool is_text)
+void PdCursesOutput::MoveAddCharacter(int r, int c, char chr)
 {
     move(r, c);
-    AddCharacter(chr, is_text);
+    AddCharacter(chr);
 }
 
 void PdCursesOutput::mvaddch(int r, int c, char chr)
 {
-    MoveAddCharacter(r, c, chr, true);
+    MoveAddCharacter(r, c, chr);
 }
 
 //todo: get rid of entirely
@@ -262,12 +244,6 @@ int PdCursesOutput::mvinch(int r, int c)
 {
     move(r, c);
     return curch();
-}
-
-//put the character on the screen and update the character position
-int PdCursesOutput::addch(unsigned char chr)
-{
-    return AddCharacter(chr, true);
 }
 
 int GetColor(int chr, int attr)
@@ -307,7 +283,7 @@ int GetColor(int chr, int attr)
     return attr;
 }
 
-int PdCursesOutput::AddCharacter(unsigned char chr, bool is_text)
+void PdCursesOutput::AddCharacter(unsigned char chr)
 {
     int r, c;
     getrc(&r, &c);
@@ -319,7 +295,7 @@ int PdCursesOutput::AddCharacter(unsigned char chr, bool is_text)
         }
         else
             move(r + 1, 0);
-        return m_row;
+        return;
     }
 
     unsigned char attr = m_attr;
@@ -327,9 +303,9 @@ int PdCursesOutput::AddCharacter(unsigned char chr, bool is_text)
     {
         attr = GetColor(chr, attr);
     }
-    PutCharacter(chr, attr, is_text);
+    PutCharacter(chr, attr);
     move(r, c + 1);
-    return (m_row);
+    return;
 }
 
 void PdCursesOutput::addstr(const char *s)
@@ -340,7 +316,7 @@ void PdCursesOutput::addstr(const char *s)
     int i;
     for (i = 0; s[i]; ++i)
     {
-        AddCharacter(s[i], true);
+        AddCharacter(s[i]);
     }
     disable_render = was_disabled;
     if (!disable_render) {
@@ -423,8 +399,6 @@ void PdCursesOutput::winit(bool narrow_screen)
     at_table = color_attr;
 
     //todo: set cursor false?
-
-    move(m_row, m_col);
 }
 
 void PdCursesOutput::forcebw()
@@ -473,14 +447,14 @@ void PdCursesOutput::vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, 
     repchr(box[BX_HB], i);
     //draw vertical boundary
     for (i = ul_r + 1; i < lr_r; i++) {
-        MoveAddCharacter(i, ul_c, box[BX_VW], true);
-        MoveAddCharacter(i, lr_c, box[BX_VW], true);
+        MoveAddCharacter(i, ul_c, box[BX_VW]);
+        MoveAddCharacter(i, lr_c, box[BX_VW]);
     }
     //draw corners
-    MoveAddCharacter(ul_r, ul_c, box[BX_UL], true);
-    MoveAddCharacter(ul_r, lr_c, box[BX_UR], true);
-    MoveAddCharacter(lr_r, ul_c, box[BX_LL], true);
-    MoveAddCharacter(lr_r, lr_c, box[BX_LR], true);
+    MoveAddCharacter(ul_r, ul_c, box[BX_UL]);
+    MoveAddCharacter(ul_r, lr_c, box[BX_UR]);
+    MoveAddCharacter(lr_r, ul_c, box[BX_LL]);
+    MoveAddCharacter(lr_r, lr_c, box[BX_LR]);
     move(r, c);
     cursor(wason);
 
@@ -508,12 +482,12 @@ void PdCursesOutput::printw(const char *format, ...)
 
 void PdCursesOutput::scroll_up(int start_row, int end_row, int nlines)
 {
-    move(end_row, m_col);
+    move(end_row, ::getcurx(::stdscr));
 }
 
 void PdCursesOutput::scroll_dn(int start_row, int end_row, int nlines)
 {
-    move(start_row, m_col);
+    move(start_row, ::getcurx(::stdscr));
 }
 
 void PdCursesOutput::scroll()
@@ -533,7 +507,7 @@ void PdCursesOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
         for (c = ul_col; c <= lr_col; ++c)
         {
             move(r, c);
-            PutCharacter(' ', m_attr, true);
+            PutCharacter(' ', m_attr);
         }
     }
     move(ul_row, ul_col);
@@ -548,72 +522,33 @@ void PdCursesOutput::repchr(int chr, int cnt)
     disable_render = true;
 
     while (cnt-- > 0) {
-        PutCharacter(chr, m_attr, true);
-        m_col++;
+        PutCharacter(chr, m_attr);
     }
     disable_render = was_disabled;
     if (!disable_render)
         Render();
 }
 
-//try to fixup screen after we get a control break
-void PdCursesOutput::fixup()
-{
-    blot_out(m_row, m_col, m_row, m_col + 1);
-}
-
 //Clear the screen in an interesting fashion
 void PdCursesOutput::implode()
 {
-    int j, r, c, cinc = COLS / 10 / 2, er, ec;
 
-    er = (COLS == 80 ? LINES - 3 : LINES - 4);
-    //If the curtain is down, just clear the memory
-    for (r = 0, c = 0, ec = COLS - 1; r < 10; r++, c += cinc, er--, ec -= cinc)
-    {
-        vbox(sng_box, r, c, er, ec);
-        sleep(25);
-        for (j = r + 1; j <= er - 1; j++)
-        {
-            move(j, c + 1); repchr(' ', cinc - 1);
-            move(j, ec - cinc + 1); repchr(' ', cinc - 1);
-        }
-        vbox(spc_box, r, c, er, ec);
-    }
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
 void PdCursesOutput::drop_curtain()
 {
-    int r;
-    cursor(false);
-    //green();
-    vbox(sng_box, 0, 0, LINES - 1, COLS - 1);
-    //yellow();
-    for (r = 1; r < LINES - 1; r++)
-    {
-        move(r, 1);
-        repchr(0xb1, COLS - 2);
-        sleep(20);
-    }
-    move(0, 0);
-    standend();
-    m_curtain_down = true;
+
 }
 
 void PdCursesOutput::raise_curtain()
 {
-    m_curtain_down = false;
-    //todo work on diff window when curtain is down
+
 }
 
 void PdCursesOutput::move(short y, short x)
 {
     ::move(y, x);
-    m_row = y;
-    m_col = x;
-    if (m_cursor)
-        ApplyMove();
 }
 
 char PdCursesOutput::curch()
@@ -624,22 +559,24 @@ char PdCursesOutput::curch()
 
 void PdCursesOutput::add_text(short y, short x, unsigned char c)
 {
-    MoveAddCharacter(y, x, c, true);
+    MoveAddCharacter(y, x, c);
 }
 
 int PdCursesOutput::add_text(unsigned char c)
 {
-    return AddCharacter(c, true);
+    AddCharacter(c);
+    return OK;
 }
 
 void PdCursesOutput::add_tile(short y, short x, unsigned char c)
 {
-    MoveAddCharacter(y, x, c, false);
+    MoveAddCharacter(y, x, c);
 }
 
 int PdCursesOutput::add_tile(unsigned char c)
 {
-    return AddCharacter(c, false);
+    AddCharacter(c);
+    return OK;
 }
 
 int PdCursesOutput::lines() const
@@ -660,7 +597,6 @@ void PdCursesOutput::stop_rendering()
 void PdCursesOutput::resume_rendering()
 {
     m_should_render = true;
-    ApplyMove();
     Render();
     ApplyCursor();
 }
@@ -669,14 +605,7 @@ void PdCursesOutput::Render()
 {
     if (!m_should_render || m_curtain_down)
         return;
-
     ::refresh();
-}
-
-void PdCursesOutput::ApplyMove()
-{
-    if (!m_should_render || m_curtain_down)
-        return;
 }
 
 void PdCursesOutput::ApplyCursor()
