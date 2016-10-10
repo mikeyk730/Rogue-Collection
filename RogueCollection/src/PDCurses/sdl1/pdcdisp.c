@@ -104,8 +104,9 @@ static void _set_attr(chtype ch)
 
         if (SP->mono)
             return;
-
-        PDC_pair_content(PAIR_NUMBER(ch), &newfg, &newbg);
+        //mdk: colors
+        int n = PAIR_NUMBER(ch);
+        PDC_pair_content(n, &newfg, &newbg);
 
         newfg |= (ch & A_BOLD) ? 8 : 0;
         newbg |= (ch & A_BLINK) ? 8 : 0;
@@ -328,6 +329,117 @@ static void _highlight(SDL_Rect *src, SDL_Rect *dest, chtype ch)
 /* update the given physical line to look like the corresponding line in
    curscr */
 
+#define PASSAGE		'#'
+#define DOOR		'+'
+#define FLOOR		'.'
+#define PLAYER		'@'
+#define TRAP		'^'
+#define STAIRS		'%'
+#define GOLD		'*'
+#define POTION		'!'
+#define SCROLL		'?'
+#define MAGIC		'$'
+#define FOOD		':'
+#define WEAPON		')'
+#define ARMOR		']'
+#define AMULET		','
+#define RING		'='
+#define STICK		'/'
+
+#define dPASSAGE   (0xb1)
+#define dDOOR      (0xce)
+#define dFLOOR     (0xfa)
+#define dPLAYER    (0x01)
+#define dTRAP      (0x04)
+#define dSTAIRS    (0xf0)
+#define dGOLD      (0x0f)
+#define dPOTION    (0xad)
+#define dSCROLL    (0x0e) //originally (0x0d)
+#define dFOOD      (0x05)
+#define dSTICK     (0xe7)
+#define dARMOR     (0xdb) //originally (0x08)
+#define dAMULET    (0x0c)
+#define dRING      (0xf8) //originally (0x09)
+#define dWEAPON    (0x18)
+#define dVWALL     (0xba)
+#define dHWALL     (0xcd)
+#define dULWALL    (0xc9)
+#define dURWALL    (0xbb)
+#define dLLWALL    (0xc8)
+#define dLRWALL    (0xbc)
+
+unsigned int GetColor(int chr, int attr)
+{
+
+    //if it is inside a room
+    if (attr == 0x07) switch (chr)
+    {
+    case dDOOR:
+    case dVWALL: case dHWALL: 
+    //case ULWALL: case URWALL: case LLWALL: case LRWALL:
+        return 0x06; //brown
+    case dFLOOR:
+        return 0x0a; //light green
+    case dSTAIRS:
+        return 0xa0; //black on light green
+    case dTRAP:
+        return 0x05; //magenta
+    case dGOLD:
+    case dPLAYER:
+        return 0x0e; //yellow
+    case dPOTION: 
+    case dSCROLL: 
+    case dSTICK: 
+    case dARMOR: 
+    case dAMULET: 
+    case dRING:
+    case dWEAPON:
+        return 0x09; //light blue
+    case dFOOD:
+        return 0x04; //red
+    }
+    //if inside a passage or a maze
+    else if (attr == 0x70) switch (chr)
+    {
+    case FOOD:
+        return 0x74; //red on grey
+    case GOLD: case PLAYER:
+        return 0x7e; //yellow on grey
+    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+        return 0x71; //blue on grey
+    }
+    // mdk: don't think used
+    //else if (m_attr == 0x0f && chr == STAIRS)
+    //    return 0xa0;
+
+    return attr;
+}
+
+unsigned int GetChar(int chr)
+{
+    switch (chr)
+    {
+    case DOOR: return dDOOR;
+    case '#': return dPASSAGE;
+    case '|': return dVWALL;
+    case '-': return dHWALL;
+    case FLOOR: return dFLOOR;
+    case STAIRS: return dSTAIRS;
+    case TRAP: return dTRAP;
+    case GOLD: return dGOLD;
+    case PLAYER: return dPLAYER;
+    case POTION: return dPOTION;
+    case SCROLL:return dSCROLL;
+    case STICK: return dSTICK;
+    case ARMOR: return dARMOR;
+    case AMULET: return dAMULET;
+    case RING: return dRING;
+    case WEAPON: return dWEAPON;
+    case FOOD: return dFOOD;
+    }
+    return chr;
+}
+
 void PDC_transform_line(int lineno, int x, int len, const chtype *srcp)
 {
     SDL_Rect src, dest, lastrect;
@@ -377,6 +489,15 @@ void PDC_transform_line(int lineno, int x, int len, const chtype *srcp)
     for (j = 0; j < len; j++)
     {
         chtype ch = srcp[j];
+
+        //mdk:hack
+        if (lineno == 23) {
+            ch += ((chtype)0x0e << PDC_COLOR_SHIFT);
+        }
+        if (lineno > 0 && lineno < 23) {
+            ch = GetChar(ch);
+            ch += ((chtype)GetColor(ch, 0x07) << PDC_COLOR_SHIFT);
+        }
 
         _set_attr(ch);
 #ifdef CHTYPE_LONG

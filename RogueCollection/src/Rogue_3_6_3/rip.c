@@ -138,10 +138,6 @@ score(int amount, int flags, int monst)
      * Open file and read list
      */
 
-    if (scoreboard == NULL)
-        return;
-    
-    outf = scoreboard;
 
     for (scp = top_ten; scp <= &top_ten[9]; scp++)
     {
@@ -169,6 +165,10 @@ score(int amount, int flags, int monst)
 	else if (strcmp(prbuf, "edit") == 0)
 	    prflags = 2;
 
+    if (scoreboard == NULL)
+        return;
+
+    outf = scoreboard;
     md_lockfile(outf);
 
     encread(scoreline, 100, outf);
