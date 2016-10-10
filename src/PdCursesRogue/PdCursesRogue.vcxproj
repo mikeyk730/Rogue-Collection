@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="pdcurses_output.cpp" />
     <ClCompile Include="pdc_keyboard_input.cpp" />
-    <ClCompile Include="console_rogue.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="windows_console.cpp" />
   </ItemGroup>
   <ItemGroup>

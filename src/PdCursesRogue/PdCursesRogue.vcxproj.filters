@@ -6,9 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="console_rogue.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="windows_console.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -16,6 +13,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="pdcurses_output.cpp" />
+    <ClCompile Include="main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windows_console.h">
