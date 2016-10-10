@@ -22,6 +22,7 @@
     <ClInclude Include="curspriv.h" />
     <ClInclude Include="panel.h" />
     <ClInclude Include="term.h" />
+    <ClInclude Include="curses_ext.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="sdl1\README.md">
@@ -188,5 +189,6 @@
     <ClCompile Include="pdcurses\window.c">
       <Filter>pdcurses</Filter>
     </ClCompile>
+    <ClCompile Include="curses_ext.c" />
   </ItemGroup>
 </Project>

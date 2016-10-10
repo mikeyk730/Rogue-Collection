@@ -2,6 +2,7 @@
 #include <Windows.h>
 #undef MOUSE_MOVED
 #include <curses.h>
+#include <curses_ext.h>
 #include "pdc_keyboard_input.h"
 #include "RogueCore/rogue.h"
 #include "RogueCore/io.h"
@@ -122,11 +123,10 @@ int getinfo_impl(char *str, int size)
 
 
 byte readchar_impl() {
-    ////while there are no characters in the type ahead buffer update the status line at the bottom of the screen
+    //while there are no characters in the type ahead buffer update the status line at the bottom of the screen
     //do
     //    handle_key_state();
-    //while (!_kbhit()); //Rogue spends a lot of time here
-    //                   //Now read a character and translate it if it appears in the translation table
+    //while (!curses_check_key()); //Rogue spends a lot of time here
     return getkey();
 }
 

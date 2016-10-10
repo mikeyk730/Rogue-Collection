@@ -162,6 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="curses.h" />
+    <ClInclude Include="curses_ext.h" />
     <ClInclude Include="curspriv.h" />
     <ClInclude Include="panel.h" />
     <ClInclude Include="sdl1\deffont.h" />
@@ -176,6 +177,7 @@
     <None Include="sdl1\README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="curses_ext.c" />
     <ClCompile Include="pdcurses\addch.c" />
     <ClCompile Include="pdcurses\addchstr.c" />
     <ClCompile Include="pdcurses\addstr.c" />

@@ -194,6 +194,8 @@ private:
 
     std::shared_ptr<DisplayInterface> m_screen;
     bool disable_render = false;
+
+    WINDOW* m_backup_window;
 };
 
 void PdCurses::putchr(int c, int attr)
@@ -393,6 +395,16 @@ void PdCurses::error(int mline, char *msg, int a1, int a2, int a3, int a4, int a
     move(row, col);
 }
 
+namespace
+{
+    //upper half of byte is bg, lower is fg
+    //each group of 4 bits represent: is_light r g b
+    void init_color_pair(int attr)
+    {
+        ::init_pair(attr, attr & 0x0f, (attr & 0xf0)>>4);
+    }
+}
+
 //winit(win_name): initialize window
 void PdCurses::winit(bool narrow_screen)
 {
@@ -400,25 +412,41 @@ void PdCurses::winit(bool narrow_screen)
     ::keypad(::stdscr, TRUE);
     ::noecho();
     ::start_color();
-    ::init_pair(0x01, COLOR_BLUE, COLOR_BLACK);
-    ::init_pair(0x02, COLOR_GREEN, COLOR_BLACK);
-    ::init_pair(0x04, COLOR_RED, COLOR_BLACK);
-    ::init_pair(0x05, COLOR_MAGENTA, COLOR_BLACK);
-    ::init_pair(0x06, COLOR_YELLOW, COLOR_BLACK); //brown
-    ::init_pair(0x07, COLOR_WHITE, COLOR_BLACK);
-    ::init_pair(0x09, COLOR_BLUE, COLOR_BLACK); //lbue
-    ::init_pair(0x0A, COLOR_GREEN, COLOR_BLACK); //lgreen
-    ::init_pair(0x0D, COLOR_MAGENTA, COLOR_BLACK); //lmag
-    ::init_pair(0x0E, COLOR_YELLOW, COLOR_BLACK);
-    
-    ::init_pair(0x70, COLOR_BLACK, COLOR_WHITE);
-    ::init_pair(0x71, COLOR_BLUE, COLOR_WHITE);
-    ::init_pair(0x72, COLOR_GREEN, COLOR_WHITE);
-    ::init_pair(0x74, COLOR_RED, COLOR_WHITE);
-    ::init_pair(0x78, COLOR_BLACK, COLOR_WHITE); //dgrey
-    ::init_pair(0x7E, COLOR_YELLOW, COLOR_WHITE);
 
-    ::init_pair(0xA0, COLOR_BLACK, COLOR_GREEN);
+    ::init_color(0x00,    0,    0,    0); //black
+    ::init_color(0x01,    0,    0,  667); //blue
+    ::init_color(0x02,    0,  667,    0); //green
+    ::init_color(0x03,    0,  667,  667); //cyan
+    ::init_color(0x04,  667,    0,    0); //red
+    ::init_color(0x05,  667,    0,  667); //magenta
+    ::init_color(0x06,  667,  333,    0); //brown
+    ::init_color(0x07,  667,  667,  667); //grey
+    ::init_color(0x08,  250,  250,  250); //d_grey
+    ::init_color(0x09,  333,  333, 1000); //l_blue
+    ::init_color(0x0a,  333, 1000,  333); //l_green
+    ::init_color(0x0b,  100, 1000, 1000); //l_cyan
+    ::init_color(0x0c, 1000,  333,  333); //l_red
+    ::init_color(0x0d, 1000,  100, 1000); //l_magenta
+    ::init_color(0x0e, 1000, 1000,  100); //yellow
+    ::init_color(0x0f, 1000, 1000, 1000); //white
+
+    init_color_pair(0x01);
+    init_color_pair(0x02);
+    init_color_pair(0x04);
+    init_color_pair(0x05);
+    init_color_pair(0x06);
+    init_color_pair(0x07);
+    init_color_pair(0x09);
+    init_color_pair(0x0A);
+    init_color_pair(0x0D);
+    init_color_pair(0x0E);
+    init_color_pair(0x70);
+    init_color_pair(0x71);
+    init_color_pair(0x72);
+    init_color_pair(0x74);
+    init_color_pair(0x78);
+    init_color_pair(0x7E);
+    init_color_pair(0xA0);
 
     LINES = 25;
     COLS = narrow_screen ? 40 : 80;
@@ -446,6 +474,9 @@ void PdCurses::forcebw()
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void PdCurses::wdump()
 {
+    m_backup_window = ::newwin(0, 0, 0, 0);
+    ::overwrite(stdscr, m_backup_window);
+
     //todo copywin or putwin
     memcpy(m_backup_data.buffer, m_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_backup_data.text_mask, m_data.text_mask, sizeof(bool)*LINES*COLS);
@@ -454,7 +485,10 @@ void PdCurses::wdump()
 //wrestor(windex): restore the window saved on disk
 void PdCurses::wrestor()
 {
-    //todo: copy win or getwin
+    ::overwrite(m_backup_window, stdscr);
+    ::delwin(m_backup_window);
+    m_backup_window = 0;
+
     memcpy(m_data.buffer, m_backup_data.buffer, sizeof(CharInfo)*LINES*COLS);
     memcpy(m_data.text_mask, m_backup_data.text_mask, sizeof(bool)*LINES*COLS);
     Render();
