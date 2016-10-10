@@ -1,0 +1,10 @@
+*.sav
+*.log
+etc/
+bin/
+*.db
+*.user
+Debug/
+Release/
+.vs
+*.opendb
