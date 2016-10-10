@@ -23,7 +23,7 @@
 #include "things.h"
 #include "potions.h"
 #include "pack.h"
-#include "scrolls.h"
+#include "scroll.h"
 #include "level.h"
 #include "food.h"
 #include "hero.h"

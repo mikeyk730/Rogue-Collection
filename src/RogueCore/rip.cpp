@@ -19,7 +19,7 @@
 #include "monsters.h"
 #include "sticks.h"
 #include "potions.h"
-#include "scrolls.h"
+#include "scroll.h"
 #include "rings.h"
 #include "armor.h"
 #include "hero.h"

@@ -35,7 +35,7 @@
 #include "rings.h"
 #include "sticks.h"
 #include "potions.h"
-#include "scrolls.h"
+#include "scroll.h"
 #include "hero.h"
 #include "monsters.h"
 #include "game_state.h"
@@ -179,24 +179,17 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     //args.savefile = "etc\\saves\\blevel8.rsf";
     //args.savefile = "rogue.sav";
 
-    try {
-        if (!args.savefile.empty()) {
-            game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, output, input);
-        }
-        else {
-            game = new GameState(seed, output, input);
-            setenv(args.optfile.c_str());
-        }
-        if (game->options.act_like_v1_1()) {
-            set_monsters_v1_1();
-        }
-        load_monster_cfg(args.monsterfile);
+    if (!args.savefile.empty()) {
+        game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, output, input);
     }
-    catch (const std::runtime_error& e)
-    {
-        std::cout << e.what() << std::endl;
-        exit(1);
+    else {
+        game = new GameState(seed, output, input);
+        setenv(args.optfile.c_str());
     }
+    if (game->options.act_like_v1_1()) {
+        set_monsters_v1_1();
+    }
+    load_monster_cfg(args.monsterfile);
 
     if (args.bw)
         game->set_environment("screen", "bw");

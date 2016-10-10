@@ -2,7 +2,9 @@
 //scrolls.c   1.4 (AI Design) 12/14/84
 
 #include <stdio.h>
-
+#include <sstream>
+#include <algorithm>
+#include <fstream>
 #include "random.h"
 #include "item_class.h"
 #include "game_state.h"
@@ -23,23 +25,6 @@
 #include "monster.h"
 #include "rings.h"
 #include "armor.h"
-
-//Scroll types
-#define S_CONFUSE   0
-#define S_MAP       1
-#define S_HOLD      2
-#define S_SLEEP     3
-#define S_ARMOR     4
-#define S_IDENT     5
-#define S_SCARE     6
-#define S_GFIND     7
-#define S_TELEP     8
-#define S_ENCH      9
-#define S_CREATE    10
-#define S_REMOVE    11
-#define S_AGGR      12
-#define S_NOP       13
-#define S_VORPAL    14
 
 const char *c_set = "bcdfghjklmnpqrstvwxyz";
 const char *v_set = "aeiou";
@@ -65,85 +50,322 @@ char* getsyl()
     return (_tsyl);
 }
 
-ScrollInfo::ScrollInfo()
+std::string GenerateScrollName()
 {
-    m_magic_props = {
-        { "monster confusion",   8, 140 },
-        { "magic mapping",       5, 150 },
-        { "hold monster",        3, 180 },
-        { "sleep",               5,   5 },
-        { "enchant armor",       8, 160 },
-        { "identify",           27, 100 },
-        { "scare monster",       4, 200 },
-        { "food detection",      4,  50 },
-        { "teleportation",       7, 165 },
-        { "enchant weapon",     10, 150 },
-        { "create monster",      5,  75 },
-        { "remove curse",        8, 105 },
-        { "aggravate monsters",  4,  20 },
-        { "blank paper",         1,   5 },
-        { "vorpalize weapon",    1, 300 }
-    };
-
     int nsyl;
     char *cp, *sp;
-    int i, nwords;
+    int nwords;
 
-    for (i = 0; i < MAXSCROLLS; i++)
+    cp = prbuf;
+    nwords = rnd(in_small_screen_mode() ? 3 : 4) + 2;
+    while (nwords--)
     {
-        cp = prbuf;
-        nwords = rnd(in_small_screen_mode() ? 3 : 4) + 2;
-        while (nwords--)
+        nsyl = rnd(2) + 1;
+        while (nsyl--)
         {
-            nsyl = rnd(2) + 1;
-            while (nsyl--)
-            {
-                sp = getsyl();
-                if (&cp[strlen(sp)] > &prbuf[MAXNAME - 1]) { nwords = 0; break; }
-                while (*sp) *cp++ = *sp++;
-            }
-            *cp++ = ' ';
+            sp = getsyl();
+            if (&cp[strlen(sp)] > &prbuf[MAXNAME - 1]) { nwords = 0; break; }
+            while (*sp) *cp++ = *sp++;
         }
-        *--cp = '\0';
-        //I'm tired of thinking about this one so just in case .....
-        prbuf[MAXNAME] = 0;
-        std::string scroll_name(prbuf);
-        if (scroll_name.back() == ' ')
-            scroll_name.pop_back();
-        m_identifier.push_back(scroll_name);
-
-        if (i > 0)
-            m_magic_props[i].prob += m_magic_props[i - 1].prob;
+        *cp++ = ' ';
     }
+    *--cp = '\0';
+    //I'm tired of thinking about this one so just in case .....
+    prbuf[MAXNAME] = 0;
+    std::string scroll_name(prbuf);
+    if (scroll_name.back() == ' ')
+        scroll_name.pop_back();
+
+    return scroll_name;
 }
 
-Item* create_scroll()
+template<typename T>
+Item* createInstance() { return new T; }
+
+template<typename T>
+void setInfo(const std::string& name, const std::string& identifier, int worth) {
+    T::info.name(name);
+    T::info.identifier(identifier);
+    T::info.worth(worth);
+}
+
+template<typename T>
+ItemCategory& getName()
 {
-    int which = pick_one(game->scrolls().m_magic_props);
-    return new Scroll(which);
+    return T::info;
 }
 
-void Scroll::read_monster_confusion()
+struct map_entry
+{
+    Item*(*creator)();
+    void(*setter)(const std::string&, const std::string&, int);
+    ItemCategory&(*getter)();
+};
+
+struct vector_entry
+{
+    int prob;
+    Item*(*create)();
+    ItemCategory&(*info)();
+};
+
+#define ITEM_MAP_ENTRY(Type) {&createInstance<Type>, &setInfo<Type>, &getName<Type>}
+
+std::map<std::string, map_entry> s_scrolls_type = {
+    { "S_CONFUSE", ITEM_MAP_ENTRY(MonsterConfusion) },
+    { "S_MAP", ITEM_MAP_ENTRY(MagicMapping) },
+    { "S_HOLD", ITEM_MAP_ENTRY(HoldMonster) },
+    { "S_SLEEP", ITEM_MAP_ENTRY(Sleep) },
+    { "S_ARMOR", ITEM_MAP_ENTRY(EnchantArmor) },
+    { "S_IDENT", ITEM_MAP_ENTRY(Identify) },
+    { "S_SCARE", ITEM_MAP_ENTRY(ScareMonster) },
+    { "S_GFIND", ITEM_MAP_ENTRY(FoodDetection) },
+    { "S_TELEP", ITEM_MAP_ENTRY(Teleportation) },
+    { "S_ENCH", ITEM_MAP_ENTRY(EnchantWeapon) },
+    { "S_CREATE", ITEM_MAP_ENTRY(CreateMonster) },
+    { "S_REMOVE", ITEM_MAP_ENTRY(RemoveCurse) },
+    { "S_AGGR", ITEM_MAP_ENTRY(AggravateMonsters) },
+    { "S_NOP", ITEM_MAP_ENTRY(BlankPaper) },
+    { "S_VORPAL", ITEM_MAP_ENTRY(VorpalizeWeapon) },
+};
+
+std::vector<vector_entry> s_scrolls;
+
+int NumScrollTypes()
+{
+    return s_scrolls.size();
+}
+
+Item* CreateScroll()
+{
+    int r = rnd(100);
+    for (size_t i = 0; i < s_scrolls.size(); ++i)
+    {
+        if (r < s_scrolls[i].prob) {
+            return s_scrolls[i].create();
+        }
+    }
+    throw std::runtime_error("Failed to create scroll");
+}
+
+Item* SummonScroll(int i)
+{
+    return s_scrolls[i].create();
+}
+
+/* Load scroll information from file.  Example input:
+S_CONFUSE  monster_confusion   8   140
+S_MAP      magic_mapping       5   150
+S_HOLD     hold_monster        3   180
+S_SLEEP    sleep               5     5
+S_ARMOR    enchant_armor       8   160
+S_IDENT    identify           27   100
+S_SCARE    scare_monster       4   200
+S_GFIND    food_detection      4    50
+S_TELEP    teleportation       7   165
+S_ENCH     enchant_weapon     10   150
+S_CREATE   create_monster      5    75
+S_REMOVE   remove_curse        8   105
+S_AGGR     aggravate_monsters  4    20
+S_NOP      blank_paper         1     5
+S_VORPAL   vorpalize_weapon    1   300
+*/
+void LoadScroll(const std::string& line, int* probability)
+{
+    if (line.empty() || line[0] == '#')
+        return;
+
+    std::istringstream ss(line);
+
+    std::string type;
+    ss >> type;
+    auto i = s_scrolls_type.find(type);
+    if (i == s_scrolls_type.end())
+        throw std::runtime_error("Unknown type: " + type);
+
+    std::string name;
+    int prob, worth;
+    ss >> name >> prob >> worth;
+    if (!ss)
+        throw std::runtime_error("Error reading: " + line);
+
+    std::replace(name.begin(), name.end(), '_', ' ');
+    *probability += prob;
+    std::string id = GenerateScrollName();
+
+    i->second.setter(name, id, worth);
+    vector_entry e = { *probability, i->second.creator, i->second.getter };
+    s_scrolls.push_back(e);
+}
+
+void LoadScrolls(const std::string & filename)
+{
+    int probability = 0;
+
+    if (filename.empty())
+        throw std::runtime_error("No scroll file provided");
+
+    std::ifstream file(filename);
+    if (!file)
+        throw std::runtime_error("Error reading from: " + filename);
+
+    std::string line;
+    while (std::getline(file, line)) {
+        LoadScroll(line, &probability);
+    }
+
+    if (probability != 100)
+        throw std::runtime_error("Scroll probabilities not 100");
+}
+
+void PrintScrollDiscoveries()
+{
+    short order[50];
+    int maxnum = s_scrolls.size();
+
+    set_order(order, maxnum);
+    int num_found = 0;
+    for (int i = 0; i < maxnum; i++) {
+        auto e = s_scrolls[order[i]];
+        if (e.info().is_discovered() || !e.info().guess().empty())
+        {
+            std::string line = e.info().name();
+            add_line("", "A scroll of %s", line.c_str());
+            num_found++;
+        }
+    }
+    if (num_found == 0)
+        add_line("", nothing(SCROLL), 0);
+}
+
+//do_read_scroll: Read a scroll from the pack and do the appropriate thing
+bool do_read_scroll()
+{
+    Item *item = get_item("read", SCROLL);
+    if (!item)
+        return false;
+
+    Scroll* scroll = dynamic_cast<Scroll*>(item);
+    if (!scroll) {
+        //mdk: reading non-scroll counts as turn
+        msg("there is nothing on it to read"); 
+        return true;
+    }
+
+    ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
+    if (scroll == game->hero().get_current_weapon())
+        game->hero().set_current_weapon(NULL);
+
+    scroll->Read();
+
+    look(true); //put the result of the scroll on the screen
+    update_status_bar();
+    scroll->call_it();
+
+    //Get rid of the thing
+    if (scroll->m_count > 1)
+        scroll->m_count--;
+    else {
+        game->hero().m_pack.remove(scroll);
+        delete(scroll);
+    }
+    return true;
+}
+
+int is_scare_monster_scroll(Item* item)
+{
+    return dynamic_cast<ScareMonster*>(item) != nullptr;
+}
+
+
+Scroll::Scroll() :
+    Item(SCROLL, 0)
+{
+}
+
+std::string Scroll::Name() const
+{
+    return "scroll";
+}
+
+std::string Scroll::InventoryName() const
+{
+    std::ostringstream ss;
+
+    if (m_count == 1) {
+        ss << "A scroll ";
+    }
+    else {
+        ss << m_count << " scrolls ";
+    }
+
+    auto scroll_info = Info();
+
+    if (scroll_info.is_discovered() || game->wizard().reveal_items())
+        ss << "of " << scroll_info.name();
+    else if (!scroll_info.guess().empty())
+        ss << "called " << scroll_info.guess();
+    else {
+        std::string title = scroll_info.identifier();
+        if (short_msgs() && title.length() > 17) {
+            title = title.substr(0, 17);
+        }
+        ss << "titled '" << title << "'";
+    }
+
+    return ss.str();
+}
+
+ItemCategory* Scroll::Category() const
+{
+    return &Info();
+}
+
+bool Scroll::IsMagic() const
+{
+    return true;
+}
+
+bool Scroll::IsEvil() const
+{
+    return false;
+
+}
+
+int Scroll::Worth() const
+{
+    auto scroll_info = Info();
+
+    int worth = scroll_info.worth();
+    worth *= m_count;
+    if (!scroll_info.is_discovered())
+        worth /= 2;
+    return worth;
+}
+
+void MonsterConfusion::Read()
 {
     //Scroll of monster confusion.  Give him that power.
     game->hero().set_can_confuse(true);
     msg("your hands begin to glow red");
 }
 
-void Scroll::read_magic_mapping()
+void MagicMapping::Read()
 {
     //Scroll of magic mapping.
     discover();
     msg("oh, now this scroll has a map on it");
     game->level().show_map(false);
+
 }
 
-void Scroll::read_hold_monster()
+void HoldMonster::Read()
 {
     //Hold monster scroll.  Stop all monsters within two spaces from chasing after the hero.
     int x, y;
     Monster* monster;
 
+    //todo: move into level
     const int COLS = game->screen().columns();
     for (x = game->hero().position().x - 3; x <= game->hero().position().x + 3; x++) {
         if (x >= 0 && x < COLS) {
@@ -157,7 +379,7 @@ void Scroll::read_hold_monster()
     }
 }
 
-void Scroll::read_sleep()
+void Sleep::Read()
 {
     //Scroll which makes you fall asleep
     discover();
@@ -165,7 +387,12 @@ void Scroll::read_sleep()
     msg("you fall asleep");
 }
 
-void Scroll::read_enchant_armor()
+bool Sleep::IsEvil() const
+{
+    return true;
+}
+
+void EnchantArmor::Read()
 {
     if (game->hero().get_current_armor() != NULL)
     {
@@ -174,7 +401,7 @@ void Scroll::read_enchant_armor()
     }
 }
 
-void Scroll::read_identify()
+void Identify::Read()
 {
     //Identify, let the rogue figure something out
     discover();
@@ -184,14 +411,15 @@ void Scroll::read_identify()
     whatis();
 }
 
-void Scroll::read_scare_monster()
+void ScareMonster::Read()
 {
     //Reading it is a mistake and produces laughter at the poor rogue's boo boo.
     msg(laugh, short_msgs() ? "" : in_dist);
 }
 
-void Scroll::read_food_detection()
+void FoodDetection::Read()
 {
+    //todo: move into level
     //Scroll of food detection
     byte discovered = false;
 
@@ -220,9 +448,10 @@ void Scroll::read_food_detection()
     }
     else
         ifterse("you hear a growling noise close by", "you hear a growling noise very close to you");
+
 }
 
-void Scroll::read_teleportation()
+void Teleportation::Read()
 {
     //Scroll of teleportation: Make him disappear and reappear
     Room* original_room = game->hero().room();
@@ -231,7 +460,7 @@ void Scroll::read_teleportation()
         discover();
 }
 
-void Scroll::read_enchant_weapon()
+void EnchantWeapon::Read()
 {
     Item* item = game->hero().get_current_weapon();
     Weapon* weapon = dynamic_cast<Weapon*>(item);
@@ -242,7 +471,7 @@ void Scroll::read_enchant_weapon()
     weapon->enchant_weapon();
 }
 
-void Scroll::read_create_monster()
+void CreateMonster::Read()
 {
     Agent* monster;
     Coord position;
@@ -254,7 +483,12 @@ void Scroll::read_create_monster()
         ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
 }
 
-void Scroll::read_remove_curse()
+bool CreateMonster::IsEvil() const
+{
+    return true;
+}
+
+void RemoveCurse::Read()
 {
     if (game->hero().get_current_armor())
         game->hero().get_current_armor()->remove_curse();
@@ -268,19 +502,24 @@ void Scroll::read_remove_curse()
     ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
 }
 
-void Scroll::read_aggravate_monsters()
+void AggravateMonsters::Read()
 {
     //This scroll aggravates all the monsters on the current level and sets them running towards the hero
     game->level().aggravate_monsters();
     ifterse("you hear a humming noise", "you hear a high pitched humming noise");
 }
 
-void Scroll::read_blank_paper()
+bool AggravateMonsters::IsEvil() const
+{
+    return true;
+}
+
+void BlankPaper::Read()
 {
     msg("this scroll seems to be blank");
 }
 
-void Scroll::read_vorpalize_weapon()
+void VorpalizeWeapon::Read()
 {
     //If he isn't wielding a weapon I get to chortle again!
     Item* item = game->hero().get_current_weapon();
@@ -292,139 +531,18 @@ void Scroll::read_vorpalize_weapon()
     weapon->vorpalize();
 }
 
-void(Scroll::*scroll_functions[MAXSCROLLS])() =
-{
-  &Scroll::read_monster_confusion,
-  &Scroll::read_magic_mapping,
-  &Scroll::read_hold_monster,
-  &Scroll::read_sleep,
-  &Scroll::read_enchant_armor,
-  &Scroll::read_identify,
-  &Scroll::read_scare_monster,
-  &Scroll::read_food_detection,
-  &Scroll::read_teleportation,
-  &Scroll::read_enchant_weapon,
-  &Scroll::read_create_monster,
-  &Scroll::read_remove_curse,
-  &Scroll::read_aggravate_monsters,
-  &Scroll::read_blank_paper,
-  &Scroll::read_vorpalize_weapon
-};
-
-//do_read_scroll: Read a scroll from the pack and do the appropriate thing
-bool do_read_scroll()
-{
-    Item *item = get_item("read", SCROLL);
-    if (!item)
-        return false;
-
-    Scroll* scroll = dynamic_cast<Scroll*>(item);
-    if (!scroll) {
-        //mdk: reading non-scroll counts as turn
-        msg("there is nothing on it to read"); 
-        return true;
-    }
-
-    ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
-    if (scroll == game->hero().get_current_weapon())
-        game->hero().set_current_weapon(NULL);
-
-    //Call the function for this scroll
-    if (scroll->m_which >= 0 && scroll->m_which < MAXSCROLLS)
-        (scroll->*scroll_functions[scroll->m_which])();
-    else {
-        msg("what a puzzling scroll!");
-        return true;
-    }
-
-    look(true); //put the result of the scroll on the screen
-    update_status_bar();
-    scroll->call_it();
-
-    //Get rid of the thing
-    if (scroll->m_count > 1)
-        scroll->m_count--;
-    else {
-        game->hero().m_pack.remove(scroll);
-        delete(scroll);
-    }
-    return true;
-}
-
-int is_scare_monster_scroll(Item* item)
-{
-    return item && item->m_type == SCROLL &&
-        item->m_which == S_SCARE;
-}
-
-std::string ScrollInfo::get_inventory_name(int which, int count) const
-{
-    char *pb = prbuf;
-
-    if (count == 1) {
-        strcpy(pb, "A scroll ");
-        pb = &prbuf[9];
-    }
-    else {
-        sprintf(pb, "%d scrolls ", count);
-        pb = &prbuf[strlen(prbuf)];
-    }
-    if (is_discovered(which) || game->wizard().reveal_items())
-        sprintf(pb, "of %s", get_name(which).c_str());
-    else if (!get_guess(which).empty())
-        sprintf(pb, "called %s", get_guess(which).c_str());
-    else
-        chopmsg(pb, "titled '%.17s'", "titled '%s'", get_identifier(which).c_str());
-
-    return prbuf;
-}
-
-std::string ScrollInfo::get_inventory_name(const Item * obj) const
-{
-    return get_inventory_name(obj->m_which, obj->m_count);
-}
-
-std::string ScrollInfo::get_inventory_name(int which) const
-{
-    return get_inventory_name(which, 1);
-}
-
-Scroll::Scroll(int which) :
-    Item(SCROLL, which)
-{
-}
-
-Item * Scroll::Clone() const
-{
-    return new Scroll(*this);
-}
-
-std::string Scroll::Name() const
-{
-    return "scroll";
-}
-
-std::string Scroll::InventoryName() const
-{
-    return item_class()->get_inventory_name(this);
-}
-
-bool Scroll::IsMagic() const
-{
-    return true;
-}
-
-bool Scroll::IsEvil() const
-{
-    return (m_which == S_SLEEP || m_which == S_CREATE || m_which == S_AGGR);
-
-}
-
-int Scroll::Worth() const
-{
-    int worth = item_class()->get_value(m_which);
-    worth *= m_count;
-    if (!item_class()->is_discovered(m_which))
-        worth /= 2;
-    return worth;
-}
+ItemCategory MonsterConfusion::info;
+ItemCategory MagicMapping::info;
+ItemCategory HoldMonster::info;
+ItemCategory Sleep::info;
+ItemCategory EnchantArmor::info;
+ItemCategory Identify::info;
+ItemCategory ScareMonster::info;
+ItemCategory FoodDetection::info;
+ItemCategory Teleportation::info;
+ItemCategory EnchantWeapon::info;
+ItemCategory CreateMonster::info;
+ItemCategory RemoveCurse::info;
+ItemCategory AggravateMonsters::info;
+ItemCategory BlankPaper::info;
+ItemCategory VorpalizeWeapon::info;

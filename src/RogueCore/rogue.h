@@ -81,7 +81,6 @@ struct GameState;
 #define NTRAPS   6
 
 #define MAXPOTIONS  14
-#define MAXSCROLLS  15
 
 #define MAXSTR    80 //maximum length of strings
 #define MAXLINES  25 //maximum number of screen lines used

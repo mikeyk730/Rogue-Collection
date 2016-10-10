@@ -318,5 +318,8 @@
     <ClInclude Include="output_interface.h">
       <Filter>Output</Filter>
     </ClInclude>
+    <ClInclude Include="scroll.h">
+      <Filter>Items</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@ struct Monster;
 struct Hero;
 struct Room;
 struct ItemClass;
+struct ItemCategory;
 
 //flags for objects
 const short IS_CURSED = 0x0001; //object is cursed
@@ -142,6 +143,8 @@ protected:
 public:
     int m_group;                     //Group number for this object
 
+    virtual ItemCategory* Category() const { return 0; }
+    
 private:
     virtual std::string InventoryName() const = 0;
     virtual std::string Name() const = 0;

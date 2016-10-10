@@ -1,37 +1,110 @@
 #pragma once
-#include "item.h"
+#include "scroll.h"
+#include "item_class.h"
 
-struct Scroll : public Item
-{
-    Scroll(int which);
+template <typename Derived>
+struct ScrollEx : public Scroll {
+    virtual Item* Clone() const override {
+        return new Derived(static_cast<Derived const&>(*this));
+    }
 
-    virtual Item* Clone() const;
-    virtual std::string Name() const;
-    virtual std::string InventoryName() const;
-    virtual bool IsMagic() const;
-    virtual bool IsEvil() const;
-    virtual int Worth() const;
-
-    //todo: each scroll should be a class
-    void read_monster_confusion();
-    void read_magic_mapping();
-    void read_hold_monster();
-    void read_sleep();
-    void read_enchant_armor();
-    void read_identify();
-    void read_scare_monster();
-    void read_food_detection();
-    void read_teleportation();
-    void read_enchant_weapon();
-    void read_create_monster();
-    void read_remove_curse();
-    void read_aggravate_monsters();
-    void read_blank_paper();
-    void read_vorpalize_weapon();
-
+    virtual ItemCategory& Info() const
+    {
+        return Derived::info;
+    }
 };
 
-Item* create_scroll();
+struct MonsterConfusion : public ScrollEx<MonsterConfusion>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
 
-bool do_read_scroll();
+struct MagicMapping : public ScrollEx<MagicMapping>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct HoldMonster : public ScrollEx<HoldMonster>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct Sleep : public ScrollEx<Sleep>
+{
+    virtual void Read();
+    virtual bool IsEvil() const override;
+    static ItemCategory info;
+};
+
+struct EnchantArmor : public ScrollEx<EnchantArmor>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct Identify : public ScrollEx<Identify>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct ScareMonster : public ScrollEx<ScareMonster>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct FoodDetection : public ScrollEx<FoodDetection>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct Teleportation : public ScrollEx<Teleportation>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct EnchantWeapon : public ScrollEx<EnchantWeapon>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct CreateMonster : public ScrollEx<CreateMonster>
+{
+    virtual void Read();
+    virtual bool IsEvil() const override;
+    static ItemCategory info;
+};
+
+struct RemoveCurse : public ScrollEx<RemoveCurse>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct AggravateMonsters : public ScrollEx<AggravateMonsters>
+{
+    virtual void Read();
+    virtual bool IsEvil() const override;
+    static ItemCategory info;
+};
+
+struct BlankPaper : public ScrollEx<BlankPaper>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
+struct VorpalizeWeapon : public ScrollEx<VorpalizeWeapon>
+{
+    virtual void Read();
+    static ItemCategory info;
+};
+
 int is_scare_monster_scroll(Item* item);

@@ -19,7 +19,7 @@
 #include "daemon.h"
 #include "level.h"
 #include "rings.h"
-#include "scrolls.h"
+#include "scroll.h"
 #include "potions.h"
 #include "sticks.h"
 #include "armor.h"

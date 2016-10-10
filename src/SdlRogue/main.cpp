@@ -10,7 +10,17 @@ namespace
 {
     void run_game(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input)
     {
-        game_main(argc, argv, output, input);
+        try {
+            game_main(argc, argv, output, input);
+        }
+        catch (const std::runtime_error& e)
+        {
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                "Error",
+                e.what(),
+                NULL);
+            exit(1);
+        }
     }
 
     TileConfig pc_tiles = { "tiles.bmp", 78, 2 };

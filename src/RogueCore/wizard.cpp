@@ -22,14 +22,14 @@
 #include "monsters.h"
 #include "sticks.h"
 #include "rings.h"
-#include "scrolls.h"
+#include "scroll.h"
 #include "potions.h"
 #include "weapons.h"
 #include "level.h"
 #include "armor.h"
 #include "hero.h"
 #include "food.h"
-#include "scrolls.h"
+#include "scroll.h"
 #include "monster.h"
 #include "amulet.h"
 
@@ -91,8 +91,8 @@ bool do_summon_object()
         obj = new Potion(which);
         break;
     case '?':
-        which = get_which(SCROLL, MAXSCROLLS - 1);
-        obj = new Scroll(which);
+        which = get_which(SCROLL, NumScrollTypes() - 1);
+        obj = SummonScroll(which);
         break;
     case '/':
         which = get_which(STICK, MAXSTICKS - 1);

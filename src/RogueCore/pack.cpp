@@ -150,6 +150,27 @@ bool do_call()
     if (!obj)
         return false;
 
+    if (obj->Category())
+    {
+        if (obj->Category()->is_discovered()) {
+            msg("that has already been identified");
+            return false;
+        }
+
+        std::string called = obj->Category()->guess();
+        if (called.empty())
+            called = obj->Category()->identifier();
+        msg("Was called \"%s\"", called.c_str());
+
+        msg("what do you want to call it? ");
+        getinfo(prbuf, MAXNAME);
+        if (*prbuf && *prbuf != ESCAPE)
+            obj->Category()->guess(prbuf);
+        msg("");
+
+        return false;
+    }
+
     ItemClass* item_class = obj->item_class();
     if (!item_class) {
         msg("you can't call that anything");

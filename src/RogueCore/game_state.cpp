@@ -13,6 +13,7 @@
 #include "output_shim.h"
 #include "io.h"
 #include "monsters.h"
+#include "scroll.h"
 
 using std::placeholders::_1;
 
@@ -51,12 +52,13 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     m_curses(new OutputShim(output)),
     m_level(new Level),
     m_hero(new Hero),
-    m_scrolls(new ScrollInfo),
-    m_potions(new PotionInfo),
-    m_rings(new RingInfo),
-    m_sticks(new StickInfo),
     m_log_stream("lastgame.log")
 {
+    LoadScrolls("scrolls.txt");
+    m_potions.reset(new PotionInfo);
+    m_rings.reset(new RingInfo);
+    m_sticks.reset(new StickInfo);
+
     init_environment();
 }
 
@@ -123,7 +125,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
 
     m_level.reset(new Level);
     m_hero.reset(new Hero);
-    m_scrolls.reset(new ScrollInfo);
+    LoadScrolls("scrolls.txt");
     m_potions.reset(new PotionInfo);
     m_rings.reset(new RingInfo);
     m_sticks.reset(new StickInfo);
@@ -232,11 +234,6 @@ Level & GameState::level()
     return *m_level;
 }
 
-ScrollInfo& GameState::scrolls()
-{
-    return *m_scrolls;
-}
-
 PotionInfo& GameState::potions()
 {
     return *m_potions;
@@ -256,8 +253,6 @@ ItemClass* GameState::item_class(int type)
 {
     switch (type)
     {
-    case SCROLL:
-        return &scrolls();
     case POTION:
         return &potions();
     case STICK:
@@ -265,7 +260,7 @@ ItemClass* GameState::item_class(int type)
     case RING:
         return &rings();
     }
-    return 0;
+    throw std::runtime_error("Bad item_class");
 }
 
 Cheats& GameState::wizard()

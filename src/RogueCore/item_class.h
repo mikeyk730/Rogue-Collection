@@ -7,6 +7,31 @@
 struct MagicItem;
 struct Item;
 
+struct ItemCategory
+{
+    std::string name() const;
+    void name(const std::string& n);
+
+    std::string guess() const;
+    void guess(const std::string& g);
+
+    std::string identifier() const;
+    void identifier(const std::string& id);
+
+    int worth() const;
+    void worth(int w);
+
+    bool is_discovered() const;
+    void discover();
+
+private:
+    std::string m_name;
+    std::string m_identifier;
+    std::string m_guess;
+    int m_worth = 0;
+    bool m_is_discovered = false;
+};
+
 //todo: reimplement so just has one vector<record>
 struct ItemClass
 {
@@ -38,15 +63,6 @@ private:
     std::map<int, std::string> m_guesses;
 };
 
-struct ScrollInfo : public ItemClass
-{
-    ScrollInfo();
-
-    virtual std::string get_inventory_name(const Item* obj) const;
-    virtual std::string get_inventory_name(int which) const;
-private:
-    std::string get_inventory_name(int which, int count) const;
-};
 
 struct PotionInfo : public ItemClass
 {

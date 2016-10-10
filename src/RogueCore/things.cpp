@@ -15,7 +15,7 @@
 #include "misc.h"
 #include "daemons.h"
 #include "rings.h"
-#include "scrolls.h"
+#include "scroll.h"
 #include "potions.h"
 #include "weapons.h"
 #include "output_shim.h"
@@ -37,8 +37,7 @@ struct MagicItem things[NUMTHINGS] =
   {0,  5 }  //stick
 };
 
-#define MAX(a,b,c,d) (a>b?(a>c?(a>d?a:d):(c>d?c:d)):(b>c?(b>d?b:d):(c>d?c:d)))
-static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)]; //todo:eliminate static
+static short order[50]; //todo:eliminate static
 static int line_cnt = 0; //todo:eliminate static
 
 //init_things: Initialize the probabilities for types of things
@@ -52,12 +51,29 @@ void init_things()
 void Item::discover()
 {
     set_known();
+    if (Category()) {
+        Category()->discover();
+    }
     if (item_class())
         item_class()->discover(m_which);
 }
 
 void Item::call_it()
 {
+    if (Category()) {
+        char buf[MAXNAME];
+        if (Category()->is_discovered())
+            Category()->guess("");
+        else if (Category()->guess().empty())
+        {
+            msg("%scall it? ", noterse("what do you want to "));
+            getinfo(buf, MAXNAME);
+            if (*buf != ESCAPE)
+                Category()->guess(buf);
+            msg("");
+        }
+    }
+
     ItemClass* items = item_class();
     if (items) {
         items->call_it(m_which);
@@ -66,6 +82,8 @@ void Item::call_it()
 
 ItemClass* Item::item_class() const
 {
+    if (m_type == SCROLL)
+        return 0;
     //todo: change class layout, so we don't need to poke into game
     //this is problematic because we couldn't, for example, start
     //the hero off with a stick
@@ -179,7 +197,7 @@ Item* Item::CreateItem()
         break;
 
     case 1:
-        return create_scroll();
+        return CreateScroll();
         break;
 
     case 2:
@@ -264,6 +282,11 @@ bool do_discovered()
 //print_disc: Print what we've discovered of type 'type'
 void print_disc(byte type)
 {
+    if (type == SCROLL) {
+        PrintScrollDiscoveries();
+        return;
+    }
+
     ItemClass* items = game->item_class(type);
     int maxnum = items->get_max_items();
 
