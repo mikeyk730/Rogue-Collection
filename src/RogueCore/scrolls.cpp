@@ -140,7 +140,7 @@ std::string Scroll::InventoryName() const
         ss << m_count << " scrolls ";
     }
 
-    auto scroll_info = Info();
+    ItemCategory& scroll_info = *Category();
 
     if (scroll_info.is_discovered() || game->wizard().reveal_items())
         ss << "of " << scroll_info.name();
@@ -157,11 +157,6 @@ std::string Scroll::InventoryName() const
     return ss.str();
 }
 
-ItemCategory* Scroll::Category() const
-{
-    return &Info();
-}
-
 bool Scroll::IsMagic() const
 {
     return true;
@@ -175,7 +170,7 @@ bool Scroll::IsEvil() const
 
 int Scroll::Worth() const
 {
-    auto scroll_info = Info();
+    ItemCategory& scroll_info = *Category();
 
     int worth = scroll_info.worth();
     worth *= m_count;

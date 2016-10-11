@@ -113,15 +113,16 @@ std::string Potion::InventoryName() const
         ss << m_count << " potions ";
     }
 
-    const std::string& color(Info().identifier());
+    ItemCategory& info = *Category();
+    const std::string& color(info.identifier());
 
-    if (Info().is_discovered() || game->wizard().reveal_items()) {
-        ss << "of " << Info().name();
+    if (info.is_discovered() || game->wizard().reveal_items()) {
+        ss << "of " << info.name();
         if (!short_msgs())
             ss << "(" << color << ")";
     }
-    else if (!Info().guess().empty()) {
-        ss << "called " << Info().guess();
+    else if (!info.guess().empty()) {
+        ss << "called " << info.guess();
         if (!short_msgs())
             ss << "(" << color << ")";
     }
@@ -145,20 +146,15 @@ bool Potion::IsEvil() const
 
 int Potion::Worth() const
 {
-    int worth = Info().worth();
+    int worth = Category()->worth();
     worth *= m_count;
-    if (!Info().is_discovered()) 
+    if (!Category()->is_discovered()) 
         worth /= 2;
     return worth;
 }
 
 void Potion::AffectMonster(Monster * m)
 {
-}
-
-ItemCategory * Potion::Category() const
-{
-    return &Info();
 }
 
 void Confusion::Quaff()

@@ -13,10 +13,7 @@ struct Scroll : public Item
     virtual int Worth() const override;
     virtual std::string InventoryName() const override;
 
-    virtual ItemCategory* Category() const;
-
     virtual void Read() = 0;
-    virtual ItemCategory& Info() const = 0;
 };
 
 bool do_read_scroll();

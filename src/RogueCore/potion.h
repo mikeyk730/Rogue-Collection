@@ -13,9 +13,6 @@ struct Potion : public Item
 
     virtual void Quaff() = 0;
     virtual void AffectMonster(Monster* m);
-
-    virtual ItemCategory* Category() const;
-    virtual ItemCategory& Info() const = 0;
 };
 
 //do_quaff: Quaff a potion from the pack

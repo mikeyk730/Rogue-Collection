@@ -8,9 +8,9 @@ struct ScrollEx : public Scroll {
         return new Derived(static_cast<Derived const&>(*this));
     }
 
-    virtual ItemCategory& Info() const
+    virtual ItemCategory* Category() const override
     {
-        return Derived::info;
+        return &Derived::info;
     }
 };
 
