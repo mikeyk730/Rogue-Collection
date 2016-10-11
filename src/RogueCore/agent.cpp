@@ -179,15 +179,6 @@ void Agent::restore_strength()
     m_stats.m_str = m_stats.m_max_str;
 }
 
-void Agent::adjust_strength(int amt)
-{
-    m_stats.m_str += amt;
-    if (m_stats.m_str > 31)
-        m_stats.m_str = 31;
-    if (m_stats.m_str > m_stats.m_max_str)
-        m_stats.m_max_str = m_stats.m_str;
-}
-
 int Agent::level() const
 {
     return m_stats.m_level;

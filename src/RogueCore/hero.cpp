@@ -10,7 +10,7 @@
 #include "armor.h"
 #include "weapons.h"
 #include "io.h"
-#include "rings.h"
+#include "ring.h"
 #include "agent.h"
 #include "food.h"
 #include "output_shim.h"
@@ -78,15 +78,13 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
     if (object == current_weapon)
     {
         //rings can boost the wielded object
-        if (is_ring_on_hand(LEFT, R_ADDDAM))
-            *damage_plus += get_ring(LEFT)->get_ring_level();
-        else if (is_ring_on_hand(LEFT, R_ADDHIT))
-            *hit_plus += get_ring(LEFT)->get_ring_level();
-
-        if (is_ring_on_hand(RIGHT, R_ADDDAM))
-            *damage_plus += get_ring(RIGHT)->get_ring_level();
-        else if (is_ring_on_hand(RIGHT, R_ADDHIT))
-            *hit_plus += get_ring(RIGHT)->get_ring_level();
+        for (int i = LEFT; i <= RIGHT; i++) {
+            Ring* r = game->hero().get_ring(i);
+            if (r) {
+                *hit_plus += r->GetHitBoost();
+                *damage_plus += r->GetDmgBoost();
+            }
+        }
     }
 
     if (hurl) {
@@ -112,10 +110,13 @@ int Hero::calculate_armor() const
 
     if (get_current_armor() != NULL)
         armor = get_current_armor()->get_armor_class();
-    if (is_ring_on_hand(LEFT, R_PROTECT))
-        armor -= get_ring(LEFT)->get_ring_level();
-    if (is_ring_on_hand(RIGHT, R_PROTECT))
-        armor -= get_ring(RIGHT)->get_ring_level();
+
+    for (int i = LEFT; i <= RIGHT; i++) {
+        Ring* r = game->hero().get_ring(i);
+        if (r) {
+            armor -= r->GetArmorBoost();
+        }
+    }
 
     return armor;
 }
@@ -132,11 +133,34 @@ int Hero::calculate_max_strength() const
 
 int Hero::calculate_strength_impl(int strength) const
 {
-    if (is_ring_on_hand(LEFT, R_ADDSTR))
-        strength += get_ring(LEFT)->get_ring_level();
-    if (is_ring_on_hand(RIGHT, R_ADDSTR))
-        strength += get_ring(RIGHT)->get_ring_level();
+    for (int i = LEFT; i <= RIGHT; i++) {
+        Ring* r = game->hero().get_ring(i);
+        if (r) {
+            strength += r->GetStrBoost();
+        }
+    }
     return (strength > 31) ? 31 : strength;
+}
+
+bool Hero::adjust_strength(int amt)
+{
+    if (amt < 0)
+    {
+        for (int i = LEFT; i <= RIGHT; i++) {
+            Ring* r = game->hero().get_ring(i);
+            if (r && r->SustainsStrength()) {
+                return false;
+            }
+        }
+    }
+
+    m_stats.m_str += amt;
+    if (m_stats.m_str > 31)
+        m_stats.m_str = 31;
+    if (m_stats.m_str > m_stats.m_max_str)
+        m_stats.m_max_str = m_stats.m_str;
+
+    return true;
 }
 
 std::string Hero::get_name()
@@ -797,15 +821,7 @@ bool Hero::put_on_ring()
     set_ring(ring, obj);
 
     //Calculate the effect it has on the poor guy.
-    switch (obj->m_which)
-    {
-    case R_SEEINVIS:
-        show_invisible();
-        break;
-    case R_AGGR:
-        game->level().aggravate_monsters();
-        break;
-    }
+    obj->PutOn();
     
     msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;

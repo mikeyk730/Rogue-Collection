@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "random.h"
-#include "item_class.h"
+#include "item_category.h"
 #include "game_state.h"
 #include "daemons.h"
 #include "daemon.h"
@@ -17,7 +17,7 @@
 #include "misc.h"
 #include "main.h"
 #include "fight.h"
-#include "rings.h"
+#include "ring.h"
 #include "monsters.h"
 #include "things.h"
 #include "hero.h"
@@ -97,7 +97,7 @@ Potion::Potion()
 {
 }
 
-std::string Potion::Name() const
+std::string Potion::TypeName() const
 {
     return "potion";
 }
@@ -106,25 +106,31 @@ std::string Potion::InventoryName() const
 {
     std::ostringstream ss;
 
-    if (m_count == 1) {
-        ss << "A potion ";
-    }
-    else {
-        ss << m_count << " potions ";
-    }
-
     ItemCategory& info = *Category();
+
+    bool show_true_name(info.is_discovered() || game->wizard().reveal_items());
+    bool has_guess(!info.guess().empty());
+    
     const std::string& color(info.identifier());
 
-    if (info.is_discovered() || game->wizard().reveal_items()) {
-        ss << "of " << info.name();
-        if (!short_msgs())
-            ss << "(" << color << ")";
-    }
-    else if (!info.guess().empty()) {
-        ss << "called " << info.guess();
-        if (!short_msgs())
-            ss << "(" << color << ")";
+    if (show_true_name || has_guess) {
+        if (m_count == 1) {
+            ss << "A potion ";
+        }
+        else {
+            ss << m_count << " potions ";
+        }
+
+        if (show_true_name) {
+            ss << "of " << info.name();
+            if (!short_msgs())
+                ss << "(" << color << ")";
+        }
+        else {
+            ss << "called " << info.guess();
+            if (!short_msgs())
+                ss << "(" << color << ")";
+        }
     }
     else if (m_count == 1)
         ss << "A" << vowelstr(color.c_str()) << " " << color << " potion";
@@ -311,7 +317,7 @@ void Healing::AffectMonster(Monster* monster)
     monster->increase_hp(rnd(8), true, false);
 }
 
-void SeeInvisible::Quaff()
+void SeeInvisiblePotion::Quaff()
 {
     if (!game->hero().sees_invisible()) {
         fuse(unsee_invisible, 0, SEE_DURATION);
@@ -334,8 +340,7 @@ void Poison::Quaff()
     const char* sick = "you feel %s sick.";
 
     discover();
-    if (!game->hero().is_wearing_ring(R_SUSTSTR)) {
-        game->hero().adjust_strength(-(rnd(3) + 1));
+    if (game->hero().adjust_strength(-(rnd(3) + 1))) {
         msg(sick, "very");
     }
     else
@@ -351,7 +356,7 @@ ItemCategory Confusion::info;
 ItemCategory Paralysis::info;
 ItemCategory Poison::info;
 ItemCategory GainStrength::info;
-ItemCategory SeeInvisible::info;
+ItemCategory SeeInvisiblePotion::info;
 ItemCategory Healing::info;
 ItemCategory MonsterDetection::info;
 ItemCategory MagicDetection::info;

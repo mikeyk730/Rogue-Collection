@@ -15,7 +15,7 @@
 #include "main.h"
 #include "fight.h"
 #include "level.h"
-#include "rings.h"
+#include "ring.h"
 #include "scrolls.h"
 #include "pack.h"
 #include "room.h"
@@ -355,7 +355,7 @@ int handle_trap(Coord tc)
                 msg("a poisoned dart killed you");
                 death('d');
             }
-            if (!game->hero().is_wearing_ring(R_SUSTSTR) && !save(VS_POISON))
+            if (!save(VS_POISON))
                 game->hero().adjust_strength(-1);
             msg("a dart just hit you in the shoulder");
         }

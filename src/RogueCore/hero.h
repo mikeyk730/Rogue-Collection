@@ -53,6 +53,8 @@ public:
     int is_ring_on_hand(int h, int r) const;
     int is_wearing_ring(int r) const;
 
+    bool adjust_strength(int amt);
+
     //pick_up: Add something to characters pack.
     void pick_up(byte ch);
 

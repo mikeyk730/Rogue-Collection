@@ -180,7 +180,7 @@
     <ClCompile Include="hero.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="item.cpp" />
-    <ClCompile Include="item_class.cpp" />
+    <ClCompile Include="item_category.cpp" />
     <ClCompile Include="level.cpp" />
     <ClCompile Include="list.cpp" />
     <ClCompile Include="mach_dep.cpp" />
@@ -217,6 +217,7 @@
     <ClInclude Include="commands.h" />
     <ClInclude Include="output_interface.h" />
     <ClInclude Include="potion.h" />
+    <ClInclude Include="ring.h" />
     <ClInclude Include="scroll.h" />
     <ClInclude Include="sticks.h" />
     <ClInclude Include="util.h" />
@@ -228,7 +229,7 @@
     <ClInclude Include="fight.h" />
     <ClInclude Include="combo_input.h" />
     <ClInclude Include="gold.h" />
-    <ClInclude Include="item_class.h" />
+    <ClInclude Include="item_category.h" />
     <ClInclude Include="monster.h" />
     <ClInclude Include="display_interface.h" />
     <ClInclude Include="stream_input.h" />

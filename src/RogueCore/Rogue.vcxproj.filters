@@ -115,9 +115,6 @@
     <ClCompile Include="io.cpp">
       <Filter>Output</Filter>
     </ClCompile>
-    <ClCompile Include="item_class.cpp">
-      <Filter>Items</Filter>
-    </ClCompile>
     <ClCompile Include="maze.cpp">
       <Filter>Levels</Filter>
     </ClCompile>
@@ -164,6 +161,9 @@
       <Filter>Output</Filter>
     </ClCompile>
     <ClCompile Include="things.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
+    <ClCompile Include="item_category.cpp">
       <Filter>Items</Filter>
     </ClCompile>
   </ItemGroup>
@@ -264,9 +264,6 @@
     <ClInclude Include="wizard.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
-    <ClInclude Include="item_class.h">
-      <Filter>Items</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -325,6 +322,12 @@
       <Filter>Items</Filter>
     </ClInclude>
     <ClInclude Include="things.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="item_category.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="ring.h">
       <Filter>Items</Filter>
     </ClInclude>
   </ItemGroup>

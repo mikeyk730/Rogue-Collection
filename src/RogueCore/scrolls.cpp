@@ -6,7 +6,6 @@
 #include <algorithm>
 #include <fstream>
 #include "random.h"
-#include "item_class.h"
 #include "game_state.h"
 #include "scrolls.h"
 #include "monsters.h"
@@ -23,7 +22,7 @@
 #include "things.h"
 #include "hero.h"
 #include "monster.h"
-#include "rings.h"
+#include "ring.h"
 #include "armor.h"
 
 const char *c_set = "bcdfghjklmnpqrstvwxyz";
@@ -124,7 +123,7 @@ Scroll::Scroll() :
 {
 }
 
-std::string Scroll::Name() const
+std::string Scroll::TypeName() const
 {
     return "scroll";
 }
@@ -287,7 +286,7 @@ void FoodDetection::Read()
 
 }
 
-void Teleportation::Read()
+void TeleportationScroll::Read()
 {
     //Scroll of teleportation: Make him disappear and reappear
     Room* original_room = game->hero().room();
@@ -375,7 +374,7 @@ ItemCategory EnchantArmor::info;
 ItemCategory Identify::info;
 ItemCategory ScareMonster::info;
 ItemCategory FoodDetection::info;
-ItemCategory Teleportation::info;
+ItemCategory TeleportationScroll::info;
 ItemCategory EnchantWeapon::info;
 ItemCategory CreateMonster::info;
 ItemCategory RemoveCurse::info;

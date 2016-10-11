@@ -15,7 +15,7 @@
 #include "misc.h"
 #include "strings.h"
 #include "command.h"
-#include "rings.h"
+#include "ring.h"
 #include "hero.h"
 #include "level.h"
 #include "pack.h"

@@ -5,7 +5,7 @@
 #include "rooms.h"
 #include "game_state.h"
 #include "hero.h"
-#include "rings.h"
+#include "ring.h"
 #include "armor.h"
 #include "level.h"
 
@@ -52,7 +52,7 @@ std::string Item::inventory_name(const Hero& hero, bool lowercase) const
 
 std::string Item::name() const
 {
-    return Name();
+    return TypeName();
 }
 
 bool Item::is_magic() const

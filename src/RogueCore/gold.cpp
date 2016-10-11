@@ -12,7 +12,7 @@ Item * Gold::Clone() const
     return new Gold(*this);
 }
 
-std::string Gold::Name() const
+std::string Gold::TypeName() const
 {
     return "gold";
 }

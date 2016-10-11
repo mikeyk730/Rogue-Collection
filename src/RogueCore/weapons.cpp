@@ -259,12 +259,12 @@ std::string Weapon::InventoryName() const
     if (this->m_count > 1)
         sprintf(pb, "%d ", this->m_count);
     else
-        sprintf(pb, "A%s ", vowelstr(Name().c_str()));
+        sprintf(pb, "A%s ", vowelstr(TypeName().c_str()));
     pb = &prbuf[strlen(prbuf)];
     if (this->is_known() || game->wizard().reveal_items())
-        sprintf(pb, "%s %s", num(this->m_hit_plus, this->m_damage_plus, WEAPON), Name().c_str());
+        sprintf(pb, "%s %s", num(this->m_hit_plus, this->m_damage_plus, WEAPON), TypeName().c_str());
     else
-        sprintf(pb, "%s", Name().c_str());
+        sprintf(pb, "%s", TypeName().c_str());
     if (this->m_count > 1) strcat(pb, "s");
     if (this->is_vorpalized() && (this->is_revealed() || game->wizard().reveal_items()))
     {
@@ -293,7 +293,7 @@ void Weapon::vorpalize()
     //You aren't allowed to doubly vorpalize a weapon.
     if (is_vorpalized())
     {
-        msg("your %s vanishes in a puff of smoke", Name().c_str());
+        msg("your %s vanishes in a puff of smoke", TypeName().c_str());
         game->hero().set_current_weapon(0);
         game->hero().m_pack.remove(this);
         delete this; //careful not to do anything afterwards
@@ -304,7 +304,7 @@ void Weapon::vorpalize()
     m_hit_plus++;
     m_damage_plus++;
     m_charges = 1;
-    msg(flash_msg, Name().c_str(), short_msgs() ? "" : intense);
+    msg(flash_msg, TypeName().c_str(), short_msgs() ? "" : intense);
 }
 
 Weapon::Weapon(int which) :
@@ -339,7 +339,7 @@ Item * Weapon::Clone() const
     return new Weapon(*this);
 }
 
-std::string Weapon::Name() const
+std::string Weapon::TypeName() const
 {
     return m_name;
 }
@@ -376,7 +376,7 @@ void Weapon::enchant_weapon()
         this->m_hit_plus++;
     else
         this->m_damage_plus++;
-    ifterse("your %s glows blue", "your %s glows blue for a moment", Name().c_str());
+    ifterse("your %s glows blue", "your %s glows blue for a moment", TypeName().c_str());
 }
 
 bool Weapon::is_vorpalized() const

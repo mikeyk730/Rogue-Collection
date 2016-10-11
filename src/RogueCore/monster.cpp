@@ -16,7 +16,7 @@
 #include "fight.h"
 #include "io.h"
 #include "rip.h"
-#include "rings.h"
+#include "ring.h"
 #include "armor.h"
 #include "gold.h"
 
@@ -526,15 +526,28 @@ void thaw_player()
 bool Monster::rust_attack()
 {
     //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-    if (game->hero().get_current_armor() && game->hero().get_current_armor()->get_armor_class() < 9 && game->hero().get_current_armor()->m_which != LEATHER)
-        if (game->hero().is_wearing_ring(R_SUSTARM))
+    if (game->hero().get_current_armor() && game->hero().get_current_armor()->get_armor_class() < 9 && game->hero().get_current_armor()->m_which != LEATHER) {
+
+        //See if a ring can help him
+        bool sustain = false;
+        for (int i = LEFT; i <= RIGHT; i++) {
+            Ring* r = game->hero().get_ring(i);
+            if (r && r->SustainsArmor()) {
+                sustain = true;
+                break;
+            }
+        }
+
+        if (sustain) {
             msg("the rust vanishes instantly");
+        }
         else {
             msg("your armor weakens, oh my!");
             game->hero().get_current_armor()->weaken_armor();
             return true;
         }
-        return false;
+    }
+    return false;
 }
 
 bool Monster::freeze_attack()
@@ -556,8 +569,7 @@ bool Monster::drain_strength_attack()
 {
     //Rattlesnakes have poisonous bites
     if (!save(VS_POISON))
-        if (!game->hero().is_wearing_ring(R_SUSTSTR)) {
-            game->hero().adjust_strength(-1);
+        if (game->hero().adjust_strength(-1)) {
             msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
             return true;
         }

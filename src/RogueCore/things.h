@@ -22,6 +22,10 @@ Item* CreateStick();
 Item* SummonStick(int i);
 int NumStickTypes();
 
+Item* CreateRing();
+Item* SummonRing(int i);
+int NumRingTypes();
+
 void LoadScrolls(const std::string& filename);
 void LoadPotions(const std::string& filename);
 void LoadSticks(const std::string& filename);

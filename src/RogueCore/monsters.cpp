@@ -17,7 +17,7 @@
 #include "misc.h"
 #include "daemon.h"
 #include "fight.h"
-#include "rings.h"
+#include "ring.h"
 #include "rooms.h"
 #include "level.h"
 #include "room.h"
@@ -253,8 +253,12 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
 
     game->level().monsters.push_front(monster);
 
-    if (game->hero().is_wearing_ring(R_AGGR))
-        monster->start_run();
+    for (int i = LEFT; i <= RIGHT; i++) {
+        Ring* r = game->hero().get_ring(i);
+        if (r) {
+            r->OnNewMonster(monster);
+        }
+    }
 
     return monster;
 }
@@ -301,9 +305,20 @@ Monster *wake_monster(Coord p)
     if ((monster = game->level().monster_at(p)) == NULL)
         return monster;
     //Every time he sees mean monster, it might start chasing him
-    if (!monster->is_running() && rnd(3) != 0 && monster->is_mean() && !monster->is_held() && !game->hero().is_wearing_ring(R_STEALTH))
+    if (!monster->is_running() && rnd(3) != 0 && monster->is_mean() && !monster->is_held())
     {
-        monster->start_run(&game->hero());
+        //See if a ring can help him
+        bool stealth = false;
+        for (int i = LEFT; i <= RIGHT; i++) {
+            Ring* r = game->hero().get_ring(i);
+            if (r && r->AddsStealth()) {
+                stealth = true;
+                break;
+            }
+        }
+
+        if (!stealth)
+            monster->start_run(&game->hero());
     }
     if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
     {

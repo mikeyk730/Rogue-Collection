@@ -5,7 +5,6 @@
 struct Monster;
 struct Hero;
 struct Room;
-struct ItemClass;
 struct ItemCategory;
 
 //flags for objects
@@ -41,23 +40,6 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 #define BANDED_MAIL      6
 #define PLATE_MAIL       7
 #define MAXARMORS        8
-
-//Ring types
-#define R_PROTECT   0
-#define R_ADDSTR    1
-#define R_SUSTSTR   2
-#define R_SEARCH    3
-#define R_SEEINVIS  4
-#define R_NOP       5
-#define R_AGGR      6
-#define R_ADDHIT    7
-#define R_ADDDAM    8
-#define R_REGEN     9
-#define R_DIGEST    10
-#define R_TELEPORT  11
-#define R_STEALTH   12
-#define R_SUSTARM   13
-#define MAXRINGS    14
 
 #define NO_WEAPON     -1
 
@@ -107,7 +89,6 @@ public:
     void set_revealed();
 
     Room* room() const;
-    ItemClass* item_class() const;
 
     void set_as_target_of(Monster* m);
 
@@ -130,7 +111,7 @@ public:
     
 private:
     virtual std::string InventoryName() const = 0;
-    virtual std::string Name() const = 0;
+    virtual std::string TypeName() const = 0;
     virtual bool IsMagic() const = 0;
     virtual bool IsEvil() const = 0;
     virtual int Worth() const = 0;

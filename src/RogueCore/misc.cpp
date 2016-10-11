@@ -18,7 +18,7 @@
 #include "fight.h"
 #include "daemon.h"
 #include "level.h"
-#include "rings.h"
+#include "ring.h"
 #include "scroll.h"
 #include "potion.h"
 #include "stick.h"

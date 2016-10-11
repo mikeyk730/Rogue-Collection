@@ -23,7 +23,7 @@
 #include "potion.h"
 #include "misc.h"
 #include "level.h"
-#include "rings.h"
+#include "ring.h"
 #include "armor.h"
 #include "pack.h"
 #include "monster.h"
@@ -112,10 +112,12 @@ int save(int which)
 {
     if (which == VS_MAGIC)
     {
-        if (game->hero().is_ring_on_hand(LEFT, R_PROTECT))
-            which -= game->hero().get_ring(LEFT)->get_ring_level();
-        if (game->hero().is_ring_on_hand(RIGHT, R_PROTECT))
-            which -= game->hero().get_ring(RIGHT)->get_ring_level();
+        for (int i = LEFT; i <= RIGHT; i++) {
+            Ring* r = game->hero().get_ring(i);
+            if (r) {
+                which -= r->GetSaveBoost();
+            }
+        }
     }
     return save_throw(which, &game->hero());
 }

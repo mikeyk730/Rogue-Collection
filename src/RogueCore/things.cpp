@@ -75,7 +75,7 @@ protected:
 private:
     void LoadItem(const std::string& line, int* probability);
 
-    virtual std::string GetIdentifier() = 0;
+    virtual std::string GetIdentifier(int* worth) = 0;
     virtual std::string GetKind() { return std::string(); }
 
     std::vector<vector_entry> m_items;
@@ -151,7 +151,7 @@ void ItemFactory::LoadItem(const std::string& line, int* probability)
 
     std::replace(name.begin(), name.end(), '_', ' ');
     *probability += prob;
-    std::string id = GetIdentifier();
+    std::string id = GetIdentifier(&worth);
     std::string kind = GetKind();
 
     i->second.setter(name, id, worth, kind);
@@ -194,7 +194,7 @@ struct ScrollFactory : public ItemFactory
             { "S_IDENT", ITEM_MAP_ENTRY(Identify) },
             { "S_SCARE", ITEM_MAP_ENTRY(ScareMonster) },
             { "S_GFIND", ITEM_MAP_ENTRY(FoodDetection) },
-            { "S_TELEP", ITEM_MAP_ENTRY(Teleportation) },
+            { "S_TELEP", ITEM_MAP_ENTRY(TeleportationScroll) },
             { "S_ENCH", ITEM_MAP_ENTRY(EnchantWeapon) },
             { "S_CREATE", ITEM_MAP_ENTRY(CreateMonster) },
             { "S_REMOVE", ITEM_MAP_ENTRY(RemoveCurse) },
@@ -205,7 +205,7 @@ struct ScrollFactory : public ItemFactory
     }
 
 private:
-    virtual std::string GetIdentifier() {
+    virtual std::string GetIdentifier(int* worth) {
         return GenerateScrollName();
     }
 };
@@ -279,7 +279,7 @@ struct PotionFactory : public ItemFactory
             { "P_PARALYZE", ITEM_MAP_ENTRY(Paralysis) },
             { "P_POISON", ITEM_MAP_ENTRY(Poison) },
             { "P_STRENGTH", ITEM_MAP_ENTRY(GainStrength) },
-            { "P_SEEINVIS", ITEM_MAP_ENTRY(SeeInvisible) },
+            { "P_SEEINVIS", ITEM_MAP_ENTRY(SeeInvisiblePotion) },
             { "P_HEALING", ITEM_MAP_ENTRY(Healing) },
             { "P_MFIND", ITEM_MAP_ENTRY(MonsterDetection) },
             { "P_TFIND", ITEM_MAP_ENTRY(MagicDetection) },
@@ -296,7 +296,7 @@ struct PotionFactory : public ItemFactory
     }
 
 private:
-    virtual std::string GetIdentifier()
+    virtual std::string GetIdentifier(int* worth)
     {
         int j;
         do {
@@ -438,7 +438,7 @@ private:
     bool woodused[NWOOD];
     std::string type;
 
-    virtual std::string GetIdentifier()
+    virtual std::string GetIdentifier(int* worth)
     {
         const char *str;
 
@@ -483,12 +483,12 @@ void PrintStickDiscoveries()
     s_sticks.PrintDiscoveries("A stick", STICK);
 }
 
-Item * CreateStick()
+Item* CreateStick()
 {
     return s_sticks.Create();
 }
 
-Item * SummonStick(int i)
+Item* SummonStick(int i)
 {
     return s_sticks.Summon(i);
 }
@@ -496,6 +496,106 @@ Item * SummonStick(int i)
 int NumStickTypes()
 {
     return s_sticks.NumTypes();
+}
+
+typedef struct { char *st_name; int st_value; } STONE;
+static STONE stones[] =
+{
+    { "agate",           25 },
+    { "alexandrite",     40 },
+    { "amethyst",        50 },
+    { "carnelian",       40 },
+    { "diamond",        300 },
+    { "emerald",        300 },
+    { "germanium",      225 },
+    { "granite",          5 },
+    { "garnet",          50 },
+    { "jade",           150 },
+    { "kryptonite",     300 },
+    { "lapis lazuli",    50 },
+    { "moonstone",       50 },
+    { "obsidian",        15 },
+    { "onyx",            60 },
+    { "opal",           200 },
+    { "pearl",          220 },
+    { "peridot",         63 },
+    { "ruby",           350 },
+    { "sapphire",       285 },
+    { "stibotantalite", 200 },
+    { "tiger eye",       50 },
+    { "topaz",           60 },
+    { "turquoise",       70 },
+    { "taaffeite",      300 },
+    { "zircon",          80 }
+};
+
+#define NSTONES (sizeof(stones)/sizeof(STONE))
+
+struct RingFactory : public ItemFactory
+{
+    RingFactory()
+    {
+        m_types = {
+            { "R_PROTECT", ITEM_MAP_ENTRY(Protection) },
+            { "R_ADDSTR", ITEM_MAP_ENTRY(AddStrength) },
+            { "R_SUSTSTR", ITEM_MAP_ENTRY(SustainStrength) },
+            { "R_SEARCH", ITEM_MAP_ENTRY(Searching) },
+            { "R_SEEINVIS", ITEM_MAP_ENTRY(SeeInvisibleRing) },
+            { "R_NOP", ITEM_MAP_ENTRY(Adornment) },
+            { "R_AGGR", ITEM_MAP_ENTRY(AggravateMonster) },
+            { "R_ADDHIT", ITEM_MAP_ENTRY(Dexterity) },
+            { "R_ADDDAM", ITEM_MAP_ENTRY(IncreaseDamage) },
+            { "R_REGEN", ITEM_MAP_ENTRY(Regeneration) },
+            { "R_DIGEST", ITEM_MAP_ENTRY(SlowDigestion) },
+            { "R_TELEPORT", ITEM_MAP_ENTRY(TeleportationRing) },
+            { "R_STEALTH", ITEM_MAP_ENTRY(Stealth) },
+            { "R_SUSTARM", ITEM_MAP_ENTRY(MaintainArmor) },
+        };
+        for (int i = 0; i < NSTONES; i++) 
+            used[i] = false;
+    }
+
+private:
+    bool used[NSTONES];
+
+    virtual std::string GetIdentifier(int* worth)
+    {
+        int j;
+        do { 
+            j = rnd(NSTONES);
+        } while (used[j]);
+
+        used[j] = true;
+        *worth += stones[j].st_value;
+        return stones[j].st_name;
+    }
+};
+
+RingFactory s_rings;
+
+void LoadRings(const std::string & filename)
+{
+    s_rings.LoadItems(filename);
+}
+
+void PrintRingDiscoveries()
+{
+    s_rings.PrintDiscoveries("A ring", RING);
+}
+
+Item* CreateRing()
+{
+    return s_rings.Create();
+}
+
+Item* SummonRing(int i)
+{
+    return s_rings.Summon(i);
+}
+
+int NumRingTypes()
+{
+    return s_rings.NumTypes();
 }
 
 struct MagicItem things[NUMTHINGS] =
@@ -526,8 +626,6 @@ void Item::discover()
     if (Category()) {
         Category()->discover();
     }
-    if (item_class())
-        item_class()->discover(m_which);
 }
 
 void Item::call_it()
@@ -545,21 +643,6 @@ void Item::call_it()
             msg("");
         }
     }
-
-    ItemClass* items = item_class();
-    if (items) {
-        items->call_it(m_which);
-    }
-}
-
-ItemClass* Item::item_class() const
-{
-    if (m_type == SCROLL || m_type == POTION || m_type == STICK)
-        return 0;
-    //todo: change class layout, so we don't need to poke into game
-    //this is problematic because we couldn't, for example, start
-    //the hero off with a stick
-    return game->item_class(m_type);
 }
 
 void Item::set_as_target_of(Monster * m)
@@ -648,12 +731,9 @@ bool can_drop(Item *op, bool unequip)
             return true;
         }
     }
+    Ring* ring = game->hero().get_ring(hand);
     game->hero().set_ring(hand, NULL);
-    if (op->m_which == R_SEEINVIS) //todo: better place for this?  should be automatic
-    {
-        unsee_invisible();
-        extinguish(unsee_invisible);
-    }
+    ring->Remove();
 
     return true;
 }
@@ -673,7 +753,7 @@ Item* Item::CreateItem()
         break;
 
     case 2:
-        return Food::CreateFood();
+        return CreateFood();
         break;
 
     case 3:
@@ -685,7 +765,7 @@ Item* Item::CreateItem()
         break;
 
     case 5:
-        return create_ring();
+        return CreateRing();
         break;
 
     case 6:
@@ -766,22 +846,9 @@ void print_disc(byte type)
         PrintStickDiscoveries();
         return;
     }
-
-    ItemClass* items = game->item_class(type);
-    int maxnum = items->get_max_items();
-
-    set_order(order, maxnum);
-    int num_found = 0;
-    for (int i = 0; i < maxnum; i++) {
-        if (items->is_discovered(order[i]) || !items->get_guess(order[i]).empty())
-        {
-            std::string line = items->get_inventory_name(order[i]);
-            add_line("", "%s", line.c_str());
-            num_found++;
-        }
+    else if (type == RING) {
+        PrintRingDiscoveries();
     }
-    if (num_found == 0)
-        add_line("", nothing(type), 0);
 }
 
 //set_order: Set up order for list

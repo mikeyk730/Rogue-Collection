@@ -19,7 +19,7 @@
 #include "output_shim.h"
 #include "mach_dep.h"
 #include "move.h"
-#include "rings.h"
+#include "ring.h"
 #include "things.h"
 #include "potion.h"
 #include "pack.h"
@@ -115,17 +115,9 @@ bool Command::is_run() const
 void do_rings()
 {
     for (int i = LEFT; i <= RIGHT; i++) {
-        if (game->hero().get_ring(i)) {
-            switch (game->hero().get_ring(i)->m_which)
-            {
-            case R_SEARCH:
-                do_search(); //mdk: we search even if asleep!
-                break;
-            case R_TELEPORT:
-                if (rnd(50) == 17)
-                    game->hero().teleport();
-                break;
-            }
+        Ring* r = game->hero().get_ring(i);
+        if (r) {
+            r->OnTurn();
         }
     }
 }

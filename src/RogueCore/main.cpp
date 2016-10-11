@@ -32,7 +32,7 @@
 #include "env.h"
 #include "command.h"
 #include "things.h"
-#include "rings.h"
+#include "ring.h"
 #include "stick.h"
 #include "potion.h"
 #include "scroll.h"

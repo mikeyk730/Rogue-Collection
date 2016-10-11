@@ -21,7 +21,7 @@
 #include "misc.h"
 #include "monsters.h"
 #include "stick.h"
-#include "rings.h"
+#include "ring.h"
 #include "scroll.h"
 #include "potion.h"
 #include "weapons.h"
@@ -100,19 +100,22 @@ bool do_summon_object()
         break;
     case '=':
     {
-        char bless;
-        which = get_which(RING, MAXRINGS - 1);
+        which = get_which(RING, NumRingTypes() - 1);
 
+/* TODO!!!
         int level = 0;
-        switch (which)
+        switch (which)   //todo: somehow get from factory
         {
         case R_PROTECT: case R_ADDSTR: case R_ADDHIT: case R_ADDDAM:
-            bless = get_bless_char();
+        {
+            char bless = get_bless_char();
             level = (bless == '-') ? -1 : rnd(2) + 1;
             break;
         }
+        }
+        */
 
-        obj = new Ring(which, level);
+        obj = SummonRing(which);
         break;
     }
     case ')':

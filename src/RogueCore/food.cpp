@@ -8,7 +8,7 @@
 #include "main.h"
 #include "misc.h"
 
-Item* Food::CreateFood()
+Item* CreateFood()
 {
     game->no_food = 0;
     int which = (rnd(10) != 0) ? 0 : 1;
@@ -25,7 +25,7 @@ Item * Food::Clone() const
     return new Food(*this);
 }
 
-std::string Food::Name() const
+std::string Food::TypeName() const
 {
     return "food";
 }

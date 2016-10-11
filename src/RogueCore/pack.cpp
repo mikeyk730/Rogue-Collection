@@ -16,6 +16,7 @@
 #include "monster.h"
 #include "weapons.h"
 #include "gold.h"
+#include "item_category.h"
 
 #define CALLABLE  -1
 
@@ -150,47 +151,25 @@ bool do_call()
     if (!obj)
         return false;
 
-    if (obj->Category())
-    {
-        if (obj->Category()->is_discovered()) {
-            msg("that has already been identified");
-            return false;
-        }
-
-        std::string called = obj->Category()->guess();
-        if (called.empty())
-            called = obj->Category()->identifier();
-        msg("Was called \"%s\"", called.c_str());
-
-        msg("what do you want to call it? ");
-        getinfo(prbuf, MAXNAME);
-        if (*prbuf && *prbuf != ESCAPE)
-            obj->Category()->guess(prbuf);
-        msg("");
-
-        return false;
-    }
-
-    ItemClass* item_class = obj->item_class();
-    if (!item_class) {
+    if (!obj->Category()) {
         msg("you can't call that anything");
         return false;
     }
 
-    if (item_class->is_discovered(obj->m_which)) {
+    if (obj->Category()->is_discovered()) {
         msg("that has already been identified");
         return false;
     }
 
-    std::string called = item_class->get_guess(obj->m_which);
+    std::string called = obj->Category()->guess();
     if (called.empty())
-        called = item_class->get_identifier(obj->m_which);
+        called = obj->Category()->identifier();
     msg("Was called \"%s\"", called.c_str());
 
     msg("what do you want to call it? ");
     getinfo(prbuf, MAXNAME);
     if (*prbuf && *prbuf != ESCAPE)
-        item_class->set_guess(obj->m_which, prbuf);
+        obj->Category()->guess(prbuf);
     msg("");
 
     return false;

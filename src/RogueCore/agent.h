@@ -40,7 +40,6 @@ struct Agent
     virtual int calculate_strength() const;
     virtual int calculate_max_strength() const;
     void restore_strength();
-    void adjust_strength(int amt);
     
     int experience() const;
     virtual void gain_experience(int exp);

@@ -5,11 +5,11 @@ struct Potion : public Item
 {
     Potion();
 
-    virtual std::string Name() const;
-    virtual std::string InventoryName() const;
-    virtual bool IsMagic() const;
-    virtual bool IsEvil() const;
-    virtual int Worth() const;
+    virtual std::string TypeName() const override;
+    virtual std::string InventoryName() const override;
+    virtual bool IsMagic() const override;
+    virtual bool IsEvil() const override;
+    virtual int Worth() const override;
 
     virtual void Quaff() = 0;
     virtual void AffectMonster(Monster* m);

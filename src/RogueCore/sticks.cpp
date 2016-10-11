@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #include "random.h"
-#include "item_class.h"
+#include "item_category.h"
 #include "game_state.h"
 #include "sticks.h"
 #include "monsters.h"
@@ -51,7 +51,7 @@ struct MagicMissile : public Item
         return new MagicMissile(*this);
     }
 
-    virtual std::string Name() const { 
+    virtual std::string TypeName() const { 
         return "magic missile"; 
     }
 
@@ -627,7 +627,7 @@ Stick::Stick(const std::string& kind)
     m_charges = 3 + rnd(5);
 }
 
-std::string Stick::Name() const
+std::string Stick::TypeName() const
 {
     return Category()->kind();
 }

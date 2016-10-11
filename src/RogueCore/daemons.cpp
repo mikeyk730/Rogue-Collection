@@ -12,7 +12,7 @@
 #include "misc.h"
 #include "rip.h"
 #include "output_shim.h"
-#include "rings.h"
+#include "ring.h"
 #include "hero.h"
 #include "room.h"
 #include "level.h"
@@ -34,10 +34,14 @@ void doctor()
     else if (game->turns_since_heal >= 3)
         game->hero().increase_hp(rnd(lvl - 7) + 1, false, false);
 
-    if (game->hero().is_ring_on_hand(LEFT, R_REGEN))
-        game->hero().increase_hp(1, false, false);
-    if (game->hero().is_ring_on_hand(RIGHT, R_REGEN))
-        game->hero().increase_hp(1, false, false);
+    int hp_boost = 0;
+    for (int i = LEFT; i <= RIGHT; i++) {
+        Ring* r = game->hero().get_ring(i);
+        if (r) {
+            hp_boost += r->GetHpBoost();
+        }
+    }
+    game->hero().increase_hp(hp_boost, false, false);
 
     if (original_hp != game->hero().get_hp())
     {

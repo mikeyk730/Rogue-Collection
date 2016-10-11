@@ -7,7 +7,7 @@ struct Scroll : public Item
 {
     Scroll();
 
-    virtual std::string Name() const override;
+    virtual std::string TypeName() const override;
     virtual bool IsMagic() const override;
     virtual bool IsEvil() const override;
     virtual int Worth() const override;

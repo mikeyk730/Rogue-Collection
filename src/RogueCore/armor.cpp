@@ -90,9 +90,9 @@ std::string Armor::InventoryName() const
 
     if (is_known() || game->wizard().reveal_items())
         chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(m_which) - get_armor_class(), 0, (char)ARMOR),
-            Name().c_str(), armor_class_for_display());
+            TypeName().c_str(), armor_class_for_display());
     else
-        sprintf(pb, "%s", Name().c_str());
+        sprintf(pb, "%s", TypeName().c_str());
 
     return prbuf;
 }
@@ -129,7 +129,7 @@ Item * Armor::Clone() const
     return new Armor(*this);
 }
 
-std::string Armor::Name() const
+std::string Armor::TypeName() const
 {
     return a_names[m_which];
 }

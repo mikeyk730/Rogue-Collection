@@ -2,9 +2,9 @@
 #include <memory>
 #include <map>
 #include <string>
+#include <vector>
 #include <fstream>
 #include "util.h"
-#include "item_class.h"
 #include "wizard.h"
 #include "command.h"
 
@@ -14,6 +14,7 @@ struct Hero;
 struct Level;
 struct OutputShim;
 struct OutputInterface;
+struct Item;
 
 struct GameState
 {
@@ -35,9 +36,6 @@ struct GameState
     Level& level();
     Hero& hero();
     
-    RingInfo& rings();
-    ItemClass* item_class(int type);
-
     Cheats& wizard();
 
     bool in_replay() const;
@@ -127,8 +125,6 @@ private:
     std::unique_ptr<Level> m_level;
     std::unique_ptr<Hero> m_hero;
     
-    std::unique_ptr<RingInfo> m_rings;
-
     std::vector<std::pair<std::string, std::string>> m_log;
     std::ofstream m_log_stream;
     std::vector<std::string> m_monster_data;

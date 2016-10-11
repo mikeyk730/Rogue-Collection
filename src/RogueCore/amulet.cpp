@@ -11,7 +11,7 @@ Item * Amulet::Clone() const
     return new Amulet(*this);
 }
 
-std::string Amulet::Name() const
+std::string Amulet::TypeName() const
 {
     return "amulet";
 }

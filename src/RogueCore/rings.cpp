@@ -1,13 +1,15 @@
 //Routines dealing specifically with rings
 //rings.c     1.4 (AI Design) 12/13/84
 #include <stdio.h>
-
+#include <sstream>
 #include "rogue.h"
 #include "random.h"
 #include "agent.h"
-#include "item_class.h"
 #include "game_state.h"
-#include "rings.h"
+#include "item_category.h"
+#include "daemons.h"
+#include "daemon.h"
+#include "ring.h"
 #include "pack.h"
 #include "misc.h"
 #include "potion.h"
@@ -15,99 +17,18 @@
 #include "things.h"
 #include "weapons.h"
 #include "hero.h"
+#include "rings.h"
+#include "level.h"
+#include "monster.h"
 
 char ring_buf[6];
-
-typedef struct { char *st_name; int st_value; } STONE;
-
-static STONE stones[] =
-{
-  {"agate",           25},
-  {"alexandrite",     40},
-  {"amethyst",        50},
-  {"carnelian",       40},
-  {"diamond",        300},
-  {"emerald",        300},
-  {"germanium",      225},
-  {"granite",          5},
-  {"garnet",          50},
-  {"jade",           150},
-  {"kryptonite",     300},
-  {"lapis lazuli",    50},
-  {"moonstone",       50},
-  {"obsidian",        15},
-  {"onyx",            60},
-  {"opal",           200},
-  {"pearl",          220},
-  {"peridot",         63},
-  {"ruby",           350},
-  {"sapphire",       285},
-  {"stibotantalite", 200},
-  {"tiger eye",       50},
-  {"topaz",           60},
-  {"turquoise",       70},
-  {"taaffeite",      300},
-  {"zircon",          80}
-};
-
-#define NSTONES (sizeof(stones)/sizeof(STONE))
-
-RingInfo::RingInfo()
-{
-    m_magic_props =
-    {
-      {"protection",          9, 400},
-      {"add strength",        9, 400},
-      {"sustain strength",    5, 280},
-      {"searching",          10, 420},
-      {"see invisible",      10, 310},
-      {"adornment",           1,  10},
-      {"aggravate monster",  10,  10},
-      {"dexterity",           8, 440},
-      {"increase damage",     8, 400},
-      {"regeneration",        4, 460},
-      {"slow digestion",      9, 240},
-      {"teleportation",       5,  30},
-      {"stealth",             7, 470},
-      {"maintain armor",      5, 380}
-    };
-
-    int i, j;
-    bool used[NSTONES];
-
-    for (i = 0; i < NSTONES; i++) used[i] = false;
-    for (i = 0; i < MAXRINGS; i++)
-    {
-        do j = rnd(NSTONES); while (used[j]);
-        used[j] = true;
-        m_identifier.push_back(stones[j].st_name);
-        if (i > 0)
-            m_magic_props[i].prob += m_magic_props[i - 1].prob;
-        m_magic_props[i].worth += stones[j].st_value;
-    }
-
-}
-
-Item* create_ring()
-{
-    int which = pick_one(game->rings().m_magic_props);
-    return new Ring(which);
-}
 
 //ring_eat: How much food does this ring use up?
 int ring_eat(int hand)
 {
-    if (game->hero().get_ring(hand) == NULL) return 0;
-    switch (game->hero().get_ring(hand)->m_which)
-    {
-    case R_REGEN: return 2;
-    case R_SUSTSTR: case R_SUSTARM: case R_PROTECT: case R_ADDSTR: case R_STEALTH: return 1;
-    case R_SEARCH: return (rnd(5) == 0);
-    case R_ADDHIT: case R_ADDDAM: return (rnd(3) == 0);
-    case R_DIGEST: return -rnd(2);
-    case R_SEEINVIS: return (rnd(5) == 0);
-    default: return 0;
-    }
+    if (game->hero().get_ring(hand) == NULL) 
+        return 0;
+    return game->hero().get_ring(hand)->GetFoodCost();
 }
 
 //ring_num: Print ring bonuses
@@ -116,91 +37,57 @@ char *ring_num(const Ring *obj)
     if (!obj->is_known() && !game->wizard().reveal_items())
         return "";
 
-    switch (obj->m_which)
+    if (obj->UsesBonuses())
     {
-    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
         ring_buf[0] = ' ';
         strcpy(&ring_buf[1], num(obj->get_ring_level(), 0, (char)RING));
-        break;
-
-    default:
-        return "";
+        return ring_buf;
     }
-    return ring_buf;
+    return "";
 }
 
-std::string RingInfo::get_inventory_name(int which, const std::string& bonus) const
+
+Ring::Ring() :
+    Item(RING, 0)
 {
-    char *pb = prbuf;
-    std::string stone = get_identifier(which);
-
-    if (is_discovered(which) || game->wizard().reveal_items())
-        chopmsg(pb, "A%s ring of %s", "A%s ring of %s(%s)", bonus.c_str(), get_name(which).c_str(), stone.c_str());
-    else if (!get_guess(which).empty())
-        chopmsg(pb, "A ring called %s", "A ring called %s(%s)", get_guess(which).c_str(), stone.c_str());
-    else
-        sprintf(pb, "A%s %s ring", vowelstr(stone.c_str()), stone.c_str());
-
-    return prbuf;
 }
 
-std::string RingInfo::get_inventory_name(const Item * obj) const
-{
-    const Ring* ring = dynamic_cast<const Ring*>(obj);
-    return get_inventory_name(obj->m_which, ring_num(ring));
-}
-
-std::string RingInfo::get_inventory_name(int which) const
-{
-    return get_inventory_name(which, "");
-}
-
-Ring::Ring(int which) :
-    Item(RING, which)
-{
-    switch (which)
-    {
-    case R_ADDSTR: case R_PROTECT: case R_ADDHIT: case R_ADDDAM:
-        if ((ring_level = rnd(3)) == 0) {
-            ring_level = -1;
-            set_cursed();
-        }
-        break;
-
-    case R_AGGR: case R_TELEPORT:
-        set_cursed();
-        break;
-    }
-}
-
-Ring::Ring(int which, int level) :
-    Item(RING, which)
+/*
+Ring::Ring(int level) :
+    Item(RING, 0)
 {
     ring_level = level;
     if (ring_level < 0)
         set_cursed();
-
-    switch (which)
-    {
-    case R_AGGR: case R_TELEPORT:
-        set_cursed();
-        break;
-    }
 }
+*/
 
-Item* Ring::Clone() const
-{
-    return new Ring(*this);
-}
-
-std::string Ring::Name() const
+std::string Ring::TypeName() const
 {
     return "ring";
 }
 
 std::string Ring::InventoryName() const
 {
-    return item_class()->get_inventory_name(this);
+    std::ostringstream ss;
+
+    ItemCategory& info = *Category();
+    std::string stone = info.identifier();
+
+    if (info.is_discovered() || game->wizard().reveal_items()) {
+        ss << "A" << ring_num(this) << " ring of " << info.name();
+        if (!short_msgs())
+            ss << "(" << stone << ")";
+    }
+    else if (!info.guess().empty()) {
+        ss << "A ring called " << info.guess();
+        if (!short_msgs())
+            ss << "(" << stone << ")";
+    }
+    else
+        ss << "A" << vowelstr(stone.c_str()) << " " << stone << " ring";
+
+    return ss.str();
 }
 
 bool Ring::IsMagic() const
@@ -210,21 +97,16 @@ bool Ring::IsMagic() const
 
 bool Ring::IsEvil() const
 {
-    switch (m_which)
-    {
-    case R_PROTECT: case R_ADDSTR: case R_ADDDAM: case R_ADDHIT:
+    if (UsesBonuses())
         return (get_ring_level() < 0);
 
-    case R_AGGR: case R_TELEPORT:
-        return true;
-    }
     return false;
 }
 
 int Ring::Worth() const
 {
-    int worth = item_class()->get_value(m_which);
-    if (m_which == R_ADDSTR || m_which == R_ADDDAM || m_which == R_PROTECT || m_which == R_ADDHIT) {
+    int worth = Category()->worth();
+    if (UsesBonuses()) {
         if (get_ring_level() > 0)
             worth += get_ring_level() * 100;
         else 
@@ -235,8 +117,308 @@ int Ring::Worth() const
     return worth;
 }
 
+
 int Ring::get_ring_level() const
 {
     return ring_level;
 }
 
+void Ring::OnTurn()
+{
+}
+
+bool Ring::SustainsStrength()
+{
+    return false;
+}
+
+bool Ring::SustainsArmor()
+{
+    return false;
+}
+
+bool Ring::AddsStealth()
+{
+    return false;
+}
+
+int Ring::GetArmorBoost()
+{
+    return 0;
+}
+
+int Ring::GetStrBoost()
+{
+    return 0;
+}
+
+int Ring::GetHitBoost()
+{
+    return 0;
+}
+
+int Ring::GetDmgBoost()
+{
+    return 0;
+}
+
+int Ring::GetSaveBoost()
+{
+    return 0;
+}
+
+int Searching::GetFoodCost()
+{
+    return (rnd(5) == 0);
+}
+
+void Searching::OnTurn()
+{
+    do_search(); //mdk: we search even if asleep!
+}
+
+TeleportationRing::TeleportationRing()
+{
+    set_cursed();
+}
+
+int TeleportationRing::GetFoodCost()
+{
+    return 0;
+}
+
+void TeleportationRing::OnTurn()
+{
+    if (rnd(50) == 17)
+        game->hero().teleport();
+}
+
+bool TeleportationRing::IsEvil() const
+{
+    return true;
+}
+
+bool Ring::UsesBonuses() const
+{
+    return false;
+}
+
+void Ring::OnNewMonster(Monster * monster)
+{
+}
+
+Protection::Protection()
+{
+    if ((ring_level = rnd(3)) == 0) {
+        ring_level = -1;
+        set_cursed();
+    }
+}
+
+int Protection::GetFoodCost()
+{
+    return 1;
+}
+
+bool Protection::UsesBonuses() const
+{
+    return true;
+}
+
+int Protection::GetArmorBoost()
+{
+    return get_ring_level();
+}
+
+int Protection::GetSaveBoost()
+{
+    return get_ring_level();
+}
+
+AddStrength::AddStrength()
+{
+    if ((ring_level = rnd(3)) == 0) {
+        ring_level = -1;
+        set_cursed();
+    }
+}
+
+int AddStrength::GetFoodCost()
+{
+    return 1;
+}
+
+bool AddStrength::UsesBonuses() const
+{
+    return true;
+}
+
+int AddStrength::GetStrBoost()
+{
+    return get_ring_level();
+}
+
+Dexterity::Dexterity()
+{
+    if ((ring_level = rnd(3)) == 0) {
+        ring_level = -1;
+        set_cursed();
+    }
+}
+
+int Dexterity::GetFoodCost()
+{
+    return (rnd(3) == 0);
+}
+
+bool Dexterity::UsesBonuses() const
+{
+    return true;
+}
+
+int Dexterity::GetHitBoost()
+{
+    return get_ring_level();
+}
+
+IncreaseDamage::IncreaseDamage()
+{
+    if ((ring_level = rnd(3)) == 0) {
+        ring_level = -1;
+        set_cursed();
+    }
+}
+
+int IncreaseDamage::GetFoodCost()
+{
+    return (rnd(3) == 0);
+}
+
+bool IncreaseDamage::UsesBonuses() const
+{
+    return true;
+}
+
+int IncreaseDamage::GetDmgBoost()
+{
+    return get_ring_level();
+}
+
+void Ring::PutOn()
+{
+}
+
+void Ring::Remove()
+{
+}
+
+int SeeInvisibleRing::GetFoodCost()
+{
+    return (rnd(5) == 0);
+}
+
+void SeeInvisibleRing::PutOn()
+{
+    show_invisible();
+}
+
+void SeeInvisibleRing::Remove()
+{
+    unsee_invisible();
+    extinguish(unsee_invisible);
+}
+
+int Ring::GetHpBoost()
+{
+    return 0;
+}
+
+int Regeneration::GetHpBoost()
+{
+    return 1;
+}
+
+bool AggravateMonster::IsEvil() const
+{
+    return true;
+}
+
+AggravateMonster::AggravateMonster()
+{
+    set_cursed();
+}
+
+int AggravateMonster::GetFoodCost()
+{
+    return 0;
+}
+
+void AggravateMonster::PutOn()
+{
+    game->level().aggravate_monsters();
+}
+
+void AggravateMonster::OnNewMonster(Monster* monster)
+{
+    monster->start_run();
+}
+
+int Regeneration::GetFoodCost()
+{
+    return 2;
+}
+
+int SlowDigestion::GetFoodCost()
+{
+    return -rnd(2);
+}
+
+int SustainStrength::GetFoodCost()
+{
+    return 1;
+}
+
+bool SustainStrength::SustainsStrength()
+{
+    return true;
+}
+
+int MaintainArmor::GetFoodCost()
+{
+    return 1;
+}
+
+bool MaintainArmor::SustainsArmor()
+{
+    return true;
+}
+
+int Stealth::GetFoodCost()
+{
+    return 1;
+}
+
+bool Stealth::AddsStealth()
+{
+    return true;
+}
+
+int Adornment::GetFoodCost()
+{
+    return 0;
+}
+
+ItemCategory Protection::info;
+ItemCategory AddStrength::info;
+ItemCategory SustainStrength::info;
+ItemCategory Searching::info;
+ItemCategory SeeInvisibleRing::info;
+ItemCategory Adornment::info;
+ItemCategory AggravateMonster::info;
+ItemCategory Dexterity::info;
+ItemCategory IncreaseDamage::info;
+ItemCategory Regeneration::info;
+ItemCategory SlowDigestion::info;
+ItemCategory TeleportationRing::info;
+ItemCategory Stealth::info;
+ItemCategory MaintainArmor::info;
