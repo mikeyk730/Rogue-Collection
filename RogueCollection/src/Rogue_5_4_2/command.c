@@ -496,8 +496,8 @@ search(void)
 	    if (!(*fp & F_REAL))
 		switch (chat(y, x))
 		{
-		    case '|':
-		    case '-':
+		    case VWALL:
+		    case HWALL:
 			if (rnd(5 + probinc) != 0)
 			    break;
 			chat(y, x) = DOOR;
@@ -614,8 +614,8 @@ identify(void)
     const struct h_list *hp;
     const char *str;
     const struct h_list ident_list[] = {
-	{'|',		"wall of a room",		FALSE},
-	{'-',		"wall of a room",		FALSE},
+	{VWALL,		"wall of a room",		FALSE},
+	{HWALL,		"wall of a room",		FALSE},
 	{GOLD,		"gold",				FALSE},
 	{STAIRS,	"a staircase",			FALSE},
 	{DOOR,		"door",				FALSE},

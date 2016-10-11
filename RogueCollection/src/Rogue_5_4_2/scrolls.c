@@ -178,8 +178,8 @@ read_scroll(void)
 			case STAIRS:
 			    break;
 
-			case '-':
-			case '|':
+			case HWALL:
+			case VWALL:
 			    if (!(pp->p_flags & F_REAL))
 			    {
 				ch = pp->p_ch = DOOR;

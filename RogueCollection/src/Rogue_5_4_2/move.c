@@ -104,8 +104,8 @@ over:
     switch (ch)
     {
 	case ' ':
-	case '|':
-	case '-':
+	case VWALL:
+	case HWALL:
 hit_bound:
 	    if (passgo && running && (proom->r_flags & ISGONE)
 		&& !on(player, ISBLIND))

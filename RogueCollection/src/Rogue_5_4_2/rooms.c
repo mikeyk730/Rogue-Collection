@@ -183,7 +183,7 @@ vert(const struct room *rp, int startx)
     int y;
 
     for (y = rp->r_pos.y + 1; y <= rp->r_max.y + rp->r_pos.y - 1; y++)
-	chat(y, startx) = '|';
+	chat(y, startx) = VWALL;
 }
 
 /*
@@ -197,7 +197,7 @@ horiz(const struct room *rp, int starty)
     int x;
 
     for (x = rp->r_pos.x; x <= rp->r_pos.x + rp->r_max.x - 1; x++)
-	chat(starty, x) = '-';
+	chat(starty, x) = HWALL;
 }
 
 /*

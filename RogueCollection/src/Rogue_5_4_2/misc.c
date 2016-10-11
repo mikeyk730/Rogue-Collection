@@ -162,8 +162,8 @@ look(int wakeup)
 			    passcount++;
 			break;
 		    case FLOOR:
-		    case '|':
-		    case '-':
+		    case VWALL:
+		    case HWALL:
 		    case ' ':
 			break;
 		    default:
@@ -195,8 +195,8 @@ trip_ch(int y, int x, int ch)
 	    case FLOOR:
 	    case ' ':
 	    case PASSAGE:
-	    case '-':
-	    case '|':
+	    case HWALL:
+	    case VWALL:
 	    case DOOR:
 	    case TRAP:
 		break;

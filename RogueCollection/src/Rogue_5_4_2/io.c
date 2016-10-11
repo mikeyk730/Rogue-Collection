@@ -135,8 +135,8 @@ step_ok(int ch)
     switch (ch)
     {
 	case ' ':
-	case '|':
-	case '-':
+	case VWALL:
+	case HWALL:
 	    return FALSE;
 	default:
 	    return (!isalpha(ch));

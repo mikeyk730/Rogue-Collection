@@ -103,6 +103,8 @@
 #define AMULET		','
 #define RING		'='
 #define STICK		'/'
+#define VWALL		'|'
+#define HWALL		'-'
 #define CALLABLE	-1
 #define R_OR_S		-2
 

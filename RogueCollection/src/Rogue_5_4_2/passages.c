@@ -304,9 +304,9 @@ door(struct room *rm, const coord *cp)
     if (rnd(10) + 1 < level && rnd(5) == 0)
     {
 	if (cp->y == rm->r_pos.y || cp->y == rm->r_pos.y + rm->r_max.y - 1)
-		pp->p_ch = '-';
+		pp->p_ch = HWALL;
 	else
-		pp->p_ch = '|';
+		pp->p_ch = VWALL;
 	pp->p_flags &= ~F_REAL;
     }
     else
@@ -331,7 +331,7 @@ add_pass(void)
 	{
 	    pp = INDEX(y, x);
 	    if ((pp->p_flags & F_PASS) || pp->p_ch == DOOR ||
-		(!(pp->p_flags&F_REAL) && (pp->p_ch == '|' || pp->p_ch == '-')))
+		(!(pp->p_flags&F_REAL) && (pp->p_ch == VWALL || pp->p_ch == HWALL)))
 	    {
 		ch = pp->p_ch;
 		if (pp->p_flags & F_PASS)
@@ -405,7 +405,7 @@ numpass(int y, int x)
      * or a numerable type of place
      */
     if ((ch = chat(y, x)) == DOOR ||
-	(!(*fp & F_REAL) && (ch == '|' || ch == '-')))
+	(!(*fp & F_REAL) && (ch == VWALL || ch == HWALL)))
     {
 	rp = &passages[pnum];
 	rp->r_exit[rp->r_nexits].y = y;
