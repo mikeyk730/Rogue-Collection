@@ -55,6 +55,13 @@ extern const char *metal[];
 /*
  * All the fun defines
  */
+#define ADDCH(ch)           addch(ch)
+#define WADDCH(w,ch)        waddch(w,ch)
+#define MVADDCH(r,c,ch)     mvaddch(r,c,ch)
+#define MVWADDCH(w,r,c,ch)  mvaddch(w,r,c,ch)
+#define INCH()              inch()
+#define MVINCH(r,c)         mvinch(r,c)
+#define MVWINCH(w,r,c)      mvwinch(w,r,c)
 #define shint		char		/* short integer (for very small #s) */
 #define when		break;case
 #define otherwise	break;default

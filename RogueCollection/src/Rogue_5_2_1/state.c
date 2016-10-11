@@ -898,7 +898,7 @@ rs_write_window(FILE *savef, WINDOW *win)
     
     for(row=0;row<height;row++)
         for(col=0;col<width;col++)
-            rs_write_int(savef, mvwinch(win,row,col));
+            rs_write_int(savef, MVWINCH(win,row,col));
 }
 
 int
@@ -930,7 +930,7 @@ rs_read_window(int inf, WINDOW *win)
                 for(col=0;col<maxcols;col++)
                 {
                     rs_read_int(inf, &value);
-                    mvwaddch(win,row,col,value);
+                    MVWADDCH(win,row,col,value);
                 }
         }
     }

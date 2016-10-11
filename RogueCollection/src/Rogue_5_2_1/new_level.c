@@ -103,7 +103,7 @@ new_level()
 	&& _monst[index] == NULL);
     enter_room(&hero);
     move(hero.y, hero.x);
-    addch(PLAYER);
+    ADDCH(PLAYER);
     if (on(player, SEEMONST))
 	turn_see(FALSE);
 }

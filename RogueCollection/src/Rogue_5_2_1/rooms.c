@@ -209,9 +209,9 @@ register coord *cp;
 	    {
 		tp = moat(y, x);
 		if (tp == NULL || !see_monst(tp))
-		    addch(chat(y, x));
+		    ADDCH(chat(y, x));
 		else
-		    addch(tp->t_disguise);
+		    ADDCH(tp->t_disguise);
 	    }
 	}
 }
@@ -233,7 +233,7 @@ register coord *cp;
     floor = ((rp->r_flags & ISDARK) && !on(player, ISBLIND)) ? ' ' : FLOOR;
     for (y = rp->r_pos.y + 1; y < rp->r_max.y + rp->r_pos.y - 1; y++)
 	for (x = rp->r_pos.x + 1; x < rp->r_max.x + rp->r_pos.x - 1; x++)
-	    switch (ch = mvinch(y, x))
+	    switch (ch = MVINCH(y, x))
 	    {
 		case ' ':
 		case TRAP:
@@ -241,7 +241,7 @@ register coord *cp;
 		    break;
 		case FLOOR:
 		    if (floor == ' ')
-			addch(' ');
+			ADDCH(' ');
 		    break;
 		default:
 		    /*
@@ -252,7 +252,7 @@ register coord *cp;
 			if (on(player, SEEMONST))
 			{
 			    standout();
-			    addch(ch);
+			    ADDCH(ch);
 			    standend();
 			    break;
 			}
@@ -269,7 +269,7 @@ register coord *cp;
 #endif
                         }
 
-		    addch(floor);
+		    ADDCH(floor);
 	    }
     door_open(rp);
 }

@@ -298,7 +298,7 @@ add_pass()
     for (y = 1; y < LINES - 1; y++)
 	for (x = 0; x < COLS; x++)
 	    if ((ch = chat(y, x)) == DOOR || ch == PASSAGE)
-		mvaddch(y, x, ch);
+		MVADDCH(y, x, ch);
 }
 #endif
 

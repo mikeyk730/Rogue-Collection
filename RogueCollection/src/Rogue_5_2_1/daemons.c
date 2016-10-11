@@ -95,7 +95,7 @@ unsee()
 	if (on(*th, ISINVIS) && see_monst(th))
 	{
 	    move(th->t_pos.y, th->t_pos.x);
-	    addch(th->t_oldch);
+	    ADDCH(th->t_oldch);
 	}
     player.t_flags &= ~CANSEE;
 }

@@ -75,7 +75,7 @@ register coord *cp;
     tp->t_type = type;
     tp->t_disguise = type;
     tp->t_pos = *cp;
-    tp->t_oldch = mvinch(cp->y, cp->x);
+    tp->t_oldch = MVINCH(cp->y, cp->x);
     tp->t_room = roomin(cp);
     moat(cp->y, cp->x) = tp;
     mp = &monsters[tp->t_type-'A'];

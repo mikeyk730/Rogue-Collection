@@ -78,7 +78,7 @@ bool silent;
 		if (from_floor)
 		{
 		    detach(lvl_obj, obj);
-		    mvaddch(hero.y, hero.x, floor);
+		    MVADDCH(hero.y, hero.x, floor);
 		    chat(hero.y, hero.x) = floor;
 		}
 		update_mdest(obj);
@@ -104,7 +104,7 @@ bool silent;
 	if (obj->o_flags & ISFOUND)
 	{
 	    detach(lvl_obj, obj);
-	    mvaddch(hero.y, hero.x, floor);
+	    MVADDCH(hero.y, hero.x, floor);
 	    chat(hero.y, hero.x) = floor;
 	    msg("the scroll turns to dust as you pick it up");
 	    return;
@@ -116,7 +116,7 @@ bool silent;
     if (from_floor)
     {
 	detach(lvl_obj, obj);
-	mvaddch(hero.y, hero.x, floor);
+	MVADDCH(hero.y, hero.x, floor);
 	chat(hero.y, hero.x) = floor;
     }
     /*
@@ -410,7 +410,7 @@ register int value;
 
     floor = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
     purse += value;
-    mvaddch(hero.y, hero.x, floor);
+    MVADDCH(hero.y, hero.x, floor);
     chat(hero.y, hero.x) = floor;
     if (value > 0)
     {

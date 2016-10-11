@@ -651,7 +651,7 @@ bool waskill;
 	    discard(obj);
     }
     moat(mp->y, mp->x) = NULL;
-    mvaddch(mp->y, mp->x, tp->t_oldch);
+    MVADDCH(mp->y, mp->x, tp->t_oldch);
     detach(mlist, tp);
     discard(tp);
 }

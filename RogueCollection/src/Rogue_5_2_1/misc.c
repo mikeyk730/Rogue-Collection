@@ -76,8 +76,8 @@ bool wakeup;
 		    if (y == hero.y && x == hero.x)
 			continue;
 		    move(y, x);
-		    if (inch() == FLOOR)
-			addch(' ');
+		    if (INCH() == FLOOR)
+			ADDCH(' ');
 		}
 	}
 	oldpos = hero;
@@ -140,8 +140,8 @@ bool wakeup;
 		}
 
 	    move(y, x);
-	    if (ch != inch())
-		addch(ch);
+	    if (ch != INCH())
+		ADDCH(ch);
 
 	    if (door_stop && !firstmove && running)
 	    {
@@ -196,7 +196,7 @@ bool wakeup;
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
     move(hero.y, hero.x);
-    addch(PLAYER);
+    ADDCH(PLAYER);
 }
 
 /*

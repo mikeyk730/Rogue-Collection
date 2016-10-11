@@ -168,7 +168,7 @@ read_scroll()
 			    ch = ' ';
 		    }
 		    if (ch != ' ')
-			mvaddch(y, x, ch);
+			MVADDCH(y, x, ch);
 		}
 	when S_GFIND:
 	    /*
@@ -180,7 +180,7 @@ read_scroll()
 		if (op->o_type == GOLD)
 		{
 		    ch = TRUE;
-		    mvwaddch(hw, op->o_pos.y, op->o_pos.x, GOLD);
+		    MVWADDCH(hw, op->o_pos.y, op->o_pos.x, GOLD);
 		}
 	    if (ch)
 	    {

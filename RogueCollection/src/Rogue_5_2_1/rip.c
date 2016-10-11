@@ -264,7 +264,7 @@ register char monst;
     killer = killname(monst, FALSE);
     mvaddstr(17, 28-((strlen(killer)+1)/2), killer);
     if (monst == 's')
-	mvaddch(16, 32, ' ');
+	MVADDCH(16, 32, ' ');
     else
 	mvaddstr(16, 33, vowelstr(killer));
     sprintf(prbuf, "%2d", 1900+lt->tm_year);

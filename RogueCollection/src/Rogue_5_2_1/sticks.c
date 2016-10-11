@@ -127,13 +127,13 @@ do_zap()
 		    pp = tp->t_pack;
 		    detach(mlist, tp);
 		    if (see_monst(tp))
-			mvaddch(y, x, chat(y, x));
+			MVADDCH(y, x, chat(y, x));
 		    oldch = tp->t_oldch;
 		    delta.y = y;
 		    delta.x = x;
 		    new_monster(tp, monster = rnd(26) + 'A', &delta);
 		    if (see_monst(tp))
-			mvaddch(y, x, monster);
+			MVADDCH(y, x, monster);
 		    tp->t_oldch = oldch;
 		    tp->t_pack = pp;
 		    ws_know[WS_POLYMORPH] |= (monster != omonst);
@@ -146,8 +146,8 @@ do_zap()
 		}
 		else
 		{
-		    if (isupper(toascii(mvinch(y,x))))
-			mvaddch(y, x, tp->t_oldch);
+		    if (isupper(toascii(MVINCH(y,x))))
+			MVADDCH(y, x, tp->t_oldch);
 		    if (obj->o_which == WS_TELAWAY)
 		    {
 			do
@@ -156,13 +156,13 @@ do_zap()
 			    rnd_pos(&rooms[rm], &tp->t_pos);
 			} until (winat(tp->t_pos.y, tp->t_pos.x) == FLOOR);
 			tp->t_room = roomin(&tp->t_pos);
-			tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
+			tp->t_oldch = MVINCH(tp->t_pos.y, tp->t_pos.x);
 			if (see_monst(tp))
-			    mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
+			    MVADDCH(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
 			else if (on(player, SEEMONST))
 			{
 			    standout();
-			    mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
+			    MVADDCH(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
 			    standend();
 			}
 		    }
@@ -172,7 +172,7 @@ do_zap()
 			tp->t_pos.x = hero.x + delta.x;
 		    
 		        if (tp->t_pos.y != y || tp->t_pos.x != x)
-			    tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
+			    tp->t_oldch = MVINCH(tp->t_pos.y, tp->t_pos.x);
 		    }
 		    moat(y, x) = NULL;
 		    moat(tp->t_pos.y, tp->t_pos.x) = tp;
@@ -433,12 +433,12 @@ def:
 		    else
 			msg("the %s whizzes by you", name);
 		}
-		mvaddch(pos.y, pos.x, dirch);
+		MVADDCH(pos.y, pos.x, dirch);
 		refresh();
 	}
     }
     for (j = 0; j < i; j++)
-	mvaddch(spotpos[j].y, spotpos[j].x, chat(spotpos[j].y, spotpos[j].x));
+	MVADDCH(spotpos[j].y, spotpos[j].x, chat(spotpos[j].y, spotpos[j].x));
 }
 
 /*

@@ -159,7 +159,7 @@ teleport()
     register int rm;
     coord c;
 
-    mvaddch(hero.y, hero.x, chat(hero.y, hero.x));
+    MVADDCH(hero.y, hero.x, chat(hero.y, hero.x));
     do
     {
 	rm = rnd_room();
@@ -176,7 +176,7 @@ teleport()
 	hero = c;
 	look(TRUE);
     }
-    mvaddch(hero.y, hero.x, PLAYER);
+    MVADDCH(hero.y, hero.x, PLAYER);
     /*
      * turn off ISHELD in case teleportation was done while fighting
      * a Fungi
@@ -240,7 +240,7 @@ show_map()
 	    if (!(real = flat(y, x) & F_REAL))
 		wstandout(hw);
 	    wmove(hw, y, x);
-	    waddch(hw, chat(y, x));
+	    WADDCH(hw, chat(y, x));
 	    if (!real)
 		wstandend(hw);
 	}

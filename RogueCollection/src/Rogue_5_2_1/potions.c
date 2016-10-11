@@ -97,7 +97,7 @@ quaff()
 		    if (is_magic(tp))
 		    {
 			show = TRUE;
-			mvwaddch(hw, tp->o_pos.y, tp->o_pos.x, MAGIC);
+			MVWADDCH(hw, tp->o_pos.y, tp->o_pos.x, MAGIC);
 			p_know[P_TFIND] = TRUE;
 		    }
 		}
@@ -108,7 +108,7 @@ quaff()
 			if (is_magic(tp))
 			{
 			    show = TRUE;
-			    mvwaddch(hw, th->t_pos.y, th->t_pos.x, MAGIC);
+			    MVWADDCH(hw, th->t_pos.y, th->t_pos.x, MAGIC);
 			    p_know[P_TFIND] = TRUE;
 			}
 		    }
@@ -212,7 +212,7 @@ invis_on()
 	if (on(*th, ISINVIS) && see_monst(th))
 	{
 	    move(th->t_pos.y, th->t_pos.x);
-	    addch(th->t_disguise);
+	    ADDCH(th->t_disguise);
 	}
 }
 
@@ -230,17 +230,17 @@ register bool turn_off;
     for (mp = mlist; mp != NULL; mp = next(mp))
     {
 	move(mp->t_pos.y, mp->t_pos.x);
-	can_see = (see_monst(mp) || inch() == (unsigned char)mp->t_type);
+	can_see = (see_monst(mp) || INCH() == (unsigned char)mp->t_type);
 	if (turn_off)
 	{
 	    if (!can_see)
-		addch(mp->t_oldch);
+		ADDCH(mp->t_oldch);
 	}
 	else
 	{
 	    if (!can_see)
 		standout();
-	    addch(mp->t_type);
+	    ADDCH(mp->t_type);
 	    if (!can_see)
 	    {
 		standend();
