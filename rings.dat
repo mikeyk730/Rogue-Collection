@@ -12,5 +12,3 @@ R_DIGEST    slow_digestion      9 240
 R_TELEPORT  teleportation       5  30
 R_STEALTH   stealth             7 470
 R_SUSTARM   maintain_armor      5 380
-
-

@@ -1,0 +1,11 @@
+MACE          mace              10    8   2d4 1d3  NO_WEAPON  0              
+SWORD         long_sword        10   15   3d4 1d2  NO_WEAPON  0              
+BOW           short_bow         10   30   1d1 1d1  NO_WEAPON  0              
+ARROW         arrow             10    1   1d1 2d3  BOW        IS_MANY|IS_MISL
+DAGGER        dagger            10    2   1d6 1d4  NO_WEAPON  IS_MISL          
+TWOSWORD      two_handed_sword  10   75   4d4 1d2  NO_WEAPON  0                
+DART          dart              10    1   1d1 1d3  NO_WEAPON  IS_MANY|IS_MISL
+CROSSBOW      crossbow          10   15   1d1 1d1  NO_WEAPON  0                
+BOLT          crossbow_bolt     10    1   1d2 2d5  CROSSBOW   IS_MANY|IS_MISL
+SPEAR         spear             10    5   2d3 1d6  NO_WEAPON  IS_MISL          
+MAGIC_BOLT    bolt               0    0   6d6 6d6  NO_WEAPON  0                 

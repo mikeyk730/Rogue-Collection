@@ -1,0 +1,8 @@
+LEATHER            leather_armor           20   20   8 
+RING_MAIL          ring_mail               15   25   7 
+STUDDED_LEATHER    studded_leather_armor   15   20   7 
+SCALE_MAIL         scale_mail              13   30   6 
+CHAIN_MAIL         chain_mail              12   75   5 
+SPLINT_MAIL        splint_mail             10   80   4 
+BANDED_MAIL        banded_mail             10   90   4 
+PLATE_MAIL         plate_mail               5  150   3
