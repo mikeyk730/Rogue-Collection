@@ -20,7 +20,7 @@
 #include "rooms.h"
 #include "misc.h"
 #include "monsters.h"
-#include "sticks.h"
+#include "stick.h"
 #include "rings.h"
 #include "scroll.h"
 #include "potion.h"
@@ -87,7 +87,7 @@ bool do_summon_object()
         msg("");
         return false;
     case '!':
-        which = get_which(POTION, MAXPOTIONS - 1);
+        which = get_which(POTION, NumPotionTypes() - 1);
         obj = SummonPotion(which);
         break;
     case '?':
@@ -95,8 +95,8 @@ bool do_summon_object()
         obj = SummonScroll(which);
         break;
     case '/':
-        which = get_which(STICK, MAXSTICKS - 1);
-        obj = new Stick(which);
+        which = get_which(STICK, NumStickTypes() - 1);
+        obj = SummonStick(which);
         break;
     case '=':
     {

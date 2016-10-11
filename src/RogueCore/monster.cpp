@@ -10,7 +10,7 @@
 #include "level.h"
 #include "misc.h"
 #include "scrolls.h"
-#include "sticks.h"
+#include "stick.h"
 #include "output_shim.h"
 #include "move.h"
 #include "fight.h"

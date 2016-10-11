@@ -18,6 +18,9 @@ Item* CreatePotion();
 Item* SummonPotion(int i);
 int NumPotionTypes();
 
+Item* CreateStick();
+Item* SummonStick(int i);
+int NumStickTypes();
 
 void LoadScrolls(const std::string& filename);
 void LoadPotions(const std::string& filename);

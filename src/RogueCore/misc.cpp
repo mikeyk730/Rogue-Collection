@@ -21,7 +21,7 @@
 #include "rings.h"
 #include "scroll.h"
 #include "potion.h"
-#include "sticks.h"
+#include "stick.h"
 #include "armor.h"
 #include "hero.h"
 #include "room.h"

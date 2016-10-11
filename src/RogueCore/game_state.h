@@ -36,7 +36,6 @@ struct GameState
     Hero& hero();
     
     RingInfo& rings();
-    StickInfo& sticks();
     ItemClass* item_class(int type);
 
     Cheats& wizard();
@@ -129,7 +128,6 @@ private:
     std::unique_ptr<Hero> m_hero;
     
     std::unique_ptr<RingInfo> m_rings;
-    std::unique_ptr<StickInfo> m_sticks;
 
     std::vector<std::pair<std::string, std::string>> m_log;
     std::ofstream m_log_stream;

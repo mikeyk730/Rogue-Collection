@@ -59,23 +59,6 @@ const short IS_REVEAL = 0x0040; //Do you know who the enemy of the object is
 #define R_SUSTARM   13
 #define MAXRINGS    14
 
-//Rod/Wand/Staff types
-#define WS_LIGHT      0
-#define WS_HIT        1
-#define WS_ELECT      2
-#define WS_FIRE       3
-#define WS_COLD       4
-#define WS_POLYMORPH  5
-#define WS_MISSILE    6
-#define WS_HASTE_M    7
-#define WS_SLOW_M     8
-#define WS_DRAIN      9
-#define WS_NOP        10
-#define WS_TELAWAY    11
-#define WS_TELTO      12
-#define WS_CANCEL     13
-#define MAXSTICKS     14
-
 #define NO_WEAPON     -1
 
 struct Item

@@ -15,7 +15,7 @@
 #include "save.h"
 #include "armor.h"
 #include "weapons.h"
-#include "sticks.h"
+#include "stick.h"
 #include "output_shim.h"
 #include "mach_dep.h"
 #include "move.h"

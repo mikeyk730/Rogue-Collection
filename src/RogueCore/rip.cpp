@@ -17,7 +17,7 @@
 #include "things.h"
 #include "misc.h"
 #include "monsters.h"
-#include "sticks.h"
+#include "stick.h"
 #include "potion.h"
 #include "scroll.h"
 #include "rings.h"

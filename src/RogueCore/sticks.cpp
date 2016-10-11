@@ -1,6 +1,6 @@
 //Functions to implement the various sticks one might find while wandering around the dungeon.
 //@(#)sticks.c1.2 (AI Design) 2/12/84
-
+#include <sstream>
 #include <stdio.h>
 
 #include "random.h"
@@ -24,163 +24,6 @@
 #include "hero.h"
 #include "room.h"
 #include "monster.h"
-
-static char *wood[] =
-{
-  "avocado wood",
-  "balsa",
-  "bamboo",
-  "banyan",
-  "birch",
-  "cedar",
-  "cherry",
-  "cinnibar",
-  "cypress",
-  "dogwood",
-  "driftwood",
-  "ebony",
-  "elm",
-  "eucalyptus",
-  "fall",
-  "hemlock",
-  "holly",
-  "ironwood",
-  "kukui wood",
-  "mahogany",
-  "manzanita",
-  "maple",
-  "oaken",
-  "persimmon wood",
-  "pecan",
-  "pine",
-  "poplar",
-  "redwood",
-  "rosewood",
-  "spruce",
-  "teak",
-  "walnut",
-  "zebrawood"
-};
-
-#define NWOOD (sizeof(wood)/sizeof(char *))
-
-static char *metal[] =
-{
-  "aluminum",
-  "beryllium",
-  "bone",
-  "brass",
-  "bronze",
-  "copper",
-  "electrum",
-  "gold",
-  "iron",
-  "lead",
-  "magnesium",
-  "mercury",
-  "nickel",
-  "pewter",
-  "platinum",
-  "steel",
-  "silver",
-  "silicon",
-  "tin",
-  "titanium",
-  "tungsten",
-  "zinc"
-};
-
-#define NMETAL (sizeof(metal)/sizeof(char *))
-
-StickInfo::StickInfo()
-{
-    m_magic_props =
-    {
-      {"light",          12, 250},
-      {"striking",        9,  75},
-      {"lightning",       3, 330},
-      {"fire",            3, 330},
-      {"cold",            3, 330},
-      {"polymorph",      15, 310},
-      {"magic missile",  10, 170},
-      {"haste monster",   9,   5},
-      {"slow monster",   11, 350},
-      {"drain life",      9, 300},
-      {"nothing",         1,   5},
-      {"teleport away",   5, 340},
-      {"teleport to",     5,  50},
-      {"cancellation",    5, 280}
-    };
-
-    int i, j;
-    char *str;
-    bool metused[NMETAL], woodused[NWOOD];
-
-    for (i = 0; i < NWOOD; i++)
-        woodused[i] = false;
-    for (i = 0; i < NMETAL; i++)
-        metused[i] = false;
-    for (i = 0; i < MAXSTICKS; i++)
-    {
-        for (;;) if (rnd(2) == 0)
-        {
-            j = rnd(NMETAL);
-            if (!metused[j]) {
-                m_type.push_back("wand");
-                str = metal[j];
-                metused[j] = true;
-                break;
-            }
-        }
-        else
-        {
-            j = rnd(NWOOD);
-            if (!woodused[j]) {
-                m_type.push_back("staff");
-                str = wood[j];
-                woodused[j] = true;
-                break;
-            }
-        }
-        m_identifier.push_back(str);
-        if (i > 0)
-            m_magic_props[i].prob += m_magic_props[i - 1].prob;
-    }
-}
-
-bool(Stick::*stick_functions[MAXSTICKS])(Coord) =
-{
-  &Stick::zap_light,
-  &Stick::zap_striking,
-  &Stick::zap_lightning,
-  &Stick::zap_fire,
-  &Stick::zap_cold,
-  &Stick::zap_polymorph,
-  &Stick::zap_magic_missile,
-  &Stick::zap_haste_monster,
-  &Stick::zap_slow_monster,
-  &Stick::zap_drain_life,
-  &Stick::zap_nothing,
-  &Stick::zap_teleport_away,
-  &Stick::zap_teleport_to,
-  &Stick::zap_cancellation
-};
-
-bool StickInfo::is_staff(int which) const
-{
-    return m_type[which] == "staff";
-}
-
-std::string StickInfo::get_type(int which) const
-{
-    return m_type[which];
-}
-
-Item* create_stick()
-{
-    int which = pick_one(game->sticks().m_magic_props);
-    return new Stick(which);
-}
 
 Monster* get_monster_in_direction(Coord dir, bool check_distant)
 {
@@ -230,7 +73,12 @@ struct MagicMissile : public Item
 };
 
 
-bool Stick::zap_light(Coord dir) 
+Light::Light()
+{
+    m_charges = 10 + rnd(10);
+}
+
+bool Light::Zap(Coord dir)
 {
     //Ready Kilowatt wand.  Light up the room
     if (game->hero().is_blind()) 
@@ -254,7 +102,17 @@ bool Stick::zap_light(Coord dir)
     return true;
 }
 
-bool Stick::zap_striking(Coord dir)
+Striking::Striking()
+{
+    m_hit_plus = 100;
+    //mdk:bugfix: The striking staff was made more powerful in the PC version.
+    //The new stats were updated above, but neglected here.  This would only
+    //come into play if the staff were wielded before the first zap.
+    m_damage_plus = 4; //originally 3
+    m_damage = "2d8";  //originally 1d8
+}
+
+bool Striking::Zap(Coord dir)
 {
     Monster* monster = get_monster_in_direction(dir, false);
     if (!monster)
@@ -270,28 +128,28 @@ bool Stick::zap_striking(Coord dir)
     return false;
 }
 
-bool Stick::zap_lightning(Coord dir)
+bool Lightning::Zap(Coord dir)
 {
     fire_bolt(game->hero().position(), &dir, "bolt");
     discover();
     return true;
 }
 
-bool Stick::zap_fire(Coord dir)
+bool Fire::Zap(Coord dir)
 {
     fire_bolt(game->hero().position(), &dir, "flame");
     discover();
     return true;
 }
 
-bool Stick::zap_cold(Coord dir)
+bool Cold::Zap(Coord dir)
 {
     fire_bolt(game->hero().position(), &dir, "ice");
     discover();
     return true;
 }
 
-bool Stick::zap_polymorph(Coord dir)
+bool Polymorph::Zap(Coord dir)
 {
     Monster* monster = get_monster_in_direction(dir, true);
     if (!monster)
@@ -327,7 +185,7 @@ bool Stick::zap_polymorph(Coord dir)
     return true;
 }
 
-bool Stick::zap_magic_missile(Coord dir) 
+bool MagicMissileStick::Zap(Coord dir)
 {
     discover();
 
@@ -343,7 +201,12 @@ bool Stick::zap_magic_missile(Coord dir)
     return true;
 }
 
-bool Stick::zap_haste_monster(Coord dir)
+bool HasteMonster::IsEvil() const
+{
+    return true;
+}
+
+bool HasteMonster::Zap(Coord dir)
 {
     Monster* monster = get_monster_in_direction(dir, true);
     if (monster)
@@ -357,7 +220,7 @@ bool Stick::zap_haste_monster(Coord dir)
     return true;
 }
 
-bool Stick::zap_slow_monster(Coord dir)
+bool SlowMonster::Zap(Coord dir)
 {
     Monster* monster = get_monster_in_direction(dir, true);
     if (monster)
@@ -372,7 +235,7 @@ bool Stick::zap_slow_monster(Coord dir)
     return true;
 }
 
-bool Stick::zap_drain_life(Coord dir) 
+bool DrainLife::Zap(Coord dir)
 {
     //Take away 1/2 of hero's hit points, then take it away evenly from the monsters in the room (or next to hero if he is in a passage)
     if (game->hero().get_hp() < 2) {
@@ -383,13 +246,13 @@ bool Stick::zap_drain_life(Coord dir)
     return true;
 }
 
-bool Stick::zap_nothing(Coord dir) 
+bool Nothing::Zap(Coord dir) 
 {
     msg("what a bizarre schtick!");
     return true;
 }
 
-bool Stick::zap_teleport_away(Coord dir)
+bool TeleportAway::Zap(Coord dir)
 {
     Monster* monster = get_monster_in_direction(dir, true);
     if (!monster)
@@ -416,7 +279,12 @@ bool Stick::zap_teleport_away(Coord dir)
     return true;
 }
 
-bool Stick::zap_teleport_to(Coord dir)
+bool TeleportTo::IsEvil() const
+{
+    return true;
+}
+
+bool TeleportTo::Zap(Coord dir)
 {
     Monster* monster = get_monster_in_direction(dir, true);
     if (!monster)
@@ -435,7 +303,7 @@ bool Stick::zap_teleport_to(Coord dir)
     return true;
 }
 
-bool Stick::zap_cancellation(Coord dir) 
+bool Cancellation::Zap(Coord dir)
 {
     Monster* monster = get_monster_in_direction(dir, true);
     if (!monster)
@@ -508,7 +376,7 @@ bool do_zap()
     if (stick->charges() == 0) {
         msg("nothing happens");
     }
-    else if ((stick->*stick_functions[stick->m_which])(delta)) {
+    else if (stick->Zap(delta)) {
         stick->use_charge();
     }
 
@@ -746,77 +614,44 @@ const char *get_charge_string(const Item *obj)
     return buf;
 }
 
-std::string StickInfo::get_inventory_name(int which, const std::string& charge) const
-{
-    char *pb = prbuf;
-    std::string type = get_type(which);
-    std::string material = get_identifier(which);
-
-    sprintf(pb, "A%s %s ", vowelstr(type.c_str()), type.c_str());
-    pb = &prbuf[strlen(prbuf)];
-    if (is_discovered(which) || game->wizard().reveal_items())
-        chopmsg(pb, "of %s%s", "of %s%s(%s)", get_name(which).c_str(), charge.c_str(), material.c_str());
-    else if (!get_guess(which).empty())
-        chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), material.c_str());
-    else
-        sprintf(pb = &prbuf[2], "%s %s", material.c_str(), type.c_str());
-
-    return prbuf;
-}
-
-std::string StickInfo::get_inventory_name(const Item * obj) const
-{
-    return get_inventory_name(obj->m_which, get_charge_string(obj));
-}
-
-std::string StickInfo::get_inventory_name(int which) const
-{
-    return get_inventory_name(which, "");
-}
-
 //e.g. we'd crash if we started the hero off with a wand
-Stick::Stick(int which)
-    : Item(STICK, which)
+Stick::Stick(const std::string& kind)
+    : Item(STICK, 0)
 {
-    StickInfo* sticks = dynamic_cast<StickInfo*>(item_class());
-    if (sticks->is_staff(which))
+    if (kind == "staff")
         m_damage = "2d3";  //mdk: A staff is more powerful than a wand for striking 
     else
         m_damage = "1d1";
 
     m_throw_damage = "1d1";
     m_charges = 3 + rnd(5);
-
-    switch (which)
-    {
-    case WS_HIT:
-        m_hit_plus = 100;
-        //mdk:bugfix: The striking staff was made more powerful in the PC version.
-        //The new stats were updated above, but neglected here.  This would only
-        //come into play if the staff were wielded before the first zap.
-        m_damage_plus = 4; //originally 3
-        m_damage = "2d8";  //originally 1d8
-        break;
-    case WS_LIGHT:
-        m_charges = 10 + rnd(10);
-        break;
-    }
-}
-
-Item * Stick::Clone() const
-{
-    return new Stick(*this);
 }
 
 std::string Stick::Name() const
 {
-    StickInfo* sticks = dynamic_cast<StickInfo*>(item_class());
-    return sticks->get_type(m_which);
+    return Category()->kind();
 }
 
 std::string Stick::InventoryName() const
 {
-    return item_class()->get_inventory_name(this);
+    std::ostringstream ss;
+
+    ItemCategory& info = *Category();
+
+    if (info.is_discovered() || game->wizard().reveal_items()) {
+        ss << "A " << info.kind() << " of " << info.name() << get_charge_string(this);
+        if (!short_msgs())
+            ss << "(" << info.identifier() << ")";
+    }
+    else if (!info.guess().empty()) {
+        ss << "A " << info.kind() << " called " << info.guess();
+        if (!short_msgs())
+            ss << "(" << info.identifier() << ")";
+    }
+    else
+        ss << "A " << info.identifier() << " " << info.kind();
+
+    return ss.str();
 }
 
 bool Stick::IsMagic() const
@@ -826,19 +661,19 @@ bool Stick::IsMagic() const
 
 bool Stick::IsEvil() const
 {
-    return (m_which == WS_HASTE_M || m_which == WS_TELTO);
+    return false;
 }
 
 int Stick::Worth() const
 {
-    int worth = item_class()->get_value(m_which);
+    int worth = Category()->worth();
     worth += 20 * charges();
     if (!is_known())
         worth /= 2;
     return worth;
 }
 
-void Stick::drain_striking()
+void Striking::drain_striking()
 {
     if (--m_charges < 0) {
         m_damage = "0d0";
@@ -848,7 +683,7 @@ void Stick::drain_striking()
     }
 }
 
-void Stick::set_striking_damage()
+void Striking::set_striking_damage()
 {
     if (rnd(20) == 0) {
         m_damage = "3d8";
@@ -860,3 +695,17 @@ void Stick::set_striking_damage()
     }
 }
 
+ItemCategory Light::info;
+ItemCategory Striking::info;
+ItemCategory Lightning::info;
+ItemCategory Fire::info;
+ItemCategory Cold::info;
+ItemCategory Polymorph::info;
+ItemCategory MagicMissileStick::info;
+ItemCategory HasteMonster::info;
+ItemCategory SlowMonster::info;
+ItemCategory DrainLife::info;
+ItemCategory Nothing::info;
+ItemCategory TeleportAway::info;
+ItemCategory TeleportTo::info;
+ItemCategory Cancellation::info;

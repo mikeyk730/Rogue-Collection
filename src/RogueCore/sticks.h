@@ -1,49 +1,107 @@
 #pragma once
-#include "item.h"
+#include "stick.h"
 
-struct Monster;
+template <typename Derived>
+struct StickEx : public Stick {
+    StickEx() : Stick(Derived::info.kind())
+    {}
 
-struct Stick : public Item
-{
-    Stick(int which);
+    virtual Item* Clone() const override {
+        return new Derived(static_cast<Derived const&>(*this));
+    }
 
-    virtual Item* Clone() const;
-    virtual std::string Name() const;
-    virtual std::string InventoryName() const;
-    virtual bool IsMagic() const;
-    virtual bool IsEvil() const;
-    virtual int Worth() const;
-
-    bool zap_light(Coord dir);
-    bool zap_striking(Coord dir);
-    bool zap_lightning(Coord dir);
-    bool zap_fire(Coord dir);
-    bool zap_cold(Coord dir);
-    bool zap_polymorph(Coord dir);
-    bool zap_magic_missile(Coord dir);
-    bool zap_haste_monster(Coord dir);
-    bool zap_slow_monster(Coord dir);
-    bool zap_drain_life(Coord dir);
-    bool zap_nothing(Coord dir);
-    bool zap_teleport_away(Coord dir);
-    bool zap_teleport_to(Coord dir);
-    bool zap_cancellation(Coord dir);
-
-    void drain_striking();
-    void set_striking_damage();
+    virtual ItemCategory* Category() const override
+    {
+        return &Derived::info;
+    }
 };
 
-Item* create_stick();
+struct Light : public StickEx<Light>
+{
+    Light();
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
 
+struct Striking : public StickEx<Striking>
+{
+    Striking();
+    virtual bool Zap(Coord dir);
+    void drain_striking();
+    void set_striking_damage();
+    static ItemCategory info;
+};
 
-//do_zap: Perform a zap with a wand
-bool do_zap();
+struct Lightning : public StickEx<Lightning>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
 
-//drain: Do drain hit points from player schtick
-void drain();
+struct Fire : public StickEx<Fire>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
 
-//fire_bolt: Fire a bolt in a given direction from a specific starting place.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
-Monster* fire_bolt(Coord start, Coord *dir, const std::string& name);
+struct Cold : public StickEx<Cold>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
 
-//charge_str: Return an appropriate string for a wand charge
-const char *get_charge_string(const Item *obj);
+struct Polymorph : public StickEx<Polymorph>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
+
+struct MagicMissileStick : public StickEx<MagicMissileStick>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
+
+struct HasteMonster : public StickEx<HasteMonster>
+{
+    virtual bool IsEvil() const override;
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
+
+struct SlowMonster : public StickEx<SlowMonster>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
+
+struct DrainLife : public StickEx<DrainLife>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
+
+struct Nothing : public StickEx<Nothing>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
+
+struct TeleportAway : public StickEx<TeleportAway>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
+
+struct TeleportTo : public StickEx<TeleportTo>
+{
+    virtual bool IsEvil() const override;
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};
+
+struct Cancellation : public StickEx<Cancellation>
+{
+    virtual bool Zap(Coord dir);
+    static ItemCategory info;
+};

@@ -18,6 +18,9 @@ struct ItemCategory
     std::string identifier() const;
     void identifier(const std::string& id);
 
+    std::string kind() const;
+    void kind(const std::string& k);
+
     int worth() const;
     void worth(int w);
 
@@ -28,6 +31,7 @@ private:
     std::string m_name;
     std::string m_identifier;
     std::string m_guess;
+    std::string m_kind;
     int m_worth = 0;
     bool m_is_discovered = false;
 };
@@ -61,22 +65,6 @@ protected:
 private:
     std::set<int> m_discoveries;
     std::map<int, std::string> m_guesses;
-};
-
-struct StickInfo : public ItemClass
-{
-    StickInfo();
-
-    virtual std::string get_inventory_name(const Item* obj) const;
-    virtual std::string get_inventory_name(int which) const;
-
-    bool is_staff(int which) const;
-    std::string get_type(int which) const;
-
-    std::vector<std::string> m_type;
-
-private:
-    std::string get_inventory_name(int which, const std::string& charge) const;
 };
 
 struct RingInfo : public ItemClass

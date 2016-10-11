@@ -57,8 +57,7 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     LoadScrolls("scrolls.txt");
     LoadPotions("potions.txt");
     m_rings.reset(new RingInfo);
-    m_sticks.reset(new StickInfo);
-
+    LoadSticks("sticks.txt");
     init_environment();
 }
 
@@ -128,7 +127,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     LoadScrolls("scrolls.txt");
     LoadPotions("potions.txt");
     m_rings.reset(new RingInfo);
-    m_sticks.reset(new StickInfo);
+    LoadSticks("sticks.txt");
 
     if (!m_show_replay)
     {
@@ -239,17 +238,10 @@ RingInfo& GameState::rings()
     return *m_rings;
 }
 
-StickInfo& GameState::sticks()
-{
-    return *m_sticks;
-}
-
 ItemClass* GameState::item_class(int type)
 {
     switch (type)
     {
-    case STICK:
-        return &sticks();
     case RING:
         return &rings();
     }

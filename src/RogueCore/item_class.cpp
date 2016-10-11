@@ -100,6 +100,16 @@ void ItemCategory::identifier(const std::string & id)
     m_identifier = id;
 }
 
+std::string ItemCategory::kind() const
+{
+    return m_kind;
+}
+
+void ItemCategory::kind(const std::string & k)
+{
+    m_kind = k;
+}
+
 int ItemCategory::worth() const
 {
     return m_worth;

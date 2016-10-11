@@ -64,9 +64,6 @@
     <ClCompile Include="strings.cpp">
       <Filter>Unsorted</Filter>
     </ClCompile>
-    <ClCompile Include="things.cpp">
-      <Filter>Unsorted</Filter>
-    </ClCompile>
     <ClCompile Include="wizard.cpp">
       <Filter>Unsorted</Filter>
     </ClCompile>
@@ -166,6 +163,9 @@
     <ClCompile Include="screen_output.cpp">
       <Filter>Output</Filter>
     </ClCompile>
+    <ClCompile Include="things.cpp">
+      <Filter>Items</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="armor.h">
@@ -178,9 +178,6 @@
       <Filter>Items</Filter>
     </ClInclude>
     <ClInclude Include="weapons.h">
-      <Filter>Items</Filter>
-    </ClInclude>
-    <ClInclude Include="sticks.h">
       <Filter>Items</Filter>
     </ClInclude>
     <ClInclude Include="scrolls.h">
@@ -264,9 +261,6 @@
     <ClInclude Include="strings.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
-    <ClInclude Include="things.h">
-      <Filter>Unsorted</Filter>
-    </ClInclude>
     <ClInclude Include="wizard.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
@@ -322,6 +316,15 @@
       <Filter>Items</Filter>
     </ClInclude>
     <ClInclude Include="potion.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="stick.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="sticks.h">
+      <Filter>Items</Filter>
+    </ClInclude>
+    <ClInclude Include="things.h">
       <Filter>Items</Filter>
     </ClInclude>
   </ItemGroup>

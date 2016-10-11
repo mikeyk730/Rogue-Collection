@@ -57,8 +57,8 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
 
     //mdk: Zapping a stick of striking calls Hero::fight to handle the damage,
     //so the draining is done here.
-    Stick* stick = dynamic_cast<Stick*>(object);
-    if (stick && stick->m_which == WS_HIT)
+    Striking* stick = dynamic_cast<Striking*>(object);
+    if (stick)
     {
         stick->drain_striking();
     }

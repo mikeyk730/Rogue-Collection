@@ -31,10 +31,11 @@ template<typename T>
 Item* createInstance() { return new T; }
 
 template<typename T>
-void setInfo(const std::string& name, const std::string& identifier, int worth) {
+void setInfo(const std::string& name, const std::string& identifier, int worth, const std::string& type) {
     T::info.name(name);
     T::info.identifier(identifier);
     T::info.worth(worth);
+    T::info.kind(type);
 }
 
 template<typename T>
@@ -46,7 +47,7 @@ ItemCategory& getName()
 struct map_entry
 {
     Item*(*creator)();
-    void(*setter)(const std::string&, const std::string&, int);
+    void(*setter)(const std::string&, const std::string&, int, const std::string&);
     ItemCategory&(*getter)();
 };
 
@@ -75,6 +76,8 @@ private:
     void LoadItem(const std::string& line, int* probability);
 
     virtual std::string GetIdentifier() = 0;
+    virtual std::string GetKind() { return std::string(); }
+
     std::vector<vector_entry> m_items;
 };
 
@@ -149,8 +152,9 @@ void ItemFactory::LoadItem(const std::string& line, int* probability)
     std::replace(name.begin(), name.end(), '_', ' ');
     *probability += prob;
     std::string id = GetIdentifier();
+    std::string kind = GetKind();
 
-    i->second.setter(name, id, worth);
+    i->second.setter(name, id, worth, kind);
     vector_entry e = { *probability, i->second.creator, i->second.getter };
     m_items.push_back(e);
 }
@@ -334,6 +338,165 @@ int NumPotionTypes()
     return s_potions.NumTypes();
 }
 
+static char *wood[] =
+{
+    "avocado wood",
+    "balsa",
+    "bamboo",
+    "banyan",
+    "birch",
+    "cedar",
+    "cherry",
+    "cinnibar",
+    "cypress",
+    "dogwood",
+    "driftwood",
+    "ebony",
+    "elm",
+    "eucalyptus",
+    "fall",
+    "hemlock",
+    "holly",
+    "ironwood",
+    "kukui wood",
+    "mahogany",
+    "manzanita",
+    "maple",
+    "oaken",
+    "persimmon wood",
+    "pecan",
+    "pine",
+    "poplar",
+    "redwood",
+    "rosewood",
+    "spruce",
+    "teak",
+    "walnut",
+    "zebrawood"
+};
+
+#define NWOOD (sizeof(wood)/sizeof(char *))
+
+static char *metal[] =
+{
+    "aluminum",
+    "beryllium",
+    "bone",
+    "brass",
+    "bronze",
+    "copper",
+    "electrum",
+    "gold",
+    "iron",
+    "lead",
+    "magnesium",
+    "mercury",
+    "nickel",
+    "pewter",
+    "platinum",
+    "steel",
+    "silver",
+    "silicon",
+    "tin",
+    "titanium",
+    "tungsten",
+    "zinc"
+};
+
+#define NMETAL (sizeof(metal)/sizeof(char *))
+
+
+struct StickFactory : public ItemFactory
+{
+    StickFactory()
+    {
+        m_types = {
+            { "WS_LIGHT", ITEM_MAP_ENTRY(Light) },
+            { "WS_HIT", ITEM_MAP_ENTRY(Striking) },
+            { "WS_ELECT", ITEM_MAP_ENTRY(Lightning) },
+            { "WS_FIRE", ITEM_MAP_ENTRY(Fire) },
+            { "WS_COLD", ITEM_MAP_ENTRY(Cold) },
+            { "WS_POLYMORPH", ITEM_MAP_ENTRY(Polymorph) },
+            { "WS_MISSILE", ITEM_MAP_ENTRY(MagicMissileStick) },
+            { "WS_HASTE_M", ITEM_MAP_ENTRY(HasteMonster) },
+            { "WS_SLOW_M", ITEM_MAP_ENTRY(SlowMonster) },
+            { "WS_DRAIN", ITEM_MAP_ENTRY(DrainLife) },
+            { "WS_NOP", ITEM_MAP_ENTRY(Nothing) },
+            { "WS_TELAWAY", ITEM_MAP_ENTRY(TeleportAway) },
+            { "WS_TELTO", ITEM_MAP_ENTRY(TeleportTo) },
+            { "WS_CANCEL", ITEM_MAP_ENTRY(Cancellation) },
+        };
+
+        for (int i = 0; i < NWOOD; i++)
+            woodused[i] = false;
+        for (int i = 0; i < NMETAL; i++)
+            metused[i] = false;
+    }
+
+private:
+    bool metused[NMETAL];
+    bool woodused[NWOOD];
+    std::string type;
+
+    virtual std::string GetIdentifier()
+    {
+        const char *str;
+
+        for (;;) if (rnd(2) == 0)
+        {
+            int j = rnd(NMETAL);
+            if (!metused[j]) {
+                type = "wand";
+                str = metal[j];
+                metused[j] = true;
+                break;
+            }
+        }
+        else
+        {
+            int j = rnd(NWOOD);
+            if (!woodused[j]) {
+                type = "staff";
+                str = wood[j];
+                woodused[j] = true;
+                break;
+            }
+        }
+        return str;
+    }
+    
+    virtual std::string GetKind() override
+    {
+        return type;
+    }
+};
+
+StickFactory s_sticks;
+
+void LoadSticks(const std::string & filename)
+{
+    s_sticks.LoadItems(filename);
+}
+
+void PrintStickDiscoveries()
+{
+    s_sticks.PrintDiscoveries("A stick", STICK);
+}
+
+Item * CreateStick()
+{
+    return s_sticks.Create();
+}
+
+Item * SummonStick(int i)
+{
+    return s_sticks.Summon(i);
+}
+
+int NumStickTypes()
+{
+    return s_sticks.NumTypes();
+}
 
 struct MagicItem things[NUMTHINGS] =
 {
@@ -391,7 +554,7 @@ void Item::call_it()
 
 ItemClass* Item::item_class() const
 {
-    if (m_type == SCROLL || m_type == POTION)
+    if (m_type == SCROLL || m_type == POTION || m_type == STICK)
         return 0;
     //todo: change class layout, so we don't need to poke into game
     //this is problematic because we couldn't, for example, start
@@ -526,7 +689,7 @@ Item* Item::CreateItem()
         break;
 
     case 6:
-        return create_stick();
+        return CreateStick();
         break;
 
     default:
@@ -597,6 +760,10 @@ void print_disc(byte type)
     }
     else if (type == POTION) {
         PrintPotionDiscoveries();
+        return;
+    }
+    else if (type == STICK) {
+        PrintStickDiscoveries();
         return;
     }
 

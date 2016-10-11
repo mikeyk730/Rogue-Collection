@@ -218,6 +218,7 @@
     <ClInclude Include="output_interface.h" />
     <ClInclude Include="potion.h" />
     <ClInclude Include="scroll.h" />
+    <ClInclude Include="sticks.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="output_shim.h" />
     <ClInclude Include="daemon.h" />
@@ -256,7 +257,7 @@
     <ClInclude Include="save.h" />
     <ClInclude Include="scrolls.h" />
     <ClInclude Include="slime.h" />
-    <ClInclude Include="sticks.h" />
+    <ClInclude Include="stick.h" />
     <ClInclude Include="strings.h" />
     <ClInclude Include="things.h" />
     <ClInclude Include="weapons.h" />
