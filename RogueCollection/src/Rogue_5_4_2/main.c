@@ -170,7 +170,6 @@ main(int argc, char **argv)
     init_color_pair(0x7E);
     init_color_pair(0xA0);
     curs_set(0);
-    raw_output(1);
 #endif
 
     /*

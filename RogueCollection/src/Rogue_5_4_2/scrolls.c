@@ -225,7 +225,7 @@ def:
 			if ((obj = pp->p_monst) != NULL)
 			    obj->t_oldch = ch;
 			if (obj == NULL || !on(player, SEEMONST))
-			    mvaddch(y, x, ch);
+			    mvaddrawch(y, x, ch);
 		    }
 		}
 	when S_FDET:
@@ -239,7 +239,7 @@ def:
 		{
 		    ch = TRUE;
 		    wmove(hw, obj->o_pos.y, obj->o_pos.x);
-		    waddch(hw, FOOD);
+		    waddrawch(hw, FOOD);
 		}
 	    if (ch)
 	    {

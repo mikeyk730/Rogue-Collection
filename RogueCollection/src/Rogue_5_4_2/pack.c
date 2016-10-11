@@ -60,7 +60,7 @@ add_pack(THING *obj, int silent)
 	if (obj->o_flags & ISFOUND)
 	{
 	    detach(lvl_obj, obj);
-	    mvaddch(hero.y, hero.x, floor_ch());
+	    mvaddrawch(hero.y, hero.x, floor_ch());
 	    chat(hero.y, hero.x) = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
             update_mdest(obj);
             discarded = 1;
@@ -202,7 +202,7 @@ pack_room(int from_floor, THING *obj)
     if (from_floor)
     {
 	detach(lvl_obj, obj);
-	mvaddch(hero.y, hero.x, floor_ch());
+	mvaddrawch(hero.y, hero.x, floor_ch());
 	chat(hero.y, hero.x) = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
     }
 
@@ -474,7 +474,7 @@ void
 money(int value)
 {
     purse += value;
-    mvaddch(hero.y, hero.x, floor_ch());
+    mvaddrawch(hero.y, hero.x, floor_ch());
     chat(hero.y, hero.x) = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
     if (value > 0)
     {

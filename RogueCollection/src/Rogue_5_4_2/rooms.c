@@ -390,7 +390,7 @@ enter_room(const coord *cp)
 		ch = chat(y, x);
 		if (tp == NULL)
 		    if (CCHAR(inch()) != ch)
-			addch(ch);
+			addrawch(ch);
 		    else
 			move(y, x + 1);
 		else
@@ -400,13 +400,13 @@ enter_room(const coord *cp)
 			if (on(player, SEEMONST))
 			{
 			    standout();
-			    addch(tp->t_disguise);
+			    addrawch(tp->t_disguise);
 			    standend();
 			}
 			else
-			    addch(ch);
+			    addrawch(ch);
 		    else
-			addch(tp->t_disguise);
+			addrawch(tp->t_disguise);
 		}
 	    }
 	}
@@ -447,7 +447,7 @@ leave_room(const coord *cp)
 	    {
 		case FLOOR:
 		    if (floor == ' ' && ch != ' ')
-			addch(' ');
+			addrawch(' ');
 		    break;
 		default:
 		    /*
@@ -463,12 +463,12 @@ leave_room(const coord *cp)
 			if (on(player, SEEMONST))
 			{
 			    standout();
-			    addch(ch);
+			    addrawch(ch);
 			    standend();
 			    break;
 			}
                         pp = INDEX(y,x);
-			addch(pp->p_ch == DOOR ? DOOR : floor);
+			addrawch(pp->p_ch == DOOR ? DOOR : floor);
 		    }
 	    }
 	}

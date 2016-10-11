@@ -121,7 +121,7 @@ do_zap(void)
 		    case WS_INVIS:
 			tp->t_flags |= ISINVIS;
 			if (cansee(y, x))
-			    mvaddch(y, x, tp->t_oldch);
+			    mvaddrawch(y, x, tp->t_oldch);
 			break;
 		    case WS_POLYMORPH:
 		    {
@@ -130,13 +130,13 @@ do_zap(void)
 			pp = tp->t_pack;
 			detach(mlist, tp);
 			if (see_monst(tp))
-			    mvaddch(y, x, chat(y, x));
+			    mvaddrawch(y, x, chat(y, x));
 			oldch = tp->t_oldch;
 			delta.y = y;
 			delta.x = x;
 			new_monster(tp, monster = rnd(26) + 'A', &delta);
 			if (see_monst(tp))
-			    mvaddch(y, x, monster);
+			    mvaddrawch(y, x, monster);
 			tp->t_oldch = oldch;
 			tp->t_pack = pp;
 			ws_info[WS_POLYMORPH].oi_know |= see_monst(tp);
@@ -147,7 +147,7 @@ do_zap(void)
 			tp->t_flags &= ~(ISINVIS|CANHUH);
 			tp->t_disguise = tp->t_type;
 			if (see_monst(tp))
-			    mvaddch(y, x, tp->t_disguise);
+			    mvaddrawch(y, x, tp->t_disguise);
 			break;
 		    case WS_TELAWAY:
 		    case WS_TELTO:
@@ -404,12 +404,12 @@ def:
 		    else
 			msg("the %s whizzes by you", name);
 		}
-		mvaddch(pos.y, pos.x, dirch);
+		mvaddrawch(pos.y, pos.x, dirch);
 		refresh();
 	}
     }
     for (c2 = spotpos; c2 < c1; c2++)
-	mvaddch(c2->y, c2->x, chat(c2->y, c2->x));
+	mvaddrawch(c2->y, c2->x, chat(c2->y, c2->x));
 }
 
 /*

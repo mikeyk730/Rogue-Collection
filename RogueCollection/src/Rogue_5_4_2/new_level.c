@@ -93,7 +93,7 @@ new_level(void)
 
     find_floor(NULL, &hero, FALSE, TRUE);
     enter_room(&hero);
-    mvaddch(hero.y, hero.x, PLAYER);
+    mvaddrawch(hero.y, hero.x, PLAYER);
     if (on(player, SEEMONST))
 	turn_see(FALSE);
     if (on(player, ISHALU))

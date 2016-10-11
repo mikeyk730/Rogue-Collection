@@ -259,7 +259,7 @@ death(int monst)
 	    addstr(*dp++);
 	mvaddstr(17, center(killer), killer);
 	if (monst == 's' || monst == 'h')
-	    mvaddch(16, 32, ' ');
+	    mvaddrawch(16, 32, ' ');
 	else
 	    mvaddstr(16, 33, vowelstr(killer));
 	mvaddstr(14, center(whoami), whoami);

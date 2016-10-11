@@ -374,7 +374,7 @@ rs_read_window(FILE *savef, WINDOW *win)
             rs_read_int(savef, &value);
 
             if ((row < height) && (col < width))
-                mvwaddch(win,row,col,value);
+                mvwaddrawch(win,row,col,value);
         }
 }
 

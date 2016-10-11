@@ -74,8 +74,14 @@ endmsg(void)
     if (mpos)
     {
 	look(FALSE);
-	mvaddstr(0, mpos, "--More--");
-	refresh();
+#ifdef USE_PC_GFX
+    standout();
+    mvaddstr(0, mpos, " More ");
+    standend();
+#else
+    mvaddstr(0, mpos, "--More--");
+#endif
+    refresh();
 	if (!msg_esc)
 	    wait_for(stdscr, ' ');
 	else

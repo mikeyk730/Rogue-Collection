@@ -451,7 +451,7 @@ void PDC_transform_line(int lineno, int x, int len, const chtype *srcp)
             ch += ((chtype)0x0e << PDC_COLOR_SHIFT);
         }
         if (lineno > 0 && lineno < 23) {
-            ch += ((chtype)GetColor(ch, 0x07) << PDC_COLOR_SHIFT);
+            ch += ((chtype)GetColor(ch&0xff, 0x07) << PDC_COLOR_SHIFT);
         }
 #endif
 

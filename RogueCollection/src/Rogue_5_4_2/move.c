@@ -192,7 +192,7 @@ hit_bound:
 		if (ch != STAIRS)
 		    take = ch;
 move_stuff:
-		mvaddch(hero.y, hero.x, floor_at());
+		mvaddrawch(hero.y, hero.x, floor_at());
 		if ((fl & F_PASS) && chat(oldpos.y, oldpos.x) == DOOR)
 		    leave_room(&nh);
 		hero = nh;
@@ -329,7 +329,7 @@ be_trapped(const coord *tc)
 	     * down for us, so we have to do it ourself
 	     */
 	    teleport();
-	    mvaddch(tc->y, tc->x, TRAP);
+	    mvaddrawch(tc->y, tc->x, TRAP);
 	when T_DART:
 	    if (!swing(pstats.s_lvl+1, pstats.s_arm, 1))
 		msg("a small dart whizzes by your ear and vanishes");

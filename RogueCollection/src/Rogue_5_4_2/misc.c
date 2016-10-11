@@ -120,7 +120,7 @@ look(int wakeup)
 		ch = ' ';
 
 	    if (tp != NULL || ch != CCHAR( inch() ))
-		addch(ch);
+		addrawch(ch);
 
 	    if (door_stop && !firstmove && running)
 	    {
@@ -175,7 +175,7 @@ look(int wakeup)
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
     if (!running || !jump)
-	mvaddch(hero.y, hero.x, PLAYER);
+	mvaddrawch(hero.y, hero.x, PLAYER);
 # ifdef DEBUG
     done = FALSE;
 # endif /* DEBUG */
@@ -232,7 +232,7 @@ erase_lamp(const coord *pos, const struct room *rp)
 		continue;
 	    move(y, x);
 	    if (CCHAR( inch() ) == FLOOR)
-		addch(' ');
+		addrawch(' ');
 	}
 }
 

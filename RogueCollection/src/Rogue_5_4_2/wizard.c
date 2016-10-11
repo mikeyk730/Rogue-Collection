@@ -206,7 +206,7 @@ teleport(void)
 {
     coord c;
 
-    mvaddch(hero.y, hero.x, floor_at());
+    mvaddrawch(hero.y, hero.x, floor_at());
     find_floor(NULL, &c, FALSE, TRUE);
     if (roomin(&c) != proom)
     {
@@ -219,7 +219,7 @@ teleport(void)
 	hero = c;
 	look(TRUE);
     }
-    mvaddch(hero.y, hero.x, PLAYER);
+    mvaddrawch(hero.y, hero.x, PLAYER);
     /*
      * turn off ISHELD in case teleportation was done while fighting
      * a Flytrap
@@ -285,7 +285,7 @@ show_map(void)
 	    if (!real)
 		wstandout(hw);
 	    wmove(hw, y, x);
-	    waddch(hw, chat(y, x));
+	    waddrawch(hw, chat(y, x));
 	    if (!(real & F_REAL))
 		wstandend(hw);
 	}

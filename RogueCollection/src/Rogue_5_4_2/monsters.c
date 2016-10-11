@@ -140,9 +140,9 @@ wanderer(void)
     {
 	standout();
 	if (!on(player, ISHALU))
-	    addch(tp->t_type);
+	    addrawch(tp->t_type);
 	else
-	    addch(rnd(26) + 'A');
+	    addrawch(rnd(26) + 'A');
 	standend();
     }
     runto(&tp->t_pos);

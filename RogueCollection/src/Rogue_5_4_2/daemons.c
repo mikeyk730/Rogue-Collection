@@ -98,7 +98,7 @@ unsee(void)
 
     for (th = mlist; th != NULL; th = next(th))
 	if (on(*th, ISINVIS) && see_monst(th))
-	    mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
+	    mvaddrawch(th->t_pos.y, th->t_pos.x, th->t_oldch);
     player.t_flags &= ~CANSEE;
 }
 
@@ -210,7 +210,7 @@ come_down(void)
      */
     for (tp = lvl_obj; tp != NULL; tp = next(tp))
 	if (cansee(tp->o_pos.y, tp->o_pos.x))
-	    mvaddch(tp->o_pos.y, tp->o_pos.x, tp->o_type);
+	    mvaddrawch(tp->o_pos.y, tp->o_pos.x, tp->o_type);
 
     /*
      * undo the monsters
@@ -221,13 +221,13 @@ come_down(void)
 	move(tp->t_pos.y, tp->t_pos.x);
 	if (cansee(tp->t_pos.y, tp->t_pos.x))
 	    if (!on(*tp, ISINVIS) || on(player, CANSEE))
-		addch(tp->t_disguise);
+		addrawch(tp->t_disguise);
 	    else
-		addch(chat(tp->t_pos.y, tp->t_pos.x));
+		addrawch(chat(tp->t_pos.y, tp->t_pos.x));
 	else if (seemonst)
 	{
 	    standout();
-	    addch(tp->t_type);
+	    addrawch(tp->t_type);
 	    standend();
 	}
     }
@@ -251,13 +251,13 @@ visuals(void)
      */
     for (tp = lvl_obj; tp != NULL; tp = next(tp))
 	if (cansee(tp->o_pos.y, tp->o_pos.x))
-	    mvaddch(tp->o_pos.y, tp->o_pos.x, rnd_thing());
+	    mvaddrawch(tp->o_pos.y, tp->o_pos.x, rnd_thing());
 
     /*
      * change the stairs
      */
     if (!seenstairs && cansee(stairs.y, stairs.x))
-	mvaddch(stairs.y, stairs.x, rnd_thing());
+	mvaddrawch(stairs.y, stairs.x, rnd_thing());
 
     /*
      * change the monsters
@@ -269,14 +269,14 @@ visuals(void)
 	if (see_monst(tp))
 	{
 	    if (tp->t_type == 'X' && tp->t_disguise != 'X')
-		addch(rnd_thing());
+		addrawch(rnd_thing());
 	    else
-		addch(rnd(26) + 'A');
+		addrawch(rnd(26) + 'A');
 	}
 	else if (seemonst)
 	{
 	    standout();
-	    addch(rnd(26) + 'A');
+	    addrawch(rnd(26) + 'A');
 	    standend();
 	}
     }

@@ -341,11 +341,11 @@ add_pass(void)
 		if (pp->p_monst != NULL)
 		    pp->p_monst->t_oldch = pp->p_ch;
 		else if (pp->p_flags & F_REAL)
-		    addch(ch);
+		    addrawch(ch);
 		else
 		{
 		    standout();
-		    addch((pp->p_flags & F_PASS) ? PASSAGE : DOOR);
+		    addrawch((pp->p_flags & F_PASS) ? PASSAGE : DOOR);
 		    standend();
 		}
 	    }
