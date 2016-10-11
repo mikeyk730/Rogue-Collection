@@ -10,7 +10,7 @@
 #include "rings.h"
 #include "pack.h"
 #include "misc.h"
-#include "potions.h"
+#include "potion.h"
 #include "io.h"
 #include "things.h"
 #include "weapons.h"

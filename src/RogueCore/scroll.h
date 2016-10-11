@@ -21,9 +21,5 @@ struct Scroll : public Item
 
 bool do_read_scroll();
 
-Item* CreateScroll();
-Item* SummonScroll(int i);
-
-int NumScrollTypes();
-void LoadScrolls(const std::string& filename);
+std::string GenerateScrollName();
 void PrintScrollDiscoveries();

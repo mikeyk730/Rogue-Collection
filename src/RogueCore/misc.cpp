@@ -20,7 +20,7 @@
 #include "level.h"
 #include "rings.h"
 #include "scroll.h"
-#include "potions.h"
+#include "potion.h"
 #include "sticks.h"
 #include "armor.h"
 #include "hero.h"

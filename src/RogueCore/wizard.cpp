@@ -23,7 +23,7 @@
 #include "sticks.h"
 #include "rings.h"
 #include "scroll.h"
-#include "potions.h"
+#include "potion.h"
 #include "weapons.h"
 #include "level.h"
 #include "armor.h"
@@ -88,7 +88,7 @@ bool do_summon_object()
         return false;
     case '!':
         which = get_which(POTION, MAXPOTIONS - 1);
-        obj = new Potion(which);
+        obj = SummonPotion(which);
         break;
     case '?':
         which = get_which(SCROLL, NumScrollTypes() - 1);

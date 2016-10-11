@@ -34,7 +34,7 @@
 #include "things.h"
 #include "rings.h"
 #include "sticks.h"
-#include "potions.h"
+#include "potion.h"
 #include "scroll.h"
 #include "hero.h"
 #include "monsters.h"

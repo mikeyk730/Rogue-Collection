@@ -20,7 +20,7 @@
 #include "main.h"
 #include "output_shim.h"
 #include "slime.h"
-#include "potions.h"
+#include "potion.h"
 #include "misc.h"
 #include "level.h"
 #include "rings.h"

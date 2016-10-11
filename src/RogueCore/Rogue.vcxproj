@@ -216,6 +216,7 @@
     <ClInclude Include="command.h" />
     <ClInclude Include="commands.h" />
     <ClInclude Include="output_interface.h" />
+    <ClInclude Include="potion.h" />
     <ClInclude Include="scroll.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="output_shim.h" />

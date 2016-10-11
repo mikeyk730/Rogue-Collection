@@ -10,6 +10,22 @@ struct MagicItem
     short worth;
 };
 
+Item* CreateScroll();
+Item* SummonScroll(int i);
+int NumScrollTypes();
+
+Item* CreatePotion();
+Item* SummonPotion(int i);
+int NumPotionTypes();
+
+
+void LoadScrolls(const std::string& filename);
+void LoadPotions(const std::string& filename);
+void LoadSticks(const std::string& filename);
+void LoadRings(const std::string& filename);
+void LoadWeapons(const std::string& filename);
+void LoadArmor(const std::string& filename);
+
 //init_things: Initialize the probabilities for types of things
 void init_things();
 

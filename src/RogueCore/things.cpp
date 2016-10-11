@@ -1,6 +1,7 @@
 //Contains functions for dealing with things like potions, scrolls, and other items.
 //things.c     1.4 (AI Design) 12/14/84
-
+#include <sstream>
+#include <algorithm>
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
@@ -15,7 +16,7 @@
 #include "misc.h"
 #include "daemons.h"
 #include "rings.h"
-#include "scroll.h"
+#include "scrolls.h"
 #include "potions.h"
 #include "weapons.h"
 #include "output_shim.h"
@@ -25,6 +26,314 @@
 #include "level.h"
 #include "food.h"
 #include "hero.h"
+
+template<typename T>
+Item* createInstance() { return new T; }
+
+template<typename T>
+void setInfo(const std::string& name, const std::string& identifier, int worth) {
+    T::info.name(name);
+    T::info.identifier(identifier);
+    T::info.worth(worth);
+}
+
+template<typename T>
+ItemCategory& getName()
+{
+    return T::info;
+}
+
+struct map_entry
+{
+    Item*(*creator)();
+    void(*setter)(const std::string&, const std::string&, int);
+    ItemCategory&(*getter)();
+};
+
+struct vector_entry
+{
+    int prob;
+    Item*(*create)();
+    ItemCategory&(*info)();
+};
+
+struct ItemFactory
+{
+    void LoadItems(const std::string & filename);
+
+    Item* Create();
+    Item* Summon(int i);
+    int NumTypes();
+
+    //todo: feels wrong here
+    void PrintDiscoveries(const std::string& prefix, int type);
+
+protected:
+    std::map<std::string, map_entry> m_types;
+
+private:
+    void LoadItem(const std::string& line, int* probability);
+
+    virtual std::string GetIdentifier() = 0;
+    std::vector<vector_entry> m_items;
+};
+
+int ItemFactory::NumTypes()
+{
+    return m_items.size();
+}
+
+Item* ItemFactory::Create()
+{
+    int r = rnd(100);
+    for (size_t i = 0; i < m_items.size(); ++i)
+    {
+        if (r < m_items[i].prob) {
+            return m_items[i].create();
+        }
+    }
+    throw std::runtime_error("Failed to create item");
+}
+
+Item* ItemFactory::Summon(int i)
+{
+    return m_items[i].create();
+}
+
+void ItemFactory::PrintDiscoveries(const std::string& prefix, int type)
+{
+    short order[50];
+    int maxnum = m_items.size();
+
+    set_order(order, maxnum);
+    int num_found = 0;
+    for (int i = 0; i < maxnum; i++) {
+        auto e = m_items[order[i]];
+
+        std::string line;
+        if (e.info().is_discovered())
+            line = prefix + " of " + e.info().name();
+        else if (!e.info().guess().empty())
+            line = prefix + " called " + e.info().guess();
+
+        if (!line.empty())
+        {
+            add_line("", "%s", line.c_str());
+            num_found++;
+        }
+    }
+    if (num_found == 0)
+        add_line("", nothing(type), 0);
+}
+
+
+void ItemFactory::LoadItem(const std::string& line, int* probability)
+{
+    if (line.empty() || line[0] == '#')
+        return;
+
+    std::istringstream ss(line);
+
+    std::string type;
+    ss >> type;
+    auto i = m_types.find(type);
+    if (i == m_types.end())
+        throw std::runtime_error("Unknown type: " + type);
+
+    std::string name;
+    int prob, worth;
+    ss >> name >> prob >> worth;
+    if (!ss)
+        throw std::runtime_error("Error reading: " + line);
+
+    std::replace(name.begin(), name.end(), '_', ' ');
+    *probability += prob;
+    std::string id = GetIdentifier();
+
+    i->second.setter(name, id, worth);
+    vector_entry e = { *probability, i->second.creator, i->second.getter };
+    m_items.push_back(e);
+}
+
+void ItemFactory::LoadItems(const std::string & filename)
+{
+    int probability = 0;
+
+    if (filename.empty())
+        throw std::runtime_error("No scroll file provided");
+
+    std::ifstream file(filename);
+    if (!file)
+        throw std::runtime_error("Error reading from: " + filename);
+
+    std::string line;
+    while (std::getline(file, line)) {
+        LoadItem(line, &probability);
+    }
+
+    if (probability != 100)
+        throw std::runtime_error("Scroll probabilities not 100");
+}
+
+#define ITEM_MAP_ENTRY(Type) {&createInstance<Type>, &setInfo<Type>, &getName<Type>}
+
+struct ScrollFactory : public ItemFactory
+{
+    ScrollFactory()
+    {
+        m_types = {
+            { "S_CONFUSE", ITEM_MAP_ENTRY(MonsterConfusion) },
+            { "S_MAP", ITEM_MAP_ENTRY(MagicMapping) },
+            { "S_HOLD", ITEM_MAP_ENTRY(HoldMonster) },
+            { "S_SLEEP", ITEM_MAP_ENTRY(Sleep) },
+            { "S_ARMOR", ITEM_MAP_ENTRY(EnchantArmor) },
+            { "S_IDENT", ITEM_MAP_ENTRY(Identify) },
+            { "S_SCARE", ITEM_MAP_ENTRY(ScareMonster) },
+            { "S_GFIND", ITEM_MAP_ENTRY(FoodDetection) },
+            { "S_TELEP", ITEM_MAP_ENTRY(Teleportation) },
+            { "S_ENCH", ITEM_MAP_ENTRY(EnchantWeapon) },
+            { "S_CREATE", ITEM_MAP_ENTRY(CreateMonster) },
+            { "S_REMOVE", ITEM_MAP_ENTRY(RemoveCurse) },
+            { "S_AGGR", ITEM_MAP_ENTRY(AggravateMonsters) },
+            { "S_NOP", ITEM_MAP_ENTRY(BlankPaper) },
+            { "S_VORPAL", ITEM_MAP_ENTRY(VorpalizeWeapon) },
+        };
+    }
+
+private:
+    virtual std::string GetIdentifier() {
+        return GenerateScrollName();
+    }
+};
+    
+ScrollFactory s_scrolls;
+
+void LoadScrolls(const std::string & filename)
+{
+    s_scrolls.LoadItems(filename);
+}
+
+void PrintScrollDiscoveries()
+{
+    s_scrolls.PrintDiscoveries("A scroll", SCROLL);
+}
+
+Item* CreateScroll()
+{
+    return s_scrolls.Create();
+}
+
+Item* SummonScroll(int i)
+{
+    return s_scrolls.Summon(i);
+}
+
+int NumScrollTypes()
+{
+    return s_scrolls.NumTypes();
+}
+
+static char *rainbow[] =
+{
+    "amber",
+    "aquamarine",
+    "black",
+    "blue",
+    "brown",
+    "clear",
+    "crimson",
+    "cyan",
+    "ecru",
+    "gold",
+    "green",
+    "grey",
+    "magenta",
+    "orange",
+    "pink",
+    "plaid",
+    "purple",
+    "red",
+    "silver",
+    "tan",
+    "tangerine",
+    "topaz",
+    "turquoise",
+    "vermilion",
+    "violet",
+    "white",
+    "yellow"
+};
+
+#define NCOLORS (sizeof(rainbow)/sizeof(char *))
+
+struct PotionFactory : public ItemFactory
+{
+    PotionFactory()
+    {
+        m_types = {
+            { "P_CONFUSE", ITEM_MAP_ENTRY(Confusion) },
+            { "P_PARALYZE", ITEM_MAP_ENTRY(Paralysis) },
+            { "P_POISON", ITEM_MAP_ENTRY(Poison) },
+            { "P_STRENGTH", ITEM_MAP_ENTRY(GainStrength) },
+            { "P_SEEINVIS", ITEM_MAP_ENTRY(SeeInvisible) },
+            { "P_HEALING", ITEM_MAP_ENTRY(Healing) },
+            { "P_MFIND", ITEM_MAP_ENTRY(MonsterDetection) },
+            { "P_TFIND", ITEM_MAP_ENTRY(MagicDetection) },
+            { "P_RAISE", ITEM_MAP_ENTRY(RaiseLevel) },
+            { "P_XHEAL", ITEM_MAP_ENTRY(ExtraHealing) },
+            { "P_HASTE", ITEM_MAP_ENTRY(HasteSelf) },
+            { "P_RESTORE", ITEM_MAP_ENTRY(RestoreStrength) },
+            { "P_BLIND", ITEM_MAP_ENTRY(Blindness) },
+            { "P_NOP", ITEM_MAP_ENTRY(ThirstQuenching) },
+        };
+
+        for (int i = 0; i < NCOLORS; i++) 
+            used[i] = false;
+    }
+
+private:
+    virtual std::string GetIdentifier()
+    {
+        int j;
+        do {
+            j = rnd(NCOLORS);
+        }
+        while (used[j]);
+
+        used[j] = true;
+        return rainbow[j];
+    }
+
+    bool used[NCOLORS];
+};
+
+PotionFactory s_potions;
+
+void LoadPotions(const std::string & filename)
+{
+    s_potions.LoadItems(filename);
+}
+
+void PrintPotionDiscoveries()
+{
+    s_potions.PrintDiscoveries("A potion", POTION);
+}
+
+Item * CreatePotion()
+{
+    return s_potions.Create();
+}
+
+Item * SummonPotion(int i)
+{
+    return s_potions.Summon(i);
+}
+
+int NumPotionTypes()
+{
+    return s_potions.NumTypes();
+}
+
 
 struct MagicItem things[NUMTHINGS] =
 {
@@ -82,7 +391,7 @@ void Item::call_it()
 
 ItemClass* Item::item_class() const
 {
-    if (m_type == SCROLL)
+    if (m_type == SCROLL || m_type == POTION)
         return 0;
     //todo: change class layout, so we don't need to poke into game
     //this is problematic because we couldn't, for example, start
@@ -193,7 +502,7 @@ Item* Item::CreateItem()
     switch (game->no_food > 3 ? 2 : pick_one(things, NUMTHINGS))
     {
     case 0:
-        return create_potion();
+        return CreatePotion();
         break;
 
     case 1:
@@ -284,6 +593,10 @@ void print_disc(byte type)
 {
     if (type == SCROLL) {
         PrintScrollDiscoveries();
+        return;
+    }
+    else if (type == POTION) {
+        PrintPotionDiscoveries();
         return;
     }
 

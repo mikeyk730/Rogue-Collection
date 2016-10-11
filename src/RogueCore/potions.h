@@ -1,48 +1,109 @@
 #pragma once
-#include "item.h"
+#include "potion.h"
 
-struct Monster;
+template <typename Derived>
+struct PotionEx : public Potion {
+    virtual Item* Clone() const override {
+        return new Derived(static_cast<Derived const&>(*this));
+    }
 
-struct Potion : public Item
-{
-    Potion(int which);
-
-    virtual Item* Clone() const;
-    virtual std::string Name() const;
-    virtual std::string InventoryName() const;
-    virtual bool IsMagic() const;
-    virtual bool IsEvil() const;
-    virtual int Worth() const;
-
-    //todo: each potion should be own derived class with quaff as virtual function
-    void quaff_confusion();
-    void quaff_paralysis();
-    void quaff_poison();
-    void quaff_gain_strength();
-    void quaff_see_invisible();
-    void quaff_healing();
-    void quaff_monster_detection();
-    void quaff_magic_detection();
-    void quaff_raise_level();
-    void quaff_extra_healing();
-    void quaff_haste_self();
-    void quaff_restore_strength();
-    void quaff_blindness();
-    void quaff_thirst_quenching();
-
+    virtual ItemCategory& Info() const
+    {
+        return Derived::info;
+    }
 };
 
-Item* create_potion();
+struct Confusion : public PotionEx<Confusion>
+{
+    virtual void Quaff();
+    virtual void AffectMonster(Monster* m) override;
+    virtual bool IsEvil() const override;
+    static ItemCategory info;
+};
 
-//do_quaff: Quaff a potion from the pack
-bool do_quaff();
+struct Paralysis : public PotionEx<Paralysis>
+{
+    virtual void Quaff();
+    virtual void AffectMonster(Monster* m) override;
+    virtual bool IsEvil() const override;
+    static ItemCategory info;
+};
 
-//show_invisible: Turn on the ability to see invisible
-void show_invisible();
+struct Poison : public PotionEx<Poison>
+{
+    virtual void Quaff();
+    virtual bool IsEvil() const override;
+    static ItemCategory info;
+};
 
-//detect_monsters: Put on or off seeing monsters on this level
-bool detect_monsters(bool enable);
-void disable_detect_monsters(int disable);
+struct GainStrength : public PotionEx<GainStrength>
+{
+    virtual void Quaff();
+    static ItemCategory info;
+};
 
-//th_effect: Compute the effect of this potion hitting a monster.
-void affect_monster(Item *obj, Monster *monster);
+struct SeeInvisible : public PotionEx<SeeInvisible>
+{
+    virtual void Quaff();
+    static ItemCategory info;
+};
+
+struct Healing : public PotionEx<Healing>
+{
+    virtual void Quaff();
+    virtual void AffectMonster(Monster* m) override;
+    static ItemCategory info;
+};
+
+struct MonsterDetection : public PotionEx<MonsterDetection>
+{
+    virtual void Quaff();
+    static ItemCategory info;
+};
+
+struct MagicDetection : public PotionEx<MagicDetection>
+{
+    virtual void Quaff();
+    static ItemCategory info;
+};
+
+struct RaiseLevel : public PotionEx<RaiseLevel>
+{
+    virtual void Quaff();
+    virtual void AffectMonster(Monster* m) override;
+    static ItemCategory info;
+};
+
+struct ExtraHealing : public PotionEx<ExtraHealing>
+{
+    virtual void Quaff();
+    virtual void AffectMonster(Monster* m) override;
+    static ItemCategory info;
+};
+
+struct HasteSelf : public PotionEx<HasteSelf>
+{
+    virtual void Quaff();
+    virtual void AffectMonster(Monster* m) override;
+    static ItemCategory info;
+};
+
+struct RestoreStrength : public PotionEx<RestoreStrength>
+{
+    virtual void Quaff();
+    static ItemCategory info;
+};
+
+struct Blindness : public PotionEx<Blindness>
+{
+    virtual void Quaff();
+    virtual void AffectMonster(Monster* m) override;
+    virtual bool IsEvil() const override;
+    static ItemCategory info;
+};
+
+struct ThirstQuenching : public PotionEx<ThirstQuenching>
+{
+    virtual void Quaff();
+    static ItemCategory info;
+};

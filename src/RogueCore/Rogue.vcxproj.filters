@@ -321,5 +321,8 @@
     <ClInclude Include="scroll.h">
       <Filter>Items</Filter>
     </ClInclude>
+    <ClInclude Include="potion.h">
+      <Filter>Items</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

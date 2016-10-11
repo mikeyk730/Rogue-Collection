@@ -35,7 +35,6 @@ struct GameState
     Level& level();
     Hero& hero();
     
-    PotionInfo& potions();
     RingInfo& rings();
     StickInfo& sticks();
     ItemClass* item_class(int type);
@@ -129,7 +128,6 @@ private:
     std::unique_ptr<Level> m_level;
     std::unique_ptr<Hero> m_hero;
     
-    std::unique_ptr<PotionInfo> m_potions;
     std::unique_ptr<RingInfo> m_rings;
     std::unique_ptr<StickInfo> m_sticks;
 

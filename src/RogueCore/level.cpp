@@ -18,7 +18,7 @@
 #include "hero.h"
 #include "pack.h"
 #include "things.h"
-#include "potions.h"
+#include "potion.h"
 #include "monster.h"
 #include "amulet.h"
 

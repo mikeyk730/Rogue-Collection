@@ -1,6 +1,6 @@
 //Function(s) for dealing with potions
 //potions.c   1.4 (AI Design) 2/12/84
-
+#include <sstream>
 #include <algorithm>
 #include <stdio.h>
 
@@ -26,241 +26,6 @@
 
 #define HOLD_TIME    spread(2)
 
-#define P_CONFUSE   0
-#define P_PARALYZE  1
-#define P_POISON    2
-#define P_STRENGTH  3
-#define P_SEEINVIS  4
-#define P_HEALING   5
-#define P_MFIND     6
-#define P_TFIND     7
-#define P_RAISE     8
-#define P_XHEAL     9
-#define P_HASTE     10
-#define P_RESTORE   11
-#define P_BLIND     12
-#define P_NOP       13
-
-static char *rainbow[] =
-{
-  "amber",
-  "aquamarine",
-  "black",
-  "blue",
-  "brown",
-  "clear",
-  "crimson",
-  "cyan",
-  "ecru",
-  "gold",
-  "green",
-  "grey",
-  "magenta",
-  "orange",
-  "pink",
-  "plaid",
-  "purple",
-  "red",
-  "silver",
-  "tan",
-  "tangerine",
-  "topaz",
-  "turquoise",
-  "vermilion",
-  "violet",
-  "white",
-  "yellow"
-};
-
-#define NCOLORS (sizeof(rainbow)/sizeof(char *))
-
-PotionInfo::PotionInfo()
-{
-    m_magic_props =
-    {
-      {"confusion",          8,   5},
-      {"paralysis",         10,   5},
-      {"poison",             8,   5},
-      {"gain strength",     15, 150},
-      {"see invisible",      2, 100},
-      {"healing",           15, 130},
-      {"monster detection",  6, 130},
-      {"magic detection",    6, 105},
-      {"raise level",        2, 250},
-      {"extra healing",      5, 200},
-      {"haste self",         4, 190},
-      {"restore strength",  14, 130},
-      {"blindness",          4,   5},
-      {"thirst quenching",   1,   5}
-    };
-
-    int i, j;
-    bool used[NCOLORS];
-
-    for (i = 0; i < NCOLORS; i++) used[i] = false;
-    for (i = 0; i < MAXPOTIONS; i++)
-    {
-        do j = rnd(NCOLORS); while (used[j]);
-        used[j] = true;
-        m_identifier.push_back(rainbow[j]);
-        if (i > 0)
-            m_magic_props[i].prob += m_magic_props[i - 1].prob;
-    }
-}
-
-Item* create_potion()
-{
-    int which = pick_one(game->potions().m_magic_props);
-    return new Potion(which);
-}
-
-void Potion::quaff_confusion()
-{
-    discover();
-    if (!game->hero().is_confused())
-    {
-        if (game->hero().is_confused())
-            lengthen(unconfuse, rnd(8) + HUH_DURATION);
-        else
-            fuse(unconfuse, 0, rnd(8) + HUH_DURATION);
-        game->hero().set_confused(true);
-        msg("wait, what's going on? Huh? What? Who?");
-    }
-}
-
-void Potion::quaff_paralysis()
-{
-    discover();
-    game->hero().increase_sleep_turns(HOLD_TIME);
-    msg("you can't move");
-}
-
-void Potion::quaff_poison()
-{
-    char *sick = "you feel %s sick.";
-
-    discover();
-    if (!game->hero().is_wearing_ring(R_SUSTSTR)) {
-        game->hero().adjust_strength(-(rnd(3) + 1));
-        msg(sick, "very");
-    }
-    else msg(sick, "momentarily");
-}
-
-void Potion::quaff_gain_strength()
-{
-    discover();
-    game->hero().adjust_strength(1);
-    msg("you feel stronger. What bulging muscles!");
-}
-
-void Potion::quaff_see_invisible()
-{
-    if (!game->hero().sees_invisible()) {
-        fuse(unsee_invisible, 0, SEE_DURATION);
-        look(false);
-        show_invisible();
-    }
-    sight();
-    msg("this potion tastes like %s juice", game->get_environment("fruit").c_str());
-}
-
-void Potion::quaff_healing()
-{
-    discover();
-    game->hero().increase_hp(roll(game->hero().m_stats.m_level, 4), true, false);
-    sight();
-    msg("you begin to feel better");
-}
-
-void Potion::quaff_monster_detection()
-{
-    if (!game->level().has_monsters())
-        msg("you have a strange feeling%s.", noterse(" for a moment"));
-    else {
-        if (detect_monsters(true))
-            discover();
-        fuse(disable_detect_monsters, true, HUH_DURATION);
-        msg("");
-    }
-}
-
-void Potion::quaff_magic_detection()
-{
-    //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
-    //Also give hints as to whether he would want to use the object.
-    if (game->level().reveal_magic()) {
-        discover();
-        msg("You sense the presence of magic.");
-    }
-    else {
-        msg("you have a strange feeling for a moment%s.", noterse(", then it passes"));
-    }
-}
-
-void Potion::quaff_raise_level()
-{
-    discover();
-    msg("you suddenly feel much more skillful");
-    game->hero().raise_level();
-}
-
-void Potion::quaff_extra_healing()
-{
-    discover();
-    game->hero().increase_hp(roll(game->hero().m_stats.m_level, 8), true, true);
-    sight();
-    msg("you begin to feel much better");
-}
-
-void Potion::quaff_haste_self()
-{
-    discover();
-    if (game->hero().add_haste(true)) {
-        msg("you feel yourself moving much faster");
-    }
-}
-
-void Potion::quaff_restore_strength()
-{
-    game->hero().restore_strength();
-    msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
-}
-
-void Potion::quaff_blindness()
-{
-    discover();
-    if (!game->hero().is_blind())
-    {
-        game->hero().set_blind(true);
-        fuse(sight, 0, SEE_DURATION);
-        look(false);
-    }
-    msg("a cloak of darkness falls around you");
-}
-
-void Potion::quaff_thirst_quenching()
-{
-    msg("this potion tastes extremely dull");
-}
-
-void(Potion::*potion_functions[MAXPOTIONS])() = {
-  &Potion::quaff_confusion,
-  &Potion::quaff_paralysis,
-  &Potion::quaff_poison,
-  &Potion::quaff_gain_strength,
-  &Potion::quaff_see_invisible,
-  &Potion::quaff_healing,
-  &Potion::quaff_monster_detection,
-  &Potion::quaff_magic_detection,
-  &Potion::quaff_raise_level,
-  &Potion::quaff_extra_healing,
-  &Potion::quaff_haste_self,
-  &Potion::quaff_restore_strength,
-  &Potion::quaff_blindness,
-  &Potion::quaff_thirst_quenching
-};
-
 //do_quaff: Quaff a potion from the pack
 bool do_quaff()
 {
@@ -280,7 +45,7 @@ bool do_quaff()
         game->hero().set_current_weapon(NULL);
 
     //Calculate the effect it has on the poor guy.
-    (potion->*potion_functions[potion->m_which])();
+    potion->Quaff();
 
     update_status_bar();
     potion->call_it();
@@ -321,83 +86,15 @@ bool detect_monsters(bool enable)
 }
 
 //th_effect: Compute the effect of this potion hitting a monster.
-void affect_monster(Item *potion, Monster *monster)
+void affect_monster(Potion *potion, Monster *monster)
 {
     msg("the flask shatters.");
-
-    switch (potion->m_which)
-    {
-    case P_CONFUSE: case P_BLIND:
-        monster->set_confused(true);
-        msg("the %s appears confused", monster->get_name().c_str());
-        break;
-
-    case P_PARALYZE:
-        monster->hold();
-        break;
-
-    case P_HEALING: case P_XHEAL:
-        monster->increase_hp(rnd(8), true, false);
-        break;
-
-    case P_RAISE:
-        monster->m_stats.m_max_hp += 8;
-        monster->increase_hp(8, false, false);
-        monster->m_stats.m_level++;
-        break;
-
-    case P_HASTE:
-        monster->set_is_fast(true);
-        break;
-    }
+    potion->AffectMonster(monster);
 }
 
-std::string PotionInfo::get_inventory_name(int which, int count) const
+Potion::Potion()
+    : Item(POTION, 0)
 {
-    char *pb = prbuf;
-    std::string color = get_identifier(which);
-
-    if (count == 1) {
-        strcpy(pb, "A potion ");
-        pb = &prbuf[9];
-    }
-    else {
-        sprintf(pb, "%d potions ", count);
-        pb = &pb[strlen(prbuf)];
-    }
-    if (is_discovered(which) || game->wizard().reveal_items()) {
-        chopmsg(pb, "of %s", "of %s(%s)", get_name(which).c_str(), color.c_str());
-    }
-    else if (!get_guess(which).empty()) {
-        chopmsg(pb, "called %s", "called %s(%s)", get_guess(which).c_str(), color.c_str());
-    }
-    else if (count == 1)
-        sprintf(prbuf, "A%s %s potion", vowelstr(color.c_str()), color.c_str());
-    else sprintf(prbuf, "%d %s potions", count, color.c_str());
-
-    return prbuf;
-}
-
-std::string PotionInfo::get_inventory_name(const Item * obj) const
-{
-    return get_inventory_name(obj->m_which, obj->m_count);
-}
-
-std::string PotionInfo::get_inventory_name(int which) const
-{
-    return get_inventory_name(which, 1);
-}
-
-
-
-Potion::Potion(int which)
-    : Item(POTION, which)
-{
-}
-
-Item * Potion::Clone() const
-{
-    return new Potion(*this);
 }
 
 std::string Potion::Name() const
@@ -407,7 +104,33 @@ std::string Potion::Name() const
 
 std::string Potion::InventoryName() const
 {
-    return item_class()->get_inventory_name(this);
+    std::ostringstream ss;
+
+    if (m_count == 1) {
+        ss << "A potion ";
+    }
+    else {
+        ss << m_count << " potions ";
+    }
+
+    const std::string& color(Info().identifier());
+
+    if (Info().is_discovered() || game->wizard().reveal_items()) {
+        ss << "of " << Info().name();
+        if (!short_msgs())
+            ss << "(" << color << ")";
+    }
+    else if (!Info().guess().empty()) {
+        ss << "called " << Info().guess();
+        if (!short_msgs())
+            ss << "(" << color << ")";
+    }
+    else if (m_count == 1)
+        ss << "A" << vowelstr(color.c_str()) << " " << color << " potion";
+    else
+        ss << m_count << " " << color << " potions";
+
+    return ss.str();
 }
 
 bool Potion::IsMagic() const
@@ -417,14 +140,227 @@ bool Potion::IsMagic() const
 
 bool Potion::IsEvil() const
 {
-    return (m_which == P_CONFUSE || m_which == P_PARALYZE || m_which == P_POISON || m_which == P_BLIND);
+    return false;
 }
 
 int Potion::Worth() const
 {
-    int worth = item_class()->get_value(m_which);
+    int worth = Info().worth();
     worth *= m_count;
-    if (!item_class()->is_discovered(m_which)) 
+    if (!Info().is_discovered()) 
         worth /= 2;
     return worth;
 }
+
+void Potion::AffectMonster(Monster * m)
+{
+}
+
+ItemCategory * Potion::Category() const
+{
+    return &Info();
+}
+
+void Confusion::Quaff()
+{
+    discover();
+    if (!game->hero().is_confused())
+    {
+        if (game->hero().is_confused())
+            lengthen(unconfuse, rnd(8) + HUH_DURATION);
+        else
+            fuse(unconfuse, 0, rnd(8) + HUH_DURATION);
+        game->hero().set_confused(true);
+        msg("wait, what's going on? Huh? What? Who?");
+    }
+}
+
+void Confusion::AffectMonster(Monster* monster)
+{
+    monster->set_confused(true);
+    msg("the %s appears confused", monster->get_name().c_str());
+}
+
+bool Confusion::IsEvil() const
+{
+    return true;
+}
+
+void Paralysis::Quaff()
+{
+    discover();
+    game->hero().increase_sleep_turns(HOLD_TIME);
+    msg("you can't move");
+}
+
+void Paralysis::AffectMonster(Monster* monster)
+{
+    monster->hold();
+}
+
+bool Paralysis::IsEvil() const
+{
+    return true;
+}
+
+void ThirstQuenching::Quaff()
+{
+    msg("this potion tastes extremely dull");
+}
+
+void Blindness::Quaff()
+{
+    discover();
+    if (!game->hero().is_blind())
+    {
+        game->hero().set_blind(true);
+        fuse(sight, 0, SEE_DURATION);
+        look(false);
+    }
+    msg("a cloak of darkness falls around you");
+}
+
+void Blindness::AffectMonster(Monster* monster)
+{
+    monster->set_confused(true);
+    msg("the %s appears confused", monster->get_name().c_str());
+}
+
+bool Blindness::IsEvil() const
+{
+    return true;
+}
+
+void RestoreStrength::Quaff()
+{
+    game->hero().restore_strength();
+    msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
+}
+
+void HasteSelf::Quaff()
+{
+    discover();
+    if (game->hero().add_haste(true)) {
+        msg("you feel yourself moving much faster");
+    }
+}
+
+void HasteSelf::AffectMonster(Monster* monster)
+{
+    monster->set_is_fast(true);
+}
+
+void ExtraHealing::Quaff()
+{
+    discover();
+    game->hero().increase_hp(roll(game->hero().m_stats.m_level, 8), true, true);
+    sight();
+    msg("you begin to feel much better");
+}
+
+void ExtraHealing::AffectMonster(Monster* monster)
+{
+    monster->increase_hp(rnd(8), true, false);
+}
+
+void RaiseLevel::Quaff()
+{
+    discover();
+    msg("you suddenly feel much more skillful");
+    game->hero().raise_level();
+}
+
+void RaiseLevel::AffectMonster(Monster* monster)
+{
+    monster->m_stats.m_max_hp += 8;
+    monster->increase_hp(8, false, false);
+    monster->m_stats.m_level++;
+}
+
+void MagicDetection::Quaff()
+{
+    //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
+    //Also give hints as to whether he would want to use the object.
+    if (game->level().reveal_magic()) {
+        discover();
+        msg("You sense the presence of magic.");
+    }
+    else {
+        msg("you have a strange feeling for a moment%s.", noterse(", then it passes"));
+    }
+}
+
+void MonsterDetection::Quaff()
+{
+    if (!game->level().has_monsters())
+        msg("you have a strange feeling%s.", noterse(" for a moment"));
+    else {
+        if (detect_monsters(true))
+            discover();
+        fuse(disable_detect_monsters, true, HUH_DURATION);
+        msg("");
+    }
+}
+
+void Healing::Quaff()
+{
+    discover();
+    game->hero().increase_hp(roll(game->hero().m_stats.m_level, 4), true, false);
+    sight();
+    msg("you begin to feel better");
+}
+
+void Healing::AffectMonster(Monster* monster)
+{
+    monster->increase_hp(rnd(8), true, false);
+}
+
+void SeeInvisible::Quaff()
+{
+    if (!game->hero().sees_invisible()) {
+        fuse(unsee_invisible, 0, SEE_DURATION);
+        look(false);
+        show_invisible();
+    }
+    sight();
+    msg("this potion tastes like %s juice", game->get_environment("fruit").c_str());
+}
+
+void GainStrength::Quaff()
+{
+    discover();
+    game->hero().adjust_strength(1);
+    msg("you feel stronger. What bulging muscles!");
+}
+
+void Poison::Quaff()
+{
+    char *sick = "you feel %s sick.";
+
+    discover();
+    if (!game->hero().is_wearing_ring(R_SUSTSTR)) {
+        game->hero().adjust_strength(-(rnd(3) + 1));
+        msg(sick, "very");
+    }
+    else msg(sick, "momentarily");
+}
+
+bool Poison::IsEvil() const
+{
+    return true;
+}
+
+ItemCategory Confusion::info;
+ItemCategory Paralysis::info;
+ItemCategory Poison::info;
+ItemCategory GainStrength::info;
+ItemCategory SeeInvisible::info;
+ItemCategory Healing::info;
+ItemCategory MonsterDetection::info;
+ItemCategory MagicDetection::info;
+ItemCategory RaiseLevel::info;
+ItemCategory ExtraHealing::info;
+ItemCategory HasteSelf::info;
+ItemCategory RestoreStrength::info;
+ItemCategory Blindness::info;
+ItemCategory ThirstQuenching::info;

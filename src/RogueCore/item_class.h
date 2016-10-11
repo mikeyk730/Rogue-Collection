@@ -63,17 +63,6 @@ private:
     std::map<int, std::string> m_guesses;
 };
 
-
-struct PotionInfo : public ItemClass
-{
-    PotionInfo();
-
-    virtual std::string get_inventory_name(const Item* obj) const;
-    virtual std::string get_inventory_name(int which) const;
-private:
-    std::string get_inventory_name(int which, int count) const;
-};
-
 struct StickInfo : public ItemClass
 {
     StickInfo();

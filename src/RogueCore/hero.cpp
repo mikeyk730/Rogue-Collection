@@ -21,7 +21,7 @@
 #include "monster.h"
 #include "room.h"
 #include "fight.h"
-#include "potions.h"
+#include "potion.h"
 #include "slime.h"
 #include "scrolls.h"
 #include "things.h"
@@ -446,14 +446,15 @@ void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
     else
         display_hit_msg(NULL, name);
 
-    if (weapon && weapon->m_type == POTION)
+    Potion* potion = dynamic_cast<Potion*>(weapon);
+    if (potion)
     {
-        affect_monster(weapon, monster);
+        affect_monster(potion, monster);
         if (!thrown)
         {
-            if (--weapon->m_count == 0) {
-                m_pack.remove(weapon);
-                delete weapon;
+            if (--potion->m_count == 0) {
+                m_pack.remove(potion);
+                delete potion;
             }
             set_current_weapon(NULL);
         }

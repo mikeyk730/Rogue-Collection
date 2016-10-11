@@ -21,7 +21,7 @@
 #include "move.h"
 #include "rings.h"
 #include "things.h"
-#include "potions.h"
+#include "potion.h"
 #include "pack.h"
 #include "scroll.h"
 #include "level.h"

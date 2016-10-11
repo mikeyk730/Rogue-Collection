@@ -13,7 +13,7 @@
 #include "output_shim.h"
 #include "io.h"
 #include "monsters.h"
-#include "scroll.h"
+#include "things.h"
 
 using std::placeholders::_1;
 
@@ -55,7 +55,7 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     m_log_stream("lastgame.log")
 {
     LoadScrolls("scrolls.txt");
-    m_potions.reset(new PotionInfo);
+    LoadPotions("potions.txt");
     m_rings.reset(new RingInfo);
     m_sticks.reset(new StickInfo);
 
@@ -126,7 +126,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     m_level.reset(new Level);
     m_hero.reset(new Hero);
     LoadScrolls("scrolls.txt");
-    m_potions.reset(new PotionInfo);
+    LoadPotions("potions.txt");
     m_rings.reset(new RingInfo);
     m_sticks.reset(new StickInfo);
 
@@ -234,11 +234,6 @@ Level & GameState::level()
     return *m_level;
 }
 
-PotionInfo& GameState::potions()
-{
-    return *m_potions;
-}
-
 RingInfo& GameState::rings()
 {
     return *m_rings;
@@ -253,8 +248,6 @@ ItemClass* GameState::item_class(int type)
 {
     switch (type)
     {
-    case POTION:
-        return &potions();
     case STICK:
         return &sticks();
     case RING:
