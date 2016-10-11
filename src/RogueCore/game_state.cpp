@@ -54,10 +54,10 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     m_hero(new Hero),
     m_log_stream("lastgame.log")
 {
-    LoadScrolls("scrolls.txt");
-    LoadPotions("potions.txt");
-    LoadRings("rings.txt");
-    LoadSticks("sticks.txt");
+    LoadScrolls("scrolls.dat");
+    LoadPotions("potions.dat");
+    LoadRings("rings.dat");
+    LoadSticks("sticks.dat");
     init_environment();
 }
 
@@ -124,10 +124,10 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
 
     m_level.reset(new Level);
     m_hero.reset(new Hero);
-    LoadScrolls("scrolls.txt");
-    LoadPotions("potions.txt");
-    LoadRings("rings.txt");
-    LoadSticks("sticks.txt");
+    LoadScrolls("scrolls.dat");
+    LoadPotions("potions.dat");
+    LoadRings("rings.dat");
+    LoadSticks("sticks.dat");
 
     if (!m_show_replay)
     {
