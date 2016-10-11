@@ -454,7 +454,11 @@ leave_room(const coord *cp)
 		     * to check for monster, we have to strip out
 		     * standout bit
 		     */
+#ifdef USE_PC_GFX
+            if (ch>='A'&&ch<='Z')
+#else
 		    if (isupper(toascii(ch)))
+#endif
 		    {
 			if (on(player, SEEMONST))
 			{

@@ -87,6 +87,7 @@
 /*
  * things that appear on the screens
  */
+#ifndef USE_PC_GFX
 #define PASSAGE		'#'
 #define DOOR		'+'
 #define FLOOR		'.'
@@ -105,6 +106,31 @@
 #define STICK		'/'
 #define VWALL		'|'
 #define HWALL		'-'
+#else
+#define PASSAGE	(0xb1)
+#define DOOR	(0xce)
+#define FLOOR	(0xfa)
+#define PLAYER	(0x01)
+#define TRAP	(0x04)
+#define STAIRS	(0xf0)
+#define GOLD	(0x0f)
+#define POTION	(0xad)
+#define SCROLL	(0x0d)
+#define MAGIC	'$'
+#define FOOD	(0x05)
+#define STICK	(0xe7)
+#define ARMOR	(0x08)
+#define AMULET	(0x0c)
+#define RING	(0x09)
+#define WEAPON	(0x18)
+#define VWALL	(0xba)
+#define HWALL	(0xcd)
+#define ULWALL	(0xc9)
+#define URWALL	(0xbb)
+#define LLWALL	(0xc8)
+#define LRWALL	(0xbc)
+
+#endif
 #define CALLABLE	-1
 #define R_OR_S		-2
 

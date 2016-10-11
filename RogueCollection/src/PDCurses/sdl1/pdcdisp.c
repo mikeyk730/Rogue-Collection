@@ -325,6 +325,73 @@ static void _highlight(SDL_Rect *src, SDL_Rect *dest, chtype ch)
     }
 }
 
+#ifdef USE_PC_GFX
+#define PASSAGE   (0xb1)
+#define DOOR      (0xce)
+#define FLOOR     (0xfa)
+#define PLAYER    (0x01)
+#define TRAP      (0x04)
+#define STAIRS    (0xf0)
+#define GOLD      (0x0f)
+#define POTION    (0xad)
+#define SCROLL    (0x0d)
+#define FOOD      (0x05)
+#define STICK     (0xe7)
+#define ARMOR     (0x08)
+#define AMULET    (0x0c)
+#define RING      (0x09)
+#define WEAPON    (0x18)
+#define VWALL     (0xba)
+#define HWALL     (0xcd)
+#define ULWALL    (0xc9)
+#define URWALL    (0xbb)
+#define LLWALL    (0xc8)
+#define LRWALL    (0xbc)
+
+unsigned int GetColor(int chr, int attr)
+{
+    //if it is inside a room
+    if (attr == 0x07) switch (chr)
+    {
+    case DOOR:
+    case VWALL: case HWALL:
+    case ULWALL: case URWALL: case LLWALL: case LRWALL:
+        return 0x06; //brown
+    case FLOOR:
+        return 0x0a; //light green
+    case STAIRS:
+        return 0xa0; //black on light green
+    case TRAP:
+        return 0x05; //magenta
+    case GOLD:
+    case PLAYER:
+        return 0x0e; //yellow
+    case POTION:
+    case SCROLL:
+    case STICK:
+    case ARMOR:
+    case AMULET:
+    case RING:
+    case WEAPON:
+        return 0x09; //light blue
+    case FOOD:
+        return 0x04; //red
+    }
+    //if inside a passage or a maze
+    else if (attr == 0x70) switch (chr)
+    {
+    case FOOD:
+        return 0x74; //red on grey
+    case GOLD: case PLAYER:
+        return 0x7e; //yellow on grey
+    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+        return 0x71; //blue on grey
+    }
+
+    return attr;
+}
+#endif
+
 /* update the given physical line to look like the corresponding line in
    curscr */
 
@@ -377,6 +444,16 @@ void PDC_transform_line(int lineno, int x, int len, const chtype *srcp)
     for (j = 0; j < len; j++)
     {
         chtype ch = srcp[j];
+
+#ifdef USE_PC_GFX
+        //mdk:hack
+        if (lineno == 23) {
+            ch += ((chtype)0x0e << PDC_COLOR_SHIFT);
+        }
+        if (lineno > 0 && lineno < 23) {
+            ch += ((chtype)GetColor(ch, 0x07) << PDC_COLOR_SHIFT);
+        }
+#endif
 
         _set_attr(ch);
 #ifdef CHTYPE_LONG
