@@ -32,13 +32,16 @@
 /*
  * All the fun defines
  */
+#define CCHAR(x) ( (x) & A_CHARTEXT )
+#define CMVINCH(x,y) CCHAR(mvinch((x),(y)))
+#define CMVWINCH(x,y,z) CCHAR(mvwinch((x),(y),(z))) 
 #define next(ptr) (*ptr).l_next
 #define prev(ptr) (*ptr).l_prev
 #define ldata(ptr) (*ptr).l_data
 #define inroom(rp, cp) (\
     (cp)->x <= (rp)->r_pos.x + ((rp)->r_max.x - 1) && (rp)->r_pos.x <= (cp)->x \
  && (cp)->y <= (rp)->r_pos.y + ((rp)->r_max.y - 1) && (rp)->r_pos.y <= (cp)->y)
-#define winat(y, x) (mvwinch(mw,y,x)==' '?mvwinch(stdscr,y,x):winch(mw))
+#define winat(y, x) (CMVWINCH(mw,y,x)==' '?CMVWINCH(stdscr,y,x):CCHAR(winch(mw)))
 #define debug if (wizard) msg
 #define RN (((seed = seed*11109+13849) & 0x7fff) >> 1)
 #define unc(cp) (cp).y, (cp).x
@@ -73,22 +76,17 @@
 #define newgrp() ++group
 #define o_charges o_ac
 #define ISMULT(type) (type == POTION || type == SCROLL || type == FOOD)
+#define ismons(c) ((c)>='A'&&(c)<='Z')
 
 /*
  * Things that appear on the screens
  */
+#ifndef USE_PC_GFX
 #define PASSAGE '#'
 #define DOOR '+'
 #define FLOOR '.'
 #define PLAYER '@'
 #define TRAP '^'
-#define TRAPDOOR '>'
-#define ARROWTRAP '{'
-#define SLEEPTRAP '$'
-#define BEARTRAP '}'
-#define TELTRAP '~'
-#define DARTTRAP '`'
-#define SECRETDOOR '&'
 #define STAIRS '%'
 #define GOLD '*'
 #define POTION '!'
@@ -100,6 +98,39 @@
 #define AMULET ','
 #define RING '='
 #define STICK '/'
+#define VWALL '|'
+#define HWALL '-'
+#else
+#define PASSAGE	(0xb1)
+#define DOOR	(0xce)
+#define FLOOR	(0xfa)
+#define PLAYER	(0x01)
+#define TRAP	(0x04)
+#define STAIRS	(0xf0)
+#define GOLD	(0x0f)
+#define POTION	(0xad)
+#define SCROLL	(0x0d)
+#define MAGIC	'$'
+#define FOOD	(0x05)
+#define STICK	(0xe7)
+#define ARMOR	(0x08)
+#define AMULET	(0x0c)
+#define RING	(0x09)
+#define WEAPON	(0x18)
+#define VWALL	(0xba)
+#define HWALL	(0xcd)
+#define ULWALL	(0xc9)
+#define URWALL	(0xbb)
+#define LLWALL	(0xc8)
+#define LRWALL	(0xbc)
+#endif
+#define TRAPDOOR '>'
+#define ARROWTRAP '{'
+#define SLEEPTRAP '$'
+#define BEARTRAP '}'
+#define TELTRAP '~'
+#define DARTTRAP '`'
+#define SECRETDOOR '&'
 #define CALLABLE -1
 
 /*

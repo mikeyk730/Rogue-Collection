@@ -62,7 +62,7 @@ do_chase(struct thing *th)
     /*
      * We don't count doors as inside rooms for this routine
      */
-    if (mvwinch(stdscr, th->t_pos.y, th->t_pos.x) == DOOR)
+    if (CMVWINCH(stdscr, th->t_pos.y, th->t_pos.x) == DOOR)
 	rer = NULL;
     this = *th->t_dest;
     /*
@@ -97,8 +97,8 @@ do_chase(struct thing *th)
     }
     else if (th->t_type == 'F')
 	return(0);
-    mvwaddch(cw, th->t_pos.y, th->t_pos.x, th->t_oldch);
-    sch = mvwinch(cw, ch_ret.y, ch_ret.x);
+    mvwaddrawch(cw, th->t_pos.y, th->t_pos.x, th->t_oldch);
+    sch = CMVWINCH(cw, ch_ret.y, ch_ret.x);
     if (rer != NULL && (rer->r_flags & ISDARK) && sch == FLOOR
 	&& DISTANCE(ch_ret.y, ch_ret.x, th->t_pos.y, th->t_pos.x) < 3
 	&& off(player, ISBLIND))
@@ -107,9 +107,9 @@ do_chase(struct thing *th)
 	th->t_oldch = sch;
 
     if (cansee(unc(ch_ret)) && !on(*th, ISINVIS))
-        mvwaddch(cw, ch_ret.y, ch_ret.x, th->t_type);
-    mvwaddch(mw, th->t_pos.y, th->t_pos.x, ' ');
-    mvwaddch(mw, ch_ret.y, ch_ret.x, th->t_type);
+        mvwaddrawch(cw, ch_ret.y, ch_ret.x, th->t_type);
+    mvwaddrawch(mw, th->t_pos.y, th->t_pos.x, ' ');
+    mvwaddrawch(mw, ch_ret.y, ch_ret.x, th->t_type);
     th->t_pos = ch_ret;
     /*
      * And stop running if need be
@@ -291,7 +291,7 @@ diag_ok(coord *sp, coord *ep)
 {
     if (ep->x == sp->x || ep->y == sp->y)
 	return TRUE;
-    return (step_ok(mvinch(ep->y, sp->x)) && step_ok(mvinch(sp->y, ep->x)));
+    return (step_ok(CMVINCH(ep->y, sp->x)) && step_ok(CMVINCH(sp->y, ep->x)));
 }
 
 /*

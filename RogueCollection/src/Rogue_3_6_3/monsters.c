@@ -60,8 +60,8 @@ new_monster(struct linked_list *item, int type, coord *cp)
     tp = (struct thing *) ldata(item);
     tp->t_type = type;
     tp->t_pos = *cp;
-    tp->t_oldch = mvwinch(cw, cp->y, cp->x);
-    mvwaddch(mw, cp->y, cp->x, tp->t_type);
+    tp->t_oldch = CMVWINCH(cw, cp->y, cp->x);
+    mvwaddrawch(mw, cp->y, cp->x, tp->t_type);
     mp = &monsters[tp->t_type-'A'];
     tp->t_stats.s_hpt = roll(mp->m_stats.s_lvl, 8);
     tp->t_stats.s_lvl = mp->m_stats.s_lvl;
@@ -118,9 +118,9 @@ wanderer()
 	if ((rp = &rooms[i]) == hr)
 	    continue;
 	rnd_pos(rp, &cp);
-	if ((ch = mvwinch(stdscr, cp.y, cp.x)) == ERR)
+	if ((ch = CMVWINCH(stdscr, cp.y, cp.x)) == ERR)
 	{
-	    debug("Routine wanderer: mvwinch failed to %d,%d", cp.y, cp.x);
+	    debug("Routine wanderer: CMVWINCH failed to %d,%d", cp.y, cp.x);
 	    if (wizard)
 		wait_for(cw,'\n');
 	    return;
@@ -185,7 +185,7 @@ wake_monster(int y, int x)
      * Hide invisible monsters
      */
     if (on(*tp, ISINVIS) && off(player, CANSEE))
-	ch = mvwinch(stdscr, y, x);
+	ch = CMVWINCH(stdscr, y, x);
     /*
      * Let greedy ones guard gold
      */

@@ -97,10 +97,10 @@ missile(int ydelta, int xdelta)
      * AHA! Here it has hit something.  If it is a wall or a door,
      * or if it misses (combat) the mosnter, put it on the floor
      */
-    if (!isupper(mvwinch(mw, obj->o_pos.y, obj->o_pos.x))
+    if (!ismons(CMVWINCH(mw, obj->o_pos.y, obj->o_pos.x))
 	|| !hit_monster(unc(obj->o_pos), obj))
 	    fall(item, TRUE);
-    mvwaddch(cw, hero.y, hero.x, PLAYER);
+    mvwaddrawch(cw, hero.y, hero.x, PLAYER);
 }
 
 /*
@@ -122,8 +122,8 @@ do_motion(struct object *obj, int ydelta, int xdelta)
 	 * Erase the old one
 	 */
 	if (!ce(obj->o_pos, hero) && cansee(unc(obj->o_pos)) &&
-	    mvwinch(cw, obj->o_pos.y, obj->o_pos.x) != ' ')
-		    mvwaddch(cw, obj->o_pos.y, obj->o_pos.x,
+	    CMVWINCH(cw, obj->o_pos.y, obj->o_pos.x) != ' ')
+		    mvwaddrawch(cw, obj->o_pos.y, obj->o_pos.x,
 			    show(obj->o_pos.y, obj->o_pos.x));
 	/*
 	 * Get the new position
@@ -137,9 +137,9 @@ do_motion(struct object *obj, int ydelta, int xdelta)
 	     * If it alright.
 	     */
 	    if (cansee(unc(obj->o_pos)) &&
-		mvwinch(cw, obj->o_pos.y, obj->o_pos.x) != ' ')
+		CMVWINCH(cw, obj->o_pos.y, obj->o_pos.x) != ' ')
 	    {
-		mvwaddch(cw, obj->o_pos.y, obj->o_pos.x, obj->o_type);
+		mvwaddrawch(cw, obj->o_pos.y, obj->o_pos.x, obj->o_type);
 		draw(cw);
 	    }
 	    continue;
@@ -163,12 +163,12 @@ fall(struct linked_list *item, int pr)
     obj = (struct object *) ldata(item);
     if (fallpos(&obj->o_pos, &fpos, TRUE))
     {
-	mvaddch(fpos.y, fpos.x, obj->o_type);
+	mvaddrawch(fpos.y, fpos.x, obj->o_type);
 	obj->o_pos = fpos;
 	if ((rp = roomin(&hero)) != NULL && !(rp->r_flags & ISDARK))
 	{
 	    light(&hero);
-	    mvwaddch(cw, hero.y, hero.x, PLAYER);
+	    mvwaddrawch(cw, hero.y, hero.x, PLAYER);
 	}
 	attach(lvl_obj, item);
 	return;

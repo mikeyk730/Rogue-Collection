@@ -69,7 +69,7 @@ read_scroll()
 		 * Light the room and put the player back up
 		 */
 		light(&hero);
-		mvwaddch(cw, hero.y, hero.x, PLAYER);
+		mvwaddrawch(cw, hero.y, hero.x, PLAYER);
 	    }
 	when S_ARMOR:
 	    if (cur_armor != NULL)
@@ -89,7 +89,7 @@ read_scroll()
 
 		for (x = hero.x-2; x <= hero.x+2; x++)
 		    for (y = hero.y-2; y <= hero.y+2; y++)
-			if (y > 0 && x > 0 && isupper(mvwinch(mw, y, x)))
+			if (y > 0 && x > 0 && ismons(CMVWINCH(mw, y, x)))
 			    if ((mon = find_mons(y, x)) != NULL)
 			    {
 				struct thing *th;
@@ -168,18 +168,18 @@ read_scroll()
 	    for (i = 0; i < LINES; i++)
 		for (j = 0; j < COLS; j++)
 		{
-		    switch (nch = ch = mvwinch(hw, i, j))
+		    switch (nch = ch = CMVWINCH(hw, i, j))
 		    {
 			case SECRETDOOR:
                             nch = DOOR;
-			    mvaddch(i, j, nch);
-			case '-':
-			case '|':
+			    mvaddrawch(i, j, nch);
+			case HWALL:
+			case VWALL:
 			case DOOR:
 			case PASSAGE:
 			case ' ':
 			case STAIRS:
-			    if (mvwinch(mw, i, j) != ' ')
+			    if (CMVWINCH(mw, i, j) != ' ')
 			    {
 				struct thing *it;
 
@@ -192,7 +192,7 @@ read_scroll()
 			    nch = ' ';
 		    }
 		    if (nch != ch)
-			waddch(hw, nch);
+			waddrawch(hw, nch);
 		}
 	    /*
 	     * Copy in what he has discovered
@@ -214,9 +214,9 @@ read_scroll()
 		{
 		    gtotal += rooms[i].r_goldval;
 		    if (rooms[i].r_goldval != 0 &&
-			mvwinch(stdscr, rooms[i].r_gold.y, rooms[i].r_gold.x)
+			CMVWINCH(stdscr, rooms[i].r_gold.y, rooms[i].r_gold.x)
 			== GOLD)
-			mvwaddch(hw,rooms[i].r_gold.y,rooms[i].r_gold.x,GOLD);
+			mvwaddrawch(hw,rooms[i].r_gold.y,rooms[i].r_gold.x,GOLD);
 		}
 		if (gtotal)
 		{

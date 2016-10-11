@@ -100,7 +100,7 @@ do_rooms()
 	    do
 	    {
 		rnd_pos(rp, &mp);
-	    } until(mvwinch(stdscr, mp.y, mp.x) == FLOOR);
+	    } until(CMVWINCH(stdscr, mp.y, mp.x) == FLOOR);
 	    new_monster(item, randmonster(FALSE), &mp);
 	    /*
 	     * See if we want to give it a treasure to carry around.
@@ -134,13 +134,13 @@ draw_room(struct room *rp)
     {
 	move(rp->r_pos.y + j, rp->r_pos.x+1);
 	for (k = 1; k < rp->r_max.x-1; k++)
-	    addch(FLOOR);
+	    addrawch(FLOOR);
     }
     /*
      * Put the gold there
      */
     if (rp->r_goldval)
-	mvaddch(rp->r_gold.y, rp->r_gold.x, GOLD);
+	mvaddrawch(rp->r_gold.y, rp->r_gold.x, GOLD);
 }
 
 /*
@@ -152,7 +152,7 @@ void
 horiz(int cnt)
 {
     while (cnt--)
-	addch('-');
+	addrawch(HWALL);
 }
 
 /*
@@ -169,7 +169,7 @@ vert(int cnt)
     x--;
     while (cnt--) {
 	move(++y, x);
-	addch('|');
+	addrawch(VWALL);
     }
 }
 

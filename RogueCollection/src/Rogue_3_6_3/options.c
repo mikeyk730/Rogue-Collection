@@ -62,6 +62,10 @@ option()
     OPTION	*op;
     int	retval;
 
+#ifdef USE_PC_GFX
+    curs_set(1);
+#endif
+
     wclear(hw);
     touchwin(hw);
     /*
@@ -94,7 +98,7 @@ option()
 		op--;
 	    }
     }
-    /*
+    /* 
      * Switch back to original screen
      */
     mvwaddstr(hw, LINES-1, 0, "--Press space to continue--");
@@ -103,6 +107,9 @@ option()
     clearok(cw, TRUE);
     touchwin(cw);
     after = FALSE;
+#ifdef USE_PC_GFX
+    curs_set(0);
+#endif
 }
 
 /*

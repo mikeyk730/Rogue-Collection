@@ -76,7 +76,7 @@ endmsg()
     if (mpos)
     {
 	wmove(cw, 0, mpos);
-	waddstr(cw, "--More--");
+    waddstr(cw, "--More--");
 	draw(cw);
 	wait_for(cw,' ');
     }
@@ -105,8 +105,8 @@ step_ok(int ch)
     switch (ch)
     {
 	case ' ':
-	case '|':
-	case '-':
+	case VWALL:
+	case HWALL:
 	case SECRETDOOR:
 	    return FALSE;
 	default:

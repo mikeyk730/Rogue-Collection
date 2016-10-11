@@ -215,13 +215,13 @@ conn(int r1, int r2)
     else
     {
 	cmov(spos);
-	addch('#');
+	addrawch(PASSAGE);
     }
     if (!(rpt->r_flags & ISGONE)) door(rpt, &epos);
     else
     {
 	cmov(epos);
-	addch('#');
+	addrawch(PASSAGE);
     }
     /*
      * Get ready to move...
@@ -242,7 +242,7 @@ conn(int r1, int r2)
 	    while(turn_distance--)
 	    {
 		cmov(curr);
-		addch(PASSAGE);
+		addrawch(PASSAGE);
 		curr.x += turn_delta.x;
 		curr.y += turn_delta.y;
 	    }
@@ -250,7 +250,7 @@ conn(int r1, int r2)
 	 * Continue digging along
 	 */
 	cmov(curr);
-	addch(PASSAGE);
+	addrawch(PASSAGE);
 	distance--;
     }
     curr.x += pdelta.x;
@@ -268,7 +268,7 @@ void
 door(struct room *rm, coord *cp)
 {
     cmov(*cp);
-    addch( (rnd(10) < level - 1 && rnd(100) < 20 ? SECRETDOOR : DOOR) );
+    addrawch( (rnd(10) < level - 1 && rnd(100) < 20 ? SECRETDOOR : DOOR) );
     rm->r_exit[rm->r_nexits++] = *cp;
 }
 
@@ -284,6 +284,6 @@ add_pass()
 
     for (y = 1; y < LINES - 2; y++)
 	for (x = 0; x < COLS; x++)
-	    if ((ch=mvinch(y, x)) == PASSAGE || ch == DOOR || ch == SECRETDOOR)
-		mvwaddch(cw, y, x, ch);
+	    if ((ch=CMVINCH(y, x)) == PASSAGE || ch == DOOR || ch == SECRETDOOR)
+		mvwaddrawch(cw, y, x, ch);
 }

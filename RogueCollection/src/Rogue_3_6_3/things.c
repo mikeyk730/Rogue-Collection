@@ -156,7 +156,7 @@ money()
 	    purse += rp->r_goldval;
 	    rp->r_goldval = 0;
 	    cmov(rp->r_gold);
-	    addch(FLOOR);
+	    addrawch(FLOOR);
 	    return;
 	}
     msg("That gold must have been counterfeit");
@@ -173,7 +173,7 @@ drop()
     struct linked_list *obj, *nobj;
     struct object *op;
 
-    ch = mvwinch(stdscr, hero.y, hero.x);
+    ch = CMVWINCH(stdscr, hero.y, hero.x);
     if (ch != FLOOR && ch != PASSAGE)
     {
 	msg("There is something there already");
@@ -205,7 +205,7 @@ drop()
      * Link it into the level object list
      */
     attach(lvl_obj, obj);
-    mvaddch(hero.y, hero.x, op->o_type);
+    mvaddrawch(hero.y, hero.x, op->o_type);
     op->o_pos = hero;
     msg("Dropped %s", inv_name(op, TRUE));
 }
@@ -248,7 +248,7 @@ dropcheck(struct object *op)
 		player.t_flags &= ~CANSEE;
 		extinguish(unsee);
 		light(&hero);
-		mvwaddch(cw, hero.y, hero.x, PLAYER);
+		mvwaddrawch(cw, hero.y, hero.x, PLAYER);
 		break;
 	}
 	cur_ring[op == cur_ring[LEFT] ? LEFT : RIGHT] = NULL;

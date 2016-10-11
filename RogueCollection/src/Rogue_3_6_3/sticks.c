@@ -85,7 +85,7 @@ do_zap(int gotdir)
 		 * Light the room and put the player back up
 		 */
 		light(&hero);
-		mvwaddch(cw, hero.y, hero.x, PLAYER);
+		mvwaddrawch(cw, hero.y, hero.x, PLAYER);
 	    }
 	when WS_DRAIN:
 	    /*
@@ -119,7 +119,7 @@ do_zap(int gotdir)
 		y += delta.y;
 		x += delta.x;
 	    }
-	    if (isupper(monster = mvwinch(mw, y, x)))
+	    if (ismons(monster = CMVWINCH(mw, y, x)))
 	    {
 		int omonst = monster;
 
@@ -136,8 +136,8 @@ do_zap(int gotdir)
 		    new_monster(item, monster = rnd(26) + 'A', &delta);
 		    if (!(tp->t_flags & ISRUN))
 			runto(&delta, &hero);
-		    if (isupper(mvwinch(cw, y, x)))
-			mvwaddch(cw, y, x, monster);
+		    if (ismons(CMVWINCH(cw, y, x)))
+			mvwaddrawch(cw, y, x, monster);
 		    tp->t_oldch = oldch;
 		    ws_know[WS_POLYMORPH] |= (monster != omonst);
 		}
@@ -161,14 +161,14 @@ do_zap(int gotdir)
 			tp->t_pos.y = hero.y + delta.y;
 			tp->t_pos.x = hero.x + delta.x;
 		    }
-		    if (isupper(mvwinch(cw, y, x)))
-			mvwaddch(cw, y, x, tp->t_oldch);
+		    if (ismons(CMVWINCH(cw, y, x)))
+			mvwaddrawch(cw, y, x, tp->t_oldch);
 		    tp->t_dest = &hero;
 		    tp->t_flags |= ISRUN;
-		    mvwaddch(mw, y, x, ' ');
-		    mvwaddch(mw, tp->t_pos.y, tp->t_pos.x, monster);
+		    mvwaddrawch(mw, y, x, ' ');
+		    mvwaddrawch(mw, tp->t_pos.y, tp->t_pos.x, monster);
 		    if (tp->t_pos.y != y || tp->t_pos.x != x)
-			tp->t_oldch = mvwinch(cw, tp->t_pos.y, tp->t_pos.x);
+			tp->t_oldch = CMVWINCH(cw, tp->t_pos.y, tp->t_pos.x);
 		}
 	    }
 	}
@@ -180,7 +180,7 @@ do_zap(int gotdir)
 	    };
 
 	    do_motion(&bolt, delta.y, delta.x);
-	    if (isupper(mvwinch(mw, bolt.o_pos.y, bolt.o_pos.x))
+	    if (ismons(CMVWINCH(mw, bolt.o_pos.y, bolt.o_pos.x))
 		&& !save_throw(VS_MAGIC, THINGPTR(find_mons(unc(bolt.o_pos)))))
 		    hit_monster(unc(bolt.o_pos), &bolt);
 	    else if (terse)
@@ -196,7 +196,7 @@ do_zap(int gotdir)
 	    delta.y += hero.y;
 	    delta.x += hero.x;
 	    ch = winat(delta.y, delta.x);
-	    if (isupper(ch))
+	    if (ismons(ch))
 	    {
 		if (rnd(20) == 0)
 		{
@@ -220,7 +220,7 @@ do_zap(int gotdir)
 		y += delta.y;
 		x += delta.x;
 	    }
-	    if (isupper(mvwinch(mw, y, x)))
+	    if (ismons(CMVWINCH(mw, y, x)))
 	    {
 		item = find_mons(y, x);
 		tp = (struct thing *) ldata(item);
@@ -262,7 +262,7 @@ do_zap(int gotdir)
 	    switch (delta.y + delta.x)
 	    {
 		case 0: dirch = '/';
-		when 1: case -1: dirch = (delta.y == 0 ? '-' : '|');
+		when 1: case -1: dirch = (delta.y == 0 ? HWALL : VWALL);
 		when 2: case -2: dirch = '\\';
 	    }
 	    pos = hero;
@@ -282,8 +282,8 @@ do_zap(int gotdir)
 		{
 		    case DOOR:
 		    case SECRETDOOR:
-		    case '|':
-		    case '-':
+		    case VWALL:
+		    case HWALL:
 		    case ' ':
 			bounced = TRUE;
 			delta.y = -delta.y;
@@ -292,7 +292,7 @@ do_zap(int gotdir)
 			msg("The bolt bounces");
 			break;
 		    default:
-			if (!bounced && isupper(ch))
+			if (!bounced && ismons(ch))
 			{
 			    if (!save_throw(VS_MAGIC, THINGPTR(find_mons(unc(pos)))))
 			    {
@@ -325,14 +325,14 @@ do_zap(int gotdir)
 			    else
 				msg("The %s whizzes by you", name);
 			}
-			mvwaddch(cw, pos.y, pos.x, dirch);
+			mvwaddrawch(cw, pos.y, pos.x, dirch);
 			draw(cw);
 		}
 		pos.y += delta.y;
 		pos.x += delta.x;
 	    }
 	    for (x = 0; x < y; x++)
-		mvwaddch(cw, spotpos[x].y, spotpos[x].x, show(spotpos[x].y, spotpos[x].x));
+		mvwaddrawch(cw, spotpos[x].y, spotpos[x].x, show(spotpos[x].y, spotpos[x].x));
 	    ws_know[obj->o_which] = TRUE;
 	}
 	when WS_NOP:
@@ -360,7 +360,7 @@ drain(int ymin, int ymax, int xmin, int xmax)
     cnt = 0;
     for (i = ymin; i <= ymax; i++)
 	for (j = xmin; j <= xmax; j++)
-	    if (isupper(mvwinch(mw, i, j)))
+	    if (ismons(CMVWINCH(mw, i, j)))
 		cnt++;
     if (cnt == 0)
     {
@@ -374,7 +374,7 @@ drain(int ymin, int ymax, int xmin, int xmax)
      */
     for (i = ymin; i <= ymax; i++)
 	for (j = xmin; j <= xmax; j++)
-	    if (isupper(mvwinch(mw, i, j)) &&
+	    if (ismons(CMVWINCH(mw, i, j)) &&
 	        ((item = find_mons(i, j)) != NULL))
 	    {
 		ick = (struct thing *) ldata(item);

@@ -388,7 +388,7 @@ search()
 	    {
 		case SECRETDOOR:
 		    if (rnd(100) < 20) {
-			mvaddch(y, x, DOOR);
+			mvaddrawch(y, x, DOOR);
 			count = 0;
 		    }
 		    break;
@@ -396,13 +396,13 @@ search()
 		{
 		    struct trap *tp;
 
-		    if (mvwinch(cw, y, x) == TRAP)
+		    if (CMVWINCH(cw, y, x) == TRAP)
 			break;
 		    if (rnd(100) > 50)
 			break;
 		    tp = trap_at(y, x);
 		    tp->tr_flags |= ISFOUND;
-		    mvwaddch(cw, y, x, TRAP);
+		    mvwaddrawch(cw, y, x, TRAP);
 		    count = 0;
 		    running = FALSE;
 		    msg(tr_name(tp->tr_type));
@@ -490,12 +490,12 @@ identify()
 	msg("");
 	return;
     }
-    if (isalpha(ch) && isupper(ch))
+    if (ismons(ch))
 	str = monsters[ch-'A'].m_name;
     else switch(ch)
     {
-	case '|':
-	case '-':
+	case VWALL:
+	case HWALL:
 	    str = "wall of a room";
 	when GOLD: str = "gold";
 	when STAIRS : str = "passage leading down";

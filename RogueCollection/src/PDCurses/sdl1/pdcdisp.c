@@ -447,7 +447,7 @@ void PDC_transform_line(int lineno, int x, int len, const chtype *srcp)
 
 #ifdef USE_PC_GFX
         //mdk:hack
-        if (lineno == 23) {
+        if (lineno >= 23) {
             ch += ((chtype)0x0e << PDC_COLOR_SHIFT);
         }
         if (lineno > 0 && lineno < 23) {

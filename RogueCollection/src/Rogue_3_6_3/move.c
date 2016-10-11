@@ -84,8 +84,8 @@ do_move(int dy, int dx)
     switch(ch)
     {
 	case ' ':
-	case '|':
-	case '-':
+	case VWALL:
+	case HWALL:
 	case SECRETDOOR:
 	    after = running = FALSE;
 	    return;
@@ -117,7 +117,7 @@ move_stuff:
 	    }
 	    else if (ch == STAIRS)
 		running = FALSE;
-	    else if (isupper(ch))
+	    else if (ismons(ch))
 	    {
 		running = FALSE;
 		fight(&nh, ch, cur_weapon, FALSE);
@@ -125,10 +125,10 @@ move_stuff:
 	    }
 	    ch = winat(hero.y, hero.x);
 	    wmove(cw, unc(hero));
-	    waddch(cw, ch);
+	    waddrawch(cw, ch);
 	    hero = nh;
 	    wmove(cw, unc(hero));
-	    waddch(cw, PLAYER);
+	    waddrawch(cw, PLAYER);
     }
 }
 
@@ -160,33 +160,33 @@ light(coord *cp)
 		if (ch == SECRETDOOR)
 		{
 		    if (j == 0 || j == rp->r_max.y - 1)
-			ch = '-';
+			ch = HWALL;
 		    else
-			ch = '|';
+			ch = VWALL;
 		}
 		/*
 		 * If the room is a dark room, we might want to remove
 		 * monsters and the like from it (since they might
 		 * move)
 		 */
-		if (isupper(ch))
+		if (ismons(ch))
 		{
 		    item = wake_monster(rp->r_pos.y+j, rp->r_pos.x+k);
 		    if (((struct thing *) ldata(item))->t_oldch == ' ')
 			if (!(rp->r_flags & ISDARK))
 			    ((struct thing *) ldata(item))->t_oldch =
-				mvwinch(stdscr, rp->r_pos.y+j, rp->r_pos.x+k);
+				CMVWINCH(stdscr, rp->r_pos.y+j, rp->r_pos.x+k);
 		}
 		if (rp->r_flags & ISDARK)
 		{
-		    rch = mvwinch(cw, rp->r_pos.y+j, rp->r_pos.x+k);
+		    rch = CMVWINCH(cw, rp->r_pos.y+j, rp->r_pos.x+k);
 		    switch (rch)
 		    {
 			case DOOR:
 			case STAIRS:
 			case TRAP:
-			case '|':
-			case '-':
+			case VWALL:
+			case HWALL:
 			case ' ':
 			    ch = rch;
 			when FLOOR:
@@ -195,7 +195,7 @@ light(coord *cp)
 			    ch = ' ';
 		    }
 		}
-		mvwaddch(cw, rp->r_pos.y+j, rp->r_pos.x+k, ch);
+		mvwaddrawch(cw, rp->r_pos.y+j, rp->r_pos.x+k, ch);
 	    }
 	}
     }
@@ -226,7 +226,7 @@ show(int y, int x)
 	 * Hide invisible monsters
 	 */
 	else if (off(player, CANSEE))
-	    ch = mvwinch(stdscr, y, x);
+	    ch = CMVWINCH(stdscr, y, x);
     }
     return ch;
 }
@@ -244,7 +244,7 @@ be_trapped(coord *tc)
 
     tp = trap_at(tc->y, tc->x);
     count = running = FALSE;
-    mvwaddch(cw, tp->tr_pos.y, tp->tr_pos.x, TRAP);
+    mvwaddrawch(cw, tp->tr_pos.y, tp->tr_pos.x, TRAP);
     tp->tr_flags |= ISFOUND;
     switch (ch = tp->tr_type)
     {

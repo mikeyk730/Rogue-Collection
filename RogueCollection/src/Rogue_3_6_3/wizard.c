@@ -157,7 +157,7 @@ teleport()
     coord c;
 
     c = hero;
-    mvwaddch(cw, hero.y, hero.x, mvwinch(stdscr, hero.y, hero.x));
+    mvwaddrawch(cw, hero.y, hero.x, CMVWINCH(stdscr, hero.y, hero.x));
     do
     {
 	rm = rnd_room();
@@ -165,7 +165,7 @@ teleport()
     } until(winat(hero.y, hero.x) == FLOOR);
     light(&c);
     light(&hero);
-    mvwaddch(cw, hero.y, hero.x, PLAYER);
+    mvwaddrawch(cw, hero.y, hero.x, PLAYER);
     /*
      * turn off ISHELD in case teleportation was done while fighting
      * a Fungi

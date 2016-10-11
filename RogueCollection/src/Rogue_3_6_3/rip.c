@@ -138,10 +138,6 @@ score(int amount, int flags, int monst)
      * Open file and read list
      */
 
-    if (scoreboard == NULL)
-        return;
-    
-    outf = scoreboard;
 
     for (scp = top_ten; scp <= &top_ten[9]; scp++)
     {
@@ -168,6 +164,12 @@ score(int amount, int flags, int monst)
 	    prflags = 1;
 	else if (strcmp(prbuf, "edit") == 0)
 	    prflags = 2;
+
+    if (scoreboard == NULL)
+        return;
+
+    outf = scoreboard;
+
 
     md_lockfile(outf);
 
@@ -391,7 +393,7 @@ total_winner()
 char *
 killname(int monst)
 {
-    if (isupper(monst))
+    if (ismons(monst))
 	return monsters[monst-'A'].m_name;
     else
 	switch (monst)

@@ -78,7 +78,7 @@ ring_on()
 	case R_SEEINVIS:
 	    player.t_flags |= CANSEE;
 	    light(&hero);
-	    mvwaddch(cw, hero.y, hero.x, PLAYER);
+	    mvwaddrawch(cw, hero.y, hero.x, PLAYER);
 	    break;
 	case R_AGGR:
 	    aggravate();

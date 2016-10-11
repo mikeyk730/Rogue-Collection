@@ -58,7 +58,7 @@ add_pack(struct linked_list *item, int silent)
 		if (from_floor)
 		{
 		    detach(lvl_obj, item);
-		    mvaddch(hero.y, hero.x,
+		    mvaddrawch(hero.y, hero.x,
 			(roomin(&hero) == NULL ? PASSAGE : FLOOR));
 		}
 		discard(item);
@@ -83,7 +83,7 @@ add_pack(struct linked_list *item, int silent)
 	{
 	    msg("The scroll turns to dust as you pick it up.");
 	    detach(lvl_obj, item);
-	    mvaddch(hero.y, hero.x, FLOOR);
+	    mvaddrawch(hero.y, hero.x, FLOOR);
 	    return;
 	}
 	else
@@ -93,7 +93,7 @@ add_pack(struct linked_list *item, int silent)
     if (from_floor)
     {
 	detach(lvl_obj, item);
-	mvaddch(hero.y, hero.x, (roomin(&hero) == NULL ? PASSAGE : FLOOR));
+	mvaddrawch(hero.y, hero.x, (roomin(&hero) == NULL ? PASSAGE : FLOOR));
     }
     /*
      * Search for an object of the same type
@@ -225,7 +225,7 @@ inventory(struct linked_list *list, int type)
 		{
 		    wclear(hw);
 		    waddstr(hw, inv_temp);
-		    waddch(hw, '\n');
+		    waddrawch(hw, '\n');
 		}
 	    /*
 	     * Print the line for this object

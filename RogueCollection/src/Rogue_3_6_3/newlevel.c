@@ -44,7 +44,7 @@ new_level()
         rm = rnd_room();
 	rnd_pos(&rooms[rm], &stairs);
     } until (winat(stairs.y, stairs.x) == FLOOR);
-    addch(STAIRS);
+    addrawch(STAIRS);
     /*
      * Place the traps
      */
@@ -70,7 +70,7 @@ new_level()
 		when 4: ch = TELTRAP;
 		when 5: ch = DARTTRAP;
 	    }
-	    addch(TRAP);
+	    addrawch(TRAP);
 	    traps[i].tr_type = ch;
 	    traps[i].tr_flags = 0;
 	    traps[i].tr_pos = stairs;
@@ -84,7 +84,7 @@ new_level()
     until(winat(hero.y, hero.x) == FLOOR);
     light(&hero);
     wmove(cw, hero.y, hero.x);
-    waddch(cw, PLAYER);
+    waddrawch(cw, PLAYER);
 }
 
 /*
@@ -146,7 +146,7 @@ put_things()
 	        rm = rnd_room();
 		rnd_pos(&rooms[rm], &tp);
 	    } until (winat(tp.y, tp.x) == FLOOR);
-	    mvaddch(tp.y, tp.x, cur->o_type);
+	    mvaddrawch(tp.y, tp.x, cur->o_type);
 	    cur->o_pos = tp;
 	}
     /*
@@ -170,7 +170,7 @@ put_things()
 	    rm = rnd_room();
 	    rnd_pos(&rooms[rm], &tp);
 	} until (winat(tp.y, tp.x) == FLOOR);
-	mvaddch(tp.y, tp.x, cur->o_type);
+	mvaddrawch(tp.y, tp.x, cur->o_type);
 	cur->o_pos = tp;
     }
 }

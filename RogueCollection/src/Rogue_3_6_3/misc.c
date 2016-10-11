@@ -64,7 +64,7 @@ look(int wakeup)
 	for (x = oldpos.x - 1; x <= oldpos.x + 1; x++)
 	    for (y = oldpos.y - 1; y <= oldpos.y + 1; y++)
 		if ((y != hero.y || x != hero.x) && show(y, x) == FLOOR)
-		    mvwaddch(cw, y, x, ' ');
+		    mvwaddrawch(cw, y, x, ' ');
     }
     inpass = ((rp = roomin(&hero)) == NULL);
     ey = hero.y + 1;
@@ -74,7 +74,7 @@ look(int wakeup)
 	{
 	    if (y <= 0 || y >= LINES - 1)
 		continue;
-	    if (isupper(mvwinch(mw, y, x)))
+	    if (ismons(CMVWINCH(mw, y, x)))
 	    {
 		struct linked_list *it;
 		struct thing *tp;
@@ -84,7 +84,7 @@ look(int wakeup)
 		else
 		    it = find_mons(y, x);
 		tp = (struct thing *) ldata(it);
-		if ((tp->t_oldch = mvinch(y, x)) == TRAP)
+		if ((tp->t_oldch = CMVINCH(y, x)) == TRAP)
 		    tp->t_oldch =
 			(trap_at(y,x)->tr_flags&ISFOUND) ? TRAP : FLOOR;
 		if (tp->t_oldch == FLOOR && (rp != NULL) && (rp->r_flags & ISDARK)
@@ -102,13 +102,13 @@ look(int wakeup)
 	    if (off(player, ISBLIND))
 	    {
 		if (y == hero.y && x == hero.x
-		 || (inpass && (ch == '-' || ch == '|')))
+		 || (inpass && (ch == HWALL || ch == VWALL)))
 			continue;
 	    }
 	    else if (y != hero.y || x != hero.x)
 		continue;
 	    wmove(cw, y, x);
-	    waddch(cw, ch);
+	    waddrawch(cw, ch);
 	    if (door_stop && !firstmove && running)
 	    {
 		switch (runch)
@@ -149,8 +149,8 @@ look(int wakeup)
 			    passcount++;
 			break;
 		    case FLOOR:
-		    case '|':
-		    case '-':
+		    case VWALL:
+		    case HWALL:
 		    case ' ':
 			break;
 		    default:
@@ -161,7 +161,7 @@ look(int wakeup)
 	}
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
-    mvwaddch(cw, hero.y, hero.x, PLAYER);
+    mvwaddrawch(cw, hero.y, hero.x, PLAYER);
     wmove(cw, oldy, oldx);
     oldpos = hero;
     oldrp = rp;
@@ -186,9 +186,9 @@ secretdoor(int y, int x)
     for (rp = rooms, i = 0; i < MAXROOMS; rp++, i++)
 	if (inroom(rp, cpp))
 	    if (y == rp->r_pos.y || y == rp->r_pos.y + rp->r_max.y - 1)
-		return('-');
+		return(HWALL);
 	    else
-		return('|');
+		return(VWALL);
 
     return('p');
 }

@@ -371,7 +371,7 @@ rs_write_window(FILE *savef, WINDOW *win)
 
     for(row=0;row<height;row++)
         for(col=0;col<width;col++)
-            rs_write_int(savef, mvwinch(win,row,col));
+            rs_write_int(savef, CMVWINCH(win,row,col));
 }
 
 void
@@ -396,7 +396,7 @@ rs_read_window(FILE *savef, WINDOW *win)
             rs_read_int(savef, &value);
 
             if ((row < height) && (col < width))
-                mvwaddch(win,row,col,value);
+                mvwaddrawch(win,row,col,value);
         }
 }
 

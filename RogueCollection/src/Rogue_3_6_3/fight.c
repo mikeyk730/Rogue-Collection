@@ -626,8 +626,8 @@ bounce(struct object *weap, char *mname)
 void
 remove_monster(coord *mp, struct linked_list *item)
 {
-    mvwaddch(mw, mp->y, mp->x, ' ');
-    mvwaddch(cw, mp->y, mp->x, ((struct thing *) ldata(item))->t_oldch);
+    mvwaddrawch(mw, mp->y, mp->x, ' ');
+    mvwaddrawch(cw, mp->y, mp->x, ((struct thing *) ldata(item))->t_oldch);
     detach(mlist, item);
     discard(item);
 }
@@ -706,11 +706,11 @@ killed(struct linked_list *item, int pr)
 		if (save(VS_MAGIC))
 		    rp->r_goldval += GOLDCALC + GOLDCALC
 				   + GOLDCALC + GOLDCALC;
-		mvwaddch(stdscr, rp->r_gold.y, rp->r_gold.x, GOLD);
+		mvwaddrawch(stdscr, rp->r_gold.y, rp->r_gold.x, GOLD);
 		if (!(rp->r_flags & ISDARK))
 		{
 		    light(&hero);
-		    mvwaddch(cw, hero.y, hero.x, PLAYER);
+		    mvwaddrawch(cw, hero.y, hero.x, PLAYER);
 		}
 	    }
 	}

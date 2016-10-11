@@ -129,7 +129,6 @@
 #define URWALL	(0xbb)
 #define LLWALL	(0xc8)
 #define LRWALL	(0xbc)
-
 #endif
 #define CALLABLE	-1
 #define R_OR_S		-2
