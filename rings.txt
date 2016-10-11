@@ -1,0 +1,16 @@
+R_PROTECT   protection          9 400
+R_ADDSTR    add_strength        9 400
+R_SUSTSTR   sustain_strength    5 280
+R_SEARCH    searching          10 420
+R_SEEINVIS  see_invisible      10 310
+R_NOP       adornment           1  10
+R_AGGR      aggravate_monster  10  10
+R_ADDHIT    dexterity           8 440
+R_ADDDAM    increase_damage     8 400
+R_REGEN     regeneration        4 460
+R_DIGEST    slow_digestion      9 240
+R_TELEPORT  teleportation       5  30
+R_STEALTH   stealth             7 470
+R_SUSTARM   maintain_armor      5 380
+
+

@@ -331,14 +331,15 @@ void GainStrength::Quaff()
 
 void Poison::Quaff()
 {
-    char *sick = "you feel %s sick.";
+    const char* sick = "you feel %s sick.";
 
     discover();
     if (!game->hero().is_wearing_ring(R_SUSTSTR)) {
         game->hero().adjust_strength(-(rnd(3) + 1));
         msg(sick, "very");
     }
-    else msg(sick, "momentarily");
+    else
+        msg(sick, "momentarily");
 }
 
 bool Poison::IsEvil() const
