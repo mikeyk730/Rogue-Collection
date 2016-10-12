@@ -102,7 +102,11 @@ look(int wakeup)
 	    if (off(player, ISBLIND))
 	    {
 		if (y == hero.y && x == hero.x
-		 || (inpass && (ch == HWALL || ch == VWALL)))
+		 || (inpass && (ch == HWALL || ch == VWALL
+#ifdef USE_PC_GFX
+    || ch == LLWALL || ch == LRWALL || ch == URWALL || ch == ULWALL
+#endif
+             )))
 			continue;
 	    }
 	    else if (y != hero.y || x != hero.x)
@@ -151,6 +155,9 @@ look(int wakeup)
 		    case FLOOR:
 		    case VWALL:
 		    case HWALL:
+#ifdef USE_PC_GFX
+            case LLWALL: case LRWALL: case URWALL: case ULWALL:
+#endif
 		    case ' ':
 			break;
 		    default:

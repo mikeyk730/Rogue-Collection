@@ -164,6 +164,9 @@ look(int wakeup)
 		    case FLOOR:
 		    case VWALL:
 		    case HWALL:
+#ifdef USE_PC_GFX
+            case LLWALL: case LRWALL: case URWALL: case ULWALL:
+#endif
 		    case ' ':
 			break;
 		    default:
@@ -197,6 +200,9 @@ trip_ch(int y, int x, int ch)
 	    case PASSAGE:
 	    case HWALL:
 	    case VWALL:
+#ifdef USE_PC_GFX
+        case LLWALL: case LRWALL: case URWALL: case ULWALL:
+#endif
 	    case DOOR:
 	    case TRAP:
 		break;

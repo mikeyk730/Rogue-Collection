@@ -86,6 +86,9 @@ do_move(int dy, int dx)
 	case ' ':
 	case VWALL:
 	case HWALL:
+#ifdef USE_PC_GFX
+    case LLWALL: case LRWALL: case URWALL: case ULWALL:
+#endif
 	case SECRETDOOR:
 	    after = running = FALSE;
 	    return;
@@ -187,6 +190,9 @@ light(coord *cp)
 			case TRAP:
 			case VWALL:
 			case HWALL:
+#ifdef USE_PC_GFX
+            case LLWALL: case LRWALL: case URWALL: case ULWALL:
+#endif
 			case ' ':
 			    ch = rch;
 			when FLOOR:

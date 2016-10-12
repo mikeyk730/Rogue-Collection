@@ -100,6 +100,10 @@
 #define STICK '/'
 #define VWALL '|'
 #define HWALL '-'
+#define ULWALL	    '-'
+#define URWALL	    '-'
+#define LLWALL	    '-'
+#define LRWALL	    '-'
 #else
 #define PASSAGE	(0xb1)
 #define DOOR	(0xce)

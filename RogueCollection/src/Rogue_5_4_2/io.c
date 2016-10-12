@@ -143,6 +143,9 @@ step_ok(int ch)
 	case ' ':
 	case VWALL:
 	case HWALL:
+#ifdef USE_PC_GFX
+    case LLWALL: case LRWALL: case URWALL: case ULWALL:
+#endif
 	    return FALSE;
 	default:
 	    return (!isalpha(ch));

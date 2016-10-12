@@ -123,9 +123,9 @@ draw_room(struct room *rp)
     move(rp->r_pos.y, rp->r_pos.x+1);
     vert(rp->r_max.y-2);				/* Draw left side */
     move(rp->r_pos.y+rp->r_max.y-1, rp->r_pos.x);
-    horiz(rp->r_max.x);					/* Draw bottom */
+    horiz(rp->r_max.x, 0);					/* Draw bottom */
     move(rp->r_pos.y, rp->r_pos.x);
-    horiz(rp->r_max.x);					/* Draw top */
+    horiz(rp->r_max.x, 1);					/* Draw top */
     vert(rp->r_max.y-2);				/* Draw right side */
     /*
      * Put the floor down
@@ -149,10 +149,13 @@ draw_room(struct room *rp)
  */
 
 void
-horiz(int cnt)
+horiz(int cnt, int is_top)
 {
-    while (cnt--)
-	addrawch(HWALL);
+    addrawch(is_top ? ULWALL : LLWALL);
+    --cnt;
+    while (cnt-- > 1)
+	    addrawch(HWALL);
+    addrawch(is_top ? URWALL : LRWALL);
 }
 
 /*

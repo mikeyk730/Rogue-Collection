@@ -343,7 +343,7 @@ BYTE *name;
     switch (dir->y + dir->x)
     {
 	case 0: dirch = '/';
-	when 1: case -1: dirch = (dir->y == 0 ? HWALL : VWALL);
+	when 1: case -1: dirch = (dir->y == 0 ? '-' : '|');
 	when 2: case -2: dirch = '\\';
     }
     pos = *start;
@@ -373,6 +373,9 @@ BYTE *name;
 
 	    case VWALL:
 	    case HWALL:
+#ifdef USE_PC_GFX
+        case LLWALL: case LRWALL: case URWALL: case ULWALL:
+#endif
 	    case ' ':
 		if (!changed)
 		    hit_hero = !hit_hero;

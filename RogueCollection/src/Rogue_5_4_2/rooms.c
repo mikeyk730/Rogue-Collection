@@ -160,8 +160,8 @@ draw_room(const struct room *rp)
     {
 	vert(rp, rp->r_pos.x);				/* Draw left side */
 	vert(rp, rp->r_pos.x + rp->r_max.x - 1);	/* Draw right side */
-	horiz(rp, rp->r_pos.y);				/* Draw top */
-	horiz(rp, rp->r_pos.y + rp->r_max.y - 1);	/* Draw bottom */
+	horiz(rp, rp->r_pos.y, 1);				/* Draw top */
+	horiz(rp, rp->r_pos.y + rp->r_max.y - 1, 0);	/* Draw bottom */
 
 	/*
 	 * Put the floor down
@@ -192,12 +192,14 @@ vert(const struct room *rp, int startx)
  */
 
 void
-horiz(const struct room *rp, int starty)
+horiz(const struct room *rp, int starty, int is_top)
 {
     int x;
 
-    for (x = rp->r_pos.x; x <= rp->r_pos.x + rp->r_max.x - 1; x++)
-	chat(starty, x) = HWALL;
+    chat(starty, rp->r_pos.x) = is_top ? ULWALL : LLWALL;
+    for (x = rp->r_pos.x + 1; x < rp->r_pos.x + rp->r_max.x - 1; x++)
+        chat(starty, x) = HWALL;
+    chat(starty, rp->r_pos.x + rp->r_max.x - 1) = is_top ? URWALL : LRWALL;
 }
 
 /*
