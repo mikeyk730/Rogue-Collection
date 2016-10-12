@@ -405,7 +405,7 @@ killname(int monst, int doart)
 	{'\0'}
     };
 
-    if (isupper(monst))
+    if (ismonst(monst))
     {
 	sp = monsters[monst-'A'].m_name;
 	article = TRUE;

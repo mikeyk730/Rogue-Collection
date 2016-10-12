@@ -643,7 +643,7 @@ identify(void)
 	msg("");
 	return;
     }
-    if (isupper(ch))
+    if (ismonst(ch))
 	str = monsters[ch-'A'].m_name;
     else
     {

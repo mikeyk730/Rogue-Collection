@@ -133,9 +133,7 @@ main(int argc, char **argv)
     init_stones();			/* Set up stone settings of rings */
     init_materials();			/* Set up materials of wands */
     setup();
-#ifdef USE_PC_GFX
-    setup_colors();
-#endif
+    PC_GFX_SETUP_COLORS();
 
     /*
      * The screen must be at least NUMLINES x NUMCOLS

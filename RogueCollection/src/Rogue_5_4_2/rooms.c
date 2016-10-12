@@ -452,15 +452,7 @@ leave_room(const coord *cp)
 			addrawch(' ');
 		    break;
 		default:
-		    /*
-		     * to check for monster, we have to strip out
-		     * standout bit
-		     */
-#ifdef USE_PC_GFX
-            if (ch>='A'&&ch<='Z')
-#else
-		    if (isupper(toascii(ch)))
-#endif
+		    if (ismonst(ch))
 		    {
 			if (on(player, SEEMONST))
 			{

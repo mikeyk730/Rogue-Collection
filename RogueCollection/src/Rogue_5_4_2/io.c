@@ -74,13 +74,9 @@ endmsg(void)
     if (mpos)
     {
 	look(FALSE);
-#ifdef USE_PC_GFX
-    attron(COLOR_PAIR(0x70));
-    mvaddstr(0, mpos, " More ");
-    attroff(COLOR_PAIR(0x70));
-#else
-    mvaddstr(0, mpos, "--More--");
-#endif
+    PC_GFX_STANDOUT();
+    mvaddstr(0, mpos, MORE_MSG);
+    PC_GFX_STANDEND();
     refresh();
 	if (!msg_esc)
 	    wait_for(stdscr, ' ');
@@ -143,9 +139,7 @@ step_ok(int ch)
 	case ' ':
 	case VWALL:
 	case HWALL:
-#ifdef USE_PC_GFX
-    case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+    PC_GFX_WALL_CASES
 	    return FALSE;
 	default:
 	    return (!isalpha(ch));

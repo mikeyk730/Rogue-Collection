@@ -359,8 +359,8 @@ set_mname(const THING *tp)
     else if (on(player, ISHALU))
     {
 	move(tp->t_pos.y, tp->t_pos.x);
-	ch = toascii(CCHAR(inch()));
-	if (!isupper(ch))
+    ch = CCHAR(inch());
+	if (!ismonst(ch))
 	    ch = rnd(26);
 	else
 	    ch -= 'A';

@@ -73,9 +73,7 @@ option(void)
     const OPTION *op;
     int		retval;
 
-#ifdef USE_PC_GFX
-    curs_set(1);
-#endif
+    PC_GFX_SET_CURSOR(1);
     wclear(hw);
     /*
      * Display current values of options
@@ -120,9 +118,7 @@ option(void)
     clearok(curscr, TRUE);
     touchwin(stdscr);
     after = FALSE;
-#ifdef USE_PC_GFX
-    curs_set(0);
-#endif
+    PC_GFX_SET_CURSOR(0);
 }
 
 /*

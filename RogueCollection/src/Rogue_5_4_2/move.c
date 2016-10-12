@@ -106,9 +106,7 @@ over:
 	case ' ':
 	case VWALL:
 	case HWALL:
-#ifdef USE_PC_GFX
-    case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+    PC_GFX_WALL_CASES
 hit_bound:
 	    if (passgo && running && (proom->r_flags & ISGONE)
 		&& !on(player, ISBLIND))
@@ -188,14 +186,18 @@ hit_bound:
 	    /* FALLTHROUGH */
 	default:
 	    running = FALSE;
-	    if (isupper(ch) || moat(nh.y, nh.x))
+	    if (ismonst(ch) || moat(nh.y, nh.x))
 		fight(&nh, cur_weapon, FALSE);
 	    else
 	    {
 		if (ch != STAIRS)
 		    take = ch;
 move_stuff:
-		mvaddrawch(hero.y, hero.x, floor_at());
+
+        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x);
+        mvaddrawch(hero.y, hero.x, floor_at());
+        PC_GFX_STANDEND();
+
 		if ((fl & F_PASS) && chat(oldpos.y, oldpos.x) == DOOR)
 		    leave_room(&nh);
 		hero = nh;
@@ -254,7 +256,7 @@ door_open(const struct room *rp)
     if (!(rp->r_flags & ISGONE))
 	for (y = rp->r_pos.y; y < rp->r_pos.y + rp->r_max.y; y++)
 	    for (x = rp->r_pos.x; x < rp->r_pos.x + rp->r_max.x; x++)
-		if (isupper(winat(y, x)))
+		if (ismonst(winat(y, x)))
 		    wake_monster(y, x);
 }
 

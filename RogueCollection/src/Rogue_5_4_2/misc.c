@@ -120,14 +120,9 @@ look(int wakeup)
 		ch = ' ';
 
         if (tp != NULL || ch != CCHAR(inch())) {
-#ifdef USE_PC_GFX
-            if (flat(y, x) & F_PASS)
-                attron(COLOR_PAIR(0x70));
-#endif
+            PC_GFX_PASSGE_STANDOUT(y, x);
             addrawch(ch);
-#ifdef USE_PC_GFX
-            attroff(COLOR_PAIR(0x70));
-#endif
+            PC_GFX_STANDEND();
         }
 
 	    if (door_stop && !firstmove && running)
@@ -172,9 +167,7 @@ look(int wakeup)
 		    case FLOOR:
 		    case VWALL:
 		    case HWALL:
-#ifdef USE_PC_GFX
-            case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+            PC_GFX_WALL_CASES
 		    case ' ':
 			break;
 		    default:
@@ -186,14 +179,9 @@ look(int wakeup)
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
     if (!running || !jump) {
-#ifdef USE_PC_GFX
-        if (flat(hero.y, hero.x) & F_PASS)
-            attron(COLOR_PAIR(0x70));
-#endif
+        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x);
         mvaddrawch(hero.y, hero.x, PLAYER);
-#ifdef USE_PC_GFX
-        attroff(COLOR_PAIR(0x70));
-#endif     
+        PC_GFX_STANDEND();
     }
 # ifdef DEBUG
     done = FALSE;
@@ -216,9 +204,7 @@ trip_ch(int y, int x, int ch)
 	    case PASSAGE:
 	    case HWALL:
 	    case VWALL:
-#ifdef USE_PC_GFX
-        case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+        PC_GFX_WALL_CASES
 	    case DOOR:
 	    case TRAP:
 		break;

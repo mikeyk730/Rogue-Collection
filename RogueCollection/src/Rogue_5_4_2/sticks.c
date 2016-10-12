@@ -342,9 +342,7 @@ fire_bolt(const coord *start, coord *dir, const char *name)
 		/* FALLTHROUGH */
 	    case VWALL:
 	    case HWALL:
-#ifdef USE_PC_GFX
-        case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+        PC_GFX_WALL_CASES
 	    case ' ':
 		if (!changed)
 		    hit_hero = !hit_hero;
