@@ -351,7 +351,7 @@ static void _highlight(SDL_Rect *src, SDL_Rect *dest, chtype ch)
 unsigned int GetColor(int chr, int attr)
 {
     //if it is inside a room
-    if (attr == 0x07) switch (chr)
+    if (attr == 0x07|| attr == 0) switch (chr)
     {
     case DOOR:
     case VWALL: case HWALL:
@@ -451,7 +451,9 @@ void PDC_transform_line(int lineno, int x, int len, const chtype *srcp)
             ch += ((chtype)0x0e << PDC_COLOR_SHIFT);
         }
         if (lineno > 0 && lineno < 23) {
-            ch += ((chtype)GetColor(ch&0xff, 0x07) << PDC_COLOR_SHIFT);
+            int color = (ch >> PDC_COLOR_SHIFT) & 0xff;
+            int new_color = GetColor(ch&0xff, color);
+            ch = (ch & ~A_COLOR) | ((chtype)new_color << PDC_COLOR_SHIFT);
         }
 #endif
 

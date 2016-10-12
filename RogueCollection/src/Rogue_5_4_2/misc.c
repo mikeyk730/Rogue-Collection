@@ -119,8 +119,16 @@ look(int wakeup)
 	    if ((proom->r_flags & ISDARK) && !see_floor && ch == FLOOR)
 		ch = ' ';
 
-	    if (tp != NULL || ch != CCHAR( inch() ))
-		addrawch(ch);
+        if (tp != NULL || ch != CCHAR(inch())) {
+#ifdef USE_PC_GFX
+            if (flat(y, x) & F_PASS)
+                attron(COLOR_PAIR(0x70));
+#endif
+            addrawch(ch);
+#ifdef USE_PC_GFX
+            attroff(COLOR_PAIR(0x70));
+#endif
+        }
 
 	    if (door_stop && !firstmove && running)
 	    {
@@ -177,8 +185,16 @@ look(int wakeup)
 	}
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
-    if (!running || !jump)
-	mvaddrawch(hero.y, hero.x, PLAYER);
+    if (!running || !jump) {
+#ifdef USE_PC_GFX
+        if (flat(hero.y, hero.x) & F_PASS)
+            attron(COLOR_PAIR(0x70));
+#endif
+        mvaddrawch(hero.y, hero.x, PLAYER);
+#ifdef USE_PC_GFX
+        attroff(COLOR_PAIR(0x70));
+#endif     
+    }
 # ifdef DEBUG
     done = FALSE;
 # endif /* DEBUG */
