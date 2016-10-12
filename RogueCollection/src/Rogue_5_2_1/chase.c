@@ -163,8 +163,11 @@ over:
 	moat(ch_ret.y, ch_ret.x) = th;
 	th->t_pos = ch_ret;
     }
-    if (see_monst(th))
-	MVADDCH(ch_ret.y, ch_ret.x, th->t_disguise);
+    if (see_monst(th)) {
+        PC_GFX_PASSGE_STANDOUT(ch_ret.y, ch_ret.x);
+        MVADDCH(ch_ret.y, ch_ret.x, th->t_disguise);
+        PC_GFX_STANDEND();
+    }
     else if (on(player, SEEMONST))
     {
 	standout();
