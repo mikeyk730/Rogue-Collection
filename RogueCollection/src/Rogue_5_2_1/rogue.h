@@ -121,6 +121,8 @@ extern const BYTE *metal[];
 #define AMULET		','
 #define RING		'='
 #define STICK		'/'
+#define VWALL	    '|'
+#define HWALL	    '-'
 #else
 #define PASSAGE	(0xb1)
 #define DOOR	(0xce)

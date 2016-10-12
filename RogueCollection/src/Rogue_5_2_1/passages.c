@@ -278,7 +278,7 @@ register coord *cp;
     index = INDEX(cp->y, cp->x);
     if (rnd(10) + 1 < level && rnd(5) == 0)
     {
-	_level[index] = (cp->y == rm->r_pos.y || cp->y == rm->r_pos.y + rm->r_max.y - 1) ? '-' : '|';
+	_level[index] = (cp->y == rm->r_pos.y || cp->y == rm->r_pos.y + rm->r_max.y - 1) ? HWALL : VWALL;
 	_flags[index] &= ~F_REAL;
     }
     else

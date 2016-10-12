@@ -391,8 +391,8 @@ search()
 	    if (!(*fp & F_REAL))
 		switch (chat(y, x))
 		{
-		    case '|':
-		    case '-':
+		    case VWALL:
+		    case HWALL:
 			if (rnd(5) != 0)
 			    break;
 			chat(y, x) = DOOR;
@@ -489,8 +489,8 @@ identify()
 	str = monsters[ch-'A'].m_name;
     else switch (ch)
     {
-	case '|':
-	case '-':
+	case VWALL:
+	case HWALL:
 	    str = "wall of a room";
 	when GOLD: str = "gold";
 	when STAIRS : str = "a staircase";

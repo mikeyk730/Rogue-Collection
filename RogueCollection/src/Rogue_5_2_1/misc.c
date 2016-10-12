@@ -183,8 +183,8 @@ bool wakeup;
 			    passcount++;
 			break;
 		    case FLOOR:
-		    case '|':
-		    case '-':
+		    case VWALL:
+		    case HWALL:
 		    case ' ':
 			break;
 		    default:

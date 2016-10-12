@@ -149,8 +149,8 @@ read_scroll()
 		    index = INDEX(y, x);
 		    switch (ch = _level[index])
 		    {
-			case '-':
-			case '|':
+			case HWALL:
+			case VWALL:
 			    if (!(_flags[index] & F_REAL))
 			    {
 				ch = _level[index] = DOOR;
