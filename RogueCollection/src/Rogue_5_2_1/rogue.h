@@ -57,13 +57,14 @@ extern const BYTE *metal[];
 /*
  * All the fun defines
  */
-#define ADDCH(ch)           addch(ch)
-#define WADDCH(w,ch)        waddch(w,ch)
-#define MVADDCH(r,c,ch)     mvaddch(r,c,ch)
-#define MVWADDCH(w,r,c,ch)  mvaddch(w,r,c,ch)
-#define INCH()              inch()
-#define MVINCH(r,c)         mvinch(r,c)
-#define MVWINCH(w,r,c)      mvwinch(w,r,c)
+#define CCHAR(x)            ( (x) & A_CHARTEXT )
+#define ADDCH(ch)           addrawch(ch)
+#define WADDCH(w,ch)        waddrawch(w,ch)
+#define MVADDCH(r,c,ch)     mvaddrawch(r,c,ch)
+#define MVWADDCH(w,r,c,ch)  mvwaddrawch(w,r,c,ch)
+#define INCH()              CCHAR(inch())
+#define MVINCH(r,c)         CCHAR(mvinch(r,c))
+#define MVWINCH(w,r,c)      CCHAR(mvwinch(w,r,c))
 #define shint		BYTE		/* short integer (for very small #s) */
 #define when		break;case
 #define otherwise	break;default
@@ -103,6 +104,7 @@ extern const BYTE *metal[];
 /*
  * Things that appear on the screens
  */
+#ifndef USE_PC_GFX
 #define PASSAGE		'#'
 #define DOOR		'+'
 #define FLOOR		'.'
@@ -119,6 +121,31 @@ extern const BYTE *metal[];
 #define AMULET		','
 #define RING		'='
 #define STICK		'/'
+#else
+#define PASSAGE	(0xb1)
+#define DOOR	(0xce)
+#define FLOOR	(0xfa)
+#define PLAYER	(0x01)
+#define TRAP	(0x04)
+#define STAIRS	(0xf0)
+#define GOLD	(0x0f)
+#define POTION	(0xad)
+#define SCROLL	(0x0d)
+#define MAGIC	'$'
+#define FOOD	(0x05)
+#define STICK	(0xe7)
+#define ARMOR	(0x08)
+#define AMULET	(0x0c)
+#define RING	(0x09)
+#define WEAPON	(0x18)
+#define VWALL	(0xba)
+#define HWALL	(0xcd)
+#define ULWALL	(0xc9)
+#define URWALL	(0xbb)
+#define LLWALL	(0xc8)
+#define LRWALL	(0xbc)
+#endif
+
 #define CALLABLE	-1
 
 /*

@@ -77,8 +77,14 @@ endmsg()
     {
 	look(FALSE);
 	move(0, mpos);
+#ifdef USE_PC_GFX
+    attron(COLOR_PAIR(0x70));
+    addstr(" More ");
+    attroff(COLOR_PAIR(0x70));
+#else
 	addstr("--More--");
-	refresh();
+#endif
+    refresh();
 	wait_for(' ');
     }
     /*

@@ -75,9 +75,9 @@ endmsg(void)
     {
 	look(FALSE);
 #ifdef USE_PC_GFX
-    standout();
+    attron(COLOR_PAIR(0x70));
     mvaddstr(0, mpos, " More ");
-    standend();
+    attroff(COLOR_PAIR(0x70));
 #else
     mvaddstr(0, mpos, "--More--");
 #endif

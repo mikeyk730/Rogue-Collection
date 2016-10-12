@@ -66,6 +66,9 @@ option()
     register OPTION	*op;
     register int	retval;
 
+#ifdef USE_PC_GFX
+    curs_set(1);
+#endif
     wclear(hw);
     /*
      * Display current values of options
@@ -106,6 +109,9 @@ option()
     clearok(curscr, TRUE);
     touchwin(stdscr);
     after = FALSE;
+#ifdef USE_PC_GFX
+    curs_set(0);
+#endif
 }
 
 /*
