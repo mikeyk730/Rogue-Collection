@@ -42,7 +42,7 @@ bool silent;
 {
     register THING *op, *lp = NULL;
     register bool exact, from_floor;
-    register char floor;
+    register BYTE floor;
     int discarded = 0;
 
     if (obj == NULL)
@@ -220,9 +220,9 @@ inventory(list, type)
 THING *list;
 int type;
 {
-    register char ch;
+    register BYTE ch;
     register int n_objs;
-    char inv_temp[MAXSTR];
+    BYTE inv_temp[MAXSTR];
 
     n_objs = 0;
     for (ch = 'a'; list != NULL; ch++, list = next(list))
@@ -254,7 +254,7 @@ int type;
  *	Add something to characters pack.
  */
 pick_up(ch)
-char ch;
+BYTE ch;
 {
     register THING *obj, *mp;
 
@@ -293,7 +293,7 @@ char ch;
 picky_inven()
 {
     register THING *obj;
-    register char ch, mch;
+    register BYTE ch, mch;
 
     if (pack == NULL)
 	msg("you aren't carrying anything");
@@ -326,11 +326,11 @@ picky_inven()
  */
 THING *
 get_item(purpose, type)
-char *purpose;
+BYTE *purpose;
 int type;
 {
     register THING *obj;
-    register char ch, och;
+    register BYTE ch, och;
 
     if (pack == NULL)
 	msg("you aren't carrying anything");
@@ -388,7 +388,7 @@ pack_char(obj)
 register THING *obj;
 {
     register THING *item;
-    register char c;
+    register BYTE c;
 
     c = 'a';
     for (item = pack; item != NULL; item = next(item))
@@ -406,7 +406,7 @@ register THING *obj;
 money(value)
 register int value;
 {
-    register char floor;
+    register BYTE floor;
 
     floor = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
     purse += value;

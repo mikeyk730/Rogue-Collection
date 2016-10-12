@@ -18,9 +18,9 @@
 #define NONE 100
 
 static struct init_weps {
-    char *iw_dam;	/* Damage when wielded */
-    char *iw_hrl;	/* Damage when thrown */
-    char iw_launch;	/* Launching weapon */
+    BYTE *iw_dam;	/* Damage when wielded */
+    BYTE *iw_hrl;	/* Damage when thrown */
+    BYTE iw_launch;	/* Launching weapon */
     int iw_flags;	/* Miscellaneous flags */
 } init_dam[MAXWEAPONS] = {
     "2d4",	"1d3",	NONE, 		0,		/* Mace */
@@ -165,7 +165,7 @@ register bool pr;
  */
 init_weapon(weap, type)
 register THING *weap;
-char type;
+BYTE type;
 {
     register struct init_weps *iwp;
 
@@ -202,12 +202,12 @@ THING *obj;
  * num:
  *	Figure out the plus number for armor/weapons
  */
-char *
+BYTE *
 num(n1, n2, type)
 register int n1, n2;
-register char type;
+register BYTE type;
 {
-    static char numbuf[10];
+    static BYTE numbuf[10];
 
     sprintf(numbuf, "%s%d", n1 < 0 ? "" : "+", n1);
     if (type == WEAPON)
@@ -222,7 +222,7 @@ register char type;
 wield()
 {
     register THING *obj, *oweapon;
-    register char *sp;
+    register BYTE *sp;
 
     oweapon = cur_weapon;
     if (!dropcheck(cur_weapon))

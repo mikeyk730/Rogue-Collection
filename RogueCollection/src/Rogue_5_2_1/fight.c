@@ -26,13 +26,13 @@ long e_levels[] = {
  */
 fight(mp, mn, weap, thrown)
 register coord *mp;
-char mn;
+BYTE mn;
 register THING *weap;
 bool thrown;
 {
     register THING *tp;
     register bool did_hit = TRUE;
-    register const char *mname;
+    register const BYTE *mname;
 
     /*
      * Find the monster we want to fight
@@ -99,7 +99,7 @@ bool thrown;
 attack(mp)
 register THING *mp;
 {
-    register const char *mname;
+    register const BYTE *mname;
 
     /*
      * Since this is an attack, stop running and any healing that was
@@ -337,7 +337,7 @@ THING *thatt, *thdef, *weap;
 bool hurl;
 {
     register struct stats *att, *def;
-    register char *cp;
+    register BYTE *cp;
     register int ndice, nsides, def_arm;
     register bool did_hit = FALSE;
     register int hplus;
@@ -439,12 +439,12 @@ bool hurl;
  * prname:
  *	The print name of a combatant
  */
-char *
+BYTE *
 prname(who, upper)
-register char *who;
+register BYTE *who;
 bool upper;
 {
-    static char tbuf[MAXSTR];
+    static BYTE tbuf[MAXSTR];
 
     *tbuf = '\0';
     if (who == 0)
@@ -466,9 +466,9 @@ bool upper;
  *	Print a message to indicate a succesful hit
  */
 hit(er, ee)
-register char *er, *ee;
+register BYTE *er, *ee;
 {
-    register char *s = "";
+    register BYTE *s = "";
 
     addmsg(prname(er, TRUE));
     if (terse)
@@ -492,9 +492,9 @@ register char *er, *ee;
  *	Print a message to indicate a poor swing
  */
 miss(er, ee)
-register char *er, *ee;
+register BYTE *er, *ee;
 {
-    register char *s = "";
+    register BYTE *s = "";
 
     addmsg(prname(er, TRUE));
     switch (terse ? 0 : rnd(4))
@@ -599,7 +599,7 @@ raise_level()
  */
 thunk(weap, mname)
 register THING *weap;
-register const char *mname;
+register const BYTE *mname;
 {
     if (weap->o_type == WEAPON)
 	addmsg("the %s hits ", w_names[weap->o_which]);
@@ -617,7 +617,7 @@ register const char *mname;
  */
 bounce(weap, mname)
 register THING *weap;
-register const char *mname;
+register const BYTE *mname;
 {
     if (weap->o_type == WEAPON)
 	addmsg("the %s misses ", w_names[weap->o_which]);

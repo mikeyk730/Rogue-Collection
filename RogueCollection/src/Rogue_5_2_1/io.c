@@ -20,10 +20,10 @@
  * msg:
  *	Display a message at the top of the screen.
  */
-static char msgbuf[BUFSIZ];
+static BYTE msgbuf[BUFSIZ];
 static int newpos = 0;
 
-msg(char *fmt, ...)
+msg(BYTE *fmt, ...)
 {
     va_list ap;
     /*
@@ -50,7 +50,7 @@ msg(char *fmt, ...)
  *	Add things to the current message
  */
 
-addmsg(char *fmt, ...)
+addmsg(BYTE *fmt, ...)
 {
     va_list ap;
 
@@ -99,7 +99,7 @@ endmsg()
  *	Perform an add onto the message buffer
  */
 
-doadd(char *fmt, va_list ap)
+doadd(BYTE *fmt, va_list ap)
 {
     vsprintf(&msgbuf[newpos], fmt, ap);
     newpos = strlen(msgbuf);
@@ -148,11 +148,11 @@ readchar()
     return( readcharw(stdscr) );
 }
 
-char *
+BYTE *
 unctrol(ch)
-char ch;
+BYTE ch;
 {
-    return( (char *) unctrl(ch) );
+    return( (BYTE *) unctrl(ch) );
 }
 
 /*
@@ -166,7 +166,7 @@ status()
     static int s_lvl, s_pur = -1, s_hp, s_ac = 0;
     static str_t s_str;
     static long s_exp = 0;
-    static char *state_name[] =
+    static BYTE *state_name[] =
     {
 	"", "Hungry", "Weak", "Faint"
     };
@@ -216,16 +216,16 @@ status()
 
 
 wait_for(ch)
-register char ch;
+register BYTE ch;
 {
     w_wait_for(stdscr, ch);
 }
 
 w_wait_for(win,ch)
 WINDOW *win;
-register char ch;
+register BYTE ch;
 {
-    register char c;
+    register BYTE c;
 
     if (ch == '\n')
         while ((c = readcharw(win)) != '\n' && c != '\r')
@@ -241,7 +241,7 @@ register char ch;
  */
 show_win(scr, message)
 register WINDOW *scr;
-char *message;
+BYTE *message;
 {
     mvwaddstr(scr, 0, 0, message);
     touchwin(scr);

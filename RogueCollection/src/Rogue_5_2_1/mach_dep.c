@@ -49,7 +49,7 @@ int num_checks;		/* times we've gone over in checkout() */
 
 #ifdef SCOREFILE
 #ifdef LOCKFILE
-static char *lockfile = LOCKFILE;
+static BYTE *lockfile = LOCKFILE;
 #endif
 #endif
 
@@ -163,7 +163,7 @@ start_score()
  *	See if the file has a symbolic link
  */
 issymlink(sp)
-char *sp;
+BYTE *sp;
 {
 #ifdef S_IFLNK
     struct stat sbuf2;
@@ -224,7 +224,7 @@ author()
 void
 checkout(int s)
 {
-    static char *msgs[] = {
+    static BYTE *msgs[] = {
 	"The load is too high to be playing.  Please leave in %0.1f minutes",
 	"Please save your game.  You have %0.1f minutes",
 	"Last warning.  You have %0.1f minutes to leave",
@@ -276,7 +276,7 @@ checkout(int s)
  *	shell, do a printf instead of a msg to avoid the refresh.
  */
 chmsg(fmt, arg)
-char *fmt;
+BYTE *fmt;
 int arg;
 {
     if (in_shell)

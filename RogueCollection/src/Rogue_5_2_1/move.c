@@ -25,7 +25,7 @@ coord nh;
  *	Start the hero running
  */
 do_run(ch)
-char ch;
+BYTE ch;
 {
     running = TRUE;
     after = FALSE;
@@ -40,7 +40,7 @@ char ch;
 do_move(dy, dx)
 int dy, dx;
 {
-    register char ch, fl;
+    register BYTE ch, fl;
 
     firstmove = FALSE;
     if (no_move)
@@ -215,7 +215,7 @@ door_open(rp)
 struct room *rp;
 {
     register int j, k;
-    register char ch;
+    register BYTE ch;
     register THING *item;
 
     if (!(rp->r_flags & ISGONE) && !on(player, ISBLIND))
@@ -241,7 +241,7 @@ struct room *rp;
 be_trapped(tc)
 register coord *tc;
 {
-    register char tr;
+    register BYTE tr;
     register int index;
 
     count = running = FALSE;
@@ -320,7 +320,7 @@ rndmove(who)
 THING *who;
 {
     register int x, y;
-    register char ch;
+    register BYTE ch;
     register THING *obj;
     static coord ret;  /* what we will be returning */
 

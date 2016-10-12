@@ -24,7 +24,7 @@
 #include <string.h>
 #include "rogue.h"
 
-char countch, direction, newcount = FALSE;
+BYTE countch, direction, newcount = FALSE;
 
 /*
  * command:
@@ -32,9 +32,9 @@ char countch, direction, newcount = FALSE;
  */
 command()
 {
-    register char ch;
+    register BYTE ch;
     register int ntimes = 1;			/* Number of player moves */
-    char *unctrol();
+    BYTE *unctrol();
 
     if (on(player, ISHASTE))
 	ntimes++;
@@ -360,7 +360,7 @@ command()
  *	What to do with an illegal command
  */
 illcom(ch)
-char ch;
+BYTE ch;
 {
     save_msg = FALSE;
     count = 0;
@@ -375,7 +375,7 @@ char ch;
 search()
 {
     register int y, x;
-    register char *fp;
+    register BYTE *fp;
     register int ey, ex;
 
     if (on(player, ISBLIND))
@@ -418,7 +418,7 @@ search()
 help()
 {
     register const struct h_list *strp = helpstr;
-    register char helpch;
+    register BYTE helpch;
     register int cnt;
 
     msg("character you want help for (* for all): ");
@@ -474,8 +474,8 @@ help()
  */
 identify()
 {
-    register char ch;
-    register const char *str;
+    register BYTE ch;
+    register const BYTE *str;
 
     msg("what do you want identified? ");
     ch = readchar();
@@ -556,8 +556,8 @@ u_level()
 call()
 {
     register THING *obj;
-    register char **guess;
-    const char *elsewise;
+    register BYTE **guess;
+    const BYTE *elsewise;
     register bool *know;
 
     obj = get_item("call", CALLABLE);

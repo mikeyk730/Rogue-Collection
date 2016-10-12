@@ -30,10 +30,10 @@
  *	The main program, of course
  */
 main(argc, argv, envp)
-char **argv;
-char **envp;
+BYTE **argv;
+BYTE **envp;
 {
-    register char *env;
+    register BYTE *env;
     int lowtime;
 
     md_init();
@@ -200,7 +200,7 @@ endit(int a)
  *	Exit the program, printing a message.
  */
 fatal(s)
-char *s;
+BYTE *s;
 {
     clear();
     move(LINES-2, 0);
@@ -272,7 +272,7 @@ tstp(int a)
  */
 playit()
 {
-    register char *opts;
+    register BYTE *opts;
 
     /*
      * set up defaults for slow terminals

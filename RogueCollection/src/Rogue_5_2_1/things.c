@@ -23,12 +23,12 @@ bool got_genocide = FALSE;
  *	Return the name of something as it would appear in an
  *	inventory.
  */
-char *
+BYTE *
 inv_name(obj, drop)
 register THING *obj;
 register bool drop;
 {
-    register char *pb;
+    register BYTE *pb;
 
     pb = prbuf;
     switch (obj->o_type)
@@ -165,7 +165,7 @@ register bool drop;
  */
 drop()
 {
-    register char ch;
+    register BYTE ch;
     register THING *nobj, *op;
 
     ch = chat(hero.y, hero.x);
@@ -396,11 +396,11 @@ static int line_cnt = 0;
 
 static bool newpage = FALSE;
 
-static char *lastfmt, *lastarg;
+static BYTE *lastfmt, *lastarg;
 
 discovered()
 {
-    register char ch;
+    register BYTE ch;
     register bool disc_list;
 
     do {
@@ -457,10 +457,10 @@ discovered()
 #define MAX(a,b,c,d)	(a > b ? (a > c ? (a > d ? a : d) : (c > d ? c : d)) : (b > c ? (b > d ? b : d) : (c > d ? c : d)))
 
 print_disc(type)
-char type;
+BYTE type;
 {
     register bool *know = NULL;
-    register char **guess = NULL;
+    register BYTE **guess = NULL;
     register int i, maxnum = 0, num_found;
     static THING obj;
     static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
@@ -532,7 +532,7 @@ int numthings;
  */
 /* VARARGS1 */
 add_line(fmt, arg)
-char *fmt, *arg;
+BYTE *fmt, *arg;
 {
     if (line_cnt == 0)
     {
@@ -590,11 +590,11 @@ end_line()
  * nothing:
  *	Set up prbuf so that message for "nothing found" is there
  */
-char *
+BYTE *
 nothing(type)
-register char type;
+register BYTE type;
 {
-    register char *sp, *tystr = NULL;
+    register BYTE *sp, *tystr = NULL;
 
     if (terse)
 	sprintf(prbuf, "Nothing");

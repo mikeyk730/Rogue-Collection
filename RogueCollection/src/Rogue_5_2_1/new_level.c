@@ -24,7 +24,7 @@ new_level()
 {
     register int rm, i;
     register THING *tp;
-    register char *sp;
+    register BYTE *sp;
     register THING **mp;
     register int index;
     coord stairs;

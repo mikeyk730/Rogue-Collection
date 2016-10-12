@@ -225,8 +225,8 @@ register coord *cp;
 {
     register int y, x;
     register struct room *rp;
-    register char floor;
-    register char ch;
+    register BYTE floor;
+    register BYTE ch;
 
     rp = proom;
     proom = &passages[flat(cp->y, cp->x) & F_PNUM];

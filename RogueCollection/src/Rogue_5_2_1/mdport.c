@@ -48,7 +48,7 @@
 #endif
 
 #ifdef __INTERIX
-char *strdup(const char *s);
+BYTE *strdup(const BYTE *s);
 #endif
 
 #include <stdlib.h>
@@ -75,7 +75,7 @@ void
 md_init()
 {
 #ifdef __INTERIX
-    char *term;
+    BYTE *term;
 
     term = getenv("TERM");
 
@@ -159,7 +159,7 @@ md_raw_standend()
 }
 
 int
-md_unlink_open_file(char *file, int inf)
+md_unlink_open_file(BYTE *file, int inf)
 {
 #ifdef _WIN32
     _close(inf);
@@ -171,7 +171,7 @@ md_unlink_open_file(char *file, int inf)
 }
 
 int
-md_unlink(char *file)
+md_unlink(BYTE *file)
 {
 #ifdef _WIN32
     _chmod(file, 0600);
@@ -182,7 +182,7 @@ md_unlink(char *file)
 }
 
 FILE *
-md_fdopen(int fd, char *mode)
+md_fdopen(int fd, BYTE *mode)
 {
 #ifdef _WIN32
     return( _fdopen(fd, mode) );
@@ -202,7 +202,7 @@ md_fileno(FILE *fp)
 }
 
 int
-md_creat(char *file, int mode)
+md_creat(BYTE *file, int mode)
 {
     int fd;
 #ifdef _WIN32
@@ -235,11 +235,11 @@ md_getuid()
 #endif
 }
 
-char *
+BYTE *
 md_getusername(int uid)
 {
-    static char login[80];
-    char *l = NULL;
+    static BYTE login[80];
+    BYTE *l = NULL;
 
     /* POSIX Shell has priority, then O/S specific methods */
     if ( (uid == md_getuid()) && ((l = getenv("LOGNAME")) != NULL) )
@@ -280,19 +280,19 @@ md_getusername(int uid)
     return(login);
 }
 
-char *
+BYTE *
 md_gethomedir()
 {
-    static char homedir[PATH_MAX];
-    char *h = NULL;
+    static BYTE homedir[PATH_MAX];
+    BYTE *h = NULL;
     size_t len;
 #if defined(_WIN32)
     TCHAR szPath[PATH_MAX];
 #endif
 #if defined(_WIN32) || defined(DJGPP)
-    char slash = '\\';
+    BYTE slash = '\\';
 #else
-    char slash = '/';
+    BYTE slash = '/';
     struct passwd *pw;
     pw = getpwuid(getuid());
 
@@ -330,17 +330,17 @@ md_sleep(int s)
 #endif
 }
 
-char *
+BYTE *
 md_getshell()
 {
-    static char shell[PATH_MAX];
-    char *s = NULL;
+    static BYTE shell[PATH_MAX];
+    BYTE *s = NULL;
 #ifdef _WIN32
-    char *def = "C:\\WINDOWS\\SYSTEM32\\CMD.EXE";
+    BYTE *def = "C:\\WINDOWS\\SYSTEM32\\CMD.EXE";
 #elif defined(__DJGPP__)
-    char *def = "C:\\COMMAND.COM";
+    BYTE *def = "C:\\COMMAND.COM";
 #else
-    char *def = "/bin/sh";
+    BYTE *def = "/bin/sh";
     struct passwd *pw;
     pw = getpwuid(getuid());
     s = pw->pw_shell;
@@ -383,7 +383,7 @@ md_shellescape()
     void (*myquit)(int);
     void (*myend)(int);
 #endif
-    char *sh;
+    BYTE *sh;
 
     sh = md_getshell();
 
@@ -425,10 +425,10 @@ md_shellescape()
 #endif
 }
 
-char *
+BYTE *
 md_getrealname(int uid)
 {
-    static char uidstr[20];
+    static BYTE uidstr[20];
 #if !defined(_WIN32) && !defined(DJGPP)
     struct passwd *pp;
 
@@ -445,20 +445,20 @@ md_getrealname(int uid)
 #endif
 }
 
-extern char *xcrypt(char *key, char *salt);
+extern BYTE *xcrypt(BYTE *key, BYTE *salt);
 
-char *
-md_crypt(char *key, char *salt)
+BYTE *
+md_crypt(BYTE *key, BYTE *salt)
 {
     return( xcrypt(key,salt) );
 }
 
-char *
-md_getpass(char *prompt)
+BYTE *
+md_getpass(BYTE *prompt)
 {
 #ifdef _WIN32
-    static char password_buffer[9];
-    char *p = password_buffer;
+    static BYTE password_buffer[9];
+    BYTE *p = password_buffer;
     int c, count = 0;
     int max_length = 9;
 
@@ -509,7 +509,7 @@ md_getpass(char *prompt)
 
    return password_buffer;
 #else
-   return( (char *) getpass(prompt) );
+   return( (BYTE *) getpass(prompt) );
 #endif
 }
 
@@ -520,7 +520,7 @@ unsigned long int
 md_ntohl(unsigned long int x)
 {
 #ifdef _WIN32
-    if ( *((char *)&md_endian) == 0x01 )
+    if ( *((BYTE *)&md_endian) == 0x01 )
         return(x);
     else
         return( ((x & 0x000000ffU) << 24) |
@@ -536,7 +536,7 @@ unsigned long int
 md_htonl(unsigned long int x)
 {
 #ifdef _WIN32
-    if ( *((char *)&md_endian) == 0x01 )
+    if ( *((BYTE *)&md_endian) == 0x01 )
         return(x);
     else
         return( ((x & 0x000000ffU) << 24) |
@@ -625,8 +625,8 @@ md_srand(int seed)
 #endif
 }
 
-char *
-md_strdup(const char *s)
+BYTE *
+md_strdup(const BYTE *s)
 {
 #ifdef _WIN32
     return( _strdup(s) );
@@ -649,11 +649,11 @@ md_memused()
 #endif
 }
 
-char *
+BYTE *
 md_gethostname()
 {
-    static char nodename[80];
-    char *n = NULL;
+    static BYTE nodename[80];
+    BYTE *n = NULL;
 #if !defined(_WIN32) && !defined(__DJGPP__)
     struct utsname ourname;
 
@@ -700,15 +700,15 @@ md_killchar()
  *	Print a readable version of a certain character
  */
 
-char *
-md_unctrl(char ch)
+BYTE *
+md_unctrl(BYTE ch)
 {
 #if USG5_0
-    extern char *_unctrl[];		/* Defined in curses library */
+    extern BYTE *_unctrl[];		/* Defined in curses library */
 
     return _unctrl[ch&0177];
 #else
-    return( (char *) unctrl(ch) );
+    return( (BYTE *) unctrl(ch) );
 #endif
 }
 

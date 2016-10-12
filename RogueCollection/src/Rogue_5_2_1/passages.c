@@ -129,10 +129,10 @@ conn(r1, r2)
 int r1, r2;
 {
     register struct room *rpf, *rpt = NULL;
-    register char rmt;
+    register BYTE rmt;
     register int distance = 0, turn_spot = 0, turn_distance = 0, index;
     register int rm;
-    register char direc;
+    register BYTE direc;
     coord del = {0,0}, curr, turn_delta = {0,0}, spos = {0,0}, epos = {0,0};
 
     if (r1 < r2)
@@ -333,9 +333,9 @@ passnum()
 numpass(y, x)
 register int y, x;
 {
-    register char *fp;
+    register BYTE *fp;
     register struct room *rp;
-    register char ch;
+    register BYTE ch;
 
     fp = &flat(y, x);
     if (*fp & F_PNUM)

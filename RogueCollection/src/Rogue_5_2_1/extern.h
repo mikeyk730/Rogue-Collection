@@ -31,9 +31,9 @@ extern bool	after, amulet, askme, door_stop, fight_flush,
 		slow_invent, terse, wizard, ws_know[];
 
 
-extern const char *p_colors[], *r_stones[], *w_names[], 
+extern const BYTE *p_colors[], *r_stones[], *w_names[], 
                   *a_names[], *ws_made[];
-extern char	_flags[], _level[], file_name[], fruit[],
+extern BYTE	_flags[], _level[], file_name[], fruit[],
 		home[], huh[], outbuf[], *p_guess[],
 		prbuf[], *r_guess[], *release, runch,
 		*s_guess[], *s_names[], take, whoami[],
@@ -52,7 +52,7 @@ extern WINDOW	*hw;
  * Function types
  */
 
-char	*charge_str(), *ctime(), *getenv(), *inv_name(),
+BYTE	*charge_str(), *ctime(), *getenv(), *inv_name(),
 	*killname(), *nothing(), *num(), *ring_num(),
 	*tr_name(),
 	*unctrol(), *vowelstr();
@@ -72,8 +72,8 @@ extern shint direction;
 extern shint newcount;
 extern int   between;
 extern int   num_checks;
-extern char  lvl_mons[27];
-extern char  wand_mons[27];
+extern BYTE  lvl_mons[27];
+extern BYTE  wand_mons[27];
 extern coord nh;
 extern bool  got_genocide;
 
@@ -86,6 +86,6 @@ extern bool  got_genocide;
 #define O_BINARY 0
 #endif
 
-extern FILE *md_fdopen(int fd, char *mode);
-extern char *md_getusername(int uid);
-extern char *md_gethomedir();
+extern FILE *md_fdopen(int fd, BYTE *mode);
+extern BYTE *md_getusername(int uid);
+extern BYTE *md_gethomedir();

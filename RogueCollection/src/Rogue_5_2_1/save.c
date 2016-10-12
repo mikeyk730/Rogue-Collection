@@ -36,7 +36,7 @@ save_game()
 {
     register FILE *savef;
     register int c;
-    char buf[MAXSTR];
+    BYTE buf[MAXSTR];
 
     /*
      * get file name
@@ -175,13 +175,13 @@ register FILE *savef;
  *	integrity from cheaters
  */
 restore(file, envp)
-register char *file;
-char **envp;
+register BYTE *file;
+BYTE **envp;
 {
     register int inf;
     register bool syml;
-    extern char **environ;
-    char buf[MAXSTR];
+    extern BYTE **environ;
+    BYTE buf[MAXSTR];
     STAT sbuf2;
     int slines, scols;
 
@@ -301,8 +301,8 @@ void *starta;
 unsigned int size;
 register FILE *outf;
 {
-    register char *ep;
-    register char *start = (char *) starta;
+    register BYTE *ep;
+    register BYTE *start = (BYTE *) starta;
     ep = encstr;
 
     while (size--)
@@ -322,9 +322,9 @@ register void *starta;
 unsigned int size;
 register int inf;
 {
-    register char *ep;
+    register BYTE *ep;
     register int read_size;
-    register char *start = (char *) starta;
+    register BYTE *start = (BYTE *) starta;
 
     if ((read_size = read(inf, start, size)) == -1 || read_size == 0)
 	return read_size;

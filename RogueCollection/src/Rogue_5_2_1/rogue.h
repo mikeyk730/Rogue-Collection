@@ -15,16 +15,18 @@
  * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
  */
 
+#define BYTE                unsigned char
+
 typedef struct { 
-    const char *st_name;
+    const BYTE *st_name;
     const int   st_value;
 } STONE;
    
-extern const char *rainbow[];
+extern const BYTE *rainbow[];
 extern const STONE stones[];
-extern const char *sylls[];
-extern const char *wood[];
-extern const char *metal[];
+extern const BYTE *sylls[];
+extern const BYTE *wood[];
+extern const BYTE *metal[];
 
 #define NCOLORS 27
 #define NSYLLS  159
@@ -62,7 +64,7 @@ extern const char *metal[];
 #define INCH()              inch()
 #define MVINCH(r,c)         mvinch(r,c)
 #define MVWINCH(w,r,c)      mvwinch(w,r,c)
-#define shint		char		/* short integer (for very small #s) */
+#define shint		BYTE		/* short integer (for very small #s) */
 #define when		break;case
 #define otherwise	break;default
 #define until(expr)	while(!(expr))
@@ -319,8 +321,8 @@ extern const char *metal[];
  */
 
 struct h_list {
-    char h_ch;
-    char *h_desc;
+    BYTE h_ch;
+    BYTE *h_desc;
 };
 
 /*
@@ -349,7 +351,7 @@ typedef unsigned int str_t;
  */
 
 struct magic_item {
-    const char *mi_name;
+    const BYTE *mi_name;
     shint mi_prob;
     short mi_worth;
 };
@@ -376,7 +378,7 @@ struct stats {
     shint s_lvl;			/* Level of mastery */
     shint s_arm;			/* Armor class */
     short s_hpt;			/* Hit points */
-    char s_dmg[16];			/* String describing damage done */
+    BYTE s_dmg[16];			/* String describing damage done */
     shint s_maxhp;			/* Max hit points */
 };
 
@@ -389,8 +391,8 @@ union thing {
 	coord _t_pos;			/* Position */
 	bool _t_turn;			/* If slowed, is it a turn to move */
 	unsigned char _t_type;		/* What it is */
-	char _t_disguise;		/* What mimic looks like */
-	char _t_oldch;			/* Character that was where it was */
+	BYTE _t_disguise;		/* What mimic looks like */
+	BYTE _t_oldch;			/* Character that was where it was */
 	coord *_t_dest;			/* Where it is running to */
 	short _t_flags;			/* State word */
 	struct stats _t_stats;		/* Physical description */
@@ -402,10 +404,10 @@ union thing {
 	union thing *_l_next, *_l_prev;	/* Next pointer in link */
 	shint _o_type;			/* What kind of object it is */
 	coord _o_pos;			/* Where it lives on the screen */
-	char *_o_text;			/* What it says if you read it */
-	char _o_launch;			/* What you need to launch it */
-	char _o_damage[8];		/* Damage if used like sword */
-	char _o_hurldmg[8];		/* Damage if thrown */
+	BYTE *_o_text;			/* What it says if you read it */
+	BYTE _o_launch;			/* What you need to launch it */
+	BYTE _o_damage[8];		/* Damage if used like sword */
+	BYTE _o_hurldmg[8];		/* Damage if thrown */
 	shint _o_count;			/* Count for plural objects */
 	shint _o_which;			/* Which object of a type it is */
 	shint _o_hplus;			/* Plusses to hit */
@@ -452,7 +454,7 @@ typedef union thing THING;
  * Array containing information on all the various types of mosnters
  */
 struct monster {
-    const char *m_name;			/* What to call the monster */
+    const BYTE *m_name;			/* What to call the monster */
     const shint m_carry;			/* Probability of carrying something */
     const short m_flags;			/* Things about the monster */
     struct stats m_stats;		/* Initial stats */

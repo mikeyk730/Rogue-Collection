@@ -92,7 +92,7 @@ init_player()
  * potions and scrolls
  */
 
-const char *rainbow[NCOLORS] = {
+const BYTE *rainbow[NCOLORS] = {
     "amber",
     "aquamarine",
     "black",
@@ -122,7 +122,7 @@ const char *rainbow[NCOLORS] = {
     "yellow",
 };
 
-const char *sylls[NSYLLS] = {
+const BYTE *sylls[NSYLLS] = {
     "a",   "ab",  "ag",  "aks", "ala", "an",  "ankh","app", "arg", "arze",
     "ash", "ban", "bar", "bat", "bek", "bie", "bin", "bit", "bjor",
     "blu", "bot", "bu",  "byt", "comp","con", "cos", "cre", "dalf",
@@ -171,7 +171,7 @@ const STONE stones[NSTONES] = {
     { "zircon",	 	 80},
 };
 
-const char *wood[NWOOD] = {
+const BYTE *wood[NWOOD] = {
     "avocado wood",
     "balsa",
     "bamboo",
@@ -207,7 +207,7 @@ const char *wood[NWOOD] = {
     "zebrawood",
 };
 
-const char *metal[NMETAL] = {
+const BYTE *metal[NMETAL] = {
     "aluminum",
     "beryllium",
     "bone",
@@ -284,8 +284,8 @@ init_colors()
 init_names()
 {
     register int nsyl;
-    register char *cp;
-    const char *sp;
+    register BYTE *cp;
+    const BYTE *sp;
     register int i, nwords;
 
     for (i = 0; i < MAXSCROLLS; i++)
@@ -297,7 +297,7 @@ init_names()
 	    nsyl = rnd(3) + 1;
 	    while (nsyl--)
 	    {
-		sp = sylls[rnd((sizeof sylls) / (sizeof (char *)))];
+		sp = sylls[rnd((sizeof sylls) / (sizeof (BYTE *)))];
 		if (&cp[strlen(sp)] > &prbuf[MAXNAME])
 			break;
 		while (*sp)
@@ -306,7 +306,7 @@ init_names()
 	    *cp++ = ' ';
 	}
 	*--cp = '\0';
-	s_names[i] = (char *) malloc((unsigned) strlen(prbuf)+1);
+	s_names[i] = (BYTE *) malloc((unsigned) strlen(prbuf)+1);
 	s_know[i] = FALSE;
 	s_guess[i] = NULL;
 	strcpy(s_names[i], prbuf);
@@ -354,7 +354,7 @@ init_stones()
 init_materials()
 {
     register int i, j;
-    register const char *str;
+    register const BYTE *str;
     bool metused[NMETAL], woodused[NWOOD];
 
     for (i = 0; i < NWOOD; i++)
@@ -403,7 +403,7 @@ init_materials()
  *	Check to see if a series of probabilities sums to 100
  */
 badcheck(name, magic, bound)
-char *name;
+BYTE *name;
 register struct magic_item *magic;
 register int bound;
 {

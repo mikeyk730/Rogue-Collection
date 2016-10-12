@@ -87,7 +87,7 @@ bool insist;
 create_obj()
 {
     register THING *obj;
-    register char ch, bless;
+    register BYTE ch, bless;
 
     obj = new_item();
     msg("type of item: ");
@@ -200,10 +200,10 @@ teleport()
  */
 passwd()
 {
-    /*register char *sp, c;
-    char buf[MAXSTR], *xcrypt();
+    /*register BYTE *sp, c;
+    BYTE buf[MAXSTR], *xcrypt();
     Only below needed - RRPF*/
-    char c;
+    BYTE c;
 
     msg("wizard's Password:");
     /* Commented out by RRPF
