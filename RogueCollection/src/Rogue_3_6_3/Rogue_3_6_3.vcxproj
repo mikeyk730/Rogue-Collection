@@ -128,7 +128,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\PDCurses\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
@@ -144,7 +144,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\PDCurses\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
@@ -162,7 +162,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\PDCurses\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -182,7 +182,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\PDCurses\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
