@@ -76,7 +76,9 @@ endmsg()
     if (mpos)
     {
 	wmove(cw, 0, mpos);
-    waddstr(cw, "--More--");
+    PC_GFX_STANDOUT();
+    waddstr(cw, MORE_MSG);
+    PC_GFX_STANDEND();
 	draw(cw);
 	wait_for(cw,' ');
     }

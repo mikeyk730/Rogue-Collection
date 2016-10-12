@@ -112,7 +112,10 @@ look(int wakeup)
 	    else if (y != hero.y || x != hero.x)
 		continue;
 	    wmove(cw, y, x);
-	    waddrawch(cw, ch);
+        if (ch != ' ')
+            PC_GFX_PASSGE_STANDOUT(y, x);
+        waddrawch(cw, ch);
+        PC_GFX_STANDEND();
 	    if (door_stop && !firstmove && running)
 	    {
 		switch (runch)
@@ -166,7 +169,9 @@ look(int wakeup)
 	}
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
+    PC_GFX_PASSGE_STANDOUT(hero.y, hero.x);
     mvwaddrawch(cw, hero.y, hero.x, PLAYER);
+    PC_GFX_STANDEND();
     wmove(cw, oldy, oldx);
     oldpos = hero;
     oldrp = rp;

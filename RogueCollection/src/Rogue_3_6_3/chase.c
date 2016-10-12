@@ -251,6 +251,15 @@ chase(struct thing *tp, coord *ee)
  */
 
 struct room *
+roomin_rc(int r, int c)
+{
+    coord coord;
+    coord.x = c;
+    coord.y = r;
+    return roomin(&coord);
+}
+
+struct room *
 roomin(coord *cp)
 {
     struct room *rp;
