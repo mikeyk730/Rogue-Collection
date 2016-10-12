@@ -20,7 +20,7 @@
 char *w_names[MAXWEAPONS] = {
     "mace",
     "long sword",
-    "int bow",
+    "short bow",
     "arrow",
     "dagger",
     "rock",

@@ -187,6 +187,9 @@ restore(const char *file)
 
     initscr();                          /* Start up cursor package */
     keypad(stdscr, 1);
+#ifdef USE_PC_GFX
+    setup_colors();
+#endif
 
     if (lines > LINES)
     {

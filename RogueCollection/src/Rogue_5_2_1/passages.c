@@ -129,10 +129,10 @@ conn(r1, r2)
 int r1, r2;
 {
     register struct room *rpf, *rpt = NULL;
-    register BYTE rmt;
+    register int rmt;
     register int distance = 0, turn_spot = 0, turn_distance = 0, index;
     register int rm;
-    register BYTE direc;
+    register char direc;
     coord del = {0,0}, curr, turn_delta = {0,0}, spos = {0,0}, epos = {0,0};
 
     if (r1 < r2)

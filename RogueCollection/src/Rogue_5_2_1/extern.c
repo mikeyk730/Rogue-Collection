@@ -37,13 +37,13 @@ bool wizard = FALSE;			/* True if allows wizard commands */
 #endif
 
 BYTE take;				/* Thing the rogue is taking */
-BYTE prbuf[MAXSTR];			/* Buffer for sprintfs */
-BYTE outbuf[BUFSIZ];			/* Output buffer for stdout */
+char prbuf[MAXSTR];			/* Buffer for sprintfs */
+char outbuf[BUFSIZ];			/* Output buffer for stdout */
 BYTE runch;				/* Direction player is running */
-BYTE *s_names[MAXSCROLLS];		/* Names of the scrolls */
-const BYTE *p_colors[MAXPOTIONS];		/* Colors of the potions */
-const BYTE *r_stones[MAXRINGS];		/* Stone settings of the rings */
-const BYTE *w_names[MAXWEAPONS + 1] = {	/* Names of the various weapons */
+char *s_names[MAXSCROLLS];		/* Names of the scrolls */
+const char *p_colors[MAXPOTIONS];		/* Colors of the potions */
+const char *r_stones[MAXRINGS];		/* Stone settings of the rings */
+const char *w_names[MAXWEAPONS + 1] = {	/* Names of the various weapons */
     "mace",
     "long sword",
     "short bow",
@@ -66,18 +66,18 @@ const BYTE *a_names[MAXARMORS] = {		/* Names of armor types */
     "banded mail",
     "plate mail",
 };
-const BYTE *ws_made[MAXSTICKS];		/* What sticks are made of */
+const char *ws_made[MAXSTICKS];		/* What sticks are made of */
 char *release;				/* Release number of rogue */
-BYTE whoami[MAXSTR];			/* Name of player */
-BYTE fruit[MAXSTR];			/* Favorite fruit */
-BYTE huh[MAXSTR];			/* The last message printed */
-BYTE *s_guess[MAXSCROLLS];		/* Players guess at what scroll is */
-BYTE *p_guess[MAXPOTIONS];		/* Players guess at what potion is */
-BYTE *r_guess[MAXRINGS];		/* Players guess at what ring is */
-BYTE *ws_guess[MAXSTICKS];		/* Players guess at what wand is */
-BYTE *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
-BYTE file_name[MAXSTR];			/* Save file name */
-BYTE home[MAXSTR];			/* User's home directory */
+char whoami[MAXSTR];			/* Name of player */
+char fruit[MAXSTR];			/* Favorite fruit */
+char huh[MAXSTR];			/* The last message printed */
+char *s_guess[MAXSCROLLS];		/* Players guess at what scroll is */
+char *p_guess[MAXPOTIONS];		/* Players guess at what potion is */
+char *r_guess[MAXRINGS];		/* Players guess at what ring is */
+char *ws_guess[MAXSTICKS];		/* Players guess at what wand is */
+char *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
+char file_name[MAXSTR];			/* Save file name */
+char home[MAXSTR];			/* User's home directory */
 BYTE _level[MAXLINES*MAXCOLS];		/* Level map */
 BYTE _flags[MAXLINES*MAXCOLS];		/* Flags for each space on the map */
 

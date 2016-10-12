@@ -225,7 +225,7 @@ inventory(struct linked_list *list, int type)
 		{
 		    wclear(hw);
 		    waddstr(hw, inv_temp);
-		    waddrawch(hw, '\n');
+		    waddch(hw, '\n');
 		}
 	    /*
 	     * Print the line for this object

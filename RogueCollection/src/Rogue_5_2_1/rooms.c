@@ -71,7 +71,7 @@ do_rooms()
 	    } until (rp->r_pos.y > 0 && rp->r_pos.y < LINES-1);
 	    continue;
 	}
-	if (rnd(10) < level - 1)
+    if (rnd(10) < level - 1)
 	    rp->r_flags |= ISDARK;
 	/*
 	 * Find a place and size for a random room
@@ -250,7 +250,7 @@ register coord *cp;
 		     * to check for monster, we have to strip out
 		     * standout bit
 		     */
-		    if (isupper(toascii(ch)))
+            if (ismonst(ch))
 			if (on(player, SEEMONST))
 			{
 			    standout();

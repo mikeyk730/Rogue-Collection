@@ -24,7 +24,7 @@
 #include <string.h>
 #include "rogue.h"
 
-BYTE countch, direction, newcount = FALSE;
+shint countch, direction, newcount = FALSE;
 
 /*
  * command:

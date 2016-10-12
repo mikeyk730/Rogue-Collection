@@ -19,7 +19,7 @@
 wear()
 {
     register THING *obj;
-    register BYTE *sp;
+    register char *sp;
 
     if (cur_armor != NULL)
     {

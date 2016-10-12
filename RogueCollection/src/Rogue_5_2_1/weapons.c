@@ -202,12 +202,12 @@ THING *obj;
  * num:
  *	Figure out the plus number for armor/weapons
  */
-BYTE *
+char *
 num(n1, n2, type)
 register int n1, n2;
 register BYTE type;
 {
-    static BYTE numbuf[10];
+    static char numbuf[10];
 
     sprintf(numbuf, "%s%d", n1 < 0 ? "" : "+", n1);
     if (type == WEAPON)

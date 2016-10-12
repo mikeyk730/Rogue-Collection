@@ -262,7 +262,7 @@ do_zap(int gotdir)
 	    switch (delta.y + delta.x)
 	    {
 		case 0: dirch = '/';
-		when 1: case -1: dirch = (delta.y == 0 ? HWALL : VWALL);
+		when 1: case -1: dirch = (delta.y == 0 ? '-' : '|');
 		when 2: case -2: dirch = '\\';
 	    }
 	    pos = hero;

@@ -65,7 +65,8 @@ extern const BYTE *metal[];
 #define INCH()              CCHAR(inch())
 #define MVINCH(r,c)         CCHAR(mvinch(r,c))
 #define MVWINCH(w,r,c)      CCHAR(mvwinch(w,r,c))
-#define shint		BYTE		/* short integer (for very small #s) */
+#define ismonst(ch)         (ch >= 'A' && ch <= 'Z')
+#define shint		int		/* short integer (for very small #s) */
 #define when		break;case
 #define otherwise	break;default
 #define until(expr)	while(!(expr))
@@ -384,7 +385,7 @@ typedef unsigned int str_t;
  */
 
 struct magic_item {
-    const BYTE *mi_name;
+    const char *mi_name;
     shint mi_prob;
     short mi_worth;
 };
@@ -437,10 +438,10 @@ union thing {
 	union thing *_l_next, *_l_prev;	/* Next pointer in link */
 	shint _o_type;			/* What kind of object it is */
 	coord _o_pos;			/* Where it lives on the screen */
-	BYTE *_o_text;			/* What it says if you read it */
+	char *_o_text;			/* What it says if you read it */
 	BYTE _o_launch;			/* What you need to launch it */
-	BYTE _o_damage[8];		/* Damage if used like sword */
-	BYTE _o_hurldmg[8];		/* Damage if thrown */
+	char _o_damage[8];		/* Damage if used like sword */
+	char _o_hurldmg[8];		/* Damage if thrown */
 	shint _o_count;			/* Count for plural objects */
 	shint _o_which;			/* Which object of a type it is */
 	shint _o_hplus;			/* Plusses to hit */
@@ -487,7 +488,7 @@ typedef union thing THING;
  * Array containing information on all the various types of mosnters
  */
 struct monster {
-    const BYTE *m_name;			/* What to call the monster */
+    const char *m_name;			/* What to call the monster */
     const shint m_carry;			/* Probability of carrying something */
     const short m_flags;			/* Things about the monster */
     struct stats m_stats;		/* Initial stats */

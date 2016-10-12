@@ -146,7 +146,7 @@ do_zap()
 		}
 		else
 		{
-		    if (isupper(toascii(MVINCH(y,x))))
+		    if (ismonst(MVINCH(y,x)))
 			MVADDCH(y, x, tp->t_oldch);
 		    if (obj->o_which == WS_TELAWAY)
 		    {
