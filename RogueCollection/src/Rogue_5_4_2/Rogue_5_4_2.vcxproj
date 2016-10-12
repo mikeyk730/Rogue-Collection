@@ -44,7 +44,12 @@
     <ClCompile Include="rings.c" />
     <ClCompile Include="rip.c" />
     <ClCompile Include="rooms.c" />
-    <ClCompile Include="save.c" />
+    <ClCompile Include="save.c">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ROGUE_5_4_2;USE_PC_GFX;SCOREFILE="rogue54.scr";MASTER</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ROGUE_5_4_2;USE_PC_GFX;SCOREFILE="rogue54.scr";MASTER</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ROGUE_5_4_2;USE_PC_GFX;SCOREFILE="rogue54.scr";MASTER</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ROGUE_5_4_2;USE_PC_GFX;SCOREFILE="rogue54.scr";MASTER</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="scrolls.c" />
     <ClCompile Include="state.c" />
     <ClCompile Include="sticks.c" />
@@ -55,6 +60,8 @@
     <ClCompile Include="xcrypt.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\pc_gfx_charmap.h" />
+    <ClInclude Include="..\pc_gfx_macros.h" />
     <ClInclude Include="extern.h" />
     <ClInclude Include="rogue.h" />
     <ClInclude Include="score.h" />

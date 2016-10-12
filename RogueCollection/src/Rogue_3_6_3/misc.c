@@ -155,9 +155,7 @@ look(int wakeup)
 		    case FLOOR:
 		    case VWALL:
 		    case HWALL:
-#ifdef USE_PC_GFX
-            case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+			PC_GFX_WALL_CASES
 		    case ' ':
 			break;
 		    default:

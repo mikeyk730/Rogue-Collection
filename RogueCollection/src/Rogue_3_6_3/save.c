@@ -174,9 +174,7 @@ restore(char *file, char **envp)
      */
 
     initscr();
-#ifdef USE_PC_GFX
-    setup_colors();
-#endif
+    PC_GFX_SETUP_COLORS();
 	
     if (slines > LINES)
     {

@@ -62,10 +62,7 @@ option()
     OPTION	*op;
     int	retval;
 
-#ifdef USE_PC_GFX
-    curs_set(1);
-#endif
-
+    PC_GFX_SET_CURSOR(1);
     wclear(hw);
     touchwin(hw);
     /*
@@ -107,9 +104,7 @@ option()
     clearok(cw, TRUE);
     touchwin(cw);
     after = FALSE;
-#ifdef USE_PC_GFX
-    curs_set(0);
-#endif
+    PC_GFX_SET_CURSOR(0);
 }
 
 /*

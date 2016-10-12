@@ -175,9 +175,7 @@ read_scroll()
 			    mvaddrawch(i, j, nch);
 			case HWALL:
 			case VWALL:
-#ifdef USE_PC_GFX
-            case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+			PC_GFX_WALL_CASES
 			case DOOR:
 			case PASSAGE:
 			case ' ':

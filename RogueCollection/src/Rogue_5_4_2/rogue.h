@@ -112,47 +112,10 @@
 #define LLWALL	    '-'
 #define LRWALL	    '-'
 #else
-#define PASSAGE	(0xb1)
-#define DOOR	(0xce)
-#define FLOOR	(0xfa)
-#define PLAYER	(0x01)
-#define TRAP	(0x04)
-#define STAIRS	(0xf0)
-#define GOLD	(0x0f)
-#define POTION	(0xad)
-#define SCROLL	(0x0d)
-#define MAGIC	'$'
-#define FOOD	(0x05)
-#define STICK	(0xe7)
-#define ARMOR	(0x08)
-#define AMULET	(0x0c)
-#define RING	(0x09)
-#define WEAPON	(0x18)
-#define VWALL	(0xba)
-#define HWALL	(0xcd)
-#define ULWALL	(0xc9)
-#define URWALL	(0xbb)
-#define LLWALL	(0xc8)
-#define LRWALL	(0xbc)
+#include "..\pc_gfx_charmap.h"
 #endif
-
-#ifdef USE_PC_GFX
-#define PC_GFX_SET_CURSOR(b)          curs_set(b)
-#define PC_GFX_SETUP_COLORS()         setup_colors()
-#define PC_GFX_WALL_CASES             case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#define PC_GFX_PASSGE_STANDOUT(r,c)   if (flat(r,c) & F_PASS) attron(COLOR_PAIR(0x70))
-#define PC_GFX_STANDOUT()             attron(COLOR_PAIR(0x70))
-#define PC_GFX_STANDEND()             attroff(COLOR_PAIR(0x70))
-#define MORE_MSG                      " More "
-#else
-#define PC_GFX_SET_CURSOR(b)
-#define PC_GFX_SETUP_COLORS()
-#define PC_GFX_WALL_CASES
-#define PC_GFX_PASSGE_STANDOUT(r,c)
-#define PC_GFX_STANDOUT()
-#define PC_GFX_STANDEND() 
-#define MORE_MSG             "--More--"
-#endif
+#define ROGUE_5_4_2
+#include "..\pc_gfx_macros.h"
 
 #define CALLABLE	-1
 #define R_OR_S		-2

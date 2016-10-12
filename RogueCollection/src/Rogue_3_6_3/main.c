@@ -132,9 +132,7 @@ char **envp;
     init_stones();			/* Set up stone settings of rings */
     init_materials();			/* Set up materials of wands */
     initscr();				/* Start up cursor package */
-#ifdef USE_PC_GFX
-    setup_colors();
-#endif
+    PC_GFX_SETUP_COLORS();
 
     if (COLS < 70)
     {

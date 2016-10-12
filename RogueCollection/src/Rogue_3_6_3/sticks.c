@@ -284,9 +284,7 @@ do_zap(int gotdir)
 		    case SECRETDOOR:
 		    case VWALL:
 		    case HWALL:
-#ifdef USE_PC_GFX
-            case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+			PC_GFX_WALL_CASES
 		    case ' ':
 			bounced = TRUE;
 			delta.y = -delta.y;

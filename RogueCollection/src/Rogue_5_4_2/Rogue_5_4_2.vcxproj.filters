@@ -40,5 +40,7 @@
     <ClInclude Include="extern.h" />
     <ClInclude Include="rogue.h" />
     <ClInclude Include="score.h" />
+    <ClInclude Include="..\pc_gfx_charmap.h" />
+    <ClInclude Include="..\pc_gfx_macros.h" />
   </ItemGroup>
 </Project>
