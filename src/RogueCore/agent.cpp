@@ -210,6 +210,11 @@ bool Agent::decrease_hp(int n, bool can_kill) {
     m_stats.m_hp -= n;
     if (!can_kill && m_stats.m_hp <= 0)
         m_stats.m_hp = 1;
+
+    std::ostringstream ss;
+    ss << get_name() << " lost " << n << "hp (" << m_stats.m_hp << ")";
+    game->log("battle", ss.str());
+
     return m_stats.m_hp > 0;
 }
 
