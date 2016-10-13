@@ -130,9 +130,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="curses.cpp" />
+    <ClCompile Include="windows_console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="curses.h" />
+    <ClInclude Include="display_interface.h" />
+    <ClInclude Include="display_interface_types.h" />
+    <ClInclude Include="windows_console.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

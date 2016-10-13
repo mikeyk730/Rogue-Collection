@@ -7,6 +7,8 @@
 #ifndef __PDCURSES__
 #define __PDCURSES__ 1
 
+#define CHTYPE_32
+
 /*man-start**************************************************************
 
 PDCurses definitions list:  (Only define those needed)

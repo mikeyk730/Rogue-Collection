@@ -194,7 +194,7 @@ hit_bound:
 		    take = ch;
 move_stuff:
 
-        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x);
+        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x, floor_at());
         mvaddrawch(hero.y, hero.x, floor_at());
         PC_GFX_STANDEND();
 

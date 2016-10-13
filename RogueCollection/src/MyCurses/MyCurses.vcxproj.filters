@@ -2,8 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="curses.h" />
+    <ClInclude Include="windows_console.h" />
+    <ClInclude Include="display_interface.h" />
+    <ClInclude Include="display_interface_types.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="curses.cpp" />
+    <ClCompile Include="windows_console.cpp" />
   </ItemGroup>
 </Project>

@@ -5,9 +5,10 @@ extern "C" {
 #include <cstdarg>
 #include <cctype>
 
-struct Coord { int x, y; };
+#include "display_interface.h"
+#include "windows_console.h"
 
-typedef unsigned char datatype;
+DisplayInterface::~DisplayInterface() {}
 
 struct __window
 {
@@ -16,8 +17,10 @@ struct __window
     ~__window();
 
     int addch(chtype ch);
+    int addrawch(chtype ch);
     int addstr(const char* s);
     int clear();
+    int erase();
     int clrtoeol();
     int getcury();
     int getcurx();
@@ -25,23 +28,28 @@ struct __window
     int getmaxx();
     chtype inch();
     int move(int r, int c);
+    int attron(chtype);
+    int attroff(chtype);
     int set_attr(int i);
     int mvwin(int r, int c);
     int refresh();
 
 private:
-    datatype get_data(int r, int c);
-    void set_data(int r, int c, datatype ch);
-    datatype** data();
+    chtype get_data(int r, int c);
+    void set_data(int r, int c, chtype ch);
+    chtype** data();
     Coord data_coords(int r, int c);
 
     Coord origin = { 0, 0 };
     Coord dimensions = { 0, 0 };
 
-    datatype** m_data = 0;
+    chtype** m_data = 0;
+    chtype attr = 0;
+
     int row = 0;
     int col = 0;
-    int attr = 0;
+
+    bool clear_screen = false;
 
     __window* parent = 0;
 };
@@ -49,6 +57,7 @@ private:
 namespace
 {
     const int s_baudrate = 3000;
+    DisplayInterface* s_screen = 0;
 }
 
 WINDOW* stdscr;
@@ -62,11 +71,11 @@ __window::__window(int lines, int cols, int begin_y, int begin_x)
     dimensions = { cols, lines };
     origin = { begin_x, begin_y };
 
-    m_data = new datatype*[lines];
+    m_data = new chtype*[lines];
     for (int i = 0; i < lines; ++i)
-        m_data[i] = new datatype[cols];
+        m_data[i] = new chtype[cols];
 
-    clear();
+    erase();
 }
 
 __window::__window(__window * p, int lines, int cols, int begin_y, int begin_x)
@@ -86,9 +95,36 @@ __window::~__window()
 
 int __window::addch(chtype ch)
 {
+    if (ch == '\n')
+    {
+        clrtoeol();
+        ++row;
+        col = 0;
+    }
+    else if (ch == '\b')
+    {
+        set_data(row, col, ' ');
+        if (col > 0) 
+            --col;
+    }
+    else if (ch == '\t')
+    {
+        do {
+            set_data(row, col, ' ');
+            ++col;
+        } while (col % 8);
+    }
+    else {
+        return addrawch(ch);
+    }
+    return OK;
+}
+
+int __window::addrawch(chtype ch)
+{
     //todo:apply addr
     set_data(row, col, ch);
-    col++;
+    ++col;
     return OK;
 }
 
@@ -99,10 +135,37 @@ int __window::addstr(const char * s)
     return OK;
 }
 
+int __window::attroff(chtype ch)
+{
+    if ((ch | A_COLOR) == (attr | A_COLOR))
+    { 
+        attr &= ~A_COLOR; //clear the color 
+    } 
+    return OK;
+}
+
+int __window::attron(chtype ch)
+{
+    if ((ch | A_COLOR) && (attr | A_COLOR))
+    {
+        attr &= ~A_COLOR; //clear the old color 
+    }
+    attr |= (ch & A_COLOR);
+    return OK;
+}
+
 int __window::clear()
 {
+    erase();
+    clear_screen = true;
+    return OK;
+}
+
+int __window::erase()
+{
+    move(0, 0);
     for (int r = 0; r < dimensions.y; ++r)
-        for (int c = col; c < dimensions.x; ++c)
+        for (int c = 0; c < dimensions.x; ++c)
             set_data(r, c, ' ');
     return OK;
 }
@@ -136,6 +199,7 @@ int __window::getmaxx()
 
 chtype __window::inch()
 {
+    //todo: should i return attrs?
     return get_data(row, col);
 }
 
@@ -160,25 +224,45 @@ int __window::mvwin(int r, int c)
 
 int __window::refresh()
 {
+    if (clear_screen) {
+        curscr->erase();
+        if (s_screen)
+            s_screen->UpdateRegion(curscr->m_data, { 0,0,COLS - 1,LINES - 1 });
+        clear_screen = false;
+    }
+
     for (int r = origin.y; r < origin.y + dimensions.y; ++r)
         for (int c = origin.x; c < origin.x + dimensions.x; ++c)
             curscr->m_data[r][c] = get_data(r, c);
+
+    if (s_screen)
+    {
+        Region r;
+        r.Left = origin.x;
+        r.Top = origin.y;
+        r.Right = origin.x + dimensions.x - 1;
+        r.Bottom = origin.y + dimensions.y - 1;
+
+        s_screen->UpdateRegion(curscr->m_data, r);
+        s_screen->MoveCursor({ col, row });
+    }
     return 0;
 }
 
-datatype __window::get_data(int r, int c)
+chtype __window::get_data(int r, int c)
 {
     Coord o = data_coords(r,c);
     return data()[o.y][o.x];
 }
 
-void __window::set_data(int r, int c, datatype ch)
+void __window::set_data(int r, int c, chtype ch)
 {
+    ch |= attr;
     Coord o = data_coords(r, c);
     data()[o.y][o.x] = ch;
 }
 
-datatype** __window::data()
+chtype** __window::data()
 {
     return parent ? parent->m_data : m_data;
 }
@@ -197,6 +281,9 @@ WINDOW* initscr(void)
 {
     LINES = 25;
     COLS = 80;
+
+    s_screen = new WindowsConsole({ 0, 0 });
+    s_screen->SetDimensions({ COLS, LINES });
 
     stdscr = new __window(LINES, COLS, 0, 0);
     curscr = new __window(LINES, COLS, 0, 0);
@@ -224,7 +311,6 @@ int	delwin(WINDOW* w)
     return OK;
 }
 
-
 int mvwin(WINDOW* w, int r, int c)
 {
     return w->mvwin(r,c);
@@ -237,12 +323,22 @@ int waddch(WINDOW* w, chtype ch)
 
 int waddrawch(WINDOW* w, chtype ch)
 {
-    return w->addch(ch);
+    return w->addrawch(ch);
 }
 
 int waddstr(WINDOW* w, const char * s)
 {
     return w->addstr(s);
+}
+
+int wattroff(WINDOW* w, chtype ch)
+{
+    return w->attroff(ch);
+}
+
+int wattron(WINDOW* w, chtype ch)
+{
+    return w->attron(ch);
 }
 
 int wclear(WINDOW* w)
@@ -252,7 +348,7 @@ int wclear(WINDOW* w)
 
 int werase(WINDOW* w)
 {
-    return w->clear();
+    return w->erase();
 }
 
 int wclrtoeol(WINDOW* w)
@@ -308,12 +404,12 @@ int wrefresh(WINDOW *w)
 
 int wstandend(WINDOW* w)
 {
-    return w->set_attr(0);
+    return w->attroff(COLOR_PAIR(0x70));
 }
 
 int wstandout(WINDOW* w)
 {
-    return w->set_attr(0x70);
+    return w->attron(COLOR_PAIR(0x70));
 }
 
 int mvwaddch(WINDOW * w, int r, int c, chtype ch)
@@ -365,6 +461,16 @@ int	addrawch(chtype ch)
 int addstr(const char* s)
 {
     return waddstr(stdscr, s);
+}
+
+int attroff(chtype ch)
+{
+    return wattroff(stdscr, ch);
+}
+
+int attron(chtype ch)
+{
+    return wattron(stdscr, ch);
 }
 
 int clear(void)
@@ -444,9 +550,17 @@ int	standout(void)
     return wstandout(stdscr);
 }
 
+
 int baudrate(void)
 {
     return s_baudrate;
+}
+
+int curs_set(int mode)
+{
+    if (s_screen)
+        s_screen->SetCursor(mode != 0);
+    return OK;
 }
 
 
@@ -576,37 +690,20 @@ int wgetnstr(WINDOW *, char* s, int n)
 
 //todo: 
 
-int     init_color(short, short, short, short)
+int init_color(short, short, short, short)
 {
     return OK;
 }
 
-int     init_pair(short, short, short)
+int init_pair(short, short, short)
 {
     return OK;
 }
-
 
 int start_color(void)
 {
     return OK;
 }
-
-int     curs_set(int)
-{
-    return OK;
-}
-
-int     attroff(chtype) 
-{
-    return OK;
-}
-
-int     attron(chtype)
-{
-    return OK;
-}
-
 
 _bool isendwin(void)
 {
