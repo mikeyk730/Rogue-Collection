@@ -93,7 +93,7 @@ create_obj()
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
     msg("Type of item: ");
-    obj->o_type = readchar(cw);
+    obj->o_type = PC_GFX_TRANSLATE(readchar(cw));
     mpos = 0;
     msg("Which %c do you want? (0-f)", obj->o_type);
     obj->o_which = (isdigit((ch = readchar(cw))) ? ch - '0' : ch - 'a' + 10);

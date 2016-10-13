@@ -1,4 +1,5 @@
 #ifdef USE_PC_GFX
+#include "pc_gfx_charmap.h"
 
 void setup_colors()
 {
@@ -40,4 +41,20 @@ void setup_colors()
     curs_set(0);
 }
 
+int translate_type(int t)
+{
+    switch (t) {
+    case '*': return GOLD;
+    case '!': return POTION;
+    case '?': return SCROLL;
+    case '$': return MAGIC;
+    case ':': return FOOD;
+    case ')': return WEAPON;
+    case ']': return ARMOR;
+    case ',': return AMULET;
+    case '=': return RING;
+    case '/': return STICK;
+    }
+    return t;
+}
 #endif

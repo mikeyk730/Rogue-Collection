@@ -5,6 +5,7 @@
     <ClInclude Include="windows_console.h" />
     <ClInclude Include="display_interface.h" />
     <ClInclude Include="display_interface_types.h" />
+    <ClInclude Include="input_interface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="curses.cpp" />

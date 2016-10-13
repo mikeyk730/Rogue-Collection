@@ -137,7 +137,7 @@ create_obj(void)
 
     obj = new_item();
     msg("type of item: ");
-    obj->o_type = readchar();
+    obj->o_type = PC_GFX_TRANSLATE(readchar());
     mpos = 0;
     msg("which %c do you want? (0-f)", obj->o_type);
     obj->o_which = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);

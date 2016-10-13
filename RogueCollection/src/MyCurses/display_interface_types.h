@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 
 struct Coord
 {
@@ -17,5 +16,3 @@ struct Region
     inline int Width() { return Right - Left + 1; }
     inline int Height() { return Bottom - Top + 1; }
 };
-
-typedef uint32_t CursesDataType;

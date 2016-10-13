@@ -1,15 +1,23 @@
 extern "C" {
 #include "curses.h"
 }
-#include <memory>
 #include <algorithm>
 #include <cstdarg>
-#include <cctype>
-
 #include "display_interface.h"
-#include "windows_console.h"
+#include "input_interface.h"
 
-DisplayInterface::~DisplayInterface() {}
+extern "C"
+{
+    void init_curses(DisplayInterface* screen, InputInterface* input);
+    void shutdow_curses();
+}
+
+namespace
+{
+    const int s_baudrate = 3000;
+    DisplayInterface* s_screen = 0;
+    InputInterface* s_input = 0;
+}
 
 struct __window
 {
@@ -20,23 +28,20 @@ struct __window
     int addch(chtype ch);
     int addrawch(chtype ch);
     int addstr(const char* s);
+    int attron(chtype);
+    int attroff(chtype);
     int clear();
-    int erase();
     int clrtoeol();
+    int erase();
     int getcury();
     int getcurx();
     int getmaxy();
     int getmaxx();
     chtype inch();
     int move(int r, int c);
-    int attron(chtype);
-    int attroff(chtype);
-    int set_attr(int i);
     int mvwin(int r, int c);
-    int refresh();
     int overlay(WINDOW* dest, bool copy_spaces) const;
-
-    Region window_region() const;
+    int refresh();
 
 private:
     chtype get_data(int r, int c) const;
@@ -45,7 +50,9 @@ private:
     void set_data_absolute(int abs_r, int abs_c, chtype ch);
     chtype** data() const;
     Coord data_coords(int r, int c) const;
+    Region window_region() const;
 
+private:
     Coord origin = { 0, 0 };
     Coord dimensions = { 0, 0 };
 
@@ -59,12 +66,6 @@ private:
 
     __window* parent = 0;
 };
-
-namespace
-{
-    const int s_baudrate = 3000;
-    DisplayInterface* s_screen = 0;
-}
 
 WINDOW* stdscr;
 WINDOW* curscr;
@@ -110,7 +111,7 @@ int __window::addch(chtype ch)
     else if (ch == '\b')
     {
         set_data(row, col, ' ');
-        if (col > 0) 
+        if (col > 0)
             --col;
     }
     else if (ch == '\t')
@@ -144,9 +145,9 @@ int __window::addstr(const char * s)
 int __window::attroff(chtype ch)
 {
     if ((ch | A_COLOR) == (attr | A_COLOR))
-    { 
+    {
         attr &= ~A_COLOR; //clear the color 
-    } 
+    }
     return OK;
 }
 
@@ -216,12 +217,6 @@ int __window::move(int r, int c)
     return OK;
 }
 
-int __window::set_attr(int i)
-{
-    //todo: handle attr
-    return OK;
-}
-
 int __window::mvwin(int r, int c)
 {
     origin = { c, r };
@@ -230,10 +225,11 @@ int __window::mvwin(int r, int c)
 
 int __window::refresh()
 {
+    Region region = window_region();
+
     if (clear_screen) {
         curscr->erase();
-        if (s_screen)
-            s_screen->UpdateRegion(curscr->m_data, { 0,0,COLS - 1,LINES - 1 });
+        region = { 0, 0, COLS - 1, LINES - 1 };
         clear_screen = false;
     }
 
@@ -243,16 +239,10 @@ int __window::refresh()
 
     if (s_screen)
     {
-        Region r;
-        r.Left = origin.x;
-        r.Top = origin.y;
-        r.Right = origin.x + dimensions.x - 1;
-        r.Bottom = origin.y + dimensions.y - 1;
-
-        s_screen->UpdateRegion(curscr->m_data, r);
+        s_screen->UpdateRegion(curscr->m_data, region);
         s_screen->MoveCursor({ col, row });
     }
-    return 0;
+    return OK;
 }
 
 int __window::overlay(WINDOW * dest, bool copy_spaces) const
@@ -289,7 +279,7 @@ Region __window::window_region() const
 
 chtype __window::get_data(int r, int c) const
 {
-    Coord o = data_coords(r,c);
+    Coord o = data_coords(r, c);
     return data()[o.y][o.x];
 }
 
@@ -325,13 +315,24 @@ Coord __window::data_coords(int r, int c) const
     return p;
 }
 
+void init_curses(DisplayInterface* screen, InputInterface* input)
+{
+    s_screen = screen;
+    s_input = input;
+}
+
+void shutdow_curses()
+{
+
+}
+
 WINDOW* initscr(void)
 {
     LINES = 25;
     COLS = 80;
 
-    s_screen = new WindowsConsole({ 0, 0 });
-    s_screen->SetDimensions({ COLS, LINES });
+    if (s_screen)
+        s_screen->SetDimensions({ COLS, LINES });
 
     stdscr = new __window(LINES, COLS, 0, 0);
     curscr = new __window(LINES, COLS, 0, 0);
@@ -371,7 +372,7 @@ int overwrite(const WINDOW* w, WINDOW* dest)
 
 int mvwin(WINDOW* w, int r, int c)
 {
-    return w->mvwin(r,c);
+    return w->mvwin(r, c);
 }
 
 int waddch(WINDOW* w, chtype ch)
@@ -449,7 +450,7 @@ int wprintw(WINDOW * w, const char * f, ...)
     char buf[1024 * 16];
     va_list argptr;
     va_start(argptr, f);
-    vsprintf_s(buf, f, argptr);
+    vsprintf(buf, f, argptr);
     va_end(argptr);
 
     return w->addstr(buf);
@@ -499,7 +500,7 @@ int mvwprintw(WINDOW * w, int r, int c, const char * f, ...)
     char buf[1024 * 16];
     va_list argptr;
     va_start(argptr, f);
-    vsprintf_s(buf, f, argptr);
+    vsprintf(buf, f, argptr);
     va_end(argptr);
 
     wmove(w, r, c);
@@ -576,7 +577,7 @@ int	mvprintw(int r, int c, const char* f, ...)
     char buf[1024 * 16];
     va_list argptr;
     va_start(argptr, f);
-    vsprintf_s(buf, f, argptr);
+    vsprintf(buf, f, argptr);
     va_end(argptr);
 
     return mvwaddstr(stdscr, r, c, buf);
@@ -587,7 +588,7 @@ int printw(const char* f, ...)
     char buf[1024 * 16];
     va_list argptr;
     va_start(argptr, f);
-    vsprintf_s(buf, f, argptr);
+    vsprintf(buf, f, argptr);
     va_end(argptr);
 
     return waddstr(stdscr, buf);
@@ -608,6 +609,21 @@ int	standout(void)
     return wstandout(stdscr);
 }
 
+int wgetch(WINDOW*)
+{
+    if (!s_input)
+        return ERR;
+    return s_input->GetChar();
+}
+
+int wgetnstr(WINDOW *, char* dest, int n)
+{
+    if (!s_input)
+        return ERR;
+    std::string s = s_input->GetString(n);
+    strcpy(dest, s.c_str());
+    return OK;
+}
 
 int baudrate(void)
 {
@@ -621,134 +637,23 @@ int curs_set(int mode)
     return OK;
 }
 
-
-
-
-
-
-
-
-
-
 char *unctrl(chtype ch)
 {
     static char chstr[9];
 
     if (isspace(ch))
-        strcpy_s(chstr, " ");
+        strcpy(chstr, " ");
     else if (!isprint(ch))
         if (ch < ' ')
-            sprintf_s(chstr, "^%c", ch + '@');
+            sprintf(chstr, "^%c", ch + '@');
         else
-            sprintf_s(chstr, "\\x%x", ch);
+            sprintf(chstr, "\\x%x", ch);
     else {
         chstr[0] = (unsigned char)ch;
         chstr[1] = 0;
     }
     return chstr;
 }
-
-#define C_LEFT    0x4b
-#define C_RIGHT   0x4d
-#define C_UP      0x48
-#define C_DOWN    0x50
-#define C_HOME    0x47
-#define C_PGUP    0x49
-#define C_END     0x4f
-#define C_PGDN    0x51
-#define C_ESCAPE  0x1b
-#define C_INS     0x52
-#define C_DEL     0x53
-#define C_F1      0x3b
-#define C_F2      0x3c
-#define C_F3      0x3d
-#define C_F4      0x3e
-#define C_F5      0x3f
-#define C_F6      0x40
-#define C_F7      0x41
-#define C_F8      0x42
-#define C_F9      0x43
-#define C_F10     0x44
-#define ALT_F9    0x70
-
-#define CTRL(ch)  (ch&037)
-
-static struct xlate
-{
-    unsigned char keycode, keyis;
-} xtab[] =
-{
-    C_HOME,  'y',
-    C_UP,    'k',
-    C_PGUP,  'u',
-    C_LEFT,  'h',
-    C_RIGHT, 'l',
-    C_END,   'b',
-    C_DOWN,  'j',
-    C_PGDN,  'n',
-    C_INS,   '>',
-    C_DEL,   's',
-    C_F1,    '?',
-    C_F2,    '/',
-    C_F3,    'a',
-    C_F4,    CTRL('R'),
-    C_F5,    'c',
-    C_F6,    'D',
-    C_F7,    'i',
-    C_F8,    '^',
-    C_F9,    CTRL('F'),
-    C_F10,   '!',
-    ALT_F9,  'F'
-};
-
-#undef getch
-#undef ungetch
-#include <conio.h>
-
-int my_getch()
-{
-    return _getch();
-}
-
-int getkey()
-{
-    struct xlate *x;
-    int key = my_getch();
-    if (key != 0 && key != 0xE0) return key;
-
-    key = my_getch();
-    for (x = xtab; x < xtab + (sizeof xtab) / sizeof *xtab; x++)
-    {
-        if (key == x->keycode)
-        {
-            return x->keyis;
-        }
-    }
-    return 0;
-}
-
-
-
-
-//todo input interface
-int wgetch(WINDOW*)
-{
-    return getkey();
-}
-
-int wgetnstr(WINDOW *, char* s, int n)
-{
-    s[0] = my_getch();
-    s[1] = 0;
-    return OK;
-}
-
-
-
-
-
-
-//todo: 
 
 int init_color(short, short, short, short)
 {
@@ -772,27 +677,27 @@ _bool isendwin(void)
 
 int raw(void)
 {
-    return 0;
+    return OK;
 }
 
 char killchar(void)
 {
-    return 0;
+    return OK;
 }
 
 int mvcur(int, int, int, int)
 {
-    return 0;
+    return OK;
 }
 
 int endwin(void)
- {
-    return 0;
+{
+    return OK;
 }
 
 char erasechar(void)
 {
-    return 0;
+    return OK;
 }
 
 int flushinp(void)
@@ -802,22 +707,22 @@ int flushinp(void)
 
 int nocbreak(void)
 {
-    return 0;
+    return OK;
 }
 
 int noecho(void)
 {
-    return 0;
+    return OK;
 }
 
 int halfdelay(int)
 {
-    return 0;
+    return OK;
 }
 
 int	clearok(WINDOW *, _bool)
 {
-    return 0;
+    return OK;
 }
 
 int keypad(WINDOW *, _bool)
@@ -827,17 +732,17 @@ int keypad(WINDOW *, _bool)
 
 int leaveok(WINDOW *, _bool)
 {
-    return 0;
+    return OK;
 }
 
 int touchwin(WINDOW *)
 {
-    return 0;
+    return OK;
 }
 
 int idlok(WINDOW *, _bool)
 {
-    return 0;
+    return OK;
 }
 
 int nodelay(WINDOW *, _bool)

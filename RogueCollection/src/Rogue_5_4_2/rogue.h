@@ -114,7 +114,6 @@
 #define LRWALL	    '-'
 #else
 #include "..\pc_gfx_charmap.h"
-void setup_colors();
 #endif
 #define ROGUE_5_4_2
 #include "..\pc_gfx_macros.h"
