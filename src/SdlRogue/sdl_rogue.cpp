@@ -13,7 +13,6 @@
 
 namespace
 {
-    bool use_unix_gfx = false;
     std::map<int, int> unix_chars = {
         { PASSAGE,   '#' },
         { DOOR,      '+' },
@@ -53,7 +52,7 @@ struct SdlRogue::Impl
 {
     const unsigned int MAX_QUEUE_SIZE = 1;
 
-    Impl(const TextConfig& text, TileConfig* tiles);
+    Impl(const TextConfig& text, TileConfig* tiles, Options options);
     ~Impl();
 
     void SetDimensions(Coord dimensions);
@@ -93,6 +92,8 @@ private:
     int m_tile_states = 0;
     Coord m_text_dimensions = { 0, 0 };
     std::map<int, int> m_attr_index;
+
+    Options m_options;
 
     struct ThreadData
     {
@@ -193,7 +194,8 @@ private:
     };
 };
 
-SdlRogue::Impl::Impl(const TextConfig& text_cfg, TileConfig* tile_cfg)
+SdlRogue::Impl::Impl(const TextConfig& text_cfg, TileConfig* tile_cfg, Options options)
+    : m_options(options)
 {
     m_window = SDL_CreateWindow("Rogue", 100, 100, 100, 100, SDL_WINDOW_HIDDEN);
     if (m_window == nullptr)
@@ -387,8 +389,11 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
     if (!color) {
         color = GetColor(c, char_color(info));
     }
+    if (!m_options.use_colors) {
+        color = 0;
+    }
 
-    if (!is_text && use_unix_gfx)
+    if (!is_text && m_options.use_unix_gfx)
     {
         auto i = unix_chars.find(c);
         if (i != unix_chars.end())
@@ -547,8 +552,8 @@ bool SdlRogue::Impl::shared_data_is_narrow()
     return m_shared_data.m_dimensions.x == 40;
 }
 
-SdlRogue::SdlRogue(const TextConfig& text, TileConfig* tiles) :
-    m_impl(new Impl(text, tiles))
+SdlRogue::SdlRogue(const TextConfig& text, TileConfig* tiles, Options options) :
+    m_impl(new Impl(text, tiles, options))
 {
 }
 
@@ -720,6 +725,13 @@ char SdlRogue::Impl::TranslateKey(SDL_Keycode keycode, uint16_t modifiers)
         auto i = m_keymap.find(keycode);
         if (i != m_keymap.end())
             keycode = i->second;
+        if (IsDirectionKey(keycode) && m_options.emulate_alt_controls)
+        {
+            m_buffer.push_back('f');
+            m_buffer.push_back(keycode);
+            m_input_cv.notify_all();
+            return 0;
+        }
         if (IsLetterKey(keycode)) {
             return CTRL(keycode);
         }

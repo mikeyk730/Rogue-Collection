@@ -1,11 +1,12 @@
 #include <memory>
 #include <thread>
+#include <vector>
 #include "SDL.h"
 #include "sdl_rogue.h"
 #include "utility.h"
 #include <input_interface.h>
 #include <display_interface.h>
-#include <curses.h>
+#include <Windows.h>
 
 DisplayInterface::~DisplayInterface() {}
 InputInterface::~InputInterface() {}
@@ -14,17 +15,36 @@ extern "C"
 {
     void init_curses(DisplayInterface* screen, InputInterface* input);
     void shutdow_curses();
-    int game_main(int argc, char **argv);
 }
 
 namespace
 {
+    std::vector<std::string> dlls = { "Rogue_3_6_3.dll", "Rogue_5_2_1.dll", "Rogue_5_4_2.dll" };
+
+    typedef int(*game_main)(int, char**);
+    typedef void(*init_game)(DisplayInterface*, InputInterface*);
+
     //void run_game(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input)
-    void run_game(int argc, char **argv, DisplayInterface* screen, InputInterface* input)
+    void run_game(int index, int argc, char **argv, DisplayInterface* screen, InputInterface* input)
     {
         try {
-            init_curses(screen, input);
-            game_main(argc, argv);
+            HINSTANCE dll = LoadLibrary(dlls[index].c_str());
+            if (!dll) {
+                throw_error("Couldn't load dll " + dlls[index]);
+            }
+
+            init_game init = (init_game)GetProcAddress(dll, "init_game");
+            if (!init) {
+                throw_error("Couldn't load int function");
+            }
+
+            game_main game = (game_main)GetProcAddress(dll, "rogue_main");
+            if (!game) {
+                throw_error("Couldn't load game function");
+            }
+
+            (*init)(screen, input);
+            (*game)(argc, argv);
         }
         catch (const std::runtime_error& e)
         {
@@ -50,18 +70,25 @@ namespace
 
 int main(int argc, char **argv)
 {
+    int index = 0;
     std::shared_ptr<SdlRogue> sdl_rogue;
-    //std::shared_ptr<OutputInterface> output;
     
     try {
-        if (SDL_Init(SDL_INIT_VIDEO) != 0)
+        if (SDL_Init(SDL_INIT_VIDEO) != 0) {
             throw_error("SDL_Init");
+        }
+
+
+        Options options;
+        if (index == 0 || index == 1) {
+            options.emulate_alt_controls = true;
+        }
 
         //sdl_rogue.reset(new SdlRogue(pc_text, 0));
         //sdl_rogue.reset(new SdlRogue(pc_text, &pc_tiles));
         //sdl_rogue.reset(new SdlRogue(pc_colored_text, &atari_tiles));
         
-        sdl_rogue.reset(new SdlRogue(pc_colored_text, 0));
+        sdl_rogue.reset(new SdlRogue(pc_colored_text, 0, options));
         //sdl_rogue.reset(new SdlRogue(pc_colored_text, &pc_tiles));
 
         //output = CreateScreenOutput(sdl_rogue);
@@ -76,7 +103,7 @@ int main(int argc, char **argv)
     }
 
     //start rogue engine on a background thread
-    std::thread rogue(run_game, argc, argv, sdl_rogue.get(), sdl_rogue.get());
+    std::thread rogue(run_game, index, argc, argv, sdl_rogue.get(), sdl_rogue.get());
     rogue.detach();
 
     sdl_rogue->Run();

@@ -20,9 +20,16 @@ struct TextConfig
     std::vector<int> colors;
 };
 
+struct Options
+{
+    bool emulate_alt_controls = false;
+    bool use_unix_gfx = false;
+    bool use_colors = true;
+};
+
 struct SdlRogue : public DisplayInterface, public InputInterface
 {
-    SdlRogue(const TextConfig& text, TileConfig* tiles);
+    SdlRogue(const TextConfig& text, TileConfig* tiles, Options options);
     ~SdlRogue();
 
     void Run();
