@@ -120,9 +120,9 @@ look(int wakeup)
 		ch = ' ';
 
         if (tp != NULL || ch != CCHAR(inch())) {
-            PC_GFX_PASSGE_STANDOUT(y, x, ch);
+            PC_GFX_PASSGE_STANDOUT(y, x, ch, 0x70);
             addrawch(ch);
-            PC_GFX_STANDEND();
+            PC_GFX_NOCOLOR(0x70);
         }
 
 	    if (door_stop && !firstmove && running)
@@ -179,9 +179,9 @@ look(int wakeup)
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
     if (!running || !jump) {
-        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x, PLAYER);
+        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x, PLAYER, 0x70);
         mvaddrawch(hero.y, hero.x, PLAYER);
-        PC_GFX_STANDEND();
+        PC_GFX_NOCOLOR(0x70);
     }
 # ifdef DEBUG
     done = FALSE;

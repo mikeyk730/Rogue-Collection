@@ -194,9 +194,9 @@ hit_bound:
 		    take = ch;
 move_stuff:
 
-        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x, floor_at());
+        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x, floor_at(), 0x70);
         mvaddrawch(hero.y, hero.x, floor_at());
-        PC_GFX_STANDEND();
+        PC_GFX_NOCOLOR(0x70);
 
 		if ((fl & F_PASS) && chat(oldpos.y, oldpos.x) == DOOR)
 		    leave_room(&nh);

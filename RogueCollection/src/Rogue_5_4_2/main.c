@@ -25,7 +25,7 @@
  *	The main program, of course
  */
 int
-main(int argc, char **argv)
+GAME_MAIN(int argc, char **argv)
 {
     char *env;
     time_t lowtime;

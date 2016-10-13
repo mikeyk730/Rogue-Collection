@@ -1,5 +1,6 @@
 extern "C" {
 #include "curses.h"
+#undef getch
 }
 #include <algorithm>
 #include <cstdarg>
@@ -33,6 +34,7 @@ struct __window
     int clear();
     int clrtoeol();
     int erase();
+    int getch();
     int getcury();
     int getcurx();
     int getmaxy();
@@ -40,6 +42,7 @@ struct __window
     chtype inch();
     int move(int r, int c);
     int mvwin(int r, int c);
+    int nodelay(bool enable);
     int overlay(WINDOW* dest, bool copy_spaces) const;
     int refresh();
 
@@ -63,6 +66,7 @@ private:
     int col = 0;
 
     bool clear_screen = false;
+    bool no_delay = false;
 
     __window* parent = 0;
 };
@@ -177,6 +181,19 @@ int __window::erase()
     return OK;
 }
 
+int __window::getch()
+{
+    if (!s_input)
+        return ERR;
+    int ch = s_input->GetChar(!no_delay);
+    return ch ? ch : ERR;
+}
+
+char erasechar(void)
+{
+    return '\b';
+}
+
 int __window::clrtoeol()
 {
     for (int c = col; c < dimensions.x; ++c)
@@ -223,6 +240,12 @@ int __window::mvwin(int r, int c)
     return OK;
 }
 
+int __window::nodelay(bool enable)
+{
+    no_delay = enable;
+    return OK;
+}
+
 int __window::refresh()
 {
     Region region = window_region();
@@ -235,7 +258,7 @@ int __window::refresh()
 
     for (int r = origin.y; r < origin.y + dimensions.y; ++r)
         for (int c = origin.x; c < origin.x + dimensions.x; ++c)
-            curscr->m_data[r][c] = get_data(r, c);
+            curscr->m_data[r][c] = get_data_absolute(r, c);
 
     if (s_screen)
     {
@@ -609,11 +632,14 @@ int	standout(void)
     return wstandout(stdscr);
 }
 
-int wgetch(WINDOW*)
+int wgetch(WINDOW* w)
 {
-    if (!s_input)
-        return ERR;
-    return s_input->GetChar();
+    return w->getch();
+}
+
+int nodelay(WINDOW* w, _bool enable)
+{
+    return w->nodelay(enable);
 }
 
 int wgetnstr(WINDOW *, char* dest, int n)
@@ -695,11 +721,6 @@ int endwin(void)
     return OK;
 }
 
-char erasechar(void)
-{
-    return OK;
-}
-
 int flushinp(void)
 {
     return OK;
@@ -745,11 +766,6 @@ int idlok(WINDOW *, _bool)
     return OK;
 }
 
-int nodelay(WINDOW *, _bool)
-{
-    return OK;
-}
-
 int crmode(void)
 {
     return OK;
@@ -765,7 +781,7 @@ int echo(void)
     return OK;
 }
 
-int beep(void)
-{
-    return OK;
-}
+//int beep(void)
+//{
+//    return putchar('\a');
+//}

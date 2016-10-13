@@ -9,6 +9,7 @@
 #define POTION	(0xad)
 #define SCROLL	(0x0d)
 #define MAGIC	'$'
+#define BMAGIC  '+'
 #define FOOD	(0x05)
 #define STICK	(0xe7)
 #define ARMOR	(0x08)

@@ -1,5 +1,6 @@
 #ifdef USE_PC_GFX
 #include "pc_gfx_charmap.h"
+#include "pc_gfx_macros.h"
 
 void setup_colors()
 {
