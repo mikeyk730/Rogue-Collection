@@ -8,7 +8,7 @@
 #define PC_GFX_STANDOUT()             attron(COLOR_PAIR(0x70))
 #define PC_GFX_STANDEND()             attroff(COLOR_PAIR(0x70))
 #else ifdef ROGUE_3_6_3
-#define PC_GFX_PASSGE_STANDOUT(r,c,ch)   if (roomin_rc(r,c) == NULL && ch != PASSAGE) PC_GFX_STANDOUT()
+#define PC_GFX_PASSGE_STANDOUT(r,c,ch)   if (roomin_rc(r,c) == NULL && ch != PASSAGE && ch != ' ') PC_GFX_STANDOUT()
 #define PC_GFX_STANDOUT()             wattron(cw, COLOR_PAIR(0x70))
 #define PC_GFX_STANDEND()             wattroff(cw, COLOR_PAIR(0x70))
 #endif

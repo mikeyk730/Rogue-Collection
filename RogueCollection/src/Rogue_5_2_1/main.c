@@ -264,8 +264,9 @@ tstp(int a)
     getyx(curscr, y, x);
     mvcur(y, x, oy, ox);
     fflush(stdout);
-    curscr->_cury = oy;
-    curscr->_curx = ox;
+    move(oy, ox);
+    //curscr->_cury = oy;
+    //curscr->_curx = ox;
 }
 
 /*

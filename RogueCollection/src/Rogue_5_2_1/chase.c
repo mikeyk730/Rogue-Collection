@@ -164,7 +164,7 @@ over:
 	th->t_pos = ch_ret;
     }
     if (see_monst(th)) {
-        PC_GFX_PASSGE_STANDOUT(ch_ret.y, ch_ret.x);
+        PC_GFX_PASSGE_STANDOUT(ch_ret.y, ch_ret.x, th->t_disguise);
         MVADDCH(ch_ret.y, ch_ret.x, th->t_disguise);
         PC_GFX_STANDEND();
     }

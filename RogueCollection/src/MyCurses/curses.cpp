@@ -2,6 +2,7 @@ extern "C" {
 #include "curses.h"
 }
 #include <memory>
+#include <algorithm>
 #include <cstdarg>
 #include <cctype>
 
@@ -33,12 +34,17 @@ struct __window
     int set_attr(int i);
     int mvwin(int r, int c);
     int refresh();
+    int overlay(WINDOW* dest, bool copy_spaces) const;
+
+    Region window_region() const;
 
 private:
-    chtype get_data(int r, int c);
+    chtype get_data(int r, int c) const;
+    chtype get_data_absolute(int abs_r, int abs_c) const;
     void set_data(int r, int c, chtype ch);
-    chtype** data();
-    Coord data_coords(int r, int c);
+    void set_data_absolute(int abs_r, int abs_c, chtype ch);
+    chtype** data() const;
+    Coord data_coords(int r, int c) const;
 
     Coord origin = { 0, 0 };
     Coord dimensions = { 0, 0 };
@@ -249,10 +255,47 @@ int __window::refresh()
     return 0;
 }
 
-chtype __window::get_data(int r, int c)
+int __window::overlay(WINDOW * dest, bool copy_spaces) const
+{
+    Region r1 = window_region();
+    Region r2 = dest->window_region();
+
+    // calculate the overlap of the windows in absolute screen coordinates
+    Region overlap;
+    overlap.Left = std::max(r1.Left, r2.Left);
+    overlap.Top = std::max(r1.Top, r2.Top);
+    overlap.Right = std::min(r1.Right, r2.Right);
+    overlap.Bottom = std::min(r1.Bottom, r2.Bottom);
+
+    for (int r = overlap.Top; r <= overlap.Bottom; ++r) {
+        for (int c = overlap.Left; c <= overlap.Right; ++c) {
+            auto ch = get_data_absolute(r, c);
+            if (copy_spaces || (ch&A_CHARTEXT) != ' ')
+                dest->set_data_absolute(r, c, ch);
+        }
+    }
+    return OK;
+}
+
+Region __window::window_region() const
+{
+    Region r;
+    r.Left = origin.x;
+    r.Top = origin.y;
+    r.Right = r.Left + dimensions.x - 1;
+    r.Bottom = r.Top + dimensions.y - 1;
+    return r;
+}
+
+chtype __window::get_data(int r, int c) const
 {
     Coord o = data_coords(r,c);
     return data()[o.y][o.x];
+}
+
+chtype __window::get_data_absolute(int abs_r, int abs_c) const
+{
+    return get_data(abs_r - origin.y, abs_c - origin.x);
 }
 
 void __window::set_data(int r, int c, chtype ch)
@@ -262,12 +305,17 @@ void __window::set_data(int r, int c, chtype ch)
     data()[o.y][o.x] = ch;
 }
 
-chtype** __window::data()
+void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
+{
+    set_data(abs_r - origin.y, abs_c - origin.x, ch);
+}
+
+chtype** __window::data() const
 {
     return parent ? parent->m_data : m_data;
 }
 
-Coord __window::data_coords(int r, int c)
+Coord __window::data_coords(int r, int c) const
 {
     Coord p = { c, r };
     if (parent) {
@@ -309,6 +357,16 @@ int	delwin(WINDOW* w)
         stdscr = 0;
     }
     return OK;
+}
+
+int overlay(const WINDOW* w, WINDOW* dest)
+{
+    return w->overlay(dest, false);
+}
+
+int overwrite(const WINDOW* w, WINDOW* dest)
+{
+    return w->overlay(dest, true);
 }
 
 int mvwin(WINDOW* w, int r, int c)
@@ -688,6 +746,8 @@ int wgetnstr(WINDOW *, char* s, int n)
 
 
 
+
+
 //todo: 
 
 int init_color(short, short, short, short)
@@ -780,7 +840,27 @@ int idlok(WINDOW *, _bool)
     return 0;
 }
 
-int     nodelay(WINDOW *, _bool)
+int nodelay(WINDOW *, _bool)
+{
+    return OK;
+}
+
+int crmode(void)
+{
+    return OK;
+}
+
+int nocrmode(void)
+{
+    return OK;
+}
+
+int echo(void)
+{
+    return OK;
+}
+
+int beep(void)
 {
     return OK;
 }

@@ -103,9 +103,7 @@ new_level()
 	&& _monst[index] == NULL);
     enter_room(&hero);
     move(hero.y, hero.x);
-    PC_GFX_PASSGE_STANDOUT(hero.y, hero.x);
     ADDCH(PLAYER);
-    PC_GFX_STANDEND();
     if (on(player, SEEMONST))
 	turn_see(FALSE);
 }

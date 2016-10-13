@@ -180,7 +180,7 @@ hit_bound:
 		if (ch != STAIRS)
 		    take = ch;
 move_stuff:
-        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x);
+        PC_GFX_PASSGE_STANDOUT(hero.y, hero.x, chat(hero.y, hero.x));
 		MVADDCH(hero.y, hero.x, chat(hero.y, hero.x));
         PC_GFX_STANDEND();
 		if ((fl & F_PASS) && chat(oldpos.y, oldpos.x) == DOOR)

@@ -141,7 +141,7 @@ bool wakeup;
 
 	    move(y, x);
         if (ch != INCH()) {
-            PC_GFX_PASSGE_STANDOUT(y, x);
+            PC_GFX_PASSGE_STANDOUT(y, x, ch);
             ADDCH(ch);
             PC_GFX_STANDEND();
         }
@@ -202,7 +202,7 @@ bool wakeup;
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
     move(hero.y, hero.x);
-    PC_GFX_PASSGE_STANDOUT(hero.y, hero.x);
+    PC_GFX_PASSGE_STANDOUT(hero.y, hero.x, PLAYER);
     ADDCH(PLAYER);
     PC_GFX_STANDEND();
 }
