@@ -1,6 +1,11 @@
 #ifdef USE_PC_GFX
 #include "pc_gfx_charmap.h"
 #include "pc_gfx_macros.h"
+#include <curses.h>
+void init_game(struct DisplayInterface* screen, struct InputInterface* input)
+{
+    init_curses(screen, input);
+}
 
 void setup_colors()
 {

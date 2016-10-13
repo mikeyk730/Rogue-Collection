@@ -29,7 +29,7 @@ WINDOW *hw;                              /* Used for the help command */
 WINDOW *mw;                              /* Used to store mosnters */
 FILE   *scoreboard = NULL;
 
-main(argc, argv, envp)
+GAME_MAIN(argc, argv, envp)
 char **argv;
 char **envp;
 {

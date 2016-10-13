@@ -112,9 +112,9 @@ look(int wakeup)
 	    else if (y != hero.y || x != hero.x)
 		continue;
 	    wmove(cw, y, x);
-        PC_GFX_PASSGE_STANDOUT(y, x, ch);
+        PC_GFX_PASSGE_COLOR(y, x, ch, 0x70);
         waddrawch(cw, ch);
-        PC_GFX_STANDEND();
+        PC_GFX_NOCOLOR(0x70);
 	    if (door_stop && !firstmove && running)
 	    {
 		switch (runch)
@@ -168,9 +168,9 @@ look(int wakeup)
 	}
     if (door_stop && !firstmove && passcount > 1)
 	running = FALSE;
-    PC_GFX_PASSGE_STANDOUT(hero.y, hero.x, PLAYER);
+    PC_GFX_PASSGE_COLOR(hero.y, hero.x, PLAYER, 0x70);
     mvwaddrawch(cw, hero.y, hero.x, PLAYER);
-    PC_GFX_STANDEND();
+    PC_GFX_NOCOLOR(0x70);
     wmove(cw, oldy, oldx);
     oldpos = hero;
     oldrp = rp;

@@ -164,9 +164,9 @@ over:
 	th->t_pos = ch_ret;
     }
     if (see_monst(th)) {
-        PC_GFX_PASSGE_STANDOUT(ch_ret.y, ch_ret.x, th->t_disguise);
+        PC_GFX_PASSGE_COLOR(ch_ret.y, ch_ret.x, th->t_disguise, 0x70);
         MVADDCH(ch_ret.y, ch_ret.x, th->t_disguise);
-        PC_GFX_STANDEND();
+        PC_GFX_NOCOLOR(0x70);
     }
     else if (on(player, SEEMONST))
     {

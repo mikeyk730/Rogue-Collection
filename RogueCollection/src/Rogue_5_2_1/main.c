@@ -29,7 +29,7 @@
  * main:
  *	The main program, of course
  */
-main(argc, argv, envp)
+GAME_MAIN(argc, argv, envp)
 BYTE **argv;
 BYTE **envp;
 {

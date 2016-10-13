@@ -781,7 +781,7 @@ int echo(void)
     return OK;
 }
 
-//int beep(void)
-//{
-//    return putchar('\a');
-//}
+int beep(void)
+{
+    return putchar('\a');
+}
