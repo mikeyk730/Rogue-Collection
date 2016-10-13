@@ -21,11 +21,11 @@ namespace
 {
     std::vector<std::string> dlls = { "Rogue_3_6_3.dll", "Rogue_5_2_1.dll", "Rogue_5_4_2.dll" };
 
-    typedef int(*game_main)(int, char**);
+    typedef int(*game_main)(int, char**, char**);
     typedef void(*init_game)(DisplayInterface*, InputInterface*);
 
     //void run_game(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input)
-    void run_game(int index, int argc, char **argv, DisplayInterface* screen, InputInterface* input)
+    void run_game(int index, int argc, char** argv, DisplayInterface* screen, InputInterface* input)
     {
         try {
             HINSTANCE dll = LoadLibrary(dlls[index].c_str());
@@ -35,16 +35,16 @@ namespace
 
             init_game init = (init_game)GetProcAddress(dll, "init_game");
             if (!init) {
-                throw_error("Couldn't load int function");
+                throw_error("Couldn't load init_game from " + dlls[index]);
             }
 
             game_main game = (game_main)GetProcAddress(dll, "rogue_main");
             if (!game) {
-                throw_error("Couldn't load game function");
+                throw_error("Couldn't load rogue_main from " + dlls[index]);
             }
 
             (*init)(screen, input);
-            (*game)(argc, argv);
+            (*game)(argc, argv, environ);
         }
         catch (const std::runtime_error& e)
         {
@@ -68,9 +68,17 @@ namespace
     };
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-    int index = 0;
+    int index = 2;
+    if (argc > 1) {
+        std::string arg(argv[1]);
+        if (arg == "1" || arg == "2" || arg == "3") {
+            index = atoi(arg.c_str())-1;
+            --argc;
+            ++argv;
+        }
+    }
     std::shared_ptr<SdlRogue> sdl_rogue;
     
     try {
