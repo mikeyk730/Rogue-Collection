@@ -1,7 +1,8 @@
 #pragma once
 #include <memory>
-#include "RogueCore/display_interface.h"
-#include "RogueCore/input_interface.h"
+#include <vector>
+#include <display_interface.h>
+#include <input_interface.h>
 
 struct Region;
 struct Coord;
@@ -28,20 +29,14 @@ struct SdlRogue : public DisplayInterface, public InputInterface
     void Quit();
 
     //display interface
-    virtual void SetDimensions(Coord dimensions);
-    virtual void Draw(CharInfo* info, bool* text_mask);
-    virtual void Draw(CharInfo* info, bool* text_mask, Region rect);
-    virtual void MoveCursor(Coord pos);
-    virtual void SetCursor(bool enable);
+    virtual void SetDimensions(Coord dimensions) override;
+    virtual void UpdateRegion(uint32_t** info, Region rect) override;
+    virtual void MoveCursor(Coord pos) override;
+    virtual void SetCursor(bool enable) override;
 
     //input interface
-    virtual bool HasMoreInput();
-    virtual char GetNextChar();
-    virtual std::string GetNextString(int size);
-    virtual bool IsCapsLockOn();
-    virtual bool IsNumLockOn();
-    virtual bool IsScrollLockOn();
-    virtual void Serialize(std::ostream& out);
+    virtual char GetChar(bool block) override;
+    virtual std::string GetString(int size) override;
 
     struct Impl;
     std::unique_ptr<Impl> m_impl;

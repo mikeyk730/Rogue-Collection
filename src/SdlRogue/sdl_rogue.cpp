@@ -6,12 +6,10 @@
 #include "SDL.h"
 #include "sdl_rogue.h"
 #include "utility.h"
-#include "RogueCore/rogue.h"
-#include "RogueCore/util.h"
-#include "RogueCore/io.h"
-#include "RogueCore/mach_dep.h"
-#include "RogueCore/game_state.h"
-#include "RogueCore/output_shim.h"
+#include "..\RogueVersions\pc_gfx_charmap.h"
+
+#define CTRL(ch)  (ch&037)
+#define ESCAPE    (0x1b)
 
 namespace
 {
@@ -39,27 +37,39 @@ namespace
         { LLWALL,    '-' },
         { LRWALL,    '-' },
     };
+
+    uint32_t char_text(uint32_t ch)
+    {
+        return ch & 0x0000ffff;
+    }
+
+    uint32_t char_color(uint32_t ch)
+    {
+        return (ch >> 24) & 0xff;
+    }
 }
 
 struct SdlRogue::Impl
 {
-    const Coord EMPTY_COORD = { 0, 0 };
-    const unsigned int MAX_QUEUE_SIZE = 50;
+    const unsigned int MAX_QUEUE_SIZE = 1;
 
     Impl(const TextConfig& text, TileConfig* tiles);
     ~Impl();
 
     void SetDimensions(Coord dimensions);
-    void Draw(CharInfo * info, bool* text_mask);
-    void Draw(CharInfo * info, bool* text_mask, Region rect);
+    void UpdateRegion(uint32_t** info, Region rect);
+    void MoveCursor(Coord pos);
+    void SetCursor(bool enable);
+
     void Run();
     void Quit();
 
 private:
     void Render();
-    void RenderRegion(CharInfo* info, bool* text_mask, Coord dimensions, Region rect);
-    void RenderText(CharInfo info, SDL_Rect r, bool is_text);
-    void RenderTile(CharInfo info, SDL_Rect r);
+    void RenderRegion(uint32_t* info, Coord dimensions, Region rect);
+    void RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color);
+    void RenderTile(uint32_t info, SDL_Rect r);
+    void RenderCursor(Coord pos);
 
     Coord get_screen_pos(Coord buffer_pos);
 
@@ -70,7 +80,6 @@ private:
     int get_text_index(unsigned short attr);
     SDL_Rect get_text_rect(unsigned char c, int i);
 
-    int shared_data_size() const;         //must have mutex before calling
     Region shared_data_full_region();     //must have mutex before calling
     bool shared_data_is_narrow();         //must have mutex before calling
 
@@ -87,9 +96,10 @@ private:
 
     struct ThreadData
     {
-        CharInfo* m_data = 0;
-        bool* m_text_mask = 0;
+        uint32_t* m_data = 0;
         Coord m_dimensions = { 0, 0 };
+        bool m_cursor = false;
+        Coord m_cursor_pos = { 0, 0 };
         std::vector<Region> m_render_regions;
     };
     ThreadData m_shared_data;
@@ -128,7 +138,7 @@ private:
 
     //todo: 2 classes
 public:
-    char GetNextChar(bool do_key_state);
+    char GetNextChar(bool block, bool do_key_state);
     virtual std::string GetNextString(int size);
 private:
     void HandleEventText(const SDL_Event& e);
@@ -261,41 +271,45 @@ void SdlRogue::Impl::Render()
 {
     std::vector<Region> regions;
     Coord dimensions;
-    std::unique_ptr<CharInfo[]> data;
-    std::unique_ptr<bool[]> text_mask;
+    std::unique_ptr<uint32_t[]> data;
+    Coord cursor_pos;
+    bool show_cursor;
 
     //locked region
     {
         std::lock_guard<std::mutex> lock(m_mutex);
 
         dimensions = m_shared_data.m_dimensions;
-        if (dimensions == EMPTY_COORD)
+        if (dimensions.x == 0 || dimensions.y == 0)
             return;
 
         if (m_shared_data.m_render_regions.empty())
             return;
 
-        CharInfo* temp = new CharInfo[dimensions.x*dimensions.y];
-        memcpy(temp, m_shared_data.m_data, shared_data_size());
+        uint32_t* temp = new uint32_t[dimensions.x*dimensions.y];
+        memcpy(temp, m_shared_data.m_data, dimensions.x*dimensions.y*sizeof(uint32_t));
         data.reset(temp);
-
-        bool* temp2 = new bool[dimensions.x*dimensions.y];
-        memcpy(temp2, m_shared_data.m_text_mask, dimensions.x*dimensions.y*sizeof(bool));
-        text_mask.reset(temp2);
 
         regions = m_shared_data.m_render_regions;
         m_shared_data.m_render_regions.clear();
+
+        show_cursor = m_shared_data.m_cursor;
+        cursor_pos = m_shared_data.m_cursor_pos;
     }
 
     for (auto i = regions.begin(); i != regions.end(); ++i)
     {
-        RenderRegion(data.get(), text_mask.get(), dimensions, *i);
+        RenderRegion(data.get(), dimensions, *i);
+    }
+
+    if (show_cursor) {
+        RenderCursor(cursor_pos);
     }
 
     SDL_RenderPresent(m_renderer);
 }
 
-void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensions, Region rect)
+void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
 {
     for (int x = rect.Left; x <= rect.Right; ++x) {
         for (int y = rect.Top; y <= rect.Bottom; ++y) {
@@ -308,14 +322,13 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensi
             r.w = m_block_size.x;
             r.h = m_block_size.y;
 
-            CharInfo info = data[y*dimensions.x + x];
-            bool is_text = text_mask[y*dimensions.x + x];
+            uint32_t info = data[y*dimensions.x+x];
 
-            //todo: how to correctly determine text or monster/passage/wall?
-            //the code below works for original tile set, but not others
-            if (!m_tiles || is_text)
+            //todo: how to correctly determine text vs monster/passage/wall?
+            if (!m_tiles)
             {
-                RenderText(info, r, is_text);
+                //int color = (y >= 23) ? 0x0e : 0;
+                RenderText(info, r, false, 0);
             }
             else {
                 RenderTile(info, r);
@@ -324,24 +337,72 @@ void SdlRogue::Impl::RenderRegion(CharInfo* data, bool* text_mask, Coord dimensi
     }
 }
 
-void SdlRogue::Impl::RenderText(CharInfo info, SDL_Rect r, bool is_text)
+unsigned int GetColor(int chr, int attr)
 {
-    unsigned char c = info.Char.AsciiChar;
+    //if it is inside a room
+    if (attr == 0x07 || attr == 0) switch (chr)
+    {
+    case DOOR:
+    case VWALL: case HWALL:
+    case ULWALL: case URWALL: case LLWALL: case LRWALL:
+        return 0x06; //brown
+    case FLOOR:
+        return 0x0a; //light green
+    case STAIRS:
+        return 0xa0; //black on light green
+    case TRAP:
+        return 0x05; //magenta
+    case GOLD:
+    case PLAYER:
+        return 0x0e; //yellow
+    case POTION:
+    case SCROLL:
+    case STICK:
+    case ARMOR:
+    case AMULET:
+    case RING:
+    case WEAPON:
+        return 0x09; //light blue
+    case FOOD:
+        return 0x04; //red
+    }
+    //if inside a passage or a maze
+    else if (attr == 0x70) switch (chr)
+    {
+    case FOOD:
+        return 0x74; //red on grey
+    case GOLD: case PLAYER:
+        return 0x7e; //yellow on grey
+    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+        return 0x71; //blue on grey
+    }
+
+    return attr;
+}
+
+
+void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color)
+{
+    unsigned char c = char_text(info);
+    if (!color) {
+        color = GetColor(c, char_color(info));
+    }
+
     if (!is_text && use_unix_gfx)
     {
         auto i = unix_chars.find(c);
         if (i != unix_chars.end())
             c = i->second;
     }
-    int i = get_text_index(info.Attributes);
+    int i = get_text_index(color);
     SDL_Rect clip = get_text_rect(c, i);
 
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }
 
-void SdlRogue::Impl::RenderTile(CharInfo info, SDL_Rect r)
+void SdlRogue::Impl::RenderTile(uint32_t info, SDL_Rect r)
 {
-    auto i = tile_index(info.Char.AsciiChar, info.Attributes);
+    auto i = tile_index(char_text(info), char_color(info));
     if (i == -1)
     {
         //draw a black tile if we don't have a tile for this character
@@ -349,9 +410,26 @@ void SdlRogue::Impl::RenderTile(CharInfo info, SDL_Rect r)
         SDL_RenderFillRect(m_renderer, &r);
         return;
     }
-    bool inv = (m_tile_states > 1 && use_inverse(info.Attributes));
+    bool inv = (m_tile_states > 1 && char_color(info));
     SDL_Rect clip = get_tile_rect(i, inv);
     SDL_RenderCopy(m_renderer, m_tiles, &clip, &r);
+}
+
+void SdlRogue::Impl::RenderCursor(Coord pos)
+{
+    pos = get_screen_pos(pos);
+
+    SDL_Rect r;
+    r.x = pos.x;
+    r.y = pos.y + (m_block_size.y * 3 / 4);
+    r.w = m_block_size.x;
+    r.h = m_block_size.y/4;
+
+    int color = 0x0f;
+    int i = get_text_index(color);
+    SDL_Rect clip = get_text_rect(0xdb, i);
+
+    SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }
 
 inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
@@ -385,27 +463,16 @@ void SdlRogue::Impl::SetDimensions(Coord dimensions)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_shared_data.m_dimensions = dimensions;
-        m_shared_data.m_data = new CharInfo[dimensions.x*dimensions.y];
-        m_shared_data.m_text_mask = new bool[dimensions.x*dimensions.y];
+        m_shared_data.m_data = new uint32_t[dimensions.x*dimensions.y];
     }
     SDL_SetWindowSize(m_window, m_block_size.x*dimensions.x, m_block_size.y*dimensions.y);
 }
 
-void SdlRogue::Impl::Draw(CharInfo * info, bool* text_mask)
-{
-    Region r;
-    {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        //If we're adding a full render to the queue, we can ignore any previous regions.
-        m_shared_data.m_render_regions.clear();
-        r = shared_data_full_region();
-    }
-    Draw(info, text_mask, r);
-}
-
-inline void SdlRogue::Impl::Draw(CharInfo * info, bool* text_mask, Region rect)
+inline void SdlRogue::Impl::UpdateRegion(uint32_t** info, Region rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+
+    //todo: If we're adding a full render to the queue, we can ignore any previous regions.
 
     //If we're behind on rendering, clear the queue and do a single full render.
     if (m_shared_data.m_render_regions.size() > MAX_QUEUE_SIZE)
@@ -417,8 +484,20 @@ inline void SdlRogue::Impl::Draw(CharInfo * info, bool* text_mask, Region rect)
         m_shared_data.m_render_regions.push_back(rect);
     }
 
-    memcpy(m_shared_data.m_data, info, shared_data_size());
-    memcpy(m_shared_data.m_text_mask, text_mask, m_shared_data.m_dimensions.x*m_shared_data.m_dimensions.y*sizeof(bool));
+    for (int r = 0; r < m_shared_data.m_dimensions.y; ++r)
+        memcpy(&m_shared_data.m_data[r*m_shared_data.m_dimensions.x], info[r], m_shared_data.m_dimensions.x*sizeof(int32_t));
+}
+
+void SdlRogue::Impl::MoveCursor(Coord pos)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_shared_data.m_cursor_pos = pos;
+}
+
+void SdlRogue::Impl::SetCursor(bool enable)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_shared_data.m_cursor = enable;
 }
 
 void SdlRogue::Impl::Run()
@@ -451,11 +530,6 @@ void SdlRogue::Impl::Quit()
     SDL_Event sdlevent;
     sdlevent.type = SDL_QUIT;
     SDL_PushEvent(&sdlevent);
-}
-
-int SdlRogue::Impl::shared_data_size() const
-{
-    return sizeof(CharInfo) * m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y;
 }
 
 Region SdlRogue::Impl::shared_data_full_region()
@@ -497,17 +571,9 @@ void SdlRogue::SetDimensions(Coord dimensions)
     m_impl->SetDimensions(dimensions);
 }
 
-void SdlRogue::Draw(CharInfo * info, bool* text_mask)
+void SdlRogue::UpdateRegion(uint32_t** info, Region r)
 {
-    m_impl->Draw(info, text_mask);
-    SDL_Event sdlevent;
-    sdlevent.type = SDL_USEREVENT;
-    SDL_PushEvent(&sdlevent);
-}
-
-void SdlRogue::Draw(CharInfo * info, bool* text_mask, Region r)
-{
-    m_impl->Draw(info, text_mask, r);
+    m_impl->UpdateRegion(info, r);
     SDL_Event sdlevent;
     sdlevent.type = SDL_USEREVENT;
     SDL_PushEvent(&sdlevent);
@@ -515,52 +581,32 @@ void SdlRogue::Draw(CharInfo * info, bool* text_mask, Region r)
 
 void SdlRogue::MoveCursor(Coord pos)
 {
+    m_impl->MoveCursor(pos);
 }
 
 void SdlRogue::SetCursor(bool enable)
 {
+    m_impl->SetCursor(enable);
 }
 
-bool SdlRogue::HasMoreInput()
+char SdlRogue::GetChar(bool block)
 {
-    return true;
+    return m_impl->GetNextChar(block, true);
 }
 
-char SdlRogue::GetNextChar()
-{
-    return m_impl->GetNextChar(true);
-}
-
-std::string SdlRogue::GetNextString(int size)
+std::string SdlRogue::GetString(int size)
 {
     return m_impl->GetNextString(size);
 }
 
-bool SdlRogue::IsCapsLockOn()
-{
-    return is_caps_lock_on();
-}
-
-bool SdlRogue::IsNumLockOn()
-{
-    return is_num_lock_on();
-}
-
-bool SdlRogue::IsScrollLockOn()
-{
-    return is_scroll_lock_on();
-}
-
-void SdlRogue::Serialize(std::ostream & out)
-{
-}
-
-char SdlRogue::Impl::GetNextChar(bool do_key_state)
+char SdlRogue::Impl::GetNextChar(bool block, bool do_key_state)
 {
     std::unique_lock<std::mutex> lock(m_input_mutex);
     while (m_buffer.empty()) {
-        if (do_key_state)
-            handle_key_state();
+        if (!block) 
+            return 0;
+        //if (do_key_state)
+          //  handle_key_state();
         m_input_cv.wait(lock);
     }
 
@@ -574,12 +620,12 @@ namespace
 {
     void backspace()
     {
-        int x, y;
-        game->screen().getrc(&x, &y);
-        if (--y < 0) y = 0;
-        game->screen().move(x, y);
-        game->screen().add_text(' ');
-        game->screen().move(x, y);
+        //int x, y;
+        //game->screen().getrc(&x, &y);
+        //if (--y < 0) y = 0;
+        //game->screen().move(x, y);
+        //game->screen().add_text(' ');
+        //game->screen().move(x, y);
     }
 }
 
@@ -589,7 +635,7 @@ std::string SdlRogue::Impl::GetNextString(int size)
 
     while (true)
     {
-        char c = GetNextChar(false);
+        char c = GetNextChar(true, false);
         switch (c)
         {
         case ESCAPE:
@@ -604,10 +650,10 @@ std::string SdlRogue::Impl::GetNextString(int size)
             break;
         default:
             if (s.size() >= unsigned int(size)) {
-                sound_beep();
+                //sound_beep();
                 break;
             }
-            game->screen().add_text(c);
+            //game->screen().add_text(c);
             s.push_back(c);
             break;
         case '\n':
@@ -671,6 +717,9 @@ SDL_Keycode SdlRogue::Impl::TranslateNumPad(SDL_Keycode keycode, uint16_t modifi
 char SdlRogue::Impl::TranslateKey(SDL_Keycode keycode, uint16_t modifiers)
 {
     if (modifiers & KMOD_CTRL) {
+        auto i = m_keymap.find(keycode);
+        if (i != m_keymap.end())
+            keycode = i->second;
         if (IsLetterKey(keycode)) {
             return CTRL(keycode);
         }
@@ -696,8 +745,8 @@ char SdlRogue::Impl::TranslateKey(SDL_Keycode keycode, uint16_t modifiers)
 
 void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
 {
-    auto keycode = TranslateNumPad(e.key.keysym.sym, e.key.keysym.mod);
-    char c = TranslateKey(keycode, e.key.keysym.mod);
+    auto c = TranslateNumPad(e.key.keysym.sym, e.key.keysym.mod);
+    c = TranslateKey(c, e.key.keysym.mod);
     if (c == 0)
         return;
 

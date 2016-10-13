@@ -3,15 +3,28 @@
 #include "SDL.h"
 #include "sdl_rogue.h"
 #include "utility.h"
-#include "RogueCore/main.h"
-#include "RogueCore/output_interface.h"
+#include <input_interface.h>
+#include <display_interface.h>
+#include <curses.h>
+
+DisplayInterface::~DisplayInterface() {}
+InputInterface::~InputInterface() {}
+
+extern "C"
+{
+    void init_curses(DisplayInterface* screen, InputInterface* input);
+    void shutdow_curses();
+    int game_main(int argc, char **argv);
+}
 
 namespace
 {
-    void run_game(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input)
+    //void run_game(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input)
+    void run_game(int argc, char **argv, DisplayInterface* screen, InputInterface* input)
     {
         try {
-            game_main(argc, argv, output, input);
+            init_curses(screen, input);
+            game_main(argc, argv);
         }
         catch (const std::runtime_error& e)
         {
@@ -38,7 +51,7 @@ namespace
 int main(int argc, char **argv)
 {
     std::shared_ptr<SdlRogue> sdl_rogue;
-    std::shared_ptr<OutputInterface> output;
+    //std::shared_ptr<OutputInterface> output;
     
     try {
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -51,7 +64,7 @@ int main(int argc, char **argv)
         sdl_rogue.reset(new SdlRogue(pc_colored_text, 0));
         //sdl_rogue.reset(new SdlRogue(pc_colored_text, &pc_tiles));
 
-        output = CreateScreenOutput(sdl_rogue);
+        //output = CreateScreenOutput(sdl_rogue);
     }
     catch (const std::runtime_error& e)
     {
@@ -63,7 +76,7 @@ int main(int argc, char **argv)
     }
 
     //start rogue engine on a background thread
-    std::thread rogue(run_game, argc, argv, output, sdl_rogue);
+    std::thread rogue(run_game, argc, argv, sdl_rogue.get(), sdl_rogue.get());
     rogue.detach();
 
     sdl_rogue->Run();
