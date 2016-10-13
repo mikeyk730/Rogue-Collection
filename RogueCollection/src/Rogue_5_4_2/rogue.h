@@ -1,3 +1,4 @@
+#pragma once
 /*
  * Rogue definitions and variable declarations
  *
@@ -113,6 +114,7 @@
 #define LRWALL	    '-'
 #else
 #include "..\pc_gfx_charmap.h"
+void setup_colors();
 #endif
 #define ROGUE_5_4_2
 #include "..\pc_gfx_macros.h"
@@ -639,7 +641,7 @@ void	getltchars(void);
 void	give_pack(THING *tp);
 void	help(void);
 void	hit(const char *er, const char *ee, int noend);
-void	horiz(const struct room *rp, int starty);
+void	horiz(const struct room *rp, int starty, int is_top);
 void	leave_room(const coord *cp);
 void	lengthen(void (*func)(), int xtime);
 void	look(int wakeup);
