@@ -260,9 +260,15 @@ int __window::refresh()
         clear_screen = false;
     }
 
-    for (int r = origin.y; r < origin.y + dimensions.y; ++r)
-        for (int c = origin.x; c < origin.x + dimensions.x; ++c)
-            curscr->m_data[index(r,c)] = get_data_absolute(r, c);
+    if (region.Top == 0 && region.Left == 0 && region.Bottom == LINES - 1 && region.Right == COLS - 1)
+    {
+        memcpy(curscr->m_data, m_data, LINES*COLS * sizeof(chtype));
+    }
+    else {
+        for (int r = origin.y; r < origin.y + dimensions.y; ++r)
+            for (int c = origin.x; c < origin.x + dimensions.x; ++c)
+                curscr->m_data[index(r, c)] = get_data_absolute(r, c);
+    }
 
     if (s_screen)
     {
