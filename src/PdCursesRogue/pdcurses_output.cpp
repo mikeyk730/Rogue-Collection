@@ -143,9 +143,9 @@ public:
 
 private:
     //drawing routines that do not auto-render
-    void private_mvaddch(int r, int c, char chr);
-    void private_addch(unsigned char c);
-    void private_putchr(int c, int attr);
+    void private_mvaddch(int r, int c, char chr, bool text);
+    void private_addch(unsigned char c, bool text);
+    void private_putchr(int c, int attr, bool text);
     void private_repchr(int chr, int cnt);
     void private_vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
@@ -274,14 +274,14 @@ void PdCursesOutput::clrtoeol()
 
 void PdCursesOutput::mvaddch(int r, int c, char chr)
 {
-    private_mvaddch(r, c, chr);
+    private_mvaddch(r, c, chr, true);
     Render();
 }
 
-void PdCursesOutput::private_mvaddch(int r, int c, char chr)
+void PdCursesOutput::private_mvaddch(int r, int c, char chr, bool text)
 {
     move(r, c);
-    private_addch(chr);
+    private_addch(chr, text);
 }
 
 //todo: get rid of entirely
@@ -327,7 +327,7 @@ int GetColor(int chr, int attr)
     return attr;
 }
 
-void PdCursesOutput::private_addch(unsigned char chr)
+void PdCursesOutput::private_addch(unsigned char chr, bool text)
 {
     int r, c;
     getrc(&r, &c);
@@ -347,15 +347,18 @@ void PdCursesOutput::private_addch(unsigned char chr)
     {
         attr = GetColor(chr, attr);
     }
-    private_putchr(chr, attr);
+    private_putchr(chr, attr, text);
     move(r, c + 1);
     return;
 }
 
-void PdCursesOutput::private_putchr(int c, int attr)
+void PdCursesOutput::private_putchr(int c, int attr, bool text)
 {
     ::attron(COLOR_PAIR(attr));
-    ::addrawch(c);
+    if (text)
+        ::addch(c);
+    else
+        ::addrawch(c);
     ::attron(COLOR_PAIR(attr));
 }
 
@@ -369,7 +372,7 @@ void PdCursesOutput::addstr(const char *s)
 {
     for (int i = 0; s[i]; ++i)
     {
-        private_addch(s[i]);
+        private_addch(s[i], true);
     }
     Render();
 }
@@ -424,14 +427,14 @@ void PdCursesOutput::private_vbox(const unsigned char box[BX_SIZE], int ul_r, in
     private_repchr(box[BX_HB], i);
     //draw vertical boundary
     for (i = ul_r + 1; i < lr_r; i++) {
-        private_mvaddch(i, ul_c, box[BX_VW]);
-        private_mvaddch(i, lr_c, box[BX_VW]);
+        private_mvaddch(i, ul_c, box[BX_VW], true);
+        private_mvaddch(i, lr_c, box[BX_VW], true);
     }
     //draw corners
-    private_mvaddch(ul_r, ul_c, box[BX_UL]);
-    private_mvaddch(ul_r, lr_c, box[BX_UR]);
-    private_mvaddch(lr_r, ul_c, box[BX_LL]);
-    private_mvaddch(lr_r, lr_c, box[BX_LR]);
+    private_mvaddch(ul_r, ul_c, box[BX_UL], true);
+    private_mvaddch(ul_r, lr_c, box[BX_UR], true);
+    private_mvaddch(lr_r, ul_c, box[BX_LL], true);
+    private_mvaddch(lr_r, lr_c, box[BX_LR], true);
     move(r, c);
     cursor(wason);
 }
@@ -477,7 +480,7 @@ void PdCursesOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
         for (c = ul_col; c <= lr_col; ++c)
         {
             move(r, c);
-            private_putchr(' ', m_attr);
+            private_putchr(' ', m_attr, true);
         }
     }
     move(ul_row, ul_col);
@@ -493,7 +496,7 @@ void PdCursesOutput::repchr(int chr, int cnt)
 void PdCursesOutput::private_repchr(int chr, int cnt)
 {
     while (cnt-- > 0) {
-        private_putchr(chr, m_attr);
+        private_putchr(chr, m_attr, true);
     }
 }
 
@@ -525,26 +528,26 @@ char PdCursesOutput::curch()
 
 int PdCursesOutput::add_text(unsigned char c)
 {
-    private_addch(c);
+    private_addch(c, true);
     Render();
     return OK;
 }
 
 void PdCursesOutput::add_text(short y, short x, unsigned char c)
 {
-    private_mvaddch(y, x, c);
+    private_mvaddch(y, x, c, true);
     Render();
 }
 
 void PdCursesOutput::add_tile(short y, short x, unsigned char c)
 {
-    private_mvaddch(y, x, c);
+    private_mvaddch(y, x, c, false);
     Render();
 }
 
 int PdCursesOutput::add_tile(unsigned char c)
 {
-    private_addch(c);
+    private_addch(c, false);
     Render();
     return OK;
 }

@@ -64,7 +64,7 @@ namespace
 
 int main(int argc, char** argv)
 {
-    int index = 1-1;
+    int index = 4-1;
     if (argc > 1) {
         std::string arg(argv[1]);
         if (arg == "1" || arg == "2" || arg == "3" || arg == "4") {
@@ -80,7 +80,6 @@ int main(int argc, char** argv)
             throw_error("SDL_Init");
         }
 
-
         Options options;
         if (index == 0 || index == 1 || index == 3) {
             options.emulate_alt_controls = true;
@@ -88,9 +87,9 @@ int main(int argc, char** argv)
 
         //sdl_rogue.reset(new SdlRogue(pc_text, 0));
         //sdl_rogue.reset(new SdlRogue(pc_text, &pc_tiles));
-        //sdl_rogue.reset(new SdlRogue(pc_colored_text, &atari_tiles));
+        sdl_rogue.reset(new SdlRogue(pc_colored_text, &atari_tiles, options));
         
-        sdl_rogue.reset(new SdlRogue(pc_colored_text, 0, options));
+        //sdl_rogue.reset(new SdlRogue(pc_colored_text, 0, options));
         //sdl_rogue.reset(new SdlRogue(pc_colored_text, &pc_tiles));
 
         //output = CreateScreenOutput(sdl_rogue);

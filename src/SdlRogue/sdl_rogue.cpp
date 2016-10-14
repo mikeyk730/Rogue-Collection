@@ -49,6 +49,11 @@ namespace
     {
         return (ch >> 24) & 0xff;
     }
+
+    bool is_text(uint32_t ch)
+    {
+        return (ch & 0x010000) == 0;
+    }
 }
 
 struct SdlRogue::Impl
@@ -146,7 +151,6 @@ public:
     char GetNextChar(bool block, bool do_key_state);
     virtual std::string GetNextString(int size);
 private:
-    void HandleInput(SDL_Keycode keycode, uint16_t modifiers);
     void HandleEventText(const SDL_Event& e);
     void HandleEventKeyDown(const SDL_Event& e);
     void HandleEventKeyUp(const SDL_Event& e);
@@ -336,7 +340,7 @@ void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
             uint32_t info = data[y*dimensions.x+x];
 
             //todo: how to correctly determine text vs monster/passage/wall?
-            if (!m_tiles)
+            if (!m_tiles || is_text(info))
             {
                 //int color = (y >= 23) ? 0x0e : 0;
                 RenderText(info, r, false, 0);
