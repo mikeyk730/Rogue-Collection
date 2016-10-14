@@ -9,7 +9,7 @@ extern "C" {
 
 extern "C"
 {
-    void init_curses(DisplayInterface* screen, InputInterface* input);
+    void init_curses(DisplayInterface* screen, InputInterface* input, int lines, int cols);
     void shutdow_curses();
 }
 
@@ -45,8 +45,11 @@ struct __window
     int nodelay(bool enable);
     int overlay(WINDOW* dest, bool copy_spaces) const;
     int refresh();
+    int getnstr(char* dest, int n);
 
 private:
+    std::string getsnstr_impl(unsigned int n);
+
     chtype get_data(int r, int c) const;
     chtype get_data_absolute(int abs_r, int abs_c) const;
     void set_data(int r, int c, chtype ch);
@@ -72,11 +75,11 @@ private:
     __window* parent = 0;
 };
 
-WINDOW* stdscr;
-WINDOW* curscr;
+WINDOW* stdscr = 0;
+WINDOW* curscr = 0;
 
-int COLS;
-int LINES;
+int COLS = 0;
+int LINES = 0;
 
 __window::__window(int lines, int cols, int begin_y, int begin_x)
 {
@@ -226,6 +229,54 @@ int __window::getmaxx()
     return dimensions.x;
 }
 
+std::string __window::getsnstr_impl(unsigned int n)
+{
+    const int ESCAPE = 0x1b;
+
+    std::string s;
+    while (true)
+    {
+        unsigned char c = s_input->GetChar(true);
+        switch (c)
+        {
+        case ESCAPE:
+            s.clear();
+            s.push_back(ESCAPE);
+            return s;
+        case '\b':
+            if (!s.empty()) {
+                addch('\b');
+                s.pop_back();
+            }
+            break;
+        default:
+            if (s.size() >= n) {
+                beep();
+                break;
+            }
+            //todo: i should care about echo
+            addch(c);
+            s.push_back(c);
+            break;
+        case '\n':
+        case '\r':
+            return s;
+        }
+
+        refresh();
+    }
+}
+
+int __window::getnstr(char* dest, int n)
+{
+    if (!s_input)
+        return ERR;
+
+    std::string s = getsnstr_impl(n - 1);
+    strcpy(dest, s.c_str());
+    return OK;
+}
+
 chtype __window::inch()
 {
     //todo: should i return attrs?
@@ -353,8 +404,10 @@ Coord __window::data_coords(int r, int c) const
     return p;
 }
 
-void init_curses(DisplayInterface* screen, InputInterface* input)
+void init_curses(DisplayInterface* screen, InputInterface* input, int lines, int cols)
 {
+    LINES = lines;
+    COLS = cols;
     s_screen = screen;
     s_input = input;
 }
@@ -366,8 +419,10 @@ void shutdow_curses()
 
 WINDOW* initscr(void)
 {
-    LINES = 25;
-    COLS = 80;
+    if (LINES == 0)
+        LINES = 25;
+    if (COLS == 0)
+        COLS = 80;
 
     if (s_screen)
         s_screen->SetDimensions({ COLS, LINES });
@@ -471,6 +526,11 @@ int getmaxy(WINDOW* w)
 int getmaxx(WINDOW* w)
 {
     return w->getmaxx();
+}
+
+int wgetnstr(WINDOW* w, char* dest, int n)
+{
+    return w->getnstr(dest, n);
 }
 
 chtype winch(WINDOW* w)
@@ -580,6 +640,11 @@ int	clrtoeol(void)
     return wclrtoeol(stdscr);
 }
 
+int getnstr(char* dest, int n)
+{
+    return wgetnstr(stdscr, dest, n);
+}
+
 chtype inch(void)
 {
     return winch(stdscr);
@@ -655,15 +720,6 @@ int wgetch(WINDOW* w)
 int nodelay(WINDOW* w, _bool enable)
 {
     return w->nodelay(enable != 0);
-}
-
-int wgetnstr(WINDOW *, char* dest, int n)
-{
-    if (!s_input)
-        return ERR;
-    std::string s = s_input->GetString(n);
-    strcpy(dest, s.c_str());
-    return OK;
 }
 
 int baudrate(void)

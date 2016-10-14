@@ -571,7 +571,7 @@ struct h_list helpstr[] = {
     'z',	"	zap a wand or staff",
     '>',	"	go down a staircase",
     's',	"	search for trap/secret door",
-    ' ',	"	(space) rest for a while",
+    REST_COMMAND,	"	"REST_DESC"rest for a while",
     'i',	"	inventory",
     'I',	"	inventory single item",
     'q',	"	quaff potion",

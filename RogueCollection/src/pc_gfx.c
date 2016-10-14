@@ -2,9 +2,9 @@
 #include "pc_gfx_charmap.h"
 #include "pc_gfx_macros.h"
 #include <curses.h>
-void init_game(struct DisplayInterface* screen, struct InputInterface* input)
+void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols)
 {
-    init_curses(screen, input);
+    init_curses(screen, input, lines, cols);
 }
 
 void setup_colors()
