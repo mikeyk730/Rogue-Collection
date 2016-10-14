@@ -1,6 +1,5 @@
 #include <cassert>
 #include <map>
-#include <vector>
 #include <deque>
 #include <mutex>
 #include <iterator>
@@ -573,7 +572,7 @@ bool SdlRogue::Impl::shared_data_is_narrow()
     return m_shared_data.m_dimensions.x == 40;
 }
 
-SdlRogue::SdlRogue(const TextConfig& text, TileConfig* tiles, Options options) :
+SdlRogue::SdlRogue(const TextConfig& text, TileConfig* tiles, const Options& options) :
     m_impl(new Impl(text, tiles, options))
 {
 }
@@ -842,9 +841,15 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
 
 void SdlRogue::Impl::HandleEventKeyUp(const SDL_Event & e)
 {
+    if (!m_options.scroll_lock_wake)
+        return;
+
     if (e.key.keysym.sym == SDLK_SCROLLLOCK ||
         e.key.keysym.sym == SDLK_CAPSLOCK ||
         e.key.keysym.sym == SDLK_NUMLOCKCLEAR){
+
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        m_buffer.push_back(0);
         m_input_cv.notify_all();
     }
 }

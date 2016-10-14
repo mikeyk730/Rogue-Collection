@@ -224,7 +224,7 @@ void get_command_from_user(Command* command)
         process_prefixes(ch, command, &fast_mode);
     }
 
-    //fast_mode ^= game->fast_play();
+    fast_mode |= game->fast_play();
 
     switch (command->ch)
     {

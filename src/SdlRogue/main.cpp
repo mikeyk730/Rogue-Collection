@@ -1,6 +1,5 @@
 #include <memory>
 #include <thread>
-#include <vector>
 #include "SDL.h"
 #include "sdl_rogue.h"
 #include "utility.h"
@@ -13,28 +12,32 @@ InputInterface::~InputInterface() {}
 
 namespace
 {
-    std::vector<std::string> dlls = { "Rogue_3_6_3.dll", "Rogue_5_2_1.dll", "Rogue_5_4_2.dll", "Rogue_PC_1_48.dll" };
-
     typedef int(*game_main)(int, char**, char**);
     typedef void(*init_game)(DisplayInterface*, InputInterface*);
 
+    struct LibraryDeleter
+    {
+        typedef HMODULE pointer;
+        void operator()(HMODULE h) { FreeLibrary(h); }
+    };
+
     //void run_game(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input)
-    void run_game(int index, int argc, char** argv, DisplayInterface* screen, InputInterface* input)
+    void run_game(const std::string& lib, int argc, char** argv, DisplayInterface* screen, InputInterface* input)
     {
         try {
-            HINSTANCE dll = LoadLibrary(dlls[index].c_str());
+            std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
             if (!dll) {
-                throw_error("Couldn't load dll " + dlls[index]);
+                throw_error("Couldn't load dll " + lib);
             }
 
-            init_game init = (init_game)GetProcAddress(dll, "init_game");
+            init_game init = (init_game)GetProcAddress(dll.get(), "init_game");
             if (!init) {
-                throw_error("Couldn't load init_game from " + dlls[index]);
+                throw_error("Couldn't load init_game from " + lib);
             }
 
-            game_main game = (game_main)GetProcAddress(dll, "rogue_main");
+            game_main game = (game_main)GetProcAddress(dll.get(), "rogue_main");
             if (!game) {
-                throw_error("Couldn't load rogue_main from " + dlls[index]);
+                throw_error("Couldn't load rogue_main from " + lib);
             }
 
             (*init)(screen, input);
@@ -66,29 +69,32 @@ namespace
         0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0xA0,
         0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f }
     };
+
+    Options s_options[4] = {// gfx   color   alt    scrl
+        {"Rogue_3_6_3.dll",   true,  false, true,  false },
+        {"Rogue_5_2_1.dll",   true,  false, true,  false },
+        {"Rogue_5_4_2.dll",   true,  false, false, false },
+        {"Rogue_PC_1_48.dll", false, true,  true,  true  },
+    };
 }
 
 int main(int argc, char** argv)
 {
-    int index = 4-1;
+    int i = 4-1;
     if (argc > 1) {
         std::string arg(argv[1]);
         if (arg == "1" || arg == "2" || arg == "3" || arg == "4") {
-            index = atoi(arg.c_str())-1;
+            i = atoi(arg.c_str())-1;
             --argc;
             ++argv;
         }
     }
+    Options options = s_options[i];
+
     std::shared_ptr<SdlRogue> sdl_rogue;
-    
     try {
         if (SDL_Init(SDL_INIT_VIDEO) != 0) {
             throw_error("SDL_Init");
-        }
-
-        Options options;
-        if (index == 0 || index == 1 || index == 3) {
-            options.emulate_alt_controls = true;
         }
 
         //sdl_rogue.reset(new SdlRogue(pc_text, 0));
@@ -111,7 +117,7 @@ int main(int argc, char** argv)
     }
 
     //start rogue engine on a background thread
-    std::thread rogue(run_game, index, argc, argv, sdl_rogue.get(), sdl_rogue.get());
+    std::thread rogue(run_game, options.dll_name, argc, argv, sdl_rogue.get(), sdl_rogue.get());
     rogue.detach();
 
     sdl_rogue->Run();

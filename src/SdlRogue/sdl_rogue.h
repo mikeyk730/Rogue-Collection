@@ -22,14 +22,16 @@ struct TextConfig
 
 struct Options
 {
-    bool emulate_alt_controls = false;
-    bool use_unix_gfx = false;
-    bool use_colors = true;
+    const char* dll_name;
+    bool use_unix_gfx;
+    bool use_colors;
+    bool emulate_alt_controls;
+    bool scroll_lock_wake;
 };
 
 struct SdlRogue : public DisplayInterface, public InputInterface
 {
-    SdlRogue(const TextConfig& text, TileConfig* tiles, Options options);
+    SdlRogue(const TextConfig& text, TileConfig* tiles, const Options& options);
     ~SdlRogue();
 
     void Run();

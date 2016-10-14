@@ -415,6 +415,8 @@ int getinfo_impl(char *str, int size)
     wason = game->screen().cursor(true);
     while (ret == 1) switch (ch = game->input_interface().GetNextChar())
     {
+    case 0:
+        continue;
     case ESCAPE:
         while (str != retstr) { backspace(); readcnt--; str--; }
         ret = *str = ESCAPE;
@@ -461,7 +463,10 @@ int readchar()
         return ch;
     }
 
-    ch = game->input_interface().GetNextChar();
+    do {
+        handle_key_state();
+        ch = game->input_interface().GetNextChar();
+    } while (ch == 0);
 
     if (ch == ESCAPE)
         game->cancel_repeating_cmd();
@@ -520,23 +525,23 @@ void handle_key_state()
         tspot = 75;
     }
 
-    //if (!game->in_replay() && game->fast_play() != scroll_lock_on)
-    //{
-    //    game->set_fast_play(scroll_lock_on);
-    //    game->cancel_repeating_cmd();
-    //    //game->stop_run_cmd();
-    //}
+    if (!game->in_replay() && game->fast_play() != scroll_lock_on)
+    {
+        game->set_fast_play(scroll_lock_on);
+        game->cancel_repeating_cmd();
+        game->stop_run_cmd();
+    }
 
-    //if ( scrl != game->fast_play()) {
-    //    scrl = game->fast_play();
-    //    game->screen().move(LINES - 1, 0);
-    //    if (game->fast_play()) {
-    //        game->screen().bold();
-    //        game->screen().addstr("Fast Play");
-    //        game->screen().standend();
-    //    }
-    //    else game->screen().addstr("         ");
-    //}
+    if ( scrl != game->fast_play()) {
+        scrl = game->fast_play();
+        game->screen().move(LINES - 1, 0);
+        if (game->fast_play()) {
+            game->screen().bold();
+            game->screen().addstr("Fast Play");
+            game->screen().standend();
+        }
+        else game->screen().addstr("         ");
+    }
 
     if (numl != num_lock_on)
     {
