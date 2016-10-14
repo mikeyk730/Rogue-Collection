@@ -197,6 +197,7 @@ quaff()
 	    if (p_guess[obj->o_which] != NULL)
 		strcpy(p_guess[obj->o_which], buf);
 	}
+    CLEAR_MSG;
     }
     /*
      * Throw the item away

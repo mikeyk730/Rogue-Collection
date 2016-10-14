@@ -74,7 +74,8 @@ score(int amount, int flags, int monst)
     {
 	mvaddstr(LINES - 1, 0 , "[Press return to continue]");
         refresh();
-        wgetnstr(stdscr,prbuf,80);
+        wait_for(stdscr, '\n'); //mdk:
+        //wgetnstr(stdscr,prbuf,80);
  	endwin();
         printf("\n");
         resetltchars();

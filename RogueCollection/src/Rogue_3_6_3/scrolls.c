@@ -303,6 +303,7 @@ read_scroll()
 	    if (s_guess[obj->o_which] != NULL)
 		strcpy(s_guess[obj->o_which], buf);
 	}
+    CLEAR_MSG;
     }
     /*
      * Get rid of the thing

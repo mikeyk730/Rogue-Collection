@@ -195,7 +195,6 @@ status()
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
     PC_GFX_COLOR(0x0e);
     mvwaddstr(cw, LINES - 1, 0, buf);
-    PC_GFX_NOCOLOR(0x0e);
     switch (hungry_state)
     {
 	case 0: ;
@@ -206,6 +205,7 @@ status()
 	when 3:
 	    waddstr(cw, "  Fainting");
     }
+    PC_GFX_NOCOLOR(0x0e);
     wclrtoeol(cw);
     s_hungry = hungry_state;
     wmove(cw, oy, ox);

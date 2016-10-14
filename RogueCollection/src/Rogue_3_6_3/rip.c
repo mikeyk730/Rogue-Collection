@@ -156,7 +156,8 @@ score(int amount, int flags, int monst)
 	mvaddstr(LINES-1, 0, "[Press return to continue]");
 	draw(stdscr);
 	prbuf[0] = 0;
-	get_str(prbuf, stdscr);
+    wait_for(stdscr, '\n'); //mdk:
+	//get_str(prbuf, stdscr);
 	endwin();
     }
     if (wizard)
