@@ -80,6 +80,11 @@ int LINES;
 
 __window::__window(int lines, int cols, int begin_y, int begin_x)
 {
+    if (lines == 0)
+        lines = LINES - begin_y;
+    if (cols == 0)
+        cols = COLS - begin_x;
+
     dimensions = { cols, lines };
     origin = { begin_x, begin_y };
 
@@ -103,19 +108,20 @@ __window::~__window()
 
 int __window::addch(chtype ch)
 {
-    if (ch == '\n')
+    ch |= attr;
+    if ((ch&A_CHARTEXT) == '\n')
     {
         clrtoeol();
         ++row;
         col = 0;
     }
-    else if (ch == '\b')
+    else if ((ch&A_CHARTEXT) == '\b')
     {
         set_data(row, col, ' ');
         if (col > 0)
             --col;
     }
-    else if (ch == '\t')
+    else if ((ch&A_CHARTEXT) == '\t')
     {
         do {
             set_data(row, col, ' ');
@@ -130,6 +136,7 @@ int __window::addch(chtype ch)
 
 int __window::addrawch(chtype ch)
 {
+    ch |= attr;
     //todo:apply addr
     set_data(row, col, ch);
     ++col;
@@ -315,7 +322,6 @@ chtype __window::get_data_absolute(int abs_r, int abs_c) const
 
 void __window::set_data(int r, int c, chtype ch)
 {
-    ch |= attr;
     Coord o = data_coords(r, c);
     data()[index(o.y,o.x)] = ch;
 }
