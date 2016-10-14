@@ -21,7 +21,6 @@ namespace
         void operator()(HMODULE h) { FreeLibrary(h); }
     };
 
-    //void run_game(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input)
     void run_game(const std::string& lib, int argc, char** argv, DisplayInterface* screen, InputInterface* input)
     {
         try {
@@ -63,18 +62,24 @@ namespace
         0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0xA0,
         0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f }
     };
-    TextConfig square_text = { "text_16x16.bmp",{
+    TextConfig cutesy_text = { "text_16x16.bmp",{
         0x07, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
         0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0xA0,
         0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f }
     };
 
-    Options s_options[4] = {// gfx   color   alt    scrl
-        {"Rogue_3_6_3.dll",   true,  false, true,  false },
-        {"Rogue_5_2_1.dll",   true,  false, true,  false },
-        {"Rogue_5_4_2.dll",   true,  false, false, false },
-        {"Rogue_PC_1_48.dll", false, true,  true,  true  },
+    GraphicsConfig unix_gfx = { &pc_colored_text, 0, true, false };
+    GraphicsConfig color_unix_gfx = { &pc_colored_text, 0, true, true };
+    GraphicsConfig pc_gfx = { &pc_colored_text, 0, false, true };
+    GraphicsConfig atari_gfx = { &cutesy_text, &atari_tiles, false, true };
+    GraphicsConfig cutesy_gfx = { &cutesy_text, 0, false, true };
+
+    std::vector<Options> s_options = {
+        { "Rogue_3_6_3.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+        { "Rogue_5_2_1.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+        { "Rogue_5_4_2.dll",   false, false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+        { "Rogue_PC_1_48.dll", true,  true,  { pc_gfx, unix_gfx, color_unix_gfx, atari_gfx, cutesy_gfx } },
     };
 }
 
@@ -89,7 +94,7 @@ int main(int argc, char** argv)
             ++argv;
         }
     }
-    Options options = s_options[i];
+    Options& options = s_options[i];
 
     std::shared_ptr<SdlRogue> sdl_rogue;
     try {
@@ -101,7 +106,7 @@ int main(int argc, char** argv)
         //sdl_rogue.reset(new SdlRogue(pc_text, &pc_tiles));
         //sdl_rogue.reset(new SdlRogue(square_text, &atari_tiles, options));
         
-        sdl_rogue.reset(new SdlRogue(pc_colored_text, 0, options));
+        sdl_rogue.reset(new SdlRogue(options));
         //sdl_rogue.reset(new SdlRogue(square_text, 0, options));
         //sdl_rogue.reset(new SdlRogue(pc_colored_text, &pc_tiles));
 

@@ -59,7 +59,7 @@ struct SdlRogue::Impl
 {
     const unsigned int MAX_QUEUE_SIZE = 1;
 
-    Impl(const TextConfig& text, TileConfig* tiles, Options options);
+    Impl(Options options);
     ~Impl();
 
     void SetDimensions(Coord dimensions);
@@ -72,6 +72,7 @@ struct SdlRogue::Impl
     void Quit();
 
 private:
+    void LoadAssets();
     void Render(bool force);
     void RenderRegion(uint32_t* info, Coord dimensions, Region rect);
     void RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color);
@@ -100,6 +101,7 @@ private:
     int m_tile_states = 0;
     Coord m_text_dimensions = { 0, 0 };
     std::map<int, int> m_attr_index;
+    int m_gfx_mode = 0;
 
     Options m_options;
 
@@ -202,7 +204,7 @@ private:
     };
 };
 
-SdlRogue::Impl::Impl(const TextConfig& text_cfg, TileConfig* tile_cfg, Options options)
+SdlRogue::Impl::Impl(Options options)
     : m_options(options)
 {
     m_window = SDL_CreateWindow("Rogue", 100, 100, 100, 100, SDL_WINDOW_HIDDEN);
@@ -213,24 +215,8 @@ SdlRogue::Impl::Impl(const TextConfig& text_cfg, TileConfig* tile_cfg, Options o
     if (m_renderer == nullptr)
         throw_error("SDL_CreateRenderer");
 
-    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + text_cfg.filename));
-    m_text_dimensions.x = text->w / 256;
-    m_text_dimensions.y = text->h / text_cfg.colors.size();
-    for (size_t i = 0; i < text_cfg.colors.size(); ++i)
-        m_attr_index[text_cfg.colors[i]] = i;
-    m_block_size = m_text_dimensions;
-    m_text = create_texture(text.get(), m_renderer).release();
+    LoadAssets();
 
-    if (tile_cfg)
-    {
-        SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + tile_cfg->filename));
-        m_block_size.x = tiles->w / tile_cfg->count;
-        m_block_size.y = tiles->h / tile_cfg->states;
-        m_tile_states = tile_cfg->states;
-        m_tiles = create_texture(tiles.get(), m_renderer).release();
-    }
-
-    SDL_SetWindowSize(m_window, m_block_size.x * 80, m_block_size.y * 25);
     SDL_ShowWindow(m_window);
 }
 
@@ -277,6 +263,39 @@ SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
     return r;
 }
 
+void SdlRogue::Impl::LoadAssets()
+{
+    if (m_text) {
+        SDL_DestroyTexture(m_text);
+        m_text = 0;
+    }
+    if (m_tiles) {
+        SDL_DestroyTexture(m_tiles);
+        m_tiles = 0;
+    }
+
+    GraphicsConfig& gfx = m_options.gfx_options[m_gfx_mode];
+
+    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + gfx.text_cfg->filename));
+    m_text_dimensions.x = text->w / 256;
+    m_text_dimensions.y = text->h / gfx.text_cfg->colors.size();
+    for (size_t i = 0; i < gfx.text_cfg->colors.size(); ++i)
+        m_attr_index[gfx.text_cfg->colors[i]] = i;
+    m_block_size = m_text_dimensions;
+    m_text = create_texture(text.get(), m_renderer).release();
+
+    if (gfx.tile_cfg)
+    {
+        SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + gfx.tile_cfg->filename));
+        m_block_size.x = tiles->w / gfx.tile_cfg->count;
+        m_block_size.y = tiles->h / gfx.tile_cfg->states;
+        m_tile_states = gfx.tile_cfg->states;
+        m_tiles = create_texture(tiles.get(), m_renderer).release();
+    }
+
+    SDL_SetWindowSize(m_window, m_block_size.x * 80, m_block_size.y * 25);
+}
+
 void SdlRogue::Impl::Render(bool force)
 {
     std::vector<Region> regions;
@@ -308,7 +327,7 @@ void SdlRogue::Impl::Render(bool force)
     }
 
     if (force) {
-        regions.push_back({ 0,0,dimensions.x,dimensions.y });
+        regions.push_back({ 0,0,dimensions.x-1,dimensions.y-1});
     }
 
     for (auto i = regions.begin(); i != regions.end(); ++i)
@@ -401,11 +420,11 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
     if (!color) {
         color = GetColor(c, char_color(info));
     }
-    if (!m_options.use_colors) {
+    if (!m_options.gfx_options[m_gfx_mode].use_colors) {
         color = 0;
     }
 
-    if (!is_text && m_options.use_unix_gfx)
+    if (!is_text && m_options.gfx_options[m_gfx_mode].use_unix_gfx)
     {
         auto i = unix_chars.find(c);
         if (i != unix_chars.end())
@@ -572,8 +591,8 @@ bool SdlRogue::Impl::shared_data_is_narrow()
     return m_shared_data.m_dimensions.x == 40;
 }
 
-SdlRogue::SdlRogue(const TextConfig& text, TileConfig* tiles, const Options& options) :
-    m_impl(new Impl(text, tiles, options))
+SdlRogue::SdlRogue(const Options& options) :
+    m_impl(new Impl(options))
 {
 }
 
@@ -812,14 +831,8 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
 
     if (ch == '`')
     {
-        if (m_options.use_unix_gfx) {
-            m_options.use_unix_gfx = false;
-            m_options.use_colors = true;
-        }
-        else {
-            m_options.use_unix_gfx = true;
-            m_options.use_colors = false;
-        }
+        m_gfx_mode = (m_gfx_mode + 1) % m_options.gfx_options.size();
+        LoadAssets();
         SDL_Event sdlevent;
         sdlevent.type = SDL_USEREVENT;
         sdlevent.user.code = 1;

@@ -20,18 +20,25 @@ struct TextConfig
     std::vector<int> colors;
 };
 
-struct Options
+struct GraphicsConfig
 {
-    const char* dll_name;
+    TextConfig* text_cfg;
+    TileConfig* tile_cfg;
     bool use_unix_gfx;
     bool use_colors;
+};
+
+struct Options
+{
+    std::string dll_name;
     bool emulate_alt_controls;
     bool scroll_lock_wake;
+    std::vector<GraphicsConfig> gfx_options;
 };
 
 struct SdlRogue : public DisplayInterface, public InputInterface
 {
-    SdlRogue(const TextConfig& text, TileConfig* tiles, const Options& options);
+    SdlRogue(const Options& options);
     ~SdlRogue();
 
     void Run();
