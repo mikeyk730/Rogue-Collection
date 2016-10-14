@@ -493,9 +493,12 @@ void SdlRogue::Impl::UpdateRegion(uint32_t* info, Region rect)
     }
     else {
         m_shared_data.m_render_regions.push_back(rect);
+        SDL_Event sdlevent;
+        sdlevent.type = SDL_USEREVENT;
+        SDL_PushEvent(&sdlevent);
     }
 
-    memcpy(m_shared_data.m_data, info, m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y *sizeof(int32_t));
+    memcpy(m_shared_data.m_data, info, m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y * sizeof(int32_t));
 }
 
 void SdlRogue::Impl::MoveCursor(Coord pos)
@@ -584,17 +587,11 @@ void SdlRogue::SetDimensions(Coord dimensions)
 void SdlRogue::UpdateRegion(uint32_t * buf)
 {
     m_impl->UpdateRegion(buf);
-    SDL_Event sdlevent;
-    sdlevent.type = SDL_USEREVENT;
-    SDL_PushEvent(&sdlevent);
 }
 
 void SdlRogue::UpdateRegion(uint32_t* info, Region r)
 {
     m_impl->UpdateRegion(info, r);
-    SDL_Event sdlevent;
-    sdlevent.type = SDL_USEREVENT;
-    SDL_PushEvent(&sdlevent);
 }
 
 void SdlRogue::MoveCursor(Coord pos)
