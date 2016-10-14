@@ -18,6 +18,9 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_NOCOLOR(c)             wattroff(cw, COLOR_PAIR(c))
 #endif
 #define MORE_MSG                      "--More--"
+#define PASSGO_DEFAULT                TRUE
+#define ASKME_DEFAULT                 TRUE
+#define REST_COMMAND                  '.'
 #else
 #define GAME_MAIN                     main
 #define PC_GFX_SET_CURSOR(b)
@@ -28,4 +31,7 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_COLOR(c)
 #define PC_GFX_NOCOLOR(c) 
 #define MORE_MSG             "--More--"
+#define PASSGO_DEFAULT                FALSE
+#define ASKME_DEFAULT                 FALSE
+#define REST_COMMAND                  ' '
 #endif

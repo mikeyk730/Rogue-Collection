@@ -273,8 +273,8 @@ int __window::refresh()
 
     if (s_screen)
     {
-        s_screen->UpdateRegion(curscr->m_data, region);
         s_screen->MoveCursor({ col, row });
+        s_screen->UpdateRegion(curscr->m_data, region);
     }
     return OK;
 }

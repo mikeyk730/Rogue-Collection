@@ -72,7 +72,7 @@ command()
 		    msg("");
 	    }
 	}
-	else ch = ' ';
+	else ch = REST_COMMAND;
 	if (no_command)
 	{
 	    if (--no_command == 0)
@@ -103,7 +103,7 @@ command()
 		    case 'H': case 'J': case 'K': case 'L':
 		    case 'Y': case 'U': case 'B': case 'N':
 		    case 'q': case 'r': case 's': case 'f':
-		    case 't': case 'C': case 'I': case ' ':
+		    case 't': case 'C': case 'I': case REST_COMMAND:
 		    case 'z': case 'p':
 			break;
 		    default:
@@ -198,7 +198,7 @@ command()
 			endwin();
 			exit(0);
 		    }
-		when ' ' : ;			/* Rest command */
+		when REST_COMMAND : ;			/* Rest command */
 		when CTRL('P') :
 		    after = FALSE;
 		    if (wizard)
