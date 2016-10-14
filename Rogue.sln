@@ -36,10 +36,19 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MyCurses", "src\MyCurses\MyCurses.vcxproj", "{0F817ACA-2C76-41C3-BBFD-36D66A68E2E6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rogue_5_4_2", "src\RogueVersions\Rogue_5_4_2\Rogue_5_4_2.vcxproj", "{E85D0F19-D582-4240-8299-06ACCF51883B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0F817ACA-2C76-41C3-BBFD-36D66A68E2E6} = {0F817ACA-2C76-41C3-BBFD-36D66A68E2E6}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rogue_5_2_1", "src\RogueVersions\Rogue_5_2_1\Rogue_5_2_1.vcxproj", "{5512251B-12A0-4CFD-8A13-0E57974206F0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0F817ACA-2C76-41C3-BBFD-36D66A68E2E6} = {0F817ACA-2C76-41C3-BBFD-36D66A68E2E6}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rogue_3_6_3", "src\RogueVersions\Rogue_3_6_3\Rogue_3_6_3.vcxproj", "{494B9490-564B-4EB9-A41D-B8A2A151115C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0F817ACA-2C76-41C3-BBFD-36D66A68E2E6} = {0F817ACA-2C76-41C3-BBFD-36D66A68E2E6}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

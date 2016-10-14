@@ -715,7 +715,7 @@ std::string GetDirectionKey(SDL_Keycode keycode, uint16_t modifiers, bool emulat
         return keybuf;
     }
 
-    bool scroll(is_scroll_lock_on());
+    bool scroll = false; // (is_scroll_lock_on());
     bool ctrl((modifiers & KMOD_CTRL) != 0);
     if (scroll ^ ctrl) {
         if (emulate_alt) {
@@ -779,11 +779,10 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
     auto i = m_keymap.find(keycode);
     if (i != m_keymap.end()) {
         keycode = i->second;
+        if (IsDirectionKey(keycode))
+            return GetDirectionKey(keycode, modifiers, m_options.emulate_alt_controls);
         use = true;
     }
-
-    if (IsDirectionKey(keycode))
-        return GetDirectionKey(keycode, modifiers, m_options.emulate_alt_controls);
 
     if ((modifiers & KMOD_CTRL) && IsLetterKey(keycode)) {
         keycode = CTRL(keycode);
@@ -830,9 +829,9 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
     }
 
     std::string new_input;
-    if (IsDirectionKey(ch))
-        new_input = GetDirectionKey(ch, 0, m_options.emulate_alt_controls);
-    else
+    //if (IsDirectionKey(ch))
+    //    new_input = GetDirectionKey(ch, 0, m_options.emulate_alt_controls);
+    //else
         new_input.push_back(ch);
 
     std::lock_guard<std::mutex> lock(m_input_mutex);

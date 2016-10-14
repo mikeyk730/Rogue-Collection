@@ -392,11 +392,61 @@ void show_win(char *message)
     wait_for(' ');
 }
 
+void backspace()
+{
+    int x, y;
+    game->screen().getrc(&x, &y);
+    if (--y < 0) y = 0;
+    game->screen().move(x, y);
+    game->screen().add_text(' ');
+    game->screen().move(x, y);
+}
+
+//This routine reads information from the keyboard. It should do all the strange processing that is needed to retrieve sensible data from the user
+int getinfo_impl(char *str, int size)
+{
+    char *retstr, ch;
+    int readcnt = 0;
+    bool wason;
+    int ret = 1;
+
+    retstr = str;
+    *str = 0;
+    wason = game->screen().cursor(true);
+    while (ret == 1) switch (ch = game->input_interface().GetNextChar())
+    {
+    case ESCAPE:
+        while (str != retstr) { backspace(); readcnt--; str--; }
+        ret = *str = ESCAPE;
+        str[1] = 0;
+        game->screen().cursor(wason);
+        break;
+    case '\b':
+        if (str != retstr) { backspace(); readcnt--; str--; }
+        break;
+    default:
+        if (readcnt >= size) { sound_beep(); break; }
+        readcnt++;
+        game->screen().add_text(ch);
+        *str++ = ch;
+        if ((ch & 0x80) == 0) break;
+    case '\n':
+    case '\r':
+        *str = 0;
+        game->screen().cursor(wason);
+        ret = ch;
+        break;
+    }
+    return ret;
+}
+
+
 int getinfo(char *str, int size)
 {
-    std::string s = game->input_interface().GetNextString(size-1);
-    strcpy_s(str, size, s.c_str());
-    return s[0]; //todo
+    //std::string s = game->input_interface().GetNextString(size-1);
+    //strcpy_s(str, size, s.c_str());
+    //return s[0]; //todo
+    return getinfo_impl(str, size);
 }
 
 //readchar: Return the next input character, from the macro or from the keyboard.
@@ -470,23 +520,23 @@ void handle_key_state()
         tspot = 75;
     }
 
-    if (!game->in_replay() && game->fast_play() != scroll_lock_on)
-    {
-        game->set_fast_play(scroll_lock_on);
-        game->cancel_repeating_cmd();
-        //game->stop_run_cmd();
-    }
+    //if (!game->in_replay() && game->fast_play() != scroll_lock_on)
+    //{
+    //    game->set_fast_play(scroll_lock_on);
+    //    game->cancel_repeating_cmd();
+    //    //game->stop_run_cmd();
+    //}
 
-    if ( scrl != game->fast_play()) {
-        scrl = game->fast_play();
-        game->screen().move(LINES - 1, 0);
-        if (game->fast_play()) {
-            game->screen().bold();
-            game->screen().addstr("Fast Play");
-            game->screen().standend();
-        }
-        else game->screen().addstr("         ");
-    }
+    //if ( scrl != game->fast_play()) {
+    //    scrl = game->fast_play();
+    //    game->screen().move(LINES - 1, 0);
+    //    if (game->fast_play()) {
+    //        game->screen().bold();
+    //        game->screen().addstr("Fast Play");
+    //        game->screen().standend();
+    //    }
+    //    else game->screen().addstr("         ");
+    //}
 
     if (numl != num_lock_on)
     {

@@ -280,7 +280,7 @@ void PdCursesOutput::mvaddch(int r, int c, char chr)
 
 void PdCursesOutput::private_mvaddch(int r, int c, char chr, bool text)
 {
-    move(r, c);
+    ::move(r, c);
     private_addch(chr, text);
 }
 
@@ -335,10 +335,10 @@ void PdCursesOutput::private_addch(unsigned char chr, bool text)
     {
         if (r == LINES - 1) {
             scroll_up(0, LINES - 1, 1);
-            move(LINES - 1, 0);
+            ::move(LINES - 1, 0);
         }
         else
-            move(r + 1, 0);
+            ::move(r + 1, 0);
         return;
     }
 
@@ -348,7 +348,7 @@ void PdCursesOutput::private_addch(unsigned char chr, bool text)
         attr = GetColor(chr, attr);
     }
     private_putchr(chr, attr, text);
-    move(r, c + 1);
+    ::move(r, c + 1);
     return;
 }
 
@@ -364,7 +364,7 @@ void PdCursesOutput::private_putchr(int c, int attr, bool text)
 
 void PdCursesOutput::mvaddstr(int r, int c, const char *s)
 {
-    move(r, c);
+    ::move(r, c);
     addstr(s);
 }
 
@@ -421,9 +421,9 @@ void PdCursesOutput::private_vbox(const unsigned char box[BX_SIZE], int ul_r, in
     wason = cursor(false);
     getrc(&r, &c);
     //draw horizontal boundary
-    move(ul_r, ul_c + 1);
+    ::move(ul_r, ul_c + 1);
     private_repchr(box[BX_HT], i = (lr_c - ul_c - 1));
-    move(lr_r, ul_c + 1);
+    ::move(lr_r, ul_c + 1);
     private_repchr(box[BX_HB], i);
     //draw vertical boundary
     for (i = ul_r + 1; i < lr_r; i++) {
@@ -435,7 +435,7 @@ void PdCursesOutput::private_vbox(const unsigned char box[BX_SIZE], int ul_r, in
     private_mvaddch(ul_r, lr_c, box[BX_UR], true);
     private_mvaddch(lr_r, ul_c, box[BX_LL], true);
     private_mvaddch(lr_r, lr_c, box[BX_LR], true);
-    move(r, c);
+    ::move(r, c);
     cursor(wason);
 }
 
@@ -458,12 +458,12 @@ void PdCursesOutput::printw(const char *format, ...)
 
 void PdCursesOutput::scroll_up(int start_row, int end_row, int nlines)
 {
-    move(end_row, ::getcurx(::stdscr));
+    ::move(end_row, ::getcurx(::stdscr));
 }
 
 void PdCursesOutput::scroll_dn(int start_row, int end_row, int nlines)
 {
-    move(start_row, ::getcurx(::stdscr));
+    ::move(start_row, ::getcurx(::stdscr));
 }
 
 void PdCursesOutput::scroll()
@@ -479,11 +479,11 @@ void PdCursesOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
     {
         for (c = ul_col; c <= lr_col; ++c)
         {
-            move(r, c);
+            ::move(r, c);
             private_putchr(' ', m_attr, true);
         }
     }
-    move(ul_row, ul_col);
+    ::move(ul_row, ul_col);
     Render();
 }
 
@@ -519,6 +519,8 @@ void PdCursesOutput::raise_curtain()
 void PdCursesOutput::move(short y, short x)
 {
     ::move(y, x);
+    if (m_cursor)
+        Render();
 }
 
 char PdCursesOutput::curch()

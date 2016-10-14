@@ -311,7 +311,7 @@ bool GameState::Options::show_torch() const
 
 bool GameState::Options::hit_plus_bugfix() const
 {
-    return game->get_environment("hit_plus_bugfix") != "false";
+    return game->get_environment("hit_plus_bugfix") == "true";
 }
 
 bool GameState::Options::ice_monster_miss_bugfix() const

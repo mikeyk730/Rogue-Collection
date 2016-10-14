@@ -60,11 +60,17 @@ namespace
         0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0xA0,
         0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f }
     };
+    TextConfig square_text = { "text_16x16.bmp",{
+        0x07, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0xA0,
+        0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f }
+    };
 }
 
 int main(int argc, char** argv)
 {
-    int index = 3-1;
+    int index = 4-1;
     if (argc > 1) {
         std::string arg(argv[1]);
         if (arg == "1" || arg == "2" || arg == "3" || arg == "4") {
@@ -87,9 +93,10 @@ int main(int argc, char** argv)
 
         //sdl_rogue.reset(new SdlRogue(pc_text, 0));
         //sdl_rogue.reset(new SdlRogue(pc_text, &pc_tiles));
-        //sdl_rogue.reset(new SdlRogue(pc_colored_text, &atari_tiles, options));
+        //sdl_rogue.reset(new SdlRogue(square_text, &atari_tiles, options));
         
         sdl_rogue.reset(new SdlRogue(pc_colored_text, 0, options));
+        //sdl_rogue.reset(new SdlRogue(square_text, 0, options));
         //sdl_rogue.reset(new SdlRogue(pc_colored_text, &pc_tiles));
 
         //output = CreateScreenOutput(sdl_rogue);
