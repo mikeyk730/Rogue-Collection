@@ -500,6 +500,8 @@ void PdCursesOutput::private_repchr(int chr, int cnt)
 //Clear the screen in an interesting fashion
 void PdCursesOutput::implode()
 {
+    int er(COLS == 80 ? LINES - 3 : LINES - 4);
+    blot_out(0, 0, er, COLS - 1);
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
