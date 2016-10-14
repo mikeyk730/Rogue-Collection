@@ -51,7 +51,7 @@ private:
     chtype get_data_absolute(int abs_r, int abs_c) const;
     void set_data(int r, int c, chtype ch);
     void set_data_absolute(int abs_r, int abs_c, chtype ch);
-    chtype* data() const;
+    chtype* data(int row, int col) const;
     Coord data_coords(int r, int c) const;
     Region window_region() const;
     int index(int r, int c) const;
@@ -268,7 +268,7 @@ int __window::refresh()
     else {
         for (int r = origin.y; r < origin.y + dimensions.y; ++r)
             for (int c = origin.x; c < origin.x + dimensions.x; ++c)
-                curscr->m_data[index(r, c)] = get_data_absolute(r, c);
+                *(curscr->data(r, c)) = get_data_absolute(r, c);
     }
 
     if (s_screen)
@@ -319,7 +319,7 @@ int __window::index(int r, int c) const
 chtype __window::get_data(int r, int c) const
 {
     Coord o = data_coords(r, c);
-    return data()[index(o.y,o.x)];
+    return *data(o.y,o.x);
 }
 
 chtype __window::get_data_absolute(int abs_r, int abs_c) const
@@ -330,7 +330,7 @@ chtype __window::get_data_absolute(int abs_r, int abs_c) const
 void __window::set_data(int r, int c, chtype ch)
 {
     Coord o = data_coords(r, c);
-    data()[index(o.y,o.x)] = ch;
+    *data(o.y,o.x) = ch;
 }
 
 void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
@@ -338,9 +338,9 @@ void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
     set_data(abs_r - origin.y, abs_c - origin.x, ch);
 }
 
-chtype* __window::data() const
+chtype* __window::data(int r, int c) const
 {
-    return parent ? parent->m_data : m_data;
+    return parent ? parent->data(r,c) : &m_data[index(r,c)];
 }
 
 Coord __window::data_coords(int r, int c) const

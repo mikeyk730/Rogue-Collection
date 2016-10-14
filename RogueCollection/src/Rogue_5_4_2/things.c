@@ -508,7 +508,7 @@ add_line(const char *fmt, const char *arg)
                 { 
                     wmove(sw, y, 0); 
                     for (x = 0; x <= maxlen; x++) 
-                        waddrawch(sw, mvwinch(hw, y, x)); 
+                        waddch(sw, mvwinch(hw, y, x)); 
                 } 
 		wmove(tw, line_cnt, 1);
 		waddstr(tw, prompt);
