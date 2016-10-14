@@ -612,4 +612,5 @@ call()
 	guess[obj->o_which] = malloc((unsigned int) strlen(prbuf) + 1);
 	strcpy(guess[obj->o_which], prbuf);
     }
+    CLEAR_MSG;
 }

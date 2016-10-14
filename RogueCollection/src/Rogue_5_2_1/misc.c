@@ -478,5 +478,6 @@ register BYTE **guess;
 	    *guess = malloc((unsigned int) strlen(prbuf) + 1);
 	    strcpy(*guess, prbuf);
 	}
+    CLEAR_MSG;
     }
 }

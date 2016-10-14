@@ -91,7 +91,7 @@ BYTE monst;
     {
 	mvaddstr(LINES - 1, 0 , "[Press return to continue]");
         refresh();
-        wait_for(stdscr, '\n'); //mdk:
+        wait_for('\n'); //mdk:
         //wgetnstr(stdscr,prbuf,80);
         move(LINES - 1, 0);
         clrtoeol();

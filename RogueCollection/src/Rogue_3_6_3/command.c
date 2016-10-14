@@ -656,4 +656,5 @@ call()
 	if (guess[obj->o_which] != NULL)
 	    strcpy(guess[obj->o_which], prbuf);
     }
+    CLEAR_MSG;
 }

@@ -1141,7 +1141,7 @@ md_readchar(WINDOW *win)
 	    	nodelayf = 0;
 		nodelay(win,0);
 	    }
-	    else if (count > 10)        /* after 10 errors assume      */
+	    else if (count > 30)        /* after 30 errors assume      */
 	        auto_save(0);           /* input stream is broken and  */
 	    else                        /* auto save and exit          */
 	    	count++;
