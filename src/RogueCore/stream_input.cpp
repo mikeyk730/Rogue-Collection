@@ -42,7 +42,7 @@ StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version, bool sta
     m_shared_data(new ThreadData)
 {
     read(*m_stream, &m_version);
-    if (m_version < 'C' || m_version > 'C') {
+    if (m_version < 'C' || m_version > 'C') { //todo: create version D that ignores fast play.  replay should translate run chars for vers C
         throw std::runtime_error("Unsupported save version: " + m_version);
     }
 

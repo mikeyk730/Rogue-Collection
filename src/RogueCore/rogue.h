@@ -24,8 +24,9 @@ struct GameState;
 
 //All the fun defines
 
-#define CTRL(ch)  (ch&037)
-#define ESCAPE    (0x1b)
+#define CTRL(ch)   (ch&0x1f)
+#define UNCTRL(ch) (ch|0x40)
+#define ESCAPE     (0x1b)
 
 //Things that appear on the screens
 

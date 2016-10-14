@@ -67,7 +67,6 @@ struct GameState
     {
         //control options
         bool show_inventory_menu() const;
-        bool stop_running_at_doors() const;
 
         //graphics options
         bool narrow_screen() const;

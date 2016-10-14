@@ -274,11 +274,6 @@ void GameState::set_monster_data(std::string s)
 //all extern/global variables
 //all static variables
 
-bool GameState::Options::stop_running_at_doors() const
-{
-    return game->get_environment("stop_running_at_doors") == "true";
-}
-
 bool GameState::Options::throws_affect_mimics() const
 {
     return game->get_environment("throws_affect_mimics") == "true";

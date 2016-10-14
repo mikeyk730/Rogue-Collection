@@ -191,8 +191,8 @@ void process_prefixes(int ch, Command* command, bool* fast_mode)
         show_count(command->count);
         break;
     }
-    case 'f': // f: toggle fast mode for this turn
-        *fast_mode = !*fast_mode;
+    case 'f': // f: turn on fast mode for this turn
+        *fast_mode = true;
         break;
     case 'g': // g: move onto an item without picking it up
         command->can_pick_up = false;
@@ -224,30 +224,18 @@ void get_command_from_user(Command* command)
         process_prefixes(ch, command, &fast_mode);
     }
 
-    fast_mode ^= game->fast_play();
-    if (command->count)
-        fast_mode = false;
+    //fast_mode ^= game->fast_play();
 
     switch (command->ch)
     {
     case 'h': case 'j': case 'k': case 'l': case 'y': case 'u': case 'b': case 'n':
-        if (fast_mode)
+        if (fast_mode && command->count == 0)
         {
             if (!game->hero().is_blind()) {
                 game->m_stop_at_door = true;
                 game->m_first_move = true;
             }
             command->ch = toupper(command->ch);
-        }
-        break;
-
-    case 'H': case 'J': case 'K': case 'L': case 'Y': case 'U': case 'B': case 'N':
-        if (game->options.stop_running_at_doors())
-        {
-            if (!game->hero().is_blind()) {
-                game->m_stop_at_door = true;
-                game->m_first_move = true;
-            }
         }
         break;
 

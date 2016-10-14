@@ -3,13 +3,14 @@
 #include <vector>
 #include <deque>
 #include <mutex>
+#include <iterator>
 #include "SDL.h"
 #include "sdl_rogue.h"
 #include "utility.h"
 #include "..\RogueVersions\pc_gfx_charmap.h"
 
-#define CTRL(ch)  (ch&037)
-#define ESCAPE    (0x1b)
+#define CTRL(ch)   (ch&0x1f)
+#define ESCAPE     (0x1b)
 
 namespace
 {
@@ -143,12 +144,13 @@ public:
     char GetNextChar(bool block, bool do_key_state);
     virtual std::string GetNextString(int size);
 private:
+    void HandleInput(SDL_Keycode keycode, uint16_t modifiers);
     void HandleEventText(const SDL_Event& e);
     void HandleEventKeyDown(const SDL_Event& e);
     void HandleEventKeyUp(const SDL_Event& e);
 
     SDL_Keycode TranslateNumPad(SDL_Keycode keycode, uint16_t modifiers);
-    char TranslateKey(SDL_Keycode keycode, uint16_t modifiers);
+    std::string TranslateKey(SDL_Keycode keycode, uint16_t modifiers);
 
 
     std::deque<unsigned char> m_buffer;
@@ -678,21 +680,44 @@ std::string SdlRogue::Impl::GetNextString(int size)
     }
 }
 
-void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
+#ifdef WIN32
+#include <Windows.h>
+bool is_scroll_lock_on()
 {
-    std::lock_guard<std::mutex> lock(m_input_mutex);
-    //todo: when does string have more than 1 char?
-    m_buffer.push_back(e.text.text[0]);
-    m_input_cv.notify_all();
+    return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
 }
-
-char ApplyShift(char c, uint16_t modifiers)
+#else
+bool is_scroll_lock_on()
 {
+    return false;
+}
+#endif
+
+std::string GetDirectionKey(SDL_Keycode keycode, uint16_t modifiers, bool emulate_alt)
+{
+    std::string keybuf;
+
     bool caps((modifiers & KMOD_CAPS) != 0);
     bool shift((modifiers & KMOD_SHIFT) != 0);
-    if (caps ^ shift)
-        return toupper(c);
-    return c;
+    if (caps ^ shift) {
+        keybuf.push_back(toupper(keycode));
+        return keybuf;
+    }
+
+    bool scroll(is_scroll_lock_on());
+    bool ctrl((modifiers & KMOD_CTRL) != 0);
+    if (scroll ^ ctrl) {
+        if (emulate_alt) {
+            keybuf.push_back('f');
+            keybuf.push_back(keycode);
+            return keybuf;
+        }
+        keybuf.push_back(CTRL(keycode));
+        return keybuf;
+    }
+
+    keybuf.push_back(keycode);
+    return keybuf;
 }
 
 bool IsLetterKey(SDL_Keycode keycode)
@@ -717,6 +742,7 @@ bool IsDirectionKey(SDL_Keycode keycode)
     return false;
 }
 
+//If numlock is off, the numpad gets translated to the arrow keys/page up/page down/etc..
 SDL_Keycode SdlRogue::Impl::TranslateNumPad(SDL_Keycode keycode, uint16_t modifiers)
 {
     if ((modifiers & KMOD_NUM) == 0){
@@ -729,53 +755,63 @@ SDL_Keycode SdlRogue::Impl::TranslateNumPad(SDL_Keycode keycode, uint16_t modifi
     return keycode;
 }
 
-char SdlRogue::Impl::TranslateKey(SDL_Keycode keycode, uint16_t modifiers)
+std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifiers)
 {
-    if (modifiers & KMOD_CTRL) {
-        auto i = m_keymap.find(keycode);
-        if (i != m_keymap.end())
-            keycode = i->second;
-        if (IsDirectionKey(keycode) && m_options.emulate_alt_controls)
-        {
-            m_buffer.push_back('f');
-            m_buffer.push_back(keycode);
-            m_input_cv.notify_all();
-            return 0;
-        }
-        if (IsLetterKey(keycode)) {
-            return CTRL(keycode);
-        }
-    }
-    else if (modifiers & KMOD_ALT) {
-        if (keycode == SDLK_F9) {
-            return 'F';
-        }
-    }
-    else {
-        auto i = m_keymap.find(keycode);
-        if (i != m_keymap.end())
-        {
-            char c = i->second;
-            if (IsDirectionKey(c))
-                return ApplyShift(c, modifiers);
-            return c;
-        }
+    bool use = false;
+    SDL_Keycode keycode = TranslateNumPad(original, modifiers);
+
+    if ((modifiers & KMOD_ALT) && keycode == SDLK_F9) {
+        keycode = 'F';
+        use = true;
     }
 
-    return 0;
+    auto i = m_keymap.find(keycode);
+    if (i != m_keymap.end()) {
+        keycode = i->second;
+        use = true;
+    }
+
+    if (IsDirectionKey(keycode))
+        return GetDirectionKey(keycode, modifiers, m_options.emulate_alt_controls);
+
+    if ((modifiers & KMOD_CTRL) && IsLetterKey(keycode)) {
+        keycode = CTRL(keycode);
+        use = true;
+    }
+
+    if (use){
+        return std::string(1, keycode);
+    }
+    return "";
 }
 
 void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
 {
-    auto c = TranslateNumPad(e.key.keysym.sym, e.key.keysym.mod);
-    c = TranslateKey(c, e.key.keysym.mod);
-    if (c == 0)
-        return;
+    std::string new_input = TranslateKey(e.key.keysym.sym, e.key.keysym.mod);
+    if (!new_input.empty())
+    {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        std::copy(new_input.begin(), new_input.end(), std::back_inserter(m_buffer));
+        m_input_cv.notify_all();
+    }
+}
+
+void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
+{
+    //todo: when does string have more than 1 char?
+    char ch = e.text.text[0];
+
+    std::string new_input;
+    if (IsDirectionKey(ch))
+        new_input = GetDirectionKey(ch, 0, m_options.emulate_alt_controls);
+    else
+        new_input.push_back(ch);
 
     std::lock_guard<std::mutex> lock(m_input_mutex);
-    m_buffer.push_back(c);
+    std::copy(new_input.begin(), new_input.end(), std::back_inserter(m_buffer));
     m_input_cv.notify_all();
 }
+
 
 void SdlRogue::Impl::HandleEventKeyUp(const SDL_Event & e)
 {

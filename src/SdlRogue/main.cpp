@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 
 
         Options options;
-        if (index == 0 || index == 1) {
+        if (index == 0 || index == 1 || index == 3) {
             options.emulate_alt_controls = true;
         }
 
