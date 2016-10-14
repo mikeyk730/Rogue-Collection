@@ -31,7 +31,7 @@ struct GraphicsConfig
 struct Options
 {
     std::string dll_name;
-    bool emulate_alt_controls;
+    bool emulate_ctrl_controls;
     bool scroll_lock_wake;
     std::vector<GraphicsConfig> gfx_options;
 };
@@ -53,7 +53,6 @@ struct SdlRogue : public DisplayInterface, public InputInterface
 
     //input interface
     virtual char GetChar(bool block) override;
-    virtual std::string GetString(int size) override;
 
     struct Impl;
     std::unique_ptr<Impl> m_impl;

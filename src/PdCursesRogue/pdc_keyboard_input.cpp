@@ -148,8 +148,13 @@ char ConsoleKeyboardInput::GetNextChar() {
     return impl->GetChar(true);
 }
 
-std::string ConsoleKeyboardInput::GetNextString(int size) {
-    return impl->GetString(size);
+std::string ConsoleKeyboardInput::GetNextString(int size)
+{
+    char* buf = new char[size];
+    ::getnstr(buf, size);
+    std::string s(buf);
+    delete buf;
+    return s;
 }
 
 void ConsoleKeyboardInput::Serialize(std::ostream& out)

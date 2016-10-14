@@ -13,7 +13,7 @@ InputInterface::~InputInterface() {}
 namespace
 {
     typedef int(*game_main)(int, char**, char**);
-    typedef void(*init_game)(DisplayInterface*, InputInterface*);
+    typedef void(*init_game)(DisplayInterface*, InputInterface*, int lines, int cols);
 
     struct LibraryDeleter
     {
@@ -39,7 +39,7 @@ namespace
                 throw_error("Couldn't load rogue_main from " + lib);
             }
 
-            (*init)(screen, input);
+            (*init)(screen, input, 25, 80);
             (*game)(argc, argv, environ);
         }
         catch (const std::runtime_error& e)

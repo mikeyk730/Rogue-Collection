@@ -8,8 +8,8 @@
 extern "C"
 {
     __declspec(dllexport) int rogue_main(int argc, char **argv);
-    __declspec(dllexport) void init_game(struct DisplayInterface* screen, struct InputInterface* input);
-    void init_curses(DisplayInterface* screen, InputInterface* input);
+    __declspec(dllexport) void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
+    void init_curses(DisplayInterface* screen, InputInterface* input, int lines, int cols);
 }
 
 namespace
@@ -19,10 +19,10 @@ namespace
 
 std::shared_ptr<OutputInterface> CreateCursesOutput();
 
-void init_game(DisplayInterface* screen, InputInterface* input)
+void init_game(DisplayInterface* screen, InputInterface* input, int lines, int cols)
 {
     s_input = input;
-    init_curses(screen, input);
+    init_curses(screen, input, lines, cols);
 }
 
 int rogue_main(int argc, char **argv)

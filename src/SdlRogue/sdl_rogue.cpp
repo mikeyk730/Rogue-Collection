@@ -149,8 +149,7 @@ private:
 
     //todo: 2 classes
 public:
-    char GetNextChar(bool block, bool do_key_state);
-    virtual std::string GetNextString(int size);
+    char GetChar(bool block);
 private:
     void HandleEventText(const SDL_Event& e);
     void HandleEventKeyDown(const SDL_Event& e);
@@ -637,22 +636,15 @@ void SdlRogue::SetCursor(bool enable)
 
 char SdlRogue::GetChar(bool block)
 {
-    return m_impl->GetNextChar(block, true);
+    return m_impl->GetChar(block);
 }
 
-std::string SdlRogue::GetString(int size)
-{
-    return m_impl->GetNextString(size);
-}
-
-char SdlRogue::Impl::GetNextChar(bool block, bool do_key_state)
+char SdlRogue::Impl::GetChar(bool block)
 {
     std::unique_lock<std::mutex> lock(m_input_mutex);
     while (m_buffer.empty()) {
         if (!block) 
             return 0;
-        //if (do_key_state)
-          //  handle_key_state();
         m_input_cv.wait(lock);
     }
 
@@ -660,53 +652,6 @@ char SdlRogue::Impl::GetNextChar(bool block, bool do_key_state)
     m_buffer.pop_front();
 
     return c;
-}
-
-namespace 
-{
-    void backspace()
-    {
-        //int x, y;
-        //game->screen().getrc(&x, &y);
-        //if (--y < 0) y = 0;
-        //game->screen().move(x, y);
-        //game->screen().add_text(' ');
-        //game->screen().move(x, y);
-    }
-}
-
-std::string SdlRogue::Impl::GetNextString(int size)
-{
-    std::string s;
-
-    while (true)
-    {
-        char c = GetNextChar(true, false);
-        switch (c)
-        {
-        case ESCAPE:
-            s.clear();
-            s.push_back(ESCAPE);
-            return s;
-        case '\b':
-            if (!s.empty()) {
-                backspace();
-                s.pop_back();
-            }
-            break;
-        default:
-            if (s.size() >= unsigned int(size)) {
-                //sound_beep();
-                break;
-            }
-            //game->screen().add_text(c);
-            s.push_back(c);
-            break;
-        case '\n':
-        case '\r':
-            return s;
-        }
-    }
 }
 
 #ifdef WIN32
@@ -722,7 +667,7 @@ bool is_scroll_lock_on()
 }
 #endif
 
-std::string GetDirectionKey(SDL_Keycode keycode, uint16_t modifiers, bool emulate_alt)
+std::string GetDirectionKey(SDL_Keycode keycode, uint16_t modifiers, bool emulate_ctrl, bool is_original)
 {
     std::string keybuf;
 
@@ -736,7 +681,7 @@ std::string GetDirectionKey(SDL_Keycode keycode, uint16_t modifiers, bool emulat
     bool scroll = false; // (is_scroll_lock_on());
     bool ctrl((modifiers & KMOD_CTRL) != 0);
     if (scroll ^ ctrl) {
-        if (emulate_alt) {
+        if (emulate_ctrl) {
             keybuf.push_back('f');
             keybuf.push_back(keycode);
             return keybuf;
@@ -745,7 +690,8 @@ std::string GetDirectionKey(SDL_Keycode keycode, uint16_t modifiers, bool emulat
         return keybuf;
     }
 
-    keybuf.push_back(keycode);
+    if (!is_original)
+        keybuf.push_back(keycode);
     return keybuf;
 }
 
@@ -797,10 +743,11 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
     auto i = m_keymap.find(keycode);
     if (i != m_keymap.end()) {
         keycode = i->second;
-        if (IsDirectionKey(keycode))
-            return GetDirectionKey(keycode, modifiers, m_options.emulate_alt_controls);
         use = true;
     }
+
+    if (IsDirectionKey(keycode))
+        return GetDirectionKey(keycode, modifiers, m_options.emulate_ctrl_controls, keycode==original);
 
     if ((modifiers & KMOD_CTRL) && IsLetterKey(keycode)) {
         keycode = CTRL(keycode);
@@ -841,10 +788,7 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
     }
 
     std::string new_input;
-    //if (IsDirectionKey(ch))
-    //    new_input = GetDirectionKey(ch, 0, m_options.emulate_alt_controls);
-    //else
-        new_input.push_back(ch);
+    new_input.push_back(ch);
 
     std::lock_guard<std::mutex> lock(m_input_mutex);
     std::copy(new_input.begin(), new_input.end(), std::back_inserter(m_buffer));
