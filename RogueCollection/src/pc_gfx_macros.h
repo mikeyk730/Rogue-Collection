@@ -21,6 +21,7 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PASSGO_DEFAULT                TRUE
 #define ASKME_DEFAULT                 TRUE
 #define REST_COMMAND                  '.'
+#define SPACE_IS_OK                   when ' ' : after = FALSE;
 #else
 #define GAME_MAIN                     main
 #define PC_GFX_SET_CURSOR(b)
@@ -34,4 +35,5 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PASSGO_DEFAULT                FALSE
 #define ASKME_DEFAULT                 FALSE
 #define REST_COMMAND                  ' '
+#define SPACE_IS_OK
 #endif

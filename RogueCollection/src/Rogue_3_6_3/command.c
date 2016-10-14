@@ -198,6 +198,7 @@ command()
 			endwin();
 			exit(0);
 		    }
+        SPACE_IS_OK
 		when REST_COMMAND : ;			/* Rest command */
 		when CTRL('P') :
 		    after = FALSE;
