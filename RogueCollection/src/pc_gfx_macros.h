@@ -17,7 +17,7 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_COLOR(c)               wattron(cw, COLOR_PAIR(c))
 #define PC_GFX_NOCOLOR(c)             wattroff(cw, COLOR_PAIR(c))
 #endif
-#define MORE_MSG                      " More "
+#define MORE_MSG                      "--More--"
 #else
 #define GAME_MAIN                     main
 #define PC_GFX_SET_CURSOR(b)

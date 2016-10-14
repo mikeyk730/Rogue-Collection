@@ -20,13 +20,13 @@ bool p_know[MAXPOTIONS];		/* Does he know what a potion does */
 bool r_know[MAXRINGS];			/* Does he know what a ring does */
 bool ws_know[MAXSTICKS];		/* Does he know what a stick does */
 bool amulet = FALSE;			/* He found the amulet */
-bool askme = FALSE;			/* Ask about unidentified things */
+bool askme = TRUE;			/* Ask about unidentified things */
 bool door_stop = FALSE;			/* Stop running when we pass a door */
 bool fight_flush = FALSE;		/* True if toilet input */
 bool firstmove = FALSE;			/* First move after setting door_stop */
 bool in_shell = FALSE;			/* True if executing a shell */
 bool jump = FALSE;			/* Show running as series of jumps */
-bool passgo = FALSE;			/* Follow passages */
+bool passgo = TRUE;			/* Follow passages */
 bool playing = TRUE;			/* True until he quits */
 bool running = FALSE;			/* True if player is running */
 bool save_msg = TRUE;			/* Remember last msg */
