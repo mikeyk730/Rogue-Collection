@@ -30,8 +30,8 @@
  *	The main program, of course
  */
 GAME_MAIN(argc, argv, envp)
-BYTE **argv;
-BYTE **envp;
+char **argv;
+char **envp;
 {
     register BYTE *env;
     int lowtime;

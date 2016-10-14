@@ -51,15 +51,16 @@ private:
     chtype get_data_absolute(int abs_r, int abs_c) const;
     void set_data(int r, int c, chtype ch);
     void set_data_absolute(int abs_r, int abs_c, chtype ch);
-    chtype** data() const;
+    chtype* data() const;
     Coord data_coords(int r, int c) const;
     Region window_region() const;
+    int index(int r, int c) const;
 
 private:
     Coord origin = { 0, 0 };
     Coord dimensions = { 0, 0 };
 
-    chtype** m_data = 0;
+    chtype* m_data = 0;
     chtype attr = 0;
 
     int row = 0;
@@ -82,9 +83,7 @@ __window::__window(int lines, int cols, int begin_y, int begin_x)
     dimensions = { cols, lines };
     origin = { begin_x, begin_y };
 
-    m_data = new chtype*[lines];
-    for (int i = 0; i < lines; ++i)
-        m_data[i] = new chtype[cols];
+    m_data = new chtype[lines*cols];
 
     erase();
 }
@@ -99,9 +98,7 @@ __window::__window(__window * p, int lines, int cols, int begin_y, int begin_x)
 
 __window::~__window()
 {
-    for (int i = 0; i < dimensions.y; ++i)
-        delete m_data[i];
-    delete m_data;
+    delete[] m_data;
 }
 
 int __window::addch(chtype ch)
@@ -258,7 +255,7 @@ int __window::refresh()
 
     for (int r = origin.y; r < origin.y + dimensions.y; ++r)
         for (int c = origin.x; c < origin.x + dimensions.x; ++c)
-            curscr->m_data[r][c] = get_data_absolute(r, c);
+            curscr->m_data[index(r,c)] = get_data_absolute(r, c);
 
     if (s_screen)
     {
@@ -300,10 +297,15 @@ Region __window::window_region() const
     return r;
 }
 
+int __window::index(int r, int c) const
+{
+    return r*dimensions.x + c;
+}
+
 chtype __window::get_data(int r, int c) const
 {
     Coord o = data_coords(r, c);
-    return data()[o.y][o.x];
+    return data()[index(o.y,o.x)];
 }
 
 chtype __window::get_data_absolute(int abs_r, int abs_c) const
@@ -315,7 +317,7 @@ void __window::set_data(int r, int c, chtype ch)
 {
     ch |= attr;
     Coord o = data_coords(r, c);
-    data()[o.y][o.x] = ch;
+    data()[index(o.y,o.x)] = ch;
 }
 
 void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
@@ -323,7 +325,7 @@ void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
     set_data(abs_r - origin.y, abs_c - origin.x, ch);
 }
 
-chtype** __window::data() const
+chtype* __window::data() const
 {
     return parent ? parent->m_data : m_data;
 }
@@ -639,7 +641,7 @@ int wgetch(WINDOW* w)
 
 int nodelay(WINDOW* w, _bool enable)
 {
-    return w->nodelay(enable);
+    return w->nodelay(enable != 0);
 }
 
 int wgetnstr(WINDOW *, char* dest, int n)
