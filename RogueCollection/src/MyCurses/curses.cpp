@@ -129,7 +129,8 @@ int __window::addch(chtype ch)
         } while (col % 8);
     }
     else {
-        return addrawch(ch);
+        set_data(row, col, ch);
+        ++col;
     }
     return OK;
 }
@@ -137,7 +138,7 @@ int __window::addch(chtype ch)
 int __window::addrawch(chtype ch)
 {
     ch |= attr;
-    //todo:apply addr
+    ch |= A_ALTCHARSET;
     set_data(row, col, ch);
     ++col;
     return OK;
