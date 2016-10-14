@@ -1,7 +1,7 @@
 #include <memory>
 
 struct OutputInterface;
-struct InputInterface;
+struct InputInterfaceEx;
 
 //do_quit: Have player make certain, then exit.
 bool do_quit();
@@ -13,4 +13,4 @@ void leave();
 void fatal(char *msg, ...);
 
 //game_main: The main program, of course
-int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input);
+int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input);

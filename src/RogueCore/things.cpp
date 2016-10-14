@@ -168,7 +168,7 @@ void ItemFactory::LoadItems(const std::string & filename)
 
     std::ifstream file(filename);
     if (!file)
-        throw std::runtime_error("Error reading from: " + filename);
+        throw std::runtime_error("Error opening: " + filename);
 
     std::string line;
     while (std::getline(file, line)) {

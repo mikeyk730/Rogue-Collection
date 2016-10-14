@@ -180,20 +180,5 @@ std::string ConsoleKeyboardInput::GetNextString(int size) {
     return buf;
 }
 
-bool ConsoleKeyboardInput::IsCapsLockOn()
-{
-    return is_caps_lock_on();
-}
-
-bool ConsoleKeyboardInput::IsNumLockOn()
-{
-    return is_num_lock_on();
-}
-
-bool ConsoleKeyboardInput::IsScrollLockOn()
-{
-    return is_scroll_lock_on();
-}
-
 void ConsoleKeyboardInput::Serialize(std::ostream& out)
 { }

@@ -11,15 +11,9 @@
 DisplayInterface::~DisplayInterface() {}
 InputInterface::~InputInterface() {}
 
-extern "C"
-{
-    void init_curses(DisplayInterface* screen, InputInterface* input);
-    void shutdow_curses();
-}
-
 namespace
 {
-    std::vector<std::string> dlls = { "Rogue_3_6_3.dll", "Rogue_5_2_1.dll", "Rogue_5_4_2.dll" };
+    std::vector<std::string> dlls = { "Rogue_3_6_3.dll", "Rogue_5_2_1.dll", "Rogue_5_4_2.dll", "Rogue_PC_1_48.dll" };
 
     typedef int(*game_main)(int, char**, char**);
     typedef void(*init_game)(DisplayInterface*, InputInterface*);
@@ -70,7 +64,7 @@ namespace
 
 int main(int argc, char** argv)
 {
-    int index = 2;
+    int index = 3;
     if (argc > 1) {
         std::string arg(argv[1]);
         if (arg == "1" || arg == "2" || arg == "3") {

@@ -3,17 +3,13 @@
 #include <vector>
 #include <functional>
 
-struct InputInterface
+struct InputInterfaceEx
 {
-    virtual ~InputInterface();
+    virtual ~InputInterfaceEx();
 
     virtual bool HasMoreInput() = 0;
     virtual char GetNextChar() = 0;
     virtual std::string GetNextString(int size) = 0;
-
-    virtual bool IsCapsLockOn() = 0;
-    virtual bool IsNumLockOn() = 0;
-    virtual bool IsScrollLockOn() = 0;
  
     virtual void Serialize(std::ostream& out) = 0;
 };

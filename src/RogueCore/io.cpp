@@ -450,9 +450,9 @@ void handle_key_state()
 {
     static bool numl = false, capsl = false, scrl = false;
     static int nspot, cspot, tspot;
-    bool num_lock_on = game->input_interface().IsNumLockOn(),
-        caps_lock_on = game->input_interface().IsCapsLockOn(),
-        scroll_lock_on = game->input_interface().IsScrollLockOn();
+    bool num_lock_on = is_num_lock_on(),
+        caps_lock_on = is_caps_lock_on(),
+        scroll_lock_on = is_scroll_lock_on();
     static int bighand, littlehand;
     int showtime = false;
 

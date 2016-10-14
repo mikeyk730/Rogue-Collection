@@ -10,7 +10,7 @@ namespace
     const char s_version = 'C';
 }
 
-CapturedInput::CapturedInput(std::shared_ptr<InputInterface> d)
+CapturedInput::CapturedInput(std::shared_ptr<InputInterfaceEx> d)
     : m_delegate(d)
 { }
 
@@ -50,21 +50,6 @@ std::string CapturedInput::GetNextString(int max_size)
     }
     m_save_pending = false;
     return s;
-}
-
-bool CapturedInput::IsCapsLockOn()
-{
-    return m_delegate->IsCapsLockOn();
-}
-
-bool CapturedInput::IsNumLockOn()
-{
-    return m_delegate->IsNumLockOn();
-}
-
-bool CapturedInput::IsScrollLockOn()
-{
-    return m_delegate->IsScrollLockOn();
 }
 
 void CapturedInput::Serialize(std::ostream& out)

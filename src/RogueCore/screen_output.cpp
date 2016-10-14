@@ -11,6 +11,8 @@
 #include "mach_dep.h"
 #include "output_interface.h"
 
+typedef uint32_t chartype;
+
 //Globals for curses
 #define BX_UL               0
 #define BX_UR               1
@@ -175,8 +177,7 @@ private:
 
     struct Data
     {
-        CharInfo* buffer = 0;
-        bool* text_mask = 0;
+        chartype* buffer = 0;
     };
     Data m_data;
     Data m_backup_data;
@@ -187,11 +188,8 @@ private:
 
 void ScreenOutput::PutCharacter(int c, int attr, bool is_text)
 {
-    CharInfo ci;
-    ci.Attributes = attr;
-    ci.Char.AsciiChar = c;
-    m_data.buffer[m_row*COLS+m_col] = ci;
-    m_data.text_mask[m_row*COLS + m_col] = is_text;
+    chartype ch = (((attr & 0xff) << 24) | (c & 0xfff));
+    m_data.buffer[m_row*COLS+m_col] = ch;
     if (!disable_render)
         Render({ m_col, m_row, m_col, m_row });
 }
@@ -209,9 +207,7 @@ ScreenOutput::ScreenOutput(std::shared_ptr<DisplayInterface> display) :
 ScreenOutput::~ScreenOutput()
 {
     delete[] m_data.buffer;
-    delete[] m_data.text_mask;
     delete[] m_backup_data.buffer;
-    delete[] m_backup_data.text_mask;
 }
 
 //clear screen
@@ -375,13 +371,10 @@ void ScreenOutput::winit(bool narrow_screen)
     m_screen->SetDimensions({ COLS, LINES });
     m_screen->SetCursor(false);
 
-    m_data.buffer = new CharInfo[LINES*COLS];
-    m_data.text_mask = new bool[LINES*COLS];
-    memset(m_data.buffer, ' ', sizeof(CharInfo)*LINES*COLS);
-    memset(m_data.text_mask, true, sizeof(bool)*LINES*COLS);
+    m_data.buffer = new chartype[LINES*COLS];
+    memset(m_data.buffer, ' ', sizeof(chartype)*LINES*COLS);
 
-    m_backup_data.buffer = new CharInfo[LINES*COLS];
-    m_backup_data.text_mask = new bool[LINES*COLS];
+    m_backup_data.buffer = new chartype[LINES*COLS];
 
     move(m_row, m_col);
 }
@@ -394,15 +387,13 @@ void ScreenOutput::forcebw()
 //wdump(windex): dump the screen off to disk, the window is saved so that it can be retrieved using windex
 void ScreenOutput::wdump()
 {
-    memcpy(m_backup_data.buffer, m_data.buffer, sizeof(CharInfo)*LINES*COLS);
-    memcpy(m_backup_data.text_mask, m_data.text_mask, sizeof(bool)*LINES*COLS);
+    memcpy(m_backup_data.buffer, m_data.buffer, sizeof(chartype)*LINES*COLS);
 }
 
 //wrestor(windex): restore the window saved on disk
 void ScreenOutput::wrestor()
 {
-    memcpy(m_data.buffer, m_backup_data.buffer, sizeof(CharInfo)*LINES*COLS);
-    memcpy(m_data.text_mask, m_backup_data.text_mask, sizeof(bool)*LINES*COLS);
+    memcpy(m_data.buffer, m_backup_data.buffer, sizeof(chartype)*LINES*COLS);
     Render();
 }
 
@@ -576,7 +567,7 @@ void ScreenOutput::move(short y, short x)
 
 char ScreenOutput::curch()
 {
-    return m_data.buffer[m_row*COLS+m_col].Char.AsciiChar;
+    return m_data.buffer[m_row*COLS+m_col] && 0xff;
 }
 
 void ScreenOutput::add_text(short y, short x, byte c)
@@ -627,7 +618,7 @@ void ScreenOutput::Render()
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->Draw(m_data.buffer, m_data.text_mask);
+    m_screen->UpdateRegion(m_data.buffer);
 }
 
 void ScreenOutput::Render(Region rect)
@@ -635,7 +626,7 @@ void ScreenOutput::Render(Region rect)
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->Draw(m_data.buffer, m_data.text_mask, rect);
+    m_screen->UpdateRegion(m_data.buffer, rect);
 }
 
 void ScreenOutput::ApplyMove()

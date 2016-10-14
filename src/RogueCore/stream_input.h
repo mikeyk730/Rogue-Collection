@@ -5,7 +5,7 @@
 #include <condition_variable>
 #include "input_interface.h"
 
-struct StreamInput : public InputInterface
+struct StreamInput : public InputInterfaceEx
 {
     StreamInput(std::unique_ptr<std::istream> in, int version, bool start_paused);
     ~StreamInput();
@@ -13,10 +13,6 @@ struct StreamInput : public InputInterface
     virtual bool HasMoreInput();
     virtual char GetNextChar();
     virtual std::string GetNextString(int size);
-
-    virtual bool IsCapsLockOn();
-    virtual bool IsNumLockOn();
-    virtual bool IsScrollLockOn();
 
     virtual void Serialize(std::ostream& out);
     

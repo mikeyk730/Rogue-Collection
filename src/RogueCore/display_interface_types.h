@@ -1,17 +1,6 @@
 #pragma once
 
-#ifdef _WIN32
-#include <Windows.h>
-typedef CHAR_INFO CharInfo;
-#elif
-struct CharInfo {
-    union {
-        wchar_t UnicodeChar;
-        char   AsciiChar;
-    } Char;
-    short Attributes;
-};
-#endif
+#include"util.h"
 
 struct Region
 {
@@ -19,4 +8,7 @@ struct Region
     int Top;
     int Right;
     int Bottom;
+
+    inline int Width() { return Right - Left + 1; }
+    inline int Height() { return Bottom - Top + 1; }
 };

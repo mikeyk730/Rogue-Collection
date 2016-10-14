@@ -5,24 +5,19 @@
 #include <condition_variable>
 #include "input_interface.h"
 
-struct ComboInput : public InputInterface
+struct ComboInput : public InputInterfaceEx
 {
-    ComboInput(std::shared_ptr<InputInterface> primary, std::shared_ptr<InputInterface> backup);
+    ComboInput(std::shared_ptr<InputInterfaceEx> primary, std::shared_ptr<InputInterfaceEx> backup);
 
     virtual bool HasMoreInput();
     virtual char GetNextChar();
     virtual std::string GetNextString(int size);
-
-    virtual bool IsCapsLockOn();
-    virtual bool IsNumLockOn();
-    virtual bool IsScrollLockOn();
-
 
     virtual void Serialize(std::ostream& out);
 
     bool Swap();
 
 private:
-    std::shared_ptr<InputInterface> m_active;
-    std::shared_ptr<InputInterface> m_backup;
+    std::shared_ptr<InputInterfaceEx> m_active;
+    std::shared_ptr<InputInterfaceEx> m_backup;
 };

@@ -3,22 +3,17 @@
 #include <vector>
 #include "input_interface.h"
 
-struct CapturedInput : public InputInterface
+struct CapturedInput : public InputInterfaceEx
 {
-    CapturedInput(std::shared_ptr<InputInterface> d);
+    CapturedInput(std::shared_ptr<InputInterfaceEx> d);
 
     virtual bool HasMoreInput();
     virtual char GetNextChar();
     virtual std::string GetNextString(int size);
 
-    virtual bool IsCapsLockOn();
-    virtual bool IsNumLockOn();
-    virtual bool IsScrollLockOn();
-
-
     virtual void Serialize(std::ostream& out);
 
-    std::shared_ptr<InputInterface> m_delegate;
+    std::shared_ptr<InputInterfaceEx> m_delegate;
     std::vector<char> m_stream;
 
     bool m_save_pending = false;

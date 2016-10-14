@@ -56,7 +56,8 @@ struct SdlRogue::Impl
     ~Impl();
 
     void SetDimensions(Coord dimensions);
-    void UpdateRegion(uint32_t** info, Region rect);
+    void UpdateRegion(uint32_t* info);
+    void UpdateRegion(uint32_t* info, Region rect);
     void MoveCursor(Coord pos);
     void SetCursor(bool enable);
 
@@ -259,7 +260,7 @@ bool SdlRogue::Impl::use_inverse(unsigned short attr)
     return attr > 100 && attr != 160;
 }
 
-inline SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
+SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
 {
     SDL_Rect r;
     r.h = m_block_size.y;
@@ -437,7 +438,7 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }
 
-inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
+Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
 {
     Coord p;
     p.x = buffer_pos.x * m_block_size.x;
@@ -445,7 +446,7 @@ inline Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
     return p;
 }
 
-inline int SdlRogue::Impl::get_text_index(unsigned short attr)
+int SdlRogue::Impl::get_text_index(unsigned short attr)
 {
     auto i = m_attr_index.find(attr);
     if (i != m_attr_index.end())
@@ -453,7 +454,7 @@ inline int SdlRogue::Impl::get_text_index(unsigned short attr)
     return 0;
 }
 
-inline SDL_Rect SdlRogue::Impl::get_text_rect(unsigned char c, int i)
+SDL_Rect SdlRogue::Impl::get_text_rect(unsigned char c, int i)
 {
     SDL_Rect r;
     r.h = m_text_dimensions.y;
@@ -473,7 +474,12 @@ void SdlRogue::Impl::SetDimensions(Coord dimensions)
     SDL_SetWindowSize(m_window, m_block_size.x*dimensions.x, m_block_size.y*dimensions.y);
 }
 
-inline void SdlRogue::Impl::UpdateRegion(uint32_t** info, Region rect)
+void SdlRogue::Impl::UpdateRegion(uint32_t * info)
+{
+    UpdateRegion(info, shared_data_full_region());
+}
+
+void SdlRogue::Impl::UpdateRegion(uint32_t* info, Region rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -489,8 +495,7 @@ inline void SdlRogue::Impl::UpdateRegion(uint32_t** info, Region rect)
         m_shared_data.m_render_regions.push_back(rect);
     }
 
-    for (int r = 0; r < m_shared_data.m_dimensions.y; ++r)
-        memcpy(&m_shared_data.m_data[r*m_shared_data.m_dimensions.x], info[r], m_shared_data.m_dimensions.x*sizeof(int32_t));
+    memcpy(m_shared_data.m_data, info, m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y *sizeof(int32_t));
 }
 
 void SdlRogue::Impl::MoveCursor(Coord pos)
@@ -576,7 +581,15 @@ void SdlRogue::SetDimensions(Coord dimensions)
     m_impl->SetDimensions(dimensions);
 }
 
-void SdlRogue::UpdateRegion(uint32_t** info, Region r)
+void SdlRogue::UpdateRegion(uint32_t * buf)
+{
+    m_impl->UpdateRegion(buf);
+    SDL_Event sdlevent;
+    sdlevent.type = SDL_USEREVENT;
+    SDL_PushEvent(&sdlevent);
+}
+
+void SdlRogue::UpdateRegion(uint32_t* info, Region r)
 {
     m_impl->UpdateRegion(info, r);
     SDL_Event sdlevent;

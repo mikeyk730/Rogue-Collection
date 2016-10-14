@@ -9,7 +9,7 @@
 #include "command.h"
 
 struct Random;
-struct InputInterface;
+struct InputInterfaceEx;
 struct Hero;
 struct Level;
 struct OutputShim;
@@ -18,8 +18,8 @@ struct Item;
 
 struct GameState
 {
-    GameState(int seed, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input);
-    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input);
+    GameState(int seed, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input);
+    GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input);
     ~GameState();
 
     void save_game(const std::string& filename);
@@ -31,7 +31,7 @@ struct GameState
     void log(const std::string& category, const std::string& msg);
 
     Random& random();
-    InputInterface& input_interface();
+    InputInterfaceEx& input_interface();
     OutputShim& screen();
     Level& level();
     Hero& hero();
@@ -120,7 +120,7 @@ private:
     std::map<std::string, std::string> m_environment; //customizable environment strings 
 
     std::unique_ptr<Random> m_random; //Random number generator
-    std::shared_ptr<InputInterface> m_input_interface; //Interface for getting game input
+    std::shared_ptr<InputInterfaceEx> m_input_interface; //Interface for getting game input
     std::unique_ptr<OutputShim> m_curses;
     std::unique_ptr<Level> m_level;
     std::unique_ptr<Hero> m_hero;

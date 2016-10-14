@@ -168,7 +168,7 @@ Args process_args(int argc, char**argv)
 
 
 //game_main: The main program, of course
-int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterface> input)
+int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input)
 {
     int seed = get_seed();
     g_random = new Random(seed);
@@ -294,4 +294,4 @@ void fatal(char *format, ...)
 }
 
 DisplayInterface::~DisplayInterface() {}
-InputInterface::~InputInterface() {}
+InputInterfaceEx::~InputInterfaceEx() {}

@@ -147,21 +147,6 @@ std::string StreamInput::GetNextString(int size)
     return s;
 }
 
-bool StreamInput::IsCapsLockOn()
-{
-    return false;
-}
-
-bool StreamInput::IsNumLockOn()
-{
-    return false;
-}
-
-bool StreamInput::IsScrollLockOn()
-{
-    return false;
-}
-
 void StreamInput::Serialize(std::ostream& out)
 {
 }
