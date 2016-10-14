@@ -36,6 +36,8 @@ namespace
         { URWALL,    '-' },
         { LLWALL,    '-' },
         { LRWALL,    '-' },
+        { 204,       '|' },
+        { 185,       '|' },
     };
 
     uint32_t char_text(uint32_t ch)
@@ -66,7 +68,7 @@ struct SdlRogue::Impl
     void Quit();
 
 private:
-    void Render();
+    void Render(bool force);
     void RenderRegion(uint32_t* info, Coord dimensions, Region rect);
     void RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color);
     void RenderTile(uint32_t info, SDL_Rect r);
@@ -272,7 +274,7 @@ SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
     return r;
 }
 
-void SdlRogue::Impl::Render()
+void SdlRogue::Impl::Render(bool force)
 {
     std::vector<Region> regions;
     Coord dimensions;
@@ -288,7 +290,7 @@ void SdlRogue::Impl::Render()
         if (dimensions.x == 0 || dimensions.y == 0)
             return;
 
-        if (m_shared_data.m_render_regions.empty())
+        if (m_shared_data.m_render_regions.empty() && !force)
             return;
 
         uint32_t* temp = new uint32_t[dimensions.x*dimensions.y];
@@ -300,6 +302,10 @@ void SdlRogue::Impl::Render()
 
         show_cursor = m_shared_data.m_cursor;
         cursor_pos = m_shared_data.m_cursor_pos;
+    }
+
+    if (force) {
+        regions.push_back({ 0,0,dimensions.x,dimensions.y });
     }
 
     for (auto i = regions.begin(); i != regions.end(); ++i)
@@ -497,6 +503,7 @@ void SdlRogue::Impl::UpdateRegion(uint32_t* info, Region rect)
         m_shared_data.m_render_regions.push_back(rect);
         SDL_Event sdlevent;
         sdlevent.type = SDL_USEREVENT;
+        sdlevent.user.code = 0;
         SDL_PushEvent(&sdlevent);
     }
 
@@ -535,7 +542,7 @@ void SdlRogue::Impl::Run()
             HandleEventKeyUp(e);
         }
         else if (e.type == SDL_USEREVENT) {
-            Render();
+            Render(e.user.code != 0);
         }
     }
 }
@@ -800,6 +807,23 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
 {
     //todo: when does string have more than 1 char?
     char ch = e.text.text[0];
+
+    if (ch == '`')
+    {
+        if (m_options.use_unix_gfx) {
+            m_options.use_unix_gfx = false;
+            m_options.use_colors = true;
+        }
+        else {
+            m_options.use_unix_gfx = true;
+            m_options.use_colors = false;
+        }
+        SDL_Event sdlevent;
+        sdlevent.type = SDL_USEREVENT;
+        sdlevent.user.code = 1;
+        SDL_PushEvent(&sdlevent);
+        return;
+    }
 
     std::string new_input;
     if (IsDirectionKey(ch))

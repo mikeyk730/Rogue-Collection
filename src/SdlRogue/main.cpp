@@ -64,10 +64,10 @@ namespace
 
 int main(int argc, char** argv)
 {
-    int index = 3;
+    int index = 1-1;
     if (argc > 1) {
         std::string arg(argv[1]);
-        if (arg == "1" || arg == "2" || arg == "3") {
+        if (arg == "1" || arg == "2" || arg == "3" || arg == "4") {
             index = atoi(arg.c_str())-1;
             --argc;
             ++argv;
