@@ -73,19 +73,19 @@ score(int amount, int flags, int monst)
         )
     {
 	mvaddstr(LINES - 1, 0 , "[Press return to continue]");
-        refresh();
-        wait_for(stdscr, '\n'); //mdk:
-        //wgetnstr(stdscr,prbuf,80);
- 	endwin();
-        printf("\n");
-        resetltchars();
+	refresh();
+	wait_for(stdscr, '\n'); //mdk:
+	//wgetnstr(stdscr,prbuf,80);
+	//endwin();
+	//printf("\n");
+	//resetltchars();
 	/*
 	 * free up space to "guarantee" there is space for the top_ten
 	 */
-	delwin(stdscr);
-	delwin(curscr);
-	if (hw != NULL)
-	    delwin(hw);
+	//delwin(stdscr);
+	//delwin(curscr);
+	//if (hw != NULL)
+	//    delwin(hw);
     }
 
     top_ten = malloc(numscores * sizeof (SCORE));
@@ -162,24 +162,25 @@ score(int amount, int flags, int monst)
     /*
      * Print the list
      */
+    clear();//mdk:printf->printw putchar->addch
     if (flags != -1)
-	putchar('\n');
-    printf("Top %s %s:\n", Numname, allscore ? "Scores" : "Rogueists");
-    printf("   Score Name\n");
+	addch('\n');
+    printw("Top %s %s:\n", Numname, allscore ? "Scores" : "Rogueists");
+    printw("   Score Name\n");
     for (scp = top_ten; scp < endp; scp++)
     {
 	if (scp->sc_score) {
 	    if (sc2 == scp)
             md_raw_standout();
-	    printf("%2d %5d %s: %s on level %d", (int) (scp - top_ten + 1),
+	    printw("%2d %5d %s: %s on level %d", (int) (scp - top_ten + 1),
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
 	    if (scp->sc_flags == 0 || scp->sc_flags == 3)
-		printf(" by %s", killname(scp->sc_monster, TRUE));
+		printw(" by %s", killname(scp->sc_monster, TRUE));
 #ifdef MASTER
 	    if (prflags == 1)
 	    {
-	    printf(" (%s)", md_getrealname(scp->sc_uid));
+	    printw(" (%s)", md_getrealname(scp->sc_uid));
 	    }
 	    else if (prflags == 2)
 	    {
@@ -201,14 +202,22 @@ score(int amount, int flags, int monst)
 	    }
 	    else
 #endif /* MASTER */
-                printf(".");
+                printw(".");
 	    if (sc2 == scp)
 		    md_raw_standend();
-            putchar('\n');
+            addch('\n');
 	}
 	else
 	    break;
     }
+
+    //mdk:
+    mvaddstr(LINES - 1, 0, "[Press return to continue]");
+    refresh();
+    wait_for(stdscr, '\n');
+    resetltchars();
+    endwin();
+
     /*
      * Update the list file
      */

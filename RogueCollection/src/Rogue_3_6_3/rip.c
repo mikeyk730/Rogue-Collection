@@ -158,7 +158,7 @@ score(int amount, int flags, int monst)
 	prbuf[0] = 0;
     wait_for(stdscr, '\n'); //mdk:
 	//get_str(prbuf, stdscr);
-	endwin();
+	//endwin();
     }
     if (wizard)
 	if (strcmp(prbuf, "names") == 0)
@@ -214,26 +214,27 @@ score(int amount, int flags, int monst)
     /*
      * Print the list
      */
+    clear();//mdk:printf->printw putchar->addch
     if (flags != -1)
-	printf("\n\n\n");
-    printf("Top Ten Adventurers:\nRank\tScore\tName\n");
+	printw("\n\n\n");
+    printw("Top Ten Adventurers:\nRank\tScore\tName\n");
     for (scp = top_ten; scp <= &top_ten[9]; scp++) {
 	if (scp->sc_score) {
-	    printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
+	    printw("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
 	    if (scp->sc_flags == 0) {
-		printf(" by a");
+		printw(" by a");
 		killer = killname(scp->sc_monster);
 		if (*killer == 'a' || *killer == 'e' || *killer == 'i' ||
 		    *killer == 'o' || *killer == 'u')
-			putchar('n');
-		printf(" %s", killer);
+			addch('n');
+		printw(" %s", killer);
 	    }
 	    if (prflags == 1)
 	    {
-		printf(" (%s)", scp->sc_login);
-		putchar('\n');
+		printw(" (%s)", scp->sc_login);
+		addch('\n');
 	    }
 	    else if (prflags == 2)
 	    {
@@ -253,9 +254,15 @@ score(int amount, int flags, int monst)
 		}
 	    }
 	    else
-		printf(".\n");
+		printw(".\n");
 	}
     }
+
+    //mdk:
+    mvaddstr(LINES - 1, 0, "[Press return to continue]");
+    refresh();
+    wait_for(stdscr, '\n'); 
+    endwin();
 
     /*
      * Update the list file

@@ -1,5 +1,5 @@
 #ifdef USE_PC_GFX
-#include "pc_gfx_charmap.h"
+#include "../Shared/pc_gfx_charmap.h"
 #include "pc_gfx_macros.h"
 #include <curses.h>
 void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols)

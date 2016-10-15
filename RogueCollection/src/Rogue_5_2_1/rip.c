@@ -93,10 +93,10 @@ BYTE monst;
         refresh();
         wait_for('\n'); //mdk:
         //wgetnstr(stdscr,prbuf,80);
-        move(LINES - 1, 0);
-        clrtoeol();
-        refresh();
-        endwin();
+        //move(LINES - 1, 0);
+        //clrtoeol();
+        //refresh();
+        //endwin();
     }
 #ifdef WIZARD
     if (wizard)
@@ -166,25 +166,26 @@ BYTE monst;
     /*
      * Print the list
      */
-    printf("Top Ten Rogueists:\nRank\tScore\tName\n");
+    clear();//mdk:printf->printw putchar->addch
+    printw("Top Ten Rogueists:\nRank\tScore\tName\n");
     for (scp = top_ten; scp <= &top_ten[9]; scp++)
     {
 	if (scp->sc_score) {
-	    printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
+	    printw("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
 	    if (scp->sc_flags == 0)
-		printf(" by %s", killname((BYTE) scp->sc_monster, TRUE));
+		printw(" by %s", killname((BYTE) scp->sc_monster, TRUE));
 	    if (prflags == 1)
 	    {
 		BYTE *name;
 		name = md_getusername(scp->sc_uid);
 		   
 		if (name == NULL)
-		    printf(" (%d)", scp->sc_uid);
+		    printw(" (%d)", scp->sc_uid);
 		else
-		    printf(" (%s)", name);
-		putchar('\n');
+		    printw(" (%s)", name);
+		addch('\n');
 	    }
 	    else if (prflags == 2)
 	    {
@@ -204,12 +205,19 @@ BYTE monst;
 		}
 	    }
 	    else
-		printf(".\n");
+		printw(".\n");
 	}
 	else
 	    break;
     }
     fseek(outf, 0L, 0);
+
+    //mdk:
+    mvaddstr(LINES - 1, 0 , "[Press return to continue]");
+    refresh();
+    wait_for('\n');
+    endwin();
+
     /*
      * Update the list file
      */
