@@ -23,8 +23,8 @@ namespace
 
     void run_game(const std::string& lib, int argc, char** argv, DisplayInterface* screen, InputInterface* input)
     {
+        std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
         try {
-            std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
             if (!dll) {
                 throw_error("Couldn't load dll " + lib);
             }
@@ -44,6 +44,7 @@ namespace
         }
         catch (const std::runtime_error& e)
         {
+            std::string s(e.what());
             SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
                 "Error",
                 e.what(),
@@ -76,10 +77,10 @@ namespace
     GraphicsConfig cutesy_gfx = { &cutesy_text, 0, false, true };
 
     std::vector<Options> s_options = {
-        { "Rogue_3_6_3.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
-        { "Rogue_5_2_1.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
-        { "Rogue_5_4_2.dll",   false, false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
-        { "Rogue_PC_1_48.dll", true,  true,  { pc_gfx, unix_gfx, color_unix_gfx, atari_gfx, cutesy_gfx } },
+        { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+        { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+        { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   false, false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+        { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", true,  true,  { pc_gfx, unix_gfx, color_unix_gfx, atari_gfx, cutesy_gfx } },
     };
 }
 

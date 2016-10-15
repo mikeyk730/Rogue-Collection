@@ -30,6 +30,7 @@ struct GraphicsConfig
 
 struct Options
 {
+    std::string name;
     std::string dll_name;
     bool emulate_ctrl_controls;
     bool scroll_lock_wake;

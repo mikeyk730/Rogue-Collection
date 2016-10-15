@@ -7,8 +7,6 @@ void whatis();
 //add_pass: Add the passages to the current window (wizard command)
 void add_pass();
 
-int get_num(short *place);
-
 //show_map: Print out the map for the wizard
 void show_map(bool show_monsters);
 

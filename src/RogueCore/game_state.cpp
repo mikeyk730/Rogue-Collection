@@ -40,10 +40,25 @@ using std::placeholders::_1;
 ;
 */
 
+#ifdef WIN32
+#include <Windows.h>
+#endif
 
 namespace
 {
     const int s_serial_version = 6;
+
+    std::string GetPath(const std::string& subdir) {
+#ifdef WIN32
+        char buffer[MAX_PATH];
+        GetModuleFileName(NULL, buffer, MAX_PATH);
+        std::string s(buffer);
+        size_t n = s.find_last_of("\\/");
+        return s.substr(0, n+1) + subdir + "\\";
+#else
+        return "";
+#endif
+    }
 }
 
 GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input) :
@@ -54,10 +69,12 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     m_hero(new Hero),
     m_log_stream("lastgame.log")
 {
-    LoadScrolls("scrolls.dat");
-    LoadPotions("potions.dat");
-    LoadRings("rings.dat");
-    LoadSticks("sticks.dat");
+    std::string path = GetPath("data");
+    LoadScrolls(path + "scrolls.dat");
+    LoadPotions(path + "potions.dat");
+    LoadRings(path + "rings.dat");
+    LoadSticks(path + "sticks.dat");
+
     init_environment();
 }
 
@@ -124,10 +141,12 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
 
     m_level.reset(new Level);
     m_hero.reset(new Hero);
-    LoadScrolls("scrolls.dat");
-    LoadPotions("potions.dat");
-    LoadRings("rings.dat");
-    LoadSticks("sticks.dat");
+    
+    std::string path = GetPath("data");
+    LoadScrolls(path + "scrolls.dat");
+    LoadPotions(path + "potions.dat");
+    LoadRings(path + "rings.dat");
+    LoadSticks(path + "sticks.dat");
 
     if (!m_show_replay)
     {
@@ -153,7 +172,7 @@ void GameState::init_environment()
     m_environment["name"] = "Rodney";
     m_environment["fruit"] = "Slime Mold";
     m_environment["macro"] = "v";
-    m_environment["scorefile"] = "rogue.scr";
+    m_environment["scorefile"] = "roguepc.scr";
     m_environment["savefile"] = "rogue.sav";
     m_environment["powers"] = "jump_levels,reveal_items";
 

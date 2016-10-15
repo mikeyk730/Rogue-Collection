@@ -67,7 +67,7 @@ namespace
         { CTRL('T'), do_toggle_terse },
         { CTRL('F'), do_play_macro },
         { CTRL('R'), do_repeat_msg },
-        { CTRL('L'), do_clear_screen },
+        //{ CTRL('L'), do_clear_screen },
         { CTRL('P'), do_toggle_wizard },
     };
     //commands that are recognized only in wizard mode

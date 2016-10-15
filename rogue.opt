@@ -1,9 +1,7 @@
 name=Mike
 fruit=mango
 powers=reveal_items,show_food_counter,jump_levels
-stop_running_at_doors=true
 use_exp_level_names=false
-macro=C=6Pfl
 log=last.log
 autosave=last.sav
 

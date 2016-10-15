@@ -382,15 +382,6 @@ void debug_screen()
     end_line("");
 }
 
-int get_num(short *place)
-{
-    char numbuf[12];
-
-    getinfo(numbuf, 10);
-    *place = atoi(numbuf);
-    return (*place);
-}
-
 Cheats::Cheats()
 {
 }
