@@ -238,8 +238,10 @@ genocide()
 	addmsg(" do you wish to wipe out");
     msg("? ");
     while (!isalpha(c = readchar()))
-	if (c == ESCAPE)
+	if (c == ESCAPE){
+        CLEAR_MSG;
 	    return;
+    }
 	else
 	{
 	    mpos = 0;

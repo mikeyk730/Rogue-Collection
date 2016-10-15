@@ -485,7 +485,7 @@ get_dir(void)
 	if (!terse)
 	    msg(prompt = "which direction? ");
 	else
-	    prompt = "direction: ";
+	    msg(prompt = "direction: ");
 	do
 	{
 	    gotit = TRUE;

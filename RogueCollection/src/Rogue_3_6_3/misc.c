@@ -408,7 +408,7 @@ get_dir()
     if (!terse)
 	msg(prompt = "Which direction? ");
     else
-	prompt = "Direction: ";
+	msg(prompt = "Direction: ");
     do
     {
 	gotit = TRUE;

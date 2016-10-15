@@ -403,7 +403,7 @@ get_dir()
     if (!terse)
 	msg(prompt = "which direction? ");
     else
-	prompt = "direction: ";
+	msg(prompt = "direction: ");
     do
     {
 	gotit = TRUE;
@@ -417,7 +417,7 @@ get_dir()
 	    when 'u': case'U': delta.y = -1; delta.x =  1;
 	    when 'b': case'B': delta.y =  1; delta.x = -1;
 	    when 'n': case'N': delta.y =  1; delta.x =  1;
-	    when ESCAPE: return FALSE;
+	    when ESCAPE: CLEAR_MSG; return FALSE;
 	    otherwise:
 		mpos = 0;
 		msg(prompt);
