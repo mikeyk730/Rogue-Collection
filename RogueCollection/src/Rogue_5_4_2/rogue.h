@@ -113,10 +113,10 @@
 #define LLWALL	    '-'
 #define LRWALL	    '-'
 #else
-#include "..\pc_gfx_charmap.h"
+#include "../Shared/pc_gfx_charmap.h"
 #endif
 #define ROGUE_5_4_2
-#include "..\pc_gfx_macros.h"
+#include "../pc_gfx_macros.h"
 
 #define CALLABLE	-1
 #define R_OR_S		-2

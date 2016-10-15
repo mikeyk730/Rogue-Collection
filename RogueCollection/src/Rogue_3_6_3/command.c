@@ -138,7 +138,7 @@ command()
 		count--;
 	    switch (ch)
 	    {
-		case '!' : shell();
+		case '!' : SHELL_CMD;
 		when 'h' : do_move(0, -1);
 		when 'j' : do_move(1, 0);
 		when 'k' : do_move(-1, 0);
@@ -235,15 +235,15 @@ command()
 			when CTRL('I') : inventory(lvl_obj, 0);
 			when CTRL('W') : whatis();
 			when CTRL('D') : level++; new_level();
-			when CTRL('U') : level--; new_level();
+			when CTRL('A') : level--; new_level();
 			when CTRL('F') : show_win(stdscr, "--More (level map)--");
 			when CTRL('X') : show_win(mw, "--More (monsters)--");
 			when CTRL('T') : teleport();
 			when CTRL('E') : msg("food left: %d", food_left);
-			when CTRL('A') : msg("%d things in your pack", inpack);
+			when '$' : msg("%d things in your pack", inpack);
 			/*when CTRL('C') : add_pass();*/
-			when CTRL('B') : add_pass();
-			when CTRL('N') :
+			when CTRL('C') : add_pass();
+			when '~' :
 			{
 			    struct linked_list *item;
 

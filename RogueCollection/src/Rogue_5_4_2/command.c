@@ -180,7 +180,7 @@ over:
                         endmsg();
 		    }
 		}
-		when '!': shell();
+		when '!': SHELL_CMD;
 		when 'h': do_move(0, -1);
 		when 'j': do_move(1, 0);
 		when 'k': do_move(-1, 0);
@@ -287,11 +287,11 @@ over:
 		    else
 			after = FALSE;
 		when 'D': after = FALSE; discovered();
-		when CTRL('P'): after = FALSE; msg(huh);
-		when CTRL('R'):
-		    after = FALSE;
-		    clearok(curscr,TRUE);
-		    wrefresh(curscr);
+		when CTRL('R'): after = FALSE; msg(huh);
+		//when CTRL('R'):
+		//    after = FALSE;
+		//    clearok(curscr,TRUE);
+		//    wrefresh(curscr);
 		when 'v':
 		    after = FALSE;
 		    msg("version %s. (mctesq was here)", release);
@@ -318,7 +318,7 @@ over:
 			}
 		    }
 #ifdef MASTER
-		when '+':
+		when CTRL('P'):
 		    after = FALSE;
 		    if (wizard)
 		    {
@@ -374,14 +374,14 @@ over:
 			case '|': msg("@ %d,%d", hero.y, hero.x);
 			when 'C': create_obj();
 			when '$': msg("inpack = %d", inpack);
-			when CTRL('G'): inventory(lvl_obj, 0);
+			when CTRL('I'): inventory(lvl_obj, 0);
 			when CTRL('W'): whatis(FALSE, 0);
 			when CTRL('D'): level++; new_level();
 			when CTRL('A'): level--; new_level();
 			when CTRL('F'): show_map();
 			when CTRL('T'): teleport();
 			when CTRL('E'): msg("food left: %d", food_left);
-			when CTRL('Q'): add_pass();
+			when CTRL('C'): add_pass();
 			when CTRL('X'): turn_see(on(player, SEEMONST));
 			when '~':
 			{
@@ -390,7 +390,7 @@ over:
 			    if ((item = get_item("charge", STICK)) != NULL)
 				item->o_charges = 10000;
 			}
-			when CTRL('I'):
+			when CTRL('G'):
 			{
 			    int i;
 			    THING *obj;

@@ -670,7 +670,7 @@ pr_list(void)
     msg("? ");
     ch = readchar();
 	msg("");
-    switch (ch)
+    switch (PC_GFX_TRANSLATE(ch))
     {
 	case POTION:
 	    pr_spec(pot_info, MAXPOTIONS);
