@@ -63,4 +63,17 @@ int translate_type(int t)
     }
     return t;
 }
+
+void fix_tombstone()
+{
+    mvchgat(10, 22, 11, 0, 0x07, 0);
+    mvchgat(11, 22, 11, 0, 0x07, 0);
+    mvchgat(12, 22, 11, 0, 0x07, 0);
+    mvchgat(16, 22, 11, 0, 0x07, 0);
+    mvchgat(19, 18, 1, 0, 0x06, 0);
+    mvchgat(19, 0, -1, 0, 0x04, 0);
+    mvchgat(20, 0, -1, 0, 0x02, 0);
+    mvchgat(19, 37, 1, 0, 0x06, 0);
+    mvchgat(20, 37, 1, 0, 0x06, 0);
+}
 #endif

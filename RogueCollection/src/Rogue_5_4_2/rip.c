@@ -265,9 +265,11 @@ death(int monst)
 	lt = localtime(&date);
 	move(8, 0);
 	dp = rip;
-	while (*dp)
+    PC_GFX_COLOR(0x06);
+    while (*dp)
 	    addstr(*dp++);
-	mvaddstr(17, center(killer), killer);
+    PC_GFX_NOCOLOR(0x06);
+    mvaddstr(17, center(killer), killer);
 	if (monst == 's' || monst == 'h')
 	    mvaddrawch(16, 32, ' ');
 	else
@@ -279,6 +281,7 @@ death(int monst)
 	sprintf(prbuf, "%4d", 1900+lt->tm_year);
 	mvaddstr(18, 26, prbuf);
     }
+    PC_GFX_TOMBSTONE();
     move(LINES - 1, 0);
     refresh();
     score(purse, amulet ? 3 : 0, monst);

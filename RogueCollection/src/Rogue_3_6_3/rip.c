@@ -59,8 +59,10 @@ death(int monst)
     lt = localtime(&date);
     clear();
     move(8, 0);
+    PC_GFX_COLOR(0x06);
     while (*dp)
 	printw("%s\n", *dp++);
+    PC_GFX_NOCOLOR(0x06);
     mvaddstr(14, 28-(((int)strlen(whoami)+1)/2), whoami);
     purse -= purse/10;
     sprintf(buf, "%d Au", purse);
@@ -70,6 +72,7 @@ death(int monst)
     mvaddstr(16, 33, vowelstr(killer));
     sprintf(prbuf, "%4d", 1900+lt->tm_year);
     mvaddstr(18, 26, prbuf);
+    PC_GFX_TOMBSTONE();
     move(LINES-1, 0);
     draw(stdscr);
     score(purse, 0, monst);

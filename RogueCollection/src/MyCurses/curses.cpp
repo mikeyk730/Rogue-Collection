@@ -46,6 +46,7 @@ struct __window
     int overlay(WINDOW* dest, bool copy_spaces) const;
     int refresh();
     int getnstr(char* dest, int n);
+    int chgat(int n, attr_t attr, short color, const void *opts);
 
 private:
     std::string getsnstr_impl(unsigned int n);
@@ -274,6 +275,19 @@ int __window::getnstr(char* dest, int n)
 
     std::string s = getsnstr_impl(n - 1);
     strcpy(dest, s.c_str());
+    return OK;
+}
+
+int __window::chgat(int n, attr_t attr, short color, const void * opts)
+{
+    if (n == -1)
+        n = COLS - col;
+
+    for (int c = col; c < col + n; ++c) {
+        chtype ch = (get_data(row, c)&A_CHARTEXT | attr | COLOR_PAIR(color));
+        set_data(row, c, ch);
+    }
+
     return OK;
 }
 
@@ -508,6 +522,11 @@ int wclrtoeol(WINDOW* w)
     return w->clrtoeol();
 }
 
+int wchgat(WINDOW* w, int n, attr_t attr, short color, const void* opt)
+{
+    return w->chgat(n, attr, color, opt);
+}
+
 int getcury(WINDOW* w)
 {
     return w->getcury();
@@ -585,6 +604,12 @@ int mvwaddstr(WINDOW* w, int r, int c, const char *s)
 {
     wmove(w, r, c);
     return waddstr(w, s);
+}
+
+int mvwchgat(WINDOW* w, int r, int c, int n, attr_t attr, short color, const void* opt)
+{
+    wmove(w, r, c);
+    return wchgat(w, n, attr, color, opt);
 }
 
 chtype mvwinch(WINDOW *w, int r, int c)
@@ -668,6 +693,11 @@ int	mvaddrawch(int r, int c, chtype ch)
 int mvaddstr(int r, int c, const char* s)
 {
     return mvwaddstr(stdscr, r, c, s);
+}
+
+int mvchgat(int r, int c, int n, attr_t attr, short color, const void* opt)
+{
+    return mvwchgat(stdscr, r, c, n, attr, color, opt);
 }
 
 chtype mvinch(int r, int c)

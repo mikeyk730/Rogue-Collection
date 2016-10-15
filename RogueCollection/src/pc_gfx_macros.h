@@ -17,6 +17,7 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_COLOR(c)               wattron(cw, COLOR_PAIR(c))
 #define PC_GFX_NOCOLOR(c)             wattroff(cw, COLOR_PAIR(c))
 #endif
+#define PC_GFX_TOMBSTONE()            fix_tombstone()
 #define MORE_MSG                      "--More--"
 #define PASSGO_DEFAULT                TRUE
 #define ASKME_DEFAULT                 TRUE
@@ -35,6 +36,7 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_PASSGE_COLOR(r,c)
 #define PC_GFX_COLOR(c)
 #define PC_GFX_NOCOLOR(c) 
+#define PC_GFX_TOMBSTONE()
 #define MORE_MSG                      "--More--"
 #define PASSGO_DEFAULT                FALSE
 #define ASKME_DEFAULT                 FALSE
