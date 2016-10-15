@@ -25,6 +25,7 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define SPACE_IS_OK                   when ' ' : after = FALSE;
 #define CLEAR_MSG                     msg("")
 #define SHELL_CMD                     msg("You're a long way from a terminal"); after = FALSE
+#define ZAP_CASE                      when 'z': case 'p'
 #else
 #define GAME_MAIN                     main
 #define PC_GFX_SET_CURSOR(b)
@@ -42,4 +43,5 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define CLEAR_MSG
 #define REST_DESC                     "(space) "
 #define SHELL_CMD                     shell()
+#define ZAP_CASE                      when 'z' : do_zap(FALSE); when 'p'
 #endif

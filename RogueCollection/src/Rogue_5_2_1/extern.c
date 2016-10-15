@@ -315,7 +315,7 @@ struct h_list helpstr[] = {
     'c',	"	call object",
     'D',	"	recall what's been discovered",
     'o',	"	examine/set options",
-    CTRL('L'),	"	redraw screen",
+    //CTRL('L'),	"	redraw screen",
     CTRL('R'),	"	repeat last message",
     ESCAPE,	"	cancel command",
     '!',	"	shell escape",

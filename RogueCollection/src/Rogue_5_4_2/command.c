@@ -298,7 +298,7 @@ over:
 		when 'S': 
 		    after = FALSE;
 		    save_game();
-		when '.': ;			/* Rest command */
+		when '.': CLEAR_MSG;			/* Rest command */
 		when ' ': after = FALSE;	/* "Legal" illegal command */
 		when '^':
 		    after = FALSE;

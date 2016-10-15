@@ -155,8 +155,10 @@ gethand()
 	    return LEFT;
 	else if (c == 'r' || c == 'R')
 	    return RIGHT;
-	else if (c == ESCAPE)
-	    return -1;
+    else if (c == ESCAPE) {
+        CLEAR_MSG;
+        return -1;
+    }
 	mpos = 0;
 	if (terse)
 	    msg("L or R");

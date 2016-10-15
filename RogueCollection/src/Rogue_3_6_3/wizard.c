@@ -93,9 +93,9 @@ create_obj()
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
     msg("Type of item: ");
-    obj->o_type = PC_GFX_TRANSLATE(readchar(cw));
+    obj->o_type = PC_GFX_TRANSLATE((ch = readchar(cw)));
     mpos = 0;
-    msg("Which %c do you want? (0-f)", obj->o_type);
+    msg("Which %c do you want? (0-f)", ch);
     obj->o_which = (isdigit((ch = readchar(cw))) ? ch - '0' : ch - 'a' + 10);
     obj->o_group = 0;
     obj->o_count = 1;
@@ -211,5 +211,6 @@ passwd()
     return (strcmp(PASSWD, crypt(buf, "mT")) == 0);*/
     /* Added below by RRPF */
     c = readchar(cw);
+    CLEAR_MSG;
     return (tolower(c) == 'y');
 }

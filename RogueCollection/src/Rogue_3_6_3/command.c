@@ -179,8 +179,7 @@ command()
 		when '?' : after = FALSE; help();
 		when '/' : after = FALSE; identify();
 		when 's' : search();
-		when 'z' : do_zap(FALSE);
-		when 'p':
+		ZAP_CASE:
 		    if (get_dir())
 			do_zap(TRUE);
 		    else

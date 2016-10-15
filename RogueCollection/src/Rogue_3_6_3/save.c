@@ -44,7 +44,13 @@ save_game()
 	do
 	{
 	    c = readchar(cw);
-	} while (c != 'n' && c != 'N' && c != 'y' && c != 'Y');
+	} while (c != 'n' && c != 'N' && c != 'y' && c != 'Y' && c != ESCAPE);
+    //mdk:
+    if (c == ESCAPE)
+    {
+        msg("");
+        return 0;
+    }
 	mpos = 0;
 	if (c == 'y' || c == 'Y')
 	{
