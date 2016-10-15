@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include <display_interface.h>
+#include "../Shared/display_interface.h"
 #include <input_interface.h>
 
 struct Region;

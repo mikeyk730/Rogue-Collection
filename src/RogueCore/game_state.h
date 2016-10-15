@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include "util.h"
+#include "../Shared/coord.h"
 #include "wizard.h"
 #include "command.h"
 

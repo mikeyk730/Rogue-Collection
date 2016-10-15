@@ -1,5 +1,5 @@
 #pragma once
-#include "util.h"
+#include "../Shared/coord.h"
 
 struct Level;
 

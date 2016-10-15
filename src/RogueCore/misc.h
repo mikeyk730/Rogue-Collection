@@ -1,6 +1,6 @@
 #pragma once
 #include "item.h"
-#include "util.h"
+#include "../Shared/coord.h"
 
 //tr_name: Print the name of a trap
 char *tr_name(byte type);

@@ -98,23 +98,6 @@ bool do_clear_screen()
     return false;
 }
 
-bool do_toggle_wizard()
-{
-    game->wizard().toggle();
-    return false;
-}
-
-bool do_toggle_powers()
-{
-    char b[255];
-    msg("Enter power: ");
-    getinfo(b, 128);
-    if (*b != ESCAPE)
-        game->wizard().toggle_powers(b);
-    clear_msg();
-    return false;
-}
-
 bool do_repeat_msg()
 {
     msg(game->last_message);

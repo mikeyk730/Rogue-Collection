@@ -7,7 +7,7 @@
 #include "output_shim.h"
 #include "main.h"
 #include "misc.h"
-#include "display_interface.h"
+#include "../Shared/display_interface.h"
 #include "mach_dep.h"
 #include "output_interface.h"
 

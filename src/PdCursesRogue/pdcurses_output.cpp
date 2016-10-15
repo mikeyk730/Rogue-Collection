@@ -442,7 +442,8 @@ void PdCursesOutput::private_vbox(const unsigned char box[BX_SIZE], int ul_r, in
 //center a string according to how many columns there really are
 void PdCursesOutput::center(int row, const char *string)
 {
-    mvaddstr(row, (COLS - strlen(string)) / 2, string);
+    int n(strlen(string));
+    mvaddstr(row, (COLS - n) / 2, string);
 }
 
 void PdCursesOutput::printw(const char *format, ...)

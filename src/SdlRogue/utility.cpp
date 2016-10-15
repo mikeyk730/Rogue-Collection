@@ -1,7 +1,7 @@
 #include <iostream>
 #include "utility.h"
 #include <SDL.h>
-#include <display_interface_types.h>
+#include "../Shared/coord.h"
 
 std::string getResourcePath(const std::string &subDir) {
     //We need to choose the path separator properly based on which

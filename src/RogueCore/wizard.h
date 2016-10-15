@@ -14,6 +14,19 @@ void show_map(bool show_monsters);
 
 bool do_raise_level();
 bool do_toggle_detect();
+bool do_msg_position();
+bool do_msg_pack_count();
+bool do_charge_stick();
+bool do_teleport();
+bool do_advance_level();
+bool do_decrease_level();
+bool do_add_passages();
+bool do_msg_food();
+bool do_reveal_all();
+bool do_add_goods();
+bool do_toggle_powers();
+bool do_toggle_wizard();
+
 
 void debug_screen();
 

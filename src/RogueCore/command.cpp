@@ -68,16 +68,28 @@ namespace
         { CTRL('F'), do_play_macro },
         { CTRL('R'), do_repeat_msg },
         { CTRL('L'), do_clear_screen },
-        { CTRL('W'), do_toggle_wizard },
+        { CTRL('P'), do_toggle_wizard },
     };
-
     //commands that are recognized only in wizard mode
+    //unmapped ctrl keys: qszvm
     std::map<int, bool(*)()> s_wizard_commands = {
+        { '|', do_msg_position },
         { 'C', do_summon_object },
-        { 'X', do_show_map },
-        { CTRL('P'), do_toggle_powers },
-        { CTRL('U'), do_raise_level },
-        { CTRL('D'), do_toggle_detect }
+        { '$', do_msg_pack_count },
+        { '~', do_charge_stick },
+        { CTRL('I'), do_discovered },
+        { CTRL('W'), do_reveal_all },
+        { CTRL('D'), do_advance_level },
+        { CTRL('A'), do_decrease_level },
+        { CTRL('F'), do_show_map },
+        { CTRL('T'), do_teleport },
+        { CTRL('E'), do_msg_food },
+        { CTRL('C'), do_add_passages },
+        { CTRL('X'), do_toggle_detect },
+        { CTRL('G'), do_add_goods },
+
+        { CTRL('O'), do_toggle_powers },
+        { CTRL('R'), do_raise_level },
     };
 }
 
@@ -301,18 +313,18 @@ bool dispatch_command(Command c)
     else if (c.is_run())
         return do_run(c);
 
-    //try executing the command from the map
-    auto i = s_commands.find(c.ch);
-    if (i != s_commands.end()) {
-        return (*i->second)();
-    }
-
-    //if we're a wizard look at wizard commands too
+    //if we're a wizard look at wizard commands first
     if (game->wizard().enabled()) {
         auto i = s_wizard_commands.find(c.ch);
         if (i != s_wizard_commands.end()) {
             return (*i->second)();
         }
+    }
+
+    //try executing the command from the map
+    auto i = s_commands.find(c.ch);
+    if (i != s_commands.end()) {
+        return (*i->second)();
     }
 
     msg("illegal command '%s'", unctrl(c.ch));

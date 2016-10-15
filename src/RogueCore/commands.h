@@ -19,7 +19,6 @@ bool do_play_macro();
 bool do_id_trap();
 bool do_options();
 bool do_clear_screen();
-bool do_toggle_wizard();
 bool do_show_map();
-bool do_toggle_powers();
+
 

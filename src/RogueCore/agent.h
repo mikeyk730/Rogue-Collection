@@ -1,6 +1,6 @@
 #pragma once
 #include <list>
-#include "util.h"
+#include "../Shared/coord.h"
 
 struct Monster;
 struct Item;

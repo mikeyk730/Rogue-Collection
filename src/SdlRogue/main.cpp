@@ -4,7 +4,7 @@
 #include "sdl_rogue.h"
 #include "utility.h"
 #include <input_interface.h>
-#include <display_interface.h>
+#include "../Shared/display_interface.h"
 #include <Windows.h>
 
 DisplayInterface::~DisplayInterface() {}
@@ -85,7 +85,7 @@ namespace
 
 int main(int argc, char** argv)
 {
-    int i = 4-1;
+    int i = 3-1;
     if (argc > 1) {
         std::string arg(argv[1]);
         if (arg == "1" || arg == "2" || arg == "3" || arg == "4") {

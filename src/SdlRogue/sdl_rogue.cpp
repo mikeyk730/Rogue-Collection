@@ -6,7 +6,7 @@
 #include "SDL.h"
 #include "sdl_rogue.h"
 #include "utility.h"
-#include "..\RogueVersions\pc_gfx_charmap.h"
+#include "../Shared/pc_gfx_charmap.h"
 
 #define CTRL(ch)   (ch&0x1f)
 #define ESCAPE     (0x1b)

@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <string>
-#include "util.h"
+#include "../Shared/coord.h"
 
 #define standend()          set_attr(0)
 #define green()             set_attr(1)

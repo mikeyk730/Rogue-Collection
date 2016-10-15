@@ -372,7 +372,7 @@ void Hero::teleport()
 }
 
 //check_level: Check to see if the guy has gone up a level.
-void Hero::check_level()
+void Hero::check_level(bool print)
 {
     int i, add, olevel;
 
@@ -387,24 +387,26 @@ void Hero::check_level()
         add = roll(i - olevel, 10);
         m_stats.m_max_hp += add;
         increase_hp(add, false, false);
-        if (game->options.use_exp_level_names())
-            msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
-        else
-            msg("Welcome to level %d", i);
+        if (print) {
+            if (game->options.use_exp_level_names())
+                msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
+            else
+                msg("Welcome to level %d", i);
+        }
     }
 }
 
 //raise_level: The guy just magically went up a level.
-void Hero::raise_level()
+void Hero::raise_level(bool print)
 {
     m_stats.m_exp = e_levels[m_stats.m_level - 1] + 1L;
-    check_level();
+    check_level(print);
 }
 
 void Hero::gain_experience(int exp)
 {
     Agent::gain_experience(exp);
-    check_level();
+    check_level(true);
 }
 
 void Hero::reduce_level()

@@ -80,10 +80,10 @@ public:
     void reduce_level();
 
     //check_level: Check to see if the guy has gone up a level.
-    void check_level();
+    void check_level(bool print);
 
     //raise_level: The guy just magically went up a level.
-    void raise_level();
+    void raise_level(bool print);
 
     void do_hit(Item* weapon, int thrown, Monster* monster, const char* name);
     void do_miss(Item* weapon, int thrown, Monster* monster, const char* name);

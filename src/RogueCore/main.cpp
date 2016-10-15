@@ -43,7 +43,7 @@
 #include "level.h"
 #include "rooms.h"
 #include "input_interface.h"
-#include "display_interface.h"
+#include "../Shared/display_interface.h"
 
 int get_seed()
 {

@@ -294,12 +294,6 @@
     <ClInclude Include="captured_input.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="display_interface.h">
-      <Filter>Output</Filter>
-    </ClInclude>
-    <ClInclude Include="display_interface_types.h">
-      <Filter>Output</Filter>
-    </ClInclude>
     <ClInclude Include="util.h">
       <Filter>Core</Filter>
     </ClInclude>

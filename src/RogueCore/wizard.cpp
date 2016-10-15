@@ -205,13 +205,113 @@ void show_map(bool show_monsters)
 
 bool do_raise_level()
 {
-    game->hero().raise_level();
+    game->hero().raise_level(true);
     return false;
 }
 
 bool do_toggle_detect()
 {
     game->wizard().toggle_powers("detect_monsters");
+    return false;
+}
+
+bool do_toggle_wizard()
+{
+    game->wizard().toggle();
+    return false;
+}
+
+bool do_toggle_powers()
+{
+    char b[255];
+    msg("Enter power: ");
+    getinfo(b, 128);
+    if (*b != ESCAPE)
+        game->wizard().toggle_powers(b);
+    clear_msg();
+    return false;
+}
+
+bool do_msg_position()
+{
+    msg("@ %d,%d", game->hero().position().y, game->hero().position().x);
+    return false;
+}
+
+bool do_msg_pack_count()
+{
+    msg("inpack = %d", game->hero().m_pack.size());
+    return false;
+}
+
+bool do_charge_stick()
+{
+    Item *item;
+
+    if ((item = get_item("charge", STICK)) != NULL)
+        item->supercharge();
+
+    return false;
+}
+
+bool do_teleport()
+{
+    game->hero().teleport();
+    return false;
+}
+
+bool do_advance_level()
+{
+    game->next_level();
+    game->level().new_level(true);
+    return false;
+}
+
+bool do_decrease_level()
+{
+    game->prev_level();
+    game->level().new_level(true);
+    return false;
+}
+
+bool do_add_passages()
+{
+    add_pass();
+    return false;
+}
+
+bool do_msg_food()
+{
+    msg("food left: %d", game->hero().get_food_left());
+    return false;
+}
+
+bool do_reveal_all()
+{
+    game->wizard().toggle_powers("reveal_items");
+    if (game->wizard().reveal_items())
+        msg("You know it all");
+    else
+        msg("You suddenly feel much more forgetful");
+    return false;
+}
+
+bool do_add_goods()
+{
+    for (int i = 0; i < 8; i++)
+        game->hero().raise_level(false);
+    game->hero().raise_level(true);
+
+    Item *obj;
+    obj = new Weapon(TWOSWORD, 1, 1);
+    obj->set_known();
+    game->hero().add_to_pack(obj, true);
+    game->hero().set_current_weapon(obj);
+
+    Armor* armor = new Armor(PLATE_MAIL, -5);
+    game->hero().add_to_pack(armor, true);
+    game->hero().set_current_armor(armor);
+
     return false;
 }
 

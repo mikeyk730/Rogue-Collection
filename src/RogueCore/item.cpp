@@ -1,7 +1,7 @@
 #include "main.h"
 #include "item.h"
 #include "agent.h"
-#include "util.h"
+#include "../Shared/coord.h"
 #include "rooms.h"
 #include "game_state.h"
 #include "hero.h"
@@ -89,6 +89,11 @@ void Item::use_charge()
 {
     if (--m_charges < 1)
         m_charges = 0;
+}
+
+void Item::supercharge()
+{
+    m_charges = 10000;
 }
 
 bool Item::is_flag_set(short flag) const {

@@ -1,6 +1,6 @@
 #include <list>
 #include "rogue.h"
-#include "util.h"
+#include "../Shared/coord.h"
 #include "room.h"
 
 struct Room;

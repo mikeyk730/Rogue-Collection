@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "util.h"
+#include "../Shared/coord.h"
 
 struct Monster;
 struct Hero;
@@ -71,6 +71,7 @@ public:
 
     int charges() const;
     void use_charge();
+    void supercharge();
 
     bool does_group() const;
 

@@ -1,7 +1,7 @@
 #pragma once
 #include <list>
 #include <string>
-#include "util.h"
+#include "../Shared/coord.h"
 
 struct Item;
 

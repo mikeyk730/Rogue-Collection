@@ -1,8 +1,6 @@
 #include <memory>
 #include "windows_console.h"
 #include "console_keyboard_input.h"
-#include "RogueCore/main.h"
-#include "RogueCore/output_interface.h"
 
 int main(int argc, char **argv)
 {

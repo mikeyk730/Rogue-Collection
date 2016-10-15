@@ -269,7 +269,7 @@ void RaiseLevel::Quaff()
 {
     discover();
     msg("you suddenly feel much more skillful");
-    game->hero().raise_level();
+    game->hero().raise_level(true);
 }
 
 void RaiseLevel::AffectMonster(Monster* monster)

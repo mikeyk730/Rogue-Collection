@@ -224,14 +224,12 @@
     <ClInclude Include="output_shim.h" />
     <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />
-    <ClInclude Include="display_interface_types.h" />
     <ClInclude Include="env.h" />
     <ClInclude Include="fight.h" />
     <ClInclude Include="combo_input.h" />
     <ClInclude Include="gold.h" />
     <ClInclude Include="item_category.h" />
     <ClInclude Include="monster.h" />
-    <ClInclude Include="display_interface.h" />
     <ClInclude Include="stream_input.h" />
     <ClInclude Include="food.h" />
     <ClInclude Include="game_state.h" />
