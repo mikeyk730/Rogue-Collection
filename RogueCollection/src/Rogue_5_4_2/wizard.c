@@ -135,12 +135,16 @@ create_obj(void)
     THING *obj;
     int ch, bless;
 
-    obj = new_item();
     msg("type of item: ");
-    obj->o_type = PC_GFX_TRANSLATE((ch = readchar()));
-    mpos = 0;
+    ch = readchar();
+    msg("");
+    if (ch == ESCAPE)
+        return;
+    obj = new_item();
+    obj->o_type = PC_GFX_TRANSLATE(ch);
     msg("which %c do you want? (0-f)", ch);
-    obj->o_which = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);
+    if (ch != '*')
+        obj->o_which = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);
     obj->o_group = 0;
     obj->o_count = 1;
     mpos = 0;
@@ -189,8 +193,9 @@ create_obj(void)
 	fix_stick(obj);
     else if (obj->o_type == GOLD)
     {
-	msg("how much?");
+	msg("how much? ");
 	get_num(&obj->o_goldval, stdscr);
+    CLEAR_MSG;
     }
     add_pack(obj, FALSE);
 }

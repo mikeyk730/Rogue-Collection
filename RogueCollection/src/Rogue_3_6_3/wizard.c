@@ -90,11 +90,14 @@ create_obj()
     int bless;
     int ch;
 
+    msg("type of item: ");
+    ch = readchar(cw);
+    msg("");
+    if (ch == ESCAPE)
+        return;
     item = new_item(sizeof *obj);
     obj = (struct object *) ldata(item);
-    msg("Type of item: ");
-    obj->o_type = PC_GFX_TRANSLATE((ch = readchar(cw)));
-    mpos = 0;
+    obj->o_type = PC_GFX_TRANSLATE(ch);
     msg("Which %c do you want? (0-f)", ch);
     obj->o_which = (isdigit((ch = readchar(cw))) ? ch - '0' : ch - 'a' + 10);
     obj->o_group = 0;
