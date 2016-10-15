@@ -80,7 +80,7 @@ command(void)
 		move_on = FALSE;
 		if (mpos != 0)		/* Erase message if its there */
 		{
-		    if (ch != '.')
+		    //mdk: if (ch != '.')
 			msg("");
 		}
 	    }
@@ -298,7 +298,7 @@ over:
 		when 'S': 
 		    after = FALSE;
 		    save_game();
-		when '.': CLEAR_MSG;			/* Rest command */
+		when '.': ;			/* Rest command */
 		when ' ': after = FALSE;	/* "Legal" illegal command */
 		when '^':
 		    after = FALSE;

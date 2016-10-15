@@ -137,9 +137,9 @@ create_obj(void)
 
     obj = new_item();
     msg("type of item: ");
-    obj->o_type = PC_GFX_TRANSLATE(readchar());
+    obj->o_type = PC_GFX_TRANSLATE((ch = readchar()));
     mpos = 0;
-    msg("which %c do you want? (0-f)", obj->o_type);
+    msg("which %c do you want? (0-f)", ch);
     obj->o_which = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);
     obj->o_group = 0;
     obj->o_count = 1;
@@ -264,6 +264,7 @@ passwd(void)
     *sp = '\0';
     return (strcmp(PASSWD, md_crypt(buf, "mT")) == 0);*/
     c = readchar();
+    CLEAR_MSG;
     return (tolower(c) == 'y');
 }
 

@@ -137,8 +137,10 @@ gethand(void)
 	    msg("left or right ring? ");
 	else
 	    msg("left hand or right hand? ");
-	if ((c = readchar()) == ESCAPE)
-	    return -1;
+    if ((c = readchar()) == ESCAPE) {
+        CLEAR_MSG;
+        return -1;
+    }
 	mpos = 0;
 	if (c == 'l' || c == 'L')
 	    return LEFT;
