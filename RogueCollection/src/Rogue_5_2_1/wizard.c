@@ -87,7 +87,7 @@ bool insist;
 create_obj()
 {
     register THING *obj;
-    register BYTE ch, bless;
+    register char ch, bless;
 
     msg("type of item: ");
     ch = readchar();

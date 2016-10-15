@@ -165,7 +165,7 @@ register bool pr;
  */
 init_weapon(weap, type)
 register THING *weap;
-BYTE type;
+byte type;
 {
     register struct init_weps *iwp;
 
@@ -205,7 +205,7 @@ THING *obj;
 char *
 num(n1, n2, type)
 register int n1, n2;
-register BYTE type;
+register chtype type;
 {
     static char numbuf[10];
 

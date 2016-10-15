@@ -15,18 +15,19 @@
  * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
  */
 
-#define BYTE                unsigned char
+#define BYTE                unsigned char //unconfirmed
+#define byte                unsigned char //confirmed
 
 typedef struct { 
-    const BYTE *st_name;
+    const char *st_name;
     const int   st_value;
 } STONE;
    
-extern const BYTE *rainbow[];
+extern const char *rainbow[];
 extern const STONE stones[];
-extern const BYTE *sylls[];
-extern const BYTE *wood[];
-extern const BYTE *metal[];
+extern const char *sylls[];
+extern const char *wood[];
+extern const char *metal[];
 
 #define NCOLORS 27
 #define NSYLLS  159
@@ -337,7 +338,7 @@ extern const BYTE *metal[];
 
 struct h_list {
     BYTE h_ch;
-    BYTE *h_desc;
+    char *h_desc;
 };
 
 /*
@@ -393,7 +394,7 @@ struct stats {
     shint s_lvl;			/* Level of mastery */
     shint s_arm;			/* Armor class */
     short s_hpt;			/* Hit points */
-    BYTE s_dmg[16];			/* String describing damage done */
+    char s_dmg[16];			/* String describing damage done */
     shint s_maxhp;			/* Max hit points */
 };
 
