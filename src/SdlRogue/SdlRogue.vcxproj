@@ -96,20 +96,22 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
-xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I</Command>
+xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -121,19 +123,21 @@ xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R 
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
-xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I</Command>
+xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -146,7 +150,7 @@ xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R 
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -154,14 +158,16 @@ xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R 
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
-xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I</Command>
+xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -175,29 +181,33 @@ xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R 
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
-xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I</Command>
+xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game_select.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sdl_rogue.cpp" />
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game_select.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="sdl_rogue.h" />
   </ItemGroup>

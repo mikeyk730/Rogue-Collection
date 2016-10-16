@@ -40,7 +40,7 @@ struct Options
 
 struct SdlRogue : public DisplayInterface, public InputInterface
 {
-    SdlRogue(const Options& options);
+    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, const Options& options);
     ~SdlRogue();
 
     void Run();

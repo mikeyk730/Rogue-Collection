@@ -8,6 +8,7 @@ struct SDL_Renderer;
 struct SDL_Surface;
 struct SDL_Texture;
 struct SDL_Rect;
+struct SDL_Color;
 struct _TTF_Font;
 
 namespace SDL
@@ -20,7 +21,29 @@ namespace SDL
         typedef std::unique_ptr<SDL_Texture, void(*)(SDL_Texture*)> Texture;
         typedef std::unique_ptr<_TTF_Font, void(*)(_TTF_Font*)> Font;
     }
+
+    namespace Colors
+    {
+        SDL_Color black();
+        SDL_Color white();
+        SDL_Color grey();
+        SDL_Color d_grey();
+        SDL_Color l_grey();
+        SDL_Color red();
+        SDL_Color l_red();
+        SDL_Color green();
+        SDL_Color l_green();
+        SDL_Color blue();
+        SDL_Color l_blue();
+        SDL_Color cyan();
+        SDL_Color l_cyan();
+        SDL_Color magenta();
+        SDL_Color l_magenta();
+        SDL_Color yellow();
+        SDL_Color brown();
+    }
 }
+
 
 void throw_error(const std::string &msg);
 
@@ -40,7 +63,8 @@ std::string getResourcePath(const std::string &subDir = "");
 uint32_t getpixel(SDL_Surface *surface, int x, int y);
 void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel);
 
+SDL::Scoped::Texture loadImage(const std::string &file, SDL_Renderer *ren);
+SDL::Scoped::Font load_font(const std::string& filename, int size);
 SDL::Scoped::Surface load_bmp(const std::string& filename);
 SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer);
-void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect* clip);
-void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect clip);
+SDL::Scoped::Surface load_text(const std::string& s, _TTF_Font* font, SDL_Color color, SDL_Color bg);

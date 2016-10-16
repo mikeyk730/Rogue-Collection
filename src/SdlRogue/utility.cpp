@@ -1,7 +1,34 @@
 #include <iostream>
-#include "utility.h"
 #include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include "utility.h"
 #include "../Shared/coord.h"
+
+namespace SDL
+{
+    namespace Colors
+    {
+        SDL_Color black()    { return {   0,   0,   0, 255 }; } //from dosbox
+        SDL_Color white()    { return { 255, 255, 255, 255 }; } //from dosbox
+        SDL_Color grey()     { return { 170, 170, 170, 255 }; } //from dosbox
+        SDL_Color d_grey()   { return {  65,  65,  65, 255 }; }
+        SDL_Color l_grey()   { return { 205, 205, 205, 255 }; }
+        SDL_Color red()      { return { 170,   0,   0, 255 }; } //from dosbox
+        SDL_Color l_red()    { return { 255,  85,  85, 255 }; }
+        SDL_Color green()    { return {   0, 170,   0, 255 }; } //from dosbox
+        SDL_Color l_green()  { return {  85,  255, 85, 255 }; } //from dosbox
+        SDL_Color blue()     { return {   0,   0, 170, 255 }; } //from dosbox
+        SDL_Color l_blue()   { return {  85,  85, 255, 255 }; } //from dosbox
+        SDL_Color cyan()     { return {   0, 170, 170, 255 }; }
+        SDL_Color l_cyan()   { return {  25, 255, 255, 255 }; }
+        SDL_Color magenta()  { return { 170,   0, 170, 255 }; } //from dosbox
+        SDL_Color l_magenta(){ return { 255,  25, 255, 255 }; } 
+        SDL_Color yellow()   { return { 255, 255,  25, 255 }; } //from dosbox
+        SDL_Color brown()    { return { 170,  85,   0, 255 }; } //from dosbox
+    }
+}
+
 
 std::string getResourcePath(const std::string &subDir) {
     //We need to choose the path separator properly based on which
@@ -35,6 +62,25 @@ std::string getResourcePath(const std::string &subDir) {
     //If we want a specific subdirectory path in the resource directory
     //append it to the base path. This would be something like Lessons/res/Lesson0
     return subDir.empty() ? baseRes : baseRes + subDir + PATH_SEP;
+}
+
+
+SDL::Scoped::Font load_font(const std::string& filename, int size)
+{
+    SDL::Scoped::Font font(TTF_OpenFont(filename.c_str(), size), TTF_CloseFont);
+    if (font == nullptr)
+        throw_error("TTF_OpenFont");
+
+    return std::move(font);
+}
+
+SDL::Scoped::Surface load_text(const std::string& s, TTF_Font* font, SDL_Color color, SDL_Color bg)
+{
+    SDL::Scoped::Surface surface(TTF_RenderText_Shaded(font, s.c_str(), color, bg), SDL_FreeSurface);
+    if (surface == nullptr)
+        throw_error("TTF_RenderText");
+
+    return std::move(surface);
 }
 
 /*
@@ -112,6 +158,13 @@ void throw_error(const std::string &msg)
     throw std::runtime_error(msg + " error: " + SDL_GetError());
 }
 
+SDL::Scoped::Texture loadImage(const std::string &file, SDL_Renderer *ren) {
+    SDL::Scoped::Texture texture(IMG_LoadTexture(ren, file.c_str()), SDL_DestroyTexture);
+    if (texture == nullptr)
+        throw_error("IMG_LoadTexture");
+    return std::move(texture);
+}
+
 SDL::Scoped::Surface load_bmp(const std::string& filename)
 {
     SDL::Scoped::Surface bmp(SDL_LoadBMP(filename.c_str()), SDL_FreeSurface);
@@ -127,25 +180,4 @@ SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer
     if (texture == nullptr)
         throw_error("CreateTextureFromSurface");
     return std::move(texture);
-}
-
-void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect* clip)
-{
-    SDL_Rect r;
-    r.x = position.x;
-    r.y = position.y;
-    if (clip != nullptr)
-    {
-        r.w = clip->w;
-        r.h = clip->h;
-    }
-    else {
-        SDL_QueryTexture(texture, NULL, NULL, &r.w, &r.h);
-    }
-    SDL_RenderCopy(renderer, texture, clip, &r);
-}
-
-void render_texture_at(SDL_Texture* texture, SDL_Renderer* renderer, Coord position, SDL_Rect clip)
-{
-    render_texture_at(texture, renderer, position, &clip);
 }

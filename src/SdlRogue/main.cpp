@@ -1,7 +1,9 @@
 #include <memory>
 #include <thread>
-#include "SDL.h"
+#include <SDL.h>
+#include <SDL_ttf.h>
 #include "sdl_rogue.h"
+#include "game_select.h"
 #include "utility.h"
 #include <input_interface.h>
 #include "../Shared/display_interface.h"
@@ -78,41 +80,61 @@ namespace
     GraphicsConfig cutesy_gfx = { &alt_text, 0, false, true };
 
     std::vector<Options> s_options = {
+        { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", true,  true,{ pc_gfx, unix_gfx, color_unix_gfx, atari_gfx, cutesy_gfx } },
+        { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   false, false,{ unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+        { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   true,  false,{ unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
         { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
-        { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
-        { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   false, false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
-        { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", true,  true,  { pc_gfx, unix_gfx, color_unix_gfx, atari_gfx, cutesy_gfx } },
     };
 }
 
 int main(int argc, char** argv)
 {
-    int i = 1-1;
+    int i = -1;
     if (argc > 1) {
         std::string arg(argv[1]);
-        if (arg == "1" || arg == "2" || arg == "3" || arg == "4") {
-            i = atoi(arg.c_str())-1;
+        if (arg == "1" || arg == "2" || arg == "3" || arg == "0") {
+            i = atoi(arg.c_str());
             --argc;
             ++argv;
         }
     }
-    Options& options = s_options[i];
 
+    SDL::Scoped::Window window(nullptr, SDL_DestroyWindow);
+    SDL::Scoped::Renderer renderer(nullptr, SDL_DestroyRenderer);
     std::shared_ptr<SdlRogue> sdl_rogue;
     try {
         if (SDL_Init(SDL_INIT_VIDEO) != 0) {
             throw_error("SDL_Init");
         }
 
-        //sdl_rogue.reset(new SdlRogue(pc_text, 0));
-        //sdl_rogue.reset(new SdlRogue(pc_text, &pc_tiles));
-        //sdl_rogue.reset(new SdlRogue(square_text, &atari_tiles, options));
-        
-        sdl_rogue.reset(new SdlRogue(options));
-        //sdl_rogue.reset(new SdlRogue(square_text, 0, options));
-        //sdl_rogue.reset(new SdlRogue(pc_colored_text, &pc_tiles));
+        if (TTF_Init() != 0) {
+            throw_error("TTF_Init");
+        }
 
-        //output = CreateScreenOutput(sdl_rogue);
+        window = SDL::Scoped::Window(SDL_CreateWindow("Rogue", 100, 100, 80*8, 25*16, SDL_WINDOW_SHOWN), SDL_DestroyWindow);
+        if (window == nullptr)
+            throw_error("SDL_CreateWindow");
+
+        renderer = SDL::Scoped::Renderer(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
+        if (renderer == nullptr)
+            throw_error("SDL_CreateRenderer");
+
+        if (i == -1) {
+            GameSelect select(window.get(), renderer.get(), s_options);
+            i = select.GetSelection();
+        }
+        
+        if (i != -1) {
+            Options& option = s_options[i];
+
+            //sdl_rogue.reset(new SdlRogue(pc_text, 0));
+            //sdl_rogue.reset(new SdlRogue(pc_text, &pc_tiles));
+            //sdl_rogue.reset(new SdlRogue(square_text, &atari_tiles, options));
+
+            sdl_rogue.reset(new SdlRogue(window.get(), renderer.get(), option));
+            //sdl_rogue.reset(new SdlRogue(square_text, 0, options));
+            //sdl_rogue.reset(new SdlRogue(pc_colored_text, &pc_tiles));
+        }
     }
     catch (const std::runtime_error& e)
     {
@@ -123,12 +145,16 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    //start rogue engine on a background thread
-    std::thread rogue(run_game, options.dll_name, argc, argv, sdl_rogue.get(), sdl_rogue.get());
-    rogue.detach();
+    if (sdl_rogue) {
+        //start rogue engine on a background thread
+        std::thread rogue(run_game, s_options[i].dll_name, argc, argv, sdl_rogue.get(), sdl_rogue.get());
+        rogue.detach();
 
-    sdl_rogue->Run();
+        sdl_rogue->Run();
+    }
 
+    renderer.release();
+    window.release();
     SDL_Quit();
     return 0;
 }

@@ -3,7 +3,8 @@
 #include <deque>
 #include <mutex>
 #include <iterator>
-#include "SDL.h"
+#include <SDL.h>
+#include <SDL_image.h>
 #include "sdl_rogue.h"
 #include "utility.h"
 #include "../Shared/pc_gfx_charmap.h"
@@ -59,7 +60,7 @@ struct SdlRogue::Impl
 {
     const unsigned int MAX_QUEUE_SIZE = 1;
 
-    Impl(Options options);
+    Impl(SDL_Window* window, SDL_Renderer* renderer, Options options);
     ~Impl();
 
     void SetDimensions(Coord dimensions);
@@ -203,28 +204,16 @@ private:
     };
 };
 
-SdlRogue::Impl::Impl(Options options)
-    : m_options(options)
+SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, Options options)
+    : m_window(window), m_renderer(renderer), m_options(options)
 {
-    m_window = SDL_CreateWindow("Rogue", 100, 100, 100, 100, SDL_WINDOW_HIDDEN);
-    if (m_window == nullptr)
-        throw_error("SDL_CreateWindow");
-
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (m_renderer == nullptr)
-        throw_error("SDL_CreateRenderer");
-
     LoadAssets();
-
-    SDL_ShowWindow(m_window);
 }
 
 SdlRogue::Impl::~Impl()
 {
     SDL_DestroyTexture(m_text);
     SDL_DestroyTexture(m_tiles);
-    SDL_DestroyRenderer(m_renderer);
-    SDL_DestroyWindow(m_window);
 }
 
 int SdlRogue::Impl::tile_index(unsigned char c, unsigned short attr)
@@ -276,13 +265,16 @@ void SdlRogue::Impl::LoadAssets()
 
     GraphicsConfig& gfx = m_options.gfx_options[m_gfx_mode];
 
-    SDL::Scoped::Surface text(load_bmp(getResourcePath("") + gfx.text_cfg->filename));
-    m_text_dimensions.x = text->w / gfx.text_cfg->layout.x;
-    m_text_dimensions.y = text->h / gfx.text_cfg->colors.size() / gfx.text_cfg->layout.y;
+    SDL::Scoped::Texture text(loadImage(getResourcePath("") + gfx.text_cfg->filename, m_renderer));
+    m_text = text.release();
+    int textw, texth;
+    SDL_QueryTexture(m_text, NULL, NULL, &textw, &texth);
+
+    m_text_dimensions.x = textw / gfx.text_cfg->layout.x;
+    m_text_dimensions.y = texth / gfx.text_cfg->colors.size() / gfx.text_cfg->layout.y;
     for (size_t i = 0; i < gfx.text_cfg->colors.size(); ++i)
         m_attr_index[gfx.text_cfg->colors[i]] = i;
     m_block_size = m_text_dimensions;
-    m_text = create_texture(text.get(), m_renderer).release();
 
     if (gfx.tile_cfg)
     {
@@ -433,6 +425,8 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
     int i = get_text_index(color);
     SDL_Rect clip = get_text_rect(c, i);
 
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+    SDL_RenderFillRect(m_renderer, &r);
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }
 
@@ -592,8 +586,8 @@ bool SdlRogue::Impl::shared_data_is_narrow()
     return m_shared_data.m_dimensions.x == 40;
 }
 
-SdlRogue::SdlRogue(const Options& options) :
-    m_impl(new Impl(options))
+SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, const Options& options) :
+    m_impl(new Impl(window, renderer, options))
 {
 }
 
