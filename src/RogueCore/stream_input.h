@@ -3,6 +3,7 @@
 #include <iostream>
 #include <mutex>
 #include <condition_variable>
+#include <deque>
 #include "input_interface.h"
 
 struct StreamInput : public InputInterfaceEx
@@ -31,6 +32,7 @@ private:
     char m_version;
     std::function<void()> m_on_end;
     std::function<void(bool)> m_on_fast_play;
+    std::deque<unsigned char> m_typeahead;
 
 public:
     struct ThreadData

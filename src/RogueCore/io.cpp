@@ -445,10 +445,10 @@ int getinfo_impl(char *str, int size)
 
 int getinfo(char *str, int size)
 {
-    //std::string s = game->input_interface().GetNextString(size-1);
-    //strcpy_s(str, size, s.c_str());
-    //return s[0]; //todo
-    return getinfo_impl(str, size);
+    std::string s = game->input_interface().GetNextString(size-1);
+    game->log("input", "GetNextString: " + s);
+    strcpy_s(str, size, s.c_str());
+    return s[0];
 }
 
 //readchar: Return the next input character, from the macro or from the keyboard.
@@ -466,6 +466,9 @@ int readchar()
     do {
         handle_key_state();
         ch = game->input_interface().GetNextChar();
+        std::ostringstream ss;
+        ss << "GetNextChar: " << ch << " (" << std::hex  << uint16_t(ch) << ")";
+        game->log("input", ss.str());
     } while (ch == 0);
 
     if (ch == ESCAPE)

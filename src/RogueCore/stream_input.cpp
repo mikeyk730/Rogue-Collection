@@ -42,7 +42,7 @@ StreamInput::StreamInput(std::unique_ptr<std::istream> in, int version, bool sta
     m_shared_data(new ThreadData)
 {
     read(*m_stream, &m_version);
-    if (m_version < 'C' || m_version > 'C') { //todo: create version D that ignores fast play.  replay should translate run chars for vers C
+    if (m_version < 'C' || m_version > 'D') {
         throw std::runtime_error("Unsupported save version: " + m_version);
     }
 
@@ -91,7 +91,31 @@ char StreamInput::GetNextChar()
     }
     --m_shared_data->m_steps;
 
+    if (!m_typeahead.empty())
+    {
+        char ch = m_typeahead.front();
+        m_typeahead.pop_front();
+        return ch;
+    }
+
     char c = ReadChar();
+
+    if (m_version == 'C')
+    {
+        //wizard keybindings have changed
+        if (c == CTRL('W'))
+            c = CTRL('P');
+        else if (c == CTRL('P'))
+            c = CTRL('O');
+        else if (c == CTRL('X'))
+            c = CTRL('F');
+        //running has changed
+        else if (c == 'J' || c == 'K' || c == 'L' || c == 'H' || c == 'Y' || c == 'U' || c == 'B' || c == 'N') {
+            m_typeahead.push_back(tolower(c));
+            c = 'f';
+        }
+    }
+
 
     if (!*m_stream || m_shared_data->m_canceled) {
         OnStreamEnd();

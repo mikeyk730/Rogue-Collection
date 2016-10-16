@@ -154,7 +154,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -184,7 +184,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
       <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>

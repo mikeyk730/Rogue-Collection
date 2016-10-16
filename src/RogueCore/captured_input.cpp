@@ -7,7 +7,7 @@
 
 namespace
 {
-    const char s_version = 'C';
+    const char s_version = 'D';
 }
 
 CapturedInput::CapturedInput(std::shared_ptr<InputInterfaceEx> d)
