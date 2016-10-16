@@ -56,25 +56,26 @@ namespace
     TileConfig pc_tiles = { "tiles.bmp", 78, 2 };
     TileConfig atari_tiles = { "atari.bmp", 78, 1 };
 
-    TextConfig pc_text = { "text.bmp",{ 0x07 } };
-    TextConfig pc_colored_text = { "text_colored.bmp",{
+    TextConfig pc_text = { "text.bmp", { 256, 1 }, { 0x07 } };
+    TextConfig alt_text = { "16x16.bmp", { 16, 16 }, { 0x07 } };
+    TextConfig pc_colored_text = { "text_colored.bmp", {256, 1}, {
         0x07, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
         0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0xA0,
         0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f }
     };
-    TextConfig cutesy_text = { "text_16x16.bmp",{
+    TextConfig cutesy_text = { "text_16x16.bmp", {256, 1}, {
         0x07, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
         0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
         0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0xA0,
         0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f }
     };
 
-    GraphicsConfig unix_gfx = { &pc_colored_text, 0, true, false };
+    GraphicsConfig unix_gfx = { &pc_text, 0, true, false };
     GraphicsConfig color_unix_gfx = { &pc_colored_text, 0, true, true };
     GraphicsConfig pc_gfx = { &pc_colored_text, 0, false, true };
     GraphicsConfig atari_gfx = { &cutesy_text, &atari_tiles, false, true };
-    GraphicsConfig cutesy_gfx = { &cutesy_text, 0, false, true };
+    GraphicsConfig cutesy_gfx = { &alt_text, 0, false, true };
 
     std::vector<Options> s_options = {
         { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
@@ -86,7 +87,7 @@ namespace
 
 int main(int argc, char** argv)
 {
-    int i = 3-1;
+    int i = 1-1;
     if (argc > 1) {
         std::string arg(argv[1]);
         if (arg == "1" || arg == "2" || arg == "3" || arg == "4") {

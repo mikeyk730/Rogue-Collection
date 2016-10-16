@@ -17,6 +17,7 @@ struct TileConfig
 struct TextConfig
 {
     std::string filename;
+    Coord layout;
     std::vector<int> colors;
 };
 

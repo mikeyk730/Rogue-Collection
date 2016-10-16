@@ -272,12 +272,13 @@ void SdlRogue::Impl::LoadAssets()
         SDL_DestroyTexture(m_tiles);
         m_tiles = 0;
     }
+    m_attr_index.clear();
 
     GraphicsConfig& gfx = m_options.gfx_options[m_gfx_mode];
 
     SDL::Scoped::Surface text(load_bmp(getResourcePath("") + gfx.text_cfg->filename));
-    m_text_dimensions.x = text->w / 256;
-    m_text_dimensions.y = text->h / gfx.text_cfg->colors.size();
+    m_text_dimensions.x = text->w / gfx.text_cfg->layout.x;
+    m_text_dimensions.y = text->h / gfx.text_cfg->colors.size() / gfx.text_cfg->layout.y;
     for (size_t i = 0; i < gfx.text_cfg->colors.size(); ++i)
         m_attr_index[gfx.text_cfg->colors[i]] = i;
     m_block_size = m_text_dimensions;
@@ -483,13 +484,14 @@ int SdlRogue::Impl::get_text_index(unsigned short attr)
     return 0;
 }
 
-SDL_Rect SdlRogue::Impl::get_text_rect(unsigned char c, int i)
+SDL_Rect SdlRogue::Impl::get_text_rect(unsigned char ch, int i)
 {
+    Coord layout = m_options.gfx_options[m_gfx_mode].text_cfg->layout;
     SDL_Rect r;
     r.h = m_text_dimensions.y;
     r.w = m_text_dimensions.x;
-    r.x = c*m_text_dimensions.x;
-    r.y = i*m_text_dimensions.y;
+    r.x = (ch % layout.x) * m_text_dimensions.x;
+    r.y = (i*layout.y + ch/layout.x) * m_text_dimensions.y;
     return r;
 }
 
