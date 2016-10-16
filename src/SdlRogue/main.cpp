@@ -76,8 +76,8 @@ namespace
     GraphicsConfig unix_gfx = { &pc_text, 0, true, false };
     GraphicsConfig color_unix_gfx = { &pc_colored_text, 0, true, true };
     GraphicsConfig pc_gfx = { &pc_colored_text, 0, false, true };
-    GraphicsConfig atari_gfx = { &cutesy_text, &atari_tiles, false, true };
-    GraphicsConfig cutesy_gfx = { &alt_text, 0, false, true };
+    GraphicsConfig atari_gfx = { &alt_text, &atari_tiles, false, true };
+    GraphicsConfig cutesy_gfx = { &cutesy_text, 0, false, true };
 
     std::vector<Options> s_options = {
         { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", true,  true,{ pc_gfx, unix_gfx, color_unix_gfx, atari_gfx, cutesy_gfx } },

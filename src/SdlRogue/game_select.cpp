@@ -42,7 +42,12 @@ int GameSelect::GetSelection()
 void GameSelect::RenderOption(int i, bool is_selected)
 {
     std::string title = m_options[i].name;
-    SDL_Color color = is_selected ? SDL::Colors::brown() : SDL::Colors::grey();
+    SDL_Color color = SDL::Colors::grey();
+    if (is_selected)
+    {
+        color = SDL::Colors::brown();
+    }
+
     auto surface = load_text(title, m_font.get(), color, SDL::Colors::black());
     auto texture = create_texture(surface.get(), m_renderer);
     SDL_Rect r;
