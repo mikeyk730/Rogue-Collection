@@ -244,7 +244,7 @@ void Level::new_level(int do_implode)
     free_item_list(items);
 
     std::ostringstream ss;
-    ss << "Entering level " << game->get_level();
+    ss << "Entering level " << game->get_level() << ", seed:" << std::hex << g_random->get_seed();
     game->log("level", ss.str());
 
 

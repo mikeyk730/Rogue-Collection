@@ -13,6 +13,11 @@ void Random::set_seed(int s)
     seed = s;
 }
 
+int Random::get_seed() const
+{
+    return seed;
+}
+
 //rnd: Pick a very random number.
 int Random::rnd(int range)
 {

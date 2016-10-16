@@ -178,6 +178,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     //args.savefile = "etc\\tests\\all_sticks_setup.rsf";
     //args.savefile = "etc\\saves\\blevel8.rsf";
     //args.savefile = "rogue.sav";
+    //args.start_paused = true;
 
     if (!args.savefile.empty()) {
         game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, output, input);
