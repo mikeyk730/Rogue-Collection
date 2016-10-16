@@ -121,9 +121,9 @@ int __window::addch(chtype ch)
     }
     else if ((ch&A_CHARTEXT) == '\b')
     {
-        set_data(row, col, ' ');
         if (col > 0)
             --col;
+        set_data(row, col, ' ');
     }
     else if ((ch&A_CHARTEXT) == '\t')
     {
