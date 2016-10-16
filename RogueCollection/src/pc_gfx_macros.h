@@ -16,6 +16,8 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_PASSGE_COLOR(r,c,ch,cl)   if (roomin_rc(r,c) == NULL && ch != PASSAGE && ch != ' ') PC_GFX_COLOR(cl)
 #define PC_GFX_COLOR(c)               wattron(cw, COLOR_PAIR(c))
 #define PC_GFX_NOCOLOR(c)             wattroff(cw, COLOR_PAIR(c))
+#define PC_GFX_COLOR_STD(c)           attron(COLOR_PAIR(c))
+#define PC_GFX_NOCOLOR_STD(c)         attroff(COLOR_PAIR(c))
 #endif
 #define PC_GFX_TOMBSTONE()            fix_tombstone()
 #define MORE_MSG                      "--More--"

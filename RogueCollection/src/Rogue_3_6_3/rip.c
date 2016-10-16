@@ -59,10 +59,10 @@ death(int monst)
     lt = localtime(&date);
     clear();
     move(8, 0);
-    PC_GFX_COLOR(0x06);
+    PC_GFX_COLOR_STD(0x06);
     while (*dp)
 	printw("%s\n", *dp++);
-    PC_GFX_NOCOLOR(0x06);
+    PC_GFX_NOCOLOR_STD(0x06);
     mvaddstr(14, 28-(((int)strlen(whoami)+1)/2), whoami);
     purse -= purse/10;
     sprintf(buf, "%d Au", purse);
