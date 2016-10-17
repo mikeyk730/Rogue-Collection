@@ -65,7 +65,7 @@ void score(int amount, int flags, char monst)
 
     if (amount || flags || monst)
     {
-        auto filename = game->get_environment("autosave");
+        std::string filename = game->get_environment("autosave");
         if(!filename.empty())
             game->save_game(filename);
 

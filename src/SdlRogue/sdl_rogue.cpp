@@ -559,6 +559,7 @@ void SdlRogue::Impl::Run()
             HandleEventKeyUp(e);
         }
         else if (e.type == SDL_USEREVENT) {
+            SDL_FlushEvent(SDL_USEREVENT);
             Render(e.user.code != 0);
         }
     }

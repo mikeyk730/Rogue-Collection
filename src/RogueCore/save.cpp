@@ -16,7 +16,7 @@ void do_save(const char* filename)
 //do_save_game: Implement the "save game" command
 bool do_save_game()
 {
-    char savename[20];
+    char savename[40];
 
     msg("");
     reset_msg_position();
@@ -24,7 +24,7 @@ bool do_save_game()
         game->screen().addstr("Save file? ");
     else
         game->screen().printw("Save file (press enter (\x11\xd9) to default to \"%s\") ? ", game->get_environment("savefile").c_str());
-    getinfo(savename, 19);
+    getinfo(savename, 39);
     if (*savename == 0)
         strcpy(savename, game->get_environment("savefile").c_str());
     do_save(savename);

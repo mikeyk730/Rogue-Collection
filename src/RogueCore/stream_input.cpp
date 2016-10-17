@@ -109,6 +109,12 @@ char StreamInput::GetNextChar()
             c = CTRL('O');
         else if (c == CTRL('X'))
             c = CTRL('F');
+        else if (c == 'X')
+            c = CTRL('F');
+        else if (c == CTRL('D'))
+            c = CTRL('X');
+        else if (c == CTRL('U'))
+            c = CTRL('R');
         //running has changed
         else if (c == 'J' || c == 'K' || c == 'L' || c == 'H' || c == 'Y' || c == 'U' || c == 'B' || c == 'N') {
             m_typeahead.push_back(tolower(c));

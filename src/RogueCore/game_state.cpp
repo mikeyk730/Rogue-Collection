@@ -46,7 +46,7 @@ using std::placeholders::_1;
 
 namespace
 {
-    const int s_serial_version = 6;
+    const int s_serial_version = 7;
 
     std::string GetPath(const std::string& subdir) {
 #ifdef WIN32
@@ -95,9 +95,9 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     if (version < 3 || version > s_serial_version) {
         throw std::runtime_error("Unsupported save version " + filename);
     }
-    if (version < 4) {
-        //the game engine has since enabled this bugfix by default
-        set_environment("hit_plus_bugfix", "false");
+    if (version == 4 || version == 5) {
+        //the game engine has since disabled this bugfix by default
+        set_environment("hit_plus_bugfix", "true");
     }
     if (version < 6) {
         //the game engine has since enabled this bugfix by default
@@ -175,6 +175,9 @@ void GameState::init_environment()
     m_environment["scorefile"] = "roguepc.scr";
     m_environment["savefile"] = "rogue.sav";
     m_environment["powers"] = "jump_levels,reveal_items";
+    m_environment["throws_affect_mimics"] = "false";
+    m_environment["hit_plus_bugfix"] = "false";
+    m_environment["ice_monster_miss_bugfix"] = "true";
 
     process_environment();
 }
