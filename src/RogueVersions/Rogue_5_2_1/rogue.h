@@ -15,8 +15,7 @@
  * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
  */
 
-#define BYTE                unsigned char //unconfirmed
-#define byte                unsigned char //confirmed
+#define byte                unsigned char
 
 typedef struct { 
     const char *st_name;
@@ -337,7 +336,7 @@ extern const char *metal[];
  */
 
 struct h_list {
-    BYTE h_ch;
+    char h_ch;
     char *h_desc;
 };
 
@@ -406,7 +405,7 @@ union thing {
 	union thing *_l_next, *_l_prev;	/* Next pointer in link */
 	coord _t_pos;			/* Position */
 	bool _t_turn;			/* If slowed, is it a turn to move */
-	unsigned char _t_type;		/* What it is */
+	char _t_type;		/* What it is */
 	byte _t_disguise;		/* What mimic looks like */
 	byte _t_oldch;			/* Character that was where it was */
 	coord *_t_dest;			/* Where it is running to */
@@ -421,7 +420,7 @@ union thing {
 	shint _o_type;			/* What kind of object it is */
 	coord _o_pos;			/* Where it lives on the screen */
 	char *_o_text;			/* What it says if you read it */
-	BYTE _o_launch;			/* What you need to launch it */
+	char _o_launch;			/* What you need to launch it */
 	char _o_damage[8];		/* Damage if used like sword */
 	char _o_hurldmg[8];		/* Damage if thrown */
 	shint _o_count;			/* Count for plural objects */

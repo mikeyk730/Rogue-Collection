@@ -52,7 +52,7 @@ register THING *th;
     register struct room *rer, *ree;	/* room of chaser, room of chasee */
     register int mindist = 32767, i, dist;
     register bool stoprun = FALSE;	/* TRUE means we are there */
-    register BYTE sch;
+    register byte sch;
     register bool door;
     register THING *obj;
     register struct room *oroom;
@@ -245,7 +245,7 @@ coord *ee;
     register int dist, thisdist;
     register THING *obj;
     register coord *er = &tp->t_pos;
-    register BYTE ch;
+    register byte ch;
     register int plcnt = 1;
 
     /*
@@ -346,7 +346,7 @@ roomin(cp)
 register coord *cp;
 {
     register struct room *rp;
-    register BYTE *fp;
+    register char *fp;
 
     for (rp = rooms; rp < &rooms[MAXROOMS]; rp++)
 	if (cp->x < rp->r_pos.x + rp->r_max.x && rp->r_pos.x <= cp->x

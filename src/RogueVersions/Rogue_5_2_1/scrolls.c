@@ -22,7 +22,7 @@ read_scroll()
 {
     register THING *obj;
     register int y, x;
-    register BYTE ch;
+    register byte ch;
     register THING *op;
     register int index;
     register bool discardit = FALSE;

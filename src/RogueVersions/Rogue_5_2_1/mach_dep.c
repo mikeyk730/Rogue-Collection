@@ -49,7 +49,7 @@ int num_checks;		/* times we've gone over in checkout() */
 
 #ifdef SCOREFILE
 #ifdef LOCKFILE
-static BYTE *lockfile = LOCKFILE;
+static char *lockfile = LOCKFILE;
 #endif
 #endif
 
@@ -163,7 +163,7 @@ start_score()
  *	See if the file has a symbolic link
  */
 issymlink(sp)
-BYTE *sp;
+char *sp;
 {
 #ifdef S_IFLNK
     struct stat sbuf2;
@@ -224,7 +224,7 @@ author()
 void
 checkout(int s)
 {
-    static BYTE *msgs[] = {
+    static char *msgs[] = {
 	"The load is too high to be playing.  Please leave in %0.1f minutes",
 	"Please save your game.  You have %0.1f minutes",
 	"Last warning.  You have %0.1f minutes to leave",

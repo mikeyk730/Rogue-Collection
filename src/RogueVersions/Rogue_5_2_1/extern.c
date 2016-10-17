@@ -56,7 +56,7 @@ const char *w_names[MAXWEAPONS + 1] = {	/* Names of the various weapons */
     "spear",
     NULL				/* fake entry for dragon's breath */
 };
-const BYTE *a_names[MAXARMORS] = {		/* Names of armor types */
+const char *a_names[MAXARMORS] = {		/* Names of armor types */
     "leather armor",
     "ring mail",
     "studded leather armor",

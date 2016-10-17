@@ -284,8 +284,8 @@ init_colors()
 init_names()
 {
     register int nsyl;
-    register BYTE *cp;
-    const BYTE *sp;
+    register char *cp;
+    const char *sp;
     register int i, nwords;
 
     for (i = 0; i < MAXSCROLLS; i++)
@@ -297,7 +297,7 @@ init_names()
 	    nsyl = rnd(3) + 1;
 	    while (nsyl--)
 	    {
-		sp = sylls[rnd((sizeof sylls) / (sizeof (BYTE *)))];
+		sp = sylls[rnd((sizeof sylls) / (sizeof (char *)))];
 		if (&cp[strlen(sp)] > &prbuf[MAXNAME])
 			break;
 		while (*sp)
@@ -306,7 +306,7 @@ init_names()
 	    *cp++ = ' ';
 	}
 	*--cp = '\0';
-	s_names[i] = (BYTE *) malloc((unsigned) strlen(prbuf)+1);
+	s_names[i] = (char *) malloc((unsigned) strlen(prbuf)+1);
 	s_know[i] = FALSE;
 	s_guess[i] = NULL;
 	strcpy(s_names[i], prbuf);
@@ -354,7 +354,7 @@ init_stones()
 init_materials()
 {
     register int i, j;
-    register const BYTE *str;
+    register const char *str;
     bool metused[NMETAL], woodused[NWOOD];
 
     for (i = 0; i < NWOOD; i++)
@@ -403,7 +403,7 @@ init_materials()
  *	Check to see if a series of probabilities sums to 100
  */
 badcheck(name, magic, bound)
-BYTE *name;
+char *name;
 register struct magic_item *magic;
 register int bound;
 {

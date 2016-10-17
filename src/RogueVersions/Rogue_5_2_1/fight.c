@@ -26,13 +26,13 @@ long e_levels[] = {
  */
 fight(mp, mn, weap, thrown)
 register coord *mp;
-BYTE mn;
+char mn;
 register THING *weap;
 bool thrown;
 {
     register THING *tp;
     register bool did_hit = TRUE;
-    register const BYTE *mname;
+    register const char *mname;
 
     /*
      * Find the monster we want to fight
@@ -439,12 +439,12 @@ bool hurl;
  * prname:
  *	The print name of a combatant
  */
-BYTE *
+char *
 prname(who, upper)
-register BYTE *who;
+register char *who;
 bool upper;
 {
-    static BYTE tbuf[MAXSTR];
+    static char tbuf[MAXSTR];
 
     *tbuf = '\0';
     if (who == 0)
@@ -466,9 +466,9 @@ bool upper;
  *	Print a message to indicate a succesful hit
  */
 hit(er, ee)
-register BYTE *er, *ee;
+register char *er, *ee;
 {
-    register BYTE *s = "";
+    register char *s = "";
 
     addmsg(prname(er, TRUE));
     if (terse)
@@ -492,9 +492,9 @@ register BYTE *er, *ee;
  *	Print a message to indicate a poor swing
  */
 miss(er, ee)
-register BYTE *er, *ee;
+register char *er, *ee;
 {
-    register BYTE *s = "";
+    register char *s = "";
 
     addmsg(prname(er, TRUE));
     switch (terse ? 0 : rnd(4))
@@ -599,7 +599,7 @@ raise_level()
  */
 thunk(weap, mname)
 register THING *weap;
-register const BYTE *mname;
+register const char *mname;
 {
     if (weap->o_type == WEAPON)
 	addmsg("the %s hits ", w_names[weap->o_which]);
@@ -617,7 +617,7 @@ register const BYTE *mname;
  */
 bounce(weap, mname)
 register THING *weap;
-register const BYTE *mname;
+register const char *mname;
 {
     if (weap->o_type == WEAPON)
 	addmsg("the %s misses ", w_names[weap->o_which]);

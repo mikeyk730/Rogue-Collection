@@ -33,7 +33,7 @@ GAME_MAIN(argc, argv, envp)
 char **argv;
 char **envp;
 {
-    register BYTE *env;
+    register char *env;
     int lowtime;
 
     md_init();
@@ -203,7 +203,7 @@ endit(int a)
  *	Exit the program, printing a message.
  */
 fatal(s)
-BYTE *s;
+char *s;
 {
     clear();
     move(LINES-2, 0);
@@ -276,7 +276,7 @@ tstp(int a)
  */
 playit()
 {
-    register BYTE *opts;
+    register char *opts;
 
     /*
      * set up defaults for slow terminals

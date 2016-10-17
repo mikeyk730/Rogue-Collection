@@ -92,7 +92,7 @@ ring_off()
 {
     register int ring;
     register THING *obj;
-    register BYTE packchar;
+    register char packchar;
 
     if (cur_ring[LEFT] == NULL && cur_ring[RIGHT] == NULL)
     {
@@ -187,11 +187,11 @@ register int hand;
  * ring_num:
  *	Print ring bonuses
  */
-BYTE *
+char *
 ring_num(obj)
 register THING *obj;
 {
-    static BYTE buf[5];
+    static char buf[5];
 
     if (!(obj->o_flags & ISKNOW))
 	return "";

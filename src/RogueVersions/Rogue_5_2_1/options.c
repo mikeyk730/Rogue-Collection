@@ -25,8 +25,8 @@
  * description of an option and what to do with it
  */
 struct optstruct {
-    BYTE	*o_name;	/* option name */
-    BYTE	*o_prompt;	/* prompt for interactive entry */
+    char	*o_name;	/* option name */
+    char	*o_prompt;	/* prompt for interactive entry */
     int		*o_opt;		/* pointer to thing to set */
     int		(*o_putfunc)();	/* function to print value */
     int		(*o_getfunc)();	/* function to get value interactively */
@@ -129,7 +129,7 @@ bool	*b;
  *	Put out a string
  */
 put_str(str)
-BYTE *str;
+char *str;
 {
     waddstr(hw, str);
 }
@@ -190,12 +190,12 @@ WINDOW *win;
 #define MAXINP	50	/* max string to read from terminal or environment */
 
 get_str(opt, win)
-register BYTE *opt;
+register char *opt;
 WINDOW *win;
 {
-    register BYTE *sp;
+    register char *sp;
     register int c, oy, ox;
-    BYTE buf[MAXSTR];
+    char buf[MAXSTR];
 
     getyx(win, oy, ox);
     wrefresh(win);
@@ -272,7 +272,7 @@ short *opt;
 WINDOW *win;
 {
     register int i;
-    BYTE buf[MAXSTR];
+    char buf[MAXSTR];
 
     if ((i = get_str(buf, win)) == NORM)
 	*opt = atoi(buf);
@@ -289,9 +289,9 @@ WINDOW *win;
  *	or the end of the entire option string.
  */
 parse_opts(str)
-register BYTE *str;
+register char *str;
 {
-    register BYTE *sp;
+    register char *sp;
     register OPTION *op;
     register int len;
 
@@ -313,7 +313,7 @@ register BYTE *str;
 		    *(bool *)op->o_opt = TRUE;
 		else				/* string option */
 		{
-		    register BYTE *start;
+		    register char *start;
 		    /*
 		     * Skip to start of string value
 		     */
@@ -321,13 +321,13 @@ register BYTE *str;
 			continue;
 		    if (*str == '~')
 		    {
-			strcpy((BYTE *) op->o_opt, home);
-			start = (BYTE *) op->o_opt + strlen(home);
+			strcpy((char *) op->o_opt, home);
+			start = (char *) op->o_opt + strlen(home);
 			while (*++str == '/')
 			    continue;
 		    }
 		    else
-			start = (BYTE *) op->o_opt;
+			start = (char *) op->o_opt;
 		    /*
 		     * Skip to end of string value
 		     */
@@ -361,7 +361,7 @@ register BYTE *str;
  *	Copy string using unctrol for things
  */
 strucpy(s1, s2, len)
-register BYTE *s1, *s2;
+register char *s1, *s2;
 register int len;
 {
     if (len > MAXINP)

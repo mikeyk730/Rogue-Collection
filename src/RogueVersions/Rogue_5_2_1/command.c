@@ -32,9 +32,9 @@ shint countch, direction, newcount = FALSE;
  */
 command()
 {
-    register BYTE ch;
+    register char ch;
     register int ntimes = 1;			/* Number of player moves */
-    BYTE *unctrol();
+    char *unctrol();
 
     if (on(player, ISHASTE))
 	ntimes++;
@@ -360,7 +360,7 @@ command()
  *	What to do with an illegal command
  */
 illcom(ch)
-BYTE ch;
+char ch;
 {
     save_msg = FALSE;
     count = 0;
@@ -375,7 +375,7 @@ BYTE ch;
 search()
 {
     register int y, x;
-    register BYTE *fp;
+    register char *fp;
     register int ey, ex;
 
     if (on(player, ISBLIND))
@@ -418,7 +418,7 @@ search()
 help()
 {
     register const struct h_list *strp = helpstr;
-    register BYTE helpch;
+    register char helpch;
     register int cnt;
 
     msg("character you want help for (* for all): ");
@@ -474,8 +474,8 @@ help()
  */
 identify()
 {
-    register BYTE ch;
-    register const BYTE *str;
+    register char ch;
+    register const char *str;
 
     msg("what do you want identified? ");
     ch = readchar();

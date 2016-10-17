@@ -54,7 +54,7 @@ extern WINDOW	*hw;
  * Function types
  */
 
-BYTE	*charge_str(), *ctime(), *getenv(), *inv_name(),
+char	*charge_str(), *ctime(), *getenv(), *inv_name(),
 	*killname(), *nothing(), *num(), *ring_num(),
 	*tr_name(),
 	*unctrol(), *vowelstr();
@@ -74,8 +74,8 @@ extern shint direction;
 extern shint newcount;
 extern int   between;
 extern int   num_checks;
-extern BYTE  lvl_mons[27];
-extern BYTE  wand_mons[27];
+extern char  lvl_mons[27];
+extern char  wand_mons[27];
 extern coord nh;
 extern bool  got_genocide;
 
@@ -88,6 +88,6 @@ extern bool  got_genocide;
 #define O_BINARY 0
 #endif
 
-extern FILE *md_fdopen(int fd, BYTE *mode);
+extern FILE *md_fdopen(int fd, char *mode);
 extern char *md_getusername(int uid);
 extern char *md_gethomedir();

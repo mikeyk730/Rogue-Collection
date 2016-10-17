@@ -20,9 +20,9 @@
  * tr_name:
  *	Print the name of a trap
  */
-BYTE *
+char *
 tr_name(type)
-BYTE type;
+char type;
 {
     switch (type)
     {
@@ -51,13 +51,14 @@ look(wakeup)
 bool wakeup;
 {
     register int x, y;
-    register unsigned char ch;
+    register byte ch;
     register int index;
     register THING *tp;
     register struct room *rp;
     register int ey, ex;
     register int passcount = 0;
-    register BYTE pfl, *fp, pch;
+    register char pfl, *fp;
+    register byte pch;
     register int sy, sx, sumhero = 0, diffhero = 0;
     register int oldx, oldy;
 
@@ -353,9 +354,9 @@ aggravate()
  *      For printfs: if string starts with a vowel, return "n" for an
  *	"an".
  */
-BYTE *
+char *
 vowelstr(str)
-register BYTE *str;
+register char *str;
 {
     switch (*str)
     {
@@ -397,7 +398,7 @@ register THING *obj;
  */
 get_dir()
 {
-    register BYTE *prompt;
+    register char *prompt;
     register bool gotit;
 
     if (!terse)
@@ -463,7 +464,7 @@ register int nm;
  */
 call_it(know, guess)
 register bool know;
-register BYTE **guess;
+register char **guess;
 {
     if (know && *guess)
     {

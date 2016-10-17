@@ -293,7 +293,7 @@ byte ch;
 picky_inven()
 {
     register THING *obj;
-    register BYTE ch, mch;
+    register char ch, mch;
 
     if (pack == NULL)
 	msg("you aren't carrying anything");
@@ -326,11 +326,11 @@ picky_inven()
  */
 THING *
 get_item(purpose, type)
-BYTE *purpose;
+char *purpose;
 int type;
 {
     register THING *obj;
-    register BYTE ch, och;
+    register char ch, och;
 
     if (pack == NULL)
 	msg("you aren't carrying anything");
@@ -388,7 +388,7 @@ pack_char(obj)
 register THING *obj;
 {
     register THING *item;
-    register BYTE c;
+    register char c;
 
     c = 'a';
     for (item = pack; item != NULL; item = next(item))
@@ -406,7 +406,7 @@ register THING *obj;
 money(value)
 register int value;
 {
-    register BYTE floor;
+    register byte floor;
 
     floor = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
     purse += value;

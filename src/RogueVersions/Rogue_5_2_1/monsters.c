@@ -22,13 +22,13 @@
  * the string not to be saved.  Otherwise genocide is lost through
  * saving a game.
  */
-BYTE lvl_mons[] =  {
+char lvl_mons[] =  {
     'K', 'J', 'B', 'S', 'H', 'E', 'A', 'O', 'Z', 'G', 'L', 'C', 'R',
     'Q', 'N', 'Y', 'T', 'W', 'F', 'I', 'X', 'U', 'M', 'V', 'P', 'D',
     '\0'
 };
 
-BYTE wand_mons[] = {
+char wand_mons[] = {
     'K', 'J', 'B', 'S', 'H', ' ', 'A', 'O', 'Z', 'G', ' ', 'C', 'R',
     'Q', ' ', 'Y', 'T', 'W', ' ', 'I', 'X', 'U', ' ', 'V', 'P', ' ',
     '\0'
@@ -43,7 +43,7 @@ randmonster(wander)
 bool wander;
 {
     register int d;
-    register BYTE *mons;
+    register char *mons;
 
     mons = wander ? wand_mons : lvl_mons;
     do
@@ -63,7 +63,7 @@ bool wander;
  */
 new_monster(tp, type, cp)
 register THING *tp;
-BYTE type;
+char type;
 register coord *cp;
 {
     register struct monster *mp;
@@ -171,7 +171,7 @@ int y, x;
 {
     register THING *tp;
     register struct room *rp;
-    register BYTE ch;
+    register char ch;
 
 #ifdef WIZARD
     if ((tp = moat(y, x)) == NULL)
@@ -229,7 +229,7 @@ int y, x;
 genocide()
 {
     register THING *mp;
-    register BYTE c;
+    register char c;
     register int i;
     register THING *nmp;
 

@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include "rogue.h"
 
-static BYTE *rip[] = {
+static char *rip[] = {
 "                       __________",
 "                      /          \\",
 "                     /    REST    \\",
@@ -43,7 +43,7 @@ static BYTE *rip[] = {
 /* VARARGS2 */
 score(amount, flags, monst)
 int amount, flags;
-BYTE monst;
+char monst;
 {
     register struct sc_ent *scp;
     register int i;
@@ -52,17 +52,17 @@ BYTE monst;
     register int prflags = 0;
     register void (*fp)(int);
     register int uid;
-    BYTE scoreline[MAXSTR + 100];
+    char scoreline[MAXSTR + 100];
 
     static struct sc_ent {
-	BYTE sc_name[MAXSTR];
+	char sc_name[MAXSTR];
 	unsigned int sc_flags;
 	unsigned int sc_uid;
 	unsigned short sc_monster;
 	unsigned short sc_score;
 	unsigned short sc_level;
     } top_ten[10];
-    static BYTE *reason[] = {
+    static char *reason[] = {
 	"killed",
 	"quit",
 	"A total winner",
@@ -112,9 +112,9 @@ BYTE monst;
 
     for(i=0; i<10; i++)
     {
-        encread((BYTE *) &top_ten[i].sc_name, MAXSTR, fd);
+        encread((char *) &top_ten[i].sc_name, MAXSTR, fd);
 	scoreline[0] = '\0';
-        encread((BYTE *) scoreline, 100, fd);
+        encread((char *) scoreline, 100, fd);
         sscanf(scoreline, "%d %d %hd %hd %hd", &top_ten[i].sc_flags, 
             &top_ten[i].sc_uid, &top_ten[i].sc_monster, &top_ten[i].sc_score,
             &top_ten[i].sc_level);
@@ -175,10 +175,10 @@ BYTE monst;
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
 	    if (scp->sc_flags == 0)
-		printw(" by %s", killname((BYTE) scp->sc_monster, TRUE));
+		printw(" by %s", killname((char) scp->sc_monster, TRUE));
 	    if (prflags == 1)
 	    {
-		BYTE *name;
+		char *name;
 		name = md_getusername(scp->sc_uid);
 		   
 		if (name == NULL)
@@ -231,12 +231,12 @@ BYTE monst;
 
             for(i=0; i<10; i++)
             {
-                encwrite((BYTE *) &top_ten[i].sc_name, MAXSTR, outf);
+                encwrite((char *) &top_ten[i].sc_name, MAXSTR, outf);
                 sprintf(scoreline," %d %d %hd %hd %hd \n",
                     top_ten[i].sc_flags, top_ten[i].sc_uid, 
                     top_ten[i].sc_monster, top_ten[i].sc_score,
                     top_ten[i].sc_level);
-                encwrite((BYTE *) scoreline, 100, outf);
+                encwrite((char *) scoreline, 100, outf);
             }
 	    unlock_sc();
 	    signal(SIGINT, fp);
@@ -250,12 +250,12 @@ BYTE monst;
  *	Do something really fun when he dies
  */
 death(monst)
-register BYTE monst;
+register char monst;
 {
-    register BYTE **dp = rip, *killer;
+    register char **dp = rip, *killer;
     register struct tm *lt;
     time_t date;
-    BYTE buf[MAXSTR];
+    char buf[MAXSTR];
     struct tm *localtime();
 
     signal(SIGINT, SIG_IGN);
@@ -295,7 +295,7 @@ total_winner()
 {
     register THING *obj;
     register int worth = 0;
-    register BYTE c;
+    register char c;
     register int oldpurse;
 
     clear();
@@ -406,12 +406,12 @@ total_winner()
  * killname:
  *	Convert a code to a monster name
  */
-BYTE *
+char *
 killname(monst, doart)
-register BYTE monst;
+register char monst;
 bool doart;
 {
-    register const BYTE *sp;
+    register const char *sp;
     register bool article;
 
     sp = prbuf;

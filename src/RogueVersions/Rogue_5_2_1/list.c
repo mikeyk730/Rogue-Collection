@@ -75,7 +75,7 @@ discard(item)
 register THING *item;
 {
     total--;
-    free((BYTE *) item);
+    free((char *) item);
 }
 
 /*

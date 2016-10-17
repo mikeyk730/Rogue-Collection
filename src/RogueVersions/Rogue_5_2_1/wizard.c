@@ -205,10 +205,10 @@ teleport()
  */
 passwd()
 {
-    /*register BYTE *sp, c;
-    BYTE buf[MAXSTR], *xcrypt();
+    /*register char *sp, c;
+    char buf[MAXSTR], *xcrypt();
     Only below needed - RRPF*/
-    BYTE c;
+    char c;
 
     msg("wizard's Password:");
     /* Commented out by RRPF

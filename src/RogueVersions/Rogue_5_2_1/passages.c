@@ -333,9 +333,9 @@ passnum()
 numpass(y, x)
 register int y, x;
 {
-    register BYTE *fp;
+    register char *fp;
     register struct room *rp;
-    register BYTE ch;
+    register byte ch;
 
     fp = &flat(y, x);
     if (*fp & F_PNUM)
