@@ -174,9 +174,9 @@ void Monster::set_destination(Coord * d)
 {
     m_destination = d;
 
-    std::ostringstream ss;
-    ss << get_name() << " " << position() << " setting target " << *d;
-    game->log("monster", ss.str());
+    //std::ostringstream ss;
+    //ss << get_name() << " " << position() << " setting target " << *d;
+    //game->log("monster", ss.str());
 
 }
 
@@ -222,9 +222,9 @@ void Monster::set_destination(Agent * a)
 {
     a->set_as_target_of(this);
 
-    std::ostringstream ss;
-    ss << get_name() << " " << position() << " setting target " << a->position() << " " << a->get_name();
-    game->log("monster", ss.str());
+    //std::ostringstream ss;
+    //ss << get_name() << " " << position() << " setting target " << a->position() << " " << a->get_name();
+    //game->log("monster", ss.str());
 }
 
 void Monster::set_destination(Item * i)
@@ -324,9 +324,8 @@ Monster* Monster::do_chase() //todo: understand
             Item* obj = *(it++);
             if (is_going_to(obj->position()))
             {
-                std::ostringstream ss;
-                ss << get_name() << " " << position() << " reached target " << obj->position();
-                game->log("monster", ss.str());
+                //ss << get_name() << " " << position() << " reached target " << obj->position();
+                //game->log("monster", ss.str());
 
                 //mdk: it looks like the intent of the original code was for orcs to
                 //pick up gold and then chase the player, instead of just guarding it.
@@ -334,6 +333,7 @@ Monster* Monster::do_chase() //todo: understand
                 if (guards_gold() && dynamic_cast<Gold*>(obj))
                     break;
 
+                std::ostringstream ss;
                 ss.str(std::string());
                 ss << get_name() << " " << position() << " obtaining " << obj->name();
                 game->log("monster", ss.str());
