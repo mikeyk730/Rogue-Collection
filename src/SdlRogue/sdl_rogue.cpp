@@ -82,6 +82,8 @@ private:
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
 
+    const GraphicsConfig& gfx_cfg() const;
+
     void set_window_size(int w, int h);
     Coord get_screen_pos(Coord buffer_pos);
 
@@ -280,7 +282,7 @@ void SdlRogue::Impl::LoadAssets()
     }
     m_attr_index.clear();
 
-    GraphicsConfig& gfx = m_options.gfx_options[m_gfx_mode];
+    const GraphicsConfig& gfx = gfx_cfg();
 
     SDL::Scoped::Texture text(loadImage(getResourcePath("") + gfx.text_cfg->filename, m_renderer));
     m_text = text.release();
@@ -431,11 +433,11 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
     if (!color) {
         color = GetColor(c, char_color(info));
     }
-    if (!m_options.gfx_options[m_gfx_mode].use_colors) {
+    if (!gfx_cfg().use_colors) {
         color = 0;
     }
 
-    if (!is_text && m_options.gfx_options[m_gfx_mode].use_unix_gfx)
+    if (!is_text && gfx_cfg().use_unix_gfx)
     {
         auto i = unix_chars.find(c);
         if (i != unix_chars.end())
@@ -481,6 +483,11 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }
 
+const GraphicsConfig & SdlRogue::Impl::gfx_cfg() const
+{
+    return m_options.gfx_options[m_gfx_mode];
+}
+
 void SdlRogue::Impl::set_window_size(int w, int h)
 {
     //mdk: i don't know why it's needed, but this code prevents ugly
@@ -508,7 +515,7 @@ int SdlRogue::Impl::get_text_index(unsigned short attr)
 
 SDL_Rect SdlRogue::Impl::get_text_rect(unsigned char ch, int i)
 {
-    Coord layout = m_options.gfx_options[m_gfx_mode].text_cfg->layout;
+    Coord layout = gfx_cfg().text_cfg->layout;
     SDL_Rect r;
     r.h = m_text_dimensions.y;
     r.w = m_text_dimensions.x;

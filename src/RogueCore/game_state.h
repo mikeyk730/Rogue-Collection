@@ -72,7 +72,6 @@ struct GameState
         bool narrow_screen() const;
         bool monochrome() const;
         bool use_exp_level_names() const;
-        bool show_torch() const;
 
         //rule changing options
         bool hit_plus_bugfix() const;

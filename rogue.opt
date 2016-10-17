@@ -13,7 +13,17 @@ gfx=pc
 name=Mike
 fruit=mango
 powers=reveal_items,show_food_counter,jump_levels
+screen=color
 use_exp_level_names=false
 log=last.log
 autosave=last.sav
+menu=true
+macro=v
+version=1.48
+hit_plus_bugfix=false
+ice_monster_miss_bugfix=true
+throws_affect_mimics=false
+;scorefile
+;savefile
+
 

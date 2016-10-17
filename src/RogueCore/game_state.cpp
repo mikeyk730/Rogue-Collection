@@ -326,11 +326,6 @@ bool GameState::Options::use_exp_level_names() const
     return game->get_environment("use_exp_level_names") != "false";
 }
 
-bool GameState::Options::show_torch() const
-{
-    return game->get_environment("torch") == "true";
-}
-
 bool GameState::Options::hit_plus_bugfix() const
 {
     return game->get_environment("hit_plus_bugfix") == "true";

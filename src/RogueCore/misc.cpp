@@ -147,7 +147,7 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
     }
 
     //Draw the tile.  
-    if ((is_passage || is_maze) && (tile != PASSAGE || game->options.show_torch())) {
+    if ((is_passage || is_maze) && (tile != PASSAGE)) {
         if (tile != ARMOR) {  //The current character used for IBM ARMOR doesn't look right in inverse
             game->screen().standout();
         }
