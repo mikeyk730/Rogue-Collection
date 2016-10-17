@@ -49,7 +49,7 @@ do_zap()
 {
     register THING *obj, *tp;
     register int y, x;
-    register BYTE *name;
+    register char *name;
 
     if ((obj = get_item("zap with", STICK)) == NULL)
 	return;
@@ -103,7 +103,7 @@ do_zap()
 	case WS_TELTO:
 	case WS_CANCEL:
 	{
-	    register BYTE monster, oldch;
+	    register byte monster, oldch;
 	    register int rm;
 
 	    y = hero.y;
@@ -115,7 +115,7 @@ do_zap()
 	    }
 	    if ((tp = moat(y, x)) != NULL)
 	    {
-		register BYTE omonst;
+		register byte omonst;
 
 		omonst = monster = tp->t_type;
 		if (monster == 'F')
@@ -323,9 +323,9 @@ drain()
  */
 fire_bolt(start, dir, name)
 coord *start, *dir;
-BYTE *name;
+char *name;
 {
-    register BYTE dirch, ch;
+    register byte dirch, ch;
     register THING *tp;
     register bool hit_hero, used, changed;
     register int i, j;
@@ -448,11 +448,11 @@ def:
  * charge_str:
  *	Return an appropriate string for a wand charge
  */
-BYTE *
+char *
 charge_str(obj)
 register THING *obj;
 {
-    static BYTE buf[20];
+    static char buf[20];
 
     if (!(obj->o_flags & ISKNOW))
 	buf[0] = '\0';

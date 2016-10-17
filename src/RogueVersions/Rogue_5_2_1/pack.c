@@ -42,7 +42,7 @@ bool silent;
 {
     register THING *op, *lp = NULL;
     register bool exact, from_floor;
-    register BYTE floor;
+    register byte floor;
     int discarded = 0;
 
     if (obj == NULL)
@@ -220,9 +220,9 @@ inventory(list, type)
 THING *list;
 int type;
 {
-    register BYTE ch;
+    register char ch;
     register int n_objs;
-    BYTE inv_temp[MAXSTR];
+    char inv_temp[MAXSTR];
 
     n_objs = 0;
     for (ch = 'a'; list != NULL; ch++, list = next(list))
@@ -254,7 +254,7 @@ int type;
  *	Add something to characters pack.
  */
 pick_up(ch)
-BYTE ch;
+byte ch;
 {
     register THING *obj, *mp;
 

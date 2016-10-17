@@ -144,7 +144,7 @@ rs_write(FILE *savef, void *ptr, int size)
 }
 
 int
-rs_write_char(FILE *savef, BYTE c)
+rs_write_char(FILE *savef, char c)
 {
     rs_write(savef, &c, 1);
     
@@ -367,7 +367,7 @@ rs_write_ulongs(FILE *savef, unsigned long *c, int count)
 }
 
 int
-rs_write_string(FILE *savef, BYTE *s)
+rs_write_string(FILE *savef, char *s)
 {
     int len = 0;
 
@@ -380,8 +380,8 @@ rs_write_string(FILE *savef, BYTE *s)
 }
 
 int
-rs_write_string_index(FILE *savef, const BYTE *master[], int max, 
-                      const BYTE *str)
+rs_write_string_index(FILE *savef, const char *master[], int max, 
+                      const char *str)
 {
     int i;
 
@@ -400,7 +400,7 @@ rs_write_string_index(FILE *savef, const BYTE *master[], int max,
 }
 
 int
-rs_write_strings(FILE *savef, BYTE *s[], int count)
+rs_write_strings(FILE *savef, char *s[], int count)
 {
     int len = 0;
     int n = 0;
@@ -448,7 +448,7 @@ rs_read(int inf, void *ptr, int size)
 }
 
 int
-rs_read_char(int inf, BYTE *c)
+rs_read_char(int inf, char *c)
 {
     rs_read(inf, c, 1);
     
@@ -719,7 +719,7 @@ rs_read_ulongs(int inf, unsigned long *i, int count)
 }
 
 int
-rs_read_string(int inf, BYTE *s, int max)
+rs_read_string(int inf, char *s, int max)
 {
     int len = 0;
 
@@ -739,10 +739,10 @@ rs_read_string(int inf, BYTE *s, int max)
 }
 
 int
-rs_read_new_string(int inf, BYTE **s)
+rs_read_new_string(int inf, char **s)
 {
     int len=0;
-    BYTE *buf=0;
+    char *buf=0;
 
     if (rs_read_int(inf, &len) != 0)
     {
@@ -766,8 +766,8 @@ rs_read_new_string(int inf, BYTE **s)
 }
 
 int
-rs_read_string_index(int inf, const BYTE *master[], int maxindex, 
-                     const BYTE **str)
+rs_read_string_index(int inf, const char *master[], int maxindex, 
+                     const char **str)
 {
     int i;
 
@@ -789,7 +789,7 @@ rs_read_string_index(int inf, const BYTE *master[], int maxindex,
 }
 
 int
-rs_read_strings(int inf, BYTE **s, int count, int max)
+rs_read_strings(int inf, char **s, int count, int max)
 {
     int n     = 0;
     int value = 0;
@@ -816,7 +816,7 @@ rs_read_strings(int inf, BYTE **s, int count, int max)
 }
 
 int
-rs_read_new_strings(int inf, BYTE **s, int count)
+rs_read_new_strings(int inf, char **s, int count)
 {
     int len   = 0;
     int n     = 0;
@@ -1808,7 +1808,7 @@ int
 rs_write_rings(FILE *savef)
 {
     int i;
-    const BYTE *stones_list[NSTONES];
+    const char *stones_list[NSTONES];
 
     for(i = 0; i < NSTONES; i++)
         stones_list[i] = stones[i].st_name;
@@ -1827,7 +1827,7 @@ int
 rs_read_rings(int inf)
 {
     int i;
-    const BYTE *stones_list[NSTONES];
+    const char *stones_list[NSTONES];
 
     for(i = 0; i < NSTONES; i++)
         stones_list[i] = stones[i].st_name;
@@ -1956,7 +1956,7 @@ int
 rs_save_file(FILE *savef)
 {
     int endian = 0x01020304;
-    big_endian = ( *((BYTE *)&endian) == 0x01 );
+    big_endian = ( *((char *)&endian) == 0x01 );
 
     rs_write_boolean(savef, after);
     rs_write_boolean(savef, noscore);
@@ -2061,7 +2061,7 @@ rs_restore_file(int inf)
 {
     bool junk;
     int endian = 0x01020304;
-    big_endian = ( *((BYTE *)&endian) == 0x01 );
+    big_endian = ( *((char *)&endian) == 0x01 );
     
     rs_read_boolean(inf, &after);
     rs_read_boolean(inf, &noscore);

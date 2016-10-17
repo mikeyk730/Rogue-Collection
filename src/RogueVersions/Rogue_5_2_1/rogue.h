@@ -407,8 +407,8 @@ union thing {
 	coord _t_pos;			/* Position */
 	bool _t_turn;			/* If slowed, is it a turn to move */
 	unsigned char _t_type;		/* What it is */
-	BYTE _t_disguise;		/* What mimic looks like */
-	BYTE _t_oldch;			/* Character that was where it was */
+	byte _t_disguise;		/* What mimic looks like */
+	byte _t_oldch;			/* Character that was where it was */
 	coord *_t_dest;			/* Where it is running to */
 	short _t_flags;			/* State word */
 	struct stats _t_stats;		/* Physical description */
