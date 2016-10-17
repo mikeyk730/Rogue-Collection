@@ -99,7 +99,7 @@ bool thrown;
 attack(mp)
 register THING *mp;
 {
-    register const BYTE *mname;
+    register const char *mname;
 
     /*
      * Since this is an attack, stop running and any healing that was
@@ -337,7 +337,7 @@ THING *thatt, *thdef, *weap;
 bool hurl;
 {
     register struct stats *att, *def;
-    register BYTE *cp;
+    register char *cp;
     register int ndice, nsides, def_arm;
     register bool did_hit = FALSE;
     register int hplus;

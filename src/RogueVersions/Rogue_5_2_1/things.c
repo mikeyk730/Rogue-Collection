@@ -23,12 +23,12 @@ bool got_genocide = FALSE;
  *	Return the name of something as it would appear in an
  *	inventory.
  */
-BYTE *
+char *
 inv_name(obj, drop)
 register THING *obj;
 register bool drop;
 {
-    register BYTE *pb;
+    register char *pb;
 
     pb = prbuf;
     switch (obj->o_type)
@@ -165,7 +165,7 @@ register bool drop;
  */
 drop()
 {
-    register BYTE ch;
+    register byte ch;
     register THING *nobj, *op;
 
     ch = chat(hero.y, hero.x);
@@ -396,11 +396,11 @@ static int line_cnt = 0;
 
 static bool newpage = FALSE;
 
-static BYTE *lastfmt, *lastarg;
+static char *lastfmt, *lastarg;
 
 discovered()
 {
-    register BYTE ch;
+    register byte ch;
     register bool disc_list;
 
     do {
@@ -412,7 +412,7 @@ discovered()
 	    addmsg(" of object do you want a list");
 	msg("? (* for all)");
 	ch = readchar();
-	switch (ch)
+	switch (PC_GFX_TRANSLATE(ch))
 	{
 	    case ESCAPE:
 		msg("");
@@ -421,14 +421,15 @@ discovered()
 	    case SCROLL:
 	    case RING:
 	    case STICK:
-	    case '*':
+	    case GOLD: //mdk:hack for *
 		disc_list = TRUE;
 		break;
 	    default:
+		CLEAR_MSG;
 		if (terse)
 		    msg("Not a type");
 		else
-		    msg("Please type one of %c%c%c%c (ESCAPE to quit)", POTION, SCROLL, RING, STICK);
+		    msg("Please type one of %c%c%c%c (ESCAPE to quit)", PC_GFX_READABLE(POTION), PC_GFX_READABLE(SCROLL), PC_GFX_READABLE(RING), PC_GFX_READABLE(STICK));
 	}
     } while (!disc_list);
     if (ch == '*')
@@ -441,10 +442,11 @@ discovered()
 	add_line("");
 	print_disc(STICK);
 	end_line();
+    CLEAR_MSG;
     }
     else
     {
-	print_disc(ch);
+	print_disc(PC_GFX_TRANSLATE(ch));
 	end_line();
     }
 }
@@ -457,10 +459,10 @@ discovered()
 #define MAX(a,b,c,d)	(a > b ? (a > c ? (a > d ? a : d) : (c > d ? c : d)) : (b > c ? (b > d ? b : d) : (c > d ? c : d)))
 
 print_disc(type)
-BYTE type;
+byte type;
 {
     register bool *know = NULL;
-    register BYTE **guess = NULL;
+    register char **guess = NULL;
     register int i, maxnum = 0, num_found;
     static THING obj;
     static short order[MAX(MAXSCROLLS, MAXPOTIONS, MAXRINGS, MAXSTICKS)];
@@ -532,7 +534,7 @@ int numthings;
  */
 /* VARARGS1 */
 add_line(fmt, arg)
-BYTE *fmt, *arg;
+char *fmt, *arg;
 {
     if (line_cnt == 0)
     {
@@ -590,17 +592,17 @@ end_line()
  * nothing:
  *	Set up prbuf so that message for "nothing found" is there
  */
-BYTE *
+char *
 nothing(type)
-register BYTE type;
+register byte type;
 {
-    register BYTE *sp, *tystr = NULL;
+    register char *sp, *tystr = NULL;
 
     if (terse)
 	sprintf(prbuf, "Nothing");
     else
 	sprintf(prbuf, "Haven't discovered anything");
-    if (type != '*')
+    if (type != GOLD) //mdk: hack for '*'
     {
 	sp = &prbuf[strlen(prbuf)];
 	switch (type)

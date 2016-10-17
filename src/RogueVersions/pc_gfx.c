@@ -47,6 +47,23 @@ void setup_colors()
     curs_set(0);
 }
 
+int reverse_translate_type(int t)
+{
+    switch (t) {
+    case GOLD:   return '*';
+    case POTION: return '!';
+    case SCROLL: return '?';
+    case MAGIC:  return '$';
+    case FOOD:   return ':';
+    case WEAPON: return ')';
+    case ARMOR:  return ']';
+    case AMULET: return ',';
+    case RING:   return '=';
+    case STICK:  return '/';
+    }
+    return t;
+}
+
 int translate_type(int t)
 {
     switch (t) {

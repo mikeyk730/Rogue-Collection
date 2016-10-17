@@ -36,10 +36,10 @@ bool terse = FALSE;			/* True if we should be short */
 bool wizard = FALSE;			/* True if allows wizard commands */
 #endif
 
-BYTE take;				/* Thing the rogue is taking */
+byte take;				/* Thing the rogue is taking */
 char prbuf[MAXSTR];			/* Buffer for sprintfs */
 char outbuf[BUFSIZ];			/* Output buffer for stdout */
-BYTE runch;				/* Direction player is running */
+char runch;				/* Direction player is running */
 char *s_names[MAXSCROLLS];		/* Names of the scrolls */
 const char *p_colors[MAXPOTIONS];		/* Colors of the potions */
 const char *r_stones[MAXRINGS];		/* Stone settings of the rings */
@@ -78,8 +78,8 @@ char *ws_guess[MAXSTICKS];		/* Players guess at what wand is */
 char *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
 char file_name[MAXSTR];			/* Save file name */
 char home[MAXSTR];			/* User's home directory */
-BYTE _level[MAXLINES*MAXCOLS];		/* Level map */
-BYTE _flags[MAXLINES*MAXCOLS];		/* Flags for each space on the map */
+byte _level[MAXLINES*MAXCOLS];		/* Level map */
+char _flags[MAXLINES*MAXCOLS];		/* Flags for each space on the map */
 
 int max_level;				/* Deepest player has gone */
 int ntraps;				/* Number of traps on this level */

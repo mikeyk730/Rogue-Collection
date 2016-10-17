@@ -276,7 +276,7 @@ checkout(int s)
  *	shell, do a printf instead of a msg to avoid the refresh.
  */
 chmsg(fmt, arg)
-BYTE *fmt;
+char *fmt;
 int arg;
 {
     if (in_shell)

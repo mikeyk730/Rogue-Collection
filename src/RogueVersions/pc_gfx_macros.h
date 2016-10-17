@@ -8,6 +8,7 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_SETUP_COLORS()         setup_colors()
 #define PC_GFX_WALL_CASES             case LLWALL: case LRWALL: case URWALL: case ULWALL:
 #define PC_GFX_TRANSLATE(x)           translate_type(x)
+#define PC_GFX_READABLE(x)            reverse_translate_type(x)
 #if defined(ROGUE_5_2_1) || defined(ROGUE_5_4_2)
 #define PC_GFX_PASSGE_COLOR(r,c,ch,cl)   if ((flat(r,c) & F_PASS) && ch != PASSAGE) PC_GFX_COLOR(cl)
 #define PC_GFX_COLOR(c)               attron(COLOR_PAIR(c))
@@ -35,6 +36,7 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_SETUP_COLORS()
 #define PC_GFX_WALL_CASES
 #define PC_GFX_TRANSLATE(x)           (x)
+#define PC_GFX_READABLE(x)            (x)
 #define PC_GFX_PASSGE_COLOR(r,c)
 #define PC_GFX_COLOR(c)
 #define PC_GFX_NOCOLOR(c) 

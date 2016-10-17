@@ -18,9 +18,9 @@
 #define NONE 100
 
 static struct init_weps {
-    BYTE *iw_dam;	/* Damage when wielded */
-    BYTE *iw_hrl;	/* Damage when thrown */
-    BYTE iw_launch;	/* Launching weapon */
+    char *iw_dam;	/* Damage when wielded */
+    char *iw_hrl;	/* Damage when thrown */
+    char iw_launch;	/* Launching weapon */
     int iw_flags;	/* Miscellaneous flags */
 } init_dam[MAXWEAPONS] = {
     "2d4",	"1d3",	NONE, 		0,		/* Mace */
@@ -205,7 +205,7 @@ THING *obj;
 char *
 num(n1, n2, type)
 register int n1, n2;
-register chtype type;
+register byte type;
 {
     static char numbuf[10];
 
@@ -222,7 +222,7 @@ register chtype type;
 wield()
 {
     register THING *obj, *oweapon;
-    register BYTE *sp;
+    register char *sp;
 
     oweapon = cur_weapon;
     if (!dropcheck(cur_weapon))

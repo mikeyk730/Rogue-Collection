@@ -355,7 +355,7 @@ discovered(void)
 	    addmsg(" of object do you want a list");
 	msg("? (* for all)");
 	ch = readchar();
-	switch (ch)
+	switch (PC_GFX_TRANSLATE(ch))
 	{
 	    case ESCAPE:
 		msg("");
@@ -364,14 +364,15 @@ discovered(void)
 	    case SCROLL:
 	    case RING:
 	    case STICK:
-	    case '*':
+	    case GOLD: //mdk: hack for '*'
 		disc_list = TRUE;
 		break;
 	    default:
+		CLEAR_MSG;
 		if (terse)
 		    msg("Not a type");
 		else
-		    msg("Please type one of %c%c%c%c (ESCAPE to quit)", POTION, SCROLL, RING, STICK);
+		    msg("Please type one of %c%c%c%c (ESCAPE to quit)", PC_GFX_READABLE(POTION), PC_GFX_READABLE(SCROLL), PC_GFX_READABLE(RING), PC_GFX_READABLE(STICK));
 	}
     } while (!disc_list);
     if (ch == '*')
@@ -384,13 +385,14 @@ discovered(void)
 	add_line("", NULL);
 	print_disc(STICK);
 	end_line();
+    CLEAR_MSG;
     }
     else
     {
-	print_disc(ch);
+	print_disc(PC_GFX_TRANSLATE(ch));
 	end_line();
     }
-    msg("");
+    //msg("");
 }
 
 /*
@@ -596,7 +598,7 @@ nothing(int type)
 	sprintf(prbuf, "Nothing");
     else
 	sprintf(prbuf, "Haven't discovered anything");
-    if (type != '*')
+    if (type != GOLD) //mdk: hack for '*'
     {
 	sp = &prbuf[strlen(prbuf)];
 	switch (type)

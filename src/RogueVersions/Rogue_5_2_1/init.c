@@ -92,7 +92,7 @@ init_player()
  * potions and scrolls
  */
 
-const BYTE *rainbow[NCOLORS] = {
+const char *rainbow[NCOLORS] = {
     "amber",
     "aquamarine",
     "black",
@@ -122,7 +122,7 @@ const BYTE *rainbow[NCOLORS] = {
     "yellow",
 };
 
-const BYTE *sylls[NSYLLS] = {
+const char *sylls[NSYLLS] = {
     "a",   "ab",  "ag",  "aks", "ala", "an",  "ankh","app", "arg", "arze",
     "ash", "ban", "bar", "bat", "bek", "bie", "bin", "bit", "bjor",
     "blu", "bot", "bu",  "byt", "comp","con", "cos", "cre", "dalf",
@@ -171,7 +171,7 @@ const STONE stones[NSTONES] = {
     { "zircon",	 	 80},
 };
 
-const BYTE *wood[NWOOD] = {
+const char *wood[NWOOD] = {
     "avocado wood",
     "balsa",
     "bamboo",
@@ -207,7 +207,7 @@ const BYTE *wood[NWOOD] = {
     "zebrawood",
 };
 
-const BYTE *metal[NMETAL] = {
+const char *metal[NMETAL] = {
     "aluminum",
     "beryllium",
     "bone",

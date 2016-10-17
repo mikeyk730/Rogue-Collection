@@ -556,8 +556,8 @@ u_level()
 call()
 {
     register THING *obj;
-    register BYTE **guess;
-    const BYTE *elsewise;
+    register char **guess;
+    const char *elsewise;
     register bool *know;
 
     obj = get_item("call", CALLABLE);

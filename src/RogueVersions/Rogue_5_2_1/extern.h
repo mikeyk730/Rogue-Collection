@@ -31,12 +31,14 @@ extern bool	after, amulet, askme, door_stop, fight_flush,
 		slow_invent, terse, wizard, ws_know[];
 
 
-extern const BYTE *p_colors[], *r_stones[], *w_names[], 
+extern const char *p_colors[], *r_stones[], *w_names[], 
                   *a_names[], *ws_made[];
-extern BYTE	_flags[], _level[], file_name[], fruit[],
+extern char	_flags[], file_name[], fruit[],
 		home[], huh[], outbuf[], *p_guess[],
 		prbuf[], *r_guess[], *release, runch,
-		*s_guess[], *s_names[], take, whoami[],
+		*s_guess[], *s_names[]; 
+extern byte take, _level[];
+extern char whoami[],
 		*ws_guess[], *ws_type[];
 
 extern int	a_chances[], a_class[], count, dnum, food_left,
@@ -87,5 +89,5 @@ extern bool  got_genocide;
 #endif
 
 extern FILE *md_fdopen(int fd, BYTE *mode);
-extern BYTE *md_getusername(int uid);
-extern BYTE *md_gethomedir();
+extern char *md_getusername(int uid);
+extern char *md_gethomedir();
