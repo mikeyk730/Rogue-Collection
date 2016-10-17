@@ -6,6 +6,7 @@
 
 struct Region;
 struct Coord;
+struct Environment;
 
 struct TileConfig
 {
@@ -23,6 +24,7 @@ struct TextConfig
 
 struct GraphicsConfig
 {
+    std::string name;
     TextConfig* text_cfg;
     TileConfig* tile_cfg;
     bool use_unix_gfx;
@@ -33,6 +35,8 @@ struct Options
 {
     std::string name;
     std::string dll_name;
+    Coord screen;
+    Coord small_screen;
     bool emulate_ctrl_controls;
     bool scroll_lock_wake;
     std::vector<GraphicsConfig> gfx_options;
@@ -40,7 +44,7 @@ struct Options
 
 struct SdlRogue : public DisplayInterface, public InputInterface
 {
-    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, const Options& options);
+    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, const Options& options, Environment* env);
     ~SdlRogue();
 
     void Run();

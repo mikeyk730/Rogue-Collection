@@ -67,7 +67,7 @@ int setenv(const char *envfile)
         if (ch == 0) { _close(fd); break; }
         pstate = 3;
         //Skip comments.
-        if (ch == '#')
+        if (ch == '#' || ch == ';')
         {
             while (peekc() != '\n');
             continue;

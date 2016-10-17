@@ -112,7 +112,7 @@ void set_monsters_v1_1()
 
 void GameState::load_monster_cfg_entry(const std::string& line)
 {
-    if (line.empty() || line[0] == '#')
+    if (line.empty() || line[0] == '#' || line[0] == ';')
         return;
 
     set_monster_data(line);

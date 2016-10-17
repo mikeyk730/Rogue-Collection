@@ -205,6 +205,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="environment.cpp" />
     <ClCompile Include="game_select.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sdl_rogue.cpp" />
@@ -212,6 +213,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game_select.h" />
+    <ClInclude Include="environment.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="sdl_rogue.h" />
   </ItemGroup>

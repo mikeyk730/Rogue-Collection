@@ -313,7 +313,7 @@ bool GameState::Options::show_inventory_menu() const
 
 bool GameState::Options::narrow_screen() const
 {
-    return game->get_environment("screen_size") == "narrow";
+    return game->get_environment("small_screen") == "true";
 }
 
 bool GameState::Options::monochrome() const

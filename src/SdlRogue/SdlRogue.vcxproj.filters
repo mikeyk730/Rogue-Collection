@@ -13,6 +13,7 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="game_select.h" />
+    <ClInclude Include="environment.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -25,5 +26,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="game_select.cpp" />
+    <ClCompile Include="environment.cpp" />
   </ItemGroup>
 </Project>

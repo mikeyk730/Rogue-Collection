@@ -132,7 +132,7 @@ void ItemFactory::PrintDiscoveries(const std::string& prefix, int type)
 
 void ItemFactory::LoadItem(const std::string& line, int* probability)
 {
-    if (line.empty() || line[0] == '#')
+    if (line.empty() || line[0] == '#' || line[0] == ';')
         return;
 
     std::istringstream ss(line);

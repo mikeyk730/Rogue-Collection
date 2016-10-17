@@ -1,4 +1,5 @@
 #include <cassert>
+#include <algorithm>
 #include <map>
 #include <deque>
 #include <mutex>
@@ -7,6 +8,7 @@
 #include <SDL_image.h>
 #include "sdl_rogue.h"
 #include "utility.h"
+#include "environment.h"
 #include "../Shared/pc_gfx_charmap.h"
 
 #define CTRL(ch)   (ch&0x1f)
@@ -60,7 +62,7 @@ struct SdlRogue::Impl
 {
     const unsigned int MAX_QUEUE_SIZE = 1;
 
-    Impl(SDL_Window* window, SDL_Renderer* renderer, Options options);
+    Impl(SDL_Window* window, SDL_Renderer* renderer, Options options, Environment* env);
     ~Impl();
 
     void SetDimensions(Coord dimensions);
@@ -80,6 +82,7 @@ private:
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
 
+    void set_window_size(int w, int h);
     Coord get_screen_pos(Coord buffer_pos);
 
     int tile_index(unsigned char c, unsigned short attr);
@@ -97,6 +100,7 @@ private:
     SDL_Renderer* m_renderer = 0;
     SDL_Texture* m_tiles = 0;
     SDL_Texture* m_text = 0;
+    Environment* m_env;
 
     Coord m_block_size = { 0, 0 };
     int m_tile_states = 0;
@@ -204,9 +208,22 @@ private:
     };
 };
 
-SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, Options options)
-    : m_window(window), m_renderer(renderer), m_options(options)
+SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, Options options, Environment* env)
+    : m_window(window), m_renderer(renderer), m_options(options), m_env(env)
 {
+    std::string gfx_pref;
+    if (env->get("gfx", &gfx_pref)) {
+        for (size_t i = 0; i < options.gfx_options.size(); ++i)
+        {
+            if (options.gfx_options[i].name == gfx_pref) {
+                m_gfx_mode = i;
+                break;
+            }
+        }
+    }
+
+    SDL_SetWindowTitle(window, std::string("Rogue Collection - " + options.name).c_str());
+    SDL_ShowWindow(window);
     LoadAssets();
 }
 
@@ -285,7 +302,8 @@ void SdlRogue::Impl::LoadAssets()
         m_tiles = create_texture(tiles.get(), m_renderer).release();
     }
 
-    SDL_SetWindowSize(m_window, m_block_size.x * 80, m_block_size.y * 25);
+    set_window_size(m_block_size.x * m_env->cols(), m_block_size.y * m_env->lines());
+    SDL_RenderClear(m_renderer);
 }
 
 void SdlRogue::Impl::Render(bool force)
@@ -319,6 +337,7 @@ void SdlRogue::Impl::Render(bool force)
     }
 
     if (force) {
+        SDL_RenderClear(m_renderer);
         regions.push_back({ 0,0,dimensions.x-1,dimensions.y-1});
     }
 
@@ -462,6 +481,15 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }
 
+void SdlRogue::Impl::set_window_size(int w, int h)
+{
+    //mdk: i don't know why it's needed, but this code prevents ugly
+    //scaling for very narrow windows
+    int winw = std::max(w, 342);
+    SDL_SetWindowSize(m_window, winw, h);
+    SDL_RenderSetLogicalSize(m_renderer, w, h);
+}
+
 Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
 {
     Coord p;
@@ -491,12 +519,14 @@ SDL_Rect SdlRogue::Impl::get_text_rect(unsigned char ch, int i)
 
 void SdlRogue::Impl::SetDimensions(Coord dimensions)
 {
+    //todo: this function is not needed now that we have env.  we can do
+    //this logic in the ctor, and take dimensions out of shared data
     {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_shared_data.m_dimensions = dimensions;
         m_shared_data.m_data = new uint32_t[dimensions.x*dimensions.y];
     }
-    SDL_SetWindowSize(m_window, m_block_size.x*dimensions.x, m_block_size.y*dimensions.y);
+    //set_window_size(m_block_size.x*dimensions.x, m_block_size.y*dimensions.y);
 }
 
 void SdlRogue::Impl::UpdateRegion(uint32_t * info)
@@ -587,8 +617,8 @@ bool SdlRogue::Impl::shared_data_is_narrow()
     return m_shared_data.m_dimensions.x == 40;
 }
 
-SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, const Options& options) :
-    m_impl(new Impl(window, renderer, options))
+SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, const Options& options, Environment* env) :
+    m_impl(new Impl(window, renderer, options, env))
 {
 }
 

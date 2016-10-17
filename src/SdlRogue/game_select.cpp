@@ -8,6 +8,7 @@ GameSelect::GameSelect(SDL_Window * window, SDL_Renderer* renderer, const std::v
     m_font(load_font(getResourcePath("fonts")+"Px437_IBM_BIOS.ttf", 12)),
     m_logo(loadImage(getResourcePath("")+"title.png", renderer))
 {
+    SDL_ShowWindow(m_window);
 }
 
 int GameSelect::GetSelection()
@@ -41,13 +42,7 @@ int GameSelect::GetSelection()
         }
 
         SDL_RenderClear(m_renderer);
-        SDL_Rect r;
-        SDL_QueryTexture(m_logo.get(), 0, 0, &r.w, &r.h);
-        r.x = (640 - r.w)/2;
-        r.y = 10;
- 
         SDL_RenderCopy(m_renderer, m_logo.get(), 0, 0);
-        //RenderText("Rogue Collection v1.0", { 25, 25 }, false);
         RenderText("Choose your Rogue:", { 33, 275 }, false);
         for (size_t i = 0; i < m_options.size(); ++i)
             RenderOption(i, i == selection);
