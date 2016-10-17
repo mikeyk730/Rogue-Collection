@@ -41,6 +41,7 @@ namespace SDL
         SDL_Color l_magenta();
         SDL_Color yellow();
         SDL_Color brown();
+        SDL_Color orange();
     }
 }
 

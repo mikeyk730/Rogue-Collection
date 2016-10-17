@@ -26,6 +26,7 @@ namespace SDL
         SDL_Color l_magenta(){ return { 255,  25, 255, 255 }; } 
         SDL_Color yellow()   { return { 255, 255,  25, 255 }; } //from dosbox
         SDL_Color brown()    { return { 170,  85,   0, 255 }; } //from dosbox
+        SDL_Color orange()   { return { 234, 118,   2, 255 }; } 
     }
 }
 

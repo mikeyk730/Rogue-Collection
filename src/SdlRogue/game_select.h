@@ -15,5 +15,6 @@ private:
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
     SDL::Scoped::Font m_font;
+    SDL::Scoped::Texture m_logo;
     const std::vector<Options>& m_options;
 };

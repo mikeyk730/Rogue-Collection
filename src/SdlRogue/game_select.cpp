@@ -5,7 +5,8 @@ GameSelect::GameSelect(SDL_Window * window, SDL_Renderer* renderer, const std::v
     m_window(window), 
     m_renderer(renderer),
     m_options(options), 
-    m_font(load_font("C:\\Users\\mikeyk730\\src\\rogue\\Game-Rogue\\res\\fonts\\Px437 (TrueType - DOS charset)\\Px437_IBM_BIOS.ttf", 20))
+    m_font(load_font(getResourcePath("fonts")+"Px437_IBM_BIOS.ttf", 12)),
+    m_logo(loadImage(getResourcePath("")+"title.png", renderer))
 {
 }
 
@@ -40,8 +41,14 @@ int GameSelect::GetSelection()
         }
 
         SDL_RenderClear(m_renderer);
-        RenderText("Rogue Collection v1.0", { 25, 25 }, false);
-        RenderText("Choose your Rogue:", { 25, 75 }, false);
+        SDL_Rect r;
+        SDL_QueryTexture(m_logo.get(), 0, 0, &r.w, &r.h);
+        r.x = (640 - r.w)/2;
+        r.y = 10;
+ 
+        SDL_RenderCopy(m_renderer, m_logo.get(), 0, 0);
+        //RenderText("Rogue Collection v1.0", { 25, 25 }, false);
+        RenderText("Choose your Rogue:", { 33, 275 }, false);
         for (size_t i = 0; i < m_options.size(); ++i)
             RenderOption(i, i == selection);
         SDL_RenderPresent(m_renderer);
@@ -52,15 +59,15 @@ int GameSelect::GetSelection()
 void GameSelect::RenderOption(int i, bool is_selected)
 {
     std::string title = std::string(1, i+'a') + ") " + m_options[i].name;
-    RenderText(title, { 50, 35 + 40 * (i + 2) }, is_selected);
+    RenderText(title, { 58, 275 + 20 * (i + 1) }, is_selected);
 }
 
 void GameSelect::RenderText(const std::string& text, Coord p, bool highlight)
 {
-    SDL_Color color = SDL::Colors::grey();
+    SDL_Color color = SDL::Colors::white();
     if (highlight)
     {
-        color = SDL::Colors::brown();
+        color = SDL::Colors::orange();
     }
 
     auto surface = load_text(text, m_font.get(), color, SDL::Colors::black());

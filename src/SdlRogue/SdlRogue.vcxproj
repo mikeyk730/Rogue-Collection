@@ -109,6 +109,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
+xcopy "$(SolutionDir)res\fonts\*.*" "$(OutDir)res\fonts\" /F /R /Y /I
 xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
@@ -135,6 +136,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
+xcopy "$(SolutionDir)res\fonts\*.*" "$(OutDir)res\fonts\" /F /R /Y /I
 xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
@@ -165,6 +167,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
+xcopy "$(SolutionDir)res\fonts\*.*" "$(OutDir)res\fonts\" /F /R /Y /I
 xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
@@ -195,6 +198,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(SolutionDir)res\*.*" "$(OutDir)res\" /F /R /Y /I
+xcopy "$(SolutionDir)res\fonts\*.*" "$(OutDir)res\fonts\" /F /R /Y /I
 xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
