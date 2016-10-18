@@ -14,9 +14,6 @@ gfx=pc
 name=Mike
 fruit=mango
 
-;todo:
-;savefile=rogue.sav
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Unix options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -49,12 +46,11 @@ prompt_for_name=false
 dir_key_clears_more=true
 hit_plus_bugfix=false
 ice_monster_miss_bugfix=true
-;powers=
+;powers=haste_self
 ;logfile=last.log
 
 ;todo:
 ;autosave=last.sav
-;screen=color
 ;throws_affect_mimics=false
 ;version=1.48
 ;scorefile=roguepc.scr

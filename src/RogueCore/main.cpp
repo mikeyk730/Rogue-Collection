@@ -170,13 +170,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     Args args = process_args(argc, argv);
 
     Options main_options;
-    char* env = getenv("ROGUEOPTS");
-    if (env)
     {
-        std::istringstream rogueopts(env);
-        main_options.from_file(rogueopts, ';');
-    }
-    else {
         std::ifstream in(args.optfile);
         main_options.from_file(in);
     }
@@ -188,12 +182,10 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     //args.savefile = "rogue.sav";
 
     int seed = get_seed();
-    std::string opt_seed = main_options.get_environment("seed");
-    if (!opt_seed.empty()) {
-        std::istringstream ss(opt_seed);
-        ss >> seed;
+    if (getenv("SEED") != nullptr)
+    {
+        seed = atoi(getenv("SEED"));
     }
-
     g_random = new Random(seed);
 
     if (!args.savefile.empty()) {
@@ -201,8 +193,16 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     }
     else {
         game = new GameState(seed, output, input);
-        std::ifstream in(args.optfile);
-        game->options.from_file(in);
+        char* env = getenv("ROGUEOPTS");
+        if (env)
+        {
+            std::istringstream rogueopts(env);
+            game->options.from_file(rogueopts, ';');
+        }
+        else {
+            std::ifstream in(args.optfile);
+            game->options.from_file(in);
+        }
         game->process_environment();
     }
 

@@ -556,7 +556,7 @@ void SdlRogue::Impl::RestoreGame(const std::string& path, Environment* curr_env)
 {
     std::ifstream file(path, std::ios::binary | std::ios::in);
     if (!file) {
-        ErrorBox("Couldn't open file: " + path);
+        throw_error("Couldn't open file: " + path);
     }
 
     unsigned char version;
@@ -568,15 +568,17 @@ void SdlRogue::Impl::RestoreGame(const std::string& path, Environment* curr_env)
     m_env.reset(new Environment());
     m_env->deserialize(file);
     
+    m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+    m_replay_steps_remaining = m_buffer.size();
+
     std::string value;
+    if (curr_env->get("pause_replay", &value) && value == "true")
+        m_paused = true;
+
     if (curr_env->get("logfile", &value))
         m_env->set("logfile", value);
 
     SetGame(name);
-    m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-    m_replay_steps_remaining = m_buffer.size();
-    if (curr_env->get("pause_replay", &value) && value == "true")
-        m_paused = true;
 }
 
 void SdlRogue::Impl::SetGame(const std::string & name)

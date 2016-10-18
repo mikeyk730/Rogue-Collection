@@ -84,7 +84,7 @@ namespace
             }
 
             (*init)(r, r, r->environment()->lines(), r->environment()->cols());
-            (*game)(argc, argv, environ);
+            (*game)(0, 0, environ);
         }
         catch (const std::runtime_error& e)
         {
@@ -98,26 +98,67 @@ namespace
     }
 }
 
-int main(int argc, char** argv)
+struct Args
 {
-    int i = -1;
+    std::string savefile;
+    std::string optfile;
+    bool print_score = false;
+    bool start_paused = false;
+};
 
-    std::shared_ptr<Environment> current_env(new Environment());
-    current_env->from_file("rogue.opt");
+Args process_args(int argc, char**argv)
+{
+    Args a = Args();
+    a.optfile = "rogue.opt";
 
-    std::string game;
-    if (current_env->get("game", &game)) {
-        if (game == "a" || game == "b" || game == "c" || game == "d") {
-            i = game[0] - 'a';
+    for (int i = 1; i < argc; ++i) {
+        std::string s(argv[i]);
+        if (s == "/r") {
+            a.savefile = "rogue.sav";
+        }
+        else if (s == "/s") {
+            a.print_score = true;
+        }
+        else if (s == "/p") {
+            a.start_paused = true;
+        }
+        else if (s == "/o") {
+            if (++i < argc)
+                a.optfile = argv[i];
+        }
+        else {
+            a.savefile = s;
         }
     }
+    return a;
+}
 
-    if (argc > 1) {
-        std::string game(argv[1]);
-        if (game == "a" || game == "b" || game == "c" || game == "d") {
+
+
+int main(int argc, char** argv)
+{
+    Args args = process_args(argc, argv);
+
+    std::shared_ptr<Environment> current_env(new Environment());
+    current_env->from_file(args.optfile);
+
+    if (!args.savefile.empty())
+        current_env->set("game", args.savefile);
+    if (args.start_paused)
+        current_env->set("pause_replay", "true");
+
+    int i = -1;
+    std::string replay_path;
+    std::string game;
+    current_env->get("game", &game);
+    if (!game.empty())
+    {
+        if (game.size() == 1 && (game[0] == 'a' || game[0] == 'b' || game[0] == 'c' || game[0] == 'd'))
+        {
             i = game[0] - 'a';
-            --argc;
-            ++argv;
+        }
+        else {
+            replay_path = game;
         }
     }
 
@@ -141,8 +182,7 @@ int main(int argc, char** argv)
         if (renderer == nullptr)
             throw_error("SDL_CreateRenderer");
 
-        std::string replay_path;
-        if (i == -1) {
+        if (i == -1 && replay_path.empty()) {
             GameSelect select(window.get(), renderer.get(), s_options);
             auto selection = select.GetSelection();
             i = selection.first;
