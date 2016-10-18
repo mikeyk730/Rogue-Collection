@@ -31,9 +31,6 @@
     <ClCompile Include="daemons.cpp">
       <Filter>Unsorted</Filter>
     </ClCompile>
-    <ClCompile Include="env.cpp">
-      <Filter>Unsorted</Filter>
-    </ClCompile>
     <ClCompile Include="extern.cpp">
       <Filter>Unsorted</Filter>
     </ClCompile>
@@ -229,9 +226,6 @@
       <Filter>Unsorted</Filter>
     </ClInclude>
     <ClInclude Include="daemons.h">
-      <Filter>Unsorted</Filter>
-    </ClInclude>
-    <ClInclude Include="env.h">
       <Filter>Unsorted</Filter>
     </ClInclude>
     <ClInclude Include="fight.h">

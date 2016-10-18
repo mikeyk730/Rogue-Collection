@@ -29,7 +29,6 @@
 #include "misc.h"
 #include "rip.h"
 #include "save.h"
-#include "env.h"
 #include "command.h"
 #include "things.h"
 #include "ring.h"
@@ -174,18 +173,21 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     g_random = new Random(seed);
 
     Args args = process_args(argc, argv);
+    Options main_options;
+    main_options.from_file(args.optfile);
+    args.start_paused |= main_options.start_replay_paused();
 
-    //args.savefile = "etc\\tests\\all_sticks_setup.rsf";
+    //args.savefile = "etc\\tests\\updated\\all_sticks_setup.rsf";
     //args.savefile = "etc\\saves\\blevel8.rsf";
     //args.savefile = "rogue.sav";
-    //args.start_paused = true;
 
     if (!args.savefile.empty()) {
         game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, output, input);
     }
     else {
         game = new GameState(seed, output, input);
-        setenv(args.optfile.c_str());
+        game->options.from_file(args.optfile);
+        game->process_environment();
     }
     if (game->options.act_like_v1_1()) {
         set_monsters_v1_1();

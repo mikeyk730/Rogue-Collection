@@ -79,7 +79,7 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     process_environment();
 }
 
-void Options::from_file(std::istream& in)
+void Options::deserialize(std::istream& in)
 {
     int env_length = 0;
     read(in, &env_length);
@@ -120,7 +120,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     read(*in, &m_seed);
     read(*in, &m_restore_count);
 
-    options.from_file(*in);
+    options.deserialize(*in);
     process_environment();
 
     if (version >= 5) {
@@ -185,6 +185,24 @@ void Options::init_environment()
     m_environment["throws_affect_mimics"] = "false";
     m_environment["hit_plus_bugfix"] = "false";
     m_environment["ice_monster_miss_bugfix"] = "true";
+}
+
+void Options::from_file(const std::string & optfile)
+{
+    std::ifstream in(optfile);
+
+    std::string line;
+    while (std::getline(in, line)) {
+        if (line.empty() || line[0] == ';' || line[0] == '#')
+            continue;
+
+        size_t p = line.find_first_of('=');
+        if (p == std::string::npos)
+            continue;
+        std::string key = line.substr(0, p);
+        std::string value = line.substr(p + 1, std::string::npos);
+        set_environment(key, value);
+    }
 }
 
 void GameState::process_environment()

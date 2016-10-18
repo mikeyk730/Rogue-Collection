@@ -35,10 +35,15 @@ struct Options
 
 public:
     void init_environment();
-    void from_file(std::istream& in);
+    void from_file(const std::string & optfile);
+
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);
-    void Options::serialize(std::ostream& file);
+    
+    //save environment to replay file
+    void Options::serialize(std::ostream& savefile);
+    //load environment to replay file
+    void deserialize(std::istream& savefile);
 
 private:
     std::map<std::string, std::string> m_environment; //customizable environment strings 

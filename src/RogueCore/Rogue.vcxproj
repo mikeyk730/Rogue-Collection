@@ -174,7 +174,6 @@
     <ClCompile Include="screen_output.cpp" />
     <ClCompile Include="daemon.cpp" />
     <ClCompile Include="daemons.cpp" />
-    <ClCompile Include="env.cpp" />
     <ClCompile Include="extern.cpp" />
     <ClCompile Include="fakedos.cpp" />
     <ClCompile Include="fight.cpp" />
@@ -228,7 +227,6 @@
     <ClInclude Include="output_shim.h" />
     <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />
-    <ClInclude Include="env.h" />
     <ClInclude Include="fight.h" />
     <ClInclude Include="combo_input.h" />
     <ClInclude Include="gold.h" />
