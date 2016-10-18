@@ -1,7 +1,8 @@
 #include <curses.h>
 #include "curses_input.h"
 
-ConsoleKeyboardInput::ConsoleKeyboardInput()
+ConsoleKeyboardInput::ConsoleKeyboardInput(InputInterface * i)
+    : m_impl(i)
 {
 }
 
@@ -10,8 +11,9 @@ bool ConsoleKeyboardInput::HasMoreInput()
     return true;
 }
 
-char ConsoleKeyboardInput::GetNextChar() {
-    return ::getch();
+char ConsoleKeyboardInput::GetNextChar(bool *is_replay) {
+    return m_impl->GetChar(true, is_replay);
+    //return ::getch();
 }
 
 std::string ConsoleKeyboardInput::GetNextString(int size)

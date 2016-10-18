@@ -9,9 +9,9 @@ struct ComboInput : public InputInterfaceEx
 {
     ComboInput(std::shared_ptr<InputInterfaceEx> primary, std::shared_ptr<InputInterfaceEx> backup);
 
-    virtual bool HasMoreInput();
-    virtual char GetNextChar();
-    virtual std::string GetNextString(int size);
+    virtual bool HasMoreInput() override;
+    virtual char GetNextChar(bool *is_replay) override;
+    virtual std::string GetNextString(int size) override;
 
     virtual void Serialize(std::ostream& out);
 

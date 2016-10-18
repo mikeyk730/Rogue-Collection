@@ -171,6 +171,8 @@ int main(int argc, char** argv)
         rogue.detach();
 
         sdl_rogue->Run();
+
+        exit(0);
     }
 
     renderer.release();

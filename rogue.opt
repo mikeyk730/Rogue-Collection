@@ -5,6 +5,7 @@
 game=
 gfx=pc
 ;small_screen=true
+;pause_replay=true
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; options in all versions
@@ -12,7 +13,9 @@ gfx=pc
 
 name=Mike
 fruit=mango
-savefile=rogue.sav
+
+;todo:
+;savefile=rogue.sav
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Unix options
@@ -39,20 +42,20 @@ askme=true
 ; PC options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-macro=v
-screen=color
-use_exp_level_names=false
-dir_key_clears_more=true
-powers=reveal_items,show_food_counter,jump_levels
-;logfile=last.log
-autosave=last.sav
 menu=true
-pause_replay=false
-hide_replay=false
+macro=v
+use_exp_level_names=false
 prompt_for_name=false
+dir_key_clears_more=true
 hit_plus_bugfix=false
 ice_monster_miss_bugfix=true
-throws_affect_mimics=false
-version=1.48
-scorefile=roguepc.scr
+;powers=
+;logfile=last.log
 
+;todo:
+;autosave=last.sav
+;screen=color
+;throws_affect_mimics=false
+;version=1.48
+;scorefile=roguepc.scr
+;hide_replay=false

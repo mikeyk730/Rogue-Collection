@@ -5,5 +5,6 @@ struct InputInterface
 {
     virtual ~InputInterface();
 
-    virtual char GetChar(bool block) = 0;
+    virtual char GetChar(bool block, bool *is_replay) = 0;
+    virtual void Flush() = 0;
 };

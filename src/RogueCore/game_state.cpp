@@ -179,7 +179,6 @@ void Options::init_environment()
     m_environment["macro"] = "v";
     m_environment["scorefile"] = "roguepc.scr";
     m_environment["savefile"] = "rogue.sav";
-    m_environment["powers"] = "jump_levels,reveal_items";
     m_environment["throws_affect_mimics"] = "false";
     m_environment["hit_plus_bugfix"] = "false";
     m_environment["ice_monster_miss_bugfix"] = "true";
@@ -290,6 +289,11 @@ Cheats& GameState::wizard()
     return cheats;
 }
 
+void GameState::set_in_replay()
+{
+    m_in_replay = true;
+}
+
 bool GameState::in_replay() const
 {
     return m_in_replay;
@@ -297,13 +301,11 @@ bool GameState::in_replay() const
 
 void GameState::set_replay_end()
 {
+    m_in_replay = false;
     if (!m_show_replay)
     {
         screen().resume_rendering();
     }
-    reset_msg_position();
-    msg("Replay ended");
-    m_in_replay = false;
 }
 
 bool GameState::fast_play() const

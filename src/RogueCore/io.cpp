@@ -435,7 +435,7 @@ int getinfo_impl(char *str, int size)
     retstr = str;
     *str = 0;
     wason = game->screen().cursor(true);
-    while (ret == 1) switch (ch = game->input_interface().GetNextChar())
+    while (ret == 1) switch (ch = game->input_interface().GetNextChar(nullptr))
     {
     case 0:
         continue;
@@ -489,11 +489,19 @@ int readchar()
 
     do {
         handle_key_state();
-        ch = game->input_interface().GetNextChar();
+        bool is_replay_char = false;
+        ch = game->input_interface().GetNextChar(&is_replay_char);
+        if (is_replay_char) {
+            game->set_in_replay();
+        }
+        else {
+            if (game->in_replay())
+                game->set_replay_end();
+        }
         std::ostringstream ss;
         ss << "GetNextChar: " << ch << " (" << std::hex  << uint16_t(ch) << ")";
         game->log("input", ss.str());
-    } while (ch == 0xFF);
+    } while (ch == 0);
 
     if (ch == ESCAPE)
         game->cancel_repeating_cmd();

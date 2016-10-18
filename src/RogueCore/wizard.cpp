@@ -282,7 +282,9 @@ bool do_add_passages()
 
 bool do_msg_food()
 {
-    msg("food left: %d", game->hero().get_food_left());
+    game->wizard().toggle_powers("show_food_counter");
+    update_status_bar();
+    //msg("food left: %d", game->hero().get_food_left());
     return false;
 }
 

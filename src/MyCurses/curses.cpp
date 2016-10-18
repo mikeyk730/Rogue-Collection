@@ -194,8 +194,15 @@ int __window::getch()
 {
     if (!s_input)
         return ERR;
-    int ch = s_input->GetChar(!no_delay);
+    int ch = s_input->GetChar(!no_delay, nullptr);
     return ch ? ch : ERR;
+}
+
+int flushinp(void)
+{
+    if (s_input)
+        s_input->Flush();
+    return OK;
 }
 
 char erasechar(void)
@@ -237,7 +244,7 @@ std::string __window::getsnstr_impl(unsigned int n)
     std::string s;
     while (true)
     {
-        unsigned char c = s_input->GetChar(true);
+        unsigned char c = s_input->GetChar(true, nullptr);
         switch (c)
         {
         case ESCAPE:
@@ -818,11 +825,6 @@ int mvcur(int, int, int, int)
 }
 
 int endwin(void)
-{
-    return OK;
-}
-
-int flushinp(void)
 {
     return OK;
 }

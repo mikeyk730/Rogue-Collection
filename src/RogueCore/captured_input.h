@@ -7,9 +7,9 @@ struct CapturedInput : public InputInterfaceEx
 {
     CapturedInput(std::shared_ptr<InputInterfaceEx> d);
 
-    virtual bool HasMoreInput();
-    virtual char GetNextChar();
-    virtual std::string GetNextString(int size);
+    virtual bool HasMoreInput() override;
+    virtual char GetNextChar(bool *is_replay) override;
+    virtual std::string GetNextString(int size) override;
 
     virtual void Serialize(std::ostream& out);
 

@@ -90,7 +90,7 @@ private:
     void RenderCursor(Coord pos);
 
     void SaveGame();
-    void RestoreGame(const std::string& filename);
+    void RestoreGame(const std::string& filename, Environment* curr_env);
     void SetGame(const std::string& name);
     void SetGame(int i);
 
@@ -168,7 +168,8 @@ private:
 
     //todo: 2 classes
 public:
-    char GetChar(bool block);
+    char GetChar(bool block, bool *is_replay);
+    void Flush();
 private:
     void HandleEventText(const SDL_Event& e);
     void HandleEventKeyDown(const SDL_Event& e);
@@ -179,7 +180,7 @@ private:
 
     std::deque<unsigned char> m_buffer;
     std::vector<unsigned char> m_keylog;
-    int m_replay_steps = 0;
+    int m_replay_steps_remaining = 0;
     int m_steps_to_take = 0;
     bool m_paused = false;
 
@@ -230,7 +231,7 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     m_window(window),
     m_renderer(renderer)
 {
-    RestoreGame(file);
+    RestoreGame(file, current_env.get());
 
     std::string gfx_pref;
     if (current_env->get("gfx", &gfx_pref)) {
@@ -551,7 +552,7 @@ void SdlRogue::Impl::SaveGame()
     }
 }
 
-void SdlRogue::Impl::RestoreGame(const std::string& path)
+void SdlRogue::Impl::RestoreGame(const std::string& path, Environment* curr_env)
 {
     std::ifstream file(path, std::ios::binary | std::ios::in);
     if (!file) {
@@ -566,12 +567,16 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
 
     m_env.reset(new Environment());
     m_env->deserialize(file);
-    //todo: copy things from cur_env
-    m_env->set("logfile", "err.log");
+    
+    std::string value;
+    if (curr_env->get("logfile", &value))
+        m_env->set("logfile", value);
 
     SetGame(name);
     m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-    m_replay_steps = m_buffer.size();
+    m_replay_steps_remaining = m_buffer.size();
+    if (curr_env->get("pause_replay", &value) && value == "true")
+        m_paused = true;
 }
 
 void SdlRogue::Impl::SetGame(const std::string & name)
@@ -815,15 +820,20 @@ void SdlRogue::SetCursor(bool enable)
     m_impl->SetCursor(enable);
 }
 
-char SdlRogue::GetChar(bool block)
+char SdlRogue::GetChar(bool block, bool *is_replay)
 {
-    return m_impl->GetChar(block);
+    return m_impl->GetChar(block, is_replay);
 }
 
-char SdlRogue::Impl::GetChar(bool block)
+void SdlRogue::Flush()
+{
+    m_impl->Flush();
+}
+
+char SdlRogue::Impl::GetChar(bool block, bool *is_replay)
 {
     std::unique_lock<std::mutex> lock(m_input_mutex);
-    while (m_replay_steps > 0 && m_paused && m_steps_to_take == 0)
+    while (m_replay_steps_remaining > 0 && m_paused && m_steps_to_take == 0)
     {
         m_input_cv.wait(lock);
     }
@@ -838,12 +848,24 @@ char SdlRogue::Impl::GetChar(bool block)
     m_buffer.pop_front();
     m_keylog.push_back(c);
 
-    if (m_replay_steps > 0)
-        --m_replay_steps;
+    if (is_replay)
+        *is_replay = (m_replay_steps_remaining > 0);
+
+    if (m_replay_steps_remaining > 0)
+        --m_replay_steps_remaining;
     if (m_steps_to_take > 0)
         --m_steps_to_take;
 
     return c;
+}
+
+void SdlRogue::Impl::Flush()
+{
+    std::unique_lock<std::mutex> lock(m_input_mutex);
+    if (m_replay_steps_remaining > 0)
+        return;
+
+    m_buffer.clear();
 }
 
 #ifdef WIN32
@@ -954,7 +976,7 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
 
 void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
 {
-    if (m_replay_steps > 0)
+    if (m_replay_steps_remaining > 0)
         return;
 
     if (e.key.keysym.sym == 's' && (e.key.keysym.mod & KMOD_CTRL))
@@ -988,17 +1010,17 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
         return;
     }
 
-    if (m_replay_steps > 0)
+    if (m_replay_steps_remaining > 0)
     {
-        if (ch == 'p') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);
+        if (ch == ' ') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);   
+            if (m_paused) {
+                ++m_steps_to_take;
+                if (m_buffer.front() == 'f' && m_options.emulate_ctrl_controls) {
+                    ++m_steps_to_take;
+                }
+            }
             m_paused = true;
-            m_steps_to_take = 0;
-            m_input_cv.notify_all();
-        }
-        else if (ch == 's') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);
-            ++m_steps_to_take;
             m_input_cv.notify_all();
         }
         else if (ch == 'r') {
@@ -1010,7 +1032,7 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
         else if (ch == 'c') {
             std::lock_guard<std::mutex> lock(m_input_mutex);
             m_buffer.clear();
-            m_replay_steps = 0;
+            m_replay_steps_remaining = 0;
             m_paused = false;
             m_steps_to_take = 0;
             m_input_cv.notify_all();

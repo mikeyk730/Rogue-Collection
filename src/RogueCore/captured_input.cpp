@@ -19,14 +19,14 @@ bool CapturedInput::HasMoreInput()
     return m_delegate->HasMoreInput();
 }
 
-char CapturedInput::GetNextChar()
+char CapturedInput::GetNextChar(bool *is_replay)
 {
     //mdk: we may discard a 'S' keystroke that is not part of a save.
     //For instance, the user can give bad input in a menu.  I'm willing
     //to live with throwing it away, as I don't think it can have any
     //effect.
     m_save_pending = false;
-    char c = m_delegate->GetNextChar();
+    char c = m_delegate->GetNextChar(is_replay);
     if (c == 'S') {
         m_save_pending = true;
     }

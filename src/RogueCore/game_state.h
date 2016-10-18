@@ -76,6 +76,7 @@ struct GameState
     Cheats& wizard();
 
     bool in_replay() const;
+    void set_in_replay();
     void set_replay_end();
 
     bool fast_play() const;

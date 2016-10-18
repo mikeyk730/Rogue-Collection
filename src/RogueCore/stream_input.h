@@ -11,9 +11,9 @@ struct StreamInput : public InputInterfaceEx
     StreamInput(std::unique_ptr<std::istream> in, int version, bool start_paused);
     ~StreamInput();
 
-    virtual bool HasMoreInput();
-    virtual char GetNextChar();
-    virtual std::string GetNextString(int size);
+    virtual bool HasMoreInput() override;
+    virtual char GetNextChar(bool *is_replay) override;
+    virtual std::string GetNextString(int size) override;
 
     virtual void Serialize(std::ostream& out);
     

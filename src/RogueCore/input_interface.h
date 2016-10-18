@@ -8,7 +8,7 @@ struct InputInterfaceEx
     virtual ~InputInterfaceEx();
 
     virtual bool HasMoreInput() = 0;
-    virtual char GetNextChar() = 0;
+    virtual char GetNextChar(bool *is_replay) = 0;
     virtual std::string GetNextString(int size) = 0;
  
     virtual void Serialize(std::ostream& out) = 0;

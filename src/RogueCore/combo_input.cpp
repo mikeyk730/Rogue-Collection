@@ -12,11 +12,11 @@ bool ComboInput::HasMoreInput()
     return m_active->HasMoreInput();
 }
 
-char ComboInput::GetNextChar()
+char ComboInput::GetNextChar(bool *is_replay)
 {
-    char c = m_active->GetNextChar();
+    char c = m_active->GetNextChar(is_replay);
     if (Swap() && c == 0) {
-        return m_active->GetNextChar();
+        return m_active->GetNextChar(is_replay);
     }
     return c;
 }

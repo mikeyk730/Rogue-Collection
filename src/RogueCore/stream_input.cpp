@@ -83,7 +83,7 @@ char StreamInput::ReadChar()
     return c;
 }
 
-char StreamInput::GetNextChar()
+char StreamInput::GetNextChar(bool *is_replay)
 {
     std::unique_lock<std::mutex> lock(m_shared_data->m_mutex);
     while (m_shared_data->m_paused && m_shared_data->m_steps == 0) {
@@ -95,6 +95,8 @@ char StreamInput::GetNextChar()
     {
         char ch = m_typeahead.front();
         m_typeahead.pop_front();
+        if (is_replay)
+            *is_replay = true;
         return ch;
     }
 
@@ -132,6 +134,8 @@ char StreamInput::GetNextChar()
     lock.unlock();
     sleep(time);
 
+    if (is_replay)
+        *is_replay = true;
     return c;
 }
 
