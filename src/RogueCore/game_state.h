@@ -16,6 +16,34 @@ struct OutputShim;
 struct OutputInterface;
 struct Item;
 
+struct Options
+{
+    //control options
+    bool show_inventory_menu() const;
+    bool start_replay_paused() const;
+
+    //graphics options
+    bool narrow_screen() const;
+    bool monochrome() const;
+    bool use_exp_level_names() const;
+
+    //rule changing options
+    bool hit_plus_bugfix() const;
+    bool ice_monster_miss_bugfix() const;
+    bool throws_affect_mimics() const;
+    bool act_like_v1_1() const;
+
+public:
+    void init_environment();
+    void from_file(std::istream& in);
+    std::string get_environment(const std::string& key) const;
+    void set_environment(const std::string& key, const std::string& value);
+    void Options::serialize(std::ostream& file);
+
+private:
+    std::map<std::string, std::string> m_environment; //customizable environment strings 
+};
+
 struct GameState
 {
     GameState(int seed, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input);
@@ -23,10 +51,6 @@ struct GameState
     ~GameState();
 
     void save_game(const std::string& filename);
-
-    std::string get_environment(const std::string& key) const;
-    void set_environment(const std::string& key, const std::string& value);
-    void process_environment();
 
     void log(const std::string& category, const std::string& msg);
 
@@ -63,23 +87,8 @@ struct GameState
 
     } last_turn;
 
-    struct Options
-    {
-        //control options
-        bool show_inventory_menu() const;
-        bool start_replay_paused() const;
-
-        //graphics options
-        bool narrow_screen() const;
-        bool monochrome() const;
-        bool use_exp_level_names() const;
-
-        //rule changing options
-        bool hit_plus_bugfix() const;
-        bool ice_monster_miss_bugfix() const;
-        bool throws_affect_mimics() const;
-        bool act_like_v1_1() const;
-    } options;
+    Options options;
+    void process_environment();
 
     bool in_smart_run_mode() const;
     bool in_run_cmd() const { return m_running; }
@@ -106,8 +115,6 @@ struct GameState
     std::string macro;
 
 private:
-    void init_environment();
-
     long m_seed = 0; //Random number seed
     int m_restore_count = 0;
     bool m_fast_play_enabled = false; //If 'Fast Play' has been enabled
@@ -115,8 +122,6 @@ private:
     bool m_show_replay = true;        //If we render the game during a replay
     int m_level_number = 1;           //Which floor of the dungeon we're on
     int m_max_level = 1;              //Maximum floor reached
-
-    std::map<std::string, std::string> m_environment; //customizable environment strings 
 
     std::unique_ptr<Random> m_random; //Random number generator
     std::shared_ptr<InputInterfaceEx> m_input_interface; //Interface for getting game input

@@ -108,7 +108,7 @@ void credits()
     if (*tname && *tname != ESCAPE)
         game->hero().set_name(tname);
     else
-        game->hero().set_name(game->get_environment("name"));
+        game->hero().set_name(game->options.get_environment("name"));
 
     game->screen().blot_out(23, 0, 24, COLS - 1);
     game->screen().brown();
@@ -174,7 +174,6 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     g_random = new Random(seed);
 
     Args args = process_args(argc, argv);
-    args.start_paused |= game->options.start_replay_paused();
 
     //args.savefile = "etc\\tests\\all_sticks_setup.rsf";
     //args.savefile = "etc\\saves\\blevel8.rsf";
@@ -194,7 +193,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     load_monster_cfg(args.monsterfile);
 
     if (args.bw)
-        game->set_environment("screen", "bw");
+        game->options.set_environment("screen", "bw");
 
     setup_screen();
 

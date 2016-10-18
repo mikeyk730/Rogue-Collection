@@ -201,7 +201,7 @@ bool Hero::eat()
 
     if (obj->m_which == 1) {
         rnd(100); //mdk: maintain save compatibility after fixing bug
-        msg("my, that was a yummy %s", game->get_environment("fruit").c_str());
+        msg("my, that was a yummy %s", game->options.get_environment("fruit").c_str());
     }
     else if (rnd(100) > 70) {
         msg("yuk, this food tastes awful");

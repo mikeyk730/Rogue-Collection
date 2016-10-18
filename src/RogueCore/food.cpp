@@ -47,7 +47,7 @@ int Food::Worth() const
 
 std::string Food::InventoryName() const
 {
-    std::string fruit = game->get_environment("fruit");
+    std::string fruit = game->options.get_environment("fruit");
     std::ostringstream ss;
 
     if (m_which == 1)

@@ -75,8 +75,22 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     LoadRings(path + "rings.dat");
     LoadSticks(path + "sticks.dat");
 
-    init_environment();
+    options.init_environment();
+    process_environment();
 }
+
+void Options::from_file(std::istream& in)
+{
+    int env_length = 0;
+    read(in, &env_length);
+    while (env_length-- > 0) {
+        std::string key, value;
+        read_string(in, &key);
+        read_string(in, &value);
+        m_environment[key] = value;
+    }
+}
+
 
 GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input) :
     m_curses(new OutputShim(output)),
@@ -97,23 +111,16 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     }
     if (version == 4 || version == 5) {
         //the game engine has since disabled this bugfix by default
-        set_environment("hit_plus_bugfix", "true");
+        options.set_environment("hit_plus_bugfix", "true");
     }
     if (version < 6) {
         //the game engine has since enabled this bugfix by default
-        set_environment("ice_monster_miss_bugfix", "false");
+        options.set_environment("ice_monster_miss_bugfix", "false");
     }
     read(*in, &m_seed);
     read(*in, &m_restore_count);
 
-    int env_length = 0;
-    read(*in, &env_length);
-    while (env_length-- > 0) {
-        std::string key, value;
-        read_string(*in, &key);
-        read_string(*in, &value);
-        m_environment[key] = value;
-    }
+    options.from_file(*in);
     process_environment();
 
     if (version >= 5) {
@@ -167,7 +174,7 @@ void GameState::cancel_repeating_cmd()
     last_turn.command.count = 0;
 }
 
-void GameState::init_environment()
+void Options::init_environment()
 {
     m_environment["name"] = "Rodney";
     m_environment["fruit"] = "Slime Mold";
@@ -178,14 +185,21 @@ void GameState::init_environment()
     m_environment["throws_affect_mimics"] = "false";
     m_environment["hit_plus_bugfix"] = "false";
     m_environment["ice_monster_miss_bugfix"] = "true";
-
-    process_environment();
 }
 
 void GameState::process_environment()
 {
-    macro = get_environment("macro");
-    wizard().add_powers(get_environment("powers"));
+    macro = options.get_environment("macro");
+    wizard().add_powers(options.get_environment("powers"));
+}
+
+void Options::serialize(std::ostream& file)
+{
+    write(file, m_environment.size());
+    for (auto i = m_environment.begin(); i != m_environment.end(); ++i) {
+        write_string(file, i->first);
+        write_string(file, i->second);
+    }
 }
 
 void GameState::save_game(const std::string& filename)
@@ -196,11 +210,7 @@ void GameState::save_game(const std::string& filename)
     write(file, m_seed);
     write(file, m_restore_count);
 
-    write(file, m_environment.size());
-    for (auto i = m_environment.begin(); i != m_environment.end(); ++i) {
-        write_string(file, i->first);
-        write_string(file, i->second);
-    }
+    options.serialize(file);
 
     write(file, m_monster_data.size());
     for (auto i = m_monster_data.begin(); i != m_monster_data.end(); ++i) {
@@ -210,7 +220,7 @@ void GameState::save_game(const std::string& filename)
     m_input_interface->Serialize(file);
 }
 
-std::string GameState::get_environment(const std::string& key) const
+std::string Options::get_environment(const std::string& key) const
 {
     auto i = m_environment.find(key);
     if (i != m_environment.end()) {
@@ -219,7 +229,7 @@ std::string GameState::get_environment(const std::string& key) const
     return "";
 }
 
-void GameState::set_environment(const std::string& key, const std::string& value)
+void Options::set_environment(const std::string& key, const std::string& value)
 {
     m_environment[key] = value;
 }
@@ -296,49 +306,49 @@ void GameState::set_monster_data(std::string s)
 //all extern/global variables
 //all static variables
 
-bool GameState::Options::throws_affect_mimics() const
+bool Options::throws_affect_mimics() const
 {
-    return game->get_environment("throws_affect_mimics") == "true";
+    return get_environment("throws_affect_mimics") == "true";
 }
 
-bool GameState::Options::act_like_v1_1() const
+bool Options::act_like_v1_1() const
 {
-    return game->get_environment("version") == "1.1";
+    return get_environment("version") == "1.1";
 }
 
-bool GameState::Options::show_inventory_menu() const
+bool Options::show_inventory_menu() const
 {
-    return game->get_environment("menu") != "false";
+    return get_environment("menu") != "false";
 }
 
-bool GameState::Options::start_replay_paused() const
+bool Options::start_replay_paused() const
 {
-    return game->get_environment("pause_replay") == "true";
+    return get_environment("pause_replay") == "true";
 }
 
-bool GameState::Options::narrow_screen() const
+bool Options::narrow_screen() const
 {
-    return game->get_environment("small_screen") == "true";
+    return get_environment("small_screen") == "true";
 }
 
-bool GameState::Options::monochrome() const
+bool Options::monochrome() const
 {
-    return game->get_environment("screen") == "bw";
+    return get_environment("screen") == "bw";
 }
 
-bool GameState::Options::use_exp_level_names() const
+bool Options::use_exp_level_names() const
 {
-    return game->get_environment("use_exp_level_names") != "false";
+    return get_environment("use_exp_level_names") != "false";
 }
 
-bool GameState::Options::hit_plus_bugfix() const
+bool Options::hit_plus_bugfix() const
 {
-    return game->get_environment("hit_plus_bugfix") == "true";
+    return get_environment("hit_plus_bugfix") == "true";
 }
 
-bool GameState::Options::ice_monster_miss_bugfix() const
+bool Options::ice_monster_miss_bugfix() const
 {
-    return game->get_environment("ice_monster_miss_bugfix") != "false";
+    return get_environment("ice_monster_miss_bugfix") != "false";
 }
 
 int GameState::get_level()

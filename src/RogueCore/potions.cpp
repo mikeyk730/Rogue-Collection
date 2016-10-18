@@ -325,7 +325,7 @@ void SeeInvisiblePotion::Quaff()
         show_invisible();
     }
     sight();
-    msg("this potion tastes like %s juice", game->get_environment("fruit").c_str());
+    msg("this potion tastes like %s juice", game->options.get_environment("fruit").c_str());
 }
 
 void GainStrength::Quaff()

@@ -65,7 +65,7 @@ void score(int amount, int flags, char monst)
 
     if (amount || flags || monst)
     {
-        std::string filename = game->get_environment("autosave");
+        std::string filename = game->options.get_environment("autosave");
         if(!filename.empty())
             game->save_game(filename);
 
@@ -75,7 +75,7 @@ void score(int amount, int flags, char monst)
         wait_for('\r');
         game->screen().move(LINES - 1, 0);
     }
-    while ((sc_fd = _open(game->get_environment("scorefile").c_str(), 0)) < 0)
+    while ((sc_fd = _open(game->options.get_environment("scorefile").c_str(), 0)) < 0)
     {
         game->screen().printw("\n");
         if (game->wizard().did_cheat() || (amount == 0)) 
@@ -88,7 +88,7 @@ void score(int amount, int flags, char monst)
             switch (response = readchar())
             {
             case 'c': case 'C':
-                _close(_creat(game->get_environment("scorefile").c_str(), _S_IREAD | _S_IWRITE));
+                _close(_creat(game->options.get_environment("scorefile").c_str(), _S_IREAD | _S_IWRITE));
             case 'r': case 'R': 
                 break;
             case 'a': case 'A': 
@@ -112,7 +112,7 @@ void score(int amount, int flags, char monst)
     _close(sc_fd);
     if (rank > 0)
     {
-        sc_fd = _open(game->get_environment("scorefile").c_str(), _O_RDWR | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
+        sc_fd = _open(game->options.get_environment("scorefile").c_str(), _O_RDWR | _O_TRUNC | _O_BINARY, _S_IREAD | _S_IWRITE);
         if (sc_fd >= 0) {
             put_scores(&top_ten[0]);
             _close(sc_fd);

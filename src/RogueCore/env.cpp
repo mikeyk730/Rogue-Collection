@@ -23,7 +23,7 @@ static char *plabel, *pstring;
 //No meaningful return codes to save data space. Just ignores strange labels
 void putenv2(char *label, char *string)
 {
-    game->set_environment(label, string);
+    game->options.set_environment(label, string);
 }
 
 //Peekc: Return the next char associated with efd (environment file descriptor)
