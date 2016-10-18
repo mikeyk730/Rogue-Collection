@@ -217,6 +217,16 @@ bool do_toggle_detect()
 
 bool do_toggle_wizard()
 {
+    if (!game->wizard().enabled()) {
+        msg("Wizard's Password:");
+        byte pw = readchar();
+        clear_msg();
+        if (pw != 'y') {
+            msg("Sorry");
+            return false;
+        }
+    }
+
     game->wizard().toggle();
     return false;
 }
