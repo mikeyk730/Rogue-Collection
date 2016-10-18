@@ -55,6 +55,7 @@
     <ClCompile Include="xcrypt.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\pc_gfx_macros.h" />
     <ClInclude Include="extern.h" />
     <ClInclude Include="rogue.h" />
   </ItemGroup>

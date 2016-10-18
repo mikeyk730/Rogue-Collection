@@ -37,7 +37,7 @@ save_game()
     register FILE *savef;
     register int c;
     char buf[MAXSTR];
-
+    NO_SAVE_RETURN FALSE;
     /*
      * get file name
      */

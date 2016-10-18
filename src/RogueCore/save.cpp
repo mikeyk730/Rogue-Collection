@@ -16,6 +16,11 @@ void do_save(const char* filename)
 //do_save_game: Implement the "save game" command
 bool do_save_game()
 {
+    if (game->options.disable_save()) {
+        msg("Use \"File > Save Recording\" to save your game");
+        return false;
+    }
+
     char savename[40];
 
     msg("");

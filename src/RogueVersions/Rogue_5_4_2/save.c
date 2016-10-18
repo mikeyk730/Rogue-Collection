@@ -32,6 +32,7 @@ save_game(void)
     int c;
     char buf[MAXSTR];
     struct stat sbuf;
+    NO_SAVE_RETURN;
     /*
      * get file name
      */

@@ -37,6 +37,9 @@ struct Options
     bool throws_affect_mimics() const;
     bool act_like_v1_1() const;
 
+    bool disable_scroll_lock() const;
+    bool disable_save() const;
+
 public:
     void init_environment();
     void from_file(const std::string & optfile);

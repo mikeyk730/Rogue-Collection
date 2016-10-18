@@ -33,7 +33,7 @@ save_game()
     FILE *savef;
     int c;
     char buf[80];
-
+    NO_SAVE_RETURN 0;
     /*
      * get file name
      */

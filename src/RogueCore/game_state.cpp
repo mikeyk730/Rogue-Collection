@@ -315,7 +315,8 @@ bool GameState::fast_play() const
 
 void GameState::set_fast_play(bool enable)
 {
-    m_fast_play_enabled = enable;
+    if (!options.disable_scroll_lock())
+        m_fast_play_enabled = enable;
 }
 
 void GameState::set_monster_data(std::string s)
@@ -336,6 +337,16 @@ bool Options::throws_affect_mimics() const
 bool Options::act_like_v1_1() const
 {
     return get_environment("version") == "1.1";
+}
+
+bool Options::disable_scroll_lock() const
+{
+    return true;
+}
+
+bool Options::disable_save() const
+{
+    return true;
 }
 
 bool Options::show_inventory_menu() const
