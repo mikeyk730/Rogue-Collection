@@ -1,5 +1,7 @@
 #include <iostream>
 #include <cassert>
+#include <chrono>
+#include <thread>
 #include <nfd.h>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -59,6 +61,11 @@ bool GetSavePath(std::string& path) {
 void ErrorBox(const std::string & msg)
 {
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg.c_str(), NULL);
+}
+
+void delay(int ms)
+{
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 std::string getResourcePath(const std::string &subDir) {

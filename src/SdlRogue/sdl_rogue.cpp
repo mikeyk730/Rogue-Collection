@@ -184,6 +184,7 @@ private:
     std::vector<unsigned char> m_keylog;
     int m_replay_steps_remaining = 0;
     int m_steps_to_take = 0;
+    int m_replay_sleep = 0;
     bool m_paused = false;
 
     std::mutex m_input_mutex;
@@ -234,6 +235,12 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     m_renderer(renderer)
 {
     RestoreGame(file, current_env.get());
+
+    std::string sleep_str;
+    if (current_env->get("replay_step_delay", &sleep_str))
+    {
+        m_replay_sleep = atoi(sleep_str.c_str());
+    }
 
     std::string gfx_pref;
     if (current_env->get("gfx", &gfx_pref)) {
@@ -867,29 +874,40 @@ void SdlRogue::Flush()
 
 char SdlRogue::Impl::GetChar(bool block, bool *is_replay)
 {
-    std::unique_lock<std::mutex> lock(m_input_mutex);
-    while (m_replay_steps_remaining > 0 && m_paused && m_steps_to_take == 0)
+    char c = 0;
+    int sleep = 0;
+
+    //locked region
     {
-        m_input_cv.wait(lock);
+        std::unique_lock<std::mutex> lock(m_input_mutex);
+        while (m_replay_steps_remaining > 0 && m_paused && m_steps_to_take == 0)
+        {
+            m_input_cv.wait(lock);
+        }
+
+        while (m_buffer.empty()) {
+            if (!block)
+                return 0;
+            m_input_cv.wait(lock);
+        }
+
+        c = m_buffer.front();
+        m_buffer.pop_front();
+        m_keylog.push_back(c);
+
+        if (m_replay_steps_remaining > 0) {
+            --m_replay_steps_remaining;
+            if (is_replay)
+                *is_replay = true;
+            if (!m_paused && m_replay_sleep)
+                sleep = m_replay_sleep;
+            if (m_steps_to_take > 0)
+                --m_steps_to_take;
+        }
     }
 
-    while (m_buffer.empty()) {
-        if (!block) 
-            return 0;
-        m_input_cv.wait(lock);
-    }
-
-    char c = m_buffer.front();
-    m_buffer.pop_front();
-    m_keylog.push_back(c);
-
-    if (is_replay)
-        *is_replay = (m_replay_steps_remaining > 0);
-
-    if (m_replay_steps_remaining > 0)
-        --m_replay_steps_remaining;
-    if (m_steps_to_take > 0)
-        --m_steps_to_take;
+    if (sleep)
+        delay(sleep);
 
     return c;
 }
@@ -1071,6 +1089,24 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
             m_paused = false;
             m_steps_to_take = 0;
             m_input_cv.notify_all();
+        }
+        else if (ch == '-') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);
+            m_replay_sleep *= 2;
+            if (m_replay_sleep == 0)
+                m_replay_sleep = 20;
+        }
+        else if (ch == '+') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);
+            m_replay_sleep /= 2;
+        }
+        else if (ch == '0') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);
+            m_replay_sleep = 0;
+        }
+        else if (ch >= '1' && ch <= '9') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);
+            m_replay_sleep = (ch - '0') * 15;
         }
 
         return;

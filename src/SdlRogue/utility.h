@@ -74,6 +74,7 @@ bool GetLoadPath(std::string& path);
 bool GetSavePath(std::string& path);
 
 void ErrorBox(const std::string& msg);
+void delay(int ms);
 
 template <typename T>
 std::ostream& write(std::ostream& out, T t) {
