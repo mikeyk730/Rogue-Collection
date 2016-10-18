@@ -101,7 +101,9 @@ int main(int argc, char** argv)
     int i = -1;
 
     std::ifstream env_file("rogue.opt");
-    std::unique_ptr<Environment> env(new Environment(env_file));
+    std::unique_ptr<Environment> env(new Environment());
+    env->from_file(env_file);
+
     std::string game;
     if (env->get("game", &game)) {
         if (game == "a" || game == "b" || game == "c" || game == "d") {
@@ -145,6 +147,9 @@ int main(int argc, char** argv)
         
         if (i != -1) {
             Options& option = s_options[i];
+
+            if (!env->write_to_os())
+                throw_error("Couldn't write environment");
 
             std::string screen;
             Coord dims = option.screen;

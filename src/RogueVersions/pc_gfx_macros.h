@@ -22,8 +22,6 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #endif
 #define PC_GFX_TOMBSTONE()            fix_tombstone()
 #define MORE_MSG                      "--More--"
-#define PASSGO_DEFAULT                TRUE
-#define ASKME_DEFAULT                 TRUE
 #define REST_COMMAND                  '.'
 #define REST_DESC
 #define SPACE_IS_OK                   when ' ' : after = FALSE;
@@ -42,8 +40,6 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define PC_GFX_NOCOLOR(c) 
 #define PC_GFX_TOMBSTONE()
 #define MORE_MSG                      "--More--"
-#define PASSGO_DEFAULT                FALSE
-#define ASKME_DEFAULT                 FALSE
 #define REST_COMMAND                  ' '
 #define SPACE_IS_OK
 #define CLEAR_MSG

@@ -5,7 +5,9 @@
 
 struct Environment
 {
-    Environment(std::istream& in);
+    Environment();
+
+    void from_file(std::istream & in);
     bool get(const std::string& key, std::string* value) const;
     void set(const std::string& key, const std::string& value);
 
@@ -14,6 +16,8 @@ struct Environment
 
     int cols() const;
     void cols(int n);
+
+    bool write_to_os();
 
 private:
     std::map<std::string, std::string> m_environment;

@@ -1,7 +1,33 @@
 #include "environment.h"
 #include <iostream>
+#include <sstream>
+#include <set>
+#include <map>
 
-Environment::Environment(std::istream & in)
+namespace
+{
+    std::set<std::string> s_unix_bools = { "terse","flush","jump","seefloor","tombstone","passgo","step","askme" };
+    std::map<std::string, std::string> s_unix_keys = { {"savefile", "file"}, {"name", "name"}, {"fruit", "fruit"}, {"inven", "inven"} };
+
+    void write_env_str(std::ostringstream& ss, std::string key, const std::string & value)
+    {
+        auto i = s_unix_keys.find(key);
+        if (i != s_unix_keys.end()) {
+            ss << i->second << "=" << value << ',';
+        }
+
+        if (s_unix_bools.find(key) != s_unix_bools.end()) {
+            if (value != "true")
+                ss << "no";
+            ss << key << ',';
+        }
+    }
+}
+
+Environment::Environment()
+{}
+
+void Environment::from_file(std::istream & in)
 {
     std::string line;
     while (std::getline(in, line)) {
@@ -41,6 +67,17 @@ void Environment::lines(int n)
 void Environment::cols(int n)
 {
     m_cols = n;
+}
+
+bool Environment::write_to_os()
+{
+    std::ostringstream ss;
+    ss << "ROGUEOPTS=";
+    for (auto i = m_environment.begin(); i != m_environment.end(); ++i)
+    {
+        write_env_str(ss, i->first, i->second);
+    }
+    return _putenv(ss.str().c_str()) == 0;
 }
 
 int Environment::lines() const

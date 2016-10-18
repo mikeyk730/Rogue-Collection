@@ -2,28 +2,52 @@
 ; options read by Rogue Collection container
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;game=a
+game=
 gfx=pc
-;small_screen=true
+small_screen=false
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options read by PC Rogue
+; options in all versions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 name=Mike
 fruit=mango
-powers=reveal_items,show_food_counter,jump_levels
+savefile=rogue.sav
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Unix options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; all Unix versions
+terse=false
+flush=false
+jump=false
+
+; Unix 5.4.2
+seefloor=true
+tombstone=true
+inven=C
+
+; Unix 5.4.2 and 5.2.1
+passgo=true
+
+; Unix 5.2.1 and 3.6.3
+step=false
+askme=true
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; PC options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+macro=v
 screen=color
 use_exp_level_names=false
+powers=reveal_items,show_food_counter,jump_levels
 log=last.log
 autosave=last.sav
 menu=true
-macro=v
-version=1.48
 hit_plus_bugfix=false
 ice_monster_miss_bugfix=true
 throws_affect_mimics=false
-;scorefile
-;savefile
-
-
+version=1.48
+scorefile=roguepc.scr
