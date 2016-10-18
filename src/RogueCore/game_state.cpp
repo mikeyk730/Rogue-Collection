@@ -343,6 +343,11 @@ bool Options::show_inventory_menu() const
     return get_environment("menu") != "false";
 }
 
+bool Options::prompt_for_name() const
+{
+    return get_environment("prompt_for_name") != "false";
+}
+
 bool Options::start_replay_paused() const
 {
     return get_environment("pause_replay") == "true";

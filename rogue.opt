@@ -48,6 +48,7 @@ autosave=last.sav
 menu=true
 pause_replay=false
 hide_replay=false
+prompt_for_name=false
 hit_plus_bugfix=false
 ice_monster_miss_bugfix=true
 throws_affect_mimics=false

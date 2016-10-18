@@ -106,8 +106,6 @@ void credits()
     getinfo(tname, 23);
     if (*tname && *tname != ESCAPE)
         game->hero().set_name(tname);
-    else
-        game->hero().set_name(game->options.get_environment("name"));
 
     game->screen().blot_out(23, 0, 24, COLS - 1);
     game->screen().brown();
@@ -207,11 +205,13 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
         return 0;
     }
 
-    credits();
+    game->hero().set_name(game->options.get_environment("name"));
+    if (game->options.prompt_for_name()) {
+        credits();
+        game->screen().drop_curtain();
+    }
 
     init_things(); //Set up probabilities of things    
-
-    game->screen().drop_curtain();
     game->level().new_level(false); //Draw current level
 
     //Start up daemons and fuses
@@ -221,7 +221,8 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     daemon(run_monsters, 0);
 
     msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
-    game->screen().raise_curtain();
+    if (game->options.prompt_for_name())
+        game->screen().raise_curtain();
 
     while (true) {
         advance_game();

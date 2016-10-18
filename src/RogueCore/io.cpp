@@ -445,9 +445,11 @@ int getinfo_impl(char *str, int size)
 
 int getinfo(char *str, int size)
 {
+    game->screen().cursor(true);
     std::string s = game->input_interface().GetNextString(size-1);
     game->log("input", "GetNextString: " + s);
     strcpy_s(str, size, s.c_str());
+    game->screen().cursor(false);
     return s[0];
 }
 
