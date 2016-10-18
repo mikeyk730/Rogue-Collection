@@ -90,6 +90,8 @@ private:
     void RenderCursor(Coord pos);
     void RenderReplayOverlay(int steps, Coord dimensions);
 
+    void PostRenderMsg(int force);
+
     void SaveGame();
     void RestoreGame(const std::string& filename, Environment* curr_env);
     void SetGame(const std::string& name);
@@ -176,6 +178,8 @@ private:
     void HandleEventText(const SDL_Event& e);
     void HandleEventKeyDown(const SDL_Event& e);
     void HandleEventKeyUp(const SDL_Event& e);
+
+    void HandleInputReplay(int ch);
 
     SDL_Keycode TranslateNumPad(SDL_Keycode keycode, uint16_t modifiers);
     std::string TranslateKey(SDL_Keycode keycode, uint16_t modifiers);
@@ -555,6 +559,14 @@ void SdlRogue::Impl::RenderReplayOverlay(int steps, Coord dimensions)
     }
 }
 
+void SdlRogue::Impl::PostRenderMsg(int force)
+{
+    SDL_Event sdlevent;
+    sdlevent.type = SDL_USEREVENT;
+    sdlevent.user.code = force;
+    SDL_PushEvent(&sdlevent);
+}
+
 void SdlRogue::Impl::SaveGame()
 {
     const unsigned char version = 1;
@@ -724,10 +736,7 @@ void SdlRogue::Impl::UpdateRegion(uint32_t* info, Region rect)
     }
     else {
         m_shared_data.m_render_regions.push_back(rect);
-        SDL_Event sdlevent;
-        sdlevent.type = SDL_USEREVENT;
-        sdlevent.user.code = 0;
-        SDL_PushEvent(&sdlevent);
+        PostRenderMsg(0);
     }
 
     memcpy(m_shared_data.m_data, info, m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y * sizeof(int32_t));
@@ -1029,8 +1038,12 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
 
 void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
 {
-    if (m_replay_steps_remaining > 0)
+    if (m_replay_steps_remaining > 0) {
+        if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_ESCAPE) {
+            HandleInputReplay(e.key.keysym.sym);
+        }
         return;
+    }
 
     if (e.key.keysym.sym == 's' && (e.key.keysym.mod & KMOD_CTRL))
     {
@@ -1056,59 +1069,13 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
     {
         m_gfx_mode = (m_gfx_mode + 1) % m_options.gfx_options.size();
         LoadAssets();
-        SDL_Event sdlevent;
-        sdlevent.type = SDL_USEREVENT;
-        sdlevent.user.code = 1;
-        SDL_PushEvent(&sdlevent);
+        PostRenderMsg(1);
         return;
     }
 
     if (m_replay_steps_remaining > 0)
     {
-        if (ch == ' ') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);   
-            if (m_paused) {
-                ++m_steps_to_take;
-                if (m_buffer.front() == 'f' && m_options.emulate_ctrl_controls) {
-                    ++m_steps_to_take;
-                }
-            }
-            m_paused = true;
-            m_input_cv.notify_all();
-        }
-        else if (ch == 'r') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);
-            m_paused = false;
-            m_steps_to_take = 0;
-            m_input_cv.notify_all();
-        }
-        else if (ch == 'c') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);
-            m_buffer.clear();
-            m_replay_steps_remaining = 0;
-            m_paused = false;
-            m_steps_to_take = 0;
-            m_input_cv.notify_all();
-        }
-        else if (ch == '-') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);
-            m_replay_sleep *= 2;
-            if (m_replay_sleep == 0)
-                m_replay_sleep = 20;
-        }
-        else if (ch == '+') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);
-            m_replay_sleep /= 2;
-        }
-        else if (ch == '0') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);
-            m_replay_sleep = 0;
-        }
-        else if (ch >= '1' && ch <= '9') {
-            std::lock_guard<std::mutex> lock(m_input_mutex);
-            m_replay_sleep = (ch - '0') * 15;
-        }
-
+        HandleInputReplay(ch);
         return;
     }
 
@@ -1132,6 +1099,65 @@ void SdlRogue::Impl::HandleEventKeyUp(const SDL_Event & e)
 
         std::lock_guard<std::mutex> lock(m_input_mutex);
         m_buffer.push_back(0);
+        m_input_cv.notify_all();
+    }
+}
+
+void SdlRogue::Impl::HandleInputReplay(int ch)
+{
+    // Pause playback
+    if (ch == SDLK_SPACE) {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        if (m_paused) {
+            ++m_steps_to_take;
+            if (m_buffer.front() == 'f' && m_options.emulate_ctrl_controls) {
+                ++m_steps_to_take;
+            }
+        }
+        m_paused = true;
+        m_input_cv.notify_all();
+    }
+    // Resume playback
+    else if (ch == SDLK_RETURN) {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        m_paused = false;
+        m_steps_to_take = 0;
+        m_input_cv.notify_all();
+    }
+    // Cancel playback
+    else if (ch == SDLK_ESCAPE) {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        m_buffer.clear();
+        m_replay_steps_remaining = 0;
+        m_paused = false;
+        m_steps_to_take = 0;
+        m_input_cv.notify_all();
+        PostRenderMsg(1);
+    }
+    // Decrease playback speed
+    else if (ch == '-') {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        m_replay_sleep *= 2;
+        if (m_replay_sleep == 0)
+            m_replay_sleep = 20;
+    }
+    // Increase playback speed
+    else if (ch == '+') {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        m_replay_sleep /= 2;
+    }
+    else if (ch == '0') {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        m_replay_sleep = 0;
+        m_paused = false;
+        m_steps_to_take = 0;
+        m_input_cv.notify_all();
+    }
+    else if (ch >= '1' && ch <= '9') {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        m_replay_sleep = (ch - '0') * 15;
+        m_paused = false;
+        m_steps_to_take = 0;
         m_input_cv.notify_all();
     }
 }
