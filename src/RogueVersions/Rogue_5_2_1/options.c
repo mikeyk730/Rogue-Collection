@@ -53,8 +53,8 @@ OPTION	optlist[] = {
 		(int *) whoami,		put_str,	get_str		},
     {"fruit",	 "Fruit: ",
 		(int *) fruit,		put_str,	get_str		},
-    {"file",	 "Save file: ",
-		(int *) file_name,	put_str,	get_str		}
+//    {"file",	 "Save file: ",
+//		(int *) file_name,	put_str,	get_str		}
 };
 
 /*

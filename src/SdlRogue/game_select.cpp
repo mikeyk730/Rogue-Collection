@@ -43,10 +43,14 @@ std::pair<int, std::string> GameSelect::GetSelection()
             else if (e.key.keysym.sym == SDLK_UP) {
                 if (selection.first > 0)
                     --selection.first;
+                else
+                    selection.first = m_options.size();
             }
             else if (e.key.keysym.sym == SDLK_DOWN) {
                 if (selection.first < int(m_options.size()))
                     ++selection.first;
+                else
+                    selection.first = 0;
             }
             else if (e.key.keysym.sym >= 'a' && e.key.keysym.sym < int('a' + m_options.size() + 1))
             {

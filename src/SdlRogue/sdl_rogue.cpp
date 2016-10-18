@@ -88,6 +88,7 @@ private:
     void RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color);
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
+    void RenderReplayOverlay(int steps, Coord dimensions);
 
     void SaveGame();
     void RestoreGame(const std::string& filename, Environment* curr_env);
@@ -98,6 +99,7 @@ private:
 
     void set_window_size(int w, int h);
     Coord get_screen_pos(Coord buffer_pos);
+    SDL_Rect get_screen_rect(Coord buffer_pos);
 
     int tile_index(unsigned char c, unsigned short attr);
     bool use_inverse(unsigned short attr);
@@ -361,6 +363,13 @@ void SdlRogue::Impl::Render(bool force)
     std::unique_ptr<uint32_t[]> data;
     Coord cursor_pos;
     bool show_cursor;
+    int replay_steps_remaining;
+    
+    //locked region
+    {
+        std::lock_guard<std::mutex> lock(m_input_mutex);
+        replay_steps_remaining = m_replay_steps_remaining;
+    }
 
     //locked region
     {
@@ -398,6 +407,10 @@ void SdlRogue::Impl::Render(bool force)
         RenderCursor(cursor_pos);
     }
 
+    if (replay_steps_remaining) {
+        RenderReplayOverlay(replay_steps_remaining, dimensions);
+    }
+
     SDL_RenderPresent(m_renderer);
 }
 
@@ -405,14 +418,7 @@ void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
 {
     for (int x = rect.Left; x <= rect.Right; ++x) {
         for (int y = rect.Top; y <= rect.Bottom; ++y) {
-            Coord p = get_screen_pos({ x, y });
-
-            // We always render using the tile size.  Text will be scaled if it doesn't match
-            SDL_Rect r;
-            r.x = p.x;
-            r.y = p.y;
-            r.w = m_block_size.x;
-            r.h = m_block_size.y;
+            SDL_Rect r = get_screen_rect({ x, y });
 
             uint32_t info = data[y*dimensions.x+x];
 
@@ -529,6 +535,19 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }
 
+void SdlRogue::Impl::RenderReplayOverlay(int steps, Coord dimensions)
+{
+    std::ostringstream ss;
+    ss << "Replay " << steps;
+    std::string s(ss.str());
+    int len = s.size();
+    for (int i = 0; i < len; ++i) {
+        SDL_Rect r = get_screen_rect({ dimensions.x - (len - i) - 1, dimensions.y - 1 });
+        //SDL_Rect r = get_screen_rect({ i, dimensions.y - 1 });
+        RenderText(s[i], r, false, 0x70);
+    }
+}
+
 void SdlRogue::Impl::SaveGame()
 {
     const unsigned char version = 1;
@@ -632,6 +651,20 @@ Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
     p.x = buffer_pos.x * m_block_size.x;
     p.y = buffer_pos.y * m_block_size.y;
     return p;
+}
+
+SDL_Rect SdlRogue::Impl::get_screen_rect(Coord buffer_pos)
+{
+    Coord p = get_screen_pos(buffer_pos);
+
+    // We always render using the tile size.  Text will be scaled if it doesn't match
+    SDL_Rect r;
+    r.x = p.x;
+    r.y = p.y;
+    r.w = m_block_size.x;
+    r.h = m_block_size.y;
+
+    return r;
 }
 
 int SdlRogue::Impl::get_text_index(unsigned short attr)
