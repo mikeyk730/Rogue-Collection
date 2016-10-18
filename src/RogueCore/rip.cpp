@@ -119,6 +119,7 @@ void score(int amount, int flags, char monst)
         }
     }
     pr_scores(rank, &top_ten[0]);
+    game->screen().move(LINES - 1, 0);
     game->screen().printw("[Press Enter to quit]");
     clear_typeahead_buffer();
     wait_for('\r');
