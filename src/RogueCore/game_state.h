@@ -23,6 +23,7 @@ struct Options
 
     //control options
     bool show_inventory_menu() const;
+    bool dir_key_clears_more() const;
     bool prompt_for_name() const;
 
     //graphics options

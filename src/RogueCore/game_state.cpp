@@ -343,6 +343,11 @@ bool Options::show_inventory_menu() const
     return get_environment("menu") != "false";
 }
 
+bool Options::dir_key_clears_more() const
+{
+    return get_environment("dir_key_clears_more") == "true";
+}
+
 bool Options::prompt_for_name() const
 {
     return get_environment("prompt_for_name") != "false";

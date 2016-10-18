@@ -80,7 +80,7 @@ bool do_summon_object()
     int which;
     Item* obj;
 
-    unsaved_msg("type of item !:%c ?:%c /:%c =:%c ):%c ]:%c ,:%c $:%c ", POTION, SCROLL, STICK, RING, WEAPON, ARMOR, AMULET, FOOD);
+    unsaved_msg("type of item !?/=)],: ");
     switch (readchar())
     {
     case ESCAPE:

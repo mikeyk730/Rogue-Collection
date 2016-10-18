@@ -171,6 +171,16 @@ void endmsg()
     newpos = 0;
 }
 
+bool is_direction(int ch)
+{
+    switch (ch) {
+    case 'h': case 'j': case 'k': case 'l':
+    case 'y': case 'u': case 'b': case 'n':
+        return true;
+    }
+    return false;
+}
+
 //More: tag the end of a line and wait for a space
 void more(const char *msg)
 {
@@ -196,10 +206,22 @@ void more(const char *msg)
     game->screen().standout();
     game->screen().addstr(msg);
     game->screen().standend();
-    while (readchar() != ' ')
+
+    int ch;
+    while ((ch = readchar()) != ' ' && !(game->options.dir_key_clears_more() && is_direction(ch)))
     {
-        if (covered && morethere) { game->screen().move(x, y); game->screen().addstr(mbuf); morethere = false; }
-        else if (covered) { game->screen().move(x, y); game->screen().standout(); game->screen().addstr(msg); game->screen().standend(); morethere = true; }
+        //if (covered && morethere) { 
+        //    game->screen().move(x, y); 
+        //    game->screen().addstr(mbuf); 
+        //    morethere = false; 
+        //}
+        //else if (covered) {
+        //    game->screen().move(x, y); 
+        //    game->screen().standout();
+        //    game->screen().addstr(msg); 
+        //    game->screen().standend();
+        //    morethere = true;
+        //}
     }
     game->screen().move(x, y);
     game->screen().addstr(mbuf);
@@ -471,7 +493,7 @@ int readchar()
         std::ostringstream ss;
         ss << "GetNextChar: " << ch << " (" << std::hex  << uint16_t(ch) << ")";
         game->log("input", ss.str());
-    } while (ch == 0);
+    } while (ch == 0xFF);
 
     if (ch == ESCAPE)
         game->cancel_repeating_cmd();
