@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-
+#include "../Shared/display_interface.h"
 #include "rogue.h"
 #include "output_shim.h"
 #include "main.h"
 #include "misc.h"
-#include "../Shared/display_interface.h"
 #include "mach_dep.h"
 #include "output_interface.h"
 

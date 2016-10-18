@@ -311,6 +311,11 @@ bool GameState::Options::show_inventory_menu() const
     return game->get_environment("menu") != "false";
 }
 
+bool GameState::Options::start_replay_paused() const
+{
+    return game->get_environment("pause_replay") == "true";
+}
+
 bool GameState::Options::narrow_screen() const
 {
     return game->get_environment("small_screen") == "true";

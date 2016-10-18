@@ -67,6 +67,7 @@ struct GameState
     {
         //control options
         bool show_inventory_menu() const;
+        bool start_replay_paused() const;
 
         //graphics options
         bool narrow_screen() const;

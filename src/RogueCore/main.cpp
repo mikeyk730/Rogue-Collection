@@ -174,6 +174,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     g_random = new Random(seed);
 
     Args args = process_args(argc, argv);
+    args.start_paused |= game->options.start_replay_paused();
 
     //args.savefile = "etc\\tests\\all_sticks_setup.rsf";
     //args.savefile = "etc\\saves\\blevel8.rsf";
