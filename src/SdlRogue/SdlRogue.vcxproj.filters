@@ -4,6 +4,9 @@
     <Filter Include="Source">
       <UniqueIdentifier>{ceee1bd3-f655-4e84-a4d1-ab4b178254d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{b1db413a-4b03-4705-ae5b-fef5ae1fad9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utility.h">
@@ -12,8 +15,24 @@
     <ClInclude Include="sdl_rogue.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="game_select.h" />
-    <ClInclude Include="environment.h" />
+    <ClInclude Include="environment.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="game_select.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\coord.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\display_interface.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\display_interface_types.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\pc_gfx_charmap.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -25,7 +44,11 @@
     <ClCompile Include="sdl_rogue.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="game_select.cpp" />
-    <ClCompile Include="environment.cpp" />
+    <ClCompile Include="environment.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="game_select.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

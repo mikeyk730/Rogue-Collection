@@ -2,11 +2,26 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="curses.h" />
-    <ClInclude Include="display_interface.h" />
-    <ClInclude Include="display_interface_types.h" />
     <ClInclude Include="input_interface.h" />
+    <ClInclude Include="..\Shared\coord.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\display_interface.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\display_interface_types.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\pc_gfx_charmap.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="curses.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{89547361-3a40-42d6-8de2-26e159221a30}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

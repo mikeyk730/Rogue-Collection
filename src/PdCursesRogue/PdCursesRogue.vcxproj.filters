@@ -6,18 +6,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pdc_keyboard_input.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="pdcurses_output.cpp">
+    <ClCompile Include="curses_input.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="curses_output.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pdc_keyboard_input.h">
+    <ClInclude Include="curses_input.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
