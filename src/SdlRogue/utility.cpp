@@ -1,4 +1,6 @@
 #include <iostream>
+#include <cassert>
+#include <nfd.h>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -30,6 +32,34 @@ namespace SDL
     }
 }
 
+bool GetLoadPath(std::string& path) {
+    nfdchar_t *p = NULL;
+    nfdresult_t result = NFD_OpenDialog("sav", NULL, &p);
+    if (result == NFD_OKAY)
+    {
+        path = p;
+        free(p);
+        return true;
+    }
+    return false;
+}
+
+bool GetSavePath(std::string& path) {
+    nfdchar_t *p = NULL;
+    nfdresult_t result = NFD_SaveDialog("sav", NULL, &p);
+    if (result == NFD_OKAY)
+    {
+        path = p;
+        free(p);
+        return true;
+    }
+    return false;
+}
+
+void ErrorBox(const std::string & msg)
+{
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg.c_str(), NULL);
+}
 
 std::string getResourcePath(const std::string &subDir) {
     //We need to choose the path separator properly based on which
@@ -155,8 +185,7 @@ void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
 
 void throw_error(const std::string &msg)
 {
-    std::cerr << SDL_GetError() << std::endl;
-    throw std::runtime_error(msg + " error: " + SDL_GetError());
+    throw std::runtime_error(msg);
 }
 
 SDL::Scoped::Texture loadImage(const std::string &file, SDL_Renderer *ren) {
@@ -181,4 +210,28 @@ SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer
     if (texture == nullptr)
         throw_error("CreateTextureFromSurface");
     return std::move(texture);
+}
+
+
+std::ostream& write_short_string(std::ostream& out, const std::string& s) 
+{
+    assert(s.length() < 255);
+    unsigned char length = static_cast<unsigned char>(s.length());
+    write<unsigned char>(out, length);
+
+    out.write(s.c_str(), length);
+    return out;
+}
+
+std::istream& read_short_string(std::istream& in, std::string* s)
+{
+    unsigned char length;
+    read<unsigned char>(in, &length);
+
+    char buf[255];
+    memset(buf, 0, 255);
+    in.read(buf, length);
+    *s = buf;
+
+    return in;
 }

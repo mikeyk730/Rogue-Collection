@@ -185,12 +185,10 @@ void Options::init_environment()
     m_environment["ice_monster_miss_bugfix"] = "true";
 }
 
-void Options::from_file(const std::string & optfile)
+void Options::from_file(std::istream & in, char delimiter)
 {
-    std::ifstream in(optfile);
-
     std::string line;
-    while (std::getline(in, line)) {
+    while (std::getline(in, line, delimiter)) {
         if (line.empty() || line[0] == ';' || line[0] == '#')
             continue;
 

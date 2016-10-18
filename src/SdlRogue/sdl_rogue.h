@@ -38,17 +38,23 @@ struct Options
     Coord screen;
     Coord small_screen;
     bool emulate_ctrl_controls;
-    bool scroll_lock_wake;
+    bool is_unix;
     std::vector<GraphicsConfig> gfx_options;
 };
 
+extern std::vector<Options> s_options;
+
 struct SdlRogue : public DisplayInterface, public InputInterface
 {
-    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, const Options& options, Environment* env);
+    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int index);
+    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const std::string& filename);
     ~SdlRogue();
 
     void Run();
     void Quit();
+
+    Environment* environment() const;
+    Options options() const;
 
     //display interface
     virtual void SetDimensions(Coord dimensions) override;

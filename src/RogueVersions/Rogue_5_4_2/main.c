@@ -71,7 +71,7 @@ GAME_MAIN(int argc, char **argv)
     if (getenv("SEED") != NULL)
     {
 	dnum = atoi(getenv("SEED"));
-	noscore = 1;
+	//mdk:noscore = 1;
     }
     else
 	dnum = (unsigned int) lowtime + md_getpid();

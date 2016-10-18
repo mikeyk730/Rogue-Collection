@@ -112,7 +112,7 @@ char **envp;
 
     if (seed > 0)
     {
-        waswizard = 1; /* don't save scores if SEED specified */
+        //mdk:waswizard = 1; /* don't save scores if SEED specified */
         dnum = seed;
     }
     else

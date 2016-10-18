@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <iostream>
+#include <sstream>
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
@@ -166,12 +167,19 @@ Args process_args(int argc, char**argv)
 //game_main: The main program, of course
 int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input)
 {
-    int seed = get_seed();
-    g_random = new Random(seed);
-
     Args args = process_args(argc, argv);
+
     Options main_options;
-    main_options.from_file(args.optfile);
+    char* env = getenv("ROGUEOPTS");
+    if (env)
+    {
+        std::istringstream rogueopts(env);
+        main_options.from_file(rogueopts, ';');
+    }
+    else {
+        std::ifstream in(args.optfile);
+        main_options.from_file(in);
+    }
     args.start_paused |= main_options.start_replay_paused();
     args.hide_replay |= main_options.hide_replay();
 
@@ -179,12 +187,22 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     //args.savefile = "etc\\saves\\blevel8.rsf";
     //args.savefile = "rogue.sav";
 
+    int seed = get_seed();
+    std::string opt_seed = main_options.get_environment("seed");
+    if (!opt_seed.empty()) {
+        std::istringstream ss(opt_seed);
+        ss >> seed;
+    }
+
+    g_random = new Random(seed);
+
     if (!args.savefile.empty()) {
         game = new GameState(g_random, args.savefile, !args.hide_replay, args.start_paused, output, input);
     }
     else {
         game = new GameState(seed, output, input);
-        game->options.from_file(args.optfile);
+        std::ifstream in(args.optfile);
+        game->options.from_file(in);
         game->process_environment();
     }
 

@@ -4,6 +4,9 @@
 #include <deque>
 #include <mutex>
 #include <iterator>
+#include <fstream>
+#include <ctime>
+#include <sstream>
 #include <SDL.h>
 #include <SDL_image.h>
 #include "sdl_rogue.h"
@@ -62,7 +65,8 @@ struct SdlRogue::Impl
 {
     const unsigned int MAX_QUEUE_SIZE = 1;
 
-    Impl(SDL_Window* window, SDL_Renderer* renderer, Options options, Environment* env);
+    Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment>env, int i);
+    Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment>env, const std::string& file);
     ~Impl();
 
     void SetDimensions(Coord dimensions);
@@ -70,6 +74,9 @@ struct SdlRogue::Impl
     void UpdateRegion(uint32_t* info, Region rect);
     void MoveCursor(Coord pos);
     void SetCursor(bool enable);
+
+    Environment* environment();
+    Options options();
 
     void Run();
     void Quit();
@@ -81,6 +88,11 @@ private:
     void RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color);
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
+
+    void SaveGame();
+    void RestoreGame(const std::string& filename);
+    void SetGame(const std::string& name);
+    void SetGame(int i);
 
     const GraphicsConfig& gfx_cfg() const;
 
@@ -102,7 +114,7 @@ private:
     SDL_Renderer* m_renderer = 0;
     SDL_Texture* m_tiles = 0;
     SDL_Texture* m_text = 0;
-    Environment* m_env;
+    std::shared_ptr<Environment> m_env;
 
     Coord m_block_size = { 0, 0 };
     int m_tile_states = 0;
@@ -165,8 +177,12 @@ private:
     SDL_Keycode TranslateNumPad(SDL_Keycode keycode, uint16_t modifiers);
     std::string TranslateKey(SDL_Keycode keycode, uint16_t modifiers);
 
-
     std::deque<unsigned char> m_buffer;
+    std::vector<unsigned char> m_keylog;
+    int m_replay_steps = 0;
+    int m_steps_to_take = 0;
+    bool m_paused = false;
+
     std::mutex m_input_mutex;
     std::condition_variable m_input_cv;
 
@@ -210,21 +226,50 @@ private:
     };
 };
 
-SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, Options options, Environment* env)
-    : m_window(window), m_renderer(renderer), m_options(options), m_env(env)
+SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> current_env, const std::string& file) :
+    m_window(window),
+    m_renderer(renderer)
 {
+    RestoreGame(file);
+
     std::string gfx_pref;
-    if (env->get("gfx", &gfx_pref)) {
-        for (size_t i = 0; i < options.gfx_options.size(); ++i)
+    if (current_env->get("gfx", &gfx_pref)) {
+        for (size_t i = 0; i < m_options.gfx_options.size(); ++i)
         {
-            if (options.gfx_options[i].name == gfx_pref) {
+            if (m_options.gfx_options[i].name == gfx_pref) {
                 m_gfx_mode = i;
                 break;
             }
         }
     }
 
-    SDL_SetWindowTitle(window, std::string("Rogue Collection - " + options.name).c_str());
+    SDL_ShowWindow(window);
+    LoadAssets();
+}
+
+SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment>env, int i) : 
+    m_window(window),
+    m_renderer(renderer),
+    m_env(env)
+{
+    int seed = (int)time(0);
+    std::ostringstream ss;
+    ss << seed;
+    m_env->set("seed", ss.str());
+ 
+    SetGame(i);
+
+    std::string gfx_pref;
+    if (m_env->get("gfx", &gfx_pref)) {
+        for (size_t i = 0; i < m_options.gfx_options.size(); ++i)
+        {
+            if (m_options.gfx_options[i].name == gfx_pref) {
+                m_gfx_mode = i;
+                break;
+            }
+        }
+    }
+
     SDL_ShowWindow(window);
     LoadAssets();
 }
@@ -483,6 +528,83 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     SDL_RenderCopy(m_renderer, m_text, &clip, &r);
 }
 
+void SdlRogue::Impl::SaveGame()
+{
+    const unsigned char version = 1;
+
+    std::string path;
+    if (!GetSavePath(path))
+        return;
+
+    std::ofstream file(path, std::ios::binary | std::ios::out);
+    if (!file) {
+        ErrorBox("Couldn't open file: " + path);
+    }
+
+    write(file, version);
+    write_short_string(file, m_options.name);
+    m_env->serialize(file);    
+    std::copy(m_keylog.begin(), m_keylog.end(), std::ostreambuf_iterator<char>(file));
+
+    if (!file) {
+        ErrorBox("Error writing to file: " + path);
+    }
+}
+
+void SdlRogue::Impl::RestoreGame(const std::string& path)
+{
+    std::ifstream file(path, std::ios::binary | std::ios::in);
+    if (!file) {
+        ErrorBox("Couldn't open file: " + path);
+    }
+
+    unsigned char version;
+    read(file, &version);
+
+    std::string name;
+    read_short_string(file, &name);
+
+    m_env.reset(new Environment());
+    m_env->deserialize(file);
+    //todo: copy things from cur_env
+    m_env->set("logfile", "err.log");
+
+    SetGame(name);
+    m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+    m_replay_steps = m_buffer.size();
+}
+
+void SdlRogue::Impl::SetGame(const std::string & name)
+{
+    for (size_t i = 0; i < s_options.size(); ++i)
+    {
+        if (s_options[i].name == name) {
+            SetGame(i);
+            return;
+        }
+    }
+    throw_error("Unknown game " + name);
+}
+
+void SdlRogue::Impl::SetGame(int i)
+{
+    m_options = s_options[i];
+
+    if (!m_env->write_to_os(m_options.is_unix))
+        throw_error("Couldn't write environment");
+
+    std::string screen;
+    Coord dims = m_options.screen;
+    if (m_env->get("small_screen", &screen) && screen == "true")
+    {
+        dims = m_options.small_screen;
+    }
+    m_env->cols(dims.x);
+    m_env->lines(dims.y);
+
+    SDL_SetWindowTitle(m_window, std::string("Rogue Collection - " + m_options.name).c_str());
+}
+
 const GraphicsConfig & SdlRogue::Impl::gfx_cfg() const
 {
     return m_options.gfx_options[m_gfx_mode];
@@ -576,6 +698,16 @@ void SdlRogue::Impl::SetCursor(bool enable)
     m_shared_data.m_cursor = enable;
 }
 
+Environment* SdlRogue::Impl::environment()
+{
+    return m_env.get();
+}
+
+Options SdlRogue::Impl::options()
+{
+    return m_options;
+}
+
 void SdlRogue::Impl::Run()
 {
     SDL_Event e;
@@ -624,8 +756,13 @@ bool SdlRogue::Impl::shared_data_is_narrow()
     return m_shared_data.m_dimensions.x == 40;
 }
 
-SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, const Options& options, Environment* env) :
-    m_impl(new Impl(window, renderer, options, env))
+SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment>env, int index) :
+    m_impl(new Impl(window, renderer, env, index))
+{
+}
+
+SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment>env, const std::string& file) :
+    m_impl(new Impl(window, renderer, env, file))
 {
 }
 
@@ -641,6 +778,16 @@ void SdlRogue::Run()
 void SdlRogue::Quit()
 {
     m_impl->Quit();
+}
+
+Environment* SdlRogue::environment() const
+{
+    return m_impl->environment();
+}
+
+Options SdlRogue::options() const
+{
+    return m_impl->options();
 }
 
 void SdlRogue::SetDimensions(Coord dimensions)
@@ -676,6 +823,11 @@ char SdlRogue::GetChar(bool block)
 char SdlRogue::Impl::GetChar(bool block)
 {
     std::unique_lock<std::mutex> lock(m_input_mutex);
+    while (m_replay_steps > 0 && m_paused && m_steps_to_take == 0)
+    {
+        m_input_cv.wait(lock);
+    }
+
     while (m_buffer.empty()) {
         if (!block) 
             return 0;
@@ -684,6 +836,12 @@ char SdlRogue::Impl::GetChar(bool block)
 
     char c = m_buffer.front();
     m_buffer.pop_front();
+    m_keylog.push_back(c);
+
+    if (m_replay_steps > 0)
+        --m_replay_steps;
+    if (m_steps_to_take > 0)
+        --m_steps_to_take;
 
     return c;
 }
@@ -796,6 +954,15 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
 
 void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
 {
+    if (m_replay_steps > 0)
+        return;
+
+    if (e.key.keysym.sym == 's' && (e.key.keysym.mod & KMOD_CTRL))
+    {
+        SaveGame();
+        return;
+    }
+
     std::string new_input = TranslateKey(e.key.keysym.sym, e.key.keysym.mod);
     if (!new_input.empty())
     {
@@ -821,6 +988,37 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
         return;
     }
 
+    if (m_replay_steps > 0)
+    {
+        if (ch == 'p') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);
+            m_paused = true;
+            m_steps_to_take = 0;
+            m_input_cv.notify_all();
+        }
+        else if (ch == 's') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);
+            ++m_steps_to_take;
+            m_input_cv.notify_all();
+        }
+        else if (ch == 'r') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);
+            m_paused = false;
+            m_steps_to_take = 0;
+            m_input_cv.notify_all();
+        }
+        else if (ch == 'c') {
+            std::lock_guard<std::mutex> lock(m_input_mutex);
+            m_buffer.clear();
+            m_replay_steps = 0;
+            m_paused = false;
+            m_steps_to_take = 0;
+            m_input_cv.notify_all();
+        }
+
+        return;
+    }
+
     std::string new_input;
     new_input.push_back(ch);
 
@@ -832,7 +1030,7 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
 
 void SdlRogue::Impl::HandleEventKeyUp(const SDL_Event & e)
 {
-    if (!m_options.scroll_lock_wake)
+    if (m_options.is_unix)
         return;
 
     if (e.key.keysym.sym == SDLK_SCROLLLOCK ||

@@ -98,14 +98,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)lib\NativeFileDialog\src\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(SolutionDir)lib\NativeFileDialog\build\lib\$(Configuration)\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;nfd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
@@ -126,13 +126,13 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)lib\NativeFileDialog\src\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;nfd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(SolutionDir)lib\NativeFileDialog\build\lib\$(Configuration)\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
@@ -154,7 +154,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)lib\NativeFileDialog\src\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -162,8 +162,8 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(SolutionDir)lib\NativeFileDialog\build\lib\$(Configuration)\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;nfd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
@@ -186,15 +186,15 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)lib\NativeFileDialog\src\include\;$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;nfd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(SolutionDir)lib\NativeFileDialog\build\lib\$(Configuration)\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>

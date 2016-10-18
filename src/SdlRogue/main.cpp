@@ -16,47 +16,6 @@ InputInterface::~InputInterface() {}
 
 namespace
 {
-    typedef int(*game_main)(int, char**, char**);
-    typedef void(*init_game)(DisplayInterface*, InputInterface*, int lines, int cols);
-
-    struct LibraryDeleter
-    {
-        typedef HMODULE pointer;
-        void operator()(HMODULE h) { FreeLibrary(h); }
-    };
-
-    void run_game(const std::string& lib, int argc, char** argv, DisplayInterface* screen, InputInterface* input, int lines, int cols)
-    {
-        std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
-        try {
-            if (!dll) {
-                throw_error("Couldn't load dll " + lib);
-            }
-
-            init_game init = (init_game)GetProcAddress(dll.get(), "init_game");
-            if (!init) {
-                throw_error("Couldn't load init_game from " + lib);
-            }
-
-            game_main game = (game_main)GetProcAddress(dll.get(), "rogue_main");
-            if (!game) {
-                throw_error("Couldn't load rogue_main from " + lib);
-            }
-
-            (*init)(screen, input, lines, cols);
-            (*game)(argc, argv, environ);
-        }
-        catch (const std::runtime_error& e)
-        {
-            std::string s(e.what());
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                "Error",
-                e.what(),
-                NULL);
-            exit(1);
-        }
-    }
-
     const int WINDOW_W = 640;
     const int WINDOW_H = 400;
 
@@ -85,27 +44,69 @@ namespace
     GraphicsConfig atari_slime_gfx = { "tiles", &alt_text, &atari_slime_tiles, false, true };
     GraphicsConfig atari_snake_gfx = { "tiles", &alt_text, &atari_snake_tiles, false, true };
     GraphicsConfig cutesy_gfx = { "boxy", &cutesy_text, 0, false, true };
-
-    std::vector<Options> s_options = {
-        { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  true,  { pc_gfx, unix_gfx, color_unix_gfx, atari_slime_gfx, cutesy_gfx } },
-        { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   {80,25}, {80,24}, false, false, { unix_gfx, color_unix_gfx, pc_gfx, atari_snake_gfx, cutesy_gfx } },
-        { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   {80,25}, {70,22}, true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
-        { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   {80,25}, {70,22}, true,  false, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
-    };
 }
 
+std::vector<Options> s_options = {
+    { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false,  { pc_gfx, unix_gfx, color_unix_gfx, atari_slime_gfx, cutesy_gfx } },
+    { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   {80,25}, {80,24}, false, true, { unix_gfx, color_unix_gfx, pc_gfx, atari_snake_gfx, cutesy_gfx } },
+    { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   {80,25}, {70,22}, true,  true, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+    { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   {80,25}, {70,22}, true,  true, { unix_gfx, color_unix_gfx, pc_gfx, cutesy_gfx } },
+};
 
+
+namespace
+{
+    typedef int(*game_main)(int, char**, char**);
+    typedef void(*init_game)(DisplayInterface*, InputInterface*, int lines, int cols);
+
+    struct LibraryDeleter
+    {
+        typedef HMODULE pointer;
+        void operator()(HMODULE h) { FreeLibrary(h); }
+    };
+
+    void run_game(const std::string& lib, int argc, char** argv, SdlRogue* r)
+    {
+        std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
+        try {
+            if (!dll) {
+                throw_error("Couldn't load dll " + lib);
+            }
+
+            init_game init = (init_game)GetProcAddress(dll.get(), "init_game");
+            if (!init) {
+                throw_error("Couldn't load init_game from " + lib);
+            }
+
+            game_main game = (game_main)GetProcAddress(dll.get(), "rogue_main");
+            if (!game) {
+                throw_error("Couldn't load rogue_main from " + lib);
+            }
+
+            (*init)(r, r, r->environment()->lines(), r->environment()->cols());
+            (*game)(argc, argv, environ);
+        }
+        catch (const std::runtime_error& e)
+        {
+            std::string s(e.what());
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
+                "Error",
+                e.what(),
+                NULL);
+            exit(1);
+        }
+    }
+}
 
 int main(int argc, char** argv)
 {
     int i = -1;
 
-    std::ifstream env_file("rogue.opt");
-    std::unique_ptr<Environment> env(new Environment());
-    env->from_file(env_file);
+    std::shared_ptr<Environment> current_env(new Environment());
+    current_env->from_file("rogue.opt");
 
     std::string game;
-    if (env->get("game", &game)) {
+    if (current_env->get("game", &game)) {
         if (game == "a" || game == "b" || game == "c" || game == "d") {
             i = game[0] - 'a';
         }
@@ -140,27 +141,19 @@ int main(int argc, char** argv)
         if (renderer == nullptr)
             throw_error("SDL_CreateRenderer");
 
+        std::string replay_path;
         if (i == -1) {
             GameSelect select(window.get(), renderer.get(), s_options);
-            i = select.GetSelection();
+            auto selection = select.GetSelection();
+            i = selection.first;
+            replay_path = selection.second;
         }
-        
-        if (i != -1) {
-            Options& option = s_options[i];
 
-            if (!env->write_to_os())
-                throw_error("Couldn't write environment");
-
-            std::string screen;
-            Coord dims = option.screen;
-            if (env->get("small_screen", &screen) && screen == "true")
-            {
-                dims = option.small_screen;
-            }
-            env->cols(dims.x);
-            env->lines(dims.y);
-
-            sdl_rogue.reset(new SdlRogue(window.get(), renderer.get(), option, env.get()));
+        if (i >= 0) {
+            sdl_rogue.reset(new SdlRogue(window.get(), renderer.get(), current_env, i));
+        }
+        else if (!replay_path.empty()) {
+            sdl_rogue.reset(new SdlRogue(window.get(), renderer.get(), current_env, replay_path));
         }
     }
     catch (const std::runtime_error& e)
@@ -174,7 +167,7 @@ int main(int argc, char** argv)
 
     if (sdl_rogue) {
         //start rogue engine on a background thread
-        std::thread rogue(run_game, s_options[i].dll_name, argc, argv, sdl_rogue.get(), sdl_rogue.get(), env->lines(), env->cols());
+        std::thread rogue(run_game, sdl_rogue->options().dll_name, argc, argv, sdl_rogue.get());
         rogue.detach();
 
         sdl_rogue->Run();

@@ -69,3 +69,23 @@ SDL::Scoped::Font load_font(const std::string& filename, int size);
 SDL::Scoped::Surface load_bmp(const std::string& filename);
 SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer);
 SDL::Scoped::Surface load_text(const std::string& s, _TTF_Font* font, SDL_Color color, SDL_Color bg);
+
+bool GetLoadPath(std::string& path);
+bool GetSavePath(std::string& path);
+
+void ErrorBox(const std::string& msg);
+
+template <typename T>
+std::ostream& write(std::ostream& out, T t) {
+    out.write((char*)&t, sizeof(T));
+    return out;
+}
+
+template <typename T>
+std::istream& read(std::istream& in, T* t) {
+    in.read((char*)t, sizeof(T));
+    return in;
+}
+
+std::ostream& write_short_string(std::ostream& out, const std::string& s);
+std::istream& read_short_string(std::istream& in, std::string* s);

@@ -17,7 +17,7 @@ void do_save(const char* filename)
 bool do_save_game()
 {
     if (game->options.disable_save()) {
-        msg("Use \"File > Save Recording\" to save your game");
+        msg("Use Ctrl+S to save your game");
         return false;
     }
 

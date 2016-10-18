@@ -42,7 +42,7 @@ struct Options
 
 public:
     void init_environment();
-    void from_file(const std::string & optfile);
+    void from_file(std::istream & optfile, char delimiter='\n');
 
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);

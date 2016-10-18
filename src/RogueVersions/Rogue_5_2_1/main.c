@@ -118,7 +118,7 @@ char **envp;
     if (getenv("SEED") != NULL)
     {
 	dnum = atoi(getenv("SEED"));
-	noscore = TRUE;
+	//mdk:noscore = TRUE;
     }
     else
 	dnum = lowtime + getpid();
