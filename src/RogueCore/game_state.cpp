@@ -66,8 +66,7 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     m_input_interface(new CapturedInput(input)),
     m_curses(new OutputShim(output)),
     m_level(new Level),
-    m_hero(new Hero),
-    m_log_stream("lastgame.log")
+    m_hero(new Hero)
 {
     std::string path = GetPath("data");
     LoadScrolls(path + "scrolls.dat");
@@ -95,8 +94,7 @@ void Options::deserialize(std::istream& in)
 GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input) :
     m_curses(new OutputShim(output)),
     m_in_replay(true),
-    m_show_replay(show_replay),
-    m_log_stream("lastgame.log")
+    m_show_replay(show_replay)
 {
     std::unique_ptr<std::istream> in(new std::ifstream(filename, std::ios::binary | std::ios::in));
     if (!*in) {
@@ -252,10 +250,16 @@ void Options::set_environment(const std::string& key, const std::string& value)
     m_environment[key] = value;
 }
 
+void GameState::set_logfile(const std::string & filename)
+{
+    if (!filename.empty())
+        m_log_stream.reset(new std::ofstream(filename));
+}
+
 void GameState::log(const std::string & category, const std::string & msg)
 {
-    m_log.push_back(std::make_pair(category, msg));
-    m_log_stream << category << ": " << msg << std::endl;
+    if (m_log_stream)
+        *m_log_stream << category << ": " << msg << std::endl;
 }
 
 Random& GameState::random()
@@ -342,6 +346,11 @@ bool Options::show_inventory_menu() const
 bool Options::start_replay_paused() const
 {
     return get_environment("pause_replay") == "true";
+}
+
+bool Options::hide_replay() const
+{
+    return get_environment("hide_replay") == "true";
 }
 
 bool Options::narrow_screen() const

@@ -121,7 +121,7 @@ struct Args
     std::string savefile;
     std::string monsterfile;
     std::string optfile;
-    bool show_replay;
+    bool hide_replay;
     bool print_score;
     bool start_paused;
     bool bw;
@@ -130,7 +130,6 @@ struct Args
 Args process_args(int argc, char**argv)
 {
     Args a = Args();
-    a.show_replay = true;
     a.optfile = "rogue.opt";
 
     for (int i = 1; i < argc; ++i) {
@@ -145,7 +144,7 @@ Args process_args(int argc, char**argv)
             a.print_score = true;
         }
         else if (s == "/q") {
-            a.show_replay = false;
+            a.hide_replay = true;
         }
         else if (s == "/p") {
             a.start_paused = true;
@@ -176,19 +175,23 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     Options main_options;
     main_options.from_file(args.optfile);
     args.start_paused |= main_options.start_replay_paused();
+    args.hide_replay |= main_options.hide_replay();
 
     //args.savefile = "etc\\tests\\updated\\all_sticks_setup.rsf";
     //args.savefile = "etc\\saves\\blevel8.rsf";
     //args.savefile = "rogue.sav";
 
     if (!args.savefile.empty()) {
-        game = new GameState(g_random, args.savefile, args.show_replay, args.start_paused, output, input);
+        game = new GameState(g_random, args.savefile, !args.hide_replay, args.start_paused, output, input);
     }
     else {
         game = new GameState(seed, output, input);
         game->options.from_file(args.optfile);
         game->process_environment();
     }
+
+    game->set_logfile(main_options.get_environment("logfile"));
+
     if (game->options.act_like_v1_1()) {
         set_monsters_v1_1();
     }

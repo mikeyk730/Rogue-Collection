@@ -18,9 +18,11 @@ struct Item;
 
 struct Options
 {
+    bool start_replay_paused() const;
+    bool hide_replay() const;
+
     //control options
     bool show_inventory_menu() const;
-    bool start_replay_paused() const;
 
     //graphics options
     bool narrow_screen() const;
@@ -57,6 +59,7 @@ struct GameState
 
     void save_game(const std::string& filename);
 
+    void set_logfile(const std::string& filename);
     void log(const std::string& category, const std::string& msg);
 
     Random& random();
@@ -134,8 +137,7 @@ private:
     std::unique_ptr<Level> m_level;
     std::unique_ptr<Hero> m_hero;
     
-    std::vector<std::pair<std::string, std::string>> m_log;
-    std::ofstream m_log_stream;
+    std::unique_ptr<std::ofstream> m_log_stream;
     std::vector<std::string> m_monster_data;
 
     Cheats cheats;
