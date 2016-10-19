@@ -118,7 +118,7 @@ private:
     Coord m_block_size = { 0, 0 };
     int m_gfx_mode = 0;
     int m_scale = INT_MAX;
-    std::unique_ptr<TextProvider> m_text_provider;
+    std::unique_ptr<ITextProvider> m_text_provider;
     std::unique_ptr<TileProvider> m_tile_provider;
 
     Options m_options;
@@ -276,7 +276,10 @@ SdlRogue::Impl::~Impl()
 
 void SdlRogue::Impl::LoadAssets()
 {
-    m_text_provider.reset(new TextProvider(*(current_gfx().text_cfg), m_renderer));
+    if (current_gfx().text_cfg->generate_colors)
+        m_text_provider.reset(new TextGenerator(*(current_gfx().text_cfg), m_renderer)); 
+    else
+        m_text_provider.reset(new TextProvider(*(current_gfx().text_cfg), m_renderer));
     m_block_size = m_text_provider->dimensions();
 
     m_tile_provider.reset();
@@ -419,8 +422,8 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
     if (!color) {
         color = GetColor(c, char_color(info));
     }
-    if (!current_gfx().use_colors) {
-        color = 0;
+    if (!current_gfx().use_colors || color == 0) {
+        color = 0x07;
     }
 
     if (!is_text && current_gfx().use_unix_gfx)
