@@ -49,10 +49,7 @@ dir_key_clears_more=true
 hit_plus_bugfix=false
 ice_monster_miss_bugfix=true
 ;powers=haste_self
-;logfile=last.log
+logfile=last.log
 
-;todo:
-;throws_affect_mimics=false
-;version=1.48
-;scorefile=roguepc.scr
-;hide_replay=false
+
+

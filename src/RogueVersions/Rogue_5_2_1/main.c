@@ -124,7 +124,7 @@ char **envp;
 	dnum = lowtime + getpid();
 #ifdef WIZARD
     if (wizard)
-	printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
+	printf("Hello %s, welcome to dungeon #%d\n", whoami, dnum);
     else
 #endif
 	printf("Hello %s, just a moment while I dig the dungeon...\n\n",whoami);

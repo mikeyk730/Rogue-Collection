@@ -381,7 +381,7 @@ swing(int at_lvl, int op_arm, int wplus)
 {
     int res = rnd(20);
     int need = (20 - at_lvl) - op_arm;
-
+    MDK_LOG("battle:     %-4s\t%d ? %d\t\t(1d20=%d + hplus=%d) ? (20 - lvl=%d - op_amr=%d)\n", (res + wplus >= need) ? "hit" : "miss", res + wplus, need, res, wplus, at_lvl, op_arm);
     return (res + wplus >= need);
 }
 
@@ -454,6 +454,7 @@ roll_em(const THING *thatt, THING *thdef, const THING *weap, int hurl)
 	if (ISRING(RIGHT, R_PROTECT))
 	    def_arm -= cur_ring[RIGHT]->o_arm;
     }
+    MDK_LOG("battle: %s %s %d,%d attack on %s[hp=%d]\n", (thatt == &player) ? "you" : monsters[thatt->t_type - 'A'].m_name, cp, hplus, dplus, (thdef == &player) ? "you" : monsters[thdef->t_type - 'A'].m_name, def->s_hpt);
     while(cp != NULL && *cp != '\0')
     {
 	ndice = atoi(cp);
@@ -472,7 +473,10 @@ roll_em(const THING *thatt, THING *thdef, const THING *weap, int hurl)
 	    damage = dplus + proll + add_dam[att->s_str];
 	    def->s_hpt -= max(0, damage);
 	    did_hit = TRUE;
-	}
+        MDK_LOG("battle:     damage=%d\t%s[hp=%d]\t(%dd%d=%d + dplus=%d + str_plus=%d)\n", damage, 
+            (thdef == &player) ? "you" : monsters[thdef->t_type - 'A'].m_name, def->s_hpt,
+            ndice, nsides, proll, dplus, add_dam[att->s_str]);
+    }
 	if ((cp = strchr(cp, '/')) == NULL)
 	    break;
 	cp++;

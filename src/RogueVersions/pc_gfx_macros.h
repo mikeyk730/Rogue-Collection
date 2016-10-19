@@ -29,6 +29,8 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define SHELL_CMD                     msg("You're a long way from a terminal"); after = FALSE
 #define ZAP_CASE                      when 'z': case 'p'
 #define NO_SAVE_RETURN                msg("Use Ctrl+S to save your game"); return
+//#define MDK_LOG                       printf
+#define MDK_LOG(...)
 #else
 #define GAME_MAIN                     main
 #define PC_GFX_SET_CURSOR(b)
@@ -48,4 +50,5 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define SHELL_CMD                     shell()
 #define ZAP_CASE                      when 'z' : do_zap(FALSE); when 'p'
 #define NO_SAVE_RETURN
+#define MDK_LOG(...)
 #endif

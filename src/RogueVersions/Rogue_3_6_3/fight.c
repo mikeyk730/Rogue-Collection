@@ -309,7 +309,7 @@ swing(int at_lvl, int op_arm, int wplus)
 {
     int res = rnd(20)+1;
     int need = (21-at_lvl)-op_arm;
-
+    MDK_LOG("battle:     %-4s\t%d ? %d\t\t(1d20=%d + hplus=%d) ? (20 - lvl=%d - op_amr=%d)\n", (res + wplus >= need) ? "hit" : "miss", res + wplus, need, res, wplus, at_lvl, op_arm);
     return (res+wplus >= need);
 }
 
@@ -411,6 +411,7 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, int hurl)
 	}
 	else
 	    def_arm = def->s_arm;
+    MDK_LOG("battle: %s %dd%d %d,%d attack on %s[hp=%d]\n", (att == &player.t_stats) ? "you" : "monster", ndice, nsides, hplus, dplus, (def == &player.t_stats) ? "you" : "monster", def->s_hpt);
 	if (swing(att->s_lvl, def_arm, hplus+str_plus(&att->s_str)))
 	{
 	    int proll;
@@ -421,6 +422,9 @@ roll_em(struct stats *att, struct stats *def, struct object *weap, int hurl)
 	    damage = dplus + proll + add_dam(&att->s_str);
 	    def->s_hpt -= max(0, damage);
 	    did_hit = TRUE;
+        MDK_LOG("battle:     damage=%d\t%s[hp=%d]\t(%dd%d=%d + dplus=%d + str_plus=%d)\n", damage,
+            (def == &player.t_stats) ? "you" : "monster", def->s_hpt,
+            ndice, nsides, proll, dplus, add_dam(&att->s_str));
 	}
 	if ((cp = strchr(cp, '/')) == NULL)
 	    break;

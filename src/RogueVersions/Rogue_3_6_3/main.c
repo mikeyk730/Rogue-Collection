@@ -118,10 +118,10 @@ char **envp;
     else
         dnum = lowtime + md_getpid();
 
-    if (wizard || env)
-	printf("Hello %s, welcome to dungeon #%d", whoami, dnum);
+    if (wizard)
+	printf("Hello %s, welcome to dungeon #%d\n", whoami, dnum);
     else
-	printf("Hello %s, just a moment while I dig the dungeon...", whoami);
+	printf("Hello %s, just a moment while I dig the dungeon...\n", whoami);
 
     fflush(stdout);
     seed = dnum;
