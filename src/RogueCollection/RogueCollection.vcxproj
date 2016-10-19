@@ -116,6 +116,9 @@ xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R 
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -143,6 +146,9 @@ xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R 
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -174,6 +180,9 @@ xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R 
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -205,6 +214,9 @@ xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R 
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>true</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="environment.cpp" />

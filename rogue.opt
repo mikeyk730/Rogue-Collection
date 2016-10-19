@@ -4,6 +4,8 @@
 
 game=
 gfx=
+fullscreen=false
+window_scaling=max
 small_screen=false
 replay_paused=false
 replay_pause_at=0

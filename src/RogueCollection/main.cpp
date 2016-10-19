@@ -173,14 +173,28 @@ int main(int argc, char** argv)
         if (TTF_Init() != 0) {
             throw_error("TTF_Init");
         }
-
-        window = SDL::Scoped::Window(SDL_CreateWindow("Rogue Collection", 100, 100, WINDOW_W, WINDOW_H, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN), SDL_DestroyWindow);
+        
+        int scale = INT_MAX;
+        std::string value;
+        if (current_env->get("window_scaling", &value) && value != "max")
+        {
+            scale = atoi(value.c_str());
+        }
+        Coord window_size = get_scaled_coord({ WINDOW_W, WINDOW_H }, scale);
+        window = SDL::Scoped::Window(SDL_CreateWindow("Rogue Collection", 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN), SDL_DestroyWindow);
         if (window == nullptr)
             throw_error("SDL_CreateWindow");
 
         renderer = SDL::Scoped::Renderer(SDL_CreateRenderer(window.get(), -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC), SDL_DestroyRenderer);
         if (renderer == nullptr)
             throw_error("SDL_CreateRenderer");
+        SDL_RenderSetLogicalSize(renderer.get(), WINDOW_W, WINDOW_H);
+        //SDL_RenderSetIntegerScale(renderer.get(), 1);
+
+        if (current_env->get("fullscreen", &value) && value == "true")
+        {
+            SetFullscreen(window.get(), true);
+        }
 
         if (i == -1 && replay_path.empty()) {
             GameSelect select(window.get(), renderer.get(), s_options);

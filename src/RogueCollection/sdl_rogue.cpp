@@ -100,6 +100,7 @@ private:
     const GraphicsConfig& gfx_cfg() const;
 
     void set_window_size(int w, int h);
+    void update_window_size();
     Coord get_screen_pos(Coord buffer_pos);
     SDL_Rect get_screen_rect(Coord buffer_pos);
 
@@ -126,6 +127,7 @@ private:
     Coord m_text_dimensions = { 0, 0 };
     std::map<int, int> m_attr_index;
     int m_gfx_mode = 0;
+    int m_scale = INT_MAX;
 
     Options m_options;
 
@@ -253,6 +255,10 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     {
         m_pause_at = atoi(value.c_str());
     }
+    if (m_current_env->get("window_scaling", &value) && value != "max")
+    {
+        m_scale = atoi(value.c_str());
+    }
 
     std::string gfx_pref;
     if (m_current_env->get("gfx", &gfx_pref)) {
@@ -281,6 +287,12 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     m_game_env->set("seed", ss.str());
  
     SetGame(i);
+
+    std::string value;
+    if (m_current_env->get("window_scaling", &value) && value != "max")
+    {
+        m_scale = atoi(value.c_str());
+    }
 
     std::string gfx_pref;
     if (m_current_env->get("gfx", &gfx_pref)) {
@@ -581,8 +593,9 @@ void SdlRogue::Impl::SaveGame()
     const unsigned char version = 1;
 
     std::string path;
-    if (!GetSavePath(path))
+    if (!GetSavePath(m_window, path)) {
         return;
+    }
 
     std::ofstream file(path, std::ios::binary | std::ios::out);
     if (!file) {
@@ -670,11 +683,17 @@ const GraphicsConfig & SdlRogue::Impl::gfx_cfg() const
 
 void SdlRogue::Impl::set_window_size(int w, int h)
 {
-    //mdk: i don't know why it's needed, but this code prevents ugly
-    //scaling for very narrow windows
-    int winw = std::max(w, 342);
-    SDL_SetWindowSize(m_window, winw, h);
+    Coord window_size = ::get_scaled_coord({ w, h }, m_scale);
+    window_size.x = std::max(window_size.x, 342); //mdk: 342 empirically determined to be min window width
+    SDL_SetWindowSize(m_window, window_size.x, window_size.y);
     SDL_RenderSetLogicalSize(m_renderer, w, h);
+}
+
+void SdlRogue::Impl::update_window_size()
+{
+    int w, h;
+    SDL_RenderGetLogicalSize(m_renderer, &w, &h);
+    set_window_size(w, h);
 }
 
 Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
@@ -783,6 +802,13 @@ void SdlRogue::Impl::Run()
     while (SDL_WaitEvent(&e)) {
         if (e.type == SDL_QUIT) {
             return;
+        }
+        else if (e.type == SDL_WINDOWEVENT) {
+            switch (e.window.event) {
+            case SDL_WINDOWEVENT_SIZE_CHANGED:
+            case SDL_WINDOWEVENT_EXPOSED:
+                PostRenderMsg(1);
+            }
         }
         else if (e.type == SDL_TEXTEDITING) {
             continue;
@@ -1057,6 +1083,23 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
 
 void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
 {
+    if (e.key.keysym.mod & KMOD_ALT) {
+        if (e.key.keysym.sym == SDLK_RETURN) {
+            ToggleFullscreen(m_window);
+            return;
+        }
+        else if (e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_9)
+        {
+            m_scale = e.key.keysym.sym - SDLK_0;
+            update_window_size();
+        }
+        else if (e.key.keysym.sym == SDLK_0)
+        {
+            m_scale = INT_MAX;
+            update_window_size();
+        }
+    }
+
     if (m_replay_steps_remaining > 0) {
         if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_ESCAPE) {
             HandleInputReplay(e.key.keysym.sym);
@@ -1064,8 +1107,7 @@ void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
         return;
     }
 
-    if (e.key.keysym.sym == 's' && (e.key.keysym.mod & KMOD_CTRL))
-    {
+    if (e.key.keysym.sym == 's' && (e.key.keysym.mod & KMOD_CTRL)) {
         SaveGame();
         return;
     }

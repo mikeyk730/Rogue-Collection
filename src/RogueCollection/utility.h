@@ -45,6 +45,8 @@ namespace SDL
     }
 }
 
+int get_scaling_factor(Coord logical_size);
+Coord get_scaled_coord(Coord logical_size, int scale_factor);
 
 void throw_error(const std::string &msg);
 
@@ -70,8 +72,12 @@ SDL::Scoped::Surface load_bmp(const std::string& filename);
 SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer);
 SDL::Scoped::Surface load_text(const std::string& s, _TTF_Font* font, SDL_Color color, SDL_Color bg);
 
-bool GetLoadPath(std::string& path);
-bool GetSavePath(std::string& path);
+bool IsFullscreen(SDL_Window* Window);
+void SetFullscreen(SDL_Window* Window, bool enable);
+void ToggleFullscreen(SDL_Window* Window);
+
+bool GetLoadPath(SDL_Window* window, std::string& path);
+bool GetSavePath(SDL_Window* window, std::string& path);
 
 void ErrorBox(const std::string& msg);
 void delay(int ms);

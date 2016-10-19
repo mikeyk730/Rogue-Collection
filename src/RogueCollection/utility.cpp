@@ -2,6 +2,7 @@
 #include <cassert>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 #include <nfd.h>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -11,6 +12,9 @@
 
 namespace SDL
 {
+    const int FULLSCREEN_FLAG = SDL_WINDOW_FULLSCREEN_DESKTOP;
+    //const int FULLSCREEN_FLAG = SDL_WINDOW_FULLSCREEN;
+
     namespace Colors
     {
         SDL_Color black()    { return {   0,   0,   0, 255 }; } //from dosbox
@@ -34,7 +38,8 @@ namespace SDL
     }
 }
 
-bool GetLoadPath(std::string& path) {
+bool GetLoadPath(std::string& path)
+{
     nfdchar_t *p = NULL;
     nfdresult_t result = NFD_OpenDialog("sav", NULL, &p);
     if (result == NFD_OKAY)
@@ -46,7 +51,17 @@ bool GetLoadPath(std::string& path) {
     return false;
 }
 
-bool GetSavePath(std::string& path) {
+bool GetLoadPath(SDL_Window* window, std::string& path) 
+{
+    bool fullscreen = IsFullscreen(window);
+    SetFullscreen(window, false);
+    bool success = GetLoadPath(path);
+    SetFullscreen(window, fullscreen);
+    return success;
+}
+
+bool GetSavePath(std::string& path)
+{
     nfdchar_t *p = NULL;
     nfdresult_t result = NFD_SaveDialog("sav", NULL, &p);
     if (result == NFD_OKAY)
@@ -58,6 +73,15 @@ bool GetSavePath(std::string& path) {
     return false;
 }
 
+bool GetSavePath(SDL_Window* window, std::string& path) 
+{
+    bool fullscreen = IsFullscreen(window);
+    SetFullscreen(window, false);
+    bool success = GetSavePath(path);
+    SetFullscreen(window, fullscreen);
+    return success;
+}
+
 void ErrorBox(const std::string & msg)
 {
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg.c_str(), NULL);
@@ -66,6 +90,21 @@ void ErrorBox(const std::string & msg)
 void delay(int ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
+
+bool IsFullscreen(SDL_Window* w)
+{
+    return (SDL_GetWindowFlags(w) & SDL::FULLSCREEN_FLAG) != 0;
+}
+
+void SetFullscreen(SDL_Window* w, bool enable)
+{
+    SDL_SetWindowFullscreen(w, enable ? SDL::FULLSCREEN_FLAG : 0);
+}
+
+void ToggleFullscreen(SDL_Window* w)
+{
+    SetFullscreen(w, !IsFullscreen(w));
 }
 
 std::string getResourcePath(const std::string &subDir) {
@@ -112,7 +151,7 @@ SDL::Scoped::Font load_font(const std::string& filename, int size)
     return std::move(font);
 }
 
-SDL::Scoped::Surface load_text(const std::string& s, TTF_Font* font, SDL_Color color, SDL_Color bg)
+SDL::Scoped::Surface load_text(const std::string& s, _TTF_Font* font, SDL_Color color, SDL_Color bg)
 {
     SDL::Scoped::Surface surface(TTF_RenderText_Shaded(font, s.c_str(), color, bg), SDL_FreeSurface);
     if (surface == nullptr)
@@ -188,6 +227,25 @@ void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
         *(Uint32 *)p = pixel;
         break;
     }
+}
+
+int get_scaling_factor(Coord logical_size)
+{
+    SDL_DisplayMode mode;
+    if (SDL_GetCurrentDisplayMode(0, &mode) == 0) {
+        int xscale = mode.w / logical_size.x;
+        int yscale = mode.h / logical_size.y;
+
+        return std::min(xscale, yscale);
+    }
+    return 2;
+}
+
+Coord get_scaled_coord(Coord logical_size, int scale_factor)
+{
+    int max_factor = get_scaling_factor(logical_size);
+    scale_factor = std::min(scale_factor, max_factor);
+    return { logical_size.x * scale_factor, logical_size.y * scale_factor };
 }
 
 void throw_error(const std::string &msg)

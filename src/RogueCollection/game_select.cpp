@@ -19,7 +19,7 @@ bool GameSelect::Select(std::pair<int, std::string>& p)
     if (p.first < int(m_options.size()))
         return true;
 
-    if (GetLoadPath(m_replay_path)) {
+    if (GetLoadPath(m_window, m_replay_path)) {
         p = std::make_pair(-1, m_replay_path);
         return true;
     }
@@ -36,7 +36,10 @@ std::pair<int, std::string> GameSelect::GetSelection()
             return std::make_pair(-1, "");
         }
         else if (e.type == SDL_KEYDOWN) {
-            if (e.key.keysym.sym == SDLK_RETURN) {
+            if (e.key.keysym.sym == SDLK_RETURN && (e.key.keysym.mod & KMOD_ALT)) {
+                ToggleFullscreen(m_window);
+            }
+            else if (e.key.keysym.sym == SDLK_RETURN) {
                 if (Select(selection))
                     return selection;
             }
