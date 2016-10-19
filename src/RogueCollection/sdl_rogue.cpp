@@ -104,25 +104,20 @@ private:
     Coord get_screen_pos(Coord buffer_pos);
     SDL_Rect get_screen_rect(Coord buffer_pos);
 
-    int tile_index(unsigned char c, unsigned short attr);
-    bool use_inverse(unsigned short attr);
-    SDL_Rect get_tile_rect(int i, bool use_inverse);
-
     Region shared_data_full_region();     //must have mutex before calling
     bool shared_data_is_narrow();         //must have mutex before calling
 
 private:
     SDL_Window* m_window = 0;
     SDL_Renderer* m_renderer = 0;
-    SDL_Texture* m_tiles = 0;
     std::shared_ptr<Environment> m_game_env;
     std::shared_ptr<Environment> m_current_env;
 
     Coord m_block_size = { 0, 0 };
-    int m_tile_states = 0;
     int m_gfx_mode = 0;
     int m_scale = INT_MAX;
     std::unique_ptr<TextProvider> m_text_provider;
+    std::unique_ptr<TileProvider> m_tile_provider;
 
     Options m_options;
 
@@ -136,37 +131,6 @@ private:
     };
     ThreadData m_shared_data;
     std::mutex m_mutex;
-
-    std::map<int, int> m_index = {
-        { PLAYER, 26 },
-        { ULWALL, 27 },
-        { URWALL, 28 },
-        { LLWALL, 29 },
-        { LRWALL, 30 },
-        { HWALL,  31 },
-        { VWALL,  32 },
-        { FLOOR,  33 },
-        { PASSAGE,34 },
-        { DOOR,   35 },
-        { STAIRS, 36 },
-        { TRAP,   37 },
-        { AMULET, 38 },
-        { FOOD,   39 },
-        { GOLD,   40 },
-        { POTION, 41 },
-        { RING,   42 },
-        { SCROLL, 43 },
-        { STICK,  44 },
-        { WEAPON, 45 },
-        { ARMOR,  55 },
-        { MAGIC,  63 },
-        { BMAGIC, 64 },
-        { '\\',   65 },
-        { '/',    66 },
-        { '-',    67 },
-        { '|',    68 },
-        { '*',    77 },
-    };    
 
     //todo: 2 classes
 public:
@@ -306,51 +270,10 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
 
 SdlRogue::Impl::~Impl()
 {
-    SDL_DestroyTexture(m_tiles);
-}
-
-int SdlRogue::Impl::tile_index(unsigned char c, unsigned short attr)
-{
-    if (c >= 'A' && c <= 'Z')
-        return c - 'A';
-
-    auto i = m_index.find(c);
-    if (i == m_index.end())
-        return -1;
-
-    int index = i->second;
-    if (index >= 65 && index <= 68) //different color bolts use different tiles
-    {
-        if (attr & 0x02) //yellow
-            index += 8;
-        else if (attr & 0x04) //red
-            index += 4;
-    }
-    return index;
-}
-
-bool SdlRogue::Impl::use_inverse(unsigned short attr)
-{
-    return attr > 100 && attr != 160;
-}
-
-SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
-{
-    SDL_Rect r;
-    r.h = m_block_size.y;
-    r.w = m_block_size.x;
-    r.x = i*m_block_size.x;
-    r.y = use_inverse ? m_block_size.y : 0;
-    return r;
 }
 
 void SdlRogue::Impl::LoadAssets()
 {
-    if (m_tiles) {
-        SDL_DestroyTexture(m_tiles);
-        m_tiles = 0;
-    }
-
     const GraphicsConfig& gfx = gfx_cfg();
 
     m_text_provider.reset(new TextProvider(*gfx.text_cfg, m_renderer));
@@ -358,11 +281,8 @@ void SdlRogue::Impl::LoadAssets()
 
     if (gfx.tile_cfg)
     {
-        SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + gfx.tile_cfg->filename));
-        m_block_size.x = tiles->w / gfx.tile_cfg->count;
-        m_block_size.y = tiles->h / gfx.tile_cfg->states;
-        m_tile_states = gfx.tile_cfg->states;
-        m_tiles = create_texture(tiles.get(), m_renderer).release();
+        m_tile_provider.reset(new TileProvider(*gfx.tile_cfg, m_renderer));
+        m_block_size = m_tile_provider->dimensions();
     }
 
     set_window_size(m_block_size.x * m_game_env->cols(), m_block_size.y * m_game_env->lines());
@@ -436,7 +356,7 @@ void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
             uint32_t info = data[y*dimensions.x+x];
 
             //todo: how to correctly determine text vs monster/passage/wall?
-            if (!m_tiles || is_text(info))
+            if (!m_tile_provider || is_text(info))
             {
                 //int color = (y >= 23) ? 0x0e : 0;
                 RenderText(info, r, false, 0);
@@ -520,17 +440,16 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
 
 void SdlRogue::Impl::RenderTile(uint32_t info, SDL_Rect r)
 {
-    auto i = tile_index(char_text(info), char_color(info));
-    if (i == -1)
-    {
+    SDL_Texture* tiles;
+    SDL_Rect clip;
+    if (m_tile_provider->GetTexture(char_text(info), char_color(info), &tiles, &clip)) {
+        SDL_RenderCopy(m_renderer, tiles, &clip, &r);
+    }
+    else{
         //draw a black tile if we don't have a tile for this character
         SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
         SDL_RenderFillRect(m_renderer, &r);
-        return;
     }
-    bool inv = (m_tile_states > 1 && char_color(info));
-    SDL_Rect clip = get_tile_rect(i, inv);
-    SDL_RenderCopy(m_renderer, m_tiles, &clip, &r);
 }
 
 void SdlRogue::Impl::RenderCursor(Coord pos)
@@ -1238,4 +1157,103 @@ void TextProvider::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Rec
     int i = get_text_index(color);
     *rect = get_text_rect(ch, i);
     *texture = m_text;
+}
+
+TileProvider::TileProvider(const TileConfig & config, SDL_Renderer * renderer)
+    : m_cfg(config)
+{
+    m_index = {
+        { PLAYER, 26 },
+        { ULWALL, 27 },
+        { URWALL, 28 },
+        { LLWALL, 29 },
+        { LRWALL, 30 },
+        { HWALL,  31 },
+        { VWALL,  32 },
+        { FLOOR,  33 },
+        { PASSAGE,34 },
+        { DOOR,   35 },
+        { STAIRS, 36 },
+        { TRAP,   37 },
+        { AMULET, 38 },
+        { FOOD,   39 },
+        { GOLD,   40 },
+        { POTION, 41 },
+        { RING,   42 },
+        { SCROLL, 43 },
+        { STICK,  44 },
+        { WEAPON, 45 },
+        { ARMOR,  55 },
+        { MAGIC,  63 },
+        { BMAGIC, 64 },
+        { '\\',   65 },
+        { '/',    66 },
+        { '-',    67 },
+        { '|',    68 },
+        { '*',    77 },
+    };
+
+    SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + config.filename));
+    m_tile_dimensions.x = tiles->w / config.count;
+    m_tile_dimensions.y = tiles->h / config.states;
+    m_tiles = create_texture(tiles.get(), renderer).release();
+}
+
+TileProvider::~TileProvider()
+{
+    SDL_DestroyTexture(m_tiles);
+}
+
+Coord TileProvider::dimensions() const
+{
+    return m_tile_dimensions;
+}
+
+int TileProvider::tile_index(unsigned char c, unsigned short attr)
+{
+    if (c >= 'A' && c <= 'Z')
+        return c - 'A';
+
+    auto i = m_index.find(c);
+    if (i == m_index.end())
+        return -1;
+
+    int index = i->second;
+    if (index >= 65 && index <= 68) //different color bolts use different tiles
+    {
+        if (attr & 0x02) //yellow
+            index += 8;
+        else if (attr & 0x04) //red
+            index += 4;
+    }
+    return index;
+}
+
+bool TileProvider::use_inverse(unsigned short attr)
+{
+    return attr > 100 && attr != 160;
+}
+
+SDL_Rect TileProvider::get_tile_rect(int i, bool use_inverse)
+{
+    SDL_Rect r;
+    r.h = m_tile_dimensions.y;
+    r.w = m_tile_dimensions.x;
+    r.x = i*m_tile_dimensions.x;
+    r.y = use_inverse ? m_tile_dimensions.y : 0;
+    return r;
+}
+
+bool TileProvider::GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect)
+{
+    auto i = tile_index(ch, color);
+    if (i == -1) {
+        return false;
+    }
+
+    bool inv = (m_cfg.states > 1 && color);
+    *rect = get_tile_rect(i, inv);
+    *texture = m_tiles;
+
+    return true;
 }
