@@ -195,6 +195,16 @@ int main(int argc, char** argv)
         else if (!replay_path.empty()) {
             sdl_rogue.reset(new SdlRogue(window.get(), renderer.get(), current_env, replay_path));
         }
+
+        if (sdl_rogue) {
+            //start rogue engine on a background thread
+            std::thread rogue(run_game, sdl_rogue->options().dll_name, argc, argv, sdl_rogue.get());
+            rogue.detach();
+
+            sdl_rogue->Run();
+
+            exit(0);
+        }
     }
     catch (const std::runtime_error& e)
     {
@@ -203,16 +213,6 @@ int main(int argc, char** argv)
             e.what(),
             NULL);
         return 1;
-    }
-
-    if (sdl_rogue) {
-        //start rogue engine on a background thread
-        std::thread rogue(run_game, sdl_rogue->options().dll_name, argc, argv, sdl_rogue.get());
-        rogue.detach();
-
-        sdl_rogue->Run();
-
-        exit(0);
     }
 
     renderer.release();

@@ -198,7 +198,7 @@ void throw_error(const std::string &msg)
 SDL::Scoped::Texture loadImage(const std::string &file, SDL_Renderer *ren) {
     SDL::Scoped::Texture texture(IMG_LoadTexture(ren, file.c_str()), SDL_DestroyTexture);
     if (texture == nullptr)
-        throw_error("IMG_LoadTexture");
+        throw_error("Couldn't open file " + file);
     return std::move(texture);
 }
 
@@ -206,7 +206,7 @@ SDL::Scoped::Surface load_bmp(const std::string& filename)
 {
     SDL::Scoped::Surface bmp(SDL_LoadBMP(filename.c_str()), SDL_FreeSurface);
     if (bmp == nullptr)
-        throw_error("SDL_LoadBMP");
+        throw_error("Couldn't open file " + filename);
 
     return std::move(bmp);
 }
