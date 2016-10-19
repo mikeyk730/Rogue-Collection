@@ -76,9 +76,9 @@ endmsg()
     if (mpos)
     {
 	wmove(cw, 0, mpos);
-    PC_GFX_COLOR(0x70);
+    PC_GFX_COLOR(cw, 0x70);
     waddstr(cw, MORE_MSG);
-    PC_GFX_NOCOLOR(0x70);
+    PC_GFX_NOCOLOR(cw, 0x70);
 	draw(cw);
 	wait_for(cw,' ');
     }
@@ -194,7 +194,7 @@ status()
     s_add = pstats.s_str.st_add;
     s_exp = pstats.s_exp; 
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
-    PC_GFX_COLOR(0x0e);
+    PC_GFX_COLOR(cw, 0x0e);
     mvwaddstr(cw, LINES - 1, 0, buf);
     switch (hungry_state)
     {
@@ -206,7 +206,7 @@ status()
 	when 3:
 	    waddstr(cw, "  Fainting");
     }
-    PC_GFX_NOCOLOR(0x0e);
+    PC_GFX_NOCOLOR(cw, 0x0e);
     wclrtoeol(cw);
     s_hungry = hungry_state;
     wmove(cw, oy, ox);
