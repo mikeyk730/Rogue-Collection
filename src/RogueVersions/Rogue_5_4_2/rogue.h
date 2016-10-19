@@ -605,7 +605,7 @@ int 	dropcheck(const THING *obj);
 void	eat(void);
 int     encclearerr();
 int     encerror();
-void    encseterr();
+void    encseterr(int err);
 size_t  encread(char *start, size_t size, FILE *inf);
 size_t	encwrite(const char *start, size_t size, FILE *outf);
 void    end_line(void);

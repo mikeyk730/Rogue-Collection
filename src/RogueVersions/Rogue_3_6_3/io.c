@@ -83,6 +83,7 @@ endmsg()
 	wait_for(cw,' ');
     }
     mvwaddstr(cw, 0, 0, msgbuf);
+    MDK_LOG("msg: %s\n", msgbuf);
     wclrtoeol(cw);
     mpos = newpos;
     newpos = 0;

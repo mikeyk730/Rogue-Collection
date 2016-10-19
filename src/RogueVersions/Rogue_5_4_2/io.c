@@ -100,6 +100,7 @@ endmsg(void)
     if (islower((int)msgbuf[0]) && !lower_msg && msgbuf[1] != ')')
 	msgbuf[0] = (char) toupper(msgbuf[0]);
     mvaddstr(0, 0, msgbuf);
+    MDK_LOG("msg: %s\n", msgbuf);
     clrtoeol();
     mpos = newpos;
     newpos = 0;

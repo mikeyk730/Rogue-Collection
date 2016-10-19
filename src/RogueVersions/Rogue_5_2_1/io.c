@@ -89,6 +89,7 @@ endmsg()
      */
     if (islower(msgbuf[0]) && msgbuf[1] != ')')
 	msgbuf[0] = toupper(msgbuf[0]);
+    MDK_LOG("msg: %s\n", msgbuf);
     mvaddstr(0, 0, msgbuf);
     clrtoeol();
     mpos = newpos;
