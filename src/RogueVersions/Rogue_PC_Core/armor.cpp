@@ -89,8 +89,8 @@ std::string Armor::InventoryName() const
     char *pb = prbuf;
 
     if (is_known() || game->wizard().reveal_items())
-        chopmsg(pb, "%s %s", "%s %s [armor class %d]", num(get_default_class(m_which) - get_armor_class(), 0, (char)ARMOR),
-            TypeName().c_str(), armor_class_for_display());
+        chopmsg(pb, "%s %s", "%s %s [protection %d]", num(get_default_class(m_which) - armor_class(), 0, (char)ARMOR),
+            TypeName().c_str(), armor_for_display());
     else
         sprintf(pb, "%s", TypeName().c_str());
 
@@ -99,21 +99,21 @@ std::string Armor::InventoryName() const
 
 bool Armor::IsMagic() const
 {
-    return get_armor_class() != get_default_class(m_which);
+    return armor_class() != get_default_class(m_which);
 }
 
 Armor::Armor(int which) :
     Item(ARMOR, which)
 {
-    armor_class = get_default_class(which);
+    m_armor_class = get_default_class(which);
 
     int k;
     if ((k = rnd(100)) < 20) {
         set_cursed();
-        armor_class += rnd(3) + 1;
+        m_armor_class += rnd(3) + 1;
     }
     else if (k < 28)
-        armor_class -= rnd(3) + 1;
+        m_armor_class -= rnd(3) + 1;
 }
 
 Armor::Armor(int which, int ac_mod) :
@@ -121,7 +121,7 @@ Armor::Armor(int which, int ac_mod) :
 {
     if (ac_mod > 0)
         set_cursed();
-    armor_class = get_default_class(which) + ac_mod;
+    m_armor_class = get_default_class(which) + ac_mod;
 }
 
 Item * Armor::Clone() const
@@ -136,7 +136,7 @@ std::string Armor::TypeName() const
 
 bool Armor::IsEvil() const
 {
-    return get_armor_class() > get_default_class(m_which);
+    return armor_class() > get_default_class(m_which);
 }
 
 int Armor::Worth() const
@@ -153,30 +153,30 @@ int Armor::Worth() const
     case BANDED_MAIL: worth = 90; break;
     case PLATE_MAIL: worth = 150; break;
     }
-    worth += (9 - get_armor_class()) * 100;
-    worth += (10 * (get_default_class(m_which) - get_armor_class()));
+    worth += (9 - armor_class()) * 100;
+    worth += (10 * (get_default_class(m_which) - armor_class()));
     return worth;
 }
 
-int Armor::get_armor_class() const
+int Armor::armor_class() const
 {
-    return armor_class;
+    return m_armor_class;
 }
 
-int Armor::armor_class_for_display() const
+int Armor::armor_for_display() const
 {
-    int a = get_armor_class();
-    return (-((a)-11));
+    int a = armor_class();
+    return 11-a;
 }
 
 void Armor::enchant_armor()
 {
-    armor_class--;
+    m_armor_class--;
     remove_curse();
 }
 
 void Armor::weaken_armor()
 {
-    armor_class++;
+    m_armor_class++;
 }
 

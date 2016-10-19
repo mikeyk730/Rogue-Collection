@@ -1,11 +1,15 @@
-#ifdef USE_PC_GFX
-#include <pc_gfx_charmap.h>
 #include "pc_gfx_macros.h"
-#include <curses.h>
+
+#ifdef ROGUE_COLLECTION
 void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols)
 {
     init_curses(screen, input, lines, cols);
 }
+#endif
+
+#ifdef USE_PC_STYLE
+#include <pc_gfx_charmap.h>
+#include <curses.h>
 
 void setup_colors()
 {

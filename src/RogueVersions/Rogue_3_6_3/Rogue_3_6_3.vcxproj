@@ -134,7 +134,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
+      <AdditionalOptions>/DUSE_PC_STYLE /DROGUE_COLLECTION %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
@@ -150,7 +151,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
+      <AdditionalOptions>/DUSE_PC_STYLE /DROGUE_COLLECTION %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
@@ -168,7 +170,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
+      <AdditionalOptions>/DUSE_PC_STYLE /DROGUE_COLLECTION %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -188,7 +191,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCOREFILE="rogue36.scr";WIZARD</PreprocessorDefinitions>
+      <AdditionalOptions>/DUSE_PC_STYLE /DROGUE_COLLECTION %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

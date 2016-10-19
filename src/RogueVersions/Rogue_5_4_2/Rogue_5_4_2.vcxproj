@@ -45,10 +45,6 @@
     <ClCompile Include="rip.c" />
     <ClCompile Include="rooms.c" />
     <ClCompile Include="save.c">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ROGUE_5_4_2;USE_PC_GFX;SCOREFILE="rogue54.scr";MASTER</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ROGUE_5_4_2;USE_PC_GFX;SCOREFILE="rogue54.scr";MASTER</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ROGUE_5_4_2;USE_PC_GFX;SCOREFILE="rogue54.scr";MASTER</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ROGUE_5_4_2;USE_PC_GFX;SCOREFILE="rogue54.scr";MASTER</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="scrolls.c" />
     <ClCompile Include="state.c" />
@@ -140,7 +136,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue54.scr";ALLSCORES;MASTER</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCOREFILE="rogue54.scr";ALLSCORES;MASTER</PreprocessorDefinitions>
+      <AdditionalOptions>/DUSE_PC_STYLE /DROGUE_COLLECTION %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
@@ -156,7 +153,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue54.scr";ALLSCORES;MASTER</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCOREFILE="rogue54.scr";ALLSCORES;MASTER</PreprocessorDefinitions>
+      <AdditionalOptions>/DUSE_PC_STYLE /DROGUE_COLLECTION %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
@@ -174,7 +172,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue54.scr";ALLSCORES;MASTER</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCOREFILE="rogue54.scr";ALLSCORES;MASTER</PreprocessorDefinitions>
+      <AdditionalOptions>/DUSE_PC_STYLE /DROGUE_COLLECTION %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -194,7 +193,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>USE_PC_GFX;SCOREFILE="rogue54.scr";ALLSCORES;MASTER</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SCOREFILE="rogue54.scr";ALLSCORES;MASTER</PreprocessorDefinitions>
+      <AdditionalOptions>/DUSE_PC_STYLE /DROGUE_COLLECTION %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

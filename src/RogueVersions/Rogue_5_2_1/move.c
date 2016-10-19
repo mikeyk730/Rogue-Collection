@@ -102,9 +102,7 @@ over:
 	case ' ':
 	case VWALL:
 	case HWALL:
-#ifdef USE_PC_GFX
-    case LLWALL: case LRWALL: case URWALL: case ULWALL:
-#endif
+    PC_GFX_WALL_CASES
 hit_bound:
 	    if (passgo && running && (proom->r_flags & ISGONE)
 		&& !on(player, ISBLIND))

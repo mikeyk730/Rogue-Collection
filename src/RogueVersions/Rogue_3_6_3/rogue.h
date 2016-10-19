@@ -81,7 +81,7 @@
 /*
  * Things that appear on the screens
  */
-#ifndef USE_PC_GFX
+#ifndef USE_PC_STYLE
 #define PASSAGE '#'
 #define DOOR '+'
 #define FLOOR '.'

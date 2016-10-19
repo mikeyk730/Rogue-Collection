@@ -103,9 +103,7 @@ look(int wakeup)
 	    {
 		if (y == hero.y && x == hero.x
 		 || (inpass && (ch == HWALL || ch == VWALL
-#ifdef USE_PC_GFX
-    || ch == LLWALL || ch == LRWALL || ch == URWALL || ch == ULWALL
-#endif
+         PC_GFX_OR_WALLS
              )))
 			continue;
 	    }

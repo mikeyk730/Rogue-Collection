@@ -526,7 +526,7 @@ void thaw_player()
 bool Monster::rust_attack()
 {
     //If a rust monster hits, you lose armor, unless that armor is leather or there is a magic ring
-    if (game->hero().get_current_armor() && game->hero().get_current_armor()->get_armor_class() < 9 && game->hero().get_current_armor()->m_which != LEATHER) {
+    if (game->hero().get_current_armor() && game->hero().get_current_armor()->armor_class() < 9 && game->hero().get_current_armor()->m_which != LEATHER) {
 
         //See if a ring can help him
         bool sustain = false;

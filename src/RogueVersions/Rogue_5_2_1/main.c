@@ -139,9 +139,7 @@ char **envp;
     init_materials();			/* Set up materials of wands */
 
     initscr();				/* Start up cursor package */
-#ifdef USE_PC_GFX
-    setup_colors();
-#endif
+    PC_GFX_SETUP_COLORS();
 
     if (COLS < 70) 
     { 

@@ -108,13 +108,13 @@ int Hero::calculate_armor() const
 {
     int armor = m_stats.m_ac;
 
-    if (get_current_armor() != NULL)
-        armor = get_current_armor()->get_armor_class();
+    if (get_current_armor())
+        armor = get_current_armor()->armor_class();
 
     for (int i = LEFT; i <= RIGHT; i++) {
-        Ring* r = game->hero().get_ring(i);
-        if (r) {
-            armor -= r->GetArmorBoost();
+        Ring* ring = game->hero().get_ring(i);
+        if (ring) {
+            armor -= ring->GetArmorBoost();
         }
     }
 

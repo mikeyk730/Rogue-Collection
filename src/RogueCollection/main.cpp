@@ -81,10 +81,7 @@ namespace
         catch (const std::runtime_error& e)
         {
             std::string s(e.what());
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-                "Error",
-                e.what(),
-                NULL);
+            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", s.c_str(), NULL);
             exit(1);
         }
     }
@@ -143,7 +140,7 @@ int main(int argc, char** argv)
     current_env->get("game", &game);
     if (!game.empty())
     {
-        if (game.size() == 1 && (game[0] == 'a' || game[0] == 'b' || game[0] == 'c' || game[0] == 'd'))
+        if (game.size() == 1 && (game[0] >= 'a' && game[0] <= 'd'))
         {
             i = game[0] - 'a';
         }

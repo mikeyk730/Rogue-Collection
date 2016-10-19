@@ -244,7 +244,7 @@ status(void)
         move(0, 0);
         msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
         level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp, pstats.s_str,
-        max_stats.s_str, 10 - s_arm, pstats.s_lvl, pstats.s_exp,
+        max_stats.s_str, ARMOR_DISPLAY_MOD - s_arm, pstats.s_lvl, pstats.s_exp,
         state_name[hungry_state]);
     }
     else
@@ -253,7 +253,7 @@ status(void)
         PC_GFX_COLOR(0x0e);
         printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
 	    level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp, pstats.s_str,
-	    max_stats.s_str, 10 - s_arm, pstats.s_lvl, pstats.s_exp,
+	    max_stats.s_str, ARMOR_DISPLAY_MOD - s_arm, pstats.s_lvl, pstats.s_exp,
 	    state_name[hungry_state]);
         PC_GFX_NOCOLOR(0x0e);
     }

@@ -161,7 +161,7 @@ int Agent::calculate_armor() const
 int Agent::armor_for_display() const
 {
     int a = calculate_armor();
-    return (-((a)-11));
+    return 11-a;
 }
 
 int Agent::calculate_strength() const
