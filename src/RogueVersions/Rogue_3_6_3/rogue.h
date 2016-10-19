@@ -105,7 +105,7 @@
 #define LLWALL	    '-'
 #define LRWALL	    '-'
 #else
-#include "../Shared/pc_gfx_charmap.h"
+#include <pc_gfx_charmap.h>
 #endif
 #define ROGUE_3_6_3
 #include "../pc_gfx_macros.h"

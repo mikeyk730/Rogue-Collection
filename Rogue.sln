@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rogue_PC_Core", "src\RogueCore\Rogue.vcxproj", "{E26D8B74-2734-44D9-B418-B00E890E4073}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rogue_PC_Core", "src\RogueVersions\Rogue_PC_Core\Rogue_PC_Core.vcxproj", "{E26D8B74-2734-44D9-B418-B00E890E4073}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RogueCollection", "src\SdlRogue\SdlRogue.vcxproj", "{691EF6AE-55BD-459F-94E6-6D318B47BCA0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RogueCollection", "src\RogueCollection\RogueCollection.vcxproj", "{691EF6AE-55BD-459F-94E6-6D318B47BCA0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5D94880B-C99D-887C-5219-9F7CBE21947C} = {5D94880B-C99D-887C-5219-9F7CBE21947C}
 		{E85D0F19-D582-4240-8299-06ACCF51883B} = {E85D0F19-D582-4240-8299-06ACCF51883B}
@@ -15,7 +15,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RogueCollection", "src\SdlR
 		{0F817ACA-2C76-41C3-BBFD-36D66A68E2E6} = {0F817ACA-2C76-41C3-BBFD-36D66A68E2E6}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rogue_PC_1_48", "src\PdCursesRogue\PdCursesRogue.vcxproj", "{25CF5262-CC48-4884-A9DF-DC5534807CB4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rogue_PC_1_48", "src\RogueVersions\Rogue_PC_1_48\Rogue_PC_1_48.vcxproj", "{25CF5262-CC48-4884-A9DF-DC5534807CB4}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E26D8B74-2734-44D9-B418-B00E890E4073} = {E26D8B74-2734-44D9-B418-B00E890E4073}
 		{0F817ACA-2C76-41C3-BBFD-36D66A68E2E6} = {0F817ACA-2C76-41C3-BBFD-36D66A68E2E6}

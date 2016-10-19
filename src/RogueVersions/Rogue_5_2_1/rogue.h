@@ -129,7 +129,7 @@ extern const char *metal[];
 #define LLWALL	    '-'
 #define LRWALL	    '-'
 #else
-#include "../../Shared\pc_gfx_charmap.h"
+#include <pc_gfx_charmap.h>
 #endif
 #define ROGUE_5_2_1
 #include "../pc_gfx_macros.h"

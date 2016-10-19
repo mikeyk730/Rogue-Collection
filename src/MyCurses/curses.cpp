@@ -4,7 +4,7 @@ extern "C" {
 }
 #include <algorithm>
 #include <cstdarg>
-#include "../Shared/display_interface.h"
+#include <display_interface.h>
 #include "input_interface.h"
 
 extern "C"
