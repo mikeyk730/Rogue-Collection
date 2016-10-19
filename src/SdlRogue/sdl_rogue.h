@@ -64,7 +64,7 @@ struct SdlRogue : public DisplayInterface, public InputInterface
     virtual void SetCursor(bool enable) override;
 
     //input interface
-    virtual char GetChar(bool block, bool *is_replay) override;
+    virtual char GetChar(bool block, bool for_string, bool *is_replay) override;
     virtual void Flush() override;
 
     struct Impl;

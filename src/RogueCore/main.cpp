@@ -190,6 +190,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
 
     if (!args.savefile.empty()) {
         game = new GameState(g_random, args.savefile, !args.hide_replay, args.start_paused, output, input);
+        game->set_logfile(main_options.get_environment("logfile"));
     }
     else {
         game = new GameState(seed, output, input);
@@ -203,10 +204,9 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
             std::ifstream in(args.optfile);
             game->options.from_file(in);
         }
+        game->set_logfile(main_options.get_environment("logfile"));
         game->process_environment();
     }
-
-    game->set_logfile(main_options.get_environment("logfile"));
 
     if (game->options.act_like_v1_1()) {
         set_monsters_v1_1();

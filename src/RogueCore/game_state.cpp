@@ -200,10 +200,18 @@ void Options::from_file(std::istream & in, char delimiter)
     }
 }
 
+void Options::for_each(std::function<void(std::pair<std::string, std::string>)> f) const
+{
+    std::for_each(m_environment.begin(), m_environment.end(), f);
+}
+
 void GameState::process_environment()
 {
     macro = options.get_environment("macro");
     wizard().add_powers(options.get_environment("powers"));
+    options.for_each([this] (std::pair<std::string, std::string> p){
+        log("env", p.first + "=" + p.second);
+    });
 }
 
 void Options::serialize(std::ostream& file)

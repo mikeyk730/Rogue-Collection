@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <functional>
 #include <fstream>
 #include "../Shared/coord.h"
 #include "wizard.h"
@@ -43,6 +44,7 @@ struct Options
 public:
     void init_environment();
     void from_file(std::istream & optfile, char delimiter='\n');
+    void for_each(std::function<void(std::pair<std::string, std::string>)> f) const;
 
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);

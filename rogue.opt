@@ -51,7 +51,6 @@ ice_monster_miss_bugfix=true
 ;logfile=last.log
 
 ;todo:
-;autosave=last.sav
 ;throws_affect_mimics=false
 ;version=1.48
 ;scorefile=roguepc.scr

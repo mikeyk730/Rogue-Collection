@@ -172,7 +172,7 @@ private:
 
     //todo: 2 classes
 public:
-    char GetChar(bool block, bool *is_replay);
+    char GetChar(bool block, bool for_string, bool *is_replay);
     void Flush();
 private:
     void HandleEventText(const SDL_Event& e);
@@ -871,9 +871,9 @@ void SdlRogue::SetCursor(bool enable)
     m_impl->SetCursor(enable);
 }
 
-char SdlRogue::GetChar(bool block, bool *is_replay)
+char SdlRogue::GetChar(bool block, bool for_string, bool *is_replay)
 {
-    return m_impl->GetChar(block, is_replay);
+    return m_impl->GetChar(block, for_string, is_replay);
 }
 
 void SdlRogue::Flush()
@@ -881,7 +881,7 @@ void SdlRogue::Flush()
     m_impl->Flush();
 }
 
-char SdlRogue::Impl::GetChar(bool block, bool *is_replay)
+char SdlRogue::Impl::GetChar(bool block, bool for_string, bool *is_replay)
 {
     char c = 0;
     int sleep = 0;
@@ -910,7 +910,7 @@ char SdlRogue::Impl::GetChar(bool block, bool *is_replay)
                 *is_replay = true;
             if (!m_paused && m_replay_sleep)
                 sleep = m_replay_sleep;
-            if (m_steps_to_take > 0)
+            if (m_steps_to_take > 0 && !(for_string && c != '\r' && c != ESCAPE))
                 --m_steps_to_take;
         }
     }

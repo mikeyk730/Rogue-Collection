@@ -194,7 +194,7 @@ int __window::getch()
 {
     if (!s_input)
         return ERR;
-    int ch = s_input->GetChar(!no_delay, nullptr);
+    int ch = s_input->GetChar(!no_delay, false, nullptr);
     return ch ? ch : ERR;
 }
 
@@ -244,7 +244,7 @@ std::string __window::getsnstr_impl(unsigned int n)
     std::string s;
     while (true)
     {
-        unsigned char c = s_input->GetChar(true, nullptr);
+        unsigned char c = s_input->GetChar(true, true, nullptr);
         switch (c)
         {
         case ESCAPE:

@@ -12,8 +12,7 @@ bool ConsoleKeyboardInput::HasMoreInput()
 }
 
 char ConsoleKeyboardInput::GetNextChar(bool *is_replay) {
-    return m_impl->GetChar(true, is_replay);
-    //return ::getch();
+    return m_impl->GetChar(true, false, is_replay);
 }
 
 std::string ConsoleKeyboardInput::GetNextString(int size)
