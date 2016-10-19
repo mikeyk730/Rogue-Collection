@@ -33,6 +33,12 @@
     <ClInclude Include="..\Shared\pc_gfx_charmap.h">
       <Filter>Shared</Filter>
     </ClInclude>
+    <ClInclude Include="text_provider.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="tile_provider.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,6 +54,12 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="game_select.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="text_provider.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="tile_provider.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
