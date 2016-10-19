@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <map>
 #include <display_interface.h>
 #include <input_interface.h>
 
@@ -41,6 +42,24 @@ struct Options
     bool is_unix;
     std::vector<GraphicsConfig> gfx_options;
 };
+
+struct TextProvider
+{
+    TextProvider(const TextConfig& config, SDL_Renderer* renderer);
+    ~TextProvider();
+    Coord dimensions() const;
+    void GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect);
+
+private:
+    int TextProvider::get_text_index(unsigned short attr);
+    SDL_Rect TextProvider::get_text_rect(unsigned char ch, int i);
+
+    TextConfig m_cfg;
+    SDL_Texture* m_text = 0;
+    Coord m_text_dimensions = { 0, 0 };
+    std::map<int, int> m_attr_index;
+};
+
 
 extern std::vector<Options> s_options;
 

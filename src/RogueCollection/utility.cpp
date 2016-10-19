@@ -141,7 +141,6 @@ std::string getResourcePath(const std::string &subDir) {
     return subDir.empty() ? baseRes : baseRes + subDir + PATH_SEP;
 }
 
-
 SDL::Scoped::Font load_font(const std::string& filename, int size)
 {
     SDL::Scoped::Font font(TTF_OpenFont(filename.c_str(), size), TTF_CloseFont);
@@ -228,6 +227,56 @@ void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
         break;
     }
 }
+
+void paint_surface(SDL_Surface* surface, SDL_Color fg, SDL_Color bg)
+{
+    int n = surface->w * surface->h;
+    for (int i = 0; i < n; ++i)
+    {
+        int x = i % surface->w;
+        int y = i / surface->w;
+        Uint32 p = getpixel(surface, x, y);
+
+        Uint8 r, g, b;
+        SDL_GetRGB(p, surface->format, &r, &g, &b);
+        if (r || g || b) {
+            p = SDL_MapRGB(surface->format, fg.r, fg.g, fg.b);
+        }
+        else {
+            p = SDL_MapRGB(surface->format, bg.r, bg.g, bg.b);
+        }
+        putpixel(surface, x, y, p);
+    }
+
+}
+
+SDL::Scoped::Surface blit_surface(SDL_Surface* surface, SDL_Rect* r)
+{
+    int w = surface->w;
+    int h = surface->h;
+    if (r)
+    {
+        w = r->w;
+        h = r->h;
+    }
+
+    SDL::Scoped::Surface tile(SDL_CreateRGBSurface(0, w, h, surface->format->BitsPerPixel, 255, 255, 255, 255), SDL_FreeSurface);
+    if (tile == nullptr)
+        throw_error("SDL_CreateRGBSurface");
+
+    if (SDL_BlitSurface(surface, r, tile.get(), 0))
+        throw_error("SDL_BlitSurface");
+
+    return std::move(tile);
+}
+
+SDL::Scoped::Texture painted_texture(SDL_Surface* surface, SDL_Rect* r, SDL_Color fg, SDL_Color bg, SDL_Renderer* renderer)
+{
+    SDL::Scoped::Surface tile(blit_surface(surface, r));
+    paint_surface(tile.get(), fg, bg);
+    return create_texture(tile.get(), renderer);
+}
+
 
 int get_scaling_factor(Coord logical_size)
 {

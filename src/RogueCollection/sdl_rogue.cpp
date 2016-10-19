@@ -108,9 +108,6 @@ private:
     bool use_inverse(unsigned short attr);
     SDL_Rect get_tile_rect(int i, bool use_inverse);
 
-    int get_text_index(unsigned short attr);
-    SDL_Rect get_text_rect(unsigned char c, int i);
-
     Region shared_data_full_region();     //must have mutex before calling
     bool shared_data_is_narrow();         //must have mutex before calling
 
@@ -118,16 +115,14 @@ private:
     SDL_Window* m_window = 0;
     SDL_Renderer* m_renderer = 0;
     SDL_Texture* m_tiles = 0;
-    SDL_Texture* m_text = 0;
     std::shared_ptr<Environment> m_game_env;
     std::shared_ptr<Environment> m_current_env;
 
     Coord m_block_size = { 0, 0 };
     int m_tile_states = 0;
-    Coord m_text_dimensions = { 0, 0 };
-    std::map<int, int> m_attr_index;
     int m_gfx_mode = 0;
     int m_scale = INT_MAX;
+    std::unique_ptr<TextProvider> m_text_provider;
 
     Options m_options;
 
@@ -311,7 +306,6 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
 
 SdlRogue::Impl::~Impl()
 {
-    SDL_DestroyTexture(m_text);
     SDL_DestroyTexture(m_tiles);
 }
 
@@ -352,28 +346,15 @@ SDL_Rect SdlRogue::Impl::get_tile_rect(int i, bool use_inverse)
 
 void SdlRogue::Impl::LoadAssets()
 {
-    if (m_text) {
-        SDL_DestroyTexture(m_text);
-        m_text = 0;
-    }
     if (m_tiles) {
         SDL_DestroyTexture(m_tiles);
         m_tiles = 0;
     }
-    m_attr_index.clear();
 
     const GraphicsConfig& gfx = gfx_cfg();
 
-    SDL::Scoped::Texture text(loadImage(getResourcePath("") + gfx.text_cfg->filename, m_renderer));
-    m_text = text.release();
-    int textw, texth;
-    SDL_QueryTexture(m_text, NULL, NULL, &textw, &texth);
-
-    m_text_dimensions.x = textw / gfx.text_cfg->layout.x;
-    m_text_dimensions.y = texth / (int)gfx.text_cfg->colors.size() / gfx.text_cfg->layout.y;
-    for (int i = 0; i < (int)gfx.text_cfg->colors.size(); ++i)
-        m_attr_index[gfx.text_cfg->colors[i]] = i;
-    m_block_size = m_text_dimensions;
+    m_text_provider.reset(new TextProvider(*gfx.text_cfg, m_renderer));
+    m_block_size = m_text_provider->dimensions();
 
     if (gfx.tile_cfg)
     {
@@ -527,12 +508,14 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
         if (i != unix_chars.end())
             c = i->second;
     }
-    int i = get_text_index(color);
-    SDL_Rect clip = get_text_rect(c, i);
+
+    SDL_Rect clip;
+    SDL_Texture* text;
+    m_text_provider->GetTexture(c, color, &text, &clip);
 
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderFillRect(m_renderer, &r);
-    SDL_RenderCopy(m_renderer, m_text, &clip, &r);
+    SDL_RenderCopy(m_renderer, text, &clip, &r);
 }
 
 void SdlRogue::Impl::RenderTile(uint32_t info, SDL_Rect r)
@@ -561,10 +544,12 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     r.h = m_block_size.y/4;
 
     int color = 0x0f;
-    int i = get_text_index(color);
-    SDL_Rect clip = get_text_rect(0xdb, i);
 
-    SDL_RenderCopy(m_renderer, m_text, &clip, &r);
+    SDL_Rect clip;
+    SDL_Texture* text;
+    m_text_provider->GetTexture(0xdb, color, &text, &clip);
+
+    SDL_RenderCopy(m_renderer, text, &clip, &r);
 }
 
 void SdlRogue::Impl::RenderReplayOverlay(int steps, Coord dimensions)
@@ -715,25 +700,6 @@ SDL_Rect SdlRogue::Impl::get_screen_rect(Coord buffer_pos)
     r.w = m_block_size.x;
     r.h = m_block_size.y;
 
-    return r;
-}
-
-int SdlRogue::Impl::get_text_index(unsigned short attr)
-{
-    auto i = m_attr_index.find(attr);
-    if (i != m_attr_index.end())
-        return i->second;
-    return 0;
-}
-
-SDL_Rect SdlRogue::Impl::get_text_rect(unsigned char ch, int i)
-{
-    Coord layout = gfx_cfg().text_cfg->layout;
-    SDL_Rect r;
-    r.h = m_text_dimensions.y;
-    r.w = m_text_dimensions.x;
-    r.x = (ch % layout.x) * m_text_dimensions.x;
-    r.y = (i*layout.y + ch/layout.x) * m_text_dimensions.y;
     return r;
 }
 
@@ -1221,4 +1187,55 @@ void SdlRogue::Impl::HandleInputReplay(int ch)
         m_steps_to_take = 0;
         m_input_cv.notify_all();
     }
+}
+
+TextProvider::TextProvider(const TextConfig & config, SDL_Renderer * renderer)
+    : m_cfg(config)
+{
+    SDL::Scoped::Texture text(loadImage(getResourcePath("") + config.filename, renderer));
+    m_text = text.release();
+    int textw, texth;
+    SDL_QueryTexture(m_text, NULL, NULL, &textw, &texth);
+
+    m_text_dimensions.x = textw / config.layout.x;
+    m_text_dimensions.y = texth / (int)config.colors.size() / config.layout.y;
+    for (int i = 0; i < (int)config.colors.size(); ++i)
+        m_attr_index[config.colors[i]] = i;
+
+}
+
+TextProvider::~TextProvider()
+{
+    SDL_DestroyTexture(m_text);
+}
+
+Coord TextProvider::dimensions() const
+{
+    return m_text_dimensions;
+}
+
+int TextProvider::get_text_index(unsigned short attr)
+{
+    auto i = m_attr_index.find(attr);
+    if (i != m_attr_index.end())
+        return i->second;
+    return 0;
+}
+
+SDL_Rect TextProvider::get_text_rect(unsigned char ch, int i)
+{
+    Coord layout = m_cfg.layout;
+    SDL_Rect r;
+    r.h = m_text_dimensions.y;
+    r.w = m_text_dimensions.x;
+    r.x = (ch % layout.x) * m_text_dimensions.x;
+    r.y = (i*layout.y + ch / layout.x) * m_text_dimensions.y;
+    return r;
+}
+
+void TextProvider::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Rect * rect)
+{
+    int i = get_text_index(color);
+    *rect = get_text_rect(ch, i);
+    *texture = m_text;
 }

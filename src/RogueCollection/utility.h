@@ -63,6 +63,10 @@ void throw_error(const std::string &msg);
 */
 std::string getResourcePath(const std::string &subDir = "");
 
+void paint_surface(SDL_Surface* surface, SDL_Color fg, SDL_Color bg);
+SDL::Scoped::Surface blit_surface(SDL_Surface* surface, SDL_Rect* r = 0);
+SDL::Scoped::Texture painted_texture(SDL_Surface* surface, SDL_Rect* r, SDL_Color fg, SDL_Color bg, SDL_Renderer* renderer);
+
 uint32_t getpixel(SDL_Surface *surface, int x, int y);
 void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel);
 
