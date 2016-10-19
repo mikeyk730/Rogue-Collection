@@ -192,6 +192,7 @@ private:
     int m_replay_sleep = 0;
     int m_pause_at = 0;
     bool m_paused = false;
+    uint16_t m_restore_count = 0;
 
     std::mutex m_input_mutex;
     std::condition_variable m_input_cv;
@@ -589,6 +590,7 @@ void SdlRogue::Impl::SaveGame()
     }
 
     write(file, version);
+    write(file, m_restore_count);
     write_short_string(file, m_options.name);
     m_game_env->serialize(file);
     std::copy(m_keylog.begin(), m_keylog.end(), std::ostreambuf_iterator<char>(file));
@@ -607,6 +609,9 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
 
     unsigned char version;
     read(file, &version);
+
+    read(file, &m_restore_count);
+    ++m_restore_count;
 
     std::string name;
     read_short_string(file, &name);
