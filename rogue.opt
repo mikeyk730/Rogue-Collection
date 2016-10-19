@@ -5,7 +5,8 @@
 game=
 gfx=pc
 ;small_screen=true
-;pause_replay=true
+;replay_paused=true
+;replay_pause_at=200
 ;replay_step_delay=15
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

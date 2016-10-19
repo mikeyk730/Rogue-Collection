@@ -75,7 +75,7 @@ struct SdlRogue::Impl
     void MoveCursor(Coord pos);
     void SetCursor(bool enable);
 
-    Environment* environment();
+    Environment* GameEnv();
     Options options();
 
     void Run();
@@ -93,7 +93,7 @@ private:
     void PostRenderMsg(int force);
 
     void SaveGame();
-    void RestoreGame(const std::string& filename, Environment* curr_env);
+    void RestoreGame(const std::string& filename);
     void SetGame(const std::string& name);
     void SetGame(int i);
 
@@ -118,7 +118,8 @@ private:
     SDL_Renderer* m_renderer = 0;
     SDL_Texture* m_tiles = 0;
     SDL_Texture* m_text = 0;
-    std::shared_ptr<Environment> m_env;
+    std::shared_ptr<Environment> m_game_env;
+    std::shared_ptr<Environment> m_current_env;
 
     Coord m_block_size = { 0, 0 };
     int m_tile_states = 0;
@@ -189,6 +190,7 @@ private:
     int m_replay_steps_remaining = 0;
     int m_steps_to_take = 0;
     int m_replay_sleep = 0;
+    int m_pause_at = 0;
     bool m_paused = false;
 
     std::mutex m_input_mutex;
@@ -236,18 +238,23 @@ private:
 
 SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> current_env, const std::string& file) :
     m_window(window),
-    m_renderer(renderer)
+    m_renderer(renderer),
+    m_current_env(current_env)
 {
-    RestoreGame(file, current_env.get());
+    RestoreGame(file);
 
-    std::string sleep_str;
-    if (current_env->get("replay_step_delay", &sleep_str))
+    std::string value;
+    if (m_current_env->get("replay_step_delay", &value))
     {
-        m_replay_sleep = atoi(sleep_str.c_str());
+        m_replay_sleep = atoi(value.c_str());
+    }
+    if (m_current_env->get("replay_pause_at", &value))
+    {
+        m_pause_at = atoi(value.c_str());
     }
 
     std::string gfx_pref;
-    if (current_env->get("gfx", &gfx_pref)) {
+    if (m_current_env->get("gfx", &gfx_pref)) {
         for (size_t i = 0; i < m_options.gfx_options.size(); ++i)
         {
             if (m_options.gfx_options[i].name == gfx_pref) {
@@ -264,17 +271,18 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
 SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment>env, int i) : 
     m_window(window),
     m_renderer(renderer),
-    m_env(env)
+    m_current_env(env),
+    m_game_env(env)
 {
     int seed = (int)time(0);
     std::ostringstream ss;
     ss << seed;
-    m_env->set("seed", ss.str());
+    m_game_env->set("seed", ss.str());
  
     SetGame(i);
 
     std::string gfx_pref;
-    if (m_env->get("gfx", &gfx_pref)) {
+    if (m_current_env->get("gfx", &gfx_pref)) {
         for (size_t i = 0; i < m_options.gfx_options.size(); ++i)
         {
             if (m_options.gfx_options[i].name == gfx_pref) {
@@ -363,7 +371,7 @@ void SdlRogue::Impl::LoadAssets()
         m_tiles = create_texture(tiles.get(), m_renderer).release();
     }
 
-    set_window_size(m_block_size.x * m_env->cols(), m_block_size.y * m_env->lines());
+    set_window_size(m_block_size.x * m_game_env->cols(), m_block_size.y * m_game_env->lines());
     SDL_RenderClear(m_renderer);
 }
 
@@ -582,7 +590,7 @@ void SdlRogue::Impl::SaveGame()
 
     write(file, version);
     write_short_string(file, m_options.name);
-    m_env->serialize(file);    
+    m_game_env->serialize(file);
     std::copy(m_keylog.begin(), m_keylog.end(), std::ostreambuf_iterator<char>(file));
 
     if (!file) {
@@ -590,7 +598,7 @@ void SdlRogue::Impl::SaveGame()
     }
 }
 
-void SdlRogue::Impl::RestoreGame(const std::string& path, Environment* curr_env)
+void SdlRogue::Impl::RestoreGame(const std::string& path)
 {
     std::ifstream file(path, std::ios::binary | std::ios::in);
     if (!file) {
@@ -603,18 +611,18 @@ void SdlRogue::Impl::RestoreGame(const std::string& path, Environment* curr_env)
     std::string name;
     read_short_string(file, &name);
 
-    m_env.reset(new Environment());
-    m_env->deserialize(file);
+    m_game_env.reset(new Environment());
+    m_game_env->deserialize(file);
     
     m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
     m_replay_steps_remaining = m_buffer.size();
 
     std::string value;
-    if (curr_env->get("pause_replay", &value) && value == "true")
+    if (m_current_env->get("replay_paused", &value) && value == "true")
         m_paused = true;
 
-    if (curr_env->get("logfile", &value))
-        m_env->set("logfile", value);
+    if (m_current_env->get("logfile", &value))
+        m_game_env->set("logfile", value);
 
     SetGame(name);
 }
@@ -635,17 +643,17 @@ void SdlRogue::Impl::SetGame(int i)
 {
     m_options = s_options[i];
 
-    if (!m_env->write_to_os(m_options.is_unix))
+    if (!m_game_env->write_to_os(m_options.is_unix))
         throw_error("Couldn't write environment");
 
     std::string screen;
     Coord dims = m_options.screen;
-    if (m_env->get("small_screen", &screen) && screen == "true")
+    if (m_game_env->get("small_screen", &screen) && screen == "true")
     {
         dims = m_options.small_screen;
     }
-    m_env->cols(dims.x);
-    m_env->lines(dims.y);
+    m_game_env->cols(dims.x);
+    m_game_env->lines(dims.y);
 
     SDL_SetWindowTitle(m_window, std::string("Rogue Collection - " + m_options.name).c_str());
 }
@@ -754,9 +762,9 @@ void SdlRogue::Impl::SetCursor(bool enable)
     m_shared_data.m_cursor = enable;
 }
 
-Environment* SdlRogue::Impl::environment()
+Environment* SdlRogue::Impl::GameEnv()
 {
-    return m_env.get();
+    return m_game_env.get();
 }
 
 Options SdlRogue::Impl::options()
@@ -836,9 +844,9 @@ void SdlRogue::Quit()
     m_impl->Quit();
 }
 
-Environment* SdlRogue::environment() const
+Environment* SdlRogue::GameEnv() const
 {
-    return m_impl->environment();
+    return m_impl->GameEnv();
 }
 
 Options SdlRogue::options() const
@@ -912,6 +920,12 @@ char SdlRogue::Impl::GetChar(bool block, bool for_string, bool *is_replay)
                 sleep = m_replay_sleep;
             if (m_steps_to_take > 0 && !(for_string && c != '\r' && c != ESCAPE))
                 --m_steps_to_take;
+
+            if (m_pause_at && m_pause_at == m_replay_steps_remaining)
+            {
+                m_paused = true;
+                m_steps_to_take = 0;
+            }
         }
     }
 

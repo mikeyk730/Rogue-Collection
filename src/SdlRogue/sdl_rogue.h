@@ -53,7 +53,7 @@ struct SdlRogue : public DisplayInterface, public InputInterface
     void Run();
     void Quit();
 
-    Environment* environment() const;
+    Environment* GameEnv() const;
     Options options() const;
 
     //display interface

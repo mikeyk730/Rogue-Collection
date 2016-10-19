@@ -83,7 +83,7 @@ namespace
                 throw_error("Couldn't load rogue_main from " + lib);
             }
 
-            (*init)(r, r, r->environment()->lines(), r->environment()->cols());
+            (*init)(r, r, r->GameEnv()->lines(), r->GameEnv()->cols());
             (*game)(0, 0, environ);
         }
         catch (const std::runtime_error& e)
@@ -145,7 +145,7 @@ int main(int argc, char** argv)
     if (!args.savefile.empty())
         current_env->set("game", args.savefile);
     if (args.start_paused)
-        current_env->set("pause_replay", "true");
+        current_env->set("replay_paused", "true");
 
     int i = -1;
     std::string replay_path;
