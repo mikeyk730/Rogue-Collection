@@ -71,7 +71,9 @@ GAME_MAIN(int argc, char **argv)
     if (getenv("SEED") != NULL)
     {
 	dnum = atoi(getenv("SEED"));
-	//mdk:noscore = 1;
+#ifndef ROGUE_COLLECTION
+	noscore = 1;
+#endif
     }
     else
 	dnum = (unsigned int) lowtime + md_getpid();

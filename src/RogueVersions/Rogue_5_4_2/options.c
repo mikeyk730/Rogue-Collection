@@ -60,8 +60,10 @@ static const OPTION	optlist[] = {
 		 whoami,	put_str,	get_str		},
     {"fruit",	 "Fruit",
 		 fruit,		put_str,	get_str		},
-//    {"file",	 "Save file",
-//		 file_name,	put_str,	get_str		}
+#ifndef ROGUE_COLLECTION
+    {"file",	 "Save file",
+		 file_name,	put_str,	get_str		}
+#endif
 };
 
 /*

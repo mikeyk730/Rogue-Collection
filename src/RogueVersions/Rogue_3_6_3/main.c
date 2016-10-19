@@ -112,7 +112,9 @@ char **envp;
 
     if (seed > 0)
     {
-        //mdk:waswizard = 1; /* don't save scores if SEED specified */
+#ifndef ROGUE_COLLECTION
+        waswizard = 1; /* don't save scores if SEED specified */
+#endif
         dnum = seed;
     }
     else

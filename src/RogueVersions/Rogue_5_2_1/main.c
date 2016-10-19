@@ -118,7 +118,9 @@ char **envp;
     if (getenv("SEED") != NULL)
     {
 	dnum = atoi(getenv("SEED"));
-	//mdk:noscore = TRUE;
+#ifndef ROGUE_COLLECTION
+	noscore = TRUE;
+#endif
     }
     else
 	dnum = lowtime + getpid();
