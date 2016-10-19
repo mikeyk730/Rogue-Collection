@@ -255,7 +255,7 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
 
     std::string gfx_pref;
     if (m_current_env->get("gfx", &gfx_pref)) {
-        for (size_t i = 0; i < m_options.gfx_options.size(); ++i)
+        for (int i = 0; i < (int)m_options.gfx_options.size(); ++i)
         {
             if (m_options.gfx_options[i].name == gfx_pref) {
                 m_gfx_mode = i;
@@ -283,7 +283,7 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
 
     std::string gfx_pref;
     if (m_current_env->get("gfx", &gfx_pref)) {
-        for (size_t i = 0; i < m_options.gfx_options.size(); ++i)
+        for (int i = 0; i < (int)m_options.gfx_options.size(); ++i)
         {
             if (m_options.gfx_options[i].name == gfx_pref) {
                 m_gfx_mode = i;
@@ -357,8 +357,8 @@ void SdlRogue::Impl::LoadAssets()
     SDL_QueryTexture(m_text, NULL, NULL, &textw, &texth);
 
     m_text_dimensions.x = textw / gfx.text_cfg->layout.x;
-    m_text_dimensions.y = texth / gfx.text_cfg->colors.size() / gfx.text_cfg->layout.y;
-    for (size_t i = 0; i < gfx.text_cfg->colors.size(); ++i)
+    m_text_dimensions.y = texth / (int)gfx.text_cfg->colors.size() / gfx.text_cfg->layout.y;
+    for (int i = 0; i < (int)gfx.text_cfg->colors.size(); ++i)
         m_attr_index[gfx.text_cfg->colors[i]] = i;
     m_block_size = m_text_dimensions;
 
@@ -559,7 +559,7 @@ void SdlRogue::Impl::RenderReplayOverlay(int steps, Coord dimensions)
     std::ostringstream ss;
     ss << "Replay " << steps;
     std::string s(ss.str());
-    int len = s.size();
+    int len = (int)s.size();
     for (int i = 0; i < len; ++i) {
         SDL_Rect r = get_screen_rect({ dimensions.x - (len - i) - 1, dimensions.y - 1 });
         //SDL_Rect r = get_screen_rect({ i, dimensions.y - 1 });
@@ -615,7 +615,7 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
     m_game_env->deserialize(file);
     
     m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-    m_replay_steps_remaining = m_buffer.size();
+    m_replay_steps_remaining = (int)m_buffer.size();
 
     std::string value;
     if (m_current_env->get("replay_paused", &value) && value == "true")
@@ -629,7 +629,7 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
 
 void SdlRogue::Impl::SetGame(const std::string & name)
 {
-    for (size_t i = 0; i < s_options.size(); ++i)
+    for (int i = 0; i < (int)s_options.size(); ++i)
     {
         if (s_options[i].name == name) {
             SetGame(i);

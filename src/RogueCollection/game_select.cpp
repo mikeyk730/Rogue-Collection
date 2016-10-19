@@ -44,7 +44,7 @@ std::pair<int, std::string> GameSelect::GetSelection()
                 if (selection.first > 0)
                     --selection.first;
                 else
-                    selection.first = m_options.size();
+                    selection.first = (int)m_options.size();
             }
             else if (e.key.keysym.sym == SDLK_DOWN) {
                 if (selection.first < int(m_options.size()))
@@ -63,8 +63,8 @@ std::pair<int, std::string> GameSelect::GetSelection()
         SDL_RenderClear(m_renderer);
         SDL_RenderCopy(m_renderer, m_logo.get(), 0, 0);
         RenderText("Choose your Rogue:", { 30, 265 }, false);
-        size_t i;
-        for (i = 0; i < m_options.size(); ++i)
+        int i;
+        for (i = 0; i < (int)m_options.size(); ++i)
             RenderOption(i, m_options[i].name, i == selection.first);
         RenderOption(i, "Restore Game", i == selection.first);
         SDL_RenderPresent(m_renderer);
