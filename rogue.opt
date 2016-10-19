@@ -3,11 +3,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 game=
-gfx=pc
-;small_screen=true
-;replay_paused=true
-;replay_pause_at=200
-;replay_step_delay=15
+gfx=
+small_screen=false
+replay_paused=false
+replay_pause_at=0
+replay_step_delay=0
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; options in all versions
@@ -43,13 +43,10 @@ askme=true
 
 menu=true
 macro=v
-use_exp_level_names=false
-prompt_for_name=false
-dir_key_clears_more=true
+prompt_for_name=true
+use_exp_level_names=true
+dir_key_clears_more=false
 hit_plus_bugfix=false
 ice_monster_miss_bugfix=true
-;powers=haste_self
-logfile=last.log
-
-
-
+powers=
+logfile=

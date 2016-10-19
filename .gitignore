@@ -6,6 +6,7 @@ bin/
 *.user
 Debug/
 Release/
+working/
 .vs
 *.opendb
 *.lnk
