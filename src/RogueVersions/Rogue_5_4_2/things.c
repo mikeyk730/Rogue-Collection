@@ -96,7 +96,7 @@ inv_name(const THING *obj, int drop)
 		if (!terse)
 		    strcat(pb, "protection ");
 		pb = &prbuf[strlen(prbuf)];
-		sprintf(pb, "%d]", ARMOR_DISPLAY_MOD - obj->o_arm);
+		sprintf(pb, "%d]", ARMOR_DISPLAY(obj->o_arm));
 	    }
 	    else
 		sprintf(pb, "%s", sp);

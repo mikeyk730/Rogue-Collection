@@ -27,7 +27,7 @@ void fix_tombstone();
 #define REST_DESC
 #define SPACE_IS_OK                   when ' ' : after = FALSE;
 #define ZAP_CASE                      when 'z': case 'p'
-#define ARMOR_DISPLAY_MOD             11
+#define ARMOR_DISPLAY(ac)             (11-ac)
 #define PC_GFX_SET_CURSOR(enable)     curs_set(enable)
 #define PC_GFX_SETUP_COLORS()         setup_colors()
 #define PC_GFX_TRANSLATE(ch)          translate_type(ch)
@@ -51,7 +51,7 @@ void fix_tombstone();
 #define SPACE_IS_OK
 #define REST_DESC                     "(space) "
 #define ZAP_CASE                      when 'z' : do_zap(FALSE); when 'p'
-#define ARMOR_DISPLAY_MOD             10
+#define ARMOR_DISPLAY(ac)             (10-ac)
 #define PC_GFX_SET_CURSOR(enable)
 #define PC_GFX_SETUP_COLORS()
 #define PC_GFX_TRANSLATE(ch)          (ch)

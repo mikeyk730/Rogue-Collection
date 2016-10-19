@@ -14,10 +14,10 @@ struct Armor : public Item
     virtual int Worth() const override;
 
     int armor_class() const;
-    int armor_for_display() const;
     void enchant_armor();
     void weaken_armor();
 
+    static int for_display(int ac);
 private:
     short m_armor_class;
 };

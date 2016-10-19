@@ -22,6 +22,7 @@
 #include "agent.h"
 #include "input_interface_ex.h"
 #include "mach_dep.h"
+#include "armor.h"
 
 #define PT(i,j)  ((COLS==40)?i:j)
 
@@ -354,7 +355,7 @@ void update_status_bar()
     }
     //Armor:
     game->screen().move(23, PT(12, 52));
-    game->screen().printw("Armor:%-2d", game->hero().armor_for_display());
+    game->screen().printw("Armor:%-2d", Armor::for_display(game->hero().calculate_armor()));
 
     //Exp:
     if (!game->options.use_exp_level_names() || game->options.act_like_v1_1())

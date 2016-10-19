@@ -90,7 +90,7 @@ std::string Armor::InventoryName() const
 
     if (is_known() || game->wizard().reveal_items())
         chopmsg(pb, "%s %s", "%s %s [protection %d]", num(get_default_class(m_which) - armor_class(), 0, (char)ARMOR),
-            TypeName().c_str(), armor_for_display());
+            TypeName().c_str(), Armor::for_display(armor_class()));
     else
         sprintf(pb, "%s", TypeName().c_str());
 
@@ -163,10 +163,9 @@ int Armor::armor_class() const
     return m_armor_class;
 }
 
-int Armor::armor_for_display() const
+int Armor::for_display(int ac)
 {
-    int a = armor_class();
-    return 11-a;
+    return 11-ac;
 }
 
 void Armor::enchant_armor()
@@ -179,4 +178,3 @@ void Armor::weaken_armor()
 {
     m_armor_class++;
 }
-

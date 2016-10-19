@@ -158,12 +158,6 @@ int Agent::calculate_armor() const
     return m_stats.m_ac;
 }
 
-int Agent::armor_for_display() const
-{
-    int a = calculate_armor();
-    return 11-a;
-}
-
 int Agent::calculate_strength() const
 {
     return m_stats.m_str;
