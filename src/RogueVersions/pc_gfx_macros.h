@@ -7,7 +7,8 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define GAME_MAIN                     __declspec(dllexport) rogue_main
 #define SHELL_CMD                     msg("You're a long way from a terminal"); after = FALSE
 #define NO_SAVE_RETURN                msg("Use Ctrl+S to save your game"); return
-#define MDK_LOG                       printf
+//#define MDK_LOG                       printf
+#define MDK_LOG(...)
 #else
 #define GAME_MAIN                     main
 #define SHELL_CMD                     shell()
@@ -19,6 +20,8 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 void setup_colors();
 int translate_type(int t);
 int reverse_translate_type(int t);
+void fix_tombstone();
+
 #define MORE_MSG                      "--More--"
 #define REST_COMMAND                  '.'
 #define REST_DESC
