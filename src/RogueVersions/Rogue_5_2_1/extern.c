@@ -27,6 +27,7 @@ bool firstmove = FALSE;			/* First move after setting door_stop */
 bool in_shell = FALSE;			/* True if executing a shell */
 bool jump = FALSE;			/* Show running as series of jumps */
 bool passgo = FALSE;			/* Follow passages */
+bool hplusfix = FALSE;			/* Fix bug giving monsters +4 hit bonus */
 bool playing = TRUE;			/* True until he quits */
 bool running = FALSE;			/* True if player is running */
 bool save_msg = TRUE;			/* Remember last msg */

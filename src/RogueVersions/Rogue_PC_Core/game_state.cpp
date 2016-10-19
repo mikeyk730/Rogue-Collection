@@ -180,8 +180,7 @@ void Options::init_environment()
     m_environment["scorefile"] = "roguepc.scr";
     m_environment["savefile"] = "rogue.sav";
     m_environment["throws_affect_mimics"] = "false";
-    m_environment["hit_plus_bugfix"] = "false";
-    m_environment["ice_monster_miss_bugfix"] = "true";
+    m_environment["hplusfix"] = "false";
 }
 
 void Options::from_file(std::istream & in, char delimiter)
@@ -399,12 +398,7 @@ bool Options::use_exp_level_names() const
 
 bool Options::hit_plus_bugfix() const
 {
-    return get_environment("hit_plus_bugfix") == "true";
-}
-
-bool Options::ice_monster_miss_bugfix() const
-{
-    return get_environment("ice_monster_miss_bugfix") != "false";
+    return get_environment("hplusfix") == "true";
 }
 
 int GameState::get_level()

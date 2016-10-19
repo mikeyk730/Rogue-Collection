@@ -34,7 +34,6 @@ struct Options
 
     //rule changing options
     bool hit_plus_bugfix() const;
-    bool ice_monster_miss_bugfix() const;
     bool throws_affect_mimics() const;
     bool act_like_v1_1() const;
 

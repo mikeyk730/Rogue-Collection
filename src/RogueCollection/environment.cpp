@@ -8,7 +8,7 @@
 
 namespace
 {
-    std::set<std::string> s_unix_bools = { "terse","flush","jump","seefloor","tombstone","passgo","step","askme" };
+    std::set<std::string> s_unix_bools = { "terse","flush","jump","seefloor","tombstone","passgo","step","askme","hplusfix" };
     std::map<std::string, std::string> s_unix_keys = { {"name", "name"}, {"fruit", "fruit"}, {"inven", "inven"} };
 
     void write_env_unix(std::ostringstream& ss, std::string key, const std::string & value)

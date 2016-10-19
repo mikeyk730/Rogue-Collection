@@ -50,6 +50,8 @@ static const OPTION	optlist[] = {
 		 &see_floor,	put_bool,	get_sf		},
     {"passgo",	"Follow turnings in passageways",
 		 &passgo,	put_bool,	get_bool	},
+    {"hplusfix",	"Fix bug giving monsters +4 hit bonus",
+		 &hplusfix,	put_bool,	get_bool	},
     {"tombstone", "Print out tombstone when killed",
 		 &tombstone,	put_bool,	get_bool	},
     {"inven",	"Inventory style",

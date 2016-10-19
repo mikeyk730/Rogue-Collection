@@ -33,6 +33,7 @@ int  lower_msg = FALSE;			/* Messages should start w/lower case */
 int  move_on = FALSE;			/* Next move shouldn't pick up items */
 int  msg_esc = FALSE;			/* Check for ESC from msg's --More-- */
 int  passgo = FALSE;			/* Follow passages */
+int  hplusfix = FALSE;			/* Fix bug giving monsters +4 hit bonus */
 int  playing = TRUE;			/* True until he quits */
 int  q_comm = FALSE;			/* Are we executing a 'Q' command? */
 int  running = FALSE;			/* True if player is running */

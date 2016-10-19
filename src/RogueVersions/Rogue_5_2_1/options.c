@@ -49,6 +49,8 @@ OPTION	optlist[] = {
 		(int *) &askme,		put_bool,	get_bool	},
     {"passgo",	"Follow turnings in passageways: ",
 		(int *) &passgo,	put_bool,	get_bool	},
+    {"hplusfix",	"Fix bug giving monsters +4 hit bonus: ",
+		(int *) &hplusfix,	put_bool,	get_bool	},
     {"name",	 "Name: ",
 		(int *) whoami,		put_str,	get_str		},
     {"fruit",	 "Fruit: ",

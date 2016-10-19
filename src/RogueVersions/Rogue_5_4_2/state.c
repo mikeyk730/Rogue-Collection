@@ -1326,6 +1326,7 @@ rs_save_file(FILE *savef)
     rs_write_int(savef, fight_flush);
     rs_write_int(savef, jump);
     rs_write_int(savef, passgo);
+    rs_write_int(savef, hplusfix);
     rs_write_int(savef, see_floor);
     rs_write_int(savef, terse);
     rs_write_int(savef, tombstone);
@@ -1392,6 +1393,7 @@ rs_restore_file(FILE *savef)
     rs_read_int(savef, &fight_flush);
     rs_read_int(savef, &jump);
     rs_read_int(savef, &passgo);
+    rs_read_int(savef, &hplusfix);
     rs_read_int(savef, &see_floor);
     rs_read_int(savef, &terse);
     rs_read_int(savef, &tombstone);

@@ -26,7 +26,7 @@
  */
 
 extern bool	after, amulet, askme, door_stop, fight_flush,
-		firstmove, in_shell, jump, noscore, p_know[], passgo,
+		firstmove, in_shell, jump, noscore, p_know[], passgo, hplusfix,
 		playing, r_know[], running, s_know[], save_msg,
 		slow_invent, terse, wizard, ws_know[];
 

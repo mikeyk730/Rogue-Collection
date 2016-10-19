@@ -494,7 +494,7 @@ typedef struct STONE STONE;
 
 extern int after, again, allscore, door_stop, fight_flush,
 	   firstmove, has_hit, inv_describe, jump, kamikaze,
-	   lower_msg, move_on, msg_esc, pack_used[],
+	   lower_msg, move_on, msg_esc, pack_used[], hplusfix,
 	   passgo, playing, q_comm, running, save_msg, see_floor,
 	   seenstairs, stat_msg, terse, to_death, tombstone,
            amulet, count, dir_ch, food_left, hungry_state, inpack,

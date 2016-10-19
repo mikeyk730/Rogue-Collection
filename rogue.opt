@@ -15,6 +15,7 @@ replay_step_delay=0
 
 name=Mike
 fruit=mango
+hplusfix=false
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Unix options
@@ -46,7 +47,5 @@ macro=v
 prompt_for_name=true
 use_exp_level_names=true
 dir_key_clears_more=false
-hit_plus_bugfix=false
-ice_monster_miss_bugfix=true
 powers=
 logfile=
