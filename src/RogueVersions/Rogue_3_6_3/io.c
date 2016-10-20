@@ -154,13 +154,14 @@ status()
     static int hpwidth = 0, s_hungry = -1;
     static int s_lvl = -1, s_pur, s_hp = -1, s_str, s_add, s_ac = 0;
     static long s_exp = 0;
+    static int s_showac = 0;
 
     /*
      * If nothing has changed since the last status, don't
      * bother.
      */
     if (s_hp == pstats.s_hpt && s_exp == pstats.s_exp && s_pur == purse
-	&& s_ac == (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm)
+	&& s_ac == (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm) && s_showac == showac
 	&& s_str == pstats.s_str.st_str && s_add == pstats.s_str.st_add
 	&& s_lvl == level && s_hungry == hungry_state)
 	    return;
@@ -181,9 +182,16 @@ status()
 	sprintf(pb, "/%d", pstats.s_str.st_add);
     }
     pb = &buf[strlen(buf)];
-    sprintf(pb, "  Ac: %-2d  Exp: %d/%d",
-	cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm, pstats.s_lvl,
-	pstats.s_exp);
+    if (showac) {
+        sprintf(pb, "  Ac: %-2d  Exp: %d/%d",
+            cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm, pstats.s_lvl,
+            pstats.s_exp);
+    }
+    else {
+        sprintf(pb, "  Arm: %-2d Exp: %d/%d",
+            ARMOR_DISPLAY(cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm), pstats.s_lvl,
+            pstats.s_exp);
+    }
     /*
      * Save old status
      */
@@ -194,6 +202,7 @@ status()
     s_add = pstats.s_str.st_add;
     s_exp = pstats.s_exp; 
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
+    s_showac = showac;
     PC_GFX_COLOR(cw, 0x0e);
     mvwaddstr(cw, LINES - 1, 0, buf);
     switch (hungry_state)

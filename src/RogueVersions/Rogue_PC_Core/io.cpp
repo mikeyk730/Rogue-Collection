@@ -355,7 +355,12 @@ void update_status_bar()
     }
     //Armor:
     game->screen().move(23, PT(12, 52));
-    game->screen().printw("Armor:%-2d", Armor::for_display(game->hero().calculate_armor()));
+    if (!game->options.show_armor_class()) {
+        game->screen().printw("Armor:%-2d", Armor::for_display(game->hero().calculate_armor()));
+    }
+    else {
+        game->screen().printw("Ac:%-2d   ", game->hero().calculate_armor());
+    }
 
     //Exp:
     if (!game->options.use_exp_level_names() || game->options.act_like_v1_1())

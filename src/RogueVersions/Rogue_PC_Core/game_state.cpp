@@ -396,6 +396,11 @@ bool Options::use_exp_level_names() const
     return get_environment("use_exp_level_names") != "false";
 }
 
+bool Options::show_armor_class() const
+{
+    return get_environment("showac") == "true";
+}
+
 bool Options::hit_plus_bugfix() const
 {
     return get_environment("hplusfix") == "true";

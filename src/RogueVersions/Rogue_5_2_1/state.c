@@ -1969,6 +1969,7 @@ rs_save_file(FILE *savef)
     rs_write_boolean(savef, jump);
     rs_write_boolean(savef, passgo);
     rs_write_boolean(savef, hplusfix);
+    rs_write_boolean(savef, showac);
     rs_write_boolean(savef, playing);
     rs_write_boolean(savef, running);
     rs_write_boolean(savef, save_msg);
@@ -2074,6 +2075,7 @@ rs_restore_file(int inf)
     rs_read_boolean(inf, &in_shell);
     rs_read_boolean(inf, &jump);
     rs_read_boolean(inf, &passgo);
+    rs_read_boolean(inf, &showac);
     rs_read_boolean(inf, &hplusfix);
     rs_read_boolean(inf, &playing);
     rs_read_boolean(inf, &running);

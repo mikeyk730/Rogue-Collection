@@ -94,9 +94,9 @@ inv_name(const THING *obj, int drop)
 		sprintf(pb, "%s %s [",
 		    num(a_class[which] - obj->o_arm, 0, ARMOR), sp);
 		if (!terse)
-		    strcat(pb, "protection ");
+		    strcat(pb, showac ? "armor class " : "protection ");
 		pb = &prbuf[strlen(prbuf)];
-		sprintf(pb, "%d]", ARMOR_DISPLAY(obj->o_arm));
+		sprintf(pb, "%d]", showac ? obj->o_arm : ARMOR_DISPLAY(obj->o_arm));
 	    }
 	    else
 		sprintf(pb, "%s", sp);

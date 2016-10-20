@@ -193,12 +193,15 @@ void
 status(void)
 {
     int oy, ox, temp;
+    const char* fmt;
+    int armor;
     static int hpwidth = 0;
     static int s_hungry = 0;
     static int s_lvl = 0;
     static int s_pur = -1;
     static int s_hp = 0;
     static int s_arm = 0;
+    static int s_showac = 0;
     static int s_str = 0;
     static int s_exp = 0;
     static char *state_name[] =
@@ -213,7 +216,7 @@ status(void)
     temp = (cur_armor != NULL ? cur_armor->o_arm : pstats.s_arm);
     if (s_hp == pstats.s_hpt && s_exp == pstats.s_exp && s_pur == purse
 	&& s_arm == temp && s_str == pstats.s_str && s_lvl == level
-	&& s_hungry == hungry_state
+	&& s_hungry == hungry_state && s_showac == showac
 	&& !stat_msg
 	)
 	    return;
@@ -238,22 +241,27 @@ status(void)
     s_str = pstats.s_str;
     s_exp = pstats.s_exp; 
     s_hungry = hungry_state;
+    s_showac = showac;
+
+    fmt = showac ? "Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Ac: %-2d   Exp: %d/%d  %s" :
+        "Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s";
+    armor = showac ? s_arm : ARMOR_DISPLAY(s_arm);
 
     if (stat_msg)
     {
         move(0, 0);
-        msg("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
+        msg(fmt,
         level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp, pstats.s_str,
-        max_stats.s_str, ARMOR_DISPLAY(s_arm), pstats.s_lvl, pstats.s_exp,
+        max_stats.s_str, armor, pstats.s_lvl, pstats.s_exp,
         state_name[hungry_state]);
     }
     else
     {
 	move(STATLINE, 0);
         PC_GFX_COLOR(0x0e);
-        printw("Level: %d  Gold: %-5d  Hp: %*d(%*d)  Str: %2d(%d)  Arm: %-2d  Exp: %d/%d  %s",
+        printw(fmt,
 	    level, purse, hpwidth, pstats.s_hpt, hpwidth, max_hp, pstats.s_str,
-	    max_stats.s_str, ARMOR_DISPLAY(s_arm), pstats.s_lvl, pstats.s_exp,
+	    max_stats.s_str, armor, pstats.s_lvl, pstats.s_exp,
 	    state_name[hungry_state]);
         PC_GFX_NOCOLOR(0x0e);
     }

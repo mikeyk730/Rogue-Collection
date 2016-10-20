@@ -88,9 +88,17 @@ std::string Armor::InventoryName() const
 {
     char *pb = prbuf;
 
+    int armor = armor_class();
+    std::string desc = "armor class";
+    if (!game->options.show_armor_class())
+    {
+        armor = Armor::for_display(armor);
+        desc = "protection";
+    }
+
     if (is_known() || game->wizard().reveal_items())
-        chopmsg(pb, "%s %s", "%s %s [protection %d]", num(get_default_class(m_which) - armor_class(), 0, (char)ARMOR),
-            TypeName().c_str(), Armor::for_display(armor_class()));
+        chopmsg(pb, "%s %s", "%s %s [%s %d]", num(get_default_class(m_which) - armor_class(), 0, (char)ARMOR),
+            TypeName().c_str(), desc.c_str(), armor);
     else
         sprintf(pb, "%s", TypeName().c_str());
 
@@ -165,7 +173,7 @@ int Armor::armor_class() const
 
 int Armor::for_display(int ac)
 {
-    return 11-ac;
+    return 10-ac;
 }
 
 void Armor::enchant_armor()

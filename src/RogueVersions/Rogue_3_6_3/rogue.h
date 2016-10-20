@@ -429,6 +429,7 @@ extern char *                a_names[MAXARMORS];	/* Names of armor types */
 extern int                   after;			/* True if we want after daemons */
 extern int                   amulet;			/* He found the amulet */
 extern int                   askme;			/* Ask about unidentified things */
+extern int                   showac;			/* Show armor class instead of protection */
 extern int                   between;
 extern coord                 ch_ret;
 extern int                   count;			/* Number of times to repeat command */

@@ -1287,7 +1287,8 @@ rs_save_file(FILE *savef)
     rs_write_int(savef, slow_invent);               
     rs_write_int(savef, firstmove);                 
     rs_write_int(savef, waswizard);                 
-    rs_write_int(savef, askme);                     
+    rs_write_int(savef, askme);    
+    rs_write_int(savef, showac);
     rs_write_int(savef, amulet);                    
     rs_write_int(savef, in_shell);                  
     rs_write_coord(savef, oldpos);                      
@@ -1368,7 +1369,8 @@ rs_restore_file(FILE *savef)
     rs_read_int(savef, &slow_invent);                 
     rs_read_int(savef, &firstmove);                   
     rs_read_int(savef, &waswizard);                   
-    rs_read_int(savef, &askme);                       
+    rs_read_int(savef, &askme);
+    rs_read_int(savef, &showac);
     rs_read_int(savef, &amulet);                      
     rs_read_int(savef, &in_shell);                    
     rs_read_coord(savef,&oldpos);                         

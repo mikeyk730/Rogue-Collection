@@ -45,6 +45,8 @@ OPTION	optlist[] = {
 		(int *) &slow_invent,	put_bool,	get_bool	},
     {"askme",	"Ask me about unidentified things: ",
 		(int *) &askme,		put_bool,	get_bool	},
+    {"showac",	"Show armor class instead of protection: ",
+		(int *) &showac,		put_bool,	get_bool	},
     {"name",	 "Name: ",
 		 (int *) whoami,	put_str,	get_str		},
     {"fruit",	 "Fruit: ",
@@ -106,6 +108,7 @@ option()
     clearok(cw, TRUE);
     touchwin(cw);
     after = FALSE;
+    status();
     PC_GFX_SET_CURSOR(0);
 }
 

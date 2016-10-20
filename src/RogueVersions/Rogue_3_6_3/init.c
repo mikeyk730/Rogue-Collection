@@ -19,7 +19,7 @@
 
 int playing = TRUE, running = FALSE, wizard = FALSE;
 int notify = TRUE, fight_flush = FALSE, terse = FALSE, door_stop = FALSE;
-int jump = FALSE, slow_invent = FALSE, firstmove = FALSE, askme = FALSE;
+int jump = FALSE, slow_invent = FALSE, firstmove = FALSE, askme = FALSE, showac = TRUE;
 int amulet = FALSE;
 int in_shell = FALSE;
 struct linked_list *lvl_obj = NULL, *mlist = NULL;

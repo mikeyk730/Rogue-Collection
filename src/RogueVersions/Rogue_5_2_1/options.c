@@ -51,6 +51,8 @@ OPTION	optlist[] = {
 		(int *) &passgo,	put_bool,	get_bool	},
     {"hplusfix",	"Fix bug giving monsters +4 hit bonus: ",
 		(int *) &hplusfix,	put_bool,	get_bool	},
+    {"showac",	"Show armor class instead of protection: ",
+		(int *) &showac,	put_bool,	get_bool	},
     {"name",	 "Name: ",
 		(int *) whoami,		put_str,	get_str		},
     {"fruit",	 "Fruit: ",
@@ -111,6 +113,7 @@ option()
     clearok(curscr, TRUE);
     touchwin(stdscr);
     after = FALSE;
+    status();
     PC_GFX_SET_CURSOR(0);
 }
 

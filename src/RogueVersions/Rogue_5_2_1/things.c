@@ -104,7 +104,7 @@ register bool drop;
 		    num(a_class[obj->o_which] - obj->o_ac, 0, ARMOR),
 		    a_names[obj->o_which]);
 		if (!terse)
-		    strcat(pb, "armor class ");
+		    strcat(pb, showac ? "armor class " : "protection ");
 		pb = &prbuf[strlen(prbuf)];
 		sprintf(pb, "%d]", obj->o_ac);
 	    }

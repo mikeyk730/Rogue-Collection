@@ -52,6 +52,8 @@ static const OPTION	optlist[] = {
 		 &passgo,	put_bool,	get_bool	},
     {"hplusfix",	"Fix bug giving monsters +4 hit bonus",
 		 &hplusfix,	put_bool,	get_bool	},
+    {"showac",	"Show armor class instead of protection",
+		 &showac,	put_bool,	get_bool	},
     {"tombstone", "Print out tombstone when killed",
 		 &tombstone,	put_bool,	get_bool	},
     {"inven",	"Inventory style",
@@ -122,6 +124,7 @@ option(void)
     clearok(curscr, TRUE);
     touchwin(stdscr);
     after = FALSE;
+    status();
     PC_GFX_SET_CURSOR(0);
 }
 
