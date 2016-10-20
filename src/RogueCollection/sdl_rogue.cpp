@@ -569,6 +569,10 @@ void SdlRogue::Impl::SetGame(int i)
 {
     m_options = s_options[i];
 
+    if (m_options.name == "PC Rogue 1.1") {
+        m_game_env->set("version", "1.1");
+    }
+
     if (!m_game_env->write_to_os(m_options.is_unix))
         throw_error("Couldn't write environment");
 

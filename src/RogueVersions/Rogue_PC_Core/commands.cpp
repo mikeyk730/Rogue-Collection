@@ -106,7 +106,11 @@ bool do_repeat_msg()
 
 bool do_print_version()
 {
-    msg("Rogue version %d.%d", REV, VER);
+    if (game->options.act_like_v1_1())
+        msg("Rogue version %d.%d (acting like v1.1)", REV, VER);
+    else
+        msg("Rogue version %d.%d", REV, VER);
+
     return false;
 }
 

@@ -210,6 +210,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
 
     if (game->options.act_like_v1_1()) {
         set_monsters_v1_1();
+        game->options.set_environment("scorefile", "roguepc11.scr");
     }
     load_monster_cfg(args.monsterfile);
 

@@ -286,7 +286,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
             int str_bonus = add_dam(calculate_strength());
             int damage = dplus + r + str_bonus;
 
-            bool half_damage(defender == &game->hero() && game->max_level() == 1); //make it easier on level one
+            bool half_damage(defender == &game->hero() && game->max_level() == 1 && !game->options.act_like_v1_1()); //make it easier on level one
             if (half_damage) {
                 damage = (damage + 1) / 2;
             }

@@ -65,7 +65,7 @@ std::pair<int, std::string> GameSelect::GetSelection()
 
         SDL_RenderClear(m_renderer);
         SDL_RenderCopy(m_renderer, m_logo.get(), 0, 0);
-        RenderText("Choose your Rogue:", { 30, 265 }, false);
+        RenderText("Choose your Rogue:", { 30, 255 }, false);
         int i;
         for (i = 0; i < (int)m_options.size(); ++i)
             RenderOption(i, m_options[i].name, i == selection.first);
@@ -78,7 +78,7 @@ std::pair<int, std::string> GameSelect::GetSelection()
 void GameSelect::RenderOption(int i, const std::string& text, bool is_selected)
 {
     std::string title = std::string(1, i+'a') + ") " + text;
-    RenderText(title, { 55, 265 + 19 * (i + 1) }, is_selected);
+    RenderText(title, { 55, 255 + 19 * (i + 1) }, is_selected);
 }
 
 void GameSelect::RenderText(const std::string& text, Coord p, bool highlight)

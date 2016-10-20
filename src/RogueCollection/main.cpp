@@ -40,6 +40,7 @@ namespace
 
 std::vector<Options> s_options = {
     { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, unix_gfx, color_unix_gfx, atari_slime_gfx, boxy_gfx } },
+    { "PC Rogue 1.1",     "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, unix_gfx, color_unix_gfx, atari_slime_gfx, boxy_gfx } },
     { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   {80,25}, {80,24}, false, true,  { unix_gfx, color_unix_gfx, pc_gfx, atari_snake_gfx, boxy_gfx } },
     { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, color_unix_gfx, pc_gfx, boxy_gfx } },
     { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, color_unix_gfx, pc_gfx, boxy_gfx } },
