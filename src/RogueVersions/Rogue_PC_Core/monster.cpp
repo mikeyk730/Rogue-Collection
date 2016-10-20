@@ -552,11 +552,21 @@ bool Monster::rust_attack()
 
 bool Monster::freeze_attack()
 {
+    //mdk: v1.1 obviously carried over logic from floating eye
+    if (game->hero().is_blind())
+        return false;
+
+    //mdk: poison doesn't make much sense, but this must have been added to make the ice monster
+    //less brutal than the Unix versions.
+    if (save(VS_POISON))
+        return false;
+
     if (game->hero().get_sleep_turns() == 0)
     {
         ifterse("you are frozen", "you are frozen by the %s", get_name().c_str());
     }
-    int turns = rnd(2) + 1; //todo: in unix this is rnd(2) + 2, but that basically freezes forever
+
+    int turns = rnd(2) + 2;
     game->hero().increase_sleep_turns(turns);
 
     std::ostringstream ss;
