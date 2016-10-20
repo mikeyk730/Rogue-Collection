@@ -38,13 +38,13 @@ const char* you = "you";
 bool attempt_swing(int lvl, int defender_amr, int hplus)
 {
     int roll = rnd(20);
-    int got = roll + hplus;
-    int need = (20 - lvl) - defender_amr;
+    int got = roll + hplus + lvl;
+    int need = 20 - defender_amr;
     bool hit(got >= need);
 
     std::ostringstream ss;
-    ss << (hit ? "HIT: " : "MISS: ") << got << " ? " << need
-        << " (1d20=" << roll << " + hplus=" << hplus << ") ? (20 - lvl=" << lvl << " - amr=" << defender_amr << ")";
+    ss << "\t" << (hit ? "hit " : "miss") << "\t\t" << got << " ? " << need
+        << "\t(1d20=" << roll << " + hplus=" << hplus << " + lvl=" << lvl << ") ? (20 - ac=" << defender_amr << ")";
     game->log("battle", ss.str());
 
     return hit;

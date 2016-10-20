@@ -300,7 +300,7 @@ int at_lvl, op_arm, wplus;
 {
     register int res = rnd(20);
     register int need = (20 - at_lvl) - op_arm;
-    MDK_LOG("battle:     %-4s\t%d ? %d\t\t(1d20=%d + hplus=%d) ? (20 - lvl=%d - op_amr=%d)\n", (res + wplus >= need) ? "hit" : "miss", res + wplus, need, res, wplus, at_lvl, op_arm);
+    MDK_LOG("battle:     %-4s\t%d ? %d\t\t(1d20=%d + hplus=%d + lvl=%d) ? (20 - ac=%d)\n", (res + wplus >= need) ? "hit" : "miss", res + wplus + at_lvl, need + at_lvl, res, wplus, at_lvl, op_arm);
     return (res + wplus >= need);
 }
 

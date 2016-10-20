@@ -206,7 +206,7 @@ bool Agent::decrease_hp(int n, bool can_kill) {
         m_stats.m_hp = 1;
 
     std::ostringstream ss;
-    ss << get_name() << " lost " << n << "hp (" << m_stats.m_hp << ")";
+    ss << "\t" << get_name() << " lost " << n << "hp (" << m_stats.m_hp << ")";
     game->log("battle", ss.str());
 
     return m_stats.m_hp > 0;
@@ -266,7 +266,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
     int defender_armor = defender->calculate_armor();
 
     std::ostringstream ss;
-    ss << get_name() << "[hp=" << get_hp() << "] " << damage_string << " "<<hplus<<","<<dplus<<" attack on "
+    ss << get_name() << " " << damage_string << " "<<hplus<<","<<dplus<<" attack on "
         << defender->get_name() << "[hp=" << defender->get_hp() << "]";
     game->log("battle", ss.str());
 
@@ -294,7 +294,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
             defender->decrease_hp(damage, true);
 
             std::ostringstream ss;
-            ss << "damage=" << damage << " => " << defender->get_name() << "[hp=" << defender->get_hp() << "]: ("
+            ss << "\tdamage=" << damage << "\t" << defender->get_name() << "[hp=" << defender->get_hp() << "]\t("
                 << damage_string << "=" << r << " + dplus=" << dplus << " + str_plus=" << str_bonus << ")"
                 << (half_damage ? "/2" : "");
             game->log("battle", ss.str());
