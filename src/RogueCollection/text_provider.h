@@ -15,13 +15,14 @@ struct TextConfig
     Coord layout;
     std::vector<int> colors;
     bool generate_colors;
+    bool monochrome;
 };
 
 struct ITextProvider
 {
+    virtual ~ITextProvider();
     virtual Coord dimensions() const = 0;
     virtual void GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect) = 0;
-
 };
 
 struct TextProvider : ITextProvider

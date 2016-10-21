@@ -25,10 +25,10 @@ namespace
     TileConfig atari_slime_tiles = { "atari.bmp",       78, 1 };
     TileConfig atari_snake_tiles = { "atari_snake.bmp", 78, 1 };
 
-    TextConfig pc_text =         { "text.bmp",  { 256, 1 }, { 0x07 }, false };
-    TextConfig pc_colored_text = { "text.bmp",  { 256, 1 }, { 0x07 }, true  };
-    TextConfig alt_text =        { "16x16.bmp", { 16, 16 }, { 0x07 }, false };
-    TextConfig boxy_text =       { "boxy.bmp",  { 16, 16 }, { 0x07 }, true  };
+    TextConfig pc_text =         { "text.bmp",  { 256, 1 }, { 0x07 }, false, true  };
+    TextConfig pc_colored_text = { "text.bmp",  { 256, 1 }, { 0x07 }, true,  false };
+    TextConfig alt_text =        { "16x16.bmp", { 16, 16 }, { 0x07 }, true,  true  };
+    TextConfig boxy_text =       { "boxy.bmp",  { 16, 16 }, { 0x07 }, true,  false };
 
     GraphicsConfig unix_gfx =        { "unix",       &pc_text,         0,                  true,  false };
     GraphicsConfig color_unix_gfx =  { "unix_color", &pc_colored_text, 0,                  true,  true  };
@@ -40,7 +40,7 @@ namespace
 
 std::vector<Options> s_options = {
     { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, unix_gfx, color_unix_gfx, atari_slime_gfx, boxy_gfx } },
-    { "PC Rogue 1.1",     "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, unix_gfx, color_unix_gfx, atari_slime_gfx, boxy_gfx } },
+    { "PC Rogue 1.1",     "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, unix_gfx, color_unix_gfx, atari_snake_gfx, boxy_gfx } },
     { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   {80,25}, {80,24}, false, true,  { unix_gfx, color_unix_gfx, pc_gfx, atari_snake_gfx, boxy_gfx } },
     { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, color_unix_gfx, pc_gfx, boxy_gfx } },
     { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, color_unix_gfx, pc_gfx, boxy_gfx } },

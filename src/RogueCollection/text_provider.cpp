@@ -96,6 +96,10 @@ Coord TextGenerator::dimensions() const
 void TextGenerator::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Rect * rect)
 {
     *rect = get_text_rect(ch);
+
+    if (m_cfg.monochrome) {
+        color = (color > 0x0f) ? 0xf0 : 0x0f;
+    }
     
     auto i = m_textures.find(color);
     if (i != m_textures.end()) {
@@ -118,4 +122,8 @@ SDL_Rect TextGenerator::get_text_rect(unsigned char ch)
     r.x = (ch % layout.x) * m_text_dimensions.x;
     r.y = (ch / layout.x) * m_text_dimensions.y;
     return r;
+}
+
+ITextProvider::~ITextProvider()
+{
 }

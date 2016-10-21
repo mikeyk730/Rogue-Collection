@@ -227,7 +227,7 @@ void Hero::ingest()
 {
     if (food_left < 0)
         food_left = 0;
-    if (food_left > (STOMACH_SIZE - 20))
+    if (food_left > (STOMACH_SIZE - 20) && !game->options.act_like_v1_1())
         increase_sleep_turns(2 + rnd(5));
     if ((food_left += HUNGER_TIME - 200 + rnd(400)) > STOMACH_SIZE)
         food_left = STOMACH_SIZE;

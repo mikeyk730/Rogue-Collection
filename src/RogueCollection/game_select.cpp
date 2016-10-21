@@ -5,8 +5,8 @@ GameSelect::GameSelect(SDL_Window * window, SDL_Renderer* renderer, const std::v
     m_window(window), 
     m_renderer(renderer),
     m_options(options), 
-    m_font(load_font(getResourcePath("fonts")+"Px437_IBM_BIOS.ttf", 12)),
-    m_logo(loadImage(getResourcePath("")+"title.png", renderer))
+    m_font(load_font(getResourcePath("fonts")+"Px437_IBM_BIOS.ttf", 16)),
+    m_logo(loadImage(getResourcePath("")+"title3.png", renderer))
 {
     SDL_ShowWindow(m_window);
 }
@@ -65,7 +65,7 @@ std::pair<int, std::string> GameSelect::GetSelection()
 
         SDL_RenderClear(m_renderer);
         SDL_RenderCopy(m_renderer, m_logo.get(), 0, 0);
-        RenderText("Choose your Rogue:", { 30, 255 }, false);
+        RenderText("Choose your Rogue:", { 17, 235 }, false);
         int i;
         for (i = 0; i < (int)m_options.size(); ++i)
             RenderOption(i, m_options[i].name, i == selection.first);
@@ -78,7 +78,7 @@ std::pair<int, std::string> GameSelect::GetSelection()
 void GameSelect::RenderOption(int i, const std::string& text, bool is_selected)
 {
     std::string title = std::string(1, i+'a') + ") " + text;
-    RenderText(title, { 55, 255 + 19 * (i + 1) }, is_selected);
+    RenderText(title, { 34, 235 + 22 * (i + 1) }, is_selected);
 }
 
 void GameSelect::RenderText(const std::string& text, Coord p, bool highlight)
