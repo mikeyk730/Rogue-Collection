@@ -140,8 +140,10 @@ void advance_game()
     //mdk:bugfix: The potion of haste self does not work in the original code.  It's meant to 
     //give you 2 - 3 actions per turn, but a bug prevented this from ever happening.
     //This bug isn't in Unix Rogue, where the player gets 2 turns while hasted
-    if (game->hero().is_fast() || game->wizard().haste_self())
-        game->hero().set_num_actions(rnd(2) + 2);
+    if (game->hero().is_fast() || game->wizard().haste_self()) {
+        int turns = game->options.act_like_v1_1() ? 2 : rnd(2) + 2;
+        game->hero().set_num_actions(turns);
+    }
 
     while (game->hero().decrement_num_actions())
     {
@@ -151,14 +153,6 @@ void advance_game()
             tick_pause();
         }
         else {
-            //mdk:bugfix: Originally the player was never set as running, so he'd
-            // be treated as asleep in battle.  I fixed this bug, but added an
-            // option to retain the buggy behavior.  Unix Rogue 5.2 handles this 
-            // better, but forgets to set the initial state, so the bug is present
-            // until the first time the player is asleep or frozen
-            if (!game->options.hit_plus_bugfix())
-                game->hero().set_running(false);
-
             execute_player_command();
         }
         do_rings();  //mdk: This used to come after running fuses/daemons

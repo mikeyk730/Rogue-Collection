@@ -552,8 +552,7 @@ bool Monster::rust_attack()
 
 bool Monster::freeze_attack()
 {
-    //mdk: v1.1 obviously carried over logic from floating eye
-    if (game->hero().is_blind())
+    if (game->hero().is_blind()) //mdk: v1.1 obviously carried over logic from floating eye
         return false;
 
     //mdk: poison doesn't make much sense, but this must have been added to make the ice monster
@@ -625,7 +624,7 @@ bool Monster::steal_item_attack()
     if (item->m_count > 1 && item->m_group == 0)
     {
         int oc;
-        oc = item->m_count--;
+        oc = --item->m_count; //mdk:bugfix, originally wouldn't decrement count properly
         item->m_count = 1;
         msg(she_stole, item->inventory_name(game->hero(), true).c_str());
         item->m_count = oc;

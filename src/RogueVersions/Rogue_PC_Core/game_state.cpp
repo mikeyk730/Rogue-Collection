@@ -65,8 +65,7 @@ GameState::GameState(int seed, std::shared_ptr<OutputInterface> output, std::sha
     m_seed(seed),
     m_input_interface(new CapturedInput(input)),
     m_curses(new OutputShim(output)),
-    m_level(new Level),
-    m_hero(new Hero)
+    m_level(new Level)
 {
     std::string path = GetPath("data");
     LoadScrolls(path + "scrolls.dat");
@@ -145,8 +144,6 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     m_input_interface.reset(new CapturedInput(std::move(combo)));
 
     m_level.reset(new Level);
-    m_hero.reset(new Hero);
-    
     std::string path = GetPath("data");
     LoadScrolls(path + "scrolls.dat");
     LoadPotions(path + "potions.dat");
@@ -161,6 +158,11 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
 
 GameState::~GameState()
 { }
+
+void GameState::CreateHero(const std::string & name)
+{
+    m_hero.reset(new Hero(name));
+}
 
 bool GameState::in_smart_run_mode() const
 {

@@ -363,7 +363,8 @@ void VorpalizeWeapon::Read()
         msg(laugh, short_msgs() ? "" : in_dist);
         return;
     }
-    weapon->vorpalize();
+    if (weapon->vorpalize())
+        discover();
 }
 
 ItemCategory MonsterConfusion::info;

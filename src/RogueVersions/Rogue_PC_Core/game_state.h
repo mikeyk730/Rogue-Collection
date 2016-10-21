@@ -64,6 +64,8 @@ struct GameState
     GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input);
     ~GameState();
 
+    void CreateHero(const std::string& name);
+
     void save_game(const std::string& filename);
 
     void set_logfile(const std::string& filename);

@@ -39,8 +39,8 @@ namespace
         20480, 40960, 81920, 163840, 327680, 655360, 1310720, 2621440, 0 };
 }
 
-Hero::Hero() :
-    Agent()
+Hero::Hero(const std::string& name) :
+    Agent(), m_name(name)
 {
     init_player();
 }
@@ -307,7 +307,10 @@ void Hero::init_player()
     obj = new Food(0);
     add_to_pack(obj, true);
 
-    set_running(true);
+    //mdk:bugfix: Originally the player was never set as running, so he'd
+    // be treated as asleep in battle.
+    if (game->options.hit_plus_bugfix())
+        set_running(true);
 }
 
 void Hero::on_new_level()
@@ -953,8 +956,9 @@ bool Hero::decrement_sleep_turns()
     --m_sleep_turns;
     if (m_sleep_turns == 0) {
         //mdk:bugfix: the player was never set as running, so he's treated as asleep in battle.
-        //The code to restore the state here is correct in Unix Rogue 5.2.
-        if (game->options.hit_plus_bugfix())
+        //Version 1.1 correctly sets the player running here, so the bug is only present
+        //until the first time the player is asleep or frozen
+        if (game->options.hit_plus_bugfix() || game->options.act_like_v1_1())
             set_running(true);
         msg("you can move again");
     }

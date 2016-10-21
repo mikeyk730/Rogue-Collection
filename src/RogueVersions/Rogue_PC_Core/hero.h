@@ -13,7 +13,7 @@ struct Armor;
 
 struct Hero : public Agent
 {
-    Hero();
+    Hero(const std::string& name);
 
     //fight: The player attacks the monster.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
     Monster* fight(Coord pos, Item *weapon, bool thrown);

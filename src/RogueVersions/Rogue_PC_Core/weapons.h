@@ -18,7 +18,7 @@ struct Weapon : public Item
 
     void enchant_weapon();
 
-    void vorpalize();
+    bool vorpalize();
     bool zap_vorpalized_weapon(Coord dir);
     bool is_vorpalized() const;
     bool is_vorpalized_against(Monster* monster) const;    

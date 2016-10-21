@@ -281,7 +281,7 @@ bool Weapon::IsMagic() const
     return hit_plus() != 0 || damage_plus() != 0;
 }
 
-void Weapon::vorpalize()
+bool Weapon::vorpalize()
 {
     //Extra Vorpal Enchant Weapon
     //    Give weapon +1,+1
@@ -297,7 +297,7 @@ void Weapon::vorpalize()
         game->hero().set_current_weapon(0);
         game->hero().m_pack.remove(this);
         delete this; //careful not to do anything afterwards
-        return;
+        return false;
     }
 
     enemy = pick_vorpal_monster();
@@ -305,6 +305,19 @@ void Weapon::vorpalize()
     m_damage_plus++;
     m_charges = 1;
     msg(flash_msg, TypeName().c_str(), short_msgs() ? "" : intense);
+
+    //Sometimes this is a mixed blessing ...
+    if (game->options.act_like_v1_1()) {
+        if (rnd(20) == 0) {
+            set_cursed();
+            if (!save(VS_MAGIC)) {
+                set_revealed();
+                msg("you feel a sudden desire to kill %ss.", get_vorpalized_name().c_str());
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 Weapon::Weapon(int which) :

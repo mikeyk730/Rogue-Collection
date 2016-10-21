@@ -202,10 +202,15 @@ char randmonster(bool wander, int level)
     const char* mons = wander ? wand_mons : lvl_mons;
     do
     {
-        int r10 = rnd(5) + rnd(6);
-        d = level + (r10 - 5);
-        if (d < 1) d = rnd(5) + 1;
-        if (d > 26) d = rnd(5) + 22;
+        if (game->options.act_like_v1_1())
+            d = level + (rnd(10) - 5);
+        else
+            d = level + (rnd(5) + rnd(6) - 5);
+
+        if (d < 1) 
+            d = rnd(5) + 1;
+        if (d > 26) 
+            d = rnd(5) + 22;
     } while (mons[--d] == ' ');
     return mons[d];
 }

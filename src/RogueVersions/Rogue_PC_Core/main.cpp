@@ -224,7 +224,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
         return 0;
     }
 
-    game->hero().set_name(game->options.get_environment("name"));
+    game->CreateHero(game->options.get_environment("name"));
     if (game->options.prompt_for_name()) {
         credits();
         game->screen().drop_curtain();
