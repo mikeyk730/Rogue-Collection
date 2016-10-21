@@ -423,7 +423,8 @@ void Monster::chase(Coord *chasee_pos, Coord* next_position)
         rndmove(this, next_position);
         dist = distance(*next_position, *chasee_pos);
         //Small chance that it will become un-confused
-        if (rnd(30) == 17)
+        int n = game->options.act_like_v1_1() ? 20 : 30;
+        if (rnd(n) == 17)
             set_confused(false);
     }
     //Otherwise, find the empty spot next to the chaser that is closest to the chasee.

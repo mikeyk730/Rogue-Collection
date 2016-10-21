@@ -157,7 +157,7 @@ void run_monsters()
 
             //flying monsters get an extra turn when far away to close the distance
             dist = distance(game->hero().position(), monster->position());
-            if (!victim && monster->is_flying() && dist > 3) {
+            if (!victim && monster->is_flying() && dist > 3 && !game->options.act_like_v1_1()) {
                 Monster* victim = monster->do_chase();
                 if (victim == monster) {
                     it = next;
