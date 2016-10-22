@@ -212,14 +212,6 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     RestoreGame(file);
 
     std::string value;
-    if (m_current_env->get("replay_step_delay", &value))
-    {
-        m_replay_sleep = atoi(value.c_str());
-    }
-    if (m_current_env->get("replay_pause_at", &value))
-    {
-        m_pause_at = atoi(value.c_str());
-    }
     if (m_current_env->get("window_scaling", &value) && value != "max")
     {
         m_scale = atoi(value.c_str());
@@ -558,24 +550,34 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
     std::string name;
     read_short_string(file, &name);
 
+    // set up game environment
     m_game_env.reset(new Environment());
     m_game_env->deserialize(file);
+    std::string value;
+    if (m_current_env->get("logfile", &value)) {
+        m_game_env->set("logfile", value);
+    }
     
     m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
     m_replay_steps_remaining = (int)m_buffer.size();
 
     file.close();
 
-    std::string value;
-    if (!m_current_env->get("delete_on_restore", &value) || value != "false")
-        std::remove(path.c_str());
-    if (m_current_env->get("replay_paused", &value) && value == "true")
+    if (m_current_env->get("replay_paused", &value) && value == "true") {
         m_paused = true;
-
-    if (m_current_env->get("logfile", &value))
-        m_game_env->set("logfile", value);
+    }
+    if (m_current_env->get("replay_pause_at", &value)) {
+        m_pause_at = atoi(value.c_str());
+    }
+    if (m_current_env->get("replay_step_delay", &value)) {
+        m_replay_sleep = atoi(value.c_str());
+    }
 
     SetGame(name);
+
+    if (!m_current_env->get("delete_on_restore", &value) || value != "false") {
+        std::remove(path.c_str());
+    }
 }
 
 void SdlRogue::Impl::SetGame(const std::string & name)
@@ -587,7 +589,7 @@ void SdlRogue::Impl::SetGame(const std::string & name)
             return;
         }
     }
-    throw_error("Unknown game " + name);
+    throw_error("Save file specified unknown game: " + name);
 }
 
 void SdlRogue::Impl::SetGame(int i)
