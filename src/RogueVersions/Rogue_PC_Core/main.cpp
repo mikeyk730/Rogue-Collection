@@ -63,16 +63,36 @@ void setup_screen()
     set_small_screen_mode(narrow_screen);
 }
 
-void credits()
+void print_credits_v11()
 {
-    const int COLS = game->screen().columns();
-    const int LINES = game->screen().lines();
-    char tname[25];
+    game->screen().bold();
+    game->screen().center(2, "ROGUE:  The Adventure Game");
+    game->screen().lmagenta();
+    game->screen().center(4, "The game of Rogue was originated by:");
+    game->screen().high();
+    game->screen().center(6, "Michael C. Toy");
+    game->screen().standend();
+    game->screen().center(7, "and");
+    game->screen().high();
+    game->screen().center(8, "Kenneth C.R.C. Arnold");
+    game->screen().lmagenta();
+    game->screen().center(10, "Adapted for the IBM PC by:");
+    game->screen().high();
+    game->screen().center(12, "John Lane");
+    game->screen().lmagenta();
+    game->screen().center(14, "Significant design contributions by:");
+    game->screen().high();
+    game->screen().center(16, "Glenn Wichman and scores of others");
+    game->screen().yellow();
+    game->screen().center(18, "****************");
+    game->screen().high();
+    game->screen().center(19, "Public Domain Software -1984");
+    game->screen().yellow();
+    game->screen().center(20, "Not to be sold");
+}
 
-    game->screen().cursor(false);
-    game->screen().clear();
-    game->screen().brown();
-    game->screen().box(0, 0, LINES - 1, COLS - 1);
+void print_credits()
+{
     game->screen().bold();
     game->screen().center(2, "ROGUE:  The Adventure Game");
     game->screen().lmagenta();
@@ -95,6 +115,24 @@ void credits()
     game->screen().standend();
     game->screen().yellow();
     game->screen().center(21, "All Rights Reserved");
+}
+
+void credits()
+{
+    const int COLS = game->screen().columns();
+    const int LINES = game->screen().lines();
+    char tname[25];
+
+    game->screen().cursor(false);
+    game->screen().clear();
+    game->screen().brown();
+    game->screen().box(0, 0, LINES - 1, COLS - 1);
+
+    if (game->options.act_like_v1_1())
+        print_credits_v11();
+    else
+        print_credits();
+
     game->screen().brown();
     game->screen().move(22, 1);
     game->screen().repchr(205, COLS - 2);

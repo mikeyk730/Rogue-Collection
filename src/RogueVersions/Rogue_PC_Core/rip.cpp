@@ -156,28 +156,43 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
     const int COLS = game->screen().columns();
 
     game->screen().clear();
-    game->screen().high();
-    game->screen().mvaddstr({ 0, 0 }, "Guildmaster's Hall Of Fame:");
-    game->screen().standend();
-    game->screen().yellow();
-    game->screen().mvaddstr({ 0, 2 }, "Gold");
+    if (game->options.act_like_v1_1()) {
+        game->screen().standout();
+        game->screen().mvaddstr({ 0, 2 }, "Guildmaster's Hall Of Fame:");
+        game->screen().standend();
+    }
+    else {
+        game->screen().high();
+        game->screen().mvaddstr({ 0, 0 }, "Guildmaster's Hall Of Fame:");
+        game->screen().standend();
+        game->screen().yellow();
+        game->screen().mvaddstr({ 0, 2 }, "Gold");
+    }
     for (i = 0; i < TOPSCORES; i++, top10++)
     {
         altmsg = NULL;
         game->screen().brown();
-        if (newrank - 1 == i)
-        {
+        if (newrank - 1 == i) {
             game->screen().yellow();
         }
+        if (game->options.act_like_v1_1()) {
+            game->screen().standend();
+        }
+
+        bool change_color((newrank - 1 != i) && !game->options.act_like_v1_1());
         if (top10->gold <= 0) break;
         curl = 4 + ((COLS == 40) ? (i * 2) : i);
         game->screen().move(curl, 0);
-        game->screen().printw("%d ", top10->gold);
-        game->screen().move(curl, 6);
-        if (newrank - 1 != i) game->screen().red();
+        game->screen().printw("%d %s", top10->gold, game->options.act_like_v1_1() ? "gold pieces. " : "");
+        if (!game->options.act_like_v1_1())
+            game->screen().move(curl, 6);
+        if (change_color)
+            game->screen().red();
         game->screen().printw("%s", top10->name);
-        if ((newrank)-1 != i) game->screen().brown();
-        if (top10->level >= 26) altmsg = " Honored by the Guild";
+        if (change_color)
+            game->screen().brown();
+        if (top10->level >= 26) 
+            altmsg = " Honored by the Guild";
         if (isalpha(top10->fate))
         {
             sprintf(dthstr, " killed by %s", killname((0xff & top10->fate), true));
@@ -185,17 +200,27 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
         }
         else switch (top10->fate)
         {
-        case 2: altmsg = " A total winner!"; break;
-        case 1: strcpy(dthstr, " quit"); break;
-        default: strcpy(dthstr, " weirded out");
+        case 2: 
+            strcpy(dthstr, " won");
+            altmsg = " A total winner!";
+            break;
+        case 1:
+            strcpy(dthstr, " quit");
+            break;
+        default: 
+            strcpy(dthstr, " weirded out");
         }
         if ((strlen(top10->name) + 10 + strlen(level_titles[top10->rank - 1])) < (size_t)COLS)
         {
-            if (top10->rank > 1 && (strlen(top10->name))) game->screen().printw(" \"%s\"", level_titles[top10->rank - 1]);
+            if (top10->rank > 1 && (strlen(top10->name)) && !game->options.act_like_v1_1())
+                game->screen().printw(" \"%s\"", level_titles[top10->rank - 1]);
         }
-        if (COLS == 40) game->screen().move(curl + 1, 6);
-        if (altmsg == NULL) game->screen().printw("%s on level %d", dthstr, top10->level);
-        else game->screen().addstr(altmsg);
+        if (COLS == 40)
+            game->screen().move(curl + 1, 6);
+        if (altmsg == NULL || game->options.act_like_v1_1())
+            game->screen().printw("%s on level %d", dthstr, top10->level);
+        else
+            game->screen().addstr(altmsg);
     }
     game->screen().standend();
     game->screen().addstr(" ");
@@ -262,17 +287,8 @@ void death(char monst)
     exit(0);
 }
 
-//total_winner: Code for a winner
-void total_winner()
+void print_total_winner()
 {
-    Item *obj;
-    int worth;
-    byte c = 'a';
-    int oldpurse;
-    const int LINES = game->screen().lines();
-
-    game->screen().clear();
-
     if (!in_small_screen_mode())
     {
         game->screen().standout();
@@ -291,6 +307,32 @@ void total_winner()
     game->screen().printw("\nYou have joined the elite ranks of those who have escaped the\n");
     game->screen().printw("Dungeons of Doom alive.  You journey home and sell all your loot at\n");
     game->screen().printw("a great profit and are admitted to the fighters guild.\n");
+}
+
+void print_total_winner_v11()
+{
+    game->screen().move(14, 0);
+    game->screen().printw("Congratulations!\nYou have made it to the light of day!\n\n\n\n");
+    game->screen().printw("You journey home and sell all your\n");
+    game->screen().printw("loot at a great profit and are\n");
+    game->screen().printw("admitted to the fighters guild.\n\n\n");
+}
+
+//total_winner: Code for a winner
+void total_winner()
+{
+    Item *obj;
+    int worth;
+    byte c = 'a';
+    int oldpurse;
+    const int LINES = game->screen().lines();
+
+    game->screen().clear();
+
+    if (game->options.act_like_v1_1())
+        print_total_winner_v11();
+    else
+        print_total_winner();
 
     game->screen().mvaddstr({ 0, LINES - 1 }, "--Press space to continue--");
     wait_for(' ');

@@ -880,10 +880,14 @@ int add_line(const char *use, const char *fmt, const char *arg)
     if (line_cnt >= LINES - 1 || fmt == NULL)
     {
         game->screen().move(LINES - 1, 0);
-        if (*use)
-            game->screen().printw("-Select item to %s. Esc to cancel-", use);
-        else
-            game->screen().addstr("-Press space to continue-");
+        if(game->options.act_like_v1_1())
+            game->screen().printw("-Press a letter or space to continue-", use);
+        else {
+            if (*use)
+                game->screen().printw("-Select item to %s. Esc to cancel-", use);
+            else
+                game->screen().addstr("-Press space to continue-");
+        }
         do retchar = readchar(); while (retchar != ESCAPE && retchar != ' ' && (!islower(retchar)));
         game->screen().clear();
         line_cnt = 0;
