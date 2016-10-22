@@ -96,7 +96,7 @@ private:
     void RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool is_tile);
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
-    void RenderReplayOverlay(int steps, Coord dimensions);
+    void RenderCounterOverlay(const std::string& s, int n, Coord dimensions);
 
     void PostRenderMsg(int force);
 
@@ -290,11 +290,13 @@ void SdlRogue::Impl::RenderMainMenu(bool force)
     Coord cursor_pos;
     bool show_cursor;
     int replay_steps_remaining;
+    bool paused;
     
     //locked region
     {
         std::lock_guard<std::mutex> lock(m_input_mutex);
         replay_steps_remaining = m_replay_steps_remaining;
+        paused = m_paused;
     }
 
     //locked region
@@ -334,7 +336,10 @@ void SdlRogue::Impl::RenderMainMenu(bool force)
     }
 
     if (replay_steps_remaining) {
-        RenderReplayOverlay(replay_steps_remaining, dimensions);
+        std::string label("Replay ");
+        if (paused)
+            label = "Paused ";
+        RenderCounterOverlay(label, replay_steps_remaining, dimensions);
     }
 
     SDL_RenderPresent(m_renderer);
@@ -343,7 +348,6 @@ void SdlRogue::Impl::RenderMainMenu(bool force)
 void SdlRogue::Impl::Animate()
 {
     bool update = false;
-
     if (current_gfx().animate) {
 
         Coord dimensions;
@@ -537,10 +541,10 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     SDL_RenderCopy(m_renderer, text, &clip, &r);
 }
 
-void SdlRogue::Impl::RenderReplayOverlay(int steps, Coord dimensions)
+void SdlRogue::Impl::RenderCounterOverlay(const std::string& label, int n, Coord dimensions)
 {
     std::ostringstream ss;
-    ss << "Replay " << steps;
+    ss << label << n;
     std::string s(ss.str());
     int len = (int)s.size();
     for (int i = 0; i < len; ++i) {
