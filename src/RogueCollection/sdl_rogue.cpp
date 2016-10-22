@@ -526,9 +526,9 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     r.x = pos.x;
     r.y = pos.y + (m_block_size.y * 3 / 4);
     r.w = m_block_size.x;
-    r.h = m_block_size.y/4;
+    r.h = m_block_size.y/8;
 
-    int color = m_frame_number ? 0x00 : 0x0f;
+    int color = m_frame_number ? 0x00 : 0x07;
 
     SDL_Rect clip;
     SDL_Texture* text;
@@ -589,11 +589,13 @@ void SdlRogue::Impl::SaveGame(std::string path, bool notify)
         DisplayMessage(SDL_MESSAGEBOX_ERROR, "Save Game", "Error writing to file: " + path);
         return;
     }
-
-    PostQuit();
     if (notify) {
         DisplayMessage(SDL_MESSAGEBOX_INFORMATION, "Save Game", "Your game was saved successfully.  Come back soon!");
     }
+
+    std::string value;
+    if (m_current_env->get("exit_on_save", &value) && value != "false")
+        PostQuit();
 }
 
 void SdlRogue::Impl::RestoreGame(const std::string& path)
