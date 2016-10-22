@@ -92,8 +92,10 @@ struct Args
 {
     std::string savefile;
     std::string optfile;
+    std::string gfx;
     bool print_score = false;
     bool start_paused = false;
+    bool small_screen = false;
 };
 
 Args process_args(int argc, char**argv)
@@ -103,16 +105,23 @@ Args process_args(int argc, char**argv)
 
     for (int i = 1; i < argc; ++i) {
         std::string s(argv[i]);
-        if (s == "/r") {
+        if (s == "/r" || s == "-r") {
             a.savefile = "rogue.sav";
         }
-        else if (s == "/s") {
+        else if (s == "/s" || s == "-s") {
             a.print_score = true;
         }
-        else if (s == "/p") {
+        else if (s == "/p" || s == "-p") {
             a.start_paused = true;
         }
-        else if (s == "/o") {
+        else if (s == "/n" || s == "-n") {
+            a.small_screen = true;
+        }
+        else if (s == "/g" || s == "-g") {
+            if (++i < argc)
+                a.gfx = argv[i];
+        }
+        else if (s == "/o" || s == "-o") {
             if (++i < argc)
                 a.optfile = argv[i];
         }
@@ -129,7 +138,10 @@ int main(int argc, char** argv)
 
     std::shared_ptr<Environment> current_env(new Environment());
     current_env->from_file(args.optfile);
-
+    if (args.small_screen)
+        current_env->set("small_screen", "true");
+    if (!args.gfx.empty())
+        current_env->set("gfx", args.gfx);
     if (!args.savefile.empty())
         current_env->set("game", args.savefile);
     if (args.start_paused)
@@ -141,7 +153,7 @@ int main(int argc, char** argv)
     current_env->get("game", &game);
     if (!game.empty())
     {
-        if (game.size() == 1 && (game[0] >= 'a' && game[0] <= 'd'))
+        if (game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + (int)s_options.size()))
         {
             i = game[0] - 'a';
         }

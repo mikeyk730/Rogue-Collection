@@ -570,7 +570,7 @@ void SdlRogue::Impl::SaveGame(std::string path, bool notify)
 
     std::ofstream file(path, std::ios::binary | std::ios::out);
     if (!file) {
-        DisplayMessage(SDL_MESSAGEBOX_ERROR, "Save Game", "Couldn't open file: " + path);
+        DisplayMessage(SDL_MESSAGEBOX_ERROR, "Save Game", "Couldn't open save file: " + path);
         return;
     }
 
@@ -602,7 +602,7 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
 {
     std::ifstream file(path, std::ios::binary | std::ios::in);
     if (!file) {
-        throw_error("Couldn't open file: " + path);
+        throw_error("Couldn't open save file: " + path);
     }
 
     unsigned char version;
