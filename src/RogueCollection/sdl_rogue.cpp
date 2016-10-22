@@ -628,6 +628,7 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
     // set up game environment
     m_game_env.reset(new Environment());
     m_game_env->deserialize(file);
+    m_game_env->set("in_replay", "true");
     std::string value;
     if (m_current_env->get("logfile", &value)) {
         m_game_env->set("logfile", value);

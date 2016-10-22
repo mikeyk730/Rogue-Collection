@@ -210,6 +210,9 @@ void GameState::process_environment()
 {
     macro = options.get_environment("macro");
     wizard().add_powers(options.get_environment("powers"));
+    if (options.get_environment("in_replay") == "true")
+        set_in_replay();
+
     options.for_each([this] (std::pair<std::string, std::string> p){
         log("env", p.first + "=" + p.second);
     });
