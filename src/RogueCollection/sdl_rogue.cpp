@@ -564,7 +564,11 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
     m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
     m_replay_steps_remaining = (int)m_buffer.size();
 
+    file.close();
+
     std::string value;
+    if (!m_current_env->get("delete_on_restore", &value) || value != "false")
+        std::remove(path.c_str());
     if (m_current_env->get("replay_paused", &value) && value == "true")
         m_paused = true;
 
