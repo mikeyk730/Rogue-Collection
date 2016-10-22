@@ -258,7 +258,8 @@ void death(char monst)
 
     game->hero().adjust_purse(-(game->hero().get_purse() / 10));
 
-    game->screen().drop_curtain();
+    if (!game->options.act_like_v1_1())
+        game->screen().drop_curtain();
     game->screen().clear();
     game->screen().brown();
     game->screen().box((COLS == 40) ? 1 : 7, (COLS - 28) / 2, 22, (COLS + 28) / 2);

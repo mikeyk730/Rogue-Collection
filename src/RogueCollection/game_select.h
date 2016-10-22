@@ -13,17 +13,25 @@ struct GameSelect
     void RenderText(const std::string& text, Coord p, bool highlight);
 
 private:
-    bool Select(std::pair<int, std::string>& p);
-    void Render(int selection);
+    bool MakeSelection();
+    void RenderMainMenu();
+    void RenderTitleScreen();
 
     void set_window_size(int w, int h, int scale);
     void scale_window(int scale);
+
+    bool HandleMainMenu(const SDL_Event& e);
+    bool HandleTitleScreen(const SDL_Event& e);
 
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;
     SDL::Scoped::Font m_font;
     SDL::Scoped::Texture m_logo;
+    SDL::Scoped::Texture m_title_screen;
     const std::vector<Options>& m_options;
     std::string m_replay_path;
+    int m_selection = 0;
     Environment* m_current_env;
+    bool m_in_main_menu = true;
+    bool m_show_title = true;
 };

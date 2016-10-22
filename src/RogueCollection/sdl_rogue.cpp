@@ -89,7 +89,7 @@ struct SdlRogue::Impl
 
 private:
     void LoadAssets();
-    void Render(bool force);
+    void RenderMainMenu(bool force);
     void Animate();
     void RenderRegion(uint32_t* info, Coord dimensions, Region rect);
     void RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool is_tile);
@@ -293,7 +293,7 @@ void SdlRogue::Impl::LoadAssets()
     SDL_RenderClear(m_renderer);
 }
 
-void SdlRogue::Impl::Render(bool force)
+void SdlRogue::Impl::RenderMainMenu(bool force)
 {
     std::vector<Region> regions;
     Coord dimensions;
@@ -848,7 +848,7 @@ void SdlRogue::Impl::Run()
         }
         else if (e.type == RENDER_EVENT) {
             SDL_FlushEvent(RENDER_EVENT);
-            Render(e.user.code != 0);
+            RenderMainMenu(e.user.code != 0);
         }
         else if (e.type == TIMER_EVENT) {
             m_frame_number = e.user.code;
@@ -1122,11 +1122,13 @@ void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
         {
             m_scale = e.key.keysym.sym - SDLK_0;
             update_window_size();
+            SetFullscreen(m_window, false);
         }
         else if (e.key.keysym.sym == SDLK_0)
         {
             m_scale = INT_MAX;
             update_window_size();
+            SetFullscreen(m_window, false);
         }
     }
 
