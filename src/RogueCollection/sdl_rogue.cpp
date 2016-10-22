@@ -404,15 +404,31 @@ void SdlRogue::Impl::Animate()
 
 void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
 {
-    for (int x = rect.Left; x <= rect.Right; ++x) {
-        for (int y = rect.Top; y <= rect.Bottom; ++y) {
+    for (int y = rect.Top; y <= rect.Bottom; ++y) {
+        for (int x = rect.Left; x <= rect.Right; ++x) {
+
             SDL_Rect r = get_screen_rect({ x, y });
 
-            uint32_t info = data[y*dimensions.x+x];
+            uint32_t info = data[y*dimensions.x + x];
 
             if (!m_tile_provider || is_text(info))
             {
-                RenderText(info, r, false, 0);
+                int color = 0;
+                if (y == 0 && char_color(info) == 0x70) {
+                    // Hack for consistent standout in msg lines.  Unix versions use '-'.
+                    // PC uses ' ' with background color.  We want consistent behavior.
+                    if (current_gfx().use_colors) {
+                        if (char_text(info) == '-')
+                            info = ' ';
+                        color = 0x70;
+                    }
+                    else {
+                        if (char_text(info) == ' ')
+                            info = '-';
+                        color = 0x07;
+                    }
+                }
+                RenderText(info, r, false, color);
             }
             else {
                 RenderTile(info, r);
@@ -461,7 +477,7 @@ unsigned int GetColor(int chr, int attr)
         return 0x71; //blue on grey
     }
 
-    return attr;
+    return attr ? attr : 0x07;
 }
 
 
@@ -471,14 +487,16 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
     if (!color) {
         color = GetColor(c, char_color(info));
     }
-    if (!current_gfx().use_colors || color == 0) {
+
+    if (!current_gfx().use_colors)
+    {
         color = 0x07;
     }
 
-    if (c == STAIRS && m_frame_number == 1 && current_gfx().animate)
+    if (current_gfx().animate && c == STAIRS && m_frame_number == 1)
         c = ' ';
 
-    if (!is_text && current_gfx().use_unix_gfx)
+    if (current_gfx().use_unix_gfx && !is_text)
     {
         auto i = unix_chars.find(c);
         if (i != unix_chars.end())

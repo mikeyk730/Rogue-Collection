@@ -335,6 +335,8 @@ int __window::refresh()
 
     if (region.Top == 0 && region.Left == 0 && region.Bottom == LINES - 1 && region.Right == COLS - 1)
     {
+        if (memcmp(curscr->m_data, m_data, LINES*COLS * sizeof(chtype)) == 0)
+            return OK;
         memcpy(curscr->m_data, m_data, LINES*COLS * sizeof(chtype));
     }
     else {
