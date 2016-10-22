@@ -19,6 +19,8 @@
 #define CTRL(ch)   (ch&0x1f)
 #define ESCAPE     (0x1b)
 
+const char* SdlRogue::WindowTitle = "Rogue Collection 1.0";
+
 namespace
 {
     std::map<int, int> unix_chars = {
@@ -61,6 +63,8 @@ namespace
     {
         return (ch & 0x010000) == 0;
     }
+
+    const unsigned char s_version = 1;
 }
 
 struct SdlRogue::Impl
@@ -94,7 +98,7 @@ private:
 
     void PostRenderMsg(int force);
 
-    void SaveGame();
+    void SaveGame(std::string path, bool notify);
     void RestoreGame(const std::string& filename);
     void SetGame(const std::string& name);
     void SetGame(int i);
@@ -496,28 +500,43 @@ void SdlRogue::Impl::PostRenderMsg(int force)
     SDL_PushEvent(&sdlevent);
 }
 
-void SdlRogue::Impl::SaveGame()
+void SdlRogue::Impl::SaveGame(std::string path, bool notify)
 {
-    const unsigned char version = 1;
-
-    std::string path;
-    if (!GetSavePath(m_window, path)) {
-        return;
+    if (path.empty()) {
+        if (!m_current_env->get("savefile", &path) || path.empty()) {
+            if (!GetSavePath(m_window, path)) {
+                return;
+            }
+        }
     }
 
     std::ofstream file(path, std::ios::binary | std::ios::out);
     if (!file) {
-        ErrorBox("Couldn't open file: " + path);
+        DisplayMessage(SDL_MESSAGEBOX_ERROR, "Save Game", "Couldn't open file: " + path);
+        return;
     }
 
-    write(file, version);
+    write(file, s_version);
     write(file, m_restore_count);
     write_short_string(file, m_options.name);
     m_game_env->serialize(file);
-    std::copy(m_keylog.begin(), m_keylog.end(), std::ostreambuf_iterator<char>(file));
+
+    //locked region
+    {
+        std::unique_lock<std::mutex> lock(m_input_mutex);
+        std::copy(m_keylog.begin(), m_keylog.end(), std::ostreambuf_iterator<char>(file));
+    }
 
     if (!file) {
-        ErrorBox("Error writing to file: " + path);
+        DisplayMessage(SDL_MESSAGEBOX_ERROR, "Save Game", "Error writing to file: " + path);
+        return;
+    }
+
+    SDL_Event sdlevent;
+    sdlevent.type = SDL_QUIT;
+    SDL_PushEvent(&sdlevent);
+    if (notify) {
+        DisplayMessage(SDL_MESSAGEBOX_INFORMATION, "Save Game", "Your game was saved successfully.  Come back soon!");
     }
 }
 
@@ -530,6 +549,8 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
 
     unsigned char version;
     read(file, &version);
+    if (version > s_version)
+        throw_error("This file is not recognized.  It may have been saved with a newer version of Rogue Collection.  Please download the latest version and try again.");
 
     read(file, &m_restore_count);
     ++m_restore_count;
@@ -570,7 +591,7 @@ void SdlRogue::Impl::SetGame(int i)
     m_options = s_options[i];
 
     if (m_options.name == "PC Rogue 1.1") {
-        m_game_env->set("version", "1.1");
+        m_game_env->set("emulate_version", "1.1");
     }
 
     if (!m_game_env->write_to_os(m_options.is_unix))
@@ -585,7 +606,10 @@ void SdlRogue::Impl::SetGame(int i)
     m_game_env->cols(dims.x);
     m_game_env->lines(dims.y);
 
-    SDL_SetWindowTitle(m_window, std::string("Rogue Collection - " + m_options.name).c_str());
+    std::string title(SdlRogue::WindowTitle);
+    title += " - ";
+    title += m_options.name;
+    SDL_SetWindowTitle(m_window, title.c_str());
 }
 
 const GraphicsConfig & SdlRogue::Impl::current_gfx() const
@@ -694,6 +718,9 @@ void SdlRogue::Impl::Run()
     SDL_Event e;
     while (SDL_WaitEvent(&e)) {
         if (e.type == SDL_QUIT) {
+            std::string path;
+            if (m_current_env->get("autosave", &path))
+                SaveGame(path, false);
             return;
         }
         else if (e.type == SDL_WINDOWEVENT) {
@@ -1001,7 +1028,7 @@ void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
     }
 
     if (e.key.keysym.sym == 's' && (e.key.keysym.mod & KMOD_CTRL)) {
-        SaveGame();
+        SaveGame("", true);
         return;
     }
 

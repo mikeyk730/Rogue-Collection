@@ -63,17 +63,17 @@ namespace
         std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
         try {
             if (!dll) {
-                throw_error("Couldn't load dll " + lib);
+                throw_error("Couldn't load dll: " + lib);
             }
 
             init_game init = (init_game)GetProcAddress(dll.get(), "init_game");
             if (!init) {
-                throw_error("Couldn't load init_game from " + lib);
+                throw_error("Couldn't load init_game from: " + lib);
             }
 
             game_main game = (game_main)GetProcAddress(dll.get(), "rogue_main");
             if (!game) {
-                throw_error("Couldn't load rogue_main from " + lib);
+                throw_error("Couldn't load rogue_main from: " + lib);
             }
 
             (*init)(r, r, r->GameEnv()->lines(), r->GameEnv()->cols());
@@ -82,7 +82,7 @@ namespace
         catch (const std::runtime_error& e)
         {
             std::string s(e.what());
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", s.c_str(), NULL);
+            DisplayMessage(SDL_MESSAGEBOX_ERROR, "Fatal Error", s.c_str());
             exit(1);
         }
     }
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
             scale = atoi(value.c_str());
         }
         Coord window_size = get_scaled_coord({ WINDOW_W, WINDOW_H }, scale);
-        window = SDL::Scoped::Window(SDL_CreateWindow("Rogue Collection", 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN), SDL_DestroyWindow);
+        window = SDL::Scoped::Window(SDL_CreateWindow(SdlRogue::WindowTitle, 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN), SDL_DestroyWindow);
         if (window == nullptr)
             throw_error("SDL_CreateWindow");
 
@@ -185,7 +185,7 @@ int main(int argc, char** argv)
         }
 
         if (i == -1 && replay_path.empty()) {
-            GameSelect select(window.get(), renderer.get(), s_options);
+            GameSelect select(window.get(), renderer.get(), s_options, current_env.get());
             auto selection = select.GetSelection();
             i = selection.first;
             replay_path = selection.second;
@@ -210,10 +210,7 @@ int main(int argc, char** argv)
     }
     catch (const std::runtime_error& e)
     {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-            "Error",
-            e.what(),
-            NULL);
+        DisplayMessage(SDL_MESSAGEBOX_ERROR, "Fatal Error", e.what());
         return 1;
     }
 

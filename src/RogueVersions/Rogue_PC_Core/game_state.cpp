@@ -345,7 +345,7 @@ bool Options::throws_affect_mimics() const
 
 bool Options::act_like_v1_1() const
 {
-    return get_environment("version") == "1.1";
+    return get_environment("emulate_version") == "1.1";
 }
 
 bool Options::disable_scroll_lock() const

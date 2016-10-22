@@ -82,11 +82,6 @@ bool GetSavePath(SDL_Window* window, std::string& path)
     return success;
 }
 
-void ErrorBox(const std::string & msg)
-{
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg.c_str(), NULL);
-}
-
 void delay(int ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
@@ -361,3 +356,26 @@ std::istream& read_short_string(std::istream& in, std::string* s)
 
     return in;
 }
+
+#ifdef WIN32
+#include <Windows.h>
+void DisplayMessage(int type, const std::string& title, const std::string& msg)
+{
+    int icon = 0;
+    switch (type) {
+    case SDL_MESSAGEBOX_ERROR:
+        icon = MB_ICONERROR;
+        break;
+    case SDL_MESSAGEBOX_WARNING:
+        icon = MB_ICONWARNING;
+        break;
+    }
+    MessageBoxA(0, msg.c_str(), title.c_str(), MB_OK | icon);
+}
+#else
+void DisplayMessage(int type, const std::string& title, const std::string& msg)
+{
+    SDL_ShowSimpleMessageBox(type, title.c_str(), msg.c_str(), NULL);
+}
+#endif
+

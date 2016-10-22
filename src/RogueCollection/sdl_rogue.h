@@ -56,6 +56,9 @@ struct SdlRogue : public DisplayInterface, public InputInterface
     virtual char GetChar(bool block, bool for_string, bool *is_replay) override;
     virtual void Flush() override;
 
+    static const char* WindowTitle;
+
+private:
     struct Impl;
     std::unique_ptr<Impl> m_impl;
 };

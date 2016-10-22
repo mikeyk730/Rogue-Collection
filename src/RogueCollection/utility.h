@@ -83,7 +83,7 @@ void ToggleFullscreen(SDL_Window* Window);
 bool GetLoadPath(SDL_Window* window, std::string& path);
 bool GetSavePath(SDL_Window* window, std::string& path);
 
-void ErrorBox(const std::string& msg);
+void DisplayMessage(int type, const std::string& title, const std::string& msg);
 void delay(int ms);
 
 template <typename T>

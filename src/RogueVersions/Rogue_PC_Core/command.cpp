@@ -200,8 +200,11 @@ void process_prefixes(int ch, Command* command, bool* fast_mode)
     case 'f': // f: turn on fast mode for this turn
         *fast_mode = true;
         break;
-    case 'g': // g: move onto an item without picking it up
-        command->can_pick_up = false;
+    case 'm': // m: move onto an item without picking it up
+        if (game->options.act_like_v1_1())
+            command->ch = ch;
+        else
+            command->can_pick_up = false;
         break;
     case 'a': //a: repeat last command
         *command = game->last_turn.command;

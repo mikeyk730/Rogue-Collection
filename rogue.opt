@@ -4,6 +4,7 @@
 
 game=
 gfx=
+;autosave=
 fullscreen=false
 window_scaling=max
 small_screen=false
