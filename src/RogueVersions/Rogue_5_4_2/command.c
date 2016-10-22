@@ -611,7 +611,7 @@ help(void)
 void
 identify(void)
 {
-    int ch;
+    int ch, tch;
     const struct h_list *hp;
     const char *str;
     const struct h_list ident_list[] = {
@@ -638,6 +638,7 @@ identify(void)
 
     msg("what do you want identified? ");
     ch = readchar();
+    tch = PC_GFX_TRANSLATE(ch);
     mpos = 0;
     if (ch == ESCAPE)
     {
@@ -650,7 +651,7 @@ identify(void)
     {
 	str = "unknown character";
 	for (hp = ident_list; hp->h_ch != '\0'; hp++)
-	    if (hp->h_ch == ch)
+	    if (hp->h_ch == tch)
 	    {
 		str = hp->h_desc;
 		break;

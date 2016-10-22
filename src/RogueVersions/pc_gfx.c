@@ -81,6 +81,14 @@ int translate_type(int t)
     case ',': return AMULET;
     case '=': return RING;
     case '/': return STICK;
+    case '|': return VWALL;
+    case '-': return HWALL;
+    case '%': return STAIRS;
+    case '+': return DOOR;
+    case '.': return FLOOR;
+    case '#': return PASSAGE;
+    case '@': return PLAYER;
+    case '^': return TRAP;
     }
     return t;
 }

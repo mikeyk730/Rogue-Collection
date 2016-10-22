@@ -488,7 +488,7 @@ identify()
     }
     if (isupper(ch))
 	str = monsters[ch-'A'].m_name;
-    else switch (ch)
+    else switch (PC_GFX_TRANSLATE(ch))
     {
 	case VWALL:
 	case HWALL:
