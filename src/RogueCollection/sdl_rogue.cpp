@@ -486,7 +486,9 @@ void SdlRogue::Impl::RenderText(uint32_t info, unsigned char color, SDL_Rect r, 
 
     // Tiles from Unix versions come in with either color=0x00 (for regular state)
     // or color=0x70 (for standout).  We need to translate these into more diverse
-    // colors.
+    // colors.  Tiles from PC versions already have the correct color, so we
+    // technically don't need to do anything here, but it doesn't hurt to call
+    // GetColor.
     if (is_tile) {
         color = GetColor(c, color);
     }

@@ -146,7 +146,7 @@ private:
     //drawing routines that do not auto-render
     void private_mvaddch(int r, int c, char chr, bool text);
     void private_addch(unsigned char c, bool text);
-    void private_putchr(int c, int attr, bool text);
+    void private_putchr(int c, bool text);
     void private_repchr(WINDOW* w, int chr, int cnt);
     void private_vbox(WINDOW* w, const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
@@ -348,19 +348,19 @@ void PdCursesOutput::private_addch(unsigned char chr, bool text)
     {
         attr = GetColor(chr, attr);
     }
-    private_putchr(chr, attr, text);
+    ::attron(COLOR_PAIR(attr));
+    private_putchr(chr, text);
+    ::attroff(COLOR_PAIR(attr));
     ::move(r, c + 1);
     return;
 }
 
-void PdCursesOutput::private_putchr(int c, int attr, bool text)
+void PdCursesOutput::private_putchr(int c, bool text)
 {
-    ::attron(COLOR_PAIR(attr));
     if (text)
         ::addch(c);
     else
         ::addrawch(c);
-    //::attroff(COLOR_PAIR(attr));
 }
 
 void PdCursesOutput::mvaddstr(int r, int c, const char *s)
@@ -487,7 +487,7 @@ void PdCursesOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
         for (c = ul_col; c <= lr_col; ++c)
         {
             ::move(r, c);
-            private_putchr(' ', m_attr, true);
+            private_putchr(' ', true);
         }
     }
     ::move(ul_row, ul_col);
@@ -496,9 +496,7 @@ void PdCursesOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 
 void PdCursesOutput::repchr(int chr, int cnt)
 {
-    ::attron(COLOR_PAIR(m_attr));
     private_repchr(stdscr, chr, cnt);
-    //::attroff(COLOR_PAIR(m_attr));
     Render();
 }
 
