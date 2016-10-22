@@ -322,7 +322,7 @@ int ScreenOutput::AddCharacter(byte chr, bool is_text)
     }
 
     byte attr = m_attr;
-    if (at_table == color_attr)
+    if (at_table == color_attr && !is_text)
     {
         attr = GetColor(chr, attr);
     }

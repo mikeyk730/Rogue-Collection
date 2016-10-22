@@ -414,6 +414,7 @@ int get_magic_char(Item *obj)
 //help: prints out help screens
 void help(const char*const* helpscr)
 {
+    bool is_objs(helpscr == helpobjs);
     int hcount = 0;
     int hrow, hcol;
     int isfull;
@@ -437,7 +438,18 @@ void help(const char*const* helpscr)
             if (hcount % 2) hcol = 40;
             if (hrow == 22 && hcol == 40) isfull = true;
         }
-        game->screen().mvaddstr({ hcol, hrow }, *helpscr++);
+        game->screen().move(hrow, hcol);
+        const char* str = *helpscr++;
+        if (is_objs) {
+            unsigned char ch = *str++;
+            game->screen().add_tile(ch);
+            if (ch == 'A' || ch == '$') {
+                game->screen().add_text(*str++);
+                game->screen().add_tile(*str++);
+            }
+        }
+        game->screen().addstr(str);
+
         //decide if we need print a continue type message
         if ((*helpscr == 0) || isfull)
         {

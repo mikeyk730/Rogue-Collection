@@ -15,11 +15,12 @@
 #include <memory>
 #include <iostream>
 #include <sstream>
-#include <stdlib.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdarg.h>
+#include <cstdlib>
+#include <ctime>
+#include <cstdio>
+#include <cstdarg>
 
+#include <display_interface.h>
 #include "random.h"
 #include "game_state.h"
 #include "main.h"
@@ -43,7 +44,6 @@
 #include "level.h"
 #include "rooms.h"
 #include "input_interface_ex.h"
-#include <display_interface.h>
 
 int get_seed()
 {
@@ -143,14 +143,28 @@ void credits()
 
     game->screen().high();
     getinfo(tname, 23);
-    if (*tname && *tname != ESCAPE)
+    bool set_name(*tname && *tname != ESCAPE);
+    if (set_name)
         game->hero().set_name(tname);
 
-    game->screen().blot_out(23, 0, 24, COLS - 1);
-    game->screen().brown();
-    game->screen().add_text({ 0,22 }, (char)0xc8);
-    game->screen().add_text({ COLS - 1,22 }, (char)0xbc);
-    game->screen().standend();
+    if (game->options.act_like_v1_1()) {
+        game->screen().high();
+        game->screen().mvaddstr({ 2, 23 }, "        Hello ");
+        game->screen().addstr(game->hero().get_name().c_str());
+        game->screen().standend();
+        tick_pause(5);
+    }
+    else {
+        game->screen().blot_out(23, 0, 24, COLS - 1);
+        game->screen().brown();
+        game->screen().add_text({ 0,22 }, (char)0xc8);
+        game->screen().add_text({ COLS - 1,22 }, (char)0xbc);
+        game->screen().standend();
+
+        if (!game->in_replay()) {
+            game->screen().drop_curtain();
+        }
+    }
 }
 
 struct Args
@@ -265,7 +279,6 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     game->CreateHero(game->options.get_environment("name"));
     if (game->options.prompt_for_name()) {
         credits();
-        game->screen().drop_curtain();
     }
 
     init_things(); //Set up probabilities of things    
@@ -278,8 +291,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     daemon(run_monsters, 0);
 
     msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
-    if (game->options.prompt_for_name())
-        game->screen().raise_curtain();
+    game->screen().raise_curtain();
 
     while (true) {
         advance_game();

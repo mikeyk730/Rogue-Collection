@@ -92,7 +92,7 @@ private:
     void Render(bool force);
     void Animate();
     void RenderRegion(uint32_t* info, Coord dimensions, Region rect);
-    void RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color);
+    void RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool is_tile);
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
     void RenderReplayOverlay(int steps, Coord dimensions);
@@ -379,7 +379,7 @@ void SdlRogue::Impl::Animate()
             int x = i % dimensions.x;
             int y = i / dimensions.x;
             SDL_Rect r = get_screen_rect({ x, y });
-            RenderText(data[i], r, false, 0);
+            RenderText(c, char_color(data[i]), r, true);
             update = true;
         }
     }
@@ -413,14 +413,13 @@ void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
 
             if (!m_tile_provider || is_text(info))
             {
-                int color = 0;
-                if (y == 0 && char_color(info) == 0x70) {
+                int color = char_color(info);
+                if (y == 0 && color == 0x70) {
                     // Hack for consistent standout in msg lines.  Unix versions use '-'.
                     // PC uses ' ' with background color.  We want consistent behavior.
                     if (current_gfx().use_colors) {
                         if (char_text(info) == '-')
                             info = ' ';
-                        color = 0x70;
                     }
                     else {
                         if (char_text(info) == ' ')
@@ -428,7 +427,7 @@ void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
                         color = 0x07;
                     }
                 }
-                RenderText(info, r, false, color);
+                RenderText(info, color, r, !is_text(info));
             }
             else {
                 RenderTile(info, r);
@@ -477,26 +476,28 @@ unsigned int GetColor(int chr, int attr)
         return 0x71; //blue on grey
     }
 
-    return attr ? attr : 0x07;
+    return attr;
 }
 
 
-void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color)
+void SdlRogue::Impl::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool is_tile)
 {
     unsigned char c = char_text(info);
-    if (!color) {
-        color = GetColor(c, char_color(info));
-    }
 
-    if (!current_gfx().use_colors)
-    {
-        color = 0x07;
+    // Tiles from Unix versions come in with either color=0x00 (for regular state)
+    // or color=0x70 (for standout).  We need to translate these into more diverse
+    // colors.
+    if (is_tile) {
+        color = GetColor(c, color);
+    }
+    if (!color || !current_gfx().use_colors) {
+        color = 0x07; //grey on black is the default
     }
 
     if (current_gfx().animate && c == STAIRS && m_frame_number == 1)
         c = ' ';
 
-    if (current_gfx().use_unix_gfx && !is_text)
+    if (current_gfx().use_unix_gfx && is_tile)
     {
         auto i = unix_chars.find(c);
         if (i != unix_chars.end())
@@ -553,7 +554,7 @@ void SdlRogue::Impl::RenderReplayOverlay(int steps, Coord dimensions)
     int len = (int)s.size();
     for (int i = 0; i < len; ++i) {
         SDL_Rect r = get_screen_rect({ dimensions.x - (len - i) - 1, dimensions.y - 1 });
-        RenderText(s[i], r, false, 0x70);
+        RenderText(s[i], 0x70, r, false);
     }
 }
 

@@ -31,6 +31,7 @@ struct __window
     int addstr(const char* s);
     int attron(chtype);
     int attroff(chtype);
+    int attrset(chtype attr);
     int clear();
     int clrtoeol();
     int erase();
@@ -44,6 +45,7 @@ struct __window
     int mvwin(int r, int c);
     int nodelay(bool enable);
     int overlay(WINDOW* dest, bool copy_spaces) const;
+    int copywin(WINDOW* dest, int srcow, int srccol, int destrow, int destcol, int destmaxrow, int destmaxcol) const;
     int refresh();
     int getnstr(char* dest, int n);
     int chgat(int n, attr_t attr, short color, const void *opts);
@@ -161,6 +163,12 @@ int __window::attroff(chtype ch)
     {
         attr &= ~A_COLOR; //clear the color 
     }
+    return OK;
+}
+
+int __window::attrset(chtype a)
+{
+    attr = (a & A_ATTRIBUTES);
     return OK;
 }
 
@@ -375,6 +383,19 @@ int __window::overlay(WINDOW * dest, bool copy_spaces) const
     return OK;
 }
 
+int __window::copywin(WINDOW* dest, int srcrow, int srccol, int destrow, int destcol, int destmaxrow, int destmaxcol) const
+{
+    int roffset = srcrow - destrow;
+    int coffset = srccol - destcol;
+    int ncols = destmaxcol - destcol + 1;
+    for (int r = destrow; r <= destmaxrow; ++r) {
+        int c = destcol;
+        memcpy(dest->data(r, c), this->data(r + roffset, c + coffset), ncols*sizeof(chtype));
+    }
+    return OK;
+}
+
+
 Region __window::window_region() const
 {
     Region r;
@@ -486,6 +507,13 @@ int overwrite(const WINDOW* w, WINDOW* dest)
     return w->overlay(dest, true);
 }
 
+int copywin(const WINDOW*src, WINDOW* dest, int srcrow, int srccol, int destrow, int destcol, int destmaxrow, int destmaxcol, int overlay)
+{
+    if (overlay == false)
+        return src->copywin(dest, srcrow, srccol, destrow, destcol, destmaxrow, destmaxcol);
+    return ERR; //not implemented
+}
+
 int mvwin(WINDOW* w, int r, int c)
 {
     return w->mvwin(r, c);
@@ -514,6 +542,11 @@ int wattroff(WINDOW* w, chtype ch)
 int wattron(WINDOW* w, chtype ch)
 {
     return w->attron(ch);
+}
+
+int wattrset(WINDOW* w, chtype attr)
+{
+    return w->attrset(attr);
 }
 
 int wclear(WINDOW* w)
@@ -662,6 +695,11 @@ int attroff(chtype ch)
 int attron(chtype ch)
 {
     return wattron(stdscr, ch);
+}
+
+int attrset(chtype a)
+{
+    return wattrset(stdscr, a);
 }
 
 int clear(void)

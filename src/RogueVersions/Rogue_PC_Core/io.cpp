@@ -638,10 +638,10 @@ void clear_typeahead_buffer()
     game->typeahead.clear();
 }
 
-void tick_pause()
+void tick_pause(int n)
 {
     if (!game->in_replay())
-        sleep(50);
+        sleep(50*n);
 }
 
 void alert()

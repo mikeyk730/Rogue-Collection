@@ -17,6 +17,7 @@
 #define BX_HB               6
 
 #define MAXATTR  17
+#define CURTAIN_SLEEP 20
 
 namespace
 {
@@ -146,8 +147,8 @@ private:
     void private_mvaddch(int r, int c, char chr, bool text);
     void private_addch(unsigned char c, bool text);
     void private_putchr(int c, int attr, bool text);
-    void private_repchr(int chr, int cnt);
-    void private_vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
+    void private_repchr(WINDOW* w, int chr, int cnt);
+    void private_vbox(WINDOW* w, const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c);
 
     void Render();
     void ApplyCursor();
@@ -343,7 +344,7 @@ void PdCursesOutput::private_addch(unsigned char chr, bool text)
     }
 
     unsigned char attr = m_attr;
-    if (at_table == color_attr)
+    if (at_table == color_attr && !text)
     {
         attr = GetColor(chr, attr);
     }
@@ -359,7 +360,7 @@ void PdCursesOutput::private_putchr(int c, int attr, bool text)
         ::addch(c);
     else
         ::addrawch(c);
-    ::attron(COLOR_PAIR(attr));
+    //::attroff(COLOR_PAIR(attr));
 }
 
 void PdCursesOutput::mvaddstr(int r, int c, const char *s)
@@ -379,8 +380,11 @@ void PdCursesOutput::addstr(const char *s)
 
 void PdCursesOutput::set_attr(int bute)
 {
-    if (bute < MAXATTR) m_attr = at_table[bute];
-    else m_attr = bute;
+    if (bute < MAXATTR) 
+        m_attr = at_table[bute];
+    else 
+        m_attr = bute;
+    ::attrset(COLOR_PAIR(m_attr));
 }
 
 void PdCursesOutput::forcebw()
@@ -407,36 +411,38 @@ void PdCursesOutput::wrestor()
 //Some general drawing routines
 void PdCursesOutput::box(int ul_r, int ul_c, int lr_r, int lr_c)
 {
-    private_vbox(dbl_box, ul_r, ul_c, lr_r, lr_c);
-    Render();
-}
-
-//box: draw a box given the upper left coordinate and the lower right
-void PdCursesOutput::private_vbox(const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
-{
-    int i;
     bool wason;
     int r, c;
 
     wason = cursor(false);
     getrc(&r, &c);
-    //draw horizontal boundary
-    ::move(ul_r, ul_c + 1);
-    private_repchr(box[BX_HT], i = (lr_c - ul_c - 1));
-    ::move(lr_r, ul_c + 1);
-    private_repchr(box[BX_HB], i);
-    //draw vertical boundary
-    for (i = ul_r + 1; i < lr_r; i++) {
-        private_mvaddch(i, ul_c, box[BX_VW], true);
-        private_mvaddch(i, lr_c, box[BX_VW], true);
-    }
-    //draw corners
-    private_mvaddch(ul_r, ul_c, box[BX_UL], true);
-    private_mvaddch(ul_r, lr_c, box[BX_UR], true);
-    private_mvaddch(lr_r, ul_c, box[BX_LL], true);
-    private_mvaddch(lr_r, lr_c, box[BX_LR], true);
+    private_vbox(stdscr, dbl_box, ul_r, ul_c, lr_r, lr_c);
     ::move(r, c);
     cursor(wason);
+
+    Render();
+
+}
+
+//box: draw a box given the upper left coordinate and the lower right
+void PdCursesOutput::private_vbox(WINDOW* w, const unsigned char box[BX_SIZE], int ul_r, int ul_c, int lr_r, int lr_c)
+{
+    int i;
+    //draw horizontal boundary
+    ::wmove(w, ul_r, ul_c + 1);
+    private_repchr(w, box[BX_HT], i = (lr_c - ul_c - 1));
+    ::wmove(w, lr_r, ul_c + 1);
+    private_repchr(w, box[BX_HB], i);
+    //draw vertical boundary
+    for (i = ul_r + 1; i < lr_r; i++) {
+        ::mvwaddch(w, i, ul_c, box[BX_VW]);
+        ::mvwaddch(w, i, lr_c, box[BX_VW]);
+    }
+    //draw corners
+    ::mvwaddch(w, ul_r, ul_c, box[BX_UL]);
+    ::mvwaddch(w, ul_r, lr_c, box[BX_UR]);
+    ::mvwaddch(w, lr_r, ul_c, box[BX_LL]);
+    ::mvwaddch(w, lr_r, lr_c, box[BX_LR]);
 }
 
 //center a string according to how many columns there really are
@@ -490,14 +496,16 @@ void PdCursesOutput::blot_out(int ul_row, int ul_col, int lr_row, int lr_col)
 
 void PdCursesOutput::repchr(int chr, int cnt)
 {
-    private_repchr(chr, cnt);
+    ::attron(COLOR_PAIR(m_attr));
+    private_repchr(stdscr, chr, cnt);
+    //::attroff(COLOR_PAIR(m_attr));
     Render();
 }
 
-void PdCursesOutput::private_repchr(int chr, int cnt)
+void PdCursesOutput::private_repchr(WINDOW* w, int chr, int cnt)
 {
     while (cnt-- > 0) {
-        private_putchr(chr, m_attr, true);
+        ::waddch(w, chr);
     }
 }
 
@@ -511,10 +519,38 @@ void PdCursesOutput::implode()
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer
 void PdCursesOutput::drop_curtain()
 {
+    if (m_curtain_down)
+        return;
+
+    wdump();
+    wattron(m_backup_window, COLOR_PAIR(0x02));
+    private_vbox(m_backup_window, sng_box, 0, 0, LINES - 1, COLS - 1);
+    wattron(m_backup_window, COLOR_PAIR(0x0e));
+    for (int r = 1; r < LINES - 1; r++)
+    {
+        wmove(m_backup_window, r, 1);
+        int cnt = COLS - 2;
+        while (cnt-- > 0) {
+            ::waddch(m_backup_window, 0xb1);
+        }
+        wrefresh(m_backup_window);
+        sleep(CURTAIN_SLEEP);
+    }
+    m_curtain_down = true;
 }
 
 void PdCursesOutput::raise_curtain()
 {
+    if (!m_curtain_down)
+        return;
+
+    for (int r = LINES - 2; r > 0; r--)
+    {
+        copywin(stdscr, m_backup_window, r, 1, r, 1, r, COLS - 2, FALSE);
+        wrefresh(m_backup_window);
+        sleep(CURTAIN_SLEEP);
+    }
+    m_curtain_down = false;
 }
 
 void PdCursesOutput::move(short y, short x)

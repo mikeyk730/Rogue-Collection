@@ -85,13 +85,13 @@ const char* const helpobjs[MAXHELPO] =
   "\x1: the hero",
   "\x5: some food",
   "\xc: the amulet of yendor",
-  "\xe: a scroll",
+  "\xd: a scroll",
   "\x18: a weapon",
-  "\xdb: a piece of armor",
+  "\x8: a piece of armor",
   "\xf: some gold",
   "\xe7: a magic staff",
   "\xad: a potion",
-  "\xf8: a magic ring",
+  "\x9: a magic ring",
   "\xb1: a passage",
 
   //make sure in 40 or 80 column none of line draw set connects. this is currently in column 1 for 80
