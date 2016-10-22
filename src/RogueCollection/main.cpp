@@ -164,12 +164,12 @@ int main(int argc, char** argv)
         
         int scale = INT_MAX;
         std::string value;
-        if (current_env->get("window_scaling", &value) && value != "max")
+        if (current_env->get("window_scaling", &value))
         {
             scale = atoi(value.c_str());
         }
         Coord window_size = get_scaled_coord({ WINDOW_W, WINDOW_H }, scale);
-        window = SDL::Scoped::Window(SDL_CreateWindow(SdlRogue::WindowTitle, 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_HIDDEN), SDL_DestroyWindow);
+        window = SDL::Scoped::Window(SDL_CreateWindow(SdlRogue::WindowTitle, 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN), SDL_DestroyWindow);
         if (window == nullptr)
             throw_error("SDL_CreateWindow");
 
@@ -189,6 +189,17 @@ int main(int argc, char** argv)
             auto selection = select.GetSelection();
             i = selection.first;
             replay_path = selection.second;
+        }
+
+        if (i >= 0 && s_options[i].name == "PC Rogue 1.48") {
+            if (!current_env->get("show_title_screen", &value) || value != "false")
+            {
+                TitleScreen title(window.get(), renderer.get(), s_options, current_env.get());
+                if (!title.Run()) {
+                    i = -1;
+                    replay_path.clear();
+                }
+            }
         }
 
         if (i >= 0) {

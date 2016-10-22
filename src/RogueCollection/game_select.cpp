@@ -10,16 +10,10 @@ GameSelect::GameSelect(SDL_Window * window, SDL_Renderer* renderer, const std::v
     m_options(options), 
     m_font(load_font(getResourcePath("fonts")+"Px437_IBM_BIOS.ttf", 16)),
     m_logo(loadImage(getResourcePath("") + "title3.png", renderer)),
-    m_title_screen(loadImage(getResourcePath("") + "epyx.png", renderer)),
-    m_current_env(current_env)
+    m_current_env(current_env),
+    m_sizer(window, renderer, current_env)
 {
     m_current_env->get("savefile", &m_replay_path);
-    std::string value;
-    if (m_current_env->get("show_title_screen", &value) && value == "false")
-    {
-        m_show_title = false;
-    }
-    SDL_ShowWindow(m_window);
 }
 
 bool GameSelect::MakeSelection()
@@ -50,33 +44,15 @@ void GameSelect::RenderMainMenu()
     SDL_RenderPresent(m_renderer);
 }
 
-void GameSelect::RenderTitleScreen()
+void TitleScreen::RenderTitleScreen()
 {
     SDL_RenderClear(m_renderer);
     SDL_RenderCopy(m_renderer, m_title_screen.get(), 0, 0);
     SDL_RenderPresent(m_renderer);
 }
 
-void GameSelect::set_window_size(int w, int h, int scale)
-{
-    Coord window_size = ::get_scaled_coord({ w, h }, scale);
-    window_size.x = std::max(window_size.x, 342); //mdk: 342 empirically determined to be min window width
-    SDL_SetWindowSize(m_window, window_size.x, window_size.y);
-    SDL_RenderSetLogicalSize(m_renderer, w, h);
-}
 
-void GameSelect::scale_window(int scale)
-{
-    std::ostringstream ss;
-    ss << scale;
-    m_current_env->set("window_scaling", ss.str());
-
-    int w, h;
-    SDL_RenderGetLogicalSize(m_renderer, &w, &h);
-    set_window_size(w, h, scale);
-}
-
-bool GameSelect::HandleMainMenu(const SDL_Event& e)
+bool GameSelect::FinishMainMenu(const SDL_Event& e)
 {
     if (e.type == SDL_KEYDOWN) {
         if (e.key.keysym.sym == SDLK_RETURN) {
@@ -106,7 +82,7 @@ bool GameSelect::HandleMainMenu(const SDL_Event& e)
     return false;
 }
 
-bool GameSelect::HandleTitleScreen(const SDL_Event & e)
+bool TitleScreen::HandleTitleScreen(const SDL_Event & e)
 {
     if (e.type == SDL_KEYDOWN) {
         if (e.key.keysym.sym == SDLK_RALT || e.key.keysym.sym == SDLK_LALT || e.key.keysym.sym == SDLK_RCTRL ||
@@ -126,37 +102,9 @@ std::pair<int, std::string> GameSelect::GetSelection()
         if (e.type == SDL_QUIT) {
             return std::make_pair(-1, "");
         }
-        else if (e.type == SDL_KEYDOWN) {
-            if (e.key.keysym.mod & KMOD_ALT) {
-                if (e.key.keysym.sym == SDLK_RETURN) {
-                    ToggleFullscreen(m_window);
-                }
-                else if (e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_9)
-                {
-                    scale_window(e.key.keysym.sym - SDLK_0);
-                    SetFullscreen(m_window, false);
-                }
-                else if (e.key.keysym.sym == SDLK_0)
-                {
-                    scale_window(INT_MAX);
-                    SetFullscreen(m_window, false);
-                }
-                continue;
-            }
-        }
-
-        if (m_in_main_menu) {
-            if (HandleMainMenu(e)) {
-                if (m_show_title && m_selection >= 0 && s_options[m_selection].name == "PC Rogue 1.48") {
-                    m_in_main_menu = false;
-                    RenderTitleScreen();
-                }
-                else {
-                    return std::make_pair(m_selection, m_replay_path);
-                }
-            }
-        }
-        else if (HandleTitleScreen(e)) {
+        if (m_sizer.ConsumeEvent(e))
+            continue;
+        if (FinishMainMenu(e)) {
             return std::make_pair(m_selection, m_replay_path);
         }
     }
@@ -187,4 +135,30 @@ void GameSelect::RenderText(const std::string& text, Coord p, bool highlight)
     r.w = surface->w;
 
     SDL_RenderCopy(m_renderer, texture.get(), 0, &r);
+}
+
+TitleScreen::TitleScreen(SDL_Window * window, SDL_Renderer * renderer, const std::vector<Options>& options, Environment * current_env) :
+    m_window(window),
+    m_renderer(renderer),
+    m_sizer(window, renderer, current_env),
+    m_title_screen(loadImage(getResourcePath("") + "epyx.png", renderer))
+{
+}
+
+bool TitleScreen::Run()
+{
+    SDL_Event e;
+    while (SDL_WaitEvent(&e)) {
+        if (e.type == SDL_QUIT) {
+            return false;
+        }
+
+        if (m_sizer.ConsumeEvent(e))
+            continue;
+
+        if (HandleTitleScreen(e)) {
+            return true;
+        }
+    }
+    throw;
 }

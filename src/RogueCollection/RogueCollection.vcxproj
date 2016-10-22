@@ -226,6 +226,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     <ClCompile Include="text_provider.cpp" />
     <ClCompile Include="tile_provider.cpp" />
     <ClCompile Include="utility.cpp" />
+    <ClCompile Include="window_sizer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Shared\coord.h" />
@@ -238,6 +239,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     <ClInclude Include="tile_provider.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="sdl_rogue.h" />
+    <ClInclude Include="window_sizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

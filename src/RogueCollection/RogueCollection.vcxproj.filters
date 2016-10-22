@@ -39,6 +39,7 @@
     <ClInclude Include="tile_provider.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="window_sizer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -60,6 +61,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="tile_provider.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="window_sizer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

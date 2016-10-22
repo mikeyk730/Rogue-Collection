@@ -15,6 +15,7 @@
 #include "environment.h"
 #include "text_provider.h"
 #include "tile_provider.h"
+#include "window_sizer.h"
 
 #define CTRL(ch)   (ch&0x1f)
 #define ESCAPE     (0x1b)
@@ -106,8 +107,6 @@ private:
 
     const GraphicsConfig& current_gfx() const;
 
-    void set_window_size(int w, int h);
-    void update_window_size();
     Coord get_screen_pos(Coord buffer_pos);
     SDL_Rect get_screen_rect(Coord buffer_pos);
 
@@ -122,7 +121,7 @@ private:
 
     Coord m_block_size = { 0, 0 };
     int m_gfx_mode = 0;
-    int m_scale = INT_MAX;
+    WindowSizer m_sizer;
     std::unique_ptr<ITextProvider> m_text_provider;
     std::unique_ptr<TileProvider> m_tile_provider;
     int m_frame_number = 0;
@@ -211,15 +210,10 @@ private:
 SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> current_env, const std::string& file) :
     m_window(window),
     m_renderer(renderer),
-    m_current_env(current_env)
+    m_current_env(current_env),
+    m_sizer(window, renderer, current_env.get())
 {
     RestoreGame(file);
-
-    std::string value;
-    if (m_current_env->get("window_scaling", &value) && value != "max")
-    {
-        m_scale = atoi(value.c_str());
-    }
 
     std::string gfx_pref;
     if (m_current_env->get("gfx", &gfx_pref)) {
@@ -236,11 +230,12 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     LoadAssets();
 }
 
-SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment>env, int i) : 
+SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int i) : 
     m_window(window),
     m_renderer(renderer),
     m_current_env(env),
-    m_game_env(env)
+    m_game_env(env),
+    m_sizer(window, renderer, env.get())
 {
     int seed = (int)time(0);
     std::ostringstream ss;
@@ -248,12 +243,6 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     m_game_env->set("seed", ss.str());
  
     SetGame(i);
-
-    std::string value;
-    if (m_current_env->get("window_scaling", &value) && value != "max")
-    {
-        m_scale = atoi(value.c_str());
-    }
 
     std::string gfx_pref;
     if (m_current_env->get("gfx", &gfx_pref)) {
@@ -289,7 +278,7 @@ void SdlRogue::Impl::LoadAssets()
         m_block_size = m_tile_provider->dimensions();
     }
 
-    set_window_size(m_block_size.x * m_game_env->cols(), m_block_size.y * m_game_env->lines());
+    m_sizer.SetWindowSize(m_block_size.x * m_game_env->cols(), m_block_size.y * m_game_env->lines());
     SDL_RenderClear(m_renderer);
 }
 
@@ -699,21 +688,6 @@ const GraphicsConfig & SdlRogue::Impl::current_gfx() const
     return m_options.gfx_options[m_gfx_mode];
 }
 
-void SdlRogue::Impl::set_window_size(int w, int h)
-{
-    Coord window_size = ::get_scaled_coord({ w, h }, m_scale);
-    window_size.x = std::max(window_size.x, 342); //mdk: 342 empirically determined to be min window width
-    SDL_SetWindowSize(m_window, window_size.x, window_size.y);
-    SDL_RenderSetLogicalSize(m_renderer, w, h);
-}
-
-void SdlRogue::Impl::update_window_size()
-{
-    int w, h;
-    SDL_RenderGetLogicalSize(m_renderer, &w, &h);
-    set_window_size(w, h);
-}
-
 Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
 {
     Coord p;
@@ -1113,24 +1087,8 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
 
 void SdlRogue::Impl::HandleEventKeyDown(const SDL_Event & e)
 {
-    if (e.key.keysym.mod & KMOD_ALT) {
-        if (e.key.keysym.sym == SDLK_RETURN) {
-            ToggleFullscreen(m_window);
-            return;
-        }
-        else if (e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_9)
-        {
-            m_scale = e.key.keysym.sym - SDLK_0;
-            update_window_size();
-            SetFullscreen(m_window, false);
-        }
-        else if (e.key.keysym.sym == SDLK_0)
-        {
-            m_scale = INT_MAX;
-            update_window_size();
-            SetFullscreen(m_window, false);
-        }
-    }
+    if (m_sizer.ConsumeEvent(e))
+        return;
 
     if (m_replay_steps_remaining > 0) {
         if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_ESCAPE) {
