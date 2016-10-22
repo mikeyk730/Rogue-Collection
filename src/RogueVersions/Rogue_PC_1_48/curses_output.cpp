@@ -300,7 +300,7 @@ int GetColor(int chr, int attr)
     case FLOOR:
         return 0x0a; //light green
     case STAIRS:
-        return 0xa0; //black on light green
+        return 0x20; //black on green
     case TRAP:
         return 0x05; //magenta
     case GOLD: case PLAYER:

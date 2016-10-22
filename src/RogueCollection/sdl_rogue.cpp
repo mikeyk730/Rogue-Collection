@@ -85,11 +85,12 @@ struct SdlRogue::Impl
     Options options();
 
     void Run();
-    void Quit();
+    void PostQuit();
 
 private:
     void LoadAssets();
     void Render(bool force);
+    void Animate();
     void RenderRegion(uint32_t* info, Coord dimensions, Region rect);
     void RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigned char color);
     void RenderTile(uint32_t info, SDL_Rect r);
@@ -124,6 +125,9 @@ private:
     int m_scale = INT_MAX;
     std::unique_ptr<ITextProvider> m_text_provider;
     std::unique_ptr<TileProvider> m_tile_provider;
+    int m_frame_number = 0;
+    uint32_t RENDER_EVENT = 0;
+    uint32_t TIMER_EVENT = 0;
 
     Options m_options;
 
@@ -347,6 +351,57 @@ void SdlRogue::Impl::Render(bool force)
     SDL_RenderPresent(m_renderer);
 }
 
+void SdlRogue::Impl::Animate()
+{
+    bool update = false;
+
+    if (current_gfx().animate) {
+
+        Coord dimensions;
+        std::unique_ptr<uint32_t[]> data;
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            dimensions = m_shared_data.m_dimensions;
+            if (dimensions.x == 0 || dimensions.y == 0)
+                return;
+
+            uint32_t* temp = new uint32_t[dimensions.x*dimensions.y];
+            memcpy(temp, m_shared_data.m_data, dimensions.x*dimensions.y * sizeof(uint32_t));
+            data.reset(temp);
+        }
+
+        for (int i = 0; i < dimensions.x*dimensions.y; ++i) {
+            auto c = char_text(data[i]);
+            if (c != STAIRS)
+                continue;
+
+            int x = i % dimensions.x;
+            int y = i / dimensions.x;
+            SDL_Rect r = get_screen_rect({ x, y });
+            RenderText(data[i], r, false, 0);
+            update = true;
+        }
+    }
+
+    bool show_cursor;
+    Coord cursor_pos;
+
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        show_cursor = m_shared_data.m_cursor;
+        cursor_pos = m_shared_data.m_cursor_pos;
+    }
+
+    if (show_cursor) {
+        RenderCursor(cursor_pos);
+        update = true;
+    }
+
+    if (update)
+        SDL_RenderPresent(m_renderer);
+}
+
 void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
 {
     for (int x = rect.Left; x <= rect.Right; ++x) {
@@ -355,10 +410,8 @@ void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
 
             uint32_t info = data[y*dimensions.x+x];
 
-            //todo: how to correctly determine text vs monster/passage/wall?
             if (!m_tile_provider || is_text(info))
             {
-                //int color = (y >= 23) ? 0x0e : 0;
                 RenderText(info, r, false, 0);
             }
             else {
@@ -380,7 +433,7 @@ unsigned int GetColor(int chr, int attr)
     case FLOOR:
         return 0x0a; //light green
     case STAIRS:
-        return 0xa0; //black on light green
+        return 0x20; //black on light green
     case TRAP:
         return 0x05; //magenta
     case GOLD:
@@ -422,6 +475,9 @@ void SdlRogue::Impl::RenderText(uint32_t info, SDL_Rect r, bool is_text, unsigne
         color = 0x07;
     }
 
+    if (c == STAIRS && m_frame_number == 1 && current_gfx().animate)
+        c = ' ';
+
     if (!is_text && current_gfx().use_unix_gfx)
     {
         auto i = unix_chars.find(c);
@@ -462,7 +518,7 @@ void SdlRogue::Impl::RenderCursor(Coord pos)
     r.w = m_block_size.x;
     r.h = m_block_size.y/4;
 
-    int color = 0x0f;
+    int color = m_frame_number ? 0x00 : 0x0f;
 
     SDL_Rect clip;
     SDL_Texture* text;
@@ -479,17 +535,17 @@ void SdlRogue::Impl::RenderReplayOverlay(int steps, Coord dimensions)
     int len = (int)s.size();
     for (int i = 0; i < len; ++i) {
         SDL_Rect r = get_screen_rect({ dimensions.x - (len - i) - 1, dimensions.y - 1 });
-        //SDL_Rect r = get_screen_rect({ i, dimensions.y - 1 });
         RenderText(s[i], r, false, 0x70);
     }
 }
 
 void SdlRogue::Impl::PostRenderMsg(int force)
 {
-    SDL_Event sdlevent;
-    sdlevent.type = SDL_USEREVENT;
-    sdlevent.user.code = force;
-    SDL_PushEvent(&sdlevent);
+    SDL_Event e;
+    SDL_zero(e);
+    e.type = RENDER_EVENT;
+    e.user.code = force;
+    SDL_PushEvent(&e);
 }
 
 void SdlRogue::Impl::SaveGame(std::string path, bool notify)
@@ -524,9 +580,7 @@ void SdlRogue::Impl::SaveGame(std::string path, bool notify)
         return;
     }
 
-    SDL_Event sdlevent;
-    sdlevent.type = SDL_QUIT;
-    SDL_PushEvent(&sdlevent);
+    PostQuit();
     if (notify) {
         DisplayMessage(SDL_MESSAGEBOX_INFORMATION, "Save Game", "Your game was saved successfully.  Come back soon!");
     }
@@ -719,8 +773,30 @@ Options SdlRogue::Impl::options()
     return m_options;
 }
 
+namespace
+{
+    Uint32 PostTimerMsg(Uint32 interval, void *type)
+    {
+        static bool parity = true;
+        parity = !parity;
+
+        SDL_Event e;
+        SDL_zero(e);
+        e.type = *static_cast<uint32_t*>(type);
+        e.user.code = parity;
+        SDL_PushEvent(&e);
+
+        return interval;
+    }
+}
+
 void SdlRogue::Impl::Run()
 {
+    RENDER_EVENT = SDL_RegisterEvents(2);
+    TIMER_EVENT = RENDER_EVENT + 1;
+
+    SDL_AddTimer(250, PostTimerMsg, &TIMER_EVENT);
+
     SDL_Event e;
     while (SDL_WaitEvent(&e)) {
         if (e.type == SDL_QUIT) {
@@ -748,18 +824,24 @@ void SdlRogue::Impl::Run()
         else if (e.type == SDL_KEYUP) {
             HandleEventKeyUp(e);
         }
-        else if (e.type == SDL_USEREVENT) {
-            SDL_FlushEvent(SDL_USEREVENT);
+        else if (e.type == RENDER_EVENT) {
+            SDL_FlushEvent(RENDER_EVENT);
             Render(e.user.code != 0);
         }
+        else if (e.type == TIMER_EVENT) {
+            m_frame_number = e.user.code;
+            Animate();
+        }
+
     }
 }
 
-void SdlRogue::Impl::Quit()
+void SdlRogue::Impl::PostQuit()
 {
-    SDL_Event sdlevent;
-    sdlevent.type = SDL_QUIT;
-    SDL_PushEvent(&sdlevent);
+    SDL_Event e;
+    SDL_zero(e);
+    e.type = SDL_QUIT;
+    SDL_PushEvent(&e);
 }
 
 Region SdlRogue::Impl::shared_data_full_region()
@@ -798,7 +880,7 @@ void SdlRogue::Run()
 
 void SdlRogue::Quit()
 {
-    m_impl->Quit();
+    m_impl->PostQuit();
 }
 
 Environment* SdlRogue::GameEnv() const

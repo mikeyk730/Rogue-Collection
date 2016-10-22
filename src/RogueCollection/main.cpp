@@ -30,12 +30,12 @@ namespace
     TextConfig alt_text =        { "16x16.bmp", { 16, 16 }, { 0x07 }, true,  true  };
     TextConfig boxy_text =       { "boxy.bmp",  { 16, 16 }, { 0x07 }, true,  false };
 
-    GraphicsConfig unix_gfx =        { "unix",       &pc_text,         0,                  true,  false };
-    GraphicsConfig color_unix_gfx =  { "unix_color", &pc_colored_text, 0,                  true,  true  };
-    GraphicsConfig pc_gfx =          { "pc",         &pc_colored_text, 0,                  false, true  };
-    GraphicsConfig atari_slime_gfx = { "tiles",      &alt_text,        &atari_slime_tiles, false, true  };
-    GraphicsConfig atari_snake_gfx = { "tiles",      &alt_text,        &atari_snake_tiles, false, true  };
-    GraphicsConfig boxy_gfx =        { "boxy",       &boxy_text,       0,                  false, true  };
+    GraphicsConfig unix_gfx =        { "unix",       &pc_text,         0,                  true,  false, false };
+    GraphicsConfig color_unix_gfx =  { "unix_color", &pc_colored_text, 0,                  true,  true,  true  };
+    GraphicsConfig pc_gfx =          { "pc",         &pc_colored_text, 0,                  false, true,  true  };
+    GraphicsConfig atari_slime_gfx = { "tiles",      &alt_text,        &atari_slime_tiles, false, true,  false };
+    GraphicsConfig atari_snake_gfx = { "tiles",      &alt_text,        &atari_snake_tiles, false, true,  false };
+    GraphicsConfig boxy_gfx =        { "boxy",       &boxy_text,       0,                  false, true,  true  };
 }
 
 std::vector<Options> s_options = {

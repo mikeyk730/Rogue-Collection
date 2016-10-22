@@ -97,7 +97,7 @@ void TextGenerator::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Re
 {
     *rect = get_text_rect(ch);
 
-    if (m_cfg.monochrome) {
+    if (color && m_cfg.monochrome) {
         color = (color > 0x0f) ? 0xf0 : 0x0f;
     }
     

@@ -17,6 +17,7 @@ struct GraphicsConfig
     TileConfig* tile_cfg;
     bool use_unix_gfx;
     bool use_colors;
+    bool animate;
 };
 
 struct Options
