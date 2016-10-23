@@ -1011,13 +1011,6 @@ std::string GetDirectionKey(SDL_Keycode keycode, uint16_t modifiers, bool emulat
 {
     std::string keybuf;
 
-    bool caps((modifiers & KMOD_CAPS) != 0);
-    bool shift((modifiers & KMOD_SHIFT) != 0);
-    if (caps ^ shift) {
-        keybuf.push_back(toupper(keycode));
-        return keybuf;
-    }
-
     bool scroll = false; // (is_scroll_lock_on());
     bool ctrl((modifiers & KMOD_CTRL) != 0);
     if (scroll ^ ctrl) {
@@ -1027,6 +1020,13 @@ std::string GetDirectionKey(SDL_Keycode keycode, uint16_t modifiers, bool emulat
             return keybuf;
         }
         keybuf.push_back(CTRL(keycode));
+        return keybuf;
+    }
+
+    bool caps((modifiers & KMOD_CAPS) != 0);
+    bool shift((modifiers & KMOD_SHIFT) != 0);
+    if (caps ^ shift) {
+        keybuf.push_back(toupper(keycode));
         return keybuf;
     }
 
@@ -1040,13 +1040,8 @@ bool IsLetterKey(SDL_Keycode keycode)
     return (keycode >= 'a' && keycode <= 'z');
 }
 
-bool IsDirectionKey(SDL_Keycode keycode, uint32_t modifiers)
+bool IsDirectionKey(SDL_Keycode keycode)
 {
-    bool caps((modifiers & KMOD_CAPS) != 0);
-    bool shift((modifiers & KMOD_SHIFT) != 0);
-    if (caps ^ shift)
-        return false;
-
     switch (keycode)
     {
     case 'h':
@@ -1077,10 +1072,15 @@ SDL_Keycode SdlRogue::Impl::TranslateNumPad(SDL_Keycode keycode, uint16_t modifi
 
 std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifiers)
 {
+    // Direction keys not modified by Ctrl or Alt are handled by HandleEventText
+    if (IsDirectionKey(original) && (modifiers & KMOD_CTRL) == 0 && (modifiers & KMOD_ALT) == 0)
+        return "";
+
     bool use = false;
     SDL_Keycode keycode = TranslateNumPad(original, modifiers);
 
-    if ((modifiers & KMOD_ALT) && keycode == SDLK_F9) {
+    // Translate Alt+F9 on PC to 'F'
+    if (!m_options.is_unix && (modifiers & KMOD_ALT) && keycode == SDLK_F9) {
         keycode = 'F';
         use = true;
     }
@@ -1091,7 +1091,7 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
         use = true;
     }
 
-    if (IsDirectionKey(keycode, modifiers))
+    if (IsDirectionKey(keycode))
         return GetDirectionKey(keycode, modifiers, m_options.emulate_ctrl_controls, keycode==original);
 
     if ((modifiers & KMOD_CTRL) && IsLetterKey(keycode)) {
