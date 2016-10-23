@@ -39,7 +39,9 @@
     <ClInclude Include="tile_provider.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="window_sizer.h" />
+    <ClInclude Include="window_sizer.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

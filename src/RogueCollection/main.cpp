@@ -41,7 +41,7 @@ namespace
     GraphicsConfig boxy_gfx =        { "boxy",       &boxy_text,       0,            0,                  false,  true,   true,   true  };
 }
 
-std::vector<Options> s_options = {
+std::vector<GameConfig> s_options = {
     { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, atari_slime_gfx, boxy_gfx, unix_gfx, color_unix_gfx } },
     { "PC Rogue 1.1",     "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, atari_snake_gfx, boxy_gfx, unix_gfx, color_unix_gfx } },
     { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   {80,25}, {80,24}, false, true,  { unix_gfx, color_unix_gfx, pc_gfx, atari_snake_gfx, boxy_gfx } },
@@ -60,7 +60,7 @@ namespace
         void operator()(HMODULE h) { FreeLibrary(h); }
     };
 
-    void run_game(const std::string& lib, int argc, char** argv, SdlRogue* r)
+    void RunGame(const std::string& lib, int argc, char** argv, SdlRogue* r)
     {
         std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
         try {
@@ -68,8 +68,8 @@ namespace
                 throw_error("Couldn't load dll: " + lib);
             }
 
-            init_game init = (init_game)GetProcAddress(dll.get(), "init_game");
-            if (!init) {
+            init_game Init = (init_game)GetProcAddress(dll.get(), "init_game");
+            if (!Init) {
                 throw_error("Couldn't load init_game from: " + lib);
             }
 
@@ -78,7 +78,7 @@ namespace
                 throw_error("Couldn't load rogue_main from: " + lib);
             }
 
-            (*init)(r, r, r->GameEnv()->lines(), r->GameEnv()->cols());
+            (*Init)(r, r, r->GameEnv()->Lines(), r->GameEnv()->Columns());
             (*game)(0, 0, environ);
         }
         catch (const std::runtime_error& e)
@@ -101,7 +101,7 @@ struct Args
     bool small_screen = false;
 };
 
-Args process_args(int argc, char**argv)
+Args ProcessArgs(int argc, char**argv)
 {
     Args a = Args();
     a.optfile = "rogue.opt";
@@ -141,25 +141,25 @@ Args process_args(int argc, char**argv)
 
 int main(int argc, char** argv)
 {
-    Args args = process_args(argc, argv);
+    Args args = ProcessArgs(argc, argv);
 
     std::shared_ptr<Environment> current_env(new Environment());
-    current_env->from_file(args.optfile);
+    current_env->LoadFromFile(args.optfile);
     if (args.small_screen)
-        current_env->set("small_screen", "true");
+        current_env->Set("small_screen", "true");
     if (!args.gfx.empty())
-        current_env->set("gfx", args.gfx);
+        current_env->Set("gfx", args.gfx);
     if (!args.savefile.empty())
-        current_env->set("game", args.savefile);
+        current_env->Set("game", args.savefile);
     if (!args.fontfile.empty())
-        current_env->set("font", args.fontfile);
+        current_env->Set("font", args.fontfile);
     if (args.start_paused)
-        current_env->set("replay_paused", "true");
+        current_env->Set("replay_paused", "true");
 
     int i = -1;
     std::string replay_path;
     std::string game;
-    current_env->get("game", &game);
+    current_env->Get("game", &game);
     if (!game.empty())
     {
         if (game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + (int)s_options.size()))
@@ -184,9 +184,9 @@ int main(int argc, char** argv)
         }
 
         std::string value;
-        if (current_env->get("font", &value)) {
+        if (current_env->Get("font", &value)) {
             placeholder.fontfile = value;
-            if (current_env->get("font_size", &value)) {
+            if (current_env->Get("font_size", &value)) {
                 int size = atoi(value.c_str());
                 if (size) {
                     placeholder.size = size;
@@ -195,11 +195,11 @@ int main(int argc, char** argv)
         }
         
         int scale = INT_MAX;
-        if (current_env->get("window_scaling", &value))
+        if (current_env->Get("window_scaling", &value))
         {
             scale = atoi(value.c_str());
         }
-        Coord window_size = get_scaled_coord({ WINDOW_W, WINDOW_H }, scale);
+        Coord window_size = GetScaledCoord({ WINDOW_W, WINDOW_H }, scale);
         window = SDL::Scoped::Window(SDL_CreateWindow(SdlRogue::WindowTitle, 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN), SDL_DestroyWindow);
         if (window == nullptr)
             throw_error("SDL_CreateWindow");
@@ -210,7 +210,7 @@ int main(int argc, char** argv)
         SDL_RenderSetLogicalSize(renderer.get(), WINDOW_W, WINDOW_H);
         //SDL_RenderSetIntegerScale(renderer.get(), 1);
 
-        if (current_env->get("fullscreen", &value) && value == "true")
+        if (current_env->Get("fullscreen", &value) && value == "true")
         {
             SetFullscreen(window.get(), true);
         }
@@ -223,7 +223,7 @@ int main(int argc, char** argv)
         }
 
         if (i >= 0 && s_options[i].name == "PC Rogue 1.48") {
-            if (!current_env->get("show_title_screen", &value) || value != "false")
+            if (!current_env->Get("show_title_screen", &value) || value != "false")
             {
                 TitleScreen title(window.get(), renderer.get(), s_options, current_env.get());
                 if (!title.Run()) {
@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 
         if (sdl_rogue) {
             //start rogue engine on a background thread
-            std::thread rogue(run_game, sdl_rogue->options().dll_name, argc, argv, sdl_rogue.get());
+            std::thread rogue(RunGame, sdl_rogue->Options().dll_name, argc, argv, sdl_rogue.get());
             rogue.detach();
 
             sdl_rogue->Run();

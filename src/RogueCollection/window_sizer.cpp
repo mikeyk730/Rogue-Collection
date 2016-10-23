@@ -24,13 +24,13 @@ bool WindowSizer::ConsumeEvent(const SDL_Event & e)
             }
             else if (e.key.keysym.sym >= SDLK_1 && e.key.keysym.sym <= SDLK_9)
             {
-                scale_window(e.key.keysym.sym - SDLK_0);
+                ScaleWindow(e.key.keysym.sym - SDLK_0);
                 SetFullscreen(m_window, false);
                 return true;
             }
             else if (e.key.keysym.sym == SDLK_0)
             {
-                scale_window(INT_MAX);
+                ScaleWindow(INT_MAX);
                 SetFullscreen(m_window, false);
                 return true;
             }
@@ -43,28 +43,28 @@ void WindowSizer::SetWindowSize(int w, int h)
 {
     int scale = INT_MAX;
     std::string value;
-    if (m_current_env->get("window_scaling", &value))
+    if (m_current_env->Get("window_scaling", &value))
     {
         scale = atoi(value.c_str());
     }
-    set_window_size(w, h, scale);
+    SetWindowSize(w, h, scale);
 }
 
-void WindowSizer::set_window_size(int w, int h, int scale)
+void WindowSizer::SetWindowSize(int w, int h, int scale)
 {
-    Coord window_size = ::get_scaled_coord({ w, h }, scale);
+    Coord window_size = ::GetScaledCoord({ w, h }, scale);
     window_size.x = std::max(window_size.x, 342); //mdk: 342 empirically determined to be min window width
     SDL_SetWindowSize(m_window, window_size.x, window_size.y);
     SDL_RenderSetLogicalSize(m_renderer, w, h);
 }
 
-void WindowSizer::scale_window(int scale)
+void WindowSizer::ScaleWindow(int scale)
 {
     std::ostringstream ss;
     ss << scale;
-    m_current_env->set("window_scaling", ss.str());
+    m_current_env->Set("window_scaling", ss.str());
 
     int w, h;
     SDL_RenderGetLogicalSize(m_renderer, &w, &h);
-    set_window_size(w, h, scale);
+    SetWindowSize(w, h, scale);
 }

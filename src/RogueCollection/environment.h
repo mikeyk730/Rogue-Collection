@@ -7,20 +7,19 @@ struct Environment
 {
     Environment();
 
-    bool get(const std::string& key, std::string* value) const;
-    void set(const std::string& key, const std::string& value);
-    void clear();
-    void from_file(const std::string& name);
+    bool Get(const std::string& key, std::string* value) const;
+    void Set(const std::string& key, const std::string& value);
+    void LoadFromFile(const std::string& name);
 
-    int lines() const;
-    void lines(int n);
+    int Lines() const;
+    void Lines(int n);
 
-    int cols() const;
-    void cols(int n);
+    int Columns() const;
+    void Columns(int n);
 
-    bool write_to_os(bool for_unix);
-    void serialize(std::ostream& file);
-    void deserialize(std::istream& in);
+    bool WriteToOs(bool for_unix);
+    void Serialize(std::ostream& file);
+    void Deserialize(std::istream& in);
 
 private:
     std::map<std::string, std::string> m_environment;

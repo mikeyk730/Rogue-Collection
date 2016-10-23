@@ -50,17 +50,17 @@ namespace
         { 185,       '|' },
     };
 
-    uint32_t char_text(uint32_t ch)
+    uint32_t CharText(uint32_t ch)
     {
         return ch & 0x0000ffff;
     }
 
-    uint32_t char_color(uint32_t ch)
+    uint32_t CharColor(uint32_t ch)
     {
         return (ch >> 24) & 0xff;
     }
 
-    bool is_text(uint32_t ch)
+    bool IsText(uint32_t ch)
     {
         return (ch & 0x010000) == 0;
     }
@@ -83,7 +83,7 @@ struct SdlRogue::Impl
     void SetCursor(bool enable);
 
     Environment* GameEnv();
-    Options options();
+    GameConfig options();
 
     void Run();
     void PostQuit();
@@ -107,11 +107,12 @@ private:
 
     const GraphicsConfig& current_gfx() const;
 
-    Coord get_screen_pos(Coord buffer_pos);
-    SDL_Rect get_screen_rect(Coord buffer_pos);
+    Coord ScreenPosition(Coord buffer_pos);
+    SDL_Rect ScreenRegion(Coord buffer_pos);
 
-    Region shared_data_full_region();     //must have mutex before calling
-    bool shared_data_is_narrow();         //must have mutex before calling
+    //todo: move into thread data
+    Region SharedDataFullRegion();     //must have mutex before calling
+    bool SharedDataIsNarrow();         //must have mutex before calling
 
 private:
     SDL_Window* m_window = 0;
@@ -128,7 +129,7 @@ private:
     uint32_t RENDER_EVENT = 0;
     uint32_t TIMER_EVENT = 0;
 
-    Options m_options;
+    GameConfig m_options;
 
     struct ThreadData
     {
@@ -216,7 +217,7 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     RestoreGame(file);
 
     std::string gfx_pref;
-    if (m_current_env->get("gfx", &gfx_pref)) {
+    if (m_current_env->Get("gfx", &gfx_pref)) {
         for (int i = 0; i < (int)m_options.gfx_options.size(); ++i)
         {
             if (m_options.gfx_options[i].name == gfx_pref) {
@@ -240,12 +241,12 @@ SdlRogue::Impl::Impl(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr
     int seed = (int)time(0);
     std::ostringstream ss;
     ss << seed;
-    m_game_env->set("seed", ss.str());
+    m_game_env->Set("seed", ss.str());
  
     SetGame(i);
 
     std::string gfx_pref;
-    if (m_current_env->get("gfx", &gfx_pref)) {
+    if (m_current_env->Get("gfx", &gfx_pref)) {
         for (int i = 0; i < (int)m_options.gfx_options.size(); ++i)
         {
             if (m_options.gfx_options[i].name == gfx_pref) {
@@ -271,7 +272,7 @@ void SdlRogue::Impl::LoadAssets()
         m_text_provider.reset(new TextGenerator(*(current_gfx().text_cfg), m_renderer)); 
     else
         m_text_provider.reset(new TextProvider(*(current_gfx().text_cfg), m_renderer));
-    m_block_size = m_text_provider->dimensions();
+    m_block_size = m_text_provider->Dimensions();
 
     m_tile_provider.reset();
     if (current_gfx().tile_cfg)
@@ -280,7 +281,7 @@ void SdlRogue::Impl::LoadAssets()
         m_block_size = m_tile_provider->dimensions();
     }
 
-    m_sizer.SetWindowSize(m_block_size.x * m_game_env->cols(), m_block_size.y * m_game_env->lines());
+    m_sizer.SetWindowSize(m_block_size.x * m_game_env->Columns(), m_block_size.y * m_game_env->Lines());
     SDL_RenderClear(m_renderer);
 }
 
@@ -367,14 +368,14 @@ void SdlRogue::Impl::Animate()
         }
 
         for (int i = 0; i < dimensions.x*dimensions.y; ++i) {
-            auto c = char_text(data[i]);
+            auto c = CharText(data[i]);
             if (c != STAIRS)
                 continue;
 
             int x = i % dimensions.x;
             int y = i / dimensions.x;
-            SDL_Rect r = get_screen_rect({ x, y });
-            RenderText(c, char_color(data[i]), r, true);
+            SDL_Rect r = ScreenRegion({ x, y });
+            RenderText(c, CharColor(data[i]), r, true);
             update = true;
         }
     }
@@ -402,27 +403,27 @@ void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
     for (int y = rect.Top; y <= rect.Bottom; ++y) {
         for (int x = rect.Left; x <= rect.Right; ++x) {
 
-            SDL_Rect r = get_screen_rect({ x, y });
+            SDL_Rect r = ScreenRegion({ x, y });
 
             uint32_t info = data[y*dimensions.x + x];
 
-            if (!m_tile_provider || is_text(info))
+            if (!m_tile_provider || IsText(info))
             {
-                int color = char_color(info);
+                int color = CharColor(info);
                 if (y == 0 && color == 0x70) {
                     // Hack for consistent standout in msg lines.  Unix versions use '-'.
                     // PC uses ' ' with background color.  We want consistent behavior.
                     if (current_gfx().use_standout) {
-                        if (char_text(info) == '-')
+                        if (CharText(info) == '-')
                             info = ' ';
                     }
                     else {
-                        if (char_text(info) == ' ')
+                        if (CharText(info) == ' ')
                             info = '-';
                         color = 0x07;
                     }
                 }
-                RenderText(info, color, r, !is_text(info));
+                RenderText(info, color, r, !IsText(info));
             }
             else {
                 RenderTile(info, r);
@@ -481,7 +482,7 @@ unsigned char flip_color(unsigned char c)
 
 void SdlRogue::Impl::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool is_tile)
 {
-    unsigned char c = char_text(info);
+    unsigned char c = CharText(info);
 
     // Tiles from Unix versions come in with either color=0x00 (for regular state)
     // or color=0x70 (for standout).  We need to translate these into more diverse
@@ -521,7 +522,7 @@ void SdlRogue::Impl::RenderTile(uint32_t info, SDL_Rect r)
 {
     SDL_Texture* tiles;
     SDL_Rect clip;
-    if (m_tile_provider->GetTexture(char_text(info), char_color(info), &tiles, &clip)) {
+    if (m_tile_provider->GetTexture(CharText(info), CharColor(info), &tiles, &clip)) {
         SDL_RenderCopy(m_renderer, tiles, &clip, &r);
     }
     else{
@@ -533,7 +534,7 @@ void SdlRogue::Impl::RenderTile(uint32_t info, SDL_Rect r)
 
 void SdlRogue::Impl::RenderCursor(Coord pos)
 {
-    pos = get_screen_pos(pos);
+    pos = ScreenPosition(pos);
 
     SDL_Rect r;
     r.x = pos.x;
@@ -557,7 +558,7 @@ void SdlRogue::Impl::RenderCounterOverlay(const std::string& label, int n, Coord
     std::string s(ss.str());
     int len = (int)s.size();
     for (int i = 0; i < len; ++i) {
-        SDL_Rect r = get_screen_rect({ dimensions.x - (len - i) - 1, dimensions.y - 1 });
+        SDL_Rect r = ScreenRegion({ dimensions.x - (len - i) - 1, dimensions.y - 1 });
         RenderText(s[i], 0x70, r, false);
     }
 }
@@ -574,7 +575,7 @@ void SdlRogue::Impl::PostRenderMsg(int force)
 void SdlRogue::Impl::SaveGame(std::string path, bool notify)
 {
     if (path.empty()) {
-        if (!m_current_env->get("savefile", &path) || path.empty()) {
+        if (!m_current_env->Get("savefile", &path) || path.empty()) {
             if (!GetSavePath(m_window, path)) {
                 return;
             }
@@ -587,10 +588,10 @@ void SdlRogue::Impl::SaveGame(std::string path, bool notify)
         return;
     }
 
-    write(file, s_version);
-    write(file, m_restore_count);
-    write_short_string(file, m_options.name);
-    m_game_env->serialize(file);
+    Write(file, s_version);
+    Write(file, m_restore_count);
+    WriteShortString(file, m_options.name);
+    m_game_env->Serialize(file);
 
     //locked region
     {
@@ -607,7 +608,7 @@ void SdlRogue::Impl::SaveGame(std::string path, bool notify)
     }
 
     std::string value;
-    if (m_current_env->get("exit_on_save", &value) && value != "false")
+    if (m_current_env->Get("exit_on_save", &value) && value != "false")
         PostQuit();
 }
 
@@ -619,23 +620,23 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
     }
 
     unsigned char version;
-    read(file, &version);
+    Read(file, &version);
     if (version > s_version)
         throw_error("This file is not recognized.  It may have been saved with a newer version of Rogue Collection.  Please download the latest version and try again.");
 
-    read(file, &m_restore_count);
+    Read(file, &m_restore_count);
     ++m_restore_count;
 
     std::string name;
-    read_short_string(file, &name);
+    ReadShortString(file, &name);
 
     // set up game environment
     m_game_env.reset(new Environment());
-    m_game_env->deserialize(file);
-    m_game_env->set("in_replay", "true");
+    m_game_env->Deserialize(file);
+    m_game_env->Set("in_replay", "true");
     std::string value;
-    if (m_current_env->get("logfile", &value)) {
-        m_game_env->set("logfile", value);
+    if (m_current_env->Get("logfile", &value)) {
+        m_game_env->Set("logfile", value);
     }
     
     m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
@@ -643,19 +644,19 @@ void SdlRogue::Impl::RestoreGame(const std::string& path)
 
     file.close();
 
-    if (m_current_env->get("replay_paused", &value) && value == "true") {
+    if (m_current_env->Get("replay_paused", &value) && value == "true") {
         m_paused = true;
     }
-    if (m_current_env->get("replay_pause_at", &value)) {
+    if (m_current_env->Get("replay_pause_at", &value)) {
         m_pause_at = atoi(value.c_str());
     }
-    if (m_current_env->get("replay_step_delay", &value)) {
+    if (m_current_env->Get("replay_step_delay", &value)) {
         m_replay_sleep = atoi(value.c_str());
     }
 
     SetGame(name);
 
-    if (!m_current_env->get("delete_on_restore", &value) || value != "false") {
+    if (!m_current_env->Get("delete_on_restore", &value) || value != "false") {
         std::remove(path.c_str());
     }
 }
@@ -677,20 +678,20 @@ void SdlRogue::Impl::SetGame(int i)
     m_options = s_options[i];
 
     if (m_options.name == "PC Rogue 1.1") {
-        m_game_env->set("emulate_version", "1.1");
+        m_game_env->Set("emulate_version", "1.1");
     }
 
-    if (!m_game_env->write_to_os(m_options.is_unix))
+    if (!m_game_env->WriteToOs(m_options.is_unix))
         throw_error("Couldn't write environment");
 
     std::string screen;
     Coord dims = m_options.screen;
-    if (m_game_env->get("small_screen", &screen) && screen == "true")
+    if (m_game_env->Get("small_screen", &screen) && screen == "true")
     {
         dims = m_options.small_screen;
     }
-    m_game_env->cols(dims.x);
-    m_game_env->lines(dims.y);
+    m_game_env->Columns(dims.x);
+    m_game_env->Lines(dims.y);
 
     std::string title(SdlRogue::WindowTitle);
     title += " - ";
@@ -703,7 +704,7 @@ const GraphicsConfig & SdlRogue::Impl::current_gfx() const
     return m_options.gfx_options[m_gfx_mode];
 }
 
-Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
+Coord SdlRogue::Impl::ScreenPosition(Coord buffer_pos)
 {
     Coord p;
     p.x = buffer_pos.x * m_block_size.x;
@@ -711,9 +712,9 @@ Coord SdlRogue::Impl::get_screen_pos(Coord buffer_pos)
     return p;
 }
 
-SDL_Rect SdlRogue::Impl::get_screen_rect(Coord buffer_pos)
+SDL_Rect SdlRogue::Impl::ScreenRegion(Coord buffer_pos)
 {
-    Coord p = get_screen_pos(buffer_pos);
+    Coord p = ScreenPosition(buffer_pos);
 
     // We always render using the tile size.  Text will be scaled if it doesn't match
     SDL_Rect r;
@@ -739,7 +740,7 @@ void SdlRogue::Impl::SetDimensions(Coord dimensions)
 
 void SdlRogue::Impl::UpdateRegion(uint32_t * info)
 {
-    UpdateRegion(info, shared_data_full_region());
+    UpdateRegion(info, SharedDataFullRegion());
 }
 
 void SdlRogue::Impl::UpdateRegion(uint32_t* info, Region rect)
@@ -752,7 +753,7 @@ void SdlRogue::Impl::UpdateRegion(uint32_t* info, Region rect)
     if (m_shared_data.m_render_regions.size() > MAX_QUEUE_SIZE)
     {
         m_shared_data.m_render_regions.clear();
-        m_shared_data.m_render_regions.push_back(shared_data_full_region());
+        m_shared_data.m_render_regions.push_back(SharedDataFullRegion());
     }
     else {
         m_shared_data.m_render_regions.push_back(rect);
@@ -779,7 +780,7 @@ Environment* SdlRogue::Impl::GameEnv()
     return m_game_env.get();
 }
 
-Options SdlRogue::Impl::options()
+GameConfig SdlRogue::Impl::options()
 {
     return m_options;
 }
@@ -812,7 +813,7 @@ void SdlRogue::Impl::Run()
     while (SDL_WaitEvent(&e)) {
         if (e.type == SDL_QUIT) {
             std::string path;
-            if (m_current_env->get("autosave", &path))
+            if (m_current_env->Get("autosave", &path))
                 SaveGame(path, false);
             return;
         }
@@ -855,7 +856,7 @@ void SdlRogue::Impl::PostQuit()
     SDL_PushEvent(&e);
 }
 
-Region SdlRogue::Impl::shared_data_full_region()
+Region SdlRogue::Impl::SharedDataFullRegion()
 {
     Region r;
     r.Left = 0;
@@ -865,7 +866,7 @@ Region SdlRogue::Impl::shared_data_full_region()
     return r;
 }
 
-bool SdlRogue::Impl::shared_data_is_narrow()
+bool SdlRogue::Impl::SharedDataIsNarrow()
 {
     return m_shared_data.m_dimensions.x == 40;
 }
@@ -899,7 +900,7 @@ Environment* SdlRogue::GameEnv() const
     return m_impl->GameEnv();
 }
 
-Options SdlRogue::options() const
+GameConfig SdlRogue::Options() const
 {
     return m_impl->options();
 }
@@ -980,7 +981,7 @@ char SdlRogue::Impl::GetChar(bool block, bool for_string, bool *is_replay)
     }
 
     if (sleep)
-        delay(sleep);
+        Delay(sleep);
 
     return c;
 }

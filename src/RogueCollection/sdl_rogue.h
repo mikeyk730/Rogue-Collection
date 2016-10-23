@@ -1,11 +1,10 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <coord.h>
 #include <display_interface.h>
 #include <input_interface.h>
 
-struct Region;
-struct Coord;
 struct Environment;
 struct TextConfig;
 struct TileConfig;
@@ -23,7 +22,7 @@ struct GraphicsConfig
     bool animate;
 };
 
-struct Options
+struct GameConfig
 {
     std::string name;
     std::string dll_name;
@@ -35,7 +34,7 @@ struct Options
 };
 
 
-extern std::vector<Options> s_options;
+extern std::vector<GameConfig> s_options;
 
 struct SdlRogue : public DisplayInterface, public InputInterface
 {
@@ -47,7 +46,7 @@ struct SdlRogue : public DisplayInterface, public InputInterface
     void Quit();
 
     Environment* GameEnv() const;
-    Options options() const;
+    GameConfig Options() const;
 
     //display interface
     virtual void SetDimensions(Coord dimensions) override;

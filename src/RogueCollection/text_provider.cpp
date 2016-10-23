@@ -7,7 +7,7 @@
 TextProvider::TextProvider(const TextConfig & config, SDL_Renderer * renderer)
     : m_cfg(config)
 {
-    SDL::Scoped::Texture text(loadImage(getResourcePath("") + config.imagefile, renderer));
+    SDL::Scoped::Texture text(LoadImage(GetResourcePath("") + config.imagefile, renderer));
     m_text = text.release();
     int textw, texth;
     SDL_QueryTexture(m_text, NULL, NULL, &textw, &texth);
@@ -23,12 +23,12 @@ TextProvider::~TextProvider()
     SDL_DestroyTexture(m_text);
 }
 
-Coord TextProvider::dimensions() const
+Coord TextProvider::Dimensions() const
 {
     return m_text_dimensions;
 }
 
-int TextProvider::get_text_index(unsigned short attr)
+int TextProvider::GetTextIndex(unsigned short attr)
 {
     auto i = m_attr_index.find(attr);
     if (i != m_attr_index.end())
@@ -36,7 +36,7 @@ int TextProvider::get_text_index(unsigned short attr)
     return 0;
 }
 
-SDL_Rect TextProvider::get_text_rect(unsigned char ch, int i)
+SDL_Rect TextProvider::GetTextRect(unsigned char ch, int i)
 {
     Coord layout = m_cfg.layout;
     SDL_Rect r;
@@ -49,18 +49,18 @@ SDL_Rect TextProvider::get_text_rect(unsigned char ch, int i)
 
 void TextProvider::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Rect * rect)
 {
-    int i = get_text_index(color);
-    *rect = get_text_rect(ch, i);
+    int i = GetTextIndex(color);
+    *rect = GetTextRect(ch, i);
     *texture = m_text;
 }
 
 TextGenerator::TextGenerator(const TextConfig & config, SDL_Renderer * renderer) : 
     m_cfg(config),
     m_renderer(renderer),
-    m_text(load_bmp(getResourcePath("") + config.imagefile))
+    m_text(LoadBmp(GetResourcePath("") + config.imagefile))
 {
     assert(config.colors.size() == 1);
-    init();
+    Init();
 }
 
 std::string all_chars()
@@ -92,7 +92,7 @@ TextGenerator::TextGenerator(const FontConfig & config, SDL_Renderer * renderer)
     m_renderer(renderer),
     m_text(0, SDL_FreeSurface)
 {
-    SDL::Scoped::Font font(load_font(config.fontfile, config.size));
+    SDL::Scoped::Font font(LoadFont(config.fontfile, config.size));
     TTF_SetFontKerning(font.get(), 0);
 
     typedef std::basic_string<Uint16, std::char_traits<Uint16>, std::allocator<Uint16> > u16string;
@@ -106,7 +106,7 @@ TextGenerator::TextGenerator(const FontConfig & config, SDL_Renderer * renderer)
     m_cfg.layout.x = s.size();
     m_cfg.layout.y = 1;
     
-    init();
+    Init();
 
     //mdk: hack.  I don't know why we sometimes get a height that's greater than the requested font size
     m_text_dimensions.y = config.size;
@@ -118,7 +118,7 @@ TextGenerator::~TextGenerator()
         SDL_DestroyTexture(i->second);
 }
 
-void TextGenerator::init()
+void TextGenerator::Init()
 {
     m_text_dimensions.x = m_text->w / m_cfg.layout.x;
     m_text_dimensions.y = m_text->h / m_cfg.layout.y;
@@ -143,14 +143,14 @@ void TextGenerator::init()
     };
 }
 
-Coord TextGenerator::dimensions() const
+Coord TextGenerator::Dimensions() const
 {
     return m_text_dimensions;
 }
 
 void TextGenerator::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Rect * rect)
 {
-    *rect = get_text_rect(ch);
+    *rect = GetTextRect(ch);
     
     auto i = m_textures.find(color);
     if (i != m_textures.end()) {
@@ -159,12 +159,12 @@ void TextGenerator::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Re
     }
     auto fg = m_colors[color & 0xf];
     auto bg = m_colors[(color >> 4) & 0xf];
-    auto t = painted_texture(m_text.get(), 0, fg, bg, m_renderer);
+    auto t = PaintedTexture(m_text.get(), 0, fg, bg, m_renderer);
     *texture = t.release();
     m_textures[color] = *texture;
 }
 
-SDL_Rect TextGenerator::get_text_rect(unsigned char ch)
+SDL_Rect TextGenerator::GetTextRect(unsigned char ch)
 {
     Coord layout = m_cfg.layout;
     SDL_Rect r;

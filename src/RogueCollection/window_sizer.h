@@ -1,9 +1,7 @@
 #pragma once
+#include <SDL.h>
 
 struct Environment;
-struct SDL_Window;
-struct SDL_Renderer;
-union SDL_Event;
 
 struct WindowSizer
 {
@@ -12,8 +10,8 @@ struct WindowSizer
 
     void SetWindowSize(int w, int h);
 private:
-    void set_window_size(int w, int h, int scale);
-    void scale_window(int scale);
+    void SetWindowSize(int w, int h, int scale);
+    void ScaleWindow(int scale);
 
     SDL_Window* m_window;
     SDL_Renderer* m_renderer;

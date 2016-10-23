@@ -2,10 +2,7 @@
 #include <string>
 #include <map>
 #include <coord.h>
-
-struct SDL_Renderer;
-struct SDL_Texture;
-struct SDL_Rect;
+#include <SDL.h>
 
 struct TileConfig
 {
@@ -22,9 +19,9 @@ struct TileProvider
     bool GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect);
 
 private:
-    int tile_index(unsigned char c, unsigned short attr);
-    bool use_inverse(unsigned short attr);
-    SDL_Rect get_tile_rect(int i, bool use_inverse);
+    int TitleIndex(unsigned char c, unsigned short attr);
+    bool UseInverse(unsigned short attr);
+    SDL_Rect GetTileRect(int i, bool use_inverse);
 
     TileConfig m_cfg;
     SDL_Texture* m_tiles = 0;

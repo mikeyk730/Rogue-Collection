@@ -11,7 +11,7 @@ namespace
     std::set<std::string> s_unix_bools = { "terse","flush","jump","seefloor","tombstone","passgo","step","askme","hplusfix","showac" };
     std::map<std::string, std::string> s_unix_keys = { {"name", "name"}, {"fruit", "fruit"}, {"inven", "inven"} };
 
-    void write_env_unix(std::ostringstream& ss, std::string key, const std::string & value)
+    void WriteEnvUnix(std::ostringstream& ss, std::string key, const std::string & value)
     {
         auto i = s_unix_keys.find(key);
         if (i != s_unix_keys.end()) {
@@ -25,7 +25,7 @@ namespace
         }
     }
 
-    void write_env_pc(std::ostringstream& ss, std::string key, const std::string & value)
+    void WriteEnvPc(std::ostringstream& ss, std::string key, const std::string & value)
     {
         ss << key << "=" << value << ';';
     }
@@ -34,7 +34,7 @@ namespace
 Environment::Environment()
 {}
 
-void Environment::from_file(const std::string& name)
+void Environment::LoadFromFile(const std::string& name)
 {
     std::ifstream in(name);
 
@@ -48,35 +48,35 @@ void Environment::from_file(const std::string& name)
             continue;
         std::string key = line.substr(0, p);
         std::string value = line.substr(p+1, std::string::npos);
-        set(key, value);
+        Set(key, value);
     }
 }
 
-void Environment::deserialize(std::istream& in)
+void Environment::Deserialize(std::istream& in)
 {
     uint16_t env_length = 0;
-    read(in, &env_length);
+    Read(in, &env_length);
 
     while (env_length-- > 0) {
         std::string key, value;
-        read_short_string(in, &key);
-        read_short_string(in, &value);
+        ReadShortString(in, &key);
+        ReadShortString(in, &value);
         m_environment[key] = value;
     }
 }
 
-void Environment::serialize(std::ostream& file)
+void Environment::Serialize(std::ostream& file)
 {
     uint16_t env_length = static_cast<uint16_t>(m_environment.size());
-    write(file, env_length);
+    Write(file, env_length);
 
     for (auto i = m_environment.begin(); i != m_environment.end(); ++i) {
-        write_short_string(file, i->first);
-        write_short_string(file, i->second);
+        WriteShortString(file, i->first);
+        WriteShortString(file, i->second);
     }
 }
 
-bool Environment::get(const std::string & key, std::string* value) const
+bool Environment::Get(const std::string & key, std::string* value) const
 {
     auto i = m_environment.find(key);
     if (i != m_environment.end()) {
@@ -87,42 +87,37 @@ bool Environment::get(const std::string & key, std::string* value) const
     return false;
 }
 
-void Environment::set(const std::string & key, const std::string & value)
+void Environment::Set(const std::string & key, const std::string & value)
 {
     m_environment[key] = value;
 }
 
-void Environment::clear()
-{
-    m_environment.clear();
-}
-
-void Environment::lines(int n)
+void Environment::Lines(int n)
 {
     m_lines = n;
 }
 
-void Environment::cols(int n)
+void Environment::Columns(int n)
 {
     m_cols = n;
 }
 
-bool Environment::write_to_os(bool for_unix)
+bool Environment::WriteToOs(bool for_unix)
 {
     std::ostringstream ss;
     ss << "ROGUEOPTS=";
     for (auto i = m_environment.begin(); i != m_environment.end(); ++i)
     {
         if (for_unix)
-            write_env_unix(ss, i->first, i->second);
+            WriteEnvUnix(ss, i->first, i->second);
         else
-            write_env_pc(ss, i->first, i->second);
+            WriteEnvPc(ss, i->first, i->second);
     }
     if (_putenv(ss.str().c_str()) != 0)
         return false;
 
     std::string seed;
-    if (!get("seed", &seed))
+    if (!Get("seed", &seed))
         return false;
 
     ss.str("");
@@ -130,12 +125,12 @@ bool Environment::write_to_os(bool for_unix)
     return (_putenv(ss.str().c_str()) == 0);
 }
 
-int Environment::lines() const
+int Environment::Lines() const
 {
     return m_lines;
 }
 
-int Environment::cols() const
+int Environment::Columns() const
 {
     return m_cols;
 }

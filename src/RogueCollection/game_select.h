@@ -8,7 +8,7 @@
 
 struct TitleScreen
 {
-    TitleScreen(SDL_Window* window, SDL_Renderer* renderer, const std::vector<Options>& options, Environment* current_env);
+    TitleScreen(SDL_Window* window, SDL_Renderer* renderer, const std::vector<GameConfig>& options, Environment* current_env);
     bool Run();
 
 private:
@@ -23,7 +23,7 @@ private:
 
 struct GameSelect
 {
-    GameSelect(SDL_Window* window, SDL_Renderer* renderer, const std::vector<Options>& options, Environment* current_env);
+    GameSelect(SDL_Window* window, SDL_Renderer* renderer, const std::vector<GameConfig>& options, Environment* current_env);
     std::pair<int, std::string> GetSelection();
     void RenderOption(int i, const std::string& text, bool is_selected);
     void RenderText(const std::string& text, Coord p, bool highlight);
@@ -37,7 +37,7 @@ private:
     SDL_Renderer* m_renderer;
     SDL::Scoped::Font m_font;
     SDL::Scoped::Texture m_logo;
-    const std::vector<Options>& m_options;
+    const std::vector<GameConfig>& m_options;
     std::string m_replay_path;
     int m_selection = 0;
     Environment* m_current_env;

@@ -82,7 +82,7 @@ bool GetSavePath(SDL_Window* window, std::string& path)
     return success;
 }
 
-void delay(int ms)
+void Delay(int ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
@@ -102,7 +102,7 @@ void ToggleFullscreen(SDL_Window* w)
     SetFullscreen(w, !IsFullscreen(w));
 }
 
-std::string getResourcePath(const std::string &subDir) {
+std::string GetResourcePath(const std::string &subDir) {
     //We need to choose the path separator properly based on which
     //platform we're running on, since Windows uses a different
     //separator than most systems
@@ -136,7 +136,7 @@ std::string getResourcePath(const std::string &subDir) {
     return subDir.empty() ? baseRes : baseRes + subDir + PATH_SEP;
 }
 
-SDL::Scoped::Font load_font(const std::string& filename, int size)
+SDL::Scoped::Font LoadFont(const std::string& filename, int size)
 {
     SDL::Scoped::Font font(TTF_OpenFont(filename.c_str(), size), TTF_CloseFont);
     if (font == nullptr)
@@ -145,7 +145,7 @@ SDL::Scoped::Font load_font(const std::string& filename, int size)
     return std::move(font);
 }
 
-SDL::Scoped::Surface load_text(const std::string& s, _TTF_Font* font, SDL_Color color, SDL_Color bg)
+SDL::Scoped::Surface LoadText(const std::string& s, _TTF_Font* font, SDL_Color color, SDL_Color bg)
 {
     SDL::Scoped::Surface surface(TTF_RenderText_Shaded(font, s.c_str(), color, bg), SDL_FreeSurface);
     if (surface == nullptr)
@@ -158,7 +158,7 @@ SDL::Scoped::Surface load_text(const std::string& s, _TTF_Font* font, SDL_Color 
 * Return the pixel value at (x, y)
 * NOTE: The surface must be locked before calling this!
 */
-uint32_t getpixel(SDL_Surface *surface, int x, int y)
+uint32_t GetPixel(SDL_Surface *surface, int x, int y)
 {
     int bpp = surface->format->BytesPerPixel;
     /* Here p is the address to the pixel we want to retrieve */
@@ -189,7 +189,7 @@ uint32_t getpixel(SDL_Surface *surface, int x, int y)
 * Set the pixel at (x, y) to the given value
 * NOTE: The surface must be locked before calling this!
 */
-void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
+void PutPixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
 {
     int bpp = surface->format->BytesPerPixel;
     /* Here p is the address to the pixel we want to set */
@@ -223,14 +223,14 @@ void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
     }
 }
 
-void paint_surface(SDL_Surface* surface, SDL_Color fg, SDL_Color bg)
+void PaintSurface(SDL_Surface* surface, SDL_Color fg, SDL_Color bg)
 {
     int n = surface->w * surface->h;
     for (int i = 0; i < n; ++i)
     {
         int x = i % surface->w;
         int y = i / surface->w;
-        Uint32 p = getpixel(surface, x, y);
+        Uint32 p = GetPixel(surface, x, y);
 
         Uint8 r, g, b;
         SDL_GetRGB(p, surface->format, &r, &g, &b);
@@ -240,12 +240,12 @@ void paint_surface(SDL_Surface* surface, SDL_Color fg, SDL_Color bg)
         else {
             p = SDL_MapRGB(surface->format, bg.r, bg.g, bg.b);
         }
-        putpixel(surface, x, y, p);
+        PutPixel(surface, x, y, p);
     }
 
 }
 
-SDL::Scoped::Surface blit_surface(SDL_Surface* surface, SDL_Rect* r)
+SDL::Scoped::Surface BlitSurface(SDL_Surface* surface, SDL_Rect* r)
 {
     int w = surface->w;
     int h = surface->h;
@@ -278,14 +278,14 @@ SDL::Scoped::Surface blit_surface(SDL_Surface* surface, SDL_Rect* r)
     return std::move(tile);
 }
 
-SDL::Scoped::Texture painted_texture(SDL_Surface* surface, SDL_Rect* r, SDL_Color fg, SDL_Color bg, SDL_Renderer* renderer)
+SDL::Scoped::Texture PaintedTexture(SDL_Surface* surface, SDL_Rect* r, SDL_Color fg, SDL_Color bg, SDL_Renderer* renderer)
 {
-    SDL::Scoped::Surface tile(blit_surface(surface, r));
-    paint_surface(tile.get(), fg, bg);
-    return create_texture(tile.get(), renderer);
+    SDL::Scoped::Surface tile(BlitSurface(surface, r));
+    PaintSurface(tile.get(), fg, bg);
+    return CreateTexture(tile.get(), renderer);
 }
 
-int get_scaling_factor(Coord logical_size)
+int GetScalingFactor(Coord logical_size)
 {
     SDL_DisplayMode mode;
     if (SDL_GetCurrentDisplayMode(0, &mode) == 0) {
@@ -297,9 +297,9 @@ int get_scaling_factor(Coord logical_size)
     return 2;
 }
 
-Coord get_scaled_coord(Coord logical_size, int scale_factor)
+Coord GetScaledCoord(Coord logical_size, int scale_factor)
 {
-    int max_factor = get_scaling_factor(logical_size);
+    int max_factor = GetScalingFactor(logical_size);
     scale_factor = std::min(scale_factor, max_factor);
     return { logical_size.x * scale_factor, logical_size.y * scale_factor };
 }
@@ -309,14 +309,14 @@ void throw_error(const std::string &msg)
     throw std::runtime_error(msg);
 }
 
-SDL::Scoped::Texture loadImage(const std::string &file, SDL_Renderer *ren) {
+SDL::Scoped::Texture LoadImage(const std::string &file, SDL_Renderer *ren) {
     SDL::Scoped::Texture texture(IMG_LoadTexture(ren, file.c_str()), SDL_DestroyTexture);
     if (texture == nullptr)
         throw_error("Couldn't open file " + file);
     return std::move(texture);
 }
 
-SDL::Scoped::Surface load_bmp(const std::string& filename)
+SDL::Scoped::Surface LoadBmp(const std::string& filename)
 {
     SDL::Scoped::Surface bmp(SDL_LoadBMP(filename.c_str()), SDL_FreeSurface);
     if (bmp == nullptr)
@@ -325,7 +325,7 @@ SDL::Scoped::Surface load_bmp(const std::string& filename)
     return std::move(bmp);
 }
 
-SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer)
+SDL::Scoped::Texture CreateTexture(SDL_Surface* surface, SDL_Renderer* renderer)
 {
     SDL::Scoped::Texture texture(SDL_CreateTextureFromSurface(renderer, surface), SDL_DestroyTexture);
     if (texture == nullptr)
@@ -334,20 +334,20 @@ SDL::Scoped::Texture create_texture(SDL_Surface* surface, SDL_Renderer* renderer
 }
 
 
-std::ostream& write_short_string(std::ostream& out, const std::string& s) 
+std::ostream& WriteShortString(std::ostream& out, const std::string& s) 
 {
     assert(s.length() < 255);
     unsigned char length = static_cast<unsigned char>(s.length());
-    write<unsigned char>(out, length);
+    Write<unsigned char>(out, length);
 
     out.write(s.c_str(), length);
     return out;
 }
 
-std::istream& read_short_string(std::istream& in, std::string* s)
+std::istream& ReadShortString(std::istream& in, std::string* s)
 {
     unsigned char length;
-    read<unsigned char>(in, &length);
+    Read<unsigned char>(in, &length);
 
     char buf[255];
     memset(buf, 0, 255);

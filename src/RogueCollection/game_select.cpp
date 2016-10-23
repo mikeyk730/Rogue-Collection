@@ -4,16 +4,16 @@
 #include "environment.h"
 #include "utility.h"
 
-GameSelect::GameSelect(SDL_Window * window, SDL_Renderer* renderer, const std::vector<Options>& options, Environment* current_env) :
+GameSelect::GameSelect(SDL_Window * window, SDL_Renderer* renderer, const std::vector<GameConfig>& options, Environment* current_env) :
     m_window(window), 
     m_renderer(renderer),
     m_options(options), 
-    m_font(load_font(getResourcePath("fonts")+"Px437_IBM_BIOS.ttf", 16)),
-    m_logo(loadImage(getResourcePath("") + "title3.png", renderer)),
+    m_font(LoadFont(GetResourcePath("fonts")+"Px437_IBM_BIOS.ttf", 16)),
+    m_logo(LoadImage(GetResourcePath("") + "title3.png", renderer)),
     m_current_env(current_env),
     m_sizer(window, renderer, current_env)
 {
-    m_current_env->get("savefile", &m_replay_path);
+    m_current_env->Get("savefile", &m_replay_path);
 }
 
 bool GameSelect::MakeSelection()
@@ -125,8 +125,8 @@ void GameSelect::RenderText(const std::string& text, Coord p, bool highlight)
         color = SDL::Colors::orange();
     }
 
-    auto surface = load_text(text, m_font.get(), color, SDL::Colors::black());
-    auto texture = create_texture(surface.get(), m_renderer);
+    auto surface = LoadText(text, m_font.get(), color, SDL::Colors::black());
+    auto texture = CreateTexture(surface.get(), m_renderer);
 
     SDL_Rect r;
     r.x = p.x;
@@ -137,11 +137,11 @@ void GameSelect::RenderText(const std::string& text, Coord p, bool highlight)
     SDL_RenderCopy(m_renderer, texture.get(), 0, &r);
 }
 
-TitleScreen::TitleScreen(SDL_Window * window, SDL_Renderer * renderer, const std::vector<Options>& options, Environment * current_env) :
+TitleScreen::TitleScreen(SDL_Window * window, SDL_Renderer * renderer, const std::vector<GameConfig>& options, Environment * current_env) :
     m_window(window),
     m_renderer(renderer),
     m_sizer(window, renderer, current_env),
-    m_title_screen(loadImage(getResourcePath("") + "epyx.png", renderer))
+    m_title_screen(LoadImage(GetResourcePath("") + "epyx.png", renderer))
 {
 }
 

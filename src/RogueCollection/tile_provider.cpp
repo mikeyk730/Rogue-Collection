@@ -37,10 +37,10 @@ TileProvider::TileProvider(const TileConfig & config, SDL_Renderer * renderer)
         { '*',    77 },
     };
 
-    SDL::Scoped::Surface tiles(load_bmp(getResourcePath("") + config.filename));
+    SDL::Scoped::Surface tiles(LoadBmp(GetResourcePath("") + config.filename));
     m_tile_dimensions.x = tiles->w / config.count;
     m_tile_dimensions.y = tiles->h / config.states;
-    m_tiles = create_texture(tiles.get(), renderer).release();
+    m_tiles = CreateTexture(tiles.get(), renderer).release();
 }
 
 TileProvider::~TileProvider()
@@ -53,7 +53,7 @@ Coord TileProvider::dimensions() const
     return m_tile_dimensions;
 }
 
-int TileProvider::tile_index(unsigned char c, unsigned short attr)
+int TileProvider::TitleIndex(unsigned char c, unsigned short attr)
 {
     if (c >= 'A' && c <= 'Z')
         return c - 'A';
@@ -73,12 +73,12 @@ int TileProvider::tile_index(unsigned char c, unsigned short attr)
     return index;
 }
 
-bool TileProvider::use_inverse(unsigned short attr)
+bool TileProvider::UseInverse(unsigned short attr)
 {
     return attr > 100 && attr != 160;
 }
 
-SDL_Rect TileProvider::get_tile_rect(int i, bool use_inverse)
+SDL_Rect TileProvider::GetTileRect(int i, bool use_inverse)
 {
     SDL_Rect r;
     r.h = m_tile_dimensions.y;
@@ -90,13 +90,13 @@ SDL_Rect TileProvider::get_tile_rect(int i, bool use_inverse)
 
 bool TileProvider::GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect)
 {
-    auto i = tile_index(ch, color);
+    auto i = TitleIndex(ch, color);
     if (i == -1) {
         return false;
     }
 
-    bool inv = (m_cfg.states > 1 && use_inverse(color));
-    *rect = get_tile_rect(i, inv);
+    bool inv = (m_cfg.states > 1 && UseInverse(color));
+    *rect = GetTileRect(i, inv);
     *texture = m_tiles;
 
     return true;

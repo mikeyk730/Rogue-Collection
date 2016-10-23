@@ -2,12 +2,8 @@
 #include <vector>
 #include <map>
 #include <coord.h>
+#include <SDL.h>
 #include "utility.h"
-
-struct SDL_Renderer;
-struct SDL_Texture;
-struct SDL_Surface;
-struct SDL_Rect;
 
 struct FontConfig
 {
@@ -26,7 +22,7 @@ struct TextConfig
 struct ITextProvider
 {
     virtual ~ITextProvider();
-    virtual Coord dimensions() const = 0;
+    virtual Coord Dimensions() const = 0;
     virtual void GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect) = 0;
 };
 
@@ -34,12 +30,12 @@ struct TextProvider : ITextProvider
 {
     TextProvider(const TextConfig& config, SDL_Renderer* renderer);
     ~TextProvider();
-    Coord dimensions() const override;
+    Coord Dimensions() const override;
     void GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect) override;
 
 private:
-    int get_text_index(unsigned short attr);
-    SDL_Rect get_text_rect(unsigned char ch, int i);
+    int GetTextIndex(unsigned short attr);
+    SDL_Rect GetTextRect(unsigned char ch, int i);
 
     TextConfig m_cfg;
     SDL_Texture* m_text = 0;
@@ -52,12 +48,12 @@ struct TextGenerator : ITextProvider
     TextGenerator(const TextConfig& config, SDL_Renderer* renderer);
     TextGenerator(const FontConfig& config, SDL_Renderer* renderer);
     ~TextGenerator();
-    Coord dimensions() const override;
+    Coord Dimensions() const override;
     void GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect) override;
 
 private:
-    SDL_Rect get_text_rect(unsigned char ch);
-    void init();
+    SDL_Rect GetTextRect(unsigned char ch);
+    void Init();
 
     TextConfig m_cfg;
     SDL_Renderer* m_renderer;
