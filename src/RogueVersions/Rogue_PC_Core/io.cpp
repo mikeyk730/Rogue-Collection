@@ -544,6 +544,7 @@ void str_attr(char *str)
 
 void handle_key_state()
 {
+/*
     static bool numl = false, capsl = false, scrl = false;
     static int nspot, cspot, tspot;
     bool num_lock_on = is_num_lock_on(),
@@ -625,6 +626,7 @@ void handle_key_state()
         game->screen().printw("%2d:%2d", bighand, littlehand);
         game->screen().standend();
     }
+*/
 }
 
 char *noterse(char *str)

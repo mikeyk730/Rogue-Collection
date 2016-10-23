@@ -265,7 +265,9 @@ SdlRogue::Impl::~Impl()
 
 void SdlRogue::Impl::LoadAssets()
 {
-    if (current_gfx().text_cfg->generate_colors)
+    if (current_gfx().font_cfg && !current_gfx().font_cfg->fontfile.empty())
+        m_text_provider.reset(new TextGenerator(*(current_gfx().font_cfg), m_renderer));
+    else if (current_gfx().text_cfg->generate_colors)
         m_text_provider.reset(new TextGenerator(*(current_gfx().text_cfg), m_renderer)); 
     else
         m_text_provider.reset(new TextProvider(*(current_gfx().text_cfg), m_renderer));
@@ -410,7 +412,7 @@ void SdlRogue::Impl::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
                 if (y == 0 && color == 0x70) {
                     // Hack for consistent standout in msg lines.  Unix versions use '-'.
                     // PC uses ' ' with background color.  We want consistent behavior.
-                    if (current_gfx().use_colors) {
+                    if (current_gfx().use_standout) {
                         if (char_text(info) == '-')
                             info = ' ';
                     }
@@ -472,6 +474,10 @@ unsigned int GetColor(int chr, int attr)
     return attr;
 }
 
+unsigned char flip_color(unsigned char c)
+{
+    return ((c & 0x0f) << 4) | ((c & 0xf0) >> 4);
+}
 
 void SdlRogue::Impl::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool is_tile)
 {
@@ -486,7 +492,10 @@ void SdlRogue::Impl::RenderText(uint32_t info, unsigned char color, SDL_Rect r, 
         color = GetColor(c, color);
     }
     if (!color || !current_gfx().use_colors) {
-        color = 0x07; //grey on black is the default
+        bool standout(color > 0x0f);
+        color = current_gfx().text_cfg->colors.front();
+        if (standout && current_gfx().use_standout)
+            color = flip_color(color);
     }
 
     if (current_gfx().animate && c == STAIRS && m_frame_number == 1)
@@ -1031,8 +1040,13 @@ bool IsLetterKey(SDL_Keycode keycode)
     return (keycode >= 'a' && keycode <= 'z');
 }
 
-bool IsDirectionKey(SDL_Keycode keycode)
+bool IsDirectionKey(SDL_Keycode keycode, uint32_t modifiers)
 {
+    bool caps((modifiers & KMOD_CAPS) != 0);
+    bool shift((modifiers & KMOD_SHIFT) != 0);
+    if (caps ^ shift)
+        return false;
+
     switch (keycode)
     {
     case 'h':
@@ -1077,7 +1091,7 @@ std::string SdlRogue::Impl::TranslateKey(SDL_Keycode original, uint16_t modifier
         use = true;
     }
 
-    if (IsDirectionKey(keycode))
+    if (IsDirectionKey(keycode, modifiers))
         return GetDirectionKey(keycode, modifiers, m_options.emulate_ctrl_controls, keycode==original);
 
     if ((modifiers & KMOD_CTRL) && IsLetterKey(keycode)) {
@@ -1147,17 +1161,17 @@ void SdlRogue::Impl::HandleEventText(const SDL_Event & e)
 
 void SdlRogue::Impl::HandleEventKeyUp(const SDL_Event & e)
 {
-    if (m_options.is_unix)
-        return;
+    //if (m_options.is_unix)
+    //    return;
 
-    if (e.key.keysym.sym == SDLK_SCROLLLOCK ||
-        e.key.keysym.sym == SDLK_CAPSLOCK ||
-        e.key.keysym.sym == SDLK_NUMLOCKCLEAR){
+    //if (e.key.keysym.sym == SDLK_SCROLLLOCK ||
+    //    e.key.keysym.sym == SDLK_CAPSLOCK ||
+    //    e.key.keysym.sym == SDLK_NUMLOCKCLEAR){
 
-        std::lock_guard<std::mutex> lock(m_input_mutex);
-        m_buffer.push_back(0);
-        m_input_cv.notify_all();
-    }
+    //    std::lock_guard<std::mutex> lock(m_input_mutex);
+    //    m_buffer.push_back(0);
+    //    m_input_cv.notify_all();
+    //}
 }
 
 void SdlRogue::Impl::HandleInputReplay(int ch)

@@ -9,14 +9,17 @@ struct Coord;
 struct Environment;
 struct TextConfig;
 struct TileConfig;
+struct FontConfig;
 
 struct GraphicsConfig
 {
     std::string name;
     TextConfig* text_cfg;
+    FontConfig* font_cfg;
     TileConfig* tile_cfg;
     bool use_unix_gfx;
     bool use_colors;
+    bool use_standout;
     bool animate;
 };
 

@@ -25,27 +25,29 @@ namespace
     TileConfig atari_slime_tiles = { "atari.bmp",       78, 1 };
     TileConfig atari_snake_tiles = { "atari_snake.bmp", 78, 1 };
 
-    TextConfig pc_text =         { "text.bmp",  { 256, 1 }, { 0x07 }, false, true  };
-    TextConfig pc_colored_text = { "text.bmp",  { 256, 1 }, { 0x07 }, true,  false };
-    TextConfig alt_text =        { "16x16.bmp", { 16, 16 }, { 0x07 }, true,  true  };
-    TextConfig boxy_text =       { "boxy.bmp",  { 16, 16 }, { 0x07 }, true,  false };
+    TextConfig pc_text =         { "text.bmp",  { 256, 1 }, { 0x07 }, false };
+    TextConfig pc_colored_text = { "text.bmp",  { 256, 1 }, { 0x07 }, true  };
+    TextConfig alt_text =        { "16x16.bmp", { 16, 16 }, { 0x0F }, true  };
+    TextConfig boxy_text =       { "boxy.bmp",  { 16, 16 }, { 0x0F }, true  };
 
-    GraphicsConfig unix_gfx =        { "unix",       &pc_text,         0,                  true,  false, false };
-    GraphicsConfig color_unix_gfx =  { "unix_color", &pc_colored_text, 0,                  true,  true,  true  };
-    GraphicsConfig pc_gfx =          { "pc",         &pc_colored_text, 0,                  false, true,  true  };
-    GraphicsConfig atari_slime_gfx = { "tiles",      &alt_text,        &atari_slime_tiles, false, true,  false };
-    GraphicsConfig atari_snake_gfx = { "tiles",      &alt_text,        &atari_snake_tiles, false, true,  false };
-    GraphicsConfig boxy_gfx =        { "boxy",       &boxy_text,       0,                  false, true,  true  };
+    FontConfig placeholder = { "", 16 };
+
+                                     //name          text_cfg          font_cfg      tile_cfg            unix    color  stndout animate     
+    GraphicsConfig unix_gfx =        { "unix",       &pc_text,         &placeholder, 0,                  true,   false,  false,  false };
+    GraphicsConfig color_unix_gfx =  { "unix_color", &pc_colored_text, &placeholder, 0,                  true,   true,   true,   true  };
+    GraphicsConfig pc_gfx =          { "pc",         &pc_colored_text, &placeholder, 0,                  false,  true,   true,   true  };
+    GraphicsConfig atari_slime_gfx = { "tiles",      &alt_text,        0,            &atari_slime_tiles, false,  false,  true,   false };
+    GraphicsConfig atari_snake_gfx = { "tiles",      &alt_text,        0,            &atari_snake_tiles, false,  false,  true,   false };
+    GraphicsConfig boxy_gfx =        { "boxy",       &boxy_text,       0,            0,                  false,  true,   true,   true  };
 }
 
 std::vector<Options> s_options = {
-    { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, unix_gfx, color_unix_gfx, atari_slime_gfx, boxy_gfx } },
-    { "PC Rogue 1.1",     "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, unix_gfx, color_unix_gfx, atari_snake_gfx, boxy_gfx } },
+    { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, atari_slime_gfx, boxy_gfx, unix_gfx, color_unix_gfx } },
+    { "PC Rogue 1.1",     "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, atari_snake_gfx, boxy_gfx, unix_gfx, color_unix_gfx } },
     { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   {80,25}, {80,24}, false, true,  { unix_gfx, color_unix_gfx, pc_gfx, atari_snake_gfx, boxy_gfx } },
     { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, color_unix_gfx, pc_gfx, boxy_gfx } },
     { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, color_unix_gfx, pc_gfx, boxy_gfx } },
 };
-
 
 namespace
 {
@@ -92,6 +94,7 @@ struct Args
 {
     std::string savefile;
     std::string optfile;
+    std::string fontfile;
     std::string gfx;
     bool print_score = false;
     bool start_paused = false;
@@ -125,6 +128,10 @@ Args process_args(int argc, char**argv)
             if (++i < argc)
                 a.optfile = argv[i];
         }
+        else if (s == "/f" || s == "-f") {
+            if (++i < argc)
+                a.fontfile = argv[i];
+        }
         else {
             a.savefile = s;
         }
@@ -144,6 +151,8 @@ int main(int argc, char** argv)
         current_env->set("gfx", args.gfx);
     if (!args.savefile.empty())
         current_env->set("game", args.savefile);
+    if (!args.fontfile.empty())
+        current_env->set("font", args.fontfile);
     if (args.start_paused)
         current_env->set("replay_paused", "true");
 
@@ -173,9 +182,19 @@ int main(int argc, char** argv)
         if (TTF_Init() != 0) {
             throw_error("TTF_Init");
         }
+
+        std::string value;
+        if (current_env->get("font", &value)) {
+            placeholder.fontfile = value;
+            if (current_env->get("font_size", &value)) {
+                int size = atoi(value.c_str());
+                if (size) {
+                    placeholder.size = size;
+                }
+            }
+        }
         
         int scale = INT_MAX;
-        std::string value;
         if (current_env->get("window_scaling", &value))
         {
             scale = atoi(value.c_str());
