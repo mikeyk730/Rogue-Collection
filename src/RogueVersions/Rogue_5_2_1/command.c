@@ -30,7 +30,7 @@ shint countch, direction, newcount = FALSE;
  * command:
  *	Process the user commands
  */
-command()
+int command()
 {
     register char ch;
     register int ntimes = 1;			/* Number of player moves */
@@ -176,7 +176,7 @@ command()
 			after = FALSE;
 		    else
 			missile(delta.y, delta.x);
-		when 'Q' : after = FALSE; quit(-1);
+		when 'Q' : after = FALSE; if(quit(-1)) return FALSE;
 		when 'i' : after = FALSE; inventory(pack, 0);
 		when 'I' : after = FALSE; picky_inven();
 		when 'd' : drop();
@@ -354,6 +354,8 @@ command()
 	search();
     else if (ISRING(RIGHT, R_TELEPORT) && rnd(50) == 0)
 	teleport();
+
+    return TRUE;
 }
 
 /*

@@ -80,6 +80,7 @@ namespace
 
             (*Init)(r, r, r->GameEnv()->Lines(), r->GameEnv()->Columns());
             (*game)(0, 0, environ);
+            r->Quit();
         }
         catch (const std::runtime_error& e)
         {
@@ -243,7 +244,6 @@ int main(int argc, char** argv)
         if (sdl_rogue) {
             //start rogue engine on a background thread
             std::thread rogue(RunGame, sdl_rogue->Options().dll_name, argc, argv, sdl_rogue.get());
-            rogue.detach();
 
             sdl_rogue->Run();
 

@@ -9,11 +9,15 @@ void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct Inp
 #define NO_SAVE_RETURN                msg("Use Ctrl+S to save your game"); return
 //#define MDK_LOG                       printf
 #define MDK_LOG(...)
+#define EXIT(...)
+#define ENDIT(...)
 #else
 #define GAME_MAIN                     main
 #define SHELL_CMD                     shell()
 #define NO_SAVE_RETURN
 #define MDK_LOG(...)
+#define EXIT(s)                       exit(s);
+#define ENDIT(s)                      endit(s)
 #endif
 
 #ifdef USE_PC_STYLE

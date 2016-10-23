@@ -59,7 +59,8 @@ char	*charge_str(), *ctime(), *getenv(), *inv_name(),
 	*tr_name(),
 	*unctrol(), *vowelstr();
 
-void    leave(int), quit(int), tstp(), auto_save(int), endit(int);
+int quit(int);
+void    leave(int), tstp(), auto_save(int), endit(int);
 int	doctor(), nohaste(),
 	rollwand(), runners(), sight(), stomach(), swander(),
 	turn_see(), unconfuse(), unsee();

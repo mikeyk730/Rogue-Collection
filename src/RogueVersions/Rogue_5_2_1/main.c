@@ -298,15 +298,15 @@ playit()
     oldpos = hero;
     oldrp = roomin(&hero);
     while (playing)
-	command();			/* Command execution */
-    endit(0);
+	playing = command();			/* Command execution */
+    ENDIT(0);
 }
 
 /*
  * quit:
  *	Have player make certain, then exit.
  */
-void
+int
 quit(int a)
 {
     register int oy, ox;
@@ -327,7 +327,8 @@ quit(int a)
 	move(LINES - 1, 0);
 	refresh();
 	score(purse, 1);
-	exit(0);
+    EXIT(0);
+    return TRUE;
     }
     else
     {
@@ -339,6 +340,7 @@ quit(int a)
 	mpos = 0;
 	count = 0;
     }
+    return FALSE;
 }
 
 /*
