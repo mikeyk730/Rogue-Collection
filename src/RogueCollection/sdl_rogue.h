@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 #include <coord.h>
-#include <display_interface.h>
-#include <input_interface.h>
 
+struct DisplayInterface;
+struct InputInterface;
 struct SdlDisplay;
 struct SdlInput;
 struct Environment;
@@ -55,6 +55,7 @@ struct SdlRogue
     GameConfig Options() const;
 
     static const char* kWindowTitle;
+    static const unsigned char kSaveVersion;
 
 private:
     void SetGame(const std::string& name);

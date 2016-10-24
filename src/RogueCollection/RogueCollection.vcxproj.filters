@@ -42,6 +42,12 @@
     <ClInclude Include="window_sizer.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="sdl_display.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="sdl_input.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -66,6 +72,12 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="window_sizer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl_display.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl_input.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
