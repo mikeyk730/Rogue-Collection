@@ -5,6 +5,8 @@
 #include <display_interface.h>
 #include <input_interface.h>
 
+struct SdlDisplay;
+struct SdlInput;
 struct Environment;
 struct TextConfig;
 struct TileConfig;
@@ -33,35 +35,36 @@ struct GameConfig
     std::vector<GraphicsConfig> gfx_options;
 };
 
-
 extern std::vector<GameConfig> s_options;
 
-struct SdlRogue : public DisplayInterface, public InputInterface
+struct SdlRogue
 {
     SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int index);
     SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const std::string& filename);
     ~SdlRogue();
 
     void Run();
-    void Quit();
+    void PostQuit();
 
+    void SaveGame(std::string path, bool notify);
+    void RestoreGame(const std::string& filename);
+
+    DisplayInterface* Display() const;
+    InputInterface* Input() const;
     Environment* GameEnv() const;
     GameConfig Options() const;
 
-    //display interface
-    virtual void SetDimensions(Coord dimensions) override;
-    virtual void UpdateRegion(uint32_t* buf) override;
-    virtual void UpdateRegion(uint32_t* info, Region rect) override;
-    virtual void MoveCursor(Coord pos) override;
-    virtual void SetCursor(bool enable) override;
-
-    //input interface
-    virtual char GetChar(bool block, bool for_string, bool *is_replay) override;
-    virtual void Flush() override;
-
-    static const char* WindowTitle;
+    static const char* kWindowTitle;
 
 private:
-    struct Impl;
-    std::unique_ptr<Impl> m_impl;
+    void SetGame(const std::string& name);
+    void SetGame(int i);
+
+    std::unique_ptr<SdlDisplay> m_display;
+    std::unique_ptr<SdlInput> m_input;
+    std::shared_ptr<Environment> m_current_env;
+    std::shared_ptr<Environment> m_game_env;
+
+    GameConfig m_options;
+    uint16_t m_restore_count = 0;
 };

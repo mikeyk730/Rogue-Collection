@@ -78,9 +78,9 @@ namespace
                 throw_error("Couldn't load rogue_main from: " + lib);
             }
 
-            (*Init)(r, r, r->GameEnv()->Lines(), r->GameEnv()->Columns());
+            (*Init)(r->Display(), r->Input(), r->GameEnv()->Lines(), r->GameEnv()->Columns());
             (*game)(0, 0, environ);
-            r->Quit();
+            r->PostQuit();
         }
         catch (const std::runtime_error& e)
         {
@@ -201,7 +201,7 @@ int main(int argc, char** argv)
             scale = atoi(value.c_str());
         }
         Coord window_size = GetScaledCoord({ WINDOW_W, WINDOW_H }, scale);
-        window = SDL::Scoped::Window(SDL_CreateWindow(SdlRogue::WindowTitle, 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN), SDL_DestroyWindow);
+        window = SDL::Scoped::Window(SDL_CreateWindow(SdlRogue::kWindowTitle, 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN), SDL_DestroyWindow);
         if (window == nullptr)
             throw_error("SDL_CreateWindow");
 
