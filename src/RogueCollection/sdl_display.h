@@ -47,7 +47,7 @@ private:
     void RenderCursor(Coord pos);
     void RenderCounterOverlay(const std::string& s, int n);
 
-    const GraphicsConfig& current_gfx() const;
+    const GraphicsConfig& graphics_cfg() const;
 
     Coord ScreenPosition(Coord buffer_pos);
     SDL_Rect ScreenRegion(Coord buffer_pos);

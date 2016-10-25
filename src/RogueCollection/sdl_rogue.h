@@ -15,9 +15,9 @@ struct FontConfig;
 struct GraphicsConfig
 {
     std::string name;
-    TextConfig* text_cfg;
-    FontConfig* font_cfg;
-    TileConfig* tile_cfg;
+    TextConfig* text;
+    FontConfig* font;
+    TileConfig* tiles;
     bool use_unix_gfx;
     bool use_colors;
     bool use_standout;

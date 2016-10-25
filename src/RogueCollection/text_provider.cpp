@@ -2,6 +2,7 @@
 #include <SDL_ttf.h>
 #include <cassert>
 #include "text_provider.h"
+#include "sdl_rogue.h"
 #include "utility.h"
 
 TextProvider::TextProvider(const TextConfig & config, SDL_Renderer * renderer)
@@ -178,3 +179,21 @@ SDL_Rect TextGenerator::GetTextRect(unsigned char ch)
 ITextProvider::~ITextProvider()
 {
 }
+
+std::unique_ptr<ITextProvider> CreateTextProvider(FontConfig* font_cfg, TextConfig* text_cfg, SDL_Renderer* renderer)
+{
+    std::unique_ptr<ITextProvider> p;
+
+    if (font_cfg && !font_cfg->fontfile.empty()) {
+        p.reset(new TextGenerator(*font_cfg, renderer));
+    }
+    else if (text_cfg->generate_colors) {
+        p.reset(new TextGenerator(*text_cfg, renderer));
+    }
+    else {
+        p.reset(new TextProvider(*text_cfg, renderer));
+    }
+
+    return std::move(p);
+}
+

@@ -62,3 +62,5 @@ private:
     std::map<int, SDL_Texture*> m_textures;
     std::vector<SDL_Color> m_colors;
 };
+
+std::unique_ptr<ITextProvider> CreateTextProvider(FontConfig* font_cfg, TextConfig* text_cfg, SDL_Renderer* renderer);

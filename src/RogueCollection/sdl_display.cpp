@@ -105,18 +105,13 @@ SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* 
 
 void SdlDisplay::LoadAssets()
 {
-    if (current_gfx().font_cfg && !current_gfx().font_cfg->fontfile.empty())
-        m_text_provider.reset(new TextGenerator(*(current_gfx().font_cfg), m_renderer));
-    else if (current_gfx().text_cfg->generate_colors)
-        m_text_provider.reset(new TextGenerator(*(current_gfx().text_cfg), m_renderer));
-    else
-        m_text_provider.reset(new TextProvider(*(current_gfx().text_cfg), m_renderer));
+    m_text_provider = CreateTextProvider(graphics_cfg().font, graphics_cfg().text, m_renderer);
     m_block_size = m_text_provider->Dimensions();
 
     m_tile_provider.reset();
-    if (current_gfx().tile_cfg)
+    if (graphics_cfg().tiles)
     {
-        m_tile_provider.reset(new TileProvider(*(current_gfx().tile_cfg), m_renderer));
+        m_tile_provider.reset(new TileProvider(*graphics_cfg().tiles, m_renderer));
         m_block_size = m_tile_provider->Dimensions();
     }
 
@@ -130,8 +125,6 @@ void SdlDisplay::RenderGame(bool force)
     std::unique_ptr<uint32_t[]> data;
     Coord cursor_pos;
     bool show_cursor;
-
-    //locked region
     {
         std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -175,7 +168,7 @@ void SdlDisplay::RenderGame(bool force)
 void SdlDisplay::Animate()
 {
     bool update = false;
-    if (current_gfx().animate) {
+    if (graphics_cfg().animate) {
 
         std::unique_ptr<uint32_t[]> data;
         {
@@ -232,7 +225,7 @@ void SdlDisplay::RenderRegion(uint32_t* data, Region rect)
                 if (y == 0 && color == 0x70) {
                     // Hack for consistent standout in msg lines.  Unix versions use '-'.
                     // PC uses ' ' with background color.  We want consistent behavior.
-                    if (current_gfx().use_standout) {
+                    if (graphics_cfg().use_standout) {
                         if (CharText(info) == '-')
                             info = ' ';
                     }
@@ -311,17 +304,17 @@ void SdlDisplay::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool
     if (is_tile) {
         color = GetColor(c, color);
     }
-    if (!color || !current_gfx().use_colors) {
+    if (!color || !graphics_cfg().use_colors) {
         bool standout(color > 0x0f);
-        color = current_gfx().text_cfg->colors.front();
-        if (standout && current_gfx().use_standout)
+        color = graphics_cfg().text->colors.front();
+        if (standout && graphics_cfg().use_standout)
             color = flip_color(color);
     }
 
-    if (current_gfx().animate && c == STAIRS && m_frame_number == 1)
+    if (graphics_cfg().animate && c == STAIRS && m_frame_number == 1)
         c = ' ';
 
-    if (current_gfx().use_unix_gfx && is_tile)
+    if (graphics_cfg().use_unix_gfx && is_tile)
     {
         auto i = unix_chars.find(c);
         if (i != unix_chars.end())
@@ -384,7 +377,7 @@ void SdlDisplay::RenderCounterOverlay(const std::string& label, int n)
     }
 }
 
-const GraphicsConfig & SdlDisplay::current_gfx() const
+const GraphicsConfig & SdlDisplay::graphics_cfg() const
 {
     return m_options.gfx_options[m_gfx_mode];
 }
