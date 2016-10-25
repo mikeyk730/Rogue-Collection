@@ -15,7 +15,7 @@ struct TileProvider
 {
     TileProvider(const TileConfig& config, SDL_Renderer* renderer);
     ~TileProvider();
-    Coord dimensions() const;
+    Coord Dimensions() const;
     bool GetTexture(int ch, int color, SDL_Texture** texture, SDL_Rect* rect);
 
 private:

@@ -48,7 +48,7 @@ TileProvider::~TileProvider()
     SDL_DestroyTexture(m_tiles);
 }
 
-Coord TileProvider::dimensions() const
+Coord TileProvider::Dimensions() const
 {
     return m_tile_dimensions;
 }

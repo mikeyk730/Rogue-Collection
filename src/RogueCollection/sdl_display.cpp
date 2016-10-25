@@ -1,4 +1,5 @@
 #include <sstream>
+#include <cassert>
 #include <SDL_image.h>
 #include <pc_gfx_charmap.h>
 #include "sdl_display.h"
@@ -96,6 +97,8 @@ SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* 
         }
     }
 
+    m_dimensions = { game_env->Columns(), game_env->Lines() };
+
     SDL_ShowWindow(window);
     LoadAssets();
 }
@@ -114,7 +117,7 @@ void SdlDisplay::LoadAssets()
     if (current_gfx().tile_cfg)
     {
         m_tile_provider.reset(new TileProvider(*(current_gfx().tile_cfg), m_renderer));
-        m_block_size = m_tile_provider->dimensions();
+        m_block_size = m_tile_provider->Dimensions();
     }
 
     m_sizer.SetWindowSize(m_block_size.x * m_game_env->Columns(), m_block_size.y * m_game_env->Lines());
@@ -124,7 +127,6 @@ void SdlDisplay::LoadAssets()
 void SdlDisplay::RenderGame(bool force)
 {
     std::vector<Region> regions;
-    Coord dimensions;
     std::unique_ptr<uint32_t[]> data;
     Coord cursor_pos;
     bool show_cursor;
@@ -133,32 +135,30 @@ void SdlDisplay::RenderGame(bool force)
     {
         std::lock_guard<std::mutex> lock(m_mutex);
 
-        dimensions = m_shared_data.m_dimensions;
-        if (dimensions.x == 0 || dimensions.y == 0)
+        if (!m_shared.data)
+            return;
+        if (m_shared.render_regions.empty() && !force)
             return;
 
-        if (m_shared_data.m_render_regions.empty() && !force)
-            return;
-
-        uint32_t* temp = new uint32_t[dimensions.x*dimensions.y];
-        memcpy(temp, m_shared_data.m_data, dimensions.x*dimensions.y * sizeof(uint32_t));
+        uint32_t* temp = new uint32_t[TotalChars()];
+        memcpy(temp, m_shared.data.get(), TotalChars() * sizeof(uint32_t));
         data.reset(temp);
 
-        regions = m_shared_data.m_render_regions;
-        m_shared_data.m_render_regions.clear();
+        regions = m_shared.render_regions;
+        m_shared.render_regions.clear();
 
-        show_cursor = m_shared_data.m_cursor;
-        cursor_pos = m_shared_data.m_cursor_pos;
+        show_cursor = m_shared.show_cursor;
+        cursor_pos = m_shared.cursor_pos;
     }
 
     if (force) {
         SDL_RenderClear(m_renderer);
-        regions.push_back({ 0,0,dimensions.x - 1,dimensions.y - 1 });
+        regions.push_back(FullRegion());
     }
 
     for (auto i = regions.begin(); i != regions.end(); ++i)
     {
-        RenderRegion(data.get(), dimensions, *i);
+        RenderRegion(data.get(), *i);
     }
 
     if (show_cursor) {
@@ -167,7 +167,7 @@ void SdlDisplay::RenderGame(bool force)
 
     std::string counter;
     if (m_input && m_input->GetRenderText(&counter))
-        RenderCounterOverlay(counter, 0, dimensions);
+        RenderCounterOverlay(counter, 0);
 
     SDL_RenderPresent(m_renderer);
 }
@@ -177,27 +177,22 @@ void SdlDisplay::Animate()
     bool update = false;
     if (current_gfx().animate) {
 
-        Coord dimensions;
         std::unique_ptr<uint32_t[]> data;
         {
             std::lock_guard<std::mutex> lock(m_mutex);
 
-            dimensions = m_shared_data.m_dimensions;
-            if (dimensions.x == 0 || dimensions.y == 0)
-                return;
-
-            uint32_t* temp = new uint32_t[dimensions.x*dimensions.y];
-            memcpy(temp, m_shared_data.m_data, dimensions.x*dimensions.y * sizeof(uint32_t));
+            uint32_t* temp = new uint32_t[TotalChars()];
+            memcpy(temp, m_shared.data.get(), TotalChars() * sizeof(uint32_t));
             data.reset(temp);
         }
 
-        for (int i = 0; i < dimensions.x*dimensions.y; ++i) {
+        for (int i = 0; i < TotalChars(); ++i) {
             auto c = CharText(data[i]);
             if (c != STAIRS)
                 continue;
 
-            int x = i % dimensions.x;
-            int y = i / dimensions.x;
+            int x = i % m_dimensions.x;
+            int y = i / m_dimensions.x;
             SDL_Rect r = ScreenRegion({ x, y });
             RenderText(c, CharColor(data[i]), r, true);
             update = true;
@@ -209,8 +204,8 @@ void SdlDisplay::Animate()
 
     {
         std::lock_guard<std::mutex> lock(m_mutex);
-        show_cursor = m_shared_data.m_cursor;
-        cursor_pos = m_shared_data.m_cursor_pos;
+        show_cursor = m_shared.show_cursor;
+        cursor_pos = m_shared.cursor_pos;
     }
 
     if (show_cursor) {
@@ -222,14 +217,14 @@ void SdlDisplay::Animate()
         SDL_RenderPresent(m_renderer);
 }
 
-void SdlDisplay::RenderRegion(uint32_t* data, Coord dimensions, Region rect)
+void SdlDisplay::RenderRegion(uint32_t* data, Region rect)
 {
     for (int y = rect.Top; y <= rect.Bottom; ++y) {
         for (int x = rect.Left; x <= rect.Right; ++x) {
 
             SDL_Rect r = ScreenRegion({ x, y });
 
-            uint32_t info = data[y*dimensions.x + x];
+            uint32_t info = data[y*m_dimensions.x + x];
 
             if (!m_tile_provider || IsText(info))
             {
@@ -375,7 +370,7 @@ void SdlDisplay::RenderCursor(Coord pos)
     SDL_RenderCopy(m_renderer, text, &clip, &r);
 }
 
-void SdlDisplay::RenderCounterOverlay(const std::string& label, int n, Coord dimensions)
+void SdlDisplay::RenderCounterOverlay(const std::string& label, int n)
 {
     std::ostringstream ss;
     ss << label;
@@ -384,7 +379,7 @@ void SdlDisplay::RenderCounterOverlay(const std::string& label, int n, Coord dim
     std::string s(ss.str());
     int len = (int)s.size();
     for (int i = 0; i < len; ++i) {
-        SDL_Rect r = ScreenRegion({ dimensions.x - (len - i) - 1, dimensions.y - 1 });
+        SDL_Rect r = ScreenRegion({ m_dimensions.x - (len - i) - 1, m_dimensions.y - 1 });
         RenderText(s[i], 0x70, r, false);
     }
 }
@@ -418,19 +413,13 @@ SDL_Rect SdlDisplay::ScreenRegion(Coord buffer_pos)
 
 void SdlDisplay::SetDimensions(Coord dimensions)
 {
-    //todo: this function is not needed now that we have env.  we can do
-    //this logic in the ctor, and take dimensions out of shared data
-    {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        m_shared_data.m_dimensions = dimensions;
-        m_shared_data.m_data = new uint32_t[dimensions.x*dimensions.y];
-    }
-    //set_window_size(m_block_size.x*dimensions.x, m_block_size.y*dimensions.y);
+    assert(m_dimensions.x == dimensions.x);
+    assert(m_dimensions.y == dimensions.y);
 }
 
 void SdlDisplay::UpdateRegion(uint32_t * info)
 {
-    UpdateRegion(info, SharedDataFullRegion());
+    UpdateRegion(info, FullRegion());
 }
 
 void SdlDisplay::UpdateRegion(uint32_t* info, Region rect)
@@ -440,29 +429,31 @@ void SdlDisplay::UpdateRegion(uint32_t* info, Region rect)
     //todo: If we're adding a full render to the queue, we can ignore any previous regions.
 
     //If we're behind on rendering, clear the queue and do a single full render.
-    if (m_shared_data.m_render_regions.size() > MAX_QUEUE_SIZE)
+    if (m_shared.render_regions.size() > kMaxQueueSize)
     {
-        m_shared_data.m_render_regions.clear();
-        m_shared_data.m_render_regions.push_back(SharedDataFullRegion());
+        m_shared.render_regions.clear();
+        m_shared.render_regions.push_back(FullRegion());
     }
     else {
-        m_shared_data.m_render_regions.push_back(rect);
+        m_shared.render_regions.push_back(rect);
         PostRenderMsg(0);
     }
 
-    memcpy(m_shared_data.m_data, info, m_shared_data.m_dimensions.x * m_shared_data.m_dimensions.y * sizeof(int32_t));
+    if(!m_shared.data)
+        m_shared.data.reset(new uint32_t[TotalChars()]);
+    memcpy(m_shared.data.get(), info, TotalChars() * sizeof(int32_t));
 }
 
 void SdlDisplay::MoveCursor(Coord pos)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_shared_data.m_cursor_pos = pos;
+    m_shared.cursor_pos = pos;
 }
 
 void SdlDisplay::SetCursor(bool enable)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_shared_data.m_cursor = enable;
+    m_shared.show_cursor = enable;
 }
 
 void SdlDisplay::SetTitle(const std::string & title)
@@ -561,18 +552,17 @@ bool SdlDisplay::HandleEventText(const SDL_Event & e)
     return false;
 }
 
-Region SdlDisplay::SharedDataFullRegion()
+Region SdlDisplay::FullRegion() const
 {
     Region r;
     r.Left = 0;
     r.Top = 0;
-    r.Right = short(m_shared_data.m_dimensions.x - 1);
-    r.Bottom = short(m_shared_data.m_dimensions.y - 1);
+    r.Right = short(m_dimensions.x - 1);
+    r.Bottom = short(m_dimensions.y - 1);
     return r;
 }
 
-bool SdlDisplay::SharedDataIsNarrow()
+int SdlDisplay::TotalChars() const
 {
-    return m_shared_data.m_dimensions.x == 40;
+    return m_dimensions.x * m_dimensions.y;
 }
-

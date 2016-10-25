@@ -11,7 +11,7 @@ struct TileProvider;
 
 struct SdlDisplay : public DisplayInterface
 {
-    const unsigned int MAX_QUEUE_SIZE = 1;
+    const unsigned int kMaxQueueSize = 1;
 
     SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env, Environment* game_env, const GameConfig& options, SdlInput* input);
 
@@ -41,20 +41,19 @@ private:
     void LoadAssets();
     void RenderGame(bool force);
     void Animate();
-    void RenderRegion(uint32_t* info, Coord dimensions, Region rect);
+    void RenderRegion(uint32_t* info, Region rect);
     void RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool is_tile);
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
-    void RenderCounterOverlay(const std::string& s, int n, Coord dimensions);
+    void RenderCounterOverlay(const std::string& s, int n);
 
     const GraphicsConfig& current_gfx() const;
 
     Coord ScreenPosition(Coord buffer_pos);
     SDL_Rect ScreenRegion(Coord buffer_pos);
 
-    //todo: move into thread data
-    Region SharedDataFullRegion();     //must have mutex before calling
-    bool SharedDataIsNarrow();         //must have mutex before calling
+    Region FullRegion() const;
+    int TotalChars() const;
 
 private:
     SDL_Window* m_window = 0;
@@ -63,6 +62,8 @@ private:
     Environment* m_game_env = 0;
     SdlInput* m_input = 0;
     GameConfig m_options;
+
+    Coord m_dimensions = { 0, 0 };
 
     Coord m_block_size = { 0, 0 };
     int m_gfx_mode = 0;
@@ -73,12 +74,11 @@ private:
 
     struct ThreadData
     {
-        uint32_t* m_data = 0;
-        Coord m_dimensions = { 0, 0 };
-        bool m_cursor = false;
-        Coord m_cursor_pos = { 0, 0 };
-        std::vector<Region> m_render_regions;
+        std::unique_ptr<uint32_t[]> data = 0;
+        bool show_cursor = false;
+        Coord cursor_pos = { 0, 0 };
+        std::vector<Region> render_regions;
     };
-    ThreadData m_shared_data;
+    ThreadData m_shared;
     std::mutex m_mutex;
 };
