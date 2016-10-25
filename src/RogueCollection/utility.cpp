@@ -321,7 +321,6 @@ SDL::Scoped::Surface LoadBmp(const std::string& filename)
     SDL::Scoped::Surface bmp(SDL_LoadBMP(filename.c_str()), SDL_FreeSurface);
     if (bmp == nullptr)
         throw_error("Couldn't open file " + filename);
-
     return bmp;
 }
 
@@ -330,7 +329,7 @@ SDL::Scoped::Texture CreateTexture(SDL_Surface* surface, SDL_Renderer* renderer)
     SDL::Scoped::Texture texture(SDL_CreateTextureFromSurface(renderer, surface), SDL_DestroyTexture);
     if (texture == nullptr)
         throw_error("CreateTextureFromSurface");
-    return std::move(texture);
+    return texture;
 }
 
 
