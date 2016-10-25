@@ -142,7 +142,7 @@ SDL::Scoped::Font LoadFont(const std::string& filename, int size)
     if (font == nullptr)
         throw_error("TTF_OpenFont");
 
-    return std::move(font);
+    return font;
 }
 
 SDL::Scoped::Surface LoadText(const std::string& s, _TTF_Font* font, SDL_Color color, SDL_Color bg)
@@ -151,7 +151,7 @@ SDL::Scoped::Surface LoadText(const std::string& s, _TTF_Font* font, SDL_Color c
     if (surface == nullptr)
         throw_error("TTF_RenderText");
 
-    return std::move(surface);
+    return surface;
 }
 
 /*
@@ -275,7 +275,7 @@ SDL::Scoped::Surface BlitSurface(SDL_Surface* surface, SDL_Rect* r)
     if (SDL_BlitSurface(surface, r, tile.get(), 0))
         throw_error("SDL_BlitSurface");
 
-    return std::move(tile);
+    return tile;
 }
 
 SDL::Scoped::Texture PaintedTexture(SDL_Surface* surface, SDL_Rect* r, SDL_Color fg, SDL_Color bg, SDL_Renderer* renderer)
@@ -313,7 +313,7 @@ SDL::Scoped::Texture LoadImage(const std::string &file, SDL_Renderer *ren) {
     SDL::Scoped::Texture texture(IMG_LoadTexture(ren, file.c_str()), SDL_DestroyTexture);
     if (texture == nullptr)
         throw_error("Couldn't open file " + file);
-    return std::move(texture);
+    return texture;
 }
 
 SDL::Scoped::Surface LoadBmp(const std::string& filename)
@@ -322,7 +322,7 @@ SDL::Scoped::Surface LoadBmp(const std::string& filename)
     if (bmp == nullptr)
         throw_error("Couldn't open file " + filename);
 
-    return std::move(bmp);
+    return bmp;
 }
 
 SDL::Scoped::Texture CreateTexture(SDL_Surface* surface, SDL_Renderer* renderer)

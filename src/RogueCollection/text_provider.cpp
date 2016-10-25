@@ -194,6 +194,6 @@ std::unique_ptr<ITextProvider> CreateTextProvider(FontConfig* font_cfg, TextConf
         p.reset(new TextProvider(*text_cfg, renderer));
     }
 
-    return std::move(p);
+    return p;
 }
 
