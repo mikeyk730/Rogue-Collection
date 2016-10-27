@@ -72,7 +72,7 @@ namespace
     }
 }
 
-SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env, Environment* game_env, const GameConfig& options, SdlInput* input) :
+SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env, Environment* game_env, const GameConfig& options, ReplayableInput* input) :
     m_window(window),
     m_renderer(renderer),
     m_current_env(current_env),

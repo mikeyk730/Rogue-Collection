@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <SDL.h>
 #include <coord.h>
 #include "game_config.h"
 

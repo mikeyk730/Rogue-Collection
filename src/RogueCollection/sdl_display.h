@@ -8,12 +8,13 @@
 struct Environment;
 struct ITextProvider;
 struct TileProvider;
+struct ReplayableInput;
 
 struct SdlDisplay : public DisplayInterface
 {
     const unsigned int kMaxQueueSize = 1;
 
-    SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env, Environment* game_env, const GameConfig& options, SdlInput* input);
+    SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env, Environment* game_env, const GameConfig& options, ReplayableInput* input);
 
     //display interface
     virtual void SetDimensions(Coord dimensions) override;
@@ -60,7 +61,7 @@ private:
     SDL_Renderer* m_renderer = 0;
     Environment* m_current_env = 0;
     Environment* m_game_env = 0;
-    SdlInput* m_input = 0;
+    ReplayableInput* m_input = 0;
     GameConfig m_options;
 
     Coord m_dimensions = { 0, 0 };

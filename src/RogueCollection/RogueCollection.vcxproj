@@ -224,7 +224,9 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     <ClCompile Include="environment.cpp" />
     <ClCompile Include="game_config.cpp" />
     <ClCompile Include="game_select.cpp" />
+    <ClCompile Include="key_utility.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="replayable_input.cpp" />
     <ClCompile Include="sdl_display.cpp" />
     <ClCompile Include="sdl_input.cpp" />
     <ClCompile Include="sdl_rogue.cpp" />
@@ -244,6 +246,8 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     <ClInclude Include="game_config.h" />
     <ClInclude Include="game_select.h" />
     <ClInclude Include="environment.h" />
+    <ClInclude Include="key_utility.h" />
+    <ClInclude Include="replayable_input.h" />
     <ClInclude Include="run_game.h" />
     <ClInclude Include="sdl_display.h" />
     <ClInclude Include="sdl_input.h" />

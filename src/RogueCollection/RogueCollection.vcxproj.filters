@@ -66,6 +66,12 @@
     <ClInclude Include="dos_to_unicode.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="key_utility.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="replayable_input.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="environment.cpp">
@@ -108,6 +114,12 @@
       <Filter>SDL</Filter>
     </ClCompile>
     <ClCompile Include="dos_to_unicode.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="key_utility.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="replayable_input.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
