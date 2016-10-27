@@ -1,4 +1,5 @@
 #pragma once
+#include <Windows.h>
 
 typedef int(*game_main)(int, char**, char**);
 typedef void(*init_game)(DisplayInterface*, InputInterface*, int lines, int cols);

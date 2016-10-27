@@ -3,7 +3,6 @@
 #include <fstream>
 #include <SDL.h>
 #include <SDL_ttf.h>
-#include <Windows.h>
 #include <input_interface.h>
 #include <display_interface.h>
 #include "sdl_rogue.h"

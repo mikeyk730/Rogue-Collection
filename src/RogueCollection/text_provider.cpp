@@ -4,6 +4,7 @@
 #include "text_provider.h"
 #include "sdl_rogue.h"
 #include "sdl_utility.h"
+#include "dos_to_unicode.h"
 
 TextProvider::TextProvider(const TextConfig & config, SDL_Renderer * renderer)
     : m_cfg(config)
@@ -73,21 +74,6 @@ std::string all_chars()
     return s;
 }
 
-#ifdef WIN32
-#include <Windows.h>
-std::wstring Dos437ToUnicode(const std::string& s)
-{
-    int len = s.size();
-    wchar_t* buf = new wchar_t[len+1];
-    memset(buf, 0, (len + 1) * sizeof(wchar_t));
-
-    MultiByteToWideChar(437, MB_USEGLYPHCHARS, s.c_str(), len, buf, len);
-    std::wstring w(buf);
-    delete[] buf;
-    return w;
-}
-#endif
-
 TextGenerator::TextGenerator(const FontConfig & config, SDL_Renderer * renderer) :
     m_cfg(),
     m_renderer(renderer),
@@ -96,10 +82,8 @@ TextGenerator::TextGenerator(const FontConfig & config, SDL_Renderer * renderer)
     SDL::Scoped::Font font(LoadFont(config.fontfile, config.size));
     TTF_SetFontKerning(font.get(), 0);
 
-    typedef std::basic_string<Uint16, std::char_traits<Uint16>, std::allocator<Uint16> > u16string;
     std::string s(all_chars());
-    std::wstring ws(Dos437ToUnicode(s));
-    u16string u16s(ws.begin(), ws.end());
+    uint16_string u16s(DosToUnicode(s));
 
     auto text = TTF_RenderUNICODE_Solid(font.get(), u16s.c_str(), SDL::Colors::grey());
     m_text = SDL::Scoped::Surface(text, SDL_FreeSurface);

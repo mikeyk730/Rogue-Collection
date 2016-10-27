@@ -220,6 +220,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="args.cpp" />
+    <ClCompile Include="dos_to_unicode.cpp" />
     <ClCompile Include="environment.cpp" />
     <ClCompile Include="game_config.cpp" />
     <ClCompile Include="game_select.cpp" />
@@ -239,6 +240,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     <ClInclude Include="..\Shared\display_interface_types.h" />
     <ClInclude Include="..\Shared\pc_gfx_charmap.h" />
     <ClInclude Include="args.h" />
+    <ClInclude Include="dos_to_unicode.h" />
     <ClInclude Include="game_config.h" />
     <ClInclude Include="game_select.h" />
     <ClInclude Include="environment.h" />
