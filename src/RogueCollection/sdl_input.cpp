@@ -2,8 +2,9 @@
 #include <sstream>
 #include "sdl_input.h"
 #include "sdl_display.h"
-#include "utility.h"
+#include "sdl_utility.h"
 #include "environment.h"
+#include "utility.h"
 
 #define CTRL(ch)   (ch&0x1f)
 #define ESCAPE     0x1b

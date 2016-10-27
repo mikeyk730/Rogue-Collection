@@ -18,6 +18,7 @@
 
 #define MAXATTR  17
 #define CURTAIN_SLEEP 20
+#define IMPLODE_SLEEP 25
 
 namespace
 {
@@ -510,8 +511,25 @@ void PdCursesOutput::private_repchr(WINDOW* w, int chr, int cnt)
 //Clear the screen in an interesting fashion
 void PdCursesOutput::implode()
 {
-    int er(COLS == 80 ? LINES - 3 : LINES - 4);
-    blot_out(0, 0, er, COLS - 1);
+    int j, r, c, cinc = COLS / 10 / 2, er, ec;
+
+    er = (COLS == 80 ? LINES - 3 : LINES - 4);
+
+    for (r = 0, c = 0, ec = COLS - 1; r < 10; r++, c += cinc, er--, ec -= cinc)
+    {
+        private_vbox(stdscr, sng_box, r, c, er, ec);
+        Render();
+        sleep(IMPLODE_SLEEP);
+        for (j = r + 1; j <= er - 1; j++)
+        {
+            move(j, c + 1); 
+            private_repchr(stdscr, ' ', cinc - 1);
+            move(j, ec - cinc + 1);
+            private_repchr(stdscr, ' ', cinc - 1);
+        }
+        private_vbox(stdscr, spc_box, r, c, er, ec);
+    }
+    Render();
 }
 
 //drop_curtain: Close a door on the screen and redirect output to the temporary buffer

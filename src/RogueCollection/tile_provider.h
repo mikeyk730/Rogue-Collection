@@ -3,13 +3,7 @@
 #include <map>
 #include <coord.h>
 #include <SDL.h>
-
-struct TileConfig
-{
-    std::string filename;
-    int count;
-    int states;
-};
+#include "game_config.h"
 
 struct TileProvider
 {

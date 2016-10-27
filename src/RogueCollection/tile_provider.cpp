@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <pc_gfx_charmap.h>
 #include "tile_provider.h"
-#include "utility.h"
+#include "sdl_utility.h"
 
 TileProvider::TileProvider(const TileConfig & config, SDL_Renderer * renderer)
     : m_cfg(config)

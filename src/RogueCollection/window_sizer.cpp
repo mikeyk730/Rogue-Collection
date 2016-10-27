@@ -4,8 +4,12 @@
 #include <SDL.h>
 #include <coord.h>
 #include "window_sizer.h"
-#include "utility.h"
 #include "environment.h"
+
+namespace SDL
+{
+    const int FULLSCREEN_FLAG = SDL_WINDOW_FULLSCREEN_DESKTOP;
+}
 
 WindowSizer::WindowSizer(SDL_Window * window, SDL_Renderer * renderer, Environment * current_env) :
     m_window(window),
@@ -67,4 +71,38 @@ void WindowSizer::ScaleWindow(int scale)
     int w, h;
     SDL_RenderGetLogicalSize(m_renderer, &w, &h);
     SetWindowSize(w, h, scale);
+}
+
+int GetScalingFactor(Coord logical_size)
+{
+    SDL_DisplayMode mode;
+    if (SDL_GetCurrentDisplayMode(0, &mode) == 0) {
+        int xscale = mode.w / logical_size.x;
+        int yscale = mode.h / logical_size.y;
+
+        return std::min(xscale, yscale);
+    }
+    return 2;
+}
+
+Coord GetScaledCoord(Coord logical_size, int scale_factor)
+{
+    int max_factor = GetScalingFactor(logical_size);
+    scale_factor = std::min(scale_factor, max_factor);
+    return{ logical_size.x * scale_factor, logical_size.y * scale_factor };
+}
+
+bool IsFullscreen(SDL_Window* w)
+{
+    return (SDL_GetWindowFlags(w) & SDL::FULLSCREEN_FLAG) != 0;
+}
+
+void SetFullscreen(SDL_Window* w, bool enable)
+{
+    SDL_SetWindowFullscreen(w, enable ? SDL::FULLSCREEN_FLAG : 0);
+}
+
+void ToggleFullscreen(SDL_Window* w)
+{
+    SetFullscreen(w, !IsFullscreen(w));
 }

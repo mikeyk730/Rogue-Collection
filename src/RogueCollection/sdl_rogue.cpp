@@ -2,10 +2,11 @@
 #include <fstream>
 #include <SDL.h>
 #include "sdl_rogue.h"
-#include "utility.h"
+#include "sdl_utility.h"
 #include "environment.h"
 #include "sdl_display.h"
 #include "sdl_input.h"
+#include "utility.h"
 
 const char* SdlRogue::kWindowTitle = "Rogue Collection 1.0";
 const unsigned char SdlRogue::kSaveVersion = 1;

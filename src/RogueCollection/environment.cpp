@@ -5,6 +5,7 @@
 #include <map>
 #include "environment.h"
 #include "utility.h"
+#include "args.h"
 
 namespace
 {
@@ -34,6 +35,12 @@ namespace
 Environment::Environment()
 {}
 
+Environment::Environment(const Args & args)
+{
+    LoadFromFile(args.optfile);
+    ApplyArgs(args);
+}
+
 void Environment::LoadFromFile(const std::string& name)
 {
     std::ifstream in(name);
@@ -50,6 +57,20 @@ void Environment::LoadFromFile(const std::string& name)
         std::string value = line.substr(p+1, std::string::npos);
         Set(key, value);
     }
+}
+
+void Environment::ApplyArgs(const Args& args)
+{
+    if (args.small_screen)
+        Set("small_screen", "true");
+    if (!args.gfx.empty())
+        Set("gfx", args.gfx);
+    if (!args.savefile.empty())
+        Set("game", args.savefile);
+    if (!args.fontfile.empty())
+        Set("font", args.fontfile);
+    if (args.start_paused)
+        Set("replay_paused", "true");
 }
 
 void Environment::Deserialize(std::istream& in)
@@ -100,6 +121,23 @@ void Environment::Lines(int n)
 void Environment::Columns(int n)
 {
     m_cols = n;
+}
+
+int Environment::WindowScaling() const
+{
+    int scale = INT_MAX;
+    std::string value;
+    if (Get("window_scaling", &value))
+    {
+        scale = atoi(value.c_str());
+    }
+    return scale;
+}
+
+bool Environment::Fullscreen() const
+{
+    std::string value;
+    return Get("fullscreen", &value) && value == "true";
 }
 
 bool Environment::WriteToOs(bool for_unix)

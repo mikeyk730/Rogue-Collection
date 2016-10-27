@@ -3,7 +3,7 @@
 #include <vector>
 #include <SDL.h>
 #include "sdl_rogue.h"
-#include "utility.h"
+#include "sdl_utility.h"
 #include "window_sizer.h"
 
 struct TitleScreen

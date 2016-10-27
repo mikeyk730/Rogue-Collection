@@ -3,21 +3,8 @@
 #include <map>
 #include <coord.h>
 #include <SDL.h>
-#include "utility.h"
-
-struct FontConfig
-{
-    std::string fontfile;
-    int size;
-};
-
-struct TextConfig
-{
-    std::string imagefile;
-    Coord layout;
-    std::vector<int> colors;
-    bool generate_colors;
-};
+#include "sdl_utility.h"
+#include "game_config.h"
 
 struct ITextProvider
 {

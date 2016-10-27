@@ -9,7 +9,7 @@
 #include "tile_provider.h"
 #include "window_sizer.h"
 #include "environment.h"
-#include "utility.h"
+#include "sdl_utility.h"
 
 namespace
 {

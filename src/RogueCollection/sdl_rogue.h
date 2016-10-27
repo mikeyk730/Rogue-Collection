@@ -2,40 +2,13 @@
 #include <memory>
 #include <vector>
 #include <coord.h>
+#include "game_config.h"
 
 struct DisplayInterface;
 struct InputInterface;
 struct SdlDisplay;
 struct SdlInput;
 struct Environment;
-struct TextConfig;
-struct TileConfig;
-struct FontConfig;
-
-struct GraphicsConfig
-{
-    std::string name;
-    TextConfig* text;
-    FontConfig* font;
-    TileConfig* tiles;
-    bool use_unix_gfx;
-    bool use_colors;
-    bool use_standout;
-    bool animate;
-};
-
-struct GameConfig
-{
-    std::string name;
-    std::string dll_name;
-    Coord screen;
-    Coord small_screen;
-    bool emulate_ctrl_controls;
-    bool is_unix;
-    std::vector<GraphicsConfig> gfx_options;
-};
-
-extern std::vector<GameConfig> s_options;
 
 struct SdlRogue
 {

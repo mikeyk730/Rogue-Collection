@@ -2,7 +2,7 @@
 #include <sstream>
 #include "game_select.h"
 #include "environment.h"
-#include "utility.h"
+#include "sdl_utility.h"
 
 GameSelect::GameSelect(SDL_Window * window, SDL_Renderer* renderer, const std::vector<GameConfig>& options, Environment* current_env) :
     m_window(window), 

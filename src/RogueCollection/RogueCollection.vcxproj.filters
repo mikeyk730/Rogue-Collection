@@ -9,9 +9,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="utility.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="sdl_rogue.h">
       <Filter>Source</Filter>
     </ClInclude>
@@ -48,12 +45,24 @@
     <ClInclude Include="sdl_input.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="run_game.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="args.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="game_config.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="sdl_utility.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="utility.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="sdl_rogue.cpp">
@@ -78,6 +87,18 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="sdl_input.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="args.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="game_config.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="sdl_utility.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="utility.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

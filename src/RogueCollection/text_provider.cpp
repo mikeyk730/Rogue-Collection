@@ -3,7 +3,7 @@
 #include <cassert>
 #include "text_provider.h"
 #include "sdl_rogue.h"
-#include "utility.h"
+#include "sdl_utility.h"
 
 TextProvider::TextProvider(const TextConfig & config, SDL_Renderer * renderer)
     : m_cfg(config)
