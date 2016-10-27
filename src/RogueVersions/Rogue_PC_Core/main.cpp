@@ -152,7 +152,7 @@ void credits()
         game->screen().mvaddstr({ 2, 23 }, "        Hello ");
         game->screen().addstr(game->hero().get_name().c_str());
         game->screen().standend();
-        tick_pause(5);
+        pause(250);
     }
     else {
         game->screen().blot_out(23, 0, 24, COLS - 1);
@@ -161,9 +161,7 @@ void credits()
         game->screen().add_text({ COLS - 1,22 }, (char)0xbc);
         game->screen().standend();
 
-        if (!game->in_replay()) {
-            game->screen().drop_curtain();
-        }
+        game->screen().drop_curtain();
     }
 }
 

@@ -640,10 +640,15 @@ void clear_typeahead_buffer()
     game->typeahead.clear();
 }
 
-void tick_pause(int n)
+void tick_pause()
+{
+    pause(50);
+}
+
+void pause(int n)
 {
     if (!game->in_replay())
-        sleep(50*n);
+        sleep(n);
 }
 
 void alert()

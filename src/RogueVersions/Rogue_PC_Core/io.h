@@ -58,7 +58,8 @@ int getinfo(char *str, int size);
 //clear_typeahead_buffer: Flush typeahead for traps, etc.
 void clear_typeahead_buffer();
 
-void tick_pause(int n=1);
+void tick_pause();
+void pause(int ms);
 void alert();
 
 //str_attr: format a string with attributes.

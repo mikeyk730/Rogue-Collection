@@ -1,6 +1,6 @@
 #include <output_interface.h>
 #include <rogue.h>
-#include <mach_dep.h>
+#include <io.h>
 #undef standout
 #undef standend
 #undef MOUSE_MOVED
@@ -519,7 +519,7 @@ void PdCursesOutput::implode()
     {
         private_vbox(stdscr, sng_box, r, c, er, ec);
         Render();
-        sleep(IMPLODE_SLEEP);
+        pause(IMPLODE_SLEEP);
         for (j = r + 1; j <= er - 1; j++)
         {
             move(j, c + 1); 
@@ -550,7 +550,7 @@ void PdCursesOutput::drop_curtain()
             ::waddch(m_backup_window, 0xb1);
         }
         wrefresh(m_backup_window);
-        sleep(CURTAIN_SLEEP);
+        pause(CURTAIN_SLEEP);
     }
     m_curtain_down = true;
 }
@@ -564,7 +564,7 @@ void PdCursesOutput::raise_curtain()
     {
         copywin(stdscr, m_backup_window, r, 1, r, 1, r, COLS - 2, FALSE);
         wrefresh(m_backup_window);
-        sleep(CURTAIN_SLEEP);
+        pause(CURTAIN_SLEEP);
     }
     m_curtain_down = false;
 }
