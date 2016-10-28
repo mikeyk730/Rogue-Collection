@@ -1,0 +1,56 @@
+<RCC>
+    <qresource prefix="/">
+        <file>frames/BlackRoughFrame.qml</file>
+        <file>frames/images/black-frame.png</file>
+        <file>frames/images/screen-frame-normals.png</file>
+        <file>frames/images/black-frame-normals.png</file>
+        <file>frames/images/screen-frame.png</file>
+        <file>frames/images/black-frame-original.png</file>
+        <file>frames/images/screen-frame-original.png</file>
+        <file>frames/WhiteSimpleFrame.qml</file>
+        <file>frames/utils/TerminalFrame.qml</file>
+        <file>SizeOverlay.qml</file>
+        <file>ShaderTerminal.qml</file>
+        <file>CheckableSlider.qml</file>
+        <file>ApplicationSettings.qml</file>
+        <file>SettingsWindow.qml</file>
+        <file>Fonts.qml</file>
+        <file>FontPixels.qml</file>
+        <file>SettingsGeneralTab.qml</file>
+        <file>PreprocessedTerminal.qml</file>
+        <file>TimeManager.qml</file>
+        <file>SimpleSlider.qml</file>
+        <file>ColorButton.qml</file>
+        <file>Glossy.qml</file>
+        <file>AboutDialog.qml</file>
+        <file>InsertNameDialog.qml</file>
+        <file>SettingsEffectsTab.qml</file>
+        <file>main.qml</file>
+        <file>SettingsTerminalTab.qml</file>
+        <file>FontScanlines.qml</file>
+        <file>fonts/1982-commodore64/C64_Pro_Mono_v1.0-STYLE.ttf</file>
+        <file>fonts/1977-apple2/PrintChar21.ttf</file>
+        <file>fonts/1971-ibm-3278/3270Medium.ttf</file>
+        <file>fonts/1985-atari-st/AtariST8x16SystemFont.ttf</file>
+        <file>fonts/modern-terminus/TerminusTTF-4.38.2.ttf</file>
+        <file>fonts/1977-commodore-pet/COMMODORE_PET.ttf</file>
+        <file>fonts/1979-atari-400-800/ATARI400800_original.TTF</file>
+        <file>fonts/1985-ibm-pc-vga/Perfect DOS VGA 437 Win.ttf</file>
+        <file>Storage.qml</file>
+        <file>CRTMainMenuBar.qml</file>
+        <file>SettingsPerformanceTab.qml</file>
+        <file>TerminalContainer.qml</file>
+        <file>images/crt256.png</file>
+        <file>utils.js</file>
+        <file>images/allNoise512.png</file>
+        <file>fonts/modern-proggy-tiny/ProggyTiny.ttf</file>
+        <file>fonts/modern-pro-font-win-tweaked/ProFontWindows.ttf</file>
+        <file>fonts/modern-monaco/monaco.ttf</file>
+        <file>fonts/modern-hermit/Hermit-medium.otf</file>
+        <file>fonts/modern-inconsolata/Inconsolata.otf</file>
+        <file>SettingsScreenTab.qml</file>
+        <file>fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf</file>
+        <file>../icons/32x32/cool-retro-term.png</file>
+        <file>Components/SizedLabel.qml</file>
+    </qresource>
+</RCC>
