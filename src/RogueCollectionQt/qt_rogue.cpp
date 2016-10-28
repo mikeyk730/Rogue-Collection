@@ -7,6 +7,7 @@ QtRogue::QtRogue(QWidget *parent, Environment* env) :
 {
     display_.reset(new QtRogueDisplay(this));
     input_.reset(new QtRogueInput(this));
+    this->setFocus();
 }
 
 QtRogue::~QtRogue()

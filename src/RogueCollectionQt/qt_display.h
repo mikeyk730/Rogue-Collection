@@ -14,6 +14,7 @@ namespace Ui {
 class Widget;
 }
 class QtRogue;
+class SimpleColoredText;
 
 class QtRogueDisplay : public DisplayInterface
 {
@@ -24,6 +25,7 @@ public:
     void Render(bool force);
     void RenderRegion(uint32_t* data, Region rect);
     void PostRenderEvent();
+    void DisplayChar(int ch, int color, int x, int y);
 
     virtual void SetDimensions(Coord dimensions) override;
     virtual void UpdateRegion(uint32_t* buf) override;
@@ -39,6 +41,7 @@ private:
     std::unique_ptr<Ui::Widget> ui;
     QtRogue* parent_;
     QFont font_;
+    std::unique_ptr<SimpleColoredText*[]> screen_;
 
     Coord dimensions_ = { 0, 0 };
 

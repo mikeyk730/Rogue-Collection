@@ -64,19 +64,32 @@ QColor colors[] = {
 class SimpleColoredText : public QGraphicsSimpleTextItem
 {
     public:
+        SimpleColoredText() : QGraphicsSimpleTextItem() {}
         SimpleColoredText(const QString &text, QColor fg, QColor bg) :
-            QGraphicsSimpleTextItem(text),
-            bg(bg)
+            QGraphicsSimpleTextItem()
         {
+            Set(text, fg, bg);
+        }
+
+        void Set(const QString &text, QColor fg, QColor bg)
+        {
+            setText(text);
             setBrush(fg);
+            bg_ = bg;
+        }
+
+        void UpdatePosition(int x, int y)
+        {
+            auto r = boundingRect();
+            setPos(x*r.width(),y*r.height());
         }
 
         void paint( QPainter *painter, const QStyleOptionGraphicsItem *o, QWidget *w) {
-            painter->fillRect(boundingRect(), bg);
+            painter->fillRect(boundingRect(), bg_);
             QGraphicsSimpleTextItem::paint(painter, o, w);
         }
 
-        QColor bg;
+        QColor bg_;
 };
 
 QColor GetColor(int color)
@@ -94,14 +107,12 @@ QColor GetBg(int color)
     return GetColor(color >> 4);
 }
 
-void DrawChar(QGraphicsScene* scene, QFont& font, int ch, int color, int x, int y)
+void QtRogueDisplay::DisplayChar(int ch, int color, int x, int y)
 {
+    auto text = screen_[y*dimensions_.x + x];
     QChar unicode = DosToUnicode(ch);
-    auto text = new SimpleColoredText(unicode, GetFg(color), GetBg(color));
-    text->setFont(font);
-    auto r = text->boundingRect();
-    text->setPos(x*r.width(),y*r.height());
-    scene->addItem(text);
+    text->Set(unicode, GetFg(color), GetBg(color));
+    text->UpdatePosition(x, y);
 }
 
 QtRogueDisplay::QtRogueDisplay(QtRogue *p) :
@@ -109,7 +120,6 @@ QtRogueDisplay::QtRogueDisplay(QtRogue *p) :
     ui(new Ui::Widget)
 {
     ui->setupUi(parent_);
-    ui->graphicsView->scale(2,2);
 
     dimensions_ = { p->GameEnv()->Columns(), p->GameEnv()->Lines() };
 
@@ -117,6 +127,19 @@ QtRogueDisplay::QtRogueDisplay(QtRogue *p) :
     font_ = QFont("Px437 IBM VGA8");
     font_.setPixelSize(16);
     font_.setStyleStrategy(QFont::NoAntialias);
+
+    scene = new QGraphicsScene(parent_);
+    scene->setSceneRect(0, 0, 640, 400);
+    int total_chars = TotalChars();
+    screen_.reset(new SimpleColoredText*[total_chars]);
+    for(int i = 0; i < total_chars; ++i){
+        auto item = new SimpleColoredText;
+        item->setFont(font_);
+        scene->addItem(item);
+        screen_[i] = item;
+    }
+    ui->graphicsView->setScene(scene);
+    ui->graphicsView->scale(2,2);
 }
 
 bool QtRogueDisplay::HandleEvent(QEvent *event)
@@ -154,17 +177,10 @@ void QtRogueDisplay::Render(bool force)
         cursor_pos = shared_.cursor_pos;
     }
 
-    scene = new QGraphicsScene(parent_);
-
     if (force) {
-//        scene = new QGraphicsScene(parent_);
+        regions.clear();
         regions.push_back(FullRegion());
     }
-
-
-    //todo:
-    scene->setSceneRect(0, 0, 640, 400);
-
 
     for (auto i = regions.begin(); i != regions.end(); ++i)
     {
@@ -178,8 +194,6 @@ void QtRogueDisplay::Render(bool force)
     //std::string counter;
     //if (input_ && input_->GetRenderText(&counter))
     //    RenderCounterOverlay(counter, 0);
-
-    ui->graphicsView->setScene(scene);
 }
 
 void QtRogueDisplay::RenderRegion(uint32_t *data, Region rect)
@@ -192,7 +206,7 @@ void QtRogueDisplay::RenderRegion(uint32_t *data, Region rect)
             int color = CharColor(info);
             int ch = CharText(info);
             //todo: --more-- standout hack
-            DrawChar(scene, font_, ch, color, x, y);
+            DisplayChar(ch, color, x, y);
         }
     }
 }

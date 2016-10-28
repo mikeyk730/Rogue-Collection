@@ -73,7 +73,6 @@ private:
     int row = 0;
     int col = 0;
 
-    bool clear_screen = false;
     bool no_delay = false;
 
     __window* parent = 0;
@@ -186,7 +185,6 @@ int __window::attron(chtype ch)
 int __window::clear()
 {
     erase();
-    clear_screen = true;
     return OK;
 }
 
@@ -336,11 +334,6 @@ int __window::refresh()
 {
     std::vector<Region> changed_regions;
     Region region = window_region();
-
-    if (clear_screen) {
-        curscr->erase(); //todo: should i do this?  what if small screen?
-        clear_screen = false;
-    }
 
     for (int r = 0; r < dimensions.y; ++r) {
         if (memcmp(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype)) != 0) {

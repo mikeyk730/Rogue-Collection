@@ -515,6 +515,7 @@ void PdCursesOutput::implode()
 
     er = (COLS == 80 ? LINES - 3 : LINES - 4);
 
+    attron(COLOR_PAIR(0x07));
     for (r = 0, c = 0, ec = COLS - 1; r < 10; r++, c += cinc, er--, ec -= cinc)
     {
         private_vbox(stdscr, sng_box, r, c, er, ec);
