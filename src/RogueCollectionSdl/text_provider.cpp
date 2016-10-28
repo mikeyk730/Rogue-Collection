@@ -88,7 +88,7 @@ TextGenerator::TextGenerator(const FontConfig & config, SDL_Renderer * renderer)
     auto text = TTF_RenderUNICODE_Solid(font.get(), u16s.c_str(), SDL::Colors::grey());
     m_text = SDL::Scoped::Surface(text, SDL_FreeSurface);
 
-    m_cfg.layout.x = s.size();
+    m_cfg.layout.x = (int)s.size();
     m_cfg.layout.y = 1;
     
     Init();

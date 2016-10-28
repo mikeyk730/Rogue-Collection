@@ -336,6 +336,7 @@ int __window::refresh()
     Region region = window_region();
 
     if (clear_screen) {
+        //todo: this doesn't seem okay.  window doesn't have to be this big:
         curscr->erase();
         region = { 0, 0, COLS - 1, LINES - 1 };
         clear_screen = false;
@@ -343,20 +344,26 @@ int __window::refresh()
 
     if (region.Top == 0 && region.Left == 0 && region.Bottom == LINES - 1 && region.Right == COLS - 1)
     {
-        if (memcmp(curscr->m_data, m_data, LINES*COLS * sizeof(chtype)) == 0)
-            return OK;
-        memcpy(curscr->m_data, m_data, LINES*COLS * sizeof(chtype));
+        if (memcmp(curscr->m_data, m_data, LINES*COLS * sizeof(chtype)) != 0) {
+            memcpy(curscr->m_data, m_data, LINES*COLS * sizeof(chtype));
+            if (s_screen) {
+                s_screen->UpdateRegion(curscr->m_data, region);
+            }
+        }
     }
     else {
-        for (int r = origin.y; r < origin.y + dimensions.y; ++r)
-            for (int c = origin.x; c < origin.x + dimensions.x; ++c)
+        for (int r = origin.y; r < origin.y + dimensions.y; ++r) {
+            for (int c = origin.x; c < origin.x + dimensions.x; ++c) {
                 *(curscr->data(r, c)) = get_data_absolute(r, c);
+            }
+        }
+        if (s_screen) {
+            s_screen->UpdateRegion(curscr->m_data, region);
+        }
     }
 
-    if (s_screen)
-    {
-        s_screen->MoveCursor({ col, row });
-        s_screen->UpdateRegion(curscr->m_data, region);
+    if (s_screen) {
+        s_screen->MoveCursor({ col + origin.x, row + origin.y });
     }
     return OK;
 }
