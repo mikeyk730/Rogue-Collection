@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RogueCollection", "src\RogueCollection\RogueCollection.vcxproj", "{691EF6AE-55BD-459F-94E6-6D318B47BCA0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RogueCollection", "src\RogueCollectionSdl\RogueCollection.vcxproj", "{691EF6AE-55BD-459F-94E6-6D318B47BCA0}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5D94880B-C99D-887C-5219-9F7CBE21947C} = {5D94880B-C99D-887C-5219-9F7CBE21947C}
 		{E85D0F19-D582-4240-8299-06ACCF51883B} = {E85D0F19-D582-4240-8299-06ACCF51883B}
