@@ -198,8 +198,6 @@ void QtRogueDisplay::Render(bool force)
 
 void QtRogueDisplay::RenderRegion(uint32_t *data, Region rect)
 {
-    //rect.Bottom = 15;
-    //rect.Right = 30;
     for (int y = rect.Top; y <= rect.Bottom; ++y) {
         for (int x = rect.Left; x <= rect.Right; ++x) {
             uint32_t info = data[y*dimensions_.x + x];

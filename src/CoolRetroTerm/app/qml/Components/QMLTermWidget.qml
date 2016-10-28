@@ -4,25 +4,30 @@ Rectangle {
     signal imagePainted
 
     property string colorScheme: "cool-retro-term"
-
     property bool enableBold: false
-    property bool fullCursorHeight: true
+    property bool fullCursorHeight: false
+    property bool antialiasText: false
+    //property font font
+    property alias font: test.font
+    property int lineSpacing
 
     property size terminalSize: { Qt.size(80, 25) }
     property size fontMetrics: { Qt.size(8, 16) }
 
-    width: 640
-    height: 400
+    color: 'black'
 
-    color: '#222222'
     Image {
         source: '../images/Codepage-437.png'
-        anchors.fill: parent
+        //anchors.fill: parent
+        width: 32 * 8 + 40
+        height: 8 * 16 + 20
     }
+
     Text {
         id: test
+        anchors.centerIn: parent
         text: qsTr("Welcome")
-        font.pixelSize: 64
+        font.pixelSize: 16
         color: '#aa3300'
     }
 }
