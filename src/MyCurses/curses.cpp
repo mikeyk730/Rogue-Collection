@@ -2,6 +2,7 @@ extern "C" {
 #include "curses.h"
 #undef getch
 }
+#include <vector>
 #include <algorithm>
 #include <cstdarg>
 #include <display_interface.h>
@@ -333,36 +334,36 @@ int __window::nodelay(bool enable)
 
 int __window::refresh()
 {
+    std::vector<Region> changed_regions;
     Region region = window_region();
 
     if (clear_screen) {
-        //todo: this doesn't seem okay.  window doesn't have to be this big:
-        curscr->erase();
-        region = { 0, 0, COLS - 1, LINES - 1 };
+        curscr->erase(); //todo: should i do this?  what if small screen?
         clear_screen = false;
     }
 
-    if (region.Top == 0 && region.Left == 0 && region.Bottom == LINES - 1 && region.Right == COLS - 1)
-    {
-        if (memcmp(curscr->m_data, m_data, LINES*COLS * sizeof(chtype)) != 0) {
-            memcpy(curscr->m_data, m_data, LINES*COLS * sizeof(chtype));
-            if (s_screen) {
-                s_screen->UpdateRegion(curscr->m_data, region);
-            }
-        }
-    }
-    else {
-        for (int r = origin.y; r < origin.y + dimensions.y; ++r) {
-            for (int c = origin.x; c < origin.x + dimensions.x; ++c) {
-                *(curscr->data(r, c)) = get_data_absolute(r, c);
-            }
-        }
-        if (s_screen) {
-            s_screen->UpdateRegion(curscr->m_data, region);
+    for (int r = 0; r < dimensions.y; ++r) {
+        if (memcmp(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype)) != 0) {
+            memcpy(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype));
+
+            Region rect;
+            rect.Top = origin.y + r;
+            rect.Left = origin.x;
+            rect.Bottom = rect.Top;
+            rect.Right = rect.Left + dimensions.x - 1;
+            changed_regions.push_back(rect);
         }
     }
 
     if (s_screen) {
+        if (changed_regions.size() == LINES) {
+            s_screen->UpdateRegion(curscr->m_data);
+        }
+        else {
+            for (int i = 0; i < changed_regions.size(); ++i) {
+                s_screen->UpdateRegion(curscr->m_data, changed_regions[i]);
+            }
+        }
         s_screen->MoveCursor({ col + origin.x, row + origin.y });
     }
     return OK;
