@@ -21,14 +21,15 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.1
 
-import QMLTermWidget 1.0
+import "Components"
 
 import "utils.js" as Utils
 
 Item{
     id: terminalContainer
 
-    property size virtualResolution: Qt.size(kterminal.width, kterminal.height)
+    //mdk: property size virtualResolution: Qt.size(kterminal.width, kterminal.height)
+    property size virtualResolution: Qt.size(16*80, 8*25)
     property alias mainTerminal: kterminal
     property ShaderEffectSource mainSource: kterminalSource
     property ShaderEffectSource blurredSource: blurredSourceLoader.item
@@ -36,7 +37,8 @@ Item{
     property real fontWidth: 1.0
     property real screenScaling: 1.0
     property real scaleTexture: 1.0
-    property alias title: ksession.title
+    //mdk: property alias title: ksession.title
+    property string title: 'Terminal'
     property alias kterminal: kterminal
 
     anchors.leftMargin: frame.displacementLeft * appSettings.windowScaling
@@ -91,13 +93,14 @@ Item{
         enableBold: false
         fullCursorHeight: true
 
-        session: QMLTermSession {
-            id: ksession
-
-            onFinished: {
-                Qt.quit()
-            }
-        }
+        //mdk:
+        //session: QMLTermSession {
+        //    id: ksession
+        //
+        //    onFinished: {
+        //        Qt.quit()
+        //    }
+        //}
 
         QMLTermScrollbar {
             id: kterminalScrollbar

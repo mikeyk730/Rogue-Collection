@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     // Some environmental variable are necessary on certain platforms.
 
     // This disables QT appmenu under Ubuntu, which is not working with QML apps.
-    setenv("QT_QPA_PLATFORMTHEME", "", 1);
+    //setenv("QT_QPA_PLATFORMTHEME", "", 1);
 
 #if defined(Q_OS_MAC)
     // This allows UTF-8 characters usage in OSX.
