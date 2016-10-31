@@ -22,6 +22,7 @@ public:
 
     QSize FontSize() const;
     QSize ScreenSize() const;
+    QSize ScreenPixelSize() const;
 
     void Render(QPainter *painter);
     void RenderRegion(QPainter *painter, uint32_t* data, Region rect);
@@ -46,6 +47,7 @@ private:
     QSize font_size_;
     QSize screen_size_;
     QRogue* parent_;
+    std::unique_ptr<QPixmap> screen_buffer_;
 
     struct ThreadData
     {

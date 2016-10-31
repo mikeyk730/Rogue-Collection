@@ -10,7 +10,7 @@
 
 namespace
 {
-    const int kMaxQueueSize = 0;
+    const int kMaxQueueSize = 10;
 
     uint32_t CharText(uint32_t ch)
     {
@@ -121,11 +121,18 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
     font.setPixelSize(32);
 
     SetFont(font);
+
+    screen_buffer_.reset(new QPixmap(ScreenPixelSize()));
 }
 
 QSize QRogueDisplay::ScreenSize() const
 {
     return screen_size_;
+}
+
+QSize QRogueDisplay::ScreenPixelSize() const
+{
+    return QSize(screen_size_.width() * font_size_.width(), screen_size_.height() * font_size_.height());
 }
 
 QFont QRogueDisplay::Font() const
@@ -160,15 +167,15 @@ void QRogueDisplay::Render(QPainter *painter)
 
     lock.unlock();
 
-    //todo:
-    copy.render_regions.clear();
-    copy.render_regions.push_back(FullRegion());
+    QPainter buffer(screen_buffer_.get());
+    buffer.setFont(font_);
 
-    painter->setFont(font_);
     for (auto i = copy.render_regions.begin(); i != copy.render_regions.end(); ++i)
     {
-        RenderRegion(painter, copy.data.get(), *i);
+        RenderRegion(&buffer, copy.data.get(), *i);
     }
+
+    painter->drawPixmap(0, 0, *screen_buffer_);
 
 //    if (show_cursor) {
 //        RenderCursor(cursor_pos);
@@ -268,7 +275,9 @@ void QRogueDisplay::UpdateRegion(uint32_t *buf, Region rect)
     }
 
     shared_.render_regions.push_back(rect);
-    PostRenderEvent();
+    if (shared_.render_regions.size() == 1){
+        PostRenderEvent();
+    }
 
     if(!shared_.data) {
         shared_.data.reset(new uint32_t[TotalChars()]);
