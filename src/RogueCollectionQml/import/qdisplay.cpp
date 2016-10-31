@@ -121,8 +121,6 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
     font.setPixelSize(32);
 
     SetFont(font);
-
-    screen_buffer_.reset(new QPixmap(ScreenPixelSize()));
 }
 
 QSize QRogueDisplay::ScreenSize() const
@@ -148,6 +146,9 @@ void QRogueDisplay::SetFont(const QFont &font)
     QFontMetrics font_metrics(font);
     font_size_.setWidth(font_metrics.width("W"));
     font_size_.setHeight(font_metrics.height());
+
+    screen_buffer_.reset();
+    PostRenderEvent();
 }
 
 QSize QRogueDisplay::FontSize() const
@@ -166,6 +167,12 @@ void QRogueDisplay::Render(QPainter *painter)
     shared_.render_regions.clear();
 
     lock.unlock();
+
+    if (!screen_buffer_) {
+        screen_buffer_.reset(new QPixmap(ScreenPixelSize()));
+        copy.render_regions.clear();
+        copy.render_regions.push_back(FullRegion());
+    }
 
     QPainter buffer(screen_buffer_.get());
     buffer.setFont(font_);
