@@ -1,5 +1,7 @@
+#include <map>
 #include <QColor>
 #include <QRectF>
+#include <pc_gfx_charmap.h>
 #include "qdisplay.h"
 #include "dos_to_unicode.h"
 #include "environment.h"
@@ -18,6 +20,39 @@ namespace
     {
         return (ch >> 24) & 0xff;
     }
+
+    bool IsText(uint32_t ch)
+    {
+        return (ch & 0x010000) == 0;
+    }
+
+    bool use_unix_gfx = false;
+    bool use_colors = true;
+    std::map<int, int> unix_chars = {
+        { PASSAGE,   '#' },
+        { DOOR,      '+' },
+        { FLOOR,     '.' },
+        { PLAYER,    '@' },
+        { TRAP,      '^' },
+        { STAIRS,    '%' },
+        { GOLD,      '*' },
+        { POTION,    '!' },
+        { SCROLL,    '?' },
+        { FOOD,      ':' },
+        { STICK,     '/' },
+        { ARMOR,     ']' },
+        { AMULET,    ',' },
+        { RING,      '=' },
+        { WEAPON,    ')' },
+        { VWALL,     '|' },
+        { HWALL,     '-' },
+        { ULWALL,    '-' },
+        { URWALL,    '-' },
+        { LLWALL,    '-' },
+        { LRWALL,    '-' },
+        { 204,       '|' },
+        { 185,       '|' },
+    };
 }
 
 namespace Colors
@@ -101,6 +136,7 @@ QFont QRogueDisplay::Font() const
 void QRogueDisplay::SetFont(const QFont &font)
 {
     font_ = font;
+    font_.setStyleStrategy(QFont::NoAntialias);
 
     QFontMetrics font_metrics(font);
     font_size_.setWidth(font_metrics.width("W"));
@@ -160,7 +196,16 @@ void QRogueDisplay::RenderRegion(QPainter *painter, uint32_t *data, Region rect)
         for (int x = rect.Left; x <= rect.Right; ++x) {
             uint32_t info = data[y*screen_size_.width() + x];
             int color = CharColor(info);
+            if (!use_colors) {
+                color = 0x07;
+            }
             int ch = CharText(info);
+            if (!IsText(info) && use_unix_gfx){
+                auto i = unix_chars.find(ch);
+                if (i != unix_chars.end()) {
+                    ch = i->second;
+                }
+            }
             ch = DosToUnicode(ch);
             //todo: --more-- standout hack
             paintChar(painter, x, y, ch, GetFg(color), GetBg(color));
