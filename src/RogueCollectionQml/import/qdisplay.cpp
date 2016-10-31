@@ -1,6 +1,7 @@
 #include <map>
 #include <QColor>
 #include <QRectF>
+#include <QRect>
 #include <pc_gfx_charmap.h>
 #include "qdisplay.h"
 #include "dos_to_unicode.h"
@@ -118,7 +119,6 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
 
     auto font = QFont("Px437 IBM VGA8");
     font.setPixelSize(32);
-    font.setStyleStrategy(QFont::NoAntialias);
 
     SetFont(font);
 }
@@ -179,36 +179,64 @@ void QRogueDisplay::Render(QPainter *painter)
     //    RenderCounterOverlay(counter, 0);
 }
 
-void QRogueDisplay::paintChar(QPainter *painter, int x, int y, QChar ch, QColor fg, QColor bg)
+void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, QString s, QColor fg, QColor bg)
 {
     auto w = font_size_.width();
     auto h = font_size_.height();
-    QRectF r(w*x, h*y, w, h);
+    QRectF r(w*x, h*y, w*s.size(), h);
 
     painter->fillRect(r, bg);
     painter->setPen(fg);
-    painter->drawText(r, 0, ch);
+    painter->drawText(r, 0, s);
+}
+
+int QRogueDisplay::TranslateChar(int info) const
+{
+    int ch = CharText(info);
+    if (!IsText(info) && use_unix_gfx){
+        auto i = unix_chars.find(ch);
+        if (i != unix_chars.end()) {
+            ch = i->second;
+        }
+    }
+    return DosToUnicode(ch);
+}
+
+int QRogueDisplay::TranslateColor(int info) const
+{
+    int color = CharColor(info);
+    if (!use_colors) {
+        color = 0x07;
+    }
+    return color;
+}
+
+int QRogueDisplay::Index(int x, int y) const
+{
+    return y*screen_size_.width() + x;
 }
 
 void QRogueDisplay::RenderRegion(QPainter *painter, uint32_t *data, Region rect)
 {
+    painter->setRenderHint(QPainter::TextAntialiasing, false);
+
     for (int y = rect.Top; y <= rect.Bottom; ++y) {
-        for (int x = rect.Left; x <= rect.Right; ++x) {
-            uint32_t info = data[y*screen_size_.width() + x];
-            int color = CharColor(info);
-            if (!use_colors) {
-                color = 0x07;
-            }
-            int ch = CharText(info);
-            if (!IsText(info) && use_unix_gfx){
-                auto i = unix_chars.find(ch);
-                if (i != unix_chars.end()) {
-                    ch = i->second;
-                }
-            }
-            ch = DosToUnicode(ch);
-            //todo: --more-- standout hack
-            paintChar(painter, x, y, ch, GetFg(color), GetBg(color));
+        for (int x = rect.Left; x <= rect.Right; ) {
+            QString s;
+            s.reserve(80);
+
+            int ref_x = x;
+            int ref_color = TranslateColor(data[Index(x,y)]);
+
+            do{
+                uint32_t info = data[Index(x,y)];
+                int color = TranslateColor(info);
+                if (color != ref_color)
+                    break;
+                s.push_back(TranslateChar(info));
+            } while (++x <= rect.Right);
+
+            PaintChar(painter, ref_x, y, s, GetFg(ref_color), GetBg(ref_color));
         }
     }
 }
@@ -236,12 +264,11 @@ void QRogueDisplay::UpdateRegion(uint32_t *buf, Region rect)
     if ((int)shared_.render_regions.size() > kMaxQueueSize)
     {
         shared_.render_regions.clear();
-        shared_.render_regions.push_back(FullRegion());
+        rect = FullRegion();
     }
-    else {
-        shared_.render_regions.push_back(rect);
-        PostRenderEvent();
-    }
+
+    shared_.render_regions.push_back(rect);
+    PostRenderEvent();
 
     if(!shared_.data) {
         shared_.data.reset(new uint32_t[TotalChars()]);
@@ -274,7 +301,6 @@ int QRogueDisplay::TotalChars() const
 {
     return screen_size_.width() * screen_size_.height();
 }
-
 
 QRogueDisplay::ThreadData::ThreadData(QRogueDisplay::ThreadData &other)
 {

@@ -37,7 +37,10 @@ public:
     int TotalChars() const;
 
 private:
-    void paintChar(QPainter *painter, int x, int y, QChar ch, QColor fg, QColor bg);
+    void PaintChar(QPainter *painter, int x, int y, QString s, QColor fg, QColor bg);
+    int TranslateChar(int ch) const;
+    int TranslateColor(int color) const;
+    int Index(int x, int y) const;
 
     QFont font_;
     QSize font_size_;
