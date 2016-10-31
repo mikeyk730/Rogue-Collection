@@ -29,7 +29,6 @@ Item{
     id: terminalContainer
 
     property size virtualResolution: Qt.size(kterminal.width, kterminal.height)
-    //mdk:property size virtualResolution: Qt.size(16*80, 8*25)
     property alias mainTerminal: kterminal
     property ShaderEffectSource mainSource: kterminalSource
     property ShaderEffectSource blurredSource: blurredSourceLoader.item

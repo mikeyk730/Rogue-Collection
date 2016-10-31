@@ -3,6 +3,7 @@
 
 #include <QQmlContext>
 #include <QStringList>
+#include <QFontDatabase>
 
 #include <QtWidgets/QApplication>
 #include <QIcon>
@@ -38,6 +39,9 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
     FileIO fileIO;
+
+    auto path = app.applicationDirPath() + "/res/fonts/Px437_IBM_VGA8.ttf";
+    int id = QFontDatabase::addApplicationFont(path);
 
 #if !defined(Q_OS_MAC)
     app.setWindowIcon(QIcon::fromTheme("cool-retro-term", QIcon(":../icons/32x32/cool-retro-term.png")));

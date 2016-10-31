@@ -1,4 +1,5 @@
 import QtQuick 2.4
+import Rogue 1.0
 
 Rectangle {
     signal imagePainted
@@ -7,27 +8,26 @@ Rectangle {
     property bool enableBold: false
     property bool fullCursorHeight: false
     property bool antialiasText: false
-    //property font font
-    property alias font: test.font
     property int lineSpacing
 
-    property size terminalSize: { Qt.size(80, 25) }
-    property size fontMetrics: { Qt.size(8, 16) }
+    property alias font: rogue.font
+    property alias terminalSize: rogue.screenSize
+    property alias fontMetrics: rogue.fontSize
 
     color: 'black'
 
-    Image {
-        source: '../images/Codepage-437.png'
-        //anchors.fill: parent
-        width: 32 * 8 + 40
-        height: 8 * 16 + 20
-    }
+    QmlRogue {
+        id: rogue
 
-    Text {
-        id: test
         anchors.centerIn: parent
-        text: qsTr("Welcome")
+
+        width: screenSize.width * fontSize.width + 16
+        height: screenSize.height * fontSize.height + 16
+
+        //font.family: 'Consolas'
         font.pixelSize: 16
-        color: '#aa3300'
+        smooth: false
+        //scale: 2
     }
 }
+

@@ -55,5 +55,6 @@
         <file>images/Codepage-437.png</file>
         <file>Components/QMLTermScrollbar.qml</file>
         <file>Components/QMLTermWidget.qml</file>
+        <file>fonts/Px437_IBM_VGA8.ttf</file>
     </qresource>
 </RCC>

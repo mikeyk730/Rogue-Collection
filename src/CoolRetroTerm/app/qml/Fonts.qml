@@ -151,6 +151,16 @@ QtObject{
             lowResolutionFont: true
         }
         ListElement{
+            name: "IBM_DOS_2"
+            text: "IBM DOS 2 (19XX)"
+            source: "fonts/Px437_IBM_VGA8.ttf"
+            lineSpacing: 3
+            pixelSize: 16
+            baseScaling: 2.0
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
             name: "HERMIT"
             text: "HD: Hermit (Modern)"
             source: "fonts/modern-hermit/Hermit-medium.otf"
