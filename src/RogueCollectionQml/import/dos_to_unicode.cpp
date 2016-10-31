@@ -1,0 +1,277 @@
+#include "dos_to_unicode.h"
+
+namespace
+{
+    uint16_t Dos437ToUnicode[] = {
+        0x0000,
+        0x263A,
+        0x263B,
+        0x2665,
+        0x2666,
+        0x2663,
+        0x2660,
+        0x2022,
+        0x25D8,
+        0x25CB,
+        0x25D9,
+        0x2642,
+        0x2640,
+        0x266A,
+        0x266B,
+        0x263C,
+        0x25BA,
+        0x25C4,
+        0x2195,
+        0x203C,
+        0x00B6,
+        0x00A7,
+        0x25AC,
+        0x21A8,
+        0x2191,
+        0x2193,
+        0x2192,
+        0x2190,
+        0x221F,
+        0x2194,
+        0x25B2,
+        0x25BC,
+        0x0020, // 0x20 - SPACE
+        0x0021, // 0x21 - EXCLAMATION MARK
+        0x0022, // 0x22 - QUOTATION MARK
+        0x0023, // 0x23 - NUMBER SIGN
+        0x0024, // 0x24 - DOLLAR SIGN
+        0x0025, // 0x25 - PERCENT SIGN
+        0x0026, // 0x26 - AMPERSAND
+        0x0027, // 0x27 - APOSTROPHE
+        0x0028, // 0x28 - LEFT PARENTHESIS
+        0x0029, // 0x29 - RIGHT PARENTHESIS
+        0x002a, // 0x2a - ASTERISK
+        0x002b, // 0x2b - PLUS SIGN
+        0x002c, // 0x2c - COMMA
+        0x002d, // 0x2d - HYPHEN-MINUS
+        0x002e, // 0x2e - FULL STOP
+        0x002f, // 0x2f - SOLIDUS
+        0x0030, // 0x30 - DIGIT ZERO
+        0x0031, // 0x31 - DIGIT ONE
+        0x0032, // 0x32 - DIGIT TWO
+        0x0033, // 0x33 - DIGIT THREE
+        0x0034, // 0x34 - DIGIT FOUR
+        0x0035, // 0x35 - DIGIT FIVE
+        0x0036, // 0x36 - DIGIT SIX
+        0x0037, // 0x37 - DIGIT SEVEN
+        0x0038, // 0x38 - DIGIT EIGHT
+        0x0039, // 0x39 - DIGIT NINE
+        0x003a, // 0x3a - COLON
+        0x003b, // 0x3b - SEMICOLON
+        0x003c, // 0x3c - LESS-THAN SIGN
+        0x003d, // 0x3d - EQUALS SIGN
+        0x003e, // 0x3e - GREATER-THAN SIGN
+        0x003f, // 0x3f - QUESTION MARK
+        0x0040, // 0x40 - COMMERCIAL AT
+        0x0041, // 0x41 - LATIN CAPITAL LETTER A
+        0x0042, // 0x42 - LATIN CAPITAL LETTER B
+        0x0043, // 0x43 - LATIN CAPITAL LETTER C
+        0x0044, // 0x44 - LATIN CAPITAL LETTER D
+        0x0045, // 0x45 - LATIN CAPITAL LETTER E
+        0x0046, // 0x46 - LATIN CAPITAL LETTER F
+        0x0047, // 0x47 - LATIN CAPITAL LETTER G
+        0x0048, // 0x48 - LATIN CAPITAL LETTER H
+        0x0049, // 0x49 - LATIN CAPITAL LETTER I
+        0x004a, // 0x4a - LATIN CAPITAL LETTER J
+        0x004b, // 0x4b - LATIN CAPITAL LETTER K
+        0x004c, // 0x4c - LATIN CAPITAL LETTER L
+        0x004d, // 0x4d - LATIN CAPITAL LETTER M
+        0x004e, // 0x4e - LATIN CAPITAL LETTER N
+        0x004f, // 0x4f - LATIN CAPITAL LETTER O
+        0x0050, // 0x50 - LATIN CAPITAL LETTER P
+        0x0051, // 0x51 - LATIN CAPITAL LETTER Q
+        0x0052, // 0x52 - LATIN CAPITAL LETTER R
+        0x0053, // 0x53 - LATIN CAPITAL LETTER S
+        0x0054, // 0x54 - LATIN CAPITAL LETTER T
+        0x0055, // 0x55 - LATIN CAPITAL LETTER U
+        0x0056, // 0x56 - LATIN CAPITAL LETTER V
+        0x0057, // 0x57 - LATIN CAPITAL LETTER W
+        0x0058, // 0x58 - LATIN CAPITAL LETTER X
+        0x0059, // 0x59 - LATIN CAPITAL LETTER Y
+        0x005a, // 0x5a - LATIN CAPITAL LETTER Z
+        0x005b, // 0x5b - LEFT SQUARE BRACKET
+        0x005c, // 0x5c - REVERSE SOLIDUS
+        0x005d, // 0x5d - RIGHT SQUARE BRACKET
+        0x005e, // 0x5e - CIRCUMFLEX ACCENT
+        0x005f, // 0x5f - LOW LINE
+        0x0060, // 0x60 - GRAVE ACCENT
+        0x0061, // 0x61 - LATIN SMALL LETTER A
+        0x0062, // 0x62 - LATIN SMALL LETTER B
+        0x0063, // 0x63 - LATIN SMALL LETTER C
+        0x0064, // 0x64 - LATIN SMALL LETTER D
+        0x0065, // 0x65 - LATIN SMALL LETTER E
+        0x0066, // 0x66 - LATIN SMALL LETTER F
+        0x0067, // 0x67 - LATIN SMALL LETTER G
+        0x0068, // 0x68 - LATIN SMALL LETTER H
+        0x0069, // 0x69 - LATIN SMALL LETTER I
+        0x006a, // 0x6a - LATIN SMALL LETTER J
+        0x006b, // 0x6b - LATIN SMALL LETTER K
+        0x006c, // 0x6c - LATIN SMALL LETTER L
+        0x006d, // 0x6d - LATIN SMALL LETTER M
+        0x006e, // 0x6e - LATIN SMALL LETTER N
+        0x006f, // 0x6f - LATIN SMALL LETTER O
+        0x0070, // 0x70 - LATIN SMALL LETTER P
+        0x0071, // 0x71 - LATIN SMALL LETTER Q
+        0x0072, // 0x72 - LATIN SMALL LETTER R
+        0x0073, // 0x73 - LATIN SMALL LETTER S
+        0x0074, // 0x74 - LATIN SMALL LETTER T
+        0x0075, // 0x75 - LATIN SMALL LETTER U
+        0x0076, // 0x76 - LATIN SMALL LETTER V
+        0x0077, // 0x77 - LATIN SMALL LETTER W
+        0x0078, // 0x78 - LATIN SMALL LETTER X
+        0x0079, // 0x79 - LATIN SMALL LETTER Y
+        0x007a, // 0x7a - LATIN SMALL LETTER Z
+        0x007b, // 0x7b - LEFT CURLY BRACKET
+        0x007c, // 0x7c - VERTICAL LINE
+        0x007d, // 0x7d - RIGHT CURLY BRACKET
+        0x007e, // 0x7e - TILDE
+        0x007f, // 0x7f - DELETE
+        0x00c7, // 0x80 - LATIN CAPITAL LETTER C WITH CEDILLA
+        0x00fc, // 0x81 - LATIN SMALL LETTER U WITH DIAERESIS
+        0x00e9, // 0x82 - LATIN SMALL LETTER E WITH ACUTE
+        0x00e2, // 0x83 - LATIN SMALL LETTER A WITH CIRCUMFLEX
+        0x00e4, // 0x84 - LATIN SMALL LETTER A WITH DIAERESIS
+        0x00e0, // 0x85 - LATIN SMALL LETTER A WITH GRAVE
+        0x00e5, // 0x86 - LATIN SMALL LETTER A WITH RING ABOVE
+        0x00e7, // 0x87 - LATIN SMALL LETTER C WITH CEDILLA
+        0x00ea, // 0x88 - LATIN SMALL LETTER E WITH CIRCUMFLEX
+        0x00eb, // 0x89 - LATIN SMALL LETTER E WITH DIAERESIS
+        0x00e8, // 0x8a - LATIN SMALL LETTER E WITH GRAVE
+        0x00ef, // 0x8b - LATIN SMALL LETTER I WITH DIAERESIS
+        0x00ee, // 0x8c - LATIN SMALL LETTER I WITH CIRCUMFLEX
+        0x00ec, // 0x8d - LATIN SMALL LETTER I WITH GRAVE
+        0x00c4, // 0x8e - LATIN CAPITAL LETTER A WITH DIAERESIS
+        0x00c5, // 0x8f - LATIN CAPITAL LETTER A WITH RING ABOVE
+        0x00c9, // 0x90 - LATIN CAPITAL LETTER E WITH ACUTE
+        0x00e6, // 0x91 - LATIN SMALL LIGATURE AE
+        0x00c6, // 0x92 - LATIN CAPITAL LIGATURE AE
+        0x00f4, // 0x93 - LATIN SMALL LETTER O WITH CIRCUMFLEX
+        0x00f6, // 0x94 - LATIN SMALL LETTER O WITH DIAERESIS
+        0x00f2, // 0x95 - LATIN SMALL LETTER O WITH GRAVE
+        0x00fb, // 0x96 - LATIN SMALL LETTER U WITH CIRCUMFLEX
+        0x00f9, // 0x97 - LATIN SMALL LETTER U WITH GRAVE
+        0x00ff, // 0x98 - LATIN SMALL LETTER Y WITH DIAERESIS
+        0x00d6, // 0x99 - LATIN CAPITAL LETTER O WITH DIAERESIS
+        0x00dc, // 0x9a - LATIN CAPITAL LETTER U WITH DIAERESIS
+        0x00a2, // 0x9b - CENT SIGN
+        0x00a3, // 0x9c - POUND SIGN
+        0x00a5, // 0x9d - YEN SIGN
+        0x20a7, // 0x9e - PESETA SIGN
+        0x0192, // 0x9f - LATIN SMALL LETTER F WITH HOOK
+        0x00e1, // 0xa0 - LATIN SMALL LETTER A WITH ACUTE
+        0x00ed, // 0xa1 - LATIN SMALL LETTER I WITH ACUTE
+        0x00f3, // 0xa2 - LATIN SMALL LETTER O WITH ACUTE
+        0x00fa, // 0xa3 - LATIN SMALL LETTER U WITH ACUTE
+        0x00f1, // 0xa4 - LATIN SMALL LETTER N WITH TILDE
+        0x00d1, // 0xa5 - LATIN CAPITAL LETTER N WITH TILDE
+        0x00aa, // 0xa6 - FEMININE ORDINAL INDICATOR
+        0x00ba, // 0xa7 - MASCULINE ORDINAL INDICATOR
+        0x00bf, // 0xa8 - INVERTED QUESTION MARK
+        0x2310, // 0xa9 - REVERSED NOT SIGN
+        0x00ac, // 0xaa - NOT SIGN
+        0x00bd, // 0xab - VULGAR FRACTION ONE HALF
+        0x00bc, // 0xac - VULGAR FRACTION ONE QUARTER
+        0x00a1, // 0xad - INVERTED EXCLAMATION MARK
+        0x00ab, // 0xae - LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+        0x00bb, // 0xaf - RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+        0x2591, // 0xb0 - LIGHT SHADE
+        0x2592, // 0xb1 - MEDIUM SHADE
+        0x2593, // 0xb2 - DARK SHADE
+        0x2502, // 0xb3 - BOX DRAWINGS LIGHT VERTICAL
+        0x2524, // 0xb4 - BOX DRAWINGS LIGHT VERTICAL AND LEFT
+        0x2561, // 0xb5 - BOX DRAWINGS VERTICAL SINGLE AND LEFT DOUBLE
+        0x2562, // 0xb6 - BOX DRAWINGS VERTICAL DOUBLE AND LEFT SINGLE
+        0x2556, // 0xb7 - BOX DRAWINGS DOWN DOUBLE AND LEFT SINGLE
+        0x2555, // 0xb8 - BOX DRAWINGS DOWN SINGLE AND LEFT DOUBLE
+        0x2563, // 0xb9 - BOX DRAWINGS DOUBLE VERTICAL AND LEFT
+        0x2551, // 0xba - BOX DRAWINGS DOUBLE VERTICAL
+        0x2557, // 0xbb - BOX DRAWINGS DOUBLE DOWN AND LEFT
+        0x255d, // 0xbc - BOX DRAWINGS DOUBLE UP AND LEFT
+        0x255c, // 0xbd - BOX DRAWINGS UP DOUBLE AND LEFT SINGLE
+        0x255b, // 0xbe - BOX DRAWINGS UP SINGLE AND LEFT DOUBLE
+        0x2510, // 0xbf - BOX DRAWINGS LIGHT DOWN AND LEFT
+        0x2514, // 0xc0 - BOX DRAWINGS LIGHT UP AND RIGHT
+        0x2534, // 0xc1 - BOX DRAWINGS LIGHT UP AND HORIZONTAL
+        0x252c, // 0xc2 - BOX DRAWINGS LIGHT DOWN AND HORIZONTAL
+        0x251c, // 0xc3 - BOX DRAWINGS LIGHT VERTICAL AND RIGHT
+        0x2500, // 0xc4 - BOX DRAWINGS LIGHT HORIZONTAL
+        0x253c, // 0xc5 - BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL
+        0x255e, // 0xc6 - BOX DRAWINGS VERTICAL SINGLE AND RIGHT DOUBLE
+        0x255f, // 0xc7 - BOX DRAWINGS VERTICAL DOUBLE AND RIGHT SINGLE
+        0x255a, // 0xc8 - BOX DRAWINGS DOUBLE UP AND RIGHT
+        0x2554, // 0xc9 - BOX DRAWINGS DOUBLE DOWN AND RIGHT
+        0x2569, // 0xca - BOX DRAWINGS DOUBLE UP AND HORIZONTAL
+        0x2566, // 0xcb - BOX DRAWINGS DOUBLE DOWN AND HORIZONTAL
+        0x2560, // 0xcc - BOX DRAWINGS DOUBLE VERTICAL AND RIGHT
+        0x2550, // 0xcd - BOX DRAWINGS DOUBLE HORIZONTAL
+        0x256c, // 0xce - BOX DRAWINGS DOUBLE VERTICAL AND HORIZONTAL
+        0x2567, // 0xcf - BOX DRAWINGS UP SINGLE AND HORIZONTAL DOUBLE
+        0x2568, // 0xd0 - BOX DRAWINGS UP DOUBLE AND HORIZONTAL SINGLE
+        0x2564, // 0xd1 - BOX DRAWINGS DOWN SINGLE AND HORIZONTAL DOUBLE
+        0x2565, // 0xd2 - BOX DRAWINGS DOWN DOUBLE AND HORIZONTAL SINGLE
+        0x2559, // 0xd3 - BOX DRAWINGS UP DOUBLE AND RIGHT SINGLE
+        0x2558, // 0xd4 - BOX DRAWINGS UP SINGLE AND RIGHT DOUBLE
+        0x2552, // 0xd5 - BOX DRAWINGS DOWN SINGLE AND RIGHT DOUBLE
+        0x2553, // 0xd6 - BOX DRAWINGS DOWN DOUBLE AND RIGHT SINGLE
+        0x256b, // 0xd7 - BOX DRAWINGS VERTICAL DOUBLE AND HORIZONTAL SINGLE
+        0x256a, // 0xd8 - BOX DRAWINGS VERTICAL SINGLE AND HORIZONTAL DOUBLE
+        0x2518, // 0xd9 - BOX DRAWINGS LIGHT UP AND LEFT
+        0x250c, // 0xda - BOX DRAWINGS LIGHT DOWN AND RIGHT
+        0x2588, // 0xdb - FULL BLOCK
+        0x2584, // 0xdc - LOWER HALF BLOCK
+        0x258c, // 0xdd - LEFT HALF BLOCK
+        0x2590, // 0xde - RIGHT HALF BLOCK
+        0x2580, // 0xdf - UPPER HALF BLOCK
+        0x03b1, // 0xe0 - GREEK SMALL LETTER ALPHA
+        0x00df, // 0xe1 - LATIN SMALL LETTER SHARP S
+        0x0393, // 0xe2 - GREEK CAPITAL LETTER GAMMA
+        0x03c0, // 0xe3 - GREEK SMALL LETTER PI
+        0x03a3, // 0xe4 - GREEK CAPITAL LETTER SIGMA
+        0x03c3, // 0xe5 - GREEK SMALL LETTER SIGMA
+        0x00b5, // 0xe6 - MICRO SIGN
+        0x03c4, // 0xe7 - GREEK SMALL LETTER TAU
+        0x03a6, // 0xe8 - GREEK CAPITAL LETTER PHI
+        0x0398, // 0xe9 - GREEK CAPITAL LETTER THETA
+        0x03a9, // 0xea - GREEK CAPITAL LETTER OMEGA
+        0x03b4, // 0xeb - GREEK SMALL LETTER DELTA
+        0x221e, // 0xec - INFINITY
+        0x03c6, // 0xed - GREEK SMALL LETTER PHI
+        0x03b5, // 0xee - GREEK SMALL LETTER EPSILON
+        0x2229, // 0xef - INTERSECTION
+        0x2261, // 0xf0 - IDENTICAL TO
+        0x00b1, // 0xf1 - PLUS-MINUS SIGN
+        0x2265, // 0xf2 - GREATER-THAN OR EQUAL TO
+        0x2264, // 0xf3 - LESS-THAN OR EQUAL TO
+        0x2320, // 0xf4 - TOP HALF INTEGRAL
+        0x2321, // 0xf5 - BOTTOM HALF INTEGRAL
+        0x00f7, // 0xf6 - DIVISION SIGN
+        0x2248, // 0xf7 - ALMOST EQUAL TO
+        0x00b0, // 0xf8 - DEGREE SIGN
+        0x2219, // 0xf9 - BULLET OPERATOR
+        0x00b7, // 0xfa - MIDDLE DOT
+        0x221a, // 0xfb - SQUARE ROOT
+        0x207f, // 0xfc - SUPERSCRIPT LATIN SMALL LETTER N
+        0x00b2, // 0xfd - SUPERSCRIPT TWO
+        0x25a0, // 0xfe - BLACK SQUARE
+        0x00a0, // 0xff - NO-BREAK SPACE
+    };
+}
+
+uint16_t DosToUnicode(unsigned char ch)
+{
+    return Dos437ToUnicode[ch];
+}
+
+uint16_string DosToUnicode(const std::string & s)
+{
+    uint16_string unicode;
+    unicode.reserve(s.size());
+    for (size_t i = 0; i < s.size(); ++i)
+        unicode.push_back(DosToUnicode(s[i]));
+    return unicode;
+}
