@@ -286,6 +286,8 @@ ShaderEffect {
             : "") +
 
              "float greyscale_color = rgb2grey(txt_color) + color;" +
+             "const vec3 lumcoeff = vec3(0.299,0.587,0.114);" +
+             "float luminance = dot(txt_color,lumcoeff);" +
 
             (chromaColor !== 0 ?
                 (rbgShift !== 0 ? "
@@ -296,10 +298,15 @@ ShaderEffect {
                     txt_color.b = bcolor;
                     greyscale_color = 0.33 * (rcolor + bcolor);" : "") +
 
-                (chromaColor == 1.0 ? "vec3 finalColor = txt_color;" :
+                (chromaColor < 0.5 ?
                 "vec3 mixedColor = mix(fontColor.rgb, txt_color * fontColor.rgb, chromaColor);
                  vec3 finalBackColor = mix(backgroundColor.rgb, mixedColor, greyscale_color);
-                 vec3 finalColor = mix(finalBackColor, fontColor.rgb, color).rgb;")
+                 vec3 finalColor = mix(finalBackColor, fontColor.rgb, color).rgb;" :
+
+                "vec3 finalColor = mix(luminance * fontColor.rgb, txt_color, chromaColor);"
+                +"finalColor = mix(backgroundColor.rgb, finalColor, luminance > 0);"
+                +"finalColor = mix(finalColor, fontColor.rgb, color);"
+                )
             :
                 "vec3 finalColor = mix(backgroundColor.rgb, fontColor.rgb, greyscale_color);") +
 
