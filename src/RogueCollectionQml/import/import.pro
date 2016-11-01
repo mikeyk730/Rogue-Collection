@@ -5,6 +5,9 @@ QT += qml quick
 DESTDIR = ../Rogue
 TARGET = $$qtLibraryTarget(rogueplugin)
 
+DEFINES += "WINVER=0x0500"
+win32:LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
+
 HEADERS += \
     plugin.h \
     qrogue.h \
@@ -16,7 +19,8 @@ HEADERS += \
     replayable_input.h \
     run_game.h \
     utility.h \
-    qdisplay.h
+    qdisplay.h \
+    key_utility.h
 
 SOURCES += \
     plugin.cpp \
@@ -28,7 +32,8 @@ SOURCES += \
     game_config.cpp \
     replayable_input.cpp \
     utility.cpp \
-    qdisplay.cpp
+    qdisplay.cpp \
+    key_utility.cpp
 
 INCLUDEPATH += $$PWD/../../Shared
 INCLUDEPATH += $$PWD/../../MyCurses

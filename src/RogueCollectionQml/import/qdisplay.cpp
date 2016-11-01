@@ -28,7 +28,8 @@ namespace
     }
 
     bool use_unix_gfx = false;
-    bool use_colors = true;
+    bool use_colors = false;
+    bool use_standout = true;
     std::map<int, int> unix_chars = {
         { PASSAGE,   '#' },
         { DOOR,      '+' },
@@ -220,7 +221,10 @@ int QRogueDisplay::TranslateColor(int info) const
 {
     int color = CharColor(info);
     if (!use_colors) {
-        color = 0x07;
+        if (use_standout && color > 0x0F)
+            color = 0x70;
+        else
+            color = 0x07;
     }
     return color;
 }

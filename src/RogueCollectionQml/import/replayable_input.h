@@ -30,6 +30,7 @@ protected:
     void SetReplaySpeed(int n);
 
     void QueueInput(const std::string& input);
+    void QueueInput(char input);
     bool InReplay() const;
     GameConfig Options() const;
 

@@ -120,7 +120,7 @@ QRogueDisplay *QRogue::Display() const
 
 void QRogue::keyPressEvent(QKeyEvent *event)
 {
-    if (!input_->HandleEvent(event))
+    if (!input_->HandleKeyEvent(event))
         QQuickPaintedItem::keyPressEvent(event);
 }
 
