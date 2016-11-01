@@ -27,9 +27,16 @@ namespace
         return (ch & 0x010000) == 0;
     }
 
+    bool BlinkChar(uint32_t ch)
+    {
+        return CharText(ch) == STAIRS;
+    }
+
     bool use_unix_gfx = false;
-    bool use_colors = false;
+    bool use_colors = true;
     bool use_standout = true;
+    bool animate = true;
+
     std::map<int, int> unix_chars = {
         { PASSAGE,   '#' },
         { DOOR,      '+' },
@@ -175,40 +182,45 @@ void QRogueDisplay::Render(QPainter *painter)
         copy.render_regions.push_back(FullRegion());
     }
 
-    QPainter buffer(screen_buffer_.get());
-    buffer.setFont(font_);
-
+    QPainter screen_painter(screen_buffer_.get());
     for (auto i = copy.render_regions.begin(); i != copy.render_regions.end(); ++i)
     {
-        RenderRegion(&buffer, copy.data.get(), *i);
+        RenderRegion(&screen_painter, copy.data.get(), *i);
     }
 
     painter->drawPixmap(0, 0, *screen_buffer_);
 
-//    if (show_cursor) {
-//        RenderCursor(cursor_pos);
-//    }
+    if (copy.show_cursor) {
+        RenderCursor(painter, copy.cursor_pos);
+    }
 
     //std::string counter;
     //if (input_ && input_->GetRenderText(&counter))
     //    RenderCounterOverlay(counter, 0);
 }
 
-void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, QString s, QColor fg, QColor bg)
+void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text)
 {
     auto w = font_size_.width();
     auto h = font_size_.height();
-    QRectF r(w*x, h*y, w*s.size(), h);
+    QRectF r(w*x, h*y, w, h);
 
-    painter->fillRect(r, bg);
-    painter->setPen(fg);
-    painter->drawText(r, 0, s);
+    if (animate && frame_%2 == 1 && BlinkChar(ch)){
+        ch = ' ';
+    }
+    ch = TranslateChar(ch, is_text);
+    color = TranslateColor(color);
+
+    painter->fillRect(r, GetBg(color));
+    painter->setFont(font_);
+    painter->setRenderHint(QPainter::TextAntialiasing, false);
+    painter->setPen(GetFg(color));
+    painter->drawText(r, 0, QChar(ch));
 }
 
-int QRogueDisplay::TranslateChar(int info) const
+int QRogueDisplay::TranslateChar(int ch, bool is_text) const
 {
-    int ch = CharText(info);
-    if (!IsText(info) && use_unix_gfx){
+    if (!is_text && use_unix_gfx){
         auto i = unix_chars.find(ch);
         if (i != unix_chars.end()) {
             ch = i->second;
@@ -217,9 +229,8 @@ int QRogueDisplay::TranslateChar(int info) const
     return DosToUnicode(ch);
 }
 
-int QRogueDisplay::TranslateColor(int info) const
+int QRogueDisplay::TranslateColor(int color) const
 {
-    int color = CharColor(info);
     if (!use_colors) {
         if (use_standout && color > 0x0F)
             color = 0x70;
@@ -236,27 +247,60 @@ int QRogueDisplay::Index(int x, int y) const
 
 void QRogueDisplay::RenderRegion(QPainter *painter, uint32_t *data, Region rect)
 {
-    painter->setRenderHint(QPainter::TextAntialiasing, false);
-
     for (int y = rect.Top; y <= rect.Bottom; ++y) {
-        for (int x = rect.Left; x <= rect.Right; ) {
-            QString s;
-            s.reserve(80);
-
-            int ref_x = x;
-            int ref_color = TranslateColor(data[Index(x,y)]);
-
-            do{
-                uint32_t info = data[Index(x,y)];
-                int color = TranslateColor(info);
-                if (color != ref_color)
-                    break;
-                s.push_back(TranslateChar(info));
-            } while (++x <= rect.Right);
-
-            PaintChar(painter, ref_x, y, s, GetFg(ref_color), GetBg(ref_color));
+        for (int x = rect.Left; x <= rect.Right; ++x) {
+            uint32_t info = data[Index(x,y)];
+            PaintChar(painter, x, y, CharText(info), CharColor(info), IsText(info));
         }
     }
+}
+
+void QRogueDisplay::RenderCursor(QPainter *painter, Coord cursor_pos)
+{
+    if (frame_ % 2)
+        return;
+
+    auto w = font_size_.width();
+    auto h = font_size_.height();
+    QRectF r(w*cursor_pos.x, h*cursor_pos.y + 4*h/5, w, h/5);
+    painter->fillRect(r, Colors::grey());
+}
+
+void QRogueDisplay::Animate()
+{
+    ++frame_;
+    bool update = false;
+    if (animate && screen_buffer_) {
+
+        std::unique_lock<std::mutex> lock(mutex_);
+        ThreadData copy(shared_);
+        lock.unlock();
+
+        for (int i = 0; i < TotalChars(); ++i) {
+            uint32_t info = copy.data[i];
+            if (!BlinkChar(info))
+                continue;
+
+            int x = i % copy.dimensions.x;
+            int y = i / copy.dimensions.x;
+
+            QPainter screen_painter(screen_buffer_.get());
+            PaintChar(&screen_painter, x, y, CharText(info), CharColor(info), IsText(info));
+            update = true;
+        }
+    }
+
+    std::unique_lock<std::mutex> lock(mutex_);
+    bool show_cursor = shared_.show_cursor;
+    lock.unlock();
+
+    if (show_cursor) {
+        update = true;
+    }
+
+    if (update)
+        PostRenderEvent();
+
 }
 
 void QRogueDisplay::PostRenderEvent()
@@ -299,12 +343,14 @@ void QRogueDisplay::UpdateRegion(uint32_t *buf, Region rect)
 
 void QRogueDisplay::MoveCursor(Coord pos)
 {
-
+    std::lock_guard<std::mutex> lock(mutex_);
+    shared_.cursor_pos = pos;
 }
 
 void QRogueDisplay::SetCursor(bool enable)
 {
-
+    std::lock_guard<std::mutex> lock(mutex_);
+    shared_.show_cursor = enable;
 }
 
 Region QRogueDisplay::FullRegion() const

@@ -26,6 +26,8 @@ public:
 
     void Render(QPainter *painter);
     void RenderRegion(QPainter *painter, uint32_t* data, Region rect);
+    void RenderCursor(QPainter *painter, Coord cursor_pos);
+    void Animate();
     void PostRenderEvent();
 
     virtual void SetDimensions(Coord dimensions) override;
@@ -38,16 +40,19 @@ public:
     int TotalChars() const;
 
 private:
-    void PaintChar(QPainter *painter, int x, int y, QString s, QColor fg, QColor bg);
-    int TranslateChar(int ch) const;
+    void PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text);
+    int TranslateChar(int ch, bool is_text) const;
     int TranslateColor(int color) const;
     int Index(int x, int y) const;
+
+    QPainter& ScreenPainter();
 
     QFont font_;
     QSize font_size_;
     QSize screen_size_;
     QRogue* parent_;
     std::unique_ptr<QPixmap> screen_buffer_;
+    int frame_ = 0;
 
     struct ThreadData
     {

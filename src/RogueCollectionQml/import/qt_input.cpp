@@ -134,6 +134,7 @@ bool QtRogueInput::HandleKeyEvent(QKeyEvent *event)
         return true;
     }
 
+    // Ctrl+dir is translated to 'f'+dir for most versions
     if (IsCtrlOn(event) && IsDirectionKey(tolower(key)))
     {
         if (Options().emulate_ctrl_controls){

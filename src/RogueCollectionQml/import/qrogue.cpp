@@ -41,6 +41,7 @@
 #include "qt_input.h"
 #include "qdisplay.h"
 #include <QPainter>
+#include <QTimer>
 #include "args.h"
 #include "environment.h"
 #include "run_game.h"
@@ -59,6 +60,10 @@ QRogue::QRogue(QQuickItem *parent)
 
     display_.reset(new QRogueDisplay(this, {80,25}));
     input_.reset(new QtRogueInput(env_, env_, config_));
+
+    QTimer *timer = new QTimer(parent);
+    parent->connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
+    timer->start(250);
 
     setFocus(true);
 
@@ -96,6 +101,11 @@ QSize QRogue::fontSize() const
 void QRogue::paint(QPainter *painter)
 {
     display_->Render(painter);
+}
+
+void QRogue::onTimer()
+{
+    display_->Animate();
 }
 
 void QRogue::postRender()

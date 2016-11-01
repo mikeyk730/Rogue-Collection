@@ -28,8 +28,11 @@ public:
     QSize fontSize() const;
     QSize screenSize() const;
     virtual void paint(QPainter *painter) override;
-
     void postRender();
+
+public slots:
+    void onTimer();
+
 signals:
     void render();
     void fontSizeChanged(int height, int width);    
