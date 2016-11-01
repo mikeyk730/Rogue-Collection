@@ -47,7 +47,8 @@
 #include "run_game.h"
 
 QRogue::QRogue(QQuickItem *parent)
-    : QQuickPaintedItem(parent)
+    : QQuickPaintedItem(parent),
+      config_()
 {
     connect(this, SIGNAL(render()), this, SLOT(update()), Qt::QueuedConnection);
 
@@ -59,6 +60,9 @@ QRogue::QRogue(QQuickItem *parent)
     InitGameConfig(env_);
 
     display_.reset(new QRogueDisplay(this, {80,25}));
+
+    config_.dll_name = "Rogue_PC_1_48.dll";
+    config_.emulate_ctrl_controls = true;
     input_.reset(new QtRogueInput(env_, env_, config_));
 
     QTimer *timer = new QTimer(parent);
@@ -68,13 +72,12 @@ QRogue::QRogue(QQuickItem *parent)
     setFocus(true);
 
     //start rogue engine on a background thread
-    std::thread rogue(RunGame<QRogue>, "Rogue_PC_1_48.dll", argc, argv, this);
+    std::thread rogue(RunGame<QRogue>, config_.dll_name, argc, argv, this);
     rogue.detach(); //todo: how do we want threading to work?
 }
 
 QRogue::~QRogue()
 {
-
 }
 
 QSize QRogue::screenSize() const
