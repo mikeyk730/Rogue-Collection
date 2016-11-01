@@ -35,7 +35,6 @@
         <file>fonts/modern-terminus/TerminusTTF-4.38.2.ttf</file>
         <file>fonts/1977-commodore-pet/COMMODORE_PET.ttf</file>
         <file>fonts/1979-atari-400-800/ATARI400800_original.TTF</file>
-        <file>fonts/1985-ibm-pc-vga/Perfect DOS VGA 437 Win.ttf</file>
         <file>Storage.qml</file>
         <file>CRTMainMenuBar.qml</file>
         <file>SettingsPerformanceTab.qml</file>
@@ -55,6 +54,6 @@
         <file>images/Codepage-437.png</file>
         <file>Components/QMLTermScrollbar.qml</file>
         <file>Components/QMLTermWidget.qml</file>
-        <file>fonts/Px437_IBM_VGA8.ttf</file>
+        <file>fonts/1985-ibm-pc-vga/Px437_IBM_VGA8.ttf</file>
     </qresource>
 </RCC>

@@ -296,9 +296,10 @@ ShaderEffect {
                     txt_color.b = bcolor;
                     greyscale_color = 0.33 * (rcolor + bcolor);" : "") +
 
+                (chromaColor == 1.0 ? "vec3 finalColor = txt_color;" :
                 "vec3 mixedColor = mix(fontColor.rgb, txt_color * fontColor.rgb, chromaColor);
                  vec3 finalBackColor = mix(backgroundColor.rgb, mixedColor, greyscale_color);
-                 vec3 finalColor = mix(finalBackColor, fontColor.rgb, color).rgb;"
+                 vec3 finalColor = mix(finalBackColor, fontColor.rgb, color).rgb;")
             :
                 "vec3 finalColor = mix(backgroundColor.rgb, fontColor.rgb, greyscale_color);") +
 
