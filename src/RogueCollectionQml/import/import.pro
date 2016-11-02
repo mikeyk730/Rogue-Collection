@@ -53,3 +53,8 @@ OTHER_FILES += qmldir
 cpqmldir.files = qmldir
 cpqmldir.path = $$DESTDIR
 COPIES += cpqmldir
+
+RESOURCES += \
+    resources.qrc
+
+DISTFILES +=

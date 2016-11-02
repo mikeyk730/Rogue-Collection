@@ -16,7 +16,7 @@ class QRogue : public QQuickPaintedItem
     Q_OBJECT
     Q_PROPERTY(QFont font READ font WRITE setFont)
     Q_PROPERTY(QSize fontSize READ fontSize NOTIFY fontSizeChanged)
-    Q_PROPERTY(QSize screenSize READ screenSize)
+    Q_PROPERTY(QSize screenSize READ screenSize CONSTANT)
 
 public:
     QRogue(QQuickItem *parent = 0);

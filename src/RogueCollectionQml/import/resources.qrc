@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/Px437_IBM_BIOS.ttf</file>
+        <file>assets/rogue.png</file>
+        <file>RogueTitle.qml</file>
+        <file>assets/title.png</file>
+        <file>GameSelect.qml</file>
+    </qresource>
+</RCC>
