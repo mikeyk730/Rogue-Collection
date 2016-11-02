@@ -1,33 +1,107 @@
-import QtQuick 2.0
+import QtQuick 2.4
+import QtQuick.Dialogs 1.0
 
 Rectangle {
+    id: root
+    width: 640
+    height: 400
     anchors.centerIn: parent
     color: 'black'
-    Image {
-        x: 215
-        y: 50
 
+    signal selected(string game, string savefile)
+
+    property string letters: "abcdefghijklmnopqrstuvwxyz"
+
+    FileDialog {
+        id: fileDialog
+
+        title: "Please choose a file to restore"
+        nameFilters: [ "Saved games (*.sav)", "All files (*)" ]
+        folder: shortcuts.documents
+        selectMultiple: false
+        onAccepted: {
+            root.selected("", fileDialog.fileUrl)
+        }
+    }
+
+    Image {
+        x: 222
+        y: 47
         scale: 1.6
 
         source: "assets/rogue.png"
         smooth: false
     }
-    ListView {
-        x: 25
-        y: 250
 
-        width: 125
-        height: 200
+    FontLoader { id: titleFont; source: "assets/Px437_IBM_BIOS.ttf" }
+
+    Rectangle {
+        id: header
+        x: 18
+        y: 234
+        height: 22
+        width: childrenRect.width
+        color: 'black'
+        Text {
+            text: "Choose your Rogue:"
+            font.family: titleFont.name
+            font.pixelSize: 16
+            color: 'white'
+            style: Text.Outline
+            styleColor: "transparent"
+        }
+    }
+    ListView {
+        id: list
+
+        x: header.x + 17
+        y: header.y + header.height + 3
+        height: 22 * count
+
+        focus: true
+
+        function handleSelection()
+        {
+            var item = model[list.currentIndex];
+            if(item === "Restore Game"){
+                fileDialog.open();
+            }
+            else
+            {
+                root.selected(item, "")
+            }
+        }
+
+        Keys.onReturnPressed: {
+            event.accepted = true;
+            handleSelection();
+        }
+
+        Keys.onPressed: {
+            if (event.key >= Qt.Key_A && event.key < Qt.Key_A + count) {
+                event.accepted = true;
+                list.currentIndex = event.key - Qt.Key_A;
+                handleSelection();
+            }
+        }
 
         model: gameTitles
-        delegate: Rectangle {
-            color: 'black'
-
-            height: 25
-            width: 200
+        delegate: Item {
+            id: wrapper
+            height: 22
             Text {
+                id: itemText
+                text: letters[index] + ") " + modelData
+                font.family: titleFont.name
+                font.pixelSize: 16
                 color: 'white'
-                text: modelData
+                style: Text.Outline
+                styleColor: "transparent"
+            }
+            states: State {
+                name: "Current"
+                when: wrapper.ListView.isCurrentItem
+                PropertyChanges { target: itemText; color: '#ff8800' }
             }
         }
     }

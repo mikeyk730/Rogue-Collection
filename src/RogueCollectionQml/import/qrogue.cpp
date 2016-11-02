@@ -69,8 +69,6 @@ QRogue::QRogue(QQuickItem *parent)
     parent->connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     timer->start(250);
 
-    setFocus(true);
-
     //start rogue engine on a background thread
     std::thread rogue(RunGame<QRogue>, config_.dll_name, argc, argv, this);
     rogue.detach(); //todo: how do we want threading to work?
