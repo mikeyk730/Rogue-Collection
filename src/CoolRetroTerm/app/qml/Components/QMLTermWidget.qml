@@ -9,40 +9,34 @@ Rectangle {
     signal simulateMouseRelease
     signal simulateMouseDoubleClick
 
-    property string colorScheme: "cool-retro-term"
-    property bool enableBold: false
-    property bool fullCursorHeight: false
-    property bool antialiasText: false
+    property string colorScheme
+    property bool enableBold
+    property bool fullCursorHeight
+    property bool antialiasText
     property int lineSpacing
 
+    property alias title: rogue.title
     property alias font: rogue.font
     property alias terminalSize: rogue.screenSize
     property alias fontMetrics: rogue.fontSize
+    property int naturalWidth: rogue.width + 2*rogue.padding
+    property int naturalHeight: rogue.height + 2*rogue.padding
 
     onSimulateMousePress: {
-        console.log(root.width, root.height, rogue.width, rogue.height);
+        console.log(root.width, root.height, root.naturalWidth, root.naturalHeight);
     }
 
     color: 'black'
-    anchors.centerIn: parent
 
     RogueWindow {
         id: rogue
 
-        onRendered: root.imagePainted()
-
-        property int padding: 10
+        property int padding: 5
         x: padding
         y: padding
+        anchors.centerIn: parent
 
-        //font.family: 'Consolas'
-        font.pixelSize: 16
         smooth: false
-
-        //anchors.centerIn: parent
-        transform: Scale {
-            xScale: Math.floor(10*((root.width-rogue.padding*2)/rogue.width))/10
-            yScale: Math.floor(10*((root.height-rogue.padding*2)/rogue.height))/10
-        }
+        onRendered: root.imagePainted()
     }
 }

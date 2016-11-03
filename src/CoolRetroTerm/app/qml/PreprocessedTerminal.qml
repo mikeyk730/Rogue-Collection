@@ -36,8 +36,9 @@ Item{
     property real fontWidth: 1.0
     property real screenScaling: 1.0
     property real scaleTexture: 1.0
-    //mdk: property alias title: ksession.title
-    property string title: 'Terminal'
+    //mdk:
+    //property alias title: ksession.title
+    property string title: kterminal.title
     property alias kterminal: kterminal
 
     anchors.leftMargin: frame.displacementLeft * appSettings.windowScaling
@@ -83,8 +84,12 @@ Item{
 
     QMLTermWidget {
         id: kterminal
-        width: Math.floor(parent.width / (screenScaling * fontWidth))
-        height: Math.floor(parent.height / screenScaling)
+
+        //mdk:
+        //width: Math.floor(parent.width / (screenScaling * fontWidth))
+        //height: Math.floor(parent.height / screenScaling)
+        width: naturalWidth
+        height: naturalHeight
 
         colorScheme: "cool-retro-term"
 
@@ -150,9 +155,9 @@ Item{
             //mdk:
             //if (workdir)
             //    ksession.initialWorkingDirectory = workdir;
-
-            ksession.startShellProgram();
-            forceActiveFocus();
+            //
+            //ksession.startShellProgram();
+            //forceActiveFocus();
         }
         Component.onCompleted: {
             appSettings.terminalFontChanged.connect(handleFontChange);
