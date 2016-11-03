@@ -13,6 +13,10 @@ Item {
 
         onSelected: {
             console.log(game, savefile);
+            if (game){
+                rogue.game = game;
+            }
+
             if (game === "PC Rogue 1.48"){
                 titleScreen.visible = true;
                 titleScreen.focus = true;

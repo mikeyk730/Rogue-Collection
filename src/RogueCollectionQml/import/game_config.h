@@ -54,3 +54,4 @@ const int kWindowHeight = 400;
 
 void InitGameConfig(Environment* env);
 extern std::vector<GameConfig> s_options;
+GameConfig GetGameConfig(const std::string& name);

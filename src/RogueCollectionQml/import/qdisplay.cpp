@@ -1,12 +1,13 @@
 #include <map>
+#include <sstream>
 #include <QColor>
 #include <QRectF>
-#include <QRect>
+#include <QKeyEvent>
 #include <pc_gfx_charmap.h>
 #include "qdisplay.h"
 #include "dos_to_unicode.h"
-#include "environment.h"
 #include "qrogue.h"
+#include "environment.h"
 
 namespace
 {
@@ -31,11 +32,6 @@ namespace
     {
         return CharText(ch) == STAIRS;
     }
-
-    bool use_unix_gfx = false;
-    bool use_colors = true;
-    bool use_standout = true;
-    bool animate = true;
 
     std::map<int, int> unix_chars = {
         { PASSAGE,   '#' },
@@ -141,6 +137,11 @@ QSize QRogueDisplay::ScreenPixelSize() const
     return QSize(screen_size_.width() * font_size_.width(), screen_size_.height() * font_size_.height());
 }
 
+QRect QRogueDisplay::ScreenRect() const
+{
+    return QRect(QPoint(0,0), ScreenPixelSize());
+}
+
 QFont QRogueDisplay::Font() const
 {
     return font_;
@@ -155,8 +156,48 @@ void QRogueDisplay::SetFont(const QFont &font)
     font_size_.setWidth(font_metrics.width("W"));
     font_size_.setHeight(font_metrics.height());
 
-    screen_buffer_.reset();
-    PostRenderEvent();
+    PostRenderEvent(true);
+}
+
+void QRogueDisplay::SetScreenSize(Coord screen_size)
+{
+    screen_size_ = QSize(screen_size.x, screen_size.y);
+}
+
+void QRogueDisplay::SetGameConfig(const GameConfig &config, Environment* env)
+{
+    config_ = config;
+
+    std::string gfx;
+    if (env->Get("gfx", &gfx)) {
+        for (size_t i = 0; i < config_.gfx_options.size(); ++i)
+        {
+            if (config_.gfx_options[i].name == gfx) {
+                gfx_index_ = i;
+                break;
+            }
+        }
+    }
+}
+
+const GraphicsConfig& QRogueDisplay::Gfx() const
+{
+    return config_.gfx_options[gfx_index_];
+}
+
+bool QRogueDisplay::HandleKeyEvent(QKeyEvent *event)
+{
+    if (event->text() == "`") {
+        NextGfxMode();
+        return true;
+    }
+    return false;
+}
+
+void QRogueDisplay::NextGfxMode()
+{
+    gfx_index_ = (gfx_index_ + 1) % config_.gfx_options.size();
+    PostRenderEvent(true);
 }
 
 QSize QRogueDisplay::FontSize() const
@@ -168,8 +209,10 @@ void QRogueDisplay::Render(QPainter *painter)
 { 
     std::unique_lock<std::mutex> lock(mutex_);
 
-    if (!shared_.data)
+    if (!shared_.data){
+        painter->fillRect(ScreenRect(), QColor("black"));
         return;
+    }
 
     ThreadData copy(shared_);
     shared_.render_regions.clear();
@@ -188,15 +231,72 @@ void QRogueDisplay::Render(QPainter *painter)
         RenderRegion(&screen_painter, copy.data.get(), *i);
     }
 
+    //std::string counter;
+    //if (input_ && input_->GetRenderText(&counter))
+    //    RenderCounterOverlay(&screen_painter, counter, 0);
+
     painter->drawPixmap(0, 0, *screen_buffer_);
 
     if (copy.show_cursor) {
         RenderCursor(painter, copy.cursor_pos);
     }
+}
 
-    //std::string counter;
-    //if (input_ && input_->GetRenderText(&counter))
-    //    RenderCounterOverlay(counter, 0);
+unsigned int GetColor(int ch, int color)
+{
+    //if it is inside a room
+    if (color == 0x07 || color == 0)
+        switch (ch)
+        {
+        case DOOR:
+        case VWALL:
+        case HWALL:
+        case ULWALL:
+        case URWALL:
+        case LLWALL:
+        case LRWALL:
+            return 0x06; //brown
+        case FLOOR:
+            return 0x0a; //light green
+        case STAIRS:
+            return 0x20; //black on light green
+        case TRAP:
+            return 0x05; //magenta
+        case GOLD:
+        case PLAYER:
+            return 0x0e; //yellow
+        case POTION:
+        case SCROLL:
+        case STICK:
+        case ARMOR:
+        case AMULET:
+        case RING:
+        case WEAPON:
+            return 0x09; //light blue
+        case FOOD:
+            return 0x04; //red
+        }
+
+    //if inside a passage or a maze
+    else if (color == 0x70)
+        switch (ch)
+        {
+        case FOOD:
+            return 0x74; //red on grey
+        case GOLD:
+        case PLAYER:
+            return 0x7e; //yellow on grey
+        case POTION:
+        case SCROLL:
+        case STICK:
+        case ARMOR:
+        case AMULET:
+        case RING:
+        case WEAPON:
+            return 0x71; //blue on grey
+        }
+
+    return color;
 }
 
 void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text)
@@ -205,11 +305,26 @@ void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color
     auto h = font_size_.height();
     QRectF r(w*x, h*y, w, h);
 
-    if (animate && frame_%2 == 1 && BlinkChar(ch)){
-        ch = ' ';
+    // Hack for consistent standout in msg lines.  Unix versions use '-'.
+    // PC uses ' ' with background color.  We want consistent behavior.
+    if (y == 0 && color == 0x70) {
+        if (Gfx().use_standout && ch == '-')
+            ch = ' ';
+        else if (!Gfx().use_standout && ch == ' ')
+            ch = '-';
     }
+
+    // Tiles from Unix versions come in with either color=0x00 (for regular state)
+    // or color=0x70 (for standout).  We need to translate these into more diverse
+    // colors.  Tiles from PC versions already have the correct color, so we
+    // technically don't need to do anything here, but it doesn't hurt to call
+    // GetColor.
+    if (!is_text) {
+        color = GetColor(ch, color);
+    }
+
     ch = TranslateChar(ch, is_text);
-    color = TranslateColor(color);
+    color = TranslateColor(color, is_text);
 
     painter->fillRect(r, GetBg(color));
     painter->setFont(font_);
@@ -220,19 +335,26 @@ void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color
 
 int QRogueDisplay::TranslateChar(int ch, bool is_text) const
 {
-    if (!is_text && use_unix_gfx){
+    if (Gfx().animate && frame_%2 == 1 && BlinkChar(ch)){
+        ch = ' ';
+    }
+
+    if (!is_text && Gfx().use_unix_gfx){
         auto i = unix_chars.find(ch);
         if (i != unix_chars.end()) {
             ch = i->second;
         }
     }
+
     return DosToUnicode(ch);
 }
 
-int QRogueDisplay::TranslateColor(int color) const
-{
-    if (!use_colors) {
-        if (use_standout && color > 0x0F)
+int QRogueDisplay::TranslateColor(int color, bool is_text) const
+{    
+    if (!color)
+        color = 0x07;
+    if (!Gfx().use_colors) {
+        if (Gfx().use_standout && color > 0x0F)
             color = 0x70;
         else
             color = 0x07;
@@ -266,11 +388,27 @@ void QRogueDisplay::RenderCursor(QPainter *painter, Coord cursor_pos)
     painter->fillRect(r, Colors::grey());
 }
 
+void QRogueDisplay::RenderCounterOverlay(QPainter* painter, const std::string& label, int n)
+{
+    std::ostringstream ss;
+    ss << label;
+    if (n > 0)
+        ss << n;
+    std::string s(ss.str());
+
+    size_t len = s.size();
+    for (size_t i = 0; i < len; ++i) {
+        int x = screen_size_.width() - (len - i) - 1;
+        int y = screen_size_.height() - 1;
+        PaintChar(painter, x, y, s[i], 0x70, true);
+    }
+}
+
 void QRogueDisplay::Animate()
 {
     ++frame_;
     bool update = false;
-    if (animate && screen_buffer_) {
+    if (Gfx().animate && screen_buffer_) {
 
         std::unique_lock<std::mutex> lock(mutex_);
         ThreadData copy(shared_);
@@ -299,12 +437,15 @@ void QRogueDisplay::Animate()
     }
 
     if (update)
-        PostRenderEvent();
+        PostRenderEvent(false);
 
 }
 
-void QRogueDisplay::PostRenderEvent()
+void QRogueDisplay::PostRenderEvent(bool rerender)
 {
+    if (rerender)
+        screen_buffer_.reset();
+
     parent_->postRender();
 }
 
@@ -331,7 +472,7 @@ void QRogueDisplay::UpdateRegion(uint32_t *buf, Region rect)
 
     shared_.render_regions.push_back(rect);
     if (shared_.render_regions.size() == 1){
-        PostRenderEvent();
+        PostRenderEvent(false);
     }
 
     if(!shared_.data) {

@@ -42,9 +42,11 @@
 #include "qdisplay.h"
 #include <QPainter>
 #include <QTimer>
+#include <sstream>
 #include "args.h"
 #include "environment.h"
 #include "run_game.h"
+#include "game_config.h"
 
 QRogue::QRogue(QQuickItem *parent)
     : QQuickPaintedItem(parent),
@@ -54,24 +56,12 @@ QRogue::QRogue(QQuickItem *parent)
 
     int argc = 0;
     char* argv[] = {0};
-
     Args args = LoadArgs(argc, argv);
-    env_ = new Environment(args);
-    InitGameConfig(env_);
+
+    env_.reset(new Environment(args));
+    InitGameConfig(env_.get());
 
     display_.reset(new QRogueDisplay(this, {80,25}));
-
-    config_.dll_name = "Rogue_PC_1_48.dll";
-    config_.emulate_ctrl_controls = true;
-    input_.reset(new QtRogueInput(env_, env_, config_));
-
-    QTimer *timer = new QTimer(parent);
-    parent->connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
-    timer->start(250);
-
-    //start rogue engine on a background thread
-    std::thread rogue(RunGame<QRogue>, config_.dll_name, argc, argv, this);
-    rogue.detach(); //todo: how do we want threading to work?
 }
 
 QRogue::~QRogue()
@@ -81,6 +71,64 @@ QRogue::~QRogue()
 QSize QRogue::screenSize() const
 {
     return display_->ScreenSize();
+}
+
+QString QRogue::game() const
+{
+    return config_.name.c_str();
+}
+
+void QRogue::setGame(const QString &game)
+{
+    config_ = GetGameConfig(game.toStdString());
+    game_env_ = env_;
+
+    int seed = (int)time(0);
+    std::ostringstream ss;
+    ss << seed;
+    game_env_->Set("seed", ss.str());
+
+    LaunchGame();
+}
+
+void QRogue::LaunchGame()
+{
+    if (config_.name == "PC Rogue 1.1") {
+        game_env_->Set("emulate_version", "1.1");
+    }
+
+    display_->SetGameConfig(config_, game_env_.get());
+
+    if (!game_env_->WriteToOs(config_.is_unix))
+        throw_error("Couldn't write environment");
+
+    std::string screen;
+    if (game_env_->Get("small_screen", &screen) && screen == "true")
+    {
+        display_->SetScreenSize(config_.small_screen);
+        screenSizeChanged(config_.small_screen.x, config_.small_screen.y);
+    }
+
+    input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
+    timer->start(250);
+
+    //start rogue engine on a background thread
+    char* argv[] = {0};
+    std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this);
+    rogue.detach(); //todo: how do we want threading to work?
+}
+
+QString QRogue::savefile() const
+{
+    return "TODO";
+}
+
+void QRogue::setSavefile(const QString &savefile)
+{
+
 }
 
 QFont QRogue::font() const
@@ -116,7 +164,7 @@ void QRogue::postRender()
 
 Environment *QRogue::GameEnv() const
 {
-    return env_;
+    return game_env_.get();
 }
 
 QtRogueInput *QRogue::Input() const
@@ -131,7 +179,9 @@ QRogueDisplay *QRogue::Display() const
 
 void QRogue::keyPressEvent(QKeyEvent *event)
 {
-    if (!input_->HandleKeyEvent(event))
+    if (display_->HandleKeyEvent(event))
+        return;
+    else if (!input_->HandleKeyEvent(event))
         QQuickPaintedItem::keyPressEvent(event);
 }
 

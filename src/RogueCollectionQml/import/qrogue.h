@@ -16,7 +16,9 @@ class QRogue : public QQuickPaintedItem
     Q_OBJECT
     Q_PROPERTY(QFont font READ font WRITE setFont)
     Q_PROPERTY(QSize fontSize READ fontSize NOTIFY fontSizeChanged)
-    Q_PROPERTY(QSize screenSize READ screenSize CONSTANT)
+    Q_PROPERTY(QSize screenSize READ screenSize NOTIFY screenSizeChanged)
+    Q_PROPERTY(QString game READ game WRITE setGame)
+    Q_PROPERTY(QString savefile READ savefile WRITE setSavefile)
 
 public:
     QRogue(QQuickItem *parent = 0);
@@ -27,6 +29,13 @@ public:
 
     QSize fontSize() const;
     QSize screenSize() const;
+
+    QString game() const;
+    void setGame(const QString& game);
+
+    QString savefile() const;
+    void setSavefile(const QString& savefile);
+
     virtual void paint(QPainter *painter) override;
     void postRender();
 
@@ -35,7 +44,8 @@ public slots:
 
 signals:
     void render();
-    void fontSizeChanged(int height, int width);    
+    void fontSizeChanged(int height, int width);
+    void screenSizeChanged(int height, int width);
 
 public:
     Environment* GameEnv() const;
@@ -48,7 +58,10 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    Environment* env_;
+    void LaunchGame();
+
+    std::shared_ptr<Environment> env_;
+    std::shared_ptr<Environment> game_env_;
     GameConfig config_;
     std::unique_ptr<QtRogueInput> input_;
     std::unique_ptr<QRogueDisplay> display_;
