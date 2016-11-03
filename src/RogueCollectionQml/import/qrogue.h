@@ -2,9 +2,7 @@
 #define QROGUE_H
 
 #include <memory>
-#include <mutex>
-#include <QtQuick/QQuickPaintedItem>
-#include <coord.h>
+#include <QQuickPaintedItem>
 #include "game_config.h"
 
 struct Environment;

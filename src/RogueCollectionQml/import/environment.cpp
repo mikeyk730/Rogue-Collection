@@ -33,10 +33,13 @@ namespace
 }
 
 Environment::Environment()
-{}
+{
+    SetDefaults();
+}
 
 Environment::Environment(const Args & args)
 {
+    SetDefaults();
     LoadFromFile(args.optfile);
     ApplyArgs(args);
 }
@@ -84,6 +87,12 @@ void Environment::Deserialize(std::istream& in)
         ReadShortString(in, &value);
         m_environment[key] = value;
     }
+}
+
+void Environment::SetDefaults()
+{
+    Set("passgo", "true");
+    Set("askme", "true");
 }
 
 void Environment::Serialize(std::ostream& file)

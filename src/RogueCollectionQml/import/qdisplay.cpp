@@ -5,9 +5,32 @@
 #include <QKeyEvent>
 #include <pc_gfx_charmap.h>
 #include "qdisplay.h"
+#include "qt_input.h"
 #include "dos_to_unicode.h"
 #include "qrogue.h"
 #include "environment.h"
+
+namespace Colors
+{
+    QColor black()    { return QColor(   0,   0,   0, 255 ); }
+    QColor white()    { return QColor( 255, 255, 255, 255 ); }
+    QColor grey()     { return QColor( 170, 170, 170, 255 ); }
+    QColor d_grey()   { return QColor(  65,  65,  65, 255 ); }
+    QColor l_grey()   { return QColor( 205, 205, 205, 255 ); }
+    QColor red()      { return QColor( 170,   0,   0, 255 ); }
+    QColor l_red()    { return QColor( 255,  85,  85, 255 ); }
+    QColor green()    { return QColor(   0, 170,   0, 255 ); }
+    QColor l_green()  { return QColor(  85,  255, 85, 255 ); }
+    QColor blue()     { return QColor(   0,   0, 170, 255 ); }
+    QColor l_blue()   { return QColor(  85,  85, 255, 255 ); }
+    QColor cyan()     { return QColor(   0, 170, 170, 255 ); }
+    QColor l_cyan()   { return QColor(  25, 255, 255, 255 ); }
+    QColor magenta()  { return QColor( 170,   0, 170, 255 ); }
+    QColor l_magenta(){ return QColor( 255,  25, 255, 255 ); }
+    QColor yellow()   { return QColor( 255, 255,  25, 255 ); }
+    QColor brown()    { return QColor( 170,  85,   0, 255 ); }
+    QColor orange()   { return QColor( 234, 118,   2, 255 ); }
+}
 
 namespace
 {
@@ -58,63 +81,43 @@ namespace
         { 204,       '|' },
         { 185,       '|' },
     };
+
+    QColor colors[] = {
+        Colors::black(),
+        Colors::blue(),
+        Colors::green(),
+        Colors::cyan(),
+        Colors::red(),
+        Colors::magenta(),
+        Colors::brown(),
+        Colors::grey(),
+        Colors::d_grey(),
+        Colors::l_blue(),
+        Colors::l_green(),
+        Colors::l_cyan(),
+        Colors::l_red(),
+        Colors::l_magenta(),
+        Colors::yellow(),
+        Colors::white()
+    };
+
+    QColor GetColor(int color)
+    {
+        return colors[color];
+    }
+
+    QColor GetFg(int color)
+    {
+        return GetColor(color & 0x0f);
+    }
+
+    QColor GetBg(int color)
+    {
+        return GetColor(color >> 4);
+    }
 }
 
-namespace Colors
-{
-    QColor black()    { return QColor(   0,   0,   0, 255 ); }
-    QColor white()    { return QColor( 255, 255, 255, 255 ); }
-    QColor grey()     { return QColor( 170, 170, 170, 255 ); }
-    QColor d_grey()   { return QColor(  65,  65,  65, 255 ); }
-    QColor l_grey()   { return QColor( 205, 205, 205, 255 ); }
-    QColor red()      { return QColor( 170,   0,   0, 255 ); }
-    QColor l_red()    { return QColor( 255,  85,  85, 255 ); }
-    QColor green()    { return QColor(   0, 170,   0, 255 ); }
-    QColor l_green()  { return QColor(  85,  255, 85, 255 ); }
-    QColor blue()     { return QColor(   0,   0, 170, 255 ); }
-    QColor l_blue()   { return QColor(  85,  85, 255, 255 ); }
-    QColor cyan()     { return QColor(   0, 170, 170, 255 ); }
-    QColor l_cyan()   { return QColor(  25, 255, 255, 255 ); }
-    QColor magenta()  { return QColor( 170,   0, 170, 255 ); }
-    QColor l_magenta(){ return QColor( 255,  25, 255, 255 ); }
-    QColor yellow()   { return QColor( 255, 255,  25, 255 ); }
-    QColor brown()    { return QColor( 170,  85,   0, 255 ); }
-    QColor orange()   { return QColor( 234, 118,   2, 255 ); }
-}
 
-QColor colors[] = {
-    Colors::black(),
-    Colors::blue(),
-    Colors::green(),
-    Colors::cyan(),
-    Colors::red(),
-    Colors::magenta(),
-    Colors::brown(),
-    Colors::grey(),
-    Colors::d_grey(),
-    Colors::l_blue(),
-    Colors::l_green(),
-    Colors::l_cyan(),
-    Colors::l_red(),
-    Colors::l_magenta(),
-    Colors::yellow(),
-    Colors::white()
-};
-
-QColor GetColor(int color)
-{
-    return colors[color];
-}
-
-QColor GetFg(int color)
-{
-    return GetColor(color & 0x0f);
-}
-
-QColor GetBg(int color)
-{
-    return GetColor(color >> 4);
-}
 
 QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
     : parent_(parent)
@@ -125,6 +128,51 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
     font.setPixelSize(32);
 
     SetFont(font);
+}
+
+void QRogueDisplay::SetDimensions(Coord dimensions)
+{
+
+}
+
+void QRogueDisplay::UpdateRegion(uint32_t *buf)
+{
+    UpdateRegion(buf, FullRegion());
+}
+
+void QRogueDisplay::UpdateRegion(uint32_t *buf, Region rect)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    //If we're behind on rendering, clear the queue and do a single full render.
+    if ((int)shared_.render_regions.size() > kMaxQueueSize)
+    {
+        shared_.render_regions.clear();
+        rect = FullRegion();
+    }
+
+    shared_.render_regions.push_back(rect);
+    if (shared_.render_regions.size() == 1){
+        PostRenderEvent(false);
+    }
+
+    if(!shared_.data) {
+        shared_.data.reset(new uint32_t[TotalChars()]);
+        shared_.dimensions = { screen_size_.width(), screen_size_.height() };
+    }
+    memcpy(shared_.data.get(), buf, TotalChars() * sizeof(int32_t));
+}
+
+void QRogueDisplay::MoveCursor(Coord pos)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    shared_.cursor_pos = pos;
+}
+
+void QRogueDisplay::SetCursor(bool enable)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    shared_.show_cursor = enable;
 }
 
 QSize QRogueDisplay::ScreenSize() const
@@ -231,14 +279,51 @@ void QRogueDisplay::Render(QPainter *painter)
         RenderRegion(&screen_painter, copy.data.get(), *i);
     }
 
-    //std::string counter;
-    //if (input_ && input_->GetRenderText(&counter))
-    //    RenderCounterOverlay(&screen_painter, counter, 0);
+    std::string counter;
+    if (parent_->Input()->GetRenderText(&counter))
+        RenderCounterOverlay(&screen_painter, counter, 0);
 
     painter->drawPixmap(0, 0, *screen_buffer_);
 
     if (copy.show_cursor) {
         RenderCursor(painter, copy.cursor_pos);
+    }
+}
+
+void QRogueDisplay::RenderRegion(QPainter *painter, uint32_t *data, Region rect)
+{
+    for (int y = rect.Top; y <= rect.Bottom; ++y) {
+        for (int x = rect.Left; x <= rect.Right; ++x) {
+            uint32_t info = data[Index(x,y)];
+            PaintChar(painter, x, y, CharText(info), CharColor(info), IsText(info));
+        }
+    }
+}
+
+void QRogueDisplay::RenderCursor(QPainter *painter, Coord cursor_pos)
+{
+    if (frame_ % 2)
+        return;
+
+    auto w = font_size_.width();
+    auto h = font_size_.height();
+    QRectF r(w*cursor_pos.x, h*cursor_pos.y + 4*h/5, w, h/5);
+    painter->fillRect(r, Colors::grey());
+}
+
+void QRogueDisplay::RenderCounterOverlay(QPainter* painter, const std::string& label, int n)
+{
+    std::ostringstream ss;
+    ss << label;
+    if (n > 0)
+        ss << n;
+    std::string s(ss.str());
+
+    size_t len = s.size();
+    for (size_t i = 0; i < len; ++i) {
+        int x = screen_size_.width() - (len - i) - 1;
+        int y = screen_size_.height() - 1;
+        PaintChar(painter, x, y, s[i], 0x70, true);
     }
 }
 
@@ -367,43 +452,6 @@ int QRogueDisplay::Index(int x, int y) const
     return y*screen_size_.width() + x;
 }
 
-void QRogueDisplay::RenderRegion(QPainter *painter, uint32_t *data, Region rect)
-{
-    for (int y = rect.Top; y <= rect.Bottom; ++y) {
-        for (int x = rect.Left; x <= rect.Right; ++x) {
-            uint32_t info = data[Index(x,y)];
-            PaintChar(painter, x, y, CharText(info), CharColor(info), IsText(info));
-        }
-    }
-}
-
-void QRogueDisplay::RenderCursor(QPainter *painter, Coord cursor_pos)
-{
-    if (frame_ % 2)
-        return;
-
-    auto w = font_size_.width();
-    auto h = font_size_.height();
-    QRectF r(w*cursor_pos.x, h*cursor_pos.y + 4*h/5, w, h/5);
-    painter->fillRect(r, Colors::grey());
-}
-
-void QRogueDisplay::RenderCounterOverlay(QPainter* painter, const std::string& label, int n)
-{
-    std::ostringstream ss;
-    ss << label;
-    if (n > 0)
-        ss << n;
-    std::string s(ss.str());
-
-    size_t len = s.size();
-    for (size_t i = 0; i < len; ++i) {
-        int x = screen_size_.width() - (len - i) - 1;
-        int y = screen_size_.height() - 1;
-        PaintChar(painter, x, y, s[i], 0x70, true);
-    }
-}
-
 void QRogueDisplay::Animate()
 {
     ++frame_;
@@ -446,51 +494,6 @@ void QRogueDisplay::PostRenderEvent(bool rerender)
         screen_buffer_.reset();
 
     parent_->postRender();
-}
-
-void QRogueDisplay::SetDimensions(Coord dimensions)
-{
-
-}
-
-void QRogueDisplay::UpdateRegion(uint32_t *buf)
-{
-    UpdateRegion(buf, FullRegion());
-}
-
-void QRogueDisplay::UpdateRegion(uint32_t *buf, Region rect)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-
-    //If we're behind on rendering, clear the queue and do a single full render.
-    if ((int)shared_.render_regions.size() > kMaxQueueSize)
-    {
-        shared_.render_regions.clear();
-        rect = FullRegion();
-    }
-
-    shared_.render_regions.push_back(rect);
-    if (shared_.render_regions.size() == 1){
-        PostRenderEvent(false);
-    }
-
-    if(!shared_.data) {
-        shared_.data.reset(new uint32_t[TotalChars()]);
-        shared_.dimensions = { screen_size_.width(), screen_size_.height() };
-    }
-    memcpy(shared_.data.get(), buf, TotalChars() * sizeof(int32_t));
-}
-
-void QRogueDisplay::MoveCursor(Coord pos)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    shared_.cursor_pos = pos;
-}
-
-void QRogueDisplay::SetCursor(bool enable)
-{
-    std::lock_guard<std::mutex> lock(mutex_);
-    shared_.show_cursor = enable;
 }
 
 Region QRogueDisplay::FullRegion() const
