@@ -85,6 +85,7 @@ QString QRogue::game() const
 void QRogue::setGame(const QString &game)
 {
     config_ = GetGameConfig(game.toStdString());
+    emit gameChanged(config_.name.c_str());
     game_env_ = env_;
 
     int seed = (int)time(0);
@@ -97,10 +98,48 @@ void QRogue::setGame(const QString &game)
     LaunchGame();
 }
 
-void QRogue::setSavefile(const QString &savefile)
+void QRogue::restoreGame(const QString &filename)
 {
-    RestoreGame(savefile.toStdString());
+    RestoreGame(filename.toStdString());
     LaunchGame();
+}
+
+void QRogue::RestoreGame(const std::string& path)
+{
+    std::ifstream file(path, std::ios::binary | std::ios::in);
+    if (!file) {
+        throw_error("Couldn't open save file: " + path);
+    }
+
+    unsigned char version;
+    Read(file, &version);
+    if (version > QRogue::kSaveVersion)
+        throw_error("This file is not recognized.  It may have been saved with a newer version of Rogue Collection.  Please download the latest version and try again.");
+
+    Read(file, &restore_count_);
+    ++restore_count_;
+
+    std::string name;
+    ReadShortString(file, &name);
+    config_ = GetGameConfig(name);
+    emit gameChanged(config_.name.c_str());
+
+    // set up game environment
+    game_env_.reset(new Environment());
+    game_env_->Deserialize(file);
+    game_env_->Set("in_replay", "true");
+    std::string value;
+    if (env_->Get("logfile", &value)) {
+        game_env_->Set("logfile", value);
+    }
+
+    input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
+    input_->RestoreGame(file);
+
+    if (env_->Get("delete_on_restore", &value) && value == "true") {
+        file.close();
+        std::remove(path.c_str());
+    }
 }
 
 void QRogue::LaunchGame()
@@ -129,55 +168,6 @@ void QRogue::LaunchGame()
     char* argv[] = {0};
     std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this);
     rogue.detach(); //todo: how do we want threading to work?
-}
-
-QString QRogue::savefile() const
-{
-    return "TODO";
-}
-
-void QRogue::RestoreGame(const std::string& path)
-{
-    std::ifstream file(path, std::ios::binary | std::ios::in);
-    if (!file) {
-        throw_error("Couldn't open save file: " + path);
-    }
-
-    unsigned char version;
-    Read(file, &version);
-    if (version > QRogue::kSaveVersion)
-        throw_error("This file is not recognized.  It may have been saved with a newer version of Rogue Collection.  Please download the latest version and try again.");
-
-    Read(file, &restore_count_);
-    ++restore_count_;
-
-    std::string name;
-    ReadShortString(file, &name);
-    config_ = GetGameConfig(name);
-
-    // set up game environment
-    game_env_.reset(new Environment());
-    game_env_->Deserialize(file);
-    game_env_->Set("in_replay", "true");
-    std::string value;
-    if (env_->Get("logfile", &value)) {
-        game_env_->Set("logfile", value);
-    }
-
-    input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
-    input_->RestoreGame(file);
-
-    if (env_->Get("delete_on_restore", &value) && value == "true") {
-        file.close();
-        std::remove(path.c_str());
-    }
-}
-
-bool QRogue::GetSavePath(std::string &filename)
-{
-    QObject *object = findChild<QObject*>("saveDialog");
-    object->setProperty("visible", true);
-    return false;
 }
 
 void QRogue::saveGame(const QString &filename)

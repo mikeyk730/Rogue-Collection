@@ -6,6 +6,7 @@ Item {
     property alias font: rogue.font
     property alias screenSize: rogue.screenSize
     property alias fontSize: rogue.fontSize
+    property alias title: rogue.title
     property Item activeItem: gameSelect
 
     id: root
@@ -23,7 +24,7 @@ Item {
 
         onRestore: {
             console.log(savefile);
-            rogue.savefile = savefile
+            rogue.restoreGame(savefile);
 
             activeItem = rogue;
             activeItem.visible = true;
@@ -68,10 +69,16 @@ Item {
         id: rogue
         visible: false
 
+        property string title: "Rogue Collection v2.0"
+
         z: 0
         width: screenSize.width * fontSize.width
         height: screenSize.height * fontSize.height
         anchors.centerIn: parent
+
+        onGameChanged: {
+            title = title + ' - ' + rogue.game
+        }
 
         //font.family: 'Consolas'
         //font.pixelSize: 16

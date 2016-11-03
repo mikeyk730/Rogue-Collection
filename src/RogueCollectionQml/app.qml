@@ -1,28 +1,28 @@
 import QtQuick 2.0
+import QtQuick.Controls 1.0
 import Rogue 1.0
 
-Rectangle {
-    id: root
 
-    width: rogue.width
-    height: rogue.height
-    color: '#888888'
+ApplicationWindow {
 
-    MouseArea{
+    title: rogue.title
+
+    Rectangle {
+        id: root
+
         anchors.fill: parent
-        onClicked : {
-            console.log("size", rogue.fontSize.width, rogue.fontSize.height)
+        color: '#888888'
+        transform: Scale {
+            xScale: width/rogue.width
+            yScale: height/rogue.height
+            origin.x: width/2
+            origin.y: height/2
+
+        }
+
+        RogueWindow{
+            id: rogue
+            anchors.centerIn: parent
         }
     }
-
-    QmlRogue {
-        id: rogue
-
-        width: screenSize.width * fontSize.width
-        height: screenSize.height * fontSize.height
-
-        //font.family: 'Consolas'
-        font.pixelSize: 16 * 2
-    }
 }
-
