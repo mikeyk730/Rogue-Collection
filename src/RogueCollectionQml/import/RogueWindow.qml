@@ -5,11 +5,12 @@ Item {
     property alias font: rogue.font
     property alias screenSize: rogue.screenSize
     property alias fontSize: rogue.fontSize
+    property Item activeItem: gameSelect
 
     id: root
 
-    width: gameSelect.width
-    height: gameSelect.height
+    width: activeItem.width
+    height: activeItem.height
 
     GameSelect {
         id: gameSelect
@@ -26,17 +27,13 @@ Item {
             }
 
             if (game === "PC Rogue 1.48"){
-                root.width = titleScreen.width
-                root.height = titleScreen.height
-                titleScreen.visible = true;
-                titleScreen.focus = true;
+                activeItem = titleScreen;
             }
             else{
-                root.width = rogue.width
-                root.height = rogue.height
-                rogue.visible = true;
-                rogue.focus = true;
+                activeItem = rogue;
             }
+            activeItem.visible = true;
+            activeItem.focus = true;
             gameSelect.visible = false;
         }
     }
@@ -46,13 +43,14 @@ Item {
         visible: false
 
         z: 1
+        width: 640
+        height: 400
         anchors.centerIn: parent
 
         onDismissed: {
-            root.width = rogue.width
-            root.height = rogue.height
-            rogue.visible = true;
-            rogue.focus = true;
+            activeItem = rogue;
+            activeItem.visible = true;
+            activeItem.focus = true;
             titleScreen.visible = false;
         }
     }
