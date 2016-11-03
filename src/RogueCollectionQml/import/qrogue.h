@@ -36,6 +36,9 @@ public:
     virtual void paint(QPainter *painter) override;
     void postRender();
 
+Q_SIGNALS:
+    void rendered();
+
 public slots:
     void onTimer();
 

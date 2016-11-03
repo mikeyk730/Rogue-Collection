@@ -29,6 +29,8 @@ Rectangle {
     RogueWindow {
         id: rogue
 
+        onRendered: root.imagePainted()
+
         property int padding: 10
         x: padding
         y: padding

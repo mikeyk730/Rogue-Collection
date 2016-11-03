@@ -228,6 +228,7 @@ QSize QRogue::fontSize() const
 void QRogue::paint(QPainter *painter)
 {
     display_->Render(painter);
+    emit rendered();
 }
 
 void QRogue::onTimer()

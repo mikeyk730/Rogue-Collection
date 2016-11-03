@@ -3,13 +3,15 @@ import QtQuick.Dialogs 1.0
 import Rogue 1.0
 
 Item {
+    id: root
+
     property alias font: rogue.font
     property alias screenSize: rogue.screenSize
     property alias fontSize: rogue.fontSize
     property alias title: rogue.title
     property Item activeItem: gameSelect
 
-    id: root
+    signal rendered
 
     width: activeItem.width
     height: activeItem.height
@@ -68,6 +70,8 @@ Item {
     QmlRogue {
         id: rogue
         visible: false
+
+        onRendered: root.rendered()
 
         property string title: "Rogue Collection v2.0"
 

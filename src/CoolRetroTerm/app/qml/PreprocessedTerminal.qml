@@ -147,8 +147,9 @@ Item{
                 ksession.setArgs(["-i", "-l"]);
             }
 
-            if (workdir)
-                ksession.initialWorkingDirectory = workdir;
+            //mdk:
+            //if (workdir)
+            //    ksession.initialWorkingDirectory = workdir;
 
             ksession.startShellProgram();
             forceActiveFocus();
