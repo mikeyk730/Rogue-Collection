@@ -247,14 +247,13 @@ void Level::new_level(int do_implode)
     ss << "Entering level " << game->get_level() << ", seed:" << std::hex << g_random->get_seed();
     game->log("level", ss.str());
 
-
     do_rooms(); //Draw rooms
-    if (game->max_level() == 1)
-    {
-        game->screen().clear();
-    }
-    if (do_implode)
+
+    if (do_implode && !game->options.act_like_v1_1())
         game->screen().implode();
+    else
+        game->screen().clear();
+
     update_status_bar();
     do_passages(); //Draw passages
     game->no_food++;
