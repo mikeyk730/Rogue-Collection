@@ -438,7 +438,6 @@ void QRogueDisplay::Animate()
 
     if (update)
         PostRenderEvent(false);
-
 }
 
 void QRogueDisplay::PostRenderEvent(bool rerender)

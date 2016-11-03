@@ -43,10 +43,14 @@
 #include <QPainter>
 #include <QTimer>
 #include <sstream>
+#include <fstream>
+#include <cstdio>
 #include "args.h"
 #include "environment.h"
 #include "run_game.h"
 #include "game_config.h"
+
+const unsigned char QRogue::kSaveVersion = 1;
 
 QRogue::QRogue(QQuickItem *parent)
     : QQuickPaintedItem(parent),
@@ -88,6 +92,14 @@ void QRogue::setGame(const QString &game)
     ss << seed;
     game_env_->Set("seed", ss.str());
 
+    input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
+
+    LaunchGame();
+}
+
+void QRogue::setSavefile(const QString &savefile)
+{
+    RestoreGame(savefile.toStdString());
     LaunchGame();
 }
 
@@ -109,8 +121,6 @@ void QRogue::LaunchGame()
         screenSizeChanged(config_.small_screen.x, config_.small_screen.y);
     }
 
-    input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
-
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     timer->start(250);
@@ -126,9 +136,92 @@ QString QRogue::savefile() const
     return "TODO";
 }
 
-void QRogue::setSavefile(const QString &savefile)
+void QRogue::RestoreGame(const std::string& path)
 {
+    std::ifstream file(path, std::ios::binary | std::ios::in);
+    if (!file) {
+        throw_error("Couldn't open save file: " + path);
+    }
 
+    unsigned char version;
+    Read(file, &version);
+    if (version > QRogue::kSaveVersion)
+        throw_error("This file is not recognized.  It may have been saved with a newer version of Rogue Collection.  Please download the latest version and try again.");
+
+    Read(file, &restore_count_);
+    ++restore_count_;
+
+    std::string name;
+    ReadShortString(file, &name);
+    config_ = GetGameConfig(name);
+
+    // set up game environment
+    game_env_.reset(new Environment());
+    game_env_->Deserialize(file);
+    game_env_->Set("in_replay", "true");
+    std::string value;
+    if (env_->Get("logfile", &value)) {
+        game_env_->Set("logfile", value);
+    }
+
+    input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
+    input_->RestoreGame(file);
+
+    if (!env_->Get("delete_on_restore", &value) || value != "false") {
+        file.close();
+        std::remove(path.c_str());
+    }
+}
+
+bool QRogue::GetSavePath(std::string &filename)
+{
+    //TODO:
+    return false;
+}
+
+void QRogue::DisplayMessage(const std::string &type, const std::string &title, const std::string &msg)
+{
+    //TODO:
+}
+
+void QRogue::PostQuit()
+{
+    //TODO:
+}
+
+void QRogue::SaveGame(std::string path, bool notify)
+{
+    if (path.empty()) {
+        if (!env_->Get("savefile", &path) || path.empty()) {
+            if (!GetSavePath(path)) {
+                return;
+            }
+        }
+    }
+
+    std::ofstream file(path, std::ios::binary | std::ios::out);
+    if (!file) {
+        DisplayMessage("Error", "Save Game", "Couldn't open save file: " + path);
+        return;
+    }
+
+    Write(file, QRogue::kSaveVersion);
+    Write(file, restore_count_);
+    WriteShortString(file, config_.name);
+    game_env_->Serialize(file);
+    input_->SaveGame(file);
+
+    if (!file) {
+        DisplayMessage("Error", "Save Game", "Error writing to file: " + path);
+        return;
+    }
+    if (notify) {
+        DisplayMessage("Info", "Save Game", "Your game was saved successfully.  Come back soon!");
+    }
+
+    std::string value;
+    if (env_->Get("exit_on_save", &value) && value != "false")
+        PostQuit();
 }
 
 QFont QRogue::font() const

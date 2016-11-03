@@ -59,12 +59,20 @@ protected:
 
 private:
     void LaunchGame();
+    void SaveGame(std::string path, bool notify);
+    void RestoreGame(const std::string& path);
+    bool GetSavePath(std::string& filename);
+    void DisplayMessage(const std::string& type, const std::string& title, const std::string& msg);
+    void PostQuit();
 
+    static const unsigned char kSaveVersion;
+
+    GameConfig config_;
     std::shared_ptr<Environment> env_;
     std::shared_ptr<Environment> game_env_;
-    GameConfig config_;
     std::unique_ptr<QtRogueInput> input_;
     std::unique_ptr<QRogueDisplay> display_;
+    uint16_t restore_count_ = 0;
 };
 
 #endif
