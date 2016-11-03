@@ -36,6 +36,8 @@ public:
     QString savefile() const;
     void setSavefile(const QString& savefile);
 
+    Q_INVOKABLE void saveGame(const QString& filename);
+
     virtual void paint(QPainter *painter) override;
     void postRender();
 
@@ -62,8 +64,6 @@ private:
     void SaveGame(std::string path, bool notify);
     void RestoreGame(const std::string& path);
     bool GetSavePath(std::string& filename);
-    void DisplayMessage(const std::string& type, const std::string& title, const std::string& msg);
-    void PostQuit();
 
     static const unsigned char kSaveVersion;
 

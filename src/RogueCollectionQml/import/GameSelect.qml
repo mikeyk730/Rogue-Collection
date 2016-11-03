@@ -8,7 +8,8 @@ Rectangle {
     anchors.centerIn: parent
     color: 'black'
 
-    signal selected(string game, string savefile)
+    signal selected(string game)
+    signal restore(string savefile)
 
     property string letters: "abcdefghijklmnopqrstuvwxyz"
 
@@ -17,10 +18,11 @@ Rectangle {
 
         title: "Please choose a file to restore"
         nameFilters: [ "Saved games (*.sav)", "All files (*)" ]
-        folder: shortcuts.documents
         selectMultiple: false
         onAccepted: {
-            root.selected("", fileDialog.fileUrl)
+            var path = fileDialog.fileUrl.toString();
+            path = path.replace(/^(file:\/{3})/,"");
+            root.restore(path)
         }
     }
 
@@ -68,7 +70,7 @@ Rectangle {
             }
             else
             {
-                root.selected(item, "")
+                root.selected(item)
             }
         }
 

@@ -35,12 +35,11 @@ void RunGame(const std::string& lib, int argc, char** argv, T* r)
 
         (*Init)(r->Display(), r->Input(), r->GameEnv()->Lines(), r->GameEnv()->Columns());
         (*game)(0, 0, environ);
-        //r->PostQuit();
     }
     catch (const std::runtime_error& e)
     {
         std::string s(e.what());
-        //ErrorBox("Fatal Error", s.c_str());
-        exit(1);
+        DisplayMessage("Error", "Fatal Error", s.c_str());
     }
+    QuitApplication();
 }

@@ -37,14 +37,14 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qrogue.h"
-#include "qt_input.h"
-#include "qdisplay.h"
 #include <QPainter>
 #include <QTimer>
 #include <sstream>
 #include <fstream>
 #include <cstdio>
+#include "qrogue.h"
+#include "qt_input.h"
+#include "qdisplay.h"
 #include "args.h"
 #include "environment.h"
 #include "run_game.h"
@@ -167,7 +167,7 @@ void QRogue::RestoreGame(const std::string& path)
     input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
     input_->RestoreGame(file);
 
-    if (!env_->Get("delete_on_restore", &value) || value != "false") {
+    if (env_->Get("delete_on_restore", &value) && value == "true") {
         file.close();
         std::remove(path.c_str());
     }
@@ -175,30 +175,18 @@ void QRogue::RestoreGame(const std::string& path)
 
 bool QRogue::GetSavePath(std::string &filename)
 {
-    //TODO:
+    QObject *object = findChild<QObject*>("saveDialog");
+    object->setProperty("visible", true);
     return false;
 }
 
-void QRogue::DisplayMessage(const std::string &type, const std::string &title, const std::string &msg)
+void QRogue::saveGame(const QString &filename)
 {
-    //TODO:
-}
-
-void QRogue::PostQuit()
-{
-    //TODO:
+    SaveGame(filename.toStdString(), true);
 }
 
 void QRogue::SaveGame(std::string path, bool notify)
 {
-    if (path.empty()) {
-        if (!env_->Get("savefile", &path) || path.empty()) {
-            if (!GetSavePath(path)) {
-                return;
-            }
-        }
-    }
-
     std::ofstream file(path, std::ios::binary | std::ios::out);
     if (!file) {
         DisplayMessage("Error", "Save Game", "Couldn't open save file: " + path);
@@ -215,13 +203,20 @@ void QRogue::SaveGame(std::string path, bool notify)
         DisplayMessage("Error", "Save Game", "Error writing to file: " + path);
         return;
     }
-    if (notify) {
-        DisplayMessage("Info", "Save Game", "Your game was saved successfully.  Come back soon!");
-    }
 
     std::string value;
-    if (env_->Get("exit_on_save", &value) && value != "false")
-        PostQuit();
+    bool quit(env_->Get("exit_on_save", &value) && value == "true");
+
+    if (notify) {
+        std::string msg = "Your game was saved successfully.";
+        if (quit){
+            msg += "  Come back soon!";
+        }
+        DisplayMessage("Info", "Save Game", msg);
+    }
+
+    if (quit)
+        QuitApplication();
 }
 
 QFont QRogue::font() const
@@ -274,8 +269,10 @@ void QRogue::keyPressEvent(QKeyEvent *event)
 {
     if (display_->HandleKeyEvent(event))
         return;
-    else if (!input_->HandleKeyEvent(event))
-        QQuickPaintedItem::keyPressEvent(event);
+    else if (input_->HandleKeyEvent(event))
+        return;
+
+    QQuickPaintedItem::keyPressEvent(event);
 }
 
 InputInterface::~InputInterface(){}

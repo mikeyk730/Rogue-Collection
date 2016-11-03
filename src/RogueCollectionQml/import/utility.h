@@ -13,7 +13,8 @@ std::istream& Read(std::istream& in, T* t) {
     return in;
 }
 
-void ErrorBox(const std::string& title, const std::string& msg);
+void DisplayMessage(const std::string& type, const std::string& title, const std::string& msg);
+void QuitApplication();
 
 std::ostream& WriteShortString(std::ostream& out, const std::string& s);
 std::istream& ReadShortString(std::istream& in, std::string* s);

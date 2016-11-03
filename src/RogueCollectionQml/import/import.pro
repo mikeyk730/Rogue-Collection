@@ -33,7 +33,8 @@ SOURCES += \
     replayable_input.cpp \
     utility.cpp \
     qdisplay.cpp \
-    key_utility.cpp
+    key_utility.cpp \
+    utility_qml.cpp
 
 INCLUDEPATH += $$PWD/../../Shared
 INCLUDEPATH += $$PWD/../../MyCurses
