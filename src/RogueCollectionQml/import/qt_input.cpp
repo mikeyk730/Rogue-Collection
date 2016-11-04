@@ -1,6 +1,7 @@
 #include <map>
 #include <QKeyEvent>
 #include "qt_input.h"
+#include "qrogue.h"
 #include "key_utility.h"
 
 #define CTRL(ch)   (ch&0x1f)
@@ -47,8 +48,9 @@ bool IsCtrlOn(QKeyEvent *event){
     return event->modifiers() & Qt::ControlModifier;
 }
 
-QtRogueInput::QtRogueInput(Environment* current_env, Environment* game_env, const GameConfig& options) :
-    ReplayableInput(current_env, game_env, options)
+QtRogueInput::QtRogueInput(QRogue* parent, Environment* current_env, Environment* game_env, const GameConfig& options) :
+    ReplayableInput(current_env, game_env, options),
+    parent_(parent)
 {
 }
 
@@ -65,7 +67,7 @@ void QtRogueInput::HandleReplayKeyEvent(QKeyEvent *event)
     }
     else if (key == Qt::Key_Escape) {
         CancelReplay();
-        //todo:SdlDisplay::PostRenderMsg(1);
+        parent_->postRender();
     }
     else if (ch == '-') {
         DecreaseReplaySpeed();

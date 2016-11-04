@@ -72,7 +72,7 @@ Tab{
                     id: framescombobox
                     Layout.fillWidth: true
                     model: appSettings.framesList
-                    currentIndex: appSettings.framesIndex
+                    currentIndex: 0 //mdk:appSettings.framesIndex
                     onActivated: {
                         appSettings.frameName = appSettings.framesList.get(index).name;
                     }

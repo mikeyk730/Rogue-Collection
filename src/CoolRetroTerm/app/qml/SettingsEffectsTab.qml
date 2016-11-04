@@ -63,7 +63,7 @@ Tab{
                 name: qsTr("Ambient Light")
                 onNewValue: appSettings.ambientLight = newValue;
                 value: appSettings.ambientLight
-                enabled: appSettings.framesIndex !== 0
+                enabled: true //mdk:appSettings.framesIndex !== 0
             }
             CheckableSlider{
                 name: qsTr("Flickering")

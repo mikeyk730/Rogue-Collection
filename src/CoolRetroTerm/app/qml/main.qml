@@ -150,18 +150,18 @@ ApplicationWindow{
         id: settingswindow
         visible: false
     }
-    AboutDialog{
-        id: aboutDialog
-        visible: false
-    }
-    Loader{
-        anchors.centerIn: parent
-        active: appSettings.showTerminalSize
-        sourceComponent: SizeOverlay{
-            z: 3
-            terminalSize: terminalContainer.terminalSize
-        }
-    }
+    //AboutDialog{
+    //    id: aboutDialog
+    //    visible: false
+    //}
+    //Loader{
+    //    anchors.centerIn: parent
+    //    active: appSettings.showTerminalSize
+    //    sourceComponent: SizeOverlay{
+    //        z: 3
+    //        terminalSize: terminalContainer.terminalSize
+    //    }
+    //}
     onClosing: {
         // OSX Since we are currently supporting only one window
         // quit the application when it is closed.

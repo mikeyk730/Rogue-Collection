@@ -93,7 +93,7 @@ void QRogue::setGame(const QString &game)
     ss << seed;
     game_env_->Set("seed", ss.str());
 
-    input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
+    input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
 
     LaunchGame();
 }
@@ -133,7 +133,7 @@ void QRogue::RestoreGame(const std::string& path)
         game_env_->Set("logfile", value);
     }
 
-    input_.reset(new QtRogueInput(env_.get(), game_env_.get(), config_));
+    input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
     input_->RestoreGame(file);
 
     if (env_->Get("delete_on_restore", &value) && value == "true") {

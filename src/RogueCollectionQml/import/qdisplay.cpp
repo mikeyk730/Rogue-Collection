@@ -279,11 +279,11 @@ void QRogueDisplay::Render(QPainter *painter)
         RenderRegion(&screen_painter, copy.data.get(), *i);
     }
 
+    painter->drawPixmap(0, 0, *screen_buffer_);
+
     std::string counter;
     if (parent_->Input()->GetRenderText(&counter))
-        RenderCounterOverlay(&screen_painter, counter, 0);
-
-    painter->drawPixmap(0, 0, *screen_buffer_);
+        RenderCounterOverlay(painter, counter, 0);
 
     if (copy.show_cursor) {
         RenderCursor(painter, copy.cursor_pos);
