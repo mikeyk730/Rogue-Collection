@@ -9,22 +9,23 @@ MenuBar {
         visible: defaultMenuBar.visible
         MenuItem {action: quitAction}
     }
-    Menu {
-        title: qsTr("Edit")
-        visible: defaultMenuBar.visible
-        MenuItem {action: copyAction}
-        MenuItem {action: pasteAction}
-        MenuSeparator{visible: Qt.platform.os !== "osx"}
-        MenuItem {action: showsettingsAction}
-    }
+    //Menu {
+        //title: qsTr("Edit")
+        //visible: defaultMenuBar.visible
+        //MenuItem {action: copyAction}
+        //MenuItem {action: pasteAction}
+        //MenuSeparator{visible: Qt.platform.os !== "osx"}
+        //MenuItem {action: showsettingsAction}
+    //}
     Menu{
         title: qsTr("View")
         visible: defaultMenuBar.visible
         MenuItem {action: fullscreenAction; visible: fullscreenAction.enabled}
-        MenuItem {action: showMenubarAction; visible: showMenubarAction.enabled}
-        MenuSeparator{visible: showMenubarAction.enabled}
-        MenuItem {action: zoomIn}
-        MenuItem {action: zoomOut}
+        //MenuItem {action: showMenubarAction; visible: showMenubarAction.enabled}
+        //MenuSeparator{visible: showMenubarAction.enabled}
+        //MenuItem {action: zoomIn}
+        //MenuItem {action: zoomOut}
+        MenuItem {action: showsettingsAction}
     }
     Menu{
         id: profilesMenu
@@ -43,9 +44,9 @@ MenuBar {
             onObjectRemoved: profilesMenu.removeItem(object)
         }
     }
-    Menu{
-        title: qsTr("Help")
-        visible: defaultMenuBar.visible
-        MenuItem {action: showAboutAction}
-    }
+    //Menu{
+    //    title: qsTr("Help")
+    //    visible: defaultMenuBar.visible
+    //    MenuItem {action: showAboutAction}
+    //}
 }

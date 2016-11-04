@@ -14,6 +14,7 @@ Rectangle {
     property bool fullCursorHeight
     property bool antialiasText
     property int lineSpacing
+    property bool terminalUsesMouse: true
 
     property alias title: rogue.title
     property alias font: rogue.font
@@ -22,9 +23,9 @@ Rectangle {
     property int naturalWidth: rogue.width + 2*rogue.padding
     property int naturalHeight: rogue.height + 2*rogue.padding
 
-    onSimulateMousePress: {
-        console.log(root.width, root.height, root.naturalWidth, root.naturalHeight);
-    }
+    //onSimulateMousePress: {
+    //    console.log(root.width, root.height, root.naturalWidth, root.naturalHeight);
+    //}
 
     color: 'black'
 

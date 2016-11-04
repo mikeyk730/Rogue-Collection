@@ -53,7 +53,10 @@ ApplicationWindow{
     visible: false
 
     property bool fullscreen: appSettings.fullscreen
-    onFullscreenChanged: visibility = (fullscreen ? Window.FullScreen : Window.Windowed)
+    onFullscreenChanged:{
+        visibility = (fullscreen ? Window.FullScreen : Window.Windowed)
+        appSettings.showMenubar = !fullscreen
+    }
 
     //Workaround: Without __contentItem a ugly thin border is visible.
     menuBar: CRTMainMenuBar{
@@ -65,20 +68,20 @@ ApplicationWindow{
     color: "#00000000"
     title: terminalContainer.title || qsTr("cool-retro-term")
 
-    Action {
-        id: showMenubarAction
-        text: qsTr("Show Menubar")
-        enabled: Qt.platform.os !== "osx"
-        shortcut: "Ctrl+Shift+M"
-        checkable: true
-        checked: appSettings.showMenubar
-        onTriggered: appSettings.showMenubar = !appSettings.showMenubar
-    }
+    //Action {
+    //    id: showMenubarAction
+    //    text: qsTr("Show Menubar")
+    //    enabled: Qt.platform.os !== "osx"
+    //    shortcut: "Ctrl+Shift+M"
+    //    checkable: true
+    //    checked: appSettings.showMenubar
+    //    onTriggered: appSettings.showMenubar = !appSettings.showMenubar
+    //}
     Action {
         id: fullscreenAction
         text: qsTr("Fullscreen")
         enabled: Qt.platform.os !== "osx"
-        shortcut: "Alt+F11"
+        shortcut: "Alt+Return"
         onTriggered: appSettings.fullscreen = !appSettings.fullscreen;
         checkable: true
         checked: appSettings.fullscreen
@@ -86,7 +89,7 @@ ApplicationWindow{
     Action {
         id: quitAction
         text: qsTr("Quit")
-        shortcut: "Ctrl+Shift+Q"
+        shortcut: "Alt+F4"
         onTriggered: Qt.quit();
     }
     Action{
@@ -98,37 +101,37 @@ ApplicationWindow{
             settingswindow.raise();
         }
     }
-    Action{
-        id: copyAction
-        text: qsTr("Copy")
-        shortcut: Qt.platform.os === "osx" ? StandardKey.Copy : "Ctrl+Shift+C"
-    }
-    Action{
-        id: pasteAction
-        text: qsTr("Paste")
-        shortcut: Qt.platform.os === "osx" ? StandardKey.Paste : "Ctrl+Shift+V"
-    }
-    Action{
-        id: zoomIn
-        text: qsTr("Zoom In")
-        shortcut: "Ctrl++"
-        onTriggered: appSettings.incrementScaling();
-    }
-    Action{
-        id: zoomOut
-        text: qsTr("Zoom Out")
-        shortcut: "Ctrl+-"
-        onTriggered: appSettings.decrementScaling();
-    }
-    Action{
-        id: showAboutAction
-        text: qsTr("About")
-        onTriggered: {
-            aboutDialog.show();
-            aboutDialog.requestActivate();
-            aboutDialog.raise();
-        }
-    }
+    //Action{
+    //    id: copyAction
+    //    text: qsTr("Copy")
+    //    shortcut: Qt.platform.os === "osx" ? StandardKey.Copy : "Ctrl+Shift+C"
+    //}
+    //Action{
+    //    id: pasteAction
+    //    text: qsTr("Paste")
+    //    shortcut: Qt.platform.os === "osx" ? StandardKey.Paste : "Ctrl+Shift+V"
+    //}
+    //Action{
+    //    id: zoomIn
+    //    text: qsTr("Zoom In")
+    //    shortcut: "Ctrl++"
+    //    onTriggered: appSettings.incrementScaling();
+    //}
+    //Action{
+    //    id: zoomOut
+    //    text: qsTr("Zoom Out")
+    //    shortcut: "Ctrl+-"
+    //    onTriggered: appSettings.decrementScaling();
+    //}
+    //Action{
+    //    id: showAboutAction
+    //    text: qsTr("About")
+    //    onTriggered: {
+    //        aboutDialog.show();
+    //       aboutDialog.requestActivate();
+    //        aboutDialog.raise();
+    //    }
+    //}
     ApplicationSettings{
         id: appSettings
     }
