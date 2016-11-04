@@ -23,6 +23,9 @@ public:
     QFont Font() const;
     void SetFont(const QFont& font);
 
+    bool Monochrome() const;
+    void SetMonochrome(bool enable);
+
     void SetScreenSize(Coord screen_size);
     void SetGameConfig(const GameConfig &config, Environment* env);
     const GraphicsConfig& Gfx() const;
@@ -64,6 +67,7 @@ private:
 
     QRogue* parent_;
     GameConfig config_;
+    bool monochrome_ = false;
     int gfx_index_ = 0;
     int frame_ = 0;
     std::unique_ptr<QPixmap> screen_buffer_;

@@ -126,6 +126,7 @@ Item{
         function handleFontChange(fontSource, pixelSize, lineSpacing, screenScaling, fontWidth){
             fontLoader.source = fontSource;
 
+            kterminal.monochrome = appSettings.chromaColor < 0.25;
             kterminal.antialiasText = !appSettings.lowResolutionFont;
             font.pixelSize = pixelSize;
             font.family = fontLoader.name;

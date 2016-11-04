@@ -220,6 +220,16 @@ void QRogue::setFont(const QFont &font)
     emit fontSizeChanged(fontSize().width(), fontSize().height());
 }
 
+bool QRogue::monochrome() const
+{
+    return display_->Monochrome();
+}
+
+void QRogue::setMonochrome(bool enable)
+{
+    display_->SetMonochrome(enable);
+}
+
 QSize QRogue::fontSize() const
 {
     return display_->FontSize();

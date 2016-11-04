@@ -16,6 +16,7 @@ Rectangle {
     property int lineSpacing
     property bool terminalUsesMouse: true
 
+    property alias monochrome: rogue.monochrome
     property alias title: rogue.title
     property alias font: rogue.font
     property alias terminalSize: rogue.screenSize

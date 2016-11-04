@@ -12,6 +12,7 @@ class QRogueDisplay;
 class QRogue : public QQuickPaintedItem
 {
     Q_OBJECT
+    Q_PROPERTY(bool monochrome READ monochrome WRITE setMonochrome)
     Q_PROPERTY(QFont font READ font WRITE setFont)
     Q_PROPERTY(QSize fontSize READ fontSize NOTIFY fontSizeChanged)
     Q_PROPERTY(QSize screenSize READ screenSize NOTIFY screenSizeChanged)
@@ -23,6 +24,9 @@ public:
 
     QFont font() const;
     void setFont(const QFont& font);
+
+    bool monochrome() const;
+    void setMonochrome(bool enable);
 
     QSize fontSize() const;
     QSize screenSize() const;

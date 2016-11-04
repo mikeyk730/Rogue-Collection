@@ -5,6 +5,7 @@ import Rogue 1.0
 Item {
     id: root
 
+    property alias monochrome: rogue.monochrome
     property alias font: rogue.font
     property alias screenSize: rogue.screenSize
     property alias fontSize: rogue.fontSize

@@ -207,6 +207,16 @@ void QRogueDisplay::SetFont(const QFont &font)
     PostRenderEvent(true);
 }
 
+bool QRogueDisplay::Monochrome() const
+{
+    return monochrome_;
+}
+
+void QRogueDisplay::SetMonochrome(bool enable)
+{
+    monochrome_ = enable;
+}
+
 void QRogueDisplay::SetScreenSize(Coord screen_size)
 {
     screen_size_ = QSize(screen_size.x, screen_size.y);
@@ -438,8 +448,8 @@ int QRogueDisplay::TranslateColor(int color, bool is_text) const
 {    
     if (!color)
         color = 0x07;
-    if (!Gfx().use_colors) {
-        if (Gfx().use_standout && color > 0x0F)
+    if (!Gfx().use_colors || monochrome_) {
+        if (Gfx().use_standout && ((color>>4) == 0x07 || (Gfx().use_colors && color > 0x0f)))
             color = 0x70;
         else
             color = 0x07;
