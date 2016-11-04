@@ -52,7 +52,6 @@
         <file>../icons/32x32/cool-retro-term.png</file>
         <file>Components/SizedLabel.qml</file>
         <file>images/Codepage-437.png</file>
-        <file>Components/QMLTermScrollbar.qml</file>
         <file>Components/QMLTermWidget.qml</file>
         <file>fonts/1985-ibm-pc-vga/Px437_IBM_VGA8.ttf</file>
     </qresource>

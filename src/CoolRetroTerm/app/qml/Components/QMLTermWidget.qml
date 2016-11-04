@@ -32,7 +32,7 @@ Rectangle {
     RogueWindow {
         id: rogue
 
-        property int padding: 5
+        property int padding: 1
         x: padding
         y: padding
         anchors.centerIn: parent
