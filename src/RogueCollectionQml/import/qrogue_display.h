@@ -10,9 +10,11 @@
 #include <coord.h>
 #include <display_interface.h>
 #include "game_config.h"
+#include "colors.h"
 
 class QRogue;
 class QKeyEvent;
+class FontProvider;
 struct Environment;
 
 class QRogueDisplay : public DisplayInterface
@@ -61,8 +63,7 @@ private:
 
     QPainter& ScreenPainter();
 
-    QFont font_;
-    QSize font_size_;
+    std::unique_ptr<FontProvider> font_provider_;
     QSize screen_size_;
 
     QRogue* parent_;

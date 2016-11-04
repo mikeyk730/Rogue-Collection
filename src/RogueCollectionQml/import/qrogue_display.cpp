@@ -4,33 +4,12 @@
 #include <QRectF>
 #include <QKeyEvent>
 #include <pc_gfx_charmap.h>
-#include "qdisplay.h"
-#include "qt_input.h"
+#include "qrogue_display.h"
+#include "qrogue_input.h"
 #include "dos_to_unicode.h"
 #include "qrogue.h"
 #include "environment.h"
-
-namespace Colors
-{
-    QColor black()    { return QColor(   0,   0,   0, 255 ); }
-    QColor white()    { return QColor( 255, 255, 255, 255 ); }
-    QColor grey()     { return QColor( 170, 170, 170, 255 ); }
-    QColor d_grey()   { return QColor(  65,  65,  65, 255 ); }
-    QColor l_grey()   { return QColor( 205, 205, 205, 255 ); }
-    QColor red()      { return QColor( 170,   0,   0, 255 ); }
-    QColor l_red()    { return QColor( 255,  85,  85, 255 ); }
-    QColor green()    { return QColor(   0, 170,   0, 255 ); }
-    QColor l_green()  { return QColor(  85,  255, 85, 255 ); }
-    QColor blue()     { return QColor(   0,   0, 170, 255 ); }
-    QColor l_blue()   { return QColor(  85,  85, 255, 255 ); }
-    QColor cyan()     { return QColor(   0, 170, 170, 255 ); }
-    QColor l_cyan()   { return QColor(  25, 255, 255, 255 ); }
-    QColor magenta()  { return QColor( 170,   0, 170, 255 ); }
-    QColor l_magenta(){ return QColor( 255,  25, 255, 255 ); }
-    QColor yellow()   { return QColor( 255, 255,  25, 255 ); }
-    QColor brown()    { return QColor( 170,  85,   0, 255 ); }
-    QColor orange()   { return QColor( 234, 118,   2, 255 ); }
-}
+#include "tile_provider.h"
 
 namespace
 {
@@ -81,40 +60,6 @@ namespace
         { 204,       '|' },
         { 185,       '|' },
     };
-
-    QColor colors[] = {
-        Colors::black(),
-        Colors::blue(),
-        Colors::green(),
-        Colors::cyan(),
-        Colors::red(),
-        Colors::magenta(),
-        Colors::brown(),
-        Colors::grey(),
-        Colors::d_grey(),
-        Colors::l_blue(),
-        Colors::l_green(),
-        Colors::l_cyan(),
-        Colors::l_red(),
-        Colors::l_magenta(),
-        Colors::yellow(),
-        Colors::white()
-    };
-
-    QColor GetColor(int color)
-    {
-        return colors[color];
-    }
-
-    QColor GetFg(int color)
-    {
-        return GetColor(color & 0x0f);
-    }
-
-    QColor GetBg(int color)
-    {
-        return GetColor(color >> 4);
-    }
 }
 
 
@@ -125,7 +70,7 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
     screen_size_ = QSize(screen_size.x, screen_size.y);
 
     auto font = QFont("Px437 IBM VGA8");
-    font.setPixelSize(32);
+    font.setPixelSize(16);
 
     SetFont(font);
 }
@@ -182,7 +127,7 @@ QSize QRogueDisplay::ScreenSize() const
 
 QSize QRogueDisplay::ScreenPixelSize() const
 {
-    return QSize(screen_size_.width() * font_size_.width(), screen_size_.height() * font_size_.height());
+    return QSize(screen_size_.width() * FontSize().width(), screen_size_.height() * FontSize().height());
 }
 
 QRect QRogueDisplay::ScreenRect() const
@@ -192,18 +137,12 @@ QRect QRogueDisplay::ScreenRect() const
 
 QFont QRogueDisplay::Font() const
 {
-    return font_;
+    return font_provider_->Font();
 }
 
 void QRogueDisplay::SetFont(const QFont &font)
 {
-    font_ = font;
-    font_.setStyleStrategy(QFont::NoAntialias);
-
-    QFontMetrics font_metrics(font);
-    font_size_.setWidth(font_metrics.width("W"));
-    font_size_.setHeight(font_metrics.height());
-
+    font_provider_.reset(new FontProvider(font));
     PostRenderEvent(true);
 }
 
@@ -260,7 +199,7 @@ void QRogueDisplay::NextGfxMode()
 
 QSize QRogueDisplay::FontSize() const
 {
-    return font_size_;
+    return font_provider_->TileSize();
 }
 
 void QRogueDisplay::Render(QPainter *painter)
@@ -315,8 +254,8 @@ void QRogueDisplay::RenderCursor(QPainter *painter, Coord cursor_pos)
     if (frame_ % 2)
         return;
 
-    auto w = font_size_.width();
-    auto h = font_size_.height();
+    auto w = FontSize().width();
+    auto h = FontSize().height();
     QRectF r(w*cursor_pos.x, h*cursor_pos.y + 4*h/5, w, h/5);
     painter->fillRect(r, Colors::grey());
 }
@@ -337,7 +276,7 @@ void QRogueDisplay::RenderCounterOverlay(QPainter* painter, const std::string& l
     }
 }
 
-unsigned int GetColor(int ch, int color)
+unsigned int GetTileColor(int ch, int color)
 {
     //if it is inside a room
     if (color == 0x07 || color == 0)
@@ -396,10 +335,6 @@ unsigned int GetColor(int ch, int color)
 
 void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text)
 {
-    auto w = font_size_.width();
-    auto h = font_size_.height();
-    QRectF r(w*x, h*y, w, h);
-
     // Hack for consistent standout in msg lines.  Unix versions use '-'.
     // PC uses ' ' with background color.  We want consistent behavior.
     if (y == 0 && color == 0x70) {
@@ -412,20 +347,19 @@ void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color
     // Tiles from Unix versions come in with either color=0x00 (for regular state)
     // or color=0x70 (for standout).  We need to translate these into more diverse
     // colors.  Tiles from PC versions already have the correct color, so we
-    // technically don't need to do anything here, but it doesn't hurt to call
-    // GetColor.
+    // technically don't need to do anything here, but it doesn't hurt to set
+    // the colors again.
     if (!is_text) {
-        color = GetColor(ch, color);
+        color = GetTileColor(ch, color);
     }
-
-    ch = TranslateChar(ch, is_text);
     color = TranslateColor(color, is_text);
 
-    painter->fillRect(r, GetBg(color));
-    painter->setFont(font_);
-    painter->setRenderHint(QPainter::TextAntialiasing, false);
-    painter->setPen(GetFg(color));
-    painter->drawText(r, 0, QChar(ch));
+    ch = TranslateChar(ch, is_text);
+
+    auto w = FontSize().width();
+    auto h = FontSize().height();
+    QRect r(w*x, h*y, w, h);
+    font_provider_->PaintTile(painter, r, ch, color);
 }
 
 int QRogueDisplay::TranslateChar(int ch, bool is_text) const

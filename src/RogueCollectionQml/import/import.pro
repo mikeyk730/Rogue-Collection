@@ -11,7 +11,6 @@ win32:LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User3
 HEADERS += \
     plugin.h \
     qrogue.h \
-    qt_input.h \
     args.h \
     dos_to_unicode.h \
     environment.h \
@@ -19,22 +18,29 @@ HEADERS += \
     replayable_input.h \
     run_game.h \
     utility.h \
-    qdisplay.h \
-    key_utility.h
+    key_utility.h \
+    qrogue_display.h \
+    qrogue_input.h \
+    tile_provider.h \
+    colors.h
 
 SOURCES += \
     plugin.cpp \
     qrogue.cpp \
-    qt_input.cpp \
     args.cpp \
     dos_to_unicode.cpp \
     environment.cpp \
     game_config.cpp \
     replayable_input.cpp \
     utility.cpp \
-    qdisplay.cpp \
     key_utility.cpp \
-    utility_qml.cpp
+    utility_qml.cpp \
+    qrogue_display.cpp \
+    qrogue_input.cpp \
+    text_provider.cpp \
+    tile_provider.cpp \
+    font_provider.cpp \
+    colors.cpp
 
 INCLUDEPATH += $$PWD/../../Shared
 INCLUDEPATH += $$PWD/../../MyCurses

@@ -1,6 +1,6 @@
 #include <map>
 #include <QKeyEvent>
-#include "qt_input.h"
+#include "qrogue_input.h"
 #include "qrogue.h"
 #include "key_utility.h"
 

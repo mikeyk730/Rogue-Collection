@@ -58,6 +58,8 @@ public:
     QtRogueInput* Input() const;
     QRogueDisplay* Display() const;
     GameConfig Config() const;
+    int Lines() const;
+    int Columns() const;
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;

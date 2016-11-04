@@ -33,7 +33,7 @@ void RunGame(const std::string& lib, int argc, char** argv, T* r)
             throw_error("Couldn't load rogue_main from: " + lib);
         }
 
-        (*Init)(r->Display(), r->Input(), r->GameEnv()->Lines(), r->GameEnv()->Columns());
+        (*Init)(r->Display(), r->Input(), r->Lines(), r->Columns());
         (*game)(0, 0, environ);
     }
     catch (const std::runtime_error& e)

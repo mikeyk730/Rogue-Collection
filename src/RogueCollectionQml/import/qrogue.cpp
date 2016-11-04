@@ -43,8 +43,8 @@
 #include <fstream>
 #include <cstdio>
 #include "qrogue.h"
-#include "qt_input.h"
-#include "qdisplay.h"
+#include "qrogue_input.h"
+#include "qrogue_display.h"
 #include "args.h"
 #include "environment.h"
 #include "run_game.h"
@@ -264,6 +264,16 @@ QtRogueInput *QRogue::Input() const
 QRogueDisplay *QRogue::Display() const
 {
     return display_.get();
+}
+
+int QRogue::Lines() const
+{
+    return screenSize().height();
+}
+
+int QRogue::Columns() const
+{
+    return screenSize().width();
 }
 
 void QRogue::keyPressEvent(QKeyEvent *event)
