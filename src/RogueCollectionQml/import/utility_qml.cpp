@@ -6,6 +6,14 @@ void QuitApplication()
     QCoreApplication::quit();
 }
 
+std::string GetResourcePath(const std::string& filename)
+{
+    std::string dir = QCoreApplication::applicationDirPath().toStdString();
+    dir += "/res/";
+    dir += filename;
+    return dir;
+}
+
 #ifdef WIN32
 #include <Windows.h>
 void DisplayMessage(const std::string &type, const std::string &title, const std::string &msg)

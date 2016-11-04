@@ -62,8 +62,6 @@ namespace
     };
 }
 
-
-
 QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
     : parent_(parent)
 {
@@ -71,8 +69,7 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
 
     auto font = QFont("Px437 IBM VGA8");
     font.setPixelSize(16);
-
-    SetFont(font);
+    font_provider_.reset(new FontProvider(font));
 }
 
 void QRogueDisplay::SetDimensions(Coord dimensions)
@@ -127,7 +124,7 @@ QSize QRogueDisplay::ScreenSize() const
 
 QSize QRogueDisplay::ScreenPixelSize() const
 {
-    return QSize(screen_size_.width() * FontSize().width(), screen_size_.height() * FontSize().height());
+    return QSize(screen_size_.width() * TileSize().width(), screen_size_.height() * TileSize().height());
 }
 
 QRect QRogueDisplay::ScreenRect() const
@@ -143,6 +140,7 @@ QFont QRogueDisplay::Font() const
 void QRogueDisplay::SetFont(const QFont &font)
 {
     font_provider_.reset(new FontProvider(font));
+    parent_->tileSizeChanged();
     PostRenderEvent(true);
 }
 
@@ -175,6 +173,7 @@ void QRogueDisplay::SetGameConfig(const GameConfig &config, Environment* env)
             }
         }
     }
+    LoadAssets();
 }
 
 const GraphicsConfig& QRogueDisplay::Gfx() const
@@ -194,12 +193,13 @@ bool QRogueDisplay::HandleKeyEvent(QKeyEvent *event)
 void QRogueDisplay::NextGfxMode()
 {
     gfx_index_ = (gfx_index_ + 1) % config_.gfx_options.size();
+    LoadAssets();
     PostRenderEvent(true);
 }
 
-QSize QRogueDisplay::FontSize() const
+QSize QRogueDisplay::TileSize() const
 {
-    return font_provider_->TileSize();
+    return TilePainter()->TileSize();
 }
 
 void QRogueDisplay::Render(QPainter *painter)
@@ -254,8 +254,8 @@ void QRogueDisplay::RenderCursor(QPainter *painter, Coord cursor_pos)
     if (frame_ % 2)
         return;
 
-    auto w = FontSize().width();
-    auto h = FontSize().height();
+    auto w = TileSize().width();
+    auto h = TileSize().height();
     QRectF r(w*cursor_pos.x, h*cursor_pos.y + 4*h/5, w, h/5);
     painter->fillRect(r, Colors::grey());
 }
@@ -356,14 +356,20 @@ void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color
 
     ch = TranslateChar(ch, is_text);
 
-    auto w = FontSize().width();
-    auto h = FontSize().height();
+    auto w = TileSize().width();
+    auto h = TileSize().height();
     QRect r(w*x, h*y, w, h);
-    font_provider_->PaintTile(painter, r, ch, color);
+    if (is_text)
+        TextPainter()->PaintTile(painter, r, ch, color);
+    else
+        TilePainter()->PaintTile(painter, r, ch, color);
 }
 
 int QRogueDisplay::TranslateChar(int ch, bool is_text) const
 {
+    if (!is_text && tile_provider_)
+        return ch;
+
     if (Gfx().animate && frame_%2 == 1 && BlinkChar(ch)){
         ch = ' ';
     }
@@ -394,6 +400,18 @@ int QRogueDisplay::TranslateColor(int color, bool is_text) const
 int QRogueDisplay::Index(int x, int y) const
 {
     return y*screen_size_.width() + x;
+}
+
+ITileProvider *QRogueDisplay::TilePainter() const
+{
+    if (tile_provider_)
+        return tile_provider_.get();
+    return font_provider_.get();
+}
+
+ITileProvider *QRogueDisplay::TextPainter() const
+{
+    return font_provider_.get();
 }
 
 void QRogueDisplay::Animate()
@@ -453,6 +471,15 @@ Region QRogueDisplay::FullRegion() const
 int QRogueDisplay::TotalChars() const
 {
     return screen_size_.width() * screen_size_.height();
+}
+
+void QRogueDisplay::LoadAssets()
+{
+    tile_provider_.reset();
+    if (Gfx().tiles) {
+        tile_provider_.reset(new TileProvider(*Gfx().tiles));
+    }
+    parent_->tileSizeChanged();
 }
 
 QRogueDisplay::ThreadData::ThreadData(QRogueDisplay::ThreadData &other)

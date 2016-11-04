@@ -39,6 +39,7 @@ public:
 
     virtual void paint(QPainter *painter) override;
     void postRender();
+    void tileSizeChanged();
 
 Q_SIGNALS:
     void rendered();

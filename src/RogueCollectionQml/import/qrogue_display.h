@@ -14,7 +14,10 @@
 
 class QRogue;
 class QKeyEvent;
+class ITileProvider;
 class FontProvider;
+class TileProvider;
+class TextProvider;
 struct Environment;
 
 class QRogueDisplay : public DisplayInterface
@@ -34,7 +37,7 @@ public:
     bool HandleKeyEvent(QKeyEvent *event);
     void NextGfxMode();
 
-    QSize FontSize() const;
+    QSize TileSize() const;
     QSize ScreenSize() const;
     QSize ScreenPixelSize() const;
     QRect ScreenRect() const;
@@ -56,6 +59,7 @@ public:
     int TotalChars() const;
 
 private:
+    void LoadAssets();
     void PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text);
     int TranslateChar(int ch, bool is_text) const;
     int TranslateColor(int color, bool is_text) const;
@@ -63,7 +67,12 @@ private:
 
     QPainter& ScreenPainter();
 
+    ITileProvider* TilePainter() const;
+    ITileProvider* TextPainter() const;
+
     std::unique_ptr<FontProvider> font_provider_;
+    std::unique_ptr<TileProvider> tile_provider_;
+    std::unique_ptr<TextProvider> text_provider_;
     QSize screen_size_;
 
     QRogue* parent_;

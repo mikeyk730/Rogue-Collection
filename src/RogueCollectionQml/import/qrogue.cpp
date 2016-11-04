@@ -217,7 +217,6 @@ QFont QRogue::font() const
 void QRogue::setFont(const QFont &font)
 {
     display_->SetFont(font);
-    emit fontSizeChanged(fontSize().width(), fontSize().height());
 }
 
 bool QRogue::monochrome() const
@@ -232,7 +231,7 @@ void QRogue::setMonochrome(bool enable)
 
 QSize QRogue::fontSize() const
 {
-    return display_->FontSize();
+    return display_->TileSize();
 }
 
 void QRogue::paint(QPainter *painter)
@@ -249,6 +248,11 @@ void QRogue::onTimer()
 void QRogue::postRender()
 {
     emit render();
+}
+
+void QRogue::tileSizeChanged()
+{
+    emit fontSizeChanged(fontSize().width(), fontSize().height());
 }
 
 Environment *QRogue::GameEnv() const

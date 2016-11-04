@@ -30,13 +30,24 @@ private:
 
 class TileProvider : public ITileProvider
 {
+public:
     TileProvider(const TileConfig& config);
     virtual QSize TileSize() const override;
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) override;
+
+private:
+    int TitleIndex(unsigned int ch, unsigned int color);
+    bool UseInverse(unsigned int color);
+    QRect GetTileRect(int i, bool use_inverse);
+
+    TileConfig config_;
+    QImage tilemap_;
+    QSize tile_size_;
 };
 
 class TextProvider : public ITileProvider
 {
+public:
     TextProvider(const TextConfig& config);
     virtual QSize TileSize() const override;
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) override;
