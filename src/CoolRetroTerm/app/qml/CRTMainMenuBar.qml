@@ -34,7 +34,7 @@ MenuBar {
         Instantiator{
             model: appSettings.profilesList
             delegate: MenuItem {
-                text: model.text
+                text: model.text+'\t'
                 onTriggered: {
                     appSettings.loadProfileString(obj_string);
                     appSettings.handleFontChanged();

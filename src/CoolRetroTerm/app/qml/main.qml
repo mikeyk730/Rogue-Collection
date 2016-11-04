@@ -79,7 +79,7 @@ ApplicationWindow{
     //}
     Action {
         id: fullscreenAction
-        text: qsTr("Fullscreen")
+        text: qsTr("Fullscreen\t")
         enabled: Qt.platform.os !== "osx"
         shortcut: "Alt+Return"
         onTriggered: appSettings.fullscreen = !appSettings.fullscreen;
@@ -88,13 +88,13 @@ ApplicationWindow{
     }
     Action {
         id: quitAction
-        text: qsTr("Quit")
+        text: qsTr("Quit\t")
         shortcut: "Alt+F4"
         onTriggered: Qt.quit();
     }
     Action{
         id: showsettingsAction
-        text: qsTr("Settings")
+        text: qsTr("Settings\t")
         onTriggered: {
             settingswindow.show();
             settingswindow.requestActivate();
