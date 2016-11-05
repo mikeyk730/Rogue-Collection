@@ -35,6 +35,11 @@ namespace
         return CharText(ch) == STAIRS;
     }
 
+    unsigned int FlipColor(unsigned int c)
+    {
+        return ((c & 0x0f) << 4) | ((c & 0xf0) >> 4);
+    }
+
     std::map<int, int> unix_chars = {
         { PASSAGE,   '#' },
         { DOOR,      '+' },
@@ -272,7 +277,7 @@ void QRogueDisplay::RenderCounterOverlay(QPainter* painter, const std::string& l
     for (size_t i = 0; i < len; ++i) {
         int x = screen_size_.width() - (len - i) - 1;
         int y = screen_size_.height() - 1;
-        PaintChar(painter, x, y, s[i], 0x70, true);
+        PaintChar(painter, x, y, s[i], FlipColor(DefaultColor()), true);
     }
 }
 
@@ -387,15 +392,20 @@ int QRogueDisplay::TranslateChar(int ch, bool is_text) const
     return DosToUnicode(ch);
 }
 
+int QRogueDisplay::DefaultColor() const
+{
+    return Gfx().text ? Gfx().text->colors.front() : 0x07;
+}
+
 int QRogueDisplay::TranslateColor(int color, bool is_text) const
 {    
     if (!color)
-        color = 0x07;
+        color = DefaultColor();
     if (!Gfx().use_colors || monochrome_) {
         if (Gfx().use_standout && ((color>>4) == 0x07 || (Gfx().use_colors && color > 0x0f)))
-            color = 0x70;
+            color = FlipColor(DefaultColor());
         else
-            color = 0x07;
+            color = DefaultColor();
     }
     return color;
 }

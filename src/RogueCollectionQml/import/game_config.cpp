@@ -1,23 +1,18 @@
 #include "game_config.h"
 #include "environment.h"
 
-TileConfig pc_tiles =          { "tiles.bmp",       78, 2 };
 TileConfig atari_slime_tiles = { "atari.bmp",       78, 1 };
 TileConfig atari_snake_tiles = { "atari_snake.bmp", 78, 1 };
 
-TextConfig pc_text =         { "text.bmp",  { 256, 1 }, { 0x07 }, false };
-TextConfig pc_colored_text = { "text.bmp",  { 256, 1 }, { 0x07 }, true  };
-TextConfig alt_text =        { "16x16.bmp", { 16, 16 }, { 0x0F }, true  };
-TextConfig boxy_text =       { "boxy.bmp",  { 16, 16 }, { 0x0F }, true  };
+TextConfig alt_text =  { "16x16.bmp", { 16, 16 }, { 0x0F }, true };
+TextConfig boxy_text = { "boxy.bmp",  { 16, 16 }, { 0x0F }, true };
 
-FontConfig placeholder = { "", 16 };
-                                 //name          text_cfg          font_cfg      tile_cfg            unix    color  stndout animate
-GraphicsConfig unix_gfx =        { "unix",       0,                &placeholder, 0,                  true,   false,  true,   false };
-GraphicsConfig pc_gfx =          { "pc",         0,                &placeholder, 0,                  false,  true,   true,   true  };
-GraphicsConfig atari_slime_gfx = { "tiles",      &alt_text,        0,            &atari_slime_tiles, false,  false,  true,   false };
-GraphicsConfig atari_snake_gfx = { "tiles",      &alt_text,        0,            &atari_snake_tiles, false,  false,  true,   false };
-GraphicsConfig boxy_gfx =        { "boxy",       &boxy_text,       0,            0,                  false,  true,   true,   true  };
-
+                                 //name      text_cfg    fnt  tile_cfg             unix    color  stndout animate
+GraphicsConfig unix_gfx =        { "unix",   0,           0,  0,                   true,   false,  true,   false };
+GraphicsConfig pc_gfx =          { "pc",     0,           0,  0,                   false,  true,   true,   true  };
+GraphicsConfig atari_slime_gfx = { "tiles",  &alt_text,   0,  &atari_slime_tiles,  false,  false,  true,   false };
+GraphicsConfig atari_snake_gfx = { "tiles",  &alt_text,   0,  &atari_snake_tiles,  false,  false,  true,   false };
+GraphicsConfig boxy_gfx =        { "boxy",   &boxy_text,  0,  0,                   false,  true,   true,   true  };
 
 std::vector<GameConfig> s_options = {
     { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, atari_slime_gfx, boxy_gfx, unix_gfx } },
@@ -35,28 +30,4 @@ GameConfig GetGameConfig(const std::string& name)
         }
     }
     throw std::runtime_error("Unknown game " + name);
-}
-
-void SetFontFile(const std::string & filename)
-{
-    placeholder.fontfile = filename;
-}
-
-void SetFontSize(int size)
-{
-    placeholder.size = size;
-}
-
-void InitGameConfig(Environment* env)
-{
-    std::string value;
-    if (env->Get("font", &value)) {
-        SetFontFile(value);
-        if (env->Get("font_size", &value)) {
-            int size = atoi(value.c_str());
-            if (size) {
-                SetFontSize(size);
-            }
-        }
-    }
 }

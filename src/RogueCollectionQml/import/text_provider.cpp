@@ -7,12 +7,14 @@
 TextProvider::TextProvider(const TextConfig & config) :
     config_(config)
 {
-    QPixmap img(GetResourcePath(config.imagefile).c_str());
+    QImage img(GetResourcePath(config.imagefile).c_str());
 
-    tile_size_.setWidth(img.size().width() / config.layout.x);
-    tile_size_.setHeight(img.size().height() / config.layout.y);
+    image_size_ = img.size();
 
-    mask_ = img.createMaskFromColor(QColor(255, 255, 255), Qt::MaskOutColor);
+    tile_size_.setWidth(image_size_.width() / config.layout.x);
+    tile_size_.setHeight(image_size_.height() / config.layout.y);
+
+    mask_ = QBitmap::fromImage(img.createMaskFromColor(qRgb(255, 255, 255), Qt::MaskOutColor));
 }
 
 QSize TextProvider::TileSize() const
@@ -24,9 +26,10 @@ void TextProvider::PaintTile(QPainter *painter, QRect dest_rect, int ch, int col
 {
     QRect source_rect = GetTextRect(ch);
 
-    painter->fillRect(dest_rect, Colors::GetBg(color));
-    painter->setPen(Colors::GetFg(color));
-    painter->drawPixmap(dest_rect, mask_, source_rect);
+    if (ch == ' ')
+        painter->fillRect(dest_rect, Colors::GetBg(color));
+    else
+        painter->drawPixmap(dest_rect, *GetPixMap(color), source_rect);
 }
 
 QRect TextProvider::GetTextRect(unsigned int ch)
@@ -38,4 +41,21 @@ QRect TextProvider::GetTextRect(unsigned int ch)
     r.setWidth(tile_size_.width());
     r.setHeight(tile_size_.height());
     return r;
+}
+
+QPixmap *TextProvider::GetPixMap(int color)
+{
+    auto i = images_.find(color);
+    if (i == images_.end()) {
+        std::unique_ptr<QPixmap> p(new QPixmap(image_size_));
+
+        QPainter painter(p.get());
+        painter.fillRect(p->rect(), Colors::GetBg(color));
+        painter.setPen(Colors::GetFg(color));
+        painter.drawPixmap(0, 0, mask_);
+        painter.end();
+
+        i = images_.insert(std::make_pair(color,std::move(p))).first;
+    }
+    return i->second.get();
 }

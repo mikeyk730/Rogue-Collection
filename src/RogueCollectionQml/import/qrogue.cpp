@@ -63,7 +63,6 @@ QRogue::QRogue(QQuickItem *parent)
     Args args = LoadArgs(argc, argv);
 
     env_.reset(new Environment(args));
-    InitGameConfig(env_.get());
 
     display_.reset(new QRogueDisplay(this, {80,25}));
 }

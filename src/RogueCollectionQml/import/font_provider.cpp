@@ -21,6 +21,9 @@ QSize FontProvider::TileSize() const
 void FontProvider::PaintTile(QPainter *painter, QRect r, int ch, int color)
 {
     painter->fillRect(r, Colors::GetBg(color));
+    if (ch == ' ')
+        return;
+
     painter->setPen(Colors::GetFg(color));
     painter->setFont(font_);
     painter->setRenderHint(QPainter::TextAntialiasing, false);

@@ -62,6 +62,7 @@ private:
     void LoadAssets();
     void PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text);
     int TranslateChar(int ch, bool is_text) const;
+    int DefaultColor() const;
     int TranslateColor(int color, bool is_text) const;
     int Index(int x, int y) const;
 

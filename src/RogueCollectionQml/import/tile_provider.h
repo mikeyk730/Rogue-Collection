@@ -1,14 +1,16 @@
 #pragma once
 #include <vector>
-#include <map>
+#include <memory>
 #include <QSize>
 #include <QFont>
 #include <QPainter>
 #include <QBitmap>
+#include <QPixmap>
 #include "game_config.h"
 
-struct ITileProvider
+class ITileProvider
 {
+public:
     virtual ~ITileProvider();
     virtual QSize TileSize() const = 0;
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) = 0;
@@ -54,8 +56,11 @@ public:
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) override;
 private:
     QRect GetTextRect(unsigned int ch);
+    QPixmap* GetPixMap(int color);
 
     TextConfig config_;
     QBitmap mask_;
+    std::map<int, std::unique_ptr<QPixmap>> images_;
+    QSize image_size_;
     QSize tile_size_;
 };

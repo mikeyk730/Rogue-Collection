@@ -49,9 +49,5 @@ struct GameConfig
     std::vector<GraphicsConfig> gfx_options;
 };
 
-const int kWindowWidth = 640;
-const int kWindowHeight = 400;
-
-void InitGameConfig(Environment* env);
 extern std::vector<GameConfig> s_options;
 GameConfig GetGameConfig(const std::string& name);
