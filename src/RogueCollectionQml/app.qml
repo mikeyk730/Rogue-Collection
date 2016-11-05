@@ -11,8 +11,18 @@ ApplicationWindow
 
     property int windowScale: 2
     property bool maintainAspect: true
-    width: rogue.width * windowScale
-    height: rogue.height * windowScale
+    width: 640 * 2
+    height: 400 * 2
+
+    function setDimensions(){
+        if (window.visibility !== Window.FullScreen){
+            window.width = rogue.width * window.windowScale
+            window.height = rogue.height * window.windowScale
+        }
+    }
+
+    onVisibilityChanged: setDimensions()
+    onWindowScaleChanged: setDimensions()
 
     Rectangle {
         id: root
@@ -20,10 +30,12 @@ ApplicationWindow
         Keys.onPressed: {
             if (event.modifiers & Qt.AltModifier)
             {
-                if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9)
+                if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9){
+                    window.visibility = Window.Windowed;
                     window.windowScale = event.key - Qt.Key_0;
+                }
                 else if (event.key === Qt.Key_Return){
-                    window.visibility = (window.visibility === Window.FullScreen) ? Window.Windowed : Window.FullScreen
+                    window.visibility = (window.visibility === Window.FullScreen) ? Window.Windowed : Window.FullScreen;
                 }
                 else if (event.key === Qt.Key_A){
                     window.maintainAspect = !window.maintainAspect
@@ -46,6 +58,8 @@ ApplicationWindow
         }
 
         RogueWindow{
+            onWidthChanged: window.setDimensions()
+            onHeightChanged: window.setDimensions()
             id: rogue
             anchors.centerIn: parent
         }
