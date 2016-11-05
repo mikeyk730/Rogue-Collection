@@ -74,15 +74,14 @@ Rectangle {
             }
         }
 
-        Keys.onReturnPressed: {
-            event.accepted = true;
-            handleSelection();
-        }
-
         Keys.onPressed: {
             if (event.key >= Qt.Key_A && event.key < Qt.Key_A + count) {
                 event.accepted = true;
                 list.currentIndex = event.key - Qt.Key_A;
+                handleSelection();
+            }
+            else if (event.key === Qt.Key_Return && (event.modifiers & Qt.AltModifier) === 0){
+                event.accepted = true;
                 handleSelection();
             }
         }

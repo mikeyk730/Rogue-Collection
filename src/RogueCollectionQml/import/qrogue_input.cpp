@@ -129,6 +129,9 @@ bool QtRogueInput::HandleKeyEvent(QKeyEvent *event)
         return true;
     }
 
+    if (IsAltOn(event))
+        return false;
+
     // Translate special keys to appropriate input
     auto i = key_translation.find(key);
     if (i != key_translation.end()) {

@@ -8,7 +8,8 @@ Image {
     signal dismissed()
 
     Keys.onPressed: {
-        if (event.key !== Qt.Key_Alt && event.key !== Qt.Key_Shift && event.key !== Qt.Key_Control){
+        if (event.key !== Qt.Key_Alt && event.key !== Qt.Key_Shift && event.key !== Qt.Key_Control &&
+                (event.modifiers & Qt.AltModifier) === 0){
             event.accepted = true;
             dismissed();
         }
