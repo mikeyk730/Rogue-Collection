@@ -226,7 +226,7 @@ QtObject{
             fontScaling: fontScaling,
             fontNames: fontNames,
             frameReflections: _frameReflections,
-            showMenubar: showMenubar,
+            //showMenubar: showMenubar,
             bloomQuality: bloomQuality,
             burnInQuality: burnInQuality
         }
@@ -312,7 +312,7 @@ QtObject{
 
         _frameReflections = settings.frameReflections !== undefined ? settings.frameReflections : _frameReflections;
 
-        showMenubar = settings.showMenubar !== undefined ? settings.showMenubar : showMenubar;
+        //showMenubar = settings.showMenubar !== undefined ? settings.showMenubar : showMenubar;
 
         bloomQuality = settings.bloomQuality !== undefined ? settings.bloomQuality : bloomQuality;
         burnInQuality = settings.burnInQuality !== undefined ? settings.burnInQuality : burnInQuality;
