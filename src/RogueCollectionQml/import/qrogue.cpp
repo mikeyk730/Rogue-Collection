@@ -64,7 +64,10 @@ QRogue::QRogue(QQuickItem *parent)
 
     env_.reset(new Environment(args));
 
-    display_.reset(new QRogueDisplay(this, {80,25}));
+    std::string graphics;
+    env_->Get("gfx", &graphics);
+
+    display_.reset(new QRogueDisplay(this, {80,25}, graphics));
 }
 
 QRogue::~QRogue()

@@ -67,8 +67,9 @@ namespace
     };
 }
 
-QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size)
-    : parent_(parent)
+QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics)
+    : parent_(parent),
+      gfx_mode_(graphics)
 {
     screen_size_ = QSize(screen_size.x, screen_size.y);
 
