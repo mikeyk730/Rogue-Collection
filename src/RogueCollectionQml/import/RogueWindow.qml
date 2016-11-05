@@ -39,11 +39,9 @@ Item {
             gameSelect.visible = false;
         }
 
-        onSelected: {
-            console.log(game);
-            rogue.game = game;
-
-            if (game === "PC Rogue 1.48"){
+        function onGameSet()
+        {
+            if (rogue.game === "PC Rogue 1.48"){
                 activeItem = titleScreen;
             }
             else{
@@ -52,6 +50,17 @@ Item {
             activeItem.visible = true;
             activeItem.focus = true;
             gameSelect.visible = false;
+        }
+
+        onSelected: {
+            console.log(game);
+            rogue.game = game;
+            onGameSet();
+        }
+
+        Component.onCompleted: {
+            if (rogue.game)
+                onGameSet();
         }
     }
 
@@ -78,16 +87,12 @@ Item {
 
         onRendered: root.rendered()
 
-        property string title: "Rogue Collection v2.0"
+        property string title: "Rogue Collection v2.0" + (rogue.game ? ' - ' + rogue.game : '')
 
         z: 0
         width: screenSize.width * fontSize.width
         height: screenSize.height * fontSize.height
         anchors.centerIn: parent
-
-        onGameChanged: {
-            title = title + ' - ' + rogue.game
-        }
 
         //font.family: 'Consolas'
         //font.pixelSize: 16

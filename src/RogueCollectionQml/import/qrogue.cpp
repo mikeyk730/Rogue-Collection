@@ -71,6 +71,19 @@ QRogue::QRogue(QQuickItem *parent)
     env_->Get("gfx", &graphics);
 
     display_.reset(new QRogueDisplay(this, {80,25}, graphics));
+
+    std::string game;
+    if (env_->Get("game", &game) && !game.empty()){
+        int i = GetGameIndex(game.c_str());
+        if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + (int)s_options.size())){
+            i = game[0] - 'a';
+        }
+
+        if (i != -1)
+            setGame(i);
+        else
+            restoreGame(game.c_str());
+    }
 }
 
 QRogue::~QRogue()
@@ -89,7 +102,13 @@ QString QRogue::game() const
 
 void QRogue::setGame(const QString &game)
 {
-    config_ = GetGameConfig(game.toStdString());
+    int i = GetGameIndex(game.toStdString());
+    setGame(i);
+}
+
+void QRogue::setGame(int index)
+{
+    config_ = GetGameConfig(index);
     emit gameChanged(config_.name.c_str());
     game_env_ = env_;
 
@@ -126,7 +145,8 @@ void QRogue::RestoreGame(const std::string& path)
 
     std::string name;
     ReadShortString(file, &name);
-    config_ = GetGameConfig(name);
+    int i = GetGameIndex(name);
+    config_ = GetGameConfig(i);
     emit gameChanged(config_.name.c_str());
 
     // set up game environment

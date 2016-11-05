@@ -22,12 +22,17 @@ std::vector<GameConfig> s_options = {
     { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, pc_gfx, boxy_gfx } },
 };
 
-GameConfig GetGameConfig(const std::string& name)
+GameConfig GetGameConfig(int i)
+{
+    return s_options[i];
+}
+
+int GetGameIndex(const std::string& name)
 {
     for (int i = 0; i < s_options.size(); ++i){
         if (s_options[i].name == name) {
-            return s_options[i];
+            return i;
         }
     }
-    throw std::runtime_error("Unknown game " + name);
+    return -1;
 }

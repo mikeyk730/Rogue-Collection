@@ -50,4 +50,6 @@ struct GameConfig
 };
 
 extern std::vector<GameConfig> s_options;
-GameConfig GetGameConfig(const std::string& name);
+GameConfig GetGameConfig(int i);
+int GetGameIndex(const std::string& name);
+
