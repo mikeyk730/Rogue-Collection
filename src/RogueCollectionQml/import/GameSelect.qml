@@ -75,12 +75,15 @@ Rectangle {
         }
 
         Keys.onPressed: {
+            if (event.modifiers & Qt.AltModifier)
+                return;
+
             if (event.key >= Qt.Key_A && event.key < Qt.Key_A + count) {
                 event.accepted = true;
                 list.currentIndex = event.key - Qt.Key_A;
                 handleSelection();
             }
-            else if (event.key === Qt.Key_Return && (event.modifiers & Qt.AltModifier) === 0){
+            else if (event.key === Qt.Key_Return){
                 event.accepted = true;
                 handleSelection();
             }

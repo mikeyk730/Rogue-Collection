@@ -10,6 +10,7 @@ ApplicationWindow
     title: rogue.title
 
     property int windowScale: 2
+    property bool maintainAspect: true
     width: rogue.width * windowScale
     height: rogue.height * windowScale
 
@@ -24,17 +25,24 @@ ApplicationWindow
                 else if (event.key === Qt.Key_Return){
                     window.visibility = (window.visibility === Window.FullScreen) ? Window.Windowed : Window.FullScreen
                 }
+                else if (event.key === Qt.Key_A){
+                    window.maintainAspect = !window.maintainAspect
+                }
             }
         }
 
         anchors.fill: parent
-        color: '#888888'
+        color: 'black'
+
+        function getXScale() { return window.width / rogue.width; }
+        function getYScale() { return window.height / rogue.height; }
+        function getScale() { return Math.min(getXScale(), getYScale()); }
+
         transform: Scale {
-            xScale: width/rogue.width
-            yScale: height/rogue.height
+            xScale: window.maintainAspect ? root.getScale() : root.getXScale()
+            yScale: window.maintainAspect ? root.getScale() : root.getYScale()
             origin.x: width/2
             origin.y: height/2
-
         }
 
         RogueWindow{
