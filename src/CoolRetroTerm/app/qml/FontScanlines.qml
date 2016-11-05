@@ -60,6 +60,16 @@ QtObject{
             fontWidth: 1.0
         }
         ListElement{
+            name: "IBM_DOS"
+            text: "IBM DOS (1985)"
+            source: "fonts/1985-ibm-pc-vga/Px437_IBM_VGA8.ttf"
+            lineSpacing: 3
+            pixelSize: 16
+            baseScaling: 2.0
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
             name: "PRO_FONT_SCALED"
             text: "Pro Font (Modern)"
             source: "fonts/modern-pro-font-win-tweaked/ProFontWindows.ttf"

@@ -406,7 +406,7 @@ QtObject{
         }
         ListElement{
             text: "IBM Dos"
-            obj_string: '{"ambientLight":0.07,"backgroundColor":"#000000","bloom":0.33,"brightness":0.25,"flickering":0.0,"contrast":0.95,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0.08,"burnIn":0.10,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.07,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
+            obj_string: '{"ambientLight":0.07,"backgroundColor":"#000000","bloom":0.33,"brightness":0.25,"flickering":0.0,"contrast":0.95,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0.08,"burnIn":0.0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.07,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
             builtin: true
         }
         ListElement{
@@ -422,6 +422,11 @@ QtObject{
         ListElement{
             text: "Pixelated"
             obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0,"brightness":0.5,"flickering":0.2,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.2,"jitter":0,"burnIn":0.22,"staticNoise":0.19,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
+            builtin: true
+        }
+        ListElement{
+            text: "Tiled"
+            obj_string: '{"ambientLight":0.04,"backgroundColor":"#000000","bloom":0.03,"brightness":1.0,"flickering":0.07,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.05,"jitter":0,"burnIn":0.0,"staticNoise":0.0,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":1.0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
             builtin: true
         }
         //ListElement{
