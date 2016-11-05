@@ -23,6 +23,10 @@ namespace Colors
     QColor yellow();
     QColor brown();
     QColor orange();
+
+    QColor GetTileColor(int color);
+    QColor GetFg(int color);
+    QColor GetBg(int color);
 }
 
 #endif // COLORS_H

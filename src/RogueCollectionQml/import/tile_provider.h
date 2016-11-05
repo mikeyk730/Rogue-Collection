@@ -4,6 +4,7 @@
 #include <QSize>
 #include <QFont>
 #include <QPainter>
+#include <QBitmap>
 #include "game_config.h"
 
 struct ITileProvider
@@ -51,4 +52,10 @@ public:
     TextProvider(const TextConfig& config);
     virtual QSize TileSize() const override;
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) override;
+private:
+    QRect GetTextRect(unsigned int ch);
+
+    TextConfig config_;
+    QBitmap mask_;
+    QSize tile_size_;
 };

@@ -381,6 +381,9 @@ int QRogueDisplay::TranslateChar(int ch, bool is_text) const
         }
     }
 
+    if (text_provider_)
+        return ch;
+
     return DosToUnicode(ch);
 }
 
@@ -406,11 +409,15 @@ ITileProvider *QRogueDisplay::TilePainter() const
 {
     if (tile_provider_)
         return tile_provider_.get();
+    else if (text_provider_)
+        return text_provider_.get();
     return font_provider_.get();
 }
 
 ITileProvider *QRogueDisplay::TextPainter() const
 {
+    if (text_provider_)
+        return text_provider_.get();
     return font_provider_.get();
 }
 
@@ -479,6 +486,12 @@ void QRogueDisplay::LoadAssets()
     if (Gfx().tiles) {
         tile_provider_.reset(new TileProvider(*Gfx().tiles));
     }
+
+    text_provider_.reset();
+    if (Gfx().text) {
+        text_provider_.reset(new TextProvider(*Gfx().text));
+    }
+
     parent_->tileSizeChanged();
 }
 

@@ -3,43 +3,6 @@
 
 ITileProvider::~ITileProvider() {}
 
-namespace Colors
-{
-    QColor colors[] = {
-        Colors::black(),
-        Colors::blue(),
-        Colors::green(),
-        Colors::cyan(),
-        Colors::red(),
-        Colors::magenta(),
-        Colors::brown(),
-        Colors::grey(),
-        Colors::d_grey(),
-        Colors::l_blue(),
-        Colors::l_green(),
-        Colors::l_cyan(),
-        Colors::l_red(),
-        Colors::l_magenta(),
-        Colors::yellow(),
-        Colors::white()
-    };
-
-    QColor GetTileColor(int color)
-    {
-        return colors[color];
-    }
-
-    QColor GetFg(int color)
-    {
-        return GetTileColor(color & 0x0f);
-    }
-
-    QColor GetBg(int color)
-    {
-        return GetTileColor(color >> 4);
-    }
-}
-
 FontProvider::FontProvider(const QFont& font)
 {
     font_ = font;

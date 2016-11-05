@@ -96,4 +96,3 @@ QRect TileProvider::GetTileRect(int i, bool use_inverse)
     r.setWidth(tile_size_.width());
     return r;
 }
-
