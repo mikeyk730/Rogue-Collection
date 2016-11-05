@@ -36,6 +36,7 @@ public:
 
     Q_INVOKABLE void restoreGame(const QString& filename);
     Q_INVOKABLE void saveGame(const QString& filename);
+    Q_INVOKABLE void setGraphics(const QString& gfx);
 
     virtual void paint(QPainter *painter) override;
     void postRender();

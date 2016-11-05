@@ -174,6 +174,11 @@ void QRogue::saveGame(const QString &filename)
     SaveGame(filename.toStdString(), true);
 }
 
+void QRogue::setGraphics(const QString &gfx)
+{
+    display_->SetGraphics(gfx);
+}
+
 void QRogue::SaveGame(std::string path, bool notify)
 {
     std::ofstream file(path, std::ios::binary | std::ios::out);

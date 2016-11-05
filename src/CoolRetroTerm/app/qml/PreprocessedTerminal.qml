@@ -136,6 +136,8 @@ Item{
             scaleTexture = Math.max(1.0, Math.floor(screenScaling * appSettings.windowScaling));
 
             kterminal.lineSpacing = lineSpacing;
+            if(appSettings.graphics)
+                kterminal.setGraphics(appSettings.graphics);
         }
         //function startSession() {
         //    appSettings.initializedSettings.disconnect(startSession);

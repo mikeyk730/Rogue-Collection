@@ -31,6 +31,8 @@ public:
     bool Monochrome() const;
     void SetMonochrome(bool enable);
 
+    void SetGraphics(const QString &gfx);
+    bool ApplyGraphics();
     void SetScreenSize(Coord screen_size);
     void SetGameConfig(const GameConfig &config, Environment* env);
     const GraphicsConfig& Gfx() const;
@@ -80,6 +82,7 @@ private:
     GameConfig config_;
     bool monochrome_ = false;
     int gfx_index_ = 0;
+    std::string gfx_mode_;
     int frame_ = 0;
     std::unique_ptr<QPixmap> screen_buffer_;
 

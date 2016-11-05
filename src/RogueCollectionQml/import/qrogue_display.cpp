@@ -159,6 +159,27 @@ void QRogueDisplay::SetMonochrome(bool enable)
     monochrome_ = enable;
 }
 
+void QRogueDisplay::SetGraphics(const QString &gfx)
+{
+    gfx_mode_ = gfx.toStdString();
+    if (ApplyGraphics()){
+        LoadAssets();
+        PostRenderEvent(true);
+    }
+}
+
+bool QRogueDisplay::ApplyGraphics()
+{
+    for (size_t i = 0; i < config_.gfx_options.size(); ++i)
+    {
+        if (config_.gfx_options[i].name == gfx_mode_) {
+            gfx_index_ = i;
+            return true;
+        }
+    }
+    return false;
+}
+
 void QRogueDisplay::SetScreenSize(Coord screen_size)
 {
     screen_size_ = QSize(screen_size.x, screen_size.y);
@@ -167,17 +188,7 @@ void QRogueDisplay::SetScreenSize(Coord screen_size)
 void QRogueDisplay::SetGameConfig(const GameConfig &config, Environment* env)
 {
     config_ = config;
-
-    std::string gfx;
-    if (env->Get("gfx", &gfx)) {
-        for (size_t i = 0; i < config_.gfx_options.size(); ++i)
-        {
-            if (config_.gfx_options[i].name == gfx) {
-                gfx_index_ = i;
-                break;
-            }
-        }
-    }
+    ApplyGraphics();
     LoadAssets();
 }
 
@@ -198,6 +209,7 @@ bool QRogueDisplay::HandleKeyEvent(QKeyEvent *event)
 void QRogueDisplay::NextGfxMode()
 {
     gfx_index_ = (gfx_index_ + 1) % config_.gfx_options.size();
+    gfx_mode_ = Gfx().name;
     LoadAssets();
     PostRenderEvent(true);
 }

@@ -27,8 +27,8 @@ import QtQuick.Dialogs 1.1
 Window {
     id: settings_window
     title: qsTr("Settings")
-    width: 580
-    height: 400
+    width: 640
+    height: 480
 
     property int tabmargins: 15
 

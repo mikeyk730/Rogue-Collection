@@ -56,8 +56,9 @@ QtObject{
 
     // PROFILE SETTINGS ///////////////////////////////////////////////////////
 
-    property bool useCustomCommand: false
-    property string customCommand: ""
+    //property bool useCustomCommand: false
+    //property string customCommand: ""
+    property string graphics: ""
 
     property string _backgroundColor: "#000000"
     property string _fontColor: "#ff8100"
@@ -255,8 +256,9 @@ QtObject{
             windowOpacity: windowOpacity,
             fontName: fontNames[rasterization],
             fontWidth: fontWidth,
-            useCustomCommand: useCustomCommand,
-            customCommand: customCommand
+            //useCustomCommand: useCustomCommand,
+            //customCommand: customCommand
+            graphics: graphics
         }
         return settings;
     }
@@ -349,8 +351,9 @@ QtObject{
         fontNames[rasterization] = settings.fontName !== undefined ? settings.fontName : fontNames[rasterization];
         fontWidth = settings.fontWidth !== undefined ? settings.fontWidth : fontWidth;
 
-        useCustomCommand = settings.useCustomCommand !== undefined ? settings.useCustomCommand : useCustomCommand
-        customCommand = settings.customCommand !== undefined ? settings.customCommand : customCommand
+        //useCustomCommand = settings.useCustomCommand !== undefined ? settings.useCustomCommand : useCustomCommand
+        //customCommand = settings.customCommand !== undefined ? settings.customCommand : customCommand
+        graphics = settings.graphics !== undefined ? settings.graphics : graphics
 
         handleFontChanged();
     }
@@ -400,33 +403,38 @@ QtObject{
 
     property ListModel profilesList: ListModel{
         ListElement{
-            text: "No Effect"
-            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.34,"flickering":0.0,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
+            text: "No Effect PC"
+            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.34,"flickering":0.0,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc"}'
+            builtin: true
+        }
+        ListElement{
+            text: "No Effect Unix"
+            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.34,"flickering":0.0,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix"}'
             builtin: true
         }
         ListElement{
             text: "IBM Dos"
-            obj_string: '{"ambientLight":0.07,"backgroundColor":"#000000","bloom":0.33,"brightness":0.25,"flickering":0.0,"contrast":0.95,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0.08,"burnIn":0.0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.07,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
+            obj_string: '{"ambientLight":0.07,"backgroundColor":"#000000","bloom":0.33,"brightness":0.25,"flickering":0.0,"contrast":0.95,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0.08,"burnIn":0.0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.07,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc"}'
             builtin: true
         }
         ListElement{
             text: "Scanlines"
-            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0.4,"brightness":0.6,"flickering":0.1,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#0ccc68","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0.16,"jitter":0.18,"burnIn":0.22,"staticNoise":0.1,"rasterization":1,"screenCurvature":0.1,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
+            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0.4,"brightness":0.6,"flickering":0.1,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#0ccc68","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0.16,"jitter":0.18,"burnIn":0.22,"staticNoise":0.1,"rasterization":1,"screenCurvature":0.1,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix"}'
             builtin: true
         }
         ListElement{
             text: "Amber"
-            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0.65,"brightness":0.5,"flickering":0.1,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ff8100","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0.16,"jitter":0.18,"burnIn":0.2,"staticNoise":0.1,"rasterization":0,"screenCurvature":0.1,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
+            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0.65,"brightness":0.5,"flickering":0.1,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ff8100","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0.16,"jitter":0.18,"burnIn":0.2,"staticNoise":0.1,"rasterization":0,"screenCurvature":0.1,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc"}'
             builtin: true
         }
         ListElement{
             text: "Pixelated"
-            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0,"brightness":0.5,"flickering":0.2,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.2,"jitter":0,"burnIn":0.22,"staticNoise":0.19,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
+            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0,"brightness":0.5,"flickering":0.2,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.2,"jitter":0,"burnIn":0.22,"staticNoise":0.19,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix"}'
             builtin: true
         }
         ListElement{
             text: "Tiled"
-            obj_string: '{"ambientLight":0.04,"backgroundColor":"#000000","bloom":0.03,"brightness":1.0,"flickering":0.07,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.05,"jitter":0,"burnIn":0.0,"staticNoise":0.0,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":1.0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"customCommand":""}'
+            obj_string: '{"ambientLight":0.04,"backgroundColor":"#000000","bloom":0.03,"brightness":1.0,"flickering":0.07,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.05,"jitter":0,"burnIn":0.0,"staticNoise":0.0,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":1.0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"tiles"}'
             builtin: true
         }
         //ListElement{

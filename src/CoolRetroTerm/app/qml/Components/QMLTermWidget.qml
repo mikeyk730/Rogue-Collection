@@ -24,6 +24,10 @@ Rectangle {
     property int naturalWidth: rogue.width + 2*rogue.padding
     property int naturalHeight: rogue.height + 2*rogue.padding
 
+    function setGraphics(graphics){
+        rogue.setGraphics(graphics);
+    }
+
     //onSimulateMousePress: {
     //    console.log(root.width, root.height, root.naturalWidth, root.naturalHeight);
     //}

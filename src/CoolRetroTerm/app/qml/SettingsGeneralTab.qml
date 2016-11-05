@@ -160,6 +160,31 @@ Tab{
             }
         }
 
+        GroupBox{
+            anchors {left: parent.left; right: parent.right}
+            title: qsTr("Graphics")
+            ColumnLayout {
+                anchors.fill: parent
+                TextField{
+                    id: graphics
+                    anchors {left: parent.left; right: parent.right}
+                    text: appSettings.graphics
+                    onEditingFinished:
+                    {
+                        saveSetting();
+                    }
+
+                    // Save text even if user forgets to press enter or unfocus
+                    function saveSetting() {
+                        appSettings.graphics = text;
+                        appSettings.handleFontChanged();
+                    }
+                    Component.onCompleted: settings_window.closing.connect(saveSetting)
+                }
+            }
+        }
+
+
 //        GroupBox{
 //            anchors {left: parent.left; right: parent.right}
 //            title: qsTr("Command")

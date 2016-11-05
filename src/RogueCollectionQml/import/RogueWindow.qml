@@ -17,6 +17,10 @@ Item {
     width: activeItem.width
     height: activeItem.height
 
+    function setGraphics(graphics){
+        rogue.setGraphics(graphics);
+    }
+
     GameSelect {
         id: gameSelect
 
