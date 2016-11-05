@@ -39,6 +39,7 @@
 ****************************************************************************/
 #include <QPainter>
 #include <QTimer>
+#include <QCoreApplication>
 #include <sstream>
 #include <fstream>
 #include <cstdio>
@@ -58,9 +59,11 @@ QRogue::QRogue(QQuickItem *parent)
 {
     connect(this, SIGNAL(render()), this, SLOT(update()), Qt::QueuedConnection);
 
-    int argc = 0;
-    char* argv[] = {0};
-    Args args = LoadArgs(argc, argv);
+    QStringList q_args = QCoreApplication::arguments();
+    std::vector<std::string> v;
+    for (int i = 0; i < q_args.size(); ++i)
+        v.push_back(q_args[i].toStdString());
+    Args args(v);
 
     env_.reset(new Environment(args));
 
