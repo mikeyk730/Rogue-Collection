@@ -160,9 +160,15 @@ void QRogueDisplay::SetMonochrome(bool enable)
     monochrome_ = enable;
 }
 
+QString QRogueDisplay::Graphics() const
+{
+    return gfx_mode_.c_str();
+}
+
 void QRogueDisplay::SetGraphics(const QString &gfx)
 {
     gfx_mode_ = gfx.toStdString();
+    parent_->graphicsChanged(Graphics());
     if (ApplyGraphics()){
         LoadAssets();
         PostRenderEvent(true);
@@ -211,6 +217,7 @@ void QRogueDisplay::NextGfxMode()
 {
     gfx_index_ = (gfx_index_ + 1) % config_.gfx_options.size();
     gfx_mode_ = Gfx().name;
+    parent_->graphicsChanged(Graphics());
     LoadAssets();
     PostRenderEvent(true);
 }

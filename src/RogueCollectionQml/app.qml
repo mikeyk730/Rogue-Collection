@@ -15,7 +15,7 @@ ApplicationWindow
     height: 400 * 2
 
     function setDimensions(){
-        if (window.visibility !== Window.FullScreen){
+        if (window.visibility === Window.Windowed){
             window.width = rogue.width * window.windowScale
             window.height = rogue.height * window.windowScale
         }
@@ -25,7 +25,8 @@ ApplicationWindow
     onWindowScaleChanged: setDimensions()
 
     Rectangle {
-        id: root
+        anchors.fill: parent
+        color: 'black'
 
         Keys.onPressed: {
             if (event.modifiers & Qt.AltModifier)
@@ -43,25 +44,28 @@ ApplicationWindow
             }
         }
 
-        anchors.fill: parent
-        color: 'black'
-
-        function getXScale() { return window.width / rogue.width; }
-        function getYScale() { return window.height / rogue.height; }
-        function getScale() { return Math.min(getXScale(), getYScale()); }
-
-        transform: Scale {
-            xScale: window.maintainAspect ? root.getScale() : root.getXScale()
-            yScale: window.maintainAspect ? root.getScale() : root.getYScale()
-            origin.x: width/2
-            origin.y: height/2
-        }
-
         RogueWindow{
-            onWidthChanged: window.setDimensions()
-            onHeightChanged: window.setDimensions()
             id: rogue
             anchors.centerIn: parent
+
+            function getXScale() { return window.width / rogue.width; }
+            function getYScale() { return window.height / rogue.height; }
+            function getScale() { return Math.min(getXScale(), getYScale()); }
+
+            transform: Scale {
+                xScale: window.maintainAspect ? rogue.getScale() : rogue.getXScale()
+                yScale: window.maintainAspect ? rogue.getScale() : rogue.getYScale()
+                origin.x: rogue.width/2
+                origin.y: rogue.height/2
+            }
+
+            onWidthChanged: window.setDimensions()
+            onHeightChanged: window.setDimensions()
+
+            FontLoader { id: unixFont; source: "assets/TerminusTTF-4.38.2.ttf" }
+
+            font.family: graphics === 'unix' ? unixFont.name : "Px437 IBM VGA8"
+            font.pixelSize: graphics === 'unix' ? 12 : 16
         }
     }
 }

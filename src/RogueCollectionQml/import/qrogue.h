@@ -17,6 +17,7 @@ class QRogue : public QQuickPaintedItem
     Q_PROPERTY(QSize fontSize READ fontSize NOTIFY fontSizeChanged)
     Q_PROPERTY(QSize screenSize READ screenSize NOTIFY screenSizeChanged)
     Q_PROPERTY(QString game READ game WRITE setGame NOTIFY gameChanged)
+    Q_PROPERTY(QString graphics READ graphics WRITE setGraphics NOTIFY graphicsChanged)
 
 public:
     QRogue(QQuickItem *parent = 0);
@@ -30,14 +31,15 @@ public:
 
     QSize fontSize() const;
     QSize screenSize() const;
-
     QString game() const;
     void setGame(const QString& game);
     void setGame(int index);
 
     Q_INVOKABLE void restoreGame(const QString& filename);
     Q_INVOKABLE void saveGame(const QString& filename);
-    Q_INVOKABLE void setGraphics(const QString& gfx);
+
+    QString graphics() const;
+    void setGraphics(const QString& gfx);
 
     virtual void paint(QPainter *painter) override;
     void postRender();
@@ -54,6 +56,7 @@ signals:
     void fontSizeChanged(int height, int width);
     void screenSizeChanged(int height, int width);
     void gameChanged(const QString& name);
+    void graphicsChanged(const QString& gfx);
 
 public:
     Environment* GameEnv() const;

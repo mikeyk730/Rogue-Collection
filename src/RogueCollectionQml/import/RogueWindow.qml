@@ -5,6 +5,7 @@ import Rogue 1.0
 Item {
     id: root
 
+    property alias graphics: rogue.graphics
     property alias monochrome: rogue.monochrome
     property alias font: rogue.font
     property alias screenSize: rogue.screenSize
@@ -16,10 +17,6 @@ Item {
 
     width: activeItem.width
     height: activeItem.height
-
-    function setGraphics(graphics){
-        rogue.setGraphics(graphics);
-    }
 
     GameSelect {
         id: gameSelect

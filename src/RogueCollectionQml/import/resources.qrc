@@ -6,5 +6,6 @@
         <file>assets/title.png</file>
         <file>GameSelect.qml</file>
         <file>RogueWindow.qml</file>
+        <file>assets/TerminusTTF-4.38.2.ttf</file>
     </qresource>
 </RCC>

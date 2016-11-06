@@ -31,6 +31,7 @@ public:
     bool Monochrome() const;
     void SetMonochrome(bool enable);
 
+    QString Graphics() const;
     void SetGraphics(const QString &gfx);
     bool ApplyGraphics();
     void SetScreenSize(Coord screen_size);
