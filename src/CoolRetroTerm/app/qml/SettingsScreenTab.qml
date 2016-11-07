@@ -56,11 +56,11 @@ Tab{
                     onValueChanged: appSettings.contrast = value
                     value: appSettings.contrast
                 }
-                Label{ text: qsTr("Opacity") }
-                SimpleSlider{
-                    onValueChanged: appSettings.windowOpacity = value
-                    value: appSettings.windowOpacity
-                }
+//                Label{ text: qsTr("Opacity") }
+//                SimpleSlider{
+//                    onValueChanged: appSettings.windowOpacity = value
+//                    value: appSettings.windowOpacity
+//                }
             }
         }
         GroupBox{

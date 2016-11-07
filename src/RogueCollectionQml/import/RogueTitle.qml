@@ -4,6 +4,7 @@ Image {
     anchors.centerIn: parent
     source: "assets/title.png"
     smooth: false
+    fillMode: Image.PreserveAspectFit
 
     signal dismissed()
 

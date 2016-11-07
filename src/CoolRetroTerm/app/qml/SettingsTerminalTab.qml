@@ -56,49 +56,49 @@ Tab{
                     }
                     Component.onCompleted: updateIndex();
                 }
-                Label{ text: qsTr("Scaling") }
-                RowLayout{
-                    Layout.fillWidth: true
-                    Slider{
-                        Layout.fillWidth: true
-                        id: fontScalingChanger
-                        onValueChanged: if(enabled) appSettings.fontScaling = value
-                        stepSize: 0.05
-                        enabled: false // Another trick to fix initial bad behavior.
-                        Component.onCompleted: {
-                            minimumValue = appSettings.minimumFontScaling;
-                            maximumValue = appSettings.maximumFontScaling;
-                            value = appSettings.fontScaling;
-                            enabled = true;
-                        }
-                        Connections{
-                            target: appSettings
-                            onFontScalingChanged: fontScalingChanger.value = appSettings.fontScaling;
-                        }
-                    }
-                    SizedLabel{
-                        text: Math.round(fontScalingChanger.value * 100) + "%"
-                    }
-                }
-                Label{ text: qsTr("Font Width") }
-                RowLayout{
-                    Layout.fillWidth: true
-                    Slider{
-                        Layout.fillWidth: true
-                        id: widthChanger
-                        onValueChanged: appSettings.fontWidth = value;
-                        value: appSettings.fontWidth
-                        stepSize: 0.05
-                        Component.onCompleted: {
-                            // This is needed to avoid unnecessary chnaged events.
-                            minimumValue = 0.5;
-                            maximumValue = 1.5;
-                        }
-                    }
-                    SizedLabel{
-                        text: Math.round(widthChanger.value * 100) + "%"
-                    }
-                }
+//                Label{ text: qsTr("Scaling") }
+//                RowLayout{
+//                    Layout.fillWidth: true
+//                    Slider{
+//                        Layout.fillWidth: true
+//                        id: fontScalingChanger
+//                        onValueChanged: if(enabled) appSettings.fontScaling = value
+//                        stepSize: 0.05
+//                        enabled: false // Another trick to fix initial bad behavior.
+//                        Component.onCompleted: {
+//                            minimumValue = appSettings.minimumFontScaling;
+//                            maximumValue = appSettings.maximumFontScaling;
+//                            value = appSettings.fontScaling;
+//                            enabled = true;
+//                        }
+//                        Connections{
+//                            target: appSettings
+//                            onFontScalingChanged: fontScalingChanger.value = appSettings.fontScaling;
+//                        }
+//                    }
+//                    SizedLabel{
+//                        text: Math.round(fontScalingChanger.value * 100) + "%"
+//                    }
+//                }
+//                Label{ text: qsTr("Font Width") }
+//                RowLayout{
+//                    Layout.fillWidth: true
+//                    Slider{
+//                        Layout.fillWidth: true
+//                        id: widthChanger
+//                        onValueChanged: appSettings.fontWidth = value;
+//                        value: appSettings.fontWidth
+//                        stepSize: 0.05
+//                        Component.onCompleted: {
+//                            // This is needed to avoid unnecessary chnaged events.
+//                            minimumValue = 0.5;
+//                            maximumValue = 1.5;
+//                        }
+//                    }
+//                    SizedLabel{
+//                        text: Math.round(widthChanger.value * 100) + "%"
+//                    }
+//                }
             }
         }
         GroupBox{

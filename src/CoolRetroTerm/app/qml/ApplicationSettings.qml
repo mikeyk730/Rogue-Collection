@@ -52,6 +52,9 @@ QtObject{
     property real fps: 24
     property bool verbose: false
 
+    property int windowScale: 2
+    property bool maintainAspect: true
+
     onWindowScalingChanged: handleFontChanged();
 
     // PROFILE SETTINGS ///////////////////////////////////////////////////////
@@ -228,7 +231,9 @@ QtObject{
             frameReflections: _frameReflections,
             //showMenubar: showMenubar,
             bloomQuality: bloomQuality,
-            burnInQuality: burnInQuality
+            burnInQuality: burnInQuality,
+            windowScale: windowScale,
+            maintainAspect: maintainAspect
         }
         return stringify(settings);
     }
@@ -316,6 +321,9 @@ QtObject{
 
         bloomQuality = settings.bloomQuality !== undefined ? settings.bloomQuality : bloomQuality;
         burnInQuality = settings.burnInQuality !== undefined ? settings.burnInQuality : burnInQuality;
+
+        windowScale = settings.windowScale !== undefined ? settings.windowScale : windowScale;
+        maintainAspect = settings.maintainAspect !== undefined ? settings.maintainAspect : maintainAspect;
     }
 
     function loadProfileString(profileString){
@@ -404,12 +412,12 @@ QtObject{
     property ListModel profilesList: ListModel{
         ListElement{
             text: "No Effect PC"
-            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.34,"flickering":0.0,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc"}'
+            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.33,"flickering":0.0,"contrast":1.0,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc"}'
             builtin: true
         }
         ListElement{
             text: "No Effect Unix"
-            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.34,"flickering":0.0,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix"}'
+            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.33,"flickering":0.0,"contrast":1.0,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix"}'
             builtin: true
         }
         ListElement{

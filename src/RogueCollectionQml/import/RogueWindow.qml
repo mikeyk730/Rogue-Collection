@@ -11,53 +11,67 @@ Item {
     property alias screenSize: rogue.screenSize
     property alias fontSize: rogue.fontSize
     property alias title: rogue.title
-    property Item activeItem: gameSelect
+    property Item activeItem: gameSelectContainer
 
     signal rendered
 
     width: activeItem.width
     height: activeItem.height
 
-    GameSelect {
-        id: gameSelect
+    Item {
+        id: gameSelectContainer
 
+        width: rogue.width
+        height: rogue.height
         z: 2
-        width: 640
-        height: 400
-        anchors.centerIn: parent
 
-        onRestore: {
-            console.log(savefile);
-            rogue.restoreGame(savefile);
+        GameSelect {
+            id: gameContainer
+            width: 640
+            height: 400
 
-            activeItem = rogue;
-            activeItem.visible = true;
-            activeItem.focus = true;
-            gameSelect.visible = false;
-        }
-
-        function onGameSet()
-        {
-            if (rogue.game === "PC Rogue 1.48"){
-                activeItem = titleScreen;
+            transform: Scale {
+                xScale: rogue.width/gameContainer.width
+                yScale: rogue.height/gameContainer.height
+                origin.x: gameContainer.width/2
+                origin.y: gameContainer.height/2
             }
-            else{
+
+            anchors.centerIn: parent
+
+            onRestore: {
+                console.log(savefile);
+                rogue.restoreGame(savefile);
+
                 activeItem = rogue;
+                activeItem.visible = true;
+                activeItem.focus = true;
+                gameSelectContainer.visible = false;
             }
-            activeItem.visible = true;
-            activeItem.focus = true;
-            gameSelect.visible = false;
-        }
 
-        onSelected: {
-            console.log(game);
-            rogue.game = game;
-            onGameSet();
-        }
+            function onGameSet()
+            {
+                if (rogue.game === "PC Rogue 1.48"){
+                    activeItem = titleScreen;
+                }
+                else{
+                    activeItem = rogue;
+                }
+                activeItem.visible = true;
+                activeItem.focus = true;
+                gameSelectContainer.visible = false;
+            }
 
-        Component.onCompleted: {
-            if (rogue.game)
+            onSelected: {
+                console.log(game);
+                rogue.game = game;
                 onGameSet();
+            }
+
+            Component.onCompleted: {
+                if (rogue.game)
+                    onGameSet();
+            }
         }
     }
 
@@ -66,8 +80,8 @@ Item {
         visible: false
 
         z: 1
-        width: 640
-        height: 400
+        width: rogue.width
+        height: rogue.height
         anchors.centerIn: parent
 
         onDismissed: {

@@ -26,7 +26,7 @@ import QtGraphicalEffects 1.0
 ApplicationWindow{
     id: terminalWindow
 
-    property int windowScale: 2
+    property alias windowScale: appSettings.windowScale
 
     minimumWidth: 320
     minimumHeight: 200
@@ -226,7 +226,7 @@ ApplicationWindow{
         width: getScaleX() * terminalContainer.naturalWidth * appSettings.windowScaling
         height:  getScaleY() * terminalContainer.naturalHeight * appSettings.windowScaling
 
-        property bool maintainAspect: true
+        property alias maintainAspect: appSettings.maintainAspect
 
         onNaturalWidthChanged: terminalWindow.setDimensions()
         onNaturalHeightChanged: terminalWindow.setDimensions()
@@ -234,6 +234,8 @@ ApplicationWindow{
         transform: Scale {
             xScale: 1 / appSettings.windowScaling
             yScale: 1 / appSettings.windowScaling
+            origin.x: terminalContainer.width/2
+            origin.y: terminalContainer.height/2
         }
 
         Keys.onPressed: {
