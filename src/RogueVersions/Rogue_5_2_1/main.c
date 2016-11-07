@@ -101,14 +101,14 @@ char **envp;
     {
 	noscore = TRUE;
 	score(0, -1);
-	exit(0);
+	return(0);
     }
     init_check();			/* check for legal startup */
     if (argc == 2)
 	if (!restore(argv[1], envp))	/* Note: restore will never return */
 	{
 		endwin();
-	    exit(1);
+        return(1);
 	}
     lowtime = (int) time(NULL);
 
@@ -148,7 +148,7 @@ char **envp;
 	printf("\n\nSorry, but your terminal window has too few columns.\n");
         printf("Your terminal has %d columns, needs 70.\n",COLS); 
         endwin(); 
-        exit(1); 
+        return(1);
 	} 
 
     if (LINES < 22) 
@@ -156,7 +156,7 @@ char **envp;
         printf("\n\nSorry, but your terminal window has too few lines.\n"); 
         printf("Your terminal has %d lines, needs 22.\n",LINES); 
         endwin(); 
-        exit(1); 
+        return(1);
     } 
  
     if ((whoami == NULL) || (*whoami == '\0') || (strcmp(whoami,"dosuser")==0))
@@ -185,7 +185,7 @@ char **envp;
     fuse(swander, 0, WANDERTIME, AFTER);
     daemon(stomach, 0, AFTER);
     daemon(runners, 0, AFTER);
-    playit();
+    EXITABLE(playit());
 }
 
 /*

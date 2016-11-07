@@ -8,7 +8,6 @@
 #include <fcntl.h>
 #include <time.h>
 #include <sys/stat.h>
-
 #include "random.h"
 #include "game_state.h"
 #include "rip.h"
@@ -24,6 +23,7 @@
 #include "armor.h"
 #include "hero.h"
 #include "level.h"
+#include "mach_dep.h"
 
 #define TOPSCORES 10
 
@@ -285,7 +285,7 @@ void death(char monst)
     game->screen().raise_curtain();
     game->screen().move(LINES - 1, 0);
     score(game->hero().get_purse(), 0, monst);
-    exit(0);
+    exit_game(0);
 }
 
 void print_total_winner()
@@ -355,8 +355,7 @@ void total_winner()
     game->screen().printw("   %5u  Gold Pieces          ", oldpurse);
     score(game->hero().get_purse(), 2, 0);
 
-
-    exit(0);
+    exit_game(0);
 }
 
 //killname: Convert a code to a monster name

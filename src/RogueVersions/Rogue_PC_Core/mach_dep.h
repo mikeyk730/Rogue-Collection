@@ -1,7 +1,10 @@
 #pragma once
 
+struct ExitGame {};
+
 void sound_beep();
 void sleep(int ms);
+void exit_game(int status);
 
 bool is_caps_lock_on();
 bool is_num_lock_on();

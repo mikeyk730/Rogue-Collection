@@ -93,10 +93,9 @@ int main(int argc, char** argv)
         if (sdl_rogue) {
             //start rogue engine on a background thread
             std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, argc, argv, sdl_rogue.get());
+            rogue.detach();
 
             sdl_rogue->Run();
-
-            exit(0);
         }
     }
     catch (const std::runtime_error& e)

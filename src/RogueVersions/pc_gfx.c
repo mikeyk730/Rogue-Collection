@@ -1,6 +1,8 @@
 #include "pc_gfx_macros.h"
 
 #ifdef ROGUE_COLLECTION
+jmp_buf exception_env;
+
 void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols)
 {
     init_curses(screen, input, lines, cols);

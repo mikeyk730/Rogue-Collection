@@ -44,6 +44,7 @@
 #include "level.h"
 #include "rooms.h"
 #include "input_interface_ex.h"
+#include "mach_dep.h"
 
 int get_seed()
 {
@@ -291,9 +292,12 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
     game->screen().raise_curtain();
 
-    while (true) {
-        advance_game();
+    try {
+        while (true) {
+            advance_game();
+        }
     }
+    catch (ExitGame&) {}
 
     delete game;
 }
@@ -325,7 +329,7 @@ bool do_quit()
         game->screen().move(0, 0);
         game->screen().printw("You quit with %u gold pieces\n", game->hero().get_purse());
         score(game->hero().get_purse(), 1, 0);
-        fatal("");
+        exit_game(0);
     }
     else
     {

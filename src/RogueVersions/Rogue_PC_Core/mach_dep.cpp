@@ -14,6 +14,11 @@ void sleep(int ms)
     Sleep(ms);
 }
 
+void exit_game(int status)
+{
+    throw ExitGame();
+}
+
 bool is_caps_lock_on()
 {
     return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;

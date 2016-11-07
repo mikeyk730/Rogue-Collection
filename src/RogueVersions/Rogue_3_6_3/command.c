@@ -349,7 +349,7 @@ quit(int p)
 	draw(stdscr);
 	endwin();
 	score(purse, 1, 0);
-	exit(0);
+	EXIT(0);
     }
     else
     {

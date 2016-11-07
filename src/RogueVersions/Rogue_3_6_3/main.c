@@ -226,7 +226,8 @@ char **envp;
     obj->o_count = 1;
     obj->o_which = 0;
     add_pack(item, TRUE);
-    playit();
+
+    EXITABLE(playit());
 }
 
 /*

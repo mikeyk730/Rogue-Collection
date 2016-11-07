@@ -293,9 +293,11 @@ playit(void)
 
     oldpos = hero;
     oldrp = roomin(&hero);
-    while (playing)
-	command();			/* Command execution */
-    endit(0);
+    EXITABLE(
+        while (playing)
+	        command()			/* Command execution */
+    );
+    ENDIT(0);
 }
 
 /*
@@ -405,6 +407,6 @@ void
 my_exit(int st)
 {
     resetltchars();
-    exit(st);
+    EXIT(st);
 }
 

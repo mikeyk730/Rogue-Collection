@@ -4,19 +4,24 @@
 
 #ifdef ROGUE_COLLECTION
 void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
+#include <setjmp.h>
+extern jmp_buf exception_env;
+
 #define GAME_MAIN                     __declspec(dllexport) rogue_main
 #define SHELL_CMD                     msg("You're a long way from a terminal"); after = FALSE
 #define NO_SAVE_RETURN                msg("Use Ctrl+S to save your game"); return
 //#define MDK_LOG                       printf
 #define MDK_LOG(...)
-#define EXIT(...)
+#define EXIT(s)                       longjmp(exception_env,1);
+#define EXITABLE(s)                   do { if (!setjmp(exception_env)) { s; } else { return 0; } } while(0)
 #define ENDIT(...)
 #else
 #define GAME_MAIN                     main
 #define SHELL_CMD                     shell()
 #define NO_SAVE_RETURN
 #define MDK_LOG(...)
-#define EXIT(s)                       exit(s);
+#define EXIT(s)                       exit(s)
+#define EXITABLE(s)                   s
 #define ENDIT(s)                      endit(s)
 #endif
 

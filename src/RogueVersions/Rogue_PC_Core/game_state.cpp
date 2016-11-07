@@ -40,7 +40,7 @@ using std::placeholders::_1;
 ;
 */
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <Windows.h>
 #endif
 
@@ -49,7 +49,7 @@ namespace
     const int s_serial_version = 7;
 
     std::string GetPath(const std::string& subdir) {
-#ifdef WIN32
+#ifdef _WIN32
         char buffer[MAX_PATH];
         GetModuleFileName(NULL, buffer, MAX_PATH);
         std::string s(buffer);

@@ -285,7 +285,7 @@ SDL::Scoped::Texture CreateTexture(SDL_Surface* surface, SDL_Renderer* renderer)
     return texture;
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <Windows.h>
 void DisplayMessage(int type, const std::string& title, const std::string& msg)
 {

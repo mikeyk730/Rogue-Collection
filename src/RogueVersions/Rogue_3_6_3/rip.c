@@ -76,7 +76,7 @@ death(int monst)
     move(LINES-1, 0);
     draw(stdscr);
     score(purse, 0, monst);
-    exit(0);
+    EXIT(0);
 }
 
 /*
@@ -398,7 +398,7 @@ total_winner()
     mvprintw(c - 'a' + 1, 0,"   %5d  Gold Peices          ", oldpurse);
     refresh();
     score(purse, 2, 0);
-    exit(0);
+    EXIT(0);
 }
 
 char *
