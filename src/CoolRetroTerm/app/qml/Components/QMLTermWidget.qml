@@ -52,6 +52,7 @@ Rectangle {
 
             smooth: false
             onRendered: root.imagePainted()
+            Component.onCompleted: appSettings.rogue = rogue
         }
     }
 }

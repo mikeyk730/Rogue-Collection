@@ -112,6 +112,18 @@ ApplicationWindow{
 
     }
     Action {
+        id: changeGraphicsAction
+        text: qsTr("Change Graphics\t")
+        shortcut: "`"
+        onTriggered: appSettings.rogue.nextGraphicsMode()
+    }
+    Action {
+        id: saveAction
+        text: qsTr("Save Game\t")
+        shortcut: "Ctrl+S"
+        onTriggered: appSettings.rogue.saveGame()
+    }
+    Action {
         id: quitAction
         text: qsTr("Quit\t")
         shortcut: "Alt+F4"

@@ -13,6 +13,18 @@ Item {
     property alias title: rogue.title
     property Item activeItem: gameSelectContainer
 
+    function saveGame()
+    {
+        if (activeItem === rogue)
+            saveDialog.open();
+    }
+
+    function nextGraphicsMode()
+    {
+        if (activeItem === rogue)
+            rogue.nextGraphicsMode();
+    }
+
     signal rendered
 
     width: activeItem.width

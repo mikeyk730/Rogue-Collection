@@ -7,6 +7,7 @@ MenuBar {
     Menu {
         title: qsTr("File")
         visible: defaultMenuBar.visible
+        MenuItem {action: saveAction}
         MenuItem {action: quitAction}
     }
     //Menu {
@@ -29,6 +30,7 @@ MenuBar {
         MenuSeparator{}
         MenuItem {action: aspectAction}
         MenuSeparator{}
+        MenuItem {action: changeGraphicsAction}
         MenuItem {action: showsettingsAction}
     }
     Menu{

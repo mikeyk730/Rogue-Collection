@@ -200,6 +200,11 @@ void QRogue::saveGame(const QString &filename)
     SaveGame(filename.toStdString(), true);
 }
 
+void QRogue::nextGraphicsMode()
+{
+    display_->NextGfxMode();
+}
+
 QString QRogue::graphics() const
 {
     return display_->Graphics();

@@ -26,6 +26,8 @@ import "utils.js" as Utils
 QtObject{
     property string version: "1.0.0"
 
+    property Item rogue
+
     // STATIC CONSTANTS ////////////////////////////////////////////////////////
 
     readonly property real minimumFontScaling: 0.25
