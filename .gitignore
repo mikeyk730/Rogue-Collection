@@ -11,3 +11,5 @@ working/
 *.opendb
 *.lnk
 *.scr
+build-*/
+src/RetroRogueCollection/import/
