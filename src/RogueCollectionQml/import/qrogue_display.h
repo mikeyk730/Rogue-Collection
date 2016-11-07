@@ -80,7 +80,7 @@ private:
     QSize screen_size_;
 
     QRogue* parent_;
-    GameConfig config_;
+    std::unique_ptr<GameConfig> config_;
     bool monochrome_ = false;
     int gfx_index_ = 0;
     std::string gfx_mode_;

@@ -168,22 +168,26 @@ QString QRogueDisplay::Graphics() const
 void QRogueDisplay::SetGraphics(const QString &gfx)
 {
     gfx_mode_ = gfx.toStdString();
-    parent_->graphicsChanged(Graphics());
     if (ApplyGraphics()){
         LoadAssets();
         PostRenderEvent(true);
     }
+    parent_->graphicsChanged(Graphics());
 }
 
 bool QRogueDisplay::ApplyGraphics()
 {
-    for (size_t i = 0; i < config_.gfx_options.size(); ++i)
+    if (!config_)
+        return false;
+
+    for (size_t i = 0; i < config_->gfx_options.size(); ++i)
     {
-        if (config_.gfx_options[i].name == gfx_mode_) {
+        if (config_->gfx_options[i].name == gfx_mode_) {
             gfx_index_ = i;
             return true;
         }
     }
+    gfx_mode_ = Gfx().name;
     return false;
 }
 
@@ -194,14 +198,15 @@ void QRogueDisplay::SetScreenSize(Coord screen_size)
 
 void QRogueDisplay::SetGameConfig(const GameConfig &config, Environment* env)
 {
-    config_ = config;
+    config_.reset(new GameConfig(config));
     ApplyGraphics();
+    parent_->graphicsChanged(Graphics());
     LoadAssets();
 }
 
 const GraphicsConfig& QRogueDisplay::Gfx() const
 {
-    return config_.gfx_options[gfx_index_];
+    return config_->gfx_options[gfx_index_];
 }
 
 bool QRogueDisplay::HandleKeyEvent(QKeyEvent *event)
@@ -215,7 +220,7 @@ bool QRogueDisplay::HandleKeyEvent(QKeyEvent *event)
 
 void QRogueDisplay::NextGfxMode()
 {
-    gfx_index_ = (gfx_index_ + 1) % config_.gfx_options.size();
+    gfx_index_ = (gfx_index_ + 1) % config_->gfx_options.size();
     gfx_mode_ = Gfx().name;
     parent_->graphicsChanged(Graphics());
     LoadAssets();

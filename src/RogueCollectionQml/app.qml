@@ -14,9 +14,9 @@ ApplicationWindow
     height: 400 * 2
 
     function setDimensions(){
-        if (window.visibility === Window.Windowed){
-            window.width = rogue.width * window.windowScale
-            window.height = rogue.height * window.windowScale
+        if (visibility === Window.Windowed){
+            width = rogue.width * windowScale
+            height = rogue.height * windowScale
         }
     }
 

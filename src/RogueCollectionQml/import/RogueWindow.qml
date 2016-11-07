@@ -75,7 +75,6 @@ Item {
             }
 
             onSelected: {
-                console.log(game);
                 rogue.game = game;
                 onGameSet();
             }
