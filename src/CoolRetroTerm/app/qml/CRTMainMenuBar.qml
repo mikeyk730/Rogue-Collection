@@ -21,10 +21,14 @@ MenuBar {
         title: qsTr("View")
         visible: defaultMenuBar.visible
         MenuItem {action: fullscreenAction; visible: fullscreenAction.enabled}
+        MenuSeparator{}
+        MenuItem {action: zoomIn}
+        MenuItem {action: zoomOut}
+        MenuItem {action: resetZoom}
         //MenuItem {action: showMenubarAction; visible: showMenubarAction.enabled}
-        //MenuSeparator{visible: showMenubarAction.enabled}
-        //MenuItem {action: zoomIn}
-        //MenuItem {action: zoomOut}
+        MenuSeparator{}
+        MenuItem {action: aspectAction}
+        MenuSeparator{}
         MenuItem {action: showsettingsAction}
     }
     Menu{

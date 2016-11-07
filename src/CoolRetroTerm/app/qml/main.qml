@@ -26,47 +26,62 @@ import QtGraphicalEffects 1.0
 ApplicationWindow{
     id: terminalWindow
 
-    width: 1024
-    height: 768
+    property int windowScale: 2
+
+    minimumWidth: 320
+    minimumHeight: 200
+
+    function setDimensions(){
+        if (visibility === Window.Windowed){
+            contentItem.implicitWidth = terminalContainer.naturalWidth*terminalWindow.windowScale
+            contentItem.implicitHeight = terminalContainer.naturalHeight*terminalWindow.windowScale
+            width = __width;
+            height = __height;
+        }
+    }
+
+    onVisibilityChanged: setDimensions()
+    onWindowScaleChanged: setDimensions()
 
     // Save window properties automatically
-    onXChanged: appSettings.x = x
-    onYChanged: appSettings.y = y
+    onXChanged: if (visibility == Window.Windowed && x > 0) appSettings.x = x
+    onYChanged: if (visibility == Window.Windowed && y > 0) appSettings.y = y
     onWidthChanged: appSettings.width = width
     onHeightChanged: appSettings.height = height
 
     // Load saved window geometry and show the window
-    Component.onCompleted: {        
+    Component.onCompleted: {
+        setDimensions();
         appSettings.handleFontChanged();
 
         x = appSettings.x
         y = appSettings.y
-        width = appSettings.width
-        height = appSettings.height
+
+        //width = appSettings.width
+        //height = appSettings.height
 
         visible = true
     }
-
-    minimumWidth: 320
-    minimumHeight: 240
 
     visible: false
 
     property bool fullscreen: appSettings.fullscreen
     onFullscreenChanged:{
-        visibility = (fullscreen ? Window.FullScreen : Window.Windowed)
-        appSettings.showMenubar = !fullscreen
+        mainMenu.visible = !fullscreen;
+        // Switching from maximized to fullscreen isn't working properly,
+        // so we set to windowed mode first.
+        visibility = Window.Windowed;
+        if (fullscreen) {
+            visibility = Window.FullScreen;
+        }
     }
 
-    //Workaround: Without __contentItem a ugly thin border is visible.
     menuBar: CRTMainMenuBar{
         id: mainMenu
-        visible: (Qt.platform.os === "osx" || appSettings.showMenubar)
-        __contentItem.visible: mainMenu.visible
     }
 
-    color: "#00000000"
-    title: terminalContainer.title || qsTr("cool-retro-term")
+    color: "black"
+    title: "Retro " + terminalContainer.title
 
     //Action {
     //    id: showMenubarAction
@@ -80,11 +95,57 @@ ApplicationWindow{
     Action {
         id: fullscreenAction
         text: qsTr("Fullscreen\t")
-        enabled: Qt.platform.os !== "osx"
+        enabled: true
         shortcut: "Alt+Return"
         onTriggered: appSettings.fullscreen = !appSettings.fullscreen;
         checkable: true
         checked: appSettings.fullscreen
+    }
+    Action {
+        id: scale100Action
+        text: qsTr("100%\t")
+        enabled: true
+        shortcut: "Alt+1"
+        onTriggered: { terminalWindow.visibility = Window.Windowed; terminalWindow.windowScale = 1 }
+        checkable: false
+        checked: terminalWindow.windowScale === 1
+    }
+    Action {
+        id: scale200Action
+        text: qsTr("200%\t")
+        enabled: true
+        shortcut: "Alt+2"
+        onTriggered: { terminalWindow.visibility = Window.Windowed; terminalWindow.windowScale = 2 }
+        checkable: false
+        checked: terminalWindow.windowScale === 2
+    }
+    Action {
+        id: scale300Action
+        text: qsTr("300%\t")
+        enabled: true
+        shortcut: "Alt+3"
+        onTriggered: { terminalWindow.visibility = Window.Windowed; terminalWindow.windowScale = 3 }
+        checkable: false
+        checked: terminalWindow.windowScale === 3
+    }
+    Action {
+        id: scale400Action
+        text: qsTr("400%\t")
+        enabled: true
+        shortcut: "Alt+4"
+        onTriggered: { terminalWindow.visibility = Window.Windowed; terminalWindow.windowScale = 4 }
+        checkable: false
+        checked: terminalWindow.windowScale === 4
+    }
+    Action {
+        id: aspectAction
+        text: qsTr("Maintain Aspect Ratio\t")
+        enabled: true
+        shortcut: "Alt+A"
+        onTriggered: terminalContainer.maintainAspect = !terminalContainer.maintainAspect
+        checkable: true
+        checked: terminalContainer.maintainAspect
+
     }
     Action {
         id: quitAction
@@ -101,28 +162,34 @@ ApplicationWindow{
             settingswindow.raise();
         }
     }
-    //Action{
-    //    id: copyAction
-    //    text: qsTr("Copy")
-    //    shortcut: Qt.platform.os === "osx" ? StandardKey.Copy : "Ctrl+Shift+C"
-    //}
-    //Action{
-    //    id: pasteAction
-    //    text: qsTr("Paste")
-    //    shortcut: Qt.platform.os === "osx" ? StandardKey.Paste : "Ctrl+Shift+V"
-    //}
-    //Action{
-    //    id: zoomIn
-    //    text: qsTr("Zoom In")
-    //    shortcut: "Ctrl++"
-    //    onTriggered: appSettings.incrementScaling();
-    //}
-    //Action{
-    //    id: zoomOut
-    //    text: qsTr("Zoom Out")
-    //    shortcut: "Ctrl+-"
-    //    onTriggered: appSettings.decrementScaling();
-    //}
+    Action{
+        id: resetZoom
+        text: qsTr("Reset Zoom")
+        shortcut: "Ctrl+0"
+        onTriggered: {
+            terminalWindow.visibility = Window.Windowed;
+            terminalWindow.windowScale = 2 ;
+        }
+    }
+    Action{
+        id: zoomIn
+        text: qsTr("Zoom In")
+        shortcut: "Ctrl++"
+        onTriggered: {
+            terminalWindow.visibility = Window.Windowed;
+            terminalWindow.windowScale += 1;
+        }
+    }
+    Action{
+        id: zoomOut
+        text: qsTr("Zoom Out")
+        shortcut: "Ctrl+-"
+        onTriggered: {
+            terminalWindow.visibility = Window.Windowed;
+            if (terminalWindow.windowScale > 1)
+                terminalWindow.windowScale -= 1 ;
+        }
+    }
     //Action{
     //    id: showAboutAction
     //    text: qsTr("About")
@@ -137,13 +204,46 @@ ApplicationWindow{
     }
     TerminalContainer{
         id: terminalContainer
-        y: appSettings.showMenubar ? 0 : -2 // Workaroud to hide the margin in the menubar.
-        width: parent.width * appSettings.windowScaling
-        height: (parent.height + Math.abs(y)) * appSettings.windowScaling
+
+        anchors.centerIn: parent
+
+        function getScale(){
+            var scaleX = parent.width/terminalContainer.naturalWidth;
+            var scaleY = parent.height/terminalContainer.naturalHeight;
+            return Math.min(scaleX, scaleY);
+        }
+
+        function getScaleX() {
+            var scaleX = parent.width/terminalContainer.naturalWidth;
+            return maintainAspect ? getScale() : scaleX;
+        }
+
+        function getScaleY() {
+            var scaleY = parent.height/terminalContainer.naturalHeight;
+            return maintainAspect ? getScale() : scaleY;
+        }
+
+        width: getScaleX() * terminalContainer.naturalWidth * appSettings.windowScaling
+        height:  getScaleY() * terminalContainer.naturalHeight * appSettings.windowScaling
+
+        property bool maintainAspect: true
+
+        onNaturalWidthChanged: terminalWindow.setDimensions()
+        onNaturalHeightChanged: terminalWindow.setDimensions()
 
         transform: Scale {
             xScale: 1 / appSettings.windowScaling
             yScale: 1 / appSettings.windowScaling
+        }
+
+        Keys.onPressed: {
+            if (event.modifiers & Qt.AltModifier)
+            {
+                if (event.key >= Qt.Key_5 && event.key <= Qt.Key_9){
+                    terminalWindow.visibility = Window.Windowed;
+                    terminalWindow.windowScale = event.key - Qt.Key_0;
+                }
+            }
         }
     }
     SettingsWindow{

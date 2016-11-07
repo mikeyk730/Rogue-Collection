@@ -8,6 +8,8 @@ Rectangle {
     signal simulateMousePress
     signal simulateMouseRelease
     signal simulateMouseDoubleClick
+    signal simulateWheel
+    signal simulateMouseMove
 
     property string colorScheme
     property bool enableBold
@@ -21,28 +23,35 @@ Rectangle {
     property alias font: rogue.font
     property alias terminalSize: rogue.screenSize
     property alias fontMetrics: rogue.fontSize
+
     property int naturalWidth: rogue.width + 2*rogue.padding
     property int naturalHeight: rogue.height + 2*rogue.padding
 
     function setGraphics(graphics){
-        rogue.setGraphics(graphics);
+        rogue.graphics = graphics;
     }
 
-    //onSimulateMousePress: {
-    //    console.log(root.width, root.height, root.naturalWidth, root.naturalHeight);
-    //}
+    onSimulateMousePress: {
+        scope.focus = true;
+    }
 
     color: 'black'
 
-    RogueWindow {
-        id: rogue
+    FocusScope {
+        id: scope
+        anchors.fill: parent
+        focus: true
 
-        property int padding: 1
-        x: padding
-        y: padding
-        anchors.centerIn: parent
+        RogueWindow {
+            id: rogue
 
-        smooth: false
-        onRendered: root.imagePainted()
+            property int padding: 1
+            x: padding
+            y: padding
+            anchors.centerIn: parent
+
+            smooth: false
+            onRendered: root.imagePainted()
+        }
     }
 }

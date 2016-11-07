@@ -28,6 +28,9 @@ import "utils.js" as Utils
 Item{
     id: terminalContainer
 
+    property alias naturalWidth: kterminal.naturalWidth
+    property alias naturalHeight: kterminal.naturalHeight
+
     property size virtualResolution: Qt.size(kterminal.width, kterminal.height)
     property alias mainTerminal: kterminal
     property ShaderEffectSource mainSource: kterminalSource
