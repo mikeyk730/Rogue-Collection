@@ -102,42 +102,6 @@ ApplicationWindow{
         checked: appSettings.fullscreen
     }
     Action {
-        id: scale100Action
-        text: qsTr("100%\t")
-        enabled: true
-        shortcut: "Alt+1"
-        onTriggered: { terminalWindow.visibility = Window.Windowed; terminalWindow.windowScale = 1 }
-        checkable: false
-        checked: terminalWindow.windowScale === 1
-    }
-    Action {
-        id: scale200Action
-        text: qsTr("200%\t")
-        enabled: true
-        shortcut: "Alt+2"
-        onTriggered: { terminalWindow.visibility = Window.Windowed; terminalWindow.windowScale = 2 }
-        checkable: false
-        checked: terminalWindow.windowScale === 2
-    }
-    Action {
-        id: scale300Action
-        text: qsTr("300%\t")
-        enabled: true
-        shortcut: "Alt+3"
-        onTriggered: { terminalWindow.visibility = Window.Windowed; terminalWindow.windowScale = 3 }
-        checkable: false
-        checked: terminalWindow.windowScale === 3
-    }
-    Action {
-        id: scale400Action
-        text: qsTr("400%\t")
-        enabled: true
-        shortcut: "Alt+4"
-        onTriggered: { terminalWindow.visibility = Window.Windowed; terminalWindow.windowScale = 4 }
-        checkable: false
-        checked: terminalWindow.windowScale === 4
-    }
-    Action {
         id: aspectAction
         text: qsTr("Maintain Aspect Ratio\t")
         enabled: true
@@ -224,7 +188,7 @@ ApplicationWindow{
         }
 
         width: getScaleX() * terminalContainer.naturalWidth * appSettings.windowScaling
-        height:  getScaleY() * terminalContainer.naturalHeight * appSettings.windowScaling
+        height: getScaleY() * terminalContainer.naturalHeight * appSettings.windowScaling
 
         property alias maintainAspect: appSettings.maintainAspect
 
@@ -241,7 +205,7 @@ ApplicationWindow{
         Keys.onPressed: {
             if (event.modifiers & Qt.AltModifier)
             {
-                if (event.key >= Qt.Key_5 && event.key <= Qt.Key_9){
+                if (event.key >= Qt.Key_1 && event.key <= Qt.Key_9){
                     terminalWindow.visibility = Window.Windowed;
                     terminalWindow.windowScale = event.key - Qt.Key_0;
                 }
