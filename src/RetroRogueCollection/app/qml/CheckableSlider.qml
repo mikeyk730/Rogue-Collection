@@ -46,7 +46,7 @@ RowLayout {
 
     CheckBox{
         id: check
-        implicitWidth: 160
+        implicitWidth: 200
         onClicked: {
             if(!checked){
                 checked = false;

@@ -44,9 +44,9 @@ QtObject{
     property bool showMenubar: true
 
     property real windowOpacity: 1.0
-    property real ambientLight: 0.2
-    property real contrast: 0.85
-    property real brightness: 0.5
+    property real ambientLight: 0.0
+    property real contrast: 1.0
+    property real brightness: 1.0/3.0
 
     property bool showTerminalSize: true
     property real windowScaling: 1.0
@@ -61,32 +61,30 @@ QtObject{
 
     // PROFILE SETTINGS ///////////////////////////////////////////////////////
 
-    //property bool useCustomCommand: false
-    //property string customCommand: ""
-    property string graphics: ""
+    property string graphics
 
     property string _backgroundColor: "#000000"
-    property string _fontColor: "#ff8100"
+    property string _fontColor: "#ffffff"
     property string saturatedColor: Utils.mix(Utils.strToColor("#FFFFFF"), Utils.strToColor(_fontColor), saturationColor * 0.5)
     property color fontColor: Utils.mix(Utils.strToColor(saturatedColor), Utils.strToColor(_backgroundColor), 0.7 + (contrast * 0.3))
     property color backgroundColor: Utils.mix(Utils.strToColor(_backgroundColor), Utils.strToColor(saturatedColor), 0.7 + (contrast * 0.3))
 
-    property real staticNoise: 0.1
-    property real screenCurvature: 0.1
-    property real glowingLine: 0.2
-    property real burnIn: 0.40
-    property real bloom: 0.65
+    property real staticNoise: 0
+    property real screenCurvature: 0
+    property real glowingLine: 0
+    property real burnIn: 0
+    property real bloom: 0
 
     property real bloomQuality: 0.5
     property real burnInQuality: 0.5
 
-    property real chromaColor: 0.0
+    property real chromaColor: 1
     property real saturationColor: 0.0
 
-    property real jitter: 0.18
+    property real jitter: 0
 
-    property real horizontalSync: 0.08
-    property real flickering: 0.1
+    property real horizontalSync: 0
+    property real flickering: 0
 
     property real rbgShift: 0.0
 
@@ -103,7 +101,7 @@ QtObject{
 
     property bool lowResolutionFont: false
 
-    property var fontNames: ["TERMINUS_SCALED", "COMMODORE_PET", "COMMODORE_PET"]
+    property var fontNames: ["IBM_DOS", "TERMINUS_SCALED"]
     property var fontlist: fontManager.item.fontlist
 
     signal terminalFontChanged(string fontSource, int pixelSize, int lineSpacing, real screenScaling, real fontWidth)
@@ -195,8 +193,8 @@ QtObject{
         return 0; // If the frame is not available default to 0.
     }
 
-    property string frameSource: "./frames/WhiteSimpleFrame.qml"
-    property string frameName: "SIMPLE_WHITE_FRAME"
+    property string frameSource: ""
+    property string frameName: "NO_FRAME"
 
     property bool _frameReflections: false
     property bool reflectionsAllowed: true
@@ -231,7 +229,6 @@ QtObject{
             fontScaling: fontScaling,
             fontNames: fontNames,
             frameReflections: _frameReflections,
-            //showMenubar: showMenubar,
             bloomQuality: bloomQuality,
             burnInQuality: burnInQuality,
             windowScale: windowScale,
@@ -263,8 +260,6 @@ QtObject{
             windowOpacity: windowOpacity,
             fontName: fontNames[rasterization],
             fontWidth: fontWidth,
-            //useCustomCommand: useCustomCommand,
-            //customCommand: customCommand
             graphics: graphics
         }
         return settings;
@@ -361,8 +356,6 @@ QtObject{
         fontNames[rasterization] = settings.fontName !== undefined ? settings.fontName : fontNames[rasterization];
         fontWidth = settings.fontWidth !== undefined ? settings.fontWidth : fontWidth;
 
-        //useCustomCommand = settings.useCustomCommand !== undefined ? settings.useCustomCommand : useCustomCommand
-        //customCommand = settings.customCommand !== undefined ? settings.customCommand : customCommand
         graphics = settings.graphics !== undefined ? settings.graphics : graphics
 
         handleFontChanged();
