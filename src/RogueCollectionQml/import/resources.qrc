@@ -7,5 +7,6 @@
         <file>GameSelect.qml</file>
         <file>RogueWindow.qml</file>
         <file>assets/TerminusTTF-4.38.2.ttf</file>
+        <file>assets/Px437_IBM_VGA8.ttf</file>
     </qresource>
 </RCC>

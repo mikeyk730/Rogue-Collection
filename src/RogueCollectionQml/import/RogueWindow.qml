@@ -117,8 +117,6 @@ Item {
         height: screenSize.height * fontSize.height
         anchors.centerIn: parent
 
-        //font.family: 'Consolas'
-        //font.pixelSize: 16
         smooth: false
 
         Keys.onPressed: {

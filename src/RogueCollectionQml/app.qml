@@ -43,9 +43,10 @@ ApplicationWindow
         onWidthChanged: window.setDimensions()
         onHeightChanged: window.setDimensions()
 
+        FontLoader { id: pcFont; source: "assets/Px437_IBM_VGA8.ttf" }
         FontLoader { id: unixFont; source: "assets/TerminusTTF-4.38.2.ttf" }
 
-        font.family: graphics === 'unix' ? unixFont.name : "Px437 IBM VGA8"
+        font.family: graphics === 'unix' ? unixFont.name : pcFont.name
         font.pixelSize: graphics === 'unix' ? 12 : 16
 
         Keys.onPressed: {
@@ -56,7 +57,10 @@ ApplicationWindow
                     window.windowScale = event.key - Qt.Key_0;
                 }
                 else if (event.key === Qt.Key_Return){
-                    window.visibility = (window.visibility === Window.FullScreen) ? Window.Windowed : Window.FullScreen;
+                    var to_fullscreen = window.visibility !== Window.FullScreen;
+                    window.visibility = Window.Windowed;
+                    if (to_fullscreen)
+                        window.visibility = Window.FullScreen;
                 }
                 else if (event.key === Qt.Key_A){
                     maintainAspect = !maintainAspect
