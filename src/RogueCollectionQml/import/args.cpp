@@ -2,31 +2,35 @@
 
 bool LoadArg(Args& a, const std::string& arg, const std::string& next)
 {
-    if (arg == "/r" || arg == "-r") {
+    if (arg == "--restore" || arg == "-r") {
         a.savefile = "rogue.sav";
     }
-    else if (arg == "/s" || arg == "-s") {
+    else if (arg == "--score" || arg == "-s") {
         a.print_score = true;
     }
-    else if (arg == "/p" || arg == "-p") {
+    else if (arg == "--paused" || arg == "-p") {
         a.start_paused = true;
     }
-    else if (arg == "/n" || arg == "-n") {
+    else if (arg == "--small-screen" || arg == "-n") {
         a.small_screen = true;
     }
-    else if (arg == "/g" || arg == "-g") {
+    else if (arg == "--graphics" || arg == "-g") {
         a.gfx = next;
         return true;
     }
-    else if (arg == "/o" || arg == "-o") {
+    else if (arg == "--optfile" || arg == "-o") {
         a.optfile = next;
         return true;
     }
-    else if (arg == "/f" || arg == "-f") {
+    else if (arg == "--font" || arg == "-f") {
         a.fontfile = next;
         return true;
     }
-    else {
+    else if (arg == "--profile") {
+        //reserved for Retro Rogue
+        return true;
+    }
+    else if (arg[0] != '-'){
         a.savefile = arg;
     }
     return false;

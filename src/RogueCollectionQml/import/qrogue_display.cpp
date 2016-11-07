@@ -302,7 +302,7 @@ void QRogueDisplay::RenderCounterOverlay(QPainter* painter, const std::string& l
     for (size_t i = 0; i < len; ++i) {
         int x = screen_size_.width() - (len - i) - 1;
         int y = screen_size_.height() - 1;
-        PaintChar(painter, x, y, s[i], FlipColor(DefaultColor()), true);
+        PaintChar(painter, x, y, s[i], 0x70, true);
     }
 }
 

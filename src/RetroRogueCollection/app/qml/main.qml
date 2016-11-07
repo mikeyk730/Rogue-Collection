@@ -1,23 +1,3 @@
-/*******************************************************************************
-* Copyright (c) 2013 "Filippo Scognamiglio"
-* https://github.com/Swordfish90/cool-retro-term
-*
-* This file is part of cool-retro-term.
-*
-* cool-retro-term is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation, either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*******************************************************************************/
-
 import QtQuick 2.2
 import QtQuick.Window 2.1
 import QtQuick.Controls 1.1
@@ -28,6 +8,8 @@ ApplicationWindow{
 
     property alias windowScale: appSettings.windowScale
 
+    title: "Retro " + terminalContainer.title
+    color: "black"
     minimumWidth: 320
     minimumHeight: 200
 
@@ -76,26 +58,9 @@ ApplicationWindow{
         }
     }
 
-    menuBar: CRTMainMenuBar{
-        id: mainMenu
-    }
-
-    color: "black"
-    title: "Retro " + terminalContainer.title
-
-    //Action {
-    //    id: showMenubarAction
-    //    text: qsTr("Show Menubar")
-    //    enabled: Qt.platform.os !== "osx"
-    //    shortcut: "Ctrl+Shift+M"
-    //    checkable: true
-    //    checked: appSettings.showMenubar
-    //    onTriggered: appSettings.showMenubar = !appSettings.showMenubar
-    //}
     Action {
         id: fullscreenAction
         text: qsTr("Fullscreen\t")
-        enabled: true
         shortcut: "Alt+Return"
         onTriggered: appSettings.fullscreen = !appSettings.fullscreen;
         checkable: true
@@ -104,7 +69,6 @@ ApplicationWindow{
     Action {
         id: aspectAction
         text: qsTr("Maintain Aspect Ratio\t")
-        enabled: true
         shortcut: "Alt+A"
         onTriggered: terminalContainer.maintainAspect = !terminalContainer.maintainAspect
         checkable: true
@@ -175,6 +139,10 @@ ApplicationWindow{
     //        aboutDialog.raise();
     //    }
     //}
+
+    menuBar: CRTMainMenuBar{
+        id: mainMenu
+    }
     ApplicationSettings{
         id: appSettings
     }
@@ -232,18 +200,4 @@ ApplicationWindow{
     //    id: aboutDialog
     //    visible: false
     //}
-    //Loader{
-    //    anchors.centerIn: parent
-    //    active: appSettings.showTerminalSize
-    //    sourceComponent: SizeOverlay{
-    //        z: 3
-    //        terminalSize: terminalContainer.terminalSize
-    //    }
-    //}
-    onClosing: {
-        // OSX Since we are currently supporting only one window
-        // quit the application when it is closed.
-        if (Qt.platform.os === "osx")
-            Qt.quit()
-    }
 }
