@@ -35,7 +35,7 @@ protected:
     GameConfig Options() const;
 
 private:
-    std::mutex m_input_mutex;
+    mutable std::mutex m_input_mutex;
     std::condition_variable m_input_cv;
     std::deque<unsigned char> m_buffer;
 

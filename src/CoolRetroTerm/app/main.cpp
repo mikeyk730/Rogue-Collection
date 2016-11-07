@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include <fileio.h>
+#include "../import/utility.h"
 
 QString getNamedArgument(QStringList args, QString name, QString defaultName)
 {
@@ -85,15 +86,22 @@ int main(int argc, char *argv[])
     importPathList.prepend(QCoreApplication::applicationDirPath() + "/../../../qmltermwidget");
     engine.setImportPathList(importPathList);
 
-    engine.load(QUrl(QStringLiteral ("qrc:/main.qml")));
+    try {
+        engine.load(QUrl(QStringLiteral ("qrc:/main.qml")));
 
-    if (engine.rootObjects().isEmpty()) {
-        qDebug() << "Cannot load QML interface";
-        return EXIT_FAILURE;
+        if (engine.rootObjects().isEmpty()) {
+            qDebug() << "Cannot load QML interface";
+            return EXIT_FAILURE;
+        }
+
+        // Quit the application when the engine closes.
+        QObject::connect((QObject*) &engine, SIGNAL(quit()), (QObject*) &app, SLOT(quit()));
+
+        return app.exec();
     }
-
-    // Quit the application when the engine closes.
-    QObject::connect((QObject*) &engine, SIGNAL(quit()), (QObject*) &app, SLOT(quit()));
-
-    return app.exec();
+    catch (std::runtime_error& e)
+    {
+        DisplayMessage("Error", "Fatal Error", e.what());
+        return 1;
+    }
 }

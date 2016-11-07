@@ -122,6 +122,11 @@ void QRogue::setGame(int index)
     LaunchGame();
 }
 
+bool QRogue::showTitleScreen()
+{
+    return config_.name == "PC Rogue 1.48" && restore_count_ == 0;
+}
+
 void QRogue::restoreGame(const QString &filename)
 {
     RestoreGame(filename.toStdString());

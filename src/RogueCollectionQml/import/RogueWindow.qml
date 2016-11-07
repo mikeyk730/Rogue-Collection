@@ -63,7 +63,7 @@ Item {
 
             function onGameSet()
             {
-                if (rogue.game === "PC Rogue 1.48"){
+                if (rogue.showTitleScreen()){
                     activeItem = titleScreen;
                 }
                 else{

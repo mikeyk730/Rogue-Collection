@@ -4,14 +4,19 @@ TARGET = cool-retro-term
 DESTDIR = $$OUT_PWD/../
 
 HEADERS += \
-    fileio.h
+    fileio.h \
+    ../import/utility.h
 
 SOURCES = main.cpp \
-    fileio.cpp
+    fileio.cpp \
+    ../import/utility.cpp \
+    ../import/utility_qml.cpp
 
 macx:ICON = icons/crt.icns
 
 RESOURCES += qml/resources.qrc
+
+win32:LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
 
 #########################################
 ##              INTALLS

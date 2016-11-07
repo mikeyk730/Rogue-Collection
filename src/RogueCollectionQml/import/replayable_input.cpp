@@ -186,6 +186,7 @@ void ReplayableInput::QueueInput(char input)
 
 bool ReplayableInput::InReplay() const
 {
+    std::lock_guard<std::mutex> lock(m_input_mutex);
     return m_replay_steps_remaining > 0;
 }
 
