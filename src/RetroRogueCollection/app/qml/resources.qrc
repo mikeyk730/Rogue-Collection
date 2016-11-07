@@ -39,7 +39,6 @@
         <file>CRTMainMenuBar.qml</file>
         <file>SettingsPerformanceTab.qml</file>
         <file>TerminalContainer.qml</file>
-        <file>images/crt256.png</file>
         <file>utils.js</file>
         <file>images/allNoise512.png</file>
         <file>fonts/modern-proggy-tiny/ProggyTiny.ttf</file>
@@ -50,7 +49,6 @@
         <file>SettingsScreenTab.qml</file>
         <file>fonts/modern-fixedsys-excelsior/FSEX301-L2.ttf</file>
         <file>Components/SizedLabel.qml</file>
-        <file>images/Codepage-437.png</file>
         <file>Components/QMLTermWidget.qml</file>
         <file>fonts/1985-ibm-pc-vga/Px437_IBM_VGA8.ttf</file>
     </qresource>
