@@ -1,4 +1,4 @@
-TARGET = QRogue
+TARGET = RogueCollection
 QT += qml quick
 
 DESTDIR = ./

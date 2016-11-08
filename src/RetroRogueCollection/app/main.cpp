@@ -18,10 +18,10 @@ int main(int argc, char *argv[])
     // Manage command line arguments from the cpp side
     QStringList args = app.arguments();
     if (args.contains("-h") || args.contains("--help")) {
-        qDebug() << "Usage: " + args.at(0) + " [--default-settings] [--profile <prof>] [--fullscreen] [-h|--help]";
-        qDebug() << "  --default-settings  Run cool-retro-term with the default settings";
-        qDebug() << "  --fullscreen        Run cool-retro-term in fullscreen.";
-        qDebug() << "  --profile <prof>    Run cool-retro-term with the given profile.";
+        qDebug() << "Usage: " + args.at(0) + " [--default-settings] [--fullscreen] [--profile <prof>] [-h|--help] [--verbose]";
+        qDebug() << "  --default-settings  Run with the default settings";
+        qDebug() << "  --fullscreen        Run in fullscreen.";
+        qDebug() << "  --profile <prof>    Run with the given profile.";
         qDebug() << "  -h|--help           Print this help.";
         qDebug() << "  --verbose           Print additional information such as profiles and settings.";
         return 0;

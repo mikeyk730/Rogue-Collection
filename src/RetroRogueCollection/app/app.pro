@@ -1,5 +1,5 @@
 QT += qml quick widgets sql
-TARGET = retro-rogue-collection
+TARGET = RetroRogueCollection
 
 DESTDIR = $$OUT_PWD/../
 
