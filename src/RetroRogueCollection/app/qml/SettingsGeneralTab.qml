@@ -163,23 +163,23 @@ Tab{
         GroupBox{
             anchors {left: parent.left; right: parent.right}
             title: qsTr("Graphics")
-            ColumnLayout {
-                anchors.fill: parent
-                TextField{
-                    id: graphics
-                    anchors {left: parent.left; right: parent.right}
-                    text: appSettings.graphics
-                    onEditingFinished:
-                    {
-                        saveSetting();
-                    }
 
-                    // Save text even if user forgets to press enter or unfocus
-                    function saveSetting() {
-                        appSettings.graphics = text;
-                        appSettings.handleFontChanged();
-                    }
-                    Component.onCompleted: settings_window.closing.connect(saveSetting)
+            ComboBox{
+                id: graphicscombo
+                anchors.fill: parent
+                model: appSettings.graphicsList
+                currentIndex: 0
+                onActivated: {
+                    appSettings.graphics = model.get(index).name;
+                    appSettings.handleFontChanged();
+                }
+                function updateIndex(){
+                    currentIndex = appSettings.getGraphicsIndexByName(appSettings.graphics);
+                }
+                Component.onCompleted: updateIndex();
+                Connections {
+                    target: appSettings
+                    onGraphicsChanged: graphicscombo.updateIndex();
                 }
             }
         }

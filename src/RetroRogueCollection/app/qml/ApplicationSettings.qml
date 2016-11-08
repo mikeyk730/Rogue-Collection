@@ -164,6 +164,38 @@ QtObject{
 
     // FRAMES /////////////////////////////////////////////////////////////////
 
+    property ListModel graphicsList: ListModel{
+        ListElement {
+            name: ""
+            text: "Default"
+        }
+        ListElement {
+            name: "unix"
+            text: "Unix"
+        }
+        ListElement {
+            name: "pc"
+            text: "PC"
+        }
+        ListElement {
+            name: "tiles"
+            text: "Tiles"
+        }
+        ListElement {
+            name: "boxy"
+            text: "Boxy"
+        }
+    }
+
+    function getGraphicsIndexByName(name) {
+        for (var i = 0; i < graphicsList.count; i++) {
+            if (name === graphicsList.get(i).name)
+                return i;
+        }
+        return 0;
+    }
+
+
     property ListModel framesList: ListModel{
         ListElement{
             name: "NO_FRAME"
