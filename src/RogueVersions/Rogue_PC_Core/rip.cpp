@@ -75,28 +75,32 @@ void score(int amount, int flags, char monst)
         wait_for('\r');
         game->screen().move(LINES - 1, 0);
     }
+
+    int count = 0;
     while ((sc_fd = _open(game->options.get_environment("scorefile").c_str(), 0)) < 0)
     {
-        game->screen().printw("\n");
-        if (game->wizard().did_cheat() || (amount == 0)) 
+        if (count++ > 0)
             return;
-        str_attr("No scorefile: %Create %Retry %Abort");
+        //game->screen().printw("\n");
+        //if (game->wizard().did_cheat() || (amount == 0)) 
+        //    return;
+        //str_attr("No scorefile: %Create %Retry %Abort");
 
-        bool reread;
-        do {
-            reread = false;
-            switch (response = readchar())
-            {
-            case 'c': case 'C':
+        //bool reread;
+        //do {
+        //    reread = false;
+        //    switch (response = readchar())
+        //    {
+        //    case 'c': case 'C':
                 _close(_creat(game->options.get_environment("scorefile").c_str(), _S_IREAD | _S_IWRITE));
-            case 'r': case 'R': 
-                break;
-            case 'a': case 'A': 
-                return;
-            default:
-                reread = true;
-            }
-        } while (reread);
+        //    case 'r': case 'R': 
+        //        break;
+        //    case 'a': case 'A': 
+        //        return;
+        //    default:
+        //        reread = true;
+        //    }
+        //} while (reread);
     }
     game->screen().printw("\n");
     get_scores(&top_ten[0]);

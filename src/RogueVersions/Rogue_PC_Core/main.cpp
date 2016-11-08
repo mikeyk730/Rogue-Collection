@@ -300,6 +300,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     catch (ExitGame&) {}
 
     delete game;
+    return 0;
 }
 
 //do_quit: Have player make certain, then exit.
