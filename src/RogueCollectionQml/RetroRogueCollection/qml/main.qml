@@ -104,16 +104,17 @@ ApplicationWindow{
     }
     Action{
         id: resetZoom
-        text: qsTr("Reset Zoom")
+        text: qsTr("Reset Scale")
         shortcut: "Ctrl+0"
         onTriggered: {
             terminalWindow.visibility = Window.Windowed;
-            terminalWindow.windowScale = 2 ;
+            terminalWindow.windowScale = 2;
+            terminalWindow.setDimensions();
         }
     }
     Action{
         id: zoomIn
-        text: qsTr("Zoom In")
+        text: qsTr("Increase Scale")
         shortcut: "Ctrl++"
         onTriggered: {
             terminalWindow.visibility = Window.Windowed;
@@ -122,7 +123,7 @@ ApplicationWindow{
     }
     Action{
         id: zoomOut
-        text: qsTr("Zoom Out")
+        text: qsTr("Decrease Scale")
         shortcut: "Ctrl+-"
         onTriggered: {
             terminalWindow.visibility = Window.Windowed;
