@@ -1,6 +1,5 @@
 TEMPLATE = subdirs
-
 CONFIG += ordered
-
-SUBDIRS += import
-SUBDIRS += app
+SUBDIRS = \
+          import \
+          app/app.pro

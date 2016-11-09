@@ -6,11 +6,20 @@
 #include <QStringList>
 #include <QFontDatabase>
 #include <QDebug>
+#include <QtPlugin>
 #include "fileio.h"
 #include "../import/utility.h"
 
+#ifdef MDK_STATIC_COMPILE
+Q_IMPORT_PLUGIN(RoguePlugin)
+#endif
+
 int main(int argc, char *argv[])
 {
+#ifdef MDK_STATIC_COMPILE
+    Q_INIT_RESOURCE(rogue_resources);
+#endif
+
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
     FileIO fileIO;
@@ -34,7 +43,7 @@ int main(int argc, char *argv[])
     QFontDatabase::addApplicationFont(path);
 
     try {
-        engine.load(QUrl(QStringLiteral ("qrc:/main.qml")));
+        engine.load(QUrl("qrc:///main.qml"));
         if (engine.rootObjects().isEmpty()) {
             return EXIT_FAILURE;
         }

@@ -2,11 +2,16 @@ TEMPLATE = lib
 CONFIG += plugin
 QT += qml quick
 
+static {
+    URI = Rogue
+    QMAKE_MOC_OPTIONS += -Muri=$$URI
+}
+
 DESTDIR = ../Rogue
 TARGET = $$qtLibraryTarget(rogueplugin)
 
-DEFINES += "WINVER=0x0500"
-win32:LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
+INCLUDEPATH += $$PWD/../../Shared
+INCLUDEPATH += $$PWD/../../MyCurses
 
 HEADERS += \
     plugin.h \
@@ -42,17 +47,14 @@ SOURCES += \
     font_provider.cpp \
     colors.cpp
 
-INCLUDEPATH += $$PWD/../../Shared
-INCLUDEPATH += $$PWD/../../MyCurses
-
-DESTPATH=$$[QT_INSTALL_EXAMPLES]/qml/tutorials/extending-qml/chapter6-plugins/Rogue
-
-target.path=$$DESTPATH
-qmldir.files=$$PWD/qmldir
-qmldir.path=$$DESTPATH
-INSTALLS += target qmldir
-
-CONFIG += install_ok  # Do not cargo-cult this!
+win32 {
+    DEFINES += "WINVER=0x0500"
+    contains(QT_ARCH, x86_64) {
+        LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
+    } else {
+        LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/User32.Lib"
+    }
+}
 
 OTHER_FILES += qmldir
 
@@ -61,7 +63,4 @@ cpqmldir.files = qmldir
 cpqmldir.path = $$DESTDIR
 COPIES += cpqmldir
 
-RESOURCES += \
-    resources.qrc
-
-DISTFILES +=
+RESOURCES += rogue_resources.qrc

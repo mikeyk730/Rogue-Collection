@@ -2,11 +2,19 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
-#include <iostream>
+#include <QtPlugin>
 #include "import/utility.h"
+
+#ifdef MDK_STATIC_COMPILE
+Q_IMPORT_PLUGIN(RoguePlugin)
+#endif
 
 int main(int argc, char *argv[])
 {
+#ifdef MDK_STATIC_COMPILE
+    Q_INIT_RESOURCE(rogue_resources);
+#endif
+
     QGuiApplication a(argc, argv);
 
     auto path = a.applicationDirPath() + "/res/fonts/Px437_IBM_VGA8.ttf";

@@ -1,6 +1,12 @@
 TARGET = RogueCollection
 QT += qml quick
 
+static {
+    QTPLUGIN += RoguePlugin
+    LIBS += -LRogue -lrogueplugin
+    DEFINES += MDK_STATIC_COMPILE
+}
+
 DESTDIR = ./
 
 SOURCES += main.cpp \
@@ -8,10 +14,13 @@ SOURCES += main.cpp \
     import/utility_qml.cpp
 RESOURCES += app.qrc
 
-target.path = $$[QT_INSTALL_EXAMPLES]/qml/tutorials/extending-qml/chapter6-plugins
-INSTALLS += target
-
 HEADERS += \
     import/utility.h
 
-win32:LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
+win32 {
+    contains(QT_ARCH, x86_64) {
+        LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
+    } else {
+        LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/User32.Lib"
+    }
+}
