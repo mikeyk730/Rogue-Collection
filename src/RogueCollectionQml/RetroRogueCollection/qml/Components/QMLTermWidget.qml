@@ -1,5 +1,5 @@
 import QtQuick 2.4
-import Rogue 1.0
+import RoguePlugin 1.0
 
 Rectangle {
     id: root

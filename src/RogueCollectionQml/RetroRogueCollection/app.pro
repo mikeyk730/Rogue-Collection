@@ -3,7 +3,7 @@ TARGET = RetroRogueCollection
 
 static {
     QTPLUGIN += RoguePlugin
-    LIBS += -L../Rogue -lrogueplugin
+    LIBS += -L../RoguePlugin -lrogueplugin
     DEFINES += MDK_STATIC_COMPILE
 }
 
@@ -11,12 +11,12 @@ DESTDIR = $$OUT_PWD/../
 
 HEADERS += \
     fileio.h \
-    ../import/utility.h
+    ../RoguePlugin/utility.h
 
 SOURCES = main.cpp \
     fileio.cpp \
-    ../import/utility.cpp \
-    ../import/utility_qml.cpp
+    ../RoguePlugin/utility.cpp \
+    ../RoguePlugin/utility_qml.cpp
 
 RESOURCES += qml/resources.qrc
 

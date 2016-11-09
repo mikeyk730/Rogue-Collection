@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QtPlugin>
 #include "fileio.h"
-#include "../import/utility.h"
+#include "../RoguePlugin/utility.h"
 
 #ifdef MDK_STATIC_COMPILE
 Q_IMPORT_PLUGIN(RoguePlugin)
