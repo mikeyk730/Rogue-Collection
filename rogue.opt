@@ -4,9 +4,6 @@
 
 game=
 gfx=
-;autosave=
-fullscreen=false
-window_scaling=max
 small_screen=false
 replay_paused=false
 replay_pause_at=0
@@ -16,10 +13,10 @@ replay_step_delay=0
 ; options in all versions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-name=Mike
-fruit=mango
-hplusfix=false
-;showac=false
+;name=Rodney
+fruit=slime-mold
+hplusfix=true
+showac=false
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Unix options
@@ -46,10 +43,11 @@ askme=true
 ; PC options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+; all PC versions
 menu=true
 macro=v
 prompt_for_name=true
-use_exp_level_names=true
 dir_key_clears_more=false
-powers=
-logfile=
+
+; PC 1.48
+use_exp_level_names=true
