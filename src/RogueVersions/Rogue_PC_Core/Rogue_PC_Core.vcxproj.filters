@@ -285,9 +285,6 @@
     <ClInclude Include="captured_input.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="util.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="output_shim.h">
       <Filter>Output</Filter>
     </ClInclude>

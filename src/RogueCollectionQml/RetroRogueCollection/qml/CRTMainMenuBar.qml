@@ -10,14 +10,6 @@ MenuBar {
         MenuItem {action: saveAction}
         MenuItem {action: quitAction}
     }
-    //Menu {
-        //title: qsTr("Edit")
-        //visible: defaultMenuBar.visible
-        //MenuItem {action: copyAction}
-        //MenuItem {action: pasteAction}
-        //MenuSeparator{visible: Qt.platform.os !== "osx"}
-        //MenuItem {action: showsettingsAction}
-    //}
     Menu{
         title: qsTr("View")
         visible: defaultMenuBar.visible
@@ -26,7 +18,6 @@ MenuBar {
         MenuItem {action: zoomIn}
         MenuItem {action: zoomOut}
         MenuItem {action: resetZoom}
-        //MenuItem {action: showMenubarAction; visible: showMenubarAction.enabled}
         MenuSeparator{}
         MenuItem {action: aspectAction}
         MenuSeparator{}
@@ -50,9 +41,9 @@ MenuBar {
             onObjectRemoved: profilesMenu.removeItem(object)
         }
     }
-    //Menu{
-    //    title: qsTr("Help")
-    //    visible: defaultMenuBar.visible
-    //    MenuItem {action: showAboutAction}
-    //}
+    Menu{
+        title: qsTr("Help")
+        visible: defaultMenuBar.visible
+        MenuItem {action: showAboutAction}
+    }
 }

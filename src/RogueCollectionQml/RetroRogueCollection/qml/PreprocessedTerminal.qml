@@ -39,8 +39,6 @@ Item{
     property real fontWidth: 1.0
     property real screenScaling: 1.0
     property real scaleTexture: 1.0
-    //mdk:
-    //property alias title: ksession.title
     property string title: kterminal.title
     property alias kterminal: kterminal
 
@@ -59,16 +57,6 @@ Item{
 
     property size terminalSize: kterminal.terminalSize
     property size fontMetrics: kterminal.fontMetrics
-
-    // Manage copy and paste
-    //Connections{
-    //    target: copyAction
-    //    onTriggered: kterminal.copyClipboard();
-    //}
-    //Connections{
-    //    target: pasteAction
-    //    onTriggered: kterminal.pasteClipboard()
-    //}
 
     //When settings are updated sources need to be redrawn.
     Connections{
@@ -91,38 +79,7 @@ Item{
         width: naturalWidth
         height: naturalHeight
 
-        //mdk:
-        //width: Math.floor(parent.width / (screenScaling * fontWidth))
-        //height: Math.floor(parent.height / screenScaling)
-        //
-        //colorScheme: "cool-retro-term"
-        //
         //smooth: !appSettings.lowResolutionFont
-        //enableBold: false
-        //fullCursorHeight: true
-        //
-        //session: QMLTermSession {
-        //    id: ksession
-        //
-        //    onFinished: {
-        //        Qt.quit()
-        //    }
-        //}
-        //
-        //QMLTermScrollbar {
-        //    id: kterminalScrollbar
-        //    terminal: kterminal
-        //    anchors.margins: width * 0.5
-        //    width: terminal.fontMetrics.width * 0.75
-        //    Rectangle {
-        //        anchors.fill: parent
-        //        anchors.topMargin: 1
-        //        anchors.bottomMargin: 1
-        //        color: "white"
-        //        radius: width * 0.25
-        //        opacity: 0.7
-        //    }
-        //}
 
         FontLoader{ id: fontLoader }
 
@@ -142,59 +99,10 @@ Item{
             if(appSettings.graphics)
                 kterminal.setGraphics(appSettings.graphics);
         }
-        //function startSession() {
-        //    appSettings.initializedSettings.disconnect(startSession);
-        //
-        //    // Retrieve the variable set in main.cpp if arguments are passed.
-        //    if (defaultCmd) {
-        //        ksession.setShellProgram(defaultCmd);
-        //        ksession.setArgs(defaultCmdArgs);
-        //    } else if (appSettings.useCustomCommand) {
-        //        var args = Utils.tokenizeCommandLine(appSettings.customCommand);
-        //        ksession.setShellProgram(args[0]);
-        //        ksession.setArgs(args.slice(1));
-        //    } else if (!defaultCmd && Qt.platform.os === "osx") {
-        //        // OSX Requires the following default parameters for auto login.
-        //        ksession.setArgs(["-i", "-l"]);
-        //    }
-        //
-        //    if (workdir)
-        //        ksession.initialWorkingDirectory = workdir;
-        //
-        //    ksession.startShellProgram();
-        //    forceActiveFocus();
-        //}
         Component.onCompleted: {
             appSettings.terminalFontChanged.connect(handleFontChange);
-            //appSettings.initializedSettings.connect(startSession);
         }
     }
-    //Component {
-    //    id: linuxContextMenu
-    //    Menu{
-            //id: contextmenu
-            //MenuItem{action: copyAction}
-            //MenuItem{action: pasteAction}
-            //MenuSeparator{}
-            //MenuItem{action: fullscreenAction}
-            //MenuItem{action: showMenubarAction}
-            //MenuSeparator{visible: !appSettings.showMenubar}
-            //CRTMainMenuBar{visible: !appSettings.showMenubar}
-    //    }
-    //}
-    //Component {
-    //    id: osxContextMenu
-    //    Menu{
-    //        id: contextmenu
-    //        MenuItem{action: copyAction}
-    //        MenuItem{action: pasteAction}
-    //    }
-    //}
-    //Loader {
-    //    id: menuLoader
-    //    sourceComponent: (Qt.platform.os === "osx" ? osxContextMenu : linuxContextMenu)
-    //}
-    //property alias contextmenu: menuLoader.item
 
     MouseArea{
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton | Qt.RightButton

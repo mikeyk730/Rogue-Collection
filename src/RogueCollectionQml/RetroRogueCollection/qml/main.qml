@@ -104,7 +104,7 @@ ApplicationWindow{
     }
     Action{
         id: resetZoom
-        text: qsTr("Reset Scale")
+        text: qsTr("Reset Scale\t")
         shortcut: "Ctrl+0"
         onTriggered: {
             terminalWindow.visibility = Window.Windowed;
@@ -114,7 +114,7 @@ ApplicationWindow{
     }
     Action{
         id: zoomIn
-        text: qsTr("Increase Scale")
+        text: qsTr("Increase Scale\t")
         shortcut: "Ctrl++"
         onTriggered: {
             terminalWindow.visibility = Window.Windowed;
@@ -123,7 +123,7 @@ ApplicationWindow{
     }
     Action{
         id: zoomOut
-        text: qsTr("Decrease Scale")
+        text: qsTr("Decrease Scale\t")
         shortcut: "Ctrl+-"
         onTriggered: {
             terminalWindow.visibility = Window.Windowed;
@@ -131,15 +131,15 @@ ApplicationWindow{
                 terminalWindow.windowScale -= 1 ;
         }
     }
-    //Action{
-    //    id: showAboutAction
-    //    text: qsTr("About")
-    //    onTriggered: {
-    //        aboutDialog.show();
-    //       aboutDialog.requestActivate();
-    //        aboutDialog.raise();
-    //    }
-    //}
+    Action{
+        id: showAboutAction
+        text: qsTr("About\t")
+        onTriggered: {
+            aboutDialog.show();
+            aboutDialog.requestActivate();
+            aboutDialog.raise();
+        }
+    }
 
     menuBar: CRTMainMenuBar{
         id: mainMenu
@@ -197,8 +197,8 @@ ApplicationWindow{
         id: settingswindow
         visible: false
     }
-    //AboutDialog{
-    //    id: aboutDialog
-    //    visible: false
-    //}
+    AboutDialog{
+        id: aboutDialog
+        visible: false
+    }
 }

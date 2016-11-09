@@ -225,7 +225,6 @@
     <ClInclude Include="ring.h" />
     <ClInclude Include="scroll.h" />
     <ClInclude Include="sticks.h" />
-    <ClInclude Include="util.h" />
     <ClInclude Include="output_shim.h" />
     <ClInclude Include="daemon.h" />
     <ClInclude Include="daemons.h" />

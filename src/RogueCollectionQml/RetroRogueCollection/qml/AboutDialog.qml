@@ -1,15 +1,17 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
-import QtQuick.Window 2.0
+import QtQuick.Window 2.2
 
 Window{
     id: dialogwindow
     title: qsTr("About")
-    width: 600
-    height: 400
+    width: 850
+    height: 525
 
     modality: Qt.ApplicationModal
+
+    onClosing: mainContent.state = "Default";
 
     ColumnLayout{
         anchors.fill: parent
@@ -17,8 +19,8 @@ Window{
         spacing: 15
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "cool-retro-term"
-            font {bold: true; pointSize: 18}
+            text: "Retro Rogue Collection"
+            font {bold: true; pointSize: 16}
         }
         Loader{
             id: mainContent
@@ -66,21 +68,24 @@ Window{
         ColumnLayout{
             anchors.fill: parent
             spacing: 10
-            Image{
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                source: "images/crt256.png"
-                smooth: true
-            }
             Text{
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
-                text: appSettings.version + "\n" +
-                      qsTr("Author: ") + "Filippo Scognamiglio\n" +
-                      qsTr("Email: ")  + "flscogna@gmail.com\n" +
-                      qsTr("Source: ") + "https://github.com/Swordfish90/cool-retro-term\n"
+                text: "Exploring the Dungeons of Doom\n\n" +
+
+                      qsTr("Version: ") + appSettings.version + "\n" +
+                      qsTr("Author: ") + "Mike Kaminski\n" +
+                      qsTr("Email: ")  + "mikeyk730@gmail.com\n" +
+                      qsTr("Source: ") + "https://github.com/mikeyk730/Game-Rogue\n\n" +
+
+                      'Rogue:\n' +
+                      "Copyright (C) 1981 Michael Toy, Ken Arnold, and Glenn Wichman\n" +
+                      "Copyright (C) 1983 Mel Sibony, Jon Lane (A.I. Design update for the IBMPC)\n" +
+                      "Copyright (C) 1985 Epyx\n" +
+                      "Credit to Roguelike Restoration Project\n\n" +
+
+                      'Graphical effects adapted from cool-retro-term:\n' +
+                      "Copyright (C) 2013 Filippo Scognamiglio\n"
             }
         }
     }
@@ -89,10 +94,10 @@ Window{
         TextArea{
             anchors.fill: parent
             readOnly: true
-            text: "Copyright (c) 2013 Filippo Scognamiglio <flscogna@gmail.com>\n\n" +
-                  "https://github.com/Swordfish90/cool-retro-term\n\n" +
+            text: "Copyright (C) 2016 Mike Kaminski <mikeyk730@gmail.com>\n" +
+                  "https://github.com/mikeyk730/Game-Rogue\n\n" +
 
-                  "cool-retro-term is free software: you can redistribute it and/or modify " +
+                  "Rogue Collection is free software: you can redistribute it and/or modify " +
                   "it under the terms of the GNU General Public License as published by " +
                   "the Free Software Foundation, either version 3 of the License, or " +
                   "(at your option) any later version.\n\n" +
