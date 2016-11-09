@@ -13,7 +13,7 @@ replay_step_delay=0
 ; options in all versions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;name=Rodney
+name=
 fruit=slime-mold
 hplusfix=true
 showac=false
