@@ -304,7 +304,7 @@ ShaderEffect {
                  vec3 finalColor = mix(finalBackColor, fontColor.rgb, color).rgb;" :
 
                 "vec3 finalColor = mix(luminance * fontColor.rgb, txt_color, chromaColor);"
-                +"finalColor = mix(backgroundColor.rgb, finalColor, luminance > 0);"
+                +"finalColor = mix(backgroundColor.rgb, finalColor, float(luminance > 0.0) * vec3(1.0,1.0,1.0));"
                 +"finalColor = mix(finalColor, fontColor.rgb, color);"
                 )
             :
