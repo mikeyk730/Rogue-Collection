@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Dialogs 1.0
-import Rogue 1.0
+import RoguePlugin 1.0
 
 Item {
     id: root

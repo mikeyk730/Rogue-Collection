@@ -1,23 +1,25 @@
-TARGET = RogueCollection
 QT += qml quick
+TARGET = RogueCollection
 
 static {
     QTPLUGIN += RoguePlugin
-    LIBS += -LRogue -lrogueplugin
+    LIBS += -L../RoguePlugin -lrogueplugin
     DEFINES += MDK_STATIC_COMPILE
 }
 
-DESTDIR = ./
-
-SOURCES += main.cpp \
-    import/utility.cpp \
-    import/utility_qml.cpp
-RESOURCES += app.qrc
+DESTDIR = $$OUT_PWD/../
 
 HEADERS += \
-    import/utility.h
+    ../RoguePlugin/utility.h
+
+SOURCES = main.cpp \
+    ../RoguePlugin/utility.cpp \
+    ../RoguePlugin/utility_qml.cpp
+
+RESOURCES += app.qrc
 
 win32 {
+    DEFINES += "WINVER=0x0500"
     contains(QT_ARCH, x86_64) {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
     } else {

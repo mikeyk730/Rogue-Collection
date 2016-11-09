@@ -3,11 +3,11 @@ CONFIG += plugin
 QT += qml quick
 
 static {
-    URI = Rogue
+    URI = RoguePlugin
     QMAKE_MOC_OPTIONS += -Muri=$$URI
 }
 
-DESTDIR = ../Rogue
+DESTDIR = $$OUT_PWD
 TARGET = $$qtLibraryTarget(rogueplugin)
 
 INCLUDEPATH += $$PWD/../../Shared

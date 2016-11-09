@@ -3,7 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
 #include <QtPlugin>
-#include "import/utility.h"
+#include "../RoguePlugin/utility.h"
 
 #ifdef MDK_STATIC_COMPILE
 Q_IMPORT_PLUGIN(RoguePlugin)
