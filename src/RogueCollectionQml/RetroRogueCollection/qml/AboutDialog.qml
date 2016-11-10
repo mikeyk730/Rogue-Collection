@@ -80,7 +80,7 @@ Window{
 
                       'Rogue:\n' +
                       "Copyright (C) 1981 Michael Toy, Ken Arnold, and Glenn Wichman\n" +
-                      "Copyright (C) 1983 Mel Sibony, Jon Lane (A.I. Design update for the IBMPC)\n" +
+                      "Copyright (C) 1983 Jon Lane (A.I. Design update for the IBM PC)\n" +
                       "Copyright (C) 1985 Epyx\n" +
                       "Credit to Roguelike Restoration Project\n\n" +
 
