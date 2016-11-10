@@ -7,8 +7,8 @@ ShaderTerminal{
     property alias title: terminal.title
     property alias terminalSize: terminal.terminalSize
 
-    property alias naturalWidth: terminal.naturalWidth
-    property alias naturalHeight: terminal.naturalHeight
+    property int naturalWidth: terminal.naturalWidth + frame.displacementLeft + frame.displacementRight
+    property int naturalHeight: terminal.naturalHeight + frame.displacementTop + frame.displacementBottom
 
     id: mainShader
     opacity: appSettings.windowOpacity * 0.3 + 0.7
