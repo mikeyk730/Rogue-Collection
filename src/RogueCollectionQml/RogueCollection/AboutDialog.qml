@@ -7,7 +7,7 @@ Window{
     id: dialogwindow
     title: qsTr("About")
     width: 830
-    height: 525
+    height: 500
 
     modality: Qt.ApplicationModal
 
@@ -19,7 +19,7 @@ Window{
         spacing: 15
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Retro Rogue Collection"
+            text: "Rogue Collection"
             font {bold: true; pointSize: 16}
         }
         Loader{
@@ -73,7 +73,7 @@ Window{
                 horizontalAlignment: Text.AlignHCenter
                 text: "Exploring the Dungeons of Doom\n\n" +
 
-                      qsTr("Version: ") + appSettings.version + "\n" +
+                      qsTr("Version: ") + "2.0\n" +
                       qsTr("Author: ") + "Mike Kaminski\n" +
                       qsTr("Email: ")  + "mikeyk730@gmail.com\n" +
                       qsTr("Source: ") + "https://github.com/mikeyk730/Rogue-Collection\n\n" +
@@ -82,10 +82,7 @@ Window{
                       "Copyright (C) 1981 Michael Toy, Ken Arnold, and Glenn Wichman\n" +
                       "Copyright (C) 1983 Jon Lane (A.I. Design update for the IBM PC)\n" +
                       "Copyright (C) 1985 Epyx\n" +
-                      "Credit to Roguelike Restoration Project\n\n" +
-
-                      'Graphical effects adapted from cool-retro-term:\n' +
-                      "Copyright (C) 2013 Filippo Scognamiglio\n"
+                      "Credit to Roguelike Restoration Project\n"
             }
         }
     }

@@ -110,7 +110,15 @@ bool Environment::Get(const std::string & key, std::string* value) const
 
 void Environment::Set(const std::string & key, const std::string & value)
 {
-    m_environment[key] = value;
+    if (value.empty())
+        Clear(key);
+    else
+        m_environment[key] = value;
+}
+
+void Environment::Clear(const std::string & key)
+{
+    m_environment.erase(key);
 }
 
 void Environment::Lines(int n)

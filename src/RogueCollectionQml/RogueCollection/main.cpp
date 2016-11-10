@@ -1,4 +1,5 @@
 #include <QtQuick/QQuickView>
+#include <QtWidgets/QApplication>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
@@ -15,7 +16,7 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(rogue_resources);
 #endif
 
-    QGuiApplication a(argc, argv);
+    QApplication a(argc, argv);
 
     auto path = a.applicationDirPath() + "/res/fonts/Px437_IBM_VGA8.ttf";
     QFontDatabase::addApplicationFont(path);
