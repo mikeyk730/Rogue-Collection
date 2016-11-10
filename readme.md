@@ -54,3 +54,7 @@ cool-retro-term
 The retro effects were adapted from [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
 
 - Copyright (C) 2013 Filippo Scognamiglio
+
+Retro Rogue Collection
+----------------------
+- Copyright (C) 2016 Mike Kaminski
