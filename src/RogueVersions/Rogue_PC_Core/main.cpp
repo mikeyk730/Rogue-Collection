@@ -79,17 +79,17 @@ void print_credits_v11()
     game->screen().lmagenta();
     game->screen().center(10, "Adapted for the IBM PC by:");
     game->screen().high();
-    game->screen().center(12, "John Lane");
+    game->screen().center(12, "Jon Lane");
     game->screen().lmagenta();
     game->screen().center(14, "Significant design contributions by:");
     game->screen().high();
     game->screen().center(16, "Glenn Wichman and scores of others");
     game->screen().yellow();
-    game->screen().center(18, "****************");
+    game->screen().center(18, "(C) Copyright 1983");
     game->screen().high();
-    game->screen().center(19, "Public Domain Software -1984");
+    game->screen().center(19, "Artificial Intelligence Design");
     game->screen().yellow();
-    game->screen().center(20, "Not to be sold");
+    game->screen().center(20, "All Rights Reserved");
 }
 
 void print_credits()
