@@ -49,11 +49,15 @@ I do not own the rights to the original Rogue games.
 
 Thanks to the [Roguelike Restoration Project](https://github.com/RoguelikeRestorationProject) for updating Unix versions to modern environments.
 
-cool-retro-term
----------------
+Retro Effects
+-------------
 The retro effects were adapted from [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
 
 - Copyright (C) 2013 Filippo Scognamiglio
+
+Fonts
+-----
+Fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by VileR
 
 Retro Rogue Collection
 ----------------------
