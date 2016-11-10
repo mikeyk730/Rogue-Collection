@@ -78,12 +78,14 @@ ApplicationWindow{
         text: qsTr("Change Graphics\t")
         shortcut: "`"
         onTriggered: appSettings.rogue.nextGraphicsMode()
+        enabled: appSettings.rogue.isGameRunning()
     }
     Action {
         id: saveAction
         text: qsTr("Save Game\t")
         shortcut: "Ctrl+S"
         onTriggered: appSettings.rogue.saveGame()
+        enabled: appSettings.rogue.isGameRunning()
     }
     Action {
         id: quitAction

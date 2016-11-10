@@ -13,16 +13,21 @@ Item {
     property alias title: rogue.title
     property Item activeItem: gameSelectContainer
 
+    function isGameRunning()
+    {
+        return activeItem == rogue;
+    }
+
     function saveGame()
     {
-        if (activeItem === rogue)
+        if (isGameRunning())
             saveDialog.open();
     }
 
     function nextGraphicsMode()
     {
-        if (activeItem === rogue)
-            activeItem.nextGraphicsMode();
+        if (isGameRunning())
+            rogue.nextGraphicsMode();
     }
 
     signal rendered
