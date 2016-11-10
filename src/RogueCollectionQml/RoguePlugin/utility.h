@@ -23,3 +23,4 @@ std::istream& ReadShortString(std::istream& in, std::string* s);
 void throw_error(const std::string &msg);
 
 void Delay(int ms);
+std::string GetTimeString();

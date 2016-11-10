@@ -2,6 +2,7 @@
 #include <cassert>
 #include <chrono>
 #include <thread>
+#include <ctime>
 #include "utility.h"
 
 std::ostream& WriteShortString(std::ostream& out, const std::string& s)
@@ -35,4 +36,17 @@ void throw_error(const std::string &msg)
 void Delay(int ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
+
+std::string GetTimeString()
+{
+    std::time_t rawtime;
+    std::time(&rawtime);
+
+    std::tm* timeinfo = std::localtime(&rawtime);
+
+    char buffer [80];
+    std::strftime(buffer,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
+
+    return buffer;
 }

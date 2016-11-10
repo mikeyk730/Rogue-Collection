@@ -22,7 +22,7 @@ Item {
     function nextGraphicsMode()
     {
         if (activeItem === rogue)
-            rogue.nextGraphicsMode();
+            activeItem.nextGraphicsMode();
     }
 
     signal rendered

@@ -2,6 +2,7 @@
 #define QROGUE_H
 
 #include <memory>
+#include <atomic>
 #include <QQuickPaintedItem>
 #include "game_config.h"
 
@@ -39,6 +40,7 @@ public:
     Q_INVOKABLE void restoreGame(const QString& filename);
     Q_INVOKABLE void saveGame(const QString& filename);
     Q_INVOKABLE void nextGraphicsMode();
+    Q_INVOKABLE void autosave();
 
     QString graphics() const;
     void setGraphics(const QString& gfx);
@@ -86,6 +88,7 @@ private:
     std::unique_ptr<QtRogueInput> input_;
     std::unique_ptr<QRogueDisplay> display_;
     uint16_t restore_count_ = 0;
+    std::atomic<bool> thread_exited_ = false;
 };
 
 #endif

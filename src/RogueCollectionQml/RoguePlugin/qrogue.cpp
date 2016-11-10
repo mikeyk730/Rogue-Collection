@@ -88,6 +88,7 @@ QRogue::QRogue(QQuickItem *parent)
 
 QRogue::~QRogue()
 {
+    autosave();
 }
 
 QSize QRogue::screenSize() const
@@ -196,7 +197,7 @@ void QRogue::LaunchGame()
 
     //start rogue engine on a background thread
     char* argv[] = {0};
-    std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this);
+    std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this, std::ref(thread_exited_));
     rogue.detach(); //todo: how do we want threading to work?
 }
 
@@ -208,6 +209,17 @@ void QRogue::saveGame(const QString &filename)
 void QRogue::nextGraphicsMode()
 {
     display_->NextGfxMode();
+}
+
+void QRogue::autosave()
+{
+    std::string value;
+    if (input_ && env_->Get("autosave", &value)){
+        if (value == "true" && !thread_exited_ || value == "force"){
+            std::string name = "autosave-" + GetTimeString() + ".sav";
+            SaveGame(name, false);
+        }
+    }
 }
 
 QString QRogue::graphics() const
@@ -239,19 +251,19 @@ void QRogue::SaveGame(std::string path, bool notify)
         return;
     }
 
-    std::string value;
-    bool quit(env_->Get("exit_on_save", &value) && value == "true");
-
     if (notify) {
+        std::string value;
+        bool quit(env_->Get("exit_on_save", &value) && value == "true");
+
         std::string msg = "Your game was saved successfully.";
         if (quit){
             msg += "  Come back soon!";
         }
         DisplayMessage("Info", "Save Game", msg);
-    }
 
-    if (quit)
-        QuitApplication();
+        if (quit)
+            QuitApplication();
+    }
 }
 
 QFont QRogue::font() const

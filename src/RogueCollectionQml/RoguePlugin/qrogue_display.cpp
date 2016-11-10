@@ -183,7 +183,7 @@ bool QRogueDisplay::ApplyGraphics()
     for (size_t i = 0; i < config_->gfx_options.size(); ++i)
     {
         if (config_->gfx_options[i].name == gfx_mode_) {
-            gfx_index_ = i;
+            gfx_index_ = (int)i;
             return true;
         }
     }

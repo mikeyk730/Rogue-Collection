@@ -1,9 +1,9 @@
 #pragma once
+#include <atomic>
 #include <Windows.h>
 #include <display_interface.h>
 #include <input_interface.h>
 #include "utility.h"
-#include <QDir>
 
 typedef int(*game_main)(int, char**, char**);
 typedef void(*init_game)(DisplayInterface*, InputInterface*, int lines, int cols);
@@ -15,7 +15,7 @@ struct LibraryDeleter
 };
 
 template <typename T>
-void RunGame(const std::string& lib, int argc, char** argv, T* r)
+void RunGame(const std::string& lib, int argc, char** argv, T* r, std::atomic<bool>& finished)
 {
     std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibraryA(lib.c_str()));
     try {
@@ -41,5 +41,6 @@ void RunGame(const std::string& lib, int argc, char** argv, T* r)
         std::string s(e.what());
         DisplayMessage("Error", "Fatal Error", s.c_str());
     }
+    finished = true;
     QuitApplication();
 }
