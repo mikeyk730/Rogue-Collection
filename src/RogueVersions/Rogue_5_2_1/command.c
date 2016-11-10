@@ -265,7 +265,7 @@ int command()
 			     * to make the game functional in
 			     * various terminals -RRPF
 			     */ 
-			case '@' : msg("@ %d,%d", hero.y, hero.x);
+			case '|' : msg("@ %d,%d", hero.y, hero.x);
 			when 'C' : create_obj();
 			when CTRL('I') : inventory(lvl_obj, 0);
 			when CTRL('W') : whatis(FALSE);

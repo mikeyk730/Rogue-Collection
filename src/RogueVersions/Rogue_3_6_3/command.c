@@ -229,7 +229,7 @@ command()
 			 * Commented-out commands were changed
 			 * on 2012-12-06 because of various
 			 * terminals and their keys */
-			case '@' : msg("@ %d,%d", hero.y, hero.x);
+			case '|' : msg("@ %d,%d", hero.y, hero.x);
 			when 'C' : create_obj();
 			when CTRL('I') : inventory(lvl_obj, 0);
 			when CTRL('W') : whatis();
