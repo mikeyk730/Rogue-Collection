@@ -12,9 +12,9 @@ Rogue went through big changes throughout the 1980s.  Originally developed for U
 + Unix Rogue v5.2.1
 + Unix Rogue v3.6.3
 
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/title.png" width=362>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/unix.png" width=362>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/pc.png" width=362>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/title.png" height=250>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/unix.png" height=250>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/pc.png" height=250>
 
 Customizable Graphics
 ---------------------
@@ -22,20 +22,20 @@ Customizable Graphics
 
 _Retro Rogue Collection_ lets you play Rogue the way it looked in the 1980s.  By emulating the look of CRT monitors, you'll get the old school experience.  Choose from several existing profiles, or create your own.
 
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/scanlines.png" width=362>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/amber.png" width=362>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/pixelated.png" width=362>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/scanlines.png" height=250>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/amber.png" height=250>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/pixelated.png" height=250>
 
 ###Tilemap Support
 
 Don't like the existing look?  You can edit the existing tilemap to add graphics of your own.
 
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/tiles.png" width=562>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/boxy.png" width=362>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/tiles.png" height=250>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/boxy.png" height=250>
 
 Replay System
 -------------
-_Retro Rogue Collection_ allows you to save your game with a full move history.  You can watch an entire replay of your game, or step through individual turns.  If you become a total winner, why not share it with a friend?
+_Retro Rogue Collection_ allows you to save your game with a full history of moves.  You can watch an replay of your entire game, or step through individual turns.  If you become a total winner, why not share it with a friend?
 
 Credits
 =======
