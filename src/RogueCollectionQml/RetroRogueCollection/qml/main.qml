@@ -13,17 +13,14 @@ ApplicationWindow{
     minimumWidth: 320
     minimumHeight: 200
 
-    function setDimensions(){
-        if (visibility === Window.Windowed){
-            contentItem.implicitWidth = terminalContainer.naturalWidth*terminalWindow.windowScale
-            contentItem.implicitHeight = terminalContainer.naturalHeight*terminalWindow.windowScale
-            width = __width;
-            height = __height;
+    function setDimensions(force){
+        if (force === true || visibility === Window.Windowed){
+            width = terminalContainer.naturalWidth*terminalWindow.windowScale;
+            height = terminalContainer.naturalHeight*terminalWindow.windowScale + terminalWindow.__topBottomMargins;
         }
     }
 
-    onVisibilityChanged: setDimensions()
-    onWindowScaleChanged: setDimensions()
+    onWindowScaleChanged: setDimensions(false)
 
     // Save window properties automatically
     onXChanged: if (visibility == Window.Windowed && x > 0) appSettings.x = x
@@ -41,6 +38,7 @@ ApplicationWindow{
 
         //width = appSettings.width
         //height = appSettings.height
+        setDimensions(true)
 
         visible = true
     }
@@ -173,8 +171,8 @@ ApplicationWindow{
 
         property alias maintainAspect: appSettings.maintainAspect
 
-        onNaturalWidthChanged: terminalWindow.setDimensions()
-        onNaturalHeightChanged: terminalWindow.setDimensions()
+        onNaturalWidthChanged: terminalWindow.setDimensions(false)
+        onNaturalHeightChanged: terminalWindow.setDimensions(false)
 
         transform: Scale {
             xScale: 1 / appSettings.windowScaling
