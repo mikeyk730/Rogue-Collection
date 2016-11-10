@@ -159,11 +159,13 @@ readchar(void)
 
     ch = md_readchar(stdscr);
 
+#ifndef ROGUE_COLLECTION
     if (ch == 3)
     {
 		quit(0);
         return(27);
     }
+#endif
 
     return(ch);
 }
@@ -175,11 +177,13 @@ wreadchar(WINDOW *win)
 
     ch = md_readchar(win);
 
+#ifndef ROGUE_COLLECTION
     if (ch == 3)
     {
 		quit(0);
         return(27);
     }
+#endif
 
     return(ch);
 }

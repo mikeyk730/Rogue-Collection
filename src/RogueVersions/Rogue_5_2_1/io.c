@@ -138,11 +138,13 @@ WINDOW *win;
 
     ch = md_readchar(win);
 
+#ifndef ROGUE_COLLECTION
     if ((ch == 3) || (ch == 0))
     {
 	quit(0);
 	return(27);
     }
+#endif
 
     return(ch);
 }
