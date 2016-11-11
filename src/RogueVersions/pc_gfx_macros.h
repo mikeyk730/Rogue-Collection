@@ -31,7 +31,7 @@ int translate_type(int t);
 int reverse_translate_type(int t);
 void fix_tombstone();
 
-#define MORE_MSG                      "--More--"
+#define MORE_MSG                      "-More-"
 #define REST_COMMAND                  '.'
 #define REST_DESC
 #define SPACE_IS_OK                   when ' ' : after = FALSE;

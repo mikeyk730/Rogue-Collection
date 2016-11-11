@@ -111,7 +111,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>MyCurses.lib;Rogue_PC_Core.lib;SDL.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MyCurses.lib;Rogue_PC_Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -129,7 +129,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MyCurses.lib;Rogue_PC_Core.lib;SDL.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MyCurses.lib;Rogue_PC_Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -149,7 +149,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>MyCurses.lib;Rogue_PC_Core.lib;SDL.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MyCurses.lib;Rogue_PC_Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -171,7 +171,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>MyCurses.lib;Rogue_PC_Core.lib;SDL.lib;SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>MyCurses.lib;Rogue_PC_Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
