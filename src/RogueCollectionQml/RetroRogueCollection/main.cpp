@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     QStringList args = app.arguments();
     if (args.contains("-h") || args.contains("--help")) {
         qDebug() << "Usage: " + args.at(0) + " [--default-settings] [--fullscreen] [--profile <prof>] [-h|--help] [--verbose]";
-        qDebug() << "  --default-settings  Run with the default settings";
+        qDebug() << "  --default-settings  Run with the default profile";
         qDebug() << "  --fullscreen        Run in fullscreen.";
         qDebug() << "  --profile <prof>    Run with the given profile.";
         qDebug() << "  -h|--help           Print this help.";
