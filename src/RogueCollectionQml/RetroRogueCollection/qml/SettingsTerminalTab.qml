@@ -34,7 +34,7 @@ Tab{
             GridLayout{
                 anchors.fill: parent
                 columns: 2
-                Label{ text: qsTr("Name") }
+                Label{ text: qsTr("Font") }
                 ComboBox{
                     id: fontChanger
                     Layout.fillWidth: true
@@ -46,7 +46,7 @@ Tab{
                     }
                     function updateIndex(){
                         var name = appSettings.fontNames[appSettings.rasterization];
-                        var index = appSettings.getIndexByName(name);
+                        var index = appSettings.getIndexByName(model, name);
                         if (index !== undefined)
                             currentIndex = index;
                     }
@@ -55,7 +55,31 @@ Tab{
                         onTerminalFontChanged: fontChanger.updateIndex();
                     }
                     Component.onCompleted: updateIndex();
+                    enabled: !appSettings.textmap
                 }
+
+                Label{ text: qsTr("Textmap") }
+                ComboBox{
+                    id: textcombo
+                    Layout.fillWidth: true
+                    model: appSettings.textmapList
+                    currentIndex: 0
+                    onActivated: {
+                        appSettings.textmap = model.get(index).name;
+                        appSettings.handleFontChanged();
+                    }
+                    function updateIndex(){
+                        currentIndex = appSettings.getIndexByName(model, appSettings.textmap);
+                    }
+                    Component.onCompleted: updateIndex();
+                    Connections {
+                        target: appSettings
+                        onTextmapChanged: textcombo.updateIndex();
+                    }
+                }
+
+
+
 //                Label{ text: qsTr("Scaling") }
 //                RowLayout{
 //                    Layout.fillWidth: true

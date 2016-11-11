@@ -22,6 +22,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Dialogs 1.1
+import RoguePlugin 1.0
 
 Tab{
     ColumnLayout{
@@ -156,30 +157,6 @@ Tab{
                             }
                         }
                     }
-                }
-            }
-        }
-
-        GroupBox{
-            anchors {left: parent.left; right: parent.right}
-            title: qsTr("Graphics")
-
-            ComboBox{
-                id: graphicscombo
-                anchors.fill: parent
-                model: appSettings.graphicsList
-                currentIndex: 0
-                onActivated: {
-                    appSettings.graphics = model.get(index).name;
-                    appSettings.handleFontChanged();
-                }
-                function updateIndex(){
-                    currentIndex = appSettings.getGraphicsIndexByName(appSettings.graphics);
-                }
-                Component.onCompleted: updateIndex();
-                Connections {
-                    target: appSettings
-                    onGraphicsChanged: graphicscombo.updateIndex();
                 }
             }
         }

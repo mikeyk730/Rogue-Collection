@@ -30,6 +30,14 @@ Item {
             rogue.nextGraphicsMode();
     }
 
+    function setTextConfig(imagefile, layout) {
+        rogue.setTextConfig(imagefile, layout);
+    }
+
+    function setTileConfig(filename, count, states) {
+        rogue.setTileConfig(filename, count, states);
+    }
+
     signal rendered
 
     width: activeItem.width
@@ -48,8 +56,8 @@ Item {
             height: 400
 
             transform: Scale {
-                xScale: rogue.width/gameContainer.width
-                yScale: rogue.height/gameContainer.height
+                xScale: Math.min(rogue.width/gameContainer.width, rogue.height/gameContainer.height)
+                yScale: Math.min(rogue.width/gameContainer.width, rogue.height/gameContainer.height)
                 origin.x: gameContainer.width/2
                 origin.y: gameContainer.height/2
             }

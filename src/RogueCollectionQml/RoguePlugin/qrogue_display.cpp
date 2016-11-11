@@ -8,7 +8,6 @@
 #include "qrogue_input.h"
 #include "dos_to_unicode.h"
 #include "qrogue.h"
-#include "environment.h"
 #include "tile_provider.h"
 
 namespace
@@ -80,7 +79,6 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::strin
 
 void QRogueDisplay::SetDimensions(Coord dimensions)
 {
-
 }
 
 void QRogueDisplay::UpdateRegion(uint32_t *buf)
@@ -150,6 +148,24 @@ void QRogueDisplay::SetFont(const QFont &font)
     PostRenderEvent(true);
 }
 
+void QRogueDisplay::SetTextConfig(const TextConfig& textConfig)
+{
+    text_provider_.reset();
+    if(textConfig.imagefile().size() > 0) {
+        text_provider_.reset(new TextProvider(textConfig));
+    }
+    parent_->tileSizeChanged();
+}
+
+void QRogueDisplay::SetTileConfig(const TileConfig &tileConfig)
+{
+    tile_provider_.reset();
+    if(!tileConfig.filename.empty()) {
+        tile_provider_.reset(new TileProvider(tileConfig));
+    }
+    parent_->tileSizeChanged();
+}
+
 bool QRogueDisplay::Monochrome() const
 {
     return monochrome_;
@@ -196,7 +212,7 @@ void QRogueDisplay::SetScreenSize(Coord screen_size)
     screen_size_ = QSize(screen_size.x, screen_size.y);
 }
 
-void QRogueDisplay::SetGameConfig(const GameConfig &config, Environment* env)
+void QRogueDisplay::SetGameConfig(const GameConfig &config)
 {
     config_.reset(new GameConfig(config));
     ApplyGraphics();
@@ -365,15 +381,6 @@ unsigned int GetTileColor(int ch, int color)
 
 void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text)
 {
-    // Hack for consistent standout in msg lines.  Unix versions use '-'.
-    // PC uses ' ' with background color.  We want consistent behavior.
-    if (y == 0 && color == 0x70) {
-        if (Gfx().use_standout && ch == '-')
-            ch = ' ';
-        else if (!Gfx().use_standout && ch == ' ')
-            ch = '-';
-    }
-
     // Tiles from Unix versions come in with either color=0x00 (for regular state)
     // or color=0x70 (for standout).  We need to translate these into more diverse
     // colors.  Tiles from PC versions already have the correct color, so we
@@ -419,7 +426,7 @@ int QRogueDisplay::TranslateChar(int ch, bool is_text) const
 
 int QRogueDisplay::DefaultColor() const
 {
-    return Gfx().text ? Gfx().text->colors.front() : 0x07;
+    return Gfx().text ? 0x0f : 0x07;
 }
 
 int QRogueDisplay::TranslateColor(int color, bool is_text) const
@@ -427,7 +434,7 @@ int QRogueDisplay::TranslateColor(int color, bool is_text) const
     if (!color)
         color = DefaultColor();
     if (!Gfx().use_colors || monochrome_) {
-        if (Gfx().use_standout && ((color>>4) == 0x07 || (Gfx().use_colors && color > 0x0f)))
+        if ((color>>4) == 0x07 || (Gfx().use_colors && color > 0x0f))
             color = FlipColor(DefaultColor());
         else
             color = DefaultColor();

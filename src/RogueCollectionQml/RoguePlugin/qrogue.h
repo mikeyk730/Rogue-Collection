@@ -27,6 +27,10 @@ public:
     QFont font() const;
     void setFont(const QFont& font);
 
+    Q_INVOKABLE void setGfxOptions(bool unix_charmap, bool color, bool animate);
+    Q_INVOKABLE void setTextConfig(const QString& filename, QSize layout);
+    Q_INVOKABLE void setTileConfig(const QString& filename, int count, int states);
+
     bool monochrome() const;
     void setMonochrome(bool enable);
 
@@ -61,6 +65,7 @@ signals:
     void screenSizeChanged(int height, int width);
     void gameChanged(const QString& name);
     void graphicsChanged(const QString& gfx);
+    void textConfigChanged(TextConfig* textConfig);
 
 public:
     Environment* GameEnv() const;

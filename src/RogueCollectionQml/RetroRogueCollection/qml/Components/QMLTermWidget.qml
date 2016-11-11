@@ -28,7 +28,19 @@ Rectangle {
     property int naturalHeight: rogue.height + 2*rogue.padding
 
     function setGraphics(graphics){
-        rogue.graphics = graphics;
+        //rogue.graphics = graphics;
+    }
+
+    function setGfxOptions(unix_charmap, color, animate) {
+        //rogue.setGfxOptions(unix_charmap, color, animate);
+    }
+
+    function setTextmap(imagefile, layout) {
+        rogue.setTextConfig(imagefile, layout);
+    }
+
+    function setTilemap(filename, count, states) {
+        rogue.setTileConfig(filename, count, states);
     }
 
     onSimulateMousePress: {

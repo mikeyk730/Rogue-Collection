@@ -98,6 +98,10 @@ Item{
             kterminal.lineSpacing = lineSpacing;
             if(appSettings.graphics)
                 kterminal.setGraphics(appSettings.graphics);
+            kterminal.setTextmap(appSettings.textmap, Qt.size(16, 16));
+            //kterminal.setTilemap(appSettings.tilemap, 78, 1);
+            //kterminal.setGfxOptions(appSettings.unixCharmap, appSettings.colorTiles, appSettings.animateTiles);
+
         }
         Component.onCompleted: {
             appSettings.terminalFontChanged.connect(handleFontChange);

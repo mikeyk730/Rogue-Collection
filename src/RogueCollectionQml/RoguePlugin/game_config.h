@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <QObject>
+#include <QSize>
+#include <QString>
 #include <coord.h>
 
 struct Environment;
@@ -11,12 +14,18 @@ struct FontConfig
     int size;
 };
 
-struct TextConfig
+class TextConfig
 {
-    std::string imagefile;
-    Coord layout;
-    std::vector<int> colors;
-    bool generate_colors;
+public:
+    TextConfig();
+    TextConfig(const QString& imagefile, QSize layout);
+
+    QString imagefile() const;
+    QSize layout() const;
+
+private:
+    QString imagefile_;
+    QSize layout_;
 };
 
 struct TileConfig
@@ -30,11 +39,9 @@ struct GraphicsConfig
 {
     std::string name;
     TextConfig* text;
-    FontConfig* font;
     TileConfig* tiles;
     bool use_unix_gfx;
     bool use_colors;
-    bool use_standout;
     bool animate;
 };
 

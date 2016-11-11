@@ -51,6 +51,858 @@ QtObject{
 
     property ListModel fontlist: ListModel{
         ListElement{
+            name: "PetMe.ttf"
+            text: "PetMe.ttf"
+            source: "fonts/petme/PetMe.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "PetMe128.ttf"
+            text: "PetMe128.ttf"
+            source: "fonts/petme/PetMe128.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "PetMe1282Y.ttf"
+            text: "xPetMe1282Y.ttf"
+            source: "fonts/petme/PetMe1282Y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "PetMe2X.ttf"
+            text: "PetMe2X.ttf"
+            source: "fonts/petme/PetMe2X.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "PetMe2Y.ttf"
+            text: "PetMe2Y.ttf"
+            source: "fonts/petme/PetMe2Y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "PetMe64.ttf"
+            text: "PetMe64.ttf"
+            source: "fonts/petme/PetMe64.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "PetMe642Y.ttf"
+            text: "PetMe642Y.ttf"
+            source: "fonts/petme/PetMe642Y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_BIOS.ttf"
+            text: "Px437_IBM_BIOS.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_BIOS.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_VTech_BIOS.ttf"
+            text: "Px437_VTech_BIOS.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_VTech_BIOS.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ITT_BIOS.ttf"
+            text: "Px437_ITT_BIOS.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ITT_BIOS.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Phoenix_BIOS.ttf"
+            text: "Px437_Phoenix_BIOS.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Phoenix_BIOS.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_AMI_BIOS-2y.ttf"
+            text: "Px437_AMI_BIOS-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_AMI_BIOS-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_DTK_BIOS-2y.ttf"
+            text: "Px437_DTK_BIOS-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_DTK_BIOS-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_BIOS-2y.ttf"
+            text: "Px437_IBM_BIOS-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_BIOS-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_VTech_BIOS-2y.ttf"
+            text: "Px437_VTech_BIOS-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_VTech_BIOS-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ITT_BIOS-2y.ttf"
+            text: "Px437_ITT_BIOS-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ITT_BIOS-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Phoenix_BIOS-2y.ttf"
+            text: "Px437_Phoenix_BIOS-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Phoenix_BIOS-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_AmstradPC1512-2y.ttf"
+            text: "Px437_AmstradPC1512-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_AmstradPC1512-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_AmstradPC1512.ttf"
+            text: "Px437_AmstradPC1512.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_AmstradPC1512.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATI_8x14.ttf"
+            text: "Px437_ATI_8x14.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATI_8x14.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATI_8x16.ttf"
+            text: "Px437_ATI_8x16.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATI_8x16.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATI_8x8-2y.ttf"
+            text: "Px437_ATI_8x8-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATI_8x8-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATI_8x8.ttf"
+            text: "Px437_ATI_8x8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATI_8x8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATI_9x14.ttf"
+            text: "Px437_ATI_9x14.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATI_9x14.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATI_9x16.ttf"
+            text: "Px437_ATI_9x16.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATI_9x16.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATI_SmallW_6x8.ttf"
+            text: "Px437_ATI_SmallW_6x8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATI_SmallW_6x8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATT_PC6300-2x.ttf"
+            text: "Px437_ATT_PC6300-2x.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATT_PC6300-2x.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ATT_PC6300.ttf"
+            text: "Px437_ATT_PC6300.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ATT_PC6300.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_CompaqThin_8x14.ttf"
+            text: "Px437_CompaqThin_8x14.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_CompaqThin_8x14.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_CompaqThin_8x16.ttf"
+            text: "Px437_CompaqThin_8x16.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_CompaqThin_8x16.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_CompaqThin_8x8.ttf"
+            text: "Px437_CompaqThin_8x8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_CompaqThin_8x8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_3270pc.ttf"
+            text: "Px437_IBM_3270pc.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_3270pc.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_CGA-2y.ttf"
+            text: "Px437_IBM_CGA-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_CGA-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_CGA.ttf"
+            text: "Px437_IBM_CGA.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_CGA.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_CGAthin-2y.ttf"
+            text: "Px437_IBM_CGAthin-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_CGAthin-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_CGAthin.ttf"
+            text: "Px437_IBM_CGAthin.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_CGAthin.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_Conv-2x.ttf"
+            text: "Px437_IBM_Conv-2x.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_Conv-2x.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_Conv-2y.ttf"
+            text: "Px437_IBM_Conv-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_Conv-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_Conv.ttf"
+            text: "Px437_IBM_Conv.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_Conv.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_EGA8-2x.ttf"
+            text: "Px437_IBM_EGA8-2x.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_EGA8-2x.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_EGA8.ttf"
+            text: "Px437_IBM_EGA8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_EGA8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_EGA9-2x.ttf"
+            text: "Px437_IBM_EGA9-2x.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_EGA9-2x.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_EGA9.ttf"
+            text: "Px437_IBM_EGA9.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_EGA9.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_ISO8.ttf"
+            text: "Px437_IBM_ISO8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_ISO8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_ISO9.ttf"
+            text: "Px437_IBM_ISO9.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_ISO9.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_MDA.ttf"
+            text: "Px437_IBM_MDA.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_MDA.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_PGC-2x.ttf"
+            text: "Px437_IBM_PGC-2x.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_PGC-2x.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_PGC.ttf"
+            text: "Px437_IBM_PGC.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_PGC.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_PS2thin1.ttf"
+            text: "Px437_IBM_PS2thin1.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_PS2thin1.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_PS2thin2.ttf"
+            text: "Px437_IBM_PS2thin2.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_PS2thin2.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_PS2thin3.ttf"
+            text: "Px437_IBM_PS2thin3.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_PS2thin3.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_PS2thin4.ttf"
+            text: "Px437_IBM_PS2thin4.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_PS2thin4.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_VGA8-2x.ttf"
+            text: "Px437_IBM_VGA8-2x.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_VGA8-2x.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_VGA8.ttf"
+            text: "Px437_IBM_VGA8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_VGA8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_VGA9-2x.ttf"
+            text: "Px437_IBM_VGA9-2x.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_VGA9-2x.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_IBM_VGA9.ttf"
+            text: "Px437_IBM_VGA9.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_IBM_VGA9.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Kaypro2k-2y.ttf"
+            text: "Px437_Kaypro2k-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Kaypro2k-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Kaypro2K.ttf"
+            text: "Px437_Kaypro2K.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Kaypro2K.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_PhoenixEGA_8x14.ttf"
+            text: "Px437_PhoenixEGA_8x14.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_PhoenixEGA_8x14.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_PhoenixEGA_8x16.ttf"
+            text: "Px437_PhoenixEGA_8x16.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_PhoenixEGA_8x16.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_PhoenixEGA_8x8-2y.ttf"
+            text: "Px437_PhoenixEGA_8x8-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_PhoenixEGA_8x8-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_PhoenixEGA_8x8.ttf"
+            text: "Px437_PhoenixEGA_8x8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_PhoenixEGA_8x8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_PhoenixEGA_9x14.ttf"
+            text: "Px437_PhoenixEGA_9x14.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_PhoenixEGA_9x14.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyNew_225-2y.ttf"
+            text: "Px437_TandyNew_225-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyNew_225-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyNew_225.ttf"
+            text: "Px437_TandyNew_225.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyNew_225.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyNew_Mono.ttf"
+            text: "Px437_TandyNew_Mono.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyNew_Mono.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyNew_TV-2y.ttf"
+            text: "Px437_TandyNew_TV-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyNew_TV-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyNew_TV.ttf"
+            text: "Px437_TandyNew_TV.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyNew_TV.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyOld_225-2y.ttf"
+            text: "Px437_TandyOld_225-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyOld_225-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyOld_225.ttf"
+            text: "Px437_TandyOld_225.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyOld_225.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyOld_TV-2y.ttf"
+            text: "Px437_TandyOld_TV-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyOld_TV-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_TandyOld_TV.ttf"
+            text: "Px437_TandyOld_TV.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_TandyOld_TV.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ToshibaLCD_8x16.ttf"
+            text: "Px437_ToshibaLCD_8x16.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ToshibaLCD_8x16.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_ToshibaLCD_8x8.ttf"
+            text: "Px437_ToshibaLCD_8x8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_ToshibaLCD_8x8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Verite_8x14.ttf"
+            text: "Px437_Verite_8x14.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Verite_8x14.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Verite_8x16.ttf"
+            text: "Px437_Verite_8x16.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Verite_8x16.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Verite_8x8-2y.ttf"
+            text: "Px437_Verite_8x8-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Verite_8x8-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Verite_8x8.ttf"
+            text: "Px437_Verite_8x8.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Verite_8x8.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Verite_9x14.ttf"
+            text: "Px437_Verite_9x14.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Verite_9x14.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Verite_9x16.ttf"
+            text: "Px437_Verite_9x16.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Verite_9x16.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_VGA_SquarePx.ttf"
+            text: "Px437_VGA_SquarePx.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_VGA_SquarePx.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+
+        ListElement{
+            name: "Px437_Wyse700a-2y.ttf"
+            text: "Px437_Wyse700a-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Wyse700a-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Wyse700a.ttf"
+            text: "Px437_Wyse700a.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Wyse700a.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Wyse700b-2y.ttf"
+            text: "Px437_Wyse700b-2y.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Wyse700b-2y.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "Px437_Wyse700b.ttf"
+            text: "Px437_Wyse700b.ttf"
+            source: "fonts/Px437 (TrueType - DOS charset)/Px437_Wyse700b.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+
+        ListElement{
             name: "TERMINUS_SCALED"
             text: "Terminus (Modern)"
             source: "fonts/modern-terminus/TerminusTTF-4.38.2.ttf"

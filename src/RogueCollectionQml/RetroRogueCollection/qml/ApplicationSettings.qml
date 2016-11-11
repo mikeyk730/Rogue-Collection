@@ -62,6 +62,12 @@ QtObject{
     // PROFILE SETTINGS ///////////////////////////////////////////////////////
 
     property string graphics
+    //todo: serialize
+    property string textmap
+    property string tilemap
+    property bool unixCharmap: false
+    property bool colorTiles: true
+    property bool animateTiles: true
 
     property string _backgroundColor: "#000000"
     property string _fontColor: "#ffffff"
@@ -124,14 +130,6 @@ QtObject{
     onFontScalingChanged: handleFontChanged();
     onFontWidthChanged: handleFontChanged();
 
-    function getIndexByName(name) {
-        for (var i = 0; i < fontlist.count; i++) {
-            if (name === fontlist.get(i).name)
-                return i;
-        }
-        return 0; // If the font is not available default to 0.
-    }
-
     function incrementScaling(){
         fontScaling = Math.min(fontScaling + 0.05, maximumFontScaling);
         handleFontChanged();
@@ -145,7 +143,7 @@ QtObject{
     function handleFontChanged(){
         if (!fontManager.item) return;
 
-        var index = getIndexByName(fontNames[rasterization]);
+        var index = getIndexByName(fontlist, fontNames[rasterization]);
         if (index === undefined) return;
 
         fontManager.item.selectedFontIndex = index;
@@ -164,32 +162,39 @@ QtObject{
 
     // FRAMES /////////////////////////////////////////////////////////////////
 
-    property ListModel graphicsList: ListModel{
+    property ListModel textmapList: ListModel{
         ListElement {
             name: ""
-            text: "Default"
+            text: "No Textmap"
         }
         ListElement {
-            name: "unix"
-            text: "Unix"
+            name: "16x16.bmp"
+            text: "16x16.bmp"
         }
         ListElement {
-            name: "pc"
-            text: "PC"
-        }
-        ListElement {
-            name: "tiles"
-            text: "Tiles"
-        }
-        ListElement {
-            name: "boxy"
-            text: "Boxy"
+            name: "boxy.bmp"
+            text: "boxy.bmp"
         }
     }
 
-    function getGraphicsIndexByName(name) {
-        for (var i = 0; i < graphicsList.count; i++) {
-            if (name === graphicsList.get(i).name)
+    property ListModel tilemapList: ListModel{
+        ListElement {
+            text: "No Tilemap"
+            v1: ''
+            v2: ''
+            v3: ''
+        }
+        ListElement {
+            text: "Atari"
+            v1: ''
+            v2: 'atari_snake.bmp'
+            v3: 'atari.bmp'
+        }
+    }
+
+    function getIndexByName(a, name) {
+        for (var i = 0; i < a.count; i++) {
+            if (name === a.get(i).name)
                 return i;
         }
         return 0;
@@ -292,7 +297,8 @@ QtObject{
             windowOpacity: windowOpacity,
             fontName: fontNames[rasterization],
             fontWidth: fontWidth,
-            graphics: graphics
+            graphics: graphics,
+            textmap: textmap
         }
         return settings;
     }
@@ -389,6 +395,7 @@ QtObject{
         fontWidth = settings.fontWidth !== undefined ? settings.fontWidth : fontWidth;
 
         graphics = settings.graphics !== undefined ? settings.graphics : graphics
+        textmap = settings.textmap !== undefined ? settings.textmap : textmap
 
         handleFontChanged();
     }
@@ -439,37 +446,37 @@ QtObject{
     property ListModel profilesList: ListModel{
         ListElement{
             text: "No Effect PC"
-            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.33,"flickering":0.0,"contrast":1.0,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc"}'
+            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.33,"flickering":0.0,"contrast":1.0,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc","textmap":""}'
             builtin: true
         }
         ListElement{
             text: "No Effect Unix"
-            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.33,"flickering":0.0,"contrast":1.0,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix"}'
+            obj_string: '{"ambientLight":0,"backgroundColor":"#000000","bloom":0,"brightness":0.33,"flickering":0.0,"contrast":1.0,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"NO_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0,"burnIn":0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.0,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix","textmap":""}'
             builtin: true
         }
         ListElement{
             text: "IBM Dos"
-            obj_string: '{"ambientLight":0.07,"backgroundColor":"#000000","bloom":0.33,"brightness":0.25,"flickering":0.0,"contrast":0.95,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0.08,"burnIn":0.0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.07,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc"}'
+            obj_string: '{"ambientLight":0.07,"backgroundColor":"#000000","bloom":0.33,"brightness":0.25,"flickering":0.0,"contrast":0.95,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0,"jitter":0.08,"burnIn":0.0,"staticNoise":0.0,"rasterization":0,"screenCurvature":0.07,"windowOpacity":1,"chromaColor":1,"saturationColor":0,"rbgShift":0.0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc","textmap":""}'
             builtin: true
         }
         ListElement{
             text: "Scanlines"
-            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0.4,"brightness":0.6,"flickering":0.1,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#0ccc68","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0.16,"jitter":0.18,"burnIn":0.22,"staticNoise":0.1,"rasterization":1,"screenCurvature":0.1,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix"}'
+            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0.4,"brightness":0.6,"flickering":0.1,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#0ccc68","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0.16,"jitter":0.18,"burnIn":0.22,"staticNoise":0.1,"rasterization":1,"screenCurvature":0.1,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix","textmap":""}'
             builtin: true
         }
         ListElement{
             text: "Amber"
-            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0.65,"brightness":0.5,"flickering":0.1,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ff8100","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0.16,"jitter":0.18,"burnIn":0.2,"staticNoise":0.1,"rasterization":0,"screenCurvature":0.1,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc"}'
+            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0.65,"brightness":0.5,"flickering":0.1,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ff8100","frameName":"SIMPLE_WHITE_FRAME","glowingLine":0,"horizontalSync":0.16,"jitter":0.18,"burnIn":0.2,"staticNoise":0.1,"rasterization":0,"screenCurvature":0.1,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"pc","textmap":""}'
             builtin: true
         }
         ListElement{
             text: "Pixelated"
-            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0,"brightness":0.5,"flickering":0.2,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.2,"jitter":0,"burnIn":0.22,"staticNoise":0.19,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix"}'
+            obj_string: '{"ambientLight":0.16,"backgroundColor":"#000000","bloom":0,"brightness":0.5,"flickering":0.2,"contrast":0.85,"fontName":"TERMINUS_SCALED","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.2,"jitter":0,"burnIn":0.22,"staticNoise":0.19,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"unix","textmap":""}'
             builtin: true
         }
         ListElement{
             text: "Tiled"
-            obj_string: '{"ambientLight":0.04,"backgroundColor":"#000000","bloom":0.03,"brightness":1.0,"flickering":0.07,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.05,"jitter":0,"burnIn":0.0,"staticNoise":0.0,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":1.0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"tiles"}'
+            obj_string: '{"ambientLight":0.04,"backgroundColor":"#000000","bloom":0.03,"brightness":1.0,"flickering":0.07,"contrast":0.85,"fontName":"IBM_DOS","fontColor":"#ffffff","frameName":"ROUGH_BLACK_FRAME","glowingLine":0,"horizontalSync":0.05,"jitter":0,"burnIn":0.0,"staticNoise":0.0,"rasterization":2,"screenCurvature":0.05,"windowOpacity":1,"chromaColor":1.0,"saturationColor":0,"rbgShift":0,"fontWidth":1.0,"useCustomCommand":false,"graphics":"tiles","textmap":""}'
             builtin: true
         }
         //ListElement{

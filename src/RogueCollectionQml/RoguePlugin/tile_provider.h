@@ -54,6 +54,7 @@ public:
     TextProvider(const TextConfig& config);
     virtual QSize TileSize() const override;
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) override;
+
 private:
     QRect GetTextRect(unsigned int ch);
     QPixmap* GetPixMap(int color);

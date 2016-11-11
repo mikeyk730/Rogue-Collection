@@ -179,7 +179,7 @@ void QRogue::LaunchGame()
         game_env_->Set("emulate_version", "1.1");
     }
 
-    display_->SetGameConfig(config_, game_env_.get());
+    display_->SetGameConfig(config_);
 
     if (!game_env_->WriteToOs(config_.is_unix))
         throw_error("Couldn't write environment");
@@ -274,6 +274,23 @@ QFont QRogue::font() const
 void QRogue::setFont(const QFont &font)
 {
     display_->SetFont(font);
+}
+
+void QRogue::setGfxOptions(bool unix_charmap, bool color, bool animate)
+{
+    //todo:
+}
+
+void QRogue::setTextConfig(const QString &filename, QSize layout)
+{
+    TextConfig config(filename, layout);
+    display_->SetTextConfig(config);
+}
+
+void QRogue::setTileConfig(const QString &filename, int count, int states)
+{
+    TileConfig config = {filename.toStdString(), count, states};
+    display_->SetTileConfig(config);
 }
 
 bool QRogue::monochrome() const

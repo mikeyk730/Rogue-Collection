@@ -17,6 +17,9 @@ struct LibraryDeleter
 template <typename T>
 void RunGame(const std::string& lib, int argc, char** argv, T* r, std::atomic<bool>& finished)
 {
+    UNREFERENCED_PARAMETER(argc);
+    UNREFERENCED_PARAMETER(argv);
+
     std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibraryA(lib.c_str()));
     try {
         if (!dll) {

@@ -4,15 +4,15 @@
 TileConfig atari_slime_tiles = { "atari.bmp",       78, 1 };
 TileConfig atari_snake_tiles = { "atari_snake.bmp", 78, 1 };
 
-TextConfig alt_text =  { "16x16.bmp", { 16, 16 }, { 0x0F }, true };
-TextConfig boxy_text = { "boxy.bmp",  { 16, 16 }, { 0x0F }, true };
+TextConfig alt_text("16x16.bmp", QSize(16, 16));
+TextConfig boxy_text("boxy.bmp", QSize(16, 16));
 
-                                 //name      text_cfg    fnt  tile_cfg             unix    color  stndout animate
-GraphicsConfig unix_gfx =        { "unix",   0,           0,  0,                   true,   false,  true,   false };
-GraphicsConfig pc_gfx =          { "pc",     0,           0,  0,                   false,  true,   true,   true  };
-GraphicsConfig atari_slime_gfx = { "tiles",  &alt_text,   0,  &atari_slime_tiles,  false,  false,  true,   false };
-GraphicsConfig atari_snake_gfx = { "tiles",  &alt_text,   0,  &atari_snake_tiles,  false,  false,  true,   false };
-GraphicsConfig boxy_gfx =        { "boxy",   &boxy_text,  0,  0,                   false,  true,   true,   true  };
+                                 //name      text_cfg     tile_cfg             unix    color  animate
+GraphicsConfig unix_gfx =        { "unix",   0,           0,                   true,   false,  false };
+GraphicsConfig pc_gfx =          { "pc",     0,           0,                   false,  true,   true  };
+GraphicsConfig atari_slime_gfx = { "tiles",  &alt_text,   &atari_slime_tiles,  false,  false,  false };
+GraphicsConfig atari_snake_gfx = { "tiles",  &alt_text,   &atari_snake_tiles,  false,  false,  false };
+GraphicsConfig boxy_gfx =        { "boxy",   &boxy_text,  0,                   false,  true,   true  };
 
 std::vector<GameConfig> s_options = {
     { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, atari_slime_gfx, boxy_gfx, unix_gfx } },
@@ -35,4 +35,24 @@ int GetGameIndex(const std::string& name)
         }
     }
     return -1;
+}
+
+TextConfig::TextConfig()
+{
+}
+
+TextConfig::TextConfig(const QString &imagefile, QSize layout) :
+    imagefile_(imagefile),
+    layout_(layout)
+{
+}
+
+QString TextConfig::imagefile() const
+{
+    return imagefile_;
+}
+
+QSize TextConfig::layout() const
+{
+    return layout_;
 }

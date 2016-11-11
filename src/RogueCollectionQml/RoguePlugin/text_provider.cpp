@@ -4,15 +4,15 @@
 #include "utility.h"
 #include "colors.h"
 
-TextProvider::TextProvider(const TextConfig & config) :
+TextProvider::TextProvider(const TextConfig& config) :
     config_(config)
 {
-    QImage img(GetResourcePath(config.imagefile).c_str());
+    QImage img(GetResourcePath(config.imagefile().toStdString()).c_str());
 
     image_size_ = img.size();
 
-    tile_size_.setWidth(image_size_.width() / config.layout.x);
-    tile_size_.setHeight(image_size_.height() / config.layout.y);
+    tile_size_.setWidth(image_size_.width() / config.layout().width());
+    tile_size_.setHeight(image_size_.height() / config.layout().height());
 
     mask_ = QBitmap::fromImage(img.createMaskFromColor(qRgb(255, 255, 255), Qt::MaskOutColor));
 }
@@ -34,10 +34,10 @@ void TextProvider::PaintTile(QPainter *painter, QRect dest_rect, int ch, int col
 
 QRect TextProvider::GetTextRect(unsigned int ch)
 {
-    Coord layout = config_.layout;
+    QSize layout = config_.layout();
     QRect r;
-    r.setX((ch % layout.x) * tile_size_.width());
-    r.setY((ch / layout.x) * tile_size_.height());
+    r.setX((ch % layout.width()) * tile_size_.width());
+    r.setY((ch / layout.width()) * tile_size_.height());
     r.setWidth(tile_size_.width());
     r.setHeight(tile_size_.height());
     return r;

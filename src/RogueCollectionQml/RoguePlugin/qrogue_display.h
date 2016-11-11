@@ -18,7 +18,6 @@ class ITileProvider;
 class FontProvider;
 class TileProvider;
 class TextProvider;
-struct Environment;
 
 class QRogueDisplay : public DisplayInterface
 {
@@ -28,6 +27,9 @@ public:
     QFont Font() const;
     void SetFont(const QFont& font);
 
+    void SetTextConfig(const TextConfig& textConfig);
+    void SetTileConfig(const TileConfig& textConfig);
+
     bool Monochrome() const;
     void SetMonochrome(bool enable);
 
@@ -35,7 +37,7 @@ public:
     void SetGraphics(const QString &gfx);
     bool ApplyGraphics();
     void SetScreenSize(Coord screen_size);
-    void SetGameConfig(const GameConfig &config, Environment* env);
+    void SetGameConfig(const GameConfig &config);
     const GraphicsConfig& Gfx() const;
     bool HandleKeyEvent(QKeyEvent *event);
     void NextGfxMode();
