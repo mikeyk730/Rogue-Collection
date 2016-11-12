@@ -1,16 +1,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Options for all versions
+; General options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;
-; The name of the player.
-;
-name=
-
-;
-; The name of the alternate food.
-;
-fruit=slime-mold
-
 ;
 ; Launch the given game.
 ;
@@ -41,24 +31,30 @@ window_scaling=2
 ;
 small_screen=false
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Saved game options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
-; During a fight, an attacker gets a +4 hit bonus if the defender is asleep. 
-; A bug in the original code causes the player to be considered asleep when he
-; isn't, so monsters have an increased probability of hitting the player.
-; If _hplusfix_ is set to true, the bug is fixed.
+; If set to true, the game is automatically saved when the window is closed.
 ; 
 ; Possible values: true, false
 ;
-hplusfix=true
+autosave=false
 
 ;
-; Early versions of Rogue showed AC instead of Armor.  If set to true, AC is 
-; shown.  If set to false, Armor is shown.  If not set, the game default is
-; shown.
+; If set to true, the applicatin exits after a game is saved.
 ; 
 ; Possible values: true, false
 ;
-showac=false
+exit_on_save=false
+
+;
+; If set to true, the savefile is deleted after it is restored.
+; 
+; Possible values: true, false
+;
+delete_on_restore=false
 
 ;
 ; If set to true, a restored game starts paused.
@@ -82,6 +78,38 @@ replay_pause_at=0
 ;
 replay_step_delay=0
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Game options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; The name of the player.
+;
+name=
+
+;
+; The name of the alternate food.
+;
+fruit=slime-mold
+
+;
+; During a fight, an attacker gets a +4 hit bonus if the defender is asleep. 
+; A bug in the original code causes the player to be considered asleep when he
+; isn't, so monsters have an increased probability of hitting the player.
+; If _hplusfix_ is set to true, the bug is fixed.
+; 
+; Possible values: true, false
+;
+hplusfix=true
+
+;
+; Early versions of Rogue showed AC instead of Armor.  If set to true, AC is 
+; shown.  If set to false, Armor is shown.  If not set, the game default is
+; shown.
+; 
+; Possible values: true, false
+;
+showac=false
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; PC options
