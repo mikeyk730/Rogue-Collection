@@ -25,7 +25,7 @@ window_scaling=2
 
 ;
 ; If set to true, the smallest possible map size is used.  This is most
-; noticable in the PC versions which have a narrow map mode.
+; noticeable in the PC versions which have a narrow map mode.
 ;
 ; Possible values: true, false
 ;
@@ -43,7 +43,7 @@ small_screen=false
 autosave=false
 
 ;
-; If set to true, the applicatin exits after a game is saved.
+; If set to true, the application exits after a game is saved.
 ; 
 ; Possible values: true, false
 ;
