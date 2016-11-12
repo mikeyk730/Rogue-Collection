@@ -74,6 +74,8 @@ void Environment::ApplyArgs(const Args& args)
         Set("font", args.fontfile);
     if (args.start_paused)
         Set("replay_paused", "true");
+    if (!args.pause_at.empty())
+        Set("replay_pause_at", args.pause_at);
 }
 
 void Environment::Deserialize(std::istream& in)

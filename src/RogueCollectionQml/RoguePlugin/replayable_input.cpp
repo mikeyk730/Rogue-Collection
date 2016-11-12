@@ -3,6 +3,7 @@
 #include "replayable_input.h"
 #include "environment.h"
 #include "utility.h"
+//#include <QDebug>
 
 #define ESCAPE 0x1b
 
@@ -11,6 +12,19 @@ ReplayableInput::ReplayableInput(Environment* current_env, Environment* game_env
     m_game_env(game_env),
     m_options(options)
 {
+}
+
+const char* GetKeyName(unsigned int ch)
+{
+    switch (ch){
+    case 'f': return "run";
+    case 'h': return "left";
+    case 'j': return "down";
+    case 'k': return "up";
+    case 'l': return "right";
+    case ' ': return "clear";
+    }
+    return "";
 }
 
 char ReplayableInput::GetChar(bool block, bool for_string, bool *is_replay)
@@ -37,6 +51,9 @@ char ReplayableInput::GetChar(bool block, bool for_string, bool *is_replay)
         m_keylog.push_back(c);
 
         if (m_replay_steps_remaining > 0) {
+            //std::ostringstream ss;
+            //ss << "Replay: " << c << ": " << std::hex << unsigned int(c) << " " << GetKeyName(c);
+            //qDebug() << ss.str().c_str();
             --m_replay_steps_remaining;
             if (is_replay)
                 *is_replay = true;
