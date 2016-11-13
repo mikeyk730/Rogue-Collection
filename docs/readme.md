@@ -11,6 +11,17 @@ Most controls have not been modified.  Use '?' in game to see a list for that sp
 | Ctrl+R         | used in all versions to repeat message
 | Alt+number     | resize the window to the given scale (e.g. Alt+3 sets window to 300%)
 
+Replay Mode
+-----------
+When a saved game is being replayed, the following controls can be used:
+
+| Control  | Action
+|----------|---------------------------------------------------
+| Space    | Pause replay.  If paused, advance one step
+| Enter    | Resume replay
+| 0-9      | Resume replay at given speed (0=fastest 9=slowest)
+| Escape   | Cancel replay
+
 Wizard Mode
 -----------
 Wizard mode is used for debugging or cheating.  Using it disqualifies your score from the Top 10.  Different versions support different commands, but the master list is below:
