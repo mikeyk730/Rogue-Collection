@@ -1,6 +1,12 @@
+Retro Rogue Collection v2.0
+===========================
+Copyright (C) 2016 Mike Kaminski
+
+For the most recent version of this file, visit https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md
+
 Controls
 ========
-Most controls have not been modified.  Use '?' in game to see a list for that specific game.  The controls below have been tweaked for consistency between versions:
+Most controls have not been modified.  Use '?' in game to see a list of controls for that specific game.  The controls below have been tweaked for consistency between versions:
 
 | Control        | Versions            | Action
 |----------------|---------------------|----------------------------------------------------------------------
@@ -46,3 +52,50 @@ Wizard mode is used for debugging or cheating.  Using it disqualifies your score
 | &#124;  | Print coordinates of player
 | C       | Create object
 
+Configuration
+=============
+The `rogue.opt` file contains many different configuration options.  Open it in a text editor and modify it to your liking.  In addition, some options can be set on the command line:
+
+~~~
+Usage: RetroRogueCollection.exe [flags] [savefile|game_letter|game_name]
+
+flags:        -h|--help            Print this help.
+              -o|--optfile <file>  Use the given Rogue option file instead of rogue.opt.
+              -n|--small-screen    Run with the smallest screen that the game supports.
+              -p|--paused          Start replay paused.
+              --pause-at <n>       Pause replay with <n> steps remaining.
+              --default-settings   Run with the default profile.
+              --profile <prof>     Run with the given profile.
+              --fullscreen         Run in fullscreen.
+              --verbose            Print additional information such as profiles and settings.
+              
+savefile:     Path to save file (e.g. "rogue.sav").
+game_letter:  Letter on game select menu (e.g. "b").
+game_name:    Name from game select menu (e.g. "PC Rogue 1.1").
+~~~
+
+Credits
+=======
+Rogue
+-----
+I do not own the rights to the original Rogue games.
+
+- Copyright (C) 1981 Michael Toy, Ken Arnold, and Glenn Wichman
+- Copyright (C) 1983 Jon Lane (A.I. Design update for the IBM PC)
+- Copyright (C) 1985 Epyx
+
+Thanks to the [Roguelike Restoration Project](https://github.com/RoguelikeRestorationProject) for updating Unix versions to modern environments.
+
+Retro Effects
+-------------
+The retro effects were adapted from [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
+
+- Copyright (C) 2013 Filippo Scognamiglio
+
+Fonts
+-----
+Fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by VileR
+
+License
+=======
+The _Retro Rogue Collection_ engine is licensed under the GNU General Public License Version 3.  See `gpl-3.0.txt` for more information.  Rogue game code belongs to the original copyright holders.
