@@ -88,24 +88,22 @@ I do not own the rights to the original Rogue games.
 
 Thanks to the [Roguelike Restoration Project](https://github.com/RoguelikeRestorationProject) for updating Unix versions to modern environments.
 
-Graphics
---------
-### Retro Effects
-
+Retro Effects
+-------------
 The retro effects were adapted from [cool-retro-term](https://github.com/Swordfish90/cool-retro-term).
 
 - Copyright (C) 2013 Filippo Scognamiglio
 
-### Fonts
-
+Fonts
+-----
 IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_
 
-### Tilesets
-
+Tilesets
+--------
 Tilesets were created from Rogue for Atari ST and NetHack 3.4.3
 
 Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Tileset Repository](http://dwarffortresswiki.org/index.php/Tileset_repository)
 
 License
 =======
-The _Retro Rogue Collection_ engine is licensed under the GNU General Public License Version 3.  See `gpl-3.0.txt` for more information.  Rogue game code belongs to the original copyright holders.
+The _Retro Rogue Collection_ engine is licensed under the GNU General Public License Version 3.  See `gpl-3.0.txt` for more information.  The original Rogue game code belongs to the original copyright holders.
