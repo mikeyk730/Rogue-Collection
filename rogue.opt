@@ -47,14 +47,14 @@ autosave=false
 ; 
 ; Possible values: true, false
 ;
-exit_on_save=false
+exit_on_save=true
 
 ;
 ; If set to true, the savefile is deleted after it is restored.
 ; 
 ; Possible values: true, false
 ;
-delete_on_restore=false
+delete_on_restore=true
 
 ;
 ; If set to true, a restored game starts paused.
