@@ -1,5 +1,7 @@
 Retro Rogue Collection v2.0
 ===========================
+https://github.com/mikeyk730/Rogue-Collection
+
 Copyright (C) 2016 Mike Kaminski
 
 For the most recent version of this file, visit https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md
@@ -69,9 +71,9 @@ flags:        -h|--help            Print this help.
               --fullscreen         Run in fullscreen.
               --verbose            Print additional information such as profiles and settings.
               
-savefile:     Path to save file (e.g. "rogue.sav").
-game_letter:  Letter on game select menu (e.g. "b").
-game_name:    Name from game select menu (e.g. "PC Rogue 1.1").
+savefile:     Path to a save file (e.g. "rogue.sav").
+game_letter:  Letter from the game select menu (e.g. "b").
+game_name:    Name from the game select menu (e.g. "PC Rogue 1.1").
 ~~~
 
 Credits
