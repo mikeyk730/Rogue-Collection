@@ -51,7 +51,7 @@ I do not own the rights to the original Rogue games.
 - Copyright (C) 1983 Jon Lane (A.I. Design update for the IBM PC)
 - Copyright (C) 1985 Epyx
 
-Thanks to the [Roguelike Restoration Project](https://github.com/RoguelikeRestorationProject) for updating Unix versions to modern environments.
+Thanks to the [Roguelike Restoration Project](https://github.com/RoguelikeRestorationProject) and the [coredumpcentral.org](http://www.coredumpcentral.org) fork for updating Unix versions to modern environments.
 
 Retro Effects
 -------------
