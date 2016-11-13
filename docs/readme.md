@@ -6,6 +6,11 @@ Copyright (C) 2016 Mike Kaminski
 
 For the most recent version of this file, visit https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md
 
+Executables
+===========
+* `RetroRogueCollection.exe` is the fully featured program that includes all retro graphic effects.
+* `RogueCollection.exe` is a lightweight version that has simpler graphics and lower memory usage.
+
 Controls
 ========
 Most controls have not been modified.  Use '?' in game to see a list of controls for that specific game.  The controls below have been tweaked for consistency between versions:

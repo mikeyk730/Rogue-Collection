@@ -35,7 +35,7 @@ Don't like the existing look?  You can edit the existing tilemap to add graphics
 
 Replay System
 -------------
-_Retro Rogue Collection_ allows you to save your game with a full history of moves.  You can watch an replay of your entire game, or step through individual turns.  If you become a total winner, why not share it with a friend?
+_Retro Rogue Collection_ allows you to save your game with a full history of moves.  You can watch a replay of your entire game, or step through individual turns.  If you become a total winner, why not share it with a friend?
 
 Credits
 =======
@@ -57,8 +57,16 @@ The retro effects were adapted from [cool-retro-term](https://github.com/Swordfi
 
 Fonts
 -----
-Fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by VileR
+IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_
 
-Retro Rogue Collection
-----------------------
-- Copyright (C) 2016 Mike Kaminski
+Tilesets
+--------
+Tilesets were created from Rogue for Atari ST and NetHack 3.4.3
+
+Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Tileset Repository](http://dwarffortresswiki.org/index.php/Tileset_repository)
+
+License
+=======
+The _Retro Rogue Collection_ engine is licensed under the GNU General Public License Version 3.  See `gpl-3.0.txt` for more information.  The original Rogue game code belongs to the original copyright holders.
+
+Copyright (C) 2016 Mike Kaminski
