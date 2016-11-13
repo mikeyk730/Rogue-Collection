@@ -67,6 +67,6 @@ Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Til
 
 License
 =======
-The _Retro Rogue Collection_ engine is licensed under the GNU General Public License Version 3.  See `gpl-3.0.txt` for more information.  The original Rogue game code belongs to the original copyright holders.Retro Rogue Collection.
+The _Retro Rogue Collection_ engine is licensed under the GNU General Public License Version 3.  See `gpl-3.0.txt` for more information.  The original Rogue game code belongs to the original copyright holders.
 
 Copyright (C) 2016 Mike Kaminski
