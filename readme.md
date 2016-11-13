@@ -35,7 +35,7 @@ Don't like the existing look?  You can edit the existing tilemap to add graphics
 
 Replay System
 -------------
-_Retro Rogue Collection_ allows you to save your game with a full history of moves.  You can watch an replay of your entire game, or step through individual turns.  If you become a total winner, why not share it with a friend?
+_Retro Rogue Collection_ allows you to save your game with a full history of moves.  You can watch a replay of your entire game, or step through individual turns.  If you become a total winner, why not share it with a friend?
 
 Credits
 =======
