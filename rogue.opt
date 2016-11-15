@@ -1,53 +1,233 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options read by Rogue Collection container
+; General options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+;
+; Launch the given game.
+;
+; Possible values: a, b, c, d, e, PC Rogue 1.48, PC Rogue 1.1, 
+;                  Unix Rogue 5.4.2, Unix Rogue 5.2.1, Unix Rogue 3.6.3
+;
 game=
+
+;
+; Use the given graphics.
+;
+; Possible values: pc, unix, tiles, boxy
+;
 gfx=
+
+;
+; Amount to scale the application window.
+;
+; Possible values: Any integer
+;
+window_scaling=2
+
+;
+; If set to true, the smallest possible map size is used.  This is most
+; noticeable in the PC versions which have a narrow map mode.
+;
+; Possible values: true, false
+;
 small_screen=false
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Saved game options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; If set to true, the game is automatically saved when the window is closed.
+; 
+; Possible values: true, false
+;
+autosave=false
+
+;
+; If set to true, the application exits after a game is saved.
+; 
+; Possible values: true, false
+;
+exit_on_save=true
+
+;
+; If set to true, the savefile is deleted after it is restored.
+; 
+; Possible values: true, false
+;
+delete_on_restore=true
+
+;
+; If set to true, a restored game starts paused.
+; 
+; Possible values: true, false
+;
 replay_paused=false
+
+;
+; Pause the replay with the given number of steps remaining.
+;
+; Possible values: Any integer
+;
 replay_pause_at=0
+
+;
+; The number of milliseconds to delay between replay steps.  A larger number
+; causes the replay to be slower.
+;
+; Possible values: Any integer
+;
 replay_step_delay=0
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; options in all versions
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Game options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; The name of the player.
+;
 name=
+
+;
+; The name of the alternate food.
+;
 fruit=slime-mold
+
+;
+; During a fight, an attacker gets a +4 hit bonus if the defender is asleep. 
+; A bug in the original code causes the player to be considered asleep when he
+; isn't, so monsters have an increased probability of hitting the player.
+; If _hplusfix_ is set to true, the bug is fixed.
+; 
+; Possible values: true, false
+;
 hplusfix=true
+
+;
+; Early versions of Rogue showed AC instead of Armor.  If set to true, AC is 
+; shown.  If set to false, Armor is shown.  If not set, the game default is
+; shown.
+; 
+; Possible values: true, false
+;
 showac=false
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; Unix options
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; all Unix versions
-terse=false
-flush=false
-jump=false
-
-; Unix 5.4.2
-seefloor=true
-tombstone=true
-inven=C
-
-; Unix 5.4.2 and 5.2.1
-passgo=true
-
-; Unix 5.2.1 and 3.6.3
-step=false
-askme=true
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; PC options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-; all PC versions
-menu=true
-macro=v
+; 
+; If set to true, the game will not prompt for your name.
+; 
+; Versions: all PC versions
+; Possible values: true, false
+;
 prompt_for_name=true
+
+;
+; If set to true, direction keys can clear the -More- message.
+; 
+; Versions: all PC versions
+; Possible values: true, false
+;
 dir_key_clears_more=false
 
-; PC 1.48
+;
+; If set to true, inventory is automatically shown when an item selection is
+; needed.
+; 
+; Versions: all PC versions
+; Possible values: true, false
+;
+menu=true
+
+;
+; If set to true, the experience level name (e.g Warrior) is shown.  If set to
+; false, the numeric value is shown.
+; 
+; Versions: PC 1.48
+; Possible values: true, false
+;
 use_exp_level_names=true
+
+;
+; The default action assigned to the macro key.
+; 
+; Versions: all PC versions
+; Possible values: true, false
+;
+macro=v
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Unix options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; 
+; Terse output.
+; 
+; Versions: All Unix versions
+; Possible values: true, false
+;
+terse=false
+
+;
+; Flush typeahead during battle.
+; 
+; Versions: All Unix versions
+; Possible values: true, false
+;
+flush=false
+
+;
+; Show position only at end of run.
+; 
+; Versions: All Unix versions
+; Possible values: true, false
+;
+jump=false
+
+;
+; Show the lamp-illuminated floor.
+; 
+; Versions: Unix 5.4.2
+; Possible values: true, false
+;
+seefloor=true
+
+;
+; Print out tombstone when killed.
+; 
+; Versions: Unix 5.4.2
+; Possible values: true, false
+;
+tombstone=true
+
+;
+; Do inventories one line at a time.
+; 
+; Versions: Unix 5.2.1 and 3.6.3
+; Possible values: true, false
+;
+step=false
+
+;
+; Inventory style.
+; 
+; Versions: Unix 5.4.2
+; Possible values: O, S, C
+;
+inven=C
+
+;
+; Follow turnings in passageways.
+; 
+; Versions: Unix 5.4.2 and 5.2.1
+; Possible values: true, false
+;
+passgo=true
+
+;
+; Ask about unidentified things.
+; 
+; Versions: Unix 5.2.1 and 3.6.3
+; Possible values: true, false
+;
+askme=true

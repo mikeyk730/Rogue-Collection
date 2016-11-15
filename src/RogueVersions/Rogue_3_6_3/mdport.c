@@ -1260,6 +1260,7 @@ md_readchar(WINDOW *win)
 	    }
 	}
 
+#ifndef ROGUE_COLLECTION
 	if (ch == 27)
 	{
 	    nodelay(win,1);
@@ -1268,6 +1269,7 @@ md_readchar(WINDOW *win)
 	    unread(ch);
 	    continue;
 	}
+#endif
 
 	switch(ch)
 	{

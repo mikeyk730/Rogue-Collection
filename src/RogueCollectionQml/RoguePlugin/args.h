@@ -13,6 +13,7 @@ struct Args
     std::string gfx;
     bool print_score = false;
     bool start_paused = false;
+    std::string pause_at;
     bool small_screen = false;
 };
 

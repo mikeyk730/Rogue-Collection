@@ -17,6 +17,7 @@ TileProvider::TileProvider(const TileConfig & config, SDL_Renderer * renderer)
         { FLOOR,  33 },
         { PASSAGE,34 },
         { DOOR,   35 },
+        { '&',    35 },
         { STAIRS, 36 },
         { TRAP,   37 },
         { AMULET, 38 },

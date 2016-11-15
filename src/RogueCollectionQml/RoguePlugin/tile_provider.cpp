@@ -16,6 +16,7 @@ std::map<int, int> s_tile_index = {
     { FLOOR,  33 },
     { PASSAGE,34 },
     { DOOR,   35 },
+    { '&',    35 },
     { STAIRS, 36 },
     { TRAP,   37 },
     { AMULET, 38 },
@@ -64,7 +65,7 @@ void TileProvider::PaintTile(QPainter *painter, QRect dest_rect, int ch, int col
 
 bool TileProvider::UseInverse(unsigned int color)
 {
-    return (color >> 4) == 0x07;
+    return 0x07 == ((color >> 4) & 0x07);
 }
 
 int TileProvider::TitleIndex(unsigned int ch, unsigned int color)
