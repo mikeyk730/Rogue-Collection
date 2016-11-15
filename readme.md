@@ -35,7 +35,7 @@ _Retro Rogue Collection_ lets you play Rogue the way it looked in the 1980s.  By
 
 Don't like the existing look?  You can edit the existing tilemap to add graphics of your own.
 
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/tiles.png" height=250>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/tiled.png" height=250>
 <img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/boxy.png" height=250>
 
 Replay System
