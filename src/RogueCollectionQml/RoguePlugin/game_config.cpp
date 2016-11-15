@@ -6,7 +6,7 @@ TileConfig tilemap_v2 = { "tilemap_v2.bmp", 61, 2 };
 TileConfig tilemap_v3 = { "tilemap_v3.bmp", 61, 2 };
 TileConfig tilemap_v4 = { "tilemap_v4.bmp", 61, 2 };
 
-TextConfig tilemap_text =  { "tilemap_text.bmp", { 16, 16 }, { 0x0F }, true };
+TextConfig tilemap_text =  { "tilemap_text.bmp", { 16, 16 }, { 0x07 }, true };
 TextConfig boxy_text =     { "boxy.bmp",         { 16, 16 }, { 0x07 }, true };
 
                                  //name      text_cfg       fnt  tile_cfg      unix    color  stndout animate
