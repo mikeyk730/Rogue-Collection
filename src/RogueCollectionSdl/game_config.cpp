@@ -4,6 +4,7 @@
 TileConfig tilemap_v1 = { "tilemap_v1.bmp",  78, 2 };
 TileConfig tilemap_v2 = { "tilemap_v2.bmp",  78, 2 };
 TileConfig tilemap_v3 = { "tilemap_v3.bmp",  78, 2 };
+TileConfig tilemap_v4 = { "tilemap_v4.bmp",  78, 2 };
 
 TextConfig pc_text =         { "text.bmp",  { 256, 1 }, { 0x07 }, false };
 TextConfig pc_colored_text = { "text.bmp",  { 256, 1 }, { 0x07 }, true  };
@@ -18,12 +19,13 @@ GraphicsConfig pc_gfx =          { "pc",         &pc_colored_text, &placeholder,
 GraphicsConfig tilemap_v1_gfx =  { "tiles",      &alt_text,        0,            &tilemap_v1,  false,  false,  true,   false };
 GraphicsConfig tilemap_v2_gfx =  { "tiles",      &alt_text,        0,            &tilemap_v2,  false,  false,  true,   false };
 GraphicsConfig tilemap_v3_gfx =  { "tiles",      &alt_text,        0,            &tilemap_v3,  false,  false,  true,   false };
+GraphicsConfig tilemap_v4_gfx =  { "tiles",      &alt_text,        0,            &tilemap_v4,  false,  false,  true,   false };
 GraphicsConfig boxy_gfx =        { "boxy",       &boxy_text,       0,            0,            false,  true,   true,   true  };
 
 
 std::vector<GameConfig> s_options = {
-    { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, tilemap_v3_gfx, boxy_gfx, unix_gfx, color_unix_gfx } },
-    { "PC Rogue 1.1",     "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, tilemap_v2_gfx, boxy_gfx, unix_gfx, color_unix_gfx } },
+    { "PC Rogue 1.48",    "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, tilemap_v4_gfx, boxy_gfx, unix_gfx, color_unix_gfx } },
+    { "PC Rogue 1.1",     "Rogue_PC_1_48.dll", {80,25}, {40,25}, true,  false, { pc_gfx, tilemap_v3_gfx, boxy_gfx, unix_gfx, color_unix_gfx } },
     { "Unix Rogue 5.4.2", "Rogue_5_4_2.dll",   {80,25}, {80,24}, false, true,  { unix_gfx, color_unix_gfx, pc_gfx, tilemap_v2_gfx, boxy_gfx } },
     { "Unix Rogue 5.2.1", "Rogue_5_2_1.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, color_unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx } },
     { "Unix Rogue 3.6.3", "Rogue_3_6_3.dll",   {80,25}, {70,22}, true,  true,  { unix_gfx, color_unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx } },
