@@ -66,7 +66,7 @@ IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org
 
 Tilesets
 --------
-Tilesets were created from Rogue for Atari ST and NetHack 3.4.3
+Tilesets were adapted from [DawnHack](http://dragondeplatino.deviantart.com/art/DawnHack-NetHack-3-4-3-UnNetHack-5-1-0-416312313) by _DragonDePlatino_
 
 Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Tileset Repository](http://dwarffortresswiki.org/index.php/Tileset_repository)
 
