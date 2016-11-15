@@ -8,5 +8,6 @@
         <file>RogueWindow.qml</file>
         <file>assets/TerminusTTF-4.38.2.ttf</file>
         <file>assets/Px437_IBM_VGA8.ttf</file>
+        <file>assets/title2.png</file>
     </qresource>
 </RCC>

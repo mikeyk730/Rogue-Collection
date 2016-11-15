@@ -27,11 +27,9 @@ Rectangle {
     }
 
     Image {
-        x: 222
-        y: 47
-        scale: 1.6
-
-        source: "assets/rogue.png"
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: -16
+        source: "assets/title2.png"
         smooth: false
     }
 
@@ -40,7 +38,7 @@ Rectangle {
     Rectangle {
         id: header
         x: 18
-        y: 234
+        y: 238
         height: 22
         width: childrenRect.width
         color: 'black'
