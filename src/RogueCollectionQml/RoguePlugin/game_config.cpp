@@ -1,10 +1,10 @@
 #include "game_config.h"
 #include "environment.h"
 
-TileConfig tilemap_v1 = { "tilemap_v1.bmp", 78, 2 };
-TileConfig tilemap_v2 = { "tilemap_v2.bmp", 78, 2 };
-TileConfig tilemap_v3 = { "tilemap_v3.bmp", 78, 2 };
-TileConfig tilemap_v4 = { "tilemap_v4.bmp", 78, 2 };
+TileConfig tilemap_v1 = { "tilemap_v1.bmp", 61, 2 };
+TileConfig tilemap_v2 = { "tilemap_v2.bmp", 61, 2 };
+TileConfig tilemap_v3 = { "tilemap_v3.bmp", 61, 2 };
+TileConfig tilemap_v4 = { "tilemap_v4.bmp", 61, 2 };
 
 TextConfig tilemap_text =  { "tilemap_text.bmp", { 16, 16 }, { 0x0F }, true };
 TextConfig boxy_text =     { "boxy.bmp",         { 16, 16 }, { 0x07 }, true };
@@ -12,10 +12,10 @@ TextConfig boxy_text =     { "boxy.bmp",         { 16, 16 }, { 0x07 }, true };
                                  //name      text_cfg       fnt  tile_cfg      unix    color  stndout animate
 GraphicsConfig unix_gfx =        { "unix",   0,              0,  0,            true,   false,  true,   false };
 GraphicsConfig pc_gfx =          { "pc",     0,              0,  0,            false,  true,   true,   true  };
-GraphicsConfig tilemap_v1_gfx =  { "tiles",  &tilemap_text,  0,  &tilemap_v1,  false,  false,  true,   false };
-GraphicsConfig tilemap_v2_gfx =  { "tiles",  &tilemap_text,  0,  &tilemap_v2,  false,  false,  true,   false };
-GraphicsConfig tilemap_v3_gfx =  { "tiles",  &tilemap_text,  0,  &tilemap_v3,  false,  false,  true,   false };
-GraphicsConfig tilemap_v4_gfx =  { "tiles",  &tilemap_text,  0,  &tilemap_v4,  false,  false,  true,   false };
+GraphicsConfig tilemap_v1_gfx =  { "tiles",  &tilemap_text,  0,  &tilemap_v1,  false,  true,   true,   false };
+GraphicsConfig tilemap_v2_gfx =  { "tiles",  &tilemap_text,  0,  &tilemap_v2,  false,  true,   true,   false };
+GraphicsConfig tilemap_v3_gfx =  { "tiles",  &tilemap_text,  0,  &tilemap_v3,  false,  true,   true,   false };
+GraphicsConfig tilemap_v4_gfx =  { "tiles",  &tilemap_text,  0,  &tilemap_v4,  false,  true,   true,   false };
 GraphicsConfig boxy_gfx =        { "boxy",   &boxy_text,     0,  0,            false,  true,   true,   true  };
 
 std::vector<GameConfig> s_options = {
