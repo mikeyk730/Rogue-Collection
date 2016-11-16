@@ -77,7 +77,7 @@ void score(int amount, int flags, char monst)
     }
 
     int count = 0;
-    while ((sc_fd = _open(game->options.get_environment("scorefile").c_str(), 0)) < 0)
+    while ((sc_fd = _open(game->options.get_environment("scorefile").c_str(), _O_BINARY)) < 0)
     {
         if (count++ > 0)
             return;
@@ -135,8 +135,10 @@ void get_scores(struct LeaderboardEntry *top10)
 
     for (i = 0; i < TOPSCORES; i++, top10++)
     {
-        if (retcode > 0) retcode = _read(sc_fd, top10, sizeof(struct LeaderboardEntry));
-        if (retcode <= 0) top10->gold = 0;
+        if (retcode > 0)
+            retcode = _read(sc_fd, top10, sizeof(struct LeaderboardEntry));
+        if (retcode <= 0)
+            top10->gold = 0;
     }
 }
 
