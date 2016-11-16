@@ -178,10 +178,12 @@ void ReplayableInput::SetMaxReplaySpeed()
     m_input_cv.notify_all();
 }
 
+int s_speeds[] = {0, 1, 3, 10, 30, 50, 70, 90, 150, 300};
+
 void ReplayableInput::SetReplaySpeed(int n)
 {
     std::lock_guard<std::mutex> lock(m_input_mutex);
-    m_replay_sleep = n * 15;
+    m_replay_sleep = s_speeds[n];
     m_paused = false;
     m_steps_to_take = 0;
     m_input_cv.notify_all();
