@@ -25,6 +25,7 @@ void FontProvider::PaintTile(QPainter *painter, QRect r, int ch, int color)
         return;
 
     painter->setPen(Colors::GetFg(color));
+    //font_.setPixelSize(r.height());
     painter->setFont(font_);
     painter->setRenderHint(QPainter::TextAntialiasing, false);
     painter->drawText(r, 0, QChar(ch));

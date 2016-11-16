@@ -71,6 +71,26 @@ QtObject{
             lowResolutionFont: true
         }
         ListElement{
+            name: "IBM_DOS_BIOS"
+            text: "IBM DOS BIOS (1985)"
+            source: "fonts/1985-ibm-pc-vga/Px437_IBM_BIOS.ttf"
+            lineSpacing: 3
+            pixelSize: 16
+            baseScaling: 2.0
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
+            name: "COMPAQ_THIN"
+            text: "Compaq Thin"
+            source: "fonts/1985-ibm-pc-vga/Px437_CompaqThin_8x16.ttf"
+            lineSpacing: 3
+            pixelSize: 16
+            baseScaling: 2.0
+            fontWidth: 1.0
+            lowResolutionFont: true
+        }
+        ListElement{
             name: "PRO_FONT_SCALED"
             text: "Pro Font (Modern)"
             source: "fonts/modern-pro-font-win-tweaked/ProFontWindows.ttf"
@@ -93,11 +113,11 @@ QtObject{
         ListElement{
             name: "COMMODORE_PET_SCALED"
             text: "Commodore PET (1977)"
-            source: "fonts/1977-commodore-pet/COMMODORE_PET.ttf"
-            lineSpacing: 2
-            pixelSize: 8
-            baseScaling: 3.5
-            fontWidth: 0.7
+            source: "fonts/Kreative/PetMe.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
             lowResolutionFont: true
         }
         ListElement{
@@ -133,11 +153,11 @@ QtObject{
         ListElement{
             name: "COMMODORE_64_SCALED"
             text: "Commodore 64 (1982)"
-            source: "fonts/1982-commodore64/C64_Pro_Mono_v1.0-STYLE.ttf"
-            lineSpacing: 3
-            pixelSize: 8
-            baseScaling: 3.5
-            fontWidth: 0.7
+            source: "fonts/Kreative/PetMe64.ttf"
+            lineSpacing: 0
+            pixelSize: 16
+            baseScaling: 2
+            fontWidth: 1.0
             lowResolutionFont: true
         }
         ListElement{

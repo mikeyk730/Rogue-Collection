@@ -35,7 +35,7 @@ QtObject{
         ListElement{
             name: "COMMODORE_PET"
             text: "Commodore PET (1977)"
-            source: "fonts/1977-commodore-pet/COMMODORE_PET.ttf"
+            source: "fonts/Kreative/PetMe.ttf"
             lineSpacing: 2
             pixelSize: 8
             baseScaling: 4.0
@@ -99,7 +99,7 @@ QtObject{
         ListElement{
             name: "COMMODORE_64"
             text: "Commodore 64 (1982)"
-            source: "fonts/1982-commodore64/C64_Pro_Mono_v1.0-STYLE.ttf"
+            source: "fonts/Kreative/PetMe64.ttf"
             lineSpacing: 3
             pixelSize: 8
             baseScaling: 4.0

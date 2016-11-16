@@ -28,12 +28,10 @@
         <file>main.qml</file>
         <file>SettingsTerminalTab.qml</file>
         <file>FontScanlines.qml</file>
-        <file>fonts/1982-commodore64/C64_Pro_Mono_v1.0-STYLE.ttf</file>
         <file>fonts/1977-apple2/PrintChar21.ttf</file>
         <file>fonts/1971-ibm-3278/3270Medium.ttf</file>
         <file>fonts/1985-atari-st/AtariST8x16SystemFont.ttf</file>
         <file>fonts/modern-terminus/TerminusTTF-4.38.2.ttf</file>
-        <file>fonts/1977-commodore-pet/COMMODORE_PET.ttf</file>
         <file>fonts/1979-atari-400-800/ATARI400800_original.TTF</file>
         <file>Storage.qml</file>
         <file>CRTMainMenuBar.qml</file>
@@ -51,5 +49,9 @@
         <file>Components/SizedLabel.qml</file>
         <file>Components/QMLTermWidget.qml</file>
         <file>fonts/1985-ibm-pc-vga/Px437_IBM_VGA8.ttf</file>
+        <file>fonts/Kreative/PetMe.ttf</file>
+        <file>fonts/Kreative/PetMe64.ttf</file>
+        <file>fonts/1985-ibm-pc-vga/Px437_IBM_BIOS.ttf</file>
+        <file>fonts/1985-ibm-pc-vga/Px437_CompaqThin_8x16.ttf</file>
     </qresource>
 </RCC>
