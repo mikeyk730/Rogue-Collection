@@ -27,14 +27,14 @@ std::map<int, int> s_tile_index = {
     { SCROLL, 43 },
     { STICK,  44 },
     { WEAPON, 45 },
-    { ARMOR,  55 },
-    { MAGIC,  63 },
-    { BMAGIC, 64 },
-    { '\\',   65 },
-    { '/',    66 },
-    { '-',    67 },
-    { '|',    68 },
-    { '*',    77 },
+    { ARMOR,  46 },
+    { MAGIC,  47 },
+    { BMAGIC, 48 },
+    { '\\',   49 },
+    { '/',    50 },
+    { '-',    51 },
+    { '|',    52 },
+    { '*',    61 },
 };
 
 TileProvider::TileProvider(const TileConfig & config)
@@ -78,7 +78,7 @@ int TileProvider::TitleIndex(unsigned int ch, unsigned int color)
         return -1;
 
     int index = i->second;
-    if (index >= 65 && index <= 68) //different color bolts use different tiles
+    if (index >= 49 && index <= 52) //different color bolts use different tiles
     {
         if (color & 0x02) //yellow
             index += 8;

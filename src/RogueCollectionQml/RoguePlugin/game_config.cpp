@@ -1,10 +1,10 @@
 #include "game_config.h"
 #include "environment.h"
 
-TileConfig tilemap_v1 = { "tilemap_v1.bmp", 78, 2 };
-TileConfig tilemap_v2 = { "tilemap_v2.bmp", 78, 2 };
-TileConfig tilemap_v3 = { "tilemap_v3.bmp", 78, 2 };
-TileConfig tilemap_v4 = { "tilemap_v4.bmp", 78, 2 };
+TileConfig tilemap_v1 = { "tilemap_v1.bmp", 61, 2 };
+TileConfig tilemap_v2 = { "tilemap_v2.bmp", 61, 2 };
+TileConfig tilemap_v3 = { "tilemap_v3.bmp", 61, 2 };
+TileConfig tilemap_v4 = { "tilemap_v4.bmp", 61, 2 };
 
 TextConfig alt_text("tilemap_text.bmp", QSize(16, 16));
 TextConfig boxy_text("boxy.bmp", QSize(16, 16));

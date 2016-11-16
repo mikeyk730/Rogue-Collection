@@ -5,7 +5,7 @@ Rogue is the classic dungeon crawing video game from the early 1980s.  _Retro Ro
 Download
 --------
 
-Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collection/releases/download/v2.0/RogueCollection_2_0.zip) today!
+Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collection/releases/download/v2.0/RogueCollection_2_0.zip) today!  Read the [readme](https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md) before getting started.
 
 Five Classic Versions
 ---------------------
@@ -35,7 +35,7 @@ _Retro Rogue Collection_ lets you play Rogue the way it looked in the 1980s.  By
 
 Don't like the existing look?  You can edit the existing tilemap to add graphics of your own.
 
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/tiles.png" height=250>
+<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/tiled.png" height=250>
 <img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/boxy.png" height=250>
 
 Replay System
@@ -66,7 +66,7 @@ IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org
 
 Tilesets
 --------
-Tilesets were created from Rogue for Atari ST and NetHack 3.4.3
+Tilesets were adapted from [DawnHack](http://dragondeplatino.deviantart.com/art/DawnHack-NetHack-3-4-3-UnNetHack-5-1-0-416312313) by _DragonDePlatino_
 
 Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Tileset Repository](http://dwarffortresswiki.org/index.php/Tileset_repository)
 

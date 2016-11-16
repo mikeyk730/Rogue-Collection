@@ -7,7 +7,7 @@ Window{
     id: dialogwindow
     title: qsTr("About")
     width: 830
-    height: 500
+    height: 520
 
     modality: Qt.ApplicationModal
 
@@ -71,18 +71,20 @@ Window{
             Text{
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
-                text: "Exploring the Dungeons of Doom\n\n" +
-
-                      qsTr("Version: ") + "2.0\n" +
-                      qsTr("Author: ") + "Mike Kaminski\n" +
-                      qsTr("Email: ")  + "mikeyk730@gmail.com\n" +
-                      qsTr("Source: ") + "https://github.com/mikeyk730/Rogue-Collection\n\n" +
+                text: "Version: 2.0\n" +
+                      "Author: Mike Kaminski\n" +
+                      "Email: mikeyk730@gmail.com\n" +
+                      "Source: https://github.com/mikeyk730/Rogue-Collection\n\n" +
 
                       'Rogue:\n' +
                       "Copyright (C) 1981 Michael Toy, Ken Arnold, and Glenn Wichman\n" +
                       "Copyright (C) 1983 Jon Lane (A.I. Design update for the IBM PC)\n" +
                       "Copyright (C) 1985 Epyx\n" +
-                      "Credit to Roguelike Restoration Project\n"
+                      "Thanks to the Roguelike Restoration Project and coredumpcentral.org\n\n" +
+
+                      'Main tileset adapted from DawnHack by DragonDePlatino\n' +
+                      'Alternate tilesets by Rogue Yun and Marble Dicen\n' +
+                      'IBM PC fonts from The Ultimate Oldschool PC Font Pack by VileR'
             }
         }
     }

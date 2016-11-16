@@ -433,6 +433,11 @@ int QRogueDisplay::TranslateColor(int color, bool is_text) const
 {    
     if (!color)
         color = DefaultColor();
+
+    // The tile provider relies on the original color to select correct bolt tile
+    if (!is_text && TilePainter() == tile_provider_.get())
+        return color;
+
     if (!Gfx().use_colors || monochrome_) {
         if ((color>>4) == 0x07 || (Gfx().use_colors && color > 0x0f))
             color = FlipColor(DefaultColor());
