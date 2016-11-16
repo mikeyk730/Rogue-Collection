@@ -36,6 +36,7 @@ public:
 
     QSize fontSize() const;
     QSize screenSize() const;
+    QSize bufferSize() const;
     QString game() const;
     void setGame(const QString& game);
     void setGame(int index);

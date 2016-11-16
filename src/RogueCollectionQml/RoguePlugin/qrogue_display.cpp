@@ -121,9 +121,11 @@ void QRogueDisplay::SetCursor(bool enable)
     shared_.show_cursor = enable;
 }
 
-QSize QRogueDisplay::ScreenSize() const
+QSize QRogueDisplay::ScreenSize(bool true_size) const
 {
-    return screen_size_;
+    if(true_size)
+        return screen_size_;
+    return QSize(40,screen_size_.height());
 }
 
 QSize QRogueDisplay::ScreenPixelSize() const
@@ -134,6 +136,26 @@ QSize QRogueDisplay::ScreenPixelSize() const
 QRect QRogueDisplay::ScreenRect() const
 {
     return QRect(QPoint(0,0), ScreenPixelSize());
+}
+
+QRect QRogueDisplay::GetRectToDraw(const QRogueDisplay::ThreadData &data)
+{
+    int player_col = 0;
+    int cols = screen_size_.width();
+    for (int i = 0; i < data.dimensions.x * data.dimensions.y; ++i){
+            if ((data.data[i] & 0xff) == PLAYER){
+                player_col = i % data.dimensions.x;
+                cols = 40;
+            }
+    }
+
+    int start_col = 0;
+    if (player_col > cols/2){
+        start_col = player_col - cols/2;
+    }
+    int end_col = start_col + cols;
+
+    return QRect(start_col * TileSize().width(), 0, end_col * TileSize().width(), screen_size_.height() * TileSize().height());
 }
 
 QFont QRogueDisplay::Font() const
@@ -274,7 +296,8 @@ void QRogueDisplay::Render(QPainter *painter)
         RenderRegion(&screen_painter, copy.data.get(), *i);
     }
 
-    painter->drawPixmap(0, 0, *screen_buffer_);
+    QRect src = GetRectToDraw(copy);
+    painter->drawPixmap(QPoint(0,0), *screen_buffer_, src);
 
     std::string counter;
     if (parent_->Input()->GetRenderText(&counter))

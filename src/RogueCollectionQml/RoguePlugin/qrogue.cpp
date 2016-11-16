@@ -93,7 +93,12 @@ QRogue::~QRogue()
 
 QSize QRogue::screenSize() const
 {
-    return display_->ScreenSize();
+    return display_->ScreenSize(false);
+}
+
+QSize QRogue::bufferSize() const
+{
+    return display_->ScreenSize(true);
 }
 
 QString QRogue::game() const
@@ -346,12 +351,12 @@ QRogueDisplay *QRogue::Display() const
 
 int QRogue::Lines() const
 {
-    return screenSize().height();
+    return bufferSize().height();
 }
 
 int QRogue::Columns() const
 {
-    return screenSize().width();
+    return bufferSize().width();
 }
 
 void QRogue::keyPressEvent(QKeyEvent *event)

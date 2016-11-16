@@ -43,7 +43,7 @@ public:
     void NextGfxMode();
 
     QSize TileSize() const;
-    QSize ScreenSize() const;
+    QSize ScreenSize(bool true_size) const;
     QSize ScreenPixelSize() const;
     QRect ScreenRect() const;
 
@@ -103,6 +103,8 @@ private:
     };
     ThreadData shared_;
     std::mutex mutex_;
+
+    QRect GetRectToDraw(const ThreadData& data);
 };
 
 #endif
