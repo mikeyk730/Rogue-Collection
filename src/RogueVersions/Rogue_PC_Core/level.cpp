@@ -253,7 +253,7 @@ void Level::new_level(int do_implode)
         if (!game->options.act_like_v1_1())
             game->screen().implode();
         else
-            game->screen().blot_out(0, 0, maxrow() - 1, MAXCOLS - 1);
+            game->screen().blot_out(0, 0, maxrow() - 1, game->screen().columns() - 1);
     }
 
     update_status_bar();
