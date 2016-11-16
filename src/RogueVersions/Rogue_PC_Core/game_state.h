@@ -127,7 +127,6 @@ struct GameState
     bool invalid_position = false;
     char run_character; //Direction player is running
     char last_message[128];     //The last message printed
-    int maxrow;            //Last Line used for map
     int msg_position = 0;  //Where cursor is on top line
     std::string typeahead;
     std::string macro;
