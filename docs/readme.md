@@ -107,7 +107,7 @@ Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Til
 
 Sound
 -----
-Level up sound by _LittleRobotSoundFactory_
+Level up sound by [_LittleRobotSoundFactory_](https://www.freesound.org/people/LittleRobotSoundFactory/) used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 Fonts
 -----
