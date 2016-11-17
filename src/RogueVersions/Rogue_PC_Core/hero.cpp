@@ -209,6 +209,7 @@ bool Hero::eat()
     else {
         msg("yum, that tasted good");
     }
+    game->screen().play_sound("eat");
 
     if (get_sleep_turns())
         msg("You feel bloated and fall asleep");
@@ -394,6 +395,7 @@ void Hero::check_level(bool print)
                 msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
             else
                 msg("Welcome to level %d", i);
+            game->screen().play_sound("raise_level");
         }
     }
 }
@@ -723,6 +725,7 @@ void Hero::pick_up_gold(int value)
 {
     adjust_purse(value);
     msg("you found %d gold pieces", value);
+    game->screen().play_sound("gold");
 }
 
 bool Hero::has_amulet()

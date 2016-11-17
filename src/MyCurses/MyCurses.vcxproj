@@ -149,6 +149,7 @@
     <ClInclude Include="..\Shared\display_interface_types.h" />
     <ClInclude Include="..\Shared\pc_gfx_charmap.h" />
     <ClInclude Include="curses.h" />
+    <ClInclude Include="curses_ex.h" />
     <ClInclude Include="input_interface.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

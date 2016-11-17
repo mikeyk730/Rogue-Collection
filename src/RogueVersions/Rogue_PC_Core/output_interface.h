@@ -68,6 +68,8 @@ struct OutputInterface
 
     virtual void stop_rendering() = 0;
     virtual void resume_rendering() = 0;
+
+    virtual void play_sound(const char* id) = 0;
 };
 
 struct DisplayInterface;

@@ -6,6 +6,7 @@
 #undef MOUSE_MOVED
 
 #include <curses.h>
+#include <curses_ex.h>
 
 //Globals for curses
 #define BX_UL               0
@@ -142,6 +143,8 @@ public:
 
     virtual void stop_rendering();
     virtual void resume_rendering();
+
+    virtual void play_sound(const char* id) override;
 
 private:
     //drawing routines that do not auto-render
@@ -628,6 +631,11 @@ void PdCursesOutput::resume_rendering()
     m_should_render = true;
     Render();
     ApplyCursor();
+}
+
+void PdCursesOutput::play_sound(const char * id)
+{
+    ::play_sound(id);
 }
 
 void PdCursesOutput::Render()

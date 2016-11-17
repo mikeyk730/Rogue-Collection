@@ -58,6 +58,7 @@ QRogue::QRogue(QQuickItem *parent)
       config_()
 {
     connect(this, SIGNAL(render()), this, SLOT(update()), Qt::QueuedConnection);
+    connect(this, SIGNAL(soundEvent(const QString&)), this, SLOT(playSound(const QString&)), Qt::QueuedConnection);
 
     QStringList q_args = QCoreApplication::arguments();
     std::vector<std::string> v;
@@ -310,6 +311,11 @@ void QRogue::postRender()
 void QRogue::tileSizeChanged()
 {
     emit fontSizeChanged(fontSize().width(), fontSize().height());
+}
+
+void QRogue::playSound(const QString &id)
+{
+    display_->PlaySoundMainThread(id);
 }
 
 Environment *QRogue::GameEnv() const

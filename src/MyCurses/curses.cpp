@@ -2,17 +2,12 @@ extern "C" {
 #include "curses.h"
 #undef getch
 }
+#include "curses_ex.h"
 #include <vector>
 #include <algorithm>
 #include <cstdarg>
 #include <display_interface.h>
 #include "input_interface.h"
-
-extern "C"
-{
-    void init_curses(DisplayInterface* screen, InputInterface* input, int lines, int cols);
-    void shutdow_curses();
-}
 
 namespace
 {
@@ -460,6 +455,13 @@ void init_curses(DisplayInterface* screen, InputInterface* input, int lines, int
 void shutdow_curses()
 {
 
+}
+
+void play_sound(const char * id)
+{
+    if (s_screen) {
+        s_screen->PlaySound(id);
+    }
 }
 
 WINDOW* initscr(void)

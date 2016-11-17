@@ -54,9 +54,12 @@ Q_SIGNALS:
 
 public slots:
     void onTimer();
+    void playSound(const QString& id);
 
 signals:
     void render();
+    void soundEvent(const QString& id);
+
     void fontSizeChanged(int height, int width);
     void screenSizeChanged(int height, int width);
     void gameChanged(const QString& name);

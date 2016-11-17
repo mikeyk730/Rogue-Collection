@@ -1,6 +1,7 @@
 #pragma once
 #include "display_interface_types.h"
 #include <cstdint>
+#include <string>
 
 struct DisplayInterface
 {
@@ -11,4 +12,6 @@ struct DisplayInterface
     virtual void UpdateRegion(uint32_t* buf, Region rect) = 0;
     virtual void MoveCursor(Coord pos) = 0;
     virtual void SetCursor(bool enable) = 0;
+
+    virtual void PlaySound(const std::string& id) = 0;
 };

@@ -44,6 +44,8 @@ bool do_quaff()
     if (potion == game->hero().get_current_weapon()) //todo: make happen when remove from pack
         game->hero().set_current_weapon(NULL);
 
+    game->screen().play_sound("eat");
+
     //Calculate the effect it has on the poor guy.
     potion->Quaff();
 

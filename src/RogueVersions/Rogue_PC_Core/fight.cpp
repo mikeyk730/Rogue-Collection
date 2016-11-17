@@ -75,6 +75,8 @@ void display_hit_msg(const char *er, const char *ee)
     case 3: s = (er == 0 ? " swing and hit " : " swings and hits "); break;
     }
     msg("%s%s", s, prname(ee, false));
+
+    game->screen().play_sound(er == 0 ? "player_hit": "monster_hit");
 }
 
 //display_miss_msg: Print a message to indicate a poor swing
@@ -91,6 +93,7 @@ void display_miss_msg(const char *er, const char *ee)
     case 3: s = (er == 0 ? " don't hit" : " doesn't hit"); break;
     }
     msg("%s %s", s, prname(ee, false));
+    game->screen().play_sound(er == 0 ? "player_miss" : "monster_miss");
 }
 
 //save_throw: See if a creature save against something

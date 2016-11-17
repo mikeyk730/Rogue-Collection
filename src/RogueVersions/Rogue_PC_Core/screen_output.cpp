@@ -9,6 +9,7 @@
 #include "misc.h"
 #include "mach_dep.h"
 #include "output_interface.h"
+#include "game_state.h"
 
 typedef uint32_t chartype;
 
@@ -145,6 +146,8 @@ public:
 
     virtual void stop_rendering();
     virtual void resume_rendering();
+
+    virtual void play_sound(const char* id) override;
 
 private:
     void MoveAddCharacter(int r, int c, char chr, bool is_text);
@@ -612,6 +615,10 @@ void ScreenOutput::resume_rendering()
     ApplyCursor();
 }
 
+void ScreenOutput::play_sound(const char * id)
+{
+}
+
 void ScreenOutput::Render()
 {
     if (!m_should_render || m_curtain_down)
@@ -787,6 +794,12 @@ int OutputShim::mvinch(Coord p)
 void OutputShim::mvaddstr(Coord p, const std::string & s)
 {
     m_output_interface->mvaddstr(p.y, p.x, s.c_str());
+}
+
+void OutputShim::play_sound(const char * id)
+{
+    if(!game->in_replay())
+        m_output_interface->play_sound(id);
 }
 
 int OutputShim::lines() const

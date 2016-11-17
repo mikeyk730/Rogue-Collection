@@ -25,6 +25,7 @@
 #include "wizard.h"
 #include "hero.h"
 #include "monster.h"
+#include "output_shim.h"
 
 #pragma warning(disable:4996)
 
@@ -339,6 +340,7 @@ Monster *wake_monster(Coord p)
                 else fuse(unconfuse, 0, rnd(20) + HUH_DURATION);
                 game->hero().set_confused(true);
                 msg("the %s's gaze has confused you", monster->get_name().c_str());
+                game->screen().play_sound("medusa");
             }
         }
     }

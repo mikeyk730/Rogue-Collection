@@ -366,6 +366,7 @@ bool do_zap()
 
     // Handle the special case of a vorpalized weapon
     if (weapon) {
+        game->screen().play_sound("zap");
         if (weapon->zap_vorpalized_weapon(delta)) {
             weapon->use_charge();
         }
@@ -376,8 +377,11 @@ bool do_zap()
     if (stick->charges() == 0) {
         msg("nothing happens");
     }
-    else if (stick->Zap(delta)) {
-        stick->use_charge();
+    else{
+        game->screen().play_sound("zap");
+        if (stick->Zap(delta)) {
+            stick->use_charge();
+        }
     }
 
     return true;

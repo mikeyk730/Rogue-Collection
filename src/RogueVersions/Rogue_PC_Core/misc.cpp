@@ -248,7 +248,8 @@ void look(bool wakeup) //todo: learn this function
 
     // todo: why not when trap is sprung?
     if (game->hero().sprung_trap()) {
-        alert();
+        game->screen().play_sound("trap");
+        //alert();
         game->hero().reset_sprung();
     }
 }
@@ -515,6 +516,7 @@ bool do_go_down_stairs()
     if (game->level().get_tile(game->hero().position()) != STAIRS && !game->wizard().jump_levels())
         msg("I see no way down");
     else {
+        game->screen().play_sound("stairs");
         game->next_level();
         game->level().new_level(true);
     }
@@ -530,6 +532,7 @@ bool do_go_up_stairs()
                 total_winner();
             game->level().new_level(true);
             msg("you feel a wrenching sensation%s", noterse(" in your gut"));
+            game->screen().play_sound("stairs");
         }
         else
             msg("your way is magically blocked");

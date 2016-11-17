@@ -3,6 +3,7 @@
 #include <QColor>
 #include <QRectF>
 #include <QKeyEvent>
+#include <QGuiApplication>
 #include <pc_gfx_charmap.h>
 #include "qrogue_display.h"
 #include "qrogue_input.h"
@@ -121,6 +122,54 @@ void QRogueDisplay::SetCursor(bool enable)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     shared_.show_cursor = enable;
+}
+
+void QRogueDisplay::PlaySoundMainThread(const QString &id)
+{
+    QSoundEffect* effect = 0;
+
+    auto i = sounds_.find(id.toStdString());
+    if (i == sounds_.end())
+    {
+        effect = new QSoundEffect(parent_);
+        if (id == "player_hit")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/hit2.wav"));
+        else if (id == "player_miss")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/miss2.wav"));
+        else if (id == "monster_hit")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/hit1.wav"));
+        else if (id == "monster_miss")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/miss1.wav"));
+        else if (id == "raise_level")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/level.wav"));
+        else if (id == "gold")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/gold.wav"));
+        else if (id == "eat")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/eat.wav"));
+        else if (id == "trap")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/trap.wav"));
+        else if (id == "stairs")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/stairs.wav"));
+        else if (id == "flame")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/fire.wav"));
+        else if (id == "frost")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/ice.wav"));
+        else if (id == "zap")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/zap.wav"));
+        else if (id == "medusa")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/medusa.wav"));
+        sounds_.insert(std::make_pair(id.toStdString(),effect));
+    }
+    else{
+        effect = i->second;
+    }
+
+    effect->play();
+}
+
+void QRogueDisplay::PlaySound(const std::string &id)
+{
+    emit parent_->soundEvent(id.c_str());
 }
 
 QSize QRogueDisplay::ScreenSize() const

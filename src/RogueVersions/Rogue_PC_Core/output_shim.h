@@ -87,5 +87,7 @@ public:
     int mvinch(Coord p);
     void mvaddstr(Coord p, const std::string& s);
 
+    void play_sound(const char* id);
+
     std::shared_ptr<OutputInterface> m_output_interface;
 };

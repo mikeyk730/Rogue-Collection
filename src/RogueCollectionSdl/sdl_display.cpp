@@ -449,6 +449,10 @@ void SdlDisplay::SetCursor(bool enable)
     m_shared.show_cursor = enable;
 }
 
+void SdlDisplay::PlaySound(const std::string & id)
+{
+}
+
 void SdlDisplay::SetTitle(const std::string & title)
 {
     SDL_SetWindowTitle(m_window, title.c_str());

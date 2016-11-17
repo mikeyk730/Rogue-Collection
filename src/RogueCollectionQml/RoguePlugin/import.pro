@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-QT += qml quick
+QT += qml quick multimedia
 
 static {
     URI = RoguePlugin

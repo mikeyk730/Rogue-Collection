@@ -7,6 +7,7 @@
 #include <QSize>
 #include <QFont>
 #include <QPainter>
+#include <QSoundEffect>
 #include <coord.h>
 #include <display_interface.h>
 #include "game_config.h"
@@ -51,12 +52,14 @@ public:
     void RenderCounterOverlay(QPainter *painter, const std::string& label, int n);
     void Animate();
     void PostRenderEvent(bool rerender);
+    void PlaySoundMainThread(const QString& id);
 
     virtual void SetDimensions(Coord dimensions) override;
     virtual void UpdateRegion(uint32_t* buf) override;
     virtual void UpdateRegion(uint32_t* buf, Region rect) override;
     virtual void MoveCursor(Coord pos) override;
     virtual void SetCursor(bool enable) override;
+    virtual void PlaySound(const std::string& id) override;
 
     Region FullRegion() const;
     int TotalChars() const;
@@ -86,6 +89,7 @@ private:
     std::string gfx_mode_;
     int frame_ = 0;
     std::unique_ptr<QPixmap> screen_buffer_;
+    std::map<std::string, QSoundEffect*> sounds_;
 
     struct ThreadData
     {
