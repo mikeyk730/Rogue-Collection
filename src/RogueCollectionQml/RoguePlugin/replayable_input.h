@@ -19,6 +19,7 @@ public:
     void RestoreGame(std::istream& file);
 
     bool GetRenderText(std::string* text);
+    bool InReplay() const;
 
 protected:
     void PauseReplay();
@@ -31,7 +32,6 @@ protected:
 
     void QueueInput(const std::string& input);
     void QueueInput(char input);
-    bool InReplay() const;
     GameConfig Options() const;
 
 private:

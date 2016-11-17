@@ -169,7 +169,8 @@ void QRogueDisplay::PlaySoundMainThread(const QString &id)
 
 void QRogueDisplay::PlaySound(const std::string &id)
 {
-    emit parent_->soundEvent(id.c_str());
+    if (!parent_->Input()->InReplay())
+        emit parent_->soundEvent(id.c_str());
 }
 
 QSize QRogueDisplay::ScreenSize() const
