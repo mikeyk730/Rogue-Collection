@@ -13,3 +13,4 @@ working/
 *.scr
 build-*/
 src/RetroRogueCollection/import/
+staging/
