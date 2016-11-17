@@ -99,15 +99,19 @@ The retro effects were adapted from [cool-retro-term](https://github.com/Swordfi
 
 - Copyright (C) 2013 Filippo Scognamiglio
 
-Fonts
------
-IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_
-
 Tilesets
 --------
 Tilesets were adapted from [DawnHack](http://dragondeplatino.deviantart.com/art/DawnHack-NetHack-3-4-3-UnNetHack-5-1-0-416312313) by _DragonDePlatino_
 
 Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Tileset Repository](http://dwarffortresswiki.org/index.php/Tileset_repository)
+
+Sound
+-----
+Level up sound by LittleRobotSoundFactory
+
+Fonts
+-----
+IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_
 
 License
 =======
