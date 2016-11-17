@@ -24,15 +24,17 @@ int main(int argc, char *argv[])
     QFontDatabase::addApplicationFont(path);
 
     try {
-        QQmlApplicationEngine engine(QUrl("qrc:///app.qml"));
-        QObject* topLevel = engine.rootObjects().value(0);
-        QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
-        window->show();
+        QQmlApplicationEngine engine;
 
         int scale = 1;
         if (a.primaryScreen()->geometry().width() >= 3000)
             scale = 2;
         engine.rootContext()->setContextProperty("defaultScale", scale);
+
+        engine.load(QUrl("qrc:///app.qml"));
+        QObject* topLevel = engine.rootObjects().value(0);
+        QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
+        window->show();
 
         return a.exec();
     }
