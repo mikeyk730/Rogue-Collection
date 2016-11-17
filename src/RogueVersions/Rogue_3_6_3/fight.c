@@ -611,6 +611,7 @@ thunk(struct object *weap, char *mname)
 	msg("The %s hits the %s", w_names[weap->o_which], mname);
     else
 	msg("You hit the %s.", mname);
+    play_sound("player_hit");
 }
 
 /*
@@ -625,6 +626,7 @@ bounce(struct object *weap, char *mname)
 	msg("The %s misses the %s", w_names[weap->o_which], mname);
     else
 	msg("You missed the %s.", mname);
+    play_sound("player_miss");
 }
 
 /*

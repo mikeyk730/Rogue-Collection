@@ -519,6 +519,7 @@ thunk(const THING *weap, const char *mname, int noend)
     addmsg("%s", mname);
     if (!noend)
 	endmsg();
+    play_sound("player_hit");
 }
 
 /*
@@ -594,6 +595,7 @@ bounce(const THING *weap, const char *mname, int noend)
     addmsg(mname);
     if (!noend)
 	endmsg();
+    play_sound("player_miss");
 }
 
 /*

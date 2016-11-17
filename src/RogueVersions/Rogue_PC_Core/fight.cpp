@@ -158,6 +158,8 @@ void display_throw_msg(Item *item, const char *name, char *does, char *did)
 {
     addmsg("the %s %s ", item->name().c_str(), does);
     game->hero().is_blind() ? msg(it) : msg("the %s", name);
+    const char* sound = strcmp(does, "hits") == 0 ? "player_hit" : "player_miss";
+    game->screen().play_sound(sound);
 }
 
 //remove: Remove a monster from the screen

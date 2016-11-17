@@ -616,6 +616,7 @@ register const char *mname;
 	msg("it");
     else
 	msg("the %s", mname);
+    play_sound("player_hit");
 }
 
 /*
@@ -634,6 +635,7 @@ register const char *mname;
 	msg("it");
     else
 	msg("the %s", mname);
+    play_sound("player_miss");
 }
 
 /*
