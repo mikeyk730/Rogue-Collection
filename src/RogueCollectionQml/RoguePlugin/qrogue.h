@@ -19,6 +19,7 @@ class QRogue : public QQuickPaintedItem
     Q_PROPERTY(QSize screenSize READ screenSize NOTIFY screenSizeChanged)
     Q_PROPERTY(QString game READ game WRITE setGame NOTIFY gameChanged)
     Q_PROPERTY(QString graphics READ graphics WRITE setGraphics NOTIFY graphicsChanged)
+    Q_PROPERTY(bool sound READ sound WRITE setSound)
 
 public:
     QRogue(QQuickItem *parent = 0);
@@ -26,6 +27,9 @@ public:
 
     QFont font() const;
     void setFont(const QFont& font);
+
+    bool sound() const;
+    void setSound(bool enable);
 
     bool monochrome() const;
     void setMonochrome(bool enable);

@@ -169,7 +169,7 @@ void QRogueDisplay::PlaySoundMainThread(const QString &id)
 
 void QRogueDisplay::PlaySound(const std::string &id)
 {
-    if (!parent_->Input()->InReplay())
+    if (sound_ && !parent_->Input()->InReplay())
         emit parent_->soundEvent(id.c_str());
 }
 
@@ -208,6 +208,16 @@ bool QRogueDisplay::Monochrome() const
 void QRogueDisplay::SetMonochrome(bool enable)
 {
     monochrome_ = enable;
+}
+
+bool QRogueDisplay::Sound() const
+{
+    return sound_;
+}
+
+void QRogueDisplay::SetSound(bool enable)
+{
+    sound_ = enable;
 }
 
 QString QRogueDisplay::Graphics() const

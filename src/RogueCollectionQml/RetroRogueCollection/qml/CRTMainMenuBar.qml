@@ -22,6 +22,7 @@ MenuBar {
         MenuItem {action: aspectAction}
         MenuSeparator{}
         MenuItem {action: changeGraphicsAction}
+        MenuItem {action: soundAction}
         MenuItem {action: showsettingsAction}
     }
     Menu{

@@ -277,6 +277,16 @@ void QRogue::setFont(const QFont &font)
     display_->SetFont(font);
 }
 
+bool QRogue::sound() const
+{
+    return display_->Sound();
+}
+
+void QRogue::setSound(bool enable)
+{
+    display_->SetSound(enable);
+}
+
 bool QRogue::monochrome() const
 {
     return display_->Monochrome();

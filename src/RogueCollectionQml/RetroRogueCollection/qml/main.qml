@@ -32,6 +32,7 @@ ApplicationWindow{
     Component.onCompleted: {
         setDimensions();
         appSettings.handleFontChanged();
+        appSettings.rogue.sound = appSettings.sound;
 
         x = appSettings.x
         y = appSettings.y
@@ -131,6 +132,17 @@ ApplicationWindow{
                 terminalWindow.windowScale -= 1 ;
         }
     }
+    Action{
+        id: soundAction
+        text: qsTr("Sound Effects\t")
+        onTriggered: {
+            appSettings.sound = !appSettings.sound;
+            appSettings.rogue.sound = appSettings.sound
+        }
+        checkable: true
+        checked: appSettings.sound
+    }
+
     Action{
         id: showAboutAction
         text: qsTr("About\t")

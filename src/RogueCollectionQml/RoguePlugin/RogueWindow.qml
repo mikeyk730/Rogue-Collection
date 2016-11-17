@@ -5,6 +5,7 @@ import RoguePlugin 1.0
 Item {
     id: root
 
+    property alias sound: rogue.sound
     property alias graphics: rogue.graphics
     property alias monochrome: rogue.monochrome
     property alias font: rogue.font

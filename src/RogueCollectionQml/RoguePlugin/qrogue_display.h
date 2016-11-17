@@ -32,6 +32,9 @@ public:
     bool Monochrome() const;
     void SetMonochrome(bool enable);
 
+    bool Sound() const;
+    void SetSound(bool enable);
+
     QString Graphics() const;
     void SetGraphics(const QString &gfx);
     bool ApplyGraphics();
@@ -85,6 +88,7 @@ private:
     QRogue* parent_;
     std::unique_ptr<GameConfig> config_;
     bool monochrome_ = false;
+    bool sound_ = false;
     int gfx_index_ = 0;
     std::string gfx_mode_;
     int frame_ = 0;

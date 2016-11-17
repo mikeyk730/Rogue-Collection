@@ -56,6 +56,7 @@ QtObject{
 
     property int windowScale: 2
     property bool maintainAspect: true
+    property bool sound: true
 
     onWindowScalingChanged: handleFontChanged();
 
@@ -264,7 +265,8 @@ QtObject{
             bloomQuality: bloomQuality,
             burnInQuality: burnInQuality,
             windowScale: windowScale,
-            maintainAspect: maintainAspect
+            maintainAspect: maintainAspect,
+            sound: sound
         }
         return stringify(settings);
     }
@@ -353,6 +355,7 @@ QtObject{
 
         windowScale = settings.windowScale !== undefined ? settings.windowScale : windowScale;
         maintainAspect = settings.maintainAspect !== undefined ? settings.maintainAspect : maintainAspect;
+        sound = settings.sound !== undefined ? settings.sound : sound;
     }
 
     function loadProfileString(profileString){
