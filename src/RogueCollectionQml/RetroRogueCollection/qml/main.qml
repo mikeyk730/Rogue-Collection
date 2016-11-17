@@ -135,6 +135,7 @@ ApplicationWindow{
     Action{
         id: soundAction
         text: qsTr("Sound Effects\t")
+        shortcut: "Alt+S"
         onTriggered: {
             appSettings.sound = !appSettings.sound;
             appSettings.rogue.sound = appSettings.sound

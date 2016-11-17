@@ -1,4 +1,4 @@
-QT += qml quick
+QT += qml quick multimedia
 TARGET = RogueCollection
 
 static {

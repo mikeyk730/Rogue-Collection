@@ -25,6 +25,7 @@ ApplicationWindow
 
     RogueWindow{
         id: rogue
+        sound: true
         anchors.centerIn: parent
 
         property bool maintainAspect: true
@@ -93,6 +94,14 @@ ApplicationWindow
         shortcut: "`"
         onTriggered: rogue.nextGraphicsMode()
         enabled: rogue.isGameRunning()
+    }
+    Action {
+        id: soundAction
+        text: qsTr("Sound Effects\t")
+        shortcut: "Alt+S"
+        onTriggered: rogue.sound = !rogue.sound
+        checkable: true
+        checked: rogue.sound
     }
     Action {
         id: saveAction
@@ -167,6 +176,7 @@ ApplicationWindow
             MenuItem {action: aspectAction}
             MenuSeparator{}
             MenuItem {action: changeGraphicsAction}
+            MenuItem {action: soundAction}
         }
         Menu{
             title: qsTr("Help")
