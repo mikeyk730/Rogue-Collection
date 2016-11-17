@@ -109,7 +109,7 @@ Sound
 -----
 Sound effects from Classic Rogue v1.51 by _Donnie Russell_
 
-"Level up" sound effect by [_LittleRobotSoundFactory_](https://www.freesound.org/people/LittleRobotSoundFactory/), used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+Item sound effect by [_Seidhepriest_](https://www.freesound.org/people/Seidhepriest/), used under [CC BY-NC 3.0](https://creativecommons.org/licenses/by-nc/3.0/)
 
 Fonts
 -----

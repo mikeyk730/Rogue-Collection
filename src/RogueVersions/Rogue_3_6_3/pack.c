@@ -180,6 +180,7 @@ picked_up:
 	if (!terse)
 	    addmsg("You now have ");
 	msg("%s (%c)", inv_name(obj, !terse), pack_char(obj));
+    play_sound("item");
     }
     if (obj->o_type == AMULET)
 	amulet = TRUE;

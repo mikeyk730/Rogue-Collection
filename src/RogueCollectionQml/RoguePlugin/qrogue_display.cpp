@@ -158,6 +158,8 @@ void QRogueDisplay::PlaySoundMainThread(const QString &id)
             effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/zap.wav"));
         else if (id == "medusa")
             effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/medusa.wav"));
+        else if (id == "item")
+            effect->setSource(QUrl::fromLocalFile(QGuiApplication::applicationDirPath() + "/res/sounds/item.wav"));
         sounds_.insert(std::make_pair(id.toStdString(),effect));
     }
     else{

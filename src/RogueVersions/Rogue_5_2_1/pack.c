@@ -209,6 +209,7 @@ picked_up:
 	if (!terse)
 	    addmsg("you now have ");
 	msg("%s (%c)", inv_name(obj, !terse), pack_char(obj));
+    play_sound("item");
     }
 }
 

@@ -616,8 +616,10 @@ void Hero::add_to_pack(Item *obj, bool silent)
     }
 
     //Notify the user
-    if (!silent)
+    if (!silent) {
         msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
+        game->screen().play_sound("item");
+    }
 }
 
 bool Hero::add_to_list(Item** obj, bool from_floor)

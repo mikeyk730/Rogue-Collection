@@ -174,6 +174,7 @@ out:
 	if (!terse)
 	    addmsg("you now have ");
 	msg("%s (%c)", inv_name(obj, !terse), obj->o_packch);
+    play_sound("item");
     }
 }
 
