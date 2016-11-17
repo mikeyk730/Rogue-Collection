@@ -101,17 +101,17 @@ The retro effects were adapted from [cool-retro-term](https://github.com/Swordfi
 
 Tilesets
 --------
-Tilesets were adapted from [DawnHack](http://dragondeplatino.deviantart.com/art/DawnHack-NetHack-3-4-3-UnNetHack-5-1-0-416312313) by _DragonDePlatino_
+Tilesets were adapted from [DawnHack](http://dragondeplatino.deviantart.com/art/DawnHack-NetHack-3-4-3-UnNetHack-5-1-0-416312313) by _DragonDePlatino_, used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Tileset Repository](http://dwarffortresswiki.org/index.php/Tileset_repository)
 
 Sound
 -----
-Level up sound by [_LittleRobotSoundFactory_](https://www.freesound.org/people/LittleRobotSoundFactory/) used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+Level up sound by [_LittleRobotSoundFactory_](https://www.freesound.org/people/LittleRobotSoundFactory/), used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 Fonts
 -----
-IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_ used under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+IBM PC fonts from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_, used under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 License
 =======
