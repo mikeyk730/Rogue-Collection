@@ -111,7 +111,7 @@ Level up sound by [_LittleRobotSoundFactory_](https://www.freesound.org/people/L
 
 Fonts
 -----
-IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_
+IBM PC fonts come from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_ used under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 License
 =======
