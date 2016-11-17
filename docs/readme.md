@@ -107,11 +107,13 @@ Alternate tilesets by _Rogue Yun_ and _Marble Dice_ from the [Dwarf Fortress Til
 
 Sound
 -----
-Level up sound by [_LittleRobotSoundFactory_](https://www.freesound.org/people/LittleRobotSoundFactory/), used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
+Sound effects from Classic Rogue v1.51 by _Donnie Russell_
+
+"Level up" sound effect by [_LittleRobotSoundFactory_](https://www.freesound.org/people/LittleRobotSoundFactory/), used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)
 
 Fonts
 -----
-IBM PC fonts from [_The Ultimate Oldschool PC Font Pack_](http://int10h.org/oldschool-pc-fonts/) by _VileR_, used under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+IBM PC fonts from [The Ultimate Oldschool PC Font Pack](http://int10h.org/oldschool-pc-fonts/) by _VileR_, used under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
 
 License
 =======
