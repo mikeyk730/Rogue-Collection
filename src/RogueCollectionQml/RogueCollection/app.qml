@@ -10,7 +10,7 @@ ApplicationWindow
     title: rogue.title
     color: 'black'
 
-    property int windowScale: 2
+    property int windowScale: defaultScale
 
     function setDimensions(force){
         if (force === true || visibility === Window.Windowed){
@@ -122,7 +122,7 @@ ApplicationWindow
         shortcut: "Ctrl+0"
         onTriggered: {
             window.visibility = Window.Windowed;
-            window.windowScale = 2;
+            window.windowScale = defaultScale;
             window.setDimensions();
         }
     }

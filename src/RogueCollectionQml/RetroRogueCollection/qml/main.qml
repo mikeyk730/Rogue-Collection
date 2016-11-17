@@ -109,7 +109,7 @@ ApplicationWindow{
         shortcut: "Ctrl+0"
         onTriggered: {
             terminalWindow.visibility = Window.Windowed;
-            terminalWindow.windowScale = 2;
+            terminalWindow.windowScale = defaultScale;
             terminalWindow.setDimensions();
         }
     }

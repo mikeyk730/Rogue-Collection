@@ -4,6 +4,8 @@
 #include <QQmlApplicationEngine>
 #include <QFontDatabase>
 #include <QtPlugin>
+#include <QQmlContext>
+#include <QScreen>
 #include "../RoguePlugin/utility.h"
 
 #ifdef MDK_STATIC_COMPILE
@@ -26,6 +28,11 @@ int main(int argc, char *argv[])
         QObject* topLevel = engine.rootObjects().value(0);
         QQuickWindow* window = qobject_cast<QQuickWindow*>(topLevel);
         window->show();
+
+        int scale = 1;
+        if (a.primaryScreen()->geometry().width() >= 3000)
+            scale = 2;
+        engine.rootContext()->setContextProperty("defaultScale", scale);
 
         return a.exec();
     }

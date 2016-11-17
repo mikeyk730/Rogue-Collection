@@ -54,7 +54,7 @@ QtObject{
     property real fps: 24
     property bool verbose: false
 
-    property int windowScale: 2
+    property int windowScale: defaultScale
     property bool maintainAspect: true
     property bool sound: true
 

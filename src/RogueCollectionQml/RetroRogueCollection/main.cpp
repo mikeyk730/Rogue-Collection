@@ -4,6 +4,7 @@
 #include <QtWidgets/QApplication>
 #include <QQmlContext>
 #include <QStringList>
+#include <QScreen>
 #include <QFontDatabase>
 #include <QDebug>
 #include <QtPlugin>
@@ -43,6 +44,11 @@ int main(int argc, char *argv[])
 
     engine.rootContext()->setContextProperty("fileIO", &fileIO);
     engine.rootContext()->setContextProperty("devicePixelRatio", app.devicePixelRatio());
+
+    int scale = 1;
+    if (app.primaryScreen()->geometry().width() >= 3000)
+        scale = 2;
+    engine.rootContext()->setContextProperty("defaultScale", scale);
 
     auto path = app.applicationDirPath() + "/res/fonts/Px437_IBM_VGA8.ttf";
     QFontDatabase::addApplicationFont(path);
