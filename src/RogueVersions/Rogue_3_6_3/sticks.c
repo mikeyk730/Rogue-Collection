@@ -60,6 +60,7 @@ do_zap(int gotdir)
 	msg("Nothing happens.");
 	return;
     }
+    play_sound("zap");
     if (!gotdir)
 	do {
 	    delta.y = rnd(3) - 1;

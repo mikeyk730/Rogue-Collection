@@ -417,5 +417,6 @@ register int value;
 	if (!terse)
 	    addmsg("you found ");
 	msg("%d gold pieces", value);
+    play_sound("gold");
     }
 }

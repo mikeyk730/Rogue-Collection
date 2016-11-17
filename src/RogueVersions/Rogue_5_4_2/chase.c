@@ -174,6 +174,7 @@ over:
 	    delta.x = sign(hero.x - th->t_pos.x);
 	    if (has_hit)
 		endmsg();
+        play_sound("flame");
 	    fire_bolt(&th->t_pos, &delta, "flame");
 	    running = FALSE;
 	    count = 0;

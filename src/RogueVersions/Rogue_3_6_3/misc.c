@@ -266,6 +266,7 @@ eat()
 	detach(pack, item);
 	discard(item);
     }
+    play_sound("eat");
 }
 
 /*

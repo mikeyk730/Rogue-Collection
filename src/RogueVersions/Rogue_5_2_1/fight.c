@@ -325,6 +325,7 @@ check_level()
 	if ((pstats.s_hpt += add) > max_hp)
 	    pstats.s_hpt = max_hp;
 	msg("welcome to level %d", i);
+    play_sound("raise_level");
     }
 }
 
@@ -489,6 +490,7 @@ register char *er, *ee;
     if (!terse)
 	addmsg(prname(ee, FALSE));
     endmsg();
+    play_sound(er == 0 ? "player_hit" : "monster_hit");
 }
 
 /*
@@ -512,6 +514,7 @@ register char *er, *ee;
     if (!terse)
 	addmsg(" %s", prname(ee, FALSE));
     endmsg();
+    play_sound(er == 0 ? "player_miss" : "monster_miss");
 }
 
 /*

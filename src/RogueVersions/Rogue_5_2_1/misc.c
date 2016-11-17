@@ -272,6 +272,7 @@ eat()
 	detach(pack, obj);
 	discard(obj);
     }
+    play_sound("eat");
 }
 
 /*

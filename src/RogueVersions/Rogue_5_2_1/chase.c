@@ -109,6 +109,7 @@ over:
 	{
 	    delta.y = sign(hero.y - th->t_pos.y);
 	    delta.x = sign(hero.x - th->t_pos.x);
+        play_sound("flame");
 	    fire_bolt(&th->t_pos, &delta, "flame");
 	    running = FALSE;
 	    count = quiet = 0;

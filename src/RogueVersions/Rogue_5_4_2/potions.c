@@ -79,6 +79,8 @@ quaff(void)
     if (obj == cur_weapon)
 	cur_weapon = NULL;
 
+    play_sound("eat");
+
     /*
      * Calculate the effect it has on the poor guy.
      */

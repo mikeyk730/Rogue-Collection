@@ -66,6 +66,7 @@ do_zap(void)
 	msg("nothing happens");
 	return;
     }
+    play_sound("zap");
     switch (obj->o_which)
     {
 	case WS_LIGHT:

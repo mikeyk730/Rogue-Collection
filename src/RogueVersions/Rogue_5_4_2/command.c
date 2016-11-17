@@ -673,6 +673,7 @@ d_level(void)
 	msg("I see no way down");
     else
     {
+        play_sound("stairs");
 	level++;
 	seenstairs = FALSE;
 	new_level();
@@ -696,6 +697,7 @@ u_level(void)
 		total_winner();
 	    new_level();
 	    msg("you feel a wrenching sensation in your gut");
+        play_sound("stairs");
 	}
 	else
 	    msg("your way is magically blocked");

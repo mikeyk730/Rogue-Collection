@@ -312,6 +312,7 @@ register coord *tc;
 		msg("a small dart whizzes by your ear and vanishes");
     }
     flush_type();
+    play_sound("trap");
     return tr;
 }
 

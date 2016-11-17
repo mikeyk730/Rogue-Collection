@@ -152,6 +152,7 @@ money()
 		if (!terse)
 		    addmsg("You found ");
 		msg("%d gold pieces.", rp->r_goldval);
+        play_sound("gold");
 	    }
 	    purse += rp->r_goldval;
 	    rp->r_goldval = 0;

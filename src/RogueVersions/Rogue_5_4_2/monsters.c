@@ -201,6 +201,7 @@ wake_monster(int y, int x)
 		if (strcmp(mname, "it") != 0)
 		    addmsg("'");
 		msg("s gaze has confused you");
+        play_sound("medusa");
 	    }
 	}
     }

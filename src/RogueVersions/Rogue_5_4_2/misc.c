@@ -320,6 +320,7 @@ eat(void)
 	else
 	    msg("%s, that tasted good", choose_str("oh, wow", "yum"));
     leave_pack(obj, FALSE, FALSE);
+    play_sound("eat");
 }
 
 /*
@@ -344,6 +345,7 @@ check_level(void)
 	max_hp += add;
 	pstats.s_hpt += add;
 	msg("welcome to level %d", i);
+    play_sound("raise_level");
     }
 }
 

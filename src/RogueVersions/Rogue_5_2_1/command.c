@@ -526,6 +526,7 @@ d_level()
 	msg("I see no way down");
     else
     {
+        play_sound("stairs");
 	level++;
 	new_level();
     }
@@ -545,6 +546,7 @@ u_level()
 		total_winner();
 	    new_level();
 	    msg("you feel a wrenching sensation in your gut");
+        play_sound("stairs");
 	}
 	else
 	    msg("your way is magically blocked");

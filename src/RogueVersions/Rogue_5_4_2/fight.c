@@ -549,6 +549,7 @@ hit(const char *er, const char *ee, int noend)
 	addmsg(prname(ee, FALSE));
     if (!noend)
 	endmsg();
+    play_sound(er == 0 ? "player_hit" : "monster_hit");
 }
 
 /*
@@ -574,6 +575,7 @@ miss(const char *er, const char *ee, int noend)
 	addmsg(" %s", prname(ee, FALSE));
     if (!noend)
 	endmsg();
+    play_sound(er == 0 ? "player_miss" : "monster_miss");
 }
 
 /*

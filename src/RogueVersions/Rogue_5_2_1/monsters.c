@@ -205,6 +205,7 @@ int y, x;
 		    fuse(unconfuse, 0, rnd(20) + HUHDURATION, AFTER);
 		player.t_flags |= ISHUH;
 		msg("the umber hulk's gaze has confused you");
+        play_sound("medusa");
 	    }
 	}
     }

@@ -355,6 +355,7 @@ be_trapped(const coord *tc)
 	    rust_armor(cur_armor);
     }
     flush_type();
+    play_sound("trap");
     return tr;
 }
 
