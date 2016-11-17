@@ -73,6 +73,10 @@ QRogue::QRogue(QQuickItem *parent)
 
     display_.reset(new QRogueDisplay(this, {80,25}, graphics));
 
+    std::string value;
+    bool sound(!env_->Get("sound", &value) || value != "false");
+    display_->SetSound(sound);
+
     std::string game;
     if (env_->Get("game", &game) && !game.empty()){
         int i = GetGameIndex(game.c_str());

@@ -10,18 +10,18 @@
 game=
 
 ;
-; Use the given graphics.
+; Use the given graphics.  Only applicable to RogueCollection.exe
 ;
 ; Possible values: pc, unix, tiles, boxy
 ;
 gfx=
 
 ;
-; Amount to scale the application window.
+; Play sound effects.  Only applicable to RogueCollection.exe
 ;
-; Possible values: Any integer
+; Possible values: true, false
 ;
-window_scaling=2
+sound=true
 
 ;
 ; If set to true, the smallest possible map size is used.  This is most

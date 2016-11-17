@@ -25,7 +25,6 @@ ApplicationWindow
 
     RogueWindow{
         id: rogue
-        sound: true
         anchors.centerIn: parent
 
         property bool maintainAspect: true
