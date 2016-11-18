@@ -1,11 +1,11 @@
-Retro Rogue Collection v2.0
+Retro Rogue Collection v2.1
 ===========================
 Rogue is the classic dungeon crawing video game from the early 1980s.  _Retro Rogue Collection_ brings it to your PC in a way never seen before.
 
 Download
 --------
 
-Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collection/releases/download/v2.0/RogueCollection_2_0.zip) today!  Read the [readme](https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md) before getting started.
+Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collection/releases/download/v2.1/RogueCollection_2_1.zip) today!  Read the [readme](https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md) before getting started.
 
 Five Classic Versions
 ---------------------
