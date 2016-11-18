@@ -212,9 +212,9 @@ step=false
 ; Inventory style.
 ; 
 ; Versions: Unix 5.4.2
-; Possible values: O, S, C
+; Possible values: overwrite, slow, clear
 ;
-inven=C
+inven=clear
 
 ;
 ; Follow turnings in passageways.
