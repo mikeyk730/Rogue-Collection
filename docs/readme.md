@@ -58,6 +58,7 @@ Wizard mode is used for debugging or cheating.  Using it disqualifies your score
 | $       | Print number of items in pack
 | &#124;  | Print coordinates of player
 | C       | Create object
+| *       | Show item probability
 
 Configuration
 =============
