@@ -106,7 +106,7 @@ register bool drop;
 		if (!terse)
 		    strcat(pb, showac ? "armor class " : "protection ");
 		pb = &prbuf[strlen(prbuf)];
-		sprintf(pb, "%d]", obj->o_ac);
+		sprintf(pb, "%d]", showac ? obj->o_ac : ARMOR_DISPLAY(obj->o_ac));
 	    }
 	    else
 		sprintf(pb, "%s", a_names[obj->o_which]);
