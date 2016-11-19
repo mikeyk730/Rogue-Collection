@@ -70,7 +70,7 @@ public:
 
     void move(short y, short x);
 
-    char curch();
+    unsigned char curch();
 
     int lines() const;
     int columns() const;

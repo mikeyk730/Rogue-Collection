@@ -129,7 +129,7 @@ public:
     virtual void raise_curtain();
 
     virtual void move(short y, short x);
-    virtual char curch();
+    virtual unsigned char curch();
 
     virtual int lines() const;
     virtual int columns() const;
@@ -580,9 +580,9 @@ void PdCursesOutput::move(short y, short x)
         Render();
 }
 
-char PdCursesOutput::curch()
+unsigned char PdCursesOutput::curch()
 {
-    return (char)::inch();
+    return ::inch() & 0xff;
 }
 
 int PdCursesOutput::add_text(unsigned char c)

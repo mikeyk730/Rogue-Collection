@@ -132,7 +132,7 @@ public:
     virtual void raise_curtain();
 
     virtual void move(short y, short x);
-    virtual char curch();
+    virtual unsigned char curch();
 
     virtual int lines() const;
     virtual int columns() const;
@@ -567,7 +567,7 @@ void ScreenOutput::move(short y, short x)
         ApplyMove();
 }
 
-char ScreenOutput::curch()
+unsigned char ScreenOutput::curch()
 {
     return m_data.buffer[m_row*COLS+m_col] && 0xff;
 }
@@ -761,7 +761,7 @@ void OutputShim::move(short y, short x)
     m_output_interface->move(y, x);
 }
 
-char OutputShim::curch()
+unsigned char OutputShim::curch()
 {
     return m_output_interface->curch();
 }

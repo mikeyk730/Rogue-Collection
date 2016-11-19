@@ -55,7 +55,7 @@ struct OutputInterface
     virtual void raise_curtain() = 0;
 
     virtual void move(short y, short x) = 0;
-    virtual char curch() = 0;
+    virtual unsigned char curch() = 0;
 
     virtual int lines() const = 0;
     virtual int columns() const = 0;
