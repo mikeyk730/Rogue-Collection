@@ -368,8 +368,13 @@ void Monster::do_screen_update(Coord next_position)
             game->screen().add_tile(position(), (char)FLOOR);
         else if (tile_beneath() == FLOOR && !game->hero().can_see(position()) && !game->hero().detects_others())
             game->screen().add_tile(position(), ' ');
-        else
+        else {
+            //mdk:bugfix: standout if in passage
+            if (game->level().is_passage(position()) && tile_beneath() != PASSAGE)
+                game->screen().standout();
             game->screen().add_tile(position(), tile_beneath());
+            game->screen().standend();
+        }
     }
 
     Room *orig_room = room();
