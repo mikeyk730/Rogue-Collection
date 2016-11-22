@@ -370,7 +370,7 @@ void Monster::do_screen_update(Coord next_position)
             game->screen().add_tile(position(), ' ');
         else {
             //mdk:bugfix: standout if in passage
-            if (game->level().is_passage(position()) && tile_beneath() != PASSAGE)
+            if (game->level().is_passage(position()) && tile_beneath() != PASSAGE && tile_beneath() != ' ')
                 game->screen().standout();
             game->screen().add_tile(position(), tile_beneath());
             game->screen().standend();
