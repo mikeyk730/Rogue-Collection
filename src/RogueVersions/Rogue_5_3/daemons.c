@@ -89,7 +89,7 @@ unsee()
 	if (on(*th, ISINVIS) && see_monst(th))
 	{
 	    move(th->t_pos.y, th->t_pos.x);
-	    addch(th->t_oldch);
+	    addrawch(th->t_oldch);
 	}
     player.t_flags &= ~CANSEE;
 }
@@ -208,13 +208,13 @@ come_down()
      */
     for (tp = lvl_obj; tp != NULL; tp = next(tp))
 	if (cansee(tp->o_pos.y, tp->o_pos.x))
-	    mvaddch(tp->o_pos.y, tp->o_pos.x, tp->o_type);
+	    mvaddrawch(tp->o_pos.y, tp->o_pos.x, tp->o_type);
 
     /*
      * undo the stairs
      */
     if (seenstairs)
-	mvaddch(stairs.y, stairs.x, STAIRS);
+	mvaddrawch(stairs.y, stairs.x, STAIRS);
 
     /*
      * undo the monsters
@@ -223,13 +223,13 @@ come_down()
     for (tp = mlist; tp != NULL; tp = next(tp))
 	if (cansee(tp->t_pos.y, tp->t_pos.x))
 	    if (!on(*tp, ISINVIS) || on(player, CANSEE))
-		mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
+		mvaddrawch(tp->t_pos.y, tp->t_pos.x, tp->t_disguise);
 	    else
-		mvaddch(tp->t_pos.y, tp->t_pos.x, chat(tp->t_pos.y, tp->t_pos.x));
+		mvaddrawch(tp->t_pos.y, tp->t_pos.x, chat(tp->t_pos.y, tp->t_pos.x));
 	else if (seemonst)
 	{
 	    standout();
-	    mvaddch(tp->t_pos.y, tp->t_pos.x, tp->t_type);
+	    mvaddrawch(tp->t_pos.y, tp->t_pos.x, tp->t_type);
 	    standend();
 	}
     player.t_flags &= ~ISTrip;
@@ -252,13 +252,13 @@ visuals()
      */
     for (tp = lvl_obj; tp != NULL; tp = next(tp))
 	if (cansee(tp->o_pos.y, tp->o_pos.x))
-	    mvaddch(tp->o_pos.y, tp->o_pos.x, rnd_thing());
+	    mvaddrawch(tp->o_pos.y, tp->o_pos.x, rnd_thing());
 
     /*
      * change the stairs
      */
     if (!seenstairs && cansee(stairs.y, stairs.x))
-	    mvaddch(stairs.y, stairs.x, rnd_thing());
+	    mvaddrawch(stairs.y, stairs.x, rnd_thing());
 
     /*
      * change the monsters
@@ -267,13 +267,13 @@ visuals()
     for (tp = mlist; tp != NULL; tp = next(tp))
 	if (see_monst(tp))
 	    if (tp->t_type == 'M' && tp->t_disguise != 'M')
-		mvaddch(tp->t_pos.y, tp->t_pos.x, rnd_thing());
+		mvaddrawch(tp->t_pos.y, tp->t_pos.x, rnd_thing());
 	    else
-		mvaddch(tp->t_pos.y, tp->t_pos.x, rnd(26) + 'A');
+		mvaddrawch(tp->t_pos.y, tp->t_pos.x, rnd(26) + 'A');
 	else if (seemonst)
 	{
 	    standout();
-	    mvaddch(tp->t_pos.y, tp->t_pos.x, rnd(26) + 'A');
+	    mvaddrawch(tp->t_pos.y, tp->t_pos.x, rnd(26) + 'A');
 	    standend();
 	}
 }

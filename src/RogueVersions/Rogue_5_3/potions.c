@@ -233,7 +233,7 @@ invis_on()
 	if (on(*th, ISINVIS) && see_monst(th) && !on(player, ISTrip))
 	{
 	    move(th->t_pos.y, th->t_pos.x);
-	    addch(th->t_disguise);
+	    addrawch(th->t_disguise);
 	}
 }
 
@@ -255,16 +255,16 @@ register bool turn_off;
 	if (turn_off)
 	{
 	    if (!can_see)
-		addch(mp->t_oldch);
+		addrawch(mp->t_oldch);
 	}
 	else
 	{
 	    if (!can_see)
 		standout();
 	    if (!on(player, ISTrip))
-		addch(mp->t_type);
+		addrawch(mp->t_type);
 	    else
-		addch(rnd(26) + 'A');
+		addrawch(rnd(26) + 'A');
 	    if (!can_see)
 	    {
 		standend();

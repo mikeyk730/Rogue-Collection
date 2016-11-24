@@ -16,7 +16,7 @@ read_scroll()
 {
     register THING *obj;
     register int y, x;
-    register char ch;
+    register unsigned char ch;
     register THING *op;
     register int index, mcount;
     register bool discardit = FALSE;
@@ -162,8 +162,8 @@ read_scroll()
 		    index = INDEX(y, x);
 		    switch (ch = _level[index])
 		    {
-			case '-':
-			case '|':
+			case HWALL:
+			case VWALL:
 			    if (!(_flags[index] & F_REAL))
 			    {
 				ch = _level[index] = DOOR;
@@ -181,7 +181,7 @@ read_scroll()
 			    ch = ' ';
 		    }
 		    if (ch != ' ')
-			mvaddch(y, x, ch);
+			mvaddrawch(y, x, ch);
 		}
 	when S_GFIND:
 	    /*

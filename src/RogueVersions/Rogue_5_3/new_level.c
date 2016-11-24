@@ -81,7 +81,7 @@ new_level()
     find_floor((struct room *) NULL, &hero, FALSE, TRUE);
     enter_room(&hero);
     move(hero.y, hero.x);
-    addch(PLAYER);
+    addrawch(PLAYER);
     if (on(player, SEEMONST))
 	turn_see(FALSE);
     if (on(player, ISTrip))

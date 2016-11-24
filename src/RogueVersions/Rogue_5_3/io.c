@@ -62,7 +62,9 @@ endmsg()
     {
 	look(FALSE);
 	move(0, mpos);
-	addstr("--More--");
+    PC_GFX_COLOR(0x70);
+	addstr(MORE_MSG);
+    PC_GFX_NOCOLOR(0x70);
 	refresh();
 	wait_for(' ');
     }
@@ -93,14 +95,15 @@ doadd(char *fmt, va_list ap)
  * step_ok:
  *	Returns true if it is ok to step on ch
  */
-step_ok(ch)
+step_ok(unsigned int ch)
 {
     switch (ch)
     {
 	case ' ':
-	case '|':
-	case '-':
-	    return FALSE;
+    case VWALL:
+    case HWALL:
+    PC_GFX_WALL_CASES    
+        return FALSE;
 	default:
 	    return (!isalpha(ch));
     }

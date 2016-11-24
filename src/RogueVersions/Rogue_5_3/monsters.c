@@ -155,7 +155,8 @@ int y, x;
 {
     register THING *tp;
     register struct room *rp;
-    register char ch, *mname;
+    register unsigned char ch;
+    char *mname;
 
 #ifdef WIZARD
     if ((tp = moat(y, x)) == NULL)

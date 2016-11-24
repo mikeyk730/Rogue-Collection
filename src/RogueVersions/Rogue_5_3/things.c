@@ -157,7 +157,7 @@ register bool drop;
  */
 drop()
 {
-    register char ch;
+    register unsigned char ch;
     register THING *nobj, *op;
 
     ch = chat(hero.y, hero.x);

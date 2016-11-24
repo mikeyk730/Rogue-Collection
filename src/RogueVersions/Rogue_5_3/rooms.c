@@ -170,7 +170,7 @@ register int startx;
     register int y;
 
     for (y = rp->r_pos.y + 1; y <= rp->r_max.y + rp->r_pos.y - 1; y++)
-	chat(y, startx) = '|';
+	chat(y, startx) = VWALL;
 }
 
 /*
@@ -184,7 +184,7 @@ int starty;
     register int x;
 
     for (x = rp->r_pos.x; x <= rp->r_pos.x + rp->r_max.x - 1; x++)
-	chat(starty, x) = '-';
+	chat(starty, x) = HWALL;
 }
 
 /*
@@ -310,7 +310,7 @@ int limit;
 bool monst;
 {
     register int cnt;
-    register char compchar;
+    register unsigned char compchar;
     register bool pickroom;
 
     if (!(pickroom = (rp == NULL)))
@@ -357,18 +357,18 @@ register coord *cp;
 	    {
 		tp = moat(y, x);
 		if (tp == NULL)
-		    addch(chat(y, x));
+		    addrawch(chat(y, x));
 		else if (!see_monst(tp))
 		    if (on(player, SEEMONST))
 		    {
 			standout();
-			addch(tp->t_disguise);
+			addrawch(tp->t_disguise);
 			standend();
 		    }
 		    else
-			addch(chat(y, x));
+			addrawch(chat(y, x));
 		else
-		    addch(tp->t_disguise);
+		    addrawch(tp->t_disguise);
 	    }
 	}
 }
@@ -382,8 +382,8 @@ register coord *cp;
 {
     register int y, x;
     register struct room *rp;
-    register char floor;
-    register char ch;
+    register unsigned char floor;
+    register unsigned char ch;
 
     rp = proom;
     if (rp->r_flags & ISMAZE)
@@ -402,7 +402,7 @@ register coord *cp;
 		    break;
 		case FLOOR:
 		    if (floor == ' ')
-			addch(' ');
+			addrawch(' ');
 		    break;
 		case STAIRS:
 		    if (!on(player, ISTrip) ||
@@ -418,13 +418,13 @@ register coord *cp;
 			if (on(player, SEEMONST))
 			{
 			    standout();
-			    addch(ch);
+			    addrawch(ch);
 			    standend();
 			    break;
 			}
 			else
 			    moat(y, x)->t_oldch = floor;
-		    addch(floor);
+		    addrawch(floor);
 	    }
     door_open(rp);
 }

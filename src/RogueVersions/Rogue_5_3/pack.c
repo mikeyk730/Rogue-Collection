@@ -53,7 +53,7 @@ bool silent;
 		if (from_floor)
 		{
 		    detach(lvl_obj, obj);
-		    mvaddch(hero.y, hero.x, floor);
+		    mvaddrawch(hero.y, hero.x, floor);
 		    chat(hero.y, hero.x) = floor;
 		}
 		discard(obj);
@@ -77,7 +77,7 @@ bool silent;
 	if (obj->o_flags & ISFOUND)
 	{
 	    detach(lvl_obj, obj);
-	    mvaddch(hero.y, hero.x, floor);
+	    mvaddrawch(hero.y, hero.x, floor);
 	    chat(hero.y, hero.x) = floor;
 	    msg("the scroll turns to dust as you pick it up");
 	    return;
@@ -89,7 +89,7 @@ bool silent;
     if (from_floor)
     {
 	detach(lvl_obj, obj);
-	mvaddch(hero.y, hero.x, floor);
+	mvaddrawch(hero.y, hero.x, floor);
 	chat(hero.y, hero.x) = floor;
     }
     /*
@@ -226,7 +226,7 @@ int type;
  *	Add something to characters pack.
  */
 pick_up(ch)
-char ch;
+unsigned char ch;
 {
     register THING *obj;
 
@@ -381,7 +381,7 @@ register int value;
 
     floor = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
     purse += value;
-    mvaddch(hero.y, hero.x, floor);
+    mvaddrawch(hero.y, hero.x, floor);
     chat(hero.y, hero.x) = floor;
     if (value > 0)
     {

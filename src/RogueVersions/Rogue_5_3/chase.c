@@ -135,7 +135,7 @@ over:
     }
     else if (th->t_type == 'F')
 	return;
-    mvaddch(th->t_pos.y, th->t_pos.x, th->t_oldch);
+    mvaddrawch(th->t_pos.y, th->t_pos.x, th->t_oldch);
     if (!ce(ch_ret, th->t_pos))
     {
 	sch = mvinch(ch_ret.y, ch_ret.x);
@@ -155,11 +155,11 @@ over:
 	th->t_pos = ch_ret;
     }
     if (see_monst(th))
-	mvaddch(ch_ret.y, ch_ret.x, th->t_disguise);
+	mvaddrawch(ch_ret.y, ch_ret.x, th->t_disguise);
     else if (on(player, SEEMONST))
     {
 	standout();
-	mvaddch(ch_ret.y, ch_ret.x, th->t_type);
+	mvaddrawch(ch_ret.y, ch_ret.x, th->t_type);
 	standend();
     }
     /*
@@ -227,7 +227,7 @@ coord *ee;
     register int dist, thisdist;
     register THING *obj;
     register coord *er = &tp->t_pos;
-    register char ch;
+    register unsigned char ch;
     register int plcnt = 1;
 
     /*

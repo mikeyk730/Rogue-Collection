@@ -246,10 +246,11 @@ register char monst;
     killer = killname(monst, FALSE);
     mvaddstr(17, 28-((strlen(killer)+1)/2), killer);
     if (monst == 's')
-	mvaddch(16, 32, ' ');
+	mvaddrawch(16, 32, ' ');
     else
 	mvaddstr(16, 33, vowelstr(killer));
-    mvaddstr(18, 28, sprintf(prbuf, "%2d", lt->tm_year));
+    sprintf(prbuf, "%2d", lt->tm_year);
+    mvaddstr(18, 28, prbuf);
     move(LINES-1, 0);
     refresh();
     mvprintw(0,0,"Doing score\n");

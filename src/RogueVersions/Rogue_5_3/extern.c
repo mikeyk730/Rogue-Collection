@@ -29,7 +29,7 @@ bool terse = FALSE;			/* True if we should be short */
 bool wizard = FALSE;			/* True if allows wizard commands */
 #endif
 
-char take;				/* Thing the rogue is taking */
+unsigned char take;				/* Thing the rogue is taking */
 char prbuf[MAXSTR];			/* Buffer for sprintfs */
 char runch;				/* Direction player is running */
 char *s_names[MAXSCROLLS];		/* Names of the scrolls */
@@ -70,7 +70,7 @@ char *ws_guess[MAXSTICKS];		/* Players guess at what wand is */
 char *ws_type[MAXSTICKS];		/* Is it a wand or a staff */
 char file_name[MAXSTR];			/* Save file name */
 char home[MAXSTR];			/* User's home directory */
-char _level[MAXLINES*MAXCOLS];		/* Level map */
+unsigned char _level[MAXLINES*MAXCOLS];		/* Level map */
 char _flags[MAXLINES*MAXCOLS];		/* Flags for each space on the map */
 char *inv_t_name[] = {
 	"Overwrite",

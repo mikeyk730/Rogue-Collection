@@ -153,7 +153,7 @@ teleport()
     register int rm;
     coord c;
 
-    mvaddch(hero.y, hero.x, chat(hero.y, hero.x));
+    mvaddrawch(hero.y, hero.x, chat(hero.y, hero.x));
     do
     {
 	rm = rnd_room();
@@ -170,7 +170,7 @@ teleport()
 	hero = c;
 	look(TRUE);
     }
-    mvaddch(hero.y, hero.x, PLAYER);
+    mvaddrawch(hero.y, hero.x, PLAYER);
     /*
      * turn off ISHELD in case teleportation was done while fighting
      * a Fungi

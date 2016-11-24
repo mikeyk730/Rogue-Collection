@@ -43,7 +43,7 @@ look(wakeup)
 bool wakeup;
 {
     register int x, y;
-    register char ch;
+    register unsigned char ch;
     register int index;
     register THING *tp;
     register struct room *rp;
@@ -67,7 +67,7 @@ bool wakeup;
 			continue;
 		    move(y, x);
 		    if (inch() == FLOOR)
-			addch(' ');
+			addrawch(' ');
 		}
 	}
 	oldpos = hero;
@@ -119,9 +119,10 @@ bool wakeup;
 			    case FLOOR:
 			    case ' ':
 			    case PASSAGE:
-			    case '-':
-			    case '|':
-			    case DOOR:
+                case VWALL:
+                case HWALL:
+                PC_GFX_WALL_CASES
+                case DOOR:
 			    case TRAP:
 				break;
 			    default:
@@ -153,7 +154,7 @@ bool wakeup;
 	    {
 		move(y, x);
 		if (ch != inch())
-		    addch(ch);
+		    addrawch(ch);
 	    }
 
 	    if (door_stop && !firstmove && running)
@@ -196,9 +197,10 @@ bool wakeup;
 			    passcount++;
 			break;
 		    case FLOOR:
-		    case '|':
-		    case '-':
-		    case ' ':
+            case HWALL:
+            case VWALL:
+            PC_GFX_WALL_CASES
+            case ' ':
 			break;
 		    default:
 			running = FALSE;
@@ -211,7 +213,7 @@ bool wakeup;
     if (!running || !jump)
     {
 	move(hero.y, hero.x);
-	addch(PLAYER);
+	addrawch(PLAYER);
     }
 }
 

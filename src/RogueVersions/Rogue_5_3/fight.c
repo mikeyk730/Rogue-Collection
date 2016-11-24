@@ -54,7 +54,7 @@ bool thrown;
 	if (on(player, ISTrip)) {
 	    ch = rnd(26) + 'A';
 	    mname = monsters[ch - 'A'].m_name;
-	    mvaddch(tp->t_pos.y, tp->t_pos.x, ch);
+	    mvaddrawch(tp->t_pos.y, tp->t_pos.x, ch);
 	}
 	else
 	    mname = monsters['M'-'A'].m_name;
@@ -121,7 +121,7 @@ register THING *mp;
     {
 	mp->t_disguise = 'M';
 	if (on(player, ISTrip))
-	    mvaddch(mp->t_pos.y, mp->t_pos.x, rnd(26) + 'A');
+	    mvaddrawch(mp->t_pos.y, mp->t_pos.x, rnd(26) + 'A');
     }
     if (on(player, ISBLIND) ||
        (on(*mp, ISINVIS) && !on(player, CANSEE|SEEMONST)))
@@ -129,7 +129,7 @@ register THING *mp;
     else if (on(player, ISTrip)) {
 	ch = toascii(mvinch(mp->t_pos.y, mp->t_pos.x));
 	if (!isupper(ch))
-	    addch(ch = rnd(26) + 'A');
+	    addrawch(ch = rnd(26) + 'A');
 	mname = monsters[ch-'A'].m_name;
     }
     else
@@ -652,7 +652,7 @@ bool waskill;
 	    discard(obj);
     }
     moat(mp->y, mp->x) = NULL;
-    mvaddch(mp->y, mp->x, tp->t_oldch);
+    mvaddrawch(mp->y, mp->x, tp->t_oldch);
     detach(mlist, tp);
     discard(tp);
 }
@@ -725,7 +725,6 @@ bool pr;
     /*
      * Get rid of the monster.
      */
-    r_remove(&tp->t_pos, tp, TRUE);
     if (pr)
     {
 	if (!terse)
@@ -741,6 +740,8 @@ bool pr;
 	    msg(mname);
 	}
     }
+    r_remove(&tp->t_pos, tp, TRUE);
+
     /*
      * Do adjustments if he went up a level
      */

@@ -24,10 +24,11 @@ extern bool	after, amulet, askme, door_stop, fight_flush,
 		playing, r_know[], running, s_know[], save_msg,
 		terse, wizard, ws_know[];
 
-extern char	_flags[], _level[], *a_names[], file_name[], fruit[],
+extern unsigned char _level[], take;
+extern char	_flags[], *a_names[], file_name[], fruit[],
 		home[], huh[], *inv_t_name[], outbuf[], *p_colors[],
 		*p_guess[], prbuf[], *r_guess[], *r_stones[], *release,
-		runch, *s_guess[], *s_names[], take, *w_names[],
+		runch, *s_guess[], *s_names[], *w_names[],
 		whoami[], *ws_guess[], *ws_made[], *ws_type[];
 
 extern int	a_chances[], a_class[], count, dnum, food_left,

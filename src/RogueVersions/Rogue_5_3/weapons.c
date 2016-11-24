@@ -95,7 +95,7 @@ register int ydelta, xdelta;
 	 * Erase the old one
 	 */
 	if (!ce(obj->o_pos, hero) && cansee(unc(obj->o_pos)))
-	    mvaddch(obj->o_pos.y, obj->o_pos.x, chat(obj->o_pos.y, obj->o_pos.x));
+	    mvaddrawch(obj->o_pos.y, obj->o_pos.x, chat(obj->o_pos.y, obj->o_pos.x));
 	/*
 	 * Get the new position
 	 */
@@ -109,7 +109,7 @@ register int ydelta, xdelta;
 	     */
 	    if (cansee(unc(obj->o_pos)))
 	    {
-		mvaddch(obj->o_pos.y, obj->o_pos.x, obj->o_type);
+		mvaddrawch(obj->o_pos.y, obj->o_pos.x, obj->o_type);
 		refresh();
 	    }
 	    continue;
@@ -136,7 +136,7 @@ register bool pr;
 	obj->o_pos = fpos;
 	if (cansee(fpos.y, fpos.x))
 	{
-	    mvaddch(fpos.y, fpos.x, obj->o_type);
+	    mvaddrawch(fpos.y, fpos.x, obj->o_type);
 	    if (_monst[index] != NULL)
 		_monst[index]->t_oldch = obj->o_type;
 	}

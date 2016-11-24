@@ -374,9 +374,9 @@ search()
 	    if (!(*fp & F_REAL))
 		switch (chat(y, x))
 		{
-		    case '|':
-		    case '-':
-			if (rnd(5 + probinc) != 0)
+            case VWALL:
+            case HWALL:
+            if (rnd(5 + probinc) != 0)
 			    break;
 			chat(y, x) = DOOR;
 			*fp |= F_REAL;

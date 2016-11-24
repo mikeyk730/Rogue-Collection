@@ -70,6 +70,7 @@
 /*
  * Things that appear on the screens
  */
+#ifndef USE_PC_STYLE
 #define PASSAGE		'#'
 #define DOOR		'+'
 #define FLOOR		'.'
@@ -86,6 +87,12 @@
 #define AMULET		','
 #define RING		'='
 #define STICK		'/'
+#else
+#include <pc_gfx_charmap.h>
+#endif
+#define ROGUE_5_3
+#include "../pc_gfx_macros.h"
+
 #define CALLABLE	-1
 
 /*
@@ -351,8 +358,8 @@ union thing {
 	coord _t_pos;			/* Position */
 	bool _t_turn;			/* If slowed, is it a turn to move */
 	char _t_type;			/* What it is */
-	char _t_disguise;		/* What mimic looks like */
-	char _t_oldch;			/* Character that was where it was */
+	unsigned char _t_disguise;		/* What mimic looks like */
+	unsigned char _t_oldch;			/* Character that was where it was */
 	coord *_t_dest;			/* Where it is running to */
 	short _t_flags;			/* State word */
 	struct stats _t_stats;		/* Physical description */

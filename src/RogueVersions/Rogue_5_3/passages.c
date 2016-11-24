@@ -308,7 +308,7 @@ add_pass()
     for (y = 1; y < LINES - 1; y++)
 	for (x = 0; x < COLS; x++)
 	    if ((ch = chat(y, x)) == DOOR || ch == PASSAGE)
-		mvaddch(y, x, ch);
+		mvaddrawch(y, x, ch);
 }
 #endif
 
@@ -345,7 +345,7 @@ register int y, x;
 {
     register char *fp;
     register struct room *rp;
-    register char ch;
+    register unsigned char ch;
 
     if (x >= COLS || x < 0 || y >= LINES || y < 1)
 	return;

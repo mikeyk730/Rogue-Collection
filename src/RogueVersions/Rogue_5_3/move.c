@@ -34,7 +34,8 @@ char ch;
 do_move(dy, dx)
 int dy, dx;
 {
-    register char ch, fl;
+    register unsigned char ch;
+    register char fl;
 
     firstmove = FALSE;
     if (no_move)
@@ -93,8 +94,9 @@ over:
     switch (ch)
     {
 	case ' ':
-	case '|':
-	case '-':
+    case VWALL:
+    case HWALL:
+    PC_GFX_WALL_CASES
 hit_bound:
 	    if (passgo && running && (proom->r_flags & ISGONE)
 		&& !on(player, ISBLIND))
@@ -178,7 +180,7 @@ hit_bound:
 		if (ch != STAIRS)
 		    take = ch;
 move_stuff:
-		mvaddch(hero.y, hero.x, chat(hero.y, hero.x));
+		mvaddrawch(hero.y, hero.x, chat(hero.y, hero.x));
 		if ((fl & F_PASS) && chat(oldpos.y, oldpos.x) == DOOR)
 		    leave_room(&nh);
 		hero = nh;
@@ -216,7 +218,7 @@ door_open(rp)
 struct room *rp;
 {
     register int j, k;
-    register char ch;
+    register unsigned char ch;
     register THING *item;
 
     if (!(rp->r_flags & ISGONE) && !on(player, ISBLIND))
@@ -290,7 +292,7 @@ register coord *tc;
 	    }
 	when T_TELEP:
 	    teleport();
-	    mvaddch(tc->y, tc->x, TRAP); /* since the hero's leaving, look()
+	    mvaddrawch(tc->y, tc->x, TRAP); /* since the hero's leaving, look()
 					    won't put it on for us */
 	when T_DART:
 	    if (swing(pstats.s_lvl+1, pstats.s_arm, 1))
@@ -321,7 +323,7 @@ rndmove(who)
 THING *who;
 {
     register int x, y;
-    register char ch;
+    register unsigned char ch;
     register THING *obj;
     static coord ret;  /* what we will be returning */
 
