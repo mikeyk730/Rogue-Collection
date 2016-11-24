@@ -100,7 +100,7 @@ option()
     wrefresh(hw);
     wait_for(' ');
     clearok(curscr, TRUE);
-#ifdef attron
+#ifdef r_attron
     touchwin(stdscr);
 #endif
     after = FALSE;
@@ -209,12 +209,12 @@ WINDOW *win;
     {
 	if (c == -1)
 	    continue;
-#ifndef	attron
+#ifndef	r_attron
 /*HMS:	else if (c == _tty.sg_erase)	/* process erase character */
 	else if (c == _tty.c_cc[VERASE])	/* process erase character */
-#else	attron
+#else	r_attron
 	else if (c == erasechar())	/* process erase character */
-#endif	attron
+#endif	r_attron
 	{
 	    if (sp > buf)
 	    {
@@ -226,12 +226,12 @@ WINDOW *win;
 	    }
 	    continue;
 	}
-#ifndef	attron
+#ifndef	r_attron
 /*HMS:	else if (c == _tty.sg_kill)	/* process kill character */
 	else if (c == _tty.c_cc[VKILL])	/* process kill character */
-#else	attron
+#else	r_attron
 	else if (c == killchar())	/* process kill character */
-#endif	attron
+#endif	r_attron
 	{
 	    sp = buf;
 	    wmove(win, oy, ox);

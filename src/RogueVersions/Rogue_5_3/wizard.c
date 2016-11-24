@@ -200,17 +200,17 @@ passwd()
     mpos = 0;
     sp = buf;
     while ((c = getchar()) != '\n' && c != '\r' && c != ESCAPE)
-#ifndef attron
+#ifndef r_attron
 	if (c == _tty.sg_kill)
-#else	attron
+#else	r_attron
 	if (c == killchar())
-#endif	attron
+#endif	r_attron
 	    sp = buf;
-#ifndef attron
+#ifndef r_attron
 	else if (c == _tty.sg_erase && sp > buf)
-#else	attron
+#else	r_attron
 	else if ((c == erasechar()) && sp > buf)
-#endif	attron
+#endif	r_attron
 	    sp--;
 	else
 	    *sp++ = c;

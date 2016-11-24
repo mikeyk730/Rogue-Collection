@@ -13,9 +13,9 @@
 typedef struct stat STAT;
 
 extern char *sys_errlist[], version[], encstr[];
-#ifndef	attron
+#ifndef	r_attron
 extern bool _endwin;
-#endif	attron
+#endif	r_attron
 extern int errno;
 
 char *sbrk();
@@ -95,8 +95,8 @@ gotfile:
 	    msg("file name: %s", buf);
 	}
 	strcpy(file_name, buf);
-	if ((savef = fopen(file_name, "w")) == NULL)
-	    msg(sys_errlist[errno]);	/* fake perror() */
+	//if ((savef = fopen(file_name, "w")) == NULL)
+	    //msg(sys_errlist[errno]);	/* fake perror() */
     } while (savef == NULL);
 
     /*
@@ -132,6 +132,7 @@ auto_save()
 save_file(savef)
 register FILE *savef;
 {
+#ifdef SAVE
     /*
      * close any open score file
      */
@@ -146,11 +147,12 @@ register FILE *savef;
     fwrite("junk", 1, 5, savef);
 
     fseek(savef, 0L, 0);
-#ifndef	attron
+#ifndef	r_attron
     _endwin = TRUE;
-#endif	attron
+#endif	r_attron
     encwrite(version, sbrk(0) - version, savef);
     fclose(savef);
+#endif
 }
 
 /*
@@ -162,6 +164,7 @@ restore(file, envp)
 register char *file;
 char **envp;
 {
+#ifdef SAVE 
     register int inf;
     register bool syml;
     register char *sp;
@@ -259,8 +262,8 @@ char **envp;
 
     environ = envp;
     gettmode();
-    if ((sp = getenv("TERM")) == NULL)
-	sp = Def_term;
+    //if ((sp = getenv("TERM")) == NULL)
+	//sp = Def_term;
     setterm(sp);
     strcpy(file_name, file);
     setup();
@@ -277,6 +280,7 @@ char **envp;
     msg("file name: %s", file);
     playit();
     /*NOTREACHED*/
+#endif
 }
 
 /*

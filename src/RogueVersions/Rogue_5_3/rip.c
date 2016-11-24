@@ -6,18 +6,18 @@
  */
 
 #include <curses.h>
-#ifdef	attron
+#ifdef	r_attron
 #include <term.h>
-#endif	attron
+#endif	r_attron
 #include <time.h>
 #include <signal.h>
 #include <sys/types.h>
-#include <pwd.h>
+//#include <pwd.h>
 #include "rogue.h"
 #include "score.h"
 
-#ifdef	attron
-# define	_puts(s)	tputs(s, 0, _putchar);
+#ifdef	r_attron
+# define	_puts(s)	//tputs(s, 0, _putchar);
 #endif
 
 static char *rip[] = {
@@ -107,7 +107,7 @@ char monst;
     sc2 = NULL;
     if (!noscore)
     {
-	uid = getuid();
+	uid = 0; //mdk:getuid();
 	for (scp = top_ten; scp < &top_ten[10]; scp++)
 	    if (amount > scp->sc_score)
 		break;
@@ -149,13 +149,13 @@ char monst;
 	int _putchar();
 
 	if (scp->sc_score) {
-#ifndef	attron
+#ifndef	r_attron
 	    if (sc2 == scp && SO)
 		_puts(SO);
-#else	attron
+#else	r_attron
 	    if (sc2 == scp && enter_standout_mode)
 		_puts(enter_standout_mode);
-#endif	attron
+#endif	r_attron
 	    printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
@@ -165,10 +165,10 @@ char monst;
 	    {
 		struct passwd *pp, *getpwuid();
 
-		if ((pp = getpwuid(scp->sc_uid)) == NULL)
+		//if ((pp = getpwuid(scp->sc_uid)) == NULL)
 		    printf(" (%d)", scp->sc_uid);
-		else
-		    printf(" (%s)", pp->pw_name);
+		//else
+		//    printf(" (%s)", pp->pw_name);
 		putchar('\n');
 	    }
 	    else if (prflags == 2)
@@ -190,13 +190,13 @@ char monst;
 	    }
 	    else
 		printf(".\n");
-#ifndef	attron
+#ifndef	r_attron
 	    if (sc2 == scp && SE)
 		_puts(SE);
-#else	attron
+#else	r_attron
 	    if (sc2 == scp && exit_standout_mode)
 		_puts(exit_standout_mode);
-#endif	attron
+#endif	r_attron
 	}
 	else
 	    break;
@@ -252,7 +252,7 @@ register char monst;
     mvaddstr(18, 28, sprintf(prbuf, "%2d", lt->tm_year));
     move(LINES-1, 0);
     refresh();
-    mvprintf(0,0,"Doing score\n");
+    mvprintw(0,0,"Doing score\n");
     refresh();
     score(purse, 0, monst);
     exit(0);
@@ -415,10 +415,10 @@ bool doart;
     return prbuf;
 }
 
-#ifdef	attron
+#ifdef	r_attron
 _putchar(c)
 char c;
 {
 	putchar(c);
 }
-#endif	attron
+#endif	r_attron

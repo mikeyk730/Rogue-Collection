@@ -83,23 +83,9 @@ endmsg()
  * doadd:
  *	Perform an add onto the message buffer
  */
-doadd(fmt, args)
-char *fmt;
-int *args;
+doadd(char *fmt, va_list ap)
 {
-    static FILE junk;
-
-    /*
-     * Do the printf into buf
-     */
-/*    junk._flag = _IOWRT + _IOSTRG; HMS */
-    junk._flag = _IOWRT;
-/*    junk._ptr = &msgbuf[newpos]; HMS */
-    junk._base = junk._ptr = &msgbuf[newpos];
-    junk._cnt = 32767;
-    junk._file = _NFILE;	/* added. HMS */
-    _doprnt(fmt, args, &junk);	/**/
-    putc('\0', &junk);
+    vsprintf(&msgbuf[newpos], fmt, ap);
     newpos = strlen(msgbuf);
 }
 
@@ -129,10 +115,12 @@ readchar()
     register int cnt;
     char c;
 
-    cnt = 0;
-    while (read(0, &c, 1) <= 0)
-	if (cnt++ > 100)	/* if we are getting infinite EOFs */
-	    auto_save();	/* save the game */
+    c = getch();
+
+    //cnt = 0;
+    //while (read(0, &c, 1) <= 0)
+	//if (cnt++ > 100)	/* if we are getting infinite EOFs */
+	//    auto_save();	/* save the game */
     return c;
 }
 
@@ -140,14 +128,14 @@ readchar()
  * unctrl:
  *	Print a readable version of a certain character
  */
-char *
-unctrl(ch)
-char ch;
-{
-    extern char *_unctrl[];		/* Defined in curses library */
+//char *
+//unctrl(ch)
+//char ch;
+//{
+//    extern char *_unctrl[];		/* Defined in curses library */
 
-    return _unctrl[ch&0177];
-}
+//    return _unctrl[ch&0177];
+//}
 
 /*
  * status:
@@ -233,7 +221,7 @@ char *message;
     wrefresh(scr);
     wait_for(' ');
     clearok(curscr, TRUE);
-#ifdef	attron
+#ifdef	r_attron
     touchwin(stdscr);
-#endif	attron
+#endif	r_attron
 }

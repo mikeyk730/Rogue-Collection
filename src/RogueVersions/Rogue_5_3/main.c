@@ -11,18 +11,19 @@
  */
 
 #include <curses.h>
-#ifdef	attron
+#ifdef	r_attron
 #include <term.h>
-#endif	attron
+#endif	r_attron
 #include <signal.h>
-#include <pwd.h>
+//#include <pwd.h>
 #include "rogue.h"
+#include "..\pc_gfx_macros.h"
 
 /*
  * main:
  *	The main program, of course
  */
-main(argc, argv, envp)
+GAME_MAIN(argc, argv, envp)
 char **argv;
 char **envp;
 {
@@ -33,15 +34,15 @@ char **envp;
     int quit(), exit(), lowtime;
 
 #ifndef DUMP
-    signal(SIGQUIT, exit);
+    //signal(SIGQUIT, exit);
     signal(SIGILL, exit);
-    signal(SIGTRAP, exit);
-    signal(SIGIOT, exit);
-    signal(SIGEMT, exit);
+    //signal(SIGTRAP, exit);
+    //signal(SIGIOT, exit);
+    //signal(SIGEMT, exit);
     signal(SIGFPE, exit);
-    signal(SIGBUS, exit);
+    //signal(SIGBUS, exit);
     signal(SIGSEGV, exit);
-    signal(SIGSYS, exit);
+    //signal(SIGSYS, exit);
 #endif
 
 #ifdef WIZARD
@@ -63,8 +64,8 @@ char **envp;
      */
     if ((env = getenv("HOME")) != NULL)
 	strcpy(home, env);
-    else if ((pw = getpwuid(getuid())) != NULL)
-	strcpy(home, pw->pw_dir);
+    //else if ((pw = getpwuid(getuid())) != NULL)
+	//strcpy(home, pw->pw_dir);
     else
 	home[0] = '\0';
     strcat(home, "/");
@@ -75,13 +76,13 @@ char **envp;
     if ((env = getenv("ROGUEOPTS")) != NULL)
 	parse_opts(env);
     if (env == NULL || whoami[0] == '\0')
-	if ((pw = getpwuid(getuid())) == NULL)
-	{
-	    printf("Say, who the hell are you?\n");
-	    exit(1);
-	}
-	else
-	    strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
+	//if ((pw = getpwuid(getuid())) == NULL)
+	//{
+	//    printf("Say, who the hell are you?\n");
+	//    exit(1);
+	//}
+	//else
+	//    strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
     if (env == NULL || fruit[0] == '\0')
 	strcpy(fruit, "slime-mold");
 
@@ -127,10 +128,10 @@ char **envp;
      * Set up windows
      */
     hw = newwin(LINES, COLS, 0, 0);
-#ifdef	attron
+#ifdef	r_attron
     idlok(stdscr, TRUE);
     idlok(hw, TRUE);
-#endif	attron
+#endif	r_attron
 #ifdef WIZARD
     noscore = wizard;
 #endif
@@ -233,21 +234,21 @@ playit()
      * set up defaults for slow terminals
      */
 
-#ifndef	attron
+#ifndef	r_attron
 /*HMS:    if (_tty.sg_ospeed <= B1200)	*/
     if ((_tty.c_cflag & CBAUD) <= B1200)
-#else	attron
+#else	r_attron
     if (baudrate() <= 1200)
-#endif	attron
+#endif	r_attron
     {
 	terse = TRUE;
 	jump = TRUE;
     }
-#ifndef	attron
+#ifndef	r_attron
     if (!CE)
-#else	attron
+#else	r_attron
     if (clr_eol)
-#endif	attron
+#endif	r_attron
 	inv_type = INV_CLEAR;
 
     /*
@@ -307,15 +308,15 @@ quit()
  */
 leave()
 {
-#ifndef	attron
+#ifndef	r_attron
     if (!_endwin)
     {
 	mvcur(0, COLS - 1, LINES - 1, 0);
 	endwin();
     }
-#else	attron
+#else	r_attron
     endwin();
-#endif	attron
+#endif	r_attron
     putchar('\n');
     exit(0);
 }
@@ -326,6 +327,7 @@ leave()
  */
 shell()
 {
+#ifdef SAVE
     register int pid;
     register char *sh;
     int ret_status;
@@ -357,11 +359,11 @@ shell()
 	int endit();
 
 	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	//signal(SIGQUIT, SIG_IGN);
 	while (wait(&ret_status) != pid)
 	    continue;
 	signal(SIGINT, quit);
-	signal(SIGQUIT, endit);
+	//signal(SIGQUIT, endit);
 	printf("\n[Press return to continue]");
 	noecho();
 	crmode();
@@ -369,4 +371,5 @@ shell()
 	wait_for('\n');
 	clearok(stdscr, TRUE);
     }
+#endif
 }

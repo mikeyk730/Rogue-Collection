@@ -39,7 +39,7 @@ bool silent;
      * to see if there is something in thr same group and if there is then
      * increment the count.
      */
-    floor = (proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
+    floor = (proom && proom->r_flags & ISGONE) ? PASSAGE : FLOOR;
     if (obj->o_group)
     {
 	for (op = pack; op != NULL; op = next(op))

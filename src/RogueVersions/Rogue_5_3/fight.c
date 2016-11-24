@@ -5,7 +5,7 @@
  */
 
 #include <curses.h>
-#include <unctrl.h>
+//#include <unctrl.h>
 #include <ctype.h>
 #include "rogue.h"
 
@@ -245,7 +245,7 @@ register THING *mp;
 			purse -= GOLDCALC + GOLDCALC + GOLDCALC + GOLDCALC;
 		    if (purse < 0)
 			purse = 0;
-		    remove(&mp->t_pos, mp, FALSE);
+		    r_remove(&mp->t_pos, mp, FALSE);
 		    if (purse != lastpurse)
 			msg("your purse feels lighter");
 		}
@@ -266,7 +266,7 @@ register THING *mp;
 				steal = obj;
 		    if (steal != NULL)
 		    {
-			remove(&mp->t_pos, moat(mp->t_pos.y, mp->t_pos.x), FALSE);
+			r_remove(&mp->t_pos, moat(mp->t_pos.y, mp->t_pos.x), FALSE);
 			inpack--;
 			if (steal->o_count > 1 && steal->o_group == 0)
 			{
@@ -634,7 +634,7 @@ register char *mname;
  * remove:
  *	Remove a monster from the screen
  */
-remove(mp, tp, waskill)
+r_remove(mp, tp, waskill)
 register coord *mp;
 register THING *tp;
 bool waskill;
@@ -725,7 +725,7 @@ bool pr;
     /*
      * Get rid of the monster.
      */
-    remove(&tp->t_pos, tp, TRUE);
+    r_remove(&tp->t_pos, tp, TRUE);
     if (pr)
     {
 	if (!terse)

@@ -6,9 +6,9 @@
  */
 
 #include <curses.h>
-#ifdef	attron
+#ifdef	r_attron
 #include <term.h>
-#endif	attron
+#endif	r_attron
 #include <ctype.h>
 #include "rogue.h"
 
@@ -553,11 +553,11 @@ char *fmt, *arg;
 		touchwin(tw);
 		wrefresh(tw);
 		wait_for(' ');
-#ifndef	attron
+#ifndef	r_attron
 		if (CE)
-#else	attron
+#else	r_attron
 		if (clr_eol)
-#endif	attron
+#endif	r_attron
 		{
 		    werase(tw);
 		    wrefresh(tw);
@@ -572,9 +572,9 @@ char *fmt, *arg;
 		wait_for(' ');
 		clearok(curscr, TRUE);
 		wclear(hw);
-#ifdef	attron
+#ifdef	r_attron
 		touchwin(stdscr);
-#endif	attron
+#endif	r_attron
 	    }
 	    newpage = TRUE;
 	    line_cnt = 0;

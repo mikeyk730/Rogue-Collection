@@ -68,8 +68,8 @@ open_score()
 #else
     fd = -1;
 #endif
-    setuid(getuid());
-    setgid(getgid());
+    //setuid(getuid());
+    //setgid(getgid());
 }
 
 /*
@@ -92,22 +92,22 @@ setup()
     if (COLS > MAXCOLS)
 	COLS = MAXCOLS;
 
-    signal(SIGHUP, auto_save);
+    //signal(SIGHUP, auto_save);
 #ifndef DUMP
     signal(SIGILL, auto_save);
-    signal(SIGTRAP, auto_save);
-    signal(SIGIOT, auto_save);
-    signal(SIGEMT, auto_save);
+    //signal(SIGTRAP, auto_save);
+    //signal(SIGIOT, auto_save);
+    //signal(SIGEMT, auto_save);
     signal(SIGFPE, auto_save);
-    signal(SIGBUS, auto_save);
+    //signal(SIGBUS, auto_save);
     signal(SIGSEGV, auto_save);
-    signal(SIGSYS, auto_save);
+    //signal(SIGSYS, auto_save);
     signal(SIGTERM, auto_save);
 #endif
 
     signal(SIGINT, quit);
 #ifndef DUMP
-    signal(SIGQUIT, endit);
+    //signal(SIGQUIT, endit);
 #endif
 #ifdef CHECKTIME
     signal(SIGALRM, checkout);
@@ -391,16 +391,23 @@ unlock_sc()
  */
 flush_type()
 {
+#ifdef SAVE
     register int flag;
 
-#ifndef	attron
+#ifndef	r_attron
     flag = _tty.sg_flags;
     _tty.sg_flags |= RAW;
     stty(_tty_ch, &_tty);
     _tty.sg_flags = flag;
     stty(_tty_ch, &_tty);
-#else	attron
+#else	r_attron
     noraw();
     raw();
-#endif	attron
+#endif	r_attron
+#endif
+}
+
+void cfree(char* p)
+{
+    free(p);
 }
