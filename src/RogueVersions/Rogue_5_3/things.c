@@ -417,6 +417,7 @@ discovered()
 		disc_list = TRUE;
 		break;
 	    default:
+        CLEAR_MSG;
 		if (terse)
 		    msg("Not a type");
 		else
@@ -433,6 +434,7 @@ discovered()
 	add_line("");
 	print_disc(STICK);
 	end_line();
+    CLEAR_MSG;
     }
     else
     {

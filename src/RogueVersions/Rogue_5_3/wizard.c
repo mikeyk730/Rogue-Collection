@@ -85,9 +85,11 @@ create_obj()
 
     obj = new_item();
     msg("type of item: ");
-    obj->o_type = PC_GFX_TRANSLATE(readchar());
+    ch = readchar();
+    obj->o_type = PC_GFX_TRANSLATE(ch);
     mpos = 0;
-    msg("which %c do you want? (0-f)", obj->o_type);
+    msg("which %c do you want? (0-f)", ch);
+    if (ch != '*')
     obj->o_which = (isdigit((ch = readchar())) ? ch - '0' : ch - 'a' + 10);
     obj->o_group = 0;
     obj->o_count = 1;
@@ -137,8 +139,9 @@ create_obj()
 	fix_stick(obj);
     else if (obj->o_type == GOLD)
     {
-	msg("how much?");
+	msg("how much? ");
 	get_num(&obj->o_goldval, stdscr);
+    CLEAR_MSG;
     }
     add_pack(obj, FALSE);
 }
