@@ -27,9 +27,9 @@ Rectangle {
     }
 
     Image {
-        x: 222
-        y: 47
-        scale: 1.6
+        x: 225
+        y: 45
+        scale: 1.55
 
         source: "assets/rogue.png"
         smooth: false
@@ -39,8 +39,8 @@ Rectangle {
 
     Rectangle {
         id: header
-        x: 18
-        y: 212
+        x: 15
+        y: 218
         height: 22
         width: childrenRect.width
         color: 'black'
@@ -57,7 +57,7 @@ Rectangle {
         id: list
 
         x: header.x + 17
-        y: header.y + header.height + 3
+        y: header.y + header.height
         height: 22 * count
 
         focus: true
