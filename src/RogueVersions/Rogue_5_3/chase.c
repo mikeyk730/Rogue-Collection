@@ -42,7 +42,7 @@ register THING *th;
     register struct room *rer, *ree;	/* room of chaser, room of chasee */
     register int mindist = 32767, i, dist;
     register bool stoprun = FALSE;	/* TRUE means we are there */
-    register char sch;
+    register unsigned char sch;
     register bool door;
     register THING *obj;
     register struct room *oroom;

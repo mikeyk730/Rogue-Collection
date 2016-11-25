@@ -96,7 +96,8 @@ do_zap()
 	case WS_TELTO:
 	case WS_CANCEL:
 	{
-	    register char monster, oldch;
+        register char monster;
+        unsigned char oldch;
 	    register int rm;
 
 	    y = hero.y;
@@ -308,7 +309,8 @@ fire_bolt(start, dir, name)
 coord *start, *dir;
 char *name;
 {
-    register char dirch, ch;
+    register char dirch;
+    unsigned char ch;
     register THING *tp;
     register bool hit_hero, used, changed;
     register int i, j;

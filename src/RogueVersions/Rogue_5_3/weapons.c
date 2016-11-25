@@ -194,7 +194,7 @@ THING *obj;
 char *
 num(n1, n2, type)
 register int n1, n2;
-register char type;
+register unsigned char type;
 {
     static char numbuf[10];
 
