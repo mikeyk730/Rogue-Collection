@@ -202,6 +202,12 @@ char monst;
 	    break;
     }
     fseek(outf, 0L, 0);
+
+    //mdk:
+    mvaddstr(LINES - 1, 0, "[Press return to continue]");
+    refresh();
+    wait_for(stdscr, '\n');
+
     /*
      * Update the list file
      */
@@ -238,10 +244,10 @@ register char monst;
     lt = localtime(&date);
     clear();
     move(8, 0);
-    PC_GFX_COLOR(stdscr, 0x06);
+    PC_GFX_COLOR(0x06);
     while (*dp)
 	printw("%s\n", *dp++);
-    PC_GFX_NOCOLOR(stdscr, 0x06);
+    PC_GFX_NOCOLOR(0x06);
     mvaddstr(14, 28-((strlen(whoami)+1)/2), whoami);
     sprintf(buf, "%d Au", purse);
     mvaddstr(15, 28-((strlen(buf)+1)/2), buf);
@@ -251,8 +257,9 @@ register char monst;
 	mvaddrawch(16, 32, ' ');
     else
 	mvaddstr(16, 33, vowelstr(killer));
-    sprintf(prbuf, "%2d", lt->tm_year);
-    mvaddstr(18, 28, prbuf);
+    sprintf(prbuf, "%4d", 1900 + lt->tm_year);
+    mvaddstr(18, 26, prbuf);
+    PC_GFX_TOMBSTONE();
     move(LINES-1, 0);
     refresh();
     mvprintw(0,0,"Doing score\n");

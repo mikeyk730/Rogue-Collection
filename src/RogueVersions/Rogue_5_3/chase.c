@@ -99,6 +99,7 @@ over:
 	{
 	    delta.y = sign(hero.y - th->t_pos.y);
 	    delta.x = sign(hero.x - th->t_pos.x);
+        play_sound("flame");
 	    fire_bolt(&th->t_pos, &delta, "flame");
 	    running = FALSE;
 	    count = quiet = 0;
@@ -154,8 +155,11 @@ over:
 	moat(ch_ret.y, ch_ret.x) = th;
 	th->t_pos = ch_ret;
     }
-    if (see_monst(th))
-	mvaddrawch(ch_ret.y, ch_ret.x, th->t_disguise);
+    if (see_monst(th)) {
+        PC_GFX_PASSGE_COLOR(ch_ret.y, ch_ret.x, th->t_disguise, 0x70);
+        mvaddrawch(ch_ret.y, ch_ret.x, th->t_disguise);
+        PC_GFX_NOCOLOR(0x70);
+    }
     else if (on(player, SEEMONST))
     {
 	standout();

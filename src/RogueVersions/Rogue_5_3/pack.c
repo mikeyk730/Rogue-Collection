@@ -344,8 +344,10 @@ int type;
 		msg("please specify a letter between 'a' and '%c'", och-1);
 		continue;
 	    }
-	    else 
-		return obj;
+        else {
+            CLEAR_MSG;
+            return obj;
+        }
 	}
     }
     return NULL;

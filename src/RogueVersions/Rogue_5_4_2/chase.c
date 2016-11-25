@@ -97,8 +97,11 @@ relocate(THING *th, const coord *new_loc)
 	moat(new_loc->y, new_loc->x) = th;
     }
     move(new_loc->y, new_loc->x);
-    if (see_monst(th))
-	addrawch(th->t_disguise);
+    if (see_monst(th)) {
+        PC_GFX_PASSGE_COLOR(new_loc->y, new_loc->x, th->t_disguise, 0x70);
+        addrawch(th->t_disguise);
+        PC_GFX_NOCOLOR(0x70);
+    }
     else if (on(player, SEEMONST))
     {
 	standout();
