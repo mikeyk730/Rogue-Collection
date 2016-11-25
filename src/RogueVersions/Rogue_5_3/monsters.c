@@ -194,6 +194,7 @@ int y, x;
 		else
 		    mname = monsters[ch-'A'].m_name;
 		msg("the %s's gaze has confused you", mname);
+        play_sound("medusa");
 	    }
 	}
     }

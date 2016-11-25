@@ -340,6 +340,7 @@ check_level()
 	if ((pstats.s_hpt += add) > max_hp)
 	    pstats.s_hpt = max_hp;
 	msg("welcome to level %d", i);
+    play_sound("raise_level");
     }
 }
 
@@ -616,6 +617,7 @@ register char *mname;
 	msg(terse ? "it" : "something");
     else
 	msg("the %s", mname);
+    play_sound("player_hit");
 }
 
 /*
@@ -633,6 +635,7 @@ register char *mname;
     if (strcmp(mname, "it") != 0 && strcmp(mname, "something") != 0)
 	addmsg("the ");
     msg(mname);
+    play_sound("player_miss");
 }
 
 /*

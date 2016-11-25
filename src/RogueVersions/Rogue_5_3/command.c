@@ -104,7 +104,7 @@ command()
 		    case 'z':
 #ifdef WIZARD
 		    case CTRL('D'): 
-            case CTRL('U'):
+            case CTRL('A'):
 #endif
 			break;
 		    default:
@@ -251,26 +251,26 @@ command()
 #ifdef WIZARD
 		    if (wizard) switch (ch)
 		    {
-			when '@' : msg("@ %d,%d", hero.y, hero.x);
+			when '|' : msg("@ %d,%d", hero.y, hero.x);
 			when 'C' : create_obj();
 			when CTRL('I') : inventory(lvl_obj, 0);
 			when CTRL('W') : whatis(FALSE);
 			when CTRL('D') : level++; new_level();
-			when CTRL('U') : level--; new_level();
+			when CTRL('A') : level--; new_level();
 			when CTRL('F') : show_map();
 			when CTRL('T') : teleport();
 			when CTRL('E') : msg("food left: %d", food_left);
-			when CTRL('A') : msg("%d things in your pack", inpack);
+			when '$' : msg("%d things in your pack", inpack);
 			when CTRL('C') : add_pass();
 			when CTRL('X') : turn_see(on(player, SEEMONST));
-			when CTRL('N') :
+			when '~' :
 			{
 			    register THING *item;
 
 			    if ((item = get_item("charge", STICK)) != NULL)
 				item->o_charges = 10000;
 			}
-			when CTRL('H') :
+			when CTRL('G') :
 			{
 			    register int i;
 			    register THING *obj;
@@ -475,7 +475,7 @@ identify()
     }
     if (isupper(ch))
 	str = monsters[ch-'A'].m_name;
-    else switch (ch)
+    else switch (PC_GFX_TRANSLATE(ch))
     {
 	case '|':
 	case '-':
@@ -511,6 +511,7 @@ d_level()
 	msg("I see no way down");
     else
     {
+        play_sound("stairs");
 	level++;
 	seenstairs = FALSE;
 	new_level();
@@ -531,6 +532,7 @@ u_level()
 		total_winner();
 	    new_level();
 	    msg("you feel a wrenching sensation in your gut");
+        play_sound("stairs");
 	}
 	else
 	    msg("your way is magically blocked");

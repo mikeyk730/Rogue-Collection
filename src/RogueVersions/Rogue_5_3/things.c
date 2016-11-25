@@ -404,7 +404,7 @@ discovered()
 	    addmsg(" of object do you want a list");
 	msg("? (* for all)");
 	ch = readchar();
-	switch (ch)
+	switch (PC_GFX_TRANSLATE(ch))
 	{
 	    case ESCAPE:
 		msg("");
@@ -413,14 +413,14 @@ discovered()
 	    case SCROLL:
 	    case RING:
 	    case STICK:
-	    case '*':
+        case GOLD: //mdk: hack for '*'
 		disc_list = TRUE;
 		break;
 	    default:
 		if (terse)
 		    msg("Not a type");
 		else
-		    msg("Please type one of %c%c%c%c (ESCAPE to quit)", POTION, SCROLL, RING, STICK);
+		    msg("Please type one of %c%c%c%c (ESCAPE to quit)", PC_GFX_READABLE(POTION), PC_GFX_READABLE(SCROLL), PC_GFX_READABLE(RING), PC_GFX_READABLE(STICK));
 	}
     } while (!disc_list);
     if (ch == '*')
@@ -436,7 +436,7 @@ discovered()
     }
     else
     {
-	print_disc(ch);
+	print_disc(PC_GFX_TRANSLATE(ch));
 	end_line();
     }
 }
@@ -449,7 +449,7 @@ discovered()
 #define MAX(a,b,c,d)	(a > b ? (a > c ? (a > d ? a : d) : (c > d ? c : d)) : (b > c ? (b > d ? b : d) : (c > d ? c : d)))
 
 print_disc(type)
-char type;
+unsigned char type;
 {
     register bool *know;
     register char **guess;
@@ -612,7 +612,7 @@ end_line()
  */
 char *
 nothing(type)
-register char type;
+register unsigned char type;
 {
     register char *sp, *tystr;
 

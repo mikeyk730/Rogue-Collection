@@ -289,6 +289,7 @@ eat()
 	}
 	else
 	    msg("%s, that tasted good", on(player, ISTrip) ? "oh, wow" : "yum");
+    play_sound("eat");
 }
 
 /*
