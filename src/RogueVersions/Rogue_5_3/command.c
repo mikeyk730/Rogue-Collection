@@ -137,7 +137,7 @@ command()
 		count--;
 	    switch (ch)
 	    {
-		when '!' : shell();
+		when '!' : SHELL_CMD;
 		when 'h' : do_move(0, -1);
 		when 'j' : do_move(1, 0);
 		when 'k' : do_move(-1, 0);

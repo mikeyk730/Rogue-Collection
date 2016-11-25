@@ -49,8 +49,8 @@ OPTION	optlist[] = {
 		(int *) whoami,		put_str,	get_str		},
     {"fruit",	 "Fruit: ",
 		(int *) fruit,		put_str,	get_str		},
-    {"file",	 "Save file: ",
-		(int *) file_name,	put_str,	get_str		}
+    //{"file",	 "Save file: ",
+	//	(int *) file_name,	put_str,	get_str		}
 };
 
 /*
@@ -62,6 +62,7 @@ option()
     register OPTION	*op;
     register int	retval;
 
+    PC_GFX_SET_CURSOR(1);
     wclear(hw);
     /*
      * Display current values of options
@@ -93,9 +94,11 @@ option()
 		op--;
 	    }
     }
+
     /*
      * Switch back to original screen
      */
+    PC_GFX_SET_CURSOR(0);
     mvwaddstr(hw, LINES-1, 0, "--Press space to continue--");
     wrefresh(hw);
     wait_for(' ');

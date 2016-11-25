@@ -250,7 +250,8 @@ fallpos(pos, newpos, pass)
 register coord *pos, *newpos;
 register bool pass;
 {
-    register int y, x, cnt, ch;
+    register int y, x, cnt;
+    unsigned char ch;
 
     cnt = 0;
     for (y = pos->y - 1; y <= pos->y + 1; y++)

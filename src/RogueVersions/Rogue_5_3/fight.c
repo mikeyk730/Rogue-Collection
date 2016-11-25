@@ -109,7 +109,8 @@ bool thrown;
 attack(mp)
 register THING *mp;
 {
-    register char *mname, ch;
+    register char *mname;
+    unsigned char ch;
 
     /*
      * Since this is an attack, stop running and any healing that was

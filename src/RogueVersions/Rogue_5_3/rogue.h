@@ -368,7 +368,7 @@ union thing {
     } _t;
     struct {
 	union thing *_l_next, *_l_prev;	/* Next pointer in link */
-	shint _o_type;			/* What kind of object it is */
+	unsigned char _o_type;			/* What kind of object it is */
 	coord _o_pos;			/* Where it lives on the screen */
 	char *_o_text;			/* What it says if you read it */
 	char _o_launch;			/* What you need to launch it */

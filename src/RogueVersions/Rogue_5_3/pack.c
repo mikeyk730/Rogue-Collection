@@ -20,7 +20,7 @@ bool silent;
 {
     register THING *op, *lp;
     register bool exact, from_floor;
-    register char floor;
+    register unsigned char floor;
 
     if (obj == NULL)
     {

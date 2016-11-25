@@ -28,6 +28,8 @@ STAT sbuf;
  */
 save_game()
 {
+    NO_SAVE_RETURN;
+
     register FILE *savef;
     register int c;
     char buf[MAXSTR];

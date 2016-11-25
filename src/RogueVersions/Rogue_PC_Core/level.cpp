@@ -204,8 +204,7 @@ void Level::show_map(bool reveal_interior)
             if (!reveal_interior && ch == DOOR)
             {
                 game->screen().move(y, x);
-                auto church = game->screen().curch();
-                if (church != DOOR)
+                if (game->screen().curch() != DOOR)
                     game->screen().standout();
             }
             if (ch != ' ')

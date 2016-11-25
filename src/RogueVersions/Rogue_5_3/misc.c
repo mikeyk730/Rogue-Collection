@@ -49,7 +49,8 @@ bool wakeup;
     register struct room *rp;
     register int ey, ex;
     register int passcount = 0;
-    register char pfl, *fp, pch;
+    register char pfl, *fp;
+    unsigned char pch;
     register int sy, sx, sumhero, diffhero;
 
     rp = proom;
