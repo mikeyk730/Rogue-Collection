@@ -76,6 +76,7 @@ command()
 	}
 	else
 	{
+        if (hplusfix) player.t_flags |= ISRUN;
 	    /*
 	     * check for prefixes
 	     */

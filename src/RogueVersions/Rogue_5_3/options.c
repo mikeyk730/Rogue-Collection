@@ -43,14 +43,20 @@ OPTION	optlist[] = {
 		(int *) &askme,		put_bool,	get_bool	},
     {"passgo",	"Follow turnings in passageways: ",
 		(int *) &passgo,	put_bool,	get_bool	},
+    { "hplusfix",	"Fix bug giving monsters +4 hit bonus: ",
+        &hplusfix,	put_bool,	get_bool },
+    { "showac",	"Show armor class instead of protection: ",
+        &showac,	put_bool,	get_bool },
     {"inven",	"Inventory style: ",
 		(int *) &inv_type,	put_inv_t,	get_inv_t	},
     {"name",	 "Name: ",
 		(int *) whoami,		put_str,	get_str		},
     {"fruit",	 "Fruit: ",
 		(int *) fruit,		put_str,	get_str		},
-    //{"file",	 "Save file: ",
-	//	(int *) file_name,	put_str,	get_str		}
+#ifndef ROGUE_COLLECTION
+    {"file",	 "Save file: ",
+		(int *) file_name,	put_str,	get_str		}
+#endif
 };
 
 /*
