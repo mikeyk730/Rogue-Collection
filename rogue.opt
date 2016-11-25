@@ -211,7 +211,7 @@ step=false
 ;
 ; Inventory style.
 ; 
-; Versions: Unix 5.4.2
+; Versions: Unix 5.4.2 and 5.3
 ; Possible values: overwrite, slow, clear
 ;
 inven=clear
@@ -219,7 +219,7 @@ inven=clear
 ;
 ; Follow turnings in passageways.
 ; 
-; Versions: Unix 5.4.2 and 5.2.1
+; Versions: Unix 5.4.2, 5.3, and 5.2.1
 ; Possible values: true, false
 ;
 passgo=true
@@ -227,7 +227,7 @@ passgo=true
 ;
 ; Ask about unidentified things.
 ; 
-; Versions: Unix 5.2.1 and 3.6.3
+; Versions: Unix 5.2.1, 5.3, and 3.6.3
 ; Possible values: true, false
 ;
 askme=true
