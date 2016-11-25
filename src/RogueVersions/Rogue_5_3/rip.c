@@ -16,10 +16,6 @@
 #include "rogue.h"
 #include "score.h"
 
-#ifdef	r_attron
-# define	_puts(s)	//tputs(s, 0, _putchar);
-#endif
-
 static char *rip[] = {
 "                       __________",
 "                      /          \\",
@@ -89,9 +85,9 @@ char monst;
 #endif
 	)
     {
-	printf("[Press return to continue]");
-	fflush(stdout);
-	gets(prbuf);
+        mvaddstr(LINES - 1, 0, "[Press return to continue]");
+        refresh();
+        wait_for('\n');
     }
 #ifdef WIZARD
     if (wizard)
@@ -111,10 +107,13 @@ char monst;
 	for (scp = top_ten; scp < &top_ten[10]; scp++)
 	    if (amount > scp->sc_score)
 		break;
+#ifdef LIMIT_TOPTEN
 	    else if (flags != 2 && scp->sc_uid == uid && scp->sc_flags != 2)
 		scp = &top_ten[10];	/* only one score per nowin uid */
-	if (scp < &top_ten[10])
+#endif
+	if (scp <= &top_ten[9])
 	{
+#ifdef LIMIT_TOPTEN
 	    if (flags != 2)
 		for (sc2 = scp; sc2 < &top_ten[10]; sc2++)
 		{
@@ -122,6 +121,7 @@ char monst;
 			break;
 		}
 	    else
+#endif
 		sc2 = &top_ten[9];
 	    while (sc2 > scp)
 	    {
@@ -143,33 +143,28 @@ char monst;
     /*
      * Print the list
      */
-    printf("\nTop Ten Rogueists:\nRank\tScore\tName\n");
+    clear();//mdk:printf->printw putchar->addch
+    printw("\nTop Ten Rogueists:\nRank\tScore\tName\n");
     for (scp = top_ten; scp < &top_ten[10]; scp++)
     {
-	int _putchar();
-
 	if (scp->sc_score) {
-#ifndef	r_attron
-	    if (sc2 == scp && SO)
-		_puts(SO);
-#else	r_attron
-	    if (sc2 == scp && enter_standout_mode)
-		_puts(enter_standout_mode);
-#endif	r_attron
-	    printf("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
+        if (sc2 == scp) {
+            PC_GFX_COLOR(0x70);
+        }
+	    printw("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
 		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
 		scp->sc_level);
 	    if (scp->sc_flags == 0)
-		printf(" by %s", killname((char) scp->sc_monster, TRUE));
+		printw(" by %s", killname((char) scp->sc_monster, TRUE));
 	    if (prflags == 1)
 	    {
 		struct passwd *pp, *getpwuid();
 
 		//if ((pp = getpwuid(scp->sc_uid)) == NULL)
-		    printf(" (%d)", scp->sc_uid);
+		    printw(" (%d)", scp->sc_uid);
 		//else
-		//    printf(" (%s)", pp->pw_name);
-		putchar('\n');
+		//    printw(" (%s)", pp->pw_name);
+		addch('\n');
 	    }
 	    else if (prflags == 2)
 	    {
@@ -189,14 +184,8 @@ char monst;
 		}
 	    }
 	    else
-		printf(".\n");
-#ifndef	r_attron
-	    if (sc2 == scp && SE)
-		_puts(SE);
-#else	r_attron
-	    if (sc2 == scp && exit_standout_mode)
-		_puts(exit_standout_mode);
-#endif	r_attron
+		printw(".\n");
+        PC_GFX_NOCOLOR(0x70);
 	}
 	else
 	    break;
@@ -206,7 +195,7 @@ char monst;
     //mdk:
     mvaddstr(LINES - 1, 0, "[Press return to continue]");
     refresh();
-    wait_for(stdscr, '\n');
+    wait_for('\n');
 
     /*
      * Update the list file
@@ -262,8 +251,8 @@ register char monst;
     PC_GFX_TOMBSTONE();
     move(LINES-1, 0);
     refresh();
-    mvprintw(0,0,"Doing score\n");
-    refresh();
+    //mvprintw(0,0,"Doing score\n");
+    //refresh();
     score(purse, 0, monst);
     exit(0);
 }
@@ -424,11 +413,3 @@ bool doart;
     strcat(prbuf, sp);
     return prbuf;
 }
-
-#ifdef	r_attron
-_putchar(c)
-char c;
-{
-	putchar(c);
-}
-#endif	r_attron

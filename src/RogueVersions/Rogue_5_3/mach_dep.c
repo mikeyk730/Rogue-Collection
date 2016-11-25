@@ -320,6 +320,9 @@ ucount()
  */
 lock_sc()
 {
+#ifdef ROGUE_COLLECTION
+    return TRUE;
+#else
 #ifdef SCOREFILE
     register int cnt;
     static struct stat sbuf;
@@ -331,9 +334,7 @@ over:
 	return TRUE;
     for (cnt = 0; cnt < 5; cnt++)
     {
-#ifndef ROGUE_COLLECTION
 	sleep(1);
-#endif
 	if (creat(lockfile, 0000) >= 0)
 	    return TRUE;
     }
@@ -369,13 +370,12 @@ over:
 		    if (unlink(lockfile) < 0)
 			return FALSE;
 		}
-#ifndef ROGUE_COLLECTION
 		sleep(1);
-#endif
 	    }
 	else
 	    return FALSE;
     }
+#endif
 #endif
 }
 
@@ -385,8 +385,10 @@ over:
  */
 unlock_sc()
 {
+#ifndef ROGUE_COLLECTION
 #ifdef SCOREFILE
     unlink(lockfile);
+#endif
 #endif
 }
 
