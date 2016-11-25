@@ -40,7 +40,7 @@ Rectangle {
     Rectangle {
         id: header
         x: 18
-        y: 234
+        y: 212
         height: 22
         width: childrenRect.width
         color: 'black'
