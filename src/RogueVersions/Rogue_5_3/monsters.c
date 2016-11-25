@@ -68,7 +68,7 @@ register coord *cp;
     tp->t_type = type;
     tp->t_disguise = type;
     tp->t_pos = *cp;
-    tp->t_oldch = mvinch(cp->y, cp->x);
+    tp->t_oldch = MVINCH(cp->y, cp->x);
     tp->t_room = roomin(cp);
     moat(cp->y, cp->x) = tp;
     mp = &monsters[tp->t_type-'A'];
@@ -190,7 +190,7 @@ int y, x;
 		    fuse(unconfuse, 0, rnd(20) + HUHDURATION, AFTER);
 		player.t_flags |= ISHUH;
 		if (on(player, ISTrip))
-		    mname = monsters[toascii(mvinch(tp->t_pos.y, tp->t_pos.x))-'A'].m_name;
+		    mname = monsters[toascii(MVINCH(tp->t_pos.y, tp->t_pos.x))-'A'].m_name;
 		else
 		    mname = monsters[ch-'A'].m_name;
 		msg("the %s's gaze has confused you", mname);

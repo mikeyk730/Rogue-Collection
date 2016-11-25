@@ -398,7 +398,7 @@ register coord *cp;
 	floor = FLOOR;
     for (y = rp->r_pos.y + 1; y < rp->r_max.y + rp->r_pos.y - 1; y++)
 	for (x = rp->r_pos.x + 1; x < rp->r_max.x + rp->r_pos.x - 1; x++)
-	    switch (ch = mvinch(y, x))
+	    switch (ch = MVINCH(y, x))
 	    {
 		case ' ':
 		case TRAP:

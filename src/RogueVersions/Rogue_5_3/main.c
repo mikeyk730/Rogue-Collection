@@ -46,6 +46,7 @@ char **envp;
 #endif
 
 #ifdef WIZARD
+#ifndef ROGUE_COLLECTION
     /*
      * Check to see if he is a wizard
      */
@@ -57,6 +58,7 @@ char **envp;
 	    argv++;
 	    argc--;
 	}
+#endif
 #endif
 
     /*
@@ -102,7 +104,7 @@ char **envp;
 	    exit(1);
     lowtime = (int) time(NULL);
 #ifdef WIZARD
-    if (wizard && getenv("SEED") != NULL)
+    if (/*wizard && */getenv("SEED") != NULL)
 	dnum = atoi(getenv("SEED"));
     else
 #endif

@@ -175,7 +175,7 @@ do_zap()
 			if (tp->t_type == 'F')
 			    player.t_flags &= ~ISHELD;
 			if (tp->t_pos.y != y || tp->t_pos.x != x)
-			    tp->t_oldch = mvinch(tp->t_pos.y, tp->t_pos.x);
+			    tp->t_oldch = MVINCH(tp->t_pos.y, tp->t_pos.x);
 		    }
 		}
 		tp->t_dest = &hero;

@@ -320,7 +320,7 @@ int type;
 	    /*
 	     * Give the poor player a chance to abort the command
 	     */
-	    if (ch == ESCAPE || ch == CTRL(G))
+	    if (ch == ESCAPE || ch == CTRL('G'))
 	    {
 		after = FALSE;
 		msg("");

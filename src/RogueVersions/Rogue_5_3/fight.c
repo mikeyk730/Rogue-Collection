@@ -69,7 +69,7 @@ bool thrown;
        (on(*tp, ISINVIS) && !on(player, CANSEE|SEEMONST)))
 	    mname = (terse ? "it" : "something");
     else if (on(player, ISTrip))
-	mname = monsters[toascii(mvinch(tp->t_pos.y, tp->t_pos.x))-'A'].m_name;
+	mname = monsters[toascii(MVINCH(tp->t_pos.y, tp->t_pos.x))-'A'].m_name;
     else
 	mname = monsters[mn-'A'].m_name;
     did_hit = FALSE;
@@ -128,7 +128,7 @@ register THING *mp;
        (on(*mp, ISINVIS) && !on(player, CANSEE|SEEMONST)))
 	    mname = (terse ? "it" : "something");
     else if (on(player, ISTrip)) {
-	ch = toascii(mvinch(mp->t_pos.y, mp->t_pos.x));
+	ch = toascii(MVINCH(mp->t_pos.y, mp->t_pos.x));
 	if (!isupper(ch))
 	    addrawch(ch = rnd(26) + 'A');
 	mname = monsters[ch-'A'].m_name;
@@ -697,7 +697,7 @@ bool pr;
 	if (!on(player, ISTrip))
 	    mname = monsters[tp->t_type-'A'].m_name;
 	else
-	    mname = monsters[toascii(mvinch(tp->t_pos.y,tp->t_pos.x))-'A'].m_name;
+	    mname = monsters[toascii(MVINCH(tp->t_pos.y,tp->t_pos.x))-'A'].m_name;
 
     pstats.s_exp += tp->t_stats.s_exp;
     /*

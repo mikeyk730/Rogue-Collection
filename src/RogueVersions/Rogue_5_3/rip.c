@@ -238,8 +238,10 @@ register char monst;
     lt = localtime(&date);
     clear();
     move(8, 0);
+    PC_GFX_COLOR(stdscr, 0x06);
     while (*dp)
 	printw("%s\n", *dp++);
+    PC_GFX_NOCOLOR(stdscr, 0x06);
     mvaddstr(14, 28-((strlen(whoami)+1)/2), whoami);
     sprintf(buf, "%d Au", purse);
     mvaddstr(15, 28-((strlen(buf)+1)/2), buf);

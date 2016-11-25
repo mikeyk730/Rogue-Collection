@@ -138,7 +138,7 @@ over:
     mvaddrawch(th->t_pos.y, th->t_pos.x, th->t_oldch);
     if (!ce(ch_ret, th->t_pos))
     {
-	sch = mvinch(ch_ret.y, ch_ret.x);
+	sch = MVINCH(ch_ret.y, ch_ret.x);
 	if (sch == FLOOR && (th->t_room->r_flags & ISDARK)
 	    && DISTANCE(th->t_pos.y, th->t_pos.x, hero.y, hero.x)
 	    && !on(player, ISBLIND))

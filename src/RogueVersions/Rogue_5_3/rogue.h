@@ -53,7 +53,7 @@
 #define free_list(a)	_free_list(&a)
 #define max(a,b)	((a) > (b) ? (a) : (b))
 #define on(thing,flag)	(((thing).t_flags & (flag)) != 0)
-#define CTRL(ch)	('ch' & 037)
+#define CTRL(ch)	(ch & 037)
 #define GOLDCALC	(rnd(50 + 10 * level) + 2)
 #define ISRING(h,r)	(cur_ring[h] != NULL && cur_ring[h]->o_which == r)
 #define ISWEARING(r)	(ISRING(LEFT, r) || ISRING(RIGHT, r))
@@ -63,6 +63,8 @@
 #define flat(y,x)	(_flags[((x) << 5) + (y)])
 #define moat(y,x)	(_monst[((x) << 5) + (y)])
 #define unc(cp)		(cp).y, (cp).x
+#define INCH()      (inch() & A_CHARTEXT)
+#define MVINCH(r,c) (mvinch(r,c) & A_CHARTEXT)
 #ifdef WIZARD
 #define debug		if (wizard) msg
 #endif

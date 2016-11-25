@@ -287,7 +287,7 @@ seen_stairs()
 {
     register THING	*tp;
 
-    if (mvinch(stairs.y, stairs.x) == STAIRS)	/* it's on the map */
+    if (MVINCH(stairs.y, stairs.x) == STAIRS)	/* it's on the map */
 	return TRUE;
     if (ce(hero, stairs))			/* It's under him */
 	return TRUE;

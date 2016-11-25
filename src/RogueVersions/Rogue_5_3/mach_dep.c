@@ -330,7 +330,9 @@ over:
 	return TRUE;
     for (cnt = 0; cnt < 5; cnt++)
     {
+#ifndef ROGUE_COLLECTION
 	sleep(1);
+#endif
 	if (creat(lockfile, 0000) >= 0)
 	    return TRUE;
     }
@@ -366,7 +368,9 @@ over:
 		    if (unlink(lockfile) < 0)
 			return FALSE;
 		}
+#ifndef ROGUE_COLLECTION
 		sleep(1);
+#endif
 	    }
 	else
 	    return FALSE;

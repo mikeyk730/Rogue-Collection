@@ -198,6 +198,9 @@ passwd()
 
     msg("wizard's Password:");
     mpos = 0;
+#ifdef ROGUE_COLLECTION
+    return (readchar() == 'y');
+#endif
     sp = buf;
     while ((c = getchar()) != '\n' && c != '\r' && c != ESCAPE)
 #ifndef r_attron

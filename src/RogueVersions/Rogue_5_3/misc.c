@@ -67,7 +67,7 @@ bool wakeup;
 		    if (y == hero.y && x == hero.x)
 			continue;
 		    move(y, x);
-		    if (inch() == FLOOR)
+		    if (INCH() == FLOOR)
 			addrawch(' ');
 		}
 	}
@@ -151,12 +151,15 @@ bool wakeup;
 			ch = tp->t_disguise;
 		}
 
-	    if (tp == NULL || !on(player, ISTrip))
-	    {
-		move(y, x);
-		if (ch != inch())
-		    addrawch(ch);
-	    }
+        if (tp == NULL || !on(player, ISTrip))
+        {
+            move(y, x);
+            if (ch != INCH()) {
+                PC_GFX_PASSGE_COLOR(y, x, ch, 0x70);
+                addrawch(ch);
+                PC_GFX_NOCOLOR(0x70);
+            }
+        }
 
 	    if (door_stop && !firstmove && running)
 	    {
@@ -213,8 +216,10 @@ bool wakeup;
 	running = FALSE;
     if (!running || !jump)
     {
-	move(hero.y, hero.x);
-	addrawch(PLAYER);
+        PC_GFX_PASSGE_COLOR(hero.y, hero.x, PLAYER, 0x70);
+        move(hero.y, hero.x);
+        addrawch(PLAYER);
+        PC_GFX_NOCOLOR(0x70);
     }
 }
 

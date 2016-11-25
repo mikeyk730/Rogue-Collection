@@ -128,7 +128,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>MDK;r_attron;clr_eol=1;enter_standout_mode=0;exit_standout_mode=0;ROGUE_COLLECTION;USE_PC_STYLE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MDK;r_attron;clr_eol=1;enter_standout_mode=0;exit_standout_mode=0;ROGUE_COLLECTION;USE_PC_STYLE;SCOREFILE="rogue53.scr";WIZARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
@@ -144,7 +144,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>MDK;r_attron;clr_eol=1;enter_standout_mode=0;exit_standout_mode=0;ROGUE_COLLECTION;USE_PC_STYLE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MDK;r_attron;clr_eol=1;enter_standout_mode=0;exit_standout_mode=0;ROGUE_COLLECTION;USE_PC_STYLE;SCOREFILE="rogue53.scr";WIZARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)lib\SDL-1.2.15\lib\$(PlatformTarget)\</AdditionalLibraryDirectories>
@@ -162,7 +162,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>MDK;r_attron;clr_eol=1;enter_standout_mode=0;exit_standout_mode=0;ROGUE_COLLECTION;USE_PC_STYLE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MDK;r_attron;clr_eol=1;enter_standout_mode=0;exit_standout_mode=0;ROGUE_COLLECTION;USE_PC_STYLE;SCOREFILE="rogue53.scr";WIZARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -182,7 +182,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\</AdditionalIncludeDirectories>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <PreprocessorDefinitions>MDK;r_attron;clr_eol=1;enter_standout_mode=0;exit_standout_mode=0;ROGUE_COLLECTION;USE_PC_STYLE</PreprocessorDefinitions>
+      <PreprocessorDefinitions>MDK;r_attron;clr_eol=1;enter_standout_mode=0;exit_standout_mode=0;ROGUE_COLLECTION;USE_PC_STYLE;SCOREFILE="rogue53.scr";WIZARD</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
