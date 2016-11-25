@@ -414,6 +414,8 @@ bool hurl;
     }
     for (;;)
     {
+    if (!cp)
+        break;
 	ndice = atoi(cp);
 	if ((cp = strchr(cp, 'd')) == NULL)
 	    break;
