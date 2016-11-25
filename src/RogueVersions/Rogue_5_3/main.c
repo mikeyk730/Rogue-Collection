@@ -145,7 +145,7 @@ char **envp;
     fuse(swander, 0, WANDERTIME, AFTER);
     daemon(stomach, 0, AFTER);
     daemon(runners, 0, AFTER);
-    playit();
+    EXITABLE(playit());
 }
 
 /*
@@ -290,7 +290,7 @@ quit()
 	move(LINES - 1, 0);
 	refresh();
 	score(purse, 1);
-	exit(0);
+	EXIT(0);
     }
     else
     {

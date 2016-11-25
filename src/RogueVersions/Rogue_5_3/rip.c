@@ -254,7 +254,7 @@ register char monst;
     //mvprintw(0,0,"Doing score\n");
     //refresh();
     score(purse, 0, monst);
-    exit(0);
+    EXIT(0);
 }
 
 /*
@@ -369,7 +369,7 @@ total_winner()
     mvprintw(c - 'a' + 1, 0,"   %5d  Gold Pieces          ", oldpurse);
     refresh();
     score(purse, 2);
-    exit(0);
+    EXIT(0);
 }
 
 /*
