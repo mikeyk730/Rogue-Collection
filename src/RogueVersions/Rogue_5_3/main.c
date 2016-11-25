@@ -78,13 +78,7 @@ char **envp;
     if ((env = getenv("ROGUEOPTS")) != NULL)
 	parse_opts(env);
     if (env == NULL || whoami[0] == '\0')
-	//if ((pw = getpwuid(getuid())) == NULL)
-	//{
-	//    printf("Say, who the hell are you?\n");
-	//    exit(1);
-	//}
-	//else
-	//    strucpy(whoami, pw->pw_name, strlen(pw->pw_name));
+        strucpy(whoami, md_getusername(), strlen(md_getusername()));
     if (env == NULL || fruit[0] == '\0')
 	strcpy(fruit, "slime-mold");
 

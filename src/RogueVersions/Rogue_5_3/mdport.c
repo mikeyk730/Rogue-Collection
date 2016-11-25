@@ -1,0 +1,1119 @@
+/*
+    mdport.c - Machine Dependent Code
+
+    Copyright (C) 2005-2008 Nicholas J. Kisseberth
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
+    3. Neither the name(s) of the author(s) nor the names of other contributors
+       may be used to endorse or promote products derived from this software
+       without specific prior written permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE AUTHOR(S) AND CONTRIBUTORS ``AS IS'' AND
+    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+    ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR(S) OR CONTRIBUTORS BE LIABLE
+    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+    OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+    OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+    SUCH DAMAGE.
+*/
+
+#include <stdlib.h>
+#include <string.h>
+
+#if defined(_WIN32)
+#include <Windows.h>
+#include <Lmcons.h>
+#include <io.h>
+#include <conio.h>
+#pragma warning( disable: 4201 ) 
+#include <shlobj.h>
+#pragma warning( default: 4201 ) 
+#include <Shlwapi.h>
+#undef MOUSE_MOVED
+#endif
+
+#include <curses.h>
+#include "extern.h"
+
+#if defined(HAVE_SYS_TYPES)
+#include <sys/types.h>
+#endif
+
+#if defined(HAVE_PROCESS_H)
+#include <process.h>
+#endif
+
+#if defined(HAVE_PWD_H)
+#include <pwd.h>
+#endif
+
+#if defined(HAVE_SYS_UTSNAME)
+#include <sys/utsname.h>
+#endif
+
+#if defined(HAVE_ARPA_INET_H)
+#include <arpa/inet.h> /* Solaris 2.8 required this for htonl() and ntohl() */
+#endif
+
+#if defined(HAVE_TERMIOS_H)
+#include <termios.h>
+#endif
+
+#if defined(HAVE_UNISTD_H)
+#ifndef __USE_GNU
+#define __USE_GNU
+#include <unistd.h>
+#undef __USE_GNU
+#else
+#include <unistd.h>
+#endif
+#endif
+
+#include <curses.h> /* AIX requires curses.h be included before term.h */
+
+#if defined(HAVE_TERM_H)
+#include <term.h>
+#elif defined(HAVE_NCURSES_TERM_H)
+#include <ncurses/term.h>
+#endif
+
+#if defined(HAVE_WORKING_FORK)
+#include <sys/wait.h>
+#endif
+
+#include <ctype.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <sys/stat.h>
+#include <signal.h>
+#include "extern.h"
+
+#if !defined(PATH_MAX) && defined(_MAX_PATH)
+#define PATH_MAX _MAX_PATH
+#endif
+
+#if !defined(PATH_MAX) && defined(_PATH_MAX)
+#define PATH_MAX _PATH_MAX
+#endif
+
+#define NOOP(x) (x += 0)
+
+#if defined(_WIN32)
+#define HAVE_CURSES_H
+#define HAVE_TERM_H
+#define HAVE__SPAWNL
+#define HAVE_SYS_TYPES_H
+#define HAVE_PROCESS_H
+#define HAVE_ERASECHAR 1
+#define HAVE_KILLCHAR 1
+#ifndef uid_t
+typedef unsigned int uid_t;
+#endif
+#ifndef pid_t
+typedef unsigned int pid_t;
+#endif
+#endif
+
+void md_onsignal_exit(void);
+
+void
+md_init(void)
+{
+#if defined(__INTERIX)
+    char *term;
+
+    term = getenv("TERM");
+
+    if (term == NULL)
+        setenv("TERM","interix");
+#elif defined(__DJGPP__)
+    _fmode = _O_BINARY;
+#elif defined(_WIN32)
+    _fmode = _O_BINARY;
+#endif
+
+#if defined(HAVE_ESCDELAY) || defined(NCURSES_VERSION)
+    ESCDELAY=64;
+#endif
+
+#if defined(DUMP)
+	md_onsignal_default();
+#else
+	md_onsignal_exit();
+#endif
+}
+
+void
+md_onsignal_default(void)
+{
+#ifdef SIGHUP
+    signal(SIGHUP, SIG_DFL);
+#endif
+#ifdef SIGQUIT
+    signal(SIGQUIT, SIG_DFL);
+#endif
+#ifdef SIGILL
+    signal(SIGILL, SIG_DFL);
+#endif
+#ifdef SIGTRAP
+    signal(SIGTRAP, SIG_DFL);
+#endif
+#ifdef SIGIOT
+    signal(SIGIOT, SIG_DFL);
+#endif
+#ifdef SIGEMT
+    signal(SIGEMT, SIG_DFL);
+#endif
+#ifdef SIGFPE
+    signal(SIGFPE, SIG_DFL);
+#endif
+#ifdef SIGBUS
+    signal(SIGBUS, SIG_DFL);
+#endif
+#ifdef SIGSEGV
+    signal(SIGSEGV, SIG_DFL);
+#endif
+#ifdef SIGSYS
+    signal(SIGSYS, SIG_DFL);
+#endif
+#ifdef SIGTERM
+    signal(SIGTERM, SIG_DFL);
+#endif
+}
+
+void
+md_onsignal_exit(void)
+{
+#ifdef SIGHUP
+    signal(SIGHUP, SIG_DFL);
+#endif
+#ifdef SIGQUIT
+    signal(SIGQUIT, exit);
+#endif
+#ifdef SIGILL
+    signal(SIGILL, exit);
+#endif
+#ifdef SIGTRAP
+    signal(SIGTRAP, exit);
+#endif
+#ifdef SIGIOT
+    signal(SIGIOT, exit);
+#endif
+#ifdef SIGEMT
+    signal(SIGEMT, exit);
+#endif
+#ifdef SIGFPE
+    signal(SIGFPE, exit);
+#endif
+#ifdef SIGBUS
+    signal(SIGBUS, exit);
+#endif
+#ifdef SIGSEGV
+    signal(SIGSEGV, exit);
+#endif
+#ifdef SIGSYS
+    signal(SIGSYS, exit);
+#endif
+#ifdef SIGTERM
+    signal(SIGTERM, exit);
+#endif
+}
+
+//extern void auto_save(int sig);
+//extern void endit(int sig);
+//extern void quit(int sig);
+
+void
+md_onsignal_autosave(void)
+{
+
+#ifdef SIGHUP
+    signal(SIGHUP, auto_save);
+#endif
+#ifdef SIGQUIT
+	signal(SIGQUIT, endit);
+#endif
+#ifdef SIGILL
+    signal(SIGILL, auto_save);
+#endif
+#ifdef SIGTRAP
+    signal(SIGTRAP, auto_save);
+#endif
+#ifdef SIGIOT
+    signal(SIGIOT, auto_save);
+#endif
+#ifdef SIGEMT
+    signal(SIGEMT, auto_save);
+#endif
+#ifdef SIGFPE
+    signal(SIGFPE, auto_save);
+#endif
+#ifdef SIGBUS
+    signal(SIGBUS, auto_save);
+#endif
+#ifdef SIGSEGV
+    signal(SIGSEGV, auto_save);
+#endif
+#ifdef SIGSYS
+    signal(SIGSYS, auto_save);
+#endif
+#ifdef SIGTERM
+    signal(SIGTERM, auto_save);
+#endif
+#ifdef SIGINT
+    signal(SIGINT, quit);
+#endif
+}
+
+void
+md_putchar(int c)
+{
+    putchar(c);
+}
+
+#ifdef _WIN32
+static int md_standout_mode = 0;
+#endif
+
+void
+md_raw_standout(void)
+{
+#ifdef _WIN32
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
+    HANDLE hStdout;
+    WORD fgattr,bgattr;
+
+    if (md_standout_mode == 0)
+    {
+        hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
+        GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
+        fgattr = (csbiInfo.wAttributes & 0xF);
+        bgattr = (csbiInfo.wAttributes & 0xF0);
+        SetConsoleTextAttribute(hStdout,(fgattr << 4) | (bgattr >> 4));
+        md_standout_mode = 1;
+    }
+#elif defined(SO)
+    tputs(SO,0,md_putchar);
+    fflush(stdout);
+#endif
+}
+
+void
+md_raw_standend(void)
+{
+#ifdef _WIN32
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
+    HANDLE hStdout;
+    WORD fgattr,bgattr;
+
+    if (md_standout_mode == 1)
+    {
+        hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
+        GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
+        fgattr = (csbiInfo.wAttributes & 0xF);
+        bgattr = (csbiInfo.wAttributes & 0xF0);
+        SetConsoleTextAttribute(hStdout,(fgattr << 4) | (bgattr >> 4));
+        md_standout_mode = 0;
+    }
+#elif defined(SE)
+    tputs(SE,0,md_putchar);
+    fflush(stdout);
+#endif
+}
+
+int
+md_unlink_open_file(const char *file, FILE *inf)
+{
+#ifdef _WIN32
+    fclose(inf);
+    (void) _chmod(file, 0600);
+    return( _unlink(file) );
+#else
+    return(unlink(file));
+#endif
+}
+
+int
+md_unlink(char *file)
+{
+#ifdef _WIN32
+    (void) _chmod(file, 0600);
+    return( _unlink(file) );
+#else
+    return(unlink(file));
+#endif
+}
+
+int
+md_chmod(const char *filename, int mode)
+{
+#ifdef _WIN32
+    return( _chmod(filename, mode) );
+#else
+    return( chmod(filename, mode) );
+#endif
+}
+
+void
+md_normaluser(void)
+{
+#if defined(HAVE_GETGID) && defined(HAVE_GETUID)
+	gid_t realgid = getgid();
+	uid_t realuid = getuid();
+
+#if defined(HAVE_SETRESGID)
+    if (setresgid(-1, realgid, realgid) != 0) {
+#elif defined (HAVE_SETREGID) 
+    if (setregid(realgid, realgid) != 0) {
+#elif defined (HAVE_SETGID)
+	if (setgid(realgid) != 0) {
+#else
+	if (0) {
+#endif
+		perror("Could not drop setgid privileges.  Aborting.");
+		exit(1);
+    }
+
+#if defined(HAVE_SETRESUID)
+    if (setresuid(-1, realuid, realuid) != 0) {
+#elif defined(HAVE_SETREUID)
+    if (setreuid(realuid, realuid) != 0) {
+#elif defined(HAVE_SETUID)
+	if (setuid(realuid) != 0) {
+#else
+	if (0) {
+#endif
+	perror("Could not drop setuid privileges.  Aborting.");
+	exit(1);
+    }
+#endif
+}
+
+uid_t
+md_getuid(void)
+{
+#ifdef HAVE_GETUID
+    return( getuid() );
+#else
+    return(42);
+#endif
+}
+
+pid_t
+md_getpid(void)
+{
+#ifdef _WIN32
+    return( _getpid() );
+#else
+    return( getpid() );
+#endif
+}
+
+char *
+md_getusername(void)
+{
+    static char login[80];
+    char *l = NULL;
+
+    /* POSIX Shell has priority, then O/S specific methods */
+    if ( (l = getenv("LOGNAME")) != NULL )
+    {
+        strncpy(login,l,80);
+        login[79] = 0;
+        return(login);
+    }
+
+#ifdef _WIN32
+    LPSTR mybuffer;
+    DWORD size = UNLEN + 1;
+    TCHAR buffer[UNLEN + 1];
+
+    mybuffer = buffer;
+    GetUserName(mybuffer,&size);
+    l = mybuffer;
+#elif defined(HAVE_GETPWUID)&& !defined(__DJGPP__)
+    struct passwd *pw;
+
+    pw = getpwuid(getuid());
+
+    l = pw->pw_name;
+#endif
+
+    if ((l == NULL) || (*l == '\0'))
+        if ( (l = getenv("USERNAME")) == NULL )
+            if ( (l = getenv("LOGNAME")) == NULL )
+                if ( (l = getenv("USER")) == NULL )
+                    l = "nobody";
+
+    strncpy(login,l,80);
+    login[79] = 0;
+
+    return(login);
+}
+
+char *
+md_gethomedir(void)
+{
+    static char homedir[PATH_MAX];
+    char *h = NULL;
+    size_t len;
+#if defined(_WIN32)
+    TCHAR szPath[PATH_MAX];
+#endif
+#if defined(_WIN32) || defined(DJGPP)
+        char slash = '\\';
+#else
+    char slash = '/';
+    struct passwd *pw;
+    pw = getpwuid(getuid());
+
+    h = pw->pw_dir;
+
+    if (strcmp(h,"/") == 0)
+        h = NULL;
+#endif
+    homedir[0] = 0;
+#ifdef _WIN32
+    if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PERSONAL, NULL, 0, szPath)))
+        h = szPath;
+#endif
+
+    if ( (h == NULL) || (*h == '\0') )
+    {
+        if ( (h = getenv("HOME")) == NULL )
+	{
+            if ( (h = getenv("HOMEDRIVE")) == NULL)
+                h = "";
+            else
+            {
+                strncpy(homedir,h,PATH_MAX-1);
+                homedir[PATH_MAX-1] = 0;
+
+                if ( (h = getenv("HOMEPATH")) == NULL)
+                    h = "";
+            }
+	}
+    }
+
+
+    len = strlen(homedir);
+    strncat(homedir,h,PATH_MAX-len-1);
+    len = strlen(homedir);
+
+    if ((len > 0) && (homedir[len-1] != slash)) {
+        homedir[len] = slash;
+        homedir[len+1] = 0;
+    }
+
+    return(homedir);
+}
+
+void
+md_sleep(int s)
+{
+#ifdef _WIN32
+    Sleep(s);
+#else
+    sleep(s);
+#endif
+}
+
+char *
+md_getshell(void)
+{
+    static char shell[PATH_MAX];
+    char *s = NULL;
+#ifdef _WIN32
+    char *def = "C:\\WINDOWS\\SYSTEM32\\CMD.EXE";
+#elif defined(__DJGPP__)
+    char *def = "C:\\COMMAND.COM";
+#else
+    char *def = "/bin/sh";
+    struct passwd *pw;
+    pw = getpwuid(getuid());
+    s = pw->pw_shell;
+#endif
+    if ((s == NULL) || (*s == '\0'))
+        if ( (s = getenv("COMSPEC")) == NULL)
+            if ( (s = getenv("SHELL")) == NULL)
+                if ( (s = getenv("SystemRoot")) == NULL)
+                    s = def;
+
+    strncpy(shell,s,PATH_MAX);
+    shell[PATH_MAX-1] = 0;
+
+    return(shell);
+}
+
+
+int
+directory_exists(char *dirname)
+{
+    struct stat sb;
+
+    if (stat(dirname, &sb) == 0) /* path exists */
+        return (sb.st_mode & S_IFDIR);
+
+    return(0);
+}
+
+char *
+md_getrealname(uid_t uid)
+{
+    static char uidstr[20];
+#if !defined(_WIN32) && !defined(DJGPP)
+    struct passwd *pp;
+
+	if ((pp = getpwuid(uid)) == NULL)
+    {
+        sprintf(uidstr,"%d", uid);
+        return(uidstr);
+    }
+	else
+	    return(pp->pw_name);
+#else
+   sprintf(uidstr,"%ld", uid);
+   return(uidstr);
+#endif
+}
+
+char *
+md_getpass(char *prompt)
+{
+#ifndef HAVE_GETPASS
+    static char password_buffer[9];
+    char *p = password_buffer;
+    int c, count = 0;
+    int max_length = 9;
+
+    fflush(stdout);
+    /* If we can't prompt, abort */
+    if (fputs(prompt, stderr) < 0)
+    {
+        *p = '\0';
+        return NULL;
+    }
+
+    for(;;)
+    {
+        /* Get a character with no echo */
+        c = _getch();
+
+        /* Exit on interrupt (^c or ^break) */
+        if (c == '\003' || c == 0x100)
+            exit(1);
+
+        /* Terminate on end of line or file (^j, ^m, ^d, ^z) */
+        if (c == '\r' || c == '\n' || c == '\004' || c == '\032')
+            break;
+
+        /* Back up on backspace */
+        if (c == '\b')
+        {
+            if (count)
+                count--;
+            else if (p > password_buffer)
+                p--;
+            continue;
+        }
+
+        /* Ignore DOS extended characters */
+        if ((c & 0xff) != c)
+            continue;
+
+        /* Add to password if it isn't full */
+        if (p < password_buffer + max_length - 1)
+            *p++ = (char) c;
+        else
+            count++;
+    }
+   *p = '\0';
+
+   fputc('\n', stderr);
+
+   return password_buffer;
+#else
+   return( getpass(prompt) );
+#endif
+}
+
+int
+md_erasechar(void)
+{
+#ifdef HAVE_ERASECHAR
+    return( erasechar() ); /* process erase character */
+#elif defined(VERASE)
+    return(_tty.c_cc[VERASE]); /* process erase character */
+#else
+    return(_tty.sg_erase); /* process erase character */
+#endif
+}
+
+int
+md_killchar(void)
+{
+#ifdef HAVE_KILLCHAR
+    return( killchar() );
+#elif defined(VKILL)
+    return(_tty.c_cc[VKILL]);
+#else
+    return(_tty.sg_kill);
+#endif
+}
+
+int
+md_dsuspchar(void)
+{
+#if defined(VDSUSP)			/* POSIX has priority */
+    struct termios attr;
+    tcgetattr(STDIN_FILENO, &attr);
+    return( attr.c_cc[VDSUSP] );
+#elif defined(TIOCGLTC)
+    struct ltchars ltc;
+    ioctl(1, TIOCGLTC, &ltc);
+    return(ltc.t_dsuspc);
+#elif defined(_POSIX_VDISABLE)
+    return(_POSIX_VDISABLE);
+#else
+    return(0);
+#endif
+}
+
+int
+md_setdsuspchar(int c)
+{
+#if defined(VDSUSP)			/* POSIX has priority */
+    struct termios attr;
+    tcgetattr(STDIN_FILENO, &attr);
+    attr.c_cc[VDSUSP] = c;
+    tcgetattr(STDIN_FILENO, &attr);
+#elif defined(TIOCSLTC)
+    struct ltchars ltc;
+    ioctl(1, TIOCGLTC, &ltc);
+    ltc.t_dsuspc = c;
+    ioctl(1, TIOCSLTC, &ltc);
+#else
+    NOOP(c);
+#endif
+    return(0);
+}
+
+int
+md_suspchar(void)
+{
+#if defined(VSUSP)			/* POSIX has priority */
+    struct termios attr;
+    tcgetattr(STDIN_FILENO, &attr);
+    return( attr.c_cc[VSUSP] );
+#elif defined(TIOCGLTC)
+    struct ltchars ltc;
+    ioctl(1, TIOCGLTC, &ltc);
+    return(ltc.t_suspc);
+#elif defined(_POSIX_VDISABLE)
+    return(_POSIX_VDISABLE);
+#else
+    return(0);
+#endif
+}
+
+int
+md_setsuspchar(int c)
+{
+#if defined(VSUSP)			/* POSIX has priority */
+    struct termios attr;
+    tcgetattr(STDIN_FILENO, &attr);
+    attr.c_cc[VSUSP] = c;
+    tcgetattr(STDIN_FILENO, &attr);
+#elif defined(TIOCSLTC)
+    struct ltchars ltc;
+    ioctl(1, TIOCGLTC, &ltc);
+    ltc.t_suspc = c;
+    ioctl(1, TIOCSLTC, &ltc);
+#else
+    NOOP(c);
+#endif
+
+    return(0);
+}
+
+/*
+    Cursor/Keypad Support
+
+    Sadly Cursor/Keypad support is less straightforward than it should be.
+    
+    The various terminal emulators/consoles choose to differentiate the 
+    cursor and keypad keys (with modifiers) in different ways (if at all!). 
+    Furthermore they use different code set sequences for each key only
+    a subset of which the various curses libraries recognize. Partly due
+    to incomplete termcap/terminfo entries and partly due to inherent 
+    limitations of those terminal capability databases.
+
+    I give curses first crack at decoding the sequences. If it fails to decode
+    it we check for common ESC-prefixed sequences.
+
+    All cursor/keypad results are translated into standard rogue movement 
+    commands.
+
+    Unmodified keys are translated to walk commands: hjklyubn
+    Modified (shift,control,alt) are translated to run commands: HJKLYUBN
+
+    Console and supported (differentiated) keys
+    Interix:  Cursor Keys, Keypad, Ctl-Keypad
+    Cygwin:   Cursor Keys, Keypad, Alt-Cursor Keys
+    MSYS:     Cursor Keys, Keypad, Ctl-Cursor Keys, Ctl-Keypad
+    Win32:    Cursor Keys, Keypad, Ctl/Shift/Alt-Cursor Keys, Ctl/Alt-Keypad
+    DJGPP:    Cursor Keys, Keypad, Ctl/Shift/Alt-Cursor Keys, Ctl/Alt-Keypad
+
+    Interix Console (raw, ncurses)
+    ==============================
+    normal	shift		ctrl	    alt
+    ESC [D,	ESC F^,		ESC [D,	    ESC [D	    /# Left	    #/
+    ESC [C,	ESC F$,		ESC [C,	    ESC [C	    /# Right	    #/
+    ESC [A,	ESC F-,		local win,  ESC [A	    /# Up	    #/
+    ESC [B,	ESC F+,		local win,  ESC [B	    /# Down	    #/
+    ESC [H,	ESC [H,		ESC [H,	    ESC [H	    /# Home	    #/
+    ESC [S,	local win,	ESC [S,	    ESC [S	    /# Page Up	    #/
+    ESC [T,	local win,	ESC [T,	    ESC [T	    /# Page Down    #/
+    ESC [U,	ESC [U,		ESC [U,	    ESC [U	    /# End	    #/
+    ESC [D,	ESC F^,		ESC [D,	    O		    /# Keypad Left  #/
+    ESC [C,	ESC F$,		ESC [C,	    O		    /# Keypad Right #/
+    ESC [A,	ESC [A,		ESC [-1,    O		    /# Keypad Up    #/
+    ESC [B,	ESC [B,		ESC [-2,    O		    /# Keypad Down  #/
+    ESC [H,	ESC [H,		ESC [-263,  O		    /# Keypad Home  #/
+    ESC [S,	ESC [S,		ESC [-19,   O		    /# Keypad PgUp  #/
+    ESC [T,	ESC [T,		ESC [-20,   O		    /# Keypad PgDn  #/
+    ESC [U,	ESC [U,		ESC [-21,   O		    /# Keypad End   #/
+    nothing,	nothing,	nothing,    O		    /# Kaypad 5     #/
+
+    Interix Console (term=interix, ncurses)
+    ==============================
+    KEY_LEFT,	ESC F^,		KEY_LEFT,   KEY_LEFT	    /# Left	    #/
+    KEY_RIGHT,	ESC F$,		KEY_RIGHT,  KEY_RIGHT	    /# Right	    #/
+    KEY_UP,	0x146,		local win,  KEY_UP	    /# Up	    #/
+    KEY_DOWN,	0x145,		local win,  KEY_DOWN	    /# Down	    #/
+    ESC [H,	ESC [H,		ESC [H,	    ESC [H	    /# Home	    #/
+    KEY_PPAGE,	local win,	KEY_PPAGE,  KEY_PPAGE	    /# Page Up	    #/
+    KEY_NPAGE,	local win,	KEY_NPAGE,  KEY_NPAGE	    /# Page Down    #/
+    KEY_LL,	KEY_LL,		KEY_LL,	    KEY_LL	    /# End	    #/
+    KEY_LEFT,	ESC F^,		ESC [-4,    O		    /# Keypad Left  #/
+    KEY_RIGHT,	ESC F$,		ESC [-3,    O		    /# Keypad Right #/
+    KEY_UP,	KEY_UP,		ESC [-1,    O		    /# Keypad Up    #/
+    KEY_DOWN,	KEY_DOWN,	ESC [-2,    O		    /# Keypad Down  #/
+    ESC [H,	ESC [H,		ESC [-263,  O		    /# Keypad Home  #/
+    KEY_PPAGE,	KEY_PPAGE,	ESC [-19,   O		    /# Keypad PgUp  #/
+    KEY_NPAGE,	KEY_NPAGE,	ESC [-20,   O		    /# Keypad PgDn  #/
+    KEY_LL,	KEY_LL,		ESC [-21,   O		    /# Keypad End   #/
+    nothing,	nothing,	nothing,    O		    /# Keypad 5     #/
+
+    Cygwin Console (raw, ncurses)
+    ==============================
+    normal	shift		ctrl	    alt
+    ESC [D,	ESC [D,		ESC [D,	    ESC ESC [D	    /# Left	    #/
+    ESC [C,	ESC [C,		ESC [C,	    ESC ESC [C	    /# Rght	    #/
+    ESC [A,	ESC [A,		ESC [A,	    ESC ESC [A	    /# Up	    #/
+    ESC [B,	ESC [B,		ESC [B,	    ESC ESC [B	    /# Down	    #/
+    ESC [1~,	ESC [1~,	ESC [1~,    ESC ESC [1~	    /# Home	    #/
+    ESC [5~,	ESC [5~,	ESC [5~,    ESC ESC [5~	    /# Page Up	    #/
+    ESC [6~,	ESC [6~,	ESC [6~,    ESC ESC [6~	    /# Page Down    #/
+    ESC [4~,	ESC [4~,	ESC [4~,    ESC ESC [4~	    /# End	    #/
+    ESC [D,	ESC [D,		ESC [D,	    ESC ESC [D,O    /# Keypad Left  #/
+    ESC [C,	ESC [C,		ESC [C,	    ESC ESC [C,O    /# Keypad Right #/
+    ESC [A,	ESC [A,		ESC [A,	    ESC ESC [A,O    /# Keypad Up    #/
+    ESC [B,	ESC [B,		ESC [B,	    ESC ESC [B,O    /# Keypad Down  #/
+    ESC [1~,	ESC [1~,	ESC [1~,    ESC ESC [1~,O   /# Keypad Home  #/
+    ESC [5~,	ESC [5~,	ESC [5~,    ESC ESC [5~,O   /# Keypad PgUp  #/
+    ESC [6~,	ESC [6~,	ESC [6~,    ESC ESC [6~,O   /# Keypad PgDn  #/
+    ESC [4~,	ESC [4~,	ESC [4~,    ESC ESC [4~,O   /# Keypad End   #/
+    ESC [-71,	nothing,	nothing,    O	            /# Keypad 5	    #/
+
+    Cygwin Console (term=cygwin, ncurses)
+    ==============================
+    KEY_LEFT,	KEY_LEFT,	KEY_LEFT,   ESC-260	    /# Left	    #/
+    KEY_RIGHT,	KEY_RIGHT,	KEY_RIGHT,  ESC-261	    /# Rght	    #/
+    KEY_UP,	KEY_UP,		KEY_UP,	    ESC-259	    /# Up	    #/
+    KEY_DOWN,	KEY_DOWN,	KEY_DOWN,   ESC-258	    /# Down	    #/
+    KEY_HOME,	KEY_HOME,	KEY_HOME,   ESC-262	    /# Home	    #/
+    KEY_PPAGE,	KEY_PPAGE,	KEY_PPAGE,  ESC-339	    /# Page Up	    #/
+    KEY_NPAGE,	KEY_NPAGE,	KEY_NPAGE,  ESC-338	    /# Page Down    #/
+    KEY_END,	KEY_END,	KEY_END,    ESC-360	    /# End	    #/
+    KEY_LEFT,	KEY_LEFT,	KEY_LEFT,   ESC-260,O	    /# Keypad Left  #/
+    KEY_RIGHT,	KEY_RIGHT,	KEY_RIGHT,  ESC-261,O	    /# Keypad Right #/
+    KEY_UP,	KEY_UP,		KEY_UP,	    ESC-259,O       /# Keypad Up    #/
+    KEY_DOWN,	KEY_DOWN,	KEY_DOWN,   ESC-258,O       /# Keypad Down  #/
+    KEY_HOME,	KEY_HOME,	KEY_HOME,   ESC-262,O       /# Keypad Home  #/
+    KEY_PPAGE,	KEY_PPAGE,	KEY_PPAGE,  ESC-339,O	    /# Keypad PgUp  #/
+    KEY_NPAGE,	KEY_NPAGE,	KEY_NPAGE,  ESC-338,O	    /# Keypad PgDn  #/
+    KEY_END,	KEY_END,	KEY_END,    ESC-360,O       /# Keypad End   #/
+    ESC [G,	nothing,	nothing,    O	            /# Keypad 5	    #/
+
+    MSYS Console (raw, ncurses)
+    ==============================
+    normal	shift		ctrl	    alt
+    ESC OD,	ESC [d,		ESC Od	    nothing	    /# Left	    #/
+    ESC OE,	ESC [e,		ESC Oe,	    nothing	    /# Right	    #/
+    ESC OA,	ESC [a,		ESC Oa,	    nothing	    /# Up	    #/
+    ESC OB,	ESC [b,		ESC Ob,	    nothing	    /# Down	    #/
+    ESC [7~,	ESC [7$,	ESC [7^,    nothing	    /# Home	    #/
+    ESC [5~,	local window,   ESC [5^,    nothing	    /# Page Up      #/
+    ESC [6~,	local window,   ESC [6^,    nothing	    /# Page Down    #/
+    ESC [8~,	ESC [8$,	ESC [8^,    nothing	    /# End	    #/
+    ESC OD,	ESC [d,		ESC Od	    O		    /# Keypad Left  #/
+    ESC OE,	ESC [c,		ESC Oc,	    O		    /# Keypad Right #/
+    ESC OA,	ESC [a,		ESC Oa,	    O		    /# Keypad Up    #/
+    ESC OB,	ESC [b,		ESC Ob,	    O		    /# Keypad Down  #/
+    ESC [7~,	ESC [7$,	ESC [7^,    O		    /# Keypad Home  #/
+    ESC [5~,	local window,   ESC [5^,    O		    /# Keypad PgUp  #/
+    ESC [6~,	local window,   ESC [6^,    O		    /# Keypad PgDn  #/
+    ESC [8~,	ESC [8$,	ESC [8^,    O		    /# Keypad End   #/
+    11,		11,		11,	    O		    /# Keypad 5     #/
+
+    MSYS Console (term=rxvt, ncurses)
+    ==============================
+    normal	shift		ctrl	    alt
+    KEY_LEFT,	KEY_SLEFT,	514	    nothing	    /# Left	    #/
+    KEY_RIGHT,	KEY_SRIGHT,	516,	    nothing	    /# Right	    #/
+    KEY_UP,	518,		519,	    nothing	    /# Up	    #/
+    KEY_DOWN,	511,		512,	    nothing	    /# Down	    #/
+    KEY_HOME,	KEY_SHOME,	ESC [7^,    nothing	    /# Home	    #/
+    KEY_PPAGE,	local window,   ESC [5^,    nothing	    /# Page Up      #/
+    KEY_NPAGE,	local window,   ESC [6^,    nothing	    /# Page Down    #/
+    KEY_END,	KEY_SEND,	KEY_EOL,    nothing	    /# End	    #/
+    KEY_LEFT,	KEY_SLEFT,	514	    O		    /# Keypad Left  #/
+    KEY_RIGHT,	KEY_SRIGHT,	516,	    O		    /# Keypad Right #/
+    KEY_UP,	518,		519,	    O		    /# Keypad Up    #/
+    KEY_DOWN,	511,		512,	    O		    /# Keypad Down  #/
+    KEY_HOME,	KEY_SHOME,	ESC [7^,    O		    /# Keypad Home  #/
+    KEY_PPAGE,	local window,   ESC [5^,    O		    /# Keypad PgUp  #/
+    KEY_NPAGE,	local window,   ESC [6^,    O		    /# Keypad PgDn  #/
+    KEY_END,	KEY_SEND,	KEY_EOL,    O		    /# Keypad End   #/
+    11,		11,		11,	    O		    /# Keypad 5     #/
+
+    Win32 Console (raw, pdcurses)
+    DJGPP Console (raw, pdcurses)
+    ==============================
+    normal	shift		ctrl	    alt
+    260,	391,		443,	    493		    /# Left	    #/
+    261,	400,		444,	    492		    /# Right	    #/
+    259,	547,		480,	    490		    /# Up	    #/
+    258,	548,		481,	    491		    /# Down	    #/
+    262,	388,		447,	    524	    	    /# Home	    #/
+    339,	396,		445,	    526	    	    /# Page Up	    #/
+    338,	394,		446,	    520		    /# Page Down    #/
+    358,	384,		448,	    518	 	    /# End	    #/
+    452,	52('4'),	511,	    521		    /# Keypad Left  #/
+    454,	54('6'),	513,	    523		    /# Keypad Right #/
+    450,	56('8'),	515,	    525		    /# Keypad Up    #/
+    456,	50('2'),	509,	    519		    /# Keypad Down  #/
+    449,	55('7'),	514,	    524		    /# Keypad Home  #/
+    451,	57('9'),	516,	    526		    /# Keypad PgUp  #/
+    457,	51('3'),	510,	    520		    /# Keypad PgDn  #/
+    455,	49('1'),	508,	    518		    /# Keypad End   #/
+    453,	53('5'),	512,	    522		    /# Keypad 5     #/
+
+    Win32 Console (pdcurses, MSVC/MingW32)
+    DJGPP Console (pdcurses)
+    ==============================
+    normal	shift		ctrl	    alt
+    KEY_LEFT,	KEY_SLEFT,	CTL_LEFT,   ALT_LEFT	    /# Left	    #/
+    KEY_RIGHT,	KEY_SRIGHT,	CTL_RIGHT,  ALT_RIGHT	    /# Right	    #/
+    KEY_UP,	KEY_SUP,	CTL_UP,	    ALT_UP	    /# Up	    #/
+    KEY_DOWN,	KEY_SDOWN,	CTL_DOWN,   ALT_DOWN	    /# Down	    #/
+    KEY_HOME,	KEY_SHOME,	CTL_HOME,   ALT_HOME	    /# Home	    #/
+    KEY_PPAGE,	KEY_SPREVIOUS,  CTL_PGUP,   ALT_PGUP	    /# Page Up      #/
+    KEY_NPAGE,	KEY_SNEXTE,	CTL_PGDN,   ALT_PGDN	    /# Page Down    #/
+    KEY_END,	KEY_SEND,	CTL_END,    ALT_END	    /# End	    #/
+    KEY_B1,	52('4'),	CTL_PAD4,   ALT_PAD4	    /# Keypad Left  #/
+    KEY_B3,	54('6'),	CTL_PAD6,   ALT_PAD6	    /# Keypad Right #/
+    KEY_A2,	56('8'),	CTL_PAD8,   ALT_PAD8	    /# Keypad Up    #/
+    KEY_C2,	50('2'),	CTL_PAD2,   ALT_PAD2	    /# Keypad Down  #/
+    KEY_A1,	55('7'),	CTL_PAD7,   ALT_PAD7	    /# Keypad Home  #/
+    KEY_A3,	57('9'),	CTL_PAD9,   ALT_PAD9	    /# Keypad PgUp  #/
+    KEY_C3,	51('3'),	CTL_PAD3,   ALT_PAD3	    /# Keypad PgDn  #/
+    KEY_C1,	49('1'),	CTL_PAD1,   ALT_PAD1	    /# Keypad End   #/
+    KEY_B2,	53('5'),	CTL_PAD5,   ALT_PAD5	    /# Keypad 5     #/
+
+    Windows Telnet (raw)
+    ==============================
+    normal	shift		ctrl	    alt
+    ESC [D,	ESC [D,		ESC [D,	    ESC [D	    /# Left	    #/
+    ESC [C,	ESC [C,		ESC [C,	    ESC [C	    /# Right	    #/
+    ESC [A,	ESC [A,		ESC [A,	    ESC [A	    /# Up	    #/
+    ESC [B,	ESC [B,		ESC [B,	    ESC [B	    /# Down	    #/
+    ESC [1~,	ESC [1~,	ESC [1~,    ESC [1~	    /# Home	    #/
+    ESC [5~,	ESC [5~,	ESC [5~,    ESC [5~	    /# Page Up	    #/
+    ESC [6~,	ESC [6~,	ESC [6~,    ESC [6~	    /# Page Down    #/
+    ESC [4~,	ESC [4~,	ESC [4~,    ESC [4~	    /# End	    #/
+    ESC [D,	ESC [D,		ESC [D,	    ESC [D	    /# Keypad Left  #/
+    ESC [C,	ESC [C,		ESC [C,	    ESC [C	    /# Keypad Right #/
+    ESC [A,	ESC [A,		ESC [A,	    ESC [A	    /# Keypad Up    #/
+    ESC [B,	ESC [B,		ESC [B,	    ESC [B	    /# Keypad Down  #/
+    ESC [1~,	ESC [1~,	ESC [1~,    ESC [1~	    /# Keypad Home  #/
+    ESC [5~,	ESC [5~,	ESC [5~,    ESC [5~	    /# Keypad PgUp  #/
+    ESC [6~,	ESC [6~,	ESC [6~,    ESC [6~	    /# Keypad PgDn  #/
+    ESC [4~,	ESC [4~,	ESC [4~,    ESC [4~	    /# Keypad End   #/
+    nothing,	nothing,	nothing,    nothing	    /# Keypad 5     #/
+
+    Windows Telnet (term=xterm)
+    ==============================
+    normal	shift		ctrl	    alt
+    KEY_LEFT,	KEY_LEFT,	KEY_LEFT,   KEY_LEFT	    /# Left	    #/
+    KEY_RIGHT,	KEY_RIGHT,	KEY_RIGHT,  KEY_RIGHT	    /# Right	    #/
+    KEY_UP,	KEY_UP,		KEY_UP,	    KEY_UP	    /# Up	    #/
+    KEY_DOWN,	KEY_DOWN,	KEY_DOWN,   KEY_DOWN	    /# Down	    #/
+    ESC [1~,	ESC [1~,	ESC [1~,    ESC [1~	    /# Home	    #/
+    KEY_PPAGE,	KEY_PPAGE,	KEY_PPAGE,  KEY_PPAGE	    /# Page Up	    #/
+    KEY_NPAGE,	KEY_NPAGE,	KEY_NPAGE,  KEY_NPAGE	    /# Page Down    #/
+    ESC [4~,	ESC [4~,	ESC [4~,    ESC [4~	    /# End	    #/
+    KEY_LEFT,	KEY_LEFT,	KEY_LEFT,   O		    /# Keypad Left  #/
+    KEY_RIGHT,	KEY_RIGHT,	KEY_RIGHT,  O		    /# Keypad Right #/
+    KEY_UP,	KEY_UP,		KEY_UP,	    O		    /# Keypad Up    #/
+    KEY_DOWN,	KEY_DOWN,	KEY_DOWN,   O		    /# Keypad Down  #/
+    ESC [1~,	ESC [1~,	ESC [1~,    ESC [1~	    /# Keypad Home  #/
+    KEY_PPAGE,	KEY_PPAGE,	KEY_PPAGE,  KEY_PPAGE	    /# Keypad PgUp  #/
+    KEY_NPAGE,	KEY_NPAGE,	KEY_NPAGE,  KEY_NPAGE	    /# Keypad PgDn  #/
+    ESC [4~,	ESC [4~,	ESC [4~,    O		    /# Keypad End   #/
+    ESC [-71,	nothing,	nothing,    O	            /# Keypad 5	    #/
+
+    PuTTY
+    ==============================
+    normal	shift		ctrl	    alt
+    ESC [D,	ESC [D,		ESC OD,	    ESC [D	    /# Left	    #/
+    ESC [C,	ESC [C,		ESC OC,	    ESC [C	    /# Right	    #/
+    ESC [A,	ESC [A,		ESC OA,	    ESC [A	    /# Up	    #/
+    ESC [B,	ESC [B,		ESC OB,	    ESC [B	    /# Down	    #/
+    ESC [1~,	ESC [1~,	local win,  ESC [1~	    /# Home	    #/
+    ESC [5~,	local win,	local win,  ESC [5~	    /# Page Up	    #/
+    ESC [6~,	local win,	local win,  ESC [6~	    /# Page Down    #/
+    ESC [4~,	ESC [4~,	local win,  ESC [4~	    /# End	    #/
+    ESC [D,	ESC [D,		ESC [D,	    O		    /# Keypad Left  #/
+    ESC [C,	ESC [C,		ESC [C,	    O		    /# Keypad Right #/
+    ESC [A,	ESC [A,		ESC [A,	    O		    /# Keypad Up    #/
+    ESC [B,	ESC [B,		ESC [B,	    O		    /# Keypad Down  #/
+    ESC [1~,	ESC [1~,	ESC [1~,    O		    /# Keypad Home  #/
+    ESC [5~,	ESC [5~,	ESC [5~,    O		    /# Keypad PgUp  #/
+    ESC [6~,	ESC [6~,	ESC [6~,    O		    /# Keypad PgDn  #/
+    ESC [4~,	ESC [4~,	ESC [4~,    O		    /# Keypad End   #/
+    nothing,	nothing,	nothing,    O		    /# Keypad 5	    #/
+
+    PuTTY
+    ==============================
+    normal	shift		ctrl	    alt
+    KEY_LEFT,	KEY_LEFT,	ESC OD,	    ESC KEY_LEFT    /# Left	    #/
+    KEY_RIGHT	KEY_RIGHT,	ESC OC,	    ESC KEY_RIGHT   /# Right	    #/
+    KEY_UP,	KEY_UP,		ESC OA,	    ESC KEY_UP	    /# Up	    #/
+    KEY_DOWN,	KEY_DOWN,	ESC OB,	    ESC KEY_DOWN    /# Down	    #/
+    ESC [1~,	ESC [1~,	local win,  ESC ESC [1~	    /# Home	    #/
+    KEY_PPAGE	local win,	local win,  ESC KEY_PPAGE   /# Page Up	    #/
+    KEY_NPAGE	local win,	local win,  ESC KEY_NPAGE   /# Page Down    #/
+    ESC [4~,	ESC [4~,	local win,  ESC ESC [4~	    /# End	    #/
+    ESC Ot,	ESC Ot,		ESC Ot,	    O		    /# Keypad Left  #/
+    ESC Ov,	ESC Ov,		ESC Ov,	    O		    /# Keypad Right #/
+    ESC Ox,	ESC Ox,		ESC Ox,	    O		    /# Keypad Up    #/
+    ESC Or,	ESC Or,		ESC Or,	    O		    /# Keypad Down  #/
+    ESC Ow,	ESC Ow,		ESC Ow,     O		    /# Keypad Home  #/
+    ESC Oy,	ESC Oy,		ESC Oy,     O		    /# Keypad PgUp  #/
+    ESC Os,	ESC Os,		ESC Os,     O		    /# Keypad PgDn  #/
+    ESC Oq,	ESC Oq,		ESC Oq,     O		    /# Keypad End   #/
+    ESC Ou,	ESC Ou,		ESC Ou,	    O		    /# Keypad 5	    #/
+*/
+
+#define M_NORMAL 0
+#define M_ESC    1
+#define M_KEYPAD 2
+#define M_TRAIL  3
+
+int undo[5];
+int uindex = -1;
+
+int
+reread()
+{
+    int redo;
+
+    if (uindex < 0)
+        return 0;
+
+    redo = undo[0];
+    undo[0] = undo[1];
+    undo[1] = undo[2];
+    undo[2] = undo[3];
+    undo[3] = undo[4];
+    uindex--;
+    return redo;
+}
+
+void
+unread(int c)
+{
+    if (uindex >= 4)
+        abort();
+
+    undo[++uindex] = c;
+}
+
+
+void
+md_tstphold(void)
+{
+#ifdef SIGTSTP
+    /*
+     * If a process can be suspended, this code wouldn't work
+     */
+# ifdef SIG_HOLD
+    signal(SIGTSTP, SIG_HOLD);
+# else
+    signal(SIGTSTP, SIG_IGN);
+# endif
+#endif
+}
+
+void
+md_tstpresume(void)
+{
+#ifdef SIGTSTP
+    signal(SIGTSTP, tstp);
+#endif
+}
+
+void
+md_tstpsignal(void)
+{
+#ifdef SIGTSTP
+    kill(0, SIGTSTP);		/* send actual signal and suspend process */
+#endif
+}
+
+#if defined(CHECKTIME)
+void
+md_start_checkout_timer(int time)
+{
+    int  checkout();
+
+#if defined(HAVE_ALARM) && defined(SIGALRM)
+    signal(SIGALRM, checkout);
+	alarm(time);
+#endif
+}
+
+void
+md_stop_checkout_timer(void)
+{
+#if defined(SIGALRM)
+    signal(SIGALRM, SIG_IGN);
+#endif
+}
+
+#endif
+

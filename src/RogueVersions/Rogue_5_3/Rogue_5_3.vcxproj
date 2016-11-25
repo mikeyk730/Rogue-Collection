@@ -32,6 +32,7 @@
     <ClCompile Include="list.c" />
     <ClCompile Include="mach_dep.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="mdport.c" />
     <ClCompile Include="misc.c" />
     <ClCompile Include="monsters.c" />
     <ClCompile Include="move.c" />
