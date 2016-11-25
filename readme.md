@@ -1,19 +1,20 @@
-Retro Rogue Collection v2.1
+Retro Rogue Collection v2.2
 ===========================
 Rogue is the classic dungeon crawing video game from the early 1980s.  _Retro Rogue Collection_ brings it to your PC in a way never seen before.
 
 Download
 --------
 
-Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collection/releases/download/v2.1/RogueCollection_2_1.zip) today!  Read the [readme](https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md) before getting started.
+Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collection/releases/download/v2.2/RogueCollection_2_2.zip) today!  Read the [readme](https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md) before getting started.
 
-Five Classic Versions
+Six Classic Versions
 ---------------------
-Rogue went through big changes throughout the 1980s.  Originally developed for Unix mainframes, it eventually saw an IBM PC release.  _Retro Rogue Collection_ lets you relive this whole era by offering five different versions of the game:
+Rogue went through big changes throughout the 1980s.  Originally developed for Unix mainframes, it eventually saw an IBM PC release.  _Retro Rogue Collection_ lets you relive this whole era by offering six different versions of the game:
 
 + PC Rogue v1.48
 + PC Rogue v1.1
 + Unix Rogue v5.4.2
++ Unix Rogue v5.3
 + Unix Rogue v5.2.1
 + Unix Rogue v3.6.3
 

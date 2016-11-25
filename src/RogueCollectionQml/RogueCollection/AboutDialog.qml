@@ -71,7 +71,7 @@ Window{
             Text{
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
-                text: "Version: 2.1\n" +
+                text: "Version: 2.2\n" +
                       "Author: Mike Kaminski\n" +
                       "Email: mikeyk730@gmail.com\n" +
                       "Source: https://github.com/mikeyk730/Rogue-Collection\n\n" +

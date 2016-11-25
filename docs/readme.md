@@ -1,4 +1,4 @@
-Retro Rogue Collection v2.1
+Retro Rogue Collection v2.2
 ===========================
 https://github.com/mikeyk730/Rogue-Collection
 
