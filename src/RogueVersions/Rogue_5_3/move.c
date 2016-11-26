@@ -180,7 +180,10 @@ hit_bound:
 		if (ch != STAIRS)
 		    take = ch;
 move_stuff:
-		mvaddrawch(hero.y, hero.x, chat(hero.y, hero.x));
+        PC_GFX_PASSGE_COLOR(hero.y, hero.x, chat(hero.y, hero.x), 0x70);
+        mvaddrawch(hero.y, hero.x, chat(hero.y, hero.x));
+        PC_GFX_NOCOLOR(0x70);
+
 		if ((fl & F_PASS) && chat(oldpos.y, oldpos.x) == DOOR)
 		    leave_room(&nh);
 		hero = nh;
