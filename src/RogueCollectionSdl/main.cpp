@@ -17,7 +17,7 @@
 
 int main(int argc, char** argv)
 {
-    Args args = LoadArgs(argc, argv);
+    Args args(argc, argv);
     std::shared_ptr<Environment> current_env(new Environment(args));
     InitGameConfig(current_env.get());
     

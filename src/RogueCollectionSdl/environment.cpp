@@ -33,10 +33,13 @@ namespace
 }
 
 Environment::Environment()
-{}
+{
+    SetDefaults();
+}
 
 Environment::Environment(const Args & args)
 {
+    SetDefaults();
     LoadFromFile(args.optfile);
     ApplyArgs(args);
 }
@@ -71,6 +74,8 @@ void Environment::ApplyArgs(const Args& args)
         Set("font", args.fontfile);
     if (args.start_paused)
         Set("replay_paused", "true");
+    if (!args.pause_at.empty())
+        Set("replay_pause_at", args.pause_at);
 }
 
 void Environment::Deserialize(std::istream& in)
@@ -84,6 +89,12 @@ void Environment::Deserialize(std::istream& in)
         ReadShortString(in, &value);
         m_environment[key] = value;
     }
+}
+
+void Environment::SetDefaults()
+{
+    Set("passgo", "true");
+    Set("askme", "true");
 }
 
 void Environment::Serialize(std::ostream& file)
@@ -116,9 +127,12 @@ void Environment::Set(const std::string & key, const std::string & value)
         m_environment[key] = value;
 }
 
-void Environment::Clear(const std::string & key)
+void Environment::Clear(const std::string &key)
 {
-    m_environment.erase(key);
+    auto i = m_environment.find(key);
+    if (i != m_environment.end()) {
+        m_environment.erase(i);
+    }
 }
 
 void Environment::Lines(int n)

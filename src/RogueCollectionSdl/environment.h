@@ -30,6 +30,8 @@ struct Environment
     void Deserialize(std::istream& in);
 
 private:
+    void SetDefaults();
+
     std::map<std::string, std::string> m_environment;
     int m_lines = 25;
     int m_cols = 80;

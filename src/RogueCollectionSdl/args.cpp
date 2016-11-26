@@ -1,39 +1,62 @@
 #include "args.h"
 
-Args LoadArgs(int argc, char**argv)
+bool LoadArg(Args& a, const std::string& arg, const std::string& next)
 {
-    Args a = Args();
-    a.optfile = "rogue.opt";
-
-    for (int i = 1; i < argc; ++i) {
-        std::string s(argv[i]);
-        if (s == "/r" || s == "-r") {
-            a.savefile = "rogue.sav";
-        }
-        else if (s == "/s" || s == "-s") {
-            a.print_score = true;
-        }
-        else if (s == "/p" || s == "-p") {
-            a.start_paused = true;
-        }
-        else if (s == "/n" || s == "-n") {
-            a.small_screen = true;
-        }
-        else if (s == "/g" || s == "-g") {
-            if (++i < argc)
-                a.gfx = argv[i];
-        }
-        else if (s == "/o" || s == "-o") {
-            if (++i < argc)
-                a.optfile = argv[i];
-        }
-        else if (s == "/f" || s == "-f") {
-            if (++i < argc)
-                a.fontfile = argv[i];
-        }
-        else {
-            a.savefile = s;
-        }
+    if (arg == "--restore" || arg == "-r") {
+        a.savefile = "rogue.sav";
     }
-    return a;
+    else if (arg == "--score" || arg == "-s") {
+        a.print_score = true;
+    }
+    else if (arg == "--paused" || arg == "-p") {
+        a.start_paused = true;
+    }
+    else if (arg == "--pause-at") {
+        a.pause_at = next;
+        return true;
+    }
+    else if (arg == "--small-screen" || arg == "-n") {
+        a.small_screen = true;
+    }
+    else if (arg == "--graphics" || arg == "-g") {
+        a.gfx = next;
+        return true;
+    }
+    else if (arg == "--optfile" || arg == "-o") {
+        a.optfile = next;
+        return true;
+    }
+    else if (arg == "--font" || arg == "-f") {
+        a.fontfile = next;
+        return true;
+    }
+    else if (arg == "--profile") {
+        //reserved for Retro Rogue
+        return true;
+    }
+    else if (arg[0] != '-'){
+        a.savefile = arg;
+    }
+    return false;
 }
+
+Args::Args(int argc, char **argv)
+{
+    for (int i = 1; i < argc; ++i) {
+        std::string arg(argv[i]);
+        std::string next(i+1 < argc ? argv[i+1] : "");
+        if (LoadArg(*this, arg, next))
+            ++i;
+    }
+}
+
+Args::Args(std::vector<std::string> args)
+{
+    for (int i = 1; i < (int)args.size(); ++i) {
+        std::string arg(args[i]);
+        std::string next(i+1 < (int)args.size() ? args[i+1] : "");
+        if (LoadArg(*this, arg, next))
+            ++i;
+    }
+}
+
