@@ -506,7 +506,7 @@ register char **guess;
 rnd_thing()
 {
     register int i;
-    static char thing_list[] = {
+    static unsigned char thing_list[] = {
 	POTION, SCROLL, RING, STICK, FOOD, WEAPON, ARMOR, STAIRS, AMULET
     };
 

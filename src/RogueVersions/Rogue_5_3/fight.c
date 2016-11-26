@@ -32,7 +32,7 @@ bool thrown;
      * Find the monster we want to fight
      */
 #ifdef WIZARD
-    debug("Fight()");
+    //debug("Fight()");
     if ((tp = moat(mp->y, mp->x)) == NULL)
 	debug("Fight what @ %d,%d", mp->y, mp->x);
 #else
