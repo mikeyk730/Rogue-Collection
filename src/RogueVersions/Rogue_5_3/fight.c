@@ -106,6 +106,7 @@ bool thrown;
  * attack:
  *	The monster attacks the player
  */
+int
 attack(mp)
 register THING *mp;
 {
@@ -247,6 +248,7 @@ register THING *mp;
 		    if (purse < 0)
 			purse = 0;
 		    r_remove(&mp->t_pos, mp, FALSE);
+            mp = NULL;
 		    if (purse != lastpurse)
 			msg("your purse feels lighter");
 		}
@@ -268,6 +270,7 @@ register THING *mp;
 		    if (steal != NULL)
 		    {
 			r_remove(&mp->t_pos, moat(mp->t_pos.y, mp->t_pos.x), FALSE);
+            mp = NULL;
 			inpack--;
 			if (steal->o_count > 1 && steal->o_group == 0)
 			{
@@ -304,6 +307,11 @@ register THING *mp;
 	flush_type();
     count = 0;
     status();
+
+    if (mp == NULL)
+        return(-1);
+    else
+        return(0);
 }
 
 /*

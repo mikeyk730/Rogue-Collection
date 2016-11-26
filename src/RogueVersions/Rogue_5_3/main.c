@@ -323,7 +323,7 @@ leave()
  */
 shell()
 {
-#ifdef SAVE
+#ifndef ROGUE_COLLECTION
     register int pid;
     register char *sh;
     int ret_status;
