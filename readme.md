@@ -5,7 +5,7 @@ Rogue is the classic dungeon crawing video game from the early 1980s.  _Retro Ro
 Download
 --------
 
-Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collection/releases/download/v2.2/RogueCollection_2_2.zip) today!  Read the [readme](https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md) before getting started.
+Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collection/releases) today!  Read the [readme](https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/readme.md) before getting started.
 
 Six Classic Versions
 ---------------------
