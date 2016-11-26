@@ -200,6 +200,7 @@ WINDOW *win;
     register int c, oy, ox;
     char buf[MAXSTR];
 
+    PC_GFX_SET_CURSOR(1);
     getyx(win, oy, ox);
     wrefresh(win);
     /*
@@ -257,6 +258,7 @@ WINDOW *win;
     wrefresh(win);
     if (win == stdscr)
 	mpos += sp - buf;
+    PC_GFX_SET_CURSOR(0);
     if (c == '-')
 	return MINUS;
     else if (c == '\033' || c == '\007')

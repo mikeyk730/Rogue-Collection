@@ -265,6 +265,7 @@ get_str(void *vopt, WINDOW *win)
     int c;
     static char buf[MAXSTR];
 
+    PC_GFX_SET_CURSOR(1);
     getyx(win, oy, ox);
     wrefresh(win);
     /*
@@ -318,6 +319,7 @@ get_str(void *vopt, WINDOW *win)
     wrefresh(win);
     if (win == stdscr)
 	mpos += (int)(sp - buf);
+    PC_GFX_SET_CURSOR(0);
     if (c == '-')
 	return MINUS;
     else if (c == ESCAPE)

@@ -190,6 +190,7 @@ get_str(void *vopt, WINDOW *win)
     int c, oy, ox;
     char buf[80];
 
+    PC_GFX_SET_CURSOR(1);
     draw(win);
     getyx(win, oy, ox);
     /*
@@ -257,6 +258,7 @@ get_str(void *vopt, WINDOW *win)
     draw(win);
     if (win == cw)
 	mpos += (int)(sp - buf);
+    PC_GFX_SET_CURSOR(0);
     if (c == '-')
 	return MINUS;
     else if (c == '\033' || c == '\007')

@@ -208,6 +208,7 @@ WINDOW *win;
     register int c, oy, ox;
     char buf[MAXSTR];
 
+    PC_GFX_SET_CURSOR(1);
     getyx(win, oy, ox);
     wrefresh(win);
     /*
@@ -272,6 +273,7 @@ WINDOW *win;
     wmove(win, oy, ox);
     waddstr(win, opt);
     waddch(win, '\n');
+    PC_GFX_SET_CURSOR(0);
     wrefresh(win);
     if (win == stdscr)
 	mpos += sp - buf;
