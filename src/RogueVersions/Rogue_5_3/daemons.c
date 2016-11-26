@@ -251,25 +251,34 @@ visuals()
      * change the things
      */
     for (tp = lvl_obj; tp != NULL; tp = next(tp))
-	if (cansee(tp->o_pos.y, tp->o_pos.x))
+	if (cansee(tp->o_pos.y, tp->o_pos.x)) {
+        PC_GFX_PASSGE_COLOR(tp->o_pos.y, tp->o_pos.x, 0, 0x70);
 	    mvaddrawch(tp->o_pos.y, tp->o_pos.x, rnd_thing());
+        PC_GFX_NOCOLOR(0x70);
+    }
 
     /*
      * change the stairs
      */
-    if (!seenstairs && cansee(stairs.y, stairs.x))
-	    mvaddrawch(stairs.y, stairs.x, rnd_thing());
+    if (!seenstairs && cansee(stairs.y, stairs.x)) {
+        PC_GFX_PASSGE_COLOR(stairs.y, stairs.x, 0, 0x70);
+        mvaddrawch(stairs.y, stairs.x, rnd_thing());
+        PC_GFX_NOCOLOR(0x70);
+    }
 
     /*
      * change the monsters
      */
     seemonst = on(player, SEEMONST);
     for (tp = mlist; tp != NULL; tp = next(tp))
-	if (see_monst(tp))
+	if (see_monst(tp)){
+        PC_GFX_PASSGE_COLOR(tp->t_pos.y, tp->t_pos.x, 0, 0x70);
 	    if (tp->t_type == 'M' && tp->t_disguise != 'M')
 		mvaddrawch(tp->t_pos.y, tp->t_pos.x, rnd_thing());
 	    else
 		mvaddrawch(tp->t_pos.y, tp->t_pos.x, rnd(26) + 'A');
+        PC_GFX_NOCOLOR(0x70);
+	}
 	else if (seemonst)
 	{
 	    standout();
