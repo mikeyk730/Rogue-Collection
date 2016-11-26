@@ -1,5 +1,5 @@
-Retro Rogue Collection v2.2
-===========================
+Retro Rogue Collection
+======================
 Rogue is the classic dungeon crawing video game from the early 1980s.  _Retro Rogue Collection_ brings it to your PC in a way never seen before.
 
 Download
