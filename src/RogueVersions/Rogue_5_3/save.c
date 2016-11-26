@@ -300,7 +300,7 @@ register FILE *outf;
 
     while (size--)
     {
-	putc(*start++ ^ *ep++, outf);
+	putc(*start++/* ^ *ep++*/, outf);
 	if (*ep == '\0')
 	    ep = encstr;
     }
@@ -325,7 +325,7 @@ register int inf;
 
     while (size--)
     {
-	*start++ ^= *ep++;
+	*start++;// ^= *ep++;
 	if (*ep == '\0')
 	    ep = encstr;
     }

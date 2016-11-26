@@ -33,6 +33,8 @@ char **envp;
     char *getpass(), *crypt();
     int quit(), exit(), lowtime;
 
+    md_init();
+
 #ifndef DUMP
     //signal(SIGQUIT, exit);
     signal(SIGILL, exit);

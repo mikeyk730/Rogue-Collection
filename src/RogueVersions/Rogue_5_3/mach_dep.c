@@ -65,7 +65,7 @@ init_check()
 open_score()
 {
 #ifdef SCOREFILE
-    fd = open(SCOREFILE, O_RDWR | O_CREAT, 0666);
+    fd = open(SCOREFILE, _O_RDWR | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
 #else
     fd = -1;
 #endif
