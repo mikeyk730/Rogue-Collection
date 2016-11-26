@@ -63,7 +63,7 @@ char monst;
 	endwin();
 
     if (fd >= 0)
-	outf = fdopen(fd, "w");
+	outf = fdopen(fd, "wb");
     else
 	return;
 
@@ -152,7 +152,7 @@ char monst;
             PC_GFX_COLOR(0x70);
         }
 	    printw("%d\t%d\t%s: %s on level %d", scp - top_ten + 1,
-		scp->sc_score, scp->sc_name, reason[scp->sc_flags],
+		scp->sc_score, scp->sc_name, reason[scp->sc_flags < 3 ? scp->sc_flags : 0],
 		scp->sc_level);
 	    if (scp->sc_flags == 0)
 		printw(" by %s", killname((char) scp->sc_monster, TRUE));

@@ -94,11 +94,11 @@ open_score(void)
         return;
     }
 
-    scoreboard = fopen(scorefile, "r+");
+    scoreboard = fopen(scorefile, "rb+");
 
     if ((scoreboard == NULL) && (errno == ENOENT))
     {
-        scoreboard = fopen(scorefile, "w+");
+        scoreboard = fopen(scorefile, "wb+");
         md_chmod(scorefile,0664);
     }
 

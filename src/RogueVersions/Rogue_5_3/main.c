@@ -90,12 +90,12 @@ char **envp;
     {
 	noscore = TRUE;
 	score(0, -1);
-	exit(0);
+	return 0;
     }
     init_check();			/* check for legal startup */
     if (argc == 2)
 	if (!restore(argv[1], envp))	/* Note: restore will never return */
-	    exit(1);
+	    return 1;
     lowtime = (int) time(NULL);
 #ifdef WIZARD
     if (/*wizard && */getenv("SEED") != NULL)
@@ -140,6 +140,7 @@ char **envp;
     daemon(stomach, 0, AFTER);
     daemon(runners, 0, AFTER);
     EXITABLE(playit());
+    return 0;
 }
 
 /*
