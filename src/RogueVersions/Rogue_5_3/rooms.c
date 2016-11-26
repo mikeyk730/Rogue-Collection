@@ -361,17 +361,21 @@ register coord *cp;
 		tp = moat(y, x);
 		if (tp == NULL)
 		    addrawch(chat(y, x));
-		else if (!see_monst(tp))
-		    if (on(player, SEEMONST))
-		    {
-			standout();
-			addrawch(tp->t_disguise);
-			standend();
-		    }
-		    else
-			addrawch(chat(y, x));
-		else
-		    addrawch(tp->t_disguise);
+        else {
+            //mdk:bugfix: items under monster didn't appear when killed from afar
+            tp->t_oldch = chat(y, x);
+            if (!see_monst(tp))
+                if (on(player, SEEMONST))
+                {
+                    standout();
+                    addrawch(tp->t_disguise);
+                    standend();
+                }
+                else
+                    addrawch(chat(y, x));
+            else
+                addrawch(tp->t_disguise);
+        }
 	    }
 	}
 }
