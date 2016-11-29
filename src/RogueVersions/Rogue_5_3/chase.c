@@ -142,7 +142,9 @@ over:
     }
     else if (th->t_type == 'F')
 	return 0;
+    PC_GFX_PASSGE_COLOR(th->t_pos.y, th->t_pos.x, th->t_oldch, 0x70);
     mvaddrawch(th->t_pos.y, th->t_pos.x, th->t_oldch);
+    PC_GFX_NOCOLOR(0x70);
     if (!ce(ch_ret, th->t_pos))
     {
 	sch = MVINCH(ch_ret.y, ch_ret.x);

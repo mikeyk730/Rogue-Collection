@@ -194,7 +194,7 @@ read_scroll()
 		if (op->o_type == GOLD)
 		{
 		    ch = TRUE;
-		    mvwaddch(hw, op->o_pos.y, op->o_pos.x, GOLD);
+		    mvwaddrawch(hw, op->o_pos.y, op->o_pos.x, GOLD);
 		}
 	    if (ch)
 	    {
