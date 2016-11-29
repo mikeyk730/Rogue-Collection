@@ -1181,7 +1181,7 @@ rs_fix_magic_items(struct magic_item *mi, int cnt)
 void
 rs_fix_monsters(struct monster mons[26])
 {
-    sprintf(mons['F'-'A'].m_stats.s_dmg,"%dd1",fung_hit);
+    sprintf(mons['F'-'A'].m_stats.s_dmg,"%dd1",fung_hit);  //mdk:bug: doesn't actually set count
 }
 
 void

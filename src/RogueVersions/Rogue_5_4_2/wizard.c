@@ -232,7 +232,7 @@ teleport(void)
     if (on(player, ISHELD)) {
 	player.t_flags &= ~ISHELD;
 	vf_hit = 0;
-	strcpy(monsters['F'-'A'].m_stats.s_dmg, "000x0");
+	strcpy(monsters['F'-'A'].m_stats.s_dmg, "000x0");  //mdk:bug: doesn't actually reset count
     }
     no_move = 0;
     count = 0;
