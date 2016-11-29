@@ -69,6 +69,8 @@ register THING *th;
      * We don't count doors as inside rooms for this routine
      */
     door = (chat(th->t_pos.y, th->t_pos.x) == DOOR);
+
+    this = *th->t_dest;
     /*
      * If the object of our desire is in a different room,
      * and we are not in a corridor, run to the door nearest to
