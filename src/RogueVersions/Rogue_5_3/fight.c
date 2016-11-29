@@ -668,7 +668,9 @@ bool waskill;
 	    discard(obj);
     }
     moat(mp->y, mp->x) = NULL;
+    PC_GFX_PASSGE_COLOR(mp->y, mp->x, tp->t_oldch, 0x70);
     mvaddrawch(mp->y, mp->x, tp->t_oldch);
+    PC_GFX_NOCOLOR(0x70);
     detach(mlist, tp);
     discard(tp);
 }

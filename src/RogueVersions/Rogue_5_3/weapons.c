@@ -136,7 +136,9 @@ register bool pr;
 	obj->o_pos = fpos;
 	if (cansee(fpos.y, fpos.x))
 	{
+        PC_GFX_PASSGE_COLOR(fpos.y, fpos.x, obj->o_type, 0x70);
 	    mvaddrawch(fpos.y, fpos.x, obj->o_type);
+        PC_GFX_NOCOLOR(0x70);
 	    if (_monst[index] != NULL)
 		_monst[index]->t_oldch = obj->o_type;
 	}

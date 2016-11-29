@@ -169,6 +169,7 @@ read_scroll()
 				ch = _level[index] = DOOR;
 				_flags[index] &= ~F_REAL;
 			    }
+            PC_GFX_WALL_CASES
 			case PASSAGE:
 			    _flags[index] |= F_SEEN;
 			case DOOR:
