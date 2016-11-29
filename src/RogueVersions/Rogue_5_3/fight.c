@@ -247,7 +247,7 @@ register THING *mp;
 			purse -= GOLDCALC + GOLDCALC + GOLDCALC + GOLDCALC;
 		    if (purse < 0)
 			purse = 0;
-		    r_remove(&mp->t_pos, mp, FALSE);
+		    remove_monster(&mp->t_pos, mp, FALSE);
             mp = NULL;
 		    if (purse != lastpurse)
 			msg("your purse feels lighter");
@@ -269,14 +269,14 @@ register THING *mp;
 				steal = obj;
 		    if (steal != NULL)
 		    {
-			r_remove(&mp->t_pos, moat(mp->t_pos.y, mp->t_pos.x), FALSE);
+			remove_monster(&mp->t_pos, moat(mp->t_pos.y, mp->t_pos.x), FALSE);
             mp = NULL;
 			inpack--;
 			if (steal->o_count > 1 && steal->o_group == 0)
 			{
 			    register int oc;
 
-			    oc = steal->o_count--;
+                oc = --steal->o_count; //mdk:bugfix, originally wouldn't decrement count properly
 			    steal->o_count = 1;
 			    msg("she stole %s!", inv_name(steal, TRUE));
 			    steal->o_count = oc;
@@ -284,8 +284,8 @@ register THING *mp;
 			else
 			{
 			    detach(pack, steal);
-			    discard(steal);
-			    msg("she stole %s!", inv_name(steal, TRUE));
+                msg("she stole %s!", inv_name(steal, TRUE));
+                discard(steal);
 			}
 		    }
 		}
@@ -654,7 +654,7 @@ register char *mname;
  * remove:
  *	Remove a monster from the screen
  */
-r_remove(mp, tp, waskill)
+remove_monster(mp, tp, waskill)
 register coord *mp;
 register THING *tp;
 bool waskill;
@@ -762,7 +762,7 @@ bool pr;
 	    msg(mname);
 	}
     }
-    r_remove(&tp->t_pos, tp, TRUE);
+    remove_monster(&tp->t_pos, tp, TRUE);
 
     /*
      * Do adjustments if he went up a level
