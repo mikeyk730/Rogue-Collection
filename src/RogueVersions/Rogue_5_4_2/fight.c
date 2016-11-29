@@ -269,7 +269,7 @@ attack(THING *mp)
 		     * Venus Flytrap stops the poor guy from moving
 		     */
 		    player.t_flags |= ISHELD;
-		    sprintf(monsters['F'-'A'].m_stats.s_dmg,"%dx1", ++vf_hit);
+		    sprintf(mp->t_stats.s_dmg,"%dx1", ++vf_hit);
 		    if (--pstats.s_hpt <= 0)
 			death('F');
 		when 'L':
@@ -649,7 +649,7 @@ killed(THING *tp, int pr)
 	case 'F':
 	    player.t_flags &= ~ISHELD;
 	    vf_hit = 0;
-	    strcpy(monsters['F'-'A'].m_stats.s_dmg, "000x0");
+	    strcpy(tp->t_stats.s_dmg, "000x0");
 	when 'L':
 	{
 	    THING *gold;

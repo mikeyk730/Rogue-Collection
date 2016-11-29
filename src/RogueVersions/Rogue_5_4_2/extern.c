@@ -197,7 +197,7 @@ struct monster monsters[26] =
 { "centaur",	  15,	0,	{ XX, 17,   4,   4, ___, "1x2/1x5/1x5" } },
 { "dragon",	 100,	ISMEAN,	{ XX,5000, 10,  -1, ___, "1x8/1x8/3x10" } },
 { "emu",	   0,	ISMEAN,	{ XX,  2,   1,   7, ___, "1x2" } },
-{ "venus flytrap", 0,	ISMEAN,	{ XX, 80,   8,   3, ___, "%%%x0" } },
+{ "venus flytrap", 0,	ISMEAN,	{ XX, 80,   8,   3, ___, "0x0" } },
 	/* NOTE: the damage is %%% so that xstr won't merge this */
 	/* string with others, since it is written on in the program */
 { "griffin",	  20,	ISMEAN|ISFLY|ISREGEN, { XX,2000, 13,   2, ___, "4x3/3x5" } },

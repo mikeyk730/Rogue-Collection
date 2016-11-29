@@ -264,15 +264,11 @@ eat()
 	    msg("that's Inedible!");
 	return;
     }
-    inpack--;
-    if (--obj->o_count < 1)
-    {
-	detach(pack, obj);
-	discard(obj);
-    }
     if (food_left < 0)
 	food_left = 0;
-    if ((food_left += HUNGERTIME - 200 + rnd(400)) > STOMACHSIZE)
+    food_left += rnd(400) - 200;
+    food_left += HUNGERTIME;
+    if (food_left > STOMACHSIZE)
 	food_left = STOMACHSIZE;
     hungry_state = 0;
     if (obj == cur_weapon)
@@ -290,6 +286,12 @@ eat()
 	else
 	    msg("%s, that tasted good", on(player, ISTrip) ? "oh, wow" : "yum");
     play_sound("eat");
+    inpack--;
+    if (--obj->o_count < 1)
+    {
+        detach(pack, obj);
+        discard(obj);
+    }
 }
 
 /*

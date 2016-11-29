@@ -130,7 +130,7 @@ nohaste()
 stomach()
 {
     register int oldfood;
-
+    //MDK_LOG("status: food_left=%d\n", food_left);
     if (food_left <= 0)
     {
 	if (food_left-- < -STARVETIME)

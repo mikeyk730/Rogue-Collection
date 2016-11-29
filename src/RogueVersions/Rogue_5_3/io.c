@@ -74,6 +74,7 @@ endmsg()
      */
     if (islower(msgbuf[0]) && msgbuf[1] != ')')
 	msgbuf[0] = toupper(msgbuf[0]);
+    MDK_LOG("msg: %s\n", msgbuf);
     mvaddstr(0, 0, msgbuf);
     clrtoeol();
     mpos = newpos;
@@ -119,7 +120,7 @@ readchar()
     char c;
 
     c = getch();
-
+    MDK_LOG("getch: '%c' (%x)\n", c, c);
     //cnt = 0;
     //while (read(0, &c, 1) <= 0)
 	//if (cnt++ > 100)	/* if we are getting infinite EOFs */

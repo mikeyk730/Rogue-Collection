@@ -173,6 +173,8 @@ void SdlDisplay::Animate()
         std::unique_ptr<uint32_t[]> data;
         {
             std::lock_guard<std::mutex> lock(m_mutex);
+            if (!m_shared.data)
+                return;
 
             uint32_t* temp = new uint32_t[TotalChars()];
             memcpy(temp, m_shared.data.get(), TotalChars() * sizeof(uint32_t));

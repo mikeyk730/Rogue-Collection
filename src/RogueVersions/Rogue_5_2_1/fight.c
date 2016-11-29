@@ -210,7 +210,7 @@ register THING *mp;
 		     * Violet fungi stops the poor guy from moving
 		     */
 		    player.t_flags |= ISHELD;
-		    sprintf(monsters['F'-'A'].m_stats.s_dmg,"%dd1",++fung_hit);
+		    sprintf(mp->t_stats.s_dmg,"%dd1",++fung_hit);
 		when 'L':
 		{
 		    /*
@@ -705,7 +705,7 @@ bool pr;
 	case 'F':
 	    player.t_flags &= ~ISHELD;
 	    fung_hit = 0;
-	    strcpy(monsters['F'-'A'].m_stats.s_dmg, "000d0");
+	    strcpy(tp->t_stats.s_dmg, "000d0");
 	when 'L':
 	{
 	    register THING *gold;

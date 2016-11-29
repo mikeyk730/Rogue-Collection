@@ -176,7 +176,9 @@ char *s;
 rnd(range)
 register int range;
 {
-    return range == 0 ? 0 : abs((int) RN) % range;
+    int r = range == 0 ? 0 : abs((int)RN) % range;
+    //MDK_LOG("rnd:%d abs(%d)/%d\n", r, seed, range);
+    return r;
 }
 
 /*
@@ -187,7 +189,7 @@ roll(number, sides)
 register int number, sides;
 {
     register int dtotal = 0;
-
+    //MDK_LOG("roll: %dd%d\n", number, sides);
     while (number--)
 	dtotal += rnd(sides)+1;
     return dtotal;
