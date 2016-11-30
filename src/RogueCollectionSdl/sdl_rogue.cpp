@@ -191,7 +191,7 @@ void SdlRogue::RestoreGame(const std::string& path)
     m_input.reset(new SdlInput(m_current_env.get(), m_game_env.get(), m_options));
     m_input->RestoreGame(file);
 
-    if (!m_current_env->Get("delete_on_restore", &value) || value != "false") {
+    if (m_current_env->Get("delete_on_restore", &value) && value == "true") {
         file.close();
         std::remove(path.c_str());
     }

@@ -259,8 +259,7 @@ Monster* Monster::do_chase() //todo: understand
 
 
     int mindist = 32767, dist;
-    Coord tempdest; //Temporary destination for chaser
-
+    Coord tempdest = *m_destination; //Temporary destination for chaser
 
     Room* monster_room = room(); //Find room of chaser
                                      //We don't count doors as inside rooms for this routine
