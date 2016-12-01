@@ -3,16 +3,16 @@
 #include <string>
 #include <coord.h>
 
-#define standend()          set_attr(0)
-#define green()             set_attr(1)
-#define red()               set_attr(3)
-#define brown()             set_attr(5)
-#define lmagenta()          set_attr(10)
-#define yellow()            set_attr(11)
-#define blue()              set_attr(13)
-#define standout()          set_attr(14)
-#define high()              set_attr(15)
-#define bold()              set_attr(16)
+#define standend()          set_attr(0x07)
+#define green()             set_attr(0x02)
+#define red()               set_attr(0x04)
+#define brown()             set_attr(0x06)
+#define lmagenta()          set_attr(0x0d)
+#define yellow()            set_attr(0x0e)
+#define blue()              set_attr(0x01)
+#define standout()          set_attr(0x70)
+#define high()              set_attr(0x0f)
+#define bold()              set_attr(0x70)
 
 struct OutputInterface;
 

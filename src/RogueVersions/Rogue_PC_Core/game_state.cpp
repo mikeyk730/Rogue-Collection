@@ -406,6 +406,11 @@ bool Options::show_armor_class() const
     return get_environment("showac") == "true";
 }
 
+bool Options::trap_bugfix() const
+{
+    return get_environment("trap_bugfix") != "false";
+}
+
 bool Options::hit_plus_bugfix() const
 {
     return get_environment("hplusfix") == "true";

@@ -10,8 +10,11 @@ extern jmp_buf exception_env;
 #define GAME_MAIN                     __declspec(dllexport) rogue_main
 #define SHELL_CMD                     msg("You're a long way from a terminal"); after = FALSE
 #define NO_SAVE_RETURN                msg("Use Ctrl+S to save your game"); return
-//#define MDK_LOG                       printf
+#ifdef _DEBUG
+#define MDK_LOG                       printf
+#else
 #define MDK_LOG(...)
+#endif
 #define EXIT(s)                       longjmp(exception_env,1);
 #define EXITABLE(s)                   do { if (!setjmp(exception_env)) { s; } else { return 0; } } while(0)
 #define ENDIT(...)

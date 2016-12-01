@@ -277,6 +277,15 @@ void Level::new_level(int do_implode)
             byte type = rnd(NTRAPS);
             if (!game->wizard().no_traps()) {
                 unset_flag(pos, F_REAL);
+                if (game->options.trap_bugfix()) {
+                    //mdk:bugfix:unset trap type to avoid ORing two different traps together.  (weird trap msg)
+                    unset_flag(pos, F_TMASK);
+                }
+                else if (get_trap_type(pos)) {
+                    std::ostringstream ss;
+                    ss << "Trap (" << get_trap_type(pos) << ") exisits at " << pos.x << "," << pos.y << ".  Trying to set " << int(type);
+                    game->log("warning", ss.str());
+                }
                 set_flag(pos, type);
             }
         }

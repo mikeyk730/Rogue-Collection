@@ -117,8 +117,12 @@ void do_motion(Item *obj, Coord delta)
         int ch;
 
         //Erase the old one
-        if (under != UNSET && !equal(obj->position(), game->hero().position()) && game->hero().can_see(obj->position()))
+        if (under != UNSET && !equal(obj->position(), game->hero().position()) && game->hero().can_see(obj->position())) {
+            if ((game->level().is_passage(obj->position()) || game->level().is_maze(obj->position())) && under != PASSAGE && under != ' ')
+                game->screen().standout();
             game->screen().add_tile(obj->position(), under);
+            game->screen().standend();
+        }
         //Get the new position
         obj->set_position(obj->position() + delta);
         //mdk: Originally thrown items would pass through mimics.  With the 'throws_affect_mimics'
@@ -130,10 +134,13 @@ void do_motion(Item *obj, Coord delta)
             if (game->hero().can_see(obj->position()))
             {
                 //mdk:bugfix: xerox tile was replaced with floor after object passed
-                under = game->level().get_tile_or_monster(obj->position(), false);
+                under = game->screen().mvinch(obj->position());
                 //under = game->m_level().get_tile(obj->position());
 
+                if (game->level().is_passage(obj->position()) || game->level().is_maze(obj->position()))
+                    game->screen().standout();
                 game->screen().add_tile(obj->position(), obj->m_type);
+                game->screen().standend();
                 tick_pause();
             }
             else 

@@ -464,7 +464,8 @@ int Hero::can_see(Coord p)
     if (distance(p, position()) < LAMP_DIST)
         return true;
     //if the coordinate is in the same room as the hero, and the room is lit
-    return (room() == game->level().get_room_from_position(p) && !room()->is_dark());
+    bool is_lit = !room()->is_dark() && !room()->is_maze();
+    return (room() == game->level().get_room_from_position(p) && is_lit);
 }
 
 void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)

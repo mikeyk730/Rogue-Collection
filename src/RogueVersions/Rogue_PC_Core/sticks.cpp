@@ -582,12 +582,16 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
             }
 
             //draw bolt
+            int standout = 0;
+            if (game->level().is_passage(bolt->position()) || game->level().is_maze(bolt->position())) {
+                standout = 0x70;
+            }
             if (bolt->is_frost() || bolt->is_ice())
-                game->screen().blue();
+                game->screen().set_attr(standout | 0x01);
             else if (bolt->is_lightning())
-                game->screen().yellow();
+                game->screen().set_attr(standout | 0x0e);
             else
-                game->screen().red();
+                game->screen().set_attr(standout | 0x04);
             tick_pause();
             game->screen().add_tile(bolt->position(), dirch);
             game->screen().standend();

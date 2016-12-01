@@ -384,10 +384,8 @@ void PdCursesOutput::addstr(const char *s)
 
 void PdCursesOutput::set_attr(int bute)
 {
-    if (bute < MAXATTR) 
-        m_attr = at_table[bute];
-    else 
-        m_attr = bute;
+    //todo: fix monochrome
+    m_attr = bute;
     ::attrset(COLOR_PAIR(m_attr));
 }
 

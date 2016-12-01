@@ -359,8 +359,8 @@ void ScreenOutput::addstr(const char *s)
 
 void ScreenOutput::set_attr(int bute)
 {
-    if (bute < MAXATTR) m_attr = at_table[bute];
-    else m_attr = bute;
+    //todo: fix monochrome
+    m_attr = bute;
 }
 
 //winit(win_name): initialize window
