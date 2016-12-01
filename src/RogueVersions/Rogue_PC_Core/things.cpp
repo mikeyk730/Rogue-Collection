@@ -620,9 +620,10 @@ void init_things()
         mp->prob += (mp - 1)->prob;
 }
 
-void Item::discover()
+void Item::discover(bool reveal)
 {
-    set_known();
+    if (reveal)
+        set_known();
     if (Category()) {
         Category()->discover();
     }

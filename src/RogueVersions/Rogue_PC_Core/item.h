@@ -80,7 +80,7 @@ public:
     void remove_curse();
 
     void call_it();
-    void discover();
+    void discover(bool reveal = true);
     void set_known();
     bool is_known() const;
 

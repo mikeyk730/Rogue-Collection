@@ -85,7 +85,7 @@ bool Light::Zap(Coord dir)
         msg("you feel a warm glow around you");
     else
     {
-        discover();
+        discover(false);
         if (game->hero().room()->is_gone()) 
             msg("the corridor glows and then fades");
         else 
@@ -131,21 +131,21 @@ bool Striking::Zap(Coord dir)
 bool Lightning::Zap(Coord dir)
 {
     fire_bolt(game->hero().position(), &dir, "bolt");
-    discover();
+    discover(false);
     return true;
 }
 
 bool Fire::Zap(Coord dir)
 {
     fire_bolt(game->hero().position(), &dir, "flame");
-    discover();
+    discover(false);
     return true;
 }
 
 bool Cold::Zap(Coord dir)
 {
     fire_bolt(game->hero().position(), &dir, "ice");
-    discover();
+    discover(false);
     return true;
 }
 
@@ -170,7 +170,7 @@ bool Polymorph::Zap(Coord dir)
     new_monster->set_tile_beneath(monster->tile_beneath());
     new_monster->m_pack = monster->m_pack;
     if (new_monster->m_type != monster->m_type)
-        discover();
+        discover(false);
 
     if (game->hero().can_see_monster(new_monster))
         game->screen().add_tile(p, new_monster->m_type);
@@ -187,7 +187,7 @@ bool Polymorph::Zap(Coord dir)
 
 bool MagicMissileStick::Zap(Coord dir)
 {
-    discover();
+    discover(false);
 
     Item* missile = new MagicMissile;
     do_motion(missile, dir);
@@ -293,6 +293,8 @@ bool TeleportTo::Zap(Coord dir)
     //erase the monster from the screen
     if (game->hero().can_see_monster(monster))
         game->screen().add_tile(monster->position(), monster->tile_beneath());
+    else
+        game->screen().add_tile(monster->position(), ' ');
 
     //move the monster to beside the player
     monster->set_position(game->hero().position() + dir);
