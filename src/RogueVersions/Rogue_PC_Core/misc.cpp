@@ -147,11 +147,8 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
     }
 
     //Draw the tile.  
-    if ((is_passage || is_maze) && (tile != PASSAGE)) {
-        if (tile != ARMOR) {  //The current character used for IBM ARMOR doesn't look right in inverse
-            game->screen().standout();
-        }
-    }
+    if (game->level().use_standout(pos, tile))
+        game->screen().standout();
     game->screen().add_tile(pos, tile);
     game->screen().standend();
 
@@ -241,7 +238,7 @@ void look(bool wakeup) //todo: learn this function
 
     // draw the player -- highlight him if he's in a maze/passage or hit a teleport trap
     Coord hero_pos = game->hero().position();
-    if (game->level().is_passage(hero_pos) || game->level().is_maze(hero_pos) || game->hero().sprung_teleport_trap())
+    if (game->level().use_standout(hero_pos, PLAYER) || game->hero().sprung_teleport_trap())
         game->screen().standout();
     game->screen().add_tile(hero_pos, PLAYER);
     game->screen().standend();

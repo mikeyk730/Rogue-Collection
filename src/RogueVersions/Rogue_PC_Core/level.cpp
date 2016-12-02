@@ -109,6 +109,15 @@ int Level::get_trap_type(Coord p)
     return get_flags(p) & F_TMASK;
 }
 
+bool Level::use_standout(Coord p, unsigned char c)
+{
+    //The current character used for IBM ARMOR doesn't look right in inverse
+    if (c == ARMOR)
+        return false;
+
+    return (is_maze(p) || is_passage(p)) && c != ' ' && c != PASSAGE;
+}
+
 void Level::search(Coord pos)
 {
     if (!is_real(pos)) {

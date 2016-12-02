@@ -46,6 +46,8 @@ struct Level {
     int get_passage_num(Coord p);
     int get_trap_type(Coord p);
 
+    bool use_standout(Coord p, unsigned char c);
+
     void search(Coord pos);
 
     Room* get_passage(Coord pos);

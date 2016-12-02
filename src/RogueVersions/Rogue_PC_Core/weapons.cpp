@@ -137,7 +137,7 @@ void do_motion(Item *obj, Coord delta)
                 under = game->screen().mvinch(obj->position());
                 //under = game->m_level().get_tile(obj->position());
 
-                if (game->level().is_passage(obj->position()) || game->level().is_maze(obj->position()))
+                if (game->level().use_standout(obj->position(), obj->m_type))
                     game->screen().standout();
                 game->screen().add_tile(obj->position(), obj->m_type);
                 game->screen().standend();
@@ -174,7 +174,7 @@ void fall(Item *obj, bool pr)
         //if (game->hero().can_see(fpos))
         if (game->hero().can_see(fpos) && location_is_empty)
         {
-            if ((game->level().is_passage(obj->position())) || (game->level().is_maze(obj->position())))
+            if (game->level().use_standout(fpos, obj->m_type))
                 game->screen().standout();
             game->screen().add_tile(fpos, obj->m_type);
             game->screen().standend();

@@ -175,15 +175,16 @@ void remove_monster(Monster* monster, bool waskill)
         else
             delete(obj);
     }
-    if (game->level().get_tile(monster_pos) == PASSAGE)
-        game->screen().standout();
     //mdk:bugfix: don't reveal out of sight tile (unless stairs)
     if (!game->hero().can_see(monster_pos) && monster->has_tile_beneath() && monster->tile_beneath() != STAIRS)
     //if (monster->tile_beneath() == FLOOR && !game->hero().can_see(monster_pos))
         game->screen().add_tile(monster_pos, ' ');
-    else if (monster->has_tile_beneath())
+    else if (monster->has_tile_beneath()) {
+        if (game->level().use_standout(monster_pos, monster->tile_beneath()))
+            game->screen().standout();
         game->screen().add_tile(monster_pos, monster->tile_beneath());
-    game->screen().standend();
+        game->screen().standend();
+    }
 
     game->level().monsters.remove(monster);
     delete monster;

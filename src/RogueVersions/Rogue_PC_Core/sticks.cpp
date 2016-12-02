@@ -583,7 +583,7 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
 
             //draw bolt
             int standout = 0;
-            if (game->level().is_passage(bolt->position()) || game->level().is_maze(bolt->position())) {
+            if (game->level().use_standout(bolt->position(), dirch)) {
                 standout = 0x70;
             }
             if (bolt->is_frost() || bolt->is_ice())

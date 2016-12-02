@@ -369,7 +369,7 @@ void Monster::do_screen_update(Coord next_position)
             game->screen().add_tile(position(), ' ');
         else {
             //mdk:bugfix: standout if in passage
-            if (game->level().is_passage(position()) && tile_beneath() != PASSAGE && tile_beneath() != ' ')
+            if (game->level().use_standout(position(), tile_beneath()))
                 game->screen().standout();
             game->screen().add_tile(position(), tile_beneath());
             game->screen().standend();
@@ -391,7 +391,7 @@ void Monster::do_screen_update(Coord next_position)
 
     if (game->hero().can_see_monster(this))
     {
-        if (game->level().is_passage(next_position))
+        if (game->level().use_standout(next_position, m_disguise))
             game->screen().standout();
         //mdk:tile is fetched from screen so a detected monster doesn't reveal level 
         set_tile_beneath(game->screen().mvinch(next_position));
