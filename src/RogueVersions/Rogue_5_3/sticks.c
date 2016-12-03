@@ -126,14 +126,20 @@ do_zap()
 
 			pp = tp->t_pack;
 			detach(mlist, tp);
-			if (see_monst(tp))
-			    mvaddrawch(y, x, chat(y, x));
+            if (see_monst(tp)) {
+                PC_GFX_PASSGE_COLOR(y, x, chat(y, x), 0x70);
+                mvaddrawch(y, x, chat(y, x));
+                PC_GFX_NOCOLOR(0x70);
+            }
 			oldch = tp->t_oldch;
 			delta.y = y;
 			delta.x = x;
 			new_monster(tp, monster = rnd(26) + 'A', &delta);
-			if (see_monst(tp))
+			if (see_monst(tp)) {
+                PC_GFX_PASSGE_COLOR(y, x, monster, 0x70);
 			    mvaddrawch(y, x, monster);
+                PC_GFX_NOCOLOR(0x70);
+            }
 			tp->t_oldch = oldch;
 			tp->t_pack = pp;
 			ws_know[WS_POLYMORPH] |= (monster != omonst);
@@ -378,7 +384,7 @@ def:
 			{
 			    addmsg("the flame bounces");
 			    if (!terse)
-				msg("off the dragon");
+				msg(" off the dragon");
 			    endmsg();
 			}
 			else

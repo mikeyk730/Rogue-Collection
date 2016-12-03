@@ -198,7 +198,7 @@ void Monster::set_tile_beneath(byte c)
 void Monster::reload_tile_beneath()
 {
     Coord p = position();
-    m_tile_beneath = game->level().get_tile(p);
+    set_tile_beneath(game->level().get_tile(p));
 }
 
 void Monster::render()

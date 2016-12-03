@@ -399,7 +399,7 @@ def:
 			{
 			    addmsg("the flame bounces");
 			    if (!terse)
-				msg("off the dragon");
+				msg(" off the dragon");
 			    endmsg();
 			}
 			else
