@@ -411,9 +411,14 @@ bool Options::trap_bugfix() const
     return get_environment("trap_bugfix") != "false";
 }
 
+bool Options::room_bugfix() const
+{
+    return get_environment("room_bugfix") != "false";
+}
+
 bool Options::hit_plus_bugfix() const
 {
-    return get_environment("hplusfix") == "true";
+    return get_environment("hplusfix") != "false";
 }
 
 int GameState::get_level()

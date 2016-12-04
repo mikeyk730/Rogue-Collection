@@ -1,5 +1,6 @@
 #pragma once
 #include <coord.h>
+#include <string>
 
 struct Level;
 
@@ -34,4 +35,5 @@ struct Room
     //door: Add a door or possibly a secret door.  Also enters the door in the exits array of the room.
     void add_door(Coord cp, Level& level);
 
+    std::string ToString() const;
 };

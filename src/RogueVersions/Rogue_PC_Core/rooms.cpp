@@ -178,6 +178,7 @@ void enter_room(Coord cp)
     Monster* monster;
 
     Room* room = game->level().get_room_from_position(cp);
+    game->log("agent", "enter_room(): " + room->ToString());
     game->hero().set_room(room);
 
     if (game->invalid_position || (room->is_gone() && (room->is_maze()) == 0))
@@ -212,7 +213,9 @@ void leave_room(Coord cp)
     byte ch;
 
     Room* room = game->hero().room();
-    game->hero().set_room(game->level().get_passage(cp));
+    Room* passage = game->level().get_passage(cp);
+    game->log("agent", "leave_room(), entering passage: " + passage->ToString());
+    game->hero().set_room(passage);
 
     if(game->wizard().see_all())
         return;

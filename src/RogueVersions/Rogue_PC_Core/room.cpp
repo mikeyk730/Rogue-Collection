@@ -2,6 +2,7 @@
 #include "room.h"
 #include "level.h"
 #include "game_state.h"
+#include <sstream>
 
 bool Room::is_flag_set(short flag) const {
     return (m_flags & flag) != 0;
@@ -48,4 +49,11 @@ void Room::add_door(Coord p, Level& level)
 
     int i = m_num_exits++;
     m_exits[i] = p;
+}
+
+std::string Room::ToString() const
+{
+    std::ostringstream ss;
+    ss << "Room " << m_index << "(" << m_ul_corner.x << "," << m_ul_corner.y << ") flags: " << std::hex << m_flags;
+    return ss.str();
 }

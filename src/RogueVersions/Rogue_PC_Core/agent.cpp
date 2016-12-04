@@ -238,6 +238,12 @@ const Coord Agent::position() const
 void Agent::set_position(Coord c)
 {
     m_position = c;
+
+    Room* r = game->level().get_room_from_position(m_position);
+    if (r != room() && game->options.room_bugfix()) {
+        //mdk:bugfix: ensure the correct room is set whenever the position changes
+        set_room(r);
+    }
 }
 
 Room* Agent::room() const
@@ -247,6 +253,9 @@ Room* Agent::room() const
 
 void Agent::set_room(Room* r)
 {
+    if (r != m_room) {
+        game->log("agent", get_name() + " set_room(): " + r->ToString());
+    }
     m_room = r;
 }
 

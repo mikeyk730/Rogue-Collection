@@ -259,6 +259,8 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
 
     game->level().monsters.push_front(monster);
 
+    game->log("agent", std::string("Created monster ") + monster->m_type);
+
     for (int i = LEFT; i <= RIGHT; i++) {
         Ring* r = game->hero().get_ring(i);
         if (r) {

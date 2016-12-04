@@ -123,14 +123,6 @@ showac=false
 prompt_for_name=true
 
 ;
-; If set to true, direction keys can clear the -More- message.
-; 
-; Versions: all PC versions
-; Possible values: true, false
-;
-dir_key_clears_more=false
-
-;
 ; If set to true, inventory is automatically shown when an item selection is
 ; needed.
 ; 
@@ -138,6 +130,15 @@ dir_key_clears_more=false
 ; Possible values: true, false
 ;
 menu=true
+
+;
+; Monsters aren't supposed to enter mazes, but a bug allowed it under certain
+; circumstances.  Purists may want to disable this fix.
+; 
+; Versions: all PC versions
+; Possible values: true, false
+;
+room_bugfix=true
 
 ;
 ; If set to true, the experience level name (e.g Warrior) is shown.  If set to

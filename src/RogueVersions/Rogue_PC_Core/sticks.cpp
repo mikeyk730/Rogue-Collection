@@ -266,7 +266,7 @@ bool TeleportAway::Zap(Coord dir)
     Coord new_pos;
     monster->invalidate_tile_beneath();
     find_empty_location(&new_pos, true);
-    monster->set_position(new_pos); //todo: update room?
+    monster->set_position(new_pos);
 
     //the monster can no longer hold the player
     if (game->hero().is_held_by(monster)) {
