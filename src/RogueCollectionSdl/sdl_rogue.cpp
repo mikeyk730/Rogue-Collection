@@ -9,7 +9,7 @@
 #include "utility.h"
 
 const char* SdlRogue::kWindowTitle = "Rogue Collection 1.0";
-const unsigned char SdlRogue::kSaveVersion = 1;
+const unsigned char SdlRogue::kSaveVersion = 2;
 
 SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> current_env, const std::string& file) :
     m_current_env(current_env)
@@ -184,6 +184,11 @@ void SdlRogue::RestoreGame(const std::string& path)
     std::string value;
     if (m_current_env->Get("logfile", &value)) {
         m_game_env->Set("logfile", value);
+    }
+    if (version == 1) {
+        m_game_env->Set("trap_bugfix", "false");
+        m_game_env->Set("room_bugfix", "false");
+        m_game_env->Set("confused_bugfix", "false");
     }
 
     SetGame(name);

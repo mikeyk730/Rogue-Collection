@@ -36,6 +36,7 @@ struct Options
     //rule changing options
     bool trap_bugfix() const;
     bool room_bugfix() const;
+    bool confused_bugfix() const;
     bool hit_plus_bugfix() const;
     bool throws_affect_mimics() const;
     bool act_like_v1_1() const;

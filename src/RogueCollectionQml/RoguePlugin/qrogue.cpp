@@ -171,6 +171,7 @@ void QRogue::RestoreGame(const std::string& path)
     if (version == 1){
         game_env_->Set("trap_bugfix", "false");
         game_env_->Set("room_bugfix", "false");
+        game_env_->Set("confused_bugfix", "false");
     }
 
     input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));

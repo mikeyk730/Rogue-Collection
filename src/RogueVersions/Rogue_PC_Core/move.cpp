@@ -151,7 +151,7 @@ bool do_hit_boundary()
     return true;
 }
 
-bool do_move_impl(bool can_pickup)
+bool do_move_impl(bool can_pickup, bool confused_move)
 {
     byte ch;
 
@@ -166,8 +166,12 @@ bool do_move_impl(bool can_pickup)
     }
     //If you are running and the move does not get you anywhere stop running
     if (game->in_run_cmd() && equal(game->hero().position(), new_position)) {
-        this_move_counts = false;
-        game->stop_run_cmd();
+        //mdk:bugfix: in the original code you could avoid taking a random step while confused
+        //by using the run command.
+        if (!confused_move || !game->options.confused_bugfix()) {
+            this_move_counts = false;
+            game->stop_run_cmd();
+        }
     }
 
     bool is_real = game->level().is_real(new_position);
@@ -260,8 +264,10 @@ bool do_move(Command c) //todo:understand
     }
 
     //Do a confused move (maybe)
+    bool confused_move = false;
     if (game->hero().is_confused() && rnd(5) != 0) {
         rndmove(&game->hero(), &new_position);
+        confused_move = true;
     }
     else {
         new_position = game->hero().position() + delta;
@@ -269,7 +275,7 @@ bool do_move(Command c) //todo:understand
 
     bool more;
     do {
-        more = do_move_impl(c.can_pick_up);
+        more = do_move_impl(c.can_pick_up, confused_move);
     } while (more);
 
     return this_move_counts;

@@ -416,6 +416,11 @@ bool Options::room_bugfix() const
     return get_environment("room_bugfix") != "false";
 }
 
+bool Options::confused_bugfix() const
+{
+    return get_environment("confused_bugfix") != "false";
+}
+
 bool Options::hit_plus_bugfix() const
 {
     return get_environment("hplusfix") != "false";
