@@ -90,8 +90,14 @@ bool detect_monsters(bool enable)
 //th_effect: Compute the effect of this potion hitting a monster.
 void affect_monster(Potion *potion, Monster *monster)
 {
-    msg("the flask shatters.");
-    potion->AffectMonster(monster);
+    //mdk: in v1.1 the monster gets a saving throw against magic
+    bool v1_1 = game->options.act_like_v1_1();
+    if (!v1_1 || !save_throw(VS_MAGIC, monster)) {
+        if (!v1_1) {
+            msg("the flask shatters.");
+        }
+        potion->AffectMonster(monster);
+    }
 }
 
 Potion::Potion()

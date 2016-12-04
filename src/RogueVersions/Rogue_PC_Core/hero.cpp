@@ -545,7 +545,8 @@ Monster* Hero::fight(Coord monster_pos, Item *weapon, bool thrown)
 
     name = this->is_blind() ? "it" : monster->get_name();
 
-    if (attack(monster, weapon, thrown) || (weapon && weapon->m_type == POTION))
+    //mdk: potions can miss in v1.1
+    if (attack(monster, weapon, thrown) || (weapon && weapon->m_type == POTION && !game->options.act_like_v1_1()))
     {
         do_hit(weapon, thrown, monster, name.c_str());
         return monster;
