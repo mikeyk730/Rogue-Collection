@@ -51,7 +51,7 @@
 #include "run_game.h"
 #include "game_config.h"
 
-const unsigned char QRogue::kSaveVersion = 1;
+const unsigned char QRogue::kSaveVersion = 2;
 
 QRogue::QRogue(QQuickItem *parent)
     : QQuickPaintedItem(parent),
@@ -167,6 +167,10 @@ void QRogue::RestoreGame(const std::string& path)
     std::string value;
     if (env_->Get("logfile", &value)) {
         game_env_->Set("logfile", value);
+    }
+    if (version == 1){
+        game_env_->Set("trap_bugfix", "false");
+        game_env_->Set("room_bugfix", "false");
     }
 
     input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
