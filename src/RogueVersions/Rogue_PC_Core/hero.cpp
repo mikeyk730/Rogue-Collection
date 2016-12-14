@@ -481,7 +481,8 @@ void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
     if (potion)
     {
         affect_monster(potion, monster);
-        if (!thrown)
+        //mdk: in v1.1 wielded potions don't break
+        if (!thrown && !game->options.act_like_v1_1())
         {
             if (--potion->m_count == 0) {
                 m_pack.remove(potion);
