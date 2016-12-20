@@ -63,7 +63,7 @@ take_off()
     if (terse)
 	addmsg("was");
     else
-	addmsg("you used to be ");
+	addmsg("you used to be");
     msg(" wearing %c) %s", pack_char(obj), inv_name(obj, TRUE));
 }
 
