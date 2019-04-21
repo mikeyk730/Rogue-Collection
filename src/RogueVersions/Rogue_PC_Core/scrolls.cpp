@@ -106,7 +106,7 @@ bool do_read_scroll()
     if (scroll->m_count > 1)
         scroll->m_count--;
     else {
-        game->hero().m_pack.remove(scroll);
+        game->hero().remove_from_pack(scroll);
         delete(scroll);
     }
     return true;

@@ -235,7 +235,7 @@ Level::Level()
 void Level::new_level(int do_implode)
 {
     int i, ntraps;
-    Agent *monster;
+    Monster *monster;
     Coord pos;
 
     //Monsters only get displayed when you move so start a level by having the poor guy rest. God forbid he lands next to a monster!
@@ -246,7 +246,7 @@ void Level::new_level(int do_implode)
     //Free up the monsters on the last level
     for (auto it = monsters.begin(); it != monsters.end(); ++it) {
         monster = *it;
-        free_item_list(monster->m_pack);
+        monster->remove_pack(false);
     }
     free_agent_list(monsters);
     //Throw away stuff left on the previous level (if anything)
@@ -424,18 +424,17 @@ bool Level::reveal_magic()
             game->screen().add_tile(item->position(), get_magic_char(item));
         }
     }
-    for (auto m = monsters.begin(); m != monsters.end(); ++m) {
-        Agent* monster = *m;
-        for (auto i = monster->m_pack.begin(); i != monster->m_pack.end(); ++i)
+
+    for (auto m = monsters.begin(); m != monsters.end(); ++m)
+    {
+        Monster* monster = *m;
+        if (monster->has_magic_items())
         {
-            Item* item = *i;
-            if (item->is_magic())
-            {
-                discovered = true;
-                game->screen().add_tile(monster->position(), MAGIC);
-            }
+            discovered = true;
+            game->screen().add_tile(monster->position(), MAGIC);
         }
     }
+
     return discovered;
 }
 

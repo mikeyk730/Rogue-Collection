@@ -44,9 +44,6 @@ bool do_throw_item();
 //do_motion: Do the actual motion on the screen done by an object travelling across the room
 void do_motion(Item *obj, Coord delta);
 
-//fall: Drop an item someplace around here.
-void fall(Item *obj, bool pr);
-
 //projectile_hit: Does the projectile hit the monster?  Returns pointer to monster that may have been invalidated.  //todo:nix return value
 Monster* projectile_hit(Coord p, Item *obj);
 

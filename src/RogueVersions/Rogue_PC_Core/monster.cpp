@@ -215,7 +215,42 @@ void Monster::invalidate_tile_beneath()
 void Monster::give_pack()
 {
     if (rnd(100) < get_carry_probability())
-        m_pack.push_front(Item::CreateItem());
+        add_to_pack(Item::CreateItem());
+}
+
+void Monster::take_pack_from(Monster* other)
+{
+    m_pack = other->m_pack;
+    other->m_pack.clear();
+}
+
+void Monster::remove_pack(bool drop_items)
+{
+    for (auto it = m_pack.begin(); it != m_pack.end();) {
+        Item* obj = *(it++);
+        remove_from_pack(obj);
+        if (drop_items) {
+            obj->set_position(position());
+            fall(obj, false);
+        }
+        else {
+            delete(obj);
+        }
+    }
+}
+
+bool Monster::has_magic_items() const
+{
+    for (auto i = m_pack.begin(); i != m_pack.end(); ++i)
+    {
+        Item* item = *i;
+        if (item->is_magic())
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void Monster::set_destination(Agent * a)
@@ -341,7 +376,7 @@ Monster* Monster::do_chase() //todo: understand
 
                 byte oldchar;
                 game->level().items.remove(obj);
-                m_pack.push_front(obj);
+                add_to_pack(obj);
                 oldchar = (room()->is_gone()) ? PASSAGE : FLOOR;
                 game->level().set_tile(obj->position(), oldchar);
                 if (game->hero().can_see(obj->position()))
@@ -616,31 +651,24 @@ bool Monster::steal_item_attack()
     const char *she_stole = "she stole %s!";
 
     //Nymphs steal a magic item, look through the pack and pick out one we like.
-    Item* item = NULL;
-    int nobj = 0;
-    for (auto it = game->hero().m_pack.begin(); it != game->hero().m_pack.end(); ++it) {
-        Item* obj = *it;
-        if (obj != game->hero().get_current_armor() && obj != game->hero().get_current_weapon() &&
-            obj != game->hero().get_ring(LEFT) && obj != game->hero().get_ring(RIGHT) &&
-            obj->is_magic() && rnd(++nobj) == 0)
-            item = obj;
-    }
-    if (item == NULL)
+    Item* item = game->hero().get_random_magic_item();
+    if (item == NULL) {
         return false;
+    }
 
     if (item->m_count > 1 && item->m_group == 0)
     {
-        int oc;
-        oc = --item->m_count; //mdk:bugfix, originally wouldn't decrement count properly
+        int oc = --item->m_count; //mdk:bugfix, originally wouldn't decrement count properly
         item->m_count = 1;
         msg(she_stole, item->inventory_name(game->hero(), true).c_str());
         item->m_count = oc;
     }
     else {
-        game->hero().m_pack.remove(item);
+        game->hero().remove_from_pack(item);
         msg(she_stole, item->inventory_name(game->hero(), true).c_str());
         delete item;
     }
+
     return true;
 }
 

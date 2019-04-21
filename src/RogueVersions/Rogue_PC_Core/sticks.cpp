@@ -168,7 +168,7 @@ bool Polymorph::Zap(Coord dir)
     //create a random monster
     Monster* new_monster = Monster::CreateMonster(rnd(26) + 'A', &p, game->get_level());
     new_monster->set_tile_beneath(monster->tile_beneath());
-    new_monster->m_pack = monster->m_pack;
+    new_monster->take_pack_from(monster);
     if (new_monster->m_type != monster->m_type)
         discover(false);
 

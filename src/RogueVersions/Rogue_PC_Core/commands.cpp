@@ -10,7 +10,7 @@
 
 bool do_inventory()
 {
-    inventory(game->hero().m_pack, 0, "");
+    game->hero().inventory(0, "");
     return false;
 }
 

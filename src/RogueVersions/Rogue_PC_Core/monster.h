@@ -100,6 +100,9 @@ struct Monster : public Agent
 
     //give_pack: Give a pack to a monster if it deserves one
     void give_pack();
+    void take_pack_from(Monster* other);
+    void remove_pack(bool drop_items);
+    bool has_magic_items() const;
 
     void set_destination(Agent* a);
     void set_destination(Item* i);

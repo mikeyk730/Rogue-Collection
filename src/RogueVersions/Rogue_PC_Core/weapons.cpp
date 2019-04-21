@@ -88,7 +88,7 @@ bool do_throw_item()
     //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  
     //Otherwise, create a new item with a count of one.
     if (obj->m_count <= 1) {
-        game->hero().m_pack.remove(obj);
+        game->hero().remove_from_pack(obj);
     }
     else
     {
@@ -304,7 +304,7 @@ bool Weapon::vorpalize()
     {
         msg("your %s vanishes in a puff of smoke", TypeName().c_str());
         game->hero().set_current_weapon(0);
-        game->hero().m_pack.remove(this);
+        game->hero().remove_from_pack(this);
         delete this; //careful not to do anything afterwards
         return false;
     }

@@ -32,8 +32,13 @@ struct Agent
 
     virtual std::string get_name() = 0;
 
-    virtual void calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
-        int* hit_plus, std::string* damage_string, int* damage_plus);
+    virtual void calculate_roll_stats(
+        Agent *defender,
+        Item *weapon,
+        bool hurl,
+        int* hit_plus,
+        std::string* damage_string,
+        int* damage_plus);
     virtual int calculate_armor() const;
 
     virtual int calculate_strength() const;
@@ -79,8 +84,11 @@ private:
     Coord m_position = { 0, 0 };      //Position
     Room *m_room = 0;                 //Current room for thing
 public:
+    void add_to_pack(Item* item);
+    void remove_from_pack(Item* item);
+    bool has_items() const;
+
     std::list<Item*> m_pack;          //What the thing is carrying
-    
     bool m_invulnerable = false;
 
 private:

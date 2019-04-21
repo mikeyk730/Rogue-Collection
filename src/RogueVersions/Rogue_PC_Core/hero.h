@@ -58,12 +58,16 @@ public:
     //pick_up: Add something to characters pack.
     void pick_up(byte ch);
 
-    //add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-    void add_to_pack(Item *obj, bool silent);
+    //obtain_item: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+    void obtain_item(Item *obj, bool silent);
 private:
     bool add_to_list(Item** obj, bool from_floor);
 public:
     int get_pack_size();
+    byte get_pack_index(Item* obj);
+    Item* get_random_magic_item() const;
+    //inventory: List what is in the pack
+    int inventory(int type, const char *lstr);
 
     //teleport: Bamf the hero someplace else
     void teleport();

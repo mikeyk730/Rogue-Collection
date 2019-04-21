@@ -163,18 +163,11 @@ void display_throw_msg(Item *item, const char *name, char *does, char *did)
 }
 
 //remove: Remove a monster from the screen
-void remove_monster(Monster* monster, bool waskill)
+void remove_monster(Monster* monster, bool drop_items)
 {
+    monster->remove_pack(drop_items);
+
     Coord monster_pos = monster->position();
-    for (auto it = monster->m_pack.begin(); it != monster->m_pack.end();) {
-        Item* obj = *(it++);
-        obj->set_position(monster->position());
-        monster->m_pack.remove(obj);
-        if (waskill)
-            fall(obj, false);
-        else
-            delete(obj);
-    }
     //mdk:bugfix: don't reveal out of sight tile (unless stairs)
     if (!game->hero().can_see(monster_pos) && monster->has_tile_beneath() && monster->tile_beneath() != STAIRS)
     //if (monster->tile_beneath() == FLOOR && !game->hero().can_see(monster_pos))
@@ -203,7 +196,7 @@ void killed_by_hero(Monster* monster, bool print)
         if (save(VS_MAGIC))
             value += rnd_gold() + rnd_gold() + rnd_gold() + rnd_gold();
         Item *gold = new Gold(value);
-        monster->m_pack.push_front(gold);
+        monster->add_to_pack(gold);
     }
 
     if (print)

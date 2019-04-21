@@ -10,6 +10,21 @@
 #include "item.h"
 #include "monster.h"
 
+void Agent::add_to_pack(Item * item)
+{
+    m_pack.push_front(item);
+}
+
+void Agent::remove_from_pack(Item * item)
+{
+    m_pack.remove(item);
+}
+
+bool Agent::has_items() const
+{
+    return !m_pack.empty();
+}
+
 bool Agent::is_flag_set(int flag) const {
     return ((m_flags & flag) != 0);
 }
@@ -198,12 +213,14 @@ int Agent::get_hp() const {
 }
 
 bool Agent::decrease_hp(int n, bool can_kill) {
-    if (m_invulnerable)
+    if (m_invulnerable) {
         return true;
+    }
 
     m_stats.m_hp -= n;
-    if (!can_kill && m_stats.m_hp <= 0)
+    if (!can_kill && m_stats.m_hp <= 0) {
         m_stats.m_hp = 1;
+    }
 
     std::ostringstream ss;
     ss << "\t" << get_name() << " lost " << n << "hp (" << m_stats.m_hp << ")";

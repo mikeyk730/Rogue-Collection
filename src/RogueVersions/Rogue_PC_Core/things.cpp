@@ -687,7 +687,7 @@ bool do_drop()
         op = nobj;
     }
     else
-        game->hero().m_pack.remove(op);
+        game->hero().remove_from_pack(op);
     //Link it into the level object list
     game->level().items.push_front(op);
     op->set_position(game->hero().position());

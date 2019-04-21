@@ -56,7 +56,7 @@ bool do_quaff()
     if (potion->m_count > 1)
         potion->m_count--;
     else {
-        game->hero().m_pack.remove(potion);
+        game->hero().remove_from_pack(potion);
         delete potion;
     }
 

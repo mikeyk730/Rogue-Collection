@@ -215,7 +215,7 @@ bool Hero::eat()
         msg("You feel bloated and fall asleep");
 
     if (--obj->m_count < 1) {
-        m_pack.remove(obj);
+        remove_from_pack(obj);
         if (obj == get_current_weapon())
             set_current_weapon(NULL); //todo: this should be done automatically when removing from pack
         delete obj;
@@ -285,28 +285,28 @@ void Hero::init_player()
     Item *obj;
     obj = new Weapon(MACE, 1, 1);
     obj->set_known();
-    add_to_pack(obj, true);
+    obtain_item(obj, true);
     set_current_weapon(obj);
 
     //Now a +1 bow
     obj = new Weapon(BOW, 1, 0);
     obj->set_known();
-    add_to_pack(obj, true);
+    obtain_item(obj, true);
 
     //Now some arrows
     obj = new Weapon(ARROW, 0, 0);
     obj->m_count = rnd(15) + 25;
     obj->set_known();
-    add_to_pack(obj, true);
+    obtain_item(obj, true);
 
     //And his suit of armor
     Armor* armor = new Armor(RING_MAIL, -1);
     set_current_armor(armor);
-    add_to_pack(armor, true);
+    obtain_item(armor, true);
 
     //Give him some food too
     obj = new Food(0);
-    add_to_pack(obj, true);
+    obtain_item(obj, true);
 
     //mdk:bugfix: Originally the player was never set as running, so he'd
     // be treated as asleep in battle.
@@ -485,7 +485,7 @@ void Hero::do_hit(Item* weapon, int thrown, Monster* monster, const char* name)
         if (!thrown && !game->options.act_like_v1_1())
         {
             if (--potion->m_count == 0) {
-                m_pack.remove(potion);
+                remove_from_pack(potion);
                 delete potion;
             }
             set_current_weapon(NULL);
@@ -599,8 +599,8 @@ int Hero::get_pack_size()
     return count;
 }
 
-//add_to_pack: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
-void Hero::add_to_pack(Item *obj, bool silent)
+//obtain_item: Pick up an object and add it to the pack.  If the argument is non-null use it as the linked_list pointer instead of getting it off the ground.
+void Hero::obtain_item(Item *obj, bool silent)
 {
     bool from_floor = false;
     if (!obj)
@@ -695,7 +695,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     }
     //Put it at the end of the pack since it is a new type
     if (!found_type) {
-        ((*obj)->m_type == FOOD) ? m_pack.push_front(*obj) :
+        ((*obj)->m_type == FOOD) ? add_to_pack(*obj) :
             m_pack.push_back(*obj);
         return true;
     }
@@ -1050,4 +1050,37 @@ void Hero::update_position()
 {
     m_previous_position = position();
     m_previous_room = room();
+}
+
+byte Hero::get_pack_index(Item* obj)
+{
+    byte index = 'a';
+    for (auto it = m_pack.begin(); it != m_pack.end(); ++it) {
+        if (*it == obj) {
+            return index;
+        }
+        else {
+            ++index;
+        }
+    }
+    return '?';
+}
+
+Item* Hero::get_random_magic_item() const
+{
+    int nobj = 0;
+    for (auto it = m_pack.begin(); it != m_pack.end(); ++it) {
+        Item* item = *it;
+        if (item != get_current_armor() &&
+            item != get_current_weapon() &&
+            item != get_ring(LEFT) &&
+            item != get_ring(RIGHT) &&
+            item->is_magic() &&
+            rnd(++nobj) == 0)
+        {
+            return item;
+        }
+    }
+
+    return nullptr;
 }

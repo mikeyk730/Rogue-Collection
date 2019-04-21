@@ -36,7 +36,7 @@
 //whatis: What a certain object is
 void whatis()
 {
-    if (game->hero().m_pack.empty()) {
+    if (!game->hero().has_items()) {
         msg("You don't have anything in your pack to identify");
         return;
     }
@@ -155,7 +155,7 @@ bool do_summon_object()
         break;
     }
 
-    game->hero().add_to_pack(obj, false);
+    game->hero().obtain_item(obj, false);
     return false;
 }
 
@@ -250,7 +250,7 @@ bool do_msg_position()
 
 bool do_msg_pack_count()
 {
-    msg("inpack = %d", game->hero().m_pack.size());
+    msg("inpack = %d", game->hero().get_pack_size());
     return false;
 }
 
@@ -317,11 +317,11 @@ bool do_add_goods()
     Item *obj;
     obj = new Weapon(TWOSWORD, 1, 1);
     obj->set_known();
-    game->hero().add_to_pack(obj, true);
+    game->hero().obtain_item(obj, true);
     game->hero().set_current_weapon(obj);
 
     Armor* armor = new Armor(PLATE_MAIL, -5);
-    game->hero().add_to_pack(armor, true);
+    game->hero().obtain_item(armor, true);
     game->hero().set_current_armor(armor);
 
     return false;
@@ -367,7 +367,7 @@ namespace
             ss << "exp:" << left << setw(5) << monster->experience() << " ";
             ss << "dmg:" << left << setw(4) << monster->damage_string();
             add_line("", ss.str().c_str(), "");
-            if (!monster->m_pack.empty()) {
+            if (monster->has_items()) {
                 add_debug_items(monster->m_pack, false, "    * %s");
             }
         }

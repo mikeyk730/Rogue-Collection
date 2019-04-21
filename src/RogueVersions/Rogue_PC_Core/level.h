@@ -112,3 +112,6 @@ private:
 
 int rnd_gold();
 int maxrow();
+
+//fall: Drop an item someplace around here.
+void fall(Item *obj, bool pr);
