@@ -116,15 +116,19 @@ struct Monster : public Agent
     void reload_tile_beneath();
     void render();
 
+private:
+    void increase_damage_stats();
+
+public:
     char m_type = 0;                  //What it is
     int m_ex_flags = 0;               //Extra state;
-private:
-    Coord *m_destination = 0;         //Where it is running to
-public:
     char m_turn = 0;                  //If slowed, is it a turn to move
     byte m_tile_beneath = 0;          //Tile that is underneath the monster
     byte m_disguise = 0;              //What mimic looks like
     int m_confused_chance = 0;        //Monster is confused 1 in every =m_confused_chance= turns
     int m_dirty = 0;
+
+private:
+    Coord *m_destination = 0;         //Where it is running to
     int m_flytrap_count = 0;
 };

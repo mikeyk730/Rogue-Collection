@@ -334,12 +334,12 @@ void update_status_bar()
         s_hp = game->hero().get_hp();
         game->screen().move(PT(22, 23), 12);
         if (game->hero().get_hp() < 100) {
-            game->screen().printw("Hits:%2d(%2d) ", game->hero().get_hp(), game->hero().m_stats.m_max_hp);
+            game->screen().printw("Hits:%2d(%2d) ", game->hero().get_hp(), game->hero().max_hp());
             //just in case they get wraithed with 3 digit max hits
             game->screen().addstr("  ");
         }
         else
-            game->screen().printw("Hits:%3d(%3d) ", game->hero().get_hp(), game->hero().m_stats.m_max_hp);
+            game->screen().printw("Hits:%3d(%3d) ", game->hero().get_hp(), game->hero().max_hp());
     }
 
     //Str:
@@ -366,11 +366,11 @@ void update_status_bar()
     if (!game->options.use_exp_level_names() || game->options.act_like_v1_1())
     {
         game->screen().move(23, PT(22, 62));
-        game->screen().printw("Exp:%d/%d  ", game->hero().m_stats.m_level, game->hero().experience());
+        game->screen().printw("Exp:%d/%d  ", game->hero().level(), game->hero().experience());
     }
-    else if (s_elvl != game->hero().m_stats.m_level)
+    else if (s_elvl != game->hero().level())
     {
-        s_elvl = game->hero().m_stats.m_level;
+        s_elvl = game->hero().level();
         game->screen().move(23, PT(22, 62));
         game->screen().printw("%-12s", level_titles[s_elvl - 1]);
     }

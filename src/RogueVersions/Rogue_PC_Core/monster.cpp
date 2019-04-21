@@ -550,11 +550,11 @@ void Monster::obtain_target()
     set_destination(&game->hero());
 }
 
-void increase_damage_stats(Monster* mp)
+void Monster::increase_damage_stats()
 {
     std::ostringstream ss;
-    ss << ++(mp->m_flytrap_count) << "d1";
-    mp->m_stats.m_damage = ss.str();
+    ss << ++(m_flytrap_count) << "d1";
+    m_stats.m_damage = ss.str();
 }
 
 void thaw_player()
@@ -690,8 +690,8 @@ bool vampire_wraith_attack(Monster* monster)
         else
             damage = roll(1, 5); //vampires only half as strong
 
-        game->hero().m_stats.m_max_hp -= damage;
-        if (game->hero().m_stats.m_max_hp < 1)
+        game->hero().decrease_max_hp(damage);
+        if (game->hero().max_hp() < 1)
             death(monster->m_type);
         game->hero().decrease_hp(damage, false);
 
@@ -745,7 +745,7 @@ Monster* Monster::attack_player()
         //todo: modify code, so enemy can have more than one power
         if (!powers_cancelled()) {
             if (increases_dmg()) {
-                increase_damage_stats(this);
+                increase_damage_stats();
             }
             if (unfreezes_player()) {
                 thaw_player();

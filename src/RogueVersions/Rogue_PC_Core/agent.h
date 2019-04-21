@@ -27,6 +27,19 @@ const int IS_FLY    = 0x8000; //creature is of the flying type
 //Structure for monsters and player
 struct Agent
 {
+    //Structure describing a fighting being
+    struct Stats
+    {
+        unsigned int m_str;     //Strength
+        long m_exp;             //Experience
+        int m_level;            //Level of mastery
+        int m_ac;               //Armor class
+        int m_hp;               //Hit points
+        std::string m_damage;   //String describing damage done
+        int m_max_hp;           //Max hit points
+        unsigned int m_max_str; //Max strength
+    };
+
     Agent();
     Agent(const Agent&) = delete;
 
@@ -59,41 +72,21 @@ struct Agent
     void set_room(Room* r);
 
     int level() const;
+    void set_level(int level);
+    int ac() const;
+    int max_hp() const;
+    void increase_max_hp(int n);
+    void decrease_max_hp(int n);
+
     std::string damage_string() const;
 
     bool attack(Agent *defender, Item *weapon, bool hurl);
 
     void set_as_target_of(Monster* m);
-    
-    //Structure describing a fighting being
-    struct Stats
-    {
-        unsigned int m_str;     //Strength
-        long m_exp;             //Experience
-        int m_level;            //Level of mastery
-        int m_ac;               //Armor class
-        int m_hp;               //Hit points
-        std::string m_damage;   //String describing damage done
-        int m_max_hp;           //Max hit points
-        unsigned int m_max_str; //Max strength
-    };
 
-    int m_flags = 0;                  //State word
-    Stats m_stats;                    //Physical description
-private:
-    Coord m_position = { 0, 0 };      //Position
-    Room *m_room = 0;                 //Current room for thing
-public:
     void add_to_pack(Item* item);
     void remove_from_pack(Item* item);
     bool has_items() const;
-
-    std::list<Item*> m_pack;          //What the thing is carrying
-    bool m_invulnerable = false;
-
-private:
-    bool is_flag_set(int flag) const;
-    void set_flag(int flag, bool enable);
 
 public:
     bool is_flying() const;
@@ -129,4 +122,20 @@ public:
 
     bool in_same_room_as(Agent* other);
     bool in_same_room_as(Item* obj);
+
+private:
+    bool is_flag_set(int flag) const;
+    void set_flag(int flag, bool enable);
+
+public:
+    std::list<Item*> m_pack;          //What the thing is carrying
+    bool m_invulnerable = false;
+
+protected:
+    Stats m_stats;                    //Physical description
+    int m_flags = 0;                  //State word
+
+private:
+    Coord m_position = { 0, 0 };      //Position
+    Room *m_room = 0;                 //Current room for thing
 };

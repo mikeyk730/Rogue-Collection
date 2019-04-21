@@ -354,7 +354,7 @@ bool do_zap()
     if (!get_dir(&delta))
         return false;
 
-    Item *item = get_item("zap with", STICK);
+    Item *item = game->hero().get_item("zap with", STICK);
     if (!item)
         return false;
 

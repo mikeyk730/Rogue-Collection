@@ -193,6 +193,31 @@ int Agent::level() const
     return m_stats.m_level;
 }
 
+void Agent::set_level(int level)
+{
+    m_stats.m_level = level;
+}
+
+int Agent::ac() const
+{
+    return m_stats.m_ac;
+}
+
+int Agent::max_hp() const
+{
+    return m_stats.m_max_hp;
+}
+
+void Agent::increase_max_hp(int n)
+{
+    m_stats.m_max_hp += n;
+}
+
+void Agent::decrease_max_hp(int n)
+{
+    m_stats.m_max_hp -= n;
+}
+
 int Agent::experience() const
 {
     return m_stats.m_exp;
@@ -234,7 +259,7 @@ void Agent::increase_hp(int n, bool max_bonus, bool second_max_bonus) {
 
     if (max_bonus && m_stats.m_hp > m_stats.m_max_hp)
         ++m_stats.m_max_hp;
-    if (second_max_bonus && m_stats.m_hp > m_stats.m_max_hp + m_stats.m_level + 1)
+    if (second_max_bonus && m_stats.m_hp > m_stats.m_max_hp + level() + 1)
         ++m_stats.m_max_hp;
 
     if (m_stats.m_hp > m_stats.m_max_hp) {
@@ -304,7 +329,7 @@ bool Agent::attack(Agent *defender, Item *weapon, bool hurl)
         if ((cp = strchr(cp, 'd')) == NULL)
             break;
         int nsides = atoi(++cp);
-        if (attempt_swing(m_stats.m_level, defender_armor, hplus + str_plus(calculate_strength())))
+        if (attempt_swing(level(), defender_armor, hplus + str_plus(calculate_strength())))
         {
             did_hit = true;
 

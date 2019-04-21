@@ -21,7 +21,7 @@
 //doctor: A healing daemon that restores hit points after rest
 void doctor()
 {
-    int lvl = game->hero().m_stats.m_level;
+    int lvl = game->hero().level();
     int original_hp = game->hero().get_hp();
 
     game->turns_since_heal++;

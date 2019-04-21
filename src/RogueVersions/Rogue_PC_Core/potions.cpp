@@ -29,7 +29,7 @@
 //do_quaff: Quaff a potion from the pack
 bool do_quaff()
 {
-    Item* item = get_item("quaff", POTION);
+    Item* item = game->hero().get_item("quaff", POTION);
     if (!item) 
         return false;
 
@@ -263,7 +263,7 @@ void HasteSelf::AffectMonster(Monster* monster)
 void ExtraHealing::Quaff()
 {
     discover();
-    game->hero().increase_hp(roll(game->hero().m_stats.m_level, 8), true, true);
+    game->hero().increase_hp(roll(game->hero().level(), 8), true, true);
     sight();
     msg("you begin to feel much better");
 }
@@ -282,9 +282,9 @@ void RaiseLevel::Quaff()
 
 void RaiseLevel::AffectMonster(Monster* monster)
 {
-    monster->m_stats.m_max_hp += 8;
+    monster->increase_max_hp(8);
     monster->increase_hp(8, false, false);
-    monster->m_stats.m_level++;
+    monster->set_level(monster->level() + 1);
 }
 
 void MagicDetection::Quaff()
@@ -315,7 +315,7 @@ void MonsterDetection::Quaff()
 void Healing::Quaff()
 {
     discover();
-    game->hero().increase_hp(roll(game->hero().m_stats.m_level, 4), true, false);
+    game->hero().increase_hp(roll(game->hero().level(), 4), true, false);
     sight();
     msg("you begin to feel better");
 }

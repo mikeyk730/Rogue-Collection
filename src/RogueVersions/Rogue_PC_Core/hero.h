@@ -68,6 +68,8 @@ public:
     Item* get_random_magic_item() const;
     //inventory: List what is in the pack
     int inventory(int type, const char *lstr);
+    Item* get_item_from_inventory(byte user_input, byte *max_valid_char);
+    Item* get_item(const std::string& purpose, int type);
 
     //teleport: Bamf the hero someplace else
     void teleport();

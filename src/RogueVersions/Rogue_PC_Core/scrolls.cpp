@@ -81,7 +81,7 @@ std::string GenerateScrollName()
 //do_read_scroll: Read a scroll from the pack and do the appropriate thing
 bool do_read_scroll()
 {
-    Item *item = get_item("read", SCROLL);
+    Item *item = game->hero().get_item("read", SCROLL);
     if (!item)
         return false;
 

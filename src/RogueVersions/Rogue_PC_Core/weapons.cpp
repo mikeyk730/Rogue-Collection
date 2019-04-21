@@ -79,7 +79,7 @@ bool do_throw_item()
     Item *obj, *nitem;
 
     //Get which thing we are hurling
-    if ((obj = get_item("throw", WEAPON)) == NULL)
+    if ((obj = game->hero().get_item("throw", WEAPON)) == NULL)
         return false;
 
     if (!can_drop(obj, true))

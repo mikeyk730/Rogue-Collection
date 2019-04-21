@@ -672,7 +672,7 @@ bool do_drop()
         return true;
     }
 
-    if ((op = get_item("drop", 0)) == NULL) 
+    if ((op = game->hero().get_item("drop", 0)) == NULL)
         return false;
 
     if (!can_drop(op, true)) 

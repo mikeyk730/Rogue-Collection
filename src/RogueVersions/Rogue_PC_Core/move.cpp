@@ -329,7 +329,7 @@ int handle_trap(Coord tc)
 
     case T_ARROW:
         game->log("battle", "Arrow trap 1d6 attack on player");
-        if (attempt_swing(game->hero().m_stats.m_level - 1, game->hero().m_stats.m_ac, 1))
+        if (attempt_swing(game->hero().level() - 1, game->hero().ac(), 1))
         {
             if (!game->hero().decrease_hp(roll(1, 6), true)) {
                 msg("an arrow killed you");
@@ -359,7 +359,7 @@ int handle_trap(Coord tc)
 
     case T_DART:
         game->log("battle", "Dart trap 1d4 attack on player");
-        if (attempt_swing(game->hero().m_stats.m_level + 1, game->hero().m_stats.m_ac, 1))
+        if (attempt_swing(game->hero().level() + 1, game->hero().ac(), 1))
         {
             if (!game->hero().decrease_hp(roll(1, 4), true)) {
                 msg("a poisoned dart killed you");

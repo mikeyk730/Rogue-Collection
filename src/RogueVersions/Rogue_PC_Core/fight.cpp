@@ -99,12 +99,12 @@ void display_miss_msg(const char *er, const char *ee)
 //save_throw: See if a creature save against something
 int save_throw(int which, Agent *monster)
 {
-    int need = 14 + which - monster->m_stats.m_level / 2;
+    int need = 14 + which - monster->level() / 2;
     int r = roll(1, 20);
     bool save(r >= need);
 
     std::ostringstream ss;
-    ss << "1d20 save throw " << (save ? "success" : "failed") << " " << r << " ? " << need << " (14+w:" << which << "-lvl:" << monster->m_stats.m_level << "/2)";
+    ss << "1d20 save throw " << (save ? "success" : "failed") << " " << r << " ? " << need << " (14+w:" << which << "-lvl:" << monster->level() << "/2)";
     game->log("battle", ss.str());
 
     return save;

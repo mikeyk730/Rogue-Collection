@@ -247,8 +247,8 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
     monster->m_flags = defaults->flags;
     monster->m_ex_flags = defaults->exflags;
     monster->m_stats = defaults->stats;
-    monster->m_stats.m_level += level_add;
-    monster->m_stats.m_hp = monster->m_stats.m_max_hp = roll(monster->m_stats.m_level, 8);
+    monster->set_level(monster->level() + level_add);
+    monster->m_stats.m_hp = monster->m_stats.m_max_hp = roll(monster->level(), 8);
     monster->m_stats.m_ac -= level_add;
     monster->m_stats.m_exp += level_add * 10 + exp_add(monster);
     monster->m_turn = true;
@@ -274,12 +274,12 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
 //expadd: Experience to add for this monster's level/hit points
 int exp_add(Monster *monster)
 {
-    int divisor = (monster->m_stats.m_level == 1) ? 8 : 6;
-    int value = monster->m_stats.m_max_hp / divisor;
+    int divisor = (monster->level() == 1) ? 8 : 6;
+    int value = monster->max_hp() / divisor;
 
-    if (monster->m_stats.m_level > 9)
+    if (monster->level() > 9)
         value *= 20;
-    else if (monster->m_stats.m_level > 6)
+    else if (monster->level() > 6)
         value *= 4;
 
     return value;

@@ -43,7 +43,7 @@ void whatis()
 
     Item *obj;
     for (;;) {
-        if ((obj = get_item("identify", 0)) == NULL)
+        if ((obj = game->hero().get_item("identify", 0)) == NULL)
         {
             msg("You must identify something");
             unsaved_msg(" ");
@@ -258,7 +258,7 @@ bool do_charge_stick()
 {
     Item *item;
 
-    if ((item = get_item("charge", STICK)) != NULL)
+    if ((item = game->hero().get_item("charge", STICK)) != NULL)
         item->supercharge();
 
     return false;

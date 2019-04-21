@@ -26,6 +26,7 @@
 #include "scrolls.h"
 #include "things.h"
 #include "sticks.h"
+#include "gold.h"
 
 #define HUNGER_TIME  spread(1300)
 #define MORE_TIME    150
@@ -383,8 +384,8 @@ void Hero::check_level(bool print)
         if (e_levels[i] > experience())
             break;
     i++;
-    olevel = m_stats.m_level;
-    m_stats.m_level = i;
+    olevel = level();
+    set_level(i);
     if (i > olevel)
     {
         add = roll(i - olevel, 10);
@@ -403,7 +404,7 @@ void Hero::check_level(bool print)
 //raise_level: The guy just magically went up a level.
 void Hero::raise_level(bool print)
 {
-    m_stats.m_exp = e_levels[m_stats.m_level - 1] + 1L;
+    m_stats.m_exp = e_levels[level() - 1] + 1L;
     check_level(print);
 }
 
@@ -415,13 +416,13 @@ void Hero::gain_experience(int exp)
 
 void Hero::reduce_level()
 {
-    --m_stats.m_level;
-    if (m_stats.m_level == 0) {
+    set_level(level() - 1);
+    if (level() == 0) {
         m_stats.m_exp = 0;
-        m_stats.m_level = 1;
+        set_level(1);
     }
     else {
-        m_stats.m_exp = e_levels[m_stats.m_level - 1] + 1;
+        m_stats.m_exp = e_levels[level() - 1] + 1;
     }
 }
 
@@ -620,7 +621,7 @@ void Hero::obtain_item(Item *obj, bool silent)
 
     //Notify the user
     if (!silent) {
-        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
+        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(*this, true).c_str(), get_pack_index(obj));
         game->screen().play_sound("item");
     }
 }
@@ -775,7 +776,7 @@ bool Hero::wield()
     }
 
     set_current_weapon(obj);
-    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", obj->inventory_name(*this, true).c_str(), pack_char(obj));
+    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", obj->inventory_name(*this, true).c_str(), get_pack_index(obj));
     return true;
 }
 
@@ -835,7 +836,7 @@ bool Hero::put_on_ring()
     //Calculate the effect it has on the poor guy.
     obj->PutOn();
     
-    msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
+    msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(*this, true).c_str(), get_pack_index(obj));
     return true;
 }
 
@@ -859,7 +860,7 @@ bool Hero::remove_ring()
         return false;
     }
 
-    char packchar = pack_char(obj);
+    char packchar = get_pack_index(obj);
     //mdk: attempting to take off cursed ring counts as turn.
     if (can_drop(obj, true))
         msg("was wearing %s(%c)", obj->inventory_name(*this, true).c_str(), packchar);
@@ -906,7 +907,7 @@ bool Hero::take_off_armor()
         return true;
 
     set_current_armor(NULL);
-    msg("you used to be wearing %c) %s", pack_char(obj), obj->inventory_name(*this, true).c_str());
+    msg("you used to be wearing %c) %s", get_pack_index(obj), obj->inventory_name(*this, true).c_str());
     return true;
 }
 
@@ -1084,3 +1085,156 @@ Item* Hero::get_random_magic_item() const
 
     return nullptr;
 }
+
+
+Item* Hero::get_item_from_inventory(byte user_input, byte *max_valid_char)
+{
+    byte index = 'a';
+
+    for (auto it = m_pack.begin(); it != m_pack.end(); ++it, ++index) {
+        if (user_input == index) {
+            return *it;
+        }
+    }
+
+    *max_valid_char = index;
+    return nullptr;
+}
+
+//inventory: List what is in the pack
+int Hero::inventory(int type, const char *lstr)
+{
+    byte ch = 'a';
+    int n_objs;
+    char inv_temp[MAXSTR];
+
+    n_objs = 0;
+    for (auto it = m_pack.begin(); it != m_pack.end(); ++it, ch++)
+    {
+        Item* item = *it;
+        Weapon* weapon = dynamic_cast<Weapon*>(item);
+        //Don't print this one if: the type doesn't match the type we were passed AND it isn't a callable type AND it isn't a zappable weapon
+        if (type && type != item->m_type &&
+            !(type == CALLABLE && (item->m_type == SCROLL || item->m_type == POTION || item->m_type == RING || item->m_type == STICK)) &&
+            !(type == WEAPON && item->m_type == POTION) && //show potions when wielding
+            !(type == STICK && weapon && weapon->is_vorpalized() && item->charges())) //show vorpalized weapon when zapping
+            continue;
+        n_objs++;
+        sprintf(inv_temp, "%c) %%s", ch);
+        add_line(lstr, inv_temp, item->inventory_name(*this, false).c_str());
+    }
+    if (n_objs == 0)
+    {
+        msg(type == 0 ? "you are empty handed" : "you don't have anything appropriate");
+        return false;
+    }
+    return (end_line(lstr));
+}
+
+//get_item: Pick something out of a pack for a purpose
+Item* Hero::get_item(const std::string& purpose, int type)
+{
+    if (!has_items()) {
+        //mdk:bugfix: Originally, trying to do something with an empty pack would count as a turn
+        msg("you aren't carrying anything");
+        return NULL;
+    }
+
+    //if we are doing something AGAIN, and the pack hasn't changed then don't ask just give him the same thing he got on the last command.
+    if (game->repeat_last_action && purpose != "identify") {
+        byte och = 0;
+        Item* item = get_item_from_inventory(game->last_turn.item_letter, &och);
+        if (item == game->last_turn.item_used) {
+            return item;
+        }
+    }
+
+    bool show_menu(game->options.show_inventory_menu());
+    for (;;)
+    {
+        byte ch;
+        if (show_menu) {
+            ch = '*';
+        }
+        else {
+            if (!short_msgs())
+                addmsg("which object do you want to ");
+            msg("%s? (* for list): ", purpose.c_str());
+            ch = readchar();
+        }
+
+        reset_msg_position();
+        show_menu = false;
+        if (ch == '*')
+        {
+            //display the inventory and get a new user_input
+            ch = inventory(type, purpose.c_str());
+            if (ch == 0) {
+                return NULL;
+            }
+            if (ch == ' ') continue;
+        }
+
+        //Give the poor player a chance to abort the command
+        if (ch == ESCAPE) {
+            msg("");
+            return NULL;
+        }
+
+        byte och = 0;
+        Item *obj = get_item_from_inventory(ch, &och);
+        if (!obj)
+        {
+            ifterse("range is 'a' to '%c'", "please specify a letter between 'a' and '%c'", och - 1);
+            continue;
+        }
+        else
+        {
+            if (purpose != "identify") {
+                game->last_turn.item_letter = ch;
+                game->last_turn.item_used = obj;
+            }
+            return obj;
+        }
+    }
+}
+
+//pick_up: Add something to characters pack.
+void Hero::pick_up(byte ch)
+{
+    //mdk:bugfix: this code used to be inside obtain_item, so it wasn't run when picking up
+    //gold. The result was a dangling m_destination pointer when you stole a monster's
+    //gold. This could cause a crash.
+    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
+        Monster* monster = *it;
+
+        //If this was the object of something's desire, that monster will get mad and run at the hero
+        if (monster->is_going_to(position())) {
+            std::ostringstream ss;
+            ss << monster->get_name() << " " << monster->position() << " item may be taken";
+            game->log("monster", ss.str());
+            monster->set_destination(this);
+        }
+    }
+
+    if (ch == GOLD)
+    {
+        Item* obj = find_obj(position(), true);
+        Gold* gold = dynamic_cast<Gold*>(obj);
+        if (gold == NULL)
+            return;
+
+        pick_up_gold(gold->get_gold_value());
+        room()->m_gold_val = 0;
+        game->level().items.remove(gold);
+        delete gold;
+
+        byte floor = (room()->is_gone()) ? PASSAGE : FLOOR;
+        game->screen().add_tile(position(), floor);
+        game->level().set_tile(position(), floor);
+    }
+    else {
+        obtain_item(NULL, false);
+    }
+}
+
