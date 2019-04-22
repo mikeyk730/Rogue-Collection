@@ -13,6 +13,14 @@ struct Armor;
 
 struct Hero : public Agent
 {
+    enum HungerState
+    {
+        Full = 0,
+        Hungry = 1,
+        Weak = 2,
+        Faint = 3
+    };
+
     Hero(const std::string& name);
 
     //fight: The player attacks the monster.  Returns pointer to monster that may have been invalidated.  //todo:nix return value
@@ -148,8 +156,8 @@ public:
 private:
     int m_purse = 0;
     bool m_had_amulet = false;
-    int hungry_state = 0;    //How hungry is he
-    int food_left = 0;       //Amount of food in hero's stomach
+    HungerState hungry_state = Full;    //How hungry is he
+    int food_left = 0;        //Amount of food in hero's stomach
     int m_num_actions = 0;
     std::string m_name;
 

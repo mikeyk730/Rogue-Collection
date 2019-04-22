@@ -80,7 +80,7 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
     {
         //rings can boost the wielded object
         for (int i = LEFT; i <= RIGHT; i++) {
-            Ring* r = game->hero().get_ring(i);
+            Ring* r = get_ring(i);
             if (r) {
                 *hit_plus += r->GetHitBoost();
                 *damage_plus += r->GetDmgBoost();
@@ -113,7 +113,7 @@ int Hero::calculate_armor() const
         armor = get_current_armor()->armor_class();
 
     for (int i = LEFT; i <= RIGHT; i++) {
-        Ring* ring = game->hero().get_ring(i);
+        Ring* ring = get_ring(i);
         if (ring) {
             armor -= ring->GetArmorBoost();
         }
@@ -135,7 +135,7 @@ int Hero::calculate_max_strength() const
 int Hero::calculate_strength_impl(int strength) const
 {
     for (int i = LEFT; i <= RIGHT; i++) {
-        Ring* r = game->hero().get_ring(i);
+        Ring* r = get_ring(i);
         if (r) {
             strength += r->GetStrBoost();
         }
@@ -148,7 +148,7 @@ bool Hero::adjust_strength(int amt)
     if (amt < 0)
     {
         for (int i = LEFT; i <= RIGHT; i++) {
-            Ring* r = game->hero().get_ring(i);
+            Ring* r = get_ring(i);
             if (r && r->SustainsStrength()) {
                 return false;
             }
@@ -233,7 +233,7 @@ void Hero::ingest()
         increase_sleep_turns(2 + rnd(5));
     if ((food_left += HUNGER_TIME - 200 + rnd(400)) > STOMACH_SIZE)
         food_left = STOMACH_SIZE;
-    hungry_state = 0;
+    hungry_state = Full;
 }
 
 void Hero::digest()
@@ -248,7 +248,7 @@ void Hero::digest()
         increase_sleep_turns(rnd(8) + 4);
         game->stop_run_cmd();
         game->cancel_repeating_cmd();
-        hungry_state = 3;
+        hungry_state = Faint;
         msg("%syou faint from lack of food", noterse("you feel very weak. "));
     }
     else
@@ -266,11 +266,11 @@ void Hero::digest()
             food_left -= deltafood;
         }
         if (food_left < MORE_TIME && oldfood >= MORE_TIME) {
-            hungry_state = 2;
+            hungry_state = Weak;
             msg("you are starting to feel weak");
         }
         else if (food_left < 2 * MORE_TIME && oldfood >= 2 * MORE_TIME) {
-            hungry_state = 1;
+            hungry_state = Hungry;
             msg("you are starting to get hungry");
         }
     }

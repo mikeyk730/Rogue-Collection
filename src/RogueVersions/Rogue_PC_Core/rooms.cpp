@@ -21,10 +21,6 @@
 #include "monster.h"
 #include "gold.h"
 
-bool isfloor(byte c) {
-    return ((c) == FLOOR || (c) == PASSAGE);
-}
-
 //do_rooms: Create rooms and corridors with a connectivity graph
 void Level::do_rooms()
 {
@@ -289,10 +285,10 @@ Room* Level::rnd_room()
 }
 
 
-void find_empty_location(Coord* c, bool consider_monsters)
+void Level::find_empty_location(Coord* c, bool consider_monsters)
 {
     do
     {
-        rnd_pos(game->level().rnd_room(), c);
+        rnd_pos(rnd_room(), c);
     } while (!isfloor(game->level().get_tile(*c, consider_monsters)));
 }

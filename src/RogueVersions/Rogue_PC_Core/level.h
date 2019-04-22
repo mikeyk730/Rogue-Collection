@@ -75,9 +75,17 @@ struct Level {
 
     Room* rnd_room();
 
+    //drop_item: Drop an item someplace around here.
+    void drop_item(Item *obj, bool pr);
+    static bool isfloor(unsigned char c);
+    void find_empty_location(Coord* c, bool consider_monsters);
+
     std::list<Item*> items; //List of objects on this level
     std::list<Monster*> monsters; //List of monsters on the level
 private:
+    //fallpos: Pick a random position around the given (y, x) coordinates
+    int fallpos(Item *obj, Coord *newpos);
+
     byte the_level[(MAXLINES - 3)*MAXCOLS];
     byte the_flags[(MAXLINES - 3)*MAXCOLS];
 
@@ -112,6 +120,3 @@ private:
 
 int rnd_gold();
 int maxrow();
-
-//fall: Drop an item someplace around here.
-void fall(Item *obj, bool pr);

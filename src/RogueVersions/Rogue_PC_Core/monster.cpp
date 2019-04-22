@@ -231,7 +231,7 @@ void Monster::remove_pack(bool drop_items)
         remove_from_pack(obj);
         if (drop_items) {
             obj->set_position(position());
-            fall(obj, false);
+            game->level().drop_item(obj, false);
         }
         else {
             delete(obj);

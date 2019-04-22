@@ -20,7 +20,3 @@ void enter_room(Coord cp);
 
 //leave_room: Code for when we exit a room
 void leave_room(Coord cp);
-
-void find_empty_location(Coord* c, bool consider_monsters);
-
-bool isfloor(unsigned char c);

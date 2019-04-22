@@ -99,8 +99,10 @@ bool do_throw_item()
     }
     do_motion(obj, delta);
     //AHA! Here it has hit something.  If it is a wall or a door, or if it misses (combat) the monster, put it on the floor
-    if (game->level().monster_at(obj->position()) == NULL || !projectile_hit(obj->position(), obj))
-        fall(obj, true);
+    if (game->level().monster_at(obj->position()) == NULL ||
+        !projectile_hit(obj->position(), obj)) {
+        game->level().drop_item(obj, true);
+    }
 
     return true;
 }
@@ -151,8 +153,8 @@ void do_motion(Item *obj, Coord delta)
     }
 }
 
-//fall: Drop an item someplace around here.
-void fall(Item *obj, bool pr)
+//drop_item: Drop an item someplace around here.
+void Level::drop_item(Item *obj, bool pr)
 {
     static Coord fpos;
 
@@ -160,21 +162,19 @@ void fall(Item *obj, bool pr)
     {
     case 1:
     {
-        bool location_is_empty(game->level().is_floor_or_passage(fpos));
-
         obj->set_position(fpos);
-        game->level().set_tile(obj->position(), obj->m_type);
-        game->level().items.push_front(obj);
+        set_tile(obj->position(), obj->m_type);
+        items.push_front(obj);
         //mdk:bugfix: don't set tile beneath unless in sight
-        if (game->level().monster_at(fpos) && game->hero().can_see(fpos))
-        //if (game->level().monster_at(fpos))
+        if (monster_at(fpos) && game->hero().can_see(fpos))
+        //if (monster_at(fpos))
             game->level().monster_at(fpos)->set_tile_beneath(obj->m_type);
 
         //mdk:bugfix: prevent a fallen item from appearing on top of a monster
+        if (game->hero().can_see(fpos) && is_floor_or_passage(fpos))
         //if (game->hero().can_see(fpos))
-        if (game->hero().can_see(fpos) && location_is_empty)
         {
-            if (game->level().use_standout(fpos, obj->m_type))
+            if (use_standout(fpos, obj->m_type))
                 game->screen().standout();
             game->screen().add_tile(fpos, obj->m_type);
             game->screen().standend();
@@ -224,7 +224,7 @@ char *num(int n1, int n2, char type)
 }
 
 //fallpos: Pick a random position around the given (y, x) coordinates
-int fallpos(Item *obj, Coord *newpos)
+int Level::fallpos(Item *obj, Coord *newpos)
 {
    int cnt = 0;
 
@@ -238,7 +238,7 @@ int fallpos(Item *obj, Coord *newpos)
             if (pos == game->hero().position() || offmap(pos)) 
                 continue;
 
-            int ch = game->level().get_tile(pos);
+            int ch = get_tile(pos);
             if (ch == FLOOR || ch == PASSAGE)
             {
                 if (rnd(++cnt) == 0) { 

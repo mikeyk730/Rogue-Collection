@@ -50,6 +50,4 @@ Monster* projectile_hit(Coord p, Item *obj);
 //num: Figure out the plus number for armor/weapons
 char *num(int n1, int n2, char type);
 
-//fallpos: Pick a random position around the given (y, x) coordinates
-int fallpos(Item *obj, Coord *newpos);
 

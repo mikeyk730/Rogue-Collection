@@ -263,9 +263,9 @@ bool TeleportAway::Zap(Coord dir)
         game->screen().add_tile(monster->position(), monster->tile_beneath());
 
     //pick a new location for the monster
-    Coord new_pos;
     monster->invalidate_tile_beneath();
-    find_empty_location(&new_pos, true);
+    Coord new_pos;
+    game->level().find_empty_location(&new_pos, true);
     monster->set_position(new_pos);
 
     //the monster can no longer hold the player

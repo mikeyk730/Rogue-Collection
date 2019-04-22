@@ -492,3 +492,7 @@ void Level::aggravate_monsters()
         monster->start_run();
     });
 }
+
+bool Level::isfloor(byte c) {
+    return ((c) == FLOOR || (c) == PASSAGE);
+}

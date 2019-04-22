@@ -346,7 +346,7 @@ int handle_trap(Coord tc)
             {
                 arrow->m_count = 1;
                 arrow->set_position(game->hero().position());
-                fall(arrow, false);
+                game->level().drop_item(arrow, false);
             }
             msg("an arrow shoots past you");
         }
