@@ -213,8 +213,10 @@ void leave_room(Coord cp)
     game->log("agent", "leave_room(), entering passage: " + passage->ToString());
     game->hero().set_room(passage);
 
-    if(game->wizard().see_all())
+    if (game->wizard().see_all()) {
+        door_open(room);
         return;
+    }
 
     byte floor = (room->is_dark() && !game->hero().is_blind()) ? ' ' : FLOOR;
     if (room->is_maze())

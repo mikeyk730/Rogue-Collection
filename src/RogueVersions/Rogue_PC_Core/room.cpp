@@ -11,9 +11,11 @@ bool Room::is_flag_set(short flag) const {
 bool Room::is_dark() const {
     return is_flag_set(IS_DARK);
 }
+
 bool Room::is_maze() const {
     return is_flag_set(IS_MAZE);
 }
+
 bool Room::is_gone() const {
     return is_flag_set(IS_GONE);
 }
@@ -26,15 +28,18 @@ bool Room::has_gold() const
 void Room::set_maze() {
     m_flags |= IS_MAZE;
 }
+
 void Room::set_gone() {
     m_flags |= IS_GONE;
 }
+
 void Room::set_dark(bool enable) {
     if (enable)
         m_flags |= IS_DARK;
     else
         m_flags &= ~IS_DARK;
 }
+
 void Room::reset() {
     m_num_exits = m_flags = 0;
     remove_gold();
