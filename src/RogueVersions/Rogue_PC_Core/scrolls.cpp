@@ -254,36 +254,12 @@ void ScareMonster::Read()
 
 void FoodDetection::Read()
 {
-    //todo: move into level
-    //Scroll of food detection
-    byte discovered = false;
-
-    for (auto it = game->level().items.begin(); it != game->level().items.end(); ++it)
-    {
-        Item* item = *it;
-        if (item->m_type == FOOD)
-        {
-            discovered = true;
-            game->screen().standout();
-            game->screen().add_tile(item->position(), FOOD);
-            game->screen().standend();
-        }
-        //as a bonus this will detect amulets as well
-        else if (item->m_type == AMULET)
-        {
-            discovered = true;
-            game->screen().standout();
-            game->screen().add_tile(item->position(), AMULET);
-            game->screen().standend();
-        }
-    }
-    if (discovered) {
+    if (game->level().detect_food()) {
         discover();
         msg("your nose tingles as you sense food");
     }
     else
         ifterse("you hear a growling noise close by", "you hear a growling noise very close to you");
-
 }
 
 void TeleportationScroll::Read()

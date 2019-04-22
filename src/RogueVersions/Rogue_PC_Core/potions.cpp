@@ -67,12 +67,7 @@ bool do_quaff()
 void show_invisible()
 {
     game->hero().set_sees_invisible(true);
-    std::for_each(game->level().monsters.begin(), game->level().monsters.end(), [](Monster* monster) {
-        if (monster->is_invisible() && game->hero().can_see_monster(monster))
-        {
-            game->screen().add_tile(monster->position(), monster->m_disguise);
-        }
-    });
+    game->level().show_invisible_monsters();
 }
 
 void disable_detect_monsters(int disable)

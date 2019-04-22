@@ -496,3 +496,43 @@ void Level::aggravate_monsters()
 bool Level::isfloor(byte c) {
     return ((c) == FLOOR || (c) == PASSAGE);
 }
+
+bool Level::detect_food()
+{
+    bool discovered = false;
+    for (auto it = items.begin(); it != items.end(); ++it)
+    {
+        Item* item = *it;
+        if (item->m_type == FOOD || item->m_type == AMULET)
+        {
+            discovered = true;
+            game->screen().standout();
+            game->screen().add_tile(item->position(), item->m_type);
+            game->screen().standend();
+        }
+    }
+
+    return discovered;
+}
+
+void Level::hide_invisible_monsters()
+{
+    std::for_each(monsters.begin(), monsters.end(), [](Monster* m) {
+        if (game->hero().can_see_monster(m) &&
+            m->is_invisible() &&
+            m->has_tile_beneath())
+        {
+            game->screen().add_tile(m->position(), m->tile_beneath());
+        }
+    });
+}
+
+void Level::show_invisible_monsters()
+{
+    std::for_each(monsters.begin(), monsters.end(), [](Monster* monster) {
+        if (monster->is_invisible() && game->hero().can_see_monster(monster))
+        {
+            game->screen().add_tile(monster->position(), monster->m_disguise);
+        }
+    });
+}

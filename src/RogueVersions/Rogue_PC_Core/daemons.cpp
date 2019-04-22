@@ -81,13 +81,7 @@ void unconfuse()
 //unsee_invisible: Turn off the ability to see invisible
 void unsee_invisible()
 {
-    Monster *th;
-
-    for (auto it = game->level().monsters.begin(); it != game->level().monsters.end(); ++it) {
-        th = *it;
-        if (th->is_invisible() && game->hero().can_see_monster(th) && th->has_tile_beneath())
-            game->screen().add_tile(th->position(), th->tile_beneath());
-    }
+    game->level().hide_invisible_monsters();
     game->hero().set_sees_invisible(false);
 }
 

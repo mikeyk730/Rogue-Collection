@@ -80,6 +80,11 @@ struct Level {
     static bool isfloor(unsigned char c);
     void find_empty_location(Coord* c, bool consider_monsters);
 
+    bool detect_food();
+
+    void hide_invisible_monsters();
+    void show_invisible_monsters();
+
     std::list<Item*> items; //List of objects on this level
     std::list<Monster*> monsters; //List of monsters on the level
 private:
