@@ -308,53 +308,9 @@ void create_wandering_monster()
 //wake_monster: What to do when the hero steps next to a monster
 Monster *wake_monster(Coord p)
 {
-    Monster *monster;
-
-    if ((monster = game->level().monster_at(p)) == NULL)
-        return monster;
-    //Every time he sees mean monster, it might start chasing him
-    if (!monster->is_running() && rnd(3) != 0 && monster->is_mean() && !monster->is_held())
-    {
-        //See if a ring can help him
-        bool stealth = false;
-        for (int i = LEFT; i <= RIGHT; i++) {
-            Ring* r = game->hero().get_ring(i);
-            if (r && r->AddsStealth()) {
-                stealth = true;
-                break;
-            }
-        }
-
-        if (!stealth)
-            monster->start_run(&game->hero());
-    }
-    if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
-    {
-        int dst;
-        Room* room = game->hero().room();
-        dst = distance(p, game->hero().position());
-        if ((room != NULL && !(room->is_dark())) || dst < LAMP_DIST)
-        {
-            monster->set_found(true);
-            if (!save(VS_MAGIC))
-            {
-                if (game->hero().is_confused()) lengthen(unconfuse, rnd(20) + HUH_DURATION);
-                else fuse(unconfuse, 0, rnd(20) + HUH_DURATION);
-                game->hero().set_confused(true);
-                msg("the %s's gaze has confused you", monster->get_name().c_str());
-                game->screen().play_sound("medusa");
-            }
-        }
-    }
-    //Let greedy ones guard gold
-    if (monster->is_greedy() && !monster->is_running())
-    {
-        if (game->hero().room()->m_gold_val) {
-            monster->set_destination(&game->hero().room()->m_gold_position);
-            monster->start_run(false);
-        }
-        else
-            monster->start_run(&game->hero());
+    Monster *monster = game->level().monster_at(p);
+    if (monster) {
+        monster->awaken();
     }
     return monster;
 }

@@ -60,6 +60,7 @@ public:
     bool remove_ring();
     int is_ring_on_hand(int h, int r) const;
     int is_wearing_ring(int r) const;
+    bool has_stealth() const;
 
     bool adjust_strength(int amt);
 
@@ -102,8 +103,8 @@ public:
     void do_hit(Item* weapon, int thrown, Monster* monster, const char* name);
     void do_miss(Item* weapon, int thrown, Monster* monster, const char* name);
 
-    //pick_up_gold: Add gold to the pack
-    void pick_up_gold(int value);
+    //acquire_gold: Add gold to the pack
+    void acquire_gold(int value);
 
     //true if player currently has amulet
     bool has_amulet();

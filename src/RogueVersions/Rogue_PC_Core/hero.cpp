@@ -726,8 +726,8 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
     return true;
 }
 
-//pick_up_gold: Add gold to the pack
-void Hero::pick_up_gold(int value)
+//acquire_gold: Add gold to the pack
+void Hero::acquire_gold(int value)
 {
     adjust_purse(value);
     msg("you found %d gold pieces", value);
@@ -757,6 +757,17 @@ int Hero::is_ring_on_hand(int hand, int ring) const
 int Hero::is_wearing_ring(int ring) const
 {
     return (is_ring_on_hand(LEFT, ring) || is_ring_on_hand(RIGHT, ring));
+}
+
+bool Hero::has_stealth() const
+{
+    for (int i = LEFT; i <= RIGHT; i++) {
+        Ring* r = get_ring(i);
+        if (r && r->AddsStealth()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 //wield: Pull out a certain object
@@ -1224,8 +1235,8 @@ void Hero::pick_up(byte ch)
         if (gold == NULL)
             return;
 
-        pick_up_gold(gold->get_gold_value());
-        room()->m_gold_val = 0;
+        acquire_gold(gold->get_gold_value());
+        room()->remove_gold();
         game->level().items.remove(gold);
         delete gold;
 

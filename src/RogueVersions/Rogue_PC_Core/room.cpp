@@ -17,6 +17,12 @@ bool Room::is_maze() const {
 bool Room::is_gone() const {
     return is_flag_set(IS_GONE);
 }
+
+bool Room::has_gold() const
+{
+    return m_gold_val > 0;
+}
+
 void Room::set_maze() {
     m_flags |= IS_MAZE;
 }
@@ -30,7 +36,13 @@ void Room::set_dark(bool enable) {
         m_flags &= ~IS_DARK;
 }
 void Room::reset() {
-    m_gold_val = m_num_exits = m_flags = 0;
+    m_num_exits = m_flags = 0;
+    remove_gold();
+}
+
+void Room::remove_gold()
+{
+    m_gold_val = 0;
 }
 
 //todo: shouldn't need to poke into game->

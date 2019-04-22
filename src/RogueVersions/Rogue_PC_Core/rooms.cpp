@@ -112,7 +112,7 @@ void Level::do_rooms()
             gold->set_position(room->m_gold_position);
         }
         //Put the monster in
-        if (rnd(100) < (room->m_gold_val > 0 ? 80 : 25))
+        if (rnd(100) < (room->has_gold() ? 80 : 25))
         {
             byte mch;
             do {

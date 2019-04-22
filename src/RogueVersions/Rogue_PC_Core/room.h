@@ -27,6 +27,9 @@ struct Room
     bool is_dark() const;
     bool is_maze() const;
     bool is_gone() const;
+    bool has_gold() const;
+    void remove_gold();
+
     void set_maze();
     void set_gone();
     void set_dark(bool enable);

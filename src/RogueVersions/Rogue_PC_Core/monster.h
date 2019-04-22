@@ -115,6 +115,7 @@ struct Monster : public Agent
     void set_tile_beneath(byte c);
     void reload_tile_beneath();
     void render();
+    void awaken();
 
 private:
     void increase_damage_stats();

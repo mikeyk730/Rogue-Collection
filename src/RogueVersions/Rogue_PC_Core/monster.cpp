@@ -19,6 +19,8 @@
 #include "ring.h"
 #include "armor.h"
 #include "gold.h"
+#include "daemon.h"
+#include "daemons.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -206,6 +208,59 @@ void Monster::render()
     game->screen().add_tile(position(), m_disguise);
 }
 
+void Monster::awaken()
+{
+    //Every time he sees mean monster, it might start chasing him
+    if (!is_running() &&
+        rnd(3) != 0 &&
+        is_mean() &&
+        !is_held())
+    {
+        //See if a ring can help him
+        if (!game->hero().has_stealth()) {
+            start_run(&game->hero());
+        }
+    }
+
+    Room* room = game->hero().room();
+
+    if (causes_confusion() &&
+        !game->hero().is_blind() &&
+        !is_found() &&
+        !powers_cancelled() &&
+        is_running())
+    {
+        int dst;
+        dst = distance(position(), game->hero().position());
+        if ((room && !room->is_dark()) || dst < LAMP_DIST)
+        {
+            set_found(true);
+            if (!save(VS_MAGIC))
+            {
+                if (game->hero().is_confused())
+                    lengthen(unconfuse, rnd(20) + HUH_DURATION);
+                else
+                    fuse(unconfuse, 0, rnd(20) + HUH_DURATION);
+                game->hero().set_confused(true);
+                msg("the %s's gaze has confused you", get_name().c_str());
+                game->screen().play_sound("medusa");
+            }
+        }
+    }
+
+    //Let greedy ones guard gold
+    if (is_greedy() && !is_running())
+    {
+        if (room->has_gold()) {
+            set_destination(&room->m_gold_position);
+            start_run(false);
+        }
+        else {
+            start_run(&game->hero());
+        }
+    }
+}
+
 void Monster::invalidate_tile_beneath()
 {
     m_tile_beneath = UNSET;
@@ -281,7 +336,7 @@ Monster* Monster::do_chase() //todo: understand
     reveal_disguise();
 
     //If gold has been taken, target the hero
-    if (is_greedy() && room()->m_gold_val == 0) {
+    if (is_greedy() && !room()->has_gold()) {
         set_destination(&game->hero());
     }
 
