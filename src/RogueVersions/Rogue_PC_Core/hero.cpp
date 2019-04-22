@@ -1080,23 +1080,23 @@ byte Hero::get_pack_index(Item* obj)
 
 Item* Hero::get_random_magic_item() const
 {
+    Item* item = nullptr;
     int nobj = 0;
     for (auto it = m_pack.begin(); it != m_pack.end(); ++it) {
-        Item* item = *it;
-        if (item != get_current_armor() &&
-            item != get_current_weapon() &&
-            item != get_ring(LEFT) &&
-            item != get_ring(RIGHT) &&
-            item->is_magic() &&
+        Item* obj = *it;
+        if (obj != get_current_armor() &&
+            obj != get_current_weapon() &&
+            obj != get_ring(LEFT) &&
+            obj != get_ring(RIGHT) &&
+            obj->is_magic() &&
             rnd(++nobj) == 0)
         {
-            return item;
+            item = obj;
         }
     }
 
-    return nullptr;
+    return item;
 }
-
 
 Item* Hero::get_item_from_inventory(byte user_input, byte *max_valid_char)
 {
