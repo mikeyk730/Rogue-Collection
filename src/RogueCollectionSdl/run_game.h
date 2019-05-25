@@ -1,18 +1,23 @@
 #pragma once
+#ifdef _WIN32 //todo:support linux
 #include <Windows.h>
+#endif
 
 typedef int(*game_main)(int, char**, char**);
 typedef void(*init_game)(DisplayInterface*, InputInterface*, int lines, int cols);
 
+#ifdef _WIN32 //todo:support linux
 struct LibraryDeleter
 {
     typedef HMODULE pointer;
     void operator()(HMODULE h) { FreeLibrary(h); }
 };
+#endif
 
 template <typename T>
 void RunGame(const std::string& lib, int argc, char** argv, T* r)
 {
+#ifdef _WIN32 //todo:support linux
     std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
     try {
         if (!dll) {
@@ -39,4 +44,5 @@ void RunGame(const std::string& lib, int argc, char** argv, T* r)
         DisplayMessage(SDL_MESSAGEBOX_ERROR, "Fatal Error", s.c_str());
         exit(1);
     }
+#endif
 }
