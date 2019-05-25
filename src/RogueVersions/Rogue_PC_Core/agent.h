@@ -34,8 +34,13 @@ struct Agent
 
     virtual std::string get_name() = 0;
 
-    virtual void calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
-        int* hit_plus, std::string* damage_string, int* damage_plus);
+    virtual void calculate_roll_stats(
+        Agent *defender,
+        Item *weapon,
+        bool hurl,
+        int* hit_plus,
+        std::string* damage_string,
+        int* damage_plus);
     virtual int calculate_armor() const;
 
     virtual int calculate_strength() const;

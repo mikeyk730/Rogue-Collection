@@ -137,7 +137,7 @@ char StreamInput::GetNextChar(bool *is_replay)
 
     int time = m_shared_data->m_throttle;
     lock.unlock();
-    sleep(time);
+    go_to_sleep(time);
 
     if (is_replay)
         *is_replay = true;
@@ -181,7 +181,7 @@ std::string StreamInput::GetNextString(int size)
 
     int time = m_shared_data->m_throttle;
     lock.unlock();
-    sleep(time);
+    go_to_sleep(time);
 
     return s;
 }

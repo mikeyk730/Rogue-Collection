@@ -656,7 +656,7 @@ void tick_pause()
 void pause(int n)
 {
     if (!game->in_replay())
-        sleep(n);
+        go_to_sleep(n);
 }
 
 void alert()

@@ -3,7 +3,7 @@
 struct ExitGame {};
 
 void sound_beep();
-void sleep(int ms);
+void go_to_sleep(int ms);
 void exit_game(int status);
 
 bool is_caps_lock_on();
