@@ -37,7 +37,7 @@ Monster* get_monster_in_direction(Coord dir, bool check_distant)
 
 struct MagicMissile : public Item
 {
-    MagicMissile() : 
+    MagicMissile() :
         Item(MISSILE, 0)
     {
         m_throw_damage = "1d8";
@@ -47,15 +47,15 @@ struct MagicMissile : public Item
         m_launcher = NO_WEAPON;
     }
 
-    virtual Item* Clone() const { 
+    virtual Item* Clone() const {
         return new MagicMissile(*this);
     }
 
-    virtual std::string TypeName() const { 
-        return "magic missile"; 
+    virtual std::string TypeName() const {
+        return "magic missile";
     }
 
-    virtual std::string InventoryName() const { 
+    virtual std::string InventoryName() const {
         return "magic missile";
     }
 
@@ -63,12 +63,12 @@ struct MagicMissile : public Item
         return true;
     }
 
-    virtual bool IsEvil() const { 
-        return false; 
+    virtual bool IsEvil() const {
+        return false;
     }
 
     virtual int Worth() const {
-        return 0; 
+        return 0;
     }
 };
 
@@ -81,14 +81,14 @@ Light::Light()
 bool Light::Zap(Coord dir)
 {
     //Ready Kilowatt wand.  Light up the room
-    if (game->hero().is_blind()) 
+    if (game->hero().is_blind())
         msg("you feel a warm glow around you");
     else
     {
         discover(false);
-        if (game->hero().room()->is_gone()) 
+        if (game->hero().room()->is_gone())
             msg("the corridor glows and then fades");
-        else 
+        else
             msg("the room is lit by a shimmering blue light");
     }
 
@@ -246,7 +246,7 @@ bool DrainLife::Zap(Coord dir)
     return true;
 }
 
-bool Nothing::Zap(Coord dir) 
+bool Nothing::Zap(Coord dir)
 {
     msg("what a bizarre schtick!");
     return true;
@@ -257,7 +257,7 @@ bool TeleportAway::Zap(Coord dir)
     Monster* monster = get_monster_in_direction(dir, true);
     if (!monster)
         return true;
-    
+
     //erase the monster from the screen
     if (game->hero().can_see_monster(monster))
         game->screen().add_tile(monster->position(), monster->tile_beneath());
@@ -310,7 +310,7 @@ bool Cancellation::Zap(Coord dir)
     Monster* monster = get_monster_in_direction(dir, true);
     if (!monster)
         return true;
-    
+
     if (game->hero().is_held_by(monster)) {
         game->hero().clear_hold();
     }
@@ -331,7 +331,7 @@ bool Weapon::zap_vorpalized_weapon(Coord dir)
     Monster* monster = get_monster_in_direction(dir, true);
     if (!monster)
         return true;
-        
+
     //a vorpalized weapon kills the target instantly
     if (is_vorpalized_against(monster))
     {
@@ -360,7 +360,7 @@ bool do_zap()
 
     Stick* stick = dynamic_cast<Stick*>(item);
     Weapon* weapon = dynamic_cast<Weapon*>(item);
-    if (!(stick || weapon && weapon->is_vorpalized() && weapon->charges())) {
+    if (!(stick || (weapon && weapon->is_vorpalized() && weapon->charges()))) {
         //mdk: zapping with non-stick doesn't count as turn
         msg("you can't zap with that!");
         return false;
@@ -547,7 +547,7 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
         switch (ch)
         {
         case DOOR: case HWALL: case VWALL: case ULWALL: case URWALL: case LLWALL: case LRWALL: case ' ':
-            if (!changed) 
+            if (!changed)
                 hero_is_target = !hero_is_target;
             changed = false;
             dir->y = -dir->y;
@@ -629,7 +629,7 @@ Stick::Stick(const std::string& kind)
     : Item(STICK, 0)
 {
     if (kind == "staff")
-        m_damage = "2d3";  //mdk: A staff is more powerful than a wand for striking 
+        m_damage = "2d3";  //mdk: A staff is more powerful than a wand for striking
     else
         m_damage = "1d1";
 

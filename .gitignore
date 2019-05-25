@@ -14,3 +14,5 @@ working/
 build-*/
 src/RetroRogueCollection/import/
 staging/
+*.o
+.vscode

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cctype>
+#include <cstring>
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
@@ -64,7 +65,7 @@ char *prname(const char *who, bool upper)
 //hit: Print a message to indicate a successful hit
 void display_hit_msg(const char *er, const char *ee)
 {
-    char *s;
+    const char *s;
 
     addmsg(prname(er, true));
     switch ((short_msgs()) ? 1 : rnd(4))
@@ -82,7 +83,7 @@ void display_hit_msg(const char *er, const char *ee)
 //display_miss_msg: Print a message to indicate a poor swing
 void display_miss_msg(const char *er, const char *ee)
 {
-    char *s;
+    const char *s;
 
     addmsg(prname(er, true));
     switch ((short_msgs()) ? 1 : rnd(4))
@@ -154,7 +155,7 @@ int add_dam(unsigned int str)
 }
 
 //display_throw_msg: A projectile hit or missed a monster
-void display_throw_msg(Item *item, const char *name, char *does, char *did)
+void display_throw_msg(Item *item, const char *name, const char *does, const char *did)
 {
     addmsg("the %s %s ", item->name().c_str(), does);
     game->hero().is_blind() ? msg(it) : msg("the %s", name);

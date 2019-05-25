@@ -112,7 +112,7 @@ private:
     };
 
     //conn: Draw a corridor from a room in a certain direction.
-    void Level::conn(int r1, int r2);
+    void conn(int r1, int r2);
 
     //passnum: Assign a number to each passageway
     void passnum();

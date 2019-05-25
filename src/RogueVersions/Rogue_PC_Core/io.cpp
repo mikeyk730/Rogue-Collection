@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
-
+#include <cstring>
 #include "random.h"
 #include "game_state.h"
 #include "io.h"
@@ -29,9 +29,6 @@
 char msgbuf[128];
 
 static int newpos = 0;
-static char *formats = "scud%", *bp, left_justify;
-static int min_width, max_width;
-static char ibuf[6];
 
 bool terse = false;
 bool expert = false;
@@ -80,9 +77,9 @@ void reset_msg_position()
 void msg(const char *format, ...)
 {
     //if the string is "", just clear the line
-    if (*format == '\0') { 
-        game->screen().move(0, 0); 
-        game->screen().clrtoeol(); 
+    if (*format == '\0') {
+        game->screen().move(0, 0);
+        game->screen().clrtoeol();
         reset_msg_position();
         return;
     }
@@ -160,12 +157,12 @@ void endmsg()
     game->log("msg", msgbuf);
     strcpy(game->last_message, msgbuf);
     if (game->msg_position) {
-        look(false); 
+        look(false);
         game->screen().move(0, game->msg_position);
-        more(" More "); 
+        more(" More ");
     }
     //All messages should start with uppercase, except ones that start with a pack addressing character
-    if (islower(msgbuf[0]) && msgbuf[1] != ')') 
+    if (islower(msgbuf[0]) && msgbuf[1] != ')')
         msgbuf[0] = toupper(msgbuf[0]);
     putmsg(0, msgbuf);
     game->msg_position = newpos;
@@ -188,15 +185,18 @@ void more(const char *msg)
     int x, y;
     int i, msz;
     char mbuf[80];
-    int morethere = true;
-    int covered = false;
+    //int morethere = true;
+    //int covered = false;
     const int COLS = game->screen().columns();
 
     msz = strlen(msg);
     game->screen().getrc(&x, &y);
     //it is reasonable to assume that if the you are no longer on line 0, you must have wrapped.
     if (x != 0) { x = 0; y = COLS; }
-    if ((y + msz) > COLS) { game->screen().move(x, y = COLS - msz); covered = true; }
+    if ((y + msz) > COLS) {
+        game->screen().move(x, y = COLS - msz);
+        //covered = true;
+    }
     for (i = 0; i < msz; i++)
     {
         mbuf[i] = game->screen().curch();
@@ -211,15 +211,15 @@ void more(const char *msg)
     int ch;
     while ((ch = readchar()) != ' ' && !(game->options.dir_key_clears_more() && is_direction(ch)))
     {
-        //if (covered && morethere) { 
-        //    game->screen().move(x, y); 
-        //    game->screen().addstr(mbuf); 
-        //    morethere = false; 
+        //if (covered && morethere) {
+        //    game->screen().move(x, y);
+        //    game->screen().addstr(mbuf);
+        //    morethere = false;
         //}
         //else if (covered) {
-        //    game->screen().move(x, y); 
+        //    game->screen().move(x, y);
         //    game->screen().standout();
-        //    game->screen().addstr(msg); 
+        //    game->screen().addstr(msg);
         //    game->screen().standend();
         //    morethere = true;
         //}
@@ -229,7 +229,7 @@ void more(const char *msg)
 }
 
 //doadd: Perform an add onto the message buffer
-void doadd(char *format, ...)
+void doadd(const char *format, ...)
 {
     va_list argptr;
     va_start(argptr, format);
@@ -271,7 +271,7 @@ void putmsg(int msgline, const char *msg)
 void scrl(int msgline, const char *str1, const char *str2)
 {
     const int COLS = game->screen().columns();
-    char *fmt;
+    const char *fmt;
 
     if (COLS > 40) fmt = "%.80s"; else fmt = "%.40s";
     if (str1 == 0)
@@ -314,7 +314,7 @@ void update_status_bar()
     static int s_hungry;
     static int s_level, s_pur = -1, s_hp;
     static int s_elvl = 0;
-    static char *state_name[] = { "      ", "Hungry", "Weak", "Faint", "?" };
+    static const char *state_name[] = { "      ", "Hungry", "Weak", "Faint", "?" };
 
     const int COLS = game->screen().columns();
 
@@ -413,7 +413,7 @@ void wait_for(char ch)
 }
 
 //show_win: Function used to display a window and wait before returning
-void show_win(char *message)
+void show_win(const char *message)
 {
     game->screen().mvaddstr({ 0, 0 }, message);
     game->screen().move(game->hero().position().y, game->hero().position().x);
@@ -470,13 +470,21 @@ int getinfo_impl(char *str, int size)
     return ret;
 }
 
+void CopyString(char* dest, int n, const char* src) //todo:mdk cross platform lib
+{
+#ifdef __linux__
+    strncpy(dest, src, n);
+#elif _WIN32
+    strcpy_s(dest, n, src);
+#endif
+}
 
 int getinfo(char *str, int size)
 {
     game->screen().cursor(true);
     std::string s = game->input_interface().GetNextString(size-1);
     game->log("input", "GetNextString: " + s);
-    strcpy_s(str, size, s.c_str());
+    CopyString(str, size, s.c_str());
     game->screen().cursor(false);
     return s[0];
 }
@@ -532,7 +540,7 @@ int readchar()
 //     attributes.  And I'm not sure how I'm going to interface this with
 //     printf certainly '%' isn't a good choice of characters.  jll.
 
-void str_attr(char *str)
+void str_attr(const char *str)
 {
     while (*str)
     {
@@ -629,7 +637,7 @@ void handle_key_state()
 */
 }
 
-char *noterse(char *str)
+const char *noterse(const char *str)
 {
     return (short_msgs() ? "" : str);
 }
@@ -648,7 +656,7 @@ void tick_pause()
 void pause(int n)
 {
     if (!game->in_replay())
-        sleep(n);
+        go_to_sleep(n);
 }
 
 void alert()

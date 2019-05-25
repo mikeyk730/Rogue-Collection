@@ -29,7 +29,7 @@ void endmsg();
 void more(const char *msg);
 
 //doadd: Perform an add onto the message buffer
-void doadd(char *fmt, ...);
+void doadd(const char *fmt, ...);
 
 //putmsg: put a msg on the line, make sure that it will fit, if it won't scroll msg sideways until he has read it all
 void putmsg(int msgline, const char *msg);
@@ -47,7 +47,7 @@ void update_status_bar();
 void wait_for(char ch);
 
 //show_win: Function used to display a window and wait before returning
-void show_win(char *message);
+void show_win(const char *message);
 
 //readchar: Return the next input character, from the macro or from the keyboard.
 int readchar();
@@ -80,12 +80,12 @@ void alert();
 //     attributes.  And I'm not sure how I'm going to interface this with
 //     printf certainly '%' isn't a good choice of characters.  jll.
 
-void str_attr(char *str);
+void str_attr(const char *str);
 
 //key_state:
 void handle_key_state();
 
-char *noterse(char *str);
+const char *noterse(const char *str);
 
 template <typename T>
 std::ostream& write(std::ostream& out, T t) {

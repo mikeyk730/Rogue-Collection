@@ -31,11 +31,9 @@ void Level::do_rooms()
     Coord top;
     Coord bsze;
     Coord mp;
-    int old_lev;
     int endline;
 
     endline = maxrow() + 1;
-    old_lev = game->get_level();
     //bsze is the maximum room size
     const int COLS = game->screen().columns();
     bsze.x = COLS / 3;

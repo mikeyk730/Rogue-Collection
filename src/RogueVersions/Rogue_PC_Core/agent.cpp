@@ -1,5 +1,6 @@
 #include <sstream>
 #include <algorithm>
+#include <cstring>
 #include "random.h"
 #include "agent.h"
 #include "main.h"
@@ -157,6 +158,10 @@ void Agent::set_is_mean(bool enable) {
 }
 
 Agent::Agent()
+{
+}
+
+Agent::~Agent()
 {
 }
 

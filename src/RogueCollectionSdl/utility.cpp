@@ -2,6 +2,7 @@
 #include <cassert>
 #include <chrono>
 #include <thread>
+#include <cstring>
 #include "utility.h"
 
 std::ostream& WriteShortString(std::ostream& out, const std::string& s)

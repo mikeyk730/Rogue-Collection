@@ -1,6 +1,6 @@
-#pragma once
 #include <algorithm>
 #include <sstream>
+#include <climits>
 #include <SDL.h>
 #include <coord.h>
 #include "window_sizer.h"

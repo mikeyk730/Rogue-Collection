@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <list>
 #include <coord.h>
 
@@ -42,6 +43,7 @@ struct Agent
 
     Agent();
     Agent(const Agent&) = delete;
+    virtual ~Agent();
 
     virtual std::string get_name() = 0;
 
@@ -57,7 +59,7 @@ struct Agent
     virtual int calculate_strength() const;
     virtual int calculate_max_strength() const;
     void restore_strength();
-    
+
     int experience() const;
     virtual void gain_experience(int exp);
 

@@ -5,7 +5,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
-
+#include <cstring>
 #include "random.h"
 #include "monsters.h"
 #include "daemons.h"
@@ -27,7 +27,9 @@
 #include "monster.h"
 #include "output_shim.h"
 
+#ifdef _WIN32
 #pragma warning(disable:4996)
+#endif
 
 namespace
 {
@@ -50,7 +52,7 @@ namespace
 #define ___  1
 #define XX  10
 
-    //mdk: IS_REGEN has no effect.  In Unix Rogue 3.6.3 it designated a 66% 
+    //mdk: IS_REGEN has no effect.  In Unix Rogue 3.6.3 it designated a 66%
     //chance to gain a hp
     struct MonsterEntry monsters[26] =
     {
@@ -208,9 +210,9 @@ char randmonster(bool wander, int level)
         else
             d = level + (rnd(5) + rnd(6) - 5);
 
-        if (d < 1) 
+        if (d < 1)
             d = rnd(5) + 1;
-        if (d > 26) 
+        if (d > 26)
             d = rnd(5) + 22;
     } while (mons[--d] == ' ');
     return mons[d];
@@ -237,7 +239,7 @@ Monster* Monster::CreateMonster(byte type, Coord *position, int level)
 {
     Monster* monster = new Monster;
     int level_add = (level <= AMULETLEVEL) ? 0 : level - AMULETLEVEL;
-    
+
     const MonsterEntry* defaults = &monsters[type - 'A'];
     monster->m_type = type;
     monster->m_disguise = type;
@@ -320,7 +322,7 @@ char pick_vorpal_monster()
 {
     const char *p;
     do {
-        // Start at end of enemies list and walk backwards, 
+        // Start at end of enemies list and walk backwards,
         // with a 10% chance of stopping at any given entry.
         // Default to M if we have bad luck.
         p = lvl_mons + strlen(lvl_mons);

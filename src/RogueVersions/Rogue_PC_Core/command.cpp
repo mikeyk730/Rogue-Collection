@@ -2,6 +2,7 @@
 //command.c   1.44    (A.I. Design)   2/14/85
 
 #include <map>
+#include <algorithm>
 #include <ctype.h>
 #include "random.h"
 #include "game_state.h"
@@ -137,7 +138,7 @@ void do_rings()
 void advance_game()
 {
     game->hero().set_num_actions(1);
-    //mdk:bugfix: The potion of haste self does not work in the original code.  It's meant to 
+    //mdk:bugfix: The potion of haste self does not work in the original code.  It's meant to
     //give you 2 - 3 actions per turn, but a bug prevented this from ever happening.
     //This bug isn't in Unix Rogue, where the player gets 2 turns while hasted
     if (game->hero().is_fast() || game->wizard().haste_self()) {
@@ -188,7 +189,7 @@ void process_prefixes(int ch, Command* command, bool* fast_mode)
 {
     switch (ch)
     {
-    case '0': case '1': case '2': case '3': case '4': 
+    case '0': case '1': case '2': case '3': case '4':
     case '5': case '6': case '7': case '8': case '9':
     {
         int n = command->count * 10;
@@ -265,7 +266,7 @@ Command get_command()
 
     if (!game->in_run_cmd())
         game->m_stop_at_door = false;
-    
+
     Command command;
     command.count = game->last_turn.command.count;
     show_count(command.count);

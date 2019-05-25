@@ -361,7 +361,7 @@ void leave()
 }
 
 //fatal: exit with a message
-void fatal(char *format, ...)
+void fatal(const char *format, ...)
 {
     char dest[1024 * 16];
     va_list argptr;

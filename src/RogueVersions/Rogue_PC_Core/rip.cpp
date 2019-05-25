@@ -4,7 +4,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <cstring>
+#ifdef _WIN32
 #include <io.h>
+#else
+#include <unistd.h>
+#endif
 #include <fcntl.h>
 #include <time.h>
 #include <sys/stat.h>
@@ -26,6 +31,19 @@
 #include "mach_dep.h"
 
 #define TOPSCORES 10
+
+#ifdef __linux__
+#define _close close
+#define _open open
+#define _read read
+#define _write write
+#define _creat creat
+#define _S_IREAD S_IREAD
+#define _S_IWRITE S_IWRITE
+#define _O_BINARY 0
+#define _O_RDWR O_RDWR
+#define _O_TRUNC O_TRUNC
+#endif
 
 static int sc_fd;
 
@@ -60,7 +78,7 @@ void score(int amount, int flags, char monst)
     game->screen().cursor(true);
     struct LeaderboardEntry his_score, top_ten[TOPSCORES];
     int rank = 0;
-    char response = ' ';
+    //char response = ' ';
     const int LINES = game->screen().lines();
 
     if (amount || flags || monst)
@@ -82,7 +100,7 @@ void score(int amount, int flags, char monst)
         if (count++ > 0)
             return;
         //game->screen().printw("\n");
-        //if (game->wizard().did_cheat() || (amount == 0)) 
+        //if (game->wizard().did_cheat() || (amount == 0))
         //    return;
         //str_attr("No scorefile: %Create %Retry %Abort");
 
@@ -93,9 +111,9 @@ void score(int amount, int flags, char monst)
         //    {
         //    case 'c': case 'C':
                 _close(_creat(game->options.get_environment("scorefile").c_str(), _S_IREAD | _S_IWRITE));
-        //    case 'r': case 'R': 
+        //    case 'r': case 'R':
         //        break;
-        //    case 'a': case 'A': 
+        //    case 'a': case 'A':
         //        return;
         //    default:
         //        reread = true;
@@ -157,7 +175,7 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
     int i;
     int curl;
     char dthstr[30];
-    char *altmsg;
+    const char *altmsg;
 
     const int COLS = game->screen().columns();
 
@@ -197,7 +215,7 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
         game->screen().printw("%s", top10->name);
         if (change_color)
             game->screen().brown();
-        if (top10->level >= 26) 
+        if (top10->level >= 26)
             altmsg = " Honored by the Guild";
         if (isalpha(top10->fate))
         {
@@ -206,14 +224,14 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
         }
         else switch (top10->fate)
         {
-        case 2: 
+        case 2:
             strcpy(dthstr, " won");
             altmsg = " A total winner!";
             break;
         case 1:
             strcpy(dthstr, " quit");
             break;
-        default: 
+        default:
             strcpy(dthstr, " weirded out");
         }
         if ((strlen(top10->name) + 10 + strlen(level_titles[top10->rank - 1])) < (size_t)COLS)

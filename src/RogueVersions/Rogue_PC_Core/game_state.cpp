@@ -21,21 +21,21 @@ using std::placeholders::_1;
 ;------------------------------------------------------------------------------
 ; hit_plus_bugfix(true, false): true
 ;------------------------------------------------------------------------------
-; During a fight, an attacker gets a +4 hit bonus if the defender is sleeping 
-; or held.  In the original code, the player was always considered asleep, so 
-; monsters always had an increased probability of hitting the player.  I've 
+; During a fight, an attacker gets a +4 hit bonus if the defender is sleeping
+; or held.  In the original code, the player was always considered asleep, so
+; monsters always had an increased probability of hitting the player.  I've
 ; fixed the bug by default, but added an option to disable the fix.
 ;
 ;------------------------------------------------------------------------------
 ; throws_affect_mimics(true, false): false
 ;------------------------------------------------------------------------------
-; In the original code, a thrown objects would always pass through a disguised 
-; mimic.  A zapped bolt would reveal a mimic, but only hit him if the player 
-; were blind.  In many cases the mimic would start chasing you while still 
+; In the original code, a thrown objects would always pass through a disguised
+; mimic.  A zapped bolt would reveal a mimic, but only hit him if the player
+; were blind.  In many cases the mimic would start chasing you while still
 ; disguised.
 ;
-; I've simplified this.  If 'throws_affect_mimics' is 'true' you can zap and 
-; throw items at a disguised mimic just like any other monster.  If it is 
+; I've simplified this.  If 'throws_affect_mimics' is 'true' you can zap and
+; throw items at a disguised mimic just like any other monster.  If it is
 ; set to 'false' then zaps and thrown items will pass through a disguised mimic
 ;
 */
@@ -56,7 +56,7 @@ namespace
         size_t n = s.find_last_of("\\/");
         return s.substr(0, n+1) + subdir + "\\";
 #else
-        return "";
+        return "./" + subdir + "/";
 #endif
     }
 }
@@ -91,9 +91,9 @@ void Options::deserialize(std::istream& in)
 
 
 GameState::GameState(Random* random, const std::string& filename, bool show_replay, bool start_paused, std::shared_ptr<OutputInterface> output, std::shared_ptr<InputInterfaceEx> input) :
-    m_curses(new OutputShim(output)),
     m_in_replay(true),
-    m_show_replay(show_replay)
+    m_show_replay(show_replay),
+    m_curses(new OutputShim(output))
 {
     std::unique_ptr<std::istream> in(new std::ifstream(filename, std::ios::binary | std::ios::in));
     if (!*in) {
@@ -137,7 +137,7 @@ GameState::GameState(Random* random, const std::string& filename, bool show_repl
     std::unique_ptr<StreamInput> replay_interface(new StreamInput(std::move(in), version, start_paused));
     replay_interface->OnReplayEnd(std::bind(&GameState::set_replay_end, this));
     replay_interface->OnFastPlayChanged(std::bind(&GameState::set_fast_play, this, _1));
-    
+
     //Handles switching to keyboard input when replay is finished
     std::unique_ptr<ComboInput> combo(new ComboInput(std::move(replay_interface), input));
 
@@ -322,7 +322,7 @@ void GameState::set_replay_end()
 
 bool GameState::fast_play() const
 {
-    return m_fast_play_enabled; 
+    return m_fast_play_enabled;
 }
 
 void GameState::set_fast_play(bool enable)
@@ -448,4 +448,3 @@ int GameState::max_level()
 {
     return m_max_level;
 }
-

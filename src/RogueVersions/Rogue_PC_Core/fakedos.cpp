@@ -1,7 +1,7 @@
 //routines for writing a fake dos
 
 #include <ctype.h>
-
+#include <cstring>
 #include "rogue.h"
 #include "game_state.h"
 #include "output_shim.h"

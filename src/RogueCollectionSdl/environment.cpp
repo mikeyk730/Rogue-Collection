@@ -3,6 +3,8 @@
 #include <fstream>
 #include <set>
 #include <map>
+#include <climits>
+#include <cstring> //todo:mdk move to cross plat
 #include "environment.h"
 #include "utility.h"
 #include "args.h"
@@ -29,6 +31,17 @@ namespace
     void WriteEnvPc(std::ostringstream& ss, std::string key, const std::string & value)
     {
         ss << key << "=" << value << ';';
+    }
+
+    int SetEnvVariable(const char* envstr) //todo:mdk move to cross platform file
+    {
+#ifdef __linux__
+        char* mem = (char*)malloc(sizeof(envstr));
+        strcpy(mem, envstr);
+        return putenv(mem);
+#elif _WIN32
+        return _putenv(envstr);
+#endif
     }
 }
 
@@ -173,7 +186,7 @@ bool Environment::WriteToOs(bool for_unix)
         else
             WriteEnvPc(ss, i->first, i->second);
     }
-    if (_putenv(ss.str().c_str()) != 0)
+    if (SetEnvVariable(ss.str().c_str()) != 0)
         return false;
 
     std::string seed;
@@ -182,7 +195,7 @@ bool Environment::WriteToOs(bool for_unix)
 
     ss.str("");
     ss << "SEED=" << seed;    
-    return (_putenv(ss.str().c_str()) == 0);
+    return (SetEnvVariable(ss.str().c_str()) == 0);
 }
 
 int Environment::Lines() const

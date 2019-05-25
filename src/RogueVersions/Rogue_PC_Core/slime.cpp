@@ -61,7 +61,7 @@ int new_slime(Monster *slime)
 bool plop_monster(int r, int c, Coord *cp)
 {
     int y, x;
-    bool appear = 0;
+    int appear = 0;
     byte ch;
 
     for (y = r - 1; y <= r + 1; y++)
@@ -76,7 +76,7 @@ bool plop_monster(int r, int c, Coord *cp)
             {
                 if (ch == SCROLL && is_scare_monster_scroll(find_obj(pos, false)))
                     continue;
-                if (rnd(++appear) == 0) { 
+                if (rnd(++appear) == 0) {
                     *cp = pos;
                 }
             }

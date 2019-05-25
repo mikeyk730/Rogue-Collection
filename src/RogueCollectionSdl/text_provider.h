@@ -25,7 +25,7 @@ private:
     SDL_Rect GetTextRect(unsigned char ch, int i);
 
     TextConfig m_cfg;
-    SDL_Texture* m_text = 0;
+    SDL_Texture* m_text = nullptr;
     Coord m_text_dimensions = { 0, 0 };
     std::map<int, int> m_attr_index;
 };
@@ -44,7 +44,7 @@ private:
 
     TextConfig m_cfg;
     SDL_Renderer* m_renderer;
-    SDL::Scoped::Surface m_text = 0;
+    SDL::Scoped::Surface m_text;
     Coord m_text_dimensions = { 0, 0 };
     std::map<int, SDL_Texture*> m_textures;
     std::vector<SDL_Color> m_colors;

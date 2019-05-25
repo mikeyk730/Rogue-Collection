@@ -97,8 +97,15 @@ std::string Armor::InventoryName() const
     }
 
     if (is_known() || game->wizard().reveal_items())
-        chopmsg(pb, "%s %s", "%s %s [%s %d]", num(get_default_class(m_which) - armor_class(), 0, (char)ARMOR),
-            TypeName().c_str(), desc.c_str(), armor);
+        chopmsg(
+            pb,
+            "%s %s", "%s %s [%s %d]",
+            num(get_default_class(m_which) - armor_class(),
+            0,
+            (char)ARMOR),
+            TypeName().c_str(),
+            desc.c_str(),
+            armor);
     else
         sprintf(pb, "%s", TypeName().c_str());
 

@@ -4,6 +4,10 @@
 #include <display_interface.h>
 #include "sdl_rogue.h"
 #include "window_sizer.h"
+#ifdef __linux__ //todo:mdk fix
+#include "text_provider.h"
+#include "tile_provider.h"
+#endif
 
 struct Environment;
 struct ITextProvider;

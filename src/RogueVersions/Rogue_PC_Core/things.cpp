@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
-
+#include <cstring>
 #include "random.h"
 #include "game_state.h"
 #include "things.h"
@@ -209,7 +209,7 @@ private:
         return GenerateScrollName();
     }
 };
-    
+
 ScrollFactory s_scrolls;
 
 void LoadScrolls(const std::string & filename)
@@ -237,7 +237,7 @@ int NumScrollTypes()
     return s_scrolls.NumTypes();
 }
 
-static char *rainbow[] =
+static const char *rainbow[] =
 {
     "amber",
     "aquamarine",
@@ -268,7 +268,7 @@ static char *rainbow[] =
     "yellow"
 };
 
-#define NCOLORS (sizeof(rainbow)/sizeof(char *))
+#define NCOLORS int(sizeof(rainbow)/sizeof(char *))
 
 struct PotionFactory : public ItemFactory
 {
@@ -291,7 +291,7 @@ struct PotionFactory : public ItemFactory
             { "P_NOP", ITEM_MAP_ENTRY(ThirstQuenching) },
         };
 
-        for (int i = 0; i < NCOLORS; i++) 
+        for (int i = 0; i < NCOLORS; i++)
             used[i] = false;
     }
 
@@ -338,7 +338,7 @@ int NumPotionTypes()
     return s_potions.NumTypes();
 }
 
-static char *wood[] =
+static const char *wood[] =
 {
     "avocado wood",
     "balsa",
@@ -375,9 +375,9 @@ static char *wood[] =
     "zebrawood"
 };
 
-#define NWOOD (sizeof(wood)/sizeof(char *))
+#define NWOOD int(sizeof(wood)/sizeof(char *))
 
-static char *metal[] =
+static const char *metal[] =
 {
     "aluminum",
     "beryllium",
@@ -403,7 +403,7 @@ static char *metal[] =
     "zinc"
 };
 
-#define NMETAL (sizeof(metal)/sizeof(char *))
+#define NMETAL int(sizeof(metal)/sizeof(char *))
 
 
 struct StickFactory : public ItemFactory
@@ -464,7 +464,7 @@ private:
         }
         return str;
     }
-    
+
     virtual std::string GetKind() override
     {
         return type;
@@ -498,7 +498,7 @@ int NumStickTypes()
     return s_sticks.NumTypes();
 }
 
-typedef struct { char *st_name; int st_value; } STONE;
+typedef struct { const char *st_name; int st_value; } STONE;
 static STONE stones[] =
 {
     { "agate",           25 },
@@ -529,7 +529,7 @@ static STONE stones[] =
     { "zircon",          80 }
 };
 
-#define NSTONES (sizeof(stones)/sizeof(STONE))
+#define NSTONES int(sizeof(stones)/sizeof(STONE))
 
 struct RingFactory : public ItemFactory
 {
@@ -551,7 +551,7 @@ struct RingFactory : public ItemFactory
             { "R_STEALTH", ITEM_MAP_ENTRY(Stealth) },
             { "R_SUSTARM", ITEM_MAP_ENTRY(MaintainArmor) },
         };
-        for (int i = 0; i < NSTONES; i++) 
+        for (int i = 0; i < NSTONES; i++)
             used[i] = false;
     }
 
@@ -561,7 +561,7 @@ private:
     virtual std::string GetIdentifier(int* worth)
     {
         int j;
-        do { 
+        do {
             j = rnd(NSTONES);
         } while (used[j]);
 
@@ -609,7 +609,7 @@ struct MagicItem things[NUMTHINGS] =
   {0,  5 }  //stick
 };
 
-static short order[50]; //todo:eliminate static
+//static short order[50]; //todo:eliminate static
 static int line_cnt = 0; //todo:eliminate static
 
 //init_things: Initialize the probabilities for types of things
@@ -651,7 +651,7 @@ void Item::set_as_target_of(Monster * m)
     m->set_destination(&m_position);
 }
 
-void chopmsg(char *s, char *shmsg, char *lnmsg, ...)
+void chopmsg(char *s, const char *shmsg, const char *lnmsg, ...)
 {
     va_list argptr;
     va_start(argptr, lnmsg);
@@ -675,7 +675,7 @@ bool do_drop()
     if ((op = game->hero().get_item("drop", 0)) == NULL)
         return false;
 
-    if (!can_drop(op, true)) 
+    if (!can_drop(op, true))
         return true;
 
     //Take it out of the pack
@@ -918,7 +918,8 @@ int end_line(const char *use)
 //nothing: Set up prbuf so that message for "nothing found" is there
 char *nothing(byte type)
 {
-    char *sp, *tystr;
+    char *sp;
+    const char *tystr;
 
     sprintf(prbuf, "Haven't discovered anything");
     if (in_small_screen_mode()) sprintf(prbuf, "Nothing");
