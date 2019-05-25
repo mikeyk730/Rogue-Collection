@@ -28,15 +28,16 @@ namespace SDL
         SDL_Color cyan()     { return {   0, 170, 170, 255 }; }
         SDL_Color l_cyan()   { return {  25, 255, 255, 255 }; }
         SDL_Color magenta()  { return { 170,   0, 170, 255 }; } //from dosbox
-        SDL_Color l_magenta(){ return { 255,  25, 255, 255 }; } 
+        SDL_Color l_magenta(){ return { 255,  25, 255, 255 }; }
         SDL_Color yellow()   { return { 255, 255,  25, 255 }; } //from dosbox
         SDL_Color brown()    { return { 170,  85,   0, 255 }; } //from dosbox
-        SDL_Color orange()   { return { 234, 118,   2, 255 }; } 
+        SDL_Color orange()   { return { 234, 118,   2, 255 }; }
     }
 }
 
 bool GetLoadPath(std::string& path)
 {
+#ifdef _WIN32
     nfdchar_t *p = NULL;
     nfdresult_t result = NFD_OpenDialog("sav", NULL, &p);
     if (result == NFD_OKAY)
@@ -45,10 +46,11 @@ bool GetLoadPath(std::string& path)
         free(p);
         return true;
     }
+#endif
     return false;
 }
 
-bool GetLoadPath(SDL_Window* window, std::string& path) 
+bool GetLoadPath(SDL_Window* window, std::string& path)
 {
     bool fullscreen = IsFullscreen(window);
     SetFullscreen(window, false);
@@ -59,6 +61,7 @@ bool GetLoadPath(SDL_Window* window, std::string& path)
 
 bool GetSavePath(std::string& path)
 {
+#ifdef _WIN32
     nfdchar_t *p = NULL;
     nfdresult_t result = NFD_SaveDialog("sav", NULL, &p);
     if (result == NFD_OKAY)
@@ -67,10 +70,11 @@ bool GetSavePath(std::string& path)
         free(p);
         return true;
     }
+#endif
     return false;
 }
 
-bool GetSavePath(SDL_Window* window, std::string& path) 
+bool GetSavePath(SDL_Window* window, std::string& path)
 {
     bool fullscreen = IsFullscreen(window);
     SetFullscreen(window, false);
@@ -306,4 +310,3 @@ void DisplayMessage(int type, const std::string& title, const std::string& msg)
     SDL_ShowSimpleMessageBox(type, title.c_str(), msg.c_str(), NULL);
 }
 #endif
-
