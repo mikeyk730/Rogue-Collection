@@ -56,7 +56,7 @@ namespace
         size_t n = s.find_last_of("\\/");
         return s.substr(0, n+1) + subdir + "\\";
 #else
-        return "";
+        return "./" + subdir + "/";
 #endif
     }
 }

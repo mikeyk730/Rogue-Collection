@@ -42,7 +42,7 @@ void sound_beep()
 
 void go_to_sleep(int ms)
 {
-    sleep(ms);
+    usleep(ms * 1000);
 }
 
 bool is_caps_lock_on()

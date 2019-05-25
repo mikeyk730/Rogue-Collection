@@ -4,7 +4,7 @@ SRCROOT  = ..
 BUILDROOT= $(SRCROOT)/../build/
 
 INCLUDES = -I$(SRCROOT)/Shared
-CFLAGS   = -Wall -Werror
+CFLAGS   = -Wall -Werror -fPIC
 
 TARGET   = lib-my-curses.a
 SOURCES  = $(shell echo *.cpp)

@@ -4,7 +4,7 @@ SRCROOT  = ../..
 BUILDROOT= $(SRCROOT)/../build/
 
 INCLUDES = -I$(SRCROOT)/Shared
-CFLAGS   = -Wall -Werror
+CFLAGS   = -Wall -Werror -fPIC
 
 TARGET   = lib-rogue-pc-core.a
 SOURCES  = $(shell echo *.cpp)
