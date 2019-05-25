@@ -121,7 +121,7 @@ SDL::Scoped::Font LoadFont(const std::string& filename, int size)
 {
     SDL::Scoped::Font font(TTF_OpenFont(filename.c_str(), size), TTF_CloseFont);
     if (font == nullptr)
-        throw_error("TTF_OpenFont");
+        throw_error("TTF_OpenFont: Failed to open " + filename);
 
     return font;
 }

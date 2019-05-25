@@ -42,20 +42,21 @@ void RunGame(const std::string& lib, int argc, char** argv, T* r)
         r->PostQuit();
     }
 #else
-    void* handle = dlopen(lib.c_str(), RTLD_LAZY);
+    std::string path = "./" + lib;
+    void* handle = dlopen(path.c_str(), RTLD_LAZY);
     try {
         if (!handle) {
-            throw_error("Couldn't load library: " + lib);
+            throw_error("Couldn't load library: " + lib + "\n" + dlerror());
         }
 
         init_game Init = (init_game)dlsym(handle, "init_game");
         if (!Init) {
-            throw_error("Couldn't load init_game from: " + lib);
+            throw_error("Couldn't load init_game from: " + lib + "\n" + dlerror());
         }
 
         game_main game = (game_main)dlsym(handle, "rogue_main");
         if (!game) {
-            throw_error("Couldn't load rogue_main from: " + lib);
+            throw_error("Couldn't load rogue_main from: " + lib + "\n" + dlerror());
         }
 
         (*Init)(r->Display(), r->Input(), r->GameEnv()->Lines(), r->GameEnv()->Columns());
