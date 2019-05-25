@@ -36,7 +36,7 @@ namespace
     int SetEnvVariable(const char* envstr) //todo:mdk move to cross platform file
     {
 #ifdef __linux__
-        char* mem = (char*)malloc(sizeof(envstr));
+        char* mem = (char*)malloc(strlen(envstr));
         strcpy(mem, envstr);
         return putenv(mem);
 #elif _WIN32
@@ -194,7 +194,7 @@ bool Environment::WriteToOs(bool for_unix)
         return false;
 
     ss.str("");
-    ss << "SEED=" << seed;    
+    ss << "SEED=" << seed;
     return (SetEnvVariable(ss.str().c_str()) == 0);
 }
 
