@@ -5,10 +5,16 @@
 #include <input_interface.h>
 #include <display_interface.h>
 
+#ifdef _WIN32
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
+
 extern "C"
 {
-    __declspec(dllexport) int rogue_main(int argc, char **argv);
-    __declspec(dllexport) void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
+    DLL_EXPORT int rogue_main(int argc, char **argv);
+    DLL_EXPORT void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
     void init_curses(DisplayInterface* screen, InputInterface* input, int lines, int cols);
 
     std::shared_ptr<InputInterfaceEx> s_input;

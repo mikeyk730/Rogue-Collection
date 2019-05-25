@@ -7,9 +7,9 @@
 #define ESCAPE 0x1b
 
 ReplayableInput::ReplayableInput(Environment* current_env, Environment* game_env, const GameConfig& options) :
+    m_options(options),
     m_current_env(current_env),
-    m_game_env(game_env),
-    m_options(options)
+    m_game_env(game_env)
 {
 }
 

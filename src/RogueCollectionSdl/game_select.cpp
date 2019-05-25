@@ -5,11 +5,11 @@
 #include "sdl_utility.h"
 
 GameSelect::GameSelect(SDL_Window * window, SDL_Renderer* renderer, const std::vector<GameConfig>& options, Environment* current_env) :
-    m_window(window), 
+    m_window(window),
     m_renderer(renderer),
-    m_options(options), 
     m_font(LoadFont(GetResourcePath("fonts")+"Px437_IBM_BIOS.ttf", 16)),
     m_logo(LoadImage(GetResourcePath("") + "title3.png", renderer)),
+    m_options(options),
     m_current_env(current_env),
     m_sizer(window, renderer, current_env)
 {
@@ -140,8 +140,8 @@ void GameSelect::RenderText(const std::string& text, Coord p, bool highlight)
 TitleScreen::TitleScreen(SDL_Window * window, SDL_Renderer * renderer, const std::vector<GameConfig>& options, Environment * current_env) :
     m_window(window),
     m_renderer(renderer),
-    m_sizer(window, renderer, current_env),
-    m_title_screen(LoadImage(GetResourcePath("") + "epyx.png", renderer))
+    m_title_screen(LoadImage(GetResourcePath("") + "epyx.png", renderer)),
+    m_sizer(window, renderer, current_env)
 {
 }
 

@@ -1,3 +1,4 @@
+#include <cstring>
 #include <output_interface.h>
 #include <rogue.h>
 #include <io.h>
@@ -459,7 +460,11 @@ void PdCursesOutput::printw(const char *format, ...)
     char dest[1024 * 16];
     va_list argptr;
     va_start(argptr, format);
+#ifdef _WIN32 //todo:mdk cross platform lib
     vsprintf_s(dest, format, argptr);
+#else
+    vsprintf(dest, format, argptr);
+#endif
     va_end(argptr);
 
     addstr(dest);
@@ -524,7 +529,7 @@ void PdCursesOutput::implode()
         pause(IMPLODE_SLEEP);
         for (j = r + 1; j <= er - 1; j++)
         {
-            move(j, c + 1); 
+            move(j, c + 1);
             private_repchr(stdscr, ' ', cinc - 1);
             move(j, ec - cinc + 1);
             private_repchr(stdscr, ' ', cinc - 1);
@@ -649,4 +654,3 @@ void PdCursesOutput::ApplyCursor()
         return;
     ::curs_set(m_cursor);
 }
-

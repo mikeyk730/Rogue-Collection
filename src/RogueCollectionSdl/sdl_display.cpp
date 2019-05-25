@@ -77,8 +77,8 @@ SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* 
     m_renderer(renderer),
     m_current_env(current_env),
     m_game_env(game_env),
-    m_options(options),
     m_input(input),
+    m_options(options),
     m_sizer(window, renderer, current_env)
 {
     std::string title(SdlRogue::kWindowTitle);
