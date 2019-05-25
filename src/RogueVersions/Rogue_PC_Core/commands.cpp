@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "commands.h"
 #include "random.h"
 #include "game_state.h"
@@ -80,7 +81,7 @@ bool do_id_trap()
         Coord lookat = game->hero().position() + d;
         if (game->level().get_tile(lookat) != TRAP)
             msg("no trap there.");
-        else 
+        else
             msg("you found %s", tr_name(game->level().get_trap_type(lookat)));
     }
     return false;

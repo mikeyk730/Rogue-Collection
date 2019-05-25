@@ -1,4 +1,5 @@
 //Cursor motion stuff to simulate a "no refresh" version of curses
+#include <cstring>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -24,7 +25,7 @@ typedef uint32_t chartype;
 
 #define MAXATTR  17
 
-namespace 
+namespace
 {
     const byte color_attr[] =
     {
@@ -499,7 +500,7 @@ void ScreenOutput::repchr(int chr, int cnt)
     disable_render = true;
 
     Region r = { m_col, m_row, m_col + cnt - 1, m_row };
-    while (cnt-- > 0) { 
+    while (cnt-- > 0) {
         PutCharacter(chr, m_attr, true);
         m_col++;
     }

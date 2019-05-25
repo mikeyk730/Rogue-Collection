@@ -2,6 +2,7 @@
 //rings.c     1.4 (AI Design) 12/13/84
 #include <stdio.h>
 #include <sstream>
+#include <cstring>
 #include "rogue.h"
 #include "random.h"
 #include "agent.h"
@@ -26,7 +27,7 @@ char ring_buf[6];
 //ring_eat: How much food does this ring use up?
 int ring_eat(int hand)
 {
-    if (game->hero().get_ring(hand) == NULL) 
+    if (game->hero().get_ring(hand) == NULL)
         return 0;
     return game->hero().get_ring(hand)->GetFoodCost();
 }
@@ -109,7 +110,7 @@ int Ring::Worth() const
     if (UsesBonuses()) {
         if (get_ring_level() > 0)
             worth += get_ring_level() * 100;
-        else 
+        else
             worth = 10;
     }
     if (!is_known())

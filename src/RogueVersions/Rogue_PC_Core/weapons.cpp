@@ -2,7 +2,7 @@
 //weapons.c   1.4 (AI Design) 12/22/84
 
 #include <stdio.h>
-
+#include <cstring>
 #include "rogue.h"
 #include "random.h"
 #include "game_state.h"
@@ -85,7 +85,7 @@ bool do_throw_item()
     if (!can_drop(obj, true))
         return true;
 
-    //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.  
+    //Get rid of the thing.  If it is a non-multiple item object, or if it is the last thing, just drop it.
     //Otherwise, create a new item with a count of one.
     if (obj->m_count <= 1) {
         game->hero().m_pack.remove(obj);
@@ -143,7 +143,7 @@ void do_motion(Item *obj, Coord delta)
                 game->screen().standend();
                 tick_pause();
             }
-            else 
+            else
                 under = UNSET;
             continue;
         }
@@ -233,17 +233,17 @@ int fallpos(Item *obj, Coord *newpos)
         for (int x = obj->position().x - 1; x <= obj->position().x + 1; x++)
         {
             Coord pos = { x, y };
-            //check to make certain the spot is empty, if it is, put the object there, set it in the 
+            //check to make certain the spot is empty, if it is, put the object there, set it in the
             //level list and re-draw the room if he can see it
-            if (pos == game->hero().position() || offmap(pos)) 
+            if (pos == game->hero().position() || offmap(pos))
                 continue;
 
             int ch = game->level().get_tile(pos);
             if (ch == FLOOR || ch == PASSAGE)
             {
-                if (rnd(++cnt) == 0) { 
-                    newpos->y = y; 
-                    newpos->x = x; 
+                if (rnd(++cnt) == 0) {
+                    newpos->y = y;
+                    newpos->x = x;
                 }
                 continue;
             }

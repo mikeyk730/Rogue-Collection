@@ -1,5 +1,6 @@
 #include <sstream>
 #include <algorithm>
+#include <cstring>
 #include "random.h"
 #include "agent.h"
 #include "main.h"

@@ -85,7 +85,7 @@ void str_attr(char *str);
 //key_state:
 void handle_key_state();
 
-char *noterse(char *str);
+const char *noterse(char *str);
 
 template <typename T>
 std::ostream& write(std::ostream& out, T t) {

@@ -2,7 +2,7 @@
 //misc.c       1.4             (A.I. Design)   12/14/84
 #include <sstream>
 #include <stdio.h>
-
+#include <cstring>
 #include "random.h"
 #include "game_state.h"
 #include "io.h"
@@ -92,7 +92,7 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
 {
     Coord hero_pos = game->hero().position();
 
-    //we can reveal the 8 directions around the player if he has sight, but 
+    //we can reveal the 8 directions around the player if he has sight, but
     //only the player's position if he's blind
     if (!game->hero().is_blind() && pos == hero_pos) {
         return;
@@ -100,7 +100,7 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
     else if (game->hero().is_blind() && pos != hero_pos) {
         return;
     }
-    
+
     bool is_passage = game->level().is_passage(pos);
     bool is_maze = game->level().is_maze(pos);
     int passage_number = game->level().get_passage_num(pos);
@@ -137,7 +137,7 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
         }
         else
         {
-            if (wakeup) 
+            if (wakeup)
                 wake_monster(pos);
             if (monster->tile_beneath() != ' ' || (!game->hero().room()->is_dark() && !game->hero().is_blind()))
                 monster->reload_tile_beneath();
@@ -146,14 +146,14 @@ void reveal_position(const Coord pos, const bool wakeup, int* passcount)
         }
     }
 
-    //Draw the tile.  
+    //Draw the tile.
     if (game->level().use_standout(pos, tile))
         game->screen().standout();
     game->screen().add_tile(pos, tile);
     game->screen().standend();
 
     // determine whether we need to stop a running player
-    if (game->in_smart_run_mode()) 
+    if (game->in_smart_run_mode())
     {
         const int ey = hero_pos.y + 1;
         const int ex = hero_pos.x + 1;
@@ -290,7 +290,7 @@ int is_in_use(Item *obj)
 {
     if (obj == NULL)
         return false;
-    if (obj == game->hero().get_current_armor() || obj == game->hero().get_current_weapon() || 
+    if (obj == game->hero().get_current_armor() || obj == game->hero().get_current_weapon() ||
         obj == game->hero().get_ring(LEFT) || obj == game->hero().get_ring(RIGHT))
     {
         msg("That's already in use");

@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
-
+#include <cstring>
 #include "random.h"
 #include "game_state.h"
 #include "things.h"
@@ -209,7 +209,7 @@ private:
         return GenerateScrollName();
     }
 };
-    
+
 ScrollFactory s_scrolls;
 
 void LoadScrolls(const std::string & filename)
@@ -291,7 +291,7 @@ struct PotionFactory : public ItemFactory
             { "P_NOP", ITEM_MAP_ENTRY(ThirstQuenching) },
         };
 
-        for (int i = 0; i < NCOLORS; i++) 
+        for (int i = 0; i < NCOLORS; i++)
             used[i] = false;
     }
 
@@ -464,7 +464,7 @@ private:
         }
         return str;
     }
-    
+
     virtual std::string GetKind() override
     {
         return type;
@@ -551,7 +551,7 @@ struct RingFactory : public ItemFactory
             { "R_STEALTH", ITEM_MAP_ENTRY(Stealth) },
             { "R_SUSTARM", ITEM_MAP_ENTRY(MaintainArmor) },
         };
-        for (int i = 0; i < NSTONES; i++) 
+        for (int i = 0; i < NSTONES; i++)
             used[i] = false;
     }
 
@@ -561,7 +561,7 @@ private:
     virtual std::string GetIdentifier(int* worth)
     {
         int j;
-        do { 
+        do {
             j = rnd(NSTONES);
         } while (used[j]);
 
@@ -672,10 +672,10 @@ bool do_drop()
         return true;
     }
 
-    if ((op = get_item("drop", 0)) == NULL) 
+    if ((op = get_item("drop", 0)) == NULL)
         return false;
 
-    if (!can_drop(op, true)) 
+    if (!can_drop(op, true))
         return true;
 
     //Take it out of the pack

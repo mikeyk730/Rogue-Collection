@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdarg.h>
-
+#include <cstring>
 #include "random.h"
 #include "game_state.h"
 #include "io.h"
@@ -80,9 +80,9 @@ void reset_msg_position()
 void msg(const char *format, ...)
 {
     //if the string is "", just clear the line
-    if (*format == '\0') { 
-        game->screen().move(0, 0); 
-        game->screen().clrtoeol(); 
+    if (*format == '\0') {
+        game->screen().move(0, 0);
+        game->screen().clrtoeol();
         reset_msg_position();
         return;
     }
@@ -160,12 +160,12 @@ void endmsg()
     game->log("msg", msgbuf);
     strcpy(game->last_message, msgbuf);
     if (game->msg_position) {
-        look(false); 
+        look(false);
         game->screen().move(0, game->msg_position);
-        more(" More "); 
+        more(" More ");
     }
     //All messages should start with uppercase, except ones that start with a pack addressing character
-    if (islower(msgbuf[0]) && msgbuf[1] != ')') 
+    if (islower(msgbuf[0]) && msgbuf[1] != ')')
         msgbuf[0] = toupper(msgbuf[0]);
     putmsg(0, msgbuf);
     game->msg_position = newpos;
@@ -211,15 +211,15 @@ void more(const char *msg)
     int ch;
     while ((ch = readchar()) != ' ' && !(game->options.dir_key_clears_more() && is_direction(ch)))
     {
-        //if (covered && morethere) { 
-        //    game->screen().move(x, y); 
-        //    game->screen().addstr(mbuf); 
-        //    morethere = false; 
+        //if (covered && morethere) {
+        //    game->screen().move(x, y);
+        //    game->screen().addstr(mbuf);
+        //    morethere = false;
         //}
         //else if (covered) {
-        //    game->screen().move(x, y); 
+        //    game->screen().move(x, y);
         //    game->screen().standout();
-        //    game->screen().addstr(msg); 
+        //    game->screen().addstr(msg);
         //    game->screen().standend();
         //    morethere = true;
         //}
@@ -470,13 +470,21 @@ int getinfo_impl(char *str, int size)
     return ret;
 }
 
+void CopyString(char* dest, int n, const char* src) //todo:mdk cross platform lib
+{
+#ifdef __linux__
+    strncpy(dest, src, n);
+#elif _WIN32
+    strcpy_s(dest, n, src);
+#endif
+}
 
 int getinfo(char *str, int size)
 {
     game->screen().cursor(true);
     std::string s = game->input_interface().GetNextString(size-1);
     game->log("input", "GetNextString: " + s);
-    strcpy_s(str, size, s.c_str());
+    CopyString(str, size, s.c_str());
     game->screen().cursor(false);
     return s[0];
 }
@@ -629,7 +637,7 @@ void handle_key_state()
 */
 }
 
-char *noterse(char *str)
+const char *noterse(char *str)
 {
     return (short_msgs() ? "" : str);
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include <list>
 #include <coord.h>
 
@@ -39,7 +40,7 @@ struct Agent
     virtual int calculate_strength() const;
     virtual int calculate_max_strength() const;
     void restore_strength();
-    
+
     int experience() const;
     virtual void gain_experience(int exp);
 
@@ -59,7 +60,7 @@ struct Agent
     bool attack(Agent *defender, Item *weapon, bool hurl);
 
     void set_as_target_of(Monster* m);
-    
+
     //Structure describing a fighting being
     struct Stats
     {
@@ -80,7 +81,7 @@ private:
     Room *m_room = 0;                 //Current room for thing
 public:
     std::list<Item*> m_pack;          //What the thing is carrying
-    
+
     bool m_invulnerable = false;
 
 private:

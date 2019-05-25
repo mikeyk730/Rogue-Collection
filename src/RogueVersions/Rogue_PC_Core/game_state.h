@@ -51,14 +51,14 @@ public:
 
     std::string get_environment(const std::string& key) const;
     void set_environment(const std::string& key, const std::string& value);
-    
+
     //save environment to replay file
-    void Options::serialize(std::ostream& savefile);
+    void serialize(std::ostream& savefile);
     //load environment to replay file
     void deserialize(std::istream& savefile);
 
 private:
-    std::map<std::string, std::string> m_environment; //customizable environment strings 
+    std::map<std::string, std::string> m_environment; //customizable environment strings
 };
 
 struct GameState
@@ -79,7 +79,7 @@ struct GameState
     OutputShim& screen();
     Level& level();
     Hero& hero();
-    
+
     Cheats& wizard();
 
     bool in_replay() const;
@@ -148,7 +148,7 @@ private:
     std::unique_ptr<OutputShim> m_curses;
     std::unique_ptr<Level> m_level;
     std::unique_ptr<Hero> m_hero;
-    
+
     std::unique_ptr<std::ofstream> m_log_stream;
     std::vector<std::string> m_monster_data;
 

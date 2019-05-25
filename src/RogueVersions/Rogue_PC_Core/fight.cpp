@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cctype>
+#include <cstring>
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
@@ -64,7 +65,7 @@ char *prname(const char *who, bool upper)
 //hit: Print a message to indicate a successful hit
 void display_hit_msg(const char *er, const char *ee)
 {
-    char *s;
+    const char *s;
 
     addmsg(prname(er, true));
     switch ((short_msgs()) ? 1 : rnd(4))
@@ -82,7 +83,7 @@ void display_hit_msg(const char *er, const char *ee)
 //display_miss_msg: Print a message to indicate a poor swing
 void display_miss_msg(const char *er, const char *ee)
 {
-    char *s;
+    const char *s;
 
     addmsg(prname(er, true));
     switch ((short_msgs()) ? 1 : rnd(4))

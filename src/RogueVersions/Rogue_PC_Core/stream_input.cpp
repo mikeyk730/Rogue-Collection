@@ -1,18 +1,22 @@
 #include <sstream>
+#include <cstring>
 #include <cassert>
 #include <cstdio>
+#ifdef _WIN32
 #include <conio.h>
+#endif
 #include <thread>
+#include <coord.h>
 #include "io.h"
 #include "stream_input.h"
 #include "rogue.h"
-#include <coord.h>
 #include "mach_dep.h"
 
 namespace
 {
     int ThreadProc(std::shared_ptr<StreamInput::ThreadData> shared_data)
     {
+#ifdef _WIN32 //todo:mdk support linux
         for (;;) {
             do {
                 std::unique_lock<std::mutex> lock(shared_data->m_mutex);
@@ -32,6 +36,7 @@ namespace
                 break;
             }
         }
+#endif
         return 0;
     }
 }

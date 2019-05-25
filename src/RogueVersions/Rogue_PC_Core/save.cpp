@@ -1,6 +1,7 @@
 //save and restore routines
 //save.c      1.32    (A.I. Design)   12/13/84
 
+#include <cstring>
 #include "rogue.h"
 #include "game_state.h"
 #include "save.h"
