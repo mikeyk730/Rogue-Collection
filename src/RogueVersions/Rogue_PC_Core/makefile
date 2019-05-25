@@ -3,9 +3,9 @@ SHELL    = /bin/sh
 SRCROOT  = ../..
 
 INCLUDES = -I$(SRCROOT)/Shared
-CFLAGS   = -Wall -Werror -shared -fPIC
+CFLAGS   = -Wall -Werror
 
-TARGET   = lib-rogue-pc-core.so
+TARGET   = lib-rogue-pc-core.a
 SOURCES  = $(shell echo *.cpp)
 HEADERS  = $(shell echo *.h)
 OBJECTS  = $(SOURCES:.cpp=.o)

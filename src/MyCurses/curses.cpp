@@ -6,6 +6,7 @@ extern "C" {
 #include <vector>
 #include <algorithm>
 #include <cstdarg>
+#include <cstring>
 #include <display_interface.h>
 #include "input_interface.h"
 
@@ -156,7 +157,7 @@ int __window::attroff(chtype ch)
 {
     if ((ch | A_COLOR) == (attr | A_COLOR))
     {
-        attr &= ~A_COLOR; //clear the color 
+        attr &= ~A_COLOR; //clear the color
     }
     return OK;
 }
@@ -171,7 +172,7 @@ int __window::attron(chtype ch)
 {
     if ((ch | A_COLOR) && (attr | A_COLOR))
     {
-        attr &= ~A_COLOR; //clear the old color 
+        attr &= ~A_COLOR; //clear the old color
     }
     attr |= (ch & A_COLOR);
     return OK;
@@ -293,7 +294,7 @@ int __window::chgat(int n, attr_t attr, short color, const void * opts)
         n = COLS - col;
 
     for (int c = col; c < col + n; ++c) {
-        chtype ch = (get_data(row, c)&A_CHARTEXT | attr | COLOR_PAIR(color));
+        chtype ch = ((get_data(row, c)&A_CHARTEXT) | attr | COLOR_PAIR(color));
         set_data(row, c, ch);
     }
 
@@ -328,7 +329,7 @@ int __window::nodelay(bool enable)
 int __window::refresh()
 {
     std::vector<Region> changed_regions;
-    Region region = window_region();
+    //Region region = window_region();
 
     for (int r = 0; r < dimensions.y; ++r) {
         if (memcmp(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype)) != 0) {
@@ -344,11 +345,11 @@ int __window::refresh()
     }
 
     if (s_screen) {
-        if (changed_regions.size() == LINES) {
+        if (changed_regions.size() == (size_t)LINES) {
             s_screen->UpdateRegion(curscr->m_data);
         }
         else {
-            for (int i = 0; i < changed_regions.size(); ++i) {
+            for (size_t i = 0; i < changed_regions.size(); ++i) {
                 s_screen->UpdateRegion(curscr->m_data, changed_regions[i]);
             }
         }

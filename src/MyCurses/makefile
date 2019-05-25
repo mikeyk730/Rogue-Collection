@@ -1,11 +1,11 @@
 CC       = g++
 SHELL    = /bin/sh
-SRCROOT  = ../..
+SRCROOT  = ..
 
-INCLUDES = -I$(SRCROOT)/Shared -I$(SRCROOT)/MyCurses -I$(SRCROOT)/RogueVersions/Rogue_PC_Core
-CFLAGS   = -Wall -Werror -shared -fPIC
+INCLUDES = -I$(SRCROOT)/Shared
+CFLAGS   = -Wall -Werror
 
-TARGET   = lib-rogue-pc-1-48.so
+TARGET   = lib-my-curses.a
 SOURCES  = $(shell echo *.cpp)
 HEADERS  = $(shell echo *.h)
 OBJECTS  = $(SOURCES:.cpp=.o)
