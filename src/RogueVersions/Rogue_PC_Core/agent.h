@@ -30,6 +30,7 @@ struct Agent
 {
     Agent();
     Agent(const Agent&) = delete;
+    virtual ~Agent();
 
     virtual std::string get_name() = 0;
 

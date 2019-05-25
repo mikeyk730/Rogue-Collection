@@ -309,11 +309,10 @@ void EnchantWeapon::Read()
 
 void CreateMonster::Read()
 {
-    Agent* monster;
     Coord position;
 
     if (plop_monster(game->hero().position().y, game->hero().position().x, &position)) {
-        monster = Monster::CreateMonster(randmonster(false, game->get_level()), &position, game->get_level());
+        Monster::CreateMonster(randmonster(false, game->get_level()), &position, game->get_level());
     }
     else
         ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");

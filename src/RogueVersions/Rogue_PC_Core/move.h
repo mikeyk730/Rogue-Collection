@@ -20,7 +20,7 @@ void door_open(Room *room);
 //handle_trap: The guy stepped on a trap.... Make him pay.
 int handle_trap(Coord tc);
 
-void descend(char *mesg);
+void descend(const char *mesg);
 
 //rndmove: Move in a random direction if the monster/person is confused
 void rndmove(Agent *who, Coord *newmv);

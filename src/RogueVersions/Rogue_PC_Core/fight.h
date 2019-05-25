@@ -29,7 +29,7 @@ int str_plus(unsigned int str);
 int add_dam(unsigned int str);
 
 //display_throw_msg: A projectile hit or missed a monster
-void display_throw_msg(Item *weapon, const char *mname, char *does, char *did);
+void display_throw_msg(Item *weapon, const char *mname, const char *does, const char *did);
 
 //remove: Remove a monster from the screen
 void remove_monster(Monster* monster, bool waskill);

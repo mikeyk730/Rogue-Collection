@@ -28,8 +28,8 @@
 //correctly made obsolete.
 static struct init_weps
 {
-    char *iw_dam;   //Damage when wielded
-    char *iw_hrl;   //Damage when thrown
+    const char *iw_dam;   //Damage when wielded
+    const char *iw_hrl;   //Damage when thrown
     char iw_launch; //Launching weapon
     int iw_flags;   //Miscellaneous flags
 } init_dam[MAXWEAPONS + 1] =

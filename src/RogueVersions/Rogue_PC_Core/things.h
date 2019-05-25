@@ -36,7 +36,7 @@ void LoadArmor(const std::string& filename);
 //init_things: Initialize the probabilities for types of things
 void init_things();
 
-void chopmsg(char *s, char *shmsg, char *lnmsg, ...);
+void chopmsg(char *s, const char *shmsg, const char *lnmsg, ...);
 
 //do_drop: Put something down
 bool do_drop();

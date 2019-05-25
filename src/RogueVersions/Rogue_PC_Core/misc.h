@@ -3,7 +3,7 @@
 #include <coord.h>
 
 //tr_name: Print the name of a trap
-char *tr_name(byte type);
+const char *tr_name(byte type);
 
 //look: A quick glance all around the player
 void look(bool wakeup);

@@ -78,7 +78,7 @@ void score(int amount, int flags, char monst)
     game->screen().cursor(true);
     struct LeaderboardEntry his_score, top_ten[TOPSCORES];
     int rank = 0;
-    char response = ' ';
+    //char response = ' ';
     const int LINES = game->screen().lines();
 
     if (amount || flags || monst)
@@ -175,7 +175,7 @@ void pr_scores(int newrank, struct LeaderboardEntry *top10)
     int i;
     int curl;
     char dthstr[30];
-    char *altmsg;
+    const char *altmsg;
 
     const int COLS = game->screen().columns();
 

@@ -69,7 +69,7 @@ bool is_passage_or_door(Coord p)
     return (game->level().is_passage(p) || game->level().get_tile(p) == DOOR);
 }
 
-bool continue_vertical() 
+bool continue_vertical()
 {
     int dy;
 
@@ -304,7 +304,6 @@ void door_open(Room *room)
 int handle_trap(Coord tc)
 {
     byte tr;
-    const int COLS = game->screen().columns();
 
     game->cancel_repeating_cmd();
     game->stop_run_cmd();
@@ -377,7 +376,7 @@ int handle_trap(Coord tc)
     return tr;
 }
 
-void descend(char *mesg)
+void descend(const char *mesg)
 {
     game->next_level();
     if (*mesg == 0) msg(" ");

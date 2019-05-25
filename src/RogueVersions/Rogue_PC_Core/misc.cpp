@@ -30,7 +30,7 @@
 const int MACROSZ = 41;
 
 //tr_name: Print the name of a trap
-char *tr_name(byte type)
+const char *tr_name(byte type)
 {
     switch (type)
     {
@@ -341,28 +341,28 @@ bool find_dir(byte ch, Coord *cp)
     gotit = true;
     switch (ch)
     {
-    case 'h': case'H':
+    case 'h': case 'H':
         cp->y = 0; cp->x = -1;
         break;
-    case 'j': case'J':
+    case 'j': case 'J':
         cp->y = 1; cp->x = 0;
         break;
-    case 'k': case'K':
+    case 'k': case 'K':
         cp->y = -1; cp->x = 0;
         break;
-    case 'l': case'L':
+    case 'l': case 'L':
         cp->y = 0; cp->x = 1;
         break;
-    case 'y': case'Y':
+    case 'y': case 'Y':
         cp->y = -1; cp->x = -1;
         break;
-    case 'u': case'U':
+    case 'u': case 'U':
         cp->y = -1; cp->x = 1;
         break;
-    case 'b': case'B':
+    case 'b': case 'B':
         cp->y = 1; cp->x = -1;
         break;
-    case 'n': case'N':
+    case 'n': case 'N':
         cp->y = 1; cp->x = 1;
         break;
     default:

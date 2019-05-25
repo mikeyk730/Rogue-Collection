@@ -126,9 +126,10 @@ std::string Monster::get_name()
 }
 
 bool Monster::is_monster_confused_this_turn() const {
-    return ((is_confused() && rnd(5) != 0) ||
+    return (
+        (is_confused() && rnd(5) != 0) ||
         // Phantoms are slightly confused all of the time, and bats are quite confused all the time
-        m_confused_chance && rnd(m_confused_chance) == 0);
+        (m_confused_chance && rnd(m_confused_chance) == 0));
 }
 
 void Monster::reveal_disguise() {
@@ -293,8 +294,8 @@ Monster* Monster::do_chase() //todo: understand
         else
         {
             tempdest = *m_destination;
-            //For monsters which can fire bolts at the poor hero, we check to see if 
-            // (a) the hero is on a straight line from it, and 
+            //For monsters which can fire bolts at the poor hero, we check to see if
+            // (a) the hero is on a straight line from it, and
             // (b) that it is within shooting distance, but outside of striking range.
             if ((shoots_fire() || shoots_ice()) &&
                 (position().y == game->hero().position().y || position().x == game->hero().position().x || abs(position().y - game->hero().position().y) == abs(position().x - game->hero().position().x)) &&
@@ -393,7 +394,7 @@ void Monster::do_screen_update(Coord next_position)
     {
         if (game->level().use_standout(next_position, m_disguise))
             game->screen().standout();
-        //mdk:tile is fetched from screen so a detected monster doesn't reveal level 
+        //mdk:tile is fetched from screen so a detected monster doesn't reveal level
         set_tile_beneath(game->screen().mvinch(next_position));
         game->screen().add_tile(next_position, m_disguise);
     }
@@ -584,13 +585,14 @@ bool Monster::freeze_attack()
 bool Monster::drain_strength_attack()
 {
     //Rattlesnakes have poisonous bites
-    if (!save(VS_POISON))
+    if (!save(VS_POISON)) {
         if (game->hero().adjust_strength(-1)) {
             msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
             return true;
         }
         else
             msg("a bite momentarily weakens you");
+    }
 
     return false;
 }
@@ -772,7 +774,7 @@ Monster* Monster::attack_player()
         }
 
         // mdk:bugfix: Originally there were no messages when the ice monster missed.
-        // I think this goes back to v1.1 when ice monsters didn't have a regular 
+        // I think this goes back to v1.1 when ice monsters didn't have a regular
         // attack
         if (!no_fight_msg()) {
             display_miss_msg(name.c_str(), NULL);

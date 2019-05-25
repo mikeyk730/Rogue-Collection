@@ -146,6 +146,10 @@ Agent::Agent()
 {
 }
 
+Agent::~Agent()
+{
+}
+
 void Agent::calculate_roll_stats(Agent *defender, Item *weapon, bool hurl,
     int* hit_plus, std::string* damage_string, int* damage_plus)
 {

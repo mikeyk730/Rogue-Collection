@@ -33,7 +33,7 @@ int ring_eat(int hand)
 }
 
 //ring_num: Print ring bonuses
-char *ring_num(const Ring *obj)
+const char *ring_num(const Ring *obj)
 {
     if (!obj->is_known() && !game->wizard().reveal_items())
         return "";
