@@ -1,6 +1,7 @@
 #include <mutex>
 #include <deque>
 #include <vector>
+#include <condition_variable>
 #include <input_interface.h>
 #include "game_config.h"
 

@@ -20,6 +20,7 @@ class FontProvider : public ITileProvider
 {
 public:
     FontProvider(const QFont& font);
+    virtual ~FontProvider() override;
     virtual QSize TileSize() const override;
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) override;
 
@@ -35,6 +36,7 @@ class TileProvider : public ITileProvider
 {
 public:
     TileProvider(const TileConfig& config);
+    virtual ~TileProvider() override;
     virtual QSize TileSize() const override;
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) override;
 
@@ -52,6 +54,7 @@ class TextProvider : public ITileProvider
 {
 public:
     TextProvider(const TextConfig& config);
+    virtual ~TextProvider() override;
     virtual QSize TileSize() const override;
     virtual void PaintTile(QPainter* painter, QRect r, int ch, int color) override;
 private:

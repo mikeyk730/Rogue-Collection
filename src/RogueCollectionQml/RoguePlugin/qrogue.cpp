@@ -42,6 +42,7 @@
 #include <QCoreApplication>
 #include <sstream>
 #include <fstream>
+#include <thread>
 #include <cstdio>
 #include "qrogue.h"
 #include "qrogue_input.h"
@@ -50,12 +51,14 @@
 #include "environment.h"
 #include "run_game.h"
 #include "game_config.h"
+#include "tile_provider.h"
 
 const unsigned char QRogue::kSaveVersion = 2;
 
 QRogue::QRogue(QQuickItem *parent)
     : QQuickPaintedItem(parent),
-      config_()
+      config_(),
+      thread_exited_(false)
 {
     connect(this, SIGNAL(render()), this, SLOT(update()), Qt::QueuedConnection);
     connect(this, SIGNAL(soundEvent(const QString&)), this, SLOT(playSound(const QString&)), Qt::QueuedConnection);

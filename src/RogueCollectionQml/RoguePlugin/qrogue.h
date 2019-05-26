@@ -22,8 +22,8 @@ class QRogue : public QQuickPaintedItem
     Q_PROPERTY(bool sound READ sound WRITE setSound)
 
 public:
-    QRogue(QQuickItem *parent = 0);
-    ~QRogue();
+    QRogue(QQuickItem *parent = nullptr);
+    virtual ~QRogue() override;
 
     QFont font() const;
     void setFont(const QFont& font);
@@ -95,7 +95,7 @@ private:
     std::unique_ptr<QtRogueInput> input_;
     std::unique_ptr<QRogueDisplay> display_;
     uint16_t restore_count_ = 0;
-    std::atomic<bool> thread_exited_ = false;
+    std::atomic<bool> thread_exited_;
 };
 
 #endif
