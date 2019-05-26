@@ -198,7 +198,7 @@ register int number, sides;
 	dtotal += rnd(sides)+1;
     return dtotal;
 }
-#ifndef ROGUE_COLLECTION
+
 #ifdef SIGTSTP
 /*
  * tstp:
@@ -222,10 +222,9 @@ tstp()
     getyx(curscr, y, x);
     mvcur(y, x, oy, ox);
     fflush(stdout);
-    curscr->_cury = oy;
-    curscr->_curx = ox;
+    //curscr->_cury = oy;
+    //curscr->_curx = ox;
 }
-#endif
 #endif
 
 /*

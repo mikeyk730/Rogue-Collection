@@ -11,7 +11,7 @@ LIBS     = -Wl,--whole-archive $(BUILDROOT)/lib-my-curses.a -Wl,--no-whole-archi
 TARGET   = lib-rogue-3-6-3.so
 SOURCES  = $(shell echo *.c)
 HEADERS  = $(shell echo *.h)
-OBJECTS  = $(SOURCES:.c=.o)
+OBJECTS  = $(SOURCES:.c=.o) pc_gfx.o
 
 all: $(TARGET)
 
@@ -19,6 +19,9 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $(BUILDROOT)/$(TARGET) $(OBJECTS) $(LIBS)
 
 %.o: %.c $(HEADERS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(INCLUDES) $(DEFINES)
+
+pc_gfx.o: ../pc_gfx.c $(HEADERS)
 	$(CC) -c -o $@ $< $(CFLAGS) $(INCLUDES) $(DEFINES)
 
 clean:

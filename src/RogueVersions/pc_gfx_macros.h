@@ -8,6 +8,8 @@
 #else
 #define DLL_EXPORT
 #endif
+struct DisplayInterface;
+struct InputInterface;
 void DLL_EXPORT init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
 #include <setjmp.h>
 extern jmp_buf exception_env;
