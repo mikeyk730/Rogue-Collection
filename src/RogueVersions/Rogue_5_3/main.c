@@ -1,6 +1,6 @@
 /*
  * #     #
- * #    #   #    #  #   ##  #    #   # 
+ * #    #   #    #  #   ##  #    #   #
  *		         #
  *
  * Exploring the dungeons of doom
@@ -17,7 +17,11 @@
 #include <signal.h>
 //#include <pwd.h>
 #include "rogue.h"
+#ifdef _WIN32
 #include "..\pc_gfx_macros.h"
+#else
+#include "../pc_gfx_macros.h"
+#endif
 
 /*
  * main:
@@ -194,6 +198,7 @@ register int number, sides;
 	dtotal += rnd(sides)+1;
     return dtotal;
 }
+#ifndef ROGUE_COLLECTION
 #ifdef SIGTSTP
 /*
  * tstp:
@@ -220,6 +225,7 @@ tstp()
     curscr->_cury = oy;
     curscr->_curx = ox;
 }
+#endif
 #endif
 
 /*

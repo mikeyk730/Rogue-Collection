@@ -3,11 +3,16 @@
 #define CLEAR_MSG                     msg("")
 
 #ifdef ROGUE_COLLECTION
-void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
+#ifdef _WIN32
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#define DLL_EXPORT
+#endif
+void DLL_EXPORT init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
 #include <setjmp.h>
 extern jmp_buf exception_env;
 
-#define GAME_MAIN                     __declspec(dllexport) rogue_main
+#define GAME_MAIN                     DLL_EXPORT rogue_main
 #define SHELL_CMD                     msg("You're a long way from a terminal"); after = FALSE
 #define NO_SAVE_RETURN                msg("Use Ctrl+S to save your game"); return
 #ifdef _DEBUG

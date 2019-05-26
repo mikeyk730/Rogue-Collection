@@ -12,7 +12,7 @@
 
 typedef struct stat STAT;
 
-extern char *sys_errlist[], version[], encstr[];
+extern char /**sys_errlist[], */version[], encstr[];
 #ifndef	r_attron
 extern bool _endwin;
 #endif	r_attron
@@ -166,7 +166,7 @@ restore(file, envp)
 register char *file;
 char **envp;
 {
-#ifdef SAVE 
+#ifdef SAVE
     register int inf;
     register bool syml;
     register char *sp;

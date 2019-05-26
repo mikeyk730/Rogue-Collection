@@ -50,9 +50,9 @@ extern WINDOW	*hw;
 #	endif
 #endif
 
-char	*brk(), *charge_str(), *ctime(), *getenv(), *inv_name(),
-	*killname(), *malloc(), *nothing(), *num(), *ring_num(),
-	*rnd_color(), *sbrk(), *strcat(), *strcpy(),
+char	/**brk(), */*charge_str(), *ctime(), *getenv(), *inv_name(),
+	*killname(), /**malloc(), */*nothing(), *num(), *ring_num(),
+	*rnd_color(), /**sbrk(), */*strcat(), *strcpy(),
 	*tr_name(), *unctrl(), *vowelstr();
 
 int	auto_save(), come_down(), doctor(), endit(), leave(),

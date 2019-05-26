@@ -28,7 +28,7 @@ namespace
         }
     }
 
-    void WriteEnvPc(std::ostringstream& ss, std::string key, const std::string & value)
+    void WriteEnvPc(std::ostringstream& ss, const std::string& key, const std::string& value)
     {
         ss << key << "=" << value << ';';
     }
@@ -50,7 +50,7 @@ Environment::Environment()
     SetDefaults();
 }
 
-Environment::Environment(const Args & args)
+Environment::Environment(const Args& args)
 {
     SetDefaults();
     LoadFromFile(args.optfile);
@@ -132,7 +132,7 @@ bool Environment::Get(const std::string & key, std::string* value) const
     return false;
 }
 
-void Environment::Set(const std::string & key, const std::string & value)
+void Environment::Set(const std::string& key, const std::string& value)
 {
     if (value.empty())
         Clear(key);
@@ -140,7 +140,7 @@ void Environment::Set(const std::string & key, const std::string & value)
         m_environment[key] = value;
 }
 
-void Environment::Clear(const std::string &key)
+void Environment::Clear(const std::string& key)
 {
     auto i = m_environment.find(key);
     if (i != m_environment.end()) {

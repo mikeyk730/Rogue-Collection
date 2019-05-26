@@ -34,7 +34,7 @@
  */
 #define CCHAR(x) ( (x) & A_CHARTEXT )
 #define CMVINCH(x,y) CCHAR(mvinch((x),(y)))
-#define CMVWINCH(x,y,z) CCHAR(mvwinch((x),(y),(z))) 
+#define CMVWINCH(x,y,z) CCHAR(mvwinch((x),(y),(z)))
 #define next(ptr) (*ptr).l_next
 #define prev(ptr) (*ptr).l_prev
 #define ldata(ptr) (*ptr).l_data
@@ -596,7 +596,7 @@ int                     gethand(void);
 void                    help(void);
 void                    hit(char *er, char *ee);
 int                     hit_monster(int y, int x, struct object *obj);
-void                    horiz(int cnt);
+//void                    horiz(int cnt);
 void                    identify(void);
 void                    init_colors(void);
 void                    init_materials(void);
