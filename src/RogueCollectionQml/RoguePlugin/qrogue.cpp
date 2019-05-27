@@ -40,6 +40,7 @@
 #include <QPainter>
 #include <QTimer>
 #include <QCoreApplication>
+#include <QDir>
 #include <sstream>
 #include <fstream>
 #include <thread>
@@ -52,6 +53,14 @@
 #include "run_game.h"
 #include "game_config.h"
 #include "tile_provider.h"
+
+namespace
+{
+    QString convertUrlToNativeFilePath(const QUrl& url)
+    {
+        return QDir::toNativeSeparators(url.toLocalFile());
+    }
+}
 
 const unsigned char QRogue::kSaveVersion = 2;
 
@@ -90,7 +99,7 @@ QRogue::QRogue(QQuickItem *parent)
         if (i != -1)
             setGame(i);
         else
-            restoreGame(game.c_str());
+            RestoreGame(game.c_str());
     }
 }
 
@@ -136,10 +145,10 @@ bool QRogue::showTitleScreen()
     return config_.name == "PC Rogue 1.48" && restore_count_ == 0;
 }
 
-void QRogue::restoreGame(const QString &filename)
+void QRogue::restoreGame(const QUrl& url)
 {
+    auto filename = convertUrlToNativeFilePath(url);
     RestoreGame(filename.toStdString());
-    LaunchGame();
 }
 
 void QRogue::RestoreGame(const std::string& path)
@@ -184,6 +193,8 @@ void QRogue::RestoreGame(const std::string& path)
         file.close();
         std::remove(path.c_str());
     }
+
+    LaunchGame();
 }
 
 void QRogue::LaunchGame()
@@ -214,8 +225,10 @@ void QRogue::LaunchGame()
     rogue.detach(); //todo: how do we want threading to work?
 }
 
-void QRogue::saveGame(const QString &filename)
+void QRogue::saveGame(const QUrl& url)
 {
+    auto filename = convertUrlToNativeFilePath(url);
+    //todo:mdk get url
     SaveGame(filename.toStdString(), true);
 }
 

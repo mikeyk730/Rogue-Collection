@@ -329,9 +329,6 @@ Monster* Monster::do_chase() //todo: understand
                 //ss << get_name() << " " << position() << " reached target " << obj->position();
                 //game->log("monster", ss.str());
 
-                //mdk: it looks like the intent of the original code was for orcs to
-                //pick up gold and then chase the player, instead of just guarding it.
-                //I'm keeping the original behavior for now.
                 if (guards_gold() && dynamic_cast<Gold*>(obj))
                     break;
 

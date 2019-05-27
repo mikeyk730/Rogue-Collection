@@ -41,8 +41,8 @@ public:
     void setGame(int index);
 
     Q_INVOKABLE bool showTitleScreen();
-    Q_INVOKABLE void restoreGame(const QString& filename);
-    Q_INVOKABLE void saveGame(const QString& filename);
+    Q_INVOKABLE void restoreGame(const QUrl& url);
+    Q_INVOKABLE void saveGame(const QUrl& url);
     Q_INVOKABLE void nextGraphicsMode();
     Q_INVOKABLE void autosave();
 
