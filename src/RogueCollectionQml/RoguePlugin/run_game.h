@@ -23,7 +23,7 @@ struct LibraryDeleter
 #endif
 
 template <typename T>
-void RunGame(const std::string& lib, int argc, char** argv, T* r, std::atomic<bool>& finished)
+void RunGame(const std::string& lib, int, char**, T* r, std::atomic<bool>& finished)
 {
     try {
 #ifdef _WIN32

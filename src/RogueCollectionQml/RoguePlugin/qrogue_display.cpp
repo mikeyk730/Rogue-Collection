@@ -79,7 +79,7 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::strin
     font_provider_.reset(new FontProvider(font));
 }
 
-void QRogueDisplay::SetDimensions(Coord dimensions)
+void QRogueDisplay::SetDimensions(Coord)
 {
 
 }
@@ -126,7 +126,7 @@ void QRogueDisplay::SetCursor(bool enable)
 
 void QRogueDisplay::PlaySoundMainThread(const QString &id)
 {
-    QSoundEffect* effect = 0;
+    QSoundEffect* effect = nullptr;
 
     auto i = sounds_.find(id.toStdString());
     if (i == sounds_.end())
@@ -258,7 +258,7 @@ void QRogueDisplay::SetScreenSize(Coord screen_size)
     screen_size_ = QSize(screen_size.x, screen_size.y);
 }
 
-void QRogueDisplay::SetGameConfig(const GameConfig &config, Environment* env)
+void QRogueDisplay::SetGameConfig(const GameConfig &config, Environment*)
 {
     config_.reset(new GameConfig(config));
     ApplyGraphics();

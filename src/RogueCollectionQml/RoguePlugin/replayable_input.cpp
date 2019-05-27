@@ -8,9 +8,9 @@
 #define ESCAPE 0x1b
 
 ReplayableInput::ReplayableInput(Environment* current_env, Environment* game_env, const GameConfig& options) :
+    m_options(options),
     m_current_env(current_env),
-    m_game_env(game_env),
-    m_options(options)
+    m_game_env(game_env)
 {
 }
 
@@ -94,7 +94,7 @@ void ReplayableInput::SaveGame(std::ostream & file)
 void ReplayableInput::RestoreGame(std::istream & file)
 {
     m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-    m_replay_steps_remaining = (int)m_buffer.size();
+    m_replay_steps_remaining = static_cast<int>(m_buffer.size());
 
     std::string value;
     if (m_current_env->Get("replay_paused", &value) && value == "true") {
@@ -178,7 +178,10 @@ void ReplayableInput::SetMaxReplaySpeed()
     m_input_cv.notify_all();
 }
 
-int s_speeds[] = {0, 1, 3, 10, 30, 50, 70, 90, 150, 300};
+namespace
+{
+    int s_speeds[] = {0, 1, 3, 10, 30, 50, 70, 90, 150, 300};
+}
 
 void ReplayableInput::SetReplaySpeed(int n)
 {

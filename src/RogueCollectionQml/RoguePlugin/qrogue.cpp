@@ -83,7 +83,7 @@ QRogue::QRogue(QQuickItem *parent)
     std::string game;
     if (env_->Get("game", &game) && !game.empty()){
         int i = GetGameIndex(game.c_str());
-        if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + (int)s_options.size())){
+        if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + static_cast<int>(s_options.size()))){
             i = game[0] - 'a';
         }
 
@@ -121,7 +121,7 @@ void QRogue::setGame(int index)
     emit gameChanged(config_.name.c_str());
     game_env_ = env_;
 
-    int seed = (int)time(0);
+    int seed = static_cast<int>(time(nullptr));
     std::ostringstream ss;
     ss << seed;
     game_env_->Set("seed", ss.str());
@@ -209,7 +209,7 @@ void QRogue::LaunchGame()
     timer->start(250);
 
     //start rogue engine on a background thread
-    char* argv[] = {0};
+    char* argv[] = {nullptr};
     std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this, std::ref(thread_exited_));
     rogue.detach(); //todo: how do we want threading to work?
 }
@@ -228,7 +228,7 @@ void QRogue::autosave()
 {
     std::string value;
     if (input_ && env_->Get("autosave", &value)){
-        if (value == "true" && !thread_exited_ || value == "force"){
+        if ((value == "true" && !thread_exited_) || value == "force"){
             std::string name = "autosave-" + GetTimeString() + ".sav";
             SaveGame(name, false);
         }

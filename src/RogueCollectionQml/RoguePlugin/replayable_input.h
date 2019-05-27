@@ -47,8 +47,8 @@ private:
     int m_pause_at = 0;
     bool m_paused = false;
 
-    Environment* m_current_env = 0;
-    Environment* m_game_env = 0;
+    Environment* m_current_env = nullptr;
+    Environment* m_game_env = nullptr;
 
     std::vector<unsigned char> m_keylog;
 };
