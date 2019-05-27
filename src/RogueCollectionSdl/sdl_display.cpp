@@ -1,3 +1,8 @@
+#ifndef _WIN32
+#error "The SDL project is depreciated in favor of the Qml versions."
+#error "This file relies on undefined behavior that doesn't work on Linux."
+#error "SDL_RenderClear should be called every frame."
+#endif
 #include <sstream>
 #include <cassert>
 #include <SDL_image.h>

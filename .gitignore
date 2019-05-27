@@ -11,7 +11,7 @@ working/
 *.opendb
 *.lnk
 *.scr
-build-*/
+build*/
 src/RetroRogueCollection/import/
 staging/
 *.o
