@@ -65,6 +65,7 @@ bool plop_monster(int r, int c, Coord *cp)
     byte ch;
 
     for (y = r - 1; y <= r + 1; y++)
+    {
         for (x = c - 1; x <= c + 1; x++)
         {
             Coord pos = { x, y };
@@ -81,5 +82,7 @@ bool plop_monster(int r, int c, Coord *cp)
                 }
             }
         }
-    return appear;
+    }
+
+    return appear != 0;
 }

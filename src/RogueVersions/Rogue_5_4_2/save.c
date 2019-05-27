@@ -408,6 +408,7 @@ wr_score(SCORE *top_ten)
     if (scoreboard == NULL)
 	return;
 
+    encclearerr(); //mdk:added clear since error set when reading empty scorefile
     rewind(scoreboard);
 
     for(i = 0; i < numscores; i++)
