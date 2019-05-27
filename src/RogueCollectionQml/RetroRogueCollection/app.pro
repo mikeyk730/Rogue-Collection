@@ -1,5 +1,11 @@
 QT += qml quick widgets sql multimedia
-TARGET = RetroRogueCollection
+
+linux {
+    TARGET = retro-rogue-collection.exe
+}
+win32 {
+    TARGET = RetroRogueCollection
+}
 
 static {
     QTPLUGIN += RoguePlugin
