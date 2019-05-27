@@ -228,7 +228,6 @@ void QRogue::LaunchGame()
 void QRogue::saveGame(const QUrl& url)
 {
     auto filename = convertUrlToNativeFilePath(url);
-    //todo:mdk get url
     SaveGame(filename.toStdString(), true);
 }
 
