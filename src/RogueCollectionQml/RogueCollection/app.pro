@@ -1,6 +1,7 @@
 QT += widgets qml quick multimedia
 linux {
-    TARGET = rogue-collection.exe
+    TARGET = rogue-collection
+    QMAKE_LFLAGS += -fno-pic -no-pie
 }
 win32 {
     TARGET = RogueCollection
