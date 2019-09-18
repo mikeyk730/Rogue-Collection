@@ -27,13 +27,24 @@
  * This file contains all of the functions which deal with the real world.
  */
 
+#ifdef _WIN32
+#include <Windows.h>
+#undef OPTIONAL
+#undef NEAR
+#define FIONREAD 0
+#endif
+
 # include <curses.h>
 # include <ctype.h>
 # include <string.h>
 # include <stdlib.h>
+#ifndef _WIN32
 # include <sys/ioctl.h>
+#endif
 # include <time.h>
+#ifndef _WIN32
 # include <unistd.h>
+#endif
 # include "install.h"
 # include "types.h"
 # include "globals.h"
@@ -193,7 +204,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
     if debug(D_MESSAGE) {
       at (28,col);
-      printw ("%s", unctrl(ch));
+      printw ("%s", unctrl((unsigned char)ch));
       at (row, col);
       refresh ();
     }
@@ -298,7 +309,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
         col = number2 - 1;
         debuglog ("CM_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
-
+#ifndef _WIN32
       case CR_TOK:
         /* Handle missing '--more--' between inventories  MLM 24-Jun-83 */
         /* --more-- doesn't seem too be missing anymore NYM 3/29/08
@@ -308,11 +319,15 @@ int   onat;                             /* 0 ==> Wait for waitstr
         col = 0;
         debuglog ("CR_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
-
+#endif
       case ER_TOK:
         break;
 
       case LF_TOK:
+#ifdef _WIN32
+        col = 0;
+        debuglog("CR_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+#endif
         row++;
         debuglog ("LF_TOK      check for scroll %d > %d\n",row, s_row2);
 
@@ -350,7 +365,10 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
         if (interrupted) return;
 
-        if (!replaying || !logdigested) { playing = 0; return; }
+        if (!replaying || !logdigested) {
+          playing = 0;
+          return;
+        }
 
         saynow ("End of game log, type 'Q' to exit.");
         return;
@@ -548,8 +566,10 @@ terpbot ()
     /* Stuff the new values into the argument space (for ps command) */
     sprintf (modeline, "Rgm %d: Id%d L%d %d %d(%d) s%d a%d e%d    ",
              rogpid, geneid, Level, Gold, Hp, Hpmax, Str / 100, 10-Ac, Explev);
+#ifndef _WIN32
     modeline[arglen-1] = '\0';
     strncpy (parmstr, modeline,256);
+#endif
 
     /* Handle Emacs and Terse mode */
     if (emacs || terse) {
@@ -656,14 +676,19 @@ char c;
      constant is 0. */
 
   if ((USLEEP) && (!noterm))
-    if (Level > 20) usleep (USLEEP+(Level * 8000));
-    else if (Level > 16) usleep (USLEEP+(Level * 4000));
-    else if (Level > 12) usleep (USLEEP+(Level * 2000));
-    else usleep (USLEEP);
+    if (Level > 20) md_usleep (USLEEP+(Level * 8000));
+    else if (Level > 16) md_usleep (USLEEP+(Level * 4000));
+    else if (Level > 12) md_usleep (USLEEP+(Level * 2000));
+    else md_usleep (USLEEP);
 
   rogue_log_write_command (c);
 
+#ifdef _WIN32
+  unsigned long bytes_written;
+  WriteFile(trogue, &c, 1, &bytes_written, NULL);
+#else
   fprintf (trogue, "%c", c);
+#endif
 }
 
 /*
@@ -784,7 +809,7 @@ int gld;                       /* What is the final score */
 int terminationtype;            /* SAVED, FINSISHED, or DIED */
 {
   struct tm *localtime(), *ts;
-  long clock;
+  time_t clock;
   char  *k, *r;
 
   /* Save the killer and score */
@@ -848,7 +873,11 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
     sendnow ("Syy"); /* Must send two yesses,  R5.2 MLM */
 
   /* Wait for Rogue to die */
+#ifndef _WIN32
   wait ((int *) NULL);
+#else
+  sendnow("\n");
+#endif
 }
 
 /*
@@ -892,6 +921,8 @@ int a1, a2, a3, a4, a5, a6, a7, a8;
 
     clrtoeol ();
     at (row, col);
+
+    printf("%s\n", buf);
   }
 }
 
@@ -922,9 +953,11 @@ waitforspace ()
 
   refresh ();
 
-  if (!noterm)
-    while ((ch = fgetc (stdin)) != ' ')
-      if (ch == '/') dosnapshot ();
+  if (!noterm) {
+    printf("Waiting for space...\n");
+    while ((ch = fgetc(stdin)) != ' ')
+      if (ch == '/') dosnapshot();
+  }
 
   at (row, col);
 }
@@ -1030,6 +1063,7 @@ getrogver ()
 
 charsavail ()
 {
+#ifndef _WIN32
   long n;
   int retc;
 
@@ -1041,6 +1075,9 @@ charsavail ()
   if (n > 0) noterm = 0;
 
   return ((int) n);
+#else
+  return 0;
+#endif
 }
 
 /*

@@ -60,7 +60,7 @@ int ntrm;
   char  newfil[100];
   FILE *newlog;
 
-  sprintf (lokfil, "%s %s", getLockFile (), vers);
+  sprintf (lokfil, "%s%s", getLockFile (), vers);
   sprintf (newfil, "%s/rgmdelta%s", getRgmDir (), vers);
 
   /* Defer interrupts while mucking with the score file */
@@ -153,7 +153,12 @@ char *vers;
       else {
         /* New file is okay, unlink old files and pointer swap score file */
         unlink (delfil); unlink (newfil);
-        unlink (scrfil); link (allfil, scrfil); unlink (allfil);
+        unlink (scrfil);
+#ifndef _WIN32
+        link (allfil, scrfil); unlink (allfil);
+#else
+        rename(allfil, scrfil);
+#endif
       }
 
       scoref = fopen (scrfil, "r");

@@ -28,7 +28,12 @@
  */
 
 /* global files */
+
+#ifdef _WIN32
+extern void* trogue;
+#else
 extern FILE *trogue;	/* From Rogue, To Rogue */
+#endif
 extern FILE *logfile;		/* Rogomatic score file */
 extern FILE *realstdout;	/* Real stdout when in terse or emacs mode */
 extern FILE *snapshot;		/* File for snapshot command */
@@ -42,7 +47,9 @@ extern char lastcmd[];		/* Copy of last command sent to Rogue */
 extern char lastname[];		/* Name of last potion/scroll/wand */
 extern char nextid;		/* Next object to identify */
 extern char ourkiller[];	/* What was listed on the tombstone */
+#ifndef _WIN32
 extern char *parmstr;		/* Pointer to argument space */
+#endif
 extern char pending_call_letter;	/* Pack object we know a name for */
 extern char pending_call_name[];	/* Pack object name for letter */
 extern char queue[];		/* stuff to be sent to Rogue */

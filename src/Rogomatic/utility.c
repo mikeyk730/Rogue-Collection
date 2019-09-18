@@ -32,7 +32,9 @@
  */
 
 # include <curses.h>
+#ifndef _WIN32
 # include <pwd.h>
+#endif
 # include <stdio.h>
 # include <stdlib.h>
 # include <signal.h>
@@ -53,7 +55,11 @@
 
 rogo_baudrate ()
 {
+#ifndef _WIN32
   return (baudrate());
+#else
+  return 0;
+#endif
 }
 
 /*
@@ -62,6 +68,7 @@ rogo_baudrate ()
 
 char *getname ()
 {
+#ifndef _WIN32
   static char name[100];
   int   i;
   struct passwd *passwd;
@@ -75,6 +82,9 @@ char *getname ()
 //  name[i] = '\0';
 
   return (name);
+#else
+  return "rogomatic";
+#endif
 }
 
 /*
@@ -155,10 +165,12 @@ uncritical ()
 
 reset_int ()
 {
+#ifndef _WIN32
   signal (SIGHUP, SIG_DFL);
   signal (SIGINT, SIG_DFL);
   signal (SIGPIPE, SIG_DFL);
   signal (SIGQUIT, SIG_DFL);
+#endif
 }
 
 /*
@@ -168,6 +180,7 @@ reset_int ()
 int_exit (exitproc)
 void (*exitproc)(int);
 {
+#ifndef _WIN32
   if (signal (SIGHUP, SIG_IGN) != SIG_IGN)  signal (SIGHUP, exitproc);
 
   if (signal (SIGINT, SIG_IGN) != SIG_IGN)  signal (SIGINT, exitproc);
@@ -175,6 +188,7 @@ void (*exitproc)(int);
   if (signal (SIGPIPE, SIG_IGN) != SIG_IGN) signal (SIGPIPE, exitproc);
 
   if (signal (SIGQUIT, SIG_IGN) != SIG_IGN) signal (SIGQUIT, exitproc);
+#endif
 }
 
 /*
@@ -200,7 +214,7 @@ start:
     return TRUE;
 
   for (try = 0; try < 60; try++) {
-          sleep (1);
+          md_sleep (1);
 
           if (creat (lokfil, NOWRITE) > 0)
             return TRUE;
@@ -228,7 +242,7 @@ start:
 unlock_file (lokfil)
 char *lokfil;
 {
-  unlink (lokfil);
+  md_unlink (lokfil);
 }
 
 # ifndef CMU

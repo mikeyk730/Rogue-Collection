@@ -230,7 +230,7 @@ char *monster;
   register int m;
 
   /* Separate the monster name from the attributes */
-  if ((attrs = index (monster, '|')) == NULL) return;
+  if ((attrs = strchr (monster, '|')) == NULL) return;
 
   *attrs++ = '\0';
 

@@ -98,6 +98,7 @@ int msgtype, a1, a2, a3, a4, a5, a6, a7, a8;
   while (1) {
     refresh ();
 
+    printf("Waiting for debug command...\n");
     switch (fgetc (stdin)) {
       case '?':
         say ("i=inv, d=debug !=stf, @=mon, #=wls, $=id, ^=flg, &=chr");
@@ -259,6 +260,7 @@ int *r, *c;
 
   saynow ("At %d,%d: enter 'row,col' for %s: ", atrow, atcol, msg);
 
+  printf("Waiting for coord...\n");
   if (fgets (buf, 256, stdin)) {
     sscanf (buf, "%d,%d", r, c);
 

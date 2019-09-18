@@ -156,7 +156,27 @@ void open_frogue_fd (int frogue_fd)
   frogue = fdopen (frogue_fd, "r");
 }
 
+#ifdef _WIN32
+char getroguechar()
+{
+  char ch = EOF;
+  for (int i = 0; ch == EOF && i < 600; ++i)
+  {
+    if (i > 0)
+    {
+      md_sleep(100);
+    }
+
+    ch = fgetc(frogue);
+  }
+
+  return ch;
+}
+
+#define GETROGUECHAR getroguechar();
+#else
 #define GETROGUECHAR fgetc(frogue);
+#endif
 #define UNGETROGUECHAR(c) ungetc(c, frogue);
 
 void close_frogue ()

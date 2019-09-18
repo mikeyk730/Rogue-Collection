@@ -93,7 +93,17 @@
  *	on a UTexas computer.
  *****************************************************************/
 
+#ifdef _WIN32
+#include <Windows.h>
+#undef OPTIONAL
+#undef NEAR
+#define pid_t int
+#endif
+
 # include <curses.h>
+#ifdef _WIN32
+#undef getch
+#endif
 # include <ctype.h>
 # include <fcntl.h>
 # include <signal.h>
@@ -101,11 +111,12 @@
 # include <string.h>
 # include <stdlib.h>
 # include <sys/types.h>
+#ifndef _WIN32
 # include <unistd.h>
+#endif
 # include "types.h"
 # include "termtokens.h"
 # include "install.h"
-
 
 /* FIXME: get rid of this prototype in the correct way */
 FILE *rogo_openlog (char *genelog);
@@ -116,7 +127,12 @@ FILE *rogo_openlog (char *genelog);
 FILE  *logfile=NULL;		/* File for score log */
 FILE  *realstdout=NULL;		/* Real stdout for Emacs, terse mode */
 FILE  *snapshot=NULL;		/* File for snapshot command */
+#ifndef _WIN32
 FILE  *trogue=NULL;		/* Pipe to Rogue process */
+#else
+HANDLE trogue=NULL;
+#endif
+
 
 /* Characters */
 char  logfilename[100];		/* Name of log file */
@@ -133,7 +149,9 @@ char  screen[24][80];		/* Map of current Rogue screen */
 char  sumline[128];		/* Termination message for Rogomatic */
 char  ourkiller[NAMSIZ];		/* How we died */
 char  versionstr[32];		/* Version of Rogue being used */
+#ifndef _WIN32
 char  *parmstr;			/* Pointer to process arguments */
+#endif
 char  pending_call_letter = ' ';	/* If non-blank we have a call it to do */
 char  pending_call_name[NAMSIZ];	/*   and this is the name to use */
 
@@ -339,11 +357,24 @@ char roguename[100];
 /* Used by onintr() to restart Rgm at top of command loop */
 jmp_buf  commandtop;
 
+#define ROGUE_COLLECTION 1
+#ifdef ROGUE_COLLECTION
+void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
+
+void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols)
+{
+    init_curses(screen, input, lines, cols);
+}
+#define GAME_MAIN __declspec(dllexport) rogue_main
+#else
+#define GAME_MAIN main
+#endif
+
 /*
  * Main program
  */
 
-main (argc, argv)
+GAME_MAIN(argc, argv)
 int   argc;
 char *argv[];
 {
@@ -408,12 +439,24 @@ char *argv[];
     startreplay (&logfile, logfilename);
   }
   else {
+#ifdef _WIN32
+    open_frogue(argv[1]);
+    trogue = CreateFile(
+      "\\\\.\\pipe\\RogueInputPipe",
+      GENERIC_WRITE,
+      0,
+      NULL,
+      OPEN_EXISTING,
+      0,
+      NULL);
+#else
     int frogue_fd = argv[1][0] - 'a';
     int trogue_fd = argv[1][1] - 'a';
     open_frogue_fd (frogue_fd);
-    open_frogue_debuglog ("debuglog.frogue");
     trogue = fdopen (trogue_fd, "w");
     setbuf (trogue, NULL);
+#endif
+    open_frogue_debuglog ("debuglog.frogue");
   }
 
   /* The second argument to player is the process id of Rogue */
@@ -428,6 +471,7 @@ char *argv[];
   if (argc > 4)	strcpy (roguename, argv[4]);
   else		sprintf (roguename, "Rog-O-Matic %s", RGMVER);
 
+#ifndef _WIN32
   /* Now count argument space and assign a global pointer to it */
   arglen = 0;
 
@@ -441,7 +485,7 @@ char *argv[];
   parmstr = argv[0];	arglen--;
   parmstr[arglen] = '\0';/* I don't like this business with muck with ps, but
                             I think the lack of a null is a problem - NYM */
-
+#endif
   /* If we are in one-line mode, then squirrel away stdout */
   if (emacs || terse) {
     realstdout = fdopen (dup (fileno (stdout)), "w");
@@ -453,7 +497,8 @@ char *argv[];
   if (startecho) toggleecho ();		/* Start logging? */
 
   clear ();				/* Clear the screen */
-  getrogver ();				/* Figure out Rogue version */
+  version = RV52A; //todo:mdk fix version identification
+  //todo:mdk getrogver ();				/* Figure out Rogue version */
 
   if (!replaying) {
     restoreltm ();			/* Get long term memory of version */
@@ -781,6 +826,7 @@ char *argv[];
     /* Close the open file */
     toggleecho ();
 
+#ifndef _WIN32
     /* Rename the log file */
     if (link (ROGUELOG, lognam) == 0) {
       unlink (ROGUELOG);
@@ -788,11 +834,13 @@ char *argv[];
     }
     else
       printf ("Log file left on %s\n", ROGUELOG);
+#endif
   }
 
   close_frogue_debuglog ();
   debuglog_close ();
 
+  getch();
   exit (0);
 }
 

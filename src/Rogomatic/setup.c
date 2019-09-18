@@ -30,7 +30,12 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <signal.h>
+#ifndef _WIN32
 # include <unistd.h>
+#else
+#define R_OK 0
+#define X_OK 0
+#endif
 # include "install.h"
 
 # define READ    0
@@ -40,7 +45,10 @@
 
 # define ROGUETERM "rg|rterm:am:bs:ce=^[^S:cl=^L:cm=^[a%+ %+ :co#80:li#24:so=^[D:se=^[d:pt:ta=^I:up=^[;:db:xn:"
 
-int   frogue, trogue;
+int   frogue;
+#ifndef _WIN32
+int   trogue;
+#endif
 
 main (argc, argv)
 int   argc;
@@ -119,6 +127,10 @@ char *argv[];
 
   if (replay) { replaylog (argc==1 ? argv[0] : ROGUELOG, options); exit (0); }
 
+#ifdef _WIN32
+  //todo:mdk launch rogue
+  //todo:mdk launch player
+#else
   if ((pipe (ptc) < 0) || (pipe (ctp) < 0)) {
     fprintf (stderr, "Cannot get pipes!\n");
     exit (1);
@@ -133,11 +145,11 @@ char *argv[];
     close (1);
     dup (ctp[WRITE]);
 
-    if (setenv ("TERM", "vt100", 1) != 0) {
+    if (md_setenv ("TERM", "vt100", 1) != 0) {
       fprintf (stderr, "can't setenv (\"TERM\", \"vt100\", 1)\n");
     }
 
-    if (setenv ("ROGUEOPTS", ropts, 1) != 0) {
+    if (md_setenv ("ROGUEOPTS", ropts, 1) != 0) {
       fprintf (stderr, "can't setenv (\"ROGUEOPTS\", \"%s\", 1)\n",ropts);
     }
 
@@ -170,6 +182,7 @@ char *argv[];
     printf ("Rogomatic not available, 'player' binary missing.\n");
     kill (child, SIGKILL);
   }
+#endif
 }
 
 /*
@@ -197,7 +210,7 @@ char *fname, *options;
 
 author()
 {
-  switch (getuid()) {
+  switch (md_getuid()) {
     case 1337:	/* Fuzzy */
     case 1313:	/* Guy */
     case 1241:	/* Andrew */

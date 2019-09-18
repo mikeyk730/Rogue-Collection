@@ -21,7 +21,9 @@
  */
 
 # include <sys/types.h>
+#ifndef _WIN32
 # include <dirent.h>
+#endif
 # include <stdlib.h>
 
 # include "install.h"
@@ -38,6 +40,9 @@ static const char *lockpath = "rlog/RgmLock";
 const char *
 getRgmDir ()
 {
+#ifdef _WIN32
+  return rgmpath;
+#else
   DIR *rgmdir = NULL;
 
   /* give preference to a directory in the current directory */
@@ -48,11 +53,15 @@ getRgmDir ()
   else {
     return RGMDIR;
   }
+#endif
 }
 
 const char *
 getLockFile ()
 {
+#ifdef _WIN32
+  return lockpath;
+#else
   DIR *rgmdir = NULL;
 
   /* give preference to a directory in the current directory */
@@ -63,4 +72,5 @@ getLockFile ()
   else {
     return LOCKFILE;
   }
+#endif
 }

@@ -170,7 +170,7 @@ char *string;
   int i = findentry (string);
 
   if (i != NOTFOUND) {
-    dbase[i].used = TRUE;
+    dbase[i].used = 1;
   }
 }
 
@@ -234,9 +234,9 @@ char *name;
 
   for (i = 0; i < datalen; i++)
     if (*dbase[i].realname && streq (dbase[i].realname, name))
-      return (TRUE);
+      return (1);
 
-  return (FALSE);
+  return (0);
 }
 
 /*

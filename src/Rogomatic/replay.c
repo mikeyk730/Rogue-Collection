@@ -29,6 +29,9 @@
  */
 
 # include <curses.h>
+#ifdef _WIN32
+#undef getch
+#endif
 # include <ctype.h>
 # include <string.h>
 # include "types.h"

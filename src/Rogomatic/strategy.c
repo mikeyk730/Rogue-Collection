@@ -1184,7 +1184,8 @@ archery ()
      * Then try calling archmonster to move to the right place.
      */
 
-    if (mlist[m].q != AWAKE && gplushit != NONE &&
+    if (mlist[m].q != AWAKE &&
+        gplushit != NONE &&
         !(mlist[m].q == HELD && Hp < Hpmax)  &&	/* DR UTexas 26 Jan 84 */
         (maxhit(m) > Hp/3 ||
          streq (monster, "leprechaun")	  ||
@@ -1194,10 +1195,10 @@ archery ()
          streq (monster, "rattlesnake")	  ||
          streq (monster, "centaur")	  ||
          streq (monster, "ice monster"))  &&
-        ammo >= (mtk = monatt[mlist[m].chr-'A'].mtokill - gplushit) &&
-        larder > 0 ||
+        (ammo >= (mtk = monatt[mlist[m].chr-'A'].mtokill - gplushit)) &&
+        (larder > 0 ||
         ((streq (monster, "leprechaun") && !hungry ()) ||
-         streq (monster, "nymph"))) {
+         streq (monster, "nymph")))) {
       dwait (D_BATTLE, "Arching at %c at (%d,%d)",
              mlist[m].chr, mlist[m].mrow, mlist[m].mcol);
 
