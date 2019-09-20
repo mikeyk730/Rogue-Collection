@@ -72,6 +72,9 @@
     <ClInclude Include="replayable_input.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="pipe_input.h">
+      <Filter>SDL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="environment.cpp">
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="replayable_input.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="pipe_input.cpp">
+      <Filter>SDL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

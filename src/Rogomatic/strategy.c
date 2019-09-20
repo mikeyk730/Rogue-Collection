@@ -225,7 +225,7 @@ int callitpending ()
 {
 
   if (pending_call_letter != ' ') {
-    command (T_OTHER, "c%c%s\n", pending_call_letter, pending_call_name);
+    command (T_OTHER, "c%c %s\n", pending_call_letter, pending_call_name); //todo:mdk added space
     pending_call_letter = ' ';
     memset (pending_call_name, '\0', NAMSIZ);
     return (1);
@@ -702,7 +702,7 @@ int adj;		/* How many attackers are there? */
                        streq (monster, "giant ant"))) &&
       wearing ("regeneration") < 0 &&
       (obj = havenamed (ring, "regeneration")) != NONE &&
-      puton (obj))
+      puton (obj)) //todo:mdk deadlock in 5.2 if detect sleeping monsters (loop of: put on, sleep, take off).  should we trigger lying in wait code?
     return (1);
 
   /* Have a ring and both hands are full, takes two turns */

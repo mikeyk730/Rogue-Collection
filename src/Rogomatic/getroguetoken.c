@@ -160,11 +160,11 @@ void open_frogue_fd (int frogue_fd)
 char getroguechar()
 {
   char ch = EOF;
-  for (int i = 0; ch == EOF && i < 600; ++i)
+  for (int i = 0; ch == EOF && i < 2000; ++i)
   {
     if (i > 0)
     {
-      md_sleep(100);
+      md_sleep(5);
     }
 
     ch = fgetc(frogue);

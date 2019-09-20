@@ -248,6 +248,7 @@ register char *mess, *mend;
 
         if (MATCH("call it*")) { echoit=0; }
         else if (MATCH("call what*")) { echoit=0; }
+        else if (MATCH("called *")) { echoit=0; } //mdk: call() shows existing name
         else unknown++;
 
         break;

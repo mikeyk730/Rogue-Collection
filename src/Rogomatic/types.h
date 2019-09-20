@@ -47,7 +47,7 @@
 # define SUCCESS     (1)
 # define FAILURE     (0)
 
-# define USLEEP   (14000)  /* set to 0 for full blast.  not using the "-w"
+# define USLEEP   (0)  /* set to 0 for full blast.  not using the "-w"
                               option also skips these delays.
 
                               i'm using 14000 here because that slows

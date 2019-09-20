@@ -1,8 +1,10 @@
+#pragma once
 #include <mutex>
 #include <deque>
 #include <vector>
 #include <condition_variable>
 #include <input_interface.h>
+#include <SDL.h>
 #include "game_config.h"
 
 struct Environment;
@@ -15,6 +17,7 @@ public:
     //input interface
     virtual char GetChar(bool block, bool for_string, bool *is_replay) override;
     virtual void Flush() override;
+    virtual bool HandleEvent(const SDL_Event& e) = 0;
 
     void SaveGame(std::ostream& file);
     void RestoreGame(std::istream& file);

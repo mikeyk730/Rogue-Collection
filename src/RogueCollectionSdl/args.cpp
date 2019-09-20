@@ -11,6 +11,13 @@ bool LoadArg(Args& a, const std::string& arg, const std::string& next)
     else if (arg == "--paused" || arg == "-p") {
         a.start_paused = true;
     }
+    else if (arg == "--rogomatic") {
+        a.rogomatic = true;
+    }
+    else if (arg == "--rogomatic-player-version") {
+        a.rogomatic_player_version = next;
+        return true;
+    }
     else if (arg == "--pause-at") {
         a.pause_at = next;
         return true;

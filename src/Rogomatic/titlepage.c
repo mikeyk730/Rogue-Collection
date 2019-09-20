@@ -119,10 +119,12 @@ char *movie[];
     /* Update the screen and delay until one timestep is gone */
     else if (r == '~') {
       refresh ();				/* Write out screen */
-
+#ifndef _WIN32
       for (; count < delaychars; count++)	/* Pad with nulls */
         putchar (0);
-
+#else
+      md_sleep(10);
+#endif
       count = 0;				/* Reset char count */
     }
 

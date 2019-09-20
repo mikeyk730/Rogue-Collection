@@ -101,9 +101,6 @@
 #endif
 
 # include <curses.h>
-#ifdef _WIN32
-#undef getch
-#endif
 # include <ctype.h>
 # include <fcntl.h>
 # include <signal.h>
@@ -471,6 +468,28 @@ char *argv[];
   if (argc > 4)	strcpy (roguename, argv[4]);
   else		sprintf (roguename, "Rog-O-Matic %s", RGMVER);
 
+#ifdef _WIN32
+  version = 0;
+  if (argc > 5) {
+      if (strstr(argv[5], "3.6")) {
+          sprintf(versionstr, "3.6");
+          version = RV36B;
+      }
+      else if (strstr(argv[5], "5.2")) {
+          sprintf(versionstr, "5.2");
+          version = RV52A;
+      }
+      else if (strstr(argv[5], "5.4")) {
+          sprintf(versionstr, "5.4");
+          version = RV54A;
+      }
+  }
+  if (!version) {
+      printf("Unknown version of Rogue");
+      exit(0);
+  }
+#endif
+
 #ifndef _WIN32
   /* Now count argument space and assign a global pointer to it */
   arglen = 0;
@@ -497,8 +516,9 @@ char *argv[];
   if (startecho) toggleecho ();		/* Start logging? */
 
   clear ();				/* Clear the screen */
-  version = RV52A; //todo:mdk fix version identification
-  //todo:mdk getrogver ();				/* Figure out Rogue version */
+#ifndef _WIN32
+  getrogver ();				/* Figure out Rogue version */
+#endif
 
   if (!replaying) {
     restoreltm ();			/* Get long term memory of version */

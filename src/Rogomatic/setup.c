@@ -33,6 +33,7 @@
 #ifndef _WIN32
 # include <unistd.h>
 #else
+#include <Windows.h>
 #define R_OK 0
 #define X_OK 0
 #endif
@@ -48,6 +49,37 @@
 int   frogue;
 #ifndef _WIN32
 int   trogue;
+#else
+void CreateProcessOrExit(LPSTR command, LPPROCESS_INFORMATION pi)
+{
+    STARTUPINFO si;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+
+    ZeroMemory(pi, sizeof(*pi));
+
+    if(!CreateProcess(
+        NULL,
+        command,
+        NULL,
+        NULL,
+        FALSE,
+        0,
+        "\0",//TODO: manage env
+        NULL,
+        &si,
+        pi))
+    {
+        printf("Could not launch Rogue");
+        exit(1);
+    }
+}
+
+void CloseHandles(PROCESS_INFORMATION pi)
+{
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+}
 #endif
 
 main (argc, argv)
@@ -94,6 +126,7 @@ char *argv[];
     exit (1);
   }
 
+#ifndef _WIN32
   /* Find which rogue to use */
   if (*rfilearg) {
     if (access (rfilearg, R_OK|X_OK) == 0)	rfile = rfilearg;
@@ -113,6 +146,7 @@ char *argv[];
     perror ("rogue");
     exit (1);
   }
+#endif
 
   if (!replay && !score) quitat = findscore (rfile, "Rog-O-Matic");
 
@@ -128,8 +162,17 @@ char *argv[];
   if (replay) { replaylog (argc==1 ? argv[0] : ROGUELOG, options); exit (0); }
 
 #ifdef _WIN32
-  //todo:mdk launch rogue
-  //todo:mdk launch player
+  PROCESS_INFORMATION rogueinfo;
+  PROCESS_INFORMATION playerinfo;
+
+  CreateProcessOrExit("RogueCollection.exe e --piped-input --piped-output", &rogueinfo);
+  CreateProcessOrExit("RogueCollection.exe g", &playerinfo);
+
+  WaitForSingleObject(rogueinfo.hProcess, INFINITE);
+  WaitForSingleObject(playerinfo.hProcess, INFINITE);
+
+  CloseHandles(rogueinfo);
+  CloseHandles(playerinfo);
 #else
   if ((pipe (ptc) < 0) || (pipe (ctp) < 0)) {
     fprintf (stderr, "Cannot get pipes!\n");

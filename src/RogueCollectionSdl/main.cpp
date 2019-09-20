@@ -15,12 +15,59 @@
 #include "run_game.h"
 #include "args.h"
 
+namespace
+{
+    void CreateProcessOrExit(const std::string& command, LPPROCESS_INFORMATION pi)
+    {
+        STARTUPINFO si;
+        ZeroMemory(&si, sizeof(si));
+        si.cb = sizeof(si);
+
+        ZeroMemory(pi, sizeof(*pi));
+
+        if (!CreateProcessA(
+            NULL,
+            (char*)command.c_str(),
+            NULL,
+            NULL,
+            FALSE,
+            0,
+            "\0",//TODO: manage env
+            NULL,
+            &si,
+            pi))
+        {
+            printf("Could not launch Rogue");
+            exit(1);
+        }
+    }
+
+    void CloseHandles(PROCESS_INFORMATION pi)
+    {
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+    }
+
+    std::string GetTimestamp()
+    {
+        time_t now;
+        time(&now);
+
+        tm t;
+        localtime_s(&t, &now);
+
+        char str[200];
+        strftime(str, 200, "%FT%H-%M-%S", &t);
+        return str;
+    }
+}
+
 int main(int argc, char** argv)
 {
     Args args(argc, argv);
     std::shared_ptr<Environment> current_env(new Environment(args));
     InitGameConfig(current_env.get());
-    
+
     int i = -1;
     std::string replay_path;
     std::string game;
@@ -39,6 +86,7 @@ int main(int argc, char** argv)
     SDL::Scoped::Window window(nullptr, SDL_DestroyWindow);
     SDL::Scoped::Renderer renderer(nullptr, SDL_DestroyRenderer);
     std::shared_ptr<SdlRogue> sdl_rogue;
+    std::unique_ptr<PROCESS_INFORMATION> rogomatic_process;
     try {
         if (SDL_Init(SDL_INIT_VIDEO) != 0) {
             throw_error("SDL_Init");
@@ -47,7 +95,7 @@ int main(int argc, char** argv)
         if (TTF_Init() != 0) {
             throw_error("TTF_Init");
         }
-        
+
         Coord window_size = GetScaledCoord({ kWindowWidth, kWindowHeight }, current_env->WindowScaling());
         window = SDL::Scoped::Window(SDL_CreateWindow(SdlRogue::kWindowTitle, 100, 100, window_size.x, window_size.y, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_SHOWN), SDL_DestroyWindow);
         if (window == nullptr)
@@ -84,7 +132,29 @@ int main(int argc, char** argv)
         }
 
         if (i >= 0) {
-            sdl_rogue.reset(new SdlRogue(window.get(), renderer.get(), current_env, i));
+            args.rogomatic &= s_options[i].supports_rogomatic;
+            if (args.rogomatic)
+            {
+                current_env->Set("name", "rogomatic");
+                current_env->Set("fruit", "apricot");
+                current_env->Set("terse", "true");
+                current_env->Set("jump", "true");
+                current_env->Set("step", "true");
+                current_env->Set("seefloor", "true");
+                current_env->Set("flush", "false");
+                current_env->Set("askme", "false");
+                current_env->Set("passgo", "false");
+                current_env->Set("inven", "slow");
+                current_env->Set("showac", "");
+            }
+
+            sdl_rogue.reset(
+                new SdlRogue(
+                    window.get(),
+                    renderer.get(),
+                    current_env,
+                    i,
+                    args.rogomatic));
         }
         else if (!replay_path.empty()) {
             sdl_rogue.reset(new SdlRogue(window.get(), renderer.get(), current_env, replay_path));
@@ -92,16 +162,34 @@ int main(int argc, char** argv)
 
         if (sdl_rogue) {
             //start rogue engine on a background thread
-            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, argc, argv, sdl_rogue.get());
+            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, argc, argv, sdl_rogue.get(), args.rogomatic_player_version);
             rogue.detach();
 
+            if (i >= 0 && args.rogomatic)
+            {
+                rogomatic_process.reset(new PROCESS_INFORMATION());
+                CreateProcessOrExit(
+                    "RogueCollection.exe g --rogomatic-player-version \"" + s_options[i].name + "\"",
+                    rogomatic_process.get());
+            }
+
             sdl_rogue->Run();
+            if (i >= 0 && args.rogomatic)
+            {
+                sdl_rogue->SaveGame(s_options[i].name + GetTimestamp() + ".sav", false);
+            }
         }
     }
     catch (const std::runtime_error& e)
     {
         DisplayMessage(SDL_MESSAGEBOX_ERROR, "Fatal Error", e.what());
         return 1;
+    }
+
+    if (rogomatic_process)
+    {
+        WaitForSingleObject(rogomatic_process->hProcess, INFINITE);
+        CloseHandles(*rogomatic_process);
     }
 
     renderer.release();

@@ -1,5 +1,6 @@
 #include <sstream>
 #include <cassert>
+#include <fstream>
 #include <SDL_image.h>
 #include <pc_gfx_charmap.h>
 #include "sdl_display.h"
@@ -72,7 +73,14 @@ namespace
     }
 }
 
-SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env, Environment* game_env, const GameConfig& options, ReplayableInput* input) :
+SdlDisplay::SdlDisplay(
+    SDL_Window* window,
+    SDL_Renderer* renderer,
+    Environment* current_env,
+    Environment* game_env,
+    const GameConfig& options,
+    ReplayableInput* input,
+    bool piped_output) :
     m_window(window),
     m_renderer(renderer),
     m_current_env(current_env),
@@ -98,6 +106,10 @@ SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* 
     }
 
     m_dimensions = { game_env->Columns(), game_env->Lines() };
+
+    if (piped_output) {
+        m_out_stream = std::ofstream("ipc.txt");
+    }
 
     SDL_ShowWindow(window);
     LoadAssets();
@@ -412,6 +424,63 @@ void SdlDisplay::SetDimensions(Coord dimensions)
     assert(m_dimensions.y == dimensions.y);
 }
 
+
+# define ctrl(c) (char)((c)&037)
+# define CL_TOK ctrl('L')
+# define ESC ctrl('[')
+# define CB_TOK (char)-18
+
+char GetCharFromData(uint32_t* data, int r, int c, int cols)
+{
+    unsigned char ch = CharText(data[r*cols + c]);
+    auto i = unix_chars.find(ch);
+    if (i != unix_chars.end())
+        ch = i->second;
+    return (ch != 0 ? ch : ' ');
+}
+
+void WritePosition(std::ofstream& out_stream, Coord pos)
+{
+    out_stream << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
+    std::flush(out_stream);
+}
+
+void WriteFullRow(std::ofstream& out_stream, uint32_t* data, int r, int cols)
+{
+    for (int c = 0; c < cols; ++c)
+    {
+        out_stream << GetCharFromData(data, r, c, cols);
+    }
+    std::flush(out_stream);
+}
+
+void WriteDiffRow(std::ofstream& out_stream, uint32_t* data, uint32_t* prev_data, int r, int cols)
+{
+    for (int c = 0; c < cols; ++c)
+    {
+        if (data[r*cols + c] != prev_data[r*cols + c])
+        {
+            WritePosition(out_stream, { c, r });
+            while (c < cols && data[r*cols + c] != prev_data[r*cols + c]) {
+                out_stream << GetCharFromData(data, r, c, cols);
+                ++c;
+            }
+        }
+    }
+    std::flush(out_stream);
+}
+
+void WriteFullScreen(std::ofstream& out_stream, uint32_t* data, int rows, int cols)
+{
+    out_stream << CL_TOK;
+    for (int r = 0; r < rows; ++r)
+    {
+        WriteFullRow(out_stream, data, r, cols);
+        out_stream << std::endl;
+    }
+    std::flush(out_stream);
+}
+
 void SdlDisplay::UpdateRegion(uint32_t * info)
 {
     UpdateRegion(info, FullRegion());
@@ -420,6 +489,31 @@ void SdlDisplay::UpdateRegion(uint32_t * info)
 void SdlDisplay::UpdateRegion(uint32_t* info, Region rect)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (!m_prev_data ||
+        rect.Top == FullRegion().Top &&
+        rect.Left == FullRegion().Left &&
+        rect.Bottom == FullRegion().Bottom &&
+        rect.Right == FullRegion().Right)
+    {
+        WriteFullScreen(m_out_stream, info, m_dimensions.y, m_dimensions.x);
+    }
+    else
+    {
+        for (int r = rect.Top; r <= rect.Bottom; ++r)
+        {
+            if (r == 0 || r == m_dimensions.y - 1) {
+                //WritePosition(m_out_stream, { m_dimensions.x - 1, r });
+                //m_out_stream << CB_TOK;
+                WritePosition(m_out_stream, { 0, r });
+                WriteFullRow(m_out_stream, info, r, m_dimensions.x);
+            }
+            else
+            {
+                WriteDiffRow(m_out_stream, info, m_prev_data.get(), r, m_dimensions.x);
+            }
+        }
+    }
 
     //todo: If we're adding a full render to the queue, we can ignore any previous regions.
 
@@ -443,6 +537,14 @@ void SdlDisplay::MoveCursor(Coord pos)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_shared.cursor_pos = pos;
+    WritePosition(m_out_stream, pos);
+
+    if (m_shared.data)
+    {
+        auto data = new uint32_t[TotalChars()];
+        memcpy(data, m_shared.data.get(), TotalChars() * sizeof(int32_t));
+        m_prev_data.reset(data);
+    }
 }
 
 void SdlDisplay::SetCursor(bool enable)

@@ -1177,7 +1177,7 @@ FILE *f;
   register int i, j, length;
   struct tm *localtime(), *ts;
   char *statusline();
-  long clock;
+  time_t clock;
 
   /* Now get the current time, so we can date the snapshot */
   clock = time(&clock);

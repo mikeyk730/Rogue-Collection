@@ -8,12 +8,12 @@
 struct DisplayInterface;
 struct InputInterface;
 struct SdlDisplay;
-struct SdlInput;
+struct ReplayableInput;
 struct Environment;
 
 struct SdlRogue
 {
-    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int index);
+    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int index, bool is_rogomatic_server);
     SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const std::string& filename);
     ~SdlRogue();
 
@@ -36,7 +36,7 @@ private:
     void SetGame(int i);
 
     std::unique_ptr<SdlDisplay> m_display;
-    std::unique_ptr<SdlInput> m_input;
+    std::unique_ptr<ReplayableInput> m_input;
     std::shared_ptr<Environment> m_current_env;
     std::shared_ptr<Environment> m_game_env;
 

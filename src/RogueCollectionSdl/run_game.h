@@ -18,7 +18,7 @@ struct LibraryDeleter
 #endif
 
 template <typename T>
-void RunGame(const std::string& lib, int argc, char** argv, T* r)
+void RunGame(const std::string& lib, int argc, char** argv, T* r, const std::string& rogomatic_version)
 {
 #ifdef _WIN32 //todo:support linux
     std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
@@ -38,7 +38,10 @@ void RunGame(const std::string& lib, int argc, char** argv, T* r)
         }
 
         (*Init)(r->Display(), r->Input(), r->GameEnv()->Lines(), r->GameEnv()->Columns());
-        (*game)(0, 0, environ);
+
+        const char* argv[6] = { "player.exe", "ipc.txt", "0", "0,0,1,1,0,0,0,0", "Mikey", rogomatic_version.c_str() }; //todo:mdk
+        bool rogomatic = lib == "Rogomatic_Player.dll";
+        (*game)(rogomatic ? 6 : 0, rogomatic ? (char**)argv : 0, environ);
         r->PostQuit();
     }
 #else
