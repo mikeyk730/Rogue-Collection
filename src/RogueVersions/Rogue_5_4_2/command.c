@@ -295,7 +295,7 @@ over:
 		//    wrefresh(curscr);
 		when 'v':
 		    after = FALSE;
-		    msg("version %s. (mctesq was here)", release);
+		    msg("Rogue version %s. (Berkeley)", release);
 		when 'S': 
 		    after = FALSE;
 		    save_game();

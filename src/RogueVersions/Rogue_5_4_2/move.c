@@ -354,7 +354,7 @@ be_trapped(const coord *tc)
 	    msg("a gush of water hits you on the head");
 	    rust_armor(cur_armor);
     }
-    flush_type();
+    if (fight_flush) flush_type();
     play_sound("trap");
     return tr;
 }

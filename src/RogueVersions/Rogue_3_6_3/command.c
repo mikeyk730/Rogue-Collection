@@ -184,7 +184,7 @@ command()
 			do_zap(TRUE);
 		    else
 			after = FALSE;
-		when 'v' : msg("Rogue version %s. (mctesq was here)", release);
+		when 'v' : msg("Rogue version %s. (Berkeley)", release);
 		when CTRL('L') : after = FALSE; clearok(curscr,TRUE);draw(curscr);
 		when CTRL('R') : after = FALSE; msg(huh);
 		when 'S' : 

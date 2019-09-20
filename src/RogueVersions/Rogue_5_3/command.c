@@ -193,7 +193,7 @@ command()
 		    wrefresh(curscr);
 		when 'v' :
 		    after = FALSE;
-		    msg("rogue version %s. (mctesq was here)", release);
+		    msg("Rogue version %s. (New Mexico Tech)", release);
 		when 'S' : 
 		    after = FALSE;
 		    if (save_game())

@@ -208,7 +208,7 @@ int command()
 		    wrefresh(curscr);
 		when 'v' :
 		    after = FALSE;
-		    msg("rogue version %s. (mctesq was here)", release);
+		    msg("Rogue version %s. (Berkeley)", release);
 		when 'S' : 
 		    after = FALSE;
 		    if (save_game())
