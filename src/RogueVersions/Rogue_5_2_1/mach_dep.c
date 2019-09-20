@@ -185,7 +185,7 @@ too_much()
 {
 #ifdef MAXLOAD
     double avec[3];
-    
+
     if (md_getloadavg(avec) == 0)
         if (avec[2] > (MAXLOAD / 10.0))
 	    return(1);
@@ -201,7 +201,7 @@ too_much()
  * author:
  *	See if a user is an author of the program
  */
-/* Function removed by RRPF 
+/* Function removed by RRPF
 author()
 {
 #ifdef WIZARD
@@ -347,6 +347,8 @@ over:
 	else
 	    return FALSE;
     }
+#else
+    return TRUE;
 #endif
 #endif
 }

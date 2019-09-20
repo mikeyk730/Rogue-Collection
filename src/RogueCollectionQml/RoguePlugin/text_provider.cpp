@@ -17,6 +17,8 @@ TextProvider::TextProvider(const TextConfig & config) :
     mask_ = QBitmap::fromImage(img.createMaskFromColor(qRgb(255, 255, 255), Qt::MaskOutColor));
 }
 
+TextProvider::~TextProvider() = default;
+
 QSize TextProvider::TileSize() const
 {
     return tile_size_;

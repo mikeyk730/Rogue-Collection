@@ -9,7 +9,7 @@ Rectangle {
     color: 'black'
 
     signal selected(string game)
-    signal restore(string savefile)
+    signal restore(url savefile)
 
     property string letters: "abcdefghijklmnopqrstuvwxyz"
 
@@ -20,9 +20,7 @@ Rectangle {
         nameFilters: [ "Saved games (*.sav)", "All files (*)" ]
         selectMultiple: false
         onAccepted: {
-            var path = fileDialog.fileUrl.toString();
-            path = path.replace(/^(file:\/{3})/,"");
-            root.restore(path)
+            root.restore(fileDialog.fileUrl)
         }
     }
 

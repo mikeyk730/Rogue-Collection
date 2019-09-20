@@ -3,7 +3,7 @@
  *
  * @(#)scedit.c	4.2 (NMT from Berkeley 5.2) 8/25/83
  */
-
+#ifndef ROGUE_COLLECTION
 # include	<stdio.h>
 # include	<pwd.h>
 # include	<signal.h>
@@ -290,3 +290,4 @@ del_score() {
 	Top_ten[9].sc_monster = RN;
 	Top_ten[9].sc_uid = RN;
 }
+#endif

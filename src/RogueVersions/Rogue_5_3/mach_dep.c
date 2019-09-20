@@ -65,7 +65,11 @@ init_check()
 open_score()
 {
 #ifdef SCOREFILE
+#ifdef _WIN32
     fd = open(SCOREFILE, _O_RDWR | _O_CREAT | _O_BINARY, _S_IREAD | _S_IWRITE);
+#else
+    fd = open(SCOREFILE, O_RDWR | O_CREAT, S_IREAD | S_IWRITE);
+#endif
 #else
     fd = -1;
 #endif

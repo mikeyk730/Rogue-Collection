@@ -6,7 +6,7 @@
  *
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
-
+#ifndef ROGUE_COLLECTION
 # include	<curses.h>
 # include	"rogue.h"
 
@@ -94,3 +94,4 @@ register unsigned int range;
 
     return RN % range;
 }
+#endif

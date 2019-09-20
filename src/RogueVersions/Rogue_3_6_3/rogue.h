@@ -34,7 +34,7 @@
  */
 #define CCHAR(x) ( (x) & A_CHARTEXT )
 #define CMVINCH(x,y) CCHAR(mvinch((x),(y)))
-#define CMVWINCH(x,y,z) CCHAR(mvwinch((x),(y),(z))) 
+#define CMVWINCH(x,y,z) CCHAR(mvwinch((x),(y),(z)))
 #define next(ptr) (*ptr).l_next
 #define prev(ptr) (*ptr).l_prev
 #define ldata(ptr) (*ptr).l_data

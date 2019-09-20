@@ -27,11 +27,13 @@ typedef struct {
 
 char	*s_vowelstr();
 
+extern char	encstr[], statlist[];
+
 char *lockfile = "/tmp/.fredlock";
 
 char prbuf[MAXSTR];			/* buffer for sprintfs */
 
-MONST	monsters[] = {
+MONST	monsterlist[] = {
 	{ "aquator" }, { "bat" }, { "centaur" }, { "dragon" }, { "emu" },
 	{ "venus flytrap" }, { "griffin" }, { "hobgoblin" }, { "ice monster" },
 	{ "jabberwock" }, { "kobold" }, { "leprechaun" }, { "medusa" },
@@ -194,7 +196,7 @@ s_killname(int monst, int doart)
 	    article = FALSE;
 	otherwise:
 	    if (isupper(monst))
-		sp = monsters[monst-'A'].m_name;
+		sp = monsterlist[monst-'A'].m_name;
 	    else
 	    {
 		sp = "God";

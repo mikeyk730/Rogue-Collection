@@ -52,7 +52,7 @@ Args::Args(int argc, char **argv)
 
 Args::Args(std::vector<std::string> args)
 {
-    for (int i = 1; i < args.size(); ++i) {
+    for (size_t i = 1; i < args.size(); ++i) {
         std::string arg(args[i]);
         std::string next(i+1 < args.size() ? args[i+1] : "");
         if (LoadArg(*this, arg, next))

@@ -40,8 +40,10 @@
 #include <QPainter>
 #include <QTimer>
 #include <QCoreApplication>
+#include <QDir>
 #include <sstream>
 #include <fstream>
+#include <thread>
 #include <cstdio>
 #include "qrogue.h"
 #include "qrogue_input.h"
@@ -50,12 +52,22 @@
 #include "environment.h"
 #include "run_game.h"
 #include "game_config.h"
+#include "tile_provider.h"
+
+namespace
+{
+    QString convertUrlToNativeFilePath(const QUrl& url)
+    {
+        return QDir::toNativeSeparators(url.toLocalFile());
+    }
+}
 
 const unsigned char QRogue::kSaveVersion = 2;
 
 QRogue::QRogue(QQuickItem *parent)
     : QQuickPaintedItem(parent),
-      config_()
+      config_(),
+      thread_exited_(false)
 {
     connect(this, SIGNAL(render()), this, SLOT(update()), Qt::QueuedConnection);
     connect(this, SIGNAL(soundEvent(const QString&)), this, SLOT(playSound(const QString&)), Qt::QueuedConnection);
@@ -80,14 +92,14 @@ QRogue::QRogue(QQuickItem *parent)
     std::string game;
     if (env_->Get("game", &game) && !game.empty()){
         int i = GetGameIndex(game.c_str());
-        if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + (int)s_options.size())){
+        if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + static_cast<int>(s_options.size()))){
             i = game[0] - 'a';
         }
 
         if (i != -1)
             setGame(i);
         else
-            restoreGame(game.c_str());
+            RestoreGame(game.c_str());
     }
 }
 
@@ -118,7 +130,7 @@ void QRogue::setGame(int index)
     emit gameChanged(config_.name.c_str());
     game_env_ = env_;
 
-    int seed = (int)time(0);
+    int seed = static_cast<int>(time(nullptr));
     std::ostringstream ss;
     ss << seed;
     game_env_->Set("seed", ss.str());
@@ -133,10 +145,10 @@ bool QRogue::showTitleScreen()
     return config_.name == "PC Rogue 1.48" && restore_count_ == 0;
 }
 
-void QRogue::restoreGame(const QString &filename)
+void QRogue::restoreGame(const QUrl& url)
 {
+    auto filename = convertUrlToNativeFilePath(url);
     RestoreGame(filename.toStdString());
-    LaunchGame();
 }
 
 void QRogue::RestoreGame(const std::string& path)
@@ -181,6 +193,8 @@ void QRogue::RestoreGame(const std::string& path)
         file.close();
         std::remove(path.c_str());
     }
+
+    LaunchGame();
 }
 
 void QRogue::LaunchGame()
@@ -206,13 +220,14 @@ void QRogue::LaunchGame()
     timer->start(250);
 
     //start rogue engine on a background thread
-    char* argv[] = {0};
+    char* argv[] = {nullptr};
     std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this, std::ref(thread_exited_));
     rogue.detach(); //todo: how do we want threading to work?
 }
 
-void QRogue::saveGame(const QString &filename)
+void QRogue::saveGame(const QUrl& url)
 {
+    auto filename = convertUrlToNativeFilePath(url);
     SaveGame(filename.toStdString(), true);
 }
 
@@ -225,7 +240,7 @@ void QRogue::autosave()
 {
     std::string value;
     if (input_ && env_->Get("autosave", &value)){
-        if (value == "true" && !thread_exited_ || value == "force"){
+        if ((value == "true" && !thread_exited_) || value == "force"){
             std::string name = "autosave-" + GetTimeString() + ".sav";
             SaveGame(name, false);
         }

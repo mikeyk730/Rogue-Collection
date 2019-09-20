@@ -1,5 +1,10 @@
-QT += qml quick multimedia
-TARGET = RogueCollection
+QT += widgets qml quick multimedia
+linux {
+    TARGET = rogue-collection.exe
+}
+win32 {
+    TARGET = RogueCollection
+}
 
 static {
     QTPLUGIN += RoguePlugin
