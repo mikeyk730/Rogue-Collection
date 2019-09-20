@@ -4,6 +4,7 @@ extern "C" {
 }
 #include "curses_ex.h"
 #include <vector>
+#include <memory>
 #include <algorithm>
 #include <cstdarg>
 #include <cstring>
@@ -57,15 +58,19 @@ private:
     void set_data(int r, int c, chtype ch);
     void set_data_absolute(int abs_r, int abs_c, chtype ch);
     chtype* data(int row, int col) const;
+    char* dirty(int row, int col) const;
     Coord data_coords(int r, int c) const;
     Region window_region() const;
     int index(int r, int c) const;
+    void clear_dirty();
 
 private:
     Coord origin = { 0, 0 };
     Coord dimensions = { 0, 0 };
 
-    chtype* m_data = 0;
+    std::unique_ptr<chtype[]> m_data = 0;
+    std::unique_ptr<char[]> m_dirty;
+
     chtype attr = 0;
 
     int row = 0;
@@ -94,7 +99,9 @@ __window::__window(int lines, int cols, int begin_y, int begin_x)
     dimensions = { cols, lines };
     origin = { begin_x, begin_y };
 
-    m_data = new chtype[lines*cols];
+    m_data.reset(new chtype[lines*cols]);
+    m_dirty.reset(new char[lines*cols]);
+    clear_dirty();
 
     erase();
 }
@@ -109,7 +116,6 @@ __window::__window(__window * p, int lines, int cols, int begin_y, int begin_x)
 
 __window::~__window()
 {
-    delete[] m_data;
 }
 
 int __window::addch(chtype ch)
@@ -346,35 +352,26 @@ int __window::noecho()
     return OK;
 }
 
+void __window::clear_dirty()
+{
+    memset(m_dirty.get(), 0, dimensions.x * dimensions.y * sizeof(char));
+}
+
 int __window::refresh()
 {
-    std::vector<Region> changed_regions;
-    //Region region = window_region();
-
     for (int r = 0; r < dimensions.y; ++r) {
-        if (memcmp(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype)) != 0) {
-            memcpy(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype));
-
-            Region rect;
-            rect.Top = origin.y + r;
-            rect.Left = origin.x;
-            rect.Bottom = rect.Top;
-            rect.Right = rect.Left + dimensions.x - 1;
-            changed_regions.push_back(rect);
-        }
+        memcpy(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype));
+        memcpy(curscr->dirty(r + origin.y, origin.x), dirty(r, 0), dimensions.x * sizeof(char));
     }
 
     if (s_screen) {
-        if (changed_regions.size() == (size_t)LINES) {
-            s_screen->UpdateRegion(curscr->m_data);
-        }
-        else {
-            for (size_t i = 0; i < changed_regions.size(); ++i) {
-                s_screen->UpdateRegion(curscr->m_data, changed_regions[i]);
-            }
-        }
+        s_screen->UpdateRegion(curscr->m_data.get(), curscr->m_dirty.get());
         s_screen->MoveCursor({ col + origin.x, row + origin.y });
     }
+
+    clear_dirty();
+    curscr->clear_dirty();
+
     return OK;
 }
 
@@ -408,6 +405,7 @@ int __window::copywin(WINDOW* dest, int srcrow, int srccol, int destrow, int des
     for (int r = destrow; r <= destmaxrow; ++r) {
         int c = destcol;
         memcpy(dest->data(r, c), this->data(r + roffset, c + coffset), ncols*sizeof(chtype));
+        memset(dest->dirty(r, c), 1, ncols*sizeof(char));
     }
     return OK;
 }
@@ -443,6 +441,7 @@ void __window::set_data(int r, int c, chtype ch)
 {
     Coord o = data_coords(r, c);
     *data(o.y,o.x) = ch;
+    *dirty(o.y, o.x) = 1;
 }
 
 void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
@@ -453,6 +452,11 @@ void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
 chtype* __window::data(int r, int c) const
 {
     return parent ? parent->data(r,c) : &m_data[index(r,c)];
+}
+
+char* __window::dirty(int r, int c) const
+{
+    return parent ? parent->dirty(r,c) : &m_dirty[index(r,c)];
 }
 
 Coord __window::data_coords(int r, int c) const

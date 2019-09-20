@@ -860,8 +860,22 @@ char *argv[];
   close_frogue_debuglog ();
   debuglog_close ();
 
-  getch();
+  flushinp();
+  wait_for('\n');
   exit (0);
+}
+
+wait_for(ch)
+register char ch;
+{
+    register char c;
+
+    if (ch == '\n')
+        while ((c = md_readchar(stdscr)) != '\n' && c != '\r')
+            continue;
+    else
+        while (md_readchar(stdscr) != ch)
+            continue;
 }
 
 /*

@@ -17,6 +17,12 @@
 #include "environment.h"
 #include "sdl_utility.h"
 
+# define ctrl(c) (char)((c)&037)
+# define CL_TOK ctrl('L')
+# define ESC ctrl('[')
+
+static const char zeros[5000];
+
 namespace
 {
     std::map<int, int> unix_chars = {
@@ -76,6 +82,41 @@ namespace
 
         return interval;
     }
+
+    char GetRawCharFromData(uint32_t* data, int r, int c, int cols)
+    {
+        unsigned char ch = CharText(data[r*cols + c]);
+        auto i = unix_chars.find(ch);
+        if (i != unix_chars.end())
+            ch = i->second;
+        return (ch != 0 ? ch : ' ');
+    }
+
+    void WriteRogomaticPosition(std::ofstream& out_stream, Coord pos)
+    {
+        out_stream << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
+        std::flush(out_stream);
+    }
+
+    void WriteRogomaticScreen(std::ofstream& out_stream, uint32_t* data, char* dirty, int rows, int cols)
+    {
+        for (int r = 0; r < rows; ++r)
+        {
+            for (int c = 0; c < cols; ++c)
+            {
+                if (dirty[r*cols + c])
+                {
+                    WriteRogomaticPosition(out_stream, { c, r });
+                    while (c < cols && dirty[r*cols + c]) {
+                        out_stream << GetRawCharFromData(data, r, c, cols);
+                        ++c;
+                    }
+                }
+            }
+        }
+
+        std::flush(out_stream);
+    }
 }
 
 SdlDisplay::SdlDisplay(
@@ -114,6 +155,7 @@ SdlDisplay::SdlDisplay(
 
     if (piped_output) {
         m_out_stream = std::ofstream("ipc.txt");
+        m_out_stream << CL_TOK;
     }
 
     SDL_ShowWindow(window);
@@ -429,97 +471,36 @@ void SdlDisplay::SetDimensions(Coord dimensions)
     assert(m_dimensions.y == dimensions.y);
 }
 
-
-# define ctrl(c) (char)((c)&037)
-# define CL_TOK ctrl('L')
-# define ESC ctrl('[')
-# define CB_TOK (char)-18
-
-char GetCharFromData(uint32_t* data, int r, int c, int cols)
-{
-    unsigned char ch = CharText(data[r*cols + c]);
-    auto i = unix_chars.find(ch);
-    if (i != unix_chars.end())
-        ch = i->second;
-    return (ch != 0 ? ch : ' ');
-}
-
-void WritePosition(std::ofstream& out_stream, Coord pos)
-{
-    out_stream << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
-    std::flush(out_stream);
-}
-
-void WriteFullRow(std::ofstream& out_stream, uint32_t* data, int r, int cols)
-{
-    for (int c = 0; c < cols; ++c)
-    {
-        out_stream << GetCharFromData(data, r, c, cols);
-    }
-    std::flush(out_stream);
-}
-
-void WriteDiffRow(std::ofstream& out_stream, uint32_t* data, uint32_t* prev_data, int r, int cols)
-{
-    for (int c = 0; c < cols; ++c)
-    {
-        if (data[r*cols + c] != prev_data[r*cols + c])
-        {
-            WritePosition(out_stream, { c, r });
-            while (c < cols && data[r*cols + c] != prev_data[r*cols + c]) {
-                out_stream << GetCharFromData(data, r, c, cols);
-                ++c;
-            }
-        }
-    }
-    std::flush(out_stream);
-}
-
-void WriteFullScreen(std::ofstream& out_stream, uint32_t* data, int rows, int cols)
-{
-    out_stream << CL_TOK;
-    for (int r = 0; r < rows; ++r)
-    {
-        WriteFullRow(out_stream, data, r, cols);
-        out_stream << std::endl;
-    }
-    std::flush(out_stream);
-}
-
 void SdlDisplay::UpdateRegion(uint32_t * info)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     UpdateRegion(info, FullRegion());
+}
+
+void SdlDisplay::UpdateRegion(uint32_t* info, char* dirty)
+{
+    WriteRogomaticScreen(m_out_stream, info, dirty, m_dimensions.y, m_dimensions.x);
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    for (int r = 0; r < m_dimensions.y; ++r)
+    {
+        if (memcmp(&dirty[r*m_dimensions.x], zeros, m_dimensions.x))
+        {
+            Region region;
+            region.Left = 0;
+            region.Top = r;
+            region.Right = short(m_dimensions.x - 1);
+            region.Bottom = r;
+
+            UpdateRegion(info, region);
+        }
+    }
 }
 
 void SdlDisplay::UpdateRegion(uint32_t* info, Region rect)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-
-    if (!m_prev_data ||
-        rect.Top == FullRegion().Top &&
-        rect.Left == FullRegion().Left &&
-        rect.Bottom == FullRegion().Bottom &&
-        rect.Right == FullRegion().Right)
-    {
-        WriteFullScreen(m_out_stream, info, m_dimensions.y, m_dimensions.x);
-    }
-    else
-    {
-        for (int r = rect.Top; r <= rect.Bottom; ++r)
-        {
-            if (r == 0 || r == m_dimensions.y - 1) {
-                //WritePosition(m_out_stream, { m_dimensions.x - 1, r });
-                //m_out_stream << CB_TOK;
-                WritePosition(m_out_stream, { 0, r });
-                WriteFullRow(m_out_stream, info, r, m_dimensions.x);
-            }
-            else
-            {
-                WriteDiffRow(m_out_stream, info, m_prev_data.get(), r, m_dimensions.x);
-            }
-        }
-    }
-
     //todo: If we're adding a full render to the queue, we can ignore any previous regions.
 
     //If we're behind on rendering, clear the queue and do a single full render.
@@ -542,13 +523,12 @@ void SdlDisplay::MoveCursor(Coord pos)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_shared.cursor_pos = pos;
-    WritePosition(m_out_stream, pos);
+    WriteRogomaticPosition(m_out_stream, pos);
 
     if (m_shared.data)
     {
         auto data = new uint32_t[TotalChars()];
         memcpy(data, m_shared.data.get(), TotalChars() * sizeof(int32_t));
-        m_prev_data.reset(data);
     }
 }
 

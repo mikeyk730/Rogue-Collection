@@ -30,8 +30,7 @@ struct SdlDisplay : public DisplayInterface
 
     //display interface
     virtual void SetDimensions(Coord dimensions) override;
-    virtual void UpdateRegion(uint32_t* buf) override;
-    virtual void UpdateRegion(uint32_t* info, Region rect) override;
+    virtual void UpdateRegion(uint32_t* info, char* dirty) override;
     virtual void MoveCursor(Coord pos) override;
     virtual void SetCursor(bool enable) override;
     virtual void PlaySound(const std::string& id) override;
@@ -46,6 +45,9 @@ struct SdlDisplay : public DisplayInterface
     static void PostRenderMsg(int force);
 
 private:
+    void UpdateRegion(uint32_t* buf);
+    void UpdateRegion(uint32_t* info, Region rect);
+
     bool HandleWindowEvent(const SDL_Event& e);
     bool HandleRenderEvent(const SDL_Event& e);
     bool HandleTimerEvent(const SDL_Event& e);
@@ -86,7 +88,6 @@ private:
     std::unique_ptr<TileProvider> m_tile_provider;
     int m_frame_number = 0;
     std::ofstream m_out_stream;
-    std::unique_ptr<uint32_t[]> m_prev_data;
 
     struct ThreadData
     {
