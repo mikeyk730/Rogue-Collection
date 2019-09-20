@@ -41,6 +41,8 @@ struct __window
     int move(int r, int c);
     int mvwin(int r, int c);
     int nodelay(bool enable);
+    int echo();
+    int noecho();
     int overlay(WINDOW* dest, bool copy_spaces) const;
     int copywin(WINDOW* dest, int srcow, int srccol, int destrow, int destcol, int destmaxrow, int destmaxcol) const;
     int refresh();
@@ -70,6 +72,8 @@ private:
     int col = 0;
 
     bool no_delay = false;
+    bool should_echo = true;
+
 
     __window* parent = 0;
 };
@@ -198,6 +202,7 @@ int __window::getch()
     if (!s_input)
         return ERR;
     int ch = s_input->GetChar(!no_delay, false, nullptr);
+    //todo:mdk should consider echo here?
     return ch ? ch : ERR;
 }
 
@@ -256,7 +261,9 @@ std::string __window::getsnstr_impl(unsigned int n)
             return s;
         case '\b':
             if (!s.empty()) {
-                addch('\b');
+                if (should_echo) {
+                    addch('\b');
+                }
                 s.pop_back();
             }
             break;
@@ -265,8 +272,9 @@ std::string __window::getsnstr_impl(unsigned int n)
                 beep();
                 break;
             }
-            //todo: i should care about echo
-            addch(c);
+            if (should_echo) {
+                addch(c);
+            }
             s.push_back(c);
             break;
         case '\n':
@@ -323,6 +331,18 @@ int __window::mvwin(int r, int c)
 int __window::nodelay(bool enable)
 {
     no_delay = enable;
+    return OK;
+}
+
+int __window::echo()
+{
+    should_echo = true;
+    return OK;
+}
+
+int __window::noecho()
+{
+    should_echo = false;
     return OK;
 }
 
@@ -803,6 +823,17 @@ int nodelay(WINDOW* w, _bool enable)
     return w->nodelay(enable != 0);
 }
 
+int wecho(WINDOW* w)
+{
+    return w->echo();
+}
+
+int wnoecho(WINDOW* w)
+{
+    return w->noecho();
+}
+
+
 int baudrate(void)
 {
     return s_baudrate;
@@ -880,7 +911,7 @@ int nocbreak(void)
 
 int noecho(void)
 {
-    return OK;
+    return wnoecho(stdscr);
 }
 
 int halfdelay(int)
@@ -925,10 +956,16 @@ int nocrmode(void)
 
 int echo(void)
 {
-    return OK;
+    return wecho(stdscr);
 }
 
 int beep(void)
 {
     return putchar('\a');
 }
+
+int noraw(void)
+{
+    return OK;
+}
+
