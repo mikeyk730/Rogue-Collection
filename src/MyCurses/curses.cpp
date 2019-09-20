@@ -49,6 +49,7 @@ struct __window
     int refresh();
     int getnstr(char* dest, int n);
     int chgat(int n, attr_t attr, short color, const void *opts);
+    int touchwin();
 
 private:
     std::string getsnstr_impl(unsigned int n);
@@ -62,7 +63,7 @@ private:
     Coord data_coords(int r, int c) const;
     Region window_region() const;
     int index(int r, int c) const;
-    void clear_dirty();
+    void fill_dirty(int value);
 
 private:
     Coord origin = { 0, 0 };
@@ -101,7 +102,7 @@ __window::__window(int lines, int cols, int begin_y, int begin_x)
 
     m_data.reset(new chtype[lines*cols]);
     m_dirty.reset(new char[lines*cols]);
-    clear_dirty();
+    fill_dirty(0);
 
     erase();
 }
@@ -352,9 +353,15 @@ int __window::noecho()
     return OK;
 }
 
-void __window::clear_dirty()
+int __window::touchwin()
 {
-    memset(m_dirty.get(), 0, dimensions.x * dimensions.y * sizeof(char));
+    fill_dirty(1);
+    return OK;
+}
+
+void __window::fill_dirty(int value)
+{
+    memset(m_dirty.get(), value, dimensions.x * dimensions.y * sizeof(char));
 }
 
 int __window::refresh()
@@ -369,8 +376,8 @@ int __window::refresh()
         s_screen->MoveCursor({ col + origin.x, row + origin.y });
     }
 
-    clear_dirty();
-    curscr->clear_dirty();
+    fill_dirty(0);
+    curscr->fill_dirty(0);
 
     return OK;
 }
@@ -480,6 +487,15 @@ void init_curses(DisplayInterface* screen, InputInterface* input, int lines, int
 void shutdow_curses()
 {
 
+}
+
+bool has_typeahead()
+{
+    if (s_input) {
+        return s_input->HasTypeahead();
+    }
+
+    return false;
 }
 
 void play_sound(const char * id)
@@ -938,9 +954,9 @@ int leaveok(WINDOW *, _bool)
     return OK;
 }
 
-int touchwin(WINDOW *)
+int touchwin(WINDOW *w)
 {
-    return OK;
+    return w->touchwin();
 }
 
 int idlok(WINDOW *, _bool)

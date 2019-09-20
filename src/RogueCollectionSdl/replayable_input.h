@@ -17,6 +17,7 @@ public:
     //input interface
     virtual char GetChar(bool block, bool for_string, bool *is_replay) override;
     virtual void Flush() override;
+    virtual bool HasTypeahead() override;
     virtual bool HandleEvent(const SDL_Event& e) = 0;
 
     void SaveGame(std::ostream& file);

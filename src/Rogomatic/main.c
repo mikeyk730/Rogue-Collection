@@ -639,6 +639,7 @@ char *argv[];
       switch (ch) {
         case '?': givehelp (); break;
 
+        case '\r':
         case '\n': if (terse)
             { printsnap (realstdout); fflush (realstdout); }
           else
@@ -861,7 +862,7 @@ char *argv[];
   debuglog_close ();
 
   flushinp();
-  wait_for('\n');
+  //wait_for('\n');
   exit (0);
 }
 

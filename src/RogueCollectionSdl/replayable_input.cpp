@@ -68,6 +68,12 @@ void ReplayableInput::Flush()
     m_buffer.clear();
 }
 
+bool ReplayableInput::HasTypeahead()
+{
+    std::unique_lock<std::mutex> lock(m_input_mutex);
+    return !m_buffer.empty();
+}
+
 void ReplayableInput::SaveGame(std::ostream & file)
 {
     std::unique_lock<std::mutex> lock(m_input_mutex);

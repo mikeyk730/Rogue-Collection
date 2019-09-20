@@ -1076,7 +1076,7 @@ charsavail ()
 
   return ((int) n);
 #else
-  return 0;
+  return has_typeahead();
 #endif
 }
 
