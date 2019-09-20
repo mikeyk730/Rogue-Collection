@@ -955,7 +955,7 @@ waitforspace ()
 
   if (!noterm) {
     printf("Waiting for space...\n");
-    while ((ch = fgetc(stdin)) != ' ')
+    while ((ch = getch()/*fgetc(stdin)*/) != ' ')
       if (ch == '/') dosnapshot();
   }
 
