@@ -1,8 +1,6 @@
 #include "tile_provider.h"
 #include "colors.h"
 
-ITileProvider::~ITileProvider() {}
-
 FontProvider::FontProvider(const QFont& font)
 {
     font_ = font;
@@ -12,6 +10,8 @@ FontProvider::FontProvider(const QFont& font)
     font_size_.setWidth(font_metrics.width("W"));
     font_size_.setHeight(font_metrics.height());
 }
+
+FontProvider::~FontProvider() = default;
 
 QSize FontProvider::TileSize() const
 {

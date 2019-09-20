@@ -16,7 +16,7 @@ std::string GetResourcePath(const std::string& filename)
 
 #ifdef WIN32
 #include <Windows.h>
-void DisplayMessage(const std::string &type, const std::string &title, const std::string &msg)
+void DisplayMessage(const std::string& type, const std::string& title, const std::string& msg)
 {
     int icon = 0;
     if (type == "Error") {
@@ -26,6 +26,12 @@ void DisplayMessage(const std::string &type, const std::string &title, const std
         icon = MB_ICONWARNING;
     }
     MessageBoxA(0, msg.c_str(), title.c_str(), MB_OK | icon);
+}
+#else
+#include <iostream>
+void DisplayMessage(const std::string&, const std::string&, const std::string& msg)
+{
+    std::cout << msg << std::endl; //todo:mdk
 }
 #endif
 

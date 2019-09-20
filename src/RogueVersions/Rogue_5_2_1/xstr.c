@@ -7,6 +7,7 @@
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
 
+#ifndef ROGUE_COLLECTION
 static char *sccsid = "@(#)xstr.c	4.1 (Berkeley) 10/1/80";
 #include <stdio.h>
 #include <ctype.h>
@@ -117,7 +118,7 @@ process(name)
 			continue;
 		}
 		for (cp = linebuf; c = *cp++;) switch (c) {
-			
+
 		case '"':
 			if (incomm)
 				goto def;
@@ -148,7 +149,7 @@ process(name)
 				continue;
 			}
 			goto def;
-		
+
 def:
 		default:
 			putchar(c);
@@ -434,3 +435,4 @@ onintr(int sig)
 	ignore(md_unlink("xs.c"));
 	exit(7);
 }
+#endif

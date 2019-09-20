@@ -28,7 +28,7 @@ namespace
         }
     }
 
-    void WriteEnvPc(std::ostringstream& ss, std::string key, const std::string & value)
+    void WriteEnvPc(std::ostringstream& ss, const std::string& key, const std::string& value)
     {
         ss << key << "=" << value << ';';
     }
@@ -36,7 +36,7 @@ namespace
     int SetEnvVariable(const char* envstr) //todo:mdk move to cross platform file
     {
 #ifdef __linux__
-        char* mem = (char*)malloc(sizeof(envstr));
+        char* mem = (char*)malloc(strlen(envstr) + 1);
         strcpy(mem, envstr);
         return putenv(mem);
 #elif _WIN32
@@ -50,7 +50,7 @@ Environment::Environment()
     SetDefaults();
 }
 
-Environment::Environment(const Args & args)
+Environment::Environment(const Args& args)
 {
     SetDefaults();
     LoadFromFile(args.optfile);
@@ -132,7 +132,7 @@ bool Environment::Get(const std::string & key, std::string* value) const
     return false;
 }
 
-void Environment::Set(const std::string & key, const std::string & value)
+void Environment::Set(const std::string& key, const std::string& value)
 {
     if (value.empty())
         Clear(key);
@@ -140,7 +140,7 @@ void Environment::Set(const std::string & key, const std::string & value)
         m_environment[key] = value;
 }
 
-void Environment::Clear(const std::string &key)
+void Environment::Clear(const std::string& key)
 {
     auto i = m_environment.find(key);
     if (i != m_environment.end()) {
@@ -194,7 +194,7 @@ bool Environment::WriteToOs(bool for_unix)
         return false;
 
     ss.str("");
-    ss << "SEED=" << seed;    
+    ss << "SEED=" << seed;
     return (SetEnvVariable(ss.str().c_str()) == 0);
 }
 

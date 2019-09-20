@@ -140,9 +140,7 @@ Item {
             selectExisting: false
 
             onAccepted: {
-                var path = saveDialog.fileUrl.toString();
-                path = path.replace(/^(file:\/{3})/,"");
-                rogue.saveGame(path);
+                rogue.saveGame(saveDialog.fileUrl);
             }
         }
     }

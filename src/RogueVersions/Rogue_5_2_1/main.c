@@ -1,6 +1,6 @@
 /*
  * #     #
- * #    #   #    #  #   ##  #    #   # 
+ * #    #   #    #  #   ##  #    #   #
  *		         #
  *
  * @(#)main.c	4.26 (Berkeley) 2/4/82
@@ -143,22 +143,22 @@ char **envp;
     initscr();				/* Start up cursor package */
     PC_GFX_SETUP_COLORS();
 
-    if (COLS < 70) 
-    { 
+    if (COLS < 70)
+    {
 	printf("\n\nSorry, but your terminal window has too few columns.\n");
-        printf("Your terminal has %d columns, needs 70.\n",COLS); 
-        endwin(); 
+        printf("Your terminal has %d columns, needs 70.\n",COLS);
+        endwin();
         return(1);
-	} 
+	}
 
-    if (LINES < 22) 
-    { 
-        printf("\n\nSorry, but your terminal window has too few lines.\n"); 
-        printf("Your terminal has %d lines, needs 22.\n",LINES); 
-        endwin(); 
+    if (LINES < 22)
+    {
+        printf("\n\nSorry, but your terminal window has too few lines.\n");
+        printf("Your terminal has %d lines, needs 22.\n",LINES);
+        endwin();
         return(1);
-    } 
- 
+    }
+
     if ((whoami == NULL) || (*whoami == '\0') || (strcmp(whoami,"dosuser")==0))
     {
         echo();
@@ -181,10 +181,10 @@ char **envp;
     /*
      * Start up daemons and fuses
      */
-    daemon(doctor, 0, AFTER);
+    start_daemon(doctor, 0, AFTER);
     fuse(swander, 0, WANDERTIME, AFTER);
-    daemon(stomach, 0, AFTER);
-    daemon(runners, 0, AFTER);
+    start_daemon(stomach, 0, AFTER);
+    start_daemon(runners, 0, AFTER);
     EXITABLE(playit());
 }
 

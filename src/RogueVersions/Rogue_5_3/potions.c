@@ -115,7 +115,7 @@ quaff()
 		}
 		if (show)
 		{
-		    show_win(hw, 
+		    show_win(hw,
 			"You sense the presence of magic on this level.--More--");
 		    break;
 		}
@@ -128,7 +128,7 @@ quaff()
 	    {
 		player.t_flags |= ISTrip;
 		fuse(come_down, 0, SEEDURATION, AFTER);
-		daemon(visuals, 0, AFTER);
+		start_daemon(visuals, 0, AFTER);
 		if (on(player, SEEMONST))
 		    turn_see(FALSE);
 		seenstairs = seen_stairs();

@@ -16,10 +16,10 @@ static char msgbuf[BUFSIZ];
 static int newpos = 0;
 
 /* VARARGS1 */
-msg(fmt, args)
-char *fmt;
-int args;
+msg(const char* fmt, ...)
 {
+    va_list args;
+
     /*
      * if the string is "", just clear the line
      */
@@ -33,7 +33,10 @@ int args;
     /*
      * otherwise add to the message and flush it out
      */
-    doadd(fmt, &args);
+
+    va_start(args, fmt);
+    doadd(fmt, args);
+    va_end(args);
     endmsg();
 }
 
@@ -42,11 +45,13 @@ int args;
  *	Add things to the current message
  */
 /* VARARGS1 */
-addmsg(fmt, args)
-char *fmt;
-int args;
+addmsg(const char* fmt, ...)
 {
-    doadd(fmt, &args);
+    va_list args;
+
+    va_start(args, fmt);
+    doadd(fmt, args);
+    va_end(args);
 }
 
 /*
@@ -103,7 +108,7 @@ step_ok(unsigned int ch)
 	case ' ':
     case VWALL:
     case HWALL:
-    PC_GFX_WALL_CASES    
+    PC_GFX_WALL_CASES
         return FALSE;
 	default:
 	    return (!isalpha(ch));
@@ -167,7 +172,7 @@ status()
 	&& s_ac == (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm)
 	&& s_str == pstats.s_str && s_lvl == level && s_hungry == hungry_state && s_showac == showac)
 	    return;
-	
+
     getyx(stdscr, oy, ox);
     if (s_hp != max_hp)
     {
@@ -197,7 +202,7 @@ status()
     s_pur = purse;
     s_hp = pstats.s_hpt;
     s_str = pstats.s_str;
-    s_exp = pstats.s_exp; 
+    s_exp = pstats.s_exp;
     s_ac = (cur_armor != NULL ? cur_armor->o_ac : pstats.s_arm);
     s_hungry = hungry_state;
     s_showac = showac;

@@ -1,6 +1,6 @@
 /*
  * #     #
- * #    #   #    #  #   ##  #    #   # 
+ * #    #   #    #  #   ##  #    #   #
  *		         #
  *
  * Exploring the dungeons of doom
@@ -17,7 +17,11 @@
 #include <signal.h>
 //#include <pwd.h>
 #include "rogue.h"
+#ifdef _WIN32
 #include "..\pc_gfx_macros.h"
+#else
+#include "../pc_gfx_macros.h"
+#endif
 
 /*
  * main:
@@ -137,10 +141,10 @@ char **envp;
     /*
      * Start up daemons and fuses
      */
-    daemon(doctor, 0, AFTER);
+    start_daemon(doctor, 0, AFTER);
     fuse(swander, 0, WANDERTIME, AFTER);
-    daemon(stomach, 0, AFTER);
-    daemon(runners, 0, AFTER);
+    start_daemon(stomach, 0, AFTER);
+    start_daemon(runners, 0, AFTER);
     EXITABLE(playit());
     return 0;
 }
@@ -194,6 +198,7 @@ register int number, sides;
 	dtotal += rnd(sides)+1;
     return dtotal;
 }
+
 #ifdef SIGTSTP
 /*
  * tstp:
@@ -217,8 +222,8 @@ tstp()
     getyx(curscr, y, x);
     mvcur(y, x, oy, ox);
     fflush(stdout);
-    curscr->_cury = oy;
-    curscr->_curx = ox;
+    //curscr->_cury = oy;
+    //curscr->_curx = ox;
 }
 #endif
 

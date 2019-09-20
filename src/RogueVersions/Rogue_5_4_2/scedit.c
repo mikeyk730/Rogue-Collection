@@ -9,7 +9,7 @@
  *
  * See the file LICENSE.TXT for full copyright and licensing information.
  */
-
+#ifndef ROGUE_COLLECTION
 # include   <curses.h>
 # include	<stdio.h>
 # include	<signal.h>
@@ -42,7 +42,6 @@ struct passwd	*getpwnam();
 int do_comm();
 int pr_score(SCORE *, int);
 
-#ifndef MDK
 int
 main(int ac, char *av[])
 {
@@ -66,7 +65,6 @@ main(int ac, char *av[])
 
 	exit(0);
 }
-#endif
 
 /*
  * do_comm:
@@ -221,7 +219,7 @@ pr_score(SCORE *scp, int num)
 		    reason[scp->sc_flags], scp->sc_level);
 		if (scp->sc_flags == 0)
 		    printf(" by %s", s_killname(scp->sc_monster, TRUE));
-		
+
         printf(" (%s)", md_getrealname(scp->sc_uid));
 		putchar('\n');
 	}
@@ -298,3 +296,4 @@ del_score(void)
 	top_ten[9].sc_monster = RN;
 	top_ten[9].sc_uid = RN;
 }
+#endif

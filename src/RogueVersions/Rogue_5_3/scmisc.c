@@ -26,7 +26,7 @@ extern char	encstr[];
 char *lockfile = "/tmp/.roguelock";
 char prbuf[MAXSTR];			/* Buffer for sprintfs */
 
-MONST	monsters[] = {
+MONST	monsterlist[] = {
 	{ "giant ant" }, { "bat" }, { "centaur" }, { "dragon" },
 	{ "floating eye" }, { "violet fungi" }, { "gnome" }, { "hobgoblin" },
 	{ "invisible stalker" }, { "jackal" }, { "kobold" }, { "leprechaun" },
@@ -177,7 +177,7 @@ bool doart;
 	    article = FALSE;
 	otherwise:
 	    if (monst >= 'A' && monst <= 'Z')
-		sp = monsters[monst-'A'].m_name;
+		sp = monsterlist[monst-'A'].m_name;
 	    else
 	    {
 		sp = "God";

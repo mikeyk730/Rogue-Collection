@@ -1,3 +1,4 @@
+#ifndef ROGUE_COLLECTION
 # include	<curses.h>
 # include	"rogue.h"
 
@@ -85,3 +86,4 @@ register unsigned int range;
 
     return RN % range;
 }
+#endif

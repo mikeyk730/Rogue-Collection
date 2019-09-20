@@ -28,4 +28,9 @@ bool IsCapsLockOn()
 {
     return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
 }
+#else
+bool IsCapsLockOn()
+{
+    return false; //todo:mdk
+}
 #endif

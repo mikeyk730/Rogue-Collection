@@ -7,34 +7,37 @@
 #define CTRL(ch)   (ch&0x1f)
 #define ESCAPE     0x1b
 
-std::map<int, int> key_aliases = {
-    { Qt::Key_Home,     Qt::Key_Y },
-    { Qt::Key_Up,       Qt::Key_K },
-    { Qt::Key_PageUp,   Qt::Key_U },
-    { Qt::Key_Left,     Qt::Key_H },
-    { Qt::Key_Right,    Qt::Key_L },
-    { Qt::Key_End,      Qt::Key_B },
-    { Qt::Key_Down,     Qt::Key_J },
-    { Qt::Key_PageDown, Qt::Key_N },
-};
+namespace
+{
+    std::map<int, int> key_aliases = {
+        { Qt::Key_Home,     Qt::Key_Y },
+        { Qt::Key_Up,       Qt::Key_K },
+        { Qt::Key_PageUp,   Qt::Key_U },
+        { Qt::Key_Left,     Qt::Key_H },
+        { Qt::Key_Right,    Qt::Key_L },
+        { Qt::Key_End,      Qt::Key_B },
+        { Qt::Key_Down,     Qt::Key_J },
+        { Qt::Key_PageDown, Qt::Key_N },
+    };
 
-std::map<int, unsigned char> key_translation = {
-    { Qt::Key_Return,    '\r' },
-    { Qt::Key_Backspace, '\b' },
-    { Qt::Key_Escape,    ESCAPE },
-    { Qt::Key_Insert,    '>' },
-    { Qt::Key_Delete,    's' },
-    { Qt::Key_F1,        '?' },
-    { Qt::Key_F2,        '/' },
-    { Qt::Key_F3,        'a' },
-    { Qt::Key_F4,        CTRL('R') },
-    { Qt::Key_F5,        'c' },
-    { Qt::Key_F6,        'D' },
-    { Qt::Key_F7,        'i' },
-    { Qt::Key_F8,        '^' },
-    { Qt::Key_F9,        CTRL('F') },
-    { Qt::Key_F10,       '!' },
-};
+    std::map<int, unsigned char> key_translation = {
+        { Qt::Key_Return,    '\r' },
+        { Qt::Key_Backspace, '\b' },
+        { Qt::Key_Escape,    ESCAPE },
+        { Qt::Key_Insert,    '>' },
+        { Qt::Key_Delete,    's' },
+        { Qt::Key_F1,        '?' },
+        { Qt::Key_F2,        '/' },
+        { Qt::Key_F3,        'a' },
+        { Qt::Key_F4,        CTRL('R') },
+        { Qt::Key_F5,        'c' },
+        { Qt::Key_F6,        'D' },
+        { Qt::Key_F7,        'i' },
+        { Qt::Key_F8,        '^' },
+        { Qt::Key_F9,        CTRL('F') },
+        { Qt::Key_F10,       '!' },
+    };
+}
 
 bool IsAltOn(QKeyEvent *event){
     return event->modifiers() & Qt::AltModifier;

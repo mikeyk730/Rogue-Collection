@@ -37,6 +37,8 @@ std::map<int, int> s_tile_index = {
     { '*',    61 },
 };
 
+ITileProvider::~ITileProvider() = default;
+
 TileProvider::TileProvider(const TileConfig & config)
     : config_(config),
       tilemap_(GetResourcePath(config.filename).c_str())
@@ -44,6 +46,8 @@ TileProvider::TileProvider(const TileConfig & config)
     tile_size_.setWidth(tilemap_.size().width() / config_.count);
     tile_size_.setHeight(tilemap_.size().height() / config_.states);
 }
+
+TileProvider::~TileProvider() = default;
 
 QSize TileProvider::TileSize() const
 {
