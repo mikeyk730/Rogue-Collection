@@ -184,14 +184,15 @@ void check_frogue_sync()
         return;
     }
 
-    int bytes = end - current;
-    if (bytes == 1 && fgetc(frogue) == '@')
+    int bytes_remaining = end - current;
+    if (bytes_remaining == 1 && fgetc(frogue) == '@')
     {
         ungetc('@', frogue);
         return;
     }
 
-    dwait(D_WARNING, "Expected EOF: %d extra bytes", bytes);
+    while (fgetc(frogue) != EOF);
+    dwait(D_WARNING, "Expected EOF: Dropped %d extra bytes", bytes_remaining);
 }
 
 #define GETROGUECHAR getroguechar();
