@@ -173,6 +173,27 @@ char getroguechar()
   return ch;
 }
 
+void check_frogue_sync()
+{
+    long current = ftell(frogue);
+    fseek(frogue, 0, SEEK_END);
+    long end = ftell(frogue);
+    fseek(frogue, current, SEEK_SET);
+
+    if (current == end) {
+        return;
+    }
+
+    int bytes = end - current;
+    if (bytes == 1 && fgetc(frogue) == '@')
+    {
+        ungetc('@', frogue);
+        return;
+    }
+
+    dwait(D_WARNING, "Expected EOF: %d extra bytes", bytes);
+}
+
 #define GETROGUECHAR getroguechar();
 #else
 #define GETROGUECHAR fgetc(frogue);

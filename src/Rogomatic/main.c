@@ -180,7 +180,7 @@ int   cursedarmor = 0;		/* True if our armor is cursed */
 int   cursedweapon = 0;		/* True if we are wielding cursed weapon */
 int   darkdir = NONE;		/* Direction of monster being arched */
 int   darkturns = 0;		/* Distance to monster being arched */
-int   debugging = D_NORMAL;	/* Debugging options in effect */
+int   debugging = D_NORMAL | D_WARNING;	/* Debugging options in effect */
 int   didreadmap = 0;		/* Last level we read a map on */
 int   doorlist[40];		/* List of doors on this level */
 int   doublehasted = 0; 	/* True if double hasted (Rogue 3.6) */
@@ -613,6 +613,7 @@ char *argv[];
 
       sendnow (";");
       getrogue (ill, 2);
+      check_frogue_sync();
     }
 
     if (startingup) {	/* All monsters identified */
