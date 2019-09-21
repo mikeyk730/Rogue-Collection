@@ -596,7 +596,7 @@ int                     gethand(void);
 void                    help(void);
 void                    hit(char *er, char *ee);
 int                     hit_monster(int y, int x, struct object *obj);
-void                    horiz(int cnt);
+void                    horiz(int cnt, int is_top);
 void                    identify(void);
 void                    init_colors(void);
 void                    init_materials(void);
