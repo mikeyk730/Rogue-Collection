@@ -4,7 +4,7 @@ SRCROOT  = ../..
 BUILDROOT= $(SRCROOT)/../build/
 
 INCLUDES = -I$(SRCROOT)/Shared -I$(SRCROOT)/MyCurses -I$(SRCROOT)/RogueVersions/Rogue_PC_Core
-CFLAGS   = -Wall -Werror -shared -fPIC
+CFLAGS   = -Wall -Werror -pedantic -shared -fPIC
 LIBS     = -Wl,--whole-archive $(BUILDROOT)/lib-rogue-pc-core.a $(BUILDROOT)/lib-my-curses.a -Wl,--no-whole-archive
 
 TARGET   = lib-rogue-pc-1-48.so

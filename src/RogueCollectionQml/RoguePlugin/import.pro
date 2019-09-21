@@ -7,6 +7,10 @@ static {
     QMAKE_MOC_OPTIONS += -Muri=$$URI
 }
 
+linux {
+    QMAKE_CXXFLAGS += -Wall -Werror -pedantic
+}
+
 DESTDIR = $$OUT_PWD
 TARGET = $$qtLibraryTarget(rogueplugin)
 
