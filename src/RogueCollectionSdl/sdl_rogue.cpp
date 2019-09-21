@@ -1,5 +1,6 @@
 #include <sstream>
 #include <fstream>
+#include <ctime>
 #include <SDL.h>
 #include "sdl_rogue.h"
 #include "sdl_utility.h"
@@ -15,14 +16,14 @@ namespace
 {
     std::string GetTimeString() //todo:common location
     {
-        std::time_t rawtime;
-        std::time(&rawtime);
+        std::time_t now;
+        std::time(&now);
 
-        std::tm* timeinfo = std::localtime(&rawtime);
+        tm timeinfo;
+        localtime_s(&timeinfo, &now);
 
-        char buffer [80];
-        std::strftime(buffer,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
-
+        char buffer[100];
+        strftime(buffer, 100, "%FT%H-%M-%S", &timeinfo);
         return buffer;
     }
 }

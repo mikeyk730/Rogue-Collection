@@ -145,7 +145,8 @@ fall(THING *obj, int pr)
 	    has_hit = FALSE;
 	}
 	msg("the %s vanishes as it hits the ground",
-	    weap_info[obj->o_which].oi_name);
+        /* BUGFIX: Identification trick */
+        (obj->o_type == WEAPON) ? weap_info[obj->o_which].oi_name : inv_name(obj, TRUE));
     }
     discard(obj);
 }
