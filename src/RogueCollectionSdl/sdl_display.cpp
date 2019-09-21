@@ -91,32 +91,6 @@ namespace
             ch = i->second;
         return (ch != 0 ? ch : ' ');
     }
-
-    void WriteRogomaticPosition(std::ofstream& out_stream, Coord pos)
-    {
-        out_stream << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
-        std::flush(out_stream);
-    }
-
-    void WriteRogomaticScreen(std::ofstream& out_stream, uint32_t* data, char* dirty, int rows, int cols)
-    {
-        for (int r = 0; r < rows; ++r)
-        {
-            for (int c = 0; c < cols; ++c)
-            {
-                if (dirty[r*cols + c])
-                {
-                    WriteRogomaticPosition(out_stream, { c, r });
-                    while (c < cols && dirty[r*cols + c]) {
-                        out_stream << GetRawCharFromData(data, r, c, cols);
-                        ++c;
-                    }
-                }
-            }
-        }
-
-        std::flush(out_stream);
-    }
 }
 
 SdlDisplay::SdlDisplay(
@@ -480,7 +454,7 @@ void SdlDisplay::UpdateRegion(uint32_t * info)
 
 void SdlDisplay::UpdateRegion(uint32_t* info, char* dirty)
 {
-    WriteRogomaticScreen(m_out_stream, info, dirty, m_dimensions.y, m_dimensions.x);
+    WriteRogomaticScreen(info, dirty, m_dimensions.y, m_dimensions.x);
 
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -523,13 +497,42 @@ void SdlDisplay::MoveCursor(Coord pos)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_shared.cursor_pos = pos;
-    WriteRogomaticPosition(m_out_stream, pos);
+    if (pos.x != m_last_update_pos.x || pos.y != m_last_update_pos.y) {
+        WriteRogomaticPosition(pos);
+    }
 
     if (m_shared.data)
     {
         auto data = new uint32_t[TotalChars()];
         memcpy(data, m_shared.data.get(), TotalChars() * sizeof(int32_t));
     }
+}
+
+void SdlDisplay::WriteRogomaticPosition(Coord pos)
+{
+    m_out_stream << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
+    std::flush(m_out_stream);
+}
+
+void SdlDisplay::WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int cols)
+{
+    for (int r = 0; r < rows; ++r)
+    {
+        for (int c = 0; c < cols; ++c)
+        {
+            if (dirty[r*cols + c])
+            {
+                WriteRogomaticPosition({ c, r });
+                while (c < cols && dirty[r*cols + c]) {
+                    m_out_stream << GetRawCharFromData(data, r, c, cols);
+                    m_last_update_pos = { c,r };
+                    ++c;
+                }
+            }
+        }
+    }
+
+    std::flush(m_out_stream);
 }
 
 void SdlDisplay::SetCursor(bool enable)

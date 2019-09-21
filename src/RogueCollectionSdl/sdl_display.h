@@ -71,6 +71,9 @@ private:
     Region FullRegion() const;
     int TotalChars() const;
 
+    void WriteRogomaticPosition(Coord pos);
+    void WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int cols);
+
 private:
     SDL_Window* m_window = 0;
     SDL_Renderer* m_renderer = 0;
@@ -88,6 +91,8 @@ private:
     std::unique_ptr<TileProvider> m_tile_provider;
     int m_frame_number = 0;
     std::ofstream m_out_stream;
+
+    Coord m_last_update_pos = { 0,0 };
 
     struct ThreadData
     {
