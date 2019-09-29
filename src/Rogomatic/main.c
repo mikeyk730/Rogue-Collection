@@ -1,15 +1,11 @@
 /*
-GENES=86 56 39 89 56 5 37 38
 bug list:
--genotype and ltm are non-deterministic
--extra bytes with "call it"
--extra bytes with removing cursed armor
--map bug
--detect monster bug
-
-1569565702
-9 89 59 36 57 79 46  0
-stuck in doorway, lvl 10
++ item traits not initialized
++ call it not working
++ read identify scroll crashes
++ map scroll corrupts level flags
+- unpinning infinite loop (1569794071)
+- detect monster bugs
 
  * Rog-O-Matic
  * Automatically exploring the dungeons of doom.
@@ -269,6 +265,7 @@ int   wplushit = 1;		/* Our plus hit from weapon bonus */
 int   zone = NONE;		/* Current screen zone, 0..8 */
 int   zonemap[9][9];		/* Map of zones connections */
 int   g_seed = 0;
+int   g_expect_extra_bytes = 0;
 
 /* Functions */
 void (*istat)(int);

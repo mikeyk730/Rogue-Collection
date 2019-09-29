@@ -175,6 +175,12 @@ char getroguechar()
 
 void check_frogue_sync()
 {
+    if (g_expect_extra_bytes)
+    {
+        g_expect_extra_bytes = 0;
+        return;
+    }
+
     long current = ftell(frogue);
     fseek(frogue, 0, SEEK_END);
     long end = ftell(frogue);
@@ -190,8 +196,8 @@ void check_frogue_sync()
         return;
     }
 
-    while (fgetc(frogue) != EOF);
-    dwait(D_WARNING, "Expected EOF: Dropped %d extra bytes from %ld", bytes_remaining, current);
+    //while (fgetc(frogue) != EOF);
+    dwait(D_WARNING, "Expected EOF: Discovered %d extra bytes from %ld", bytes_remaining, current);
 }
 
 #define GETROGUECHAR getroguechar();

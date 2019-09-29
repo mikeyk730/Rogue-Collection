@@ -895,7 +895,8 @@ curseditem ()
   usesynch = 0;    /* Force a reset inventory */
 
   clearsendqueue();
-  sendnow ("%c", ESC); //todo:mdk is this necessary?
+  sendnow ("%c", ESC);
+  g_expect_extra_bytes = 1;
 
   /* lastdrop is index of last item we tried to use which could be cursed */
   if (lastdrop != NONE && lastdrop < invcount) {
