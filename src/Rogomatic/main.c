@@ -1,4 +1,16 @@
 /*
+GENES=86 56 39 89 56 5 37 38
+bug list:
+-genotype and ltm are non-deterministic
+-extra bytes with "call it"
+-extra bytes with removing cursed armor
+-map bug
+-detect monster bug
+
+1569565702
+9 89 59 36 57 79 46  0
+stuck in doorway, lvl 10
+
  * Rog-O-Matic
  * Automatically exploring the dungeons of doom.
  *
@@ -180,7 +192,7 @@ int   cursedarmor = 0;		/* True if our armor is cursed */
 int   cursedweapon = 0;		/* True if we are wielding cursed weapon */
 int   darkdir = NONE;		/* Direction of monster being arched */
 int   darkturns = 0;		/* Distance to monster being arched */
-int   debugging = D_NORMAL;	/* Debugging options in effect */
+int   debugging = D_NORMAL | D_WARNING;	/* Debugging options in effect */
 int   didreadmap = 0;		/* Last level we read a map on */
 int   doorlist[40];		/* List of doors on this level */
 int   doublehasted = 0; 	/* True if double hasted (Rogue 3.6) */
@@ -256,6 +268,7 @@ int   wplusdam = 2;		/* Our plus damage from weapon bonus */
 int   wplushit = 1;		/* Our plus hit from weapon bonus */
 int   zone = NONE;		/* Current screen zone, 0..8 */
 int   zonemap[9][9];		/* Map of zones connections */
+int   g_seed = 0;
 
 /* Functions */
 void (*istat)(int);
@@ -613,7 +626,8 @@ char *argv[];
 
       sendnow (";");
       getrogue (ill, 2);
-      check_frogue_sync();
+      if (ourscore == 0)
+          check_frogue_sync();
     }
 
     if (startingup) {	/* All monsters identified */
@@ -905,8 +919,6 @@ void onintr (int sig)
 
 startlesson ()
 {
-  int tmpseed = 0;
-
   sprintf (genelog, "%s/GeneLog%d", getRgmDir (), version);
   sprintf (genepool, "%s/GenePool%d", getRgmDir (), version);
   sprintf (genelock, "%s/GeneLock%d", getRgmDir (), version);
@@ -918,8 +930,8 @@ startlesson ()
        the environment variable SEED to some positive integer
        value and use a version of rogue that also uses a SEED
        environment variable.  this makes testing so much easier... */
-    tmpseed = atoi(getenv("SEED"));
-    rogo_srand(tmpseed);
+    g_seed = atoi(getenv("SEED"));
+    rogo_srand(g_seed);
   }
   else
     /* Start random number generator based upon the current time */
@@ -927,8 +939,15 @@ startlesson ()
 
   critical ();				/* Disable interrupts */
 
+  /* mdk: allow genes to be set through the environment for deterministic testing */
+  char* genes_var = getenv("GENES");
+  if (genes_var != NULL) {
+      sscanf(genes_var, "%d %d %d %d %d %d %d %d",
+          &knob[0], &knob[1], &knob[2], &knob[3],
+          &knob[4], &knob[5], &knob[6], &knob[7]);
+  }
   /* Serialize access to the gene pool */
-  if (lock_file (genelock, MAXLOCK)) {	/* Lock the gene pool */
+  else if (lock_file (genelock, MAXLOCK)) {	/* Lock the gene pool */
     if (rogo_openlog (genelog) == NULL)	/* Open the gene log file */
       saynow ("Could not open file %s", genelog);
 

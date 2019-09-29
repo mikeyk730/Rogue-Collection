@@ -14,12 +14,19 @@ bool LoadArg(Args& a, const std::string& arg, const std::string& next)
     else if (arg == "--rogomatic") {
         a.rogomatic = true;
     }
-    else if (arg == "--rogomatic-player-version") {
+    else if (arg == "--rogomatic-server") {
+        a.rogomatic_server = true;
+    }
+    else if (arg == "--rogomatic-player") {
         a.rogomatic_player_version = next;
         return true;
     }
     else if (arg == "--pause-at") {
         a.pause_at = next;
+        return true;
+    }
+    else if (arg == "--seed") {
+        a.seed = next;
         return true;
     }
     else if (arg == "--small-screen" || arg == "-n") {

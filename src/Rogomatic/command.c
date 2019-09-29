@@ -116,6 +116,9 @@ int tmode, a1, a2, a3, a4;
   turns += times;
   timespent[Level].timestamp = turns;
   timespent[Level].activity[tmode] += times > 1 ? times : 1;
+  if (timespent[Level].activity[tmode] > 1000) { /* mdk: added warning to detect bugs */
+      dwait(D_WARNING, "Moving for %d turns, mode: %d", timespent[Level].activity[tmode], tmode);
+  }
 
   /* Do the inventory stuff */
   if (movedir == NOTAMOVE)

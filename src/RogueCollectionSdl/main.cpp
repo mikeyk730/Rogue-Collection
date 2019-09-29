@@ -133,7 +133,7 @@ int main(int argc, char** argv)
 
         if (i >= 0) {
             args.rogomatic &= s_options[i].supports_rogomatic;
-            if (args.rogomatic)
+            if (args.rogomatic | args.rogomatic_server)
             {
                 current_env->Set("name", "rogomatic");
                 current_env->Set("fruit", "apricot");
@@ -154,7 +154,7 @@ int main(int argc, char** argv)
                     renderer.get(),
                     current_env,
                     i,
-                    args.rogomatic));
+                    args));
         }
         else if (!replay_path.empty()) {
             sdl_rogue.reset(new SdlRogue(window.get(), renderer.get(), current_env, replay_path));
@@ -169,7 +169,7 @@ int main(int argc, char** argv)
             {
                 rogomatic_process.reset(new PROCESS_INFORMATION());
                 CreateProcessOrExit(
-                    "RogueCollection.exe g --rogomatic-player-version \"" + s_options[i].name + "\"",
+                    "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\"",
                     rogomatic_process.get());
             }
 

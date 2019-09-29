@@ -242,9 +242,19 @@ int   onat;                             /* 0 ==> Wait for waitstr
     }
     else m = "re--";
 
-    /* If the message is 'Call it:', cancel the request */
+    /* If the message is 'Call it:', send the name */
     if (ch == *call) {
       if (*++call == 0) {
+        /*
+         * mdk: All versions of Rogue that I know of display the previous name
+         * before letting the player name an object, e.g. "Called (*)--More--".
+         * Rogomatic doesn't seem to account for this message, so I had to change
+         * the logic here. We may have to delete a semicolon that came from
+         * clearing the --More--. Afterwards, we can actually send the name for
+         * the item.
+         */
+        if (onat == 2) sendnow("%c", ctrl('H'));
+        finishcallit();
         /* Send an escape (and possibly a semicolon) to clear the message */
         if (onat == 2) sendnow ("%c;", ESC);
         else           sendnow ("%c", ESC);
@@ -676,9 +686,9 @@ char c;
      constant is 0. */
 
   if ((USLEEP) && (!noterm))
-    if (Level > 20) md_usleep (USLEEP+(Level * 8000));
-    else if (Level > 16) md_usleep (USLEEP+(Level * 4000));
-    else if (Level > 12) md_usleep (USLEEP+(Level * 2000));
+    if (Level > 20) md_usleep (USLEEP+(Level * 4 * LEVELDELAY));
+    else if (Level > 16) md_usleep (USLEEP+(Level * 2 * LEVELDELAY));
+    else if (Level > 12) md_usleep (USLEEP+(Level * LEVELDELAY));
     else md_usleep (USLEEP);
 
   rogue_log_write_command (c);
@@ -1223,6 +1233,7 @@ dosnapshot ()
     saynow ("Cannot write file %s.", SNAPSHOT);
   else {
     printsnap (snapshot);
+    summary(snapshot, NEWLINE); /* mdk: added more info to snapshot */
     fclose (snapshot);
     saynow ("Snapshot added to %s.", SNAPSHOT);
   }

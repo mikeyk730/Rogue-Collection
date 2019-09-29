@@ -148,7 +148,7 @@ static FILE *frogue = NULL;
 
 void open_frogue (const char *file)
 {
-  frogue = fopen (file, "r");
+  frogue = fopen (file, "rb");
 }
 
 void open_frogue_fd (int frogue_fd)
@@ -185,14 +185,13 @@ void check_frogue_sync()
     }
 
     int bytes_remaining = end - current;
-    if (bytes_remaining == 1 && fgetc(frogue) == '@')
+    if (bytes_remaining < 10)
     {
-        ungetc('@', frogue);
         return;
     }
 
     while (fgetc(frogue) != EOF);
-    dwait(D_WARNING, "Expected EOF: Dropped %d extra bytes", bytes_remaining);
+    dwait(D_WARNING, "Expected EOF: Dropped %d extra bytes from %ld", bytes_remaining, current);
 }
 
 #define GETROGUECHAR getroguechar();

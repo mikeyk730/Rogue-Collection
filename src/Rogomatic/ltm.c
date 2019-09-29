@@ -112,7 +112,7 @@ int score;
   register int m;
   register FILE *ltmfil;
 
-  if (nextmon < 1 || nosave) return;
+  if (nextmon < 1 || nosave || getenv("NOLTM")) return;
 
   dwait (D_CONTROL, "Saveltm called, writing file '%s'", ltmnam);
 
@@ -169,7 +169,7 @@ restoreltm ()
 
   /* Only read the long term memory if we can get access */
   if (lock_file (getLockFile (), MAXLOCK)) {
-    if (fexists (ltmnam))
+    if (fexists (ltmnam) && !getenv("NOLTM"))
       readltm ();
     else {
       dwait (D_CONTROL | D_SAY,

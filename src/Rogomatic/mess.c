@@ -248,7 +248,7 @@ register char *mess, *mend;
 
         if (MATCH("call it*")) { echoit=0; }
         else if (MATCH("call what*")) { echoit=0; }
-        else if (MATCH("called *")) { echoit=0; } //mdk: call() shows existing name
+        else if (MATCH("called *")) { echoit=0; } /* mdk: call() shows existing name in my versions of Rogue */
         else unknown++;
 
         break;
@@ -895,7 +895,7 @@ curseditem ()
   usesynch = 0;    /* Force a reset inventory */
 
   clearsendqueue();
-  sendnow ("%c", ESC);
+  sendnow ("%c", ESC); //todo:mdk is this necessary?
 
   /* lastdrop is index of last item we tried to use which could be cursed */
   if (lastdrop != NONE && lastdrop < invcount) {
@@ -1161,7 +1161,7 @@ FILE *f;
 char sep;
 {
   register int m;
-  char s[1024], *monname ();
+  char s[2048], *monname ();
 
   sprintf (s, "Monsters killed:%c%c", sep, sep);
 
@@ -1178,8 +1178,11 @@ char sep;
            timeshit, timesmissed+timeshit, sep);
 
   if (numgold > 0)
-    sprintf (s, "%sGold %d total, %d pots, %d average.%c",  s,
+    sprintf (s, "%sGold %d total, %d pots, %d average.%c", s,
              sumgold, numgold, (sumgold*10+5) / (numgold*10), sep);
+  sprintf(s, "%sSeed: %d, Genotype: %d %d %d %d %d %d %d %d.%c", s,
+      g_seed, knob[0], knob[1], knob[2], knob[3],
+      knob[4], knob[5], knob[6], knob[7], sep);
 
   if (f == NULL)
     addstr (s);

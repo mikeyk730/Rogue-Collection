@@ -189,6 +189,18 @@ bool Environment::WriteToOs(bool for_unix)
     if (SetEnvVariable(ss.str().c_str()) != 0)
         return false;
 
+    std::string genes;
+    if (Get("genes", &genes))
+    {
+        SetEnvVariable(("GENES=" + genes).c_str());
+    }
+
+    std::string ltm;
+    if (Get("ltm", &ltm) && ltm == "false")
+    {
+        SetEnvVariable("NOLTM=true");
+    }
+
     std::string seed;
     if (!Get("seed", &seed))
         return false;

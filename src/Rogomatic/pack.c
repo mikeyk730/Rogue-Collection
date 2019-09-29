@@ -568,7 +568,7 @@ char *msgstart, *msgend;
     inven[ipos].type = what;
     inven[ipos].count = n;
     inven[ipos].phit = plushit;
-    inven[ipos].traits = 0; //bugfix:mdk added 2019-09-16
+    inven[ipos].traits = 0; //mdk:bugfix clear traits for new items
 
     if ((plushit != UNKNOWN) && (plushit > 0))
       remember (ipos, ENCHANTED | KNOWN);

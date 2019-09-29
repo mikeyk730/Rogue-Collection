@@ -11,8 +11,10 @@ struct Args
     std::string optfile = "rogue.opt";
     std::string fontfile;
     std::string gfx;
-    bool rogomatic;
+    bool rogomatic = false;
+    bool rogomatic_server = false;
     std::string rogomatic_player_version;
+    std::string seed;
     bool print_score = false;
     bool start_paused = false;
     std::string pause_at;
