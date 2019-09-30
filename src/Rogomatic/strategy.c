@@ -1246,6 +1246,11 @@ pickupafter ()
     return (0);
   }
 
+  /* mdk:bugfix don't go to the target if it's a trap. Teleport trap can cause an infinite loop. */
+  if (onrc(TRAP, agoalr, agoalc)) {
+      return 0;
+  }
+
   /* Else go for it */
   return (gotowards (agoalr, agoalc, 0));
 }

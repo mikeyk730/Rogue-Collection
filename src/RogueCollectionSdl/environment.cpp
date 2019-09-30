@@ -89,6 +89,9 @@ void Environment::ApplyArgs(const Args& args)
         Set("replay_paused", "true");
     if (!args.pause_at.empty())
         Set("replay_pause_at", args.pause_at);
+    if (!args.genes.empty())
+        Set("genes", args.genes);
+
 }
 
 void Environment::Deserialize(std::istream& in)

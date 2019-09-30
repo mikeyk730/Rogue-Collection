@@ -29,6 +29,10 @@ bool LoadArg(Args& a, const std::string& arg, const std::string& next)
         a.seed = next;
         return true;
     }
+    else if (arg == "--genes") {
+        a.genes = next;
+        return true;
+    }
     else if (arg == "--small-screen" || arg == "-n") {
         a.small_screen = true;
     }

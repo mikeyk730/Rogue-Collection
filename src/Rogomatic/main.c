@@ -3,8 +3,9 @@ bug list:
 + item traits not initialized
 + call it not working
 + read identify scroll crashes
-+ map scroll corrupts level flags
-- unpinning infinite loop (1569794071)
++ map scroll corrupts level flag
++ teleport trap loop (seed: 1569796540)
+- unpinning infinite loop (seed: 1569794071)
 - detect monster bugs
 
  * Rog-O-Matic
@@ -531,6 +532,7 @@ char *argv[];
 #endif
 
   if (!replaying) {
+    initseed();
     restoreltm ();			/* Get long term memory of version */
     startlesson ();			/* Start genetic learning */
   }
@@ -909,18 +911,8 @@ void onintr (int sig)
   longjmp (commandtop,0);       /* Back to command Process */
 }
 
-/*
- * startlesson: Genetic learning algorithm, pick a genotype to
- * test this game, and set the parameters (or "knobs") accordingly.
- */
-
-startlesson ()
+initseed()
 {
-  sprintf (genelog, "%s/GeneLog%d", getRgmDir (), version);
-  sprintf (genepool, "%s/GenePool%d", getRgmDir (), version);
-  sprintf (genelock, "%s/GeneLock%d", getRgmDir (), version);
-
-
   /* set up random number generation */
   if (getenv("SEED") != NULL) {
     /* if we want repeatable results for testing set
@@ -933,6 +925,18 @@ startlesson ()
   else
     /* Start random number generator based upon the current time */
     rogo_srand (0);
+}
+
+/*
+ * startlesson: Genetic learning algorithm, pick a genotype to
+ * test this game, and set the parameters (or "knobs") accordingly.
+ */
+
+startlesson ()
+{
+  sprintf (genelog, "%s/GeneLog%d", getRgmDir (), version);
+  sprintf (genepool, "%s/GenePool%d", getRgmDir (), version);
+  sprintf (genelock, "%s/GeneLock%d", getRgmDir (), version);
 
   critical ();				/* Disable interrupts */
 

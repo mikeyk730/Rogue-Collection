@@ -168,8 +168,15 @@ int main(int argc, char** argv)
             if (i >= 0 && args.rogomatic)
             {
                 rogomatic_process.reset(new PROCESS_INFORMATION());
+
+                auto command = "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\"";
+                if (!args.seed.empty())
+                    command += " --seed " + args.seed;
+                if (!args.genes.empty())
+                    command += " --genes \"" + args.genes + "\"";
+
                 CreateProcessOrExit(
-                    "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\"",
+                    command,
                     rogomatic_process.get());
             }
 

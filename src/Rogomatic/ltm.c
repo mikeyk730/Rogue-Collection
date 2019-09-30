@@ -157,7 +157,13 @@ int score;
 
 restoreltm ()
 {
-  sprintf (ltmnam, "%s/ltm%d", getRgmDir (), version);
+  /* mdk: load ltm from seed file if it exists. */
+  sprintf (ltmnam, "%s/ltm%d.%d", getRgmDir (), version, g_seed);
+  nosave = 1;
+  if (!fexists(ltmnam)) {
+      sprintf (ltmnam, "%s/ltm%d", getRgmDir (), version);
+      nosave = 0;
+  }
   dwait (D_CONTROL, "Restoreltm called, reading file '%s'", ltmnam);
 
   clearltm (monhist);			/* Clear the original sums */
