@@ -28,6 +28,10 @@
  * term memory"
  */
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 # include <curses.h>
 # include <math.h>
 # include <string.h>
@@ -154,6 +158,16 @@ int score;
 /*
  * restoreltm: Read the long term memory file.
  */
+
+copyltm()
+{
+    if (!nosave)
+    {
+        char dest[80];
+        sprintf(dest, "%s/ltm%d.%d", getRgmDir(), version, g_seed);
+        CopyFile(ltmnam, dest, TRUE);
+    }
+}
 
 restoreltm ()
 {

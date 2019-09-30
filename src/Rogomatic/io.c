@@ -1237,6 +1237,22 @@ dosnapshot ()
     fclose (snapshot);
     saynow ("Snapshot added to %s.", SNAPSHOT);
   }
+
+#define ROGUE_COLLECTION 1
+#ifdef ROGUE_COLLECTION
+  char filename[80];
+  FILE* batch;
+
+  copyltm();
+  sprintf_s(filename, 80, "run-%d.bat", g_seed);
+  if ((batch = wopen(filename, "w")) != NULL) {
+      fprintf(batch,
+          "RogueCollection.exe e --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
+          g_seed, knob[0], knob[1], knob[2], knob[3],
+          knob[4], knob[5], knob[6], knob[7]);
+  }
+  fclose(batch);
+#endif
 }
 
 /*
