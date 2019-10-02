@@ -6,7 +6,8 @@ bug list:
 + map scroll corrupts level flag
 + teleport trap loop (seed: 1569796540)
 - unpinning infinite loop (seed: 1569794071)
-- detect monster bugs
+- ring loop with detect monster (seed: 1569821396)
+- sleeping monster blocking door (seed: 1569806185)
 
  * Rog-O-Matic
  * Automatically exploring the dungeons of doom.

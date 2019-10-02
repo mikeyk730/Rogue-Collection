@@ -427,7 +427,10 @@ char *msgstart, *msgend;
 
   /* Now find what we have picked up: */
   if (stlmatch(mend-4,"food")) {what=food; xknow=KNOWN;}
-  else if (stlmatch(mess,"amulet")) xtr(amulet,0,0,KNOWN)
+  else if (stlmatch(mess,"amulet")) {
+      dosnapshot();
+      xtr(amulet,0,0,KNOWN)
+  }
   else if (stlmatch(mess,"potion of ")) xtr(potion,10,0,KNOWN)
   else if (stlmatch(mess,"potions of ")) xtr(potion,11,0,KNOWN)
   else if (stlmatch(mess,"scroll of ")) xtr(Scroll,10,0,KNOWN)
