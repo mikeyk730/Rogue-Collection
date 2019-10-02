@@ -148,7 +148,7 @@ static FILE *frogue = NULL;
 
 void open_frogue (const char *file)
 {
-  frogue = fopen (file, "r");
+  frogue = fopen (file, "rb");
 }
 
 void open_frogue_fd (int frogue_fd)
@@ -171,6 +171,33 @@ char getroguechar()
   }
 
   return ch;
+}
+
+void check_frogue_sync()
+{
+    if (g_expect_extra_bytes)
+    {
+        g_expect_extra_bytes = 0;
+        return;
+    }
+
+    long current = ftell(frogue);
+    fseek(frogue, 0, SEEK_END);
+    long end = ftell(frogue);
+    fseek(frogue, current, SEEK_SET);
+
+    if (current == end) {
+        return;
+    }
+
+    int bytes_remaining = end - current;
+    if (bytes_remaining < 10)
+    {
+        return;
+    }
+
+    //while (fgetc(frogue) != EOF);
+    dwait(D_WARNING, "Expected EOF: Discovered %d extra bytes from %ld", bytes_remaining, current);
 }
 
 #define GETROGUECHAR getroguechar();

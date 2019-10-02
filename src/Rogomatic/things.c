@@ -155,7 +155,7 @@ int obj;
 
   /* read unknown scrolls or good scrolls rather than dropping them */
   if (inven[obj].type == Scroll &&
-      (!itemis (obj, KNOWN) ||
+      ((!itemis (obj, KNOWN) && prepareident(pickident(), obj)) || /* mdk:bugfix: added prepareident in case the unknown scroll is an identify scroll */
        stlmatch (inven[obj].str, "identify") &&
        prepareident (pickident (), obj) ||
        stlmatch (inven[obj].str, "enchant") ||

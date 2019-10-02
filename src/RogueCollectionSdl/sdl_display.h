@@ -92,8 +92,6 @@ private:
     int m_frame_number = 0;
     std::ofstream m_out_stream;
 
-    Coord m_last_update_pos = { 0,0 };
-
     struct ThreadData
     {
         std::unique_ptr<uint32_t[]> data = 0;

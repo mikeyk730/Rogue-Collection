@@ -427,7 +427,10 @@ char *msgstart, *msgend;
 
   /* Now find what we have picked up: */
   if (stlmatch(mend-4,"food")) {what=food; xknow=KNOWN;}
-  else if (stlmatch(mess,"amulet")) xtr(amulet,0,0,KNOWN)
+  else if (stlmatch(mess,"amulet")) {
+      dosnapshot();
+      xtr(amulet,0,0,KNOWN)
+  }
   else if (stlmatch(mess,"potion of ")) xtr(potion,10,0,KNOWN)
   else if (stlmatch(mess,"potions of ")) xtr(potion,11,0,KNOWN)
   else if (stlmatch(mess,"scroll of ")) xtr(Scroll,10,0,KNOWN)
@@ -568,7 +571,7 @@ char *msgstart, *msgend;
     inven[ipos].type = what;
     inven[ipos].count = n;
     inven[ipos].phit = plushit;
-    inven[ipos].traits = 0; //bugfix:mdk added 2019-09-16
+    inven[ipos].traits = 0; //mdk:bugfix clear traits for new items
 
     if ((plushit != UNKNOWN) && (plushit > 0))
       remember (ipos, ENCHANTED | KNOWN);

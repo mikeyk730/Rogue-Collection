@@ -112,7 +112,7 @@
  * <killer>.<level>.<score>.  This variable must be defined.
  */
 
-# define ROGUELOG	"roguelog"
+# define ROGUELOG	"rlog/roguelog"
 
 /* 
  * This file is created whenever the Rog-O-Matic score file is accessed to
@@ -138,4 +138,4 @@
  * is typed during a Rogue game.  It must be defined.
  */
 
-# define SNAPSHOT	"snapshot.rgm"
+# define SNAPSHOT	"rlog/snapshot.rgm"

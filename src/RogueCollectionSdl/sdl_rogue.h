@@ -10,10 +10,11 @@ struct InputInterface;
 struct SdlDisplay;
 struct ReplayableInput;
 struct Environment;
+struct Args;
 
 struct SdlRogue
 {
-    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int index, bool is_rogomatic_server);
+    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int index, const Args& args);
     SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const std::string& filename);
     ~SdlRogue();
 

@@ -167,6 +167,8 @@ extern int wplusdam;		/* Weapon damage bonus */
 extern int wplushit;		/* Weapon hit bonus */
 extern int zone;		/* Current zone (0 to 8) */
 extern int zonemap[9][9];	/* Connectivity map */
+extern int g_seed;
+extern int g_expect_extra_bytes;
 
 /* Status line variables */
 extern int Level,MaxLevel,Gold,Hp,Hpmax,Str,Strmax,Ac,Exp,Explev;

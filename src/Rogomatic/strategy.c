@@ -223,14 +223,29 @@ int   strategize ()
 
 int callitpending ()
 {
-
+  /*
+   * mdk: this function used to send the name as part of the command,
+   * but it didn't account for clearing the --More-- message. I had to
+   * extract a function below to actually send the name.
+   */
   if (pending_call_letter != ' ') {
-    command (T_OTHER, "c%c %s\n", pending_call_letter, pending_call_name); //todo:mdk added space
-    pending_call_letter = ' ';
-    memset (pending_call_name, '\0', NAMSIZ);
+    command (T_OTHER, "c%c", pending_call_letter);
     return (1);
   }
   return (0);
+}
+
+/* mdk: added to fix "call it" logic. */
+void finishcallit()
+{
+    if (pending_call_letter != ' ') {
+        sendnow("%s\n", pending_call_name);
+        pending_call_letter = ' ';
+        memset(pending_call_name, '\0', NAMSIZ);
+    }
+    else {
+        dwait(D_FATAL, "No object to call, %c %s", pending_call_letter, pending_call_name);
+    }
 }
 
 /*
@@ -702,7 +717,7 @@ int adj;		/* How many attackers are there? */
                        streq (monster, "giant ant"))) &&
       wearing ("regeneration") < 0 &&
       (obj = havenamed (ring, "regeneration")) != NONE &&
-      puton (obj)) //todo:mdk deadlock in 5.2 if detect sleeping monsters (loop of: put on, sleep, take off).  should we trigger lying in wait code?
+      puton (obj)) //todo:mdk:bug deadlock in 5.2 if detect sleeping monsters (loop of: put on, sleep, take off).  should we trigger lying in wait code?
     return (1);
 
   /* Have a ring and both hands are full, takes two turns */
@@ -1229,6 +1244,11 @@ pickupafter ()
   if (atrow == agoalr && atcol == agoalc) {
     agoalr = agoalc = NONE;
     return (0);
+  }
+
+  /* mdk:bugfix don't go to the target if it's a trap. Teleport trap can cause an infinite loop. */
+  if (onrc(TRAP, agoalr, agoalc)) {
+      return 0;
   }
 
   /* Else go for it */

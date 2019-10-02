@@ -9,6 +9,7 @@
 #include "sdl_input.h"
 #include "pipe_input.h"
 #include "utility.h"
+#include "args.h"
 
 const char* SdlRogue::kWindowTitle = "Rogue Collection 1.0";
 const unsigned char SdlRogue::kSaveVersion = 2;
@@ -36,18 +37,23 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
     m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, m_input.get(), false));
 }
 
-SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int i, bool is_rogomatic_server) :
+SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int i, const Args& args) :
     m_current_env(env),
     m_game_env(env)
 {
-    int seed = (int)time(0);
     std::ostringstream ss;
-    ss << seed;
+    if (args.seed != "") {
+        ss << args.seed;
+    }
+    else {
+        ss << (int)time(0);
+    }
     m_game_env->Set("seed", ss.str());
 
     SetGame(i);
 
-    if (is_rogomatic_server)
+    bool rogomatic_server = args.rogomatic | args.rogomatic_server;
+    if (rogomatic_server)
     {
         //todo:mdk turn into decorator that can be cancelled with ESC
         m_input.reset(new PipeInput(m_current_env.get(), m_game_env.get(), m_options));
@@ -57,7 +63,7 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
         m_input.reset(new SdlInput(m_current_env.get(), m_game_env.get(), m_options));
     }
 
-    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0, is_rogomatic_server));
+    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0, rogomatic_server));
 }
 
 SdlRogue::~SdlRogue()

@@ -497,9 +497,7 @@ void SdlDisplay::MoveCursor(Coord pos)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_shared.cursor_pos = pos;
-    if (pos.x != m_last_update_pos.x || pos.y != m_last_update_pos.y) {
-        WriteRogomaticPosition(pos);
-    }
+    WriteRogomaticPosition(pos);
 
     if (m_shared.data)
     {
@@ -525,7 +523,6 @@ void SdlDisplay::WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int
                 WriteRogomaticPosition({ c, r });
                 while (c < cols && dirty[r*cols + c]) {
                     m_out_stream << GetRawCharFromData(data, r, c, cols);
-                    m_last_update_pos = { c,r };
                     ++c;
                 }
             }
@@ -633,7 +630,7 @@ bool SdlDisplay::HandleEventKeyDown(const SDL_Event & e)
 
 bool SdlDisplay::HandleEventText(const SDL_Event & e)
 {
-    if (e.text.text[0] == '`')
+    if (e.text.text[0] == '~')
     {
         NextGfxMode();
         return true;

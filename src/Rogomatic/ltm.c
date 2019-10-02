@@ -28,6 +28,10 @@
  * term memory"
  */
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 # include <curses.h>
 # include <math.h>
 # include <string.h>
@@ -112,7 +116,7 @@ int score;
   register int m;
   register FILE *ltmfil;
 
-  if (nextmon < 1 || nosave) return;
+  if (nextmon < 1 || nosave || getenv("NOLTM")) return;
 
   dwait (D_CONTROL, "Saveltm called, writing file '%s'", ltmnam);
 
@@ -155,9 +159,25 @@ int score;
  * restoreltm: Read the long term memory file.
  */
 
+copyltm()
+{
+    if (!nosave)
+    {
+        char dest[80];
+        sprintf(dest, "%s/ltm%d.%d", getRgmDir(), version, g_seed);
+        CopyFile(ltmnam, dest, TRUE);
+    }
+}
+
 restoreltm ()
 {
-  sprintf (ltmnam, "%s/ltm%d", getRgmDir (), version);
+  /* mdk: load ltm from seed file if it exists. */
+  sprintf (ltmnam, "%s/ltm%d.%d", getRgmDir (), version, g_seed);
+  nosave = 1;
+  if (!fexists(ltmnam)) {
+      sprintf (ltmnam, "%s/ltm%d", getRgmDir (), version);
+      nosave = 0;
+  }
   dwait (D_CONTROL, "Restoreltm called, reading file '%s'", ltmnam);
 
   clearltm (monhist);			/* Clear the original sums */
@@ -169,7 +189,7 @@ restoreltm ()
 
   /* Only read the long term memory if we can get access */
   if (lock_file (getLockFile (), MAXLOCK)) {
-    if (fexists (ltmnam))
+    if (fexists (ltmnam) && !getenv("NOLTM"))
       readltm ();
     else {
       dwait (D_CONTROL | D_SAY,
