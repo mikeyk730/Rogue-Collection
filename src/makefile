@@ -7,6 +7,7 @@ all:
 	$(MAKE) -C RogueVersions/Rogue_5_2_1
 	$(MAKE) -C RogueVersions/Rogue_5_3
 	$(MAKE) -C RogueVersions/Rogue_5_4_2
+	$(MAKE) -C Rogomatic
 
 clean:
 	$(MAKE) -C MyCurses clean
@@ -16,3 +17,4 @@ clean:
 	$(MAKE) -C RogueVersions/Rogue_5_2_1 clean
 	$(MAKE) -C RogueVersions/Rogue_5_3 clean
 	$(MAKE) -C RogueVersions/Rogue_5_4_2 clean
+	$(MAKE) -C Rogomatic clean

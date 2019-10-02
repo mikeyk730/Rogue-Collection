@@ -116,13 +116,13 @@ void
 md_raw_standout()
 {
 #ifdef _WIN32
-    CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
     HANDLE hStdout;
     int fgattr,bgattr;
 
     if (md_standout_mode == 0)
     {
-        hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
+        hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
         GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
         fgattr = (csbiInfo.wAttributes & 0xF);
         bgattr = (csbiInfo.wAttributes & 0xF0);
@@ -139,13 +139,13 @@ void
 md_raw_standend()
 {
 #ifdef _WIN32
-    CONSOLE_SCREEN_BUFFER_INFO csbiInfo; 
+    CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
     HANDLE hStdout;
     int fgattr,bgattr;
 
     if (md_standout_mode == 1)
     {
-        hStdout = GetStdHandle(STD_OUTPUT_HANDLE); 
+        hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
         GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
         fgattr = (csbiInfo.wAttributes & 0xF);
         bgattr = (csbiInfo.wAttributes & 0xF0);
@@ -326,7 +326,7 @@ md_usleep(int us)
 #ifdef _WIN32
     Sleep(us/1000);
 #else
-    usleep(s);
+    usleep(us);
 #endif
 
 }
@@ -433,10 +433,10 @@ md_shellescape()
 	myend = signal(SIGINT, SIG_IGN);
 #ifdef SIGQUIT
         myquit = signal(SIGQUIT, SIG_IGN);
-#endif  
+#endif
         while (wait(&ret_status) != pid)
             continue;
-	    
+
         signal(SIGINT, myquit);
 #ifdef SIGQUIT
         signal(SIGQUIT, myend);
@@ -581,14 +581,14 @@ md_ucount()
     struct utmpx *up=NULL;
     int count=0;
 
-    setutxent();    
+    setutxent();
     do
     {
 	up = getutxent();
 	if (up && up->ut_type == USER_PROCESS)
 	    count++;
     } while(up != NULL);
-   
+
    endutxent();
 
    return(count);

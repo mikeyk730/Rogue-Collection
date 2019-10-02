@@ -124,6 +124,8 @@ bug list:
 # include "types.h"
 # include "termtokens.h"
 # include "install.h"
+# include "../RogueVersions/pc_gfx_macros.h"
+
 
 /* FIXME: get rid of this prototype in the correct way */
 FILE *rogo_openlog (char *genelog);
@@ -366,19 +368,6 @@ char roguename[100];
 /* Used by onintr() to restart Rgm at top of command loop */
 jmp_buf  commandtop;
 
-#define ROGUE_COLLECTION 1
-#ifdef ROGUE_COLLECTION
-void __declspec(dllexport) init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols);
-
-void init_game(struct DisplayInterface* screen, struct InputInterface* input, int lines, int cols)
-{
-    init_curses(screen, input, lines, cols);
-}
-#define GAME_MAIN __declspec(dllexport) rogue_main
-#else
-#define GAME_MAIN main
-#endif
-
 /*
  * Main program
  */
@@ -406,7 +395,7 @@ char *argv[];
   for (i = 80 * 24; i--; ) screen[0][i] = ' ';
 
   /*
-   * Get the process id of this player program if the 
+   * Get the process id of this player program if the
    * environment variable is set which requests this be
    * done.  Then create the file name with the PID so
    * that the debugging scripts can find it and use the

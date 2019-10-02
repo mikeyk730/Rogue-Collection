@@ -1238,7 +1238,6 @@ dosnapshot ()
     saynow ("Snapshot added to %s.", SNAPSHOT);
   }
 
-#define ROGUE_COLLECTION 1
 #ifdef ROGUE_COLLECTION
   char filename[80];
   FILE* batch;
