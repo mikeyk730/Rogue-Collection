@@ -65,7 +65,7 @@ namespace
 #ifdef _WIN32
     void CreateProcessOrExit(const std::string& command, LPPROCESS_INFORMATION pi)
     {
-        STARTUPINFO si;
+        STARTUPINFOA si;
         ZeroMemory(&si, sizeof(si));
         si.cb = sizeof(si);
 
@@ -78,7 +78,7 @@ namespace
             NULL,
             FALSE,
             0,
-            "\0",//TODO: manage env
+            (void*)"\0",//TODO: manage env
             NULL,
             &si,
             pi))
@@ -194,11 +194,13 @@ void QRogue::setGame(int index, Args& args)
     if (rogomatic_server)
     {
         input_.reset(new PipeInput(env_.get(), game_env_.get(), config_));
+#ifndef _WIN32
         int fd = ((PipeInput*)input_.get())->GetWriteFile();
         std::ostringstream ss;
         ss << fd;
         game_env_->Set("rogomatic_trogue_fd", ss.str());
-        printf("Rogomaticd pipe: %d\n", fd);
+        printf("Rogomatic pipe: %d\n", fd);
+#endif
     }
     else
     {
@@ -282,6 +284,11 @@ void QRogue::LaunchGame(bool spawn_rogomatic)
         display_->SetScreenSize(config_.small_screen);
         screenSizeChanged(config_.small_screen.x, config_.small_screen.y);
     }
+    else //todo:mdk fixed size for rogomatic
+    {
+        display_->SetScreenSize(config_.screen);
+        screenSizeChanged(config_.screen.x, config_.screen.y);
+    }
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
@@ -291,17 +298,17 @@ void QRogue::LaunchGame(bool spawn_rogomatic)
     {
         //todo:mdk implement
 #ifdef _WIN32
-                rogomatic_process.reset(new PROCESS_INFORMATION());
+                auto rogomatic_process = new PROCESS_INFORMATION();
 
-                auto command = "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\"";
-                if (!args.seed.empty())
+                auto command = "RetroRogueCollection.exe g --rogomatic-player 5.2";
+                /*if (!args.seed.empty())
                     command += " --seed " + args.seed;
                 if (!args.genes.empty())
                     command += " --genes \"" + args.genes + "\"";
-
+*/
                 CreateProcessOrExit(
                     command,
-                    rogomatic_process.get());
+                    rogomatic_process);
 #endif
     }
 

@@ -151,16 +151,6 @@ void Environment::Clear(const std::string& key)
     }
 }
 
-void Environment::Lines(int n)
-{
-    m_lines = n;
-}
-
-void Environment::Columns(int n)
-{
-    m_cols = n;
-}
-
 int Environment::WindowScaling() const
 {
     int scale = INT_MAX;
@@ -211,14 +201,4 @@ bool Environment::WriteToOs(bool for_unix)
     ss.str("");
     ss << "SEED=" << seed;
     return (SetEnvVariable(ss.str().c_str()) == 0);
-}
-
-int Environment::Lines() const
-{
-    return m_lines;
-}
-
-int Environment::Columns() const
-{
-    return m_cols;
 }

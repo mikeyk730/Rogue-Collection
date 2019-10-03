@@ -16,12 +16,6 @@ struct Environment
     void LoadFromFile(const std::string& name);
     void ApplyArgs(const Args& args);
 
-    int Lines() const;
-    void Lines(int n);
-
-    int Columns() const;
-    void Columns(int n);
-
     int WindowScaling() const;
     bool Fullscreen() const;
 
@@ -33,6 +27,4 @@ private:
     void SetDefaults();
 
     std::map<std::string, std::string> m_environment;
-    int m_lines = 25;
-    int m_cols = 80;
 };
