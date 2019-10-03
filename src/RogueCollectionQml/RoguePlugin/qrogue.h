@@ -7,7 +7,7 @@
 #include "game_config.h"
 
 struct Environment;
-class ReplayableInput;
+struct ReplayableInput;
 class QRogueDisplay;
 struct Args;
 

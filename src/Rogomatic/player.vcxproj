@@ -87,6 +87,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ROGUE_COLLECTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>MyCurses.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -113,6 +114,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ROGUE_COLLECTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -138,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\RogueVersions\pc_gfx.c" />
     <ClCompile Include="arms.c" />
     <ClCompile Include="command.c" />
     <ClCompile Include="config.c" />
@@ -169,6 +172,7 @@
     <ClCompile Include="worth.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\RogueVersions\pc_gfx_macros.h" />
     <ClInclude Include="getroguetoken.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="install.h" />

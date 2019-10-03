@@ -1,7 +1,6 @@
 #pragma once
 #ifdef _WIN32
 #include <Windows.h>
-#include <SDL.h>
 #endif
 #include "replayable_input.h"
 

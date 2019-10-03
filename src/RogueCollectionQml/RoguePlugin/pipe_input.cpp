@@ -20,7 +20,7 @@ namespace
 PipeInput::PipeInput(Environment * current_env, Environment * game_env, const GameConfig & options) :
     ReplayableInput(current_env, game_env, options)
 {
-    m_pipe_handle = CreateNamedPipe(
+    m_pipe_handle = CreateNamedPipeA(
         PipeName,
         PIPE_ACCESS_INBOUND,
         PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT | PIPE_REJECT_REMOTE_CLIENTS,
@@ -43,7 +43,7 @@ PipeInput::PipeInput(Environment * current_env, Environment * game_env, const Ga
 PipeInput::~PipeInput()
 {
     s_shutdown = true;
-    DeleteFile(PipeName);
+    DeleteFileA(PipeName);
     CloseHandle(m_pipe_handle);
 }
 
