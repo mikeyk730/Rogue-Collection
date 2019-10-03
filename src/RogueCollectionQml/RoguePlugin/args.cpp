@@ -11,8 +11,26 @@ bool LoadArg(Args& a, const std::string& arg, const std::string& next)
     else if (arg == "--paused" || arg == "-p") {
         a.start_paused = true;
     }
+    else if (arg == "--rogomatic") {
+        a.rogomatic = true;
+    }
+    else if (arg == "--rogomatic-server") {
+        a.rogomatic_server = true;
+    }
+    else if (arg == "--rogomatic-player") {
+        a.rogomatic_player_version = next;
+        return true;
+    }
     else if (arg == "--pause-at") {
         a.pause_at = next;
+        return true;
+    }
+    else if (arg == "--seed") {
+        a.seed = next;
+        return true;
+    }
+    else if (arg == "--genes") {
+        a.genes = next;
         return true;
     }
     else if (arg == "--small-screen" || arg == "-n") {
@@ -52,9 +70,9 @@ Args::Args(int argc, char **argv)
 
 Args::Args(std::vector<std::string> args)
 {
-    for (size_t i = 1; i < args.size(); ++i) {
+    for (int i = 1; i < (int)args.size(); ++i) {
         std::string arg(args[i]);
-        std::string next(i+1 < args.size() ? args[i+1] : "");
+        std::string next(i+1 < (int)args.size() ? args[i+1] : "");
         if (LoadArg(*this, arg, next))
             ++i;
     }

@@ -11,7 +11,7 @@ class QtRogueInput : public ReplayableInput
 public:
     QtRogueInput(QRogue* parent, Environment* current_env, Environment* game_env, const GameConfig& options);
 
-    bool HandleKeyEvent(QKeyEvent *event);
+    virtual bool HandleKeyEvent(QKeyEvent *event) override;
 
 private:
     std::string GetModifiedText(QKeyEvent *event, int key);

@@ -156,7 +156,7 @@ void open_frogue_fd (int frogue_fd)
   frogue = fdopen (frogue_fd, "r");
 }
 
-#ifdef _WIN32
+#ifdef ROGUE_COLLECTION
 char getroguechar()
 {
   char ch = EOF;

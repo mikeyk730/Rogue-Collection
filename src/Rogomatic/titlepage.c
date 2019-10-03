@@ -119,7 +119,7 @@ char *movie[];
     /* Update the screen and delay until one timestep is gone */
     else if (r == '~') {
       refresh ();				/* Write out screen */
-#ifndef _WIN32
+#ifndef ROGUE_COLLECTION
       for (; count < delaychars; count++)	/* Pad with nulls */
         putchar (0);
 #else
@@ -150,7 +150,7 @@ int level;
   static int nextshow = 1;
 
   if (!nohalf && level >= nextshow) {
-    if (nextshow == 1) { 
+    if (nextshow == 1) {
       nextshow = 9999; animate (titlepage);
     }
   }

@@ -576,7 +576,7 @@ terpbot ()
     /* Stuff the new values into the argument space (for ps command) */
     sprintf (modeline, "Rgm %d: Id%d L%d %d %d(%d) s%d a%d e%d    ",
              rogpid, geneid, Level, Gold, Hp, Hpmax, Str / 100, 10-Ac, Explev);
-#ifndef _WIN32
+#ifndef ROGUE_COLLECTION
     modeline[arglen-1] = '\0';
     strncpy (parmstr, modeline,256);
 #endif
@@ -1073,7 +1073,7 @@ getrogver ()
 
 charsavail ()
 {
-#ifndef _WIN32
+#ifndef ROGUE_COLLECTION
   long n;
   int retc;
 

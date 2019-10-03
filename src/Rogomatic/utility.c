@@ -68,7 +68,7 @@ rogo_baudrate ()
 
 char *getname ()
 {
-#ifndef _WIN32
+#ifndef ROGUE_COLLECTION
   static char name[100];
   int   i;
   struct passwd *passwd;

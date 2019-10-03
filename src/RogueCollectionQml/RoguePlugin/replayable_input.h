@@ -1,3 +1,4 @@
+#pragma once
 #include <mutex>
 #include <deque>
 #include <vector>
@@ -6,6 +7,7 @@
 #include "game_config.h"
 
 struct Environment;
+class QKeyEvent;
 
 struct ReplayableInput : public InputInterface
 {
@@ -15,6 +17,8 @@ public:
     //input interface
     virtual char GetChar(bool block, bool for_string, bool *is_replay) override;
     virtual void Flush() override;
+    virtual bool HasTypeahead() override;
+    virtual bool HandleKeyEvent(QKeyEvent *event) = 0;
 
     void SaveGame(std::ostream& file);
     void RestoreGame(std::istream& file);

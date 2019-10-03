@@ -1,5 +1,6 @@
 #include <map>
 #include <sstream>
+#include <fstream>
 #include <QColor>
 #include <QRectF>
 #include <QKeyEvent>
@@ -11,6 +12,12 @@
 #include "qrogue.h"
 #include "environment.h"
 #include "tile_provider.h"
+
+# define ctrl(c) (char)((c)&037)
+# define CL_TOK ctrl('L')
+# define ESC ctrl('[')
+
+static char zeros[5000];
 
 namespace
 {
@@ -39,7 +46,7 @@ namespace
     unsigned int FlipColor(unsigned int c)
     {
         return ((c & 0x0f) << 4) | ((c & 0xf0) >> 4);
-    }
+    }    
 
     std::map<int, int> unix_chars = {
         { PASSAGE,   '#' },
@@ -66,9 +73,43 @@ namespace
         { 204,       '|' },
         { 185,       '|' },
     };
+
+    char GetRawCharFromData(uint32_t* data, int r, int c, int cols)
+    {
+        unsigned char ch = CharText(data[r*cols + c]);
+        auto i = unix_chars.find(ch);
+        if (i != unix_chars.end())
+            ch = i->second;
+        return (ch != 0 ? ch : ' ');
+    }
 }
 
-QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics)
+void QRogueDisplay::WriteRogomaticPosition(Coord pos)
+{
+    rogomatic_stream_ << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
+    std::flush(rogomatic_stream_);
+}
+
+void QRogueDisplay::WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int cols)
+{
+    for (int r = 0; r < rows; ++r)
+    {
+        for (int c = 0; c < cols; ++c)
+        {
+            if (dirty[r*cols + c])
+            {
+                WriteRogomaticPosition({ c, r });
+                while (c < cols && dirty[r*cols + c]) {
+                    rogomatic_stream_ << GetRawCharFromData(data, r, c, cols);
+                    ++c;
+                }
+            }
+        }
+    }
+
+    std::flush(rogomatic_stream_);
+}
+QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, bool rogomatic_server)
     : parent_(parent),
       gfx_mode_(graphics)
 {
@@ -77,6 +118,11 @@ QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::strin
     auto font = QFont("Px437 IBM VGA8");
     font.setPixelSize(16);
     font_provider_.reset(new FontProvider(font));
+
+    if (rogomatic_server) {
+        rogomatic_stream_ = std::ofstream("ipc.txt");
+        rogomatic_stream_ << CL_TOK;
+    }
 }
 
 void QRogueDisplay::SetDimensions(Coord)
@@ -84,15 +130,29 @@ void QRogueDisplay::SetDimensions(Coord)
 
 }
 
-void QRogueDisplay::UpdateRegion(uint32_t *buf)
+void QRogueDisplay::UpdateRegion(uint32_t* info, char* dirty)
 {
-    UpdateRegion(buf, FullRegion());
+    WriteRogomaticScreen(info, dirty, screen_size_.height(), screen_size_.width());
+
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    for (int r = 0; r < screen_size_.height(); ++r)
+    {
+        if (memcmp(&dirty[r*screen_size_.width()], zeros, screen_size_.width()))
+        {
+            Region region;
+            region.Left = 0;
+            region.Top = r;
+            region.Right = short(screen_size_.width() - 1);
+            region.Bottom = r;
+
+            UpdateRegion(info, region);
+        }
+    }
 }
 
 void QRogueDisplay::UpdateRegion(uint32_t *buf, Region rect)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-
     //If we're behind on rendering, clear the queue and do a single full render.
     if ((int)shared_.render_regions.size() > kMaxQueueSize)
     {
@@ -116,6 +176,8 @@ void QRogueDisplay::MoveCursor(Coord pos)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     shared_.cursor_pos = pos;
+        WriteRogomaticPosition(pos);
+
 }
 
 void QRogueDisplay::SetCursor(bool enable)
@@ -295,7 +357,7 @@ QSize QRogueDisplay::TileSize() const
 }
 
 void QRogueDisplay::Render(QPainter *painter)
-{ 
+{
     std::unique_lock<std::mutex> lock(mutex_);
 
     if (!shared_.data){
@@ -485,7 +547,7 @@ int QRogueDisplay::DefaultColor() const
 }
 
 int QRogueDisplay::TranslateColor(int color, bool is_text) const
-{    
+{
     if (!color)
         color = DefaultColor();
 

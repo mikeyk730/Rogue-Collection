@@ -7,8 +7,9 @@
 #include "game_config.h"
 
 struct Environment;
-class QtRogueInput;
+class ReplayableInput;
 class QRogueDisplay;
+struct Args;
 
 class QRogue : public QQuickPaintedItem
 {
@@ -38,7 +39,7 @@ public:
     QSize screenSize() const;
     QString game() const;
     void setGame(const QString& game);
-    void setGame(int index);
+    void setGame(int index, Args& args);
 
     Q_INVOKABLE bool showTitleScreen();
     Q_INVOKABLE void restoreGame(const QUrl& url);
@@ -72,7 +73,7 @@ signals:
 public:
     Environment* GameEnv() const;
     Environment* CurrentEnv() const;
-    QtRogueInput* Input() const;
+    ReplayableInput* Input() const;
     QRogueDisplay* Display() const;
     GameConfig Config() const;
     int Lines() const;
@@ -82,7 +83,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    void LaunchGame();
+    void LaunchGame(bool spawn_rogomatic);
     void SaveGame(std::string path, bool notify);
     void RestoreGame(const std::string& path);
     bool GetSavePath(std::string& filename);
@@ -92,7 +93,7 @@ private:
     GameConfig config_;
     std::shared_ptr<Environment> env_;
     std::shared_ptr<Environment> game_env_;
-    std::unique_ptr<QtRogueInput> input_;
+    std::unique_ptr<ReplayableInput> input_;
     std::unique_ptr<QRogueDisplay> display_;
     uint16_t restore_count_ = 0;
     std::atomic<bool> thread_exited_;

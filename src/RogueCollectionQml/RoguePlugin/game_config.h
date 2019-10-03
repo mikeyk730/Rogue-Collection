@@ -47,6 +47,7 @@ struct GameConfig
     bool emulate_ctrl_controls;
     bool is_unix;
     std::vector<GraphicsConfig> gfx_options;
+    bool supports_rogomatic;
 };
 
 extern std::vector<GameConfig> s_options;

@@ -4,7 +4,7 @@
 #include <set>
 #include <map>
 #include <climits>
-#include <cstring>
+#include <cstring> //todo:mdk move to cross plat
 #include "environment.h"
 #include "utility.h"
 #include "args.h"
@@ -28,7 +28,7 @@ namespace
         }
     }
 
-    void WriteEnvPc(std::ostringstream& ss, std::string key, const std::string & value)
+    void WriteEnvPc(std::ostringstream& ss, const std::string& key, const std::string& value)
     {
         ss << key << "=" << value << ';';
     }
@@ -50,7 +50,7 @@ Environment::Environment()
     SetDefaults();
 }
 
-Environment::Environment(const Args & args)
+Environment::Environment(const Args& args)
 {
     SetDefaults();
     LoadFromFile(args.optfile);
@@ -89,6 +89,9 @@ void Environment::ApplyArgs(const Args& args)
         Set("replay_paused", "true");
     if (!args.pause_at.empty())
         Set("replay_pause_at", args.pause_at);
+    if (!args.genes.empty())
+        Set("genes", args.genes);
+
 }
 
 void Environment::Deserialize(std::istream& in)
@@ -132,7 +135,7 @@ bool Environment::Get(const std::string & key, std::string* value) const
     return false;
 }
 
-void Environment::Set(const std::string & key, const std::string & value)
+void Environment::Set(const std::string& key, const std::string& value)
 {
     if (value.empty())
         Clear(key);
@@ -140,7 +143,7 @@ void Environment::Set(const std::string & key, const std::string & value)
         m_environment[key] = value;
 }
 
-void Environment::Clear(const std::string &key)
+void Environment::Clear(const std::string& key)
 {
     auto i = m_environment.find(key);
     if (i != m_environment.end()) {
@@ -189,12 +192,24 @@ bool Environment::WriteToOs(bool for_unix)
     if (SetEnvVariable(ss.str().c_str()) != 0)
         return false;
 
+    std::string genes;
+    if (Get("genes", &genes))
+    {
+        SetEnvVariable(("GENES=" + genes).c_str());
+    }
+
+    std::string ltm;
+    if (Get("ltm", &ltm) && ltm == "false")
+    {
+        SetEnvVariable("NOLTM=true");
+    }
+
     std::string seed;
     if (!Get("seed", &seed))
         return false;
 
     ss.str("");
-    ss << "SEED=" << seed;    
+    ss << "SEED=" << seed;
     return (SetEnvVariable(ss.str().c_str()) == 0);
 }
 

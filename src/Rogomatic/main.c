@@ -158,7 +158,7 @@ char  screen[24][80];		/* Map of current Rogue screen */
 char  sumline[128];		/* Termination message for Rogomatic */
 char  ourkiller[NAMSIZ];		/* How we died */
 char  versionstr[32];		/* Version of Rogue being used */
-#ifndef _WIN32
+#ifndef ROGUE_COLLECTION
 char  *parmstr;			/* Pointer to process arguments */
 #endif
 char  pending_call_letter = ' ';	/* If non-blank we have a call it to do */
@@ -437,8 +437,9 @@ char *argv[];
     startreplay (&logfile, logfilename);
   }
   else {
-#ifdef _WIN32
+#ifdef ROGUE_COLLECTION
     open_frogue(argv[1]);
+#ifdef _WIN32
     trogue = CreateFile(
       "\\\\.\\pipe\\RogueInputPipe",
       GENERIC_WRITE,
@@ -447,6 +448,9 @@ char *argv[];
       OPEN_EXISTING,
       0,
       NULL);
+#else
+    trogue = fdopen(20, "w");
+#endif
 #else
     int frogue_fd = argv[1][0] - 'a';
     int trogue_fd = argv[1][1] - 'a';
@@ -469,7 +473,7 @@ char *argv[];
   if (argc > 4)	strcpy (roguename, argv[4]);
   else		sprintf (roguename, "Rog-O-Matic %s", RGMVER);
 
-#ifdef _WIN32
+#ifdef ROGUE_COLLECTION
   version = 0;
   if (argc > 5) {
       if (strstr(argv[5], "3.6")) {
@@ -491,7 +495,7 @@ char *argv[];
   }
 #endif
 
-#ifndef _WIN32
+#ifndef ROGUE_COLLECTION
   /* Now count argument space and assign a global pointer to it */
   arglen = 0;
 
@@ -517,7 +521,7 @@ char *argv[];
   if (startecho) toggleecho ();		/* Start logging? */
 
   clear ();				/* Clear the screen */
-#ifndef _WIN32
+#ifndef ROGUE_COLLECTION
   getrogver ();				/* Figure out Rogue version */
 #endif
 

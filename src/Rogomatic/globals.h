@@ -47,7 +47,7 @@ extern char lastcmd[];		/* Copy of last command sent to Rogue */
 extern char lastname[];		/* Name of last potion/scroll/wand */
 extern char nextid;		/* Next object to identify */
 extern char ourkiller[];	/* What was listed on the tombstone */
-#ifndef _WIN32
+#ifndef ROGUE_COLLECTION
 extern char *parmstr;		/* Pointer to argument space */
 #endif
 extern char pending_call_letter;	/* Pack object we know a name for */

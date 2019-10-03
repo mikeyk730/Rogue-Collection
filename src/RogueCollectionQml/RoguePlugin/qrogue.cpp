@@ -53,6 +53,7 @@
 #include "run_game.h"
 #include "game_config.h"
 #include "tile_provider.h"
+#include "pipe_input.h"
 
 namespace
 {
@@ -60,6 +61,39 @@ namespace
     {
         return QDir::toNativeSeparators(url.toLocalFile());
     }
+
+#ifdef _WIN32
+    void CreateProcessOrExit(const std::string& command, LPPROCESS_INFORMATION pi)
+    {
+        STARTUPINFO si;
+        ZeroMemory(&si, sizeof(si));
+        si.cb = sizeof(si);
+
+        ZeroMemory(pi, sizeof(*pi));
+
+        if (!CreateProcessA(
+            NULL,
+            (char*)command.c_str(),
+            NULL,
+            NULL,
+            FALSE,
+            0,
+            "\0",//TODO: manage env
+            NULL,
+            &si,
+            pi))
+        {
+            printf("Could not launch Rogue");
+            exit(1);
+        }
+    }
+
+    void CloseHandles(PROCESS_INFORMATION pi)
+    {
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+    }
+#endif
 }
 
 const unsigned char QRogue::kSaveVersion = 2;
@@ -81,9 +115,10 @@ QRogue::QRogue(QQuickItem *parent)
     env_.reset(new Environment(args));
 
     std::string graphics;
-    env_->Get("gfx", &graphics);
 
-    display_.reset(new QRogueDisplay(this, {80,25}, graphics));
+    env_->Get("gfx", &graphics);
+    bool rogomatic_server = args.rogomatic | args.rogomatic_server;
+    display_.reset(new QRogueDisplay(this, {80,25}, graphics, rogomatic_server));
 
     std::string value;
     bool sound(!env_->Get("sound", &value) || value != "false");
@@ -97,7 +132,9 @@ QRogue::QRogue(QQuickItem *parent)
         }
 
         if (i != -1)
-            setGame(i);
+        {
+            setGame(i, args);
+        }
         else
             RestoreGame(game.c_str());
     }
@@ -120,12 +157,31 @@ QString QRogue::game() const
 
 void QRogue::setGame(const QString &game)
 {
+    Args args(0, nullptr);
     int i = GetGameIndex(game.toStdString());
-    setGame(i);
+    setGame(i, args);
 }
 
-void QRogue::setGame(int index)
+void QRogue::setGame(int index, Args& args)
 {
+    args.rogomatic &= s_options[index].supports_rogomatic;
+    bool rogomatic_server = args.rogomatic | args.rogomatic_server;
+
+    if (rogomatic_server)
+    {
+        env_->Set("name", "rogomatic");
+        env_->Set("fruit", "apricot");
+        env_->Set("terse", "true");
+        env_->Set("jump", "true");
+        env_->Set("step", "true");
+        env_->Set("seefloor", "true");
+        env_->Set("flush", "false");
+        env_->Set("askme", "false");
+        env_->Set("passgo", "false");
+        env_->Set("inven", "slow");
+        env_->Set("showac", "");
+    }
+
     config_ = GetGameConfig(index);
     emit gameChanged(config_.name.c_str());
     game_env_ = env_;
@@ -135,9 +191,21 @@ void QRogue::setGame(int index)
     ss << seed;
     game_env_->Set("seed", ss.str());
 
-    input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
+    if (rogomatic_server)
+    {
+        input_.reset(new PipeInput(env_.get(), game_env_.get(), config_));
+        int fd = ((PipeInput*)input_.get())->GetWriteFile();
+        std::ostringstream ss;
+        ss << fd;
+        game_env_->Set("rogomatic_trogue_fd", ss.str());
+        printf("Rogomaticd pipe: %d\n", fd);
+    }
+    else
+    {
+        input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
+    }
 
-    LaunchGame();
+    LaunchGame(args.rogomatic);
 }
 
 bool QRogue::showTitleScreen()
@@ -194,10 +262,10 @@ void QRogue::RestoreGame(const std::string& path)
         std::remove(path.c_str());
     }
 
-    LaunchGame();
+    LaunchGame(false);
 }
 
-void QRogue::LaunchGame()
+void QRogue::LaunchGame(bool spawn_rogomatic)
 {
     if (config_.name == "PC Rogue 1.1") {
         game_env_->Set("emulate_version", "1.1");
@@ -219,9 +287,27 @@ void QRogue::LaunchGame()
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     timer->start(250);
 
+    if (spawn_rogomatic)
+    {
+        //todo:mdk implement
+#ifdef _WIN32
+                rogomatic_process.reset(new PROCESS_INFORMATION());
+
+                auto command = "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\"";
+                if (!args.seed.empty())
+                    command += " --seed " + args.seed;
+                if (!args.genes.empty())
+                    command += " --genes \"" + args.genes + "\"";
+
+                CreateProcessOrExit(
+                    command,
+                    rogomatic_process.get());
+#endif
+    }
+
     //start rogue engine on a background thread
     char* argv[] = {nullptr};
-    std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this, std::ref(thread_exited_));
+    std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this, std::ref(thread_exited_), "5.2"); //todo:mdk pass version
     rogue.detach(); //todo: how do we want threading to work?
 }
 
@@ -357,7 +443,7 @@ Environment *QRogue::GameEnv() const
     return game_env_.get();
 }
 
-QtRogueInput *QRogue::Input() const
+ReplayableInput *QRogue::Input() const
 {
     return input_.get();
 }
