@@ -1,6 +1,8 @@
 #include <memory>
 #include <thread>
 #include <fstream>
+#include <io.h>
+#include <fcntl.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <input_interface.h>
@@ -63,9 +65,48 @@ namespace
     }
 }
 
+int start(Args& args);
+
 int main(int argc, char** argv)
 {
     Args args(argc, argv);
+
+    if (args.rogomatic) //game process
+    {
+        int fdpipe[2];
+        if (_pipe(fdpipe, 256, O_BINARY) == -1)
+            exit(1);
+
+        char read_fd[20];
+        _itoa_s(fdpipe[0], read_fd, sizeof(read_fd), 10);
+        args.trogue_fd = read_fd;
+
+        char write_fd[20];
+        _itoa_s(fdpipe[1], write_fd, sizeof(write_fd), 10);
+        int pid;
+        //todo:mdk: consider timing on startup with frogue, gene and seed args
+        if ((pid = _spawnl(P_NOWAIT, argv[0], argv[0], "g", "--rogomatic-player", "5.2", "--trogue-fd", write_fd, NULL)) == -1)
+            printf("Spawn failed");
+
+        auto value = start(args);
+
+        /* Wait until spawned program is done processing. */
+        int termstat;
+        _cwait(&termstat, pid, WAIT_CHILD);
+        if (termstat & 0x0)
+            printf("Child failed\n");
+
+        _close(fdpipe[1]);
+        _close(fdpipe[0]);
+
+        return value;
+    }
+
+    return start(args);
+}
+
+int start(Args& args)
+{
     std::shared_ptr<Environment> current_env(new Environment(args));
     InitGameConfig(current_env.get());
 
@@ -163,26 +204,26 @@ int main(int argc, char** argv)
 
         if (sdl_rogue) {
             //start rogue engine on a background thread
-            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, argc, argv, sdl_rogue.get(), args);
+            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, 0, nullptr, sdl_rogue.get(), args);
             rogue.detach();
 
-            if (i >= 0 && args.rogomatic)
-            {
-                rogomatic_process.reset(new PROCESS_INFORMATION());
+            //if (i >= 0 && args.rogomatic)
+            //{
+                //rogomatic_process.reset(new PROCESS_INFORMATION());
 
-                auto pipe_input = dynamic_cast<PipeInput*>(sdl_rogue->Input());
-                std::string pipe_write_fd = pipe_input ? std::to_string(pipe_input->GetWriteFd()) : "";
+                //auto pipe_input = dynamic_cast<PipeInput*>(sdl_rogue->Input());
+                //std::string pipe_write_fd = pipe_input ? std::to_string(pipe_input->GetWriteFd()) : "";
 
-                auto command = "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\" --trogue-fd " + pipe_write_fd;
-                if (!args.seed.empty())
-                    command += " --seed " + args.seed;
-                if (!args.genes.empty())
-                    command += " --genes \"" + args.genes + "\"";
+                //auto command = "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\" --trogue-fd " + pipe_write_fd;
+                //if (!args.seed.empty())
+                //    command += " --seed " + args.seed;
+                //if (!args.genes.empty())
+                //    command += " --genes \"" + args.genes + "\"";
 
-                CreateProcessOrExit(
-                    command,
-                    rogomatic_process.get());
-            }
+                //CreateProcessOrExit(
+                //    command,
+                //    rogomatic_process.get());
+            //}
 
             sdl_rogue->Run();
             if (i >= 0 && args.rogomatic)

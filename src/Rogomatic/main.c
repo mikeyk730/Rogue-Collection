@@ -435,15 +435,17 @@ char *argv[];
   else {
 #ifdef ROGUE_COLLECTION
       
+    open_frogue(argv[1]);
 
-      open_frogue(argv[1]);
-    //printf("%s\n", argv[6]);
-    trogue = fdopen(atoi(argv[6]), "w");
-    _write(trogue, "v", 1);
-    fflush(trogue);
-    //printf("%x\n", trogue);
-    //setbuf(trogue, NULL);
+    int trogue_fd = atoi(argv[6]);
+    //printf("%d\n", trogue_fd);
+    //md_sleep(20000);
+    //_write(trogue_fd, "dal", 3);
+    
+    trogue = fdopen(trogue_fd, "w");
+    setbuf(trogue, NULL);
     //fprintf(trogue, "v");
+    //fflush(trogue);
     
 #else
     int frogue_fd = argv[1][0] - 'a';

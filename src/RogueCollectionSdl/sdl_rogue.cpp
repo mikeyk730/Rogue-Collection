@@ -56,7 +56,7 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
     if (rogomatic_server)
     {
         //todo:mdk turn into decorator that can be cancelled with ESC
-        m_input.reset(new PipeInput(m_current_env.get(), m_game_env.get(), m_options));
+        m_input.reset(new PipeInput(m_current_env.get(), m_game_env.get(), m_options, atoi(args.trogue_fd.c_str())));
     }
     else
     {

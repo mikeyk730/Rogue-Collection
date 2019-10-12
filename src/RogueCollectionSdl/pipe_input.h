@@ -5,16 +5,14 @@
 
 struct PipeInput : public ReplayableInput
 {
-    PipeInput(Environment* current_env, Environment* game_env, const GameConfig& options);
+    PipeInput(Environment* current_env, Environment* game_env, const GameConfig& options, int fd);
     ~PipeInput();
 
     virtual bool HandleEvent(const SDL_Event& e) override;
 
     void RunPipeServer();
-    int GetReadFd() const;
-    int GetWriteFd() const;
 
 private:
-    int pipe_fd_[2];
+    int pipe_fd_;
 };
 #endif
