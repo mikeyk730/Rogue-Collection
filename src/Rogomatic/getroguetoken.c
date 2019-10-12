@@ -159,16 +159,20 @@ void open_frogue_fd (int frogue_fd)
 #ifdef ROGUE_COLLECTION
 char getroguechar()
 {
+    if (!g_protocol_debugging) {
+        return fgetc(frogue);
+    }
+
   char ch = EOF;
-  /*for (int i = 0; ch == EOF && i < 2000; ++i) //todo:mdk support for debugging
+  for (int i = 0; ch == EOF && i < 2000; ++i) //todo:mdk support for debugging
   {
     if (i > 0)
     {
       md_sleep(5);
     }
-    */
+
     ch = fgetc(frogue);
-  //}
+  }
 
   return ch;
 }

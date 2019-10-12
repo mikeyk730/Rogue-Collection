@@ -266,6 +266,11 @@ int   zone = NONE;		/* Current screen zone, 0..8 */
 int   zonemap[9][9];		/* Map of zones connections */
 int   g_seed = 0;
 int   g_expect_extra_bytes = 0;
+#ifdef ROGOMATIC_PROTOCOL_DEBUGGING
+int   g_protocol_debugging = 1;
+#else
+int   g_protocol_debugging = 0;
+#endif
 
 /* Functions */
 void (*istat)(int);
@@ -439,11 +444,8 @@ char *argv[];
     open_frogue_fd(frogue_fd);
 
     int trogue_fd = atoi(argv[6]);
-    //_write(trogue_fd, "dal", 3);    
     trogue = fdopen(trogue_fd, "wb");
     setbuf(trogue, NULL);
-    //fprintf(trogue, "v");
-    //fflush(trogue);
     
 #else
     int frogue_fd = argv[1][0] - 'a';
@@ -613,8 +615,8 @@ char *argv[];
 
       sendnow (";");
       getrogue (ill, 2);
-      //if (ourscore == 0)
-      //    check_frogue_sync();
+      if (g_protocol_debugging && ourscore == 0)
+          check_frogue_sync();
     }
 
     if (startingup) {	/* All monsters identified */
