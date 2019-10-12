@@ -1,6 +1,5 @@
 #pragma once
 #ifdef _WIN32
-#include <Windows.h>
 #include <SDL.h>
 #include "replayable_input.h"
 
@@ -12,8 +11,10 @@ struct PipeInput : public ReplayableInput
     virtual bool HandleEvent(const SDL_Event& e) override;
 
     void RunPipeServer();
+    int GetReadFd() const;
+    int GetWriteFd() const;
 
 private:
-    HANDLE m_pipe_handle;
+    int pipe_fd_[2];
 };
 #endif

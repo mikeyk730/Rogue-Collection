@@ -693,12 +693,7 @@ char c;
 
   rogue_log_write_command (c);
 
-#ifdef _WIN32
-  unsigned long bytes_written;
-  WriteFile(trogue, &c, 1, &bytes_written, NULL);
-#else
   fprintf (trogue, "%c", c);
-#endif
 }
 
 /*

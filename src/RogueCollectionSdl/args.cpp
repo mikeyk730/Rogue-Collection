@@ -21,6 +21,14 @@ bool LoadArg(Args& a, const std::string& arg, const std::string& next)
         a.rogomatic_player_version = next;
         return true;
     }
+    else if (arg == "--trogue-fd") {
+        a.trogue_fd = next;
+        return true;
+    }
+    else if (arg == "--frouge-fd") {
+        a.frogue_fd = next;
+        return true;
+    }
     else if (arg == "--pause-at") {
         a.pause_at = next;
         return true;

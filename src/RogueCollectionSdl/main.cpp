@@ -14,6 +14,7 @@
 #include "game_config.h"
 #include "run_game.h"
 #include "args.h"
+#include "pipe_input.h"
 
 namespace
 {
@@ -162,14 +163,17 @@ int main(int argc, char** argv)
 
         if (sdl_rogue) {
             //start rogue engine on a background thread
-            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, argc, argv, sdl_rogue.get(), args.rogomatic_player_version);
+            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, argc, argv, sdl_rogue.get(), args);
             rogue.detach();
 
             if (i >= 0 && args.rogomatic)
             {
                 rogomatic_process.reset(new PROCESS_INFORMATION());
 
-                auto command = "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\"";
+                auto pipe_input = dynamic_cast<PipeInput*>(sdl_rogue->Input());
+                std::string pipe_write_fd = pipe_input ? std::to_string(pipe_input->GetWriteFd()) : "";
+
+                auto command = "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\" --trogue-fd " + pipe_write_fd;
                 if (!args.seed.empty())
                     command += " --seed " + args.seed;
                 if (!args.genes.empty())

@@ -29,11 +29,7 @@
 
 /* global files */
 
-#ifdef _WIN32
-extern void* trogue;
-#else
 extern FILE *trogue;	/* From Rogue, To Rogue */
-#endif
 extern FILE *logfile;		/* Rogomatic score file */
 extern FILE *realstdout;	/* Real stdout when in terse or emacs mode */
 extern FILE *snapshot;		/* File for snapshot command */

@@ -136,11 +136,7 @@ FILE *rogo_openlog (char *genelog);
 FILE  *logfile=NULL;		/* File for score log */
 FILE  *realstdout=NULL;		/* Real stdout for Emacs, terse mode */
 FILE  *snapshot=NULL;		/* File for snapshot command */
-#ifndef _WIN32
 FILE  *trogue=NULL;		/* Pipe to Rogue process */
-#else
-HANDLE trogue=NULL;
-#endif
 
 
 /* Characters */
@@ -438,19 +434,17 @@ char *argv[];
   }
   else {
 #ifdef ROGUE_COLLECTION
-    open_frogue(argv[1]);
-#ifdef _WIN32
-    trogue = CreateFile(
-      "\\\\.\\pipe\\RogueInputPipe",
-      GENERIC_WRITE,
-      0,
-      NULL,
-      OPEN_EXISTING,
-      0,
-      NULL);
-#else
-    trogue = fdopen(20, "w");
-#endif
+      
+
+      open_frogue(argv[1]);
+    //printf("%s\n", argv[6]);
+    trogue = fdopen(atoi(argv[6]), "w");
+    _write(trogue, "v", 1);
+    fflush(trogue);
+    //printf("%x\n", trogue);
+    //setbuf(trogue, NULL);
+    //fprintf(trogue, "v");
+    
 #else
     int frogue_fd = argv[1][0] - 'a';
     int trogue_fd = argv[1][1] - 'a';

@@ -20,6 +20,8 @@ struct Args
     bool start_paused = false;
     std::string pause_at;
     bool small_screen = false;
+    std::string trogue_fd;
+    std::string frogue_fd;
 };
 
 
