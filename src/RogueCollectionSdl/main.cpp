@@ -20,37 +20,6 @@
 
 namespace
 {
-    void CreateProcessOrExit(const std::string& command, LPPROCESS_INFORMATION pi)
-    {
-        STARTUPINFO si;
-        ZeroMemory(&si, sizeof(si));
-        si.cb = sizeof(si);
-
-        ZeroMemory(pi, sizeof(*pi));
-
-        if (!CreateProcessA(
-            NULL,
-            (char*)command.c_str(),
-            NULL,
-            NULL,
-            FALSE,
-            0,
-            "\0",//TODO: manage env
-            NULL,
-            &si,
-            pi))
-        {
-            printf("Could not launch Rogue");
-            exit(1);
-        }
-    }
-
-    void CloseHandles(PROCESS_INFORMATION pi)
-    {
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
-    }
-
     std::string GetTimestamp()
     {
         time_t now;
@@ -88,15 +57,16 @@ int main(int argc, char** argv)
         std::string frogue_read_fd = std::to_string(frogue_pipe[0]);
 
         int pid;
-        //todo:mdk: consider timing on startup with frogue, gene and seed args
         if ((pid = _spawnl(
             P_NOWAIT,
             argv[0],
             argv[0],
             "g",
-            "--rogomatic-player", "5.2",
+            "--rogomatic-player", "5.2", //todo:mdk remove hardcoding
             "--trogue-fd", trogue_write_fd.c_str(),
             "--frogue-fd", frogue_read_fd.c_str(),
+            "--seed", (args.seed.empty() ? "\"\"" : args.seed.c_str()),
+            "--genes", (args.genes.empty() ? "\"\"" : args.genes.c_str()),
             NULL)) == -1)
         {
             printf("Spawn failed");
@@ -120,6 +90,8 @@ int main(int argc, char** argv)
         return value;
     }
 
+    printf("genes:%s\n", args.genes.c_str());
+    printf("seed:%s\n", args.seed.c_str());
     return start(args);
 }
 
@@ -225,24 +197,6 @@ int start(Args& args)
             std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, 0, nullptr, sdl_rogue.get(), args);
             rogue.detach();
 
-            //if (i >= 0 && args.rogomatic)
-            //{
-                //rogomatic_process.reset(new PROCESS_INFORMATION());
-
-                //auto pipe_input = dynamic_cast<PipeInput*>(sdl_rogue->Input());
-                //std::string pipe_write_fd = pipe_input ? std::to_string(pipe_input->GetWriteFd()) : "";
-
-                //auto command = "RogueCollection.exe g --rogomatic-player \"" + s_options[i].name + "\" --trogue-fd " + pipe_write_fd;
-                //if (!args.seed.empty())
-                //    command += " --seed " + args.seed;
-                //if (!args.genes.empty())
-                //    command += " --genes \"" + args.genes + "\"";
-
-                //CreateProcessOrExit(
-                //    command,
-                //    rogomatic_process.get());
-            //}
-
             sdl_rogue->Run();
             if (i >= 0 && args.rogomatic)
             {
@@ -254,12 +208,6 @@ int start(Args& args)
     {
         DisplayMessage(SDL_MESSAGEBOX_ERROR, "Fatal Error", e.what());
         return 1;
-    }
-
-    if (rogomatic_process)
-    {
-        WaitForSingleObject(rogomatic_process->hProcess, INFINITE);
-        CloseHandles(*rogomatic_process);
     }
 
     renderer.release();
