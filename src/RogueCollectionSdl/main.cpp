@@ -215,7 +215,7 @@ int start(Args& args)
 
         if (sdl_rogue) {
             //start rogue engine on a background thread
-            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, 0, nullptr, sdl_rogue.get(), args);
+            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, sdl_rogue.get(), args);
             rogue.detach();
 
             sdl_rogue->Run();

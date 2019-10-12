@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <dlfcn.h>
 #endif
+#include <string>
 #include "args.h"
 
 typedef int(*game_main)(int, char**, char**);
@@ -19,7 +20,7 @@ struct LibraryDeleter
 #endif
 
 template <typename T>
-void RunGame(const std::string& lib, int argc, char** argv, T* r, const Args& args)
+void RunGame(const std::string& lib, T* r, const Args& args)
 {
 #ifdef _WIN32 //todo:support linux
     std::unique_ptr<HMODULE, LibraryDeleter> dll(LoadLibrary(lib.c_str()));
@@ -40,18 +41,22 @@ void RunGame(const std::string& lib, int argc, char** argv, T* r, const Args& ar
 
         (*Init)(r->Display(), r->Input(), r->GameEnv()->Lines(), r->GameEnv()->Columns());
 
+        int frogue = atoi(args.frogue_fd.c_str());
+        int trogue = atoi(args.trogue_fd.c_str());
+        std::string rogomatic_fds = "aa";
+        rogomatic_fds[0] += frogue;
+        rogomatic_fds[1] += trogue;
 
-        const char* argv[7] = { 
+        const char* argv[6] = {
             "player.exe", 
-            args.frogue_fd.c_str(),
+            rogomatic_fds.c_str(),
             "0",
             "0,0,1,1,0,0,0,0", 
             "Mikey", 
-            args.rogomatic_player_version.c_str(), 
-            args.trogue_fd.c_str()
+            args.rogomatic_player_version.c_str()
         }; //todo:mdk
         bool rogomatic = lib == "Rogomatic_Player.dll";
-        (*game)(rogomatic ? 7 : 0, rogomatic ? (char**)argv : 0, environ);
+        (*game)(rogomatic ? 6 : 0, rogomatic ? (char**)argv : 0, environ);
         r->PostQuit();
     }
 #else

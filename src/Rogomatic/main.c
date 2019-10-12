@@ -438,22 +438,11 @@ char *argv[];
     startreplay (&logfile, logfilename);
   }
   else {
-#ifdef ROGUE_COLLECTION
-      
-    int frogue_fd = atoi(argv[1]);
-    open_frogue_fd(frogue_fd);
-
-    int trogue_fd = atoi(argv[6]);
-    trogue = fdopen(trogue_fd, "wb");
-    setbuf(trogue, NULL);
-    
-#else
     int frogue_fd = argv[1][0] - 'a';
     int trogue_fd = argv[1][1] - 'a';
     open_frogue_fd (frogue_fd);
-    trogue = fdopen (trogue_fd, "w");
+    trogue = fdopen (trogue_fd, "wb");
     setbuf (trogue, NULL);
-#endif
     open_frogue_debuglog ("debuglog.frogue");
   }
 
