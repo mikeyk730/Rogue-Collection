@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cassert>
 #include <fstream>
+#include <io.h>
 #include <SDL_image.h>
 #include <pc_gfx_charmap.h>
 #include "sdl_display.h"
@@ -100,14 +101,16 @@ SdlDisplay::SdlDisplay(
     Environment* game_env,
     const GameConfig& options,
     ReplayableInput* input,
-    bool piped_output) :
+    bool piped_output,
+    int pipe_fd) :
     m_window(window),
     m_renderer(renderer),
     m_current_env(current_env),
     m_game_env(game_env),
     m_input(input),
     m_options(options),
-    m_sizer(window, renderer, current_env)
+    m_sizer(window, renderer, current_env),
+    pipe_fd_(piped_output ? pipe_fd : 0)
 {
     std::string title(SdlRogue::kWindowTitle);
     title += " - ";
@@ -127,9 +130,9 @@ SdlDisplay::SdlDisplay(
 
     m_dimensions = { game_env->Columns(), game_env->Lines() };
 
-    if (piped_output) {
-        m_out_stream = std::ofstream("ipc.txt");
-        m_out_stream << CL_TOK;
+    if (pipe_fd_) {
+        char buf = CL_TOK;
+        _write(pipe_fd_, &buf, 1);
     }
 
     SDL_ShowWindow(window);
@@ -508,12 +511,22 @@ void SdlDisplay::MoveCursor(Coord pos)
 
 void SdlDisplay::WriteRogomaticPosition(Coord pos)
 {
-    m_out_stream << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
-    std::flush(m_out_stream);
+    if (!pipe_fd_) {
+        return;
+    }
+
+    std::ostringstream ss;
+    ss << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
+    auto buf = ss.str();
+    _write(pipe_fd_, buf.c_str(), buf.size());
 }
 
 void SdlDisplay::WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int cols)
 {
+    if (!pipe_fd_) {
+        return;
+    }
+
     for (int r = 0; r < rows; ++r)
     {
         for (int c = 0; c < cols; ++c)
@@ -522,14 +535,13 @@ void SdlDisplay::WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int
             {
                 WriteRogomaticPosition({ c, r });
                 while (c < cols && dirty[r*cols + c]) {
-                    m_out_stream << GetRawCharFromData(data, r, c, cols);
+                    auto buf = GetRawCharFromData(data, r, c, cols);
+                    _write(pipe_fd_, &buf, 1);
                     ++c;
                 }
             }
         }
     }
-
-    std::flush(m_out_stream);
 }
 
 void SdlDisplay::SetCursor(bool enable)

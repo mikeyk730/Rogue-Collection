@@ -43,7 +43,7 @@ void RunGame(const std::string& lib, int argc, char** argv, T* r, const Args& ar
 
         const char* argv[7] = { 
             "player.exe", 
-            "ipc.txt",
+            args.frogue_fd.c_str(),
             "0",
             "0,0,1,1,0,0,0,0", 
             "Mikey", 

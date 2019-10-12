@@ -34,7 +34,7 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
     m_current_env(current_env)
 {
     RestoreGame(file);
-    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, m_input.get(), false));
+    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, m_input.get(), false, 0));
 }
 
 SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int i, const Args& args) :
@@ -63,7 +63,7 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
         m_input.reset(new SdlInput(m_current_env.get(), m_game_env.get(), m_options));
     }
 
-    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0, rogomatic_server));
+    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0, rogomatic_server, atoi(args.frogue_fd.c_str())));
 }
 
 SdlRogue::~SdlRogue()

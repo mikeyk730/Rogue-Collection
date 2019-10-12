@@ -1,6 +1,5 @@
 #pragma once
 #include <mutex>
-#include <fstream>
 #include <SDL.h>
 #include <display_interface.h>
 #include "sdl_rogue.h"
@@ -26,7 +25,8 @@ struct SdlDisplay : public DisplayInterface
         Environment* game_env,
         const GameConfig& options,
         ReplayableInput* input,
-        bool piped_output);
+        bool piped_output,
+        int pipe_fd);
 
     //display interface
     virtual void SetDimensions(Coord dimensions) override;
@@ -90,7 +90,7 @@ private:
     std::unique_ptr<ITextProvider> m_text_provider;
     std::unique_ptr<TileProvider> m_tile_provider;
     int m_frame_number = 0;
-    std::ofstream m_out_stream;
+    int pipe_fd_;
 
     struct ThreadData
     {

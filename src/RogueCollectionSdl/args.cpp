@@ -25,7 +25,7 @@ bool LoadArg(Args& a, const std::string& arg, const std::string& next)
         a.trogue_fd = next;
         return true;
     }
-    else if (arg == "--frouge-fd") {
+    else if (arg == "--frogue-fd") {
         a.frogue_fd = next;
         return true;
     }

@@ -153,22 +153,22 @@ void open_frogue (const char *file)
 
 void open_frogue_fd (int frogue_fd)
 {
-  frogue = fdopen (frogue_fd, "r");
+  frogue = fdopen (frogue_fd, "rb");
 }
 
 #ifdef ROGUE_COLLECTION
 char getroguechar()
 {
   char ch = EOF;
-  for (int i = 0; ch == EOF && i < 2000; ++i)
+  /*for (int i = 0; ch == EOF && i < 2000; ++i) //todo:mdk support for debugging
   {
     if (i > 0)
     {
       md_sleep(5);
     }
-
+    */
     ch = fgetc(frogue);
-  }
+  //}
 
   return ch;
 }

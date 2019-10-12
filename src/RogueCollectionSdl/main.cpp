@@ -73,20 +73,34 @@ int main(int argc, char** argv)
 
     if (args.rogomatic) //game process
     {
-        int fdpipe[2];
-        if (_pipe(fdpipe, 256, O_BINARY) == -1)
+        int trogue_pipe[2];
+        if (_pipe(trogue_pipe, 256, O_BINARY) == -1)
             exit(1);
 
-        char read_fd[20];
-        _itoa_s(fdpipe[0], read_fd, sizeof(read_fd), 10);
-        args.trogue_fd = read_fd;
+        args.trogue_fd = std::to_string(trogue_pipe[0]);
+        std::string trogue_write_fd = std::to_string(trogue_pipe[1]);
 
-        char write_fd[20];
-        _itoa_s(fdpipe[1], write_fd, sizeof(write_fd), 10);
+        int frogue_pipe[2];
+        if (_pipe(frogue_pipe, 65536, O_BINARY) == -1)
+            exit(1);
+
+        args.frogue_fd = std::to_string(frogue_pipe[1]);
+        std::string frogue_read_fd = std::to_string(frogue_pipe[0]);
+
         int pid;
         //todo:mdk: consider timing on startup with frogue, gene and seed args
-        if ((pid = _spawnl(P_NOWAIT, argv[0], argv[0], "g", "--rogomatic-player", "5.2", "--trogue-fd", write_fd, NULL)) == -1)
+        if ((pid = _spawnl(
+            P_NOWAIT,
+            argv[0],
+            argv[0],
+            "g",
+            "--rogomatic-player", "5.2",
+            "--trogue-fd", trogue_write_fd.c_str(),
+            "--frogue-fd", frogue_read_fd.c_str(),
+            NULL)) == -1)
+        {
             printf("Spawn failed");
+        }
 
         auto value = start(args);
 
@@ -94,10 +108,14 @@ int main(int argc, char** argv)
         int termstat;
         _cwait(&termstat, pid, WAIT_CHILD);
         if (termstat & 0x0)
+        {
             printf("Child failed\n");
+        }
 
-        _close(fdpipe[1]);
-        _close(fdpipe[0]);
+        _close(trogue_pipe[1]);
+        _close(trogue_pipe[0]);
+        _close(frogue_pipe[1]);
+        _close(frogue_pipe[0]);
 
         return value;
     }

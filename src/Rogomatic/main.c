@@ -435,14 +435,12 @@ char *argv[];
   else {
 #ifdef ROGUE_COLLECTION
       
-    open_frogue(argv[1]);
+    int frogue_fd = atoi(argv[1]);
+    open_frogue_fd(frogue_fd);
 
     int trogue_fd = atoi(argv[6]);
-    //printf("%d\n", trogue_fd);
-    //md_sleep(20000);
-    //_write(trogue_fd, "dal", 3);
-    
-    trogue = fdopen(trogue_fd, "w");
+    //_write(trogue_fd, "dal", 3);    
+    trogue = fdopen(trogue_fd, "wb");
     setbuf(trogue, NULL);
     //fprintf(trogue, "v");
     //fflush(trogue);
@@ -615,8 +613,8 @@ char *argv[];
 
       sendnow (";");
       getrogue (ill, 2);
-      if (ourscore == 0)
-          check_frogue_sync();
+      //if (ourscore == 0)
+      //    check_frogue_sync();
     }
 
     if (startingup) {	/* All monsters identified */
