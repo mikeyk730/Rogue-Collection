@@ -35,7 +35,6 @@
     <ClInclude Include="environment.h" />
     <ClInclude Include="game_config.h" />
     <ClInclude Include="key_utility.h" />
-    <ClInclude Include="options.h" />
     <ClInclude Include="replayable_input.h" />
     <ClInclude Include="run_game.h" />
     <ClInclude Include="utility.h" />

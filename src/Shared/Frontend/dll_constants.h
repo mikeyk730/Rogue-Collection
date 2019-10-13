@@ -1,3 +1,4 @@
+#pragma once
 #ifdef _WIN32
 const char* Rogomatic     = "Rogomatic_Player.dll";
 const char* Rogue_PC_1_48 = "Rogue_PC_1_48.dll";
@@ -13,8 +14,3 @@ const char* Rogue_5_3     = "lib-rogue-5-3.so";
 const char* Rogue_5_2_1   = "lib-rogue-5-2-1.so";
 const char* Rogue_3_6_3   = "lib-rogue-3-6-3.so";
 #endif
-
-TileConfig tilemap_v1 = { "tilemap_v1.bmp",  61, 2 };
-TileConfig tilemap_v2 = { "tilemap_v2.bmp",  61, 2 };
-TileConfig tilemap_v3 = { "tilemap_v3.bmp",  61, 2 };
-TileConfig tilemap_v4 = { "tilemap_v4.bmp",  61, 2 };

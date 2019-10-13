@@ -58,9 +58,6 @@
     <ClInclude Include="key_utility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="options.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="replayable_input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
