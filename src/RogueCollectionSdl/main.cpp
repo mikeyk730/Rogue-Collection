@@ -1,8 +1,5 @@
 #include <memory>
 #include <thread>
-#include <fstream>
-#include <io.h>
-#include <fcntl.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <input_interface.h>
