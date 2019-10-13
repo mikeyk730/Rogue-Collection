@@ -29,6 +29,8 @@ struct Environment
     void Serialize(std::ostream& file);
     void Deserialize(std::istream& in);
 
+    void SetRogomaticValues();
+
 private:
     void SetDefaults();
 

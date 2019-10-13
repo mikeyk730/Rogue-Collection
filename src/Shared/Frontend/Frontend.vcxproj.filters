@@ -41,6 +41,9 @@
     <ClCompile Include="pipe_output.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="start_process.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="args.h">
@@ -74,6 +77,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pipe_output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="start_process.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

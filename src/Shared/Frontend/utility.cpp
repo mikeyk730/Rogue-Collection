@@ -40,6 +40,19 @@ void Delay(int ms)
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
+std::string GetTimestamp()
+{
+    time_t now;
+    time(&now);
+
+    tm t;
+    localtime_s(&t, &now);
+
+    char str[200];
+    strftime(str, 200, "%FT%H-%M-%S", &t);
+    return str;
+}
+
 namespace
 {
     std::map<int, int> unix_chars = {

@@ -21,6 +21,8 @@ void throw_error(const std::string &msg);
 
 void Delay(int ms);
 
+std::string GetTimestamp();
+
 uint32_t CharText(uint32_t ch);
 uint32_t CharColor(uint32_t ch);
 bool IsText(uint32_t ch);
