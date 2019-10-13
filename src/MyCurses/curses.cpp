@@ -50,6 +50,7 @@ struct __window
     int getnstr(char* dest, int n);
     int chgat(int n, attr_t attr, short color, const void *opts);
     int touchwin();
+    int clearok(bool enable);
 
 private:
     std::string getsnstr_impl(unsigned int n);
@@ -79,7 +80,7 @@ private:
 
     bool no_delay = false;
     bool should_echo = true;
-
+    bool should_clear_screen = false;
 
     __window* parent = 0;
 };
@@ -359,6 +360,12 @@ int __window::touchwin()
     return OK;
 }
 
+int __window::clearok(bool enable)
+{
+    should_clear_screen = enable;
+    return OK;
+}
+
 void __window::fill_dirty(int value)
 {
     memset(m_dirty.get(), value, dimensions.x * dimensions.y * sizeof(char));
@@ -366,6 +373,14 @@ void __window::fill_dirty(int value)
 
 int __window::refresh()
 {
+    if (should_clear_screen || curscr->should_clear_screen)
+    {
+        fill_dirty(1);
+        curscr->fill_dirty(1);
+        should_clear_screen = false;
+        curscr->should_clear_screen = false;
+    }
+
     for (int r = 0; r < dimensions.y; ++r) {
         memcpy(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype));
         memcpy(curscr->dirty(r + origin.y, origin.x), dirty(r, 0), dimensions.x * sizeof(char));
@@ -939,9 +954,9 @@ int halfdelay(int)
     return OK;
 }
 
-int	clearok(WINDOW *, _bool)
+int clearok(WINDOW *w, _bool enable)
 {
-    return OK;
+    return w->clearok(enable != 0);
 }
 
 int keypad(WINDOW *, _bool)

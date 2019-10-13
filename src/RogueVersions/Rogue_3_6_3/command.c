@@ -185,7 +185,7 @@ command()
 		    else
 			after = FALSE;
 		when 'v' : msg("Rogue version %s. (Berkeley)", release);
-		when CTRL('L') : after = FALSE; clearok(curscr,TRUE);draw(curscr);
+		when CTRL('M') : after = FALSE; clearok(curscr, TRUE); draw(curscr); //mdk: Remapped from CTRL('L')
 		when CTRL('R') : after = FALSE; msg(huh);
 		when 'S' : 
 		    after = FALSE;

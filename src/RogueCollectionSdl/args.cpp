@@ -17,10 +17,6 @@ bool LoadArg(Args& a, const std::string& arg, const std::string& next)
     else if (arg == "--rogomatic-server") {
         a.rogomatic_server = true;
     }
-    else if (arg == "--rogomatic-player") {
-        a.rogomatic_player_version = next;
-        return true;
-    }
     else if (arg == "--trogue-fd") {
         a.trogue_fd = next;
         return true;

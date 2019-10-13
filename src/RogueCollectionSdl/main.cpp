@@ -79,7 +79,6 @@ int main(int argc, char** argv)
             argv[0],
             argv[0],
             "g",
-            "--rogomatic-player", "5.2", //todo:mdk remove hardcoding
             "--trogue-fd", trogue_write_fd.c_str(),
             "--frogue-fd", frogue_read_fd.c_str(),
             "--seed", (args.seed.empty() ? "\"\"" : args.seed.c_str()),

@@ -202,7 +202,7 @@ int command()
 			after = FALSE;
 		when 'D': after = FALSE; discovered();
 		when CTRL('R') : after = FALSE; msg(huh);
-		when CTRL('L') :
+		when CTRL('M') : //mdk: Remapped from CTRL('L')
 		    after = FALSE;
 		    clearok(curscr,TRUE);
 		    wrefresh(curscr);

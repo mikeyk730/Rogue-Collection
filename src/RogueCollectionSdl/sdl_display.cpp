@@ -23,6 +23,7 @@
 # define ESC ctrl('[')
 
 static const char zeros[5000];
+static char ones[5000];
 
 namespace
 {
@@ -112,6 +113,8 @@ SdlDisplay::SdlDisplay(
     m_sizer(window, renderer, current_env),
     pipe_fd_(piped_output ? pipe_fd : 0)
 {
+    memset(ones, 0x01, 5000);
+
     std::string title(SdlRogue::kWindowTitle);
     title += " - ";
     title += m_options.name;
@@ -129,11 +132,6 @@ SdlDisplay::SdlDisplay(
     }
 
     m_dimensions = { game_env->Columns(), game_env->Lines() };
-
-    if (pipe_fd_) {
-        char buf = CL_TOK;
-        _write(pipe_fd_, &buf, 1);
-    }
 
     SDL_ShowWindow(window);
     LoadAssets();
@@ -525,6 +523,12 @@ void SdlDisplay::WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int
 {
     if (!pipe_fd_) {
         return;
+    }
+
+    if (memcmp(dirty, ones, TotalChars()) == 0)
+    {
+        char buf = CL_TOK;
+        _write(pipe_fd_, &buf, 1);
     }
 
     for (int r = 0; r < rows; ++r)

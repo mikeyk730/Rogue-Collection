@@ -47,16 +47,15 @@ void RunGame(const std::string& lib, T* r, const Args& args)
         rogomatic_fds[0] += frogue;
         rogomatic_fds[1] += trogue;
 
-        const char* argv[6] = {
+        const char* argv[5] = {
             "player.exe", 
             rogomatic_fds.c_str(),
             "0",
             "0,0,1,1,0,0,0,0", 
             "Mikey", 
-            args.rogomatic_player_version.c_str()
         }; //todo:mdk
         bool rogomatic = lib == "Rogomatic_Player.dll";
-        (*game)(rogomatic ? 6 : 0, rogomatic ? (char**)argv : 0, environ);
+        (*game)(rogomatic ? 5 : 0, rogomatic ? (char**)argv : 0, environ);
         r->PostQuit();
     }
 #else

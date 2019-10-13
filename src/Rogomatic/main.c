@@ -458,28 +458,6 @@ char *argv[];
   if (argc > 4)	strcpy (roguename, argv[4]);
   else		sprintf (roguename, "Rog-O-Matic %s", RGMVER);
 
-#ifdef ROGUE_COLLECTION
-  version = 0;
-  if (argc > 5) {
-      if (strstr(argv[5], "3.6")) {
-          sprintf(versionstr, "3.6");
-          version = RV36B;
-      }
-      else if (strstr(argv[5], "5.2")) {
-          sprintf(versionstr, "5.2");
-          version = RV52A;
-      }
-      else if (strstr(argv[5], "5.4")) {
-          sprintf(versionstr, "5.4");
-          version = RV54A;
-      }
-  }
-  if (!version) {
-      printf("Unknown version of Rogue");
-      exit(0);
-  }
-#endif
-
 #ifndef ROGUE_COLLECTION
   /* Now count argument space and assign a global pointer to it */
   arglen = 0;
@@ -506,9 +484,7 @@ char *argv[];
   if (startecho) toggleecho ();		/* Start logging? */
 
   clear ();				/* Clear the screen */
-#ifndef ROGUE_COLLECTION
   getrogver ();				/* Figure out Rogue version */
-#endif
 
   if (!replaying) {
     initseed();
@@ -542,12 +518,18 @@ char *argv[];
    * Also identify wands (/), so that we can differentiate
    * older Rogue 3.6 from Rogue 3.6 with extra magic...
    */
-
+#ifndef ROGUE_COLLECTION
   if (version < RV53A)
     sendnow ("%c//;", ctrl('l'));
   else
     sendnow ("%c;", ctrl('r'));
-
+#else
+  /* mdk: refresh key is remapped in Rogue Collection */
+  if (version < RV53A)
+      sendnow("%c//;", ctrl('m'));
+  else
+      sendnow("%c;", ctrl('m'));
+#endif
   /*
    * If we are not replaying an old game, we must position the
    * input after the next form feed, which signals the start of
