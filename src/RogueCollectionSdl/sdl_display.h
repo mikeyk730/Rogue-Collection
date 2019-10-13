@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <display_interface.h>
 #include "sdl_rogue.h"
+#include "sdl_utility.h"
 #include "window_sizer.h"
 #ifdef __linux__ //todo:mdk fix
 #include "text_provider.h"
@@ -81,7 +82,7 @@ private:
     Environment* m_current_env = nullptr;
     Environment* m_game_env = nullptr;
     ReplayableInput* m_input = nullptr;
-    SDL_Texture* m_screen_texture = nullptr;
+    SDL::Scoped::Texture m_screen_texture;
     GameConfig m_options;
 
     Coord m_dimensions = { 0, 0 };

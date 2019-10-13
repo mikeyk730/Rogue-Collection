@@ -56,7 +56,7 @@ void TextProvider::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Rec
     *texture = m_text;
 }
 
-TextGenerator::TextGenerator(const TextConfig & config, SDL_Renderer * renderer) : 
+TextGenerator::TextGenerator(const TextConfig & config, SDL_Renderer * renderer) :
     m_cfg(config),
     m_renderer(renderer),
     m_text(LoadBmp(GetResourcePath("") + config.imagefile))
@@ -90,7 +90,7 @@ TextGenerator::TextGenerator(const FontConfig & config, SDL_Renderer * renderer)
 
     m_cfg.layout.x = (int)s.size();
     m_cfg.layout.y = 1;
-    
+
     Init();
 
     //mdk: hack.  I don't know why we sometimes get a height that's greater than the requested font size
@@ -136,7 +136,7 @@ Coord TextGenerator::Dimensions() const
 void TextGenerator::GetTexture(int ch, int color, SDL_Texture ** texture, SDL_Rect * rect)
 {
     *rect = GetTextRect(ch);
-    
+
     auto i = m_textures.find(color);
     if (i != m_textures.end()) {
         *texture = i->second;

@@ -33,6 +33,24 @@ namespace
 
         return interval;
     }
+
+    class ScopedRendererTarget
+    {
+    public:
+        ScopedRendererTarget(SDL_Renderer* renderer, SDL_Texture* texture)
+            : renderer_(renderer)
+        {
+            SDL_SetRenderTarget(renderer_, texture);
+        }
+
+        ~ScopedRendererTarget()
+        {
+            SDL_SetRenderTarget(renderer_, nullptr);
+        }
+
+    private:
+        SDL_Renderer* renderer_;
+    };
 }
 
 SdlDisplay::SdlDisplay(
@@ -49,6 +67,7 @@ SdlDisplay::SdlDisplay(
     m_current_env(current_env),
     m_game_env(game_env),
     m_input(input),
+    m_screen_texture(nullptr, SDL_DestroyTexture),
     m_options(options),
     m_sizer(window, renderer, current_env),
     m_pipe_output(piped_output ? new PipeOutput(pipe_fd) : nullptr)
@@ -80,10 +99,6 @@ SdlDisplay::SdlDisplay(
 
 SdlDisplay::~SdlDisplay()
 {
-    if (m_screen_texture)
-    {
-        SDL_DestroyTexture(m_screen_texture);
-    }
 }
 
 void SdlDisplay::LoadAssets()
@@ -103,13 +118,14 @@ void SdlDisplay::LoadAssets()
     m_sizer.SetWindowSize(w, h);
     SDL_RenderClear(m_renderer);
 
-    m_screen_texture = SDL_CreateTexture(
-        m_renderer,
-        SDL_PIXELFORMAT_RGBA8888,
-        SDL_TEXTUREACCESS_TARGET,
-        w,
-        h);
-    SDL_SetRenderTarget(m_renderer, m_screen_texture);
+    m_screen_texture = SDL::Scoped::Texture(
+        SDL_CreateTexture(
+            m_renderer,
+            SDL_PIXELFORMAT_RGBA8888,
+            SDL_TEXTUREACCESS_TARGET,
+            w,
+            h),
+        SDL_DestroyTexture);
 }
 
 void SdlDisplay::RenderGame(bool force)
@@ -137,6 +153,8 @@ void SdlDisplay::RenderGame(bool force)
         cursor_pos = m_shared.cursor_pos;
     }
 
+    ScopedRendererTarget render_guard(m_renderer, m_screen_texture.get());
+
     if (force) {
         SDL_RenderClear(m_renderer);
         regions.push_back(FullRegion());
@@ -155,11 +173,14 @@ void SdlDisplay::RenderGame(bool force)
     if (m_input && m_input->GetRenderText(&counter))
         RenderCounterOverlay(counter, 0);
 
+    SDL_RenderPresent(m_renderer);
     UpdateWindow();
 }
 
 void SdlDisplay::Animate()
 {
+    ScopedRendererTarget render_guard(m_renderer, m_screen_texture.get());
+
     bool update = false;
     if (graphics_cfg().animate) {
 
@@ -202,20 +223,17 @@ void SdlDisplay::Animate()
     }
 
     if (update) {
+        SDL_RenderPresent(m_renderer);
         UpdateWindow();
     }
 }
 
 void SdlDisplay::UpdateWindow()
 {
-    SDL_RenderPresent(m_renderer);
-
     SDL_SetRenderTarget(m_renderer, nullptr);
     SDL_RenderClear(m_renderer);
-    SDL_RenderCopy(m_renderer, m_screen_texture, nullptr, nullptr);
+    SDL_RenderCopy(m_renderer, m_screen_texture.get(), nullptr, nullptr);
     SDL_RenderPresent(m_renderer);
-
-    SDL_SetRenderTarget(m_renderer, m_screen_texture);
 }
 
 void SdlDisplay::RenderRegion(uint32_t* data, Region rect)
