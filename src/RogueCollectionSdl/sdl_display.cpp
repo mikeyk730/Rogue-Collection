@@ -1,8 +1,3 @@
-#ifndef _WIN32
-#error "The SDL project is depreciated in favor of the Qml versions."
-#error "This file relies on undefined behavior that doesn't work on Linux."
-#error "SDL_RenderClear should be called every frame."
-#endif
 #include <sstream>
 #include <cassert>
 #include <SDL_image.h>
@@ -83,6 +78,14 @@ SdlDisplay::SdlDisplay(
     LoadAssets();
 }
 
+SdlDisplay::~SdlDisplay()
+{
+    if (m_screen_texture)
+    {
+        SDL_DestroyTexture(m_screen_texture);
+    }
+}
+
 void SdlDisplay::LoadAssets()
 {
     m_text_provider = CreateTextProvider(graphics_cfg().font, graphics_cfg().text, m_renderer);
@@ -95,8 +98,18 @@ void SdlDisplay::LoadAssets()
         m_block_size = m_tile_provider->Dimensions();
     }
 
-    m_sizer.SetWindowSize(m_block_size.x * m_game_env->Columns(), m_block_size.y * m_game_env->Lines());
+    int w = m_block_size.x * m_game_env->Columns();
+    int h = m_block_size.y * m_game_env->Lines();
+    m_sizer.SetWindowSize(w, h);
     SDL_RenderClear(m_renderer);
+
+    m_screen_texture = SDL_CreateTexture(
+        m_renderer,
+        SDL_PIXELFORMAT_RGBA8888,
+        SDL_TEXTUREACCESS_TARGET,
+        w,
+        h);
+    SDL_SetRenderTarget(m_renderer, m_screen_texture);
 }
 
 void SdlDisplay::RenderGame(bool force)
@@ -124,8 +137,6 @@ void SdlDisplay::RenderGame(bool force)
         cursor_pos = m_shared.cursor_pos;
     }
 
-    //SDL_RenderClear(m_renderer); //todo:mdk don't rely on undefined behavior
-
     if (force) {
         SDL_RenderClear(m_renderer);
         regions.push_back(FullRegion());
@@ -144,7 +155,7 @@ void SdlDisplay::RenderGame(bool force)
     if (m_input && m_input->GetRenderText(&counter))
         RenderCounterOverlay(counter, 0);
 
-    SDL_RenderPresent(m_renderer);
+    UpdateWindow();
 }
 
 void SdlDisplay::Animate()
@@ -172,10 +183,7 @@ void SdlDisplay::Animate()
             int y = i / m_dimensions.x;
             SDL_Rect r = ScreenRegion({ x, y });
             RenderText(c, CharColor(data[i]), r, true);
-            if (update == false) {
-                //SDL_RenderClear(m_renderer); //todo:mdk don't rely on undefined behavior
-                update = true;
-            }
+            update = true;
         }
     }
 
@@ -190,14 +198,24 @@ void SdlDisplay::Animate()
 
     if (show_cursor) {
         RenderCursor(cursor_pos);
-        if (update == false) {
-            //SDL_RenderClear(m_renderer); //todo:mdk don't rely on undefined behavior
-            update = true;
-        }
+        update = true;
     }
 
-    if (update)
-        SDL_RenderPresent(m_renderer);
+    if (update) {
+        UpdateWindow();
+    }
+}
+
+void SdlDisplay::UpdateWindow()
+{
+    SDL_RenderPresent(m_renderer);
+
+    SDL_SetRenderTarget(m_renderer, nullptr);
+    SDL_RenderClear(m_renderer);
+    SDL_RenderCopy(m_renderer, m_screen_texture, nullptr, nullptr);
+    SDL_RenderPresent(m_renderer);
+
+    SDL_SetRenderTarget(m_renderer, m_screen_texture);
 }
 
 void SdlDisplay::RenderRegion(uint32_t* data, Region rect)

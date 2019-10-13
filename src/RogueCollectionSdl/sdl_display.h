@@ -28,6 +28,7 @@ struct SdlDisplay : public DisplayInterface
         ReplayableInput* input,
         bool piped_output,
         int pipe_fd);
+    ~SdlDisplay();
 
     //display interface
     virtual void SetDimensions(Coord dimensions) override;
@@ -64,6 +65,7 @@ private:
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
     void RenderCounterOverlay(const std::string& s, int n);
+    void UpdateWindow();
 
     const GraphicsConfig& graphics_cfg() const;
 
@@ -74,11 +76,12 @@ private:
     int TotalChars() const;
 
 private:
-    SDL_Window* m_window = 0;
-    SDL_Renderer* m_renderer = 0;
-    Environment* m_current_env = 0;
-    Environment* m_game_env = 0;
-    ReplayableInput* m_input = 0;
+    SDL_Window* m_window = nullptr;
+    SDL_Renderer* m_renderer = nullptr;
+    Environment* m_current_env = nullptr;
+    Environment* m_game_env = nullptr;
+    ReplayableInput* m_input = nullptr;
+    SDL_Texture* m_screen_texture = nullptr;
     GameConfig m_options;
 
     Coord m_dimensions = { 0, 0 };
