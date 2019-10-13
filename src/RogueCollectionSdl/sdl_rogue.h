@@ -5,7 +5,6 @@
 #include <coord.h>
 #include "game_config.h"
 
-struct DisplayInterface;
 struct InputInterface;
 struct SdlDisplay;
 struct ReplayableInput;
@@ -24,7 +23,7 @@ struct SdlRogue
     void SaveGame(std::string path, bool notify);
     void RestoreGame(const std::string& filename);
 
-    DisplayInterface* Display() const;
+    SdlDisplay* Display() const;
     InputInterface* Input() const;
     Environment* GameEnv() const;
     GameConfig Options() const;

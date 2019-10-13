@@ -5,6 +5,7 @@
 #include <input_interface.h>
 #include <display_interface.h>
 #include "sdl_rogue.h"
+#include "sdl_display.h"
 #include "text_provider.h"
 #include "tile_provider.h"
 #include "game_select.h"
@@ -112,8 +113,9 @@ int start(Args& args)
 
         if (sdl_rogue) {
             //start rogue engine on a background thread
+            Coord dims = sdl_rogue->Display()->GetDimensions();
             std::thread rogue([&] {
-                RunGame(sdl_rogue->Options().dll_name, sdl_rogue->Display(), sdl_rogue->Input(), sdl_rogue->GameEnv(), args);
+                RunGame(sdl_rogue->Options().dll_name, sdl_rogue->Display(), sdl_rogue->Input(), dims.y, dims.x, args);
                 sdl_rogue->PostQuit();
             });
             rogue.detach();

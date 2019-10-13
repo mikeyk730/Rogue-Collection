@@ -3,7 +3,6 @@
 
 struct DisplayInterface;
 struct InputInterface;
-struct Environment;
 struct Args;
 
-void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* input, Environment* environment, const Args& args);
+void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* input, int lines, int columns, const Args& args);

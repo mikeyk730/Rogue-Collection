@@ -88,7 +88,13 @@ SdlDisplay::SdlDisplay(
         }
     }
 
-    m_dimensions = { game_env->Columns(), game_env->Lines() };
+    std::string screen;
+    m_dimensions = m_options.screen;
+    if (m_game_env->Get("small_screen", &screen) && screen == "true")
+    {
+        m_dimensions = m_options.small_screen;
+    }
+
     if (m_pipe_output) {
         m_pipe_output->SetDimensions(m_dimensions);
     }
@@ -113,8 +119,8 @@ void SdlDisplay::LoadAssets()
         m_block_size = m_tile_provider->Dimensions();
     }
 
-    int w = m_block_size.x * m_game_env->Columns();
-    int h = m_block_size.y * m_game_env->Lines();
+    int w = m_block_size.x * m_dimensions.x;
+    int h = m_block_size.y * m_dimensions.y;
     m_sizer.SetWindowSize(w, h);
     SDL_RenderClear(m_renderer);
 
@@ -482,6 +488,11 @@ void SdlDisplay::NextGfxMode()
 bool SdlDisplay::GetSavePath(std::string& path)
 {
     return ::GetSavePath(m_window, path);
+}
+
+Coord SdlDisplay::GetDimensions() const
+{
+    return m_dimensions;
 }
 
 void SdlDisplay::RegisterEvents()

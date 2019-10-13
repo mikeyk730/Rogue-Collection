@@ -42,6 +42,7 @@ struct SdlDisplay : public DisplayInterface
     void SetTitle(const std::string& title);
     void NextGfxMode();
     bool GetSavePath(std::string& path);
+    Coord GetDimensions() const;
 
     bool HandleEvent(const SDL_Event& e);
 

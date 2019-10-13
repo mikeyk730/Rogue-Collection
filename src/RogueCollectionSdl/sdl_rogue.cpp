@@ -70,7 +70,7 @@ SdlRogue::~SdlRogue()
 {
 }
 
-DisplayInterface * SdlRogue::Display() const
+SdlDisplay* SdlRogue::Display() const
 {
     return m_display.get();
 }
@@ -152,15 +152,6 @@ void SdlRogue::SetGame(int i)
 
     if (!m_game_env->WriteToOs(m_options.is_unix))
         throw_error("Couldn't write environment");
-
-    std::string screen;
-    Coord dims = m_options.screen;
-    if (m_game_env->Get("small_screen", &screen) && screen == "true")
-    {
-        dims = m_options.small_screen;
-    }
-    m_game_env->Columns(dims.x);
-    m_game_env->Lines(dims.y);
 }
 
 void SdlRogue::SaveGame(std::string path, bool notify)

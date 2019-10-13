@@ -22,7 +22,6 @@ HEADERS += \
     plugin.h \
     qrogue.h \
     dos_to_unicode.h \
-    environment.h \
     game_config.h \
     replayable_input.h \
     pipe_input.h \
@@ -38,7 +37,6 @@ SOURCES += \
     plugin.cpp \
     qrogue.cpp \
     dos_to_unicode.cpp \
-    environment.cpp \
     game_config.cpp \
     replayable_input.cpp \
     pipe_input.cpp \
@@ -58,6 +56,13 @@ win32 {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
     } else {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/User32.Lib"
+    }
+
+    debug {
+        LIBS += "$$PWD/../../../bin/Win32/Debug/Frontend.lib"
+    }
+    release {
+        LIBS += "$$PWD/../../../bin/Win32/Release/Frontend.lib"
     }
 }
 

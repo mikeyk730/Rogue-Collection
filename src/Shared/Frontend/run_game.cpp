@@ -24,7 +24,7 @@ struct LibraryDeleter
 };
 #endif
 
-void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* input, Environment* environment, const Args& args)
+void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* input, int lines, int columns, const Args& args)
 {
     try {
 #ifdef _WIN32
@@ -60,7 +60,7 @@ void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* 
         }
 #endif
 
-        (*Init)(display, input, environment->Lines(), environment->Columns());
+        (*Init)(display, input, lines, columns);
 
         int frogue = atoi(args.frogue_fd.c_str());
         int trogue = atoi(args.trogue_fd.c_str());
@@ -69,11 +69,11 @@ void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* 
         rogomatic_fds[1] += trogue;
 
         const char* argv[5] = {
-            "player.exe", 
+            "player.exe",
             rogomatic_fds.c_str(),
             "0",
-            "0,0,1,1,0,0,0,0", 
-            "Mikey", 
+            "0,0,1,1,0,0,0,0",
+            "Mikey",
         }; //todo:mdk
         bool rogomatic = lib == "Rogomatic_Player.dll";
         (*game)(rogomatic ? 5 : 0, rogomatic ? (char**)argv : 0, environ);
