@@ -98,14 +98,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;ROGOMATIC_PROTOCOL_DEBUGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)lib\NativeFileDialog\src\include\;$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)lib\NativeFileDialog\src\include\;$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\;$(SolutionDir)src\Shared\Frontend\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(SolutionDir)lib\NativeFileDialog\build\lib\$(Configuration)\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;nfd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;nfd.lib;Frontend.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
@@ -160,7 +160,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)lib\NativeFileDialog\src\include\;$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)lib\sdl\include\;$(SolutionDir)lib\SDL2_ttf-2.0.14\include\;$(SolutionDir)lib\SDL2_image-2.0.1\include\;$(SolutionDir)lib\NativeFileDialog\src\include\;$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\;$(SolutionDir)src\Shared\Frontend\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -169,7 +169,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\;$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\;$(SolutionDir)lib\NativeFileDialog\build\lib\$(Configuration)\$(PlatformTarget)\;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;nfd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;nfd.lib;Frontend.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
@@ -219,22 +219,15 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="args.cpp" />
-    <ClCompile Include="dos_to_unicode.cpp" />
-    <ClCompile Include="environment.cpp" />
-    <ClCompile Include="game_config.cpp" />
     <ClCompile Include="game_select.cpp" />
-    <ClCompile Include="key_utility.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pipe_input.cpp" />
-    <ClCompile Include="replayable_input.cpp" />
     <ClCompile Include="sdl_display.cpp" />
     <ClCompile Include="sdl_input.cpp" />
     <ClCompile Include="sdl_rogue.cpp" />
     <ClCompile Include="text_provider.cpp" />
     <ClCompile Include="tile_provider.cpp" />
     <ClCompile Include="sdl_utility.cpp" />
-    <ClCompile Include="utility.cpp" />
     <ClCompile Include="window_sizer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -242,22 +235,14 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     <ClInclude Include="..\Shared\display_interface.h" />
     <ClInclude Include="..\Shared\display_interface_types.h" />
     <ClInclude Include="..\Shared\pc_gfx_charmap.h" />
-    <ClInclude Include="args.h" />
-    <ClInclude Include="dos_to_unicode.h" />
-    <ClInclude Include="game_config.h" />
     <ClInclude Include="game_select.h" />
-    <ClInclude Include="environment.h" />
-    <ClInclude Include="key_utility.h" />
     <ClInclude Include="pipe_input.h" />
-    <ClInclude Include="replayable_input.h" />
-    <ClInclude Include="run_game.h" />
     <ClInclude Include="sdl_display.h" />
     <ClInclude Include="sdl_input.h" />
     <ClInclude Include="text_provider.h" />
     <ClInclude Include="tile_provider.h" />
     <ClInclude Include="sdl_utility.h" />
     <ClInclude Include="sdl_rogue.h" />
-    <ClInclude Include="utility.h" />
     <ClInclude Include="window_sizer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

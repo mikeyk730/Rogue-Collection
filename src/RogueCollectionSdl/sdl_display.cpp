@@ -566,6 +566,11 @@ void SdlDisplay::PlaySound(const std::string & id)
 {
 }
 
+void SdlDisplay::DisplayMessage(const std::string & message)
+{
+    ::DisplayMessage(SDL_MESSAGEBOX_ERROR, "Fatal Error", message.c_str());
+}
+
 void SdlDisplay::SetTitle(const std::string & title)
 {
     SDL_SetWindowTitle(m_window, title.c_str());

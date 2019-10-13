@@ -21,11 +21,6 @@ PipeInput::~PipeInput()
 {
 }
 
-bool PipeInput::HandleEvent(const SDL_Event & e)
-{
-    return false;
-}
-
 void PipeInput::RunPipeServer()
 {
     char buffer[BufferSize];

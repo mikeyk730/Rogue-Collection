@@ -13,4 +13,5 @@ struct DisplayInterface
     virtual void SetCursor(bool enable) = 0;
 
     virtual void PlaySound(const std::string& id) = 0;
+    virtual void DisplayMessage(const std::string& message) = 0;
 };

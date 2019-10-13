@@ -138,7 +138,6 @@ int start(Args& args)
     SDL::Scoped::Window window(nullptr, SDL_DestroyWindow);
     SDL::Scoped::Renderer renderer(nullptr, SDL_DestroyRenderer);
     std::shared_ptr<SdlRogue> sdl_rogue;
-    std::unique_ptr<PROCESS_INFORMATION> rogomatic_process;
     try {
         if (SDL_Init(SDL_INIT_VIDEO) != 0) {
             throw_error("SDL_Init");
@@ -214,7 +213,10 @@ int start(Args& args)
 
         if (sdl_rogue) {
             //start rogue engine on a background thread
-            std::thread rogue(RunGame<SdlRogue>, sdl_rogue->Options().dll_name, sdl_rogue.get(), args);
+            std::thread rogue([&] {
+                RunGame(sdl_rogue->Options().dll_name, sdl_rogue->Display(), sdl_rogue->Input(), sdl_rogue->GameEnv(), args);
+                sdl_rogue->PostQuit();
+            });
             rogue.detach();
 
             sdl_rogue->Run();

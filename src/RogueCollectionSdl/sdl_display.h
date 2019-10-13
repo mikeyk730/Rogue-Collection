@@ -34,6 +34,7 @@ struct SdlDisplay : public DisplayInterface
     virtual void MoveCursor(Coord pos) override;
     virtual void SetCursor(bool enable) override;
     virtual void PlaySound(const std::string& id) override;
+    virtual void DisplayMessage(const std::string& message) override;
 
     void SetTitle(const std::string& title);
     void NextGfxMode();

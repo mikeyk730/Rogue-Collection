@@ -1,5 +1,6 @@
 #pragma once
 #include <iosfwd>
+#include <string>
 
 template <typename T>
 std::ostream& Write(std::ostream& out, T t) {

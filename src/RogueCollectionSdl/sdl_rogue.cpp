@@ -92,6 +92,8 @@ GameConfig SdlRogue::Options() const
 
 void SdlRogue::Run()
 {
+    auto sdl_input = dynamic_cast<SdlInput*>(m_input.get());
+
     SdlDisplay::RegisterEvents();
 
     SDL_Event e;
@@ -114,7 +116,9 @@ void SdlRogue::Run()
             }
         }
 
-        m_input->HandleEvent(e);
+        if (sdl_input) {
+            sdl_input->HandleEvent(e);
+        }
     }
 }
 

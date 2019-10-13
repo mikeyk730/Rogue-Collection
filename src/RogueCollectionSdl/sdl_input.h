@@ -6,7 +6,7 @@
 struct SdlInput : public ReplayableInput
 {
     SdlInput(Environment* current_env, Environment* game_env, const GameConfig& options);
-    virtual bool HandleEvent(const SDL_Event& e) override;
+    virtual bool HandleEvent(const SDL_Event& e);
 
 private:
     bool HandleEventText(const SDL_Event& e);
