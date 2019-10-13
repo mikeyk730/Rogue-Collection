@@ -178,6 +178,8 @@ void SdlDisplay::RenderGame(bool force)
         cursor_pos = m_shared.cursor_pos;
     }
 
+    //SDL_RenderClear(m_renderer); //todo:mdk don't rely on undefined behavior
+
     if (force) {
         SDL_RenderClear(m_renderer);
         regions.push_back(FullRegion());
@@ -224,7 +226,10 @@ void SdlDisplay::Animate()
             int y = i / m_dimensions.x;
             SDL_Rect r = ScreenRegion({ x, y });
             RenderText(c, CharColor(data[i]), r, true);
-            update = true;
+            if (update == false) {
+                //SDL_RenderClear(m_renderer); //todo:mdk don't rely on undefined behavior
+                update = true;
+            }
         }
     }
 
@@ -239,7 +244,10 @@ void SdlDisplay::Animate()
 
     if (show_cursor) {
         RenderCursor(cursor_pos);
-        update = true;
+        if (update == false) {
+            //SDL_RenderClear(m_renderer); //todo:mdk don't rely on undefined behavior
+            update = true;
+        }
     }
 
     if (update)
