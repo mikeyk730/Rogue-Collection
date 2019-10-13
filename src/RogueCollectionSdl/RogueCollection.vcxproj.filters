@@ -45,9 +45,6 @@
     <ClInclude Include="window_sizer.h">
       <Filter>SDL</Filter>
     </ClInclude>
-    <ClInclude Include="pipe_input.h">
-      <Filter>SDL</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sdl_display.cpp">
@@ -75,9 +72,6 @@
       <Filter>SDL</Filter>
     </ClCompile>
     <ClCompile Include="window_sizer.cpp">
-      <Filter>SDL</Filter>
-    </ClCompile>
-    <ClCompile Include="pipe_input.cpp">
       <Filter>SDL</Filter>
     </ClCompile>
   </ItemGroup>

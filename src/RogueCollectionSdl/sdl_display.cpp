@@ -5,8 +5,6 @@
 #endif
 #include <sstream>
 #include <cassert>
-#include <fstream>
-#include <io.h>
 #include <SDL_image.h>
 #include <pc_gfx_charmap.h>
 #include "sdl_display.h"
@@ -17,57 +15,13 @@
 #include "window_sizer.h"
 #include "environment.h"
 #include "sdl_utility.h"
-
-# define ctrl(c) (char)((c)&037)
-# define CL_TOK ctrl('L')
-# define ESC ctrl('[')
+#include "utility.h"
+#include "pipe_output.h"
 
 static const char zeros[5000];
-static char ones[5000];
 
 namespace
 {
-    std::map<int, int> unix_chars = {
-        { PASSAGE,   '#' },
-        { DOOR,      '+' },
-        { FLOOR,     '.' },
-        { PLAYER,    '@' },
-        { TRAP,      '^' },
-        { STAIRS,    '%' },
-        { GOLD,      '*' },
-        { POTION,    '!' },
-        { SCROLL,    '?' },
-        { FOOD,      ':' },
-        { STICK,     '/' },
-        { ARMOR,     ']' },
-        { AMULET,    ',' },
-        { RING,      '=' },
-        { WEAPON,    ')' },
-        { VWALL,     '|' },
-        { HWALL,     '-' },
-        { ULWALL,    '-' },
-        { URWALL,    '-' },
-        { LLWALL,    '-' },
-        { LRWALL,    '-' },
-        { 204,       '|' },
-        { 185,       '|' },
-    };
-
-    uint32_t CharText(uint32_t ch)
-    {
-        return ch & 0x0000ffff;
-    }
-
-    uint32_t CharColor(uint32_t ch)
-    {
-        return (ch >> 24) & 0xff;
-    }
-
-    bool IsText(uint32_t ch)
-    {
-        return (ch & 0x010000) == 0;
-    }
-
     uint32_t RENDER_EVENT = 0;
     uint32_t TIMER_EVENT = 0;
 
@@ -83,15 +37,6 @@ namespace
         SDL_PushEvent(&e);
 
         return interval;
-    }
-
-    char GetRawCharFromData(uint32_t* data, int r, int c, int cols)
-    {
-        unsigned char ch = CharText(data[r*cols + c]);
-        auto i = unix_chars.find(ch);
-        if (i != unix_chars.end())
-            ch = i->second;
-        return (ch != 0 ? ch : ' ');
     }
 }
 
@@ -111,10 +56,8 @@ SdlDisplay::SdlDisplay(
     m_input(input),
     m_options(options),
     m_sizer(window, renderer, current_env),
-    pipe_fd_(piped_output ? pipe_fd : 0)
+    m_pipe_output(piped_output ? new PipeOutput(pipe_fd) : nullptr)
 {
-    memset(ones, 0x01, 5000);
-
     std::string title(SdlRogue::kWindowTitle);
     title += " - ";
     title += m_options.name;
@@ -132,6 +75,9 @@ SdlDisplay::SdlDisplay(
     }
 
     m_dimensions = { game_env->Columns(), game_env->Lines() };
+    if (m_pipe_output) {
+        m_pipe_output->SetDimensions(m_dimensions);
+    }
 
     SDL_ShowWindow(window);
     LoadAssets();
@@ -360,9 +306,7 @@ void SdlDisplay::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool
 
     if (graphics_cfg().use_unix_gfx && is_tile)
     {
-        auto i = unix_chars.find(c);
-        if (i != unix_chars.end())
-            c = i->second;
+        c = GetUnixChar(c);
     }
 
     SDL_Rect clip;
@@ -463,7 +407,9 @@ void SdlDisplay::UpdateRegion(uint32_t * info)
 
 void SdlDisplay::UpdateRegion(uint32_t* info, char* dirty)
 {
-    WriteRogomaticScreen(info, dirty, m_dimensions.y, m_dimensions.x);
+    if (m_pipe_output) {
+        m_pipe_output->UpdateRegion(info, dirty);
+    }
 
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -504,55 +450,17 @@ void SdlDisplay::UpdateRegion(uint32_t* info, Region rect)
 
 void SdlDisplay::MoveCursor(Coord pos)
 {
+    if (m_pipe_output) {
+        m_pipe_output->MoveCursor(pos);
+    }
+
     std::lock_guard<std::mutex> lock(m_mutex);
     m_shared.cursor_pos = pos;
-    WriteRogomaticPosition(pos);
 
     if (m_shared.data)
     {
         auto data = new uint32_t[TotalChars()];
         memcpy(data, m_shared.data.get(), TotalChars() * sizeof(int32_t));
-    }
-}
-
-void SdlDisplay::WriteRogomaticPosition(Coord pos)
-{
-    if (!pipe_fd_) {
-        return;
-    }
-
-    std::ostringstream ss;
-    ss << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
-    auto buf = ss.str();
-    _write(pipe_fd_, buf.c_str(), buf.size());
-}
-
-void SdlDisplay::WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int cols)
-{
-    if (!pipe_fd_) {
-        return;
-    }
-
-    if (memcmp(dirty, ones, TotalChars()) == 0)
-    {
-        char buf = CL_TOK;
-        _write(pipe_fd_, &buf, 1);
-    }
-
-    for (int r = 0; r < rows; ++r)
-    {
-        for (int c = 0; c < cols; ++c)
-        {
-            if (dirty[r*cols + c])
-            {
-                WriteRogomaticPosition({ c, r });
-                while (c < cols && dirty[r*cols + c]) {
-                    auto buf = GetRawCharFromData(data, r, c, cols);
-                    _write(pipe_fd_, &buf, 1);
-                    ++c;
-                }
-            }
-        }
     }
 }
 

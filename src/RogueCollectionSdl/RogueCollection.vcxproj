@@ -221,7 +221,6 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
   <ItemGroup>
     <ClCompile Include="game_select.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="pipe_input.cpp" />
     <ClCompile Include="sdl_display.cpp" />
     <ClCompile Include="sdl_input.cpp" />
     <ClCompile Include="sdl_rogue.cpp" />
@@ -236,7 +235,6 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     <ClInclude Include="..\Shared\display_interface_types.h" />
     <ClInclude Include="..\Shared\pc_gfx_charmap.h" />
     <ClInclude Include="game_select.h" />
-    <ClInclude Include="pipe_input.h" />
     <ClInclude Include="sdl_display.h" />
     <ClInclude Include="sdl_input.h" />
     <ClInclude Include="text_provider.h" />

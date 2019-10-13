@@ -1,11 +1,9 @@
 #pragma once
-#ifdef _WIN32
-#include <SDL.h>
 #include "replayable_input.h"
 
 struct PipeInput : public ReplayableInput
 {
-    PipeInput(Environment* current_env, Environment* game_env, const GameConfig& options, int fd);
+    PipeInput(Environment* current_env, Environment* game_env, const GameConfig& options, int pipe_fd);
     ~PipeInput();
 
     void RunPipeServer();
@@ -13,4 +11,3 @@ struct PipeInput : public ReplayableInput
 private:
     int pipe_fd_;
 };
-#endif

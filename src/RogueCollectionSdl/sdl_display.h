@@ -13,6 +13,7 @@ struct Environment;
 struct ITextProvider;
 struct TileProvider;
 struct ReplayableInput;
+struct PipeOutput;
 
 struct SdlDisplay : public DisplayInterface
 {
@@ -72,9 +73,6 @@ private:
     Region FullRegion() const;
     int TotalChars() const;
 
-    void WriteRogomaticPosition(Coord pos);
-    void WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int cols);
-
 private:
     SDL_Window* m_window = 0;
     SDL_Renderer* m_renderer = 0;
@@ -91,7 +89,7 @@ private:
     std::unique_ptr<ITextProvider> m_text_provider;
     std::unique_ptr<TileProvider> m_tile_provider;
     int m_frame_number = 0;
-    int pipe_fd_;
+    std::unique_ptr<PipeOutput> m_pipe_output;
 
     struct ThreadData
     {

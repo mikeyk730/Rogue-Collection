@@ -1,4 +1,3 @@
-#ifdef _WIN32
 #include <io.h>
 #include <fcntl.h>
 #include <exception>
@@ -31,5 +30,3 @@ void PipeInput::RunPipeServer()
         QueueInput(std::string(buffer, buffer + bytes_read));
     }
 }
-
-#endif
