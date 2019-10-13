@@ -15,12 +15,12 @@ DESTDIR = $$OUT_PWD
 TARGET = $$qtLibraryTarget(rogueplugin)
 
 INCLUDEPATH += $$PWD/../../Shared
+INCLUDEPATH += $$PWD/../../Shared/Frontend
 INCLUDEPATH += $$PWD/../../MyCurses
 
 HEADERS += \
     plugin.h \
     qrogue.h \
-    args.h \
     dos_to_unicode.h \
     environment.h \
     game_config.h \
@@ -37,7 +37,6 @@ HEADERS += \
 SOURCES += \
     plugin.cpp \
     qrogue.cpp \
-    args.cpp \
     dos_to_unicode.cpp \
     environment.cpp \
     game_config.cpp \

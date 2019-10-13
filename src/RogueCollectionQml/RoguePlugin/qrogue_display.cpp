@@ -12,6 +12,7 @@
 #include "qrogue.h"
 #include "environment.h"
 #include "tile_provider.h"
+#include "utility.h"
 
 # define ctrl(c) (char)((c)&037)
 # define CL_TOK ctrl('L')
@@ -235,6 +236,11 @@ void QRogueDisplay::PlaySound(const std::string &id)
 {
     if (sound_ && !parent_->Input()->InReplay())
         emit parent_->soundEvent(id.c_str());
+}
+
+void QRogueDisplay::DisplayMessage(const std::string& message)
+{
+    ::DisplayMessage("Error", "Fatal Error", message.c_str());
 }
 
 QSize QRogueDisplay::ScreenSize() const
