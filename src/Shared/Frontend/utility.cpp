@@ -106,6 +106,54 @@ char GetUnixChar(unsigned char c)
     return c;
 }
 
+unsigned int GetColor(int chr, int attr)
+{
+    //if it is inside a room
+    if (attr == 0x07 || attr == 0) switch (chr)
+    {
+    case DOOR:
+    case VWALL: case HWALL:
+    case ULWALL: case URWALL: case LLWALL: case LRWALL:
+        return 0x06; //brown
+    case FLOOR:
+        return 0x0a; //light green
+    case STAIRS:
+        return 0x20; //black on light green
+    case TRAP:
+        return 0x05; //magenta
+    case GOLD:
+    case PLAYER:
+        return 0x0e; //yellow
+    case POTION:
+    case SCROLL:
+    case STICK:
+    case ARMOR:
+    case AMULET:
+    case RING:
+    case WEAPON:
+        return 0x09; //light blue
+    case FOOD:
+        return 0x04; //red
+    }
+    //if inside a passage or a maze
+    else if (attr == 0x70) switch (chr)
+    {
+    case FOOD:
+        return 0x74; //red on grey
+    case GOLD: case PLAYER:
+        return 0x7e; //yellow on grey
+    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+        return 0x71; //blue on grey
+    }
+
+    return attr;
+}
+
+unsigned char FlipColor(unsigned char c)
+{
+    return ((c & 0x0f) << 4) | ((c & 0xf0) >> 4);
+}
+
 char GetRawCharFromData(uint32_t* data, int r, int c, int cols)
 {
     unsigned char ch = CharText(data[r*cols + c]);
