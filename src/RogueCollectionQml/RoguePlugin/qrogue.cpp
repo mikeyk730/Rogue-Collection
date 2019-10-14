@@ -55,6 +55,7 @@
 #include "tile_provider.h"
 #include "pipe_input.h"
 #include "utility_qml.h"
+#include "utility.h"
 
 namespace
 {
@@ -208,7 +209,7 @@ void QRogue::setGame(int index, Args& args)
         input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
     }
 
-    LaunchGame(args.rogomatic);
+    LaunchGame(args);
 }
 
 bool QRogue::showTitleScreen()
@@ -265,10 +266,11 @@ void QRogue::RestoreGame(const std::string& path)
         std::remove(path.c_str());
     }
 
-    LaunchGame(false);
+    Args args(0, nullptr);
+    LaunchGame(args);
 }
 
-void QRogue::LaunchGame(bool spawn_rogomatic)
+void QRogue::LaunchGame(Args& args)
 {
     if (config_.name == "PC Rogue 1.1") {
         game_env_->Set("emulate_version", "1.1");
@@ -295,27 +297,12 @@ void QRogue::LaunchGame(bool spawn_rogomatic)
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     timer->start(250);
 
-    if (spawn_rogomatic)
-    {
-        //todo:mdk implement
-#ifdef _WIN32
-                auto rogomatic_process = new PROCESS_INFORMATION();
-
-                auto command = "RetroRogueCollection.exe g --rogomatic-player 5.2";
-                /*if (!args.seed.empty())
-                    command += " --seed " + args.seed;
-                if (!args.genes.empty())
-                    command += " --genes \"" + args.genes + "\"";
-*/
-                CreateProcessOrExit(
-                    command,
-                    rogomatic_process);
-#endif
-    }
-
     //start rogue engine on a background thread
-    char* argv[] = {nullptr};
-    std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this, std::ref(thread_exited_), "5.2"); //todo:mdk pass version
+    std::thread rogue([&] {
+        RunGame(config_.dll_name, Display(), Input(), Lines(), Columns(), args);
+        thread_exited_ = true;
+        QuitApplication();
+    });
     rogue.detach(); //todo: how do we want threading to work?
 }
 

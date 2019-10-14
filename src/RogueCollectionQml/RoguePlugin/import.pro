@@ -22,7 +22,6 @@ HEADERS += \
     plugin.h \
     qrogue.h \
     pipe_input.h \
-    run_game.h \
     utility_qml.h \
     qrogue_display.h \
     qrogue_input.h \

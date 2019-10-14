@@ -83,7 +83,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    void LaunchGame(bool spawn_rogomatic);
+    void LaunchGame(Args& args);
     void SaveGame(std::string path, bool notify);
     void RestoreGame(const std::string& path);
     bool GetSavePath(std::string& filename);
