@@ -17,10 +17,9 @@ static {
 DESTDIR = $$OUT_PWD/../
 
 HEADERS += \
-    ../RoguePlugin/utility.h
+    ../RoguePlugin/utility_qml.h
 
 SOURCES = main.cpp \
-    ../RoguePlugin/utility.cpp \
     ../RoguePlugin/utility_qml.cpp
 
 RESOURCES += app.qrc

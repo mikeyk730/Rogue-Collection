@@ -12,6 +12,7 @@
 #include "qrogue.h"
 #include "environment.h"
 #include "tile_provider.h"
+#include "utility_qml.h"
 #include "utility.h"
 
 # define ctrl(c) (char)((c)&037)
@@ -23,66 +24,6 @@ static char zeros[5000];
 namespace
 {
     const int kMaxQueueSize = 10;
-
-    uint32_t CharText(uint32_t ch)
-    {
-        return ch & 0x0000ffff;
-    }
-
-    uint32_t CharColor(uint32_t ch)
-    {
-        return (ch >> 24) & 0xff;
-    }
-
-    bool IsText(uint32_t ch)
-    {
-        return (ch & 0x010000) == 0;
-    }
-
-    bool BlinkChar(uint32_t ch)
-    {
-        return CharText(ch) == STAIRS;
-    }
-
-    unsigned int FlipColor(unsigned int c)
-    {
-        return ((c & 0x0f) << 4) | ((c & 0xf0) >> 4);
-    }    
-
-    std::map<int, int> unix_chars = {
-        { PASSAGE,   '#' },
-        { DOOR,      '+' },
-        { FLOOR,     '.' },
-        { PLAYER,    '@' },
-        { TRAP,      '^' },
-        { STAIRS,    '%' },
-        { GOLD,      '*' },
-        { POTION,    '!' },
-        { SCROLL,    '?' },
-        { FOOD,      ':' },
-        { STICK,     '/' },
-        { ARMOR,     ']' },
-        { AMULET,    ',' },
-        { RING,      '=' },
-        { WEAPON,    ')' },
-        { VWALL,     '|' },
-        { HWALL,     '-' },
-        { ULWALL,    '-' },
-        { URWALL,    '-' },
-        { LLWALL,    '-' },
-        { LRWALL,    '-' },
-        { 204,       '|' },
-        { 185,       '|' },
-    };
-
-    char GetRawCharFromData(uint32_t* data, int r, int c, int cols)
-    {
-        unsigned char ch = CharText(data[r*cols + c]);
-        auto i = unix_chars.find(ch);
-        if (i != unix_chars.end())
-            ch = i->second;
-        return (ch != 0 ? ch : ' ');
-    }
 }
 
 void QRogueDisplay::WriteRogomaticPosition(Coord pos)
@@ -436,63 +377,6 @@ void QRogueDisplay::RenderCounterOverlay(QPainter* painter, const std::string& l
     }
 }
 
-unsigned int GetTileColor(int ch, int color)
-{
-    //if it is inside a room
-    if (color == 0x07 || color == 0)
-        switch (ch)
-        {
-        case DOOR:
-        case VWALL:
-        case HWALL:
-        case ULWALL:
-        case URWALL:
-        case LLWALL:
-        case LRWALL:
-            return 0x06; //brown
-        case FLOOR:
-            return 0x0a; //light green
-        case STAIRS:
-            return 0x20; //black on light green
-        case TRAP:
-            return 0x05; //magenta
-        case GOLD:
-        case PLAYER:
-            return 0x0e; //yellow
-        case POTION:
-        case SCROLL:
-        case STICK:
-        case ARMOR:
-        case AMULET:
-        case RING:
-        case WEAPON:
-            return 0x09; //light blue
-        case FOOD:
-            return 0x04; //red
-        }
-
-    //if inside a passage or a maze
-    else if (color == 0x70)
-        switch (ch)
-        {
-        case FOOD:
-            return 0x74; //red on grey
-        case GOLD:
-        case PLAYER:
-            return 0x7e; //yellow on grey
-        case POTION:
-        case SCROLL:
-        case STICK:
-        case ARMOR:
-        case AMULET:
-        case RING:
-        case WEAPON:
-            return 0x71; //blue on grey
-        }
-
-    return color;
-}
-
 void QRogueDisplay::PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text)
 {
     // Hack for consistent standout in msg lines.  Unix versions use '-'.
@@ -535,10 +419,7 @@ int QRogueDisplay::TranslateChar(int ch, bool is_text) const
     }
 
     if (!is_text && Gfx().use_unix_gfx){
-        auto i = unix_chars.find(ch);
-        if (i != unix_chars.end()) {
-            ch = i->second;
-        }
+        ch = GetUnixChar(ch);
     }
 
     if (text_provider_)

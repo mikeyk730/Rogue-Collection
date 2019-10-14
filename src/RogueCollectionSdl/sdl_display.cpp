@@ -286,7 +286,7 @@ void SdlDisplay::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool
     // technically don't need to do anything here, but it doesn't hurt to call
     // GetColor.
     if (is_tile) {
-        color = GetColor(c, color);
+        color = GetTileColor(c, color);
     }
     if (!color || !graphics_cfg().use_colors) {
         bool standout(color > 0x0f);

@@ -2,6 +2,7 @@
 #include <cassert>
 #include <chrono>
 #include <thread>
+#include <ctime>
 #include <cstring>
 #include <map>
 #include <pc_gfx_charmap.h>
@@ -42,6 +43,17 @@ void Delay(int ms)
 
 std::string GetTimestamp()
 {
+    /*
+    std::time_t rawtime;
+    std::time(&rawtime);
+
+    std::tm* timeinfo = std::localtime(&rawtime);
+
+    char buffer [80];
+    std::strftime(buffer,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
+
+    return buffer;
+    */
     time_t now;
     time(&now);
 
@@ -97,7 +109,12 @@ bool IsText(uint32_t ch)
     return (ch & 0x010000) == 0;
 }
 
-char GetUnixChar(unsigned char c)
+bool BlinkChar(uint32_t ch)
+{
+    return CharText(ch) == STAIRS;
+}
+
+uint32_t GetUnixChar(uint32_t c)
 {
     auto i = unix_chars.find(c);
     if (i != unix_chars.end())
@@ -106,14 +123,28 @@ char GetUnixChar(unsigned char c)
     return c;
 }
 
-unsigned int GetColor(int chr, int attr)
+char GetRawCharFromData(uint32_t* data, int r, int c, int cols)
+{
+    unsigned char ch = CharText(data[r*cols + c]);
+    auto i = unix_chars.find(ch);
+    if (i != unix_chars.end())
+        ch = i->second;
+    return (ch != 0 ? ch : ' ');
+}
+
+uint32_t GetTileColor(int chr, int attr)
 {
     //if it is inside a room
-    if (attr == 0x07 || attr == 0) switch (chr)
+    if (attr == 0x07 || attr == 0)
+    switch (chr)
     {
     case DOOR:
-    case VWALL: case HWALL:
-    case ULWALL: case URWALL: case LLWALL: case LRWALL:
+    case VWALL:
+    case HWALL:
+    case ULWALL:
+    case URWALL:
+    case LLWALL:
+    case LRWALL:
         return 0x06; //brown
     case FLOOR:
         return 0x0a; //light green
@@ -136,29 +167,28 @@ unsigned int GetColor(int chr, int attr)
         return 0x04; //red
     }
     //if inside a passage or a maze
-    else if (attr == 0x70) switch (chr)
+    else if (attr == 0x70)
+    switch (chr)
     {
     case FOOD:
         return 0x74; //red on grey
-    case GOLD: case PLAYER:
+    case GOLD:
+    case PLAYER:
         return 0x7e; //yellow on grey
-    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
+    case POTION:
+    case SCROLL:
+    case STICK:
+    case ARMOR:
+    case AMULET:
+    case RING:
+    case WEAPON:
         return 0x71; //blue on grey
     }
 
     return attr;
 }
 
-unsigned char FlipColor(unsigned char c)
+uint32_t FlipColor(uint32_t c)
 {
     return ((c & 0x0f) << 4) | ((c & 0xf0) >> 4);
-}
-
-char GetRawCharFromData(uint32_t* data, int r, int c, int cols)
-{
-    unsigned char ch = CharText(data[r*cols + c]);
-    auto i = unix_chars.find(ch);
-    if (i != unix_chars.end())
-        ch = i->second;
-    return (ch != 0 ? ch : ' ');
 }

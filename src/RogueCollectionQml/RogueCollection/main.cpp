@@ -6,7 +6,7 @@
 #include <QtPlugin>
 #include <QQmlContext>
 #include <QScreen>
-#include "../RoguePlugin/utility.h"
+#include "../RoguePlugin/utility_qml.h"
 
 #ifdef MDK_STATIC_COMPILE
 Q_IMPORT_PLUGIN(RoguePlugin)

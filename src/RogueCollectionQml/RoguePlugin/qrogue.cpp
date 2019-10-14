@@ -54,6 +54,7 @@
 #include "game_config.h"
 #include "tile_provider.h"
 #include "pipe_input.h"
+#include "utility_qml.h"
 
 namespace
 {
@@ -334,7 +335,7 @@ void QRogue::autosave()
     std::string value;
     if (input_ && env_->Get("autosave", &value)){
         if ((value == "true" && !thread_exited_) || value == "force"){
-            std::string name = "autosave-" + GetTimeString() + ".sav";
+            std::string name = "autosave-" + GetTimestamp() + ".sav";
             SaveGame(name, false);
         }
     }

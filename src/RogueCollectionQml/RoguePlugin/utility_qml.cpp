@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include "utility.h"
+#include "utility_qml.h"
 
 void QuitApplication()
 {
