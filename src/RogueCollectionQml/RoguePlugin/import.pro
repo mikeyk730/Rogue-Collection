@@ -21,13 +21,11 @@ INCLUDEPATH += $$PWD/../../MyCurses
 HEADERS += \
     plugin.h \
     qrogue.h \
-    dos_to_unicode.h \
     game_config.h \
     replayable_input.h \
     pipe_input.h \
     run_game.h \
     utility.h \
-    key_utility.h \
     qrogue_display.h \
     qrogue_input.h \
     tile_provider.h \
@@ -36,12 +34,10 @@ HEADERS += \
 SOURCES += \
     plugin.cpp \
     qrogue.cpp \
-    dos_to_unicode.cpp \
     game_config.cpp \
     replayable_input.cpp \
     pipe_input.cpp \
     utility.cpp \
-    key_utility.cpp \
     utility_qml.cpp \
     qrogue_display.cpp \
     qrogue_input.cpp \

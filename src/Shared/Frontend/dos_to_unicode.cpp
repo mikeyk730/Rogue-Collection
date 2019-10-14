@@ -3,7 +3,7 @@
 namespace
 {
     uint16_t Dos437ToUnicode[] = {
-        0x0000,
+        0x0020,
         0x263A,
         0x263B,
         0x2665,

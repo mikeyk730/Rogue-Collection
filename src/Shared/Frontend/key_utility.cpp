@@ -1,11 +1,11 @@
 #include "key_utility.h"
 
-bool IsLetterKey(unsigned char keycode)
+bool IsLetterKey(unsigned int keycode)
 {
     return (keycode >= 'a' && keycode <= 'z');
 }
 
-bool IsDirectionKey(unsigned char keycode)
+bool IsDirectionKey(unsigned int keycode)
 {
     switch (keycode)
     {
@@ -21,3 +21,16 @@ bool IsDirectionKey(unsigned char keycode)
     }
     return false;
 }
+
+#ifdef WIN32
+#include <Windows.h>
+bool IsCapsLockOn()
+{
+    return LOBYTE(GetKeyState(VK_CAPITAL)) != 0;
+}
+#else
+bool IsCapsLockOn()
+{
+    return false; //todo:mdk
+}
+#endif
