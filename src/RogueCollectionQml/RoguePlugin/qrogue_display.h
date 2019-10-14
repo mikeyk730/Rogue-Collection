@@ -24,7 +24,7 @@ struct Environment;
 class QRogueDisplay : public DisplayInterface
 {
 public:
-    QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, bool rogomatic_server);
+    QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, bool rogomatic_server, int pipe_fd);
 
     QFont Font() const;
     void SetFont(const QFont& font);
@@ -77,9 +77,6 @@ private:
     int TranslateColor(int color, bool is_text) const;
     int Index(int x, int y) const;
 
-    void WriteRogomaticPosition(Coord pos);
-    void WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int cols);
-
     QPainter& ScreenPainter();
 
     ITileProvider* TilePainter() const;
@@ -99,8 +96,7 @@ private:
     int frame_ = 0;
     std::unique_ptr<QPixmap> screen_buffer_;
     std::map<std::string, QSoundEffect*> sounds_;
-
-    std::ofstream rogomatic_stream_;
+    std::unique_ptr<DisplayInterface> rogomatic_output_;
 
     struct ThreadData
     {
@@ -108,7 +104,7 @@ private:
         ThreadData(ThreadData& other);
 
         Coord dimensions = { 0, 0 };
-        std::unique_ptr<uint32_t[]> data = 0;
+        std::unique_ptr<uint32_t[]> data = nullptr;
         std::vector<Region> render_regions;
 
         bool show_cursor = false;

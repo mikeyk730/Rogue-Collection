@@ -87,7 +87,7 @@ QRogue::QRogue(QQuickItem *parent)
 
     env_->Get("gfx", &graphics);
     bool rogomatic_server = args.rogomatic | args.rogomatic_server;
-    display_.reset(new QRogueDisplay(this, {80,25}, graphics, rogomatic_server));
+    display_.reset(new QRogueDisplay(this, {80,25}, graphics, rogomatic_server, args.GetDescriptorFromRogue()));
 
     std::string value;
     bool sound(!env_->Get("sound", &value) || value != "false");
@@ -138,17 +138,7 @@ void QRogue::setGame(int index, Args& args)
 
     if (rogomatic_server)
     {
-        env_->Set("name", "rogomatic");
-        env_->Set("fruit", "apricot");
-        env_->Set("terse", "true");
-        env_->Set("jump", "true");
-        env_->Set("step", "true");
-        env_->Set("seefloor", "true");
-        env_->Set("flush", "false");
-        env_->Set("askme", "false");
-        env_->Set("passgo", "false");
-        env_->Set("inven", "slow");
-        env_->Set("showac", "");
+        env_->SetRogomaticValues();
     }
 
     config_ = GetGameConfig(index);

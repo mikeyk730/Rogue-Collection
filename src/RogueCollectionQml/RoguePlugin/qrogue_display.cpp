@@ -14,6 +14,7 @@
 #include "tile_provider.h"
 #include "utility_qml.h"
 #include "utility.h"
+#include "pipe_output.h"
 
 # define ctrl(c) (char)((c)&037)
 # define CL_TOK ctrl('L')
@@ -26,45 +27,16 @@ namespace
     const int kMaxQueueSize = 10;
 }
 
-void QRogueDisplay::WriteRogomaticPosition(Coord pos)
-{
-    rogomatic_stream_ << ESC << '[' << (pos.y + 1) << ';' << (pos.x + 1) << 'H';
-    std::flush(rogomatic_stream_);
-}
-
-void QRogueDisplay::WriteRogomaticScreen(uint32_t* data, char* dirty, int rows, int cols)
-{
-    for (int r = 0; r < rows; ++r)
-    {
-        for (int c = 0; c < cols; ++c)
-        {
-            if (dirty[r*cols + c])
-            {
-                WriteRogomaticPosition({ c, r });
-                while (c < cols && dirty[r*cols + c]) {
-                    rogomatic_stream_ << GetRawCharFromData(data, r, c, cols);
-                    ++c;
-                }
-            }
-        }
-    }
-
-    std::flush(rogomatic_stream_);
-}
-QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, bool rogomatic_server)
+QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, bool rogomatic_server, int pipe_fd)
     : parent_(parent),
-      gfx_mode_(graphics)
+      gfx_mode_(graphics),
+      rogomatic_output_(rogomatic_server ? new PipeOutput(pipe_fd) : nullptr)
 {
-    screen_size_ = QSize(screen_size.x, screen_size.y);
+    SetScreenSize(screen_size);
 
     auto font = QFont("Px437 IBM VGA8");
     font.setPixelSize(16);
     font_provider_.reset(new FontProvider(font));
-
-    if (rogomatic_server) {
-        rogomatic_stream_ = std::ofstream("ipc.txt");
-        rogomatic_stream_ << CL_TOK;
-    }
 }
 
 void QRogueDisplay::SetDimensions(Coord)
@@ -74,7 +46,9 @@ void QRogueDisplay::SetDimensions(Coord)
 
 void QRogueDisplay::UpdateRegion(uint32_t* info, char* dirty)
 {
-    WriteRogomaticScreen(info, dirty, screen_size_.height(), screen_size_.width());
+    if (rogomatic_output_) {
+        rogomatic_output_->UpdateRegion(info, dirty);
+    }
 
     std::lock_guard<std::mutex> lock(mutex_);
 
@@ -116,10 +90,12 @@ void QRogueDisplay::UpdateRegion(uint32_t *buf, Region rect)
 
 void QRogueDisplay::MoveCursor(Coord pos)
 {
+    if (rogomatic_output_) {
+        rogomatic_output_->MoveCursor(pos);
+    }
+
     std::lock_guard<std::mutex> lock(mutex_);
     shared_.cursor_pos = pos;
-        WriteRogomaticPosition(pos);
-
 }
 
 void QRogueDisplay::SetCursor(bool enable)
@@ -264,6 +240,10 @@ bool QRogueDisplay::ApplyGraphics()
 
 void QRogueDisplay::SetScreenSize(Coord screen_size)
 {
+    if (rogomatic_output_) {
+        rogomatic_output_->SetDimensions(screen_size);
+    }
+
     screen_size_ = QSize(screen_size.x, screen_size.y);
 }
 
