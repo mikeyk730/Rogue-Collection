@@ -1,73 +1,11 @@
 #include "args.h"
 
-bool LoadArg(Args& a, const std::string& arg, const std::string& next)
-{
-    if (arg == "--restore" || arg == "-r") {
-        a.savefile = "rogue.sav";
-    }
-    else if (arg == "--score" || arg == "-s") {
-        a.print_score = true;
-    }
-    else if (arg == "--paused" || arg == "-p") {
-        a.start_paused = true;
-    }
-    else if (arg == "--rogomatic") {
-        a.rogomatic = true;
-    }
-    else if (arg == "--rogomatic-server") {
-        a.rogomatic_server = true;
-    }
-    else if (arg == "--trogue-fd") {
-        a.trogue_fd = next;
-        return true;
-    }
-    else if (arg == "--frogue-fd") {
-        a.frogue_fd = next;
-        return true;
-    }
-    else if (arg == "--pause-at") {
-        a.pause_at = next;
-        return true;
-    }
-    else if (arg == "--seed") {
-        a.seed = next;
-        return true;
-    }
-    else if (arg == "--genes") {
-        a.genes = next;
-        return true;
-    }
-    else if (arg == "--small-screen" || arg == "-n") {
-        a.small_screen = true;
-    }
-    else if (arg == "--graphics" || arg == "-g") {
-        a.gfx = next;
-        return true;
-    }
-    else if (arg == "--optfile" || arg == "-o") {
-        a.optfile = next;
-        return true;
-    }
-    else if (arg == "--font" || arg == "-f") {
-        a.fontfile = next;
-        return true;
-    }
-    else if (arg == "--profile") {
-        //reserved for Retro Rogue
-        return true;
-    }
-    else if (arg[0] != '-'){
-        a.savefile = arg;
-    }
-    return false;
-}
-
 Args::Args(int argc, char **argv)
 {
     for (int i = 1; i < argc; ++i) {
         std::string arg(argv[i]);
-        std::string next(i+1 < argc ? argv[i+1] : "");
-        if (LoadArg(*this, arg, next))
+        std::string next(i + 1 < argc ? argv[i + 1] : "");
+        if (LoadArg(arg, next))
             ++i;
     }
 }
@@ -76,10 +14,72 @@ Args::Args(std::vector<std::string> args)
 {
     for (int i = 1; i < (int)args.size(); ++i) {
         std::string arg(args[i]);
-        std::string next(i+1 < (int)args.size() ? args[i+1] : "");
-        if (LoadArg(*this, arg, next))
+        std::string next(i + 1 < (int)args.size() ? args[i + 1] : "");
+        if (LoadArg(arg, next))
             ++i;
     }
+}
+
+bool Args::LoadArg(const std::string& arg, const std::string& next)
+{
+    if (arg == "--restore" || arg == "-r") {
+        savefile = "rogue.sav";
+    }
+    else if (arg == "--score" || arg == "-s") {
+        print_score = true;
+    }
+    else if (arg == "--paused" || arg == "-p") {
+        start_paused = true;
+    }
+    else if (arg == "--rogomatic") {
+        rogomatic = true;
+    }
+    else if (arg == "--rogomatic-server") {
+        rogomatic_server = true;
+    }
+    else if (arg == "--trogue-fd") {
+        trogue_fd = next;
+        return true;
+    }
+    else if (arg == "--frogue-fd") {
+        frogue_fd = next;
+        return true;
+    }
+    else if (arg == "--pause-at") {
+        pause_at = next;
+        return true;
+    }
+    else if (arg == "--seed") {
+        seed = next;
+        return true;
+    }
+    else if (arg == "--genes") {
+        genes = next;
+        return true;
+    }
+    else if (arg == "--small-screen" || arg == "-n") {
+        small_screen = true;
+    }
+    else if (arg == "--graphics" || arg == "-g") {
+        gfx = next;
+        return true;
+    }
+    else if (arg == "--optfile" || arg == "-o") {
+        optfile = next;
+        return true;
+    }
+    else if (arg == "--font" || arg == "-f") {
+        fontfile = next;
+        return true;
+    }
+    else if (arg[0] != '-' && savefile == ""){
+        savefile = arg;
+    }
+    //else {
+    //    throw std::runtime_error("Unknown arg: " + arg);
+    //}
+
+    return false;
 }
 
 int Args::GetDescriptorToRogue() const

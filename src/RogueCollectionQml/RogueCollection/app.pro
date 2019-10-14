@@ -16,6 +16,8 @@ static {
 
 DESTDIR = $$OUT_PWD/../
 
+INCLUDEPATH += $$PWD/../../Shared/Frontend
+
 HEADERS += \
     ../RoguePlugin/utility_qml.h
 
@@ -30,5 +32,12 @@ win32 {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
     } else {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/User32.Lib"
+    }
+
+    debug {
+        LIBS += "$$PWD/../../../bin/Win32/Debug/Frontend.lib"
+    }
+    release {
+        LIBS += "$$PWD/../../../bin/Win32/Release/Frontend.lib"
     }
 }

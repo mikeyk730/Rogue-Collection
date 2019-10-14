@@ -22,15 +22,16 @@ const int kWindowWidth = 640;
 const int kWindowHeight = 400;
 void InitGameConfig(Environment* env);
 
-int start(Args& args);
+int RunMain(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
-    return StartProcess(start, argc, argv);
+    return StartProcess(RunMain, argc, argv);
 }
 
-int start(Args& args)
+int RunMain(int argc, char** argv)
 {
+    Args args(argc, argv);
     std::shared_ptr<Environment> current_env(new Environment(args));
     InitGameConfig(current_env.get());
 

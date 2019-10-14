@@ -1,4 +1,3 @@
 #pragma once
-struct Args;
 
-int StartProcess(int(*start)(Args& args), int argc, char** argv);
+int StartProcess(int(*start)(int argc, char** argv), int argc, char** argv);

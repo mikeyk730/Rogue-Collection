@@ -6,13 +6,21 @@
 #include <QtPlugin>
 #include <QQmlContext>
 #include <QScreen>
+#include "start_process.h"
 #include "../RoguePlugin/utility_qml.h"
 
 #ifdef MDK_STATIC_COMPILE
 Q_IMPORT_PLUGIN(RoguePlugin)
 #endif
 
-int main(int argc, char *argv[])
+int RunMain(int argc, char** argv);
+
+int main(int argc, char** argv)
+{
+    return StartProcess(RunMain, argc, argv);
+}
+
+int RunMain(int argc, char *argv[])
 {
 #ifdef MDK_STATIC_COMPILE
     Q_INIT_RESOURCE(rogue_resources);

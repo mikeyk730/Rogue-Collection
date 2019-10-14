@@ -24,6 +24,9 @@ struct Args
 
     int GetDescriptorToRogue() const;
     int GetDescriptorFromRogue() const;
+
+private:
+    bool LoadArg(const std::string& arg, const std::string& next);
 };
 
 
