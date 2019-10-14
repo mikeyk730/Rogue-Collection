@@ -22,7 +22,6 @@
     <ClCompile Include="args.cpp" />
     <ClCompile Include="dos_to_unicode.cpp" />
     <ClCompile Include="environment.cpp" />
-    <ClCompile Include="game_config.cpp" />
     <ClCompile Include="key_utility.cpp" />
     <ClCompile Include="pipe_input.cpp" />
     <ClCompile Include="pipe_output.cpp" />

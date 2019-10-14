@@ -23,9 +23,6 @@
     <ClCompile Include="dos_to_unicode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="game_config.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="key_utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

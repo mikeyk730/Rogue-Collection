@@ -74,5 +74,8 @@
     <ClCompile Include="window_sizer.cpp">
       <Filter>SDL</Filter>
     </ClCompile>
+    <ClCompile Include="game_config.cpp">
+      <Filter>SDL</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

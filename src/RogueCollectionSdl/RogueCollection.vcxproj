@@ -219,6 +219,7 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game_config.cpp" />
     <ClCompile Include="game_select.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="sdl_display.cpp" />
