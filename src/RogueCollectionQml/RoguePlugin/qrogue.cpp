@@ -474,7 +474,9 @@ void QRogue::keyPressEvent(QKeyEvent *event)
 {
     if (display_->HandleKeyEvent(event))
         return;
-    else if (input_->HandleKeyEvent(event))
+
+    auto qt_input = dynamic_cast<QtRogueInput*>(input_.get());
+    if (qt_input && qt_input->HandleKeyEvent(event))
         return;
 
     QQuickPaintedItem::keyPressEvent(event);

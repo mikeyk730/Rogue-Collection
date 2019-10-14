@@ -18,6 +18,10 @@
 #include "utility.h"
 #include "start_process.h"
 
+const int kWindowWidth = 640;
+const int kWindowHeight = 400;
+void InitGameConfig(Environment* env);
+
 int start(Args& args);
 
 int main(int argc, char** argv)

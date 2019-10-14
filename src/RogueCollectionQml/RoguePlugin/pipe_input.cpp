@@ -32,7 +32,6 @@ PipeInput::PipeInput(Environment * current_env, Environment * game_env, const Ga
 
     if (m_pipe_handle == INVALID_HANDLE_VALUE)
     {
-        DWORD e = GetLastError();
         throw std::runtime_error("Failed to create pipe");
     }
 
@@ -53,7 +52,6 @@ void PipeInput::RunPipeServer()
     {
         if (!ConnectNamedPipe(m_pipe_handle, NULL))
         {
-            DWORD e = GetLastError();
             throw std::runtime_error("Failed to connect to pipe");
         }
 
@@ -108,8 +106,3 @@ int PipeInput::GetWriteFile() const
 }
 
 #endif
-
-bool PipeInput::HandleKeyEvent(QKeyEvent*)
-{
-    return false;
-}

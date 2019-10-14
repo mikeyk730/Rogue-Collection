@@ -22,7 +22,6 @@ HEADERS += \
     plugin.h \
     qrogue.h \
     game_config.h \
-    replayable_input.h \
     pipe_input.h \
     run_game.h \
     utility.h \
@@ -35,7 +34,6 @@ SOURCES += \
     plugin.cpp \
     qrogue.cpp \
     game_config.cpp \
-    replayable_input.cpp \
     pipe_input.cpp \
     utility.cpp \
     utility_qml.cpp \

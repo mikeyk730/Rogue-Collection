@@ -83,7 +83,7 @@ void ReplayableInput::SaveGame(std::ostream & file)
 void ReplayableInput::RestoreGame(std::istream & file)
 {
     m_buffer.assign(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-    m_replay_steps_remaining = (int)m_buffer.size();
+    m_replay_steps_remaining = static_cast<int>(m_buffer.size());
 
     std::string value;
     if (m_current_env->Get("replay_paused", &value) && value == "true") {
@@ -167,10 +167,15 @@ void ReplayableInput::SetMaxReplaySpeed()
     m_input_cv.notify_all();
 }
 
+namespace
+{
+    int s_speeds[] = {0, 1, 3, 10, 30, 50, 70, 90, 150, 300};
+}
+
 void ReplayableInput::SetReplaySpeed(int n)
 {
     std::lock_guard<std::mutex> lock(m_input_mutex);
-    m_replay_sleep = n * 15;
+    m_replay_sleep = s_speeds[n];
     m_paused = false;
     m_steps_to_take = 0;
     m_input_cv.notify_all();
@@ -183,8 +188,16 @@ void ReplayableInput::QueueInput(const std::string & input)
     m_input_cv.notify_all();
 }
 
+void ReplayableInput::QueueInput(char input)
+{
+    std::lock_guard<std::mutex> lock(m_input_mutex);
+    m_buffer.push_back(input);
+    m_input_cv.notify_all();
+}
+
 bool ReplayableInput::InReplay() const
 {
+    std::lock_guard<std::mutex> lock(m_input_mutex);
     return m_replay_steps_remaining > 0;
 }
 

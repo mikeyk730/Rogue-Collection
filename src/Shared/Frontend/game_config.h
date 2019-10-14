@@ -50,8 +50,6 @@ struct GameConfig
     bool supports_rogomatic;
 };
 
-const int kWindowWidth = 640;
-const int kWindowHeight = 400;
-
-void InitGameConfig(Environment* env);
 extern std::vector<GameConfig> s_options;
+GameConfig GetGameConfig(int i);
+int GetGameIndex(const std::string& name);

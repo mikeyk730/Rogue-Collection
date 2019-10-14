@@ -22,6 +22,7 @@ public:
     void RestoreGame(std::istream& file);
 
     bool GetRenderText(std::string* text);
+    bool InReplay() const;
 
 protected:
     void PauseReplay();
@@ -33,11 +34,11 @@ protected:
     void SetReplaySpeed(int n);
 
     void QueueInput(const std::string& input);
-    bool InReplay() const;
+    void QueueInput(char input);
     GameConfig Options() const;
 
 private:
-    std::mutex m_input_mutex;
+    mutable std::mutex m_input_mutex;
     std::condition_variable m_input_cv;
     std::deque<unsigned char> m_buffer;
 

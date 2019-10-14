@@ -9,8 +9,6 @@ struct PipeInput : public ReplayableInput
     PipeInput(Environment* current_env, Environment* game_env, const GameConfig& options);
     virtual ~PipeInput() override;
 
-    virtual bool HandleKeyEvent(QKeyEvent *event) override;
-
     void RunPipeServer();
 
 #ifdef _WIN32

@@ -57,3 +57,19 @@ void InitGameConfig(Environment* env)
         }
     }
 }
+
+GameConfig GetGameConfig(int i)
+{
+    return s_options[i];
+}
+
+int GetGameIndex(const std::string& name)
+{
+    for (size_t i = 0; i < s_options.size(); ++i){
+        if (s_options[i].name == name) {
+            return i;
+        }
+    }
+
+    return -1;
+}
