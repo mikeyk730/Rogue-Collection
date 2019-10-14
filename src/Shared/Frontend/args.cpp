@@ -82,3 +82,13 @@ Args::Args(std::vector<std::string> args)
     }
 }
 
+int Args::GetDescriptorToRogue() const
+{
+    return atoi(trogue_fd.c_str());
+}
+
+int Args::GetDescriptorFromRogue() const
+{
+    return atoi(frogue_fd.c_str());
+}
+

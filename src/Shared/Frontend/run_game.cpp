@@ -62,11 +62,9 @@ void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* 
 
         (*Init)(display, input, lines, columns);
 
-        int frogue = atoi(args.frogue_fd.c_str());
-        int trogue = atoi(args.trogue_fd.c_str());
         std::string rogomatic_fds = "aa";
-        rogomatic_fds[0] += frogue;
-        rogomatic_fds[1] += trogue;
+        rogomatic_fds[0] += args.GetDescriptorFromRogue();
+        rogomatic_fds[1] += args.GetDescriptorToRogue();
 
         const char* argv[5] = {
             "player.exe",

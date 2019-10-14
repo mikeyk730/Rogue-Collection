@@ -56,14 +56,14 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
     if (rogomatic_server)
     {
         //todo:mdk turn into decorator that can be cancelled with ESC
-        m_input.reset(new PipeInput(m_current_env.get(), m_game_env.get(), m_options, atoi(args.trogue_fd.c_str())));
+        m_input.reset(new PipeInput(m_current_env.get(), m_game_env.get(), m_options, args.GetDescriptorToRogue()));
     }
     else
     {
         m_input.reset(new SdlInput(m_current_env.get(), m_game_env.get(), m_options));
     }
 
-    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0, rogomatic_server, atoi(args.frogue_fd.c_str())));
+    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0, rogomatic_server, args.GetDescriptorFromRogue()));
 }
 
 SdlRogue::~SdlRogue()

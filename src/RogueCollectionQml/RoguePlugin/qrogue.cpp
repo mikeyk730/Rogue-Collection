@@ -63,39 +63,6 @@ namespace
     {
         return QDir::toNativeSeparators(url.toLocalFile());
     }
-
-#ifdef _WIN32
-    void CreateProcessOrExit(const std::string& command, LPPROCESS_INFORMATION pi)
-    {
-        STARTUPINFOA si;
-        ZeroMemory(&si, sizeof(si));
-        si.cb = sizeof(si);
-
-        ZeroMemory(pi, sizeof(*pi));
-
-        if (!CreateProcessA(
-            NULL,
-            (char*)command.c_str(),
-            NULL,
-            NULL,
-            FALSE,
-            0,
-            (void*)"\0",//TODO: manage env
-            NULL,
-            &si,
-            pi))
-        {
-            printf("Could not launch Rogue");
-            exit(1);
-        }
-    }
-
-    void CloseHandles(PROCESS_INFORMATION pi)
-    {
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
-    }
-#endif
 }
 
 const unsigned char QRogue::kSaveVersion = 2;
@@ -195,14 +162,7 @@ void QRogue::setGame(int index, Args& args)
 
     if (rogomatic_server)
     {
-        input_.reset(new PipeInput(env_.get(), game_env_.get(), config_));
-#ifndef _WIN32
-        int fd = ((PipeInput*)input_.get())->GetWriteFile();
-        std::ostringstream ss;
-        ss << fd;
-        game_env_->Set("rogomatic_trogue_fd", ss.str());
-        printf("Rogomatic pipe: %d\n", fd);
-#endif
+        input_.reset(new PipeInput(env_.get(), game_env_.get(), config_, args.GetDescriptorToRogue()));
     }
     else
     {

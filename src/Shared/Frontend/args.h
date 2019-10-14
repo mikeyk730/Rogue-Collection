@@ -21,6 +21,9 @@ struct Args
     bool small_screen = false;
     std::string trogue_fd;
     std::string frogue_fd;
+
+    int GetDescriptorToRogue() const;
+    int GetDescriptorFromRogue() const;
 };
 
 
