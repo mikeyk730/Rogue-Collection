@@ -3,6 +3,8 @@
 #include <process.h>
 #else
 #include <unistd.h>
+#include <spawn.h>
+#include <sys/wait.h>
 #define _close close
 #endif
 #include <fcntl.h>
@@ -29,10 +31,20 @@ namespace
             }
         }
 
+        void AddArg(std::string value)
+        {
+            args_.push_back(CreateNewString(value));
+        }
+
         void AddArg(const std::string& key, const std::string& value)
         {
             AddArg(key);
             AddArg(value);
+        }
+
+        void NullTerminate()
+        {
+            args_.push_back(nullptr);
         }
 
         int GetArgc() const {
@@ -52,11 +64,6 @@ namespace
             return buf;
         }
 
-        void AddArg(std::string value)
-        {
-            args_.push_back(CreateNewString(value));
-        }
-
         std::vector<char*> args_;
     };
 }
@@ -72,10 +79,11 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         int trogue_pipe[2];
 #ifdef WIN32
         if (_pipe(trogue_pipe, 256, O_BINARY) == -1)
+            exit(1);
 #else
         if (pipe(trogue_pipe) == -1)
-#endif
             exit(1);
+#endif
 
         //args_.trogue_fd = std::to_string(trogue_pipe[0]);
         wrapper.AddArg("--trogue-fd", std::to_string(trogue_pipe[0]));
@@ -101,22 +109,21 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         int frogue_pipe[2];
 #ifdef WIN32
         if (_pipe(frogue_pipe, 65536, O_BINARY) == -1)
+            exit(1);
 #else
         if (pipe(frogue_pipe) == -1)
-#endif
             exit(1);
+#endif
 
         //args_.frogue_fd = std::to_string(frogue_pipe[1]);
         wrapper.AddArg("--frogue-fd", std::to_string(frogue_pipe[1]));
         std::string frogue_read_fd = std::to_string(frogue_pipe[0]);
 #endif
 
-#ifdef WIN32
         int pid = -1;
-#endif
+#ifdef WIN32
         if (args.rogomatic)
         {
-#ifdef WIN32
             if ((pid = _spawnl(
                 P_NOWAIT,
                 argv[0],
@@ -126,24 +133,50 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
                 "--frogue-fd", frogue_read_fd.c_str(),
                 "--seed", (args.seed.empty() ? "\"\"" : args.seed.c_str()),
                 "--genes", (args.genes.empty() ? "\"\"" : args.genes.c_str()),
-                NULL)) == -1)
+                nullptr)) == -1)
             {
                 perror("Spawning Roogomatic failed");
                 exit(1);
             }
-#endif
         }
+#else
+        ArgWrapper spawned_args(1, argv);
+        spawned_args.AddArg("g");
+        spawned_args.AddArg("--trogue-fd", trogue_write_fd);
+        spawned_args.AddArg("--frogue-fd", frogue_read_fd);
+        if (!args.seed.empty())
+            spawned_args.AddArg("--seed",  args.seed);
+        if (!args.genes.empty())
+            spawned_args.AddArg("--genes", args.genes);
+        spawned_args.NullTerminate();
+
+        if (args.rogomatic)
+        {
+            if (posix_spawn(&pid, argv[0], nullptr, nullptr, spawned_args.GetArgv(), environ) != 0)
+            {
+                perror("Spawning Roogomatic failed");
+                exit(1);
+            }
+        }
+#endif
 
         auto value = start(wrapper.GetArgc(), wrapper.GetArgv());
 
         /* Wait until Rogomatic is done processing. */
-#ifdef WIN32
         int termstat;
+#ifdef WIN32
         _cwait(&termstat, pid, WAIT_CHILD);
-        if (termstat & 0x0)
+        if (termstat)
         {
             printf("Rogomatic failed\n");
         }
+#else
+        waitpid(pid, &termstat, WEXITED);
+        if (!WIFEXITED(termstat))
+        {
+            printf("Rogomatic failed\n");
+        }
+
 #endif
 
         _close(trogue_pipe[1]);
