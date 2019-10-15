@@ -6,6 +6,7 @@
 #include <spawn.h>
 #include <sys/wait.h>
 #define _close close
+#define _fileno fileno
 #endif
 #include <fcntl.h>
 #include <cstring>
@@ -14,16 +15,16 @@
 
 namespace
 {
-    struct ArgWrapper
+    struct ArgBuilder
     {
-        ArgWrapper(int argc, char** argv)
+        ArgBuilder(int argc, char** argv)
         {
             for (int i = 0; i < argc; ++i) {
                 AddArg(argv[i]);
             }
         }
 
-        ~ArgWrapper()
+        ~ArgBuilder()
         {
             for (char* element : args_)
             {
@@ -74,7 +75,7 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
 
     if (args.rogomatic || args.rogomatic_server)
     {
-        ArgWrapper wrapper(argc, argv);
+        ArgBuilder wrapper(argc, argv);
 
         int trogue_pipe[2];
 #ifdef WIN32
@@ -85,7 +86,6 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
             exit(1);
 #endif
 
-        //args_.trogue_fd = std::to_string(trogue_pipe[0]);
         wrapper.AddArg("--trogue-fd", std::to_string(trogue_pipe[0]));
         std::string trogue_write_fd = std::to_string(trogue_pipe[1]);
 
@@ -102,7 +102,6 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
             exit(1);
         }
 
-        //args_.frogue_fd = std::to_string(_fileno(frogue_write));
         wrapper.AddArg("--frogue-fd", std::to_string(_fileno(frogue_write)));
         std::string frogue_read_fd = std::to_string(_fileno(frogue_read));
 #else
@@ -115,7 +114,6 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
             exit(1);
 #endif
 
-        //args_.frogue_fd = std::to_string(frogue_pipe[1]);
         wrapper.AddArg("--frogue-fd", std::to_string(frogue_pipe[1]));
         std::string frogue_read_fd = std::to_string(frogue_pipe[0]);
 #endif
@@ -140,7 +138,7 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
             }
         }
 #else
-        ArgWrapper spawned_args(1, argv);
+        ArgBuilder spawned_args(1, argv);
         spawned_args.AddArg("g");
         spawned_args.AddArg("--trogue-fd", trogue_write_fd);
         spawned_args.AddArg("--frogue-fd", frogue_read_fd);
