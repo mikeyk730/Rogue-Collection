@@ -40,7 +40,7 @@ static const char *lockpath = "rlog/RgmLock";
 const char *
 getRgmDir ()
 {
-#ifdef _WIN32
+#ifdef ROGUE_COLLECTION
   return rgmpath;
 #else
   DIR *rgmdir = NULL;
@@ -59,7 +59,7 @@ getRgmDir ()
 const char *
 getLockFile ()
 {
-#ifdef _WIN32
+#ifdef ROGUE_COLLECTION
   return lockpath;
 #else
   DIR *rgmdir = NULL;

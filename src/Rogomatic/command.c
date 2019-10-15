@@ -74,15 +74,16 @@ int   d, mode;
  */
 
 /* VARARGS2 */
-command (tmode, f, a1, a2, a3, a4)
-char *f;
-int tmode, a1, a2, a3, a4;
+void command (int tmode, char* f, ...)
 {
   int times;
   char cmd[128], functionchar ();
 
   /* Build the command */
-  sprintf (cmd, f, a1, a2, a3, a4);
+  va_list args;
+  va_start(args, f);
+  vsprintf (cmd, f, args);
+  va_end(args);
 
   debuglog ("command : command (%s)\n",cmd);
 
@@ -395,4 +396,3 @@ int obj;
   if (! dwait (D_INFORM, "%s (%s", str, itemstr (obj)))
     saynow ("%s (%s", str, itemstr (obj));
 }
-

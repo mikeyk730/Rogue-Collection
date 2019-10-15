@@ -49,7 +49,7 @@ extern char *parmstr;		/* Pointer to argument space */
 extern char pending_call_letter;	/* Pack object we know a name for */
 extern char pending_call_name[];	/* Pack object name for letter */
 extern char queue[];		/* stuff to be sent to Rogue */
-extern char *roguename;		/* Name we are playing under */
+extern char roguename[];		/* Name we are playing under */
 extern char screen[24][80];	/* characters drawn by Rogue */
 extern char sumline[];		/* Summation line */
 extern char *termination;	/* Latin verb for how we died */
@@ -220,3 +220,6 @@ extern int k_exper;		/* Level on which to experiment with items */
 extern int k_run;		/* Propensity for retreating */
 extern int k_wake;		/* Propensity for waking things up */
 extern int k_food;		/* Propensity for hoarding food (rings) */
+
+const char * getLockFile ();
+const char * getRgmDir ();

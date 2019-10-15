@@ -653,16 +653,17 @@ dumpwalls ()
  */
 
 /* VARARGS1 */
-sendnow (f, a1, a2, a3, a4)
-char *f;
-int a1, a2, a3, a4;
+void sendnow (char* f, ...)
 {
   char cmd[128];
   register char *s = cmd;
 
   memset(cmd, '\0', 128);
 
-  sprintf (cmd, f, a1, a2, a3, a4);
+  va_list args;
+  va_start(args, f);
+  vsprintf (cmd, f, args);
+  va_end(args);
 
   while (*s) sendcnow (*s++);
 }
@@ -704,15 +705,16 @@ char c;
 # define bump(p,sizeq) (p)=((p)+1)%sizeq
 
 /* VARARGS1 */
-rogo_send (f, a1, a2, a3, a4)
-char *f;
-int a1, a2, a3, a4;
+void rogo_send (char* f, ...)
 {
   char cmd[128];
   register char *s = cmd;
 
   memset (cmd, '\0', 128);
-  sprintf (s, f, a1, a2, a3, a4);
+  va_list args;
+  va_start(args, f);
+  vsprintf (s, f, args);
+  va_end(args);
 
   debuglog ("rogo_send (%s)\n",s);
 
@@ -911,15 +913,16 @@ char *mess;
  */
 
 /* VARARGS1 */
-say (f, a1, a2, a3, a4, a5, a6, a7, a8)
-char *f;
-int a1, a2, a3, a4, a5, a6, a7, a8;
+void say (char* f, ...)
 {
   char buf[BUFSIZ], *b;
 
   if (!emacs && !terse) {
     memset (buf, '\0', BUFSIZ);
-    sprintf (buf, f, a1, a2, a3, a4, a5, a6, a7, a8);
+    va_list args;
+    va_start(args, f);
+    vsprintf (buf, f, args);
+    va_end(args);
     at (0,0);
 
     for (b=buf; *b; b++) printw ("%s", unctrl (*b));
@@ -937,12 +940,14 @@ int a1, a2, a3, a4, a5, a6, a7, a8;
  */
 
 /* VARARGS1 */
-saynow (f, a1, a2, a3, a4, a5, a6, a7, a8)
-char *f;
-int a1, a2, a3, a4, a5, a6, a7, a8;
+void saynow (char* f, ...)
 {
   if (!emacs && !terse) {
-    say (f, a1, a2, a3, a4, a5, a6, a7, a8);
+    va_list args;
+    va_start(args, f);
+    say(f, args);
+    va_end(args);
+
     refresh ();
   }
 }

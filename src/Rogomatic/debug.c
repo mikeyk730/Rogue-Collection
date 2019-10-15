@@ -45,15 +45,16 @@
  */
 
 /* VARARGS2 */
-dwait (msgtype, f, a1, a2, a3, a4, a5, a6, a7, a8)
-char *f;
-int msgtype, a1, a2, a3, a4, a5, a6, a7, a8;
+void dwait (int msgtype, char* f, ...)
 {
   char msg[128];
   int r, c;
 
   /* Build the actual message */
-  sprintf (msg, f, a1, a2, a3, a4, a5, a6, a7, a8);
+  va_list args;
+  va_start(args, f);
+  vsprintf (msg, f, args);
+  va_end(args);
 
   /* Log the message if the error is severe enough */
   if (!replaying && (msgtype & (D_FATAL | D_ERROR | D_WARNING))) {

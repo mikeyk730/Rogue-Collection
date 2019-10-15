@@ -124,6 +124,7 @@ bug list:
 # include "types.h"
 # include "termtokens.h"
 # include "install.h"
+# include "globals.h"
 # include "../RogueVersions/pc_gfx_macros.h"
 
 
@@ -373,13 +374,19 @@ jmp_buf  commandtop;
  * Main program
  */
 
-GAME_MAIN(argc, argv)
+GAME_MAIN(argc, argv, env)
 int   argc;
 char *argv[];
+char *env[];
 {
   char  ch, *s, *getenv(), *statusline(), msg[128];
   int startingup = 1;
   register int  i;
+
+  if (argc <= 2) {
+     printf("Improper usage\n");
+     exit(1);
+  }
 
   debuglog_open ("debuglog.player");
 
@@ -481,7 +488,8 @@ char *argv[];
 
   initscr (); crmode (); noecho ();	/* Initialize the Curses package */
 
-  if (startecho) toggleecho ();		/* Start logging? */
+  if (startecho)
+    toggleecho ();		/* Start logging? */
 
   clear ();				/* Clear the screen */
   getrogver ();				/* Figure out Rogue version */

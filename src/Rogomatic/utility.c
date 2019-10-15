@@ -251,11 +251,13 @@ char *lokfil;
  */
 
 /* VARARGS2 */
-quit (code, fmt, a1, a2, a3, a4)
-int code, a1, a2, a3, a4;
-char *fmt;
+void quit (int code, char* fmt, ...)
 {
-  fprintf (stderr, fmt, a1, a2, a3, a4);
+  va_list args;
+  va_start(args, fmt);
+  vfprintf (stderr, fmt, args);
+  va_end(args);
+
   exit (code);
 }
 
