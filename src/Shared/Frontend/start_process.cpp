@@ -1,6 +1,12 @@
+#ifdef WIN32
 #include <io.h>
-#include <fcntl.h>
 #include <process.h>
+#else
+#include <unistd.h>
+#define _close close
+#endif
+#include <fcntl.h>
+#include <cstring>
 #include <vector>
 #include "args.h"
 
@@ -64,7 +70,11 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         ArgWrapper wrapper(argc, argv);
 
         int trogue_pipe[2];
+#ifdef WIN32
         if (_pipe(trogue_pipe, 256, O_BINARY) == -1)
+#else
+        if (pipe(trogue_pipe) == -1)
+#endif
             exit(1);
 
         //args_.trogue_fd = std::to_string(trogue_pipe[0]);
@@ -89,7 +99,11 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         std::string frogue_read_fd = std::to_string(_fileno(frogue_read));
 #else
         int frogue_pipe[2];
+#ifdef WIN32
         if (_pipe(frogue_pipe, 65536, O_BINARY) == -1)
+#else
+        if (pipe(frogue_pipe) == -1)
+#endif
             exit(1);
 
         //args_.frogue_fd = std::to_string(frogue_pipe[1]);
@@ -97,9 +111,12 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         std::string frogue_read_fd = std::to_string(frogue_pipe[0]);
 #endif
 
+#ifdef WIN32
         int pid = -1;
+#endif
         if (args.rogomatic)
         {
+#ifdef WIN32
             if ((pid = _spawnl(
                 P_NOWAIT,
                 argv[0],
@@ -114,17 +131,20 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
                 perror("Spawning Roogomatic failed");
                 exit(1);
             }
+#endif
         }
 
         auto value = start(wrapper.GetArgc(), wrapper.GetArgv());
 
         /* Wait until Rogomatic is done processing. */
+#ifdef WIN32
         int termstat;
         _cwait(&termstat, pid, WAIT_CHILD);
         if (termstat & 0x0)
         {
             printf("Rogomatic failed\n");
         }
+#endif
 
         _close(trogue_pipe[1]);
         _close(trogue_pipe[0]);

@@ -1,5 +1,11 @@
-#include <sstream>
+#ifdef WIN32
 #include <io.h>
+#else
+#include <unistd.h>
+#define _write write
+#endif
+#include <sstream>
+#include <cstring>
 #include "pipe_output.h"
 #include "utility.h"
 

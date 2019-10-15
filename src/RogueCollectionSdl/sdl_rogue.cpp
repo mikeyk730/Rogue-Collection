@@ -14,22 +14,6 @@
 const char* SdlRogue::kWindowTitle = "Rogue Collection 1.0";
 const unsigned char SdlRogue::kSaveVersion = 2;
 
-namespace
-{
-    std::string GetTimeString() //todo:common location
-    {
-        std::time_t now;
-        std::time(&now);
-
-        tm timeinfo;
-        localtime_s(&timeinfo, &now);
-
-        char buffer[100];
-        strftime(buffer, 100, "%FT%H-%M-%S", &timeinfo);
-        return buffer;
-    }
-}
-
 SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> current_env, const std::string& file) :
     m_current_env(current_env)
 {
@@ -104,7 +88,7 @@ void SdlRogue::Run()
         if (e.type == SDL_QUIT) {
             std::string value;
             if (m_current_env->Get("autosave", &value) && value == "true") {
-                std::string name = "autosave-" + GetTimeString() + ".sav";
+                std::string name = "autosave-" + GetTimestamp() + ".sav";
                 SaveGame(name, false);
             }
             return;

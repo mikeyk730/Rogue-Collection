@@ -1,11 +1,11 @@
 CC       = g++
 SHELL    = /bin/sh
-SRCROOT  = ..
+SRCROOT  = ../..
 
-INCLUDES = -I$(SRCROOT)/Shared
+INCLUDES = -I$(SRCROOT)/Shared -I$(SRCROOT)/MyCurses
 CFLAGS   = -Wall -Werror -pedantic -fPIC
 
-TARGET   = lib-my-curses.a
+TARGET   = lib-shared-frontend.a
 SOURCES  = $(shell echo *.cpp)
 HEADERS  = $(shell echo *.h)
 OBJECTS  = $(SOURCES:.cpp=.o)

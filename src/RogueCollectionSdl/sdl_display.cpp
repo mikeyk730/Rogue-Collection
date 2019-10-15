@@ -13,7 +13,7 @@
 #include "utility.h"
 #include "pipe_output.h"
 
-static const char zeros[5000];
+static char zeros[5000];
 
 namespace
 {
@@ -72,6 +72,8 @@ SdlDisplay::SdlDisplay(
     m_sizer(window, renderer, current_env),
     m_pipe_output(piped_output ? new PipeOutput(pipe_fd) : nullptr)
 {
+    memset(zeros, 0, 5000);
+
     std::string title(SdlRogue::kWindowTitle);
     title += " - ";
     title += m_options.name;

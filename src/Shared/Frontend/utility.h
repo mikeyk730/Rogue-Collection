@@ -1,5 +1,5 @@
 #pragma once
-#include <iosfwd>
+#include <iostream>
 #include <string>
 
 template <typename T>

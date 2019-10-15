@@ -1,4 +1,10 @@
+#ifdef WIN32
 #include <io.h>
+#else
+#include <unistd.h>
+#define _read read
+#endif
+#include <thread>
 #include <fcntl.h>
 #include <exception>
 #include "pipe_input.h"
@@ -24,8 +30,8 @@ void PipeInput::RunPipeServer()
 {
     char buffer[BufferSize];
     int bytes_read;
-        
-    while (bytes_read = _read(pipe_fd_, buffer, 1))
+
+    while ((bytes_read = _read(pipe_fd_, buffer, 1)))
     {
         QueueInput(std::string(buffer, buffer + bytes_read));
     }

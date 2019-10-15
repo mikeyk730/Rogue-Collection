@@ -43,26 +43,16 @@ void Delay(int ms)
 
 std::string GetTimestamp()
 {
-    /*
-    std::time_t rawtime;
-    std::time(&rawtime);
 
-    std::tm* timeinfo = std::localtime(&rawtime);
+    std::time_t now;
+    std::time(&now);
+
+    std::tm* timeinfo = std::localtime(&now);
 
     char buffer [80];
     std::strftime(buffer,80,"%Y-%m-%d-%H-%M-%S",timeinfo);
 
     return buffer;
-    */
-    time_t now;
-    time(&now);
-
-    tm t;
-    localtime_s(&t, &now);
-
-    char str[200];
-    strftime(str, 200, "%FT%H-%M-%S", &t);
-    return str;
 }
 
 namespace
