@@ -106,7 +106,13 @@ int RunMain(int argc, char** argv)
         }
 
         if (game) {
-            args.rogomatic &= game->supports_rogomatic;
+            if (args.rogomatic && !game->supports_rogomatic) {
+                DisplayMessage(
+                    SDL_MESSAGEBOX_WARNING,
+                    "Rogomatic", "Rogomatic does not support " + game->name);
+                args.rogomatic &= game->supports_rogomatic;
+            }
+
             if (args.rogomatic)
             {
                 current_env->SetRogomaticValues();
