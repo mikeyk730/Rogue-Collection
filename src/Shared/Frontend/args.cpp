@@ -34,8 +34,8 @@ bool Args::LoadArg(const std::string& arg, const std::string& next)
     else if (arg == "--rogomatic") {
         rogomatic = true;
     }
-    else if (arg == "--rogomatic-server") {
-        rogomatic_server = true;
+    else if (arg == "--rogomatic-player") {
+        rogomatic_player = true;
     }
     else if (arg == "--trogue-fd") {
         trogue_fd = next;

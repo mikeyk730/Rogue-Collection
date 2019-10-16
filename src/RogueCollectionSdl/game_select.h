@@ -8,7 +8,7 @@
 
 struct TitleScreen
 {
-    TitleScreen(SDL_Window* window, SDL_Renderer* renderer, const std::vector<GameConfig>& options, Environment* current_env);
+    TitleScreen(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env);
     bool Run();
 
 private:

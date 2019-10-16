@@ -13,7 +13,7 @@ struct Args;
 
 struct SdlRogue
 {
-    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int index, const Args& args);
+    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const GameConfig& game, const Args& args);
     SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const std::string& filename);
     ~SdlRogue();
 
@@ -33,7 +33,7 @@ struct SdlRogue
 
 private:
     void SetGame(const std::string& name);
-    void SetGame(int i);
+    void SetGame(const GameConfig& game);
 
     std::unique_ptr<SdlDisplay> m_display;
     std::unique_ptr<ReplayableInput> m_input;

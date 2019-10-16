@@ -61,23 +61,21 @@ void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* 
 
         (*Init)(display, input, lines, columns);
 
-        bool rogomatic = lib.find("ogomatic") != std::string::npos;
-
         std::string rogomatic_fds = "aa";
         rogomatic_fds[0] += args.GetDescriptorFromRogue();
         rogomatic_fds[1] += args.GetDescriptorToRogue();
 
         const int argc = 4;
         const char* argv[argc] = {
-            "player.exe",
+            lib.c_str(),
             rogomatic_fds.c_str(),
             "0",
             "0,0,1,1,0,0,0,0"
         };
 
         (*game)(
-            rogomatic ? argc : 0,
-            rogomatic ? (char**)argv : nullptr,
+            args.rogomatic_player ? argc : 0,
+            args.rogomatic_player ? (char**)argv : nullptr,
             environ);
     }
     catch (const std::runtime_error& e)

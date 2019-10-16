@@ -12,7 +12,7 @@ struct Args
     std::string fontfile;
     std::string gfx;
     bool rogomatic = false;
-    bool rogomatic_server = false;
+    bool rogomatic_player = false;
     std::string seed;
     std::string genes;
     bool print_score = false;

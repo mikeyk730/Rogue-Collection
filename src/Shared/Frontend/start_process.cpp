@@ -73,7 +73,7 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
 {
     Args args(argc, argv);
 
-    if (args.rogomatic || args.rogomatic_server)
+    if (args.rogomatic)
     {
         ArgBuilder wrapper(argc, argv);
 
@@ -126,7 +126,7 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
                 P_NOWAIT,
                 argv[0],
                 argv[0],
-                "g",
+                "--rogomatic-player",
                 "--trogue-fd", trogue_write_fd.c_str(),
                 "--frogue-fd", frogue_read_fd.c_str(),
                 "--seed", (args.seed.empty() ? "\"\"" : args.seed.c_str()),

@@ -51,5 +51,7 @@ struct GameConfig
 };
 
 extern std::vector<GameConfig> s_options;
+GameConfig GetRogomaticGameConfig();
 GameConfig GetGameConfig(int i);
 int GetGameIndex(const std::string& name);
+bool HasTitleScreen(const GameConfig& game);

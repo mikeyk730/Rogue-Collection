@@ -60,7 +60,6 @@ SdlDisplay::SdlDisplay(
     Environment* game_env,
     const GameConfig& options,
     ReplayableInput* input,
-    bool piped_output,
     int pipe_fd) :
     m_window(window),
     m_renderer(renderer),
@@ -70,7 +69,7 @@ SdlDisplay::SdlDisplay(
     m_screen_texture(nullptr, SDL_DestroyTexture),
     m_options(options),
     m_sizer(window, renderer, current_env),
-    m_pipe_output(piped_output ? new PipeOutput(pipe_fd) : nullptr)
+    m_pipe_output(pipe_fd ? new PipeOutput(pipe_fd) : nullptr)
 {
     memset(zeros, 0, 5000);
 

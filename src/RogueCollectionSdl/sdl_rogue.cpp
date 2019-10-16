@@ -18,10 +18,10 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
     m_current_env(current_env)
 {
     RestoreGame(file);
-    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, m_input.get(), false, 0));
+    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, m_input.get(), 0));
 }
 
-SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int i, const Args& args) :
+SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const GameConfig& game, const Args& args) :
     m_current_env(env),
     m_game_env(env)
 {
@@ -34,10 +34,9 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
     }
     m_game_env->Set("seed", ss.str());
 
-    SetGame(i);
+    SetGame(game);
 
-    bool rogomatic_server = args.rogomatic | args.rogomatic_server;
-    if (rogomatic_server)
+    if (args.rogomatic)
     {
         //todo:mdk turn into decorator that can be cancelled with ESC
         m_input.reset(new PipeInput(m_current_env.get(), m_game_env.get(), m_options, args.GetDescriptorToRogue()));
@@ -47,7 +46,8 @@ SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<E
         m_input.reset(new SdlInput(m_current_env.get(), m_game_env.get(), m_options));
     }
 
-    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0, rogomatic_server, args.GetDescriptorFromRogue()));
+    int frogue = args.rogomatic ? args.GetDescriptorFromRogue() : 0;
+    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0, frogue));
 }
 
 SdlRogue::~SdlRogue()
@@ -114,21 +114,20 @@ void SdlRogue::PostQuit()
     SDL_PushEvent(&e);
 }
 
-void SdlRogue::SetGame(const std::string & name)
+void SdlRogue::SetGame(const std::string& name)
 {
-    for (int i = 0; i < (int)s_options.size(); ++i)
+    int i = GetGameIndex(name);
+    if (i < 0)
     {
-        if (s_options[i].name == name) {
-            SetGame(i);
-            return;
-        }
+        throw_error("Save file specified unknown game: " + name);
     }
-    throw_error("Save file specified unknown game: " + name);
+
+    SetGame(GetGameConfig(i));
 }
 
-void SdlRogue::SetGame(int i)
+void SdlRogue::SetGame(const GameConfig& game)
 {
-    m_options = s_options[i];
+    m_options = game;
 
     if (m_options.name == "PC Rogue 1.1") {
         m_game_env->Set("emulate_version", "1.1");

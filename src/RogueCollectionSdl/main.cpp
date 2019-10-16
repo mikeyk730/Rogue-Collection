@@ -33,22 +33,6 @@ int RunMain(int argc, char** argv)
 {
     Args args(argc, argv);
     std::shared_ptr<Environment> current_env(new Environment(args));
-    InitGameConfig(current_env.get());
-
-    int i = -1;
-    std::string replay_path;
-    std::string game;
-    current_env->Get("game", &game);
-    if (!game.empty())
-    {
-        if (game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + (int)s_options.size()))
-        {
-            i = game[0] - 'a';
-        }
-        else {
-            replay_path = game;
-        }
-    }
 
     SDL::Scoped::Window window(nullptr, SDL_DestroyWindow);
     SDL::Scoped::Renderer renderer(nullptr, SDL_DestroyRenderer);
@@ -73,33 +57,57 @@ int RunMain(int argc, char** argv)
         SDL_RenderSetLogicalSize(renderer.get(), kWindowWidth, kWindowHeight);
         //SDL_RenderSetIntegerScale(renderer.get(), 1);
 
-        if (current_env->Fullscreen())
-        {
+        if (current_env->Fullscreen()) {
             SetFullscreen(window.get(), true);
         }
 
-        if (i == -1 && replay_path.empty()) {
+        InitGameConfig(current_env.get());
+
+        std::unique_ptr<GameConfig> game;
+        std::string replay_path;
+
+        if (args.rogomatic_player) {
+            game.reset(new GameConfig(GetRogomaticGameConfig()));
+        }
+        else {
+            std::string value;
+            current_env->Get("game", &value);
+            if (!value.empty())
+            {
+                if (value.size() == 1 && (value[0] >= 'a' && value[0] < 'a' + (int)s_options.size())) {
+                    int i = value[0] - 'a';
+                    game.reset(new GameConfig(GetGameConfig(i)));
+                }
+                else {
+                    replay_path = value;
+                }
+            }
+        }
+
+        if (!game && replay_path.empty()) {
             GameSelect select(window.get(), renderer.get(), s_options, current_env.get());
             auto selection = select.GetSelection();
-            i = selection.first;
+            if (selection.first >= 0) {
+                game.reset(new GameConfig(GetGameConfig(selection.first)));
+            }
+
             replay_path = selection.second;
         }
 
-        if (i >= 0 && s_options[i].name == "PC Rogue 1.48") {
+        if (game && HasTitleScreen(*game)) {
             std::string value;
-            if (!current_env->Get("show_title_screen", &value) || value != "false")
-            {
-                TitleScreen title(window.get(), renderer.get(), s_options, current_env.get());
+            if (!current_env->Get("show_title_screen", &value) || value != "false") {
+                TitleScreen title(window.get(), renderer.get(), current_env.get());
                 if (!title.Run()) {
-                    i = -1;
+                    game.reset();
                     replay_path.clear();
                 }
             }
         }
 
-        if (i >= 0) {
-            args.rogomatic &= s_options[i].supports_rogomatic;
-            if (args.rogomatic | args.rogomatic_server)
+        if (game) {
+            args.rogomatic &= game->supports_rogomatic;
+            if (args.rogomatic)
             {
                 current_env->SetRogomaticValues();
             }
@@ -109,7 +117,7 @@ int RunMain(int argc, char** argv)
                     window.get(),
                     renderer.get(),
                     current_env,
-                    i,
+                    *game,
                     args));
         }
         else if (!replay_path.empty()) {
@@ -126,9 +134,9 @@ int RunMain(int argc, char** argv)
             rogue.detach();
 
             sdl_rogue->Run();
-            if (i >= 0 && args.rogomatic)
+            if (game && args.rogomatic)
             {
-                sdl_rogue->SaveGame(s_options[i].name + GetTimestamp() + ".sav", false);
+                sdl_rogue->SaveGame(game->name + GetTimestamp() + ".sav", false);
             }
         }
     }
