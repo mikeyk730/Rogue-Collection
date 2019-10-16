@@ -41,3 +41,11 @@ win32 {
         LIBS += "$$PWD/../../../bin/Win32/Release/Frontend.lib"
     }
 }
+linux {
+    debug {
+        LIBS += "$$PWD/../../../build/debug/lib-shared-frontend.a"
+    }
+    release {
+        LIBS += "$$PWD/../../../build/release/lib-shared-frontend.a"
+    }
+}
