@@ -44,8 +44,21 @@ std::vector<GameConfig> s_options = {
     { "Unix Rogue 5.3",   Rogue_5_3,     {80,24}, {80,24}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx }, false },
     { "Unix Rogue 5.2.1", Rogue_5_2_1,   {80,24}, {70,22}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx }, true },
     { "Unix Rogue 3.6.3", Rogue_3_6_3,   {80,24}, {70,22}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx }, true },
-    { "Rog-o-matic",      Rogomatic,     {80,24}, {80,24}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx }, false },
 };
+
+GameConfig GetRogomaticGameConfig()
+{
+    return {
+        "Rog-o-matic",
+        Rogomatic,
+        { 80,24 },
+        { 80,24 },
+        true,
+        true,
+        { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx },
+        false
+    };
+}
 
 GameConfig GetGameConfig(int i)
 {
@@ -55,7 +68,7 @@ GameConfig GetGameConfig(int i)
 int GetGameIndex(const std::string& name)
 {
     for (size_t i = 0; i < s_options.size(); ++i){
-        if (s_options[i].name == name) {
+        if (GetGameConfig(i).name == name) {
             return i;
         }
     }

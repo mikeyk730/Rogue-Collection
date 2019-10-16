@@ -24,7 +24,7 @@ struct Environment;
 class QRogueDisplay : public DisplayInterface
 {
 public:
-    QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, bool rogomatic_server, int pipe_fd);
+    QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, int pipe_fd);
 
     QFont Font() const;
     void SetFont(const QFont& font);

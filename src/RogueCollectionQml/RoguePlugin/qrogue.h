@@ -39,7 +39,7 @@ public:
     QSize screenSize() const;
     QString game() const;
     void setGame(const QString& game);
-    void setGame(int index, Args& args);
+    void setGame(const GameConfig& game, Args& args);
 
     Q_INVOKABLE bool showTitleScreen();
     Q_INVOKABLE void restoreGame(const QUrl& url);

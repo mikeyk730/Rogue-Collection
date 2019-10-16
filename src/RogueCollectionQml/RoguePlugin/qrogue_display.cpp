@@ -27,10 +27,10 @@ namespace
     const int kMaxQueueSize = 10;
 }
 
-QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, bool rogomatic_server, int pipe_fd)
+QRogueDisplay::QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, int pipe_fd)
     : parent_(parent),
       gfx_mode_(graphics),
-      rogomatic_output_(rogomatic_server ? new PipeOutput(pipe_fd) : nullptr)
+      rogomatic_output_(pipe_fd ? new PipeOutput(pipe_fd) : nullptr)
 {
     SetScreenSize(screen_size);
 

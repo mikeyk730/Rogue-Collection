@@ -86,26 +86,40 @@ QRogue::QRogue(QQuickItem *parent)
     std::string graphics;
 
     env_->Get("gfx", &graphics);
-    bool rogomatic_server = args.rogomatic | args.rogomatic_server;
-    display_.reset(new QRogueDisplay(this, {80,25}, graphics, rogomatic_server, args.GetDescriptorFromRogue()));
+    int frogue = args.rogomatic ? args.GetDescriptorFromRogue() : 0;
+    display_.reset(new QRogueDisplay(this, {80,25}, graphics, frogue));
 
     std::string value;
     bool sound(!env_->Get("sound", &value) || value != "false");
     display_->SetSound(sound);
 
-    std::string game;
-    if (env_->Get("game", &game) && !game.empty()){
-        int i = GetGameIndex(game.c_str());
-        if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + static_cast<int>(s_options.size()))){
-            i = game[0] - 'a';
-        }
+    std::unique_ptr<GameConfig> game_config;
+    if (args.rogomatic_player) {
+        game_config.reset(new GameConfig(GetRogomaticGameConfig()));
+    }
 
-        if (i != -1)
-        {
-            setGame(i, args);
+    if (!game_config){
+        std::string game;
+        if (env_->Get("game", &game) && !game.empty()){
+            int i = GetGameIndex(game.c_str());
+            if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + static_cast<int>(s_options.size()))){
+                i = game[0] - 'a';
+            }
+
+            if (i != -1)
+            {
+                game_config.reset(new GameConfig(GetGameConfig(i)));
+            }
+            else
+            {
+                RestoreGame(game.c_str());
+            }
         }
-        else
-            RestoreGame(game.c_str());
+    }
+
+    if (game_config)
+    {
+        setGame(*game_config, args);
     }
 }
 
@@ -128,20 +142,18 @@ void QRogue::setGame(const QString &game)
 {
     Args args(0, nullptr);
     int i = GetGameIndex(game.toStdString());
-    setGame(i, args);
+    setGame(GetGameConfig(i), args);
 }
 
-void QRogue::setGame(int index, Args& args)
+void QRogue::setGame(const GameConfig& game, Args& args)
 {
-    args.rogomatic &= s_options[index].supports_rogomatic;
-    bool rogomatic_server = args.rogomatic | args.rogomatic_server;
-
-    if (rogomatic_server)
+    args.rogomatic &= game.supports_rogomatic;
+    if (args.rogomatic)
     {
         env_->SetRogomaticValues();
     }
 
-    config_ = GetGameConfig(index);
+    config_ = game;
     emit gameChanged(config_.name.c_str());
     game_env_ = env_;
 
@@ -150,7 +162,7 @@ void QRogue::setGame(int index, Args& args)
     ss << seed;
     game_env_->Set("seed", ss.str());
 
-    if (rogomatic_server)
+    if (args.rogomatic)
     {
         input_.reset(new PipeInput(env_.get(), game_env_.get(), config_, args.GetDescriptorToRogue()));
     }
