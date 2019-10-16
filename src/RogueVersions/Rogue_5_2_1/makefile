@@ -4,7 +4,7 @@ SRCROOT  = ../..
 
 INCLUDES = -I$(SRCROOT)/Shared -I$(SRCROOT)/MyCurses
 DEFINES  = -DROGUE_COLLECTION -DUSE_PC_STYLE -DSCOREFILE=\"rogue52.scr\" -DWIZARD
-CFLAGS   = -w -shared -fPIC
+CFLAGS   = -w -shared -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -s
 
 TARGET   = lib-rogue-5-2-1.so
 SOURCES  = $(shell echo *.c)
@@ -12,10 +12,9 @@ HEADERS  = $(shell echo *.h)
 OBJECTS  = $(SOURCES:.c=.o) pc_gfx.o
 
 BUILDROOT= $(SRCROOT)/../build/release
-# CFLAGS += -DDEBUG -g
-# BUILDROOT = $(SRCROOT)/../build/debug
+CFLAGS  += -DDEBUG -g
+BUILDROOT= $(SRCROOT)/../build/debug
 LIBS     = -Wl,--whole-archive $(BUILDROOT)/lib-my-curses.a -Wl,--no-whole-archive
-
 
 all: $(TARGET)
 
