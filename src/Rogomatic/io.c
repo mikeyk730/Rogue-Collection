@@ -915,14 +915,19 @@ char *mess;
 /* VARARGS1 */
 void say (char* f, ...)
 {
+    va_list args;
+    va_start(args, f);
+    say_impl(f, args);
+    va_end(args);
+}
+
+void say_impl (char* f, va_list args)
+{
   char buf[BUFSIZ], *b;
 
   if (!emacs && !terse) {
     memset (buf, '\0', BUFSIZ);
-    va_list args;
-    va_start(args, f);
     vsprintf (buf, f, args);
-    va_end(args);
     at (0,0);
 
     for (b=buf; *b; b++) printw ("%s", unctrl (*b));
@@ -945,7 +950,7 @@ void saynow (char* f, ...)
   if (!emacs && !terse) {
     va_list args;
     va_start(args, f);
-    say(f, args);
+    say_impl(f, args);
     va_end(args);
 
     refresh ();

@@ -33,3 +33,8 @@ FILE *md_fdopen(int fd,char *mode);
 FILE *rogo_openlog(char *genelog);
 FILE *rogo_openlog(register char *genelog);
 FILE *wopen(char* fname, char* mode);
+void saynow(char* f, ...);
+void say(char* f, ...);
+void command(int tmode, char* f, ...);
+void sendnow(char* f, ...);
+void say_impl(char* f, va_list args);

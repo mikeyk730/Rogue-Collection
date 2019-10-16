@@ -176,6 +176,7 @@
     <ClInclude Include="getroguetoken.h" />
     <ClInclude Include="globals.h" />
     <ClInclude Include="install.h" />
+    <ClInclude Include="rogomatic.h" />
     <ClInclude Include="termtokens.h" />
     <ClInclude Include="types.h" />
   </ItemGroup>
