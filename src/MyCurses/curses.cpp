@@ -504,13 +504,13 @@ void shutdow_curses()
 
 }
 
-bool has_typeahead()
+int has_typeahead()
 {
-    if (s_input) {
-        return s_input->HasTypeahead();
+    if (s_input && s_input->HasTypeahead()) {
+        return 1;
     }
 
-    return false;
+    return 0;
 }
 
 void play_sound(const char * id)
@@ -1003,4 +1003,3 @@ int noraw(void)
 {
     return OK;
 }
-

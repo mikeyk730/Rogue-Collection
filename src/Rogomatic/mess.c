@@ -932,7 +932,7 @@ stuff item_type;
   if (*lastname && *objname && !stlmatch (objname, lastname)) {
     infername (lastname, objname, item_type);
     for (i=0; i<MAXINV; i++) {
-      if ((inven[i].count > 0) && 
+      if ((inven[i].count > 0) &&
            streq (inven[i].str, lastname) && inven[i].type == item_type) {
         memset (inven[i].str, '\0', NAMSIZ);
         strncpy (inven[i].str, objname, NAMSIZ-1);
@@ -1162,7 +1162,7 @@ FILE *f;
 char sep;
 {
   register int m;
-  char s[2048], *monname ();
+  char s[2048], *monname (char);
 
   sprintf (s, "Monsters killed:%c%c", sep, sep);
 

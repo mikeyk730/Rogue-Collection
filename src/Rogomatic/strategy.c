@@ -561,8 +561,8 @@ int adj;		/* How many attackers are there? */
   turns = hasted ? (mdist-1)*2 : (mdist-1);
 
   /* No point in wasting resources when we are invulnerable */
-  if (on (SCAREM) && 
-      (turns > 0 || confused) && 
+  if (on (SCAREM) &&
+      (turns > 0 || confused) &&
       !streq(monster, "dragon") &&
       (Hp < percent (Hpmax, 95))) {
     command (T_RESTING, "s");
@@ -942,7 +942,7 @@ int adj;		/* How many attackers are there? */
       mdir != NONE && on(ROOM) && mdist < 6 &&
       ((obj = unknown (wand)) != NONE) && (!used (inven[obj].str)) &&
       ! (itemis (obj, WORTHLESS))
-     ) { 
+     ) {
     point (obj, mdir);
     usesynch = 0;
     return (1);
@@ -1030,7 +1030,7 @@ int tostuff ()
    *
    * NOTE: Don't pick up the scaremonster scroll!!!    MLM
    *
-   * scaremonster shouldn't be worth going to if we have enough Hp 
+   * scaremonster shouldn't be worth going to if we have enough Hp
    * to do something else...
    */
 

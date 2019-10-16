@@ -22,6 +22,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+# include "rogomatic.h"
 
 #define MAXLINE 4096
 
@@ -63,5 +64,3 @@ void debuglog (const char *fmt, ...)
   err_doit (0, 0, fmt, ap);
   va_end (ap);
 }
-
-

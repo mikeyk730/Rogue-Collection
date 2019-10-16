@@ -1,3 +1,4 @@
+#pragma once
 /*
  * Rog-O-Matic
  * Automatically exploring the dungeons of doom.
@@ -186,7 +187,7 @@
 # define T_LISTLEN   (10)
 
 /* Bit value for debugging types (for debugging function dwait and
-   screen message debugging).  If D_MESSAGE is set the screen must 
+   screen message debugging).  If D_MESSAGE is set the screen must
    be at least 31x80 information displayed to fit.  */
 
 # define D_FATAL   (00001)

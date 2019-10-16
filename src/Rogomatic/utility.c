@@ -44,6 +44,7 @@
 # include <time.h>
 
 # include "install.h"
+# include "rogomatic.h"
 
 
 # define TRUE 1

@@ -31,6 +31,7 @@
 # include <stdlib.h>
 # include <time.h>
 # include "types.h"
+# include "rogomatic.h"
 
 # define TRIALS(g)		((g)->score.count)
 # define NONE		(-1)

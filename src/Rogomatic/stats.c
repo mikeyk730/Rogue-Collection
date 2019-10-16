@@ -49,6 +49,7 @@
 # include <stdio.h>
 # include <math.h>
 # include "types.h"
+# include "rogomatic.h"
 
 /*
  * clearprob: zero a probability structure.

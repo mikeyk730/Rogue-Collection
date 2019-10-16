@@ -25,8 +25,8 @@
 # include <dirent.h>
 #endif
 # include <stdlib.h>
-
 # include "install.h"
+# include "rogomatic.h"
 
 /* install.h has a RGMDIR and a LOCKFILE which are set to the install path
  * which is fine, unless you are testing things out when you might want a

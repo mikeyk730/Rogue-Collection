@@ -33,7 +33,7 @@ extern FILE *trogue;	/* From Rogue, To Rogue */
 extern FILE *logfile;		/* Rogomatic score file */
 extern FILE *realstdout;	/* Real stdout when in terse or emacs mode */
 extern FILE *snapshot;		/* File for snapshot command */
-FILE *wopen();			/* Open a file for world access */
+//FILE *wopen();			/* Open a file for world access */
 
 /* global characters and strings */
 extern char afterid;		/* Index of object after identify */
@@ -56,12 +56,12 @@ extern char *termination;	/* Latin verb for how we died */
 extern char versionstr[];	/* Version of Rogue we are playing */
 
 /* character and string functions */
-extern int getlogtoken();
-extern char *getname(), *itemstr();
-extern char logchar(), *monname(), *findentry_getfakename(), *findentry_getrealname();
+//extern int getlogtoken();
+//extern char *getname(), *itemstr();
+//extern char logchar(), *monname(), *findentry_getfakename(), *findentry_getrealname();
 
 /* double precision floating point functions */
-double prob(), mean(), stdev();	/* For stats.c */
+//double prob(), mean(), stdev();	/* For stats.c */
 
 /* global integers */
 extern int aggravated;		/* True if we aggravated this level */
@@ -221,5 +221,4 @@ extern int k_run;		/* Propensity for retreating */
 extern int k_wake;		/* Propensity for waking things up */
 extern int k_food;		/* Propensity for hoarding food (rings) */
 
-const char * getLockFile ();
-const char * getRgmDir ();
+#include "rogomatic.h"
