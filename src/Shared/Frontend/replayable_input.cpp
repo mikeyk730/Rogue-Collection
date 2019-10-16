@@ -13,6 +13,12 @@ ReplayableInput::ReplayableInput(Environment* current_env, Environment* game_env
 {
 }
 
+ReplayableInput::~ReplayableInput()
+{
+    m_exit = true;
+    m_input_cv.notify_all();
+}
+
 char ReplayableInput::GetChar(bool block, bool for_string, bool *is_replay)
 {
     char c = 0;
@@ -24,10 +30,12 @@ char ReplayableInput::GetChar(bool block, bool for_string, bool *is_replay)
         while (m_replay_steps_remaining > 0 && m_paused && m_steps_to_take == 0)
         {
             m_input_cv.wait(lock);
+            if (m_exit)
+                return 0;
         }
 
         while (m_buffer.empty()) {
-            if (!block)
+            if (!block || m_exit)
                 return 0;
             m_input_cv.wait(lock);
         }

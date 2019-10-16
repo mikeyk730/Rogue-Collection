@@ -12,8 +12,8 @@ struct ReplayableInput : public InputInterface
 {
 public:
     ReplayableInput(Environment* current_env, Environment* game_env, const GameConfig& options);
+    virtual ~ReplayableInput();
 
-    //input interface
     virtual char GetChar(bool block, bool for_string, bool *is_replay) override;
     virtual void Flush() override;
     virtual bool HasTypeahead() override;
@@ -48,6 +48,7 @@ private:
     int m_replay_sleep = 0;
     int m_pause_at = 0;
     bool m_paused = false;
+    bool m_exit = false;
 
     Environment* m_current_env = nullptr;
     Environment* m_game_env = nullptr;

@@ -287,6 +287,7 @@ std::string __window::getsnstr_impl(unsigned int n)
             break;
         case '\n':
         case '\r':
+        case 0:
             return s;
         }
 
