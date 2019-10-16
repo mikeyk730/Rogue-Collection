@@ -846,6 +846,7 @@ char *env[];
 
   flushinp();
   //wait_for('\n');
+  //sendnow("\n");
   exit (0);
 }
 
