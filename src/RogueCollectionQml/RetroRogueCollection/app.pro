@@ -37,10 +37,10 @@ win32 {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/User32.Lib"
     }
 
-    debug {
+    CONFIG( debug, debug|release ) {
         LIBS += "$$PWD/../../../bin/Win32/Debug/Frontend.lib"
     }
-    release {
+    else {
         LIBS += "$$PWD/../../../bin/Win32/Release/Frontend.lib"
     }
 }
@@ -48,7 +48,7 @@ linux {
     debug {
         LIBS += "$$PWD/../../../build/debug/lib-shared-frontend.a"
     }
-    release {
+    else {
         LIBS += "$$PWD/../../../build/release/lib-shared-frontend.a"
     }
 }
