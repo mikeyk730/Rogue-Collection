@@ -5,11 +5,11 @@
 #include <atomic>
 #include <QQuickPaintedItem>
 #include "game_config.h"
+#include "args.h"
 
 struct Environment;
 struct ReplayableInput;
 class QRogueDisplay;
-struct Args;
 
 class QRogue : public QQuickPaintedItem
 {
@@ -39,7 +39,7 @@ public:
     QSize screenSize() const;
     QString game() const;
     void setGame(const QString& game);
-    void setGame(const GameConfig& game, Args& args);
+    void setGame(const GameConfig& game);
 
     Q_INVOKABLE bool showTitleScreen();
     Q_INVOKABLE void restoreGame(const QUrl& url);
@@ -83,13 +83,14 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 
 private:
-    void LaunchGame(Args& args);
+    void LaunchGame();
     void SaveGame(std::string path, bool notify);
     void RestoreGame(const std::string& path);
     bool GetSavePath(std::string& filename);
 
     static const unsigned char kSaveVersion;
 
+    Args args_;
     GameConfig config_;
     std::shared_ptr<Environment> env_;
     std::shared_ptr<Environment> game_env_;

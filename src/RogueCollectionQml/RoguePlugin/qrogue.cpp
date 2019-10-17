@@ -24,30 +24,35 @@ namespace
     {
         return QDir::toNativeSeparators(url.toLocalFile());
     }
+
+    Args GetArgs()
+    {
+        QStringList q_args = QCoreApplication::arguments();
+        std::vector<std::string> v;
+        for (int i = 0; i < q_args.size(); ++i) {
+            v.push_back(q_args[i].toStdString());
+        }
+
+        return Args(v);
+    }
 }
 
 const unsigned char QRogue::kSaveVersion = 2;
 
 QRogue::QRogue(QQuickItem *parent)
     : QQuickPaintedItem(parent),
+      args_(GetArgs()),
       config_(),
       thread_exited_(false)
 {
     connect(this, SIGNAL(render()), this, SLOT(update()), Qt::QueuedConnection);
     connect(this, SIGNAL(soundEvent(const QString&)), this, SLOT(playSound(const QString&)), Qt::QueuedConnection);
 
-    QStringList q_args = QCoreApplication::arguments();
-    std::vector<std::string> v;
-    for (int i = 0; i < q_args.size(); ++i)
-        v.push_back(q_args[i].toStdString());
-    Args args(v);
-
-    env_.reset(new Environment(args));
+    env_.reset(new Environment(args_));
 
     std::string graphics;
-
     env_->Get("gfx", &graphics);
-    int frogue = args.rogomatic ? args.GetDescriptorFromRogue() : 0;
+    int frogue = args_.rogomatic ? args_.GetDescriptorFromRogue() : 0;
     display_.reset(new QRogueDisplay(this, {80,25}, graphics, frogue));
 
     std::string value;
@@ -55,7 +60,7 @@ QRogue::QRogue(QQuickItem *parent)
     display_->SetSound(sound);
 
     std::unique_ptr<GameConfig> game_config;
-    if (args.rogomatic_player) {
+    if (args_.rogomatic_player) {
         game_config.reset(new GameConfig(GetRogomaticGameConfig()));
     }
 
@@ -80,7 +85,7 @@ QRogue::QRogue(QQuickItem *parent)
 
     if (game_config)
     {
-        setGame(*game_config, args);
+        setGame(*game_config);
     }
 }
 
@@ -101,15 +106,22 @@ QString QRogue::game() const
 
 void QRogue::setGame(const QString &game)
 {
-    Args args(0, nullptr);
     int i = GetGameIndex(game.toStdString());
-    setGame(GetGameConfig(i), args);
+    setGame(GetGameConfig(i));
 }
 
-void QRogue::setGame(const GameConfig& game, Args& args)
+void QRogue::setGame(const GameConfig& game)
 {
-    args.rogomatic &= game.supports_rogomatic;
-    if (args.rogomatic)
+    if (args_.rogomatic)
+    {
+        if (!game.supports_rogomatic)
+        {
+            DisplayMessage("Error", "Rogomatic", "Rogomatic doesn't support " + game.name);
+            args_.rogomatic = false;
+        }
+    }
+
+    if (args_.rogomatic)
     {
         env_->SetRogomaticValues();
     }
@@ -123,16 +135,16 @@ void QRogue::setGame(const GameConfig& game, Args& args)
     ss << seed;
     game_env_->Set("seed", ss.str());
 
-    if (args.rogomatic)
+    if (args_.rogomatic)
     {
-        input_.reset(new PipeInput(env_.get(), game_env_.get(), config_, args.GetDescriptorToRogue()));
+        input_.reset(new PipeInput(env_.get(), game_env_.get(), config_, args_.GetDescriptorToRogue()));
     }
     else
     {
         input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
     }
 
-    LaunchGame(args);
+    LaunchGame();
 }
 
 bool QRogue::showTitleScreen()
@@ -189,11 +201,10 @@ void QRogue::RestoreGame(const std::string& path)
         std::remove(path.c_str());
     }
 
-    Args args(0, nullptr);
-    LaunchGame(args);
+    LaunchGame();
 }
 
-void QRogue::LaunchGame(Args& args)
+void QRogue::LaunchGame()
 {
     if (config_.name == "PC Rogue 1.1") {
         game_env_->Set("emulate_version", "1.1");
@@ -222,7 +233,7 @@ void QRogue::LaunchGame(Args& args)
 
     //start rogue engine on a background thread
     std::thread rogue([=] {
-        RunGame(config_.dll_name, Display(), Input(), Lines(), Columns(), args);
+        RunGame(config_.dll_name, Display(), Input(), Lines(), Columns(), args_);
         thread_exited_ = true;
         QuitApplication();
     });
