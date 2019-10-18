@@ -12,8 +12,8 @@ HEADERS  = $(shell echo *.h)
 OBJECTS  = $(SOURCES:.cpp=.o)
 
 BUILDROOT= $(SRCROOT)/../build/release
-CFLAGS  += -DDEBUG -g
-BUILDROOT= $(SRCROOT)/../build/debug
+#CFLAGS  += -DDEBUG -g
+#BUILDROOT= $(SRCROOT)/../build/debug
 
 all: $(TARGET)
 

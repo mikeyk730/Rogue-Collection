@@ -12,8 +12,8 @@ HEADERS  = $(shell echo *.h)
 OBJECTS  = $(SOURCES:.c=.o) pc_gfx.o
 
 BUILDROOT= $(SRCROOT)/../build/release
-CFLAGS  += -DDEBUG -g
-BUILDROOT= $(SRCROOT)/../build/debug
+#CFLAGS  += -DDEBUG -g
+#BUILDROOT= $(SRCROOT)/../build/debug
 LIBS     = -Wl,--whole-archive $(BUILDROOT)/lib-my-curses.a -Wl,--no-whole-archive
 
 all: $(TARGET)
