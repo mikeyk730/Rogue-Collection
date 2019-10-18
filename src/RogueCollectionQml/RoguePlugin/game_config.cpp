@@ -49,7 +49,7 @@ std::vector<GameConfig> s_options = {
 GameConfig GetRogomaticGameConfig()
 {
     return {
-        "Rog-o-matic",
+        "Rog-O-Matic",
         Rogomatic,
         { 80,24 },
         { 80,24 },

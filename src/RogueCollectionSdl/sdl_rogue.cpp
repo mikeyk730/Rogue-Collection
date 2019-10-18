@@ -11,7 +11,7 @@
 #include "utility.h"
 #include "args.h"
 
-const char* SdlRogue::kWindowTitle = "Rogue Collection 1.0";
+const char* SdlRogue::kWindowTitle = "Rogue Collection 1.3.0";
 const unsigned char SdlRogue::kSaveVersion = 2;
 
 SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> current_env, const std::string& file) :

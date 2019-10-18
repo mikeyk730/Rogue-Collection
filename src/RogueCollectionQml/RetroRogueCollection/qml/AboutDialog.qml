@@ -76,11 +76,16 @@ Window{
                       "Email: mikeyk730@gmail.com\n" +
                       "Source: https://github.com/mikeyk730/Rogue-Collection\n\n" +
 
-                      'Rogue:\n' +
+                      "Rogue:\n" +
                       "Copyright (C) 1981 Michael Toy, Ken Arnold, and Glenn Wichman\n" +
                       "Copyright (C) 1983 Jon Lane (A.I. Design update for the IBM PC)\n" +
                       "Copyright (C) 1985 Epyx\n" +
                       "Thanks to the Roguelike Restoration Project and coredumpcentral.org\n\n" +
+
+                      "Rogue-O-Matic:\n" +
+                      "Copyright (C) 1985 by A. Appel, G. Jacobson, L. Hamey, and M. Mauldin\n" +
+                      "Copyright (C) 2008 by Anthony Molinaro\n" +
+                      "Copyright (C) 2011-2015 by ant <ant at anthive dot com>\n\n" +
 
                       'Graphical effects adapted from cool-retro-term:\n' +
                       'Copyright (C) 2013 Filippo Scognamiglio\n\n' +
