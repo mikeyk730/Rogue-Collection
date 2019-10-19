@@ -14,7 +14,8 @@ Rogue went through big changes throughout the 1980s.  Originally developed for U
 + PC Rogue v1.48
 + PC Rogue v1.1
 + Unix Rogue v5.4.2
-+ Unix Rogue v5.3 (New Mexico Tech)
++ Unix Rogue v5.3
+  + Derivative of v5.2 modified at New Mexico Tech
 + Unix Rogue v5.2.1
 + Unix Rogue v3.6.3
 
@@ -28,7 +29,7 @@ Watch an AI from the early 1980s put your skills to shame.  Rog-O-Matic speeds t
 
 Customizable Graphics
 ---------------------
-###Retro Effects
+### Retro Effects
 
 _Retro Rogue Collection_ lets you play Rogue the way it looked in the 1980s.  By emulating the look of CRT monitors, you'll get the old school experience.  Choose from several existing profiles, or create your own.
 
@@ -36,7 +37,7 @@ _Retro Rogue Collection_ lets you play Rogue the way it looked in the 1980s.  By
 <img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/amber.png" height=250>
 <img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/pixelated.png" height=250>
 
-###Tilemap Support
+### Tilemap Support
 
 Don't like the existing look?  You can edit the existing tilemap to add graphics of your own.
 
