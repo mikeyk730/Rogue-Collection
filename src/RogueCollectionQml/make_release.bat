@@ -17,8 +17,14 @@ xcopy ..\..\src\RogueCollectionQml\gpl-3.0.txt .\staging\license\
 copy ..\..\src\RogueVersions\Rogue_5_4_2\LICENSE.TXT  .\staging\license\unix-rogue.txt
 
 xcopy ..\..\src\build-RogueCollection-Static_32bit-Release\RogueCollection.exe .\staging\
+xcopy ..\..\src\build-RogueCollection-Static_32bit-Release\RoguePlugin\qmldir .\staging\RoguePlugin\
 xcopy ..\..\src\build-RetroRogueCollection-Static_32bit-Release\RetroRogueCollection.exe .\staging\
 xcopy ..\..\src\build-RetroRogueCollection-Static_32bit-Release\RoguePlugin\qmldir .\staging\RoguePlugin\
 xcopy ..\..\bin\Win32\Release\Rogue_*.dll .\staging\
+xcopy ..\..\bin\Win32\Release\Rogomatic*.dll .\staging\
 xcopy ..\..\rogue.opt .\staging\
 xcopy ..\..\docs\readme.md .\staging\
+
+cd staging
+mkdir rlog
+cd ..
