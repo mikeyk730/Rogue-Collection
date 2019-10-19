@@ -114,7 +114,9 @@
 xcopy "$(SolutionDir)res\fonts\*.*" "$(OutDir)res\fonts\" /F /R /Y /I
 xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
-xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
+xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)rogue.opt" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)readme.md" "$(OutDir)rlog\" /F /R /Y /I</Command>
     </PostBuildEvent>
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
@@ -178,7 +180,9 @@ xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)
 xcopy "$(SolutionDir)res\fonts\*.*" "$(OutDir)res\fonts\" /F /R /Y /I
 xcopy "$(SolutionDir)lib\sdl\lib\$(PlatformTarget)\SDL2.dll" "$(OutDir)." /F /R /Y /I
 xcopy "$(SolutionDir)lib\SDL2_image-2.0.1\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
-xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I</Command>
+xcopy "$(SolutionDir)lib\SDL2_ttf-2.0.14\lib\$(PlatformTarget)\*.dll" "$(OutDir)." /F /R /Y /I
+xcopy "$(SolutionDir)rogue.opt" "$(OutDir)" /F /R /Y /I
+xcopy "$(SolutionDir)readme.md" "$(OutDir)rlog\" /F /R /Y /I</Command>
     </PostBuildEvent>
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
