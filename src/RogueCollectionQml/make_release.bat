@@ -1,3 +1,9 @@
+@echo off
+echo This file assumes you've built the following:
+echo  - Rogue.sln in Release
+echo  - RogueCollection.pro to bin\build-RogueCollection-Static_32bit-Release
+echo  - RetroRogueCollection.pro to bin\build-RetroRogueCollection-Static_32bit-Release
+
 xcopy ..\..\res\tilemap_v1.bmp ..\..\bin\staging\res\
 xcopy ..\..\res\tilemap_v2.bmp ..\..\bin\staging\res\
 xcopy ..\..\res\tilemap_v3.bmp ..\..\bin\staging\res\
