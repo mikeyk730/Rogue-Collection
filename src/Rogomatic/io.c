@@ -686,11 +686,11 @@ char c;
      if you want to run full blast, make sure the USLEEP global
      constant is 0. */
 
-  if ((USLEEP) && (!noterm))
-    if (Level > 20) md_usleep (USLEEP+(Level * 4 * LEVELDELAY));
-    else if (Level > 16) md_usleep (USLEEP+(Level * 2 * LEVELDELAY));
-    else if (Level > 12) md_usleep (USLEEP+(Level * LEVELDELAY));
-    else md_usleep (USLEEP);
+  if ((g_move_delay) && (!noterm))
+    if (Level > 20) md_usleep (g_move_delay + (Level * 4 * g_level_delay));
+    else if (Level > 16) md_usleep (g_move_delay + (Level * 2 * g_level_delay));
+    else if (Level > 12) md_usleep (g_move_delay + (Level * g_level_delay));
+    else md_usleep (g_move_delay);
 
   rogue_log_write_command (c);
 

@@ -48,28 +48,6 @@
 # define SUCCESS     (1)
 # define FAILURE     (0)
 
-# define LEVELDELAY 0
-# define USLEEP   (0)  /* set to 0 for full blast.  not using the "-w"
-                              option also skips these delays.
-
-                              i'm using 14000 here because that slows
-                              things down enough that i can watch.
-
-                              it also it keeps the fan from spinning up
-                              (saving battery life, reducing energy use
-                               in general or reducing fan noise).
-
-                              at higher levels it goes even slower because
-                              it should be more interesting (or at least
-                              in theory...)
-
-                              for your specific machine you might have to
-                              adjust this up or down to suit your own
-                              preferences.
-
-                              if you want to adjust the specific values
-                              see io.c (yay source code! :) ) */
-
 /*
  * Magic numbers for Invisible stalker strategies
  */

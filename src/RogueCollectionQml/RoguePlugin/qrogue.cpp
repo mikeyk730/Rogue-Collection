@@ -233,7 +233,7 @@ void QRogue::LaunchGame()
 
     //start rogue engine on a background thread
     std::thread rogue([=] {
-        RunGame(config_.dll_name, Display(), Input(), Lines(), Columns(), args_);
+        RunGame(config_.dll_name, Display(), Input(), game_env_.get(), Lines(), Columns(), args_);
         thread_exited_ = true;
         QuitApplication();
     });

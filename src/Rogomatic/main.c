@@ -267,6 +267,8 @@ int   zone = NONE;		/* Current screen zone, 0..8 */
 int   zonemap[9][9];		/* Map of zones connections */
 int   g_seed = 0;
 int   g_expect_extra_bytes = 0;
+int   g_move_delay = 0;
+int   g_level_delay = 0;
 #ifdef ROGOMATIC_PROTOCOL_DEBUGGING
 int   g_protocol_debugging = 1;
 #else
@@ -429,6 +431,14 @@ char *env[];
     }
   }
 
+  char* env_value;
+  if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL) {
+      g_move_delay = atoi(env_value);
+  }
+  if ((env_value = getenv("ROGOMATIC_LEVEL_DELAY")) != NULL) {
+      g_level_delay = atoi(env_value);
+  }
+
   /*
    * The first argument to player is a two character string encoding
    * the file descriptors of the pipe ends. See setup.c for call.
@@ -487,6 +497,8 @@ char *env[];
   }
 
   initscr (); crmode (); noecho ();	/* Initialize the Curses package */
+
+  saynow("Rog-O-Matic is waiting for Rogue to start...");
 
   if (startecho)
     toggleecho ();		/* Start logging? */

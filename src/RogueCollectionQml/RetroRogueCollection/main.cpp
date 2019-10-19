@@ -45,7 +45,7 @@ int RunMain(int argc, char *argv[])
         qDebug() << "  --default-settings  Run with the default profile";
         qDebug() << "  --profile <prof>    Run with the given profile.";
         qDebug() << "  --rogomatic         Spawn Rog-O-Matic to play the game.";
-        qDebug() << "  --fullscreen        Run in fullscreen.";
+        //qDebug() << "  --fullscreen        Run in fullscreen.";
         qDebug() << "  --verbose           Print additional information such as profiles and settings.";
 
         return 0;

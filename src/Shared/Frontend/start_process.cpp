@@ -12,6 +12,7 @@
 #include <cstring>
 #include <vector>
 #include "args.h"
+#include "environment.h"
 
 namespace
 {
@@ -72,6 +73,7 @@ namespace
 int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
 {
     Args args(argc, argv);
+    Environment env(args);
 
     if (args.rogomatic)
     {
@@ -117,6 +119,9 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         wrapper.AddArg("--frogue-fd", std::to_string(frogue_pipe[1]));
         std::string frogue_read_fd = std::to_string(frogue_pipe[0]);
 #endif
+        std::string profile;
+        env.Get("rogomatic_profile", &profile);
+        const char* EmptyArg = "\"\"";
 
         int pid = -1;
 #ifdef WIN32
@@ -129,8 +134,9 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
                 "--rogomatic-player",
                 "--trogue-fd", trogue_write_fd.c_str(),
                 "--frogue-fd", frogue_read_fd.c_str(),
-                "--seed", (args.seed.empty() ? "\"\"" : args.seed.c_str()),
-                "--genes", (args.genes.empty() ? "\"\"" : args.genes.c_str()),
+                "--seed", (args.seed.empty() ? EmptyArg : args.seed.c_str()),
+                "--genes", (args.genes.empty() ? EmptyArg : args.genes.c_str()),
+                "--profile", (profile.empty() ? EmptyArg : profile.c_str()),
                 nullptr)) == -1)
             {
                 perror("Spawning Roogomatic failed");
@@ -146,6 +152,8 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
             spawned_args.AddArg("--seed",  args.seed);
         if (!args.genes.empty())
             spawned_args.AddArg("--genes", args.genes);
+        if (!profile.empty())
+            spawned_args.AddArg("--profile", profile);
         spawned_args.NullTerminate();
 
         if (args.rogomatic)
@@ -158,7 +166,7 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         }
 #endif
 
-        auto value = start(wrapper.GetArgc(), wrapper.GetArgv());
+        auto status = start(wrapper.GetArgc(), wrapper.GetArgv());
 
         /* Wait until Rogomatic is done processing. */
         int termstat;
@@ -187,7 +195,7 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         _close(frogue_pipe[0]);
 #endif
 
-        return value;
+        return status;
     }
 
     return start(argc, argv);

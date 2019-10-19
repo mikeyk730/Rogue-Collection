@@ -4,8 +4,9 @@
 ;
 ; Launch the given game.
 ;
-; Possible values: a, b, c, d, e, PC Rogue 1.48, PC Rogue 1.1, 
-;                  Unix Rogue 5.4.2, Unix Rogue 5.2.1, Unix Rogue 3.6.3
+; Possible values: a, b, c, d, e, PC Rogue 1.48, PC Rogue 1.1,
+;                  Unix Rogue 5.4.2, Unix Rogue 5.2.1, Unix Rogue 5.3,
+                   Unix Rogue 3.6.3
 ;
 game=
 
@@ -31,34 +32,33 @@ sound=true
 ;
 small_screen=false
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Saved game options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ; If set to true, the game is automatically saved when the window is closed.
-; 
+;
 ; Possible values: true, false
 ;
 autosave=false
 
 ;
 ; If set to true, the application exits after a game is saved.
-; 
+;
 ; Possible values: true, false
 ;
 exit_on_save=true
 
 ;
 ; If set to true, the savefile is deleted after it is restored.
-; 
+;
 ; Possible values: true, false
 ;
 delete_on_restore=true
 
 ;
 ; If set to true, a restored game starts paused.
-; 
+;
 ; Possible values: true, false
 ;
 replay_paused=false
@@ -93,20 +93,20 @@ name=
 fruit=slime-mold
 
 ;
-; During a fight, an attacker gets a +4 hit bonus if the defender is asleep. 
+; During a fight, an attacker gets a +4 hit bonus if the defender is asleep.
 ; A bug in the original code causes the player to be considered asleep when he
 ; isn't, so monsters have an increased probability of hitting the player.
 ; If _hplusfix_ is set to true, the bug is fixed.
-; 
+;
 ; Possible values: true, false
 ;
 hplusfix=true
 
 ;
-; Early versions of Rogue showed AC instead of Armor.  If set to true, AC is 
+; Early versions of Rogue showed AC instead of Armor.  If set to true, AC is
 ; shown.  If set to false, Armor is shown.  If not set, the game default is
 ; shown.
-; 
+;
 ; Possible values: true, false
 ;
 showac=false
@@ -114,9 +114,9 @@ showac=false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; PC options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; 
+;
 ; If set to true, the game will not prompt for your name.
-; 
+;
 ; Versions: all PC versions
 ; Possible values: true, false
 ;
@@ -125,7 +125,7 @@ prompt_for_name=true
 ;
 ; If set to true, inventory is automatically shown when an item selection is
 ; needed.
-; 
+;
 ; Versions: all PC versions
 ; Possible values: true, false
 ;
@@ -134,7 +134,7 @@ menu=true
 ;
 ; Monsters aren't supposed to enter mazes, but a bug allowed it under certain
 ; circumstances.  Purists may want to disable this fix.
-; 
+;
 ; Versions: all PC versions
 ; Possible values: true, false
 ;
@@ -143,7 +143,7 @@ room_bugfix=true
 ;
 ; If set to true, the experience level name (e.g Warrior) is shown.  If set to
 ; false, the numeric value is shown.
-; 
+;
 ; Versions: PC 1.48
 ; Possible values: true, false
 ;
@@ -151,7 +151,7 @@ use_exp_level_names=true
 
 ;
 ; The default action assigned to the macro key.
-; 
+;
 ; Versions: all PC versions
 ; Possible values: true, false
 ;
@@ -161,9 +161,9 @@ macro=v
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Unix options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-; 
+;
 ; Terse output.
-; 
+;
 ; Versions: All Unix versions
 ; Possible values: true, false
 ;
@@ -171,7 +171,7 @@ terse=false
 
 ;
 ; Flush typeahead during battle.
-; 
+;
 ; Versions: All Unix versions
 ; Possible values: true, false
 ;
@@ -179,7 +179,7 @@ flush=false
 
 ;
 ; Show position only at end of run.
-; 
+;
 ; Versions: All Unix versions
 ; Possible values: true, false
 ;
@@ -187,7 +187,7 @@ jump=false
 
 ;
 ; Show the lamp-illuminated floor.
-; 
+;
 ; Versions: Unix 5.4.2
 ; Possible values: true, false
 ;
@@ -195,7 +195,7 @@ seefloor=true
 
 ;
 ; Print out tombstone when killed.
-; 
+;
 ; Versions: Unix 5.4.2
 ; Possible values: true, false
 ;
@@ -203,7 +203,7 @@ tombstone=true
 
 ;
 ; Do inventories one line at a time.
-; 
+;
 ; Versions: Unix 5.2.1 and 3.6.3
 ; Possible values: true, false
 ;
@@ -211,7 +211,7 @@ step=false
 
 ;
 ; Inventory style.
-; 
+;
 ; Versions: Unix 5.4.2 and 5.3
 ; Possible values: overwrite, slow, clear
 ;
@@ -219,7 +219,7 @@ inven=clear
 
 ;
 ; Follow turnings in passageways.
-; 
+;
 ; Versions: Unix 5.4.2, 5.3, and 5.2.1
 ; Possible values: true, false
 ;
@@ -227,8 +227,50 @@ passgo=true
 
 ;
 ; Ask about unidentified things.
-; 
+;
 ; Versions: Unix 5.2.1, 5.3, and 3.6.3
 ; Possible values: true, false
 ;
 askme=true
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Rog-O-Matic options
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+; If set to true, Rog-O-Matic starts paused.
+;
+; Possible values: true, false
+;
+rogomatic_paused=false
+
+;
+; If set, Rog-O-Matic will start with the specified profile.  Only applicable
+; to RetroRogueCollection.exe.
+;
+; Possible values: name of a profile, e.g. Scanlines
+;
+rogomatic_profile=
+
+;
+; The number of microseconds to delay between moves.  A larger number causes
+; Rog-O-Matic to play slower.  Set to 0 to play as fast as possible.
+;
+; Possible values: Any non-negative integer, e.g. 14000
+;
+rogomatic_delay=0
+
+;
+; An initial microsecond delay that scales up as Rog-O-Matic reaches lower
+; levels.  Set to 0 to play as fast as possible.
+;
+; Possible values: Any non-negative integer, e.g. 2000
+;
+rogomatic_level_delay=0
+
+;
+; If set to true, Rog-O-Matic will emit debug logging.
+;
+; Possible values: true, false
+;
+rogomatic_logging=false
+

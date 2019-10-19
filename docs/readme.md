@@ -75,7 +75,6 @@ flags:        -h|--help            Print this help.
               --pause-at <n>       Pause replay with <n> steps remaining.
               --default-settings   Run with the default profile.
               --profile <prof>     Run with the given profile.
-              --fullscreen         Run in fullscreen.
               --rogomatic          Spawn Rog-O-Matic to play the game.
               --verbose            Print additional information such as profiles and settings.
 

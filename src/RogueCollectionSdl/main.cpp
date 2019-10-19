@@ -134,7 +134,14 @@ int RunMain(int argc, char** argv)
             //start rogue engine on a background thread
             Coord dims = sdl_rogue->Display()->GetDimensions();
             std::thread rogue([&] {
-                RunGame(sdl_rogue->Options().dll_name, sdl_rogue->Display(), sdl_rogue->Input(), dims.y, dims.x, args);
+                RunGame(
+                    sdl_rogue->Options().dll_name,
+                    sdl_rogue->Display(),
+                    sdl_rogue->Input(),
+                    current_env.get(),
+                    dims.y,
+                    dims.x,
+                    args);
                 sdl_rogue->PostQuit();
             });
             rogue.detach();

@@ -166,6 +166,8 @@ extern int zonemap[9][9];	/* Connectivity map */
 extern int g_seed;
 extern int g_expect_extra_bytes;
 extern int g_protocol_debugging;
+extern int g_move_delay;
+extern int g_level_delay;
 
 /* Status line variables */
 extern int Level,MaxLevel,Gold,Hp,Hpmax,Str,Strmax,Ac,Exp,Explev;

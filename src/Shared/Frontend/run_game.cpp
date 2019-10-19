@@ -7,6 +7,7 @@
 #include <string>
 #include <memory>
 #include "args.h"
+#include "environment.h"
 #include "display_interface.h"
 #include "input_interface.h"
 #include "environment.h"
@@ -23,7 +24,7 @@ struct LibraryDeleter
 };
 #endif
 
-void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* input, int lines, int columns, const Args& args)
+void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* input, Environment* environment, int lines, int columns, const Args& args)
 {
     try {
 #ifdef _WIN32
@@ -65,12 +66,23 @@ void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* 
         rogomatic_fds[0] += args.GetDescriptorFromRogue();
         rogomatic_fds[1] += args.GetDescriptorToRogue();
 
+        std::string rogomatic_flags = "0,0,0,1,0,0,0,0";
+        std::string value;
+        if (environment->Get("rogomatic_paused", &value) && value == "true")
+        {
+            rogomatic_flags[12] = '1';
+        }
+        if (environment->Get("rogomatic_logging", &value) && value == "true")
+        {
+            rogomatic_flags[4] = '1';
+        }
+
         const int argc = 4;
         const char* argv[argc] = {
             lib.c_str(),
             rogomatic_fds.c_str(),
             "0",
-            "0,0,1,1,0,0,0,0"
+            rogomatic_flags.c_str()
         };
 
         (*game)(

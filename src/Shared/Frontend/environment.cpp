@@ -197,16 +197,22 @@ bool Environment::WriteToOs(bool for_unix)
     if (SetEnvVariable(ss.str().c_str()) != 0)
         return false;
 
-    std::string genes;
-    if (Get("genes", &genes))
+    std::string value;
+    if (Get("genes", &value))
     {
-        SetEnvVariable(("GENES=" + genes).c_str());
+        SetEnvVariable(("GENES=" + value).c_str());
     }
-
-    std::string ltm;
-    if (Get("ltm", &ltm) && ltm == "false")
+    if (Get("ltm", &value) && value == "false")
     {
         SetEnvVariable("NOLTM=true");
+    }
+    if (Get("rogomatic_delay", &value))
+    {
+        SetEnvVariable(("ROGOMATIC_DELAY=" + value).c_str());
+    }
+    if (Get("rogomatic_level_delay", &value))
+    {
+        SetEnvVariable(("ROGOMATIC_LEVEL_DELAY=" + value).c_str());
     }
 
     std::string seed;
