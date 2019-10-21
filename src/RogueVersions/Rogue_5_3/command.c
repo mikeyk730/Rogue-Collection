@@ -103,7 +103,7 @@ command()
 		    case 't': case 'C': case 'I': case '.':
 		    case 'z':
 #ifdef WIZARD
-		    case CTRL('D'): 
+		    case CTRL('D'):
             case CTRL('A'):
 #endif
 			break;
@@ -187,18 +187,18 @@ command()
 			after = FALSE;
 		when 'D': after = FALSE; discovered();
 		when CTRL('R') : after = FALSE; msg(huh);
-		when CTRL('M') : //mdk: Remapped from CTRL('L')
+		when CTRL('E') : //mdk: Remapped from CTRL('L')
 		    after = FALSE;
 		    clearok(curscr,TRUE);
 		    wrefresh(curscr);
 		when 'v' :
 		    after = FALSE;
 		    msg("Rogue version %s. (New Mexico Tech)", release);
-		when 'S' : 
+		when 'S' :
 		    after = FALSE;
 		    if (save_game())
 		    {
-			move(LINES-1, 0); 
+			move(LINES-1, 0);
 			clrtoeol();
 			refresh();
 			endwin();
@@ -367,7 +367,7 @@ search()
     ey = hero.y + 1;
     ex = hero.x + 1;
     probinc = (on(player, ISTrip) ? 3 : 0);
-    for (y = hero.y - 1; y <= ey; y++) 
+    for (y = hero.y - 1; y <= ey; y++)
 	for (x = hero.x - 1; x <= ex; x++)
 	{
 	    if (y == hero.y && x == hero.x)

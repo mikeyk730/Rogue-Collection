@@ -32,7 +32,7 @@ int lastscore = -1;
 struct thing player;
 struct room rooms[MAXROOMS];
 struct room *oldrp;
-struct stats max_stats; 
+struct stats max_stats;
 struct object *cur_armor;
 struct object *cur_ring[2];
 int after;
@@ -585,7 +585,7 @@ struct h_list helpstr[] = {
     'd',	"	drop object",
     'c',	"	call object",
     'o',	"	examine/set options",
-    CTRL('M'),	"	redraw screen",
+    CTRL('E'),	"	redraw screen",
     CTRL('R'),	"	repeat last message",
     ESCAPE,	"	cancel command",
     'v',	"	print program version number",

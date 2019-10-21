@@ -22,7 +22,7 @@ Most controls have not been modified.  Use '?' in game to see a list of controls
 | z+direction    | All versions        | Zap in the given direction
 | m+direction    | PC 1.48, Unix 5.4.2 | Move onto an object without picking it up
 | Ctrl+R         | All versions        | Repeat last message
-| Ctrl+M         | All versions        | Redraw screen
+| Ctrl+E         | All versions        | Redraw screen
 | Alt+number     | All versions        | Resize the window to the given scale (e.g. Alt+3 sets window to 300%)
 
 Replay Mode
@@ -68,8 +68,7 @@ The `rogue.opt` file contains many different configuration options.  Open it in 
 ~~~
 Usage: RetroRogueCollection.exe [flags] [savefile|game_letter|game_name]
 
-flags:        -h|--help            Print this help.
-              -o|--optfile <file>  Use the given Rogue option file instead of rogue.opt.
+flags:        -o|--optfile <file>  Use the given Rogue option file instead of rogue.opt.
               -n|--small-screen    Run with the smallest screen that the game supports.
               -p|--paused          Start replay paused.
               --pause-at <n>       Pause replay with <n> steps remaining.

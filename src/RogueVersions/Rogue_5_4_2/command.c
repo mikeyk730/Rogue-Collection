@@ -289,14 +289,14 @@ over:
 			after = FALSE;
 		when 'D': after = FALSE; discovered();
 		when CTRL('R'): after = FALSE; msg(huh); //mdk: Remapped
-		when CTRL('M'): //mdk: Remapped from CTRL('R')
+		when CTRL('E'): //mdk: Remapped from CTRL('R')
 		    after = FALSE;
 		    clearok(curscr,TRUE);
 		    wrefresh(curscr);
 		when 'v':
 		    after = FALSE;
 		    msg("Rogue version %s. (Berkeley)", release);
-		when 'S': 
+		when 'S':
 		    after = FALSE;
 		    save_game();
 		when '.': ;			/* Rest command */
@@ -330,7 +330,7 @@ over:
 		    else
 		    {
 			wizard = passwd();
-			if (wizard) 
+			if (wizard)
 			{
 			    noscore = TRUE;
 			    turn_see(FALSE);
@@ -488,7 +488,7 @@ search(void)
     probinc = (on(player, ISHALU) ? 3 : 0);
     probinc += (on(player, ISBLIND) ? 2 : 0);
     found = FALSE;
-    for (y = hero.y - 1; y <= ey; y++) 
+    for (y = hero.y - 1; y <= ey; y++)
 	for (x = hero.x - 1; x <= ex; x++)
 	{
 	    if (y == hero.y && x == hero.x)

@@ -12,7 +12,7 @@
 
 /* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06 and again on
  * 2013-12-31.
- * Copyright (C) 2012-2013 Rogue Central @ coredumpcentral.org. 
+ * Copyright (C) 2012-2013 Rogue Central @ coredumpcentral.org.
  * All Rights Reserved.
  * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
  */
@@ -202,18 +202,18 @@ int command()
 			after = FALSE;
 		when 'D': after = FALSE; discovered();
 		when CTRL('R') : after = FALSE; msg(huh);
-		when CTRL('M') : //mdk: Remapped from CTRL('L')
+		when CTRL('E') : //mdk: Remapped from CTRL('L')
 		    after = FALSE;
 		    clearok(curscr,TRUE);
 		    wrefresh(curscr);
 		when 'v' :
 		    after = FALSE;
 		    msg("Rogue version %s. (Berkeley)", release);
-		when 'S' : 
+		when 'S' :
 		    after = FALSE;
 		    if (save_game())
 		    {
-			move(LINES-1, 0); 
+			move(LINES-1, 0);
 			clrtoeol();
 			refresh();
 			endwin();
@@ -264,7 +264,7 @@ int command()
 			    /* Some Wizard keys commented out & changed
 			     * to make the game functional in
 			     * various terminals -RRPF
-			     */ 
+			     */
 			case '|' : msg("@ %d,%d", hero.y, hero.x);
 			when 'C' : create_obj();
 			when CTRL('I') : inventory(lvl_obj, 0);
@@ -385,7 +385,7 @@ search()
 	return;
     ey = hero.y + 1;
     ex = hero.x + 1;
-    for (y = hero.y - 1; y <= ey; y++) 
+    for (y = hero.y - 1; y <= ey; y++)
 	for (x = hero.x - 1; x <= ex; x++)
 	{
 	    if (y == hero.y && x == hero.x)

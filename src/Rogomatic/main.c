@@ -546,9 +546,9 @@ char *env[];
 #else
   /* mdk: refresh key is remapped in Rogue Collection */
   if (version < RV53A)
-      sendnow("%c//;", ctrl('m'));
+      sendnow("%c//;", ctrl('e'));
   else
-      sendnow("%c;", ctrl('m'));
+      sendnow("%c;", ctrl('e'));
 #endif
   /*
    * If we are not replaying an old game, we must position the

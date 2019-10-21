@@ -6,8 +6,8 @@
 #include <QStringList>
 #include <QScreen>
 #include <QFontDatabase>
-#include <QDebug>
 #include <QtPlugin>
+#include <iostream>
 #include "fileio.h"
 #include "start_process.h"
 #include "../RoguePlugin/utility_qml.h"
@@ -32,24 +32,6 @@ int RunMain(int argc, char *argv[])
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
     FileIO fileIO;
-
-    // Manage command line arguments from the cpp side
-    QStringList args = app.arguments();
-    if (args.contains("-h") || args.contains("--help")) {
-        qDebug() << "Usage: " + args.at(0) + " [flags] [savefile|name]";
-        qDebug() << "  -h|--help           Print this help.";
-        qDebug() << "  -o|--optfile <file> Use the given Rogue option file";
-        qDebug() << "  -n|--small-screen   Run with the smallest screen that the game supports";
-        qDebug() << "  -p|--paused         Start replay paused";
-        qDebug() << "  --pause-at <n>      Pause replay with <n> steps remaining";
-        qDebug() << "  --default-settings  Run with the default profile";
-        qDebug() << "  --profile <prof>    Run with the given profile.";
-        qDebug() << "  --rogomatic         Spawn Rog-O-Matic to play the game.";
-        //qDebug() << "  --fullscreen        Run in fullscreen.";
-        qDebug() << "  --verbose           Print additional information such as profiles and settings.";
-
-        return 0;
-    }
 
     engine.rootContext()->setContextProperty("fileIO", &fileIO);
     engine.rootContext()->setContextProperty("devicePixelRatio", app.devicePixelRatio());

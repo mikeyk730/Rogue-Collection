@@ -383,7 +383,7 @@ const struct h_list helpstr[] = {
     {'@',	"	print current stats",			TRUE},
     {'D',	"	recall what's been discovered",		TRUE},
     {'o',	"	examine/set options",			TRUE},
-    {CTRL('M'),	"	redraw screen",				TRUE},
+    {CTRL('E'),	"	redraw screen",				TRUE},
     {CTRL('R'),	"	repeat last message",			TRUE},
     {ESCAPE,	"	cancel command",			TRUE},
     {'S',	"	save game",				TRUE},
@@ -402,7 +402,7 @@ int between;
 
 struct delayed_action d_list[MAXDAEMONS] = {
     _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_,
-    _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, 
+    _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_, _X_,
 };
 
 int group = 2;

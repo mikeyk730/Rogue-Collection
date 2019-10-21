@@ -12,7 +12,7 @@
 
 
 /* Updated by Rogue Central @ coredumpcentral.org on 2012-12-06 and 2013-12-31.
- * Copyright (C) 2012-2013 Rogue Central @ coredumpcentral.org. 
+ * Copyright (C) 2012-2013 Rogue Central @ coredumpcentral.org.
  * All Rights Reserved.
  * See README.CDC, LICENSE.CDC, and CHANGES.CDC for more information.
  */
@@ -185,13 +185,13 @@ command()
 		    else
 			after = FALSE;
 		when 'v' : msg("Rogue version %s. (Berkeley)", release);
-		when CTRL('M') : after = FALSE; clearok(curscr, TRUE); draw(curscr); //mdk: Remapped from CTRL('L')
+		when CTRL('E') : after = FALSE; clearok(curscr, TRUE); draw(curscr); //mdk: Remapped from CTRL('L')
 		when CTRL('R') : after = FALSE; msg(huh);
-		when 'S' : 
+		when 'S' :
 		    after = FALSE;
 		    if (save_game())
 		    {
-			wmove(cw, LINES-1, 0); 
+			wmove(cw, LINES-1, 0);
 			wclrtoeol(cw);
 			draw(cw);
 			endwin();
@@ -305,7 +305,7 @@ command()
 	    pick_up(take);
 	if (!running)
 	    door_stop = FALSE;
-	if (!after)     
+	if (!after)
 	    ntimes++;
     }
     /*

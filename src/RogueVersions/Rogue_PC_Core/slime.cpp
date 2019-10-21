@@ -61,7 +61,7 @@ int new_slime(Monster *slime)
 bool plop_monster(int r, int c, Coord *cp)
 {
     int y, x;
-    bool appear = 0;
+    bool appear = false;
     byte ch;
 
     for (y = r - 1; y <= r + 1; y++)
@@ -77,12 +77,14 @@ bool plop_monster(int r, int c, Coord *cp)
             {
                 if (ch == SCROLL && is_scare_monster_scroll(find_obj(pos, false)))
                     continue;
-                if (rnd(++appear) == 0) {
+
+                appear = true;
+                if (rnd(1) == 0) { //todo:mdk is slime placement random?
                     *cp = pos;
                 }
             }
         }
     }
 
-    return appear != 0;
+    return appear;
 }
