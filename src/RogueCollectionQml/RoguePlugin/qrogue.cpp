@@ -130,9 +130,13 @@ void QRogue::setGame(const GameConfig& game)
     emit gameChanged(config_.name.c_str());
     game_env_ = env_;
 
-    int seed = static_cast<int>(time(nullptr));
     std::ostringstream ss;
-    ss << seed;
+    if (args_.seed != "") {
+        ss << args_.seed;
+    }
+    else {
+        ss << static_cast<int>(time(nullptr));
+    }
     game_env_->Set("seed", ss.str());
 
     if (args_.rogomatic)
