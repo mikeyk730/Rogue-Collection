@@ -19,13 +19,15 @@ Rogue went through big changes throughout the 1980s.  Originally developed for U
 + Unix Rogue v5.2.1
 + Unix Rogue v3.6.3
 
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/title.png" height=250>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/unix.png" height=250>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/pc.png" height=250>
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/title.png" height=250>
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/unix.png" height=250>
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/pc.png" height=250>
 
 Rog-O-Matic
 -----------
 Watch an AI from the early 1980s put your skills to shame.  Rog-O-Matic speeds through the dungeons of Unix Rogue v5.4.2, v5.2.1, and v3.6.3.  Using a genetic algorithm, Rog-O-Matic learns from every game it plays.  Will you witness it become a total winner?
+
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/rogomatic.gif" height=250>
 
 Customizable Graphics
 ---------------------
@@ -33,16 +35,16 @@ Customizable Graphics
 
 _Retro Rogue Collection_ lets you play Rogue the way it looked in the 1980s.  By emulating the look of CRT monitors, you'll get the old school experience.  Choose from several existing profiles, or create your own.
 
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/scanlines.png" height=250>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/amber.png" height=250>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/pixelated.png" height=250>
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/scanlines.png" height=250>
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/amber.png" height=250>
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/pixelated.png" height=250>
 
 ### Tilemap Support
 
 Don't like the existing look?  You can edit the existing tilemap to add graphics of your own.
 
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/tiled.png" height=250>
-<img src="https://github.com/mikeyk730/Game-Rogue/raw/master/docs/screenshots/boxy.png" height=250>
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/tiled.png" height=250>
+<img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/boxy.png" height=250>
 
 Replay System
 -------------
@@ -50,4 +52,4 @@ _Retro Rogue Collection_ allows you to save your game with a full history of mov
 
 Linux Support
 -------------
-With version 3.0 code builds and runs on Linux!
+With version 3.0 the code builds and runs on Linux!
