@@ -61,7 +61,7 @@ int new_slime(Monster *slime)
 bool plop_monster(int r, int c, Coord *cp)
 {
     int y, x;
-    int appear = 0;
+    bool appear = 0;
     byte ch;
 
     for (y = r - 1; y <= r + 1; y++)
