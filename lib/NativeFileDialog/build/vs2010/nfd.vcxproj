@@ -72,8 +72,8 @@
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\lib\Release\x86\</OutDir>
-    <IntDir>..\obj\x86\Release\nfd\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)tmp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>nfd</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
@@ -84,8 +84,8 @@
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\lib\Debug\x86\</OutDir>
-    <IntDir>..\obj\x86\Debug\nfd\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)tmp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
     <TargetName>nfd</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
