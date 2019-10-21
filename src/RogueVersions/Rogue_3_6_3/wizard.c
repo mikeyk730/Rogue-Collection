@@ -180,7 +180,7 @@ teleport()
     }
     count = 0;
     running = FALSE;
-    flush_type();		/* flush typeahead */
+    if (fight_flush) flush_type();		/* flush typeahead */
     return rm;
 }
 

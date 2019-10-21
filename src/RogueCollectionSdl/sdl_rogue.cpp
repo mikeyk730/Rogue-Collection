@@ -7,54 +7,72 @@
 #include "environment.h"
 #include "sdl_display.h"
 #include "sdl_input.h"
+#include "pipe_input.h"
+#include "pipe_output.h"
 #include "utility.h"
+#include "args.h"
 
-const char* SdlRogue::kWindowTitle = "Rogue Collection 1.0";
+const char* SdlRogue::kWindowTitle = "Rogue Collection 1.3.0";
 const unsigned char SdlRogue::kSaveVersion = 2;
-
-namespace
-{
-    std::string GetTimeString() //todo:common location
-    {
-        std::time_t now;
-        std::time(&now);
-
-        tm timeinfo;
-        localtime_s(&timeinfo, &now);
-
-        char buffer[100];
-        strftime(buffer, 100, "%FT%H-%M-%S", &timeinfo);
-        return buffer;
-    }
-}
 
 SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> current_env, const std::string& file) :
     m_current_env(current_env)
 {
     RestoreGame(file);
-    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, m_input.get()));
+    m_display.reset(
+        new SdlDisplay(
+            window,
+            renderer,
+            m_current_env.get(),
+            m_game_env.get(),
+            m_options,
+            m_input.get(),
+            nullptr));
 }
 
-SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int i) :
+SdlRogue::SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const GameConfig& game, const Args& args) :
     m_current_env(env),
     m_game_env(env)
 {
-    int seed = (int)time(0);
     std::ostringstream ss;
-    ss << seed;
+    if (args.seed != "") {
+        ss << args.seed;
+    }
+    else {
+        ss << (int)time(0);
+    }
     m_game_env->Set("seed", ss.str());
 
-    SetGame(i);
+    SetGame(game);
 
-    m_input.reset(new SdlInput(m_current_env.get(), m_game_env.get(), m_options));
-    m_display.reset(new SdlDisplay(window, renderer, m_current_env.get(), m_game_env.get(), m_options, 0));
+    if (args.rogomatic)
+    {
+        //todo:mdk turn into decorator that can be cancelled with ESC
+        m_input.reset(new PipeInput(m_current_env.get(), m_game_env.get(), m_options, args.GetDescriptorToRogue()));
+    }
+    else
+    {
+        m_input.reset(new SdlInput(m_current_env.get(), m_game_env.get(), m_options));
+    }
+
+    int frogue = args.rogomatic ? args.GetDescriptorFromRogue() : 0;
+    std::unique_ptr<PipeOutput> pipe_output(frogue ? new PipeOutput(frogue) : nullptr);
+    m_display.reset(
+        new SdlDisplay(
+            window,
+            renderer,
+            m_current_env.get(),
+            m_game_env.get(),
+            m_options,
+            nullptr,
+            std::move(pipe_output)));
 }
 
 SdlRogue::~SdlRogue()
 {
 }
 
-DisplayInterface * SdlRogue::Display() const
+SdlDisplay* SdlRogue::Display() const
 {
     return m_display.get();
 }
@@ -76,6 +94,8 @@ GameConfig SdlRogue::Options() const
 
 void SdlRogue::Run()
 {
+    auto sdl_input = dynamic_cast<SdlInput*>(m_input.get());
+
     SdlDisplay::RegisterEvents();
 
     SDL_Event e;
@@ -86,19 +106,23 @@ void SdlRogue::Run()
         if (e.type == SDL_QUIT) {
             std::string value;
             if (m_current_env->Get("autosave", &value) && value == "true") {
-                std::string name = "autosave-" + GetTimeString() + ".sav";
+                std::string name = "autosave-" + GetTimestamp() + ".sav";
                 SaveGame(name, false);
             }
             return;
         }
         else if (e.type == SDL_KEYDOWN) {
             if (e.key.keysym.sym == 's' && (e.key.keysym.mod & KMOD_CTRL)) {
-                SaveGame("", true);
-                continue;
+                if (SupportsSave()) {
+                    SaveGame("", true);
+                    continue;
+                }
             }
         }
 
-        m_input->HandleEvent(e);
+        if (sdl_input) {
+            sdl_input->HandleEvent(e);
+        }
     }
 }
 
@@ -110,21 +134,25 @@ void SdlRogue::PostQuit()
     SDL_PushEvent(&e);
 }
 
-void SdlRogue::SetGame(const std::string & name)
+void SdlRogue::SetGame(const std::string& name)
 {
-    for (int i = 0; i < (int)s_options.size(); ++i)
+    int i = GetGameIndex(name);
+    if (i < 0)
     {
-        if (s_options[i].name == name) {
-            SetGame(i);
-            return;
-        }
+        throw_error("Save file specified unknown game: " + name);
     }
-    throw_error("Save file specified unknown game: " + name);
+
+    auto config = GetGameConfig(i);
+    if (!config.supports_save) {
+        throw_error(config.name + " doesn't support saving.");
+    }
+
+    SetGame(config);
 }
 
-void SdlRogue::SetGame(int i)
+void SdlRogue::SetGame(const GameConfig& game)
 {
-    m_options = s_options[i];
+    m_options = game;
 
     if (m_options.name == "PC Rogue 1.1") {
         m_game_env->Set("emulate_version", "1.1");
@@ -132,19 +160,23 @@ void SdlRogue::SetGame(int i)
 
     if (!m_game_env->WriteToOs(m_options.is_unix))
         throw_error("Couldn't write environment");
+}
 
-    std::string screen;
-    Coord dims = m_options.screen;
-    if (m_game_env->Get("small_screen", &screen) && screen == "true")
-    {
-        dims = m_options.small_screen;
-    }
-    m_game_env->Columns(dims.x);
-    m_game_env->Lines(dims.y);
+bool SdlRogue::SupportsSave() const
+{
+    return m_options.supports_save;
 }
 
 void SdlRogue::SaveGame(std::string path, bool notify)
 {
+    if (!SupportsSave()) {
+        if (notify) {
+            DisplayMessage(SDL_MESSAGEBOX_ERROR, "Save Game", m_options.name + " doesn't support saving.");
+        }
+
+        return;
+    }
+
     if (path.empty()) {
         if (!m_current_env->Get("savefile", &path) || path.empty()) {
             if (!m_display->GetSavePath(path)) {

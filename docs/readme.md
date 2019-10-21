@@ -1,4 +1,4 @@
-Retro Rogue Collection v2.2
+Retro Rogue Collection v3.0
 ===========================
 https://github.com/mikeyk730/Rogue-Collection
 
@@ -22,6 +22,7 @@ Most controls have not been modified.  Use '?' in game to see a list of controls
 | z+direction    | All versions        | Zap in the given direction
 | m+direction    | PC 1.48, Unix 5.4.2 | Move onto an object without picking it up
 | Ctrl+R         | All versions        | Repeat last message
+| Ctrl+M         | All versions        | Redraw screen
 | Alt+number     | All versions        | Resize the window to the given scale (e.g. Alt+3 sets window to 300%)
 
 Replay Mode
@@ -74,9 +75,9 @@ flags:        -h|--help            Print this help.
               --pause-at <n>       Pause replay with <n> steps remaining.
               --default-settings   Run with the default profile.
               --profile <prof>     Run with the given profile.
-              --fullscreen         Run in fullscreen.
+              --rogomatic          Spawn Rog-O-Matic to play the game.
               --verbose            Print additional information such as profiles and settings.
-              
+
 savefile:     Path to a save file (e.g. "rogue.sav").
 game_letter:  Letter from the game select menu (e.g. "b").
 game_name:    Name from the game select menu (e.g. "PC Rogue 1.1").
@@ -93,6 +94,15 @@ I do not own the rights to the original Rogue games.
 - Copyright (C) 1985 Epyx
 
 Thanks to the [Roguelike Restoration Project](https://github.com/RoguelikeRestorationProject) and the [coredumpcentral.org](http://www.coredumpcentral.org) fork for updating Unix versions to modern environments.
+
+Rogue-O-Matic
+-------------
+Original version:
+- Copyright (C) 1985 by A. Appel, G. Jacobson, L. Hamey, and M. Mauldin
+
+Restoration and updates:
+- Copyright (C) 2008 by Anthony Molinaro
+- Copyright (C) 2011-2015 by ant <ant at anthive dot com>
 
 Retro Effects
 -------------
@@ -118,4 +128,4 @@ IBM PC fonts from [The Ultimate Oldschool PC Font Pack](http://int10h.org/oldsch
 
 License
 =======
-The _Retro Rogue Collection_ engine is licensed under the GNU General Public License Version 3.  See `license\gpl-3.0.txt` for more information.  The original Rogue game code belongs to the original copyright holders.  See `license\unix-rogue.txt` for more information regarding the Unix versions.
+The _Retro Rogue Collection_ engine is licensed under the GNU General Public License Version 3.  See `license\gpl-3.0.txt` for more information.  The original Rogue and Rog-O-Matic code belongs to the original copyright holders.  See `license\unix-rogue.txt` for more information regarding the Unix versions.

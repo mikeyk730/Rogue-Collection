@@ -194,7 +194,7 @@ teleport()
     no_move = 0;
     count = 0;
     running = FALSE;
-    flush_type();
+    if (fight_flush) flush_type();
     return rm;
 }
 

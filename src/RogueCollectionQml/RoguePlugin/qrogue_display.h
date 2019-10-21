@@ -24,7 +24,7 @@ struct Environment;
 class QRogueDisplay : public DisplayInterface
 {
 public:
-    QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics);
+    QRogueDisplay(QRogue* parent, Coord screen_size, const std::string& graphics, int pipe_fd);
 
     QFont Font() const;
     void SetFont(const QFont& font);
@@ -58,17 +58,19 @@ public:
     void PlaySoundMainThread(const QString& id);
 
     virtual void SetDimensions(Coord dimensions) override;
-    virtual void UpdateRegion(uint32_t* buf) override;
-    virtual void UpdateRegion(uint32_t* buf, Region rect) override;
+
+    virtual void UpdateRegion(uint32_t* info, char* dirty) override;
     virtual void MoveCursor(Coord pos) override;
     virtual void SetCursor(bool enable) override;
     virtual void PlaySound(const std::string& id) override;
+    virtual void DisplayMessage(const std::string &message) override;
 
     Region FullRegion() const;
     int TotalChars() const;
 
 private:
     void LoadAssets();
+    void UpdateRegion(uint32_t* buf, Region rect);
     void PaintChar(QPainter *painter, int x, int y, int ch, int color, bool is_text);
     int TranslateChar(int ch, bool is_text) const;
     int DefaultColor() const;
@@ -94,6 +96,7 @@ private:
     int frame_ = 0;
     std::unique_ptr<QPixmap> screen_buffer_;
     std::map<std::string, QSoundEffect*> sounds_;
+    std::unique_ptr<DisplayInterface> rogomatic_output_;
 
     struct ThreadData
     {
@@ -101,7 +104,7 @@ private:
         ThreadData(ThreadData& other);
 
         Coord dimensions = { 0, 0 };
-        std::unique_ptr<uint32_t[]> data = 0;
+        std::unique_ptr<uint32_t[]> data = nullptr;
         std::vector<Region> render_regions;
 
         bool show_cursor = false;

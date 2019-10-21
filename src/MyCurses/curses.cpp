@@ -4,6 +4,7 @@ extern "C" {
 }
 #include "curses_ex.h"
 #include <vector>
+#include <memory>
 #include <algorithm>
 #include <cstdarg>
 #include <cstring>
@@ -41,11 +42,15 @@ struct __window
     int move(int r, int c);
     int mvwin(int r, int c);
     int nodelay(bool enable);
+    int echo();
+    int noecho();
     int overlay(WINDOW* dest, bool copy_spaces) const;
     int copywin(WINDOW* dest, int srcow, int srccol, int destrow, int destcol, int destmaxrow, int destmaxcol) const;
     int refresh();
     int getnstr(char* dest, int n);
     int chgat(int n, attr_t attr, short color, const void *opts);
+    int touchwin();
+    int clearok(bool enable);
 
 private:
     std::string getsnstr_impl(unsigned int n);
@@ -55,21 +60,27 @@ private:
     void set_data(int r, int c, chtype ch);
     void set_data_absolute(int abs_r, int abs_c, chtype ch);
     chtype* data(int row, int col) const;
+    char* dirty(int row, int col) const;
     Coord data_coords(int r, int c) const;
     Region window_region() const;
     int index(int r, int c) const;
+    void fill_dirty(int value);
 
 private:
     Coord origin = { 0, 0 };
     Coord dimensions = { 0, 0 };
 
-    chtype* m_data = 0;
+    std::unique_ptr<chtype[]> m_data = 0;
+    std::unique_ptr<char[]> m_dirty;
+
     chtype attr = 0;
 
     int row = 0;
     int col = 0;
 
     bool no_delay = false;
+    bool should_echo = true;
+    bool should_clear_screen = false;
 
     __window* parent = 0;
 };
@@ -90,7 +101,9 @@ __window::__window(int lines, int cols, int begin_y, int begin_x)
     dimensions = { cols, lines };
     origin = { begin_x, begin_y };
 
-    m_data = new chtype[lines*cols];
+    m_data.reset(new chtype[lines*cols]);
+    m_dirty.reset(new char[lines*cols]);
+    fill_dirty(0);
 
     erase();
 }
@@ -105,7 +118,6 @@ __window::__window(__window * p, int lines, int cols, int begin_y, int begin_x)
 
 __window::~__window()
 {
-    delete[] m_data;
 }
 
 int __window::addch(chtype ch)
@@ -198,6 +210,7 @@ int __window::getch()
     if (!s_input)
         return ERR;
     int ch = s_input->GetChar(!no_delay, false, nullptr);
+    //todo:mdk should consider echo here?
     return ch ? ch : ERR;
 }
 
@@ -256,7 +269,9 @@ std::string __window::getsnstr_impl(unsigned int n)
             return s;
         case '\b':
             if (!s.empty()) {
-                addch('\b');
+                if (should_echo) {
+                    addch('\b');
+                }
                 s.pop_back();
             }
             break;
@@ -265,12 +280,14 @@ std::string __window::getsnstr_impl(unsigned int n)
                 beep();
                 break;
             }
-            //todo: i should care about echo
-            addch(c);
+            if (should_echo) {
+                addch(c);
+            }
             s.push_back(c);
             break;
         case '\n':
         case '\r':
+        case 0:
             return s;
         }
 
@@ -326,35 +343,58 @@ int __window::nodelay(bool enable)
     return OK;
 }
 
+int __window::echo()
+{
+    should_echo = true;
+    return OK;
+}
+
+int __window::noecho()
+{
+    should_echo = false;
+    return OK;
+}
+
+int __window::touchwin()
+{
+    fill_dirty(1);
+    return OK;
+}
+
+int __window::clearok(bool enable)
+{
+    should_clear_screen = enable;
+    return OK;
+}
+
+void __window::fill_dirty(int value)
+{
+    memset(m_dirty.get(), value, dimensions.x * dimensions.y * sizeof(char));
+}
+
 int __window::refresh()
 {
-    std::vector<Region> changed_regions;
-    //Region region = window_region();
+    if (should_clear_screen || curscr->should_clear_screen)
+    {
+        fill_dirty(1);
+        curscr->fill_dirty(1);
+        should_clear_screen = false;
+        curscr->should_clear_screen = false;
+    }
 
     for (int r = 0; r < dimensions.y; ++r) {
-        if (memcmp(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype)) != 0) {
-            memcpy(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype));
-
-            Region rect;
-            rect.Top = origin.y + r;
-            rect.Left = origin.x;
-            rect.Bottom = rect.Top;
-            rect.Right = rect.Left + dimensions.x - 1;
-            changed_regions.push_back(rect);
-        }
+        memcpy(curscr->data(r + origin.y, origin.x), data(r, 0), dimensions.x * sizeof(chtype));
+        memcpy(curscr->dirty(r + origin.y, origin.x), dirty(r, 0), dimensions.x * sizeof(char));
     }
 
     if (s_screen) {
-        if (changed_regions.size() == (size_t)LINES) {
-            s_screen->UpdateRegion(curscr->m_data);
-        }
-        else {
-            for (size_t i = 0; i < changed_regions.size(); ++i) {
-                s_screen->UpdateRegion(curscr->m_data, changed_regions[i]);
-            }
-        }
+        s_screen->UpdateRegion(curscr->m_data.get(), curscr->m_dirty.get());
         s_screen->MoveCursor({ col + origin.x, row + origin.y });
     }
+
+    fill_dirty(0);
+    curscr->fill_dirty(0);
+
     return OK;
 }
 
@@ -388,6 +428,7 @@ int __window::copywin(WINDOW* dest, int srcrow, int srccol, int destrow, int des
     for (int r = destrow; r <= destmaxrow; ++r) {
         int c = destcol;
         memcpy(dest->data(r, c), this->data(r + roffset, c + coffset), ncols*sizeof(chtype));
+        memset(dest->dirty(r, c), 1, ncols*sizeof(char));
     }
     return OK;
 }
@@ -423,6 +464,7 @@ void __window::set_data(int r, int c, chtype ch)
 {
     Coord o = data_coords(r, c);
     *data(o.y,o.x) = ch;
+    *dirty(o.y, o.x) = 1;
 }
 
 void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
@@ -433,6 +475,11 @@ void __window::set_data_absolute(int abs_r, int abs_c, chtype ch)
 chtype* __window::data(int r, int c) const
 {
     return parent ? parent->data(r,c) : &m_data[index(r,c)];
+}
+
+char* __window::dirty(int r, int c) const
+{
+    return parent ? parent->dirty(r,c) : &m_dirty[index(r,c)];
 }
 
 Coord __window::data_coords(int r, int c) const
@@ -456,6 +503,15 @@ void init_curses(DisplayInterface* screen, InputInterface* input, int lines, int
 void shutdow_curses()
 {
 
+}
+
+int has_typeahead()
+{
+    if (s_input && s_input->HasTypeahead()) {
+        return 1;
+    }
+
+    return 0;
 }
 
 void play_sound(const char * id)
@@ -803,6 +859,17 @@ int nodelay(WINDOW* w, _bool enable)
     return w->nodelay(enable != 0);
 }
 
+int wecho(WINDOW* w)
+{
+    return w->echo();
+}
+
+int wnoecho(WINDOW* w)
+{
+    return w->noecho();
+}
+
+
 int baudrate(void)
 {
     return s_baudrate;
@@ -880,7 +947,7 @@ int nocbreak(void)
 
 int noecho(void)
 {
-    return OK;
+    return wnoecho(stdscr);
 }
 
 int halfdelay(int)
@@ -888,9 +955,9 @@ int halfdelay(int)
     return OK;
 }
 
-int	clearok(WINDOW *, _bool)
+int clearok(WINDOW *w, _bool enable)
 {
-    return OK;
+    return w->clearok(enable != 0);
 }
 
 int keypad(WINDOW *, _bool)
@@ -903,9 +970,9 @@ int leaveok(WINDOW *, _bool)
     return OK;
 }
 
-int touchwin(WINDOW *)
+int touchwin(WINDOW *w)
 {
-    return OK;
+    return w->touchwin();
 }
 
 int idlok(WINDOW *, _bool)
@@ -925,10 +992,15 @@ int nocrmode(void)
 
 int echo(void)
 {
-    return OK;
+    return wecho(stdscr);
 }
 
 int beep(void)
 {
     return putchar('\a');
+}
+
+int noraw(void)
+{
+    return OK;
 }

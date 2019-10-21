@@ -1,8 +1,3 @@
-#ifndef _WIN32
-#error "The SDL project is depreciated in favor of the Qml versions."
-#error "This file relies on undefined behavior that doesn't work on Linux."
-#error "SDL_RenderClear should be called every frame."
-#endif
 #include <sstream>
 #include <cassert>
 #include <SDL_image.h>
@@ -15,50 +10,13 @@
 #include "window_sizer.h"
 #include "environment.h"
 #include "sdl_utility.h"
+#include "utility.h"
+#include "pipe_output.h"
+
+static char zeros[5000];
 
 namespace
 {
-    std::map<int, int> unix_chars = {
-        { PASSAGE,   '#' },
-        { DOOR,      '+' },
-        { FLOOR,     '.' },
-        { PLAYER,    '@' },
-        { TRAP,      '^' },
-        { STAIRS,    '%' },
-        { GOLD,      '*' },
-        { POTION,    '!' },
-        { SCROLL,    '?' },
-        { FOOD,      ':' },
-        { STICK,     '/' },
-        { ARMOR,     ']' },
-        { AMULET,    ',' },
-        { RING,      '=' },
-        { WEAPON,    ')' },
-        { VWALL,     '|' },
-        { HWALL,     '-' },
-        { ULWALL,    '-' },
-        { URWALL,    '-' },
-        { LLWALL,    '-' },
-        { LRWALL,    '-' },
-        { 204,       '|' },
-        { 185,       '|' },
-    };
-
-    uint32_t CharText(uint32_t ch)
-    {
-        return ch & 0x0000ffff;
-    }
-
-    uint32_t CharColor(uint32_t ch)
-    {
-        return (ch >> 24) & 0xff;
-    }
-
-    bool IsText(uint32_t ch)
-    {
-        return (ch & 0x010000) == 0;
-    }
-
     uint32_t RENDER_EVENT = 0;
     uint32_t TIMER_EVENT = 0;
 
@@ -75,17 +33,46 @@ namespace
 
         return interval;
     }
+
+    class ScopedRendererTarget
+    {
+    public:
+        ScopedRendererTarget(SDL_Renderer* renderer, SDL_Texture* texture)
+            : renderer_(renderer)
+        {
+            SDL_SetRenderTarget(renderer_, texture);
+        }
+
+        ~ScopedRendererTarget()
+        {
+            SDL_SetRenderTarget(renderer_, nullptr);
+        }
+
+    private:
+        SDL_Renderer* renderer_;
+    };
 }
 
-SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env, Environment* game_env, const GameConfig& options, ReplayableInput* input) :
+SdlDisplay::SdlDisplay(
+    SDL_Window* window,
+    SDL_Renderer* renderer,
+    Environment* current_env,
+    Environment* game_env,
+    const GameConfig& options,
+    ReplayableInput* input,
+    std::unique_ptr<PipeOutput> pipe_output) :
     m_window(window),
     m_renderer(renderer),
     m_current_env(current_env),
     m_game_env(game_env),
     m_input(input),
+    m_screen_texture(nullptr, SDL_DestroyTexture),
     m_options(options),
-    m_sizer(window, renderer, current_env)
+    m_sizer(window, renderer, current_env),
+    m_pipe_output(std::move(pipe_output))
 {
+    memset(zeros, 0, 5000);
+
     std::string title(SdlRogue::kWindowTitle);
     title += " - ";
     title += m_options.name;
@@ -102,10 +89,23 @@ SdlDisplay::SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* 
         }
     }
 
-    m_dimensions = { game_env->Columns(), game_env->Lines() };
+    std::string screen;
+    m_dimensions = m_options.screen;
+    if (m_game_env->Get("small_screen", &screen) && screen == "true")
+    {
+        m_dimensions = m_options.small_screen;
+    }
+
+    if (m_pipe_output) {
+        m_pipe_output->SetDimensions(m_dimensions);
+    }
 
     SDL_ShowWindow(window);
     LoadAssets();
+}
+
+SdlDisplay::~SdlDisplay()
+{
 }
 
 void SdlDisplay::LoadAssets()
@@ -120,8 +120,19 @@ void SdlDisplay::LoadAssets()
         m_block_size = m_tile_provider->Dimensions();
     }
 
-    m_sizer.SetWindowSize(m_block_size.x * m_game_env->Columns(), m_block_size.y * m_game_env->Lines());
+    int w = m_block_size.x * m_dimensions.x;
+    int h = m_block_size.y * m_dimensions.y;
+    m_sizer.SetWindowSize(w, h);
     SDL_RenderClear(m_renderer);
+
+    m_screen_texture = SDL::Scoped::Texture(
+        SDL_CreateTexture(
+            m_renderer,
+            SDL_PIXELFORMAT_RGBA8888,
+            SDL_TEXTUREACCESS_TARGET,
+            w,
+            h),
+        SDL_DestroyTexture);
 }
 
 void SdlDisplay::RenderGame(bool force)
@@ -149,6 +160,8 @@ void SdlDisplay::RenderGame(bool force)
         cursor_pos = m_shared.cursor_pos;
     }
 
+    ScopedRendererTarget render_guard(m_renderer, m_screen_texture.get());
+
     if (force) {
         SDL_RenderClear(m_renderer);
         regions.push_back(FullRegion());
@@ -168,10 +181,13 @@ void SdlDisplay::RenderGame(bool force)
         RenderCounterOverlay(counter, 0);
 
     SDL_RenderPresent(m_renderer);
+    UpdateWindow();
 }
 
 void SdlDisplay::Animate()
 {
+    ScopedRendererTarget render_guard(m_renderer, m_screen_texture.get());
+
     bool update = false;
     if (graphics_cfg().animate) {
 
@@ -213,8 +229,18 @@ void SdlDisplay::Animate()
         update = true;
     }
 
-    if (update)
+    if (update) {
         SDL_RenderPresent(m_renderer);
+        UpdateWindow();
+    }
+}
+
+void SdlDisplay::UpdateWindow()
+{
+    SDL_SetRenderTarget(m_renderer, nullptr);
+    SDL_RenderClear(m_renderer);
+    SDL_RenderCopy(m_renderer, m_screen_texture.get(), nullptr, nullptr);
+    SDL_RenderPresent(m_renderer);
 }
 
 void SdlDisplay::RenderRegion(uint32_t* data, Region rect)
@@ -226,7 +252,8 @@ void SdlDisplay::RenderRegion(uint32_t* data, Region rect)
 
             uint32_t info = data[y*m_dimensions.x + x];
 
-            if (!m_tile_provider || IsText(info))
+            bool is_text = IsText(info);
+            if (!m_tile_provider || is_text)
             {
                 int color = CharColor(info);
                 if (y == 0 && color == 0x70) {
@@ -242,61 +269,13 @@ void SdlDisplay::RenderRegion(uint32_t* data, Region rect)
                         color = 0x07;
                     }
                 }
-                RenderText(info, color, r, !IsText(info));
+                RenderText(info, color, r, !is_text);
             }
             else {
                 RenderTile(info, r);
             }
         }
     }
-}
-
-unsigned int GetColor(int chr, int attr)
-{
-    //if it is inside a room
-    if (attr == 0x07 || attr == 0) switch (chr)
-    {
-    case DOOR:
-    case VWALL: case HWALL:
-    case ULWALL: case URWALL: case LLWALL: case LRWALL:
-        return 0x06; //brown
-    case FLOOR:
-        return 0x0a; //light green
-    case STAIRS:
-        return 0x20; //black on light green
-    case TRAP:
-        return 0x05; //magenta
-    case GOLD:
-    case PLAYER:
-        return 0x0e; //yellow
-    case POTION:
-    case SCROLL:
-    case STICK:
-    case ARMOR:
-    case AMULET:
-    case RING:
-    case WEAPON:
-        return 0x09; //light blue
-    case FOOD:
-        return 0x04; //red
-    }
-    //if inside a passage or a maze
-    else if (attr == 0x70) switch (chr)
-    {
-    case FOOD:
-        return 0x74; //red on grey
-    case GOLD: case PLAYER:
-        return 0x7e; //yellow on grey
-    case POTION: case SCROLL: case STICK: case ARMOR: case AMULET: case RING: case WEAPON:
-        return 0x71; //blue on grey
-    }
-
-    return attr;
-}
-
-unsigned char flip_color(unsigned char c)
-{
-    return ((c & 0x0f) << 4) | ((c & 0xf0) >> 4);
 }
 
 void SdlDisplay::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool is_tile)
@@ -309,13 +288,13 @@ void SdlDisplay::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool
     // technically don't need to do anything here, but it doesn't hurt to call
     // GetColor.
     if (is_tile) {
-        color = GetColor(c, color);
+        color = GetTileColor(c, color);
     }
     if (!color || !graphics_cfg().use_colors) {
         bool standout(color > 0x0f);
         color = graphics_cfg().text->colors.front();
         if (standout && graphics_cfg().use_standout)
-            color = flip_color(color);
+            color = FlipColor(color);
     }
 
     if (graphics_cfg().animate && c == STAIRS && m_frame_number == 1)
@@ -323,9 +302,7 @@ void SdlDisplay::RenderText(uint32_t info, unsigned char color, SDL_Rect r, bool
 
     if (graphics_cfg().use_unix_gfx && is_tile)
     {
-        auto i = unix_chars.find(c);
-        if (i != unix_chars.end())
-            c = i->second;
+        c = GetUnixChar(c);
     }
 
     SDL_Rect clip;
@@ -419,13 +396,36 @@ void SdlDisplay::SetDimensions(Coord dimensions)
 
 void SdlDisplay::UpdateRegion(uint32_t * info)
 {
+    std::lock_guard<std::mutex> lock(m_mutex);
+
     UpdateRegion(info, FullRegion());
+}
+
+void SdlDisplay::UpdateRegion(uint32_t* info, char* dirty)
+{
+    if (m_pipe_output) {
+        m_pipe_output->UpdateRegion(info, dirty);
+    }
+
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    for (int r = 0; r < m_dimensions.y; ++r)
+    {
+        if (memcmp(&dirty[r*m_dimensions.x], zeros, m_dimensions.x))
+        {
+            Region region;
+            region.Left = 0;
+            region.Top = r;
+            region.Right = short(m_dimensions.x - 1);
+            region.Bottom = r;
+
+            UpdateRegion(info, region);
+        }
+    }
 }
 
 void SdlDisplay::UpdateRegion(uint32_t* info, Region rect)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-
     //todo: If we're adding a full render to the queue, we can ignore any previous regions.
 
     //If we're behind on rendering, clear the queue and do a single full render.
@@ -446,8 +446,18 @@ void SdlDisplay::UpdateRegion(uint32_t* info, Region rect)
 
 void SdlDisplay::MoveCursor(Coord pos)
 {
+    if (m_pipe_output) {
+        m_pipe_output->MoveCursor(pos);
+    }
+
     std::lock_guard<std::mutex> lock(m_mutex);
     m_shared.cursor_pos = pos;
+
+    if (m_shared.data)
+    {
+        auto data = new uint32_t[TotalChars()];
+        memcpy(data, m_shared.data.get(), TotalChars() * sizeof(int32_t));
+    }
 }
 
 void SdlDisplay::SetCursor(bool enable)
@@ -458,6 +468,11 @@ void SdlDisplay::SetCursor(bool enable)
 
 void SdlDisplay::PlaySound(const std::string & id)
 {
+}
+
+void SdlDisplay::DisplayMessage(const std::string & message)
+{
+    ::DisplayMessage(SDL_MESSAGEBOX_ERROR, "Fatal Error", message.c_str());
 }
 
 void SdlDisplay::SetTitle(const std::string & title)
@@ -475,6 +490,11 @@ void SdlDisplay::NextGfxMode()
 bool SdlDisplay::GetSavePath(std::string& path)
 {
     return ::GetSavePath(m_window, path);
+}
+
+Coord SdlDisplay::GetDimensions() const
+{
+    return m_dimensions;
 }
 
 void SdlDisplay::RegisterEvents()
@@ -548,7 +568,7 @@ bool SdlDisplay::HandleEventKeyDown(const SDL_Event & e)
 
 bool SdlDisplay::HandleEventText(const SDL_Event & e)
 {
-    if (e.text.text[0] == '`')
+    if (e.text.text[0] == '~')
     {
         NextGfxMode();
         return true;

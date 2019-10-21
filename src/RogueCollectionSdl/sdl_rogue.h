@@ -5,25 +5,26 @@
 #include <coord.h>
 #include "game_config.h"
 
-struct DisplayInterface;
 struct InputInterface;
 struct SdlDisplay;
-struct SdlInput;
+struct ReplayableInput;
 struct Environment;
+struct Args;
 
 struct SdlRogue
 {
-    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, int index);
+    SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const GameConfig& game, const Args& args);
     SdlRogue(SDL_Window* window, SDL_Renderer* renderer, std::shared_ptr<Environment> env, const std::string& filename);
     ~SdlRogue();
 
     void Run();
     void PostQuit();
 
+    bool SupportsSave() const;
     void SaveGame(std::string path, bool notify);
     void RestoreGame(const std::string& filename);
 
-    DisplayInterface* Display() const;
+    SdlDisplay* Display() const;
     InputInterface* Input() const;
     Environment* GameEnv() const;
     GameConfig Options() const;
@@ -33,10 +34,10 @@ struct SdlRogue
 
 private:
     void SetGame(const std::string& name);
-    void SetGame(int i);
+    void SetGame(const GameConfig& game);
 
     std::unique_ptr<SdlDisplay> m_display;
-    std::unique_ptr<SdlInput> m_input;
+    std::unique_ptr<ReplayableInput> m_input;
     std::shared_ptr<Environment> m_current_env;
     std::shared_ptr<Environment> m_game_env;
 

@@ -9,13 +9,21 @@
 #include <QDebug>
 #include <QtPlugin>
 #include "fileio.h"
-#include "../RoguePlugin/utility.h"
+#include "start_process.h"
+#include "../RoguePlugin/utility_qml.h"
 
 #ifdef MDK_STATIC_COMPILE
 Q_IMPORT_PLUGIN(RoguePlugin)
 #endif
 
-int main(int argc, char *argv[])
+int RunMain(int argc, char** argv);
+
+int main(int argc, char** argv)
+{
+    return StartProcess(RunMain, argc, argv);
+}
+
+int RunMain(int argc, char *argv[])
 {
 #ifdef MDK_STATIC_COMPILE
     Q_INIT_RESOURCE(rogue_resources);
@@ -36,7 +44,8 @@ int main(int argc, char *argv[])
         qDebug() << "  --pause-at <n>      Pause replay with <n> steps remaining";
         qDebug() << "  --default-settings  Run with the default profile";
         qDebug() << "  --profile <prof>    Run with the given profile.";
-        qDebug() << "  --fullscreen        Run in fullscreen.";
+        qDebug() << "  --rogomatic         Spawn Rog-O-Matic to play the game.";
+        //qDebug() << "  --fullscreen        Run in fullscreen.";
         qDebug() << "  --verbose           Print additional information such as profiles and settings.";
 
         return 0;

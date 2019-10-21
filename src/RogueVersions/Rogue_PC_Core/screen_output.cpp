@@ -625,7 +625,7 @@ void ScreenOutput::Render()
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->UpdateRegion(m_data.buffer);
+    //todo:mdk m_screen->UpdateRegion(m_data.buffer);
 }
 
 void ScreenOutput::Render(Region rect)
@@ -633,7 +633,7 @@ void ScreenOutput::Render(Region rect)
     if (!m_should_render || m_curtain_down)
         return;
 
-    m_screen->UpdateRegion(m_data.buffer, rect);
+    //todo:mdk m_screen->UpdateRegion(m_data.buffer, rect);
 }
 
 void ScreenOutput::ApplyMove()

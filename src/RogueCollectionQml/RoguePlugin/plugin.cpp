@@ -14,7 +14,7 @@ void RoguePlugin::initializeEngine(QQmlEngine *engine, const char *)
     QStringList titles;
 
     for (size_t i = 0; i < s_options.size(); ++i)
-        titles.append(s_options[i].name.c_str());
+        titles.append(GetGameConfig(i).name.c_str());
     titles.append("Restore Game");
 
     auto context = engine->rootContext();

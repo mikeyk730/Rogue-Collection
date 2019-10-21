@@ -64,3 +64,5 @@ int	checkout();
 #endif
 
 long	lseek();// , time();
+
+extern char *md_getusername();

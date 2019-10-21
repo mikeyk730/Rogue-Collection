@@ -6,7 +6,7 @@
 #ifdef _WIN32
 #define DLL_EXPORT __declspec(dllexport)
 #else
-#define DLL_EXPORT
+#define DLL_EXPORT __attribute__ ((visibility ("default")))
 #endif
 struct DisplayInterface;
 struct InputInterface;
@@ -41,7 +41,7 @@ int translate_type(int t);
 int reverse_translate_type(int t);
 void fix_tombstone();
 
-#define MORE_MSG                      "-More-"
+#define MORE_MSG                      "--More--"
 #define REST_COMMAND                  '.'
 #define REST_DESC
 #define SPACE_IS_OK                   when ' ' : after = FALSE;

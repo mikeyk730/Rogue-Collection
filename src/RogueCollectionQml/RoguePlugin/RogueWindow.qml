@@ -19,9 +19,14 @@ Item {
         return activeItem == rogue;
     }
 
+    function supportsSave()
+    {
+        return isGameRunning() && rogue.supportsSave()
+    }
+
     function saveGame()
     {
-        if (isGameRunning())
+        if (supportsSave())
             saveDialog.open();
     }
 
@@ -115,7 +120,7 @@ Item {
 
         onRendered: root.rendered()
 
-        property string title: "Rogue Collection v2.2" + (rogue.game ? ' - ' + rogue.game : '')
+        property string title: "Rogue Collection v3.0" + (rogue.game ? ' - ' + rogue.game : '')
 
         z: 0
         width: screenSize.width * fontSize.width
@@ -127,8 +132,10 @@ Item {
         Keys.onPressed: {
             if ((event.modifiers & Qt.ControlModifier) && (event.key === Qt.Key_S))
             {
-                saveDialog.open();
-                event.accepted = true;
+                if (rogue.supportsSave()) {
+                    saveDialog.open();
+                    event.accepted = true;
+                }
             }
         }
 

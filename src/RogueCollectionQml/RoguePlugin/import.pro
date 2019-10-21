@@ -15,19 +15,13 @@ DESTDIR = $$OUT_PWD
 TARGET = $$qtLibraryTarget(rogueplugin)
 
 INCLUDEPATH += $$PWD/../../Shared
+INCLUDEPATH += $$PWD/../../Shared/Frontend
 INCLUDEPATH += $$PWD/../../MyCurses
 
 HEADERS += \
     plugin.h \
     qrogue.h \
-    args.h \
-    dos_to_unicode.h \
-    environment.h \
-    game_config.h \
-    replayable_input.h \
-    run_game.h \
-    utility.h \
-    key_utility.h \
+    utility_qml.h \
     qrogue_display.h \
     qrogue_input.h \
     tile_provider.h \
@@ -36,13 +30,7 @@ HEADERS += \
 SOURCES += \
     plugin.cpp \
     qrogue.cpp \
-    args.cpp \
-    dos_to_unicode.cpp \
-    environment.cpp \
     game_config.cpp \
-    replayable_input.cpp \
-    utility.cpp \
-    key_utility.cpp \
     utility_qml.cpp \
     qrogue_display.cpp \
     qrogue_input.cpp \
@@ -57,6 +45,21 @@ win32 {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
     } else {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/User32.Lib"
+    }
+
+    CONFIG( debug, debug|release ) {
+        LIBS += "$$PWD/../../../bin/Win32/Debug/Frontend.lib"
+    }
+    else {
+        LIBS += "$$PWD/../../../bin/Win32/Release/Frontend.lib"
+    }
+}
+linux {
+    debug {
+        LIBS += "$$PWD/../../../build/debug/lib-shared-frontend.a"
+    }
+    else {
+        LIBS += "$$PWD/../../../build/release/lib-shared-frontend.a"
     }
 }
 

@@ -311,7 +311,7 @@ register coord *tc;
 	    else
 		msg("a small dart whizzes by your ear and vanishes");
     }
-    flush_type();
+    if (fight_flush) flush_type();
     play_sound("trap");
     return tr;
 }

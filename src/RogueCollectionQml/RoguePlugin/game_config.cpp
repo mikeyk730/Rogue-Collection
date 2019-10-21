@@ -21,12 +21,14 @@ namespace
     GraphicsConfig boxy_gfx =        { "boxy",   &boxy_text,     nullptr,  nullptr,      false,  true,   true,   true  };
 
 #ifdef _WIN32 //todo:mdk
+    const char* Rogomatic     = "Rogomatic_Player.dll";
     const char* Rogue_PC_1_48 = "Rogue_PC_1_48.dll";
     const char* Rogue_5_4_2   = "Rogue_5_4_2.dll";
     const char* Rogue_5_3     = "Rogue_5_3.dll";
     const char* Rogue_5_2_1   = "Rogue_5_2_1.dll";
     const char* Rogue_3_6_3   = "Rogue_3_6_3.dll";
 #else
+    const char* Rogomatic     = "lib-rogomatic-player.so";
     const char* Rogue_PC_1_48 = "lib-rogue-pc-1-48.so";
     const char* Rogue_5_4_2   = "lib-rogue-5-4-2.so";
     const char* Rogue_5_3     = "lib-rogue-5-3.so";
@@ -36,13 +38,28 @@ namespace
 }
 
 std::vector<GameConfig> s_options = {
-    { "PC Rogue 1.48",    Rogue_PC_1_48, {80,25}, {40,25}, true,  false, { pc_gfx, tilemap_v4_gfx, boxy_gfx, unix_gfx } },
-    { "PC Rogue 1.1",     Rogue_PC_1_48, {80,25}, {40,25}, true,  false, { pc_gfx, tilemap_v3_gfx, boxy_gfx, unix_gfx } },
-    { "Unix Rogue 5.4.2", Rogue_5_4_2,   {80,25}, {80,24}, false, true,  { unix_gfx, pc_gfx, tilemap_v2_gfx, boxy_gfx } },
-    { "Unix Rogue 5.3",   Rogue_5_3,     {80,25}, {80,24}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx } },
-    { "Unix Rogue 5.2.1", Rogue_5_2_1,   {80,25}, {70,22}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx } },
-    { "Unix Rogue 3.6.3", Rogue_3_6_3,   {80,25}, {70,22}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx } },
+    { "PC Rogue 1.48",    Rogue_PC_1_48, {80,25}, {40,25}, true,  false, { pc_gfx, tilemap_v4_gfx, boxy_gfx, unix_gfx }, false, true },
+    { "PC Rogue 1.1",     Rogue_PC_1_48, {80,25}, {40,25}, true,  false, { pc_gfx, tilemap_v3_gfx, boxy_gfx, unix_gfx }, false, true },
+    { "Unix Rogue 5.4.2", Rogue_5_4_2,   {80,24}, {80,24}, false, true,  { unix_gfx, pc_gfx, tilemap_v2_gfx, boxy_gfx }, true  ,true },
+    { "Unix Rogue 5.3",   Rogue_5_3,     {80,24}, {80,24}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx }, false, true },
+    { "Unix Rogue 5.2.1", Rogue_5_2_1,   {80,24}, {70,22}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx }, true , true },
+    { "Unix Rogue 3.6.3", Rogue_3_6_3,   {80,24}, {70,22}, true,  true,  { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx }, true , true },
 };
+
+GameConfig GetRogomaticGameConfig()
+{
+    return {
+        "Rog-O-Matic",
+        Rogomatic,
+        { 80,24 },
+        { 80,24 },
+        true,
+        true,
+        { unix_gfx, pc_gfx, tilemap_v1_gfx, boxy_gfx },
+        false,
+        false
+    };
+}
 
 GameConfig GetGameConfig(int i)
 {
@@ -51,8 +68,8 @@ GameConfig GetGameConfig(int i)
 
 int GetGameIndex(const std::string& name)
 {
-    for (int i = 0; i < (int)s_options.size(); ++i){
-        if (s_options[i].name == name) {
+    for (size_t i = 0; i < s_options.size(); ++i){
+        if (GetGameConfig(i).name == name) {
             return i;
         }
     }

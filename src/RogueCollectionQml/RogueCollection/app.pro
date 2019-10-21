@@ -16,11 +16,12 @@ static {
 
 DESTDIR = $$OUT_PWD/../
 
+INCLUDEPATH += $$PWD/../../Shared/Frontend
+
 HEADERS += \
-    ../RoguePlugin/utility.h
+    ../RoguePlugin/utility_qml.h
 
 SOURCES = main.cpp \
-    ../RoguePlugin/utility.cpp \
     ../RoguePlugin/utility_qml.cpp
 
 RESOURCES += app.qrc
@@ -31,5 +32,18 @@ win32 {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
     } else {
         LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/User32.Lib"
+    }
+
+    CONFIG( debug, debug|release ) {
+        LIBS += "$$PWD/../../../bin/Win32/Debug/Frontend.lib"
+    } else {
+        LIBS += "$$PWD/../../../bin/Win32/Release/Frontend.lib"
+    }
+}
+linux {
+    debug {
+        LIBS += "$$PWD/../../../build/debug/lib-shared-frontend.a"
+    } else {
+        LIBS += "$$PWD/../../../build/release/lib-shared-frontend.a"
     }
 }

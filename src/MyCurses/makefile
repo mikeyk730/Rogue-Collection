@@ -1,7 +1,6 @@
 CC       = g++
 SHELL    = /bin/sh
 SRCROOT  = ..
-BUILDROOT= $(SRCROOT)/../build/
 
 INCLUDES = -I$(SRCROOT)/Shared
 CFLAGS   = -Wall -Werror -pedantic -fPIC
@@ -11,11 +10,14 @@ SOURCES  = $(shell echo *.cpp)
 HEADERS  = $(shell echo *.h)
 OBJECTS  = $(SOURCES:.cpp=.o)
 
+BUILDROOT= $(SRCROOT)/../build/release
+#CFLAGS  += -DDEBUG -g
+#BUILDROOT= $(SRCROOT)/../build/debug
+
 all: $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	ar rvs $(BUILDROOT)/$(TARGET) $(OBJECTS)
-#	$(CC) $(CFLAGS) -o $(BUILDROOT)/$(TARGET) $(OBJECTS)
 
 %.o: %.cpp $(HEADERS)
 	$(CC) -c -o $@ $< $(CFLAGS) $(INCLUDES)

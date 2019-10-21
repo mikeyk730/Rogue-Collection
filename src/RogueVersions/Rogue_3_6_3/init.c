@@ -585,7 +585,7 @@ struct h_list helpstr[] = {
     'd',	"	drop object",
     'c',	"	call object",
     'o',	"	examine/set options",
-    //CTRL('L'),	"	redraw screen",
+    CTRL('M'),	"	redraw screen",
     CTRL('R'),	"	repeat last message",
     ESCAPE,	"	cancel command",
     'v',	"	print program version number",

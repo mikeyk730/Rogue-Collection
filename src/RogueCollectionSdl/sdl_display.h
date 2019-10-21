@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <display_interface.h>
 #include "sdl_rogue.h"
+#include "sdl_utility.h"
 #include "window_sizer.h"
 #ifdef __linux__ //todo:mdk fix
 #include "text_provider.h"
@@ -13,24 +14,34 @@ struct Environment;
 struct ITextProvider;
 struct TileProvider;
 struct ReplayableInput;
+struct PipeOutput;
 
 struct SdlDisplay : public DisplayInterface
 {
     const unsigned int kMaxQueueSize = 1;
 
-    SdlDisplay(SDL_Window* window, SDL_Renderer* renderer, Environment* current_env, Environment* game_env, const GameConfig& options, ReplayableInput* input);
+    SdlDisplay(
+        SDL_Window* window,
+        SDL_Renderer* renderer,
+        Environment* current_env,
+        Environment* game_env,
+        const GameConfig& options,
+        ReplayableInput* input,
+        std::unique_ptr<PipeOutput> pipe_output);
+    ~SdlDisplay();
 
     //display interface
     virtual void SetDimensions(Coord dimensions) override;
-    virtual void UpdateRegion(uint32_t* buf) override;
-    virtual void UpdateRegion(uint32_t* info, Region rect) override;
+    virtual void UpdateRegion(uint32_t* info, char* dirty) override;
     virtual void MoveCursor(Coord pos) override;
     virtual void SetCursor(bool enable) override;
     virtual void PlaySound(const std::string& id) override;
+    virtual void DisplayMessage(const std::string& message) override;
 
     void SetTitle(const std::string& title);
     void NextGfxMode();
     bool GetSavePath(std::string& path);
+    Coord GetDimensions() const;
 
     bool HandleEvent(const SDL_Event& e);
 
@@ -38,6 +49,9 @@ struct SdlDisplay : public DisplayInterface
     static void PostRenderMsg(int force);
 
 private:
+    void UpdateRegion(uint32_t* buf);
+    void UpdateRegion(uint32_t* info, Region rect);
+
     bool HandleWindowEvent(const SDL_Event& e);
     bool HandleRenderEvent(const SDL_Event& e);
     bool HandleTimerEvent(const SDL_Event& e);
@@ -52,6 +66,7 @@ private:
     void RenderTile(uint32_t info, SDL_Rect r);
     void RenderCursor(Coord pos);
     void RenderCounterOverlay(const std::string& s, int n);
+    void UpdateWindow();
 
     const GraphicsConfig& graphics_cfg() const;
 
@@ -62,11 +77,12 @@ private:
     int TotalChars() const;
 
 private:
-    SDL_Window* m_window = 0;
-    SDL_Renderer* m_renderer = 0;
-    Environment* m_current_env = 0;
-    Environment* m_game_env = 0;
-    ReplayableInput* m_input = 0;
+    SDL_Window* m_window = nullptr;
+    SDL_Renderer* m_renderer = nullptr;
+    Environment* m_current_env = nullptr;
+    Environment* m_game_env = nullptr;
+    ReplayableInput* m_input = nullptr;
+    SDL::Scoped::Texture m_screen_texture;
     GameConfig m_options;
 
     Coord m_dimensions = { 0, 0 };
@@ -77,6 +93,7 @@ private:
     std::unique_ptr<ITextProvider> m_text_provider;
     std::unique_ptr<TileProvider> m_tile_provider;
     int m_frame_number = 0;
+    std::unique_ptr<PipeOutput> m_pipe_output;
 
     struct ThreadData
     {

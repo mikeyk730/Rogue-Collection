@@ -303,7 +303,7 @@ be_trapped(coord *tc)
 	    else
 		msg("A small dart whizzes by your ear and vanishes.");
     }
-    flush_type();	/* flush typeahead */
+    if (fight_flush) flush_type();	/* flush typeahead */
     play_sound("trap");
     return(ch);
 }

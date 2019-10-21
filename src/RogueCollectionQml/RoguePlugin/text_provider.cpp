@@ -1,7 +1,7 @@
 #include <QImage>
 #include "tile_provider.h"
 #include "dos_to_unicode.h"
-#include "utility.h"
+#include "utility_qml.h"
 #include "colors.h"
 
 TextProvider::TextProvider(const TextConfig & config) :

@@ -1,42 +1,3 @@
-/****************************************************************************
-**
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the documentation of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
 #include <QPainter>
 #include <QTimer>
 #include <QCoreApplication>
@@ -53,6 +14,9 @@
 #include "run_game.h"
 #include "game_config.h"
 #include "tile_provider.h"
+#include "pipe_input.h"
+#include "utility_qml.h"
+#include "utility.h"
 
 namespace
 {
@@ -60,46 +24,68 @@ namespace
     {
         return QDir::toNativeSeparators(url.toLocalFile());
     }
+
+    Args GetArgs()
+    {
+        QStringList q_args = QCoreApplication::arguments();
+        std::vector<std::string> v;
+        for (int i = 0; i < q_args.size(); ++i) {
+            v.push_back(q_args[i].toStdString());
+        }
+
+        return Args(v);
+    }
 }
 
 const unsigned char QRogue::kSaveVersion = 2;
 
 QRogue::QRogue(QQuickItem *parent)
     : QQuickPaintedItem(parent),
+      args_(GetArgs()),
       config_(),
       thread_exited_(false)
 {
     connect(this, SIGNAL(render()), this, SLOT(update()), Qt::QueuedConnection);
     connect(this, SIGNAL(soundEvent(const QString&)), this, SLOT(playSound(const QString&)), Qt::QueuedConnection);
 
-    QStringList q_args = QCoreApplication::arguments();
-    std::vector<std::string> v;
-    for (int i = 0; i < q_args.size(); ++i)
-        v.push_back(q_args[i].toStdString());
-    Args args(v);
-
-    env_.reset(new Environment(args));
+    env_.reset(new Environment(args_));
 
     std::string graphics;
     env_->Get("gfx", &graphics);
-
-    display_.reset(new QRogueDisplay(this, {80,25}, graphics));
+    int frogue = args_.rogomatic ? args_.GetDescriptorFromRogue() : 0;
+    display_.reset(new QRogueDisplay(this, {80,25}, graphics, frogue));
 
     std::string value;
     bool sound(!env_->Get("sound", &value) || value != "false");
     display_->SetSound(sound);
 
-    std::string game;
-    if (env_->Get("game", &game) && !game.empty()){
-        int i = GetGameIndex(game.c_str());
-        if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + static_cast<int>(s_options.size()))){
-            i = game[0] - 'a';
-        }
+    std::unique_ptr<GameConfig> game_config;
+    if (args_.rogomatic_player) {
+        game_config.reset(new GameConfig(GetRogomaticGameConfig()));
+    }
 
-        if (i != -1)
-            setGame(i);
-        else
-            RestoreGame(game.c_str());
+    if (!game_config){
+        std::string game;
+        if (env_->Get("game", &game) && !game.empty()){
+            int i = GetGameIndex(game.c_str());
+            if (i == -1  && game.size() == 1 && (game[0] >= 'a' && game[0] < 'a' + static_cast<int>(s_options.size()))){
+                i = game[0] - 'a';
+            }
+
+            if (i != -1)
+            {
+                game_config.reset(new GameConfig(GetGameConfig(i)));
+            }
+            else
+            {
+                RestoreGame(game.c_str());
+            }
+        }
+    }
+
+    if (game_config)
+    {
+        setGame(*game_config);
     }
 }
 
@@ -121,12 +107,26 @@ QString QRogue::game() const
 void QRogue::setGame(const QString &game)
 {
     int i = GetGameIndex(game.toStdString());
-    setGame(i);
+    setGame(GetGameConfig(i));
 }
 
-void QRogue::setGame(int index)
+void QRogue::setGame(const GameConfig& game)
 {
-    config_ = GetGameConfig(index);
+    if (args_.rogomatic)
+    {
+        if (!game.supports_rogomatic)
+        {
+            DisplayMessage("Error", "Rogomatic", "Rogomatic doesn't support " + game.name);
+            args_.rogomatic = false;
+        }
+    }
+
+    if (args_.rogomatic)
+    {
+        env_->SetRogomaticValues();
+    }
+
+    config_ = game;
     emit gameChanged(config_.name.c_str());
     game_env_ = env_;
 
@@ -135,7 +135,14 @@ void QRogue::setGame(int index)
     ss << seed;
     game_env_->Set("seed", ss.str());
 
-    input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
+    if (args_.rogomatic)
+    {
+        input_.reset(new PipeInput(env_.get(), game_env_.get(), config_, args_.GetDescriptorToRogue()));
+    }
+    else
+    {
+        input_.reset(new QtRogueInput(this, env_.get(), game_env_.get(), config_));
+    }
 
     LaunchGame();
 }
@@ -143,6 +150,11 @@ void QRogue::setGame(int index)
 bool QRogue::showTitleScreen()
 {
     return config_.name == "PC Rogue 1.48" && restore_count_ == 0;
+}
+
+bool QRogue::supportsSave()
+{
+    return config_.supports_save;
 }
 
 void QRogue::restoreGame(const QUrl& url)
@@ -170,6 +182,9 @@ void QRogue::RestoreGame(const std::string& path)
     ReadShortString(file, &name);
     int i = GetGameIndex(name);
     config_ = GetGameConfig(i);
+    if (!supportsSave()) {
+        throw_error(config_.name + " doesn't support saving.");
+    }
     emit gameChanged(config_.name.c_str());
 
     // set up game environment
@@ -214,14 +229,22 @@ void QRogue::LaunchGame()
         display_->SetScreenSize(config_.small_screen);
         screenSizeChanged(config_.small_screen.x, config_.small_screen.y);
     }
+    else //todo:mdk fixed size for rogomatic
+    {
+        display_->SetScreenSize(config_.screen);
+        screenSizeChanged(config_.screen.x, config_.screen.y);
+    }
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
     timer->start(250);
 
     //start rogue engine on a background thread
-    char* argv[] = {nullptr};
-    std::thread rogue(RunGame<QRogue>, config_.dll_name, 0, argv, this, std::ref(thread_exited_));
+    std::thread rogue([=] {
+        RunGame(config_.dll_name, Display(), Input(), game_env_.get(), Lines(), Columns(), args_);
+        thread_exited_ = true;
+        QuitApplication();
+    });
     rogue.detach(); //todo: how do we want threading to work?
 }
 
@@ -241,7 +264,7 @@ void QRogue::autosave()
     std::string value;
     if (input_ && env_->Get("autosave", &value)){
         if ((value == "true" && !thread_exited_) || value == "force"){
-            std::string name = "autosave-" + GetTimeString() + ".sav";
+            std::string name = "autosave-" + GetTimestamp() + ".sav";
             SaveGame(name, false);
         }
     }
@@ -259,6 +282,14 @@ void QRogue::setGraphics(const QString &gfx)
 
 void QRogue::SaveGame(std::string path, bool notify)
 {
+    if (!supportsSave()) {
+        if (notify) {
+            DisplayMessage("Error", "Save Game", config_.name + " doesn't support saving.");
+        }
+
+        return;
+    }
+
     std::ofstream file(path, std::ios::binary | std::ios::out);
     if (!file) {
         DisplayMessage("Error", "Save Game", "Couldn't open save file: " + path);
@@ -357,7 +388,7 @@ Environment *QRogue::GameEnv() const
     return game_env_.get();
 }
 
-QtRogueInput *QRogue::Input() const
+ReplayableInput *QRogue::Input() const
 {
     return input_.get();
 }
@@ -381,7 +412,9 @@ void QRogue::keyPressEvent(QKeyEvent *event)
 {
     if (display_->HandleKeyEvent(event))
         return;
-    else if (input_->HandleKeyEvent(event))
+
+    auto qt_input = dynamic_cast<QtRogueInput*>(input_.get());
+    if (qt_input && qt_input->HandleKeyEvent(event))
         return;
 
     QQuickPaintedItem::keyPressEvent(event);

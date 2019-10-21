@@ -288,14 +288,14 @@ over:
 		    else
 			after = FALSE;
 		when 'D': after = FALSE; discovered();
-		when CTRL('R'): after = FALSE; msg(huh);
-		//when CTRL('R'):
-		//    after = FALSE;
-		//    clearok(curscr,TRUE);
-		//    wrefresh(curscr);
+		when CTRL('R'): after = FALSE; msg(huh); //mdk: Remapped
+		when CTRL('M'): //mdk: Remapped from CTRL('R')
+		    after = FALSE;
+		    clearok(curscr,TRUE);
+		    wrefresh(curscr);
 		when 'v':
 		    after = FALSE;
-		    msg("version %s. (mctesq was here)", release);
+		    msg("Rogue version %s. (Berkeley)", release);
 		when 'S': 
 		    after = FALSE;
 		    save_game();

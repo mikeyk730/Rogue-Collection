@@ -3,7 +3,7 @@
 #include <QCoreApplication>
 #include <pc_gfx_charmap.h>
 #include "tile_provider.h"
-#include "utility.h"
+#include "utility_qml.h"
 
 std::map<int, int> s_tile_index = {
     { PLAYER, 26 },

@@ -402,20 +402,7 @@ unlock_sc()
  */
 flush_type()
 {
-#ifdef SAVE
-    register int flag;
-
-#ifndef	r_attron
-    flag = _tty.sg_flags;
-    _tty.sg_flags |= RAW;
-    stty(_tty_ch, &_tty);
-    _tty.sg_flags = flag;
-    stty(_tty_ch, &_tty);
-#else	r_attron
-    noraw();
-    raw();
-#endif	r_attron
-#endif
+    flushinp();
 }
 
 void cfree(char* p)

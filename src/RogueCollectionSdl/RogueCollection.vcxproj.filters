@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source">
-      <UniqueIdentifier>{ceee1bd3-f655-4e84-a4d1-ab4b178254d2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shared">
       <UniqueIdentifier>{b1db413a-4b03-4705-ae5b-fef5ae1fad9b}</UniqueIdentifier>
     </Filter>
@@ -12,9 +9,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="environment.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\Shared\coord.h">
       <Filter>Shared</Filter>
     </ClInclude>
@@ -26,18 +20,6 @@
     </ClInclude>
     <ClInclude Include="..\Shared\pc_gfx_charmap.h">
       <Filter>Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="run_game.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="args.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="game_config.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="utility.h">
-      <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="sdl_utility.h">
       <Filter>SDL</Filter>
@@ -63,29 +45,8 @@
     <ClInclude Include="window_sizer.h">
       <Filter>SDL</Filter>
     </ClInclude>
-    <ClInclude Include="dos_to_unicode.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="key_utility.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="replayable_input.h">
-      <Filter>Source</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="environment.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="args.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="game_config.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="utility.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="sdl_display.cpp">
       <Filter>SDL</Filter>
     </ClCompile>
@@ -113,14 +74,8 @@
     <ClCompile Include="window_sizer.cpp">
       <Filter>SDL</Filter>
     </ClCompile>
-    <ClCompile Include="dos_to_unicode.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="key_utility.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="replayable_input.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="game_config.cpp">
+      <Filter>SDL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

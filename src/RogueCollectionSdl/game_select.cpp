@@ -137,7 +137,7 @@ void GameSelect::RenderText(const std::string& text, Coord p, bool highlight)
     SDL_RenderCopy(m_renderer, texture.get(), 0, &r);
 }
 
-TitleScreen::TitleScreen(SDL_Window * window, SDL_Renderer * renderer, const std::vector<GameConfig>& options, Environment * current_env) :
+TitleScreen::TitleScreen(SDL_Window * window, SDL_Renderer * renderer, Environment * current_env) :
     m_window(window),
     m_renderer(renderer),
     m_title_screen(LoadImage(GetResourcePath("") + "epyx.png", renderer)),

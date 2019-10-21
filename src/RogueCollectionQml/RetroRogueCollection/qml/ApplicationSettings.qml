@@ -24,7 +24,7 @@ import QtQuick.Controls 1.0
 import "utils.js" as Utils
 
 QtObject{
-    property string version: "2.2"
+    property string version: "3.0"
 
     property Item rogue
 
@@ -536,10 +536,11 @@ QtObject{
                 console.log("Warning: selected profile is not valid; ignoring it");
         }
 
-        if (args.indexOf("--fullscreen") !== -1) {
+        //todo: mdk not working
+        /*if (args.indexOf("--fullscreen") !== -1) {
             fullscreen = true;
             showMenubar = false;
-        }
+        }*/
 
         initializedSettings();
     }

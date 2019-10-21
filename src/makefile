@@ -1,5 +1,6 @@
 all:
-	mkdir -p ../build
+	mkdir -p ../build/release/
+	mkdir -p ../build/debug/
 	$(MAKE) -C MyCurses
 	$(MAKE) -C RogueVersions/Rogue_PC_Core
 	$(MAKE) -C RogueVersions/Rogue_PC_1_48
@@ -7,6 +8,9 @@ all:
 	$(MAKE) -C RogueVersions/Rogue_5_2_1
 	$(MAKE) -C RogueVersions/Rogue_5_3
 	$(MAKE) -C RogueVersions/Rogue_5_4_2
+	$(MAKE) -C Rogomatic
+	$(MAKE) -C Shared/Frontend
+	$(MAKE) -C RogueCollectionSdl
 
 clean:
 	$(MAKE) -C MyCurses clean
@@ -16,3 +20,6 @@ clean:
 	$(MAKE) -C RogueVersions/Rogue_5_2_1 clean
 	$(MAKE) -C RogueVersions/Rogue_5_3 clean
 	$(MAKE) -C RogueVersions/Rogue_5_4_2 clean
+	$(MAKE) -C Rogomatic clean
+	$(MAKE) -C Shared/Frontend clean
+	$(MAKE) -C RogueCollectionSdl clean

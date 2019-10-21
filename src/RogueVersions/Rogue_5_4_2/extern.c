@@ -383,7 +383,7 @@ const struct h_list helpstr[] = {
     {'@',	"	print current stats",			TRUE},
     {'D',	"	recall what's been discovered",		TRUE},
     {'o',	"	examine/set options",			TRUE},
-    //{CTRL('L'),	"	redraw screen",				TRUE},
+    {CTRL('M'),	"	redraw screen",				TRUE},
     {CTRL('R'),	"	repeat last message",			TRUE},
     {ESCAPE,	"	cancel command",			TRUE},
     {'S',	"	save game",				TRUE},
