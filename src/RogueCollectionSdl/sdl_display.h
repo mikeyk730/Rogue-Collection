@@ -27,7 +27,7 @@ struct SdlDisplay : public DisplayInterface
         Environment* game_env,
         const GameConfig& options,
         ReplayableInput* input,
-        int pipe_fd);
+        std::unique_ptr<PipeOutput> pipe_output);
     ~SdlDisplay();
 
     //display interface

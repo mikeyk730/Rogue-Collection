@@ -107,7 +107,7 @@ ApplicationWindow
         text: qsTr("Save Game\t")
         shortcut: "Ctrl+S"
         onTriggered: rogue.saveGame()
-        enabled: rogue.isGameRunning()
+        enabled: rogue.supportsSave()
     }
     Action {
         id: quitAction

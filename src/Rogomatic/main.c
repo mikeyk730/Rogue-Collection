@@ -788,8 +788,10 @@ char *env[];
 
           break;
 
+#ifndef ROGUE_COLLECTION
         case 'S': quitrogue ("saved", Gold, SAVED);
           playing = 0; break;
+#endif
 
         case 'Q': quitrogue ("user typing quit", Gold, FINISHED);
           playing = 0; break;

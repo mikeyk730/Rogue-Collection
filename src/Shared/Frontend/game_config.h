@@ -48,6 +48,7 @@ struct GameConfig
     bool is_unix;
     std::vector<GraphicsConfig> gfx_options;
     bool supports_rogomatic;
+    bool supports_save;
 };
 
 extern std::vector<GameConfig> s_options;

@@ -20,6 +20,7 @@ struct SdlRogue
     void Run();
     void PostQuit();
 
+    bool SupportsSave() const;
     void SaveGame(std::string path, bool notify);
     void RestoreGame(const std::string& filename);
 

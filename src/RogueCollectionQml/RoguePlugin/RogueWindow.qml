@@ -19,9 +19,14 @@ Item {
         return activeItem == rogue;
     }
 
+    function supportsSave()
+    {
+        return isGameRunning() && rogue.supportsSave()
+    }
+
     function saveGame()
     {
-        if (isGameRunning())
+        if (supportsSave())
             saveDialog.open();
     }
 
@@ -127,8 +132,10 @@ Item {
         Keys.onPressed: {
             if ((event.modifiers & Qt.ControlModifier) && (event.key === Qt.Key_S))
             {
-                saveDialog.open();
-                event.accepted = true;
+                if (rogue.supportsSave()) {
+                    saveDialog.open();
+                    event.accepted = true;
+                }
             }
         }
 

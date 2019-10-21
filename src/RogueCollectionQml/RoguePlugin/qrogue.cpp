@@ -152,6 +152,11 @@ bool QRogue::showTitleScreen()
     return config_.name == "PC Rogue 1.48" && restore_count_ == 0;
 }
 
+bool QRogue::supportsSave()
+{
+    return config_.supports_save;
+}
+
 void QRogue::restoreGame(const QUrl& url)
 {
     auto filename = convertUrlToNativeFilePath(url);
@@ -177,6 +182,9 @@ void QRogue::RestoreGame(const std::string& path)
     ReadShortString(file, &name);
     int i = GetGameIndex(name);
     config_ = GetGameConfig(i);
+    if (!supportsSave()) {
+        throw_error(config_.name + " doesn't support saving.");
+    }
     emit gameChanged(config_.name.c_str());
 
     // set up game environment
@@ -274,6 +282,14 @@ void QRogue::setGraphics(const QString &gfx)
 
 void QRogue::SaveGame(std::string path, bool notify)
 {
+    if (!supportsSave()) {
+        if (notify) {
+            DisplayMessage("Error", "Save Game", config_.name + " doesn't support saving.");
+        }
+
+        return;
+    }
+
     std::ofstream file(path, std::ios::binary | std::ios::out);
     if (!file) {
         DisplayMessage("Error", "Save Game", "Couldn't open save file: " + path);

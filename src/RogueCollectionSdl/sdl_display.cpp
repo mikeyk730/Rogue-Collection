@@ -60,7 +60,7 @@ SdlDisplay::SdlDisplay(
     Environment* game_env,
     const GameConfig& options,
     ReplayableInput* input,
-    int pipe_fd) :
+    std::unique_ptr<PipeOutput> pipe_output) :
     m_window(window),
     m_renderer(renderer),
     m_current_env(current_env),
@@ -69,7 +69,7 @@ SdlDisplay::SdlDisplay(
     m_screen_texture(nullptr, SDL_DestroyTexture),
     m_options(options),
     m_sizer(window, renderer, current_env),
-    m_pipe_output(pipe_fd ? new PipeOutput(pipe_fd) : nullptr)
+    m_pipe_output(std::move(pipe_output))
 {
     memset(zeros, 0, 5000);
 
@@ -252,7 +252,8 @@ void SdlDisplay::RenderRegion(uint32_t* data, Region rect)
 
             uint32_t info = data[y*m_dimensions.x + x];
 
-            if (!m_tile_provider || IsText(info))
+            bool is_text = IsText(info);
+            if (!m_tile_provider || is_text)
             {
                 int color = CharColor(info);
                 if (y == 0 && color == 0x70) {
@@ -268,7 +269,7 @@ void SdlDisplay::RenderRegion(uint32_t* data, Region rect)
                         color = 0x07;
                     }
                 }
-                RenderText(info, color, r, !IsText(info));
+                RenderText(info, color, r, !is_text);
             }
             else {
                 RenderTile(info, r);
