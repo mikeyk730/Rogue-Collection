@@ -21,9 +21,8 @@ MenuBar {
         MenuSeparator{}
         MenuItem {action: aspectAction}
         MenuSeparator{}
-        MenuItem {action: changeGraphicsAction}
         MenuItem {action: soundAction}
-        MenuItem {action: showsettingsAction}
+        MenuItem {action: changeGraphicsAction}
     }
     Menu{
         id: profilesMenu
@@ -41,6 +40,8 @@ MenuBar {
             onObjectAdded: profilesMenu.insertItem(index, object)
             onObjectRemoved: profilesMenu.removeItem(object)
         }
+        MenuSeparator{}
+        MenuItem {action: showsettingsAction}
     }
     Menu{
         title: qsTr("Help")

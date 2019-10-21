@@ -174,8 +174,8 @@ ApplicationWindow
             MenuSeparator{}
             MenuItem {action: aspectAction}
             MenuSeparator{}
-            MenuItem {action: changeGraphicsAction}
             MenuItem {action: soundAction}
+            MenuItem {action: changeGraphicsAction}
         }
         Menu{
             title: qsTr("Help")

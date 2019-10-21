@@ -96,7 +96,7 @@ ApplicationWindow{
     }
     Action{
         id: showsettingsAction
-        text: qsTr("Settings\t")
+        text: qsTr("Edit Profiles...\t")
         onTriggered: {
             settingswindow.show();
             settingswindow.requestActivate();
