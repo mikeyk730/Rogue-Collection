@@ -124,7 +124,6 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         env.Get("rogomatic_command", &command);
         std::string profile;
         env.Get("rogomatic_profile", &profile);
-        const char* EmptyArg = "\"\"";
 
         int pid = -1;
 #ifdef WIN32
@@ -137,12 +136,12 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
                 "--rogomatic-player",
                 "--trogue-fd", trogue_write_fd.c_str(),
                 "--frogue-fd", frogue_read_fd.c_str(),
-                "--seed", (args.seed.empty() ? EmptyArg : args.seed.c_str()),
-                "--genes", (args.genes.empty() ? EmptyArg : args.genes.c_str()),
-                "--profile", (profile.empty() ? EmptyArg : profile.c_str()),
+                "--seed", ("\"" + args.seed + "\"").c_str(),
+                "--genes", ("\"" + args.genes + "\"").c_str(),
+                "--profile", ("\"" + profile + "\"").c_str(),
                 nullptr)) == -1)
             {
-                perror("Spawning Roogomatic failed");
+                perror("Spawning Rogomatic failed");
                 exit(1);
             }
         }
