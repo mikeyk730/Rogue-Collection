@@ -30,4 +30,4 @@ xcopy bin\Win32\Release\Rogue_*.dll bin\RogueCollection\
 xcopy bin\Win32\Release\Rogomatic*.dll bin\RogueCollection\
 xcopy rogue.opt bin\RogueCollection\
 xcopy docs\readme.md bin\RogueCollection\
-xcopy readme.md bin\RogueCollection\rlog\
+mkdir bin\RogueCollection\rlog\
