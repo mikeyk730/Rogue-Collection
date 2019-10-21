@@ -28,7 +28,7 @@ STAT sbuf;
  */
 save_game()
 {
-    NO_SAVE_RETURN;
+    NO_SAVE_RETURN FALSE;
 
     register FILE *savef;
     register int c;
