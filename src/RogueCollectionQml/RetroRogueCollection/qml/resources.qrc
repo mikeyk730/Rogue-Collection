@@ -53,5 +53,6 @@
         <file>fonts/Kreative/PetMe64.ttf</file>
         <file>fonts/1985-ibm-pc-vga/Px437_IBM_BIOS.ttf</file>
         <file>fonts/1985-ibm-pc-vga/Px437_CompaqThin_8x16.ttf</file>
+        <file>fonts/modern-glass-tty/Glass_TTY_VT220.ttf</file>
     </qresource>
 </RCC>

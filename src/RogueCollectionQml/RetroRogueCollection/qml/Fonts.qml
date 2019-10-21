@@ -224,5 +224,14 @@ QtObject{
             fontWidth: 1.0
             lowResolutionFont: false
         }
+        ListElement{
+            name: "GLASS_TTY"
+            text: "HD: Glass TTY (Modern)"
+            source: "fonts/modern-glass-tty/Glass_TTY_VT220.ttf"
+            lineSpacing: 0.1
+            pixelSize: 20
+            fontWidth: 1.0
+            lowResolutionFont: false
+        }
     }
 }
