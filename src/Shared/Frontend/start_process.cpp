@@ -119,6 +119,9 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         wrapper.AddArg("--frogue-fd", std::to_string(frogue_pipe[1]));
         std::string frogue_read_fd = std::to_string(frogue_pipe[0]);
 #endif
+
+        std::string command(argv[0]);
+        env.Get("rogomatic_command", &command);
         std::string profile;
         env.Get("rogomatic_profile", &profile);
         const char* EmptyArg = "\"\"";
@@ -129,8 +132,8 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
         {
             if ((pid = _spawnl(
                 P_NOWAIT,
-                argv[0],
-                argv[0],
+                command.c_str(),
+                command.c_str(),
                 "--rogomatic-player",
                 "--trogue-fd", trogue_write_fd.c_str(),
                 "--frogue-fd", frogue_read_fd.c_str(),
@@ -144,8 +147,9 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
             }
         }
 #else
-        ArgBuilder spawned_args(1, argv);
-        spawned_args.AddArg("g");
+        ArgBuilder spawned_args(0, nullptr);
+        spawned_args.AddArg(command);
+        spawned_args.AddArg("--rogomatic-player");
         spawned_args.AddArg("--trogue-fd", trogue_write_fd);
         spawned_args.AddArg("--frogue-fd", frogue_read_fd);
         if (!args.seed.empty())
