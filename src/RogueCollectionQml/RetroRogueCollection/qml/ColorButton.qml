@@ -31,14 +31,14 @@ Item {
     ColorDialog {
         id: colorDialog
         title: qsTr("Choose a color")
-        modality: Qt.ApplicationModal
+        modality: Qt.NonModal
         visible: false
 
         //This is a workaround to a Qt 5.2 bug.
         onColorChanged: if (Qt.platform.os !== "osx") colorSelected(color)
         onAccepted: if (Qt.platform.os === "osx") colorSelected(color)
     }
-    Rectangle{
+    Rectangle {
         anchors.fill: parent
         radius: 10
         color: rootItem.color
@@ -51,13 +51,13 @@ Item {
             color: "white"
             opacity: 0.5
         }
-        Text{
+        Text {
             anchors.centerIn: parent
             z: parent.z + 1
             text: name + ":  " + rootItem.color
         }
     }
-    MouseArea{
+    MouseArea {
         anchors.fill: parent
         onClicked: colorDialog.visible = true;
     }
