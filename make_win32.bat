@@ -1,6 +1,6 @@
 CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
-msbuild Rogue.sln /t:Build /p:Configuration=Release
+msbuild Rogue.sln /t:Build /p:Configuration=Release /m
 
 mkdir bin\build-RogueCollection-Static_32bit-Release
 cd bin\build-RogueCollection-Static_32bit-Release

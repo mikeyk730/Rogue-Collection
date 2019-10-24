@@ -1,0 +1,1 @@
+RogueCollection.exe --rogomatic

@@ -23,8 +23,10 @@ xcopy src\RogueCollectionQml\gpl-3.0.txt bin\RogueCollection\license\
 copy src\RogueVersions\Rogue_5_4_2\LICENSE.TXT  bin\RogueCollection\license\unix-rogue.txt
 
 xcopy bin\build-RogueCollection-Static_32bit-Release\RogueCollection.exe bin\RogueCollection\
+xcopy src\RogueCollectionQml\Rogomatic.bat bin\RogueCollection\
 xcopy bin\build-RogueCollection-Static_32bit-Release\RoguePlugin\qmldir bin\RogueCollection\RoguePlugin\
 xcopy bin\build-RetroRogueCollection-Static_32bit-Release\RetroRogueCollection.exe bin\RogueCollection\
+xcopy src\RogueCollectionQml\RetroRogomatic.bat bin\RogueCollection\
 xcopy bin\build-RetroRogueCollection-Static_32bit-Release\RoguePlugin\qmldir bin\RogueCollection\RoguePlugin\ /F /R /Y /I
 xcopy bin\Win32\Release\Rogue_*.dll bin\RogueCollection\
 xcopy bin\Win32\Release\Rogomatic*.dll bin\RogueCollection\
