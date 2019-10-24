@@ -414,8 +414,10 @@ int   tomonster ()
         (!cosmic && wanttowake (monchar) &&
          (avghit (i) <= 50 || (maxhit (i) + 50 - k_wake) < Hp)) ||
         (mlist[i].q == HELD && Hp >= Hpmax)) {
-      danger += maxhit(i);		/* track total danger */
-      adj++;				/* count number of monsters */
+      if (dist == 1) { /* mdk:bugfix more accurate damage and adjacent count. Fixes regeneration ring deadlock. */
+        danger += maxhit(i);		/* track total danger */
+        adj++;				/* count number of monsters */
+      }
 
       /* If he is the closest monster, save his index and distance */
       if (dist < closest)
@@ -717,7 +719,7 @@ int adj;		/* How many attackers are there? */
                        streq (monster, "giant ant"))) &&
       wearing ("regeneration") < 0 &&
       (obj = havenamed (ring, "regeneration")) != NONE &&
-      puton (obj)) //todo:mdk:bug deadlock in 5.2 if detect sleeping monsters (loop of: put on, sleep, take off).  should we trigger lying in wait code?
+      puton (obj))
     return (1);
 
   /* Have a ring and both hands are full, takes two turns */

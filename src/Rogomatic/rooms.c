@@ -751,7 +751,7 @@ mapinfer()
     inroom = 0;
 
     for (c=0; c<80; c++) {
-      if (seerc ('|', r, c) || (seerc ('+', r, c) && !seerc('-', r, c - 1) && !seerc('-', r, c + 1))) //mdk:bugfix added +1 check for doors at corners
+      if (seerc ('|', r, c) || (seerc ('+', r, c) && !seerc('-', r, c - 1) && !seerc('-', r, c + 1))) /* mdk:bugfix added +1 check for doors at corners */
         { inroom = !inroom; }
       else if (inroom)
         { setrc (ROOM | CANGO, r, c); }

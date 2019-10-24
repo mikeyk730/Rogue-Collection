@@ -119,10 +119,12 @@ void command (int tmode, char* f, ...)
   timespent[Level].activity[tmode] += times > 1 ? times : 1;
 
   /* mdk: added to detect bugs where rogomatic gets stuck on a level */
-  if (g_protocol_debugging) {
-    if (timespent[Level].activity[tmode] > 1000) {
-      dwait(D_WARNING, "Moving for %d turns, mode: %d", timespent[Level].activity[tmode], tmode);
-    }
+  if (timespent[Level].activity[tmode] > 1000 && g_last_stuck_level != Level) {
+      g_last_stuck_level = Level;
+      dosnapshot();
+      if (g_protocol_debugging) {
+          dwait(D_WARNING, "Moving for %d turns, mode: %d", timespent[Level].activity[tmode], tmode);
+      }
   }
 
   /* Do the inventory stuff */

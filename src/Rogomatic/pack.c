@@ -485,7 +485,7 @@ char *msgstart, *msgend;
   dwait (D_PACK, "inv    ht %d dm %d ch %d kn %d",
          plushit, plusdam, charges, xknow);
 
-  /* make sure all unknown potion, Scroll, wand, rings 
+  /* make sure all unknown potion, Scroll, wand, rings
      are in dbase */
   if (!xknow && (what == potion || what == Scroll || what == wand || what == ring)) {
     addobj (objname, ipos, what);
@@ -571,7 +571,7 @@ char *msgstart, *msgend;
     inven[ipos].type = what;
     inven[ipos].count = n;
     inven[ipos].phit = plushit;
-    inven[ipos].traits = 0; //mdk:bugfix clear traits for new items
+    inven[ipos].traits = 0; /* mdk:bugfix clear traits for new items */
 
     if ((plushit != UNKNOWN) && (plushit > 0))
       remember (ipos, ENCHANTED | KNOWN);

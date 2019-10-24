@@ -164,7 +164,7 @@ char getroguechar()
     }
 
   char ch = EOF;
-  for (int i = 0; ch == EOF && i < 2000; ++i) //todo:mdk support for debugging
+  for (int i = 0; ch == EOF && i < 2000; ++i)
   {
     if (i > 0)
     {

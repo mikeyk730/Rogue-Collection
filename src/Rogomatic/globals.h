@@ -168,6 +168,7 @@ extern int g_expect_extra_bytes;
 extern int g_protocol_debugging;
 extern int g_move_delay;
 extern int g_level_delay;
+extern int g_last_stuck_level;
 
 /* Status line variables */
 extern int Level,MaxLevel,Gold,Hp,Hpmax,Str,Strmax,Ac,Exp,Explev;

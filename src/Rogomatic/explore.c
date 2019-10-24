@@ -477,7 +477,7 @@ int r, c, depth, *val, *avd, *cont;
     { *val = 0; }
 
   *avd += avdmonsters[r][c];
-  return (1);
+  return (1); /* mdk:bugfix eliminated undefined behavior */
 }
 
 /*
@@ -538,7 +538,7 @@ int *val, *avd, *cont;
   else				{ *val = 0;}
 
   *avd += avdmonsters[r][c];
-  return (1);
+  return (1); /* mdk:bugfix eliminated undefined behavior */
 }
 
 /*

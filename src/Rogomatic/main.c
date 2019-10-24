@@ -2,13 +2,14 @@
 bug list:
 + item traits not initialized
 + call it not working
-+ read identify scroll crashes
-+ map scroll corrupts level flag
-+ teleport trap loop
-+ running strategies don't run
-- unpinning infinite loop (seed: 1569794071)
-- ring loop with detect monster (seed: 1569821396)
++ reading identify scroll crashes
++ map scroll corrupts level flags
++ archery teleport trap loop
++ run strategies don't execute
++ regeneration ring loop with detect monster ability
+- unpinning loop (seed: 1569794071)
 - sleeping monster blocking door (seed: 1569806185)
+- teleport trap at doorway infinite loop
 
  * Rog-O-Matic
  * Automatically exploring the dungeons of doom.
@@ -270,6 +271,7 @@ int   g_seed = 0;
 int   g_expect_extra_bytes = 0;
 int   g_move_delay = 0;
 int   g_level_delay = 0;
+int   g_last_stuck_level = -1;
 #ifdef ROGOMATIC_PROTOCOL_DEBUGGING
 int   g_protocol_debugging = 1;
 #else
@@ -861,7 +863,7 @@ char *env[];
 
   flushinp();
   //wait_for('\n');
-  //sendnow("\n");
+  sendnow("\n");
   exit (0);
 }
 
