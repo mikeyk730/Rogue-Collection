@@ -7,7 +7,7 @@ Window{
     id: dialogwindow
     title: qsTr("About")
     width: 830
-    height: 600
+    height: 710
 
     modality: Qt.ApplicationModal
 

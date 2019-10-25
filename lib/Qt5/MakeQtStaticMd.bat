@@ -1,10 +1,11 @@
 CALL "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
 
-set "qtver=5.9.8"
+set "qtver=5.7.0"
+set "qttag=v%qtver%"
 set "prefix=Qt"
 set "suffix=_src"
 set "buildSuffix=X86_MSVC2015_MD"
-set "folder=%prefix%%qtver%%suffix%"
+set "folder=%prefix%%suffix%"
 if "%buildSuffix%" == "" set compilefolder=%prefix%%qtver%
 if NOT "%buildSuffix%" == "" set compilefolder=%prefix%%qtver%_%buildSuffix%
 
@@ -15,15 +16,13 @@ pause
 CALL git clone https://code.qt.io/qt/qt5.git %folder%
 CALL cd %folder%
 CALL git checkout .
-CALL git checkout %qtver%
 if NOT %ERRORLEVEL% == 0 goto :errorcheckout
 CALL perl init-repository --module-subset=default,-qtwebengine
+CALL git checkout %qttag%
+call git submodule update --checkout --recursive
 CALL cd ..\
 
-echo Manually apply patches to source before continuing
-pause
-
-echo Press enter to configure build
+echo Press enter to configure build. Manually apply patches to source before continuing
 pause
 set PATH=%cd%\%folder%\bin;%PATH%
 set QTDIR=%cd%\%folder%\qtbase
@@ -32,19 +31,20 @@ call cd %compilefolder%
 set CL=/MP
 CALL ..\%folder%\configure -confirm-license -release -opensource -platform win32-msvc2015 -opengl desktop -static -nomake examples -nomake tests -mp -qt-zlib -qt-pcre -qt-libpng -qt-libjpeg
 
+REM Configure will tell you if you need to run "nmake" or both "nmake" and "nmake install"
 echo Press enter to compile build (~10Gb)
 pause
 CALL nmake
 
-echo Press enter to install build
-pause
-CALL nmake install
+REM echo Press enter to install build
+REM pause
+REM CALL nmake install
 
-echo Press enter to copy configuration to build output
-pause
-copy qt.conf C:\Qt\Qt-5.9.8\bin\
+REM echo Press enter to copy configuration to build output
+REM pause
+REM copy qt.conf C:\Qt\Qt-%qver%\bin\
+REM echo Check build output in C:\Qt\Qt-%qver%
 
-echo Check build output in C:\Qt\Qt-5.9.8
 echo Setup kit and pass "CONFIG+=static" into qmake in your project
 pause
 
