@@ -177,7 +177,7 @@ fall(struct linked_list *item, int pr)
         if (obj->o_type == WEAPON) /* BUGFUX: Identification trick */
             msg("Your %s vanishes as it hits the ground.", w_names[obj->o_which]);
         else
-            msg("%s vanishes as it hits the ground.", inv_name(obj,TRUE));
+            msg("Your %s vanishes as it hits the ground.", inv_name(obj,TRUE));
     discard(item);
 }
 
@@ -237,7 +237,7 @@ num(int n1, int n2)
         sprintf(numbuf, "%s%d,%s%d",
 				n1 < 0 ? "" : "+", n1, n2 < 0 ? "" : "+", n2);
     return numbuf;
-}    
+}
 
 /*
  * wield:

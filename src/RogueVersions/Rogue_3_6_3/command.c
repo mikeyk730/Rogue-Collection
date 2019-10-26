@@ -184,7 +184,7 @@ command()
 			do_zap(TRUE);
 		    else
 			after = FALSE;
-		when 'v' : msg("Rogue version %s. (Berkeley)", release);
+		when 'v' : after = FALSE; msg("Rogue version %s. (Berkeley)", release);
 		when CTRL('E') : after = FALSE; clearok(curscr, TRUE); draw(curscr); //mdk: Remapped from CTRL('L')
 		when CTRL('R') : after = FALSE; msg(huh);
 		when 'S' :
