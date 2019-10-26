@@ -220,10 +220,6 @@ bool Environment::WriteToOs(bool for_unix)
     {
         SetEnvVariable(("ROGOMATIC_LEVEL_DELAY=" + value).c_str());
     }
-    if (IsEqual("rogomatic_debug", "false"))
-    {
-        SetEnvVariable(("ROGOMATIC_DEBUG=false" + value).c_str());
-    }
     if (IsEqual("rogomatic_debug_protocol", "true"))
     {
         SetEnvVariable("ROGOMATIC_DEBUG_PROTOCOL=true");

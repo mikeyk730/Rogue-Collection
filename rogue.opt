@@ -268,9 +268,8 @@ rogomatic_delay=0
 rogomatic_level_delay=0
 
 ;
-; If set to true, Rog-O-Matic will emit debug logging.
+; If set to true, debuging features will be enabled in Rog-O-Matic.
 ;
 ; Possible values: true, false
 ;
-rogomatic_logging=false
-
+rogomatic_debug=false

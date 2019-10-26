@@ -391,11 +391,6 @@ char *env[];
   }
 
   char* env_value;
-  if ((env_value = getenv("ROGOMATIC_DEBUG")) != NULL) {
-      g_debug = strcmp(env_value, "false") != 0;
-      if (g_debug)
-          debugging = D_NORMAL | D_WARNING;
-  }
   if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL) {
       g_debug_protocol = strcmp(env_value, "true") == 0;
   }
@@ -476,8 +471,12 @@ char *env[];
 
   /* The third argument is an option list */
   if (argc > 3) sscanf (argv[3], "%d,%d,%d,%d,%d,%d,%d,%d",
-                          &cheat, &noterm, &startecho, &nohalf,
+                          &cheat, &noterm, &g_debug, &nohalf,
                           &emacs, &terse, &transparent, &quitat);
+  if (g_debug) {
+      debugging = D_NORMAL | D_WARNING;
+      startecho = 1;
+  }
 
   /* The fourth argument is the Rogue name */
   if (argc > 4)	strcpy (roguename, argv[4]);

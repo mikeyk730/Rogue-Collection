@@ -40,10 +40,10 @@ err_doit(int errnoflag, int error, const char *fmt, va_list ap)
     fputs(buf, debug);
     fflush (debug);
   }
-  else {
+  /*else {
     fputs (buf, stderr);
     fflush (stderr);
-  }
+  }*/
 }
 
 void debuglog_open (const char *log)

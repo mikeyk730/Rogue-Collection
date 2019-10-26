@@ -67,12 +67,11 @@ void RunGame(const std::string& lib, DisplayInterface* display, InputInterface* 
         rogomatic_fds[1] += args.GetDescriptorToRogue();
 
         std::string rogomatic_flags = "0,0,0,1,0,0,0,0";
-        std::string value;
-        if (environment->Get("rogomatic_paused", &value) && value == "true")
+        if (environment->IsEqual("rogomatic_paused", "true"))
         {
             rogomatic_flags[12] = '1';
         }
-        if (environment->Get("rogomatic_logging", &value) && value == "true")
+        if (!environment->IsEqual("rogomatic_debug", "false"))
         {
             rogomatic_flags[4] = '1';
         }
