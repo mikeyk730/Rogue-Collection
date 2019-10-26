@@ -191,7 +191,7 @@ int   cursedarmor = 0;		/* True if our armor is cursed */
 int   cursedweapon = 0;		/* True if we are wielding cursed weapon */
 int   darkdir = NONE;		/* Direction of monster being arched */
 int   darkturns = 0;		/* Distance to monster being arched */
-int   debugging = D_NORMAL | D_WARNING;	/* Debugging options in effect */
+int   debugging = 0;	/* Debugging options in effect */
 int   didreadmap = 0;		/* Last level we read a map on */
 int   doorlist[40];		/* List of doors on this level */
 int   doublehasted = 0; 	/* True if double hasted (Rogue 3.6) */
@@ -272,11 +272,8 @@ int   g_expect_extra_bytes = 0;
 int   g_move_delay = 0;
 int   g_level_delay = 0;
 int   g_last_stuck_level = -1;
-#ifdef ROGOMATIC_PROTOCOL_DEBUGGING
-int   g_protocol_debugging = 1;
-#else
-int   g_protocol_debugging = 0;
-#endif
+int   g_debug = 1;
+int   g_debug_protocol = 0;
 
 /* Functions */
 void (*istat)(int);
@@ -393,6 +390,22 @@ char *env[];
      exit(1);
   }
 
+  char* env_value;
+  if ((env_value = getenv("ROGOMATIC_DEBUG")) != NULL) {
+      g_debug = strcmp(env_value, "false") != 0;
+      if (g_debug)
+          debugging = D_NORMAL | D_WARNING;
+  }
+  if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL) {
+      g_debug_protocol = strcmp(env_value, "true") == 0;
+  }
+  if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL) {
+      g_move_delay = atoi(env_value);
+  }
+  if ((env_value = getenv("ROGOMATIC_LEVEL_DELAY")) != NULL) {
+      g_level_delay = atoi(env_value);
+  }
+
   debuglog_open ("debuglog.player");
 
   /*
@@ -432,14 +445,6 @@ char *env[];
       fprintf (stderr, "Can't open '%s'.\n", pidfilename);
       exit(1);
     }
-  }
-
-  char* env_value;
-  if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL) {
-      g_move_delay = atoi(env_value);
-  }
-  if ((env_value = getenv("ROGOMATIC_LEVEL_DELAY")) != NULL) {
-      g_level_delay = atoi(env_value);
   }
 
   /*
@@ -613,8 +618,8 @@ char *env[];
 
       sendnow (";");
       getrogue (ill, 2);
-      if (g_protocol_debugging && ourscore == 0)
-          check_frogue_sync();
+      if (ourscore == 0)
+        check_frogue_sync();
     }
 
     if (startingup) {	/* All monsters identified */

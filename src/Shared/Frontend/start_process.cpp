@@ -68,6 +68,40 @@ namespace
 
         std::vector<char*> args_;
     };
+
+    void GetFileFromRogue(int* read_fd, int* write_fd)
+    {
+        FILE* frogue_write = fopen("ipc.txt", "wb");
+        if (!frogue_write) {
+            perror("Error opening file for write");
+            exit(1);
+        }
+
+        *write_fd = _fileno(frogue_write);
+
+        FILE* frogue_read = fopen("ipc.txt", "rb");
+        if (!frogue_read) {
+            perror("Error opening file for read");
+            exit(1);
+        }
+
+        *read_fd = _fileno(frogue_read);
+    }
+
+    void CreatePipe(int* read_fd, int* write_fd)
+    {
+        int fd[2];
+#ifdef WIN32
+        if (_pipe(fd, 65536, O_BINARY) == -1)
+            exit(1);
+#else
+        if (pipe(fd) == -1)
+            exit(1);
+#endif
+
+        *read_fd = fd[0];
+        *write_fd = fd[1];
+    }
 }
 
 int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
@@ -79,46 +113,24 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
     {
         ArgBuilder wrapper(argc, argv);
 
-        int trogue_pipe[2];
-#ifdef WIN32
-        if (_pipe(trogue_pipe, 256, O_BINARY) == -1)
-            exit(1);
-#else
-        if (pipe(trogue_pipe) == -1)
-            exit(1);
-#endif
+        int trogue_read, trogue_write;
+        CreatePipe(&trogue_read, &trogue_write);
 
-        wrapper.AddArg("--trogue-fd", std::to_string(trogue_pipe[0]));
-        std::string trogue_write_fd = std::to_string(trogue_pipe[1]);
+        wrapper.AddArg("--trogue-fd", std::to_string(trogue_read));
+        std::string trogue_write_fd = std::to_string(trogue_write);
 
-#ifdef ROGOMATIC_PROTOCOL_DEBUGGING
-        FILE* frogue_write = fopen("ipc.txt", "wb");
-        if (!frogue_write) {
-            perror("Error opening file for write");
-            exit(1);
+        int frogue_read, frogue_write;
+        if (env.IsEqual("rogomatic_debug_protocol", "true"))
+        {
+            GetFileFromRogue(&frogue_read, &frogue_write);
+        }
+        else
+        {
+            CreatePipe(&frogue_read, &frogue_write);
         }
 
-        FILE* frogue_read = fopen("ipc.txt", "rb");
-        if (!frogue_read) {
-            perror("Error opening file for read");
-            exit(1);
-        }
-
-        wrapper.AddArg("--frogue-fd", std::to_string(_fileno(frogue_write)));
-        std::string frogue_read_fd = std::to_string(_fileno(frogue_read));
-#else
-        int frogue_pipe[2];
-#ifdef WIN32
-        if (_pipe(frogue_pipe, 65536, O_BINARY) == -1)
-            exit(1);
-#else
-        if (pipe(frogue_pipe) == -1)
-            exit(1);
-#endif
-
-        wrapper.AddArg("--frogue-fd", std::to_string(frogue_pipe[1]));
-        std::string frogue_read_fd = std::to_string(frogue_pipe[0]);
-#endif
+        std::string frogue_read_fd = std::to_string(frogue_read);
+        wrapper.AddArg("--frogue-fd", std::to_string(frogue_write));
 
         std::string command(argv[0]);
         env.Get("rogomatic_command", &command);
@@ -188,15 +200,11 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
 
 #endif
 
-        _close(trogue_pipe[1]);
-        _close(trogue_pipe[0]);
-#ifdef ROGOMATIC_PROTOCOL_DEBUGGING
-        fclose(frogue_write);
-        fclose(frogue_read);
-#else
-        _close(frogue_pipe[1]);
-        _close(frogue_pipe[0]);
-#endif
+        _close(trogue_read);
+        _close(trogue_write);
+
+        _close(frogue_read);
+        _close(frogue_write);
 
         return status;
     }

@@ -126,12 +126,8 @@ static FILE *froguelog = NULL;
 
 void open_frogue_debuglog (const char *file)
 {
-  froguelog = fopen (file,"w");
-}
-
-void open_frogue_fd_debuglog (int frogue_fd_dl)
-{
-  froguelog = fdopen (frogue_fd_dl,"w");
+  if (g_debug)
+    froguelog = fopen (file,"w");
 }
 
 #define PUTDEBUGCHAR(c) {if (froguelog != NULL) {fputc(c,froguelog); fflush (froguelog);}}
@@ -159,7 +155,7 @@ void open_frogue_fd (int frogue_fd)
 #ifdef ROGUE_COLLECTION
 char getroguechar()
 {
-    if (!g_protocol_debugging) {
+    if (!g_debug_protocol) {
         return fgetc(frogue);
     }
 
@@ -179,6 +175,11 @@ char getroguechar()
 
 void check_frogue_sync()
 {
+    if (!g_debug_protocol)
+    {
+        return;
+    }
+
     if (g_expect_extra_bytes)
     {
         g_expect_extra_bytes = 0;

@@ -22,7 +22,8 @@
 
 #include <stdarg.h>
 #include <stdio.h>
-# include "rogomatic.h"
+#include "types.h"
+#include "globals.h"
 
 #define MAXLINE 4096
 
@@ -47,18 +48,19 @@ err_doit(int errnoflag, int error, const char *fmt, va_list ap)
 
 void debuglog_open (const char *log)
 {
-  debug = fopen (log, "w");
+  if (g_debug)
+    debug = fopen (log, "w");
 }
 
 void debuglog_close (void)
 {
-  fclose (debug);
+  if (debug != NULL)
+    fclose (debug);
 }
 
 void debuglog (const char *fmt, ...)
 {
   va_list  ap;
-  char buf[MAXLINE];
 
   va_start (ap, fmt);
   err_doit (0, 0, fmt, ap);

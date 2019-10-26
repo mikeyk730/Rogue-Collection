@@ -1,3 +1,4 @@
+#pragma once
 /*
  * Rog-O-Matic
  * Automatically exploring the dungeons of doom.
@@ -164,10 +165,11 @@ extern int wplushit;		/* Weapon hit bonus */
 extern int zone;		/* Current zone (0 to 8) */
 extern int zonemap[9][9];	/* Connectivity map */
 extern int g_seed;
-extern int g_expect_extra_bytes;
-extern int g_protocol_debugging;
 extern int g_move_delay;
 extern int g_level_delay;
+extern int g_debug;
+extern int g_debug_protocol;
+extern int g_expect_extra_bytes;
 extern int g_last_stuck_level;
 
 /* Status line variables */

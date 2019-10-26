@@ -150,6 +150,12 @@ bool Environment::Get(const std::string & key, std::string* value) const
     return false;
 }
 
+bool Environment::IsEqual(const std::string & key, const std::string & target_value) const
+{
+    std::string actual_value;
+    return (Get(key, &actual_value) && actual_value == target_value);
+}
+
 void Environment::Set(const std::string& key, const std::string& value)
 {
     if (value.empty())
@@ -202,7 +208,7 @@ bool Environment::WriteToOs(bool for_unix)
     {
         SetEnvVariable(("GENES=" + value).c_str());
     }
-    if (Get("ltm", &value) && value == "false")
+    if (IsEqual("ltm", "false"))
     {
         SetEnvVariable("NOLTM=true");
     }
@@ -213,6 +219,14 @@ bool Environment::WriteToOs(bool for_unix)
     if (Get("rogomatic_level_delay", &value))
     {
         SetEnvVariable(("ROGOMATIC_LEVEL_DELAY=" + value).c_str());
+    }
+    if (IsEqual("rogomatic_debug", "false"))
+    {
+        SetEnvVariable(("ROGOMATIC_DEBUG=false" + value).c_str());
+    }
+    if (IsEqual("rogomatic_debug_protocol", "true"))
+    {
+        SetEnvVariable("ROGOMATIC_DEBUG_PROTOCOL=true");
     }
 
     std::string seed;

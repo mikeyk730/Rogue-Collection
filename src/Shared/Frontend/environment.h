@@ -11,6 +11,7 @@ struct Environment
     Environment(const Args& args);
 
     bool Get(const std::string& key, std::string* value) const;
+    bool IsEqual(const std::string& key, const std::string& value) const;
     void Set(const std::string& key, const std::string& value);
     void Clear(const std::string& key);
     void LoadFromFile(const std::string& name);

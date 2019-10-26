@@ -1244,18 +1244,21 @@ dosnapshot ()
   }
 
 #ifdef ROGUE_COLLECTION
-  char filename[80];
-  FILE* batch;
+  if (g_debug)
+  {
+      char filename[80];
+      FILE* batch;
 
-  copyltm();
-  sprintf_s(filename, 80, "run-%d.bat", g_seed);
-  if ((batch = wopen(filename, "w")) != NULL) {
-      fprintf(batch,
-          "RogueCollection.exe e --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
-          g_seed, knob[0], knob[1], knob[2], knob[3],
-          knob[4], knob[5], knob[6], knob[7]);
+      copyltm();
+      sprintf_s(filename, 80, "run-%d-lvl%d.bat", g_seed, Level);
+      if ((batch = wopen(filename, "w")) != NULL) {
+          fprintf(batch,
+              "RogueCollection.exe --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
+              g_seed, knob[0], knob[1], knob[2], knob[3],
+              knob[4], knob[5], knob[6], knob[7]);
+      }
+      fclose(batch);
   }
-  fclose(batch);
 #endif
 }
 
