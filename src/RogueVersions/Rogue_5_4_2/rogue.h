@@ -13,7 +13,7 @@
 
 #include "extern.h"
 
-#undef lines 
+#undef lines
 
 #define NOOP(x) (x += 0)
 #define CCHAR(x) ( (x) & A_CHARTEXT )
@@ -494,7 +494,7 @@ typedef struct STONE STONE;
 
 extern int after, again, allscore, door_stop, fight_flush,
 	   firstmove, has_hit, inv_describe, jump, kamikaze,
-	   lower_msg, move_on, msg_esc, pack_used[], hplusfix, showac,
+	   lower_msg, move_on, msg_esc, pack_used[], hplusfix, askme, showac,
 	   passgo, playing, q_comm, running, save_msg, see_floor,
 	   seenstairs, stat_msg, terse, to_death, tombstone,
            amulet, count, dir_ch, food_left, hungry_state, inpack,
@@ -504,10 +504,10 @@ extern int after, again, allscore, door_stop, fight_flush,
 	   numscores, total, between, group, cNWOOD, cNMETAL, cNSTONES,
 	   cNCOLORS;
 
-extern char file_name[], home[], huh[], *Numname, outbuf[], 
+extern char file_name[], home[], huh[], *Numname, outbuf[],
 	    *ws_type[], *s_names[];
 
-extern const char *ws_made[], *inv_t_name[], *p_colors[], *r_stones[], 
+extern const char *ws_made[], *inv_t_name[], *p_colors[], *r_stones[],
                   *release, *tr_name[], *rainbow[], *wood[], *metal[],
 		  encstr[], statlist[], version[];
 
@@ -660,7 +660,7 @@ int	inventory(const THING *list, int type);
 void	invis_on(void);
 int	is_current(const THING *obj);
 int 	is_magic(const THING *obj);
-int     is_symlink(const char *sp); 
+int     is_symlink(const char *sp);
 void	kill_daemon(void (*func)());
 void	killed(THING *tp, int pr);
 const char *killname(int monst, int doart);

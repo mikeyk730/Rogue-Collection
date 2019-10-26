@@ -52,6 +52,8 @@ static const OPTION	optlist[] = {
 		 &passgo,	put_bool,	get_bool	},
     {"hplusfix",	"Fix bug giving monsters +4 hit bonus",
 		 &hplusfix,	put_bool,	get_bool	},
+    {"askme",	"Ask me about unidentified things",
+		 &askme,	put_bool,	get_bool	},
     {"showac",	"Show armor class instead of protection",
 		 &showac,	put_bool,	get_bool	},
     {"tombstone", "Print out tombstone when killed",
@@ -186,7 +188,7 @@ get_bool(void *vp, WINDOW *win)
     op_bad = TRUE;
     getyx(win, oy, ox);
     waddstr(win, *bp ? "True" : "False");
-    while (op_bad)	
+    while (op_bad)
     {
 	wmove(win, oy, ox);
 	wrefresh(win);
@@ -342,7 +344,7 @@ get_inv_t(void *vp, WINDOW *win)
     op_bad = TRUE;
     getyx(win, oy, ox);
     waddstr(win, inv_t_name[*ip]);
-    while (op_bad)	
+    while (op_bad)
     {
 	wmove(win, oy, ox);
 	wrefresh(win);
@@ -379,7 +381,7 @@ get_inv_t(void *vp, WINDOW *win)
     mvwprintw(win, oy, ox, "%s\n", inv_t_name[*ip]);
     return NORM;
 }
-	
+
 
 #ifdef MASTER
 /*

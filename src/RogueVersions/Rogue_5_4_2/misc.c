@@ -82,7 +82,7 @@ look(int wakeup)
 	    if (pch != DOOR && ch != DOOR)
 		if ((pfl & F_PASS) != (*fp & F_PASS))
 		    continue;
-	    if (((*fp & F_PASS) || ch == DOOR) && 
+	    if (((*fp & F_PASS) || ch == DOOR) &&
 		 ((pfl & F_PASS) || pch == DOOR))
 	    {
 		if (hero.x != x && hero.y != y &&
@@ -444,7 +444,7 @@ vowelstr(const char *str)
     }
 }
 
-/* 
+/*
  * is_current:
  *	See if the object is one of the currently used items
  */
@@ -564,7 +564,7 @@ call_it(struct obj_info *info)
 	    info->oi_guess = NULL;
 	}
     }
-    else if (!info->oi_guess)
+    else if (!info->oi_guess && askme)
     {
 	msg(terse ? "call it: " : "what do you want to call it? ");
 	if (get_str(prbuf, stdscr) == NORM)

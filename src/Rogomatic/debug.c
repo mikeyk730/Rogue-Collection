@@ -67,6 +67,7 @@ void dwait (int msgtype, char* f, ...)
                getname(), msgtype, msg);
 
       if (msgtype & (D_FATAL | D_ERROR)) {
+        dosnapshot();
         printsnap (errfil);
         summary (errfil, NEWLINE);
         fprintf (errfil, "\f\n");

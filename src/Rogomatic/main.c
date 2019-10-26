@@ -547,6 +547,10 @@ char *env[];
   else
     sendnow ("%c;", ctrl('r'));
 #else
+  debuglog("--seed %d --genes \"%d %d %d %d %d %d %d %d\"\n",
+      g_seed, knob[0], knob[1], knob[2], knob[3],
+      knob[4], knob[5], knob[6], knob[7]);
+
   /* mdk: refresh key is remapped in Rogue Collection */
   if (version < RV53A)
       sendnow("%c//;", ctrl('e'));

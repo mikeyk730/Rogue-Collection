@@ -99,7 +99,7 @@ rs_write_int(FILE *savef, int c)
         bytes[0] = buf[3];
         buf = bytes;
     }
-    
+
     rs_write(savef, buf, 4);
 }
 
@@ -109,7 +109,7 @@ rs_read_int(FILE *savef, int *i)
     char bytes[4];
     int input = 0;
     char *buf = (char *)&input;
-    
+
     rs_read(savef, &input, 4);
 
     if (encerror())
@@ -123,7 +123,7 @@ rs_read_int(FILE *savef, int *i)
         bytes[0] = buf[3];
         buf = bytes;
     }
-    
+
     *i = *((int *) buf);
 }
 
@@ -141,7 +141,7 @@ rs_write_uint(FILE *savef, unsigned int c)
         bytes[0] = buf[3];
         buf = bytes;
     }
-    
+
     rs_write(savef, buf, 4);
 }
 
@@ -151,7 +151,7 @@ rs_read_uint(FILE *savef, unsigned int *i)
     char bytes[4];
     int input = 0;
     char *buf = (char *)&input;
-    
+
     rs_read(savef, &input, 4);
 
     if (encerror())
@@ -165,7 +165,7 @@ rs_read_uint(FILE *savef, unsigned int *i)
         bytes[0] = buf[3];
         buf = bytes;
     }
-    
+
     *i = *((unsigned int *) buf);
 }
 
@@ -179,10 +179,10 @@ rs_write_chars(FILE *savef, const char *c, int cnt)
 void
 rs_read_chars(FILE *savef, char *i, int cnt)
 {
-    int value = 0;  
+    int value = 0;
 
     rs_read_int(savef, &value);
-    
+
     if (!encerror() && (value != cnt))
 	encseterr(EILSEQ);
 
@@ -204,7 +204,7 @@ void
 rs_read_ints(FILE *savef, int *i, int cnt)
 {
     int n, value;
-    
+
     rs_read_int(savef,&value);
 
     if (!encerror() && (value != cnt))
@@ -271,10 +271,10 @@ rs_read_new_string(FILE *savef, char **s)
     if (len == 0)
         buf = NULL;
     else
-    { 
+    {
         buf = malloc(len);
 
-        if (buf == NULL)            
+        if (buf == NULL)
             encseterr(ENOMEM);
     }
 
@@ -328,7 +328,7 @@ rs_read_coord(FILE *savef, coord *c)
     rs_read_int(savef,&in.x);
     rs_read_int(savef,&in.y);
 
-    if (!encerror()) 
+    if (!encerror())
     {
         c->x = in.x;
         c->y = in.y;
@@ -356,7 +356,7 @@ void
 rs_read_window(FILE *savef, WINDOW *win)
 {
     int row,col,maxlines,maxcols,value,width,height;
-    
+
     width  = getmaxx(win);
     height = getmaxy(win);
 
@@ -388,7 +388,7 @@ get_list_item(THING *l, int i)
     for(cnt = 0; l != NULL; cnt++, l = l->l_next)
         if (cnt == i)
             return(l);
-    
+
     return(NULL);
 }
 
@@ -400,7 +400,7 @@ find_list_ptr(THING *l, void *ptr)
     for(cnt = 0; l != NULL; cnt++, l = l->l_next)
         if (l == ptr)
             return(cnt);
-    
+
     return(-1);
 }
 
@@ -408,10 +408,10 @@ int
 list_size(THING *l)
 {
     int cnt;
-    
+
     for(cnt = 0; l != NULL; cnt++, l = l->l_next)
         ;
-    
+
     return(cnt);
 }
 
@@ -546,14 +546,14 @@ rs_write_sticks(FILE *savef)
         }
     }
 }
-        
+
 void
 rs_read_sticks(FILE *savef)
 {
     int i = 0, list = 0;
 
     for(i = 0; i < MAXSTICKS; i++)
-    { 
+    {
         rs_read_int(savef,&list);
 
         if (list == 0)
@@ -561,7 +561,7 @@ rs_read_sticks(FILE *savef)
             rs_read_string_index(savef, wood, cNWOOD, &ws_made[i]);
             ws_type[i] = "staff";
         }
-        else 
+        else
         {
             rs_read_string_index(savef, metal, cNMETAL, &ws_made[i]);
             ws_type[i] = "wand";
@@ -574,10 +574,10 @@ rs_write_daemons(FILE *savef, struct delayed_action *dlist, int cnt)
 {
     int i = 0;
     int func = 0;
-        
+
     rs_write_marker(savef, RSID_DAEMONS);
     rs_write_int(savef, cnt);
-        
+
     for(i = 0; i < cnt; i++)
     {
         if (dlist[i].d_func == rollwand)
@@ -608,7 +608,7 @@ rs_write_daemons(FILE *savef, struct delayed_action *dlist, int cnt)
         rs_write_int(savef, dlist[i].d_arg);
         rs_write_int(savef, dlist[i].d_time);
     }
-}       
+}
 
 void
 rs_read_daemons(FILE *savef, struct delayed_action *dlist, int cnt)
@@ -616,7 +616,7 @@ rs_read_daemons(FILE *savef, struct delayed_action *dlist, int cnt)
     int i = 0;
     int func = 0;
     int value = 0;
-    
+
     rs_read_marker(savef, RSID_DAEMONS);
     rs_read_int(savef, &value);
 
@@ -636,7 +636,7 @@ rs_read_daemons(FILE *savef, struct delayed_action *dlist, int cnt)
 
 	if (encerror())
 	    return;
-                    
+
         switch(func)
         {
             case 1: dlist[i].d_func = rollwand;
@@ -668,13 +668,13 @@ rs_read_daemons(FILE *savef, struct delayed_action *dlist, int cnt)
         dlist[i].d_arg = 0;
         dlist[i].d_time = 0;
     }
-}       
-        
+}
+
 void
 rs_write_obj_info(FILE *savef, struct obj_info *i, int cnt)
 {
     int n;
-    
+
     rs_write_marker(savef, RSID_MAGICITEMS);
     rs_write_int(savef, cnt);
 
@@ -766,7 +766,7 @@ rs_write_rooms(FILE *savef, struct room r[], int cnt)
     int n = 0;
 
     rs_write_int(savef, cnt);
-    
+
     for(n = 0; n < cnt; n++)
         rs_write_room(savef, &r[n]);
 }
@@ -789,7 +789,7 @@ void
 rs_write_room_reference(FILE *savef, struct room *rp)
 {
     int i, room = -1;
-    
+
     for (i = 0; i < MAXROOMS; i++)
         if (&rooms[i] == rp)
             room = i;
@@ -801,7 +801,7 @@ void
 rs_read_room_reference(FILE *savef, struct room **rp)
 {
     int i;
-    
+
     rs_read_int(savef, &i);
 
     if (!encerror())
@@ -812,7 +812,7 @@ void
 rs_write_monsters(FILE *savef, struct monster *m, int cnt)
 {
     int n;
-    
+
     rs_write_marker(savef, RSID_MONSTERS);
     rs_write_int(savef, cnt);
 
@@ -840,8 +840,8 @@ void
 rs_write_object(FILE *savef, THING *o)
 {
     rs_write_marker(savef, RSID_OBJECT);
-    rs_write_int(savef, o->_o._o_type); 
-    rs_write_coord(savef, o->_o._o_pos); 
+    rs_write_int(savef, o->_o._o_type);
+    rs_write_coord(savef, o->_o._o_pos);
     rs_write_int(savef, o->_o._o_launch);
     rs_write_int(savef, o->_o._o_packch);
     rs_write_chars(savef, o->_o._o_damage, sizeof(o->_o._o_damage));
@@ -898,7 +898,7 @@ rs_read_object_list(FILE *savef, THING **list)
     if (encerror())
 	return;
 
-    for (i = 0; i < cnt; i++) 
+    for (i = 0; i < cnt; i++)
     {
         l = new_item();
 
@@ -914,10 +914,10 @@ rs_read_object_list(FILE *savef, THING **list)
 
         previous = l;
     }
-            
+
     if (l != NULL)
         l->l_next = NULL;
-    
+
     *list = head;
 }
 
@@ -925,7 +925,7 @@ void
 rs_write_object_reference(FILE *savef, THING *list, THING *item)
 {
     int i;
-    
+
     i = find_list_ptr(list, item);
 
     rs_write_int(savef, i);
@@ -935,7 +935,7 @@ void
 rs_read_object_reference(FILE *savef, THING *list, THING **item)
 {
     int i;
-    
+
     rs_read_int(savef, &i);
 
     if (!encerror())
@@ -948,11 +948,11 @@ int
 find_room_coord(const struct room *rmlist,const coord *c, int n)
 {
     int i = 0;
-    
+
     for(i = 0; i < n; i++)
         if(&rmlist[i].r_gold == c)
             return(i);
-    
+
     return(-1);
 }
 
@@ -1000,7 +1000,7 @@ void
 rs_write_thing(FILE *savef, THING *t)
 {
     int i = -1;
-    
+
     rs_write_marker(savef, RSID_THING);
 
     if (t == NULL)
@@ -1008,7 +1008,7 @@ rs_write_thing(FILE *savef, THING *t)
         rs_write_int(savef, 0);
         return;
     }
-    
+
     rs_write_int(savef, 1);
     rs_write_coord(savef, t->_t._t_pos);
     rs_write_int(savef, t->_t._t_turn);
@@ -1016,7 +1016,7 @@ rs_write_thing(FILE *savef, THING *t)
     rs_write_int(savef, t->_t._t_disguise);
     rs_write_int(savef, t->_t._t_oldch);
 
-    /* 
+    /*
         t_dest can be:
         0,0: NULL
         0,1: location of hero
@@ -1024,7 +1024,7 @@ rs_write_thing(FILE *savef, THING *t)
         2,i: location of an object
         3,i: location of gold in a room
 
-        We need to remember what we are chasing rather than 
+        We need to remember what we are chasing rather than
         the current location of what we are chasing.
     */
 
@@ -1036,7 +1036,7 @@ rs_write_thing(FILE *savef, THING *t)
     else if (t->t_dest != NULL)
     {
         i = find_thing_coord(mlist, t->t_dest);
-            
+
         if (i >=0 )
         {
             rs_write_int(savef,1);
@@ -1045,7 +1045,7 @@ rs_write_thing(FILE *savef, THING *t)
         else
         {
             i = find_object_coord(lvl_obj, t->t_dest);
-            
+
             if (i >= 0)
             {
                 rs_write_int(savef,2);
@@ -1054,13 +1054,13 @@ rs_write_thing(FILE *savef, THING *t)
             else
             {
                 i = find_room_coord(rooms, t->t_dest, MAXROOMS);
-        
-                if (i >= 0) 
+
+                if (i >= 0)
                 {
                     rs_write_int(savef,3);
                     rs_write_int(savef,i);
                 }
-                else 
+                else
                 {
                     rs_write_int(savef, 0);
                     rs_write_int(savef,1); /* chase the hero anyway */
@@ -1073,7 +1073,7 @@ rs_write_thing(FILE *savef, THING *t)
         rs_write_int(savef,0);
         rs_write_int(savef,0);
     }
-    
+
     rs_write_int(savef, t->_t._t_flags);
     rs_write_stats(savef, &t->_t._t_stats);
     rs_write_room_reference(savef, t->_t._t_room);
@@ -1100,8 +1100,8 @@ rs_read_thing(FILE *savef, THING *t)
     rs_read_int(savef,&t->_t._t_type);
     rs_read_int(savef,&t->_t._t_disguise);
     rs_read_int(savef,&t->_t._t_oldch);
-            
-    /* 
+
+    /*
         t_dest can be (listid,index):
         0,0: NULL
         0,1: location of hero
@@ -1109,10 +1109,10 @@ rs_read_thing(FILE *savef, THING *t)
         2,i: location of an object
         3,i: location of gold in a room
 
-        We need to remember what we are chasing rather than 
+        We need to remember what we are chasing rather than
         the current location of what we are chasing.
     */
-            
+
     rs_read_int(savef, &listid);
     rs_read_int(savef, &index);
     t->_t._t_reserved = -1;
@@ -1150,7 +1150,7 @@ rs_read_thing(FILE *savef, THING *t)
     }
     else
         t->_t._t_dest = NULL;
-            
+
     rs_read_int(savef,&t->_t._t_flags);
     rs_read_stats(savef,&t->_t._t_stats);
     rs_read_room_reference(savef, &t->_t._t_room);
@@ -1179,7 +1179,7 @@ void
 rs_write_thing_list(FILE *savef, THING *l)
 {
     int cnt = 0;
-    
+
     rs_write_marker(savef, RSID_MONSTERLIST);
 
     cnt = list_size(l);
@@ -1207,12 +1207,12 @@ rs_read_thing_list(FILE *savef, THING **list)
     if (encerror())
 	return;
 
-    for (i = 0; i < cnt; i++) 
+    for (i = 0; i < cnt; i++)
     {
         l = new_item();
 
         l->l_prev = previous;
-            
+
         if (previous != NULL)
             previous->l_next = l;
 
@@ -1223,7 +1223,7 @@ rs_read_thing_list(FILE *savef, THING **list)
 
         previous = l;
     }
-        
+
     if (l != NULL)
         l->l_next = NULL;
 
@@ -1258,7 +1258,7 @@ void
 rs_read_thing_reference(FILE *savef, THING *list, THING **item)
 {
     int i;
-    
+
     rs_read_int(savef, &i);
 
     if (encerror())
@@ -1293,8 +1293,8 @@ void
 rs_write_places(FILE *savef, PLACE *p, int cnt)
 {
     int i = 0;
-    
-    for(i = 0; i < cnt; i++) 
+
+    for(i = 0; i < cnt; i++)
     {
         rs_write_int(savef, p[i].p_ch);
         rs_write_int(savef, p[i].p_flags);
@@ -1306,8 +1306,8 @@ void
 rs_read_places(FILE *savef, PLACE *p, int cnt)
 {
     int i = 0;
-    
-    for(i = 0; i < cnt; i++) 
+
+    for(i = 0; i < cnt; i++)
     {
         rs_read_int(savef,&p[i].p_ch);
         rs_read_int(savef,&p[i].p_flags);
@@ -1327,6 +1327,7 @@ rs_save_file(FILE *savef)
     rs_write_int(savef, jump);
     rs_write_int(savef, passgo);
     rs_write_int(savef, hplusfix);
+    rs_write_int(savef, askme);
     rs_write_int(savef, showac);
     rs_write_int(savef, see_floor);
     rs_write_int(savef, terse);
@@ -1356,25 +1357,25 @@ rs_save_file(FILE *savef)
     rs_write_int(savef, vf_hit);
     rs_write_uint(savef, seed);
     rs_write_coord(savef, stairs);
-    rs_write_thing(savef, &player);                     
+    rs_write_thing(savef, &player);
     rs_write_object_reference(savef, player.t_pack, cur_armor);
     rs_write_object_reference(savef, player.t_pack, cur_ring[0]);
-    rs_write_object_reference(savef, player.t_pack, cur_ring[1]); 
-    rs_write_object_reference(savef, player.t_pack, cur_weapon); 
-    rs_write_object_list(savef, lvl_obj);               
-    rs_write_thing_list(savef, mlist);                
+    rs_write_object_reference(savef, player.t_pack, cur_ring[1]);
+    rs_write_object_reference(savef, player.t_pack, cur_weapon);
+    rs_write_object_list(savef, lvl_obj);
+    rs_write_thing_list(savef, mlist);
     rs_write_places(savef,places,MAXLINES*MAXCOLS);
-    rs_write_stats(savef,&max_stats); 
-    rs_write_rooms(savef, rooms, MAXROOMS);             
+    rs_write_stats(savef,&max_stats);
+    rs_write_rooms(savef, rooms, MAXROOMS);
     rs_write_rooms(savef, passages, MAXPASS);
-    rs_write_monsters(savef,monsters,26);               
-    rs_write_obj_info(savef, things,  NUMTHINGS);  
-    rs_write_obj_info(savef, arm_info,  MAXARMORS);  
-    rs_write_obj_info(savef, pot_info,  MAXPOTIONS);  
-    rs_write_obj_info(savef, ring_info,  MAXRINGS);    
-    rs_write_obj_info(savef, scr_info,  MAXSCROLLS);  
-    rs_write_obj_info(savef, weap_info,  MAXWEAPONS+1);  
-    rs_write_obj_info(savef, ws_info, MAXSTICKS);      
+    rs_write_monsters(savef,monsters,26);
+    rs_write_obj_info(savef, things,  NUMTHINGS);
+    rs_write_obj_info(savef, arm_info,  MAXARMORS);
+    rs_write_obj_info(savef, pot_info,  MAXPOTIONS);
+    rs_write_obj_info(savef, ring_info,  MAXRINGS);
+    rs_write_obj_info(savef, scr_info,  MAXSCROLLS);
+    rs_write_obj_info(savef, weap_info,  MAXWEAPONS+1);
+    rs_write_obj_info(savef, ws_info, MAXSTICKS);
     rs_write_daemons(savef, &d_list[0], 20);
     rs_write_int(savef,between);
     rs_write_int(savef, group);
@@ -1395,6 +1396,7 @@ rs_restore_file(FILE *savef)
     rs_read_int(savef, &jump);
     rs_read_int(savef, &passgo);
     rs_read_int(savef, &hplusfix);
+    rs_read_int(savef, &askme);
     rs_read_int(savef, &showac);
     rs_read_int(savef, &see_floor);
     rs_read_int(savef, &terse);
@@ -1424,27 +1426,27 @@ rs_restore_file(FILE *savef)
     rs_read_int(savef, &vf_hit);
     rs_read_uint(savef, &seed);
     rs_read_coord(savef, &stairs);
-    rs_read_thing(savef, &player); 
+    rs_read_thing(savef, &player);
     rs_read_object_reference(savef, player.t_pack, &cur_armor);
     rs_read_object_reference(savef, player.t_pack, &cur_ring[0]);
     rs_read_object_reference(savef, player.t_pack, &cur_ring[1]);
     rs_read_object_reference(savef, player.t_pack, &cur_weapon);
-    rs_read_object_list(savef, &lvl_obj);                 
-    rs_read_thing_list(savef, &mlist);                  
+    rs_read_object_list(savef, &lvl_obj);
+    rs_read_thing_list(savef, &mlist);
     rs_fix_thing(&player);
     rs_fix_thing_list(mlist);
     rs_read_places(savef,places,MAXLINES*MAXCOLS);
     rs_read_stats(savef, &max_stats);
     rs_read_rooms(savef, rooms, MAXROOMS);
     rs_read_rooms(savef, passages, MAXPASS);
-    rs_read_monsters(savef,monsters,26);                  
-    rs_read_obj_info(savef, things,  NUMTHINGS);  
-    rs_read_obj_info(savef, arm_info,   MAXARMORS);         
-    rs_read_obj_info(savef, pot_info,  MAXPOTIONS);       
-    rs_read_obj_info(savef, ring_info,  MAXRINGS);         
-    rs_read_obj_info(savef, scr_info,  MAXSCROLLS);       
-    rs_read_obj_info(savef, weap_info, MAXWEAPONS+1);       
-    rs_read_obj_info(savef, ws_info, MAXSTICKS);       
+    rs_read_monsters(savef,monsters,26);
+    rs_read_obj_info(savef, things,  NUMTHINGS);
+    rs_read_obj_info(savef, arm_info,   MAXARMORS);
+    rs_read_obj_info(savef, pot_info,  MAXPOTIONS);
+    rs_read_obj_info(savef, ring_info,  MAXRINGS);
+    rs_read_obj_info(savef, scr_info,  MAXSCROLLS);
+    rs_read_obj_info(savef, weap_info, MAXWEAPONS+1);
+    rs_read_obj_info(savef, ws_info, MAXSTICKS);
     rs_read_daemons(savef, d_list, 20);
     rs_read_int(savef,&between);
     rs_read_int(savef,&group);
