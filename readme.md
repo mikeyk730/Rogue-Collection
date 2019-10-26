@@ -25,7 +25,14 @@ Rogue went through big changes throughout the 1980s.  Originally developed for U
 
 Rog-O-Matic
 -----------
-Watch an AI from the early 1980s put your skills to shame.  Rog-O-Matic speeds through the dungeons of Unix Rogue v5.4.2, v5.2.1, and v3.6.3.  Using a genetic algorithm, Rog-O-Matic learns from every game it plays.  Will you witness it become a total winner?
+Watch an AI from the early 1980s put your skills to shame.  Rog-O-Matic speeds through the dungeons of Unix Rogue.  Using a genetic algorithm, Rog-O-Matic learns from every game it plays.  Will you witness it become a total winner?
+
+Rog-O-Matic is well tested against:
++ Unix Rogue v5.2.1
+
+Rog-O-Matic can play the following verions, but is untested and may crash:
++ Unix Rogue v5.4.2
++ Unix Rogue v3.6.3
 
 <img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/rogomatic.gif" height=250>
 
