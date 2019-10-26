@@ -202,7 +202,7 @@ void PdCursesOutput::winit(bool narrow_screen)
 {
     ::initscr();
     ::keypad(::stdscr, TRUE);
-    ::noecho();
+    ::echo();
     ::start_color();
 
     ::init_color(0x00, 0, 0, 0); //black
