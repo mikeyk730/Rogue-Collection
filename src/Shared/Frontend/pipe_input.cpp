@@ -33,6 +33,10 @@ void PipeInput::RunPipeServer()
 
     while ((bytes_read = _read(pipe_fd_, buffer, 1)))
     {
+        if (bytes_read == 1 && buffer[0] == EOF) {
+            break;
+        }
+
         QueueInput(std::string(buffer, buffer + bytes_read));
     }
 }

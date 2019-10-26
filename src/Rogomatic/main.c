@@ -871,8 +871,10 @@ char *env[];
   debuglog_close ();
 
   flushinp();
-  //wait_for('\n');
   sendnow("\n");
+#ifdef ROGUE_COLLECTION
+  sendcnow(EOF);
+#endif
   exit (0);
 }
 
