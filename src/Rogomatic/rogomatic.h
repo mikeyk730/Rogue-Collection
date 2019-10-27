@@ -38,3 +38,4 @@ void say(char* f, ...);
 void command(int tmode, char* f, ...);
 void sendnow(char* f, ...);
 void say_impl(char* f, va_list args);
+void add_to_screen(int row, int col, char ch);

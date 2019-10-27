@@ -129,10 +129,6 @@ bug list:
 # include "globals.h"
 # include "../RogueVersions/pc_gfx_macros.h"
 
-
-/* FIXME: get rid of this prototype in the correct way */
-FILE *rogo_openlog (char *genelog);
-
 /* global data - see globals.h for current definitions */
 
 /* Files */

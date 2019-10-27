@@ -433,7 +433,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
         else if (row) {
           at (row, col);
 
-          if (!emacs && !terse) addch (ch);
+          if (!emacs && !terse) add_to_screen (row, col, ch);
 
           if (row == 23) botprinted = 1;
           else           updatepos (ch, row, col);
@@ -1107,7 +1107,7 @@ redrawscreen ()
   clear ();
 
   for (i = 1; i < 24; i++) for (j = 0; j < 80; j++)
-      if ((ch = screen[i][j]) > ' ') mvaddch(i, j, ch);
+      if ((ch = screen[i][j]) > ' ') add_to_screen(i, j, ch);
 
   at (row, col);
 
@@ -1336,4 +1336,16 @@ statusline ()
            plural(turns), gplushit, gplusdam, wplushit, wplusdam);
 
   return (s);
+}
+
+#include "../RogueVersions/pc_gfx_macros.h"
+
+void add_to_screen(int row, int col, char ch)
+{
+    if (row > 0 && row < 23) {
+        mvaddrawch(row, col, PC_GFX_TRANSLATE(ch));
+        return;
+    }
+
+    mvaddch(row, col, ch);
 }

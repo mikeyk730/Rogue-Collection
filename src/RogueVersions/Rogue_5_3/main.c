@@ -17,11 +17,7 @@
 #include <signal.h>
 //#include <pwd.h>
 #include "rogue.h"
-#ifdef _WIN32
-#include "..\pc_gfx_macros.h"
-#else
 #include "../pc_gfx_macros.h"
-#endif
 
 /*
  * main:
