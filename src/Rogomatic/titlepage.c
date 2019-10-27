@@ -90,7 +90,7 @@ static char *titlepage[]= {
  * greater than 2400).
  */
 
-animate (movie)
+void animate (movie)
 char *movie[];
 {
   int baud;
@@ -144,7 +144,7 @@ char *movie[];
  * 'nohalf' is true if the user does not want to see a halftime show.
  */
 
-halftimeshow (level)
+void halftimeshow (level)
 int level;
 {
   static int nextshow = 1;

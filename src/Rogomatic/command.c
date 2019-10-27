@@ -31,6 +31,7 @@
 # include <curses.h>
 # include <ctype.h>
 # include <string.h>
+# include <stdlib.h>
 # include "types.h"
 # include "globals.h"
 
@@ -39,14 +40,14 @@
 static int cmdonscreen = 0;
 
 /* Move one square in direction 'd' */
-move1 (d)
+void move1 (d)
 int   d;
 {
   command (T_MOVING, "%c", keydir[d]);
 }
 
 /* Move in direction 'd' until we find something */
-fmove (d)
+void fmove (d)
 int   d;
 {
   if (version < RV53A)	command (T_MOVING, "f%c", keydir[d]);
@@ -54,14 +55,14 @@ int   d;
 }
 
 /* Move 'count' squares in direction 'd', with time use mode 'mode' */
-rmove (count, d, mode)
+void rmove (count, d, mode)
 int   count, d, mode;
 {
   command (mode, "%d%c", count, keydir[d]);
 }
 
 /* Move one square in direction 'd' without picking anything up */
-mmove (d, mode)
+void mmove (d, mode)
 int   d, mode;
 {
   command (mode, "m%c", keydir[d]);
@@ -144,7 +145,7 @@ void command (int tmode, char* f, ...)
  * commandcount: Return the number of a times a command is to happen.
  */
 
-commandcount (cmd)
+int commandcount (cmd)
 char *cmd;
 {
   register int times = atoi (cmd);
@@ -203,7 +204,7 @@ char *cmd;
  * adjustpack: adjust pack in accordance with command.
  */
 
-adjustpack (cmd)
+void adjustpack (cmd)
 char *cmd;
 {
   char functionchar(), commandarg();
@@ -339,8 +340,7 @@ char *cmd;
 /*
  * bumpsearchcount: Note that we just searched this square.
  */
-
-bumpsearchcount ()
+void bumpsearchcount ()
 {
   register int dr, dc;
 
@@ -367,7 +367,7 @@ replaycommand ()
  * clearcommand:	Remove the command we showed.
  */
 
-showcommand (cmd)
+void showcommand (cmd)
 char *cmd;
 {
   register char *s;
@@ -386,7 +386,7 @@ char *cmd;
   cmdonscreen = 1;
 }
 
-clearcommand ()
+void clearcommand ()
 {
   at (23,72); clrtoeol (); at (row, col);
   cmdonscreen = 0;
@@ -395,7 +395,7 @@ clearcommand ()
  * usemsg: About to use an item, tell the user.
  */
 
-usemsg (str, obj)
+void usemsg (str, obj)
 char *str;
 int obj;
 {

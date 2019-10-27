@@ -21,7 +21,7 @@
  */
 
 # include <stdio.h>
-
+# include <stdlib.h>
 # include "types.h"
 # include "globals.h"
 # include "termtokens.h"
@@ -95,7 +95,7 @@ void rogue_log_write_token (char ch)
         case CL_TOK: fprintf (fecho, "{ff}");                   break;
         case CM_TOK: fprintf (fecho, "{cm(%d,%d)}", number1, number2);  break;
         case CR_TOK: fprintf (fecho, "{cr}");                   break;
-        case ER_TOK: fprintf (fecho, "{ERRESC}", ch);           break;
+        case ER_TOK: fprintf (fecho, "{ERRESC}");               break;
         case LF_TOK: fprintf (fecho, "{lf}");                   break;
         case ND_TOK: fprintf (fecho, "{nd(%d)}", number1);      break;
         case SE_TOK: fprintf (fecho, "{se}");                   break;
@@ -201,7 +201,6 @@ void check_frogue_sync()
         return;
     }
 
-    //while (fgetc(frogue) != EOF);
     dwait(D_WARNING, "Expected EOF: Discovered %d extra bytes from %ld", bytes_remaining, current);
 }
 
@@ -238,7 +237,6 @@ static int matchnum (char ch)
 
 static int fetchnum (char ch)
 {
-  char ch2;
   char num[20];
   int ind = 1;
   int done = 0;
@@ -632,7 +630,7 @@ getroguetoken (void)
  * getoldcommand: retrieve the old command from a logfile we are replaying.
  */
 
-getoldcommand (s)
+void getoldcommand (s)
 register char *s;
 {
   register int charcount = 0;

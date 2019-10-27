@@ -56,14 +56,6 @@ extern char sumline[];		/* Summation line */
 extern char *termination;	/* Latin verb for how we died */
 extern char versionstr[];	/* Version of Rogue we are playing */
 
-/* character and string functions */
-//extern int getlogtoken();
-//extern char *getname(), *itemstr();
-//extern char logchar(), *monname(), *findentry_getfakename(), *findentry_getrealname();
-
-/* double precision floating point functions */
-//double prob(), mean(), stdev();	/* For stats.c */
-
 /* global integers */
 extern int aggravated;		/* True if we aggravated this level */
 extern int agoalr,agoalc;	/* where we killed a monster */

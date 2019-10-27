@@ -28,6 +28,7 @@
  */
 
 # include <curses.h>
+# include <stdlib.h>
 # include <string.h>
 # include "types.h"
 # include "globals.h"
@@ -88,7 +89,7 @@ register int i;
  * dumpinv: print the inventory. calls itemstr.
  */
 
-dumpinv (f)
+void dumpinv (f)
 register FILE *f;
 {
   register int i;
@@ -111,7 +112,7 @@ register FILE *f;
  * removeinv: remove an item from the inventory.
  */
 
-removeinv (pos)
+void removeinv (pos)
 int pos;
 {
   if (--(inven[pos].count) == 0) {
@@ -133,7 +134,7 @@ int pos;
  * things can be dropped all at once.
  */
 
-deleteinv (pos)
+void deleteinv (pos)
 int pos;
 {
 
@@ -154,7 +155,7 @@ int pos;
  * clearpack: zero out slot in pack.  DR UTexas 01/05/84
  */
 
-clearpack (pos)
+void clearpack (pos)
 int pos;
 {
   if (pos >= MAXINV) return;
@@ -180,7 +181,7 @@ int pos;
  * the pack.
  */
 
-rollpackup (pos)
+void rollpackup (pos)
 register int pos;
 {
   register char *savebuf;
@@ -215,7 +216,7 @@ register int pos;
  * objects behind that position.
  */
 
-rollpackdown (pos)
+void rollpackdown (pos)
 register int pos;
 {
   register char *savebuf;
@@ -251,7 +252,7 @@ register int pos;
  * doresetinv.
  */
 
-resetinv()
+void resetinv()
 {
   if (!replaying) {
     command (T_OTHER, "i");
@@ -270,7 +271,7 @@ resetinv()
  * doresetinv: reset the inventory.  DR UTexas 01/05/84
  */
 
-doresetinv ()
+void doresetinv ()
 {
   int i;
   static char space[MAXINV][80];
@@ -295,7 +296,7 @@ doresetinv ()
 
 # define xtr(w,b,e,k) {what=(w);xbeg=mess+(b);xend=mend-(e);xknow|=(k);}
 
-inventory (msgstart, msgend)
+int inventory (msgstart, msgend)
 char *msgstart, *msgend;
 {
   register char *p, *q, *mess = msgstart, *mend = msgend;
@@ -640,7 +641,7 @@ char *msgstart, *msgend;
  * countpack: Count objects, missiles, and food in the pack.
  */
 
-countpack ()
+void countpack ()
 {
   register int i, cnt;
 

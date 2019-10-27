@@ -62,7 +62,7 @@
  * runaway code.
  */
 
-markcycles (print)
+int markcycles (print)
 {
   short mark[1920];
   struct {short where,door,dirs;} st[1000];
@@ -148,9 +148,9 @@ markcycles (print)
  * Added: 3/7/87 by mlm
  */
 
-markchokepts ()
+void markchokepts ()
 {
-  register int *Scr, *ScrEnd, loc;
+  register int *Scr, *ScrEnd;
 
   for (Scr = scrmap[0], ScrEnd = &Scr[1920]; Scr<ScrEnd; Scr++) {
     if (*Scr & DOOR) *Scr |= CHOKE;
@@ -207,7 +207,6 @@ int runaway ()
 int canrun ()
 {
   int result, oldcomp = compression;
-  int runinit(), runvalue(), expruninit(), exprunvalue();
 
   if (on (STAIRS)) return (1);		/* Can run down stairs */
 
@@ -265,7 +264,6 @@ int unpin ()
 int backtodoor (dist)
 int dist;
 {
-  int rundoorinit(), rundoorvalue();
   static int lastcall= -10, stillcount=0, notmoving=0, closest=99;
 
   /*

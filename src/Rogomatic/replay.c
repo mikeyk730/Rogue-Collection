@@ -51,7 +51,7 @@ int numlev = 0;
  * the log file to the level requested by the user.
  */
 
-positionreplay ()
+void positionreplay ()
 {
   int curlev;
   long curpos;
@@ -119,7 +119,7 @@ positionreplay ()
  *             Rog-O-Matic log file.
  */
 
-findlevel (f, lvpos, nmlev, maxnum)
+int findlevel (f, lvpos, nmlev, maxnum)
 FILE *f;
 struct levstruct *lvpos;
 int *nmlev, maxnum;
@@ -145,7 +145,7 @@ int *nmlev, maxnum;
   fillstruct (f, &lvpos[l]);
 
   while (++l <= maxnum && findmatch (f, NEWLEVSTR)) {
-    fseek (f, (long) -strlen (POSITAT), 1);
+    fseek (f, -(long)strlen (POSITAT), 1); /* mdk:bugfix signed fix */
     lvpos[l].pos = ftell (f);
     fillstruct (f, &lvpos[l]);
   }
@@ -160,7 +160,7 @@ int *nmlev, maxnum;
  * fields of a levstruct.
  */
 
-fillstruct (f, lev)
+void fillstruct (f, lev)
 FILE *f;
 struct levstruct *lev;
 {

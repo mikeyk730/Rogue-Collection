@@ -29,8 +29,10 @@
 
 #ifdef _WIN32
 #include <Windows.h>
+#undef MOUSE_MOVED
 #undef OPTIONAL
 #undef NEAR
+#undef FIONREAD
 #define FIONREAD 0
 #endif
 
@@ -159,7 +161,7 @@ printscreen (void)
  * implies that we have synchronized with Rogue.
  */
 
-getrogue (waitstr, onat)
+void getrogue (waitstr, onat)
 char *waitstr;                          /* String to synchronize with */
 int   onat;                             /* 0 ==> Wait for waitstr
                                            1 ==> Cursor on @ sufficient
@@ -512,7 +514,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
  * the status line looks like.
  */
 
-terpbot ()
+void terpbot ()
 {
   char sstr[30], modeline[256];
   int oldlev = Level, oldgold = Gold, oldhp = Hp, Str18 = 0;
@@ -608,7 +610,7 @@ terpbot ()
  * dumpwalls: Dump the current screen map
  */
 
-dumpwalls ()
+void dumpwalls ()
 {
   register int   r, c, S;
   char ch;
@@ -673,7 +675,7 @@ void sendnow (char* f, ...)
  * the logging of characters in echo mode.
  */
 
-sendcnow (c)
+void sendcnow (c)
 char c;
 {
   if (replaying)
@@ -762,7 +764,7 @@ pending ()
  * at: move the cursor. Now just a call to move();
  */
 
-at (r, c)
+void at (r, c)
 int   r, c;
 {
   move (r, c);
@@ -779,7 +781,7 @@ int   r, c;
 # define KILLROW 17
 # define TOMBCOL 19
 
-deadrogue ()
+void deadrogue ()
 {
   int    mh;
   char  *killer, *killend;
@@ -810,7 +812,7 @@ deadrogue ()
  * the Rogue process, then wait for it to die before returning.
  */
 
-quitrogue (reason, gld, terminationtype)
+void quitrogue (reason, gld, terminationtype)
 char *reason;                   /* A reason string for the summary line */
 int gld;                       /* What is the final score */
 int terminationtype;            /* SAVED, FINSISHED, or DIED */
@@ -897,7 +899,7 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
  * MLM 8/27/82
  */
 
-waitfor (mess)
+void waitfor (mess)
 char *mess;
 {
   register char *m = mess;
@@ -962,7 +964,7 @@ void saynow (char* f, ...)
  * Be sure to interpret a snapshot command, if given.
  */
 
-waitforspace ()
+void waitforspace ()
 {
   char ch;
 
@@ -997,7 +999,7 @@ char *nexthelp[] = {
 
 char **helpline = nexthelp;
 
-givehelp ()
+void givehelp ()
 {
   if (*helpline == NULL) helpline = nexthelp;
 
@@ -1010,7 +1012,7 @@ givehelp ()
  *             curses rather than sending a form feed to Rogue. MLM
  */
 
-pauserogue ()
+void pauserogue ()
 {
   at (23, 0);
   addstr ("--press space to continue--");
@@ -1034,7 +1036,7 @@ pauserogue ()
 
 # define VERMSG	"ersion "
 
-getrogver ()
+void getrogver ()
 {
   register char *vstr = versionstr, *m = VERMSG;
   register int cnt = 2000, ch;
@@ -1099,7 +1101,7 @@ charsavail ()
  * redrawscreen: Make the users screen look like the Rogue screen (screen).
  */
 
-redrawscreen ()
+void redrawscreen ()
 {
   register int i, j;
   char ch;
@@ -1119,7 +1121,7 @@ redrawscreen ()
  * roguelog file.
  */
 
-toggleecho ()
+void toggleecho ()
 {
   if (replaying) return;
 
@@ -1150,7 +1152,7 @@ toggleecho ()
  * clearsendqueue: Throw away queued Rogue commands.
  */
 
-clearsendqueue ()
+void clearsendqueue ()
 {
   head = tail;
 }
@@ -1159,7 +1161,7 @@ clearsendqueue ()
  * startreplay: Open the log file to replay.
  */
 
-startreplay (logf, logfname)
+void startreplay (logf, logfname)
 FILE **logf;
 char *logfname;
 {
@@ -1186,7 +1188,7 @@ register int n;
  * printsnap: print a snapshot to file f.
  */
 
-printsnap (f)
+void printsnap (f)
 FILE *f;
 {
   register int i, j, length;
@@ -1232,7 +1234,7 @@ FILE *f;
  * dosnapshot: add a snapshot to the SHAPSHOT file.
  */
 
-dosnapshot ()
+void dosnapshot ()
 {
   if ((snapshot = wopen (SNAPSHOT, "a")) == NULL)
     saynow ("Cannot write file %s.", SNAPSHOT);
@@ -1268,7 +1270,7 @@ dosnapshot ()
  * formfeed not recorded in the log file.   MLM
  */
 
-clearscreen ()
+void clearscreen ()
 {
   register int i, j;
 

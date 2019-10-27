@@ -34,6 +34,8 @@
 # include <curses.h>
 #ifndef _WIN32
 # include <pwd.h>
+#else
+# include <io.h>
 #endif
 # include <stdio.h>
 # include <stdlib.h>
@@ -109,7 +111,7 @@ char *fname, *mode;
  * fexists: return a boolean if the named file exists
  */
 
-fexists (fn)
+int fexists (fn)
 char *fn;
 {
   struct stat pbuf;
@@ -118,10 +120,10 @@ char *fn;
 }
 
 /*
- * filelength: Do a stat and return the length of a file.
+ * getfilelength: Do a stat and return the length of a file.
  */
 
-int filelength (f)
+int getfilelength (f)
 char *f;
 {
   struct stat sbuf;
@@ -138,7 +140,7 @@ char *f;
 
 static void   (*hstat)(int), (*istat)(int), (*qstat)(int), (*pstat)(int);
 
-critical ()
+void critical ()
 {
 // FIXME: when uncommented, get bus errors :(
 //  hstat = signal (SIGHUP, SIG_IGN);
@@ -151,7 +153,7 @@ critical ()
  * uncritical: Enable interrupts
  */
 
-uncritical ()
+void uncritical ()
 {
 // FIXME: when uncommented, get bus errors :(
 //  signal (SIGHUP, hstat);
@@ -164,7 +166,7 @@ uncritical ()
  * reset_int: Set all interrupts to default
  */
 
-reset_int ()
+void reset_int ()
 {
 #ifndef _WIN32
   signal (SIGHUP, SIG_DFL);
@@ -178,7 +180,7 @@ reset_int ()
  * int_exit: Set up a function to call if we get an interrupt
  */
 
-int_exit (exitproc)
+void int_exit (exitproc)
 void (*exitproc)(int);
 {
 #ifndef _WIN32
@@ -199,8 +201,8 @@ void (*exitproc)(int);
 
 # define NOWRITE 0
 
-lock_file (lokfil, maxtime)
-char *lokfil;
+int lock_file (lokfil, maxtime)
+const char *lokfil;
 int maxtime;
 {
 
@@ -240,8 +242,8 @@ start:
  * unlock_file: Unlock a lock file.
  */
 
-unlock_file (lokfil)
-char *lokfil;
+void unlock_file (lokfil)
+const char *lokfil;
 {
   md_unlink (lokfil);
 }
@@ -333,15 +335,11 @@ char *small, *big;
 
 #define EXTRASIZE 5		/* increment to add to env. size */
 
-//char *index (), *malloc (), *realloc ();
-//int   strlen ();
-
 static int  envsize = -1;	/* current size of environment */
-extern char **environ;		/* the global which is your env. */
 
-static int  findenv ();		/* look for a name in the env. */
-static int  newenv ();		/* copy env. from stack to heap */
-static int  moreenv ();		/* incr. size of env. */
+static int  findenv (char *name);		/* look for a name in the env. */
+static int  newenv (void);		/* copy env. from stack to heap */
+static int  moreenv (void);		/* incr. size of env. */
 
 int  rogo_putenv (name, value)
 char *name, *value;

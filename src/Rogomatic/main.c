@@ -107,8 +107,11 @@ bug list:
 
 #ifdef _WIN32
 #include <Windows.h>
+#undef MOUSE_MOVED
 #undef OPTIONAL
 #undef NEAR
+#include <io.h>
+#include <process.h>
 #define pid_t int
 #endif
 
@@ -904,7 +907,7 @@ void onintr (int sig)
   longjmp (commandtop,0);       /* Back to command Process */
 }
 
-initseed()
+void initseed()
 {
   /* set up random number generation */
   if (getenv("SEED") != NULL) {
@@ -925,7 +928,7 @@ initseed()
  * test this game, and set the parameters (or "knobs") accordingly.
  */
 
-startlesson ()
+void startlesson ()
 {
   sprintf (genelog, "%s/GeneLog%d", getRgmDir (), version);
   sprintf (genepool, "%s/GenePool%d", getRgmDir (), version);
@@ -970,7 +973,7 @@ startlesson ()
  * evaluate the performance of this genotype and save in genepool.
  */
 
-endlesson ()
+void endlesson ()
 {
   if (geneid > 0 &&
       (stlmatch (termination, "perditus") ||

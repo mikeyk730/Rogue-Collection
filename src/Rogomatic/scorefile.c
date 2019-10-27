@@ -39,6 +39,12 @@
 # include "globals.h"
 # include "install.h"
 
+void intrupscore(int);
+
+#ifdef _WIN32
+#include <io.h>
+#endif
+
 # define LINESIZE	2048
 # define SCORE(s,p)     (atoi (s+p))
 
@@ -51,7 +57,7 @@ static char lokfil[100];
  * score file and catching interrupts and things.
  */
 
-add_score (new_line, vers, ntrm)
+void add_score (new_line, vers, ntrm)
 char *new_line, *vers;
 int ntrm;
 {
@@ -108,7 +114,7 @@ char *vers;
 {
   char  ch, scrfil[100], delfil[100], newfil[100], allfil[100], cmd[256];
   FILE *scoref, *deltaf;
-  int   oldmask, intrupscore ();
+  int   oldmask;
 
   sprintf (lokfil, "%s %s", LOCKFILE, vers);
   sprintf (scrfil, "%s/rgmscore%s", getRgmDir (), vers);
@@ -144,7 +150,7 @@ char *vers;
                newfil, delfil, allfil, newfil, scrfil);
       system (cmd);
 
-      if (filelength (allfil) != filelength (delfil) + filelength (scrfil)) {
+      if (getfilelength (allfil) != getfilelength (delfil) + getfilelength (scrfil)) {
         fprintf (stderr, "Error, new file is wrong length!\n");
         unlink (newfil); unlink (allfil);
         unlock_file (lokfil);
@@ -203,7 +209,7 @@ char *vers;
  * intrupscore: We have an interrupt, clean up and unlock the score file.
  */
 
-intrupscore ()
+void intrupscore (int i)
 {
   unlock_file (lokfil);
   exit (1);

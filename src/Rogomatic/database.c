@@ -30,7 +30,7 @@
  * Note: pack_index was first used to keep certain errors from happening.
  *       various fixes seem to have worked so it is no longer needed, but
  *       it is nice to have when dumping the table...  with that said,
- *       we do not bother to keep the pack_index reference back to the 
+ *       we do not bother to keep the pack_index reference back to the
  *       inventory accurate later on.  only new items get it set.
  *
  */
@@ -111,7 +111,7 @@ stuff item_type;
   register int i;
 
   for (i = 0; i < datalen; i++)
-    if ((dbase[i].item_type == item_type) && 
+    if ((dbase[i].item_type == item_type) &&
        (streq (dbase[i].fakename, string) ||
         *dbase[i].realname && streq (dbase[i].realname, string)))
       return (dbase[i].fakename);
@@ -132,7 +132,7 @@ stuff item_type;
   register int i;
 
   for (i = 0; i < datalen; i++)
-    if ((dbase[i].item_type == item_type) && 
+    if ((dbase[i].item_type == item_type) &&
        (streq (dbase[i].fakename, string) ||
         *dbase[i].realname && streq (dbase[i].realname, string)))
       return (dbase[i].realname);
@@ -144,7 +144,7 @@ stuff item_type;
  * addobj: Add item to dbase.
  */
 
-addobj (codename, pack_index, item_type)
+void addobj (codename, pack_index, item_type)
 char  *codename;
 int   pack_index;
 stuff item_type;
@@ -164,7 +164,7 @@ stuff item_type;
  *         object with name 'string'.
  */
 
-useobj (string)
+void useobj (string)
 char *string;
 {
   int i = findentry (string);
@@ -180,7 +180,7 @@ char *string;
  * light).
  */
 
-infername (codename, name, item_type)
+void infername (codename, name, item_type)
 char  *codename;
 char  *name;
 stuff item_type;
@@ -221,6 +221,8 @@ char *codename;
     if (streq (dbase[i].fakename, codename))
       return (dbase[i].used);
 
+  dwait (D_ERROR, "used: unknown codename '%s'", codename); /* mdk: added error condition */
+  return 0;
 }
 
 /*
@@ -259,14 +261,14 @@ char *codename;
  * dumpdatabase: Debugging, dump the database on the screen.
  */
 
-dumpdatabase ()
+void dumpdatabase ()
 {
   register int i;
 
   for (i = 0; i < datalen; i++) {
     at (i+1, 0);
-    printw ("%02d %c|%01d|%01d %-32s %02d '%s'", 
-      i, (dbase[i].pack_index != -1) ? LETTER(dbase[i].pack_index) : ' ', dbase[i].item_type, dbase[i].used, 
+    printw ("%02d %c|%01d|%01d %-32s %02d '%s'",
+      i, (dbase[i].pack_index != -1) ? LETTER(dbase[i].pack_index) : ' ', dbase[i].item_type, dbase[i].used,
       dbase[i].realname, i, dbase[i].fakename);
   }
 }

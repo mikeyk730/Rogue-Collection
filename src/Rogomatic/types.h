@@ -321,7 +321,7 @@ typedef struct {
 
 typedef struct { int   expdam, maxdam, mtokill; } attrec;
 
-typedef struct { int gamecnt, gamesum, inittime, timeswritten; } lrnrec;
+typedef struct { int gamecnt, gamesum; time_t inittime; int timeswritten; } lrnrec;
 
 typedef struct {
   char m_name[NAMSIZ];
@@ -339,3 +339,6 @@ typedef struct {
   int activity[T_LISTLEN];
   int timestamp;
 } timerec;
+
+typedef int(*evalinit_ptr)();
+typedef int(*evaluate_ptr)(int r, int c, int depth, int *val, int *avd, int *cont);

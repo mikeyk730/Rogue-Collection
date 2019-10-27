@@ -171,7 +171,7 @@ md_unlink_open_file(char *file, int inf)
 }
 
 int
-md_unlink(char *file)
+md_unlink(const char *file)
 {
 #ifdef _WIN32
     _chmod(file, 0600);
@@ -467,14 +467,6 @@ md_getrealname(int uid)
 #endif
 }
 
-/*extern char *xcrypt(char *key, char *salt);
-
-char *
-md_crypt(char *key, char *salt)
-{
-    return( xcrypt(key,salt) );
-}
-*/
 char *
 md_getpass(char *prompt)
 {

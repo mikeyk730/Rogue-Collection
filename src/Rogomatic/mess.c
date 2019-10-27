@@ -30,10 +30,9 @@
 # include <curses.h>
 # include <ctype.h>
 # include <string.h>
+# include <stdlib.h>
 # include "types.h"
 # include "globals.h"
-
-extern int clearsendqueue ();
 
 /* Matching macros */
 # define MATCH(p) smatch(mess,p,result)
@@ -70,7 +69,7 @@ static char *result[] = { res1, res2, res3, res4, res5 };
  * multiple messages.
  */
 
-terpmes ()
+void terpmes ()
 {
   char mess[128]; char topline[128];
   register char *m, *mend, *s, *t;
@@ -153,7 +152,7 @@ terpmes ()
  * or call functions.
  */
 
-parsemsg (mess, mend)
+void parsemsg (mess, mend)
 register char *mess, *mend;
 {
   int unknown = 0;
@@ -457,7 +456,7 @@ register char *mess, *mend;
         else if (MATCH("this potion tastes pretty*")) infer ("thirst quenching", potion);
         else if (MATCH("this potion tastes like * juice*"))
           { infer ("see invisible", potion); if (version == RV36A) sendnow ("%c", ESC); }
-        else if (MATCH("this scroll seems to be blank*")) infer ("blank paper");
+        else if (MATCH("this scroll seems to be blank*")) infer ("blank paper", Scroll); /* mdk:bugfix: missing argument */
         else if (MATCH("the * bounces*")) ;
         else if (MATCH("the * vanishes as it hits the ground*"))
           { darkturns = 0; darkdir = NONE; targetmonster = 0; echoit=0; }
@@ -706,7 +705,7 @@ register char *mess, *mend;
  * characters matched by the 'i'th *.
  */
 
-smatch (dat, pat, res)
+int smatch (dat, pat, res)
 register char *dat, *pat, **res;
 {
   register char *star = 0, *starend, *resp;
@@ -745,7 +744,7 @@ register char *dat, *pat, **res;
  * readident: we have read an identify scroll.
  */
 
-readident (name)
+void readident (name)
 char *name;
 {
   int obj; char id = '*';	/* Default is "* for list" */
@@ -846,7 +845,7 @@ char *name;
  * rampage: read a scroll of genocide.
  */
 
-rampage ()
+void rampage ()
 {
   char monc;
 
@@ -890,7 +889,7 @@ rampage ()
  * Good rings we have identified, so don't bother marking rings.
  */
 
-curseditem ()
+void curseditem ()
 {
   usesynch = 0;    /* Force a reset inventory */
 
@@ -923,7 +922,7 @@ curseditem ()
  * base, and then zap that name into all of the same objects
  */
 
-infer (objname, item_type)
+void infer (objname, item_type)
 char *objname;
 stuff item_type;
 {
@@ -946,7 +945,7 @@ stuff item_type;
  * Killed: called whenever we defeat a monster.
  */
 
-killed (monster)
+void killed (monster)
 register char *monster;
 {
   register int m = 0, mh = 0;
@@ -1032,7 +1031,7 @@ char *monster;
  * wasmissed: Record being missed by a monster.
  */
 
-wasmissed (monster)
+void wasmissed (monster)
 char *monster;
 {
   register int mh = 0, m = 0;
@@ -1058,7 +1057,7 @@ char *monster;
  * didhit: Record hitting a monster.
  */
 
-didhit ()
+void didhit ()
 {
   register int m = 0;
 
@@ -1076,7 +1075,7 @@ didhit ()
  * didmiss: Record missing a monster.
  */
 
-didmiss ()
+void didmiss ()
 {
   register int m = 0;
 
@@ -1094,7 +1093,7 @@ didmiss ()
  * mshit: Record hitting a monster with a missile.
  */
 
-mshit (monster)
+void mshit (monster)
 char *monster;
 {
   register int mh;
@@ -1118,7 +1117,7 @@ char *monster;
  * msmiss: Record missing a monster with a missile.
  */
 
-msmiss (monster)
+void msmiss (monster)
 char *monster;
 {
   register int mh;
@@ -1144,7 +1143,7 @@ char *monster;
  *            statistics about the amount of gold picked up.
  */
 
-countgold (amount)
+void countgold (amount)
 register char *amount;
 {
   int pot;
@@ -1157,7 +1156,7 @@ register char *amount;
  * Summary: print a summary of the game.
  */
 
-summary (f, sep)
+void summary (f, sep)
 FILE *f;
 char sep;
 {
@@ -1195,7 +1194,7 @@ char sep;
  * versiondep: Set version dependent variables.
  */
 
-versiondep ()
+void versiondep ()
 {
   if (version >= RV53A)		genocide = "DMJGU";
   else if (version >= RV52A)	genocide = "UDVPX";
@@ -1210,7 +1209,7 @@ versiondep ()
  * when we are being stalked by an invisible monster.
  */
 
-getmonhist (monster, hitormiss)
+int getmonhist (monster, hitormiss)
 char *monster;
 int hitormiss;
 {

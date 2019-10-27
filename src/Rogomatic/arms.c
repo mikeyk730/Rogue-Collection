@@ -79,7 +79,7 @@ int havearmor (k, print, rustproof)
  * of remove curse and -2 for when we don't have a remove curse.
  */
 
-armorclass (i)
+int armorclass (i)
 int i;
 {
   int class;
@@ -284,7 +284,7 @@ int havering (k, print)
  *            value of the ring.
  */
 
-ringclass (i)
+int ringclass (i)
 int i;
 {
   int class = 0, magicplus = 0;
@@ -505,7 +505,7 @@ int havebow (k, print)
  *           hit, multiplied by 10.
  */
 
-bowclass (i)
+int bowclass (i)
 int i;
 {
   int class, hitplus = 0, damplus = 0;
@@ -586,7 +586,7 @@ havearrow ()
  * hitbonus: Return the bonus to hit.
  */
 
-hitbonus (strength)
+int hitbonus (strength)
 int strength;
 {
   int bonus = 0;
@@ -614,7 +614,7 @@ int strength;
  * damagebonus: bonus = the damage bonus.
  */
 
-damagebonus (strength)
+int damagebonus (strength)
 int strength;
 {
   int bonus = 0;
@@ -648,7 +648,7 @@ int strength;
  * setbonuses: Set global hit and damage pluses.
  */
 
-setbonuses ()
+void setbonuses ()
 {
   /* Set global Hit bonus */
   gplushit = hitbonus (Str);

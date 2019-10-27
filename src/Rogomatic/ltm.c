@@ -30,6 +30,10 @@
 
 #ifdef _WIN32
 #include <Windows.h>
+#undef MOUSE_MOVED
+#undef OPTIONAL
+#undef NEAR
+#include <time.h>
 #endif
 
 # include <curses.h>
@@ -46,7 +50,7 @@ static char ltmnam[100];	/* Long term memory file name */
  * mapcharacter: Read a character help message
  */
 
-mapcharacter (ch, str)
+void mapcharacter (ch, str)
 char ch, *str;
 {
   dwait (D_CONTROL, "mapcharacter called: '%c' ==> '%s'", ch, str);
@@ -110,7 +114,7 @@ char *monster;
  * access to the output file.
  */
 
-saveltm (score)
+void saveltm (score)
 int score;
 {
   register int m;
@@ -129,7 +133,7 @@ int score;
       { dwait (D_WARNING, "Can't write long term memory file '%s'...", ltmnam); }
     else {
       /* Write the ltm file header */
-      fprintf (ltmfil, "Count %d, sum %d, start %d, saved %d\n",
+      fprintf (ltmfil, "Count %d, sum %d, start %lld, saved %d\n",
                ltm.gamecnt+1, ltm.gamesum+score,
                ltm.inittime, ltm.timeswritten+1);
 
@@ -159,7 +163,7 @@ int score;
  * restoreltm: Read the long term memory file.
  */
 
-copyltm()
+void copyltm()
 {
     if (!nosave)
     {
@@ -169,7 +173,7 @@ copyltm()
     }
 }
 
-restoreltm ()
+void restoreltm ()
 {
   /* mdk: load ltm from seed file if it exists. */
   sprintf (ltmnam, "%s/ltm%d.%d", getRgmDir (), version, g_seed);
@@ -213,7 +217,7 @@ restoreltm ()
  * into storage.  Be careful about serializing access to the file.
  */
 
-readltm ()
+void readltm ()
 {
   char buf[BUFSIZ];
   register FILE *ltmfil;
@@ -226,7 +230,7 @@ readltm ()
   else {
     /* Read the ltm file header */
     if (fgets (buf, BUFSIZ, ltmfil))
-      sscanf (buf, "Count %d, sum %d, start %d, saved %d",
+      sscanf (buf, "Count %d, sum %d, start %lld, saved %d",
               &ltm.gamecnt, &ltm.gamesum,
               &ltm.inittime, &ltm.timeswritten);
 
@@ -242,7 +246,7 @@ readltm ()
  * parsemonster: parse one line from the ltm file.
  */
 
-parsemonster (monster)
+void parsemonster (monster)
 char *monster;
 {
   register char *attrs;
@@ -270,7 +274,7 @@ char *monster;
  * clearltm: Clear a whole long term memory array.
  */
 
-clearltm (ltmarr)
+void clearltm (ltmarr)
 register ltmrec *ltmarr;
 {
   register int i;
@@ -290,7 +294,7 @@ register ltmrec *ltmarr;
  * dumpmonstertable: Format and print the monster table on the screen
  */
 
-dumpmonstertable ()
+void dumpmonstertable ()
 {
   register int m;
   char monc;
@@ -320,7 +324,7 @@ dumpmonstertable ()
  * analyzeltm: Set the monatt array based on current long term memory.
  */
 
-analyzeltm ()
+void analyzeltm ()
 {
   register int m, i;
   double avg_dam = 0.6*Level+3, max_dam = 7.0+Level, avg_arr = 4.0;
@@ -354,8 +358,8 @@ analyzeltm ()
     }
 
     /* Now store the information in the monster tables */
-    monatt[i].expdam = ceil (avg_dam*10);
-    monatt[i].maxdam = ceil (max_dam);
-    monatt[i].mtokill = ceil (avg_arr);
+    monatt[i].expdam = (int)ceil (avg_dam*10);
+    monatt[i].maxdam = (int)ceil (max_dam);
+    monatt[i].mtokill = (int)ceil (avg_arr);
   }
 }

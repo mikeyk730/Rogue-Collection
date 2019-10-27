@@ -1,3 +1,4 @@
+#include <curses_ex.h>
 #include "pc_gfx_macros.h"
 
 #ifdef ROGUE_COLLECTION

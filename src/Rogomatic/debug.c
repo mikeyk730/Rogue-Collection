@@ -45,7 +45,7 @@
  */
 
 /* VARARGS2 */
-void dwait (int msgtype, char* f, ...)
+int dwait (int msgtype, char* f, ...)
 {
   char msg[128];
   int r, c;
@@ -131,7 +131,7 @@ void dwait (int msgtype, char* f, ...)
  * promptforflags: Prompt the user for a location and dump its flags.
  */
 
-promptforflags ()
+void promptforflags ()
 {
   int r, c;
 
@@ -157,7 +157,7 @@ char *fnames[] = {
   "boundry", "sleeper",  "everclr"
 };
 
-dumpflags (r, c)
+void dumpflags (r, c)
 int   r, c;
 {
   char **f; int b;
@@ -173,7 +173,7 @@ int   r, c;
  * Timehistory: print a time analysis of the game.
  */
 
-timehistory (f, sep)
+void timehistory (f, sep)
 FILE *f;
 char sep;
 {
@@ -206,7 +206,7 @@ char sep;
  * toggledebug: Set the value of the debugging word.
  */
 
-toggledebug ()
+void toggledebug ()
 {
   char debugstr[100];
   int type = debugging & ~(D_FATAL | D_ERROR | D_WARNING);
@@ -254,7 +254,7 @@ toggledebug ()
  * getscrpos: Prompt the user for an x,y coordinate on the screen.
  */
 
-getscrpos (msg, r, c)
+int getscrpos (msg, r, c)
 char *msg;
 int *r, *c;
 {

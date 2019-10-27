@@ -44,8 +44,6 @@
 
 # define DIDFIGHT 3
 
-extern int genericinit(), sleepvalue();	/* From explore.c */
-
 /*
  * strategize: Run through each rule until something fires. Return 1 if an
  * action was taken, otherwise return 0 (and then play will read a command
@@ -478,7 +476,7 @@ int   tomonster ()
  * Some monsters are included here because we want to shoot arrows at them.
  */
 
-wanttowake(c)
+int wanttowake(c)
 char c;
 {
   char *monster = monname (c);
@@ -1264,7 +1262,7 @@ pickupafter ()
  *           removed from the game.
  */
 
-dropjunk ()
+int dropjunk ()
 {
   int obj;
 
