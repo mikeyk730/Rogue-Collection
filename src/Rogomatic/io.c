@@ -1248,9 +1248,10 @@ void dosnapshot ()
       copyltm();
       sprintf_s(filename, 80, "run-%d-lvl%d.bat", g_seed, Level);
       if ((batch = wopen(filename, "w")) != NULL) {
+          char game = version == RV36B ? 'f' : version == RV52A ? 'e' : version == RV54A ? 'c' : 'X';
           fprintf(batch,
-              "RogueCollection.exe --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
-              g_seed, knob[0], knob[1], knob[2], knob[3],
+              "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
+              game, g_seed, knob[0], knob[1], knob[2], knob[3],
               knob[4], knob[5], knob[6], knob[7]);
       }
       fclose(batch);
