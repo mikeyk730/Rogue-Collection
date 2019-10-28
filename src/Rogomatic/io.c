@@ -55,12 +55,6 @@
 
 # define READ	0
 
-/*
- * Charonscreen returns the current character on the screen (using
- * curses(3)).  This macro is based on the winch(win) macro.
- */
-# define charonscreen(Y,X)	(A_CHARTEXT & mvwinch (stdscr, Y, X))
-
 char *month[] = {
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -1191,7 +1185,7 @@ register int n;
 void printsnap (f)
 FILE *f;
 {
-  register int i, j, length;
+  register int i, j;
   struct tm *localtime(), *ts;
   char *statusline();
   time_t clock;
@@ -1210,9 +1204,9 @@ FILE *f;
   fprintf (f, "\n");
 
   for (i = 0; i < 24; i++) {
-    for (length = 79; length >= 0 && charonscreen(i,length) == ' '; length--);
-
-    for (j=0; j <= length; j++) fprintf (f, "%c", charonscreen(i,j));
+    for (j = 0; j < 80; j++) {
+        fprintf(f, "%c", get_from_screen(i, j));
+    }
 
     fprintf (f, "\n");
   }
@@ -1349,5 +1343,16 @@ void add_to_screen(int row, int col, char ch)
         return;
     }
 
-    mvaddch(row, col, ch);
+    mvaddch(row, col, ch ? ch : ' ');
+}
+
+char get_from_screen(int row, int col)
+{
+    int info = mvwinch(stdscr, row, col);
+    int ch = info & A_CHARTEXT;
+    if (info & A_ALTCHARSET) {
+        ch = PC_GFX_READABLE(ch);
+    }
+
+    return ch ? ch : ' ';
 }

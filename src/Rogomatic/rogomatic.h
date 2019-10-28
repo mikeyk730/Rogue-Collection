@@ -38,6 +38,7 @@ void command(int tmode, char* f, ...);
 void sendnow(char* f, ...);
 void say_impl(char* f, va_list args);
 void add_to_screen(int row, int col, char ch);
+char get_from_screen(int row, int col);
 void bumpsearchcount(void);
 void adjustpack(char *cmd);
 void clearcommand(void);

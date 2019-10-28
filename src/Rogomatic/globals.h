@@ -34,7 +34,6 @@ extern FILE *trogue;	/* From Rogue, To Rogue */
 extern FILE *logfile;		/* Rogomatic score file */
 extern FILE *realstdout;	/* Real stdout when in terse or emacs mode */
 extern FILE *snapshot;		/* File for snapshot command */
-//FILE *wopen();			/* Open a file for world access */
 
 /* global characters and strings */
 extern char afterid;		/* Index of object after identify */
