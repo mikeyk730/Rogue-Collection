@@ -832,7 +832,8 @@ char *name;
     }
 
     waitfor ("not a valid item");
-    sendnow (" %c;", id);		/* Pick an object to identify */
+    /* sendnow (" %c;", id); */		/* Pick an object to identify */
+    sendnow (" %c", id); /* mdk: removed extra semicolon */
     if (id == '*')
       memset (lastname, '\0', NAMSIZ);
     usesynch = 0; justreadid=1;		/* Must reset inventory */
