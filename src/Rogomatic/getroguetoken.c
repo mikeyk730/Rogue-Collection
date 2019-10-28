@@ -196,12 +196,25 @@ void check_frogue_sync()
     }
 
     int bytes_remaining = end - current;
-    if (bytes_remaining < 10)
+    int has_semicolon = 0;
+    const char *search = ";'";
+    char ch;
+    while ((ch = fgetc(frogue)) != EOF)
     {
-        return;
+        if (ch == *search) {
+            if (*++search == 0) {
+                has_semicolon = 1;
+                break;
+            }
+        }
+        else search = ";'";
     }
 
-    dwait(D_WARNING, "Expected EOF: Discovered %d extra bytes from %ld", bytes_remaining, current);
+    fseek(frogue, current, SEEK_SET);
+
+    if (bytes_remaining > 30 || has_semicolon) {
+        dwait(D_WARNING, "Expected EOF: Discovered %d extra bytes (%d) from %ld", bytes_remaining, has_semicolon, current);
+    }
 }
 
 #define GETROGUECHAR getroguechar();
