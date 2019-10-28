@@ -25,9 +25,9 @@ Rogue went through big changes throughout the 1980s.  Originally developed for U
 
 Rog-O-Matic
 -----------
-Watch an AI from the early 1980s put your skills to shame.  Rog-O-Matic speeds through the dungeons of Unix Rogue.  Using a genetic algorithm, Rog-O-Matic learns from every game it plays.  Will you witness it become a total winner?
+Watch an [AI from the early 1980s](https://www.cs.princeton.edu/~appel/papers/rogomatic.html) put your skills to shame.  Rogomatic speeds through the dungeons of Unix Rogue.  Using a genetic algorithm, Rogomatic learns from every game it plays.  Will you witness it become a total winner?
 
-Rog-O-Matic knows how to play:
+Rogomatic knows how to play:
 + Unix Rogue v3.6.3
 + Unix Rogue v5.2.1
 + Unix Rogue v5.4.2
