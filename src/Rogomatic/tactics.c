@@ -458,7 +458,7 @@ register int turns;
 findarrow ()
 {
   /* If wrong version, not cheating or must go find food, then forget it */
-  if (version > RV36B || !cheat || hungry())
+  if (!version_has_arrow_bug() || !cheat || hungry())
     return (0);
 
   else if (!usingarrow && foundarrowtrap && !on (ARROW) &&

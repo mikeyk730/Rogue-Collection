@@ -962,7 +962,7 @@ register char *monster;
   dwait (D_BATTLE | D_MONSTER, "Killed '%s'", monster);
 
   /* If cheating against Rogue 3.6, check out our arrow */
-  if (version < RV52A && cheat) {
+  if (version_has_arrow_bug() && cheat) {
     if (usingarrow && hitstokill > 1 && !beingstalked && goodarrow < 20) {
       saynow ("Oops, bad arrow...");
       newweapon = badarrow = 1; remember (currentweapon, WORTHLESS);
