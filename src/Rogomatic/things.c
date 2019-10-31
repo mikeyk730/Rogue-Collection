@@ -238,7 +238,7 @@ int obj, dir;
     return (0);
   else {
     command (T_HANDLING, "%c%c%c",
-             (version < RV52A) ? 'p' : 'z',	/* R5.2 MLM */
+             get_zap_key(),	/* R5.2 MLM */
              keydir[dir], LETTER (obj));
     return (1);
   }

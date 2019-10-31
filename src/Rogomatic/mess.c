@@ -1197,7 +1197,7 @@ char sep;
 
 void versiondep ()
 {
-  if (version >= RV53A)		genocide = "DMJGU";
+  if (version_has_new_monsters())		genocide = "DMJGU";
   else if (version >= RV52A)	genocide = "UDVPX";
   else				genocide = "UXDPW";
 

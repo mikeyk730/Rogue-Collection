@@ -34,3 +34,18 @@ int version_has_wands()
 {
     return version != RV36A;
 }
+
+int version_has_new_monsters()
+{
+    return version >= RV53A;
+}
+
+int get_zap_key()
+{
+    return (version < RV52A) ? 'p' : 'z';
+}
+
+int version_has_hallucination()
+{
+    return version >= RV53A;
+}

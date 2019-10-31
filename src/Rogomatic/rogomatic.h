@@ -358,3 +358,6 @@ int version_supports_move_without_pickup();
 int version_has_invisible_stalker();
 int version_has_double_haste_bug();
 int version_has_wands();
+int version_has_new_monsters();
+int get_zap_key();
+int version_has_hallucination();
