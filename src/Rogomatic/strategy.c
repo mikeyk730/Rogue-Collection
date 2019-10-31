@@ -1135,7 +1135,7 @@ fightinvisible ()
   *cmd = '\0';
 
   /* Record the monster type (for didhit and didmiss, see mess.c) */
-  if (version < RV53A)
+  if (version_has_invisible_stalker())
     lastmonster = ('I'-'A'+1);
   else
     lastmonster = ('P'-'A'+1);

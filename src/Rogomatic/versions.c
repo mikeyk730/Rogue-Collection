@@ -19,3 +19,13 @@ int version_supports_move_without_pickup()
 {
     return version >= RV53A;
 }
+
+int version_has_invisible_stalker()
+{
+    return version < RV53A;
+}
+
+int version_has_double_haste_bug()
+{
+    return version < RV52A;
+}
