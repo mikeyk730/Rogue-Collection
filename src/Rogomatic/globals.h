@@ -27,6 +27,8 @@
  *
  * Global variables
  */
+#include <stdio.h>
+#include "types.h"
 
 /* global files */
 

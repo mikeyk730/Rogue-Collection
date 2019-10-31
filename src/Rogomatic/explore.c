@@ -144,7 +144,7 @@ int r, c, depth, *val, *avd, *cont;
          onrc (MONSTER, r, c) ? 150 :
          expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
   *val = r == gotorow && c == gotocol ? 1 : 0;
@@ -172,7 +172,7 @@ int r, c, depth, *val, *avd, *cont;
          onrc (MONSTER, r, c) ? 150 :
          expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
   if (onrc (SLEEPER, r, c)) {
@@ -449,7 +449,7 @@ int r, c, depth, *val, *avd, *cont;
          onrc (MONSTER, r, c) ? 150 :
          0;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
   if (onrc (MONSTER, r, c))
@@ -528,7 +528,7 @@ int *val, *avd, *cont;
          onrc (WATERAP, r, c) ? 100 :
          onrc (MONSTER, r, c) ? 50 : 0;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
   if (onrc (RUNOK, r, c))	{ *val = 2;}
@@ -593,7 +593,7 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     { *avd = a+1000; *val=0; return (1); }
 
   if (onrc (BEEN+SEEN, r, c) == SEEN) { /* If been or not seen, not a target */
@@ -701,7 +701,7 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     { *avd = a+1000; *val=0; return (1); }
 
   if (onrc (BEEN+SEEN, r, c) == SEEN) { /* If been or not seen, not a target */
@@ -774,7 +774,7 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     a += 200;
 
   for (k=0; k<8; k++) {  /* examine adjacent squares */
@@ -1072,7 +1072,7 @@ int r, c, depth, *val, *avd, *cont;
          expavoidval;
   *val = 0;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 500;
 
   if (onrc(CANGO, r, c)) {
@@ -1214,7 +1214,7 @@ int r, c, depth, *val, *avd, *cont;
           onrc (MONSTER, r, c)	? 150 :
           expavoidval) + avdmonsters[r][c];
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 500;
 
   *val = archval[r][c];

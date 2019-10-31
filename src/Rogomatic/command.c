@@ -274,7 +274,7 @@ char *cmd;
 
       /* Update number of charges */
       if (inven[lastwand].charges > 0) {
-        if (version >= RV52A &&
+        if (striking_takes_2_charges() &&
             stlmatch (inven[lastwand].str, "striking"))
           inven[lastwand].charges -= 2;
         else
