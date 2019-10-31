@@ -175,6 +175,7 @@
     <ClCompile Include="things.c" />
     <ClCompile Include="titlepage.c" />
     <ClCompile Include="utility.c" />
+    <ClCompile Include="versions.c" />
     <ClCompile Include="worth.c" />
   </ItemGroup>
   <ItemGroup>

@@ -401,7 +401,6 @@ void Level::treas_room()
                 debug("treasure roomm bailout");
             monster->set_is_mean(true); //no sloughers in THIS room
             monster->give_pack();
-
         }
     }
 }

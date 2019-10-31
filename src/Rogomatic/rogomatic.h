@@ -350,3 +350,5 @@ int downright(int *drow, int *dcol);
 
 #include <curses.h>
 int md_readchar(WINDOW *win);
+
+int version_has_arrow_bug();

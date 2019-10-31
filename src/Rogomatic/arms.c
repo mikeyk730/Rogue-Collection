@@ -216,11 +216,11 @@ int i;
    * to kill something, we assume it is a valuable arrow.
    */
 
-  else if (cheat && version <= RV36B && usingarrow && goodarrow > 20 &&
+  else if (cheat && version_has_arrow_bug() && usingarrow && goodarrow > 20 &&
            i == currentweapon)
     return (1800);
 
-  else if (cheat && version <= RV36B && stlmatch (inven[i].str, "arrow") &&
+  else if (cheat && version_has_arrow_bug() && stlmatch (inven[i].str, "arrow") &&
            inven[i].count == 1 && !itemis (i, WORTHLESS) &&
            (!badarrow || i != currentweapon))
     { hitplus = 50;  damplus = 50; }

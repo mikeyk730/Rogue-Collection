@@ -88,12 +88,12 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
     }
 
     if (hurl) {
-        //mdk: the original code never used throw damage except for arrows and crossbow bolts.
+        //mdk:bugfix the original code never used throw damage except for arrows and crossbow bolts.
         //This bug was introduced in the PC port, as the behavior is correct in Unix Rogue 5.2.
         if (object->launcher() == NO_WEAPON) {
             *damage_string = object->throw_damage();
         }
-        //if we've used the right object to launch the projectile, we use the throw 
+        //if we've used the right object to launch the projectile, we use the throw
         //damage of the projectile, and get the plusses from the launcher.
         else if (current_weapon && object->launcher() == current_weapon->m_which)
         {
@@ -352,15 +352,15 @@ void Hero::teleport()
         set_position(c);
         enter_room(position());
     }
-    else { 
-        set_position(c); 
-        look(true); 
+    else {
+        set_position(c);
+        look(true);
     }
     game->screen().add_tile(position(), PLAYER);
 
     //turn off IS_HELD in case teleportation was done while fighting a Flytrap
     clear_hold();
-    
+
     reset_trap_turns();
     game->cancel_repeating_cmd();
     game->stop_run_cmd();
@@ -440,7 +440,7 @@ bool Hero::can_see_monster(Monster *monster)
         (monster->room() != room() || monster->room()->is_dark() || monster->room()->is_maze()))
         return false;
 
-    //If we are seeing the enemy of a vorpally enchanted object for the first time, 
+    //If we are seeing the enemy of a vorpally enchanted object for the first time,
     //give the player a hint as to what that object is good for.
     Item* item = get_current_weapon();
     Weapon* weapon = dynamic_cast<Weapon*>(item);
@@ -604,7 +604,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
 {
     bool from_floor = false;
     if (!obj)
-    {   
+    {
         from_floor = true;
         obj = find_obj(position(), true);
         if (!obj)
@@ -810,22 +810,22 @@ bool Hero::put_on_ring()
         msg("you can't put that on your finger");
         return false;
     }
-        
+
     if (is_in_use(obj)) {
         return false;
     }
 
     //find out which hand to put it on
     int ring = -1;
-    if (get_ring(LEFT) == NULL) 
+    if (get_ring(LEFT) == NULL)
         ring = LEFT;
     if (get_ring(RIGHT) == NULL)
         ring = RIGHT;
-    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) 
+    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL)
         if ((ring = get_hand()) < 0)
             return false;
-    
-    if (ring < 0) { 
+
+    if (ring < 0) {
         msg("you already have a ring on each hand");
         return false;
     }
@@ -834,7 +834,7 @@ bool Hero::put_on_ring()
 
     //Calculate the effect it has on the poor guy.
     obj->PutOn();
-    
+
     msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;
 }
@@ -875,7 +875,7 @@ bool Hero::wear_armor()
     }
 
     Item *obj = get_item("wear", ARMOR);
-    if (!obj) 
+    if (!obj)
         return false;
 
     //mdk: trying to wear non-armor counts as turn
