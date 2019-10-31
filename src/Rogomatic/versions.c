@@ -29,3 +29,8 @@ int version_has_double_haste_bug()
 {
     return version < RV52A;
 }
+
+int version_has_wands()
+{
+    return version != RV36A;
+}

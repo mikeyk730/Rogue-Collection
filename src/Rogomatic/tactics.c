@@ -272,7 +272,7 @@ int readscroll ()
        (obj2 = unidentified (wand)) != NONE ||
        (obj2 = unidentified (Scroll)) != NONE ||
        Level > 10 && (obj2 = unknown (wand)) != NONE ||
-       ((cheat || version == RV36A) &&
+       ((cheat || !version_has_wands()) &&
         ((obj2 = unknown (potion)) != NONE ||
          (obj2 = haveother (Scroll, obj)) != NONE)))) {
     prepareident (obj2, obj);
@@ -505,7 +505,7 @@ register int running; /* True ==> don't do anything fancy */
   /* Don't go down until we have killed five monsters in one blow.   */
   /* While waiting, run back and forth to look for monsters.        */
 
-  if (cheat && version <= RV36B && !running &&
+  if (cheat && version_has_arrow_bug() && !running &&
       foundarrowtrap && usingarrow &&
       have (food) != NONE && goodarrow < 5 && waitaround ()) {
     saynow ("Checking out arrow...");

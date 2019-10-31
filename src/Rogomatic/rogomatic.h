@@ -357,3 +357,4 @@ int can_step_on_scare_monster_if_inv_full();
 int version_supports_move_without_pickup();
 int version_has_invisible_stalker();
 int version_has_double_haste_bug();
+int version_has_wands();
