@@ -364,3 +364,4 @@ int version_has_hallucination();
 int leather_is_rustproof();
 int get_repeat_message_key();
 int get_redraw_key();
+int new_armor_protocol();

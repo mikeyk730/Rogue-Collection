@@ -79,7 +79,7 @@ int obj;
 {
   if (cursedweapon) return (0);
 
-  if (version >= RV54A) {
+  if (new_weapon_protocol()) {
 
     if (itemis(currentweapon, CURSED)) {
       cursedweapon=1;

@@ -75,3 +75,8 @@ else
     return ctrl('e');
 #endif
 }
+
+int new_armor_protocol()
+{
+    return version >= RV54A;
+}
