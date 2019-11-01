@@ -195,7 +195,7 @@ int quaffpotion ()
       ((obj = havemult (potion, "healing", 2)) != NONE ||
        (obj = havemult (potion, "extra healing", 2)) != NONE ||
        know ("blindness") && (obj = havenamed (potion, "healing")) != NONE ||
-       know ("blindness") && (know ("hallucination") || !version_has_hallucination()  &&
+       know ("blindness") && (know ("hallucination") || !version_has_hallucination())  &&
        Level < 15 && (obj = havenamed (potion, "extra healing")) != NONE) &&
       quaff (obj))
     return (1);
