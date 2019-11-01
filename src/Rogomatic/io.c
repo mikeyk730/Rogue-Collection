@@ -516,7 +516,7 @@ void terpbot ()
   register int i, oldstr = Str, oldAc = Ac, oldExp = Explev;
 
   /* Since we use scanf to read this field, it must not be left blank */
-  if (screen[23][78] == ' ') screen[23][78] = 'X';
+  if (screen[23][(MAXCOLS-2)] == ' ') screen[23][(MAXCOLS-2)] = 'X';
 
   /* Read the bottom line, there are three versions of the status line */
   if (status_v1()) {	/* Rogue 3.6, Rogue 4.7? */
@@ -544,7 +544,7 @@ void terpbot ()
   }
 
   /* Monitor changes in some variables */
-  if (screen[23][78] == 'X') screen[23][78] = ' ';	/* Restore blank */
+  if (screen[23][(MAXCOLS-2)] == 'X') screen[23][(MAXCOLS-2)] = ' ';	/* Restore blank */
 
   if (oldlev != Level)       newlevel ();
 
@@ -580,14 +580,14 @@ void terpbot ()
     /* Handle Emacs and Terse mode */
     if (emacs || terse) {
       /* Skip backward over blanks and nulls */
-      for (i = 79; screen[23][i] == ' ' || screen[23][i] == '\0'; i--);
+      for (i = (MAXCOLS-1); screen[23][i] == ' ' || screen[23][i] == '\0'; i--);
 
       screen[23][++i] = '\0';
 
       if (emacs) {
         sprintf (modeline, " %s (%%b)", screen[23]);
 
-        if (strlen (modeline) > 72) sprintf (modeline, " %s", screen[23]);
+        if (strlen (modeline) > (MAXCOLS-8)) sprintf (modeline, " %s", screen[23]);
 
         fprintf (realstdout, "%s", modeline);
         fflush (realstdout);
@@ -1204,7 +1204,7 @@ FILE *f;
            ts -> tm_hour, ts -> tm_min, ts -> tm_sec);
 
   /* Print the current map */
-  putn ('-', f, 79);
+  putn ('-', f, (MAXCOLS-1));
   fprintf (f, "\n");
 
   for (i = 0; i < 24; i++) {
@@ -1215,7 +1215,7 @@ FILE *f;
     fprintf (f, "\n");
   }
 
-  putn ('-', f, 79);
+  putn ('-', f, (MAXCOLS-1));
 
   /* Print status variables */
   fprintf (f, "\n\n%s\n\n", statusline ());
@@ -1224,7 +1224,7 @@ FILE *f;
 
   dumpinv (f);
   fprintf (f, "\n");
-  putn ('-', f, 79);
+  putn ('-', f, (MAXCOLS-1));
   fprintf (f, "\n");
 }
 

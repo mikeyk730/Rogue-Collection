@@ -314,7 +314,7 @@ char *msgstart, *msgend;
   if (debug(D_MESSAGE)) {
     at (30,0);
     clrtoeol ();
-    printw(">%-79.79s",mess);
+    printw(DBG_FMT,mess);
     at (row, col);
     refresh ();
   }
@@ -615,10 +615,10 @@ char *msgstart, *msgend;
   if (debug(D_MESSAGE)) {
     at (30,0);
     clrtoeol ();
-    printw("<%-79.79s",mess);
+    printw(DBG_FMT2,mess);
     at (31,0);
     clrtoeol ();
-    printw("<%-79.79s",objname);
+    printw(DBG_FMT2,objname);
     at (row, col);
     refresh ();
   }

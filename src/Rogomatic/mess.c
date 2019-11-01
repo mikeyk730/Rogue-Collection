@@ -81,7 +81,7 @@ void terpmes ()
 
   /* Set 't' to the tail of the message,
       skip backward until you find a letter, digit, or punctuation */
-  t=topline+79;
+  t=topline+(MAXCOLS-1);
 
   while ((isspace(*t) || *t == '.' || *t == '-') && (t > topline)) {
     if (*t == '-' || *t == '.' || *t == '\0')
@@ -118,12 +118,12 @@ void terpmes ()
     /* :ANT: for debugging screen now has to be at least 31x80 */
     if debug(D_MESSAGE) {
       at (24,0);
-      printw (">%-79.79s",screen);
+      printw (DBG_FMT,screen);
       at (25,0);
-      printw (">%-79.79s",topline);
+      printw (DBG_FMT,topline);
       at (26,0);
       clrtoeol ();
-      printw (">%-79.79s",mess);
+      printw (DBG_FMT,mess);
       refresh ();
     }
 
@@ -134,12 +134,12 @@ void terpmes ()
     /* :ANT: for debugging */
     if debug(D_MESSAGE) {
       at (24,0);
-      printw ("<%-79.79s",screen);
+      printw (DBG_FMT2,screen);
       at (25,0);
-      printw ("<%-79.79s",topline);
+      printw (DBG_FMT2,topline);
       at (26,0);
       clrtoeol ();
-      printw ("<%-79.79s",mess);
+      printw (DBG_FMT2,mess);
       refresh ();
     }
 

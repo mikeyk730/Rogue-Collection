@@ -371,12 +371,12 @@ void showcommand (cmd)
 char *cmd;
 {
   register char *s;
-  register int i = 72;
+  register int i = (MAXCOLS-8);
 
-  at (23,72); standout (); printw (" ");
+  at (23,i); standout (); printw (" ");
 
   for (s=cmd; *s; s++) {
-    if ((i + strlen (unctrl(*s))) < 78) {
+    if ((i + strlen (unctrl(*s))) < (MAXCOLS-2)) {
       printw ("%s", unctrl (*s));
     }
     i += strlen (unctrl(*s));
@@ -388,7 +388,7 @@ char *cmd;
 
 void clearcommand ()
 {
-  at (23,72); clrtoeol (); at (row, col);
+  at (23,(MAXCOLS-8)); clrtoeol (); at (row, col);
   cmdonscreen = 0;
 }
 /*

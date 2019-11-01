@@ -225,7 +225,7 @@ int setpsd (print)
   markmissingrooms ();
 
   /* Changed loop boundaries to ignore border around screen -- mlm 5/18/82 */
-  for (i=2; i<22; i++) for (j=1; j<79; j++) {
+  for (i=2; i<22; i++) for (j=1; j<(MAXCOLS-1); j++) {
       unsetrc (PSD|DEADEND,i,j);
 
       /* If attempt > 3, allow ANYTHING to be a secret door! */
@@ -293,7 +293,7 @@ int setpsd (print)
     }
 
   /* Now remove PSD bits from walls which already have doors */
-  for (i=2; i<22; i++) for (j=1; j<79; j++) {
+  for (i=2; i<22; i++) for (j=1; j<(MAXCOLS-1); j++) {
       if (onrc (DOOR, i, j)) {
         for (k = i-1; onrc (WALL, k, j); k--)
           { if (onrc (PSD, k, j)) numberpsd--; unsetrc (PSD, k, j);}
@@ -961,7 +961,7 @@ int secret ()
 
   /* If Level 1 or edge of screen: dead end cannot be room, mark and return */
   if (Level == 1 && attempt == 0 ||
-      !has_hidden_passages() && (atrow<=1 || atrow>=22 || atcol<=0 || atcol>=79))
+      !has_hidden_passages() && (atrow<=1 || atrow>=22 || atcol<=0 || atcol>=(MAXCOLS-1)))
     { markexplored (atrow, atcol); return (0); }
 
   /* Have we mapped this level? */

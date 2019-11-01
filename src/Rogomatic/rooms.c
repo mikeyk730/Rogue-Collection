@@ -105,18 +105,18 @@ void newlevel ()
  *	     CANGO -- halls, but no room in sector
  */
 
-static struct {int top,bot,left,right;} bounds[9]=
+static struct {int top,bot,left,right;} bounds[9]= //todo:mdk
 
   /* top bot left right */
 /*0*/	{{ 1,  6,   0,  25},
   /*1*/	 { 1,  6,  27,  51},
-  /*2*/	 { 1,  6,  53,  79},
+  /*2*/	 { 1,  6,  53,  (MAXCOLS-1)},
   /*3*/	 { 8, 14,   0,  25},
   /*4*/	 { 8, 14,  27,  51},
-  /*5*/	 { 8, 14,  53,  79},
+  /*5*/	 { 8, 14,  53,  (MAXCOLS-1)},
   /*6*/	 {16, 22,   0,  25},
   /*7*/	 {16, 22,  27,  51},
-  /*8*/	 {16, 22,  53,  79}
+  /*8*/	 {16, 22,  53,  (MAXCOLS-1)}
 };
 
 void markmissingrooms ()
@@ -227,7 +227,7 @@ int notr, notc;
   stairrow = staircol = NONE;
 
   for (r = 2; r < 22; r++)
-    for (c = 1; c < 79; c++)
+    for (c = 1; c < (MAXCOLS-1); c++)
       if ((seerc ('%', r, c) || onrc (STAIRS, r, c)) &&
           r != notr && c != notc)
         { setrc (STAIRS, r, c); stairrow = r; staircol = c; }
@@ -242,7 +242,7 @@ int *drow, *dcol;
 {
   register int i=atrow, j=atcol;
 
-  while (i < 23 && j < 79) {
+  while (i < 23 && j < (MAXCOLS-1)) {
     if (onrc (CANGO, i, j+1)) j++;
     else if (onrc (CANGO, i+1, j)) i++;
     else { *drow = i; *dcol = j; return (1); }
@@ -381,7 +381,7 @@ void currentrectangle ()
 
     if (curl <= 1) flags &= ~fL;
 
-    if (curr >= 78) flags &= ~fR;
+    if (curr >= (MAXCOLS-2)) flags &= ~fR;
 
     ckdoor (fT, curt<6,  r, c, curt, curt-1, curl-1, curr+1)
     ckdoor (fB, curb>17, r, c, curb, curb+1, curl-1, curr+1)
@@ -718,7 +718,7 @@ void teleport ()
   if (movedir >= 0 && movedir < 8 && !confused) {
     teleported++;
 
-    while (r > 1 && r < 23 && c > 0 && c < 79) {
+    while (r > 1 && r < 23 && c > 0 && c < (MAXCOLS-1)) {
       if (onrc (WALL | DOOR | HALL, r, c)) break;
 
       if (onrc (TRAP, r, c)) {
@@ -1089,7 +1089,7 @@ void dumpmazedoor ()
   register int r, c;
 
   for (r=2; r<22; r++) {
-    for (c=1; c<79; c++) {
+    for (c=1; c<(MAXCOLS-1); c++) {
       if (((scrmap[r][c] & (BEEN|DOOR|HALL|ROOM|WALL|STAIRS)) == 0) &&
           mazedoor (r, c))
         mvaddch (r, c, 'M');

@@ -50,6 +50,8 @@
 
 #define MAXROWS 24
 #define MAXCOLS 80
+#define DBG_FMT  ">%-79.79s"
+#define DBG_FMT2 "<%-79.79s"
 
 /*
  * Magic numbers for Invisible stalker strategies
