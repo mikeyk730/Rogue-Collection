@@ -536,6 +536,12 @@ char *env[];
   else
     { saynow (msg); }
 
+#ifdef ROGUE_COLLECTION
+  debuglog("--seed %d --genes \"%d %d %d %d %d %d %d %d\"\n",
+      g_seed, knob[0], knob[1], knob[2], knob[3],
+      knob[4], knob[5], knob[6], knob[7]);
+#endif
+
   /*
    * Now that we have the version figured out, we can properly
    * interpret the screen.  Force a redraw by sending a redraw
@@ -544,22 +550,11 @@ char *env[];
    * Also identify wands (/), so that we can differentiate
    * older Rogue 3.6 from Rogue 3.6 with extra magic...
    */
-#ifndef ROGUE_COLLECTION
   if (version < RV53A)
-    sendnow ("%c//;", ctrl('l'));
+      sendnow("%c//;", get_redraw_key());
   else
-    sendnow ("%c;", ctrl('r'));
-#else
-  debuglog("--seed %d --genes \"%d %d %d %d %d %d %d %d\"\n",
-      g_seed, knob[0], knob[1], knob[2], knob[3],
-      knob[4], knob[5], knob[6], knob[7]);
+      sendnow("%c;", get_redraw_key());
 
-  /* mdk: refresh key is remapped in Rogue Collection */
-  if (version < RV53A)
-      sendnow("%c//;", ctrl('e'));
-  else
-      sendnow("%c;", ctrl('e'));
-#endif
   /*
    * If we are not replaying an old game, we must position the
    * input after the next form feed, which signals the start of

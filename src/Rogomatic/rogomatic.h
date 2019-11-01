@@ -361,3 +361,6 @@ int version_has_wands();
 int version_has_new_monsters();
 int get_zap_key();
 int version_has_hallucination();
+int leather_is_rustproof();
+int get_repeat_message_key();
+int get_redraw_key();

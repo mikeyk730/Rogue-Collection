@@ -49,3 +49,29 @@ int version_has_hallucination()
 {
     return version >= RV53A;
 }
+
+int leather_is_rustproof()
+{
+    return version > RV36B; //todo:mdk: more places should check this
+}
+
+int get_repeat_message_key()
+{
+#ifndef ROGUE_COLLECTION
+    if (version >= RV53A)
+        return ctrl('p');
+#endif
+    return ctrl('r');
+}
+
+int get_redraw_key()
+{
+#ifndef ROGUE_COLLECTION
+if (version < RV53A)
+    return ctrl('l');
+else
+    return ctrl('r');
+#else
+    return ctrl('e');
+#endif
+}
