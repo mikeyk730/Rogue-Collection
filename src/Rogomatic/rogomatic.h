@@ -376,3 +376,4 @@ int read_in_corner();
 int rust_monster_level();
 int eat_after_fainting();
 int has_universal_identify_scroll();
+int has_hidden_passages();

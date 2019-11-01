@@ -147,6 +147,7 @@
 # define RV36B    (362)	/* CURROG: Rogue 3.6 with wands */
 # define RV52A    (521)	/* NEWROG: Rogue 5.2 */
 # define RV52B    (522)	/* Rogue 5.2 with maze rooms */
+# define RV53NMT  (530)	/* Rogue 5.3 NMT */
 # define RV53A    (531)	/* Rogue 5.3 new monsters */
 # define RV54A    (544)	/* Rogue 5.4.4 mystery trap */
 

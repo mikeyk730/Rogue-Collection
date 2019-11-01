@@ -1061,7 +1061,11 @@ void getrogver ()
 
   if (stlmatch (versionstr, "3.6"))		version = RV36B;
   else if (stlmatch (versionstr, "5.2"))	version = RV52A;
+#ifdef ROGUE_COLLECTION
+  else if (stlmatch (versionstr, "5.3"))	version = RV53NMT;
+#else
   else if (stlmatch (versionstr, "5.3"))	version = RV53A;
+#endif
   else if (stlmatch (versionstr, "5.4"))	version = RV54A;
   else saynow ("What a strange version of Rogue! ");
 }
