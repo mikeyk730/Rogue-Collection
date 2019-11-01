@@ -552,7 +552,7 @@ register char *mess, *mend;
         else if (MATCH("you feel yourself slowing down*"))
           { hasted = 0; doublehasted = 0; }
         else if (MATCH("you faint from exhaustion*"))
-          { if (version < RV52A) doublehasted = 1; else hasted = 0; }
+          { if (has_double_haste_bug()) doublehasted = 1; else hasted = 0; }
         else if (MATCH("you feel less confused now*")) confused = 0;
         else if (MATCH("you feel less trip*")) confused = 0;
         else if (MATCH("your * vanishes as it hits the ground*"))
@@ -638,7 +638,7 @@ register char *mess, *mend;
 
         else if (MATCH("you are transfixed*")) ;
         else if (MATCH("you are frozen*")) washit ("ice monster");
-        else if (MATCH("you faint*")) {echoit=0; if (version<RV36B) eat();}
+        else if (MATCH("you faint*")) {echoit=0; if (eat_after_fainting()) eat();}
         else if (MATCH("you freak out*")) echoit = 0;
         else if (MATCH("you fell into a trap!*")) ;
         else if (MATCH("yum*")) echoit=0;
@@ -751,7 +751,7 @@ char *name;
   stuff item_type = none;
   char lookup_name[NAMSIZ];
 
-  if (!replaying && version < RV53A &&
+  if (!replaying && dynamic_inv_order() &&
       (nextid < LETTER (0) || nextid > LETTER (invcount))) {
     dwait (D_FATAL, "Readident: nextid %d, afterid %d, invcount %d.",
            nextid, afterid, invcount);
@@ -765,7 +765,7 @@ char *name;
   at (row, col);
   refresh ();
 
-  if (version < RV53A) {	/* Rogue 3.6, Rogue 5.2 */
+  if (has_universal_identify_scroll()) {	/* Rogue 3.6, Rogue 5.2 */
     deleteinv (OBJECT (afterid));	/* Assume object gone */
     sendnow (" %c", nextid);		/* Identify it */
 
@@ -1218,7 +1218,7 @@ int hitormiss;
     { return (findmonster ("it")); }
   else {
     if (streq (monster, "it") && hitormiss) {
-      if (version < RV53A) {
+      if (version_has_invisible_stalker()) {
         if (! seemonster ("invisible stalker")) beingstalked=INVHIT;
 
         return (findmonster ("invisible stalker"));

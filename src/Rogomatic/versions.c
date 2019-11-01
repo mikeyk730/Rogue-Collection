@@ -25,7 +25,7 @@ int version_has_invisible_stalker()
     return version < RV53A;
 }
 
-int version_has_double_haste_bug()
+int has_double_haste_bug()
 {
     return version < RV52A;
 }
@@ -86,6 +86,11 @@ int dynamic_inv_order()
     return version < RV53A;
 }
 
+int has_universal_identify_scroll()
+{
+    return version < RV53A;
+}
+
 int status_v1()
 {
     return version < RV52A;
@@ -129,4 +134,9 @@ int rust_monster_level()
 int has_hidden_passages()
 {
     return version >= RV53A;
+}
+
+int eat_after_fainting()
+{
+    return version < RV36B;
 }

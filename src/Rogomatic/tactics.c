@@ -136,7 +136,7 @@ int quaffpotion ()
   int obj = NONE, obj2 = NONE;
 
   /* Take advantage of double haste bug -- assures permanent haste */
-  if (!doublehasted && version_has_double_haste_bug() &&
+  if (!doublehasted && has_double_haste_bug() &&
       ((hasted && (obj = havenamed (potion, "haste self")) != NONE) ||
        ((obj = havemult (potion, "haste self", 2)) != NONE)) &&
       quaff (obj))
