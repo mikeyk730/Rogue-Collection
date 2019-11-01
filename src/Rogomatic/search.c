@@ -40,9 +40,9 @@
 # define NOTTRIED     (11)
 # define TARGET       (10)
 
-static int moveavd[24][80], moveval[24][80], movecont[24][80],
-       movedepth[24][80];
-static char mvdir[24][80];
+static int moveavd[MAXROWS][MAXCOLS], moveval[MAXROWS][MAXCOLS], movecont[MAXROWS][MAXCOLS],
+       movedepth[MAXROWS][MAXCOLS];
+static char mvdir[MAXROWS][MAXCOLS];
 static int mvtype=0;
 static int didinit=0;
 
@@ -303,7 +303,7 @@ void setnewgoal ()
 int searchfrom (row, col, evaluate, dir, trow, tcol)
 int row, col, *trow, *tcol;
 evaluate_ptr evaluate;
-char dir[24][80];
+char dir[MAXROWS][MAXCOLS];
 {
   register int r, c, sdir, tempdir;
 
@@ -357,13 +357,13 @@ char dir[24][80];
 int searchto (row, col, evaluate, dir, trow, tcol)
 int row, col, *trow, *tcol;
 evaluate_ptr evaluate;
-char dir[24][80];
+char dir[MAXROWS][MAXCOLS];
 {
   int searchcontinue = 10000000, type, havetarget=0, depth=0;
   register int r, c, nr, nc;
   register int k;
   char begin[QSIZE], *end, *head, *tail;
-  int saveavd[24][80], val, avd, cont;
+  int saveavd[MAXROWS][MAXCOLS], val, avd, cont;
   int any;
   static int sdirect[8] = {4, 6, 0, 2, 5, 7, 1, 3},
              sdeltr[8]  = {0,-1, 0, 1,-1,-1, 1, 1},

@@ -40,7 +40,7 @@
 	    timestosearch)
 
 static int expDor, expavoidval;
-static int avdmonsters[24][80];
+static int avdmonsters[MAXROWS][MAXCOLS];
 
 int rogo_connect[9][4] = {
   /* Room  top    bot   left  right*/
@@ -1112,7 +1112,7 @@ int avoid ()
  * battlestations will handle firing at him.
  */
 
-static int archrow = NONE, archcol = NONE, archturns = NONE, archval[24][80];
+static int archrow = NONE, archcol = NONE, archturns = NONE, archval[MAXROWS][MAXCOLS];
 
 int archmonster (m, trns)
 register int m;		/* Monster to attack */

@@ -152,7 +152,7 @@ char  genocided[100];		/* List of monsters genocided */
 char  lastcmd[NAMSIZ];		/* Copy of last command sent to Rogue */
 char  lastname[NAMSIZ];		/* Name of last potion/scroll/wand */
 char  nextid = '\0';            /* Next object to identify */
-char  screen[24][80];		/* Map of current Rogue screen */
+char  screen[MAXROWS][MAXCOLS];		/* Map of current Rogue screen */
 char  sumline[128];		/* Termination message for Rogomatic */
 char  ourkiller[NAMSIZ];		/* How we died */
 char  versionstr[32];		/* Version of Rogue being used */
@@ -248,7 +248,7 @@ int   rightring = NONE;		/* Index of our right ring */
 int   rogpid = 0;		/* Pid of rogue process */
 int   room[9];			/* Flags for each room */
 int   row, col;			/* Current cursor position */
-int   scrmap[24][80];		/* Flags bits for level map */
+int   scrmap[MAXROWS][MAXCOLS];		/* Flags bits for level map */
 int   singlestep = 0;		/* True ==> go one turn */
 int   slowed = 0;		/* True ==> recently zapped w/slow monster */
 int   stairrow, staircol;	/* Position of stairs on this level */
@@ -318,7 +318,7 @@ char *knob_name[MAXKNOB] = {
   "hoarding food:    "
 };
 /* Door search map */
-char timessearched[24][80], timestosearch;
+char timessearched[MAXROWS][MAXCOLS], timestosearch;
 int  searchstartr = NONE, searchstartc = NONE, reusepsd=0;
 int  new_mark=1, new_findroom=1, new_search=1, new_stairs=1, new_arch=1;
 

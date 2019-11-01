@@ -52,7 +52,7 @@ extern char pending_call_letter;	/* Pack object we know a name for */
 extern char pending_call_name[];	/* Pack object name for letter */
 extern char queue[];		/* stuff to be sent to Rogue */
 extern char roguename[];		/* Name we are playing under */
-extern char screen[24][80];	/* characters drawn by Rogue */
+extern char screen[MAXROWS][MAXCOLS];	/* characters drawn by Rogue */
 extern char sumline[];		/* Summation line */
 extern char *termination;	/* Latin verb for how we died */
 extern char versionstr[];	/* Version of Rogue we are playing */
@@ -141,7 +141,7 @@ extern int rightring;		/* Index of our right ring */
 extern int rogpid;		/* Process id of Rogue process */
 extern int room[];		/* Flags for each room */
 extern int row,col;		/* where is the cursor? */
-extern int scrmap[24][80];	/* attribute flags for squares */
+extern int scrmap[MAXROWS][MAXCOLS];	/* attribute flags for squares */
 extern int slowed;		/* True if we recently slowed a monster */
 extern int stairrow,staircol;	/* Where is the staircase */
 extern int teleported;		/* times teleported on this level */
@@ -193,7 +193,7 @@ extern char	killedmonster, targetmonster;
 
 /* Door search variables */
 extern int	new_mark, new_findroom, new_search, new_stairs, new_arch;
-extern char	timessearched[24][80], timestosearch;
+extern char	timessearched[MAXROWS][MAXCOLS], timestosearch;
 extern int	searchstartr, searchstartc;
 extern int	reusepsd;
 

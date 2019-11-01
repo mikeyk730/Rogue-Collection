@@ -48,6 +48,9 @@
 # define SUCCESS     (1)
 # define FAILURE     (0)
 
+#define MAXROWS 24
+#define MAXCOLS 80
+
 /*
  * Magic numbers for Invisible stalker strategies
  */
