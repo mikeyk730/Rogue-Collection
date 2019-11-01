@@ -372,9 +372,9 @@ char dir[MAXROWS][MAXCOLS];
   head = tail = begin;
   end = begin + QSIZE;
 
-  for (c = 23*80; c--; ) dir[0][c] = NOTTRIED;		/* MLM */
+  for (c = 23*MAXCOLS; c--; ) dir[0][c] = NOTTRIED;		/* MLM */
 
-  for (c = 80; c--; ) dir[0][c] = 0;			/* MLM */
+  for (c = MAXCOLS; c--; ) dir[0][c] = 0;			/* MLM */
 
   *(tail++) = row;  *(tail++) = col;
   *(tail++) = QUEUEBREAK;  *(tail++) = QUEUEBREAK;

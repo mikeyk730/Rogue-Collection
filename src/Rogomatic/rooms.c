@@ -86,7 +86,7 @@ void newlevel ()
    */
 
   for (i = 1; i < 23; i++)
-    for (j = 0; j < 80; j++) {  /* Forall screen positions */
+    for (j = 0; j < MAXCOLS; j++) {  /* Forall screen positions */
       scrmap[i][j] = SCRMINIT;
       timessearched[i][j] = 0;
       updatepos (screen[i][j], i, j);
@@ -751,7 +751,7 @@ void mapinfer()
   for (r=1; r<23; r++) {
     inroom = 0;
 
-    for (c=0; c<80; c++) {
+    for (c=0; c<MAXCOLS; c++) {
       if (seerc ('|', r, c) || (seerc ('+', r, c) && !seerc('-', r, c - 1) && !seerc('-', r, c + 1))) /* mdk:bugfix added +1 check for doors at corners */
         { inroom = !inroom; }
       else if (inroom)

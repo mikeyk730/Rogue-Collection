@@ -331,7 +331,7 @@ int   Str = 16, Strmax = 16, Ac = 6, Exp = 0, Explev = 1, turns = 0;
 char  Ms[30];	/* The message about his state of hunger */
 
 /* Miscellaneous movement tables */
-int   deltrc[8] = { 1,-79,-80,-81,-1,79,80,81 };
+int   deltrc[8] = { 1,-(MAXCOLS-1),-MAXCOLS,-(MAXCOLS+1),-1,MAXCOLS-1,MAXCOLS,MAXCOLS+1 };
 int   deltc[8]  = { 1, 1, 0, -1, -1, -1, 0, 1 };
 int   deltr[8]  = { 0, -1, -1, -1, 0, 1, 1, 1 };
 char  keydir[8] = { 'l', 'u', 'k', 'y', 'h', 'b', 'j', 'n' };
@@ -412,7 +412,7 @@ char *env[];
   sprintf (sumline, "");
   sprintf (versionstr, "");
 
-  for (i = 80 * 24; i--; ) screen[0][i] = ' ';
+  for (i = MAXCOLS * 24; i--; ) screen[0][i] = ' ';
 
   /*
    * Get the process id of this player program if the

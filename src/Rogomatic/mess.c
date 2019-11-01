@@ -761,7 +761,7 @@ char *name;
 
   at (0,0);
   clrtoeol ();
-  memset (screen,' ', 80);
+  memset (screen,' ', MAXCOLS);
   at (row, col);
   refresh ();
 

@@ -83,13 +83,13 @@ scrollup (void)
   newdoors = doorlist;
 
   for (r = s_row1; r < s_row2; r++) {
-    for (c = 0; c < 80; c++) {
+    for (c = 0; c < MAXCOLS; c++) {
       screen[r][c] = screen[r+1][c];
       updatepos (screen[r][c], r, c);
     }
   }
 
-  for (c = 0; c < 80; c++) {
+  for (c = 0; c < MAXCOLS; c++) {
     screen[s_row2][c] = ' ';
     updatepos (screen[s_row2][c], s_row2, c);
   }
@@ -102,13 +102,13 @@ scrolldown (void)
   int c;
 
   for (r = s_row2; r > s_row1; r--) {
-    for (c = 0; c < 80; c++) {
+    for (c = 0; c < MAXCOLS; c++) {
       screen[r][c] = screen[r-1][c];
       updatepos (screen[r][c], r, c);
     }
   }
 
-  for (c = 0; c < 80; c++) {
+  for (c = 0; c < MAXCOLS; c++) {
     screen[s_row1][c] = ' ';
     updatepos (screen[s_row1][c], s_row1, c);
   }
@@ -132,7 +132,7 @@ printscreen (void)
       debuglog (" ");
     }
 
-    for (j = 0; j < 80; ++j) {
+    for (j = 0; j < MAXCOLS; ++j) {
       if (i == row && j == col)
         debuglog ("_");
       else
@@ -281,12 +281,12 @@ int   onat;                             /* 0 ==> Wait for waitstr
       case CE_TOK:
 
         if (row && row < 23)
-          for (i = col; i < 80; i++) {
+          for (i = col; i < MAXCOLS; i++) {
             updatepos (' ', row, i);
             screen[row][i] = ' ';
           }
         else
-          for (i = col; i < 80; i++)
+          for (i = col; i < MAXCOLS; i++)
             screen[row][i] = ' ';
 
         if (row) { at (row, col); clrtoeol (); }
@@ -612,7 +612,7 @@ void dumpwalls ()
   printexplored ();
 
   for (r = 1; r < 23; r++) {
-    for (c = 0; c < 80; c++) {
+    for (c = 0; c < MAXCOLS; c++) {
       S=scrmap[r][c];
       ch = (ARROW&S)                   ? 'a' :
            (TELTRAP&S)                 ? 't' :
@@ -1106,7 +1106,7 @@ void redrawscreen ()
 
   clear ();
 
-  for (i = 1; i < 24; i++) for (j = 0; j < 80; j++)
+  for (i = 1; i < 24; i++) for (j = 0; j < MAXCOLS; j++)
       if ((ch = screen[i][j]) > ' ') add_to_screen(i, j, ch);
 
   at (row, col);
@@ -1208,7 +1208,7 @@ FILE *f;
   fprintf (f, "\n");
 
   for (i = 0; i < 24; i++) {
-    for (j = 0; j < 80; j++) {
+    for (j = 0; j < MAXCOLS; j++) {
         fprintf(f, "%c", get_from_screen(i, j));
     }
 
@@ -1278,7 +1278,7 @@ void clearscreen ()
   screen00 = ' ';
 
   for (i = 0; i < 24; i++)
-    for (j = 0; j < 80; j++) {
+    for (j = 0; j < MAXCOLS; j++) {
       screen[i][j] = ' ';
       scrmap[i][j] = SCRMINIT;
     }

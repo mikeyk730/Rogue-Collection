@@ -310,7 +310,7 @@ int setpsd (print)
     }
 
   if (print || debug (D_SCREEN))
-    for (i=0; i<24; i++) for (j=0; j<80; j++)
+    for (i=0; i<24; i++) for (j=0; j<MAXCOLS; j++)
         if (onrc (PSD,i,j)) { at (i,j); addch ('P'); }
 
   reusepsd = numberpsd+1;
@@ -602,7 +602,7 @@ int *val, *avd, *cont;
       nc = c + deltc[k];
 
       /* For each unseen neighbour: add 10 to value. */
-      if (nr >= 1 && nr <= 22 && nc >= 0 && nc <= 80 &&
+      if (nr >= 1 && nr <= 22 && nc >= 0 && nc <= MAXCOLS &&
           !onrc (SEEN, nr, nc)) {
         v += 10;
 
@@ -710,7 +710,7 @@ int *val, *avd, *cont;
       nc = c + deltc[k];
 
       /* For each unseen neighbour: add 10 to value. */
-      if (nr >= 1 && nr <= 22 && nc >= 0 && nc <= 80 &&
+      if (nr >= 1 && nr <= 22 && nc >= 0 && nc <= MAXCOLS &&
           !onrc (SEEN, nr, nc)) {
         v += 10;
 
@@ -782,7 +782,7 @@ int *val, *avd, *cont;
     register int nc = c + deltc[k];
 
     if (nr >= 1 && nr <= 22 &&
-        nc >= 0 && nc <= 80 &&
+        nc >= 0 && nc <= MAXCOLS &&
         onrc (PSD, nr, nc) && timessearched[nr][nc] < SEARCHES(nr,nc)) {
       /* If adjacent square is on the screen */
       /* and if it has PSD set but has not been searched completely */
@@ -826,7 +826,7 @@ void avoidmonsters ()
   register int i, r, c, wearingstealth;
 
   /* Clear old avoid monster values */
-  for (i = 24*80; i--; ) avdmonsters[0][i] = 0;
+  for (i = 24*MAXCOLS; i--; ) avdmonsters[0][i] = 0;
 
   /* Set stealth status */
   wearingstealth = (wearing ("stealth") != NONE);
@@ -907,7 +907,7 @@ void pinavoid ()
   register int i;
 
   /* Clear old avoid monster values */
-  for (i = 24*80; i--; ) avdmonsters[0][i] = 0;
+  for (i = 24*MAXCOLS; i--; ) avdmonsters[0][i] = 0;
 
   /* Avoid each monster in turn */
   for (i=0; i<mlistlen; i++) {
@@ -1171,7 +1171,7 @@ int archeryinit ()
   register int dir, r, c, dr, dc, dist;
 
   /* Clear the archery value array */
-  for (r = 24*80; r--; ) archval[0][r] = 0;
+  for (r = 24*MAXCOLS; r--; ) archval[0][r] = 0;
 
   /* Scan around monster to see how far away we can shoot from */
   for (dir = 0; dir < 8; dir++) {
