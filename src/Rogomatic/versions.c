@@ -47,7 +47,7 @@ int get_zap_key()
 
 int version_has_hallucination()
 {
-    return version >= RV53A;
+    return version >= RV53NMT;
 }
 
 int leather_is_rustproof()
