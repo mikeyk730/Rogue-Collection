@@ -186,7 +186,7 @@ register int movetype;
     { rmove (1, dir, timemode); return (1); }
 
   /* If we are about to step onto a scare monster scroll, use the 'm' cmd */
-  if (version_supports_move_without_pickup() && onrc (SCAREM, atrow+dr, atcol+dc))
+  if (can_move_without_pickup() && onrc (SCAREM, atrow+dr, atcol+dc))
     { mmove (dir, timemode); return (1); }
 
   /* Send the movement command and return success */

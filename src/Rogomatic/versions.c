@@ -15,7 +15,7 @@ int can_step_on_scare_monster_if_inv_full()
     return version < RV53A;
 }
 
-int version_supports_move_without_pickup()
+int can_move_without_pickup()
 {
     return version >= RV53A;
 }
@@ -124,4 +124,9 @@ int read_in_corner()
 int rust_monster_level()
 {
     return version < RV52A ? 8 : 7;
+}
+
+int has_hidden_passages()
+{
+    return version >= RV53A;
 }

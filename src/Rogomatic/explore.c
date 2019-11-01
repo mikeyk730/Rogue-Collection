@@ -34,7 +34,7 @@
 
 # define SEARCHES(r,c)						\
 	(onrc(DEADEND,r,c) ?					\
-	    ((version < RV53A || !isexplored (r,c)) ?		\
+	    ((!has_hidden_passages() || !isexplored (r,c)) ?		\
 		(timestosearch + k_door / 5) :			\
 		(timestosearch - k_door / 5 + 5)) :		\
 	    timestosearch)
@@ -239,7 +239,7 @@ int setpsd (print)
         { if (!onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j); }
 
       /* Set Possible Secret Door for corridor secret door */
-      else if (version >= RV53A &&
+      else if (has_hidden_passages() &&
                ! onrc (BEEN|DOOR|HALL|ROOM|WALL|STAIRS, i, j) &&
                nextto (DOOR, i, j))
         { if (!onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j); }
@@ -795,7 +795,7 @@ int *val, *avd, *cont;
   }
 
   if (v>0) {
-    if (version >= RV53A &&
+    if (has_hidden_passages() &&
         onrc (DOOR|BEEN, r, c) == (DOOR|BEEN) &&
         (onrc (CANGO|WALL, r+1, c) == 0 || onrc (CANGO|WALL, r-1, c) == 0 ||
          onrc (CANGO|WALL, r, c+1) == 0 || onrc (CANGO|WALL, r, c-1) == 0))
@@ -944,7 +944,7 @@ int secret ()
   int secretinit(), secretvalue();
 
   /* Secret passage adjacent to door? */
-  if (version >= RV53A && on (DOOR) && !blinded &&
+  if (has_hidden_passages() && on (DOOR) && !blinded &&
       (seerc (' ',atrow+1,atcol) || seerc (' ',atrow-1,atcol) ||
        seerc (' ',atrow,atcol+1) || seerc (' ',atrow,atcol-1)) &&
       SEARCHES (atrow, atcol) < timestosearch+20) {
@@ -961,7 +961,7 @@ int secret ()
 
   /* If Level 1 or edge of screen: dead end cannot be room, mark and return */
   if (Level == 1 && attempt == 0 ||
-      version < RV53A && (atrow<=1 || atrow>=22 || atcol<=0 || atcol>=79))
+      !has_hidden_passages() && (atrow<=1 || atrow>=22 || atcol<=0 || atcol>=79))
     { markexplored (atrow, atcol); return (0); }
 
   /* Have we mapped this level? */
@@ -970,7 +970,7 @@ int secret ()
   /* Found a dead end, should we search it? */
   if (nexttowall (atrow, atcol) ||
       canbedoor (atrow, atcol) &&
-      (version >= RV53A || !isexplored (atrow, atcol))) {
+      (has_hidden_passages() || !isexplored (atrow, atcol))) {
     setrc (DEADEND, atrow, atcol);
 
     if ((SEARCHES (atrow, atcol) - timessearched[atrow][atcol]) > 0) {
@@ -1287,7 +1287,7 @@ int depth, *val, *avd, *cont;
   if (onrc (TRAP|MONSTER,r, c))               { *avd = ROGINFINITY; return (0); }
   else if (restinroom && onrc (DOOR,r, c))    { *avd = ROGINFINITY; return (0); }
   else if (onrc (SCAREM, r, c)) {
-    if (objcount == maxobj || version >= RV53A) { *val = 500; return (1); }
+    if (objcount == maxobj || can_move_without_pickup()) { *val = 500; return (1); }
     else                                      { *avd = ROGINFINITY; return (0); }
   }
   else if (onrc (STAIRS, r, c))               { *val = 400; return (1); }
