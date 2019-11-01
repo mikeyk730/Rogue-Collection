@@ -656,7 +656,7 @@ char *env[];
 
           for (s = "hjklyubnHJKLYUBN"; *s; s++) {
             if (ch == *s) {
-              if (version < RV53A) command (T_OTHER, "f%c", ch);
+              if (run_uses_f_prefix()) command (T_OTHER, "f%c", ch);
               else                 command (T_OTHER, "%c", ctrl (ch));
             }
           }

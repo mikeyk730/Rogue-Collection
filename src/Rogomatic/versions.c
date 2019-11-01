@@ -67,8 +67,8 @@ int get_repeat_message_key()
 int get_redraw_key()
 {
 #ifndef ROGUE_COLLECTION
-if (version < RV53A)
-    return ctrl('l');
+    if (version < RV53A)
+        return ctrl('l');
 else
     return ctrl('r');
 #else
@@ -106,7 +106,7 @@ int version_uses_old_weapon_stats()
     return version < RV52A;
 }
 
-int version_uses_f_prefix_to_run()
+int run_uses_f_prefix()
 {
     return version < RV53A;
 }
@@ -114,4 +114,14 @@ int version_uses_f_prefix_to_run()
 int new_ring_format()
 {
     return version >= RV53A;
+}
+
+int read_in_corner()
+{
+    return version <= RV36B;
+}
+
+int rust_monster_level()
+{
+    return version < RV52A ? 8 : 7;
 }

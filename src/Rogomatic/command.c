@@ -50,7 +50,7 @@ int   d;
 void fmove (d)
 int   d;
 {
-  if (version_uses_f_prefix_to_run())	command (T_MOVING, "f%c", keydir[d]);
+  if (run_uses_f_prefix())	command (T_MOVING, "f%c", keydir[d]);
   else			command (T_MOVING, "%c", ctrl (keydir[d]));
 }
 

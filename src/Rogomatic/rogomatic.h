@@ -370,5 +370,7 @@ int status_v1();
 int status_v2();
 int version_uses_new_strength();
 int version_uses_old_weapon_stats();
-int version_uses_f_prefix_to_run();
+int run_uses_f_prefix();
 int new_ring_format();
+int read_in_corner();
+int rust_monster_level();

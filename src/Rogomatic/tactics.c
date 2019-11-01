@@ -64,7 +64,7 @@ int handlearmor ()
 
   obj = havearmor (1, NOPRINT, ANY);		/* Get best armor */
 
-  if (Level > (version < RV52A ? 8 : 7) && Level < 19 &&
+  if (Level > (rust_monster_level()) && Level < 19 &&
       wearing ("maintain armor") == NONE &&
       willrust (obj) &&
       itemis (obj, KNOWN)) {
@@ -130,8 +130,6 @@ int handleweapon ()
  *
  * If we are at or below the exp. level, then experiment with unknown potions.
  */
-
-# define MAXSTR (version < RV52A ? 1900 : 3100)
 
 int quaffpotion ()
 {
@@ -309,7 +307,7 @@ int readscroll ()
     prepareident (pickident (), obj);
 
     /* Go to a corner to read the scroll */
-    if (version <= RV36B && !know ("create monster") && gotocorner ())
+    if (read_in_corner() && !know ("create monster") && gotocorner ())
       return (1);
 
     /* Must put on our good armor first */
