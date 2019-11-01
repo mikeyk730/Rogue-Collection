@@ -5,6 +5,7 @@
 + No maze rooms
 + Leather armor can rust
 + Mace and swords don't use throw damage when thrown
++ High strength works differently
 
 5.2
 + Old monsters
@@ -17,7 +18,8 @@
 5.4
 + New monsters
 + Maze rooms starting on level 2
-+ Passages can be hidden requiring the player to searh
++ Passages can be hidden requiring the player to search
++ Inventory order doesn't shift
 
 1.1
 + New monsters

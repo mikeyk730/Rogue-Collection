@@ -80,3 +80,28 @@ int new_weapon_protocol()
 {
     return version >= RV54A;
 }
+
+int dynamic_inv_order()
+{
+    return version < RV53A;
+}
+
+int status_v1()
+{
+    return version < RV52A;
+}
+
+int status_v2()
+{
+    return version >= RV52A && version < RV53A;
+}
+
+int version_uses_new_strength()
+{
+    return version > RV36B;
+}
+
+int version_uses_old_weapon_stats()
+{
+    return version < RV52A;
+}

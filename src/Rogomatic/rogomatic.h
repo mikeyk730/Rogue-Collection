@@ -365,3 +365,8 @@ int leather_is_rustproof();
 int get_repeat_message_key();
 int get_redraw_key();
 int new_weapon_protocol();
+int dynamic_inv_order();
+int status_v1();
+int status_v2();
+int version_uses_new_strength();
+int version_uses_old_weapon_stats();

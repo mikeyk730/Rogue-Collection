@@ -465,7 +465,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
     resetinv();
   }
 
-  if (version < RV53A && checkrange && !pending ())
+  if (dynamic_inv_order() && checkrange && !pending ())
     { command (T_OTHER, "Iz"); checkrange = 0; }
 
   /* If mapping status has changed */
@@ -519,7 +519,7 @@ void terpbot ()
   if (screen[23][78] == ' ') screen[23][78] = 'X';
 
   /* Read the bottom line, there are three versions of the status line */
-  if (version < RV52A) {	/* Rogue 3.6, Rogue 4.7? */
+  if (status_v1()) {	/* Rogue 3.6, Rogue 4.7? */
     sscanf (screen[23],
             " Level: %d Gold: %d Hp: %d(%d) Str: %s Ac: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, sstr, &Ac, &Explev, &Exp, Ms);
@@ -528,7 +528,7 @@ void terpbot ()
 
     if (Str > Strmax) Strmax = Str;
   }
-  else if (version < RV53A) {	/* Rogue 5.2 (versions A and B) */
+  else if (status_v2()) {	/* Rogue 5.2 (versions A and B) */
     sscanf (screen[23],
             " Level: %d Gold: %d Hp: %d(%d) Str: %d(%d) Ac: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);
