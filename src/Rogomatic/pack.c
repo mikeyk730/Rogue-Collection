@@ -187,7 +187,7 @@ register int pos;
   register char *savebuf;
   register int i;
 
-  if (version >= RV53A) return;
+  if (!dynamic_inv_order()) return;
 
   if (pos < currentarmor) currentarmor--;
   else if (pos == currentarmor) currentarmor = NONE;
@@ -222,7 +222,7 @@ register int pos;
   register char *savebuf;
   register int i;
 
-  if (version >= RV53A) {
+  if (!dynamic_inv_order()) {
     return;
   }
 
@@ -287,7 +287,7 @@ void doresetinv ()
   invcount = objcount = urocnt = 0;
   currentarmor = currentweapon = leftring = rightring = NONE;
 
-  if (version >= RV53A) invcount = MAXINV;
+  if (!dynamic_inv_order()) invcount = MAXINV;
 }
 
 /*
@@ -478,7 +478,7 @@ char *msgstart, *msgend;
   for (p = objname, q = xbeg; q < xend;  p++, q++) *p = *q;
 
   /* Ring bonus is printed differently in Rogue 5.3 */
-  if (version >= RV53A && what == ring && charges != UNKNOWN)
+  if (new_ring_format() && what == ring && charges != UNKNOWN)
     { plushit = charges; charges = UNKNOWN; }
 
   dwait (D_PACK, "inv %s '%s'",
@@ -565,7 +565,7 @@ char *msgstart, *msgend;
   }
   /* New item, in older Rogues, open up a spot in the pack */
   else {
-    if (version < RV53A) {
+    if (dynamic_inv_order()) {
       rollpackdown (ipos);
     }
 

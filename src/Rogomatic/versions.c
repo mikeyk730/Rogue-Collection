@@ -105,3 +105,13 @@ int version_uses_old_weapon_stats()
 {
     return version < RV52A;
 }
+
+int version_uses_f_prefix_to_run()
+{
+    return version < RV53A;
+}
+
+int new_ring_format()
+{
+    return version >= RV53A;
+}

@@ -370,3 +370,5 @@ int status_v1();
 int status_v2();
 int version_uses_new_strength();
 int version_uses_old_weapon_stats();
+int version_uses_f_prefix_to_run();
+int new_ring_format();
