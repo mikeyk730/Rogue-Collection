@@ -3,6 +3,7 @@
     + Trolls and vampires have a 1/3 chance of regenerating 1 HP each turn
 + No treasure rooms
 + No maze rooms
++ Leather armor can rust
 + Mace and swords don't use throw damage when thrown
 
 5.2

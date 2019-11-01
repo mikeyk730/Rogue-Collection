@@ -76,7 +76,7 @@ else
 #endif
 }
 
-int new_armor_protocol()
+int new_weapon_protocol()
 {
     return version >= RV54A;
 }
