@@ -391,7 +391,7 @@ void Hero::check_level(bool print)
         m_stats.m_max_hp += add;
         increase_hp(add, false, false);
         if (print) {
-            if (game->options.use_exp_level_names())
+            if (!game->options.act_like_v1_1())
                 msg("and achieve the rank of \"%s\"", level_titles[i - 1]);
             else
                 msg("Welcome to level %d", i);

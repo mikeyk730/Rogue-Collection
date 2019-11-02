@@ -33,7 +33,6 @@ struct Options
     //graphics options
     bool narrow_screen() const;
     bool monochrome() const;
-    bool use_exp_level_names() const;
     bool show_armor_class() const;
     bool unix_output() const;
     bool terse() const;
