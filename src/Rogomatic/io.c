@@ -516,11 +516,11 @@ void terpbot ()
   register int i, oldstr = Str, oldAc = Ac, oldExp = Explev;
 
   /* Since we use scanf to read this field, it must not be left blank */
-  if (screen[(MAXROWS-1)][(MAXCOLS-2)] == ' ') screen[(MAXROWS-1)][(MAXCOLS-2)] = 'X';
+  if (screen[STATUSROW][(MAXCOLS-2)] == ' ') screen[STATUSROW][(MAXCOLS-2)] = 'X';
 
   /* Read the bottom line, there are three versions of the status line */
   if (status_v1()) {	/* Rogue 3.6, Rogue 4.7? */
-    sscanf (screen[(MAXROWS-1)],
+    sscanf (screen[STATUSROW],
             " Level: %d Gold: %d Hp: %d(%d) Str: %s Ac: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, sstr, &Ac, &Explev, &Exp, Ms);
     sscanf (sstr, "%d/%d", &Str, &Str18);
@@ -529,14 +529,14 @@ void terpbot ()
     if (Str > Strmax) Strmax = Str;
   }
   else if (status_v2()) {	/* Rogue 5.2 (versions A and B) */
-    sscanf (screen[(MAXROWS-1)],
+    sscanf (screen[STATUSROW],
             " Level: %d Gold: %d Hp: %d(%d) Str: %d(%d) Ac: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);
 
     Str = Str * 100; Strmax = Strmax * 100;
   }
   else {			/* Rogue 5.3 (and beyond???) */
-    sscanf (screen[(MAXROWS-1)],
+    sscanf (screen[STATUSROW],
             " Level: %d Gold: %d Hp: %d(%d) Str: %d(%d) Arm: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);
 
@@ -544,7 +544,7 @@ void terpbot ()
   }
 
   /* Monitor changes in some variables */
-  if (screen[(MAXROWS-1)][(MAXCOLS-2)] == 'X') screen[(MAXROWS-1)][(MAXCOLS-2)] = ' ';	/* Restore blank */
+  if (screen[STATUSROW][(MAXCOLS-2)] == 'X') screen[STATUSROW][(MAXCOLS-2)] = ' ';	/* Restore blank */
 
   if (oldlev != Level)       newlevel ();
 
@@ -611,7 +611,7 @@ void dumpwalls ()
 
   printexplored ();
 
-  for (r = 1; r < (MAXROWS-1); r++) {
+  for (r = 1; r < STATUSROW; r++) {
     for (c = 0; c < MAXCOLS; c++) {
       S=scrmap[r][c];
       ch = (ARROW&S)                   ? 'a' :
@@ -1063,6 +1063,7 @@ void getrogver ()
   else if (stlmatch (versionstr, "5.2"))	version = RV52A;
 #ifdef ROGUE_COLLECTION
   else if (stlmatch (versionstr, "5.3"))	version = RV53NMT;
+  else if (stlmatch (versionstr, "1.48"))	version = RVPC11;
 #else
   else if (stlmatch (versionstr, "5.3"))	version = RV53A;
 #endif
@@ -1343,7 +1344,7 @@ statusline ()
 
 void add_to_screen(int row, int col, char ch)
 {
-    if (row > 0 && row < (MAXROWS-1)) {
+    if (row > 0 && row < STATUSROW) {
         mvaddrawch(row, col, PC_GFX_TRANSLATE(ch));
         return;
     }

@@ -242,7 +242,7 @@ int *drow, *dcol;
 {
   register int i=atrow, j=atcol;
 
-  while (i < (MAXROWS-1) && j < (MAXCOLS-1)) {
+  while (i < STATUSROW && j < (MAXCOLS-1)) {
     if (onrc (CANGO, i, j+1)) j++;
     else if (onrc (CANGO, i+1, j)) i++;
     else { *drow = i; *dcol = j; return (1); }
@@ -718,7 +718,7 @@ void teleport ()
   if (movedir >= 0 && movedir < 8 && !confused) {
     teleported++;
 
-    while (r > 1 && r < (MAXROWS-1) && c > 0 && c < (MAXCOLS-1)) {
+    while (r > 1 && r < STATUSROW && c > 0 && c < (MAXCOLS-1)) {
       if (onrc (WALL | DOOR | HALL, r, c)) break;
 
       if (onrc (TRAP, r, c)) {
@@ -748,7 +748,7 @@ void mapinfer()
 
   dwait (D_CONTROL, "Map read: inferring rooms.");
 
-  for (r=1; r<(MAXROWS-1); r++) {
+  for (r=1; r<STATUSROW; r++) {
     inroom = 0;
 
     for (c=0; c<MAXCOLS; c++) {

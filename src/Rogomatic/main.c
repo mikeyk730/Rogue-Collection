@@ -814,7 +814,7 @@ char *env[];
   }
 
   /* Print termination messages */
-  at ((MAXROWS-1), 0);
+  at (STATUSROW, 0);
   clrtoeol ();
 //  clear ();
   refresh ();
