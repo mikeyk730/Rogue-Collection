@@ -280,6 +280,8 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
         credits();
     }
 
+    set_brief_mode(game->options.terse());
+
     init_things(); //Set up probabilities of things
     game->screen().clear();
     game->level().new_level(false); //Draw current level

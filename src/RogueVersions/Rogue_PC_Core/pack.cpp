@@ -32,7 +32,6 @@ Item *pack_obj(byte ch, byte *chp)
     return NULL;
 }
 
-
 //inventory: List what is in the pack
 int inventory(std::list<Item *>& list, int type, const char *lstr)
 {
@@ -53,14 +52,55 @@ int inventory(std::list<Item *>& list, int type, const char *lstr)
             continue;
         n_objs++;
         sprintf(inv_temp, "%c) %%s", ch);
-        add_line(lstr, inv_temp, item->inventory_name(game->hero(), false).c_str());
+        if (game->options.use_slow_inventory())
+            msg(inv_temp, item->inventory_name(game->hero(), false).c_str());
+        else
+            add_line(lstr, inv_temp, item->inventory_name(game->hero(), false).c_str());
     }
     if (n_objs == 0)
     {
         msg(type == 0 ? "you are empty handed" : "you don't have anything appropriate");
         return false;
     }
-    return (end_line(lstr));
+
+    return game->options.use_slow_inventory() ? ' ' : end_line(lstr);
+}
+
+void single_inventory(std::list<Item*>& list)
+{
+    if (list.size() == 0) {
+        msg("You aren't carrying anything");
+        return;
+    }
+
+    char selection = 'a';
+
+    if (list.size() > 1) {
+        msg(short_msgs() ? "Item: " : "Which item do you wish to inventory: ");
+        selection = readchar();
+        clear_msg();
+
+        if (selection == ESCAPE)
+        {
+            return;
+        }
+    }
+
+    char ch = 'a';
+    for (std::list<Item*>::iterator i = list.begin(); i != list.end(); ++i)
+    {
+        if (ch == selection)
+        {
+            msg("%c) %s", ch, (*i)->inventory_name(game->hero(), false).c_str());
+            return;
+        }
+
+        ++ch;
+    }
+
+    if (!short_msgs())
+        msg("'%s' not in pack", unctrl(selection));
+    msg("Range is 'a' to '%c'", --ch);
 }
 
 //get_item: Pick something out of a pack for a purpose
@@ -112,7 +152,7 @@ Item* get_item(const std::string& purpose, int type)
             msg("");
             return NULL;
         }
-        
+
         byte och = 0;
         Item *obj = pack_obj(ch, &och);
         if (!obj)

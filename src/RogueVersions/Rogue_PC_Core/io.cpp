@@ -159,7 +159,7 @@ void endmsg()
     if (game->msg_position) {
         look(false);
         game->screen().move(0, game->msg_position);
-        more(" More ");
+        more();
     }
     //All messages should start with uppercase, except ones that start with a pack addressing character
     if (islower(msgbuf[0]) && msgbuf[1] != ')')
@@ -177,6 +177,12 @@ bool is_direction(int ch)
         return true;
     }
     return false;
+}
+
+void more()
+{
+    auto message = game->options.unix_output() ? "--More--" : " More ";
+    more(message);
 }
 
 //More: tag the end of a line and wait for a space

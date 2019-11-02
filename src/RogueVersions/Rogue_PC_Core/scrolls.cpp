@@ -243,7 +243,7 @@ void Identify::Read()
     discover();
     msg("this scroll is an identify scroll");
     if (game->options.show_inventory_menu())
-        more(" More ");
+        more();
     whatis();
 }
 

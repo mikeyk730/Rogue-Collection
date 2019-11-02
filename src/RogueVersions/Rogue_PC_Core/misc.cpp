@@ -412,6 +412,21 @@ int get_magic_char(Item *obj)
 //help: prints out help screens
 void help(const char*const* helpscr)
 {
+    if (game->options.prompt_for_help())
+    {
+        msg("what do you want identified? ");
+        char ch = readchar();
+        clear_msg();
+
+        const char* str = "unknown character";
+        if (ch >= 'A' && ch <= 'Z') {
+            str = get_monster_name(ch);
+        }
+
+        msg("'%s': %s", unctrl(ch), str);
+        return;
+    }
+
     bool is_objs(helpscr == helpobjs);
     int hcount = 0;
     int hrow, hcol;

@@ -26,6 +26,7 @@ void addmsg(const char *fmt, ...);
 void endmsg();
 
 //More: tag the end of a line and wait for a space
+void more();
 void more(const char *msg);
 
 //doadd: Perform an add onto the message buffer

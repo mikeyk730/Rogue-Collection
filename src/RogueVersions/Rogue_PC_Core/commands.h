@@ -1,6 +1,7 @@
 #pragma once
 
 bool do_inventory();
+bool do_single_inventory();
 bool do_eat();
 bool do_wield();
 bool do_wear_armor();

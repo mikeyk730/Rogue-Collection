@@ -53,6 +53,7 @@ namespace
 
         //informational/utility actions
         { 'i', do_inventory },
+        { 'I', do_single_inventory },
         { 'c', do_call },
         { 'D', do_discovered },
         { '^', do_id_trap },

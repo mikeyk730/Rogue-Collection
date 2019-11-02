@@ -635,13 +635,13 @@ void Item::call_it()
         char buf[MAXNAME];
         if (Category()->is_discovered())
             Category()->guess("");
-        else if (Category()->guess().empty())
+        else if (Category()->guess().empty() && game->options.askme())
         {
             msg("%scall it? ", noterse("what do you want to "));
             getinfo(buf, MAXNAME);
             if (*buf != ESCAPE)
                 Category()->guess(buf);
-            msg("");
+            clear_msg();
         }
     }
 }

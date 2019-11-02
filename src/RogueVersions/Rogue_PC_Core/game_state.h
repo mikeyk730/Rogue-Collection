@@ -24,14 +24,19 @@ struct Options
 
     //control options
     bool show_inventory_menu() const;
+    bool use_slow_inventory() const;
     bool dir_key_clears_more() const;
     bool prompt_for_name() const;
+    bool prompt_for_help() const;
+    bool askme() const;
 
     //graphics options
     bool narrow_screen() const;
     bool monochrome() const;
     bool use_exp_level_names() const;
     bool show_armor_class() const;
+    bool unix_output() const;
+    bool terse() const;
 
     //rule changing options
     bool trap_bugfix() const;

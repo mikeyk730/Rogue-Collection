@@ -15,6 +15,12 @@ bool do_inventory()
     return false;
 }
 
+bool do_single_inventory()
+{
+    single_inventory(game->hero().m_pack);
+    return false;
+}
+
 bool do_eat()
 {
     return game->hero().eat();
@@ -108,9 +114,9 @@ bool do_repeat_msg()
 bool do_print_version()
 {
     if (game->options.act_like_v1_1())
-        msg("Rogue version %d.%d (acting like v1.1)", REV, VER);
+        msg("Rogue version 1.1. (A.I. Design)");
     else
-        msg("Rogue version %d.%d", REV, VER);
+        msg("Rogue version %d.%d. (Epyx)", REV, VER);
 
     return false;
 }
