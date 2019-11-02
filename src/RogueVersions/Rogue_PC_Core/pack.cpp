@@ -17,6 +17,7 @@
 #include "weapons.h"
 #include "gold.h"
 #include "item_category.h"
+#include "text.h"
 
 #define CALLABLE  -1
 
@@ -129,9 +130,7 @@ Item* get_item(const std::string& purpose, int type)
             ch = '*';
         }
         else {
-            if (!short_msgs())
-                addmsg("which object do you want to ");
-            msg("%s? (* for list): ", purpose.c_str());
+            msg(get_text(game, text_use), purpose.c_str());
             ch = readchar();
         }
 

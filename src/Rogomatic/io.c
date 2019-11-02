@@ -155,6 +155,8 @@ printscreen (void)
  * implies that we have synchronized with Rogue.
  */
 
+#define GRASS (pc_protocol() ? "___\\/" : ")______")
+
 void getrogue (waitstr, onat)
 char *waitstr;                          /* String to synchronize with */
 int   onat;                             /* 0 ==> Wait for waitstr
@@ -175,7 +177,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
   m = "re--";				/* FSM to check for '--More--' */
   call = "Call it:";			/* FSM to check for 'Call it:' */
   q = "(* for list): ";			/* FSM to check for prompt */
-  d = ")______";			/* FSM to check for tombstone grass */
+  d = GRASS;			/* FSM to check for tombstone grass */
 
   if (moved)				/* If we moved last time, put any */
     { sleepmonster (); moved = 0; }	/* Old monsters to sleep */
@@ -215,7 +217,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
     /* Available on that system. Hopefully the grass is the same   */
     /* in all versions of Rogue!                                   */
     if (ch == *d) { if (0 == *++d) { addch (ch); deadrogue (); return; } }
-    else d = ")_______";
+    else d = GRASS;
 
     /* If the message has a more, strip it off and call terpmes */
     if (ch == *m) {

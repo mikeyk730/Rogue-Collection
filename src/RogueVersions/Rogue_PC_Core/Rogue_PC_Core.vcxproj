@@ -209,6 +209,7 @@
     <ClCompile Include="sticks.cpp" />
     <ClCompile Include="stream_input.cpp" />
     <ClCompile Include="strings.cpp" />
+    <ClCompile Include="text.cpp" />
     <ClCompile Include="things.cpp" />
     <ClCompile Include="weapons.cpp" />
     <ClCompile Include="wizard.cpp" />
@@ -261,6 +262,7 @@
     <ClInclude Include="slime.h" />
     <ClInclude Include="stick.h" />
     <ClInclude Include="strings.h" />
+    <ClInclude Include="text.h" />
     <ClInclude Include="things.h" />
     <ClInclude Include="weapons.h" />
     <ClInclude Include="wizard.h" />
