@@ -117,11 +117,11 @@ void terpmes ()
 
     /* :ANT: for debugging screen now has to be at least 31x80 */
     if debug(D_MESSAGE) {
-      at (24,0);
+      at (MAXROWS,0);
       printw (DBG_FMT,screen);
-      at (25,0);
+      at ((MAXROWS+1),0);
       printw (DBG_FMT,topline);
-      at (26,0);
+      at ((MAXROWS+2),0);
       clrtoeol ();
       printw (DBG_FMT,mess);
       refresh ();
@@ -133,11 +133,11 @@ void terpmes ()
 
     /* :ANT: for debugging */
     if debug(D_MESSAGE) {
-      at (24,0);
+      at (MAXROWS,0);
       printw (DBG_FMT2,screen);
-      at (25,0);
+      at ((MAXROWS+1),0);
       printw (DBG_FMT2,topline);
-      at (26,0);
+      at ((MAXROWS+2),0);
       clrtoeol ();
       printw (DBG_FMT2,mess);
       refresh ();

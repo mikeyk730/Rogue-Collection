@@ -122,7 +122,7 @@ printscreen (void)
   debuglog ("             1111111111222222222233333333334444444444555555555566666666667777777777\n");
   debuglog ("   01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
 
-  for (i=0; i < 24; ++i) {
+  for (i=0; i < MAXROWS; ++i) {
     debuglog ("%02d", i);
 
     if (i >= s_row1 && i <= s_row2) {
@@ -280,7 +280,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
       case CE_TOK:
 
-        if (row && row < 23)
+        if (row && row < (MAXROWS-1))
           for (i = col; i < MAXCOLS; i++) {
             updatepos (' ', row, i);
             screen[row][i] = ' ';
@@ -431,7 +431,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
           if (!emacs && !terse) add_to_screen (row, col, ch);
 
-          if (row == 23) botprinted = 1;
+          if (row == (MAXROWS-1)) botprinted = 1;
           else           updatepos (ch, row, col);
         }
         else if (col == 0)
@@ -516,11 +516,11 @@ void terpbot ()
   register int i, oldstr = Str, oldAc = Ac, oldExp = Explev;
 
   /* Since we use scanf to read this field, it must not be left blank */
-  if (screen[23][(MAXCOLS-2)] == ' ') screen[23][(MAXCOLS-2)] = 'X';
+  if (screen[(MAXROWS-1)][(MAXCOLS-2)] == ' ') screen[(MAXROWS-1)][(MAXCOLS-2)] = 'X';
 
   /* Read the bottom line, there are three versions of the status line */
   if (status_v1()) {	/* Rogue 3.6, Rogue 4.7? */
-    sscanf (screen[23],
+    sscanf (screen[(MAXROWS-1)],
             " Level: %d Gold: %d Hp: %d(%d) Str: %s Ac: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, sstr, &Ac, &Explev, &Exp, Ms);
     sscanf (sstr, "%d/%d", &Str, &Str18);
@@ -529,14 +529,14 @@ void terpbot ()
     if (Str > Strmax) Strmax = Str;
   }
   else if (status_v2()) {	/* Rogue 5.2 (versions A and B) */
-    sscanf (screen[23],
+    sscanf (screen[(MAXROWS-1)],
             " Level: %d Gold: %d Hp: %d(%d) Str: %d(%d) Ac: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);
 
     Str = Str * 100; Strmax = Strmax * 100;
   }
   else {			/* Rogue 5.3 (and beyond???) */
-    sscanf (screen[23],
+    sscanf (screen[(MAXROWS-1)],
             " Level: %d Gold: %d Hp: %d(%d) Str: %d(%d) Arm: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);
 
@@ -544,7 +544,7 @@ void terpbot ()
   }
 
   /* Monitor changes in some variables */
-  if (screen[23][(MAXCOLS-2)] == 'X') screen[23][(MAXCOLS-2)] = ' ';	/* Restore blank */
+  if (screen[(MAXROWS-1)][(MAXCOLS-2)] == 'X') screen[(MAXROWS-1)][(MAXCOLS-2)] = ' ';	/* Restore blank */
 
   if (oldlev != Level)       newlevel ();
 
@@ -580,20 +580,20 @@ void terpbot ()
     /* Handle Emacs and Terse mode */
     if (emacs || terse) {
       /* Skip backward over blanks and nulls */
-      for (i = (MAXCOLS-1); screen[23][i] == ' ' || screen[23][i] == '\0'; i--);
+      for (i = (MAXCOLS-1); screen[(MAXROWS-1)][i] == ' ' || screen[(MAXROWS-1)][i] == '\0'; i--);
 
-      screen[23][++i] = '\0';
+      screen[(MAXROWS-1)][++i] = '\0';
 
       if (emacs) {
-        sprintf (modeline, " %s (%%b)", screen[23]);
+        sprintf (modeline, " %s (%%b)", screen[(MAXROWS-1)]);
 
-        if (strlen (modeline) > (MAXCOLS-8)) sprintf (modeline, " %s", screen[23]);
+        if (strlen (modeline) > (MAXCOLS-8)) sprintf (modeline, " %s", screen[(MAXROWS-1)]);
 
         fprintf (realstdout, "%s", modeline);
         fflush (realstdout);
       }
       else if (terse && oldlev != Level) {
-        fprintf (realstdout, "%s\n", screen[23]);
+        fprintf (realstdout, "%s\n", screen[(MAXROWS-1)]);
         fflush (realstdout);
       }
     }
@@ -611,7 +611,7 @@ void dumpwalls ()
 
   printexplored ();
 
-  for (r = 1; r < 23; r++) {
+  for (r = 1; r < (MAXROWS-1); r++) {
     for (c = 0; c < MAXCOLS; c++) {
       S=scrmap[r][c];
       ch = (ARROW&S)                   ? 'a' :
@@ -843,7 +843,7 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
            sumline, Ac, Explev, Exp, ltm.gamecnt);
 
   /* Now write the summary line to the log file */
-  at (23, 0); clrtoeol (); refresh ();
+  at ((MAXROWS-1), 0); clrtoeol (); refresh ();
 
   /* 22 is index of score in sumline */
   if (!replaying)
@@ -1008,7 +1008,7 @@ void givehelp ()
 
 void pauserogue ()
 {
-  at (23, 0);
+  at ((MAXROWS-1), 0);
   addstr ("--press space to continue--");
   clrtoeol ();
   refresh ();
@@ -1106,7 +1106,7 @@ void redrawscreen ()
 
   clear ();
 
-  for (i = 1; i < 24; i++) for (j = 0; j < MAXCOLS; j++)
+  for (i = 1; i < MAXROWS; i++) for (j = 0; j < MAXCOLS; j++)
       if ((ch = screen[i][j]) > ' ') add_to_screen(i, j, ch);
 
   at (row, col);
@@ -1207,7 +1207,7 @@ FILE *f;
   putn ('-', f, (MAXCOLS-1));
   fprintf (f, "\n");
 
-  for (i = 0; i < 24; i++) {
+  for (i = 0; i < MAXROWS; i++) {
     for (j = 0; j < MAXCOLS; j++) {
         fprintf(f, "%c", get_from_screen(i, j));
     }
@@ -1277,7 +1277,7 @@ void clearscreen ()
   clear ();
   screen00 = ' ';
 
-  for (i = 0; i < 24; i++)
+  for (i = 0; i < MAXROWS; i++)
     for (j = 0; j < MAXCOLS; j++) {
       screen[i][j] = ' ';
       scrmap[i][j] = SCRMINIT;
@@ -1343,7 +1343,7 @@ statusline ()
 
 void add_to_screen(int row, int col, char ch)
 {
-    if (row > 0 && row < 23) {
+    if (row > 0 && row < (MAXROWS-1)) {
         mvaddrawch(row, col, PC_GFX_TRANSLATE(ch));
         return;
     }

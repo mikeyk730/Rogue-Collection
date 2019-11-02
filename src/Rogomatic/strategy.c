@@ -1142,7 +1142,7 @@ fightinvisible ()
 
   /* Count how many orthogonal moves we can make */
   for (dir=0; dir<8; dir++)
-    if (atdrow(dir) > 0 && atdrow(dir) < 23 &&
+    if (atdrow(dir) > 0 && atdrow(dir) < (MAXROWS-1) &&
         onrc(CANGO, atdrow(dir), atdcol(dir)) &&
         onrc(CANGO, atdrow(dir), atcol) &&
         onrc(CANGO, atrow, atdcol(dir)))

@@ -90,7 +90,7 @@ int genericinit ()
  */
 
 # define N 100
-static int secretvalues[16]= { 0, N-24, N-22, N-20,
+static int secretvalues[16]= { 0,    N-24, N-22, N-20,
                                N-9,  N-6,  N-5,  N-5,
                                N-3,  N-2,  N-1,  N-1,
                                N,    N,    N,    N
@@ -225,7 +225,7 @@ int setpsd (print)
   markmissingrooms ();
 
   /* Changed loop boundaries to ignore border around screen -- mlm 5/18/82 */
-  for (i=2; i<22; i++) for (j=1; j<(MAXCOLS-1); j++) {
+  for (i=2; i<(MAXROWS-2); i++) for (j=1; j<(MAXCOLS-1); j++) {
       unsetrc (PSD|DEADEND,i,j);
 
       /* If attempt > 3, allow ANYTHING to be a secret door! */
@@ -293,7 +293,7 @@ int setpsd (print)
     }
 
   /* Now remove PSD bits from walls which already have doors */
-  for (i=2; i<22; i++) for (j=1; j<(MAXCOLS-1); j++) {
+  for (i=2; i<(MAXROWS-2); i++) for (j=1; j<(MAXCOLS-1); j++) {
       if (onrc (DOOR, i, j)) {
         for (k = i-1; onrc (WALL, k, j); k--)
           { if (onrc (PSD, k, j)) numberpsd--; unsetrc (PSD, k, j);}
@@ -310,7 +310,7 @@ int setpsd (print)
     }
 
   if (print || debug (D_SCREEN))
-    for (i=0; i<24; i++) for (j=0; j<MAXCOLS; j++)
+    for (i=0; i<MAXROWS; i++) for (j=0; j<MAXCOLS; j++)
         if (onrc (PSD,i,j)) { at (i,j); addch ('P'); }
 
   reusepsd = numberpsd+1;
@@ -602,7 +602,7 @@ int *val, *avd, *cont;
       nc = c + deltc[k];
 
       /* For each unseen neighbour: add 10 to value. */
-      if (nr >= 1 && nr <= 22 && nc >= 0 && nc <= MAXCOLS &&
+      if (nr >= 1 && nr <= (MAXROWS-2) && nc >= 0 && nc <= MAXCOLS &&
           !onrc (SEEN, nr, nc)) {
         v += 10;
 
@@ -710,7 +710,7 @@ int *val, *avd, *cont;
       nc = c + deltc[k];
 
       /* For each unseen neighbour: add 10 to value. */
-      if (nr >= 1 && nr <= 22 && nc >= 0 && nc <= MAXCOLS &&
+      if (nr >= 1 && nr <= (MAXROWS-2) && nc >= 0 && nc <= MAXCOLS &&
           !onrc (SEEN, nr, nc)) {
         v += 10;
 
@@ -781,7 +781,7 @@ int *val, *avd, *cont;
     register int nr = r + deltr[k];
     register int nc = c + deltc[k];
 
-    if (nr >= 1 && nr <= 22 &&
+    if (nr >= 1 && nr <= (MAXROWS-2) &&
         nc >= 0 && nc <= MAXCOLS &&
         onrc (PSD, nr, nc) && timessearched[nr][nc] < SEARCHES(nr,nc)) {
       /* If adjacent square is on the screen */
@@ -826,7 +826,7 @@ void avoidmonsters ()
   register int i, r, c, wearingstealth;
 
   /* Clear old avoid monster values */
-  for (i = 24*MAXCOLS; i--; ) avdmonsters[0][i] = 0;
+  for (i = MAXROWS*MAXCOLS; i--; ) avdmonsters[0][i] = 0;
 
   /* Set stealth status */
   wearingstealth = (wearing ("stealth") != NONE);
@@ -907,7 +907,7 @@ void pinavoid ()
   register int i;
 
   /* Clear old avoid monster values */
-  for (i = 24*MAXCOLS; i--; ) avdmonsters[0][i] = 0;
+  for (i = MAXROWS*MAXCOLS; i--; ) avdmonsters[0][i] = 0;
 
   /* Avoid each monster in turn */
   for (i=0; i<mlistlen; i++) {
@@ -961,7 +961,7 @@ int secret ()
 
   /* If Level 1 or edge of screen: dead end cannot be room, mark and return */
   if (Level == 1 && attempt == 0 ||
-      !has_hidden_passages() && (atrow<=1 || atrow>=22 || atcol<=0 || atcol>=(MAXCOLS-1)))
+      !has_hidden_passages() && (atrow<=1 || atrow>=(MAXROWS-2) || atcol<=0 || atcol>=(MAXCOLS-1)))
     { markexplored (atrow, atcol); return (0); }
 
   /* Have we mapped this level? */
@@ -1171,7 +1171,7 @@ int archeryinit ()
   register int dir, r, c, dr, dc, dist;
 
   /* Clear the archery value array */
-  for (r = 24*MAXCOLS; r--; ) archval[0][r] = 0;
+  for (r = MAXROWS*MAXCOLS; r--; ) archval[0][r] = 0;
 
   /* Scan around monster to see how far away we can shoot from */
   for (dir = 0; dir < 8; dir++) {

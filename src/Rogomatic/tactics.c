@@ -619,10 +619,10 @@ static struct {
       horend,
       hordelt;
 } cb [4] = {
-  {  3, 21,  1,           1, (MAXCOLS-2),  1},	/* Top left corner */
-  {  3, 21,  1, (MAXCOLS-2),           1, -1},	/* Top right corner */
-  { 21,  3, -1, (MAXCOLS-2),           1, -1},	/* Bottom right corner */
-  { 21,  3, -1,           1, (MAXCOLS-2),  1}
+  {           3, (MAXROWS-3),  1,           1, (MAXCOLS-2),  1},	/* Top left corner */
+  {           3, (MAXROWS-3),  1, (MAXCOLS-2),           1, -1},	/* Top right corner */
+  { (MAXROWS-3),           3, -1, (MAXCOLS-2),           1, -1},	/* Bottom right corner */
+  { (MAXROWS-3),           3, -1,           1, (MAXCOLS-2),  1}
 };  /* Bottom left corner */
 
 static gc = 0; /* Goal corner from 0..3 */

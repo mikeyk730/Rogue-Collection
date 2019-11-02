@@ -412,7 +412,7 @@ char *env[];
   sprintf (sumline, "");
   sprintf (versionstr, "");
 
-  for (i = MAXCOLS * 24; i--; ) screen[0][i] = ' ';
+  for (i = MAXCOLS * MAXROWS; i--; ) screen[0][i] = ' ';
 
   /*
    * Get the process id of this player program if the
@@ -814,7 +814,7 @@ char *env[];
   }
 
   /* Print termination messages */
-  at (23, 0);
+  at ((MAXROWS-1), 0);
   clrtoeol ();
 //  clear ();
   refresh ();

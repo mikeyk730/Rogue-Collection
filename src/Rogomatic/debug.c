@@ -266,7 +266,7 @@ int *r, *c;
   if (getnstr(buf, 256)/*fgets (buf, 256, stdin)*/) {
     sscanf (buf, "%d,%d", r, c);
 
-    if (*r>=1 && *r<23 && *c>=0 && *c<=(MAXCOLS-1))
+    if (*r>=1 && *r<(MAXROWS-1) && *c>=0 && *c<=(MAXCOLS-1))
       return (1);
     else
       say ("%d,%d is not on the screen!", *r, *c);

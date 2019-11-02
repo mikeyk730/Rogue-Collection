@@ -372,7 +372,7 @@ char dir[MAXROWS][MAXCOLS];
   head = tail = begin;
   end = begin + QSIZE;
 
-  for (c = 23*MAXCOLS; c--; ) dir[0][c] = NOTTRIED;		/* MLM */
+  for (c = (MAXROWS-1)*MAXCOLS; c--; ) dir[0][c] = NOTTRIED;		/* MLM */
 
   for (c = MAXCOLS; c--; ) dir[0][c] = 0;			/* MLM */
 

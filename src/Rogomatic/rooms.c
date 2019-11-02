@@ -85,7 +85,7 @@ void newlevel ()
    * Clear the lowlevel map
    */
 
-  for (i = 1; i < 23; i++)
+  for (i = 1; i < (MAXROWS-1); i++)
     for (j = 0; j < MAXCOLS; j++) {  /* Forall screen positions */
       scrmap[i][j] = SCRMINIT;
       timessearched[i][j] = 0;
@@ -105,18 +105,18 @@ void newlevel ()
  *	     CANGO -- halls, but no room in sector
  */
 
-static struct {int top,bot,left,right;} bounds[9]= //todo:mdk
+static struct {int top,bot,left,right;} bounds[9]=
 
   /* top bot left right */
-/*0*/	{{ 1,  6,   0,  25},
-  /*1*/	 { 1,  6,  27,  51},
-  /*2*/	 { 1,  6,  53,  (MAXCOLS-1)},
-  /*3*/	 { 8, 14,   0,  25},
-  /*4*/	 { 8, 14,  27,  51},
-  /*5*/	 { 8, 14,  53,  (MAXCOLS-1)},
-  /*6*/	 {16, 22,   0,  25},
-  /*7*/	 {16, 22,  27,  51},
-  /*8*/	 {16, 22,  53,  (MAXCOLS-1)}
+  /*0*/	{{ 1,           6,   0,           25},
+  /*1*/	 { 1,           6,  27,           51},
+  /*2*/	 { 1,           6,  53,  (MAXCOLS-1)},
+  /*3*/	 { 8,          14,   0,           25},
+  /*4*/	 { 8,          14,  27,           51},
+  /*5*/	 { 8,          14,  53,  (MAXCOLS-1)},
+  /*6*/	 {16, (MAXROWS-2),   0,           25},
+  /*7*/	 {16, (MAXROWS-2),  27,           51},
+  /*8*/	 {16, (MAXROWS-2),  53,  (MAXCOLS-1)}
 };
 
 void markmissingrooms ()
@@ -226,7 +226,7 @@ int notr, notc;
 
   stairrow = staircol = NONE;
 
-  for (r = 2; r < 22; r++)
+  for (r = 2; r < (MAXROWS-2); r++)
     for (c = 1; c < (MAXCOLS-1); c++)
       if ((seerc ('%', r, c) || onrc (STAIRS, r, c)) &&
           r != notr && c != notc)
@@ -242,7 +242,7 @@ int *drow, *dcol;
 {
   register int i=atrow, j=atcol;
 
-  while (i < 23 && j < (MAXCOLS-1)) {
+  while (i < (MAXROWS-1) && j < (MAXCOLS-1)) {
     if (onrc (CANGO, i, j+1)) j++;
     else if (onrc (CANGO, i+1, j)) i++;
     else { *drow = i; *dcol = j; return (1); }
@@ -377,7 +377,7 @@ void currentrectangle ()
 
     if (curt <= 2) flags &= ~fT;    /* Wall must be on screen edge */
 
-    if (curb >= 21) flags &= ~fB;
+    if (curb >= (MAXROWS-3)) flags &= ~fB;
 
     if (curl <= 1) flags &= ~fL;
 
@@ -385,7 +385,7 @@ void currentrectangle ()
 
     ckdoor (fT, curt<6,  r, c, curt, curt-1, curl-1, curr+1)
     ckdoor (fB, curb>17, r, c, curb, curb+1, curl-1, curr+1)
-    ckdoor (fL, curl<24, c, r, curl, curl-1, curt-1, curb+1)
+    ckdoor (fL, curl<MAXROWS, c, r, curl, curl-1, curt-1, curb+1)
     ckdoor (fR, curr>56, c, r, curr, curr+1, curt-1, curb+1)
 
     /* Fill in the corners of the room without seeing them */
@@ -718,7 +718,7 @@ void teleport ()
   if (movedir >= 0 && movedir < 8 && !confused) {
     teleported++;
 
-    while (r > 1 && r < 23 && c > 0 && c < (MAXCOLS-1)) {
+    while (r > 1 && r < (MAXROWS-1) && c > 0 && c < (MAXCOLS-1)) {
       if (onrc (WALL | DOOR | HALL, r, c)) break;
 
       if (onrc (TRAP, r, c)) {
@@ -748,7 +748,7 @@ void mapinfer()
 
   dwait (D_CONTROL, "Map read: inferring rooms.");
 
-  for (r=1; r<23; r++) {
+  for (r=1; r<(MAXROWS-1); r++) {
     inroom = 0;
 
     for (c=0; c<MAXCOLS; c++) {
@@ -1088,7 +1088,7 @@ void dumpmazedoor ()
 {
   register int r, c;
 
-  for (r=2; r<22; r++) {
+  for (r=2; r<(MAXROWS-2); r++) {
     for (c=1; c<(MAXCOLS-1); c++) {
       if (((scrmap[r][c] & (BEEN|DOOR|HALL|ROOM|WALL|STAIRS)) == 0) &&
           mazedoor (r, c))

@@ -373,7 +373,7 @@ char *cmd;
   register char *s;
   register int i = (MAXCOLS-8);
 
-  at (23,i); standout (); printw (" ");
+  at ((MAXROWS-1),i); standout (); printw (" ");
 
   for (s=cmd; *s; s++) {
     if ((i + strlen (unctrl(*s))) < (MAXCOLS-2)) {
@@ -388,7 +388,7 @@ char *cmd;
 
 void clearcommand ()
 {
-  at (23,(MAXCOLS-8)); clrtoeol (); at (row, col);
+  at ((MAXROWS-1),(MAXCOLS-8)); clrtoeol (); at (row, col);
   cmdonscreen = 0;
 }
 /*
