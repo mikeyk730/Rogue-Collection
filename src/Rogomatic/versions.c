@@ -7,7 +7,8 @@ int version_has_arrow_bug()
 
 int striking_takes_2_charges()
 {
-    return version >= RV52A;
+    return version >= RV52A
+        && version != RVPC11 && version != RVPC148;
 }
 
 int can_step_on_scare_monster_if_inv_full()
@@ -17,12 +18,13 @@ int can_step_on_scare_monster_if_inv_full()
 
 int can_move_without_pickup()
 {
-    return version >= RV53A;
+    return version >= RV53A
+        || version == RVPC148;
 }
 
 int version_has_invisible_stalker()
 {
-    return version < RV53A;
+    return !version_has_new_monsters();
 }
 
 int has_double_haste_bug()
@@ -37,7 +39,9 @@ int version_has_wands()
 
 int version_has_new_monsters()
 {
-    return version >= RV53A;
+    return version >= RV53A
+        || version == RVPC11
+        || version == RVPC148;
 }
 
 int get_zap_key()
@@ -98,7 +102,14 @@ int status_v1()
 
 int status_v2()
 {
-    return version >= RV52A && version < RV53A;
+    return version == RV52A ||
+        version == RV52B ||
+        version == RV53NMT;
+}
+
+int status_v3()
+{
+    return version == RVPC11;
 }
 
 int version_uses_new_strength()
@@ -134,6 +145,11 @@ int rust_monster_level()
 int has_hidden_passages()
 {
     return version >= RV53A;
+}
+
+int pc_protocol()
+{
+    return version == RVPC11 || version == RVPC148;
 }
 
 int eat_after_fainting()

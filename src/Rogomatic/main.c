@@ -550,7 +550,7 @@ char *env[];
    * Also identify wands (/), so that we can differentiate
    * older Rogue 3.6 from Rogue 3.6 with extra magic...
    */
-  if (version < RV53A)
+  if (version < RV52A)
       sendnow("%c//;", get_redraw_key());
   else
       sendnow("%c;", get_redraw_key());
@@ -561,7 +561,7 @@ char *env[];
    * the level drawing.
    */
   {
-    if (!replaying)
+    if (!replaying && !pc_protocol())
       while ((int) (ch = getroguetoken ()) != CL_TOK && (int) ch != EOF) {
         /* FIXME: If you start next to a monster this will get stuck, as
            pressing 'v' takes time in version 3.6, so rogue will be waiting

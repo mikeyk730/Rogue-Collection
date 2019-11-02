@@ -431,7 +431,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
           if (!emacs && !terse) add_to_screen (row, col, ch);
 
-          if (row == (MAXROWS-1)) botprinted = 1;
+          if (row == STATUSROW) botprinted = 1;
           else           updatepos (ch, row, col);
         }
         else if (col == 0)
@@ -534,6 +534,12 @@ void terpbot ()
             &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);
 
     Str = Str * 100; Strmax = Strmax * 100;
+  }
+  else if (status_v3()) {	/* Rogue PC 1.1 */
+      sscanf(screen[STATUSROW],
+          "Level:%d Hits:%d(%d) Str:%d(%d) Gold:%d Armor:%d Exp:%d/%d",
+          &Level, &Hp, &Hpmax, &Str, &Strmax, &Gold, &Ac, &Explev, &Exp);
+      Ms[0] = screen[STATUSROW + 1][58];
   }
   else {			/* Rogue 5.3 (and beyond???) */
     sscanf (screen[STATUSROW],
@@ -1063,7 +1069,8 @@ void getrogver ()
   else if (stlmatch (versionstr, "5.2"))	version = RV52A;
 #ifdef ROGUE_COLLECTION
   else if (stlmatch (versionstr, "5.3"))	version = RV53NMT;
-  else if (stlmatch (versionstr, "1.48"))	version = RVPC11;
+  else if (stlmatch (versionstr, "1.1"))	version = RVPC11;
+  else if (stlmatch (versionstr, "1.48"))	version = RVPC148;
 #else
   else if (stlmatch (versionstr, "5.3"))	version = RV53A;
 #endif
