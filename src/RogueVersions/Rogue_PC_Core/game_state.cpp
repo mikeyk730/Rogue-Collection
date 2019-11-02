@@ -411,6 +411,11 @@ bool Options::monochrome() const
     return get_environment("screen") == "bw";
 }
 
+bool Options::use_exp_level_names() const
+{
+    return get_environment("use_exp_level_names") != "false";
+}
+
 bool Options::show_armor_class() const
 {
     return get_environment("showac") == "true";
