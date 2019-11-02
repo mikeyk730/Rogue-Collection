@@ -413,7 +413,7 @@ bool Options::monochrome() const
 
 bool Options::use_exp_level_names() const
 {
-    return get_environment("use_exp_level_names") != "false";
+    return !act_like_v1_1();
 }
 
 bool Options::show_armor_class() const
