@@ -336,6 +336,7 @@ char *small, *big;
 #define EXTRASIZE 5		/* increment to add to env. size */
 
 static int  envsize = -1;	/* current size of environment */
+extern char **environ;		/* the global which is your env. */
 
 static int  findenv (char *name);		/* look for a name in the env. */
 static int  newenv (void);		/* copy env. from stack to heap */

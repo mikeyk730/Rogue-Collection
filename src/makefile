@@ -1,6 +1,12 @@
 all:
 	mkdir -p ../build/release/
-	mkdir -p ../build/debug/
+	mkdir -p ../build/release/res/
+	cp -R ../res/* ../build/release/res/
+	mkdir -p ../build/release/data/
+	cp -R ../data/* ../build/release/data/
+	mkdir -p ../build/release/rlog/
+	cp -R ../rogue.opt ../build/release/
+	cp -R ../docs/readme.md ../build/release/
 	$(MAKE) -C MyCurses
 	$(MAKE) -C RogueVersions/Rogue_PC_Core
 	$(MAKE) -C RogueVersions/Rogue_PC_1_48

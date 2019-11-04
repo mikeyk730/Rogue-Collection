@@ -28,6 +28,8 @@
  * Miscellaneous Macros and Constants
  */
 
+#include <time.h>
+
 /* Global Preprocessor constants */
 
 # define ill         ";'"
@@ -342,3 +344,5 @@ typedef struct {
 
 typedef int(*evalinit_ptr)();
 typedef int(*evaluate_ptr)(int r, int c, int depth, int *val, int *avd, int *cont);
+
+typedef struct levstruct levstruct;

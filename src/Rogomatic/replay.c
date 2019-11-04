@@ -121,7 +121,7 @@ void positionreplay ()
 
 int findlevel (f, lvpos, nmlev, maxnum)
 FILE *f;
-struct levstruct *lvpos;
+levstruct *lvpos;
 int *nmlev, maxnum;
 {
   char ch;
@@ -162,7 +162,7 @@ int *nmlev, maxnum;
 
 void fillstruct (f, lev)
 FILE *f;
-struct levstruct *lev;
+levstruct *lev;
 {
   lev->level  = 0;
   lev->gold   = 0;
