@@ -1242,10 +1242,11 @@ void dosnapshot ()
 #ifdef ROGUE_COLLECTION
   if (g_debug)
   {
+      copyltm();
+#ifdef _WIN32
       char filename[80];
       FILE* batch;
 
-      copyltm();
       sprintf_s(filename, 80, "run-%d-lvl%d.bat", g_seed, Level);
       if ((batch = wopen(filename, "w")) != NULL) {
           char game = version == RV36B ? 'f' : version == RV52A ? 'e' : version == RV54A ? 'c' : 'X';
@@ -1255,6 +1256,7 @@ void dosnapshot ()
               knob[4], knob[5], knob[6], knob[7]);
       }
       fclose(batch);
+#endif
   }
 #endif
 }
