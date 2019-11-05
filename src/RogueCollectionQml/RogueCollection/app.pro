@@ -41,7 +41,7 @@ win32 {
     }
 }
 linux {
-    debug {
+    CONFIG( debug, debug|release ) {
         LIBS += "$$PWD/../../../build/debug/lib-shared-frontend.a"
     } else {
         LIBS += "$$PWD/../../../build/release/lib-shared-frontend.a"

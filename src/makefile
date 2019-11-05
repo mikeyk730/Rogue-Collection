@@ -16,7 +16,16 @@ all:
 	$(MAKE) -C RogueVersions/Rogue_5_4_2
 	$(MAKE) -C Rogomatic
 	$(MAKE) -C Shared/Frontend
-	$(MAKE) -C RogueCollectionSdl
+	#$(MAKE) -C RogueCollectionSdl
+	mkdir -p ../build/qml/RogueCollection/
+	cd ../build/qml/RogueCollection/ && qmake ../../../src/RogueCollectionQml/RogueCollection.pro -spec linux-g++ && make qmake_all && make -j4
+	cp ../build/qml/RogueCollection/rogue-collection ../build/release
+	mkdir -p ../build/qml/RetroRogueCollection/
+	cd ../build/qml/RetroRogueCollection/ && qmake ../../../src/RogueCollectionQml/RetroRogueCollection.pro -spec linux-g++ && make qmake_all && make -j4
+	cp ../build/qml/RetroRogueCollection/retro-rogue-collection ../build/release
+	mkdir -p ../build/release/RoguePlugin/
+	cp ../build/qml/RetroRogueCollection/RoguePlugin/qmldir ../build/release/RoguePlugin
+	cp ../build/qml/RetroRogueCollection/RoguePlugin/librogueplugin.so ../build/release/RoguePlugin
 
 clean:
 	$(MAKE) -C MyCurses clean
@@ -29,3 +38,5 @@ clean:
 	$(MAKE) -C Rogomatic clean
 	$(MAKE) -C Shared/Frontend clean
 	$(MAKE) -C RogueCollectionSdl clean
+	cd ../build/qml/RogueCollection/ && make clean -j4
+	cd ../build/qml/RetroRogueCollection/ && make clean -j4
