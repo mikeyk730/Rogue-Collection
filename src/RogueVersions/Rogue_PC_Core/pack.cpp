@@ -130,7 +130,7 @@ Item* get_item(const std::string& purpose, int type)
             ch = '*';
         }
         else {
-            msg(get_text(game, text_use), purpose.c_str());
+            msg(get_text(text_use), purpose.c_str());
             ch = readchar();
         }
 
@@ -203,9 +203,9 @@ bool do_call()
     std::string called = obj->Category()->guess();
     if (called.empty())
         called = obj->Category()->identifier();
-    msg("Was called \"%s\"", called.c_str());
+    msg(get_text(text_was_called), called.c_str());
 
-    msg("what do you want to call it? ");
+    msg(get_text(text_call_it));
     getinfo(prbuf, MAXNAME);
     if (*prbuf && *prbuf != ESCAPE)
         obj->Category()->guess(prbuf);

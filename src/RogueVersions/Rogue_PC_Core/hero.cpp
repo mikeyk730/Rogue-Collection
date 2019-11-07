@@ -271,7 +271,7 @@ void Hero::digest()
         }
         else if (food_left < 2 * MORE_TIME && oldfood >= 2 * MORE_TIME) {
             hungry_state = 1;
-            msg(get_text(game, text_hungry));
+            msg(get_text(text_hungry));
         }
     }
 }
@@ -730,7 +730,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
 void Hero::pick_up_gold(int value)
 {
     adjust_purse(value);
-    msg(get_text(game, text_gold), value);
+    msg(get_text(text_found_gold), value);
     game->screen().play_sound("gold");
 }
 
@@ -889,7 +889,7 @@ bool Hero::wear_armor()
     waste_time(); //mdk: putting on armor takes 2 turns
 
     set_current_armor(armor);
-    msg("you are now wearing %s", armor->inventory_name(*this, true).c_str());
+    msg(get_text(text_wear_armor), armor->inventory_name(*this, true).c_str());
     return true;
 }
 
@@ -907,7 +907,7 @@ bool Hero::take_off_armor()
         return true;
 
     set_current_armor(NULL);
-    msg("you used to be wearing %c) %s", pack_char(obj), obj->inventory_name(*this, true).c_str());
+    msg(get_text(text_remove_armor), pack_char(obj), obj->inventory_name(*this, true).c_str());
     return true;
 }
 

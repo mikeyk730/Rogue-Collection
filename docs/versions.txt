@@ -37,6 +37,8 @@
 + Striking staff improved vs Unix versions
 + Player's XP are shown
 + Player gets a poision saving throw against Ice Monster
++ Hear a growling if read food detection on level with no food
++ Can be damaged by falling trap
 + Bug: Haste self doesn't work (fixed in Rogue Collection)
 + Bug: Player is initially considered asleep (fixed in Rogue Collection)
 + Bug: Weapon throw damages aren't used (fixed in Rogue Collection)

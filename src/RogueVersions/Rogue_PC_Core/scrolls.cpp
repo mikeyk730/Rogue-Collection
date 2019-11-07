@@ -94,7 +94,7 @@ bool do_read_scroll()
         return true;
     }
 
-    msg(get_text(game, text_vanish));
+    msg(get_text(text_scroll_vanishes));
     if (scroll == game->hero().get_current_weapon())
         game->hero().set_current_weapon(NULL);
 
@@ -234,7 +234,7 @@ void EnchantArmor::Read()
     if (game->hero().get_current_armor() != NULL)
     {
         game->hero().get_current_armor()->enchant_armor();
-        ifterse("your armor glows faintly", "your armor glows faintly for a moment");
+        msg(get_text(text_enchant_armor));
     }
 }
 
@@ -335,14 +335,14 @@ void RemoveCurse::Read()
     if (game->hero().get_ring(RIGHT))
         game->hero().get_ring(RIGHT)->remove_curse();
 
-    ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
+    msg(get_text(text_remove_curse));
 }
 
 void AggravateMonsters::Read()
 {
     //This scroll aggravates all the monsters on the current level and sets them running towards the hero
     game->level().aggravate_monsters();
-    ifterse("you hear a humming noise", "you hear a high pitched humming noise");
+    msg(get_text(text_aggravate_monsters));
 }
 
 bool AggravateMonsters::IsEvil() const

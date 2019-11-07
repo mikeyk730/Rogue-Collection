@@ -210,7 +210,7 @@ void killed_by_hero(Monster* monster, bool print)
 
     if (print)
     {
-        addmsg(get_text(game, text_defeated));
+        addmsg(get_text(text_defeated_monster));
         if (game->hero().is_blind())
             msg(it);
         else

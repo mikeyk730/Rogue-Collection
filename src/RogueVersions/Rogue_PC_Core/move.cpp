@@ -22,6 +22,7 @@
 #include "game_state.h"
 #include "hero.h"
 #include "monster.h"
+#include "text.h"
 
 #define BEAR_TIME    spread(3)
 
@@ -366,10 +367,10 @@ int handle_trap(Coord tc)
             }
             if (!save(VS_POISON))
                 game->hero().adjust_strength(-1);
-            msg("a dart just hit you in the shoulder");
+            msg(get_text(text_dart_hit));
         }
         else
-            msg("a dart whizzes by your ear and vanishes");
+            msg(get_text(text_dart_miss));
         break;
     }
     clear_typeahead_buffer();

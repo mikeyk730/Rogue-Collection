@@ -19,6 +19,7 @@
 #include "ring.h"
 #include "armor.h"
 #include "gold.h"
+#include "text.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -584,7 +585,7 @@ bool Monster::drain_strength_attack()
     //Rattlesnakes have poisonous bites
     if (!save(VS_POISON)) {
         if (game->hero().adjust_strength(-1)) {
-            msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
+            msg(get_text(text_bite));
             return true;
         }
         else

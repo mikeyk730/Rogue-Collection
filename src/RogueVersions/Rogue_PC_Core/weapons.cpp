@@ -23,6 +23,7 @@
 #include "hero.h"
 #include "pack.h"
 #include "monster.h"
+#include "text.h"
 
 //mdk: IS_MISL has no effect.  It did in Unix 3.6.3, but I think it was
 //correctly made obsolete.
@@ -185,7 +186,7 @@ void fall(Item *obj, bool pr)
         pr = 0;
     }
     if (pr)
-        msg("the %s vanishes%s.", obj->name().c_str(), noterse(" as it hits the ground"));
+        msg(get_text(text_item_vanishes), obj->name().c_str());
     delete obj;
 }
 
@@ -398,7 +399,7 @@ void Weapon::enchant_weapon()
         this->m_hit_plus++;
     else
         this->m_damage_plus++;
-    ifterse("your %s glows blue", "your %s glows blue for a moment", TypeName().c_str());
+    msg(get_text(text_enchant_weapon), TypeName().c_str());
 }
 
 bool Weapon::is_vorpalized() const

@@ -216,13 +216,19 @@ register char *mess, *mend;
         /* :ANT: */
 
         else if (MATCH("a new monster is nearby*")) infer ("create monster", Scroll);
-        else if (MATCH("a staff of * [*](*)*")) infer (res1, wand);
-        else if (MATCH("a wand of * [*](*)*")) infer (res1, wand);
-        else if (MATCH("a ring of *(*)*")) infer (res1, ring);
-        else if (MATCH("a wand of *(*)*")) infer (res1, wand);
-        else if (MATCH("a staff of *(*)*")) infer (res1, wand);
+        else if (MATCH("a staff of * [*](*)*")) infer(res1, wand);
+        else if (MATCH("a staff of * [*]*")) infer(res1, wand);
+        else if (MATCH("a wand of * [*](*)*")) infer(res1, wand);
+        else if (MATCH("a wand of * [*]*")) infer(res1, wand);
+        else if (MATCH("a ring of *(*)*")) infer(res1, ring);
+        else if (MATCH("a ring of *")) infer(res1, ring);
+        else if (MATCH("a wand of *(*)*")) infer(res1, wand);
+        else if (MATCH("a wand of *")) infer(res1, wand);
+        else if (MATCH("a staff of *(*)*")) infer(res1, wand);
+        else if (MATCH("a staff of *")) infer(res1, wand);
         else if (MATCH("a scroll of *")) infer (res1, Scroll);
-        else if (MATCH("a potion of *(*)*")) infer (res1, potion);
+        else if (MATCH("a potion of *(*)*")) infer(res1, potion);
+        else if (MATCH("a potion of *")) infer(res1, potion);
         else if (MATCH("a +*")) ;
         else if (MATCH("an +*")) ;
         else if (MATCH("a -*")) ;
@@ -423,6 +429,7 @@ register char *mess, *mend;
       case 't':
 
         if (MATCH("throw what*")) echoit=0;
+        else if (MATCH("the screen looks fine*"));
         else if (MATCH("the * bounces*")) ;
         else if (MATCH("the bolt *")) ;
         else if (MATCH("the flame *")) ;
@@ -543,6 +550,7 @@ register char *mess, *mend;
         else if (MATCH("you suddenly feel much more skillful*"))
           { infer("raise level", potion); }
         else if (MATCH("your nose tingles*")) infer ("food detection", Scroll);
+        else if (MATCH("you hear a growling*")) infer("food detection", Scroll);
         else if (MATCH("you start to float in the air*"))
           { infer ("levitation", potion); floating=1; }
         else if (MATCH("you're floating off the ground!*")) floating=1;
@@ -560,6 +568,7 @@ register char *mess, *mend;
         else if (MATCH("your hands begin to glow *"))
           { infer ("monster confusion", Scroll); redhands = 1; }
         else if (MATCH("your hands stop glowing *")) redhands = 0;
+        else if (MATCH("your mace gives off a flash*")); //todo:mdk handle vorp
 
         else if (MATCH("you feel as if somebody is watching over you*") ||
                  MATCH("you feel in touch with the universal onenes*")) {
@@ -631,7 +640,7 @@ register char *mess, *mend;
         else if (MATCH("your purse feels lighter*")) ;
         else if (MATCH("you suddenly feel weaker*")) ;
         else if (MATCH("you must identify something*")) ;
-        else if (MATCH("you have a * feeling for a moment, then it passes*")) infer ("monster detection", potion);
+        else if (MATCH("you have a * feeling for a moment, then it passes*")) infer ("monster detection", potion); //todo:mdk
         else if (MATCH("you have a * feeling for a moment*")) infer ("monster detection", potion);
         else if (MATCH("you daydream of * for a moment, then it passes*")) infer ("magic detection", potion);
         else if (MATCH("you feel deeply moved*")) infer ("teleportation", Scroll);
@@ -641,6 +650,7 @@ register char *mess, *mend;
         else if (MATCH("you faint*")) {echoit=0; if (eat_after_fainting()) eat();}
         else if (MATCH("you freak out*")) echoit = 0;
         else if (MATCH("you fell into a trap!*")) ;
+        else if (MATCH("you are damaged by the fall*"));
         else if (MATCH("yum*")) echoit=0;
         else if (MATCH("yuk*")) echoit=0;
         else if (MATCH("you sense the presence of magic*")) { infer ("magic detection", potion); echoit=0; }

@@ -182,7 +182,12 @@ int get_translated_char()
 {
     int ch;
     ch = readchar();
-    clear_msg();
+    if (game->options.show_animation()) { //todo:mdk revisit this option
+        msg("");
+    }
+    else {
+        reset_msg_position();
+    }
     return translate_command(ch);
 }
 

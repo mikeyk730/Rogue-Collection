@@ -24,6 +24,7 @@
 #include "hero.h"
 #include "room.h"
 #include "monster.h"
+#include "text.h"
 
 Monster* get_monster_in_direction(Coord dir, bool check_distant)
 {
@@ -196,7 +197,7 @@ bool MagicMissileStick::Zap(Coord dir)
     if ((monster = game->level().monster_at(missile->position())) != NULL && !save_throw(VS_MAGIC, monster))
         projectile_hit(missile->position(), missile);
     else
-        msg("the missile vanishes with a puff of smoke");
+        msg(get_text(text_missile_vanishes));
 
     return true;
 }
