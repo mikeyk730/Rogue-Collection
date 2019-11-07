@@ -26,6 +26,7 @@
 #include "scrolls.h"
 #include "things.h"
 #include "sticks.h"
+#include "text.h"
 
 #define HUNGER_TIME  spread(1300)
 #define MORE_TIME    150
@@ -270,7 +271,7 @@ void Hero::digest()
         }
         else if (food_left < 2 * MORE_TIME && oldfood >= 2 * MORE_TIME) {
             hungry_state = 1;
-            msg("you are starting to get hungry");
+            msg(get_text(game, text_hungry));
         }
     }
 }
@@ -729,7 +730,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
 void Hero::pick_up_gold(int value)
 {
     adjust_purse(value);
-    msg("you found %d gold pieces", value);
+    msg(get_text(game, text_gold), value);
     game->screen().play_sound("gold");
 }
 

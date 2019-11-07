@@ -37,6 +37,7 @@ struct Options
     bool show_armor_class() const;
     bool unix_output() const;
     bool terse() const;
+    bool show_animation() const;
 
     //rule changing options
     bool trap_bugfix() const;

@@ -225,7 +225,7 @@ int setpsd (print)
   markmissingrooms ();
 
   /* Changed loop boundaries to ignore border around screen -- mlm 5/18/82 */
-  for (i=2; i<(MAXROWS-2); i++) for (j=1; j<(MAXCOLS-1); j++) {
+  for (i=2; i<(STATUSROW-1); i++) for (j=1; j<(MAXCOLS-1); j++) {
       unsetrc (PSD|DEADEND,i,j);
 
       /* If attempt > 3, allow ANYTHING to be a secret door! */
@@ -293,7 +293,7 @@ int setpsd (print)
     }
 
   /* Now remove PSD bits from walls which already have doors */
-  for (i=2; i<(MAXROWS-2); i++) for (j=1; j<(MAXCOLS-1); j++) {
+  for (i=2; i<(STATUSROW-1); i++) for (j=1; j<(MAXCOLS-1); j++) {
       if (onrc (DOOR, i, j)) {
         for (k = i-1; onrc (WALL, k, j); k--)
           { if (onrc (PSD, k, j)) numberpsd--; unsetrc (PSD, k, j);}
@@ -602,7 +602,7 @@ int *val, *avd, *cont;
       nc = c + deltc[k];
 
       /* For each unseen neighbour: add 10 to value. */
-      if (nr >= 1 && nr <= (MAXROWS-2) && nc >= 0 && nc <= MAXCOLS &&
+      if (nr >= 1 && nr <= (STATUSROW-1) && nc >= 0 && nc <= MAXCOLS &&
           !onrc (SEEN, nr, nc)) {
         v += 10;
 
@@ -710,7 +710,7 @@ int *val, *avd, *cont;
       nc = c + deltc[k];
 
       /* For each unseen neighbour: add 10 to value. */
-      if (nr >= 1 && nr <= (MAXROWS-2) && nc >= 0 && nc <= MAXCOLS &&
+      if (nr >= 1 && nr <= (STATUSROW-1) && nc >= 0 && nc <= MAXCOLS &&
           !onrc (SEEN, nr, nc)) {
         v += 10;
 
@@ -781,7 +781,7 @@ int *val, *avd, *cont;
     register int nr = r + deltr[k];
     register int nc = c + deltc[k];
 
-    if (nr >= 1 && nr <= (MAXROWS-2) &&
+    if (nr >= 1 && nr <= (STATUSROW-1) &&
         nc >= 0 && nc <= MAXCOLS &&
         onrc (PSD, nr, nc) && timessearched[nr][nc] < SEARCHES(nr,nc)) {
       /* If adjacent square is on the screen */
@@ -961,7 +961,7 @@ int secret ()
 
   /* If Level 1 or edge of screen: dead end cannot be room, mark and return */
   if (Level == 1 && attempt == 0 ||
-      !has_hidden_passages() && (atrow<=1 || atrow>=(MAXROWS-2) || atcol<=0 || atcol>=(MAXCOLS-1)))
+      !has_hidden_passages() && (atrow<=1 || atrow>=(STATUSROW-1) || atcol<=0 || atcol>=(MAXCOLS-1)))
     { markexplored (atrow, atcol); return (0); }
 
   /* Have we mapped this level? */

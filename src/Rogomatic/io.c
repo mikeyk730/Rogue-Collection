@@ -282,7 +282,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
       case CE_TOK:
 
-        if (row && row < (MAXROWS-1))
+        if (row && row < STATUSROW)
           for (i = col; i < MAXCOLS; i++) {
             updatepos (' ', row, i);
             screen[row][i] = ' ';
@@ -441,7 +441,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
         else if (col == 1 && ch == 'l' && screen[0][0] == 'I') {
           screen[0][0] = screen00;
 
-          if (screen00 != ' ') terpmes ();
+          if (screen00 != ' ') terpmes (); //todo:mdk not being hit on pc because message cleared with all input
 
           screen[0][0] = 'I';
         }
@@ -588,20 +588,20 @@ void terpbot ()
     /* Handle Emacs and Terse mode */
     if (emacs || terse) {
       /* Skip backward over blanks and nulls */
-      for (i = (MAXCOLS-1); screen[(MAXROWS-1)][i] == ' ' || screen[(MAXROWS-1)][i] == '\0'; i--);
+      for (i = (MAXCOLS-1); screen[STATUSROW][i] == ' ' || screen[STATUSROW][i] == '\0'; i--);
 
-      screen[(MAXROWS-1)][++i] = '\0';
+      screen[STATUSROW][++i] = '\0';
 
       if (emacs) {
-        sprintf (modeline, " %s (%%b)", screen[(MAXROWS-1)]);
+        sprintf (modeline, " %s (%%b)", screen[STATUSROW]);
 
-        if (strlen (modeline) > (MAXCOLS-8)) sprintf (modeline, " %s", screen[(MAXROWS-1)]);
+        if (strlen (modeline) > (MAXCOLS-8)) sprintf (modeline, " %s", screen[STATUSROW]);
 
         fprintf (realstdout, "%s", modeline);
         fflush (realstdout);
       }
       else if (terse && oldlev != Level) {
-        fprintf (realstdout, "%s\n", screen[(MAXROWS-1)]);
+        fprintf (realstdout, "%s\n", screen[STATUSROW]);
         fflush (realstdout);
       }
     }
@@ -851,7 +851,7 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
            sumline, Ac, Explev, Exp, ltm.gamecnt);
 
   /* Now write the summary line to the log file */
-  at ((MAXROWS-1), 0); clrtoeol (); refresh ();
+  at (STATUSROW, 0); clrtoeol (); refresh ();
 
   /* 22 is index of score in sumline */
   if (!replaying)
@@ -1016,7 +1016,7 @@ void givehelp ()
 
 void pauserogue ()
 {
-  at ((MAXROWS-1), 0);
+  at (STATUSROW, 0);
   addstr ("--press space to continue--");
   clrtoeol ();
   refresh ();

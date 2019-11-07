@@ -85,7 +85,7 @@ void newlevel ()
    * Clear the lowlevel map
    */
 
-  for (i = 1; i < (MAXROWS-1); i++)
+  for (i = 1; i < STATUSROW; i++)
     for (j = 0; j < MAXCOLS; j++) {  /* Forall screen positions */
       scrmap[i][j] = SCRMINIT;
       timessearched[i][j] = 0;
@@ -114,9 +114,9 @@ static struct {int top,bot,left,right;} bounds[9]=
   /*3*/	 { 8,          14,   0,           25},
   /*4*/	 { 8,          14,  27,           51},
   /*5*/	 { 8,          14,  53,  (MAXCOLS-1)},
-  /*6*/	 {16, (MAXROWS-2),   0,           25},
-  /*7*/	 {16, (MAXROWS-2),  27,           51},
-  /*8*/	 {16, (MAXROWS-2),  53,  (MAXCOLS-1)}
+  /*6*/	 {16, (STATUSROW-1),   0,           25},
+  /*7*/	 {16, (STATUSROW-1),  27,           51},
+  /*8*/	 {16, (STATUSROW-1),  53,  (MAXCOLS-1)}
 };
 
 void markmissingrooms ()
@@ -226,7 +226,7 @@ int notr, notc;
 
   stairrow = staircol = NONE;
 
-  for (r = 2; r < (MAXROWS-2); r++)
+  for (r = 2; r < (STATUSROW-1); r++)
     for (c = 1; c < (MAXCOLS-1); c++)
       if ((seerc ('%', r, c) || onrc (STAIRS, r, c)) &&
           r != notr && c != notc)
@@ -377,7 +377,7 @@ void currentrectangle ()
 
     if (curt <= 2) flags &= ~fT;    /* Wall must be on screen edge */
 
-    if (curb >= (MAXROWS-3)) flags &= ~fB;
+    if (curb >= (STATUSROW-2)) flags &= ~fB;
 
     if (curl <= 1) flags &= ~fL;
 
@@ -385,7 +385,7 @@ void currentrectangle ()
 
     ckdoor (fT, curt<6,  r, c, curt, curt-1, curl-1, curr+1)
     ckdoor (fB, curb>17, r, c, curb, curb+1, curl-1, curr+1)
-    ckdoor (fL, curl<MAXROWS, c, r, curl, curl-1, curt-1, curb+1)
+    ckdoor (fL, curl<STATUSROW, c, r, curl, curl-1, curt-1, curb+1)
     ckdoor (fR, curr>56, c, r, curr, curr+1, curt-1, curb+1)
 
     /* Fill in the corners of the room without seeing them */
@@ -1088,7 +1088,7 @@ void dumpmazedoor ()
 {
   register int r, c;
 
-  for (r=2; r<(MAXROWS-2); r++) {
+  for (r=2; r<(STATUSROW-1); r++) {
     for (c=1; c<(MAXCOLS-1); c++) {
       if (((scrmap[r][c] & (BEEN|DOOR|HALL|ROOM|WALL|STAIRS)) == 0) &&
           mazedoor (r, c))

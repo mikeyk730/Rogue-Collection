@@ -431,6 +431,11 @@ bool Options::terse() const
     return get_environment("terse") == "true";
 }
 
+bool Options::show_animation() const
+{
+    return get_environment("show_animation") != "false";
+}
+
 bool Options::trap_bugfix() const
 {
     return get_environment("trap_bugfix") != "false";

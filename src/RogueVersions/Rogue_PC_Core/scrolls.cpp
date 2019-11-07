@@ -25,6 +25,7 @@
 #include "monster.h"
 #include "ring.h"
 #include "armor.h"
+#include "text.h"
 
 const char *c_set = "bcdfghjklmnpqrstvwxyz";
 const char *v_set = "aeiou";
@@ -93,7 +94,7 @@ bool do_read_scroll()
         return true;
     }
 
-    ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
+    msg(get_text(game, text_vanish));
     if (scroll == game->hero().get_current_weapon())
         game->hero().set_current_weapon(NULL);
 

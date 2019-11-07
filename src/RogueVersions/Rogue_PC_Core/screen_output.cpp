@@ -11,6 +11,7 @@
 #include "mach_dep.h"
 #include "output_interface.h"
 #include "game_state.h"
+#include "io.h"
 
 typedef uint32_t chartype;
 
@@ -519,7 +520,7 @@ void ScreenOutput::implode()
     for (r = 0, c = 0, ec = COLS - 1; r < 10; r++, c += cinc, er--, ec -= cinc)
     {
         vbox(sng_box, r, c, er, ec);
-        go_to_sleep(25);
+        pause(25);
         for (j = r + 1; j <= er - 1; j++)
         {
             move(j, c + 1); repchr(' ', cinc - 1);
@@ -541,7 +542,7 @@ void ScreenOutput::drop_curtain()
     {
         move(r, 1);
         repchr(0xb1, COLS - 2);
-        go_to_sleep(20);
+        pause(20);
     }
     move(0, 0);
     standend();
@@ -555,7 +556,7 @@ void ScreenOutput::raise_curtain()
     for (int r = LINES - 2; r > 0; r--)
     {
         Render({1, r, COLS-2, r});
-        go_to_sleep(20);
+        pause(20);
     }
     Render();
 }

@@ -14,6 +14,9 @@ namespace
     std::map<text_id, Text> s_text_library =
     {
         { text_defeated,{ "you have defeated ", nullptr, nullptr, "defeated " } },
+        { text_gold, { "you found %d gold pieces", nullptr, nullptr, "%d gold pieces" } },
+        { text_vanish, { "as you read the scroll, it vanishes", "the scroll vanishes", nullptr, nullptr } },
+        { text_hungry, {"you are starting to get hungry", nullptr, nullptr, "getting hungry" } },
         { text_use, {
             "which object do you want to %s? (*for list) : ",
             "%s? (* for list): ",

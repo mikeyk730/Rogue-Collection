@@ -283,8 +283,10 @@ void scrl(int msgline, const char *str1, const char *str2)
     if (str1 == 0)
     {
         game->screen().move(msgline, 0);
-        if (strlen(str2) < (size_t)COLS) game->screen().clrtoeol();
         game->screen().printw(fmt, str2);
+        if (strlen(str2) < (size_t)COLS) {
+            game->screen().clrtoeol();
+        }
     }
     else while (str1 <= str2)
     {
@@ -661,7 +663,7 @@ void tick_pause()
 
 void pause(int n)
 {
-    if (!game->in_replay())
+    if (!game->in_replay() && game->options.show_animation())
         go_to_sleep(n);
 }
 
