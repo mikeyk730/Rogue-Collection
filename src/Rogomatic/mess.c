@@ -514,6 +514,7 @@ register char *mess, *mend;
         else if (MATCH("wait*that's a *")) ;
         else if (MATCH("what a*feeling*")) { infer("confusion", potion); confused=1; }
         else if (MATCH("what a*piece of paper*")) infer ("blank paper", Scroll);
+        else if (MATCH("what a bizarre schtick*")); //todo:mdk infer nothing
         else if (MATCH("welcome to level *")) ;
         else if (MATCH("was wearing*")) ;
         else if (MATCH("what bulging muscles*")) infer ("gain strength", potion);
