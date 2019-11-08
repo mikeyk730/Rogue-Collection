@@ -862,7 +862,6 @@ char *env[];
   debuglog_close ();
 
   flushinp();
-  sendnow("\n");
 #ifdef ROGUE_COLLECTION
   sendcnow(EOF);
 #endif

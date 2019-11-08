@@ -441,7 +441,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
         else if (col == 1 && ch == 'l' && screen[0][0] == 'I') {
           screen[0][0] = screen00;
 
-          if (screen00 != ' ') terpmes (); //todo:mdk not being hit on pc because message cleared with all input
+          if (screen00 != ' ') terpmes ();
 
           screen[0][0] = 'I';
         }
@@ -1263,7 +1263,12 @@ void dosnapshot ()
       copyltm();
       sprintf_s(filename, 80, "run-%d-lvl%d.bat", g_seed, Level);
       if ((batch = wopen(filename, "w")) != NULL) {
-          char game = version == RV36B ? 'f' : version == RV52A ? 'e' : version == RV54A ? 'c' : 'X';
+          char game =
+              version == RV36B ? 'f' :
+              version == RV52A ? 'e' :
+              version == RV54A ? 'c' :
+              version == RVPC11 ? 'b' :
+              'X';
           fprintf(batch,
               "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
               game, g_seed, knob[0], knob[1], knob[2], knob[3],

@@ -435,7 +435,8 @@ register char *mess, *mend;
         else if (MATCH("the flame *")) ;
         else if (MATCH("the ice hits*")) ;
         else if (MATCH("the ice misses*")) ;
-        else if (MATCH("the ice whizzes by you*")) wasmissed ("ice monster");
+        else if (MATCH("the ice whizzes by you*")) wasmissed("ice monster");
+        else if (MATCH("the * whizzes past*")) echoit = 0;
         else if (MATCH("the * hits it*")) {echoit=0; mshit ("it");}
         else if (MATCH("the * misses it*")) {echoit=0; msmiss ("it");}
         else if (MATCH("the * hits the *")) {echoit=0; mshit (res2);}
@@ -535,6 +536,7 @@ register char *mess, *mend;
         else if (MATCH("you can move again*")) echoit=0;
         else if (MATCH("you are still stuck *")) nametrap (BEARTRP,HERE);
         else if (MATCH("you can't move*")) echoit=0;
+        else if (MATCH("you are hit by the*")) echoit = 0;
         else if (MATCH("you can't carry anything else*"))
           { echoit=0; set (STUFF); maxobj=objcount; }
         else if (MATCH("you can*")) curseditem ();
