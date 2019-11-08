@@ -30,7 +30,9 @@ Watch an AI from the early 1980s put your skills to shame.  Rog-O-Matic speeds t
 Rog-O-Matic knows how to play:
 + Unix Rogue v3.6.3
 + Unix Rogue v5.2.1
++ Unix Rogue v5.3
 + Unix Rogue v5.4.2
++ PC Rogue v1.1 (Experimental)
 
 <img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/rogomatic.gif" height=250>
 
