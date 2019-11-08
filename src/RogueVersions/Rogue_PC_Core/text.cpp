@@ -14,7 +14,7 @@ namespace
 
     std::map<text_id, Text> s_text_library =
     {
-        { text_defeated_monster,{ "you have defeated ", nullptr, nullptr, "defeated " } },
+        { text_defeated_monster, { "you have defeated ", nullptr, nullptr, "defeated " } },
         { text_found_gold, { "you found %d gold pieces", nullptr, nullptr, "%d gold pieces" } },
         { text_scroll_vanishes, { "as you read the scroll, it vanishes", "the scroll vanishes", nullptr, nullptr } },
         { text_hungry, { "you are starting to get hungry", nullptr, nullptr, "getting hungry" } },
@@ -27,6 +27,7 @@ namespace
         { text_enchant_armor, { "your armor glows faintly for a moment", "your armor glows faintly", nullptr, nullptr } },
         { text_enchant_weapon, { "your %s glows blue for a moment", "your %s glows blue", nullptr, nullptr } },
         { text_missile_vanishes, { "the missile vanishes with a puff of smoke", nullptr, nullptr, "missile vanishes" } },
+        { text_sleep_trap, { "a strange white mist envelops you and you fall asleep", "a mist envelops you and you fall asleep", nullptr, nullptr } },
         { text_monster_detect_fail, {
             "you have a strange feeling for a moment.",
             "you have a strange feeling.",

@@ -155,7 +155,7 @@ printscreen (void)
  * implies that we have synchronized with Rogue.
  */
 
-#define GRASS (pc_protocol() ? "___\\/" : ")______")
+#define GAMEOVER (pc_protocol() ? "see rankings" : ")______")
 
 void getrogue (waitstr, onat)
 char *waitstr;                          /* String to synchronize with */
@@ -177,7 +177,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
   m = "re--";				/* FSM to check for '--More--' */
   call = "Call it:";			/* FSM to check for 'Call it:' */
   q = "(* for list): ";			/* FSM to check for prompt */
-  d = GRASS;			/* FSM to check for tombstone grass */
+  d = GAMEOVER;			/* FSM to check for tombstone grass */
 
   if (moved)				/* If we moved last time, put any */
     { sleepmonster (); moved = 0; }	/* Old monsters to sleep */
@@ -217,7 +217,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
     /* Available on that system. Hopefully the grass is the same   */
     /* in all versions of Rogue!                                   */
     if (ch == *d) { if (0 == *++d) { addch (ch); deadrogue (); return; } }
-    else d = GRASS;
+    else d = GAMEOVER;
 
     /* If the message has a more, strip it off and call terpmes */
     if (ch == *m) {
@@ -542,6 +542,7 @@ void terpbot ()
           "Level:%d Hits:%d(%d) Str:%d(%d) Gold:%d Armor:%d Exp:%d/%d",
           &Level, &Hp, &Hpmax, &Str, &Strmax, &Gold, &Ac, &Explev, &Exp);
       Ms[0] = screen[STATUSROW + 1][58];
+      Str = Str * 100; Strmax = Strmax * 100; Ac = 10 - Ac;
   }
   else {			/* Rogue 5.3 (and beyond???) */
     sscanf (screen[STATUSROW],
@@ -779,9 +780,9 @@ int   r, c;
  * game.
  */
 
-# define GOLDROW 15
-# define KILLROW 17
-# define TOMBCOL 19
+# define GOLDROW (pc_protocol() ? 18 : 15)
+# define KILLROW (pc_protocol() ? 16 : 17)
+# define TOMBCOL (pc_protocol() ? 30 : 19)
 
 void deadrogue ()
 {
@@ -793,12 +794,12 @@ void deadrogue ()
 
   sscanf (&screen[GOLDROW][TOMBCOL], "%18d", &Gold);
 
-  killer = &screen[KILLROW][TOMBCOL];
-  killend = killer+17;
-
-  while (*killer==' ') ++killer;
+  killend = &screen[KILLROW][TOMBCOL] + 17;
 
   while (*killend==' ') *(killend--) = '\0';
+  killer = killend - 1;
+  while (*killer!= ' ') --killer;
+  ++killer;
 
   /* Record the death blow if killed by a monster */
   if ((mh = findmonster (killer)) != NONE) {

@@ -25,7 +25,8 @@ typedef enum {
     text_enchant_weapon,
     text_monster_detect_fail,
     text_magic_detect_fail,
-    text_missile_vanishes
+    text_missile_vanishes,
+    text_sleep_trap
 } text_id;
 
 const char* get_text(text_id id);

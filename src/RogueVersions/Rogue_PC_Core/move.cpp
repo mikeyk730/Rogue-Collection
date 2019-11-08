@@ -324,7 +324,7 @@ int handle_trap(Coord tc)
 
     case T_SLEEP:
         game->hero().increase_sleep_turns(SLEEP_TIME);
-        msg("a %smist envelops you and you fall asleep", noterse("strange white "));
+        msg(get_text(text_sleep_trap));
         break;
 
     case T_ARROW:
