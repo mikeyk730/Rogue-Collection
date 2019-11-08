@@ -156,7 +156,7 @@ Item* get_item(const std::string& purpose, int type)
         Item *obj = pack_obj(ch, &och);
         if (!obj)
         {
-            ifterse("range is 'a' to '%c'", "please specify a letter between 'a' and '%c'", och - 1);
+            msg(get_text(text_inventory_prompt), och - 1);
             continue;
         }
         else

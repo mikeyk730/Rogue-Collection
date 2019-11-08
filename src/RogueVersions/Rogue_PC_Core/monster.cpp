@@ -568,7 +568,7 @@ bool Monster::freeze_attack()
 
     if (game->hero().get_sleep_turns() == 0)
     {
-        ifterse("you are frozen", "you are frozen by the %s", get_name().c_str());
+        msg(get_text(text_frozen), get_name().c_str());
     }
 
     int turns = rnd(2) + 2;

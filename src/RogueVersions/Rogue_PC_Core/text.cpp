@@ -14,6 +14,7 @@ namespace
 
     std::map<text_id, Text> s_text_library =
     {
+        { text_more, { " More ", nullptr, "--More--", nullptr } },
         { text_defeated_monster, { "you have defeated ", nullptr, nullptr, "defeated " } },
         { text_found_gold, { "you found %d gold pieces", nullptr, nullptr, "%d gold pieces" } },
         { text_scroll_vanishes, { "as you read the scroll, it vanishes", "the scroll vanishes", nullptr, nullptr } },
@@ -35,7 +36,7 @@ namespace
             nullptr
         } },
         { text_magic_detect_fail, {
-            "you have a strange feeling for a moment, then it passes.",
+            "you have a strange feeling for a moment, then it passes.", //no terse on unix
             "you have a strange feeling for a moment.",
             nullptr,
             nullptr
@@ -61,7 +62,7 @@ namespace
             "A small dart just hit you in the shoulder", nullptr
         } },
         { text_dart_miss, {
-            "a dart whizzes by your ear and vanishes", nullptr,
+            "a dart whizzes by your ear and vanishes", nullptr, //no terse diff on unix
             "a small dart whizzes by your ear and vanishes", nullptr
         } },
         { text_remove_curse, { "you feel as if somebody is watching over you", "somebody is watching over you", nullptr, nullptr } },
@@ -70,7 +71,20 @@ namespace
             "%s? (* for list): ",
             nullptr,
             "%s what? (* for list): "
-        } }
+        } },
+        { text_now_wielding, { "you are now wielding %s (%c)", "now wielding %s (%c)", nullptr, "wielding %s (%c)" } },
+        { text_frozen, { "you are frozen by the %s", "you are frozen", nullptr, "you are frozen" } }, //Terse diff on unix
+        { text_detect_food_fail, { "you hear a growling noise very close to you", "you hear a growling noise close by", nullptr, nullptr } }, //Terse, no msg on unix
+        { text_create_monster_fail, { "you hear a faint cry of anguish in the distance", "you hear a faint cry of anguish", nullptr, nullptr } },
+        { text_inventory_prompt, { "please specify a letter between 'a' and '%c'", "range is 'a' to '%c'", nullptr, "range is 'a' to '%c'" } },
+        { text_faint, { "you feel very weak. You faint from lack of food", "you faint from lack of food", "you feel too weak from lack of food.  You faint", "You faint" } },
+        { text_gain_item, { "you now have %s (%c)", "%s (%c)", nullptr, "%s (%c)" } },
+        { text_scroll_dust, { "the scroll turns to dust as you pick it up.", "the scroll turns to dust.", nullptr, nullptr } },
+        { text_wearing_ring, { "you are now wearing %s (%c)", "wearing %s (%c)", nullptr, "%s (%c)" } },
+        { text_already_wearing_armor, { "you are already wearing some.  You'll have to take it off first.", "you are already wearing some.", nullptr, "you are already wearing some." } },
+        { text_welcome, { "Hello %s.  Welcome to the Dungeons of Doom.", "Hello %s.", nullptr, nullptr } },
+        { text_name_used_item_prompt, { "what do you want to call it? ", "call it? ", nullptr, "Call it: " } },
+        { text_go_up_stairs, { "you feel a wrenching sensation in your gut", "you feel a wrenching sensation", nullptr, nullptr } }
     };
 }
 

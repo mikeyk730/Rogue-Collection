@@ -553,7 +553,7 @@ register char *mess, *mend;
         else if (MATCH("you suddenly feel much more skillful*"))
           { infer("raise level", potion); }
         else if (MATCH("your nose tingles*")) infer ("food detection", Scroll);
-        else if (MATCH("you hear a growling*")) infer("food detection", Scroll);
+        else if (MATCH("you hear a growling*")) infer("food detection", Scroll); //todo:mdk PC message
         else if (MATCH("you start to float in the air*"))
           { infer ("levitation", potion); floating=1; }
         else if (MATCH("you're floating off the ground!*")) floating=1;

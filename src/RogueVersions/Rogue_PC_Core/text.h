@@ -26,7 +26,21 @@ typedef enum {
     text_monster_detect_fail,
     text_magic_detect_fail,
     text_missile_vanishes,
-    text_sleep_trap
+    text_sleep_trap,
+    text_more,
+    text_now_wielding,
+    text_frozen,
+    text_detect_food_fail,
+    text_create_monster_fail,
+    text_inventory_prompt,
+    text_faint,
+    text_gain_item,
+    text_scroll_dust,
+    text_wearing_ring,
+    text_already_wearing_armor,
+    text_welcome,
+    text_name_used_item_prompt,
+    text_go_up_stairs,
 } text_id;
 
 const char* get_text(text_id id);

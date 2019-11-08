@@ -8,8 +8,6 @@ bool in_small_screen_mode();
 void set_brief_mode(bool enable);
 bool in_brief_mode();
 
-void ifterse(const char *tfmt, const char *fmt, ...);
-
 //msg: Display a message at the top of the screen.
 void msg(const char *fmt, ...);
 void debug(const char *fmt, ...);
@@ -85,8 +83,6 @@ void str_attr(const char *str);
 
 //key_state:
 void handle_key_state();
-
-const char *noterse(const char *str);
 
 template <typename T>
 std::ostream& write(std::ostream& out, T t) {

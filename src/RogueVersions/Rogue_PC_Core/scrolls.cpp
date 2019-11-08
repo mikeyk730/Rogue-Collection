@@ -284,8 +284,7 @@ void FoodDetection::Read()
         msg("your nose tingles as you sense food");
     }
     else
-        ifterse("you hear a growling noise close by", "you hear a growling noise very close to you");
-
+        msg(get_text(text_detect_food_fail));
 }
 
 void TeleportationScroll::Read()
@@ -316,7 +315,7 @@ void CreateMonster::Read()
         Monster::CreateMonster(randmonster(false, game->get_level()), &position, game->get_level());
     }
     else
-        ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
+        msg(get_text(text_create_monster_fail));
 }
 
 bool CreateMonster::IsEvil() const

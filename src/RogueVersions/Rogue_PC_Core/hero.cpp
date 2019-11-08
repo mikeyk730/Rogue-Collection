@@ -249,7 +249,7 @@ void Hero::digest()
         game->stop_run_cmd();
         game->cancel_repeating_cmd();
         hungry_state = 3;
-        msg("%syou faint from lack of food", noterse("you feel very weak. "));
+        msg(get_text(text_faint));
     }
     else
     {
@@ -621,7 +621,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
 
     //Notify the user
     if (!silent) {
-        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
+        msg(get_text(text_gain_item), obj->inventory_name(*this, true).c_str(), pack_char(obj));
         game->screen().play_sound("item");
     }
 }
@@ -673,7 +673,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
             delete *obj;
             game->screen().add_tile(position(), floor);
             game->level().set_tile(position(), floor);
-            msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
+            msg(get_text(text_scroll_dust));
             return false;
         }
         else (*obj)->set_found();
@@ -776,7 +776,7 @@ bool Hero::wield()
     }
 
     set_current_weapon(obj);
-    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", obj->inventory_name(*this, true).c_str(), pack_char(obj));
+    msg(get_text(text_now_wielding), obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;
 }
 
@@ -836,7 +836,7 @@ bool Hero::put_on_ring()
     //Calculate the effect it has on the poor guy.
     obj->PutOn();
 
-    msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
+    msg(get_text(text_wearing_ring), obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;
 }
 
@@ -871,7 +871,7 @@ bool Hero::remove_ring()
 bool Hero::wear_armor()
 {
     if (get_current_armor()) {
-        msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
+        msg(get_text(text_already_wearing_armor));
         return false;
     }
 

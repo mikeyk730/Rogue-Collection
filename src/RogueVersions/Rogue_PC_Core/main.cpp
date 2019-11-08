@@ -45,6 +45,7 @@
 #include "rooms.h"
 #include "input_interface_ex.h"
 #include "mach_dep.h"
+#include "text.h"
 
 int get_seed()
 {
@@ -292,7 +293,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
     daemon(stomach, 0);
     daemon(run_monsters, 0);
 
-    msg("Hello %s%s.", game->hero().get_name().c_str(), noterse(".  Welcome to the Dungeons of Doom"));
+    msg(get_text(text_welcome), game->hero().get_name().c_str());
     game->screen().raise_curtain();
 
     try {

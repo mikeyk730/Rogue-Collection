@@ -23,6 +23,7 @@
 #include "input_interface_ex.h"
 #include "mach_dep.h"
 #include "armor.h"
+#include "text.h"
 
 #define PT(i,j)  ((COLS==40)?i:j)
 
@@ -56,17 +57,6 @@ void set_brief_mode(bool enable)
 bool in_brief_mode()
 {
     return expert;
-}
-
-//msg: Display a message at the top of the screen.
-void ifterse(const char *tfmt, const char *format, ...)
-{
-    char dest[1024 * 16];
-    va_list argptr;
-    va_start(argptr, format);
-    vsprintf(dest, expert ? tfmt : format, argptr);
-    va_end(argptr);
-    msg(dest);
 }
 
 void reset_msg_position()
@@ -181,8 +171,7 @@ bool is_direction(int ch)
 
 void more()
 {
-    auto message = game->options.unix_output() ? "--More--" : " More ";
-    more(message);
+    more(get_text(text_more));
 }
 
 //More: tag the end of a line and wait for a space
@@ -643,11 +632,6 @@ void handle_key_state()
         game->screen().standend();
     }
 */
-}
-
-const char *noterse(const char *str)
-{
-    return (short_msgs() ? "" : str);
 }
 
 //clear_typeahead_buffer: Flush typeahead for traps, etc.
