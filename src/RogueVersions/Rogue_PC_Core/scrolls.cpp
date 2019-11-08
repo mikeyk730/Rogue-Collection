@@ -91,7 +91,7 @@ bool do_read_scroll()
         return true;
     }
 
-    msg(get_text(text_scroll_vanishes));
+    msg(get_text(text_read_scroll));
     if (scroll == game->hero().get_current_weapon())
         game->hero().set_current_weapon(NULL);
 

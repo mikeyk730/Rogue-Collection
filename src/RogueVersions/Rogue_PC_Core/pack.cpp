@@ -130,7 +130,7 @@ Item* get_item(const std::string& purpose, int type)
             ch = '*';
         }
         else {
-            msg(get_text(text_use), purpose.c_str());
+            msg(get_text(text_use_item_prompt), purpose.c_str());
             ch = readchar();
         }
 
@@ -205,7 +205,7 @@ bool do_call()
         called = obj->Category()->identifier();
     msg(get_text(text_was_called), called.c_str());
 
-    msg(get_text(text_call_it));
+    msg(get_text(text_call_it_prompt));
     getinfo(prbuf, MAXNAME);
     if (*prbuf && *prbuf != ESCAPE)
         obj->Category()->guess(prbuf);

@@ -17,7 +17,7 @@ namespace
         { text_more, { " More ", nullptr, "--More--", nullptr } },
         { text_defeated_monster, { "you have defeated ", nullptr, nullptr, "defeated " } },
         { text_found_gold, { "you found %d gold pieces", nullptr, nullptr, "%d gold pieces" } },
-        { text_scroll_vanishes, { "as you read the scroll, it vanishes", "the scroll vanishes", nullptr, nullptr } },
+        { text_read_scroll, { "as you read the scroll, it vanishes", "the scroll vanishes", nullptr, nullptr } },
         { text_hungry, { "you are starting to get hungry", nullptr, nullptr, "getting hungry" } },
         { text_aggravate_monsters, { "you hear a high pitched humming noise", "you hear a humming noise", nullptr, nullptr } },
         { text_item_vanishes, { "the %s vanishes as it hits the ground.", "the %s vanishes.", nullptr, nullptr } },
@@ -50,7 +50,7 @@ namespace
             "You feel stronger, now.  What bulging muscles!", nullptr
         } },
         { text_was_called, { "Was called \"%s\"", nullptr, nullptr, "Called \"%s\"" } },
-        { text_call_it, { "what do you want to call it? ", nullptr, nullptr, "Call it: " } },
+        { text_call_it_prompt, { "what do you want to call it? ", nullptr, nullptr, "Call it: " } },
         { text_bite, {
             "you feel a bite in your leg and now feel weaker",
             "you feel a bite in your leg",
@@ -66,7 +66,7 @@ namespace
             "a small dart whizzes by your ear and vanishes", nullptr
         } },
         { text_remove_curse, { "you feel as if somebody is watching over you", "somebody is watching over you", nullptr, nullptr } },
-        { text_use, {
+        { text_use_item_prompt, {
             "which object do you want to %s? (*for list) : ",
             "%s? (* for list): ",
             nullptr,
@@ -79,11 +79,11 @@ namespace
         { text_inventory_prompt, { "please specify a letter between 'a' and '%c'", "range is 'a' to '%c'", nullptr, "range is 'a' to '%c'" } },
         { text_faint, { "you feel very weak. You faint from lack of food", "you faint from lack of food", "you feel too weak from lack of food.  You faint", "You faint" } },
         { text_gain_item, { "you now have %s (%c)", "%s (%c)", nullptr, "%s (%c)" } },
-        { text_scroll_dust, { "the scroll turns to dust as you pick it up.", "the scroll turns to dust.", nullptr, nullptr } },
-        { text_wearing_ring, { "you are now wearing %s (%c)", "wearing %s (%c)", nullptr, "%s (%c)" } },
+        { text_destroy_scare_monster, { "the scroll turns to dust as you pick it up.", "the scroll turns to dust.", nullptr, nullptr } },
+        { text_wear_ring, { "you are now wearing %s (%c)", "wearing %s (%c)", nullptr, "%s (%c)" } },
         { text_already_wearing_armor, { "you are already wearing some.  You'll have to take it off first.", "you are already wearing some.", nullptr, "you are already wearing some." } },
         { text_welcome, { "Hello %s.  Welcome to the Dungeons of Doom.", "Hello %s.", nullptr, nullptr } },
-        { text_name_used_item_prompt, { "what do you want to call it? ", "call it? ", nullptr, "Call it: " } },
+        { text_used_item_call_it_prompt, { "what do you want to call it? ", "call it? ", nullptr, "Call it: " } },
         { text_go_up_stairs, { "you feel a wrenching sensation in your gut", "you feel a wrenching sensation", nullptr, nullptr } },
         { text_identify_item, { "Which item do you wish to inventory: ", "Item: ", nullptr, "Item: " } },
         { text_maniacal_laughter, { "you hear maniacal laughter in the distance.", "you hear maniacal laughter.", nullptr, nullptr } },

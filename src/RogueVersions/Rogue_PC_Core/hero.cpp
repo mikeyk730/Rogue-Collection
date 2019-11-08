@@ -673,7 +673,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
             delete *obj;
             game->screen().add_tile(position(), floor);
             game->level().set_tile(position(), floor);
-            msg(get_text(text_scroll_dust));
+            msg(get_text(text_destroy_scare_monster));
             return false;
         }
         else (*obj)->set_found();
@@ -836,7 +836,7 @@ bool Hero::put_on_ring()
     //Calculate the effect it has on the poor guy.
     obj->PutOn();
 
-    msg(get_text(text_wearing_ring), obj->inventory_name(*this, true).c_str(), pack_char(obj));
+    msg(get_text(text_wear_ring), obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;
 }
 

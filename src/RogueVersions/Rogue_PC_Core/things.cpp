@@ -638,7 +638,7 @@ void Item::call_it()
             Category()->guess("");
         else if (Category()->guess().empty() && game->options.askme())
         {
-            msg(get_text(text_name_used_item_prompt));
+            msg(get_text(text_used_item_call_it_prompt));
             getinfo(buf, MAXNAME);
             if (*buf != ESCAPE)
                 Category()->guess(buf);
