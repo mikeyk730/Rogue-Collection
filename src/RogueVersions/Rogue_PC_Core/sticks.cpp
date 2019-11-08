@@ -582,7 +582,7 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
                 }
             }
 
-            if (game->options.show_animation())
+            if (game->options.interactive())
             {
                 //draw bolt
                 int standout = 0;

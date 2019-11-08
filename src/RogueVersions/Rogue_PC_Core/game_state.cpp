@@ -431,9 +431,9 @@ bool Options::terse() const
     return get_environment("terse") == "true";
 }
 
-bool Options::show_animation() const
+bool Options::interactive() const
 {
-    return get_environment("show_animation") != "false";
+    return get_environment("interactive") != "false";
 }
 
 bool Options::trap_bugfix() const

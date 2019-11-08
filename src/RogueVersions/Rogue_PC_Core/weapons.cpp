@@ -132,7 +132,7 @@ void do_motion(Item *obj, Coord delta)
         if (step_ok(ch = game->level().get_tile_or_monster(obj->position(), hit_mimics)) && ch != DOOR)
         {
             //It hasn't hit anything yet, so display it if alright.
-            if (game->hero().can_see(obj->position()) && game->options.show_animation())
+            if (game->hero().can_see(obj->position()) && game->options.interactive())
             {
                 //mdk:bugfix: xerox tile was replaced with floor after object passed
                 under = game->screen().mvinch(obj->position());

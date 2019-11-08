@@ -663,7 +663,7 @@ void tick_pause()
 
 void pause(int n)
 {
-    if (!game->in_replay() && game->options.show_animation())
+    if (!game->in_replay() && game->options.interactive())
         go_to_sleep(n);
 }
 

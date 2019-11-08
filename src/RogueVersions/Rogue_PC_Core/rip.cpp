@@ -90,7 +90,7 @@ void score(int amount, int flags, char monst)
         game->screen().move(LINES - 1, 0);
         game->screen().printw("[Press Enter to see rankings]");
         clear_typeahead_buffer();
-        wait_for('\r');
+        wait_for('\n');
         game->screen().move(LINES - 1, 0);
     }
 
@@ -144,7 +144,7 @@ void score(int amount, int flags, char monst)
     game->screen().move(LINES - 1, 0);
     game->screen().printw("[Press Enter to quit]");
     clear_typeahead_buffer();
-    wait_for('\r');
+    wait_for('\n');
 }
 
 void get_scores(struct LeaderboardEntry *top10)
