@@ -1266,8 +1266,10 @@ void dosnapshot ()
           char game =
               version == RV36B ? 'f' :
               version == RV52A ? 'e' :
+              version == RV53NMT ? 'd' :
               version == RV54A ? 'c' :
               version == RVPC11 ? 'b' :
+              version == RVPC148 ? 'a' :
               'X';
           fprintf(batch,
               "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
