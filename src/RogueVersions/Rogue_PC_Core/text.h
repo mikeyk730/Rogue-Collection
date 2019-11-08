@@ -41,6 +41,9 @@ typedef enum {
     text_welcome,
     text_name_used_item_prompt,
     text_go_up_stairs,
+    text_identify_item,
+    text_maniacal_laughter,
+    text_vorpalize_weapon,
 } text_id;
 
 const char* get_text(text_id id);

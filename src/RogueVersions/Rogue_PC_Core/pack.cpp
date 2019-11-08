@@ -77,7 +77,7 @@ void single_inventory(std::list<Item*>& list)
     char selection = 'a';
 
     if (list.size() > 1) {
-        msg(short_msgs() ? "Item: " : "Which item do you wish to inventory: ");
+        msg(get_text(text_identify_item));
         selection = readchar();
         clear_msg();
 

@@ -84,7 +84,10 @@ namespace
         { text_already_wearing_armor, { "you are already wearing some.  You'll have to take it off first.", "you are already wearing some.", nullptr, "you are already wearing some." } },
         { text_welcome, { "Hello %s.  Welcome to the Dungeons of Doom.", "Hello %s.", nullptr, nullptr } },
         { text_name_used_item_prompt, { "what do you want to call it? ", "call it? ", nullptr, "Call it: " } },
-        { text_go_up_stairs, { "you feel a wrenching sensation in your gut", "you feel a wrenching sensation", nullptr, nullptr } }
+        { text_go_up_stairs, { "you feel a wrenching sensation in your gut", "you feel a wrenching sensation", nullptr, nullptr } },
+        { text_identify_item, { "Which item do you wish to inventory: ", "Item: ", nullptr, "Item: " } },
+        { text_maniacal_laughter, { "you hear maniacal laughter in the distance.", "you hear maniacal laughter.", nullptr, nullptr } },
+        { text_vorpalize_weapon, { "your %s gives off a flash of intense white light", "your %s gives off a flash", nullptr, nullptr } },
     };
 }
 

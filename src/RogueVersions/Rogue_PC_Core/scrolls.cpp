@@ -30,9 +30,6 @@
 const char *c_set = "bcdfghjklmnpqrstvwxyz";
 const char *v_set = "aeiou";
 
-const char *laugh = "you hear maniacal laughter%s.";
-const char *in_dist = " in the distance";
-
 //random_char_in(): return random character in given string
 char random_char_in(const char *string)
 {
@@ -251,7 +248,7 @@ void Identify::Read()
 void ScareMonster::Read()
 {
     //Reading it is a mistake and produces laughter at the poor rogue's boo boo.
-    msg(laugh, short_msgs() ? "" : in_dist);
+    msg(get_text(text_maniacal_laughter));
 }
 
 void FoodDetection::Read()
@@ -360,7 +357,7 @@ void VorpalizeWeapon::Read()
     Item* item = game->hero().get_current_weapon();
     Weapon* weapon = dynamic_cast<Weapon*>(item);
     if (!weapon) {
-        msg(laugh, short_msgs() ? "" : in_dist);
+        msg(get_text(text_maniacal_laughter));
         return;
     }
     if (weapon->vorpalize())

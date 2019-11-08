@@ -314,7 +314,8 @@ bool Weapon::vorpalize()
     m_hit_plus++;
     m_damage_plus++;
     m_charges = 1;
-    msg(flash_msg, TypeName().c_str(), short_msgs() ? "" : intense);
+    msg(get_text(text_vorpalize_weapon));
+
 
     //Sometimes this is a mixed blessing ...
     if (game->options.act_like_v1_1()) {

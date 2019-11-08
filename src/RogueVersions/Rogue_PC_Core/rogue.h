@@ -65,7 +65,6 @@ struct GameState;
 //string constants
 
 extern const char *const level_titles[], *const helpcoms[], *const helpobjs[];
-extern const char *const flash_msg, *const intense;
 
 //Now all the global variables
 
