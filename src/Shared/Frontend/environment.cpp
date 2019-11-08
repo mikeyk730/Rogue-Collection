@@ -124,7 +124,7 @@ void Environment::SetRogomaticValues()
     Set("inven", "slow");
     Set("menu", "false");
     Set("showac", "");
-    Set("show_animation", "false");
+    Set("interactive", "false");
 }
 
 void Environment::SetDefaults()
