@@ -571,7 +571,7 @@ register char *mess, *mend;
         else if (MATCH("your hands begin to glow *"))
           { infer ("monster confusion", Scroll); redhands = 1; }
         else if (MATCH("your hands stop glowing *")) redhands = 0;
-        else if (MATCH("your mace gives off a flash*")); //todo:mdk handle vorp
+        else if (MATCH("your * gives off a flash*")) infer("vorpalize weapon", Scroll); //todo:mdk handle vorpalized weapon elsewhere
 
         else if (MATCH("you feel as if somebody is watching over you*") ||
                  MATCH("you feel in touch with the universal onenes*")) {
