@@ -429,7 +429,6 @@ register char *mess, *mend;
       case 't':
 
         if (MATCH("throw what*")) echoit=0;
-        else if (MATCH("the screen looks fine*"));
         else if (MATCH("the * bounces*")) ;
         else if (MATCH("the bolt *")) ;
         else if (MATCH("the flame *")) ;

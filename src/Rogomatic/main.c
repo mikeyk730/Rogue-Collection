@@ -561,7 +561,7 @@ char *env[];
    * the level drawing.
    */
   {
-    if (!replaying && !pc_protocol())
+    if (!replaying)
       while ((int) (ch = getroguetoken ()) != CL_TOK && (int) ch != EOF) {
         /* FIXME: If you start next to a monster this will get stuck, as
            pressing 'v' takes time in version 3.6, so rogue will be waiting

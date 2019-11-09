@@ -84,7 +84,8 @@ struct ScreenOutput : public OutputInterface
     ~ScreenOutput();
 
 public:
-    virtual void clear();
+    virtual void clear() override;
+    virtual void redraw() override;
 
     //Turn cursor on and off
     virtual bool cursor(bool ison);
@@ -218,6 +219,10 @@ ScreenOutput::~ScreenOutput()
 void ScreenOutput::clear()
 {
     blot_out(0, 0, LINES - 1, COLS - 1);
+}
+
+void ScreenOutput::redraw()
+{
 }
 
 //Turn cursor on and off
@@ -665,6 +670,11 @@ OutputShim::~OutputShim()
 void OutputShim::clear()
 {
     m_output_interface->clear();
+}
+
+void OutputShim::redraw()
+{
+    m_output_interface->redraw();
 }
 
 bool OutputShim::cursor(bool ison)

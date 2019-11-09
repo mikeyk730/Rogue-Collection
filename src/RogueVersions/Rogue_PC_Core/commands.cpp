@@ -8,6 +8,7 @@
 #include "io.h"
 #include "level.h"
 #include "daemons.h"
+#include "output_shim.h"
 
 bool do_inventory()
 {
@@ -101,7 +102,12 @@ bool do_options()
 
 bool do_clear_screen()
 {
-    msg("the screen looks fine to me");
+    if (game->options.unix_output()) {
+        game->screen().redraw();
+    }
+    else {
+        msg("the screen looks fine to me");
+    }
     return false;
 }
 
