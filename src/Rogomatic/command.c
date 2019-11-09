@@ -50,7 +50,7 @@ int   d;
 void fmove (d)
 int   d;
 {
-  if (version < RV53A)	command (T_MOVING, "f%c", keydir[d]);
+  if (run_uses_f_prefix())	command (T_MOVING, "f%c", keydir[d]);
   else			command (T_MOVING, "%c", ctrl (keydir[d]));
 }
 
@@ -274,7 +274,7 @@ char *cmd;
 
       /* Update number of charges */
       if (inven[lastwand].charges > 0) {
-        if (version >= RV52A &&
+        if (striking_takes_2_charges() &&
             stlmatch (inven[lastwand].str, "striking"))
           inven[lastwand].charges -= 2;
         else
@@ -371,12 +371,12 @@ void showcommand (cmd)
 char *cmd;
 {
   register char *s;
-  register int i = 72;
+  register int i = (MAXCOLS-8);
 
-  at (23,72); standout (); printw (" ");
+  at (STATUSROW,i); standout (); printw (" ");
 
   for (s=cmd; *s; s++) {
-    if ((i + strlen (unctrl(*s))) < 78) {
+    if ((i + strlen (unctrl(*s))) < (MAXCOLS-2)) {
       printw ("%s", unctrl (*s));
     }
     i += strlen (unctrl(*s));
@@ -388,7 +388,7 @@ char *cmd;
 
 void clearcommand ()
 {
-  at (23,72); clrtoeol (); at (row, col);
+  at (STATUSROW,(MAXCOLS-8)); clrtoeol (); at (row, col);
   cmdonscreen = 0;
 }
 /*

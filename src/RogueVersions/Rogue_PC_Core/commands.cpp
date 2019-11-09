@@ -8,10 +8,17 @@
 #include "io.h"
 #include "level.h"
 #include "daemons.h"
+#include "output_shim.h"
 
 bool do_inventory()
 {
     inventory(game->hero().m_pack, 0, "");
+    return false;
+}
+
+bool do_single_inventory()
+{
+    single_inventory(game->hero().m_pack);
     return false;
 }
 
@@ -95,7 +102,12 @@ bool do_options()
 
 bool do_clear_screen()
 {
-    msg("the screen looks fine to me");
+    if (game->options.unix_output()) {
+        game->screen().redraw();
+    }
+    else {
+        msg("the screen looks fine to me");
+    }
     return false;
 }
 
@@ -108,9 +120,9 @@ bool do_repeat_msg()
 bool do_print_version()
 {
     if (game->options.act_like_v1_1())
-        msg("Rogue version %d.%d (acting like v1.1)", REV, VER);
+        msg("Rogue version 1.1. (A.I. Design)");
     else
-        msg("Rogue version %d.%d", REV, VER);
+        msg("Rogue version %d.%d. (Epyx)", REV, VER);
 
     return false;
 }

@@ -64,7 +64,7 @@ int handlearmor ()
 
   obj = havearmor (1, NOPRINT, ANY);		/* Get best armor */
 
-  if (Level > (version < RV52A ? 8 : 7) && Level < 19 &&
+  if (Level > (rust_monster_level()) && Level < 19 &&
       wearing ("maintain armor") == NONE &&
       willrust (obj) &&
       itemis (obj, KNOWN)) {
@@ -131,14 +131,12 @@ int handleweapon ()
  * If we are at or below the exp. level, then experiment with unknown potions.
  */
 
-# define MAXSTR (version < RV52A ? 1900 : 3100)
-
 int quaffpotion ()
 {
   int obj = NONE, obj2 = NONE;
 
   /* Take advantage of double haste bug -- assures permanent haste */
-  if (!doublehasted && version < RV52A &&
+  if (!doublehasted && has_double_haste_bug() &&
       ((hasted && (obj = havenamed (potion, "haste self")) != NONE) ||
        ((obj = havemult (potion, "haste self", 2)) != NONE)) &&
       quaff (obj))
@@ -195,7 +193,7 @@ int quaffpotion ()
       ((obj = havemult (potion, "healing", 2)) != NONE ||
        (obj = havemult (potion, "extra healing", 2)) != NONE ||
        know ("blindness") && (obj = havenamed (potion, "healing")) != NONE ||
-       know ("blindness") && (know ("hallucination") || version < RV53A)  &&
+       know ("blindness") && (know ("hallucination") || !version_has_hallucination())  &&
        Level < 15 && (obj = havenamed (potion, "extra healing")) != NONE) &&
       quaff (obj))
     return (1);
@@ -272,7 +270,7 @@ int readscroll ()
        (obj2 = unidentified (wand)) != NONE ||
        (obj2 = unidentified (Scroll)) != NONE ||
        Level > 10 && (obj2 = unknown (wand)) != NONE ||
-       ((cheat || version == RV36A) &&
+       ((cheat || !version_has_wands()) &&
         ((obj2 = unknown (potion)) != NONE ||
          (obj2 = haveother (Scroll, obj)) != NONE)))) {
     prepareident (obj2, obj);
@@ -309,7 +307,7 @@ int readscroll ()
     prepareident (pickident (), obj);
 
     /* Go to a corner to read the scroll */
-    if (version <= RV36B && !know ("create monster") && gotocorner ())
+    if (read_in_corner() && !know ("create monster") && gotocorner ())
       return (1);
 
     /* Must put on our good armor first */
@@ -458,7 +456,7 @@ register int turns;
 findarrow ()
 {
   /* If wrong version, not cheating or must go find food, then forget it */
-  if (version > RV36B || !cheat || hungry())
+  if (!version_has_arrow_bug() || !cheat || hungry())
     return (0);
 
   else if (!usingarrow && foundarrowtrap && !on (ARROW) &&
@@ -505,7 +503,7 @@ register int running; /* True ==> don't do anything fancy */
   /* Don't go down until we have killed five monsters in one blow.   */
   /* While waiting, run back and forth to look for monsters.        */
 
-  if (cheat && version <= RV36B && !running &&
+  if (cheat && version_has_arrow_bug() && !running &&
       foundarrowtrap && usingarrow &&
       have (food) != NONE && goodarrow < 5 && waitaround ()) {
     saynow ("Checking out arrow...");
@@ -621,10 +619,10 @@ static struct {
       horend,
       hordelt;
 } cb [4] = {
-  {  3, 21,  1,  1, 78,  1},	/* Top left corner */
-  {  3, 21,  1, 78,  1, -1},	/* Top right corner */
-  { 21,  3, -1, 78,  1, -1},	/* Bottom right corner */
-  { 21,  3, -1,  1, 78,  1}
+  {           3, (STATUSROW-2),  1,           1, (MAXCOLS-2),  1},	/* Top left corner */
+  {           3, (STATUSROW-2),  1, (MAXCOLS-2),           1, -1},	/* Top right corner */
+  { (STATUSROW-2),           3, -1, (MAXCOLS-2),           1, -1},	/* Bottom right corner */
+  { (STATUSROW-2),           3, -1,           1, (MAXCOLS-2),  1}
 };  /* Bottom left corner */
 
 static gc = 0; /* Goal corner from 0..3 */

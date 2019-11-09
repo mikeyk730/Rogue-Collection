@@ -192,9 +192,9 @@ int i;
   if (stlmatch (inven[i].str, "mace"))
     class =  50;
   else if (stlmatch (inven[i].str, "two handed sword"))
-    class = (version < RV52A) ? 105 : 100;
+    class = (version_uses_old_weapon_stats()) ? 105 : 100;
   else if (stlmatch (inven[i].str, "long sword"))
-    class =  (version < RV52A) ? 55 : 75;
+    class = (version_uses_old_weapon_stats()) ? 55 : 75;
   else if (stlmatch (inven[i].str, "arrow"))
     class =  10;
   else
@@ -216,11 +216,11 @@ int i;
    * to kill something, we assume it is a valuable arrow.
    */
 
-  else if (cheat && version <= RV36B && usingarrow && goodarrow > 20 &&
+  else if (cheat && version_has_arrow_bug() && usingarrow && goodarrow > 20 &&
            i == currentweapon)
     return (1800);
 
-  else if (cheat && version <= RV36B && stlmatch (inven[i].str, "arrow") &&
+  else if (cheat && version_has_arrow_bug() && stlmatch (inven[i].str, "arrow") &&
            inven[i].count == 1 && !itemis (i, WORTHLESS) &&
            (!badarrow || i != currentweapon))
     { hitplus = 50;  damplus = 50; }
@@ -593,7 +593,7 @@ int strength;
 
   if (strength < 700) bonus = strength/100 - 7;
 
-  else if (version > RV36B) {
+  else if (version_uses_new_strength()) {
     if (strength < 1700) bonus = 0;
     else if (strength < 2100) bonus = 1;
     else if (strength < 3100) bonus = 2;
@@ -621,7 +621,7 @@ int strength;
 
   if (strength < 700) bonus = strength/100 - 7;
 
-  else  if (version > RV36B) {
+  else  if (version_uses_new_strength()) {
     if (strength < 1600) bonus = 0;
     else if (strength < 1800) bonus = 1;
     else if (strength < 1900) bonus = 2;

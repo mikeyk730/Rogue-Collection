@@ -212,7 +212,7 @@ void check_frogue_sync()
 
     fseek(frogue, current, SEEK_SET);
 
-    if (bytes_remaining > 30 || has_semicolon) {
+    if (bytes_remaining > 120 || has_semicolon) {
         dwait(D_WARNING, "Expected EOF: Discovered %d extra bytes (%d) from %ld", bytes_remaining, has_semicolon, current);
     }
 }

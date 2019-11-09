@@ -83,13 +83,13 @@ scrollup (void)
   newdoors = doorlist;
 
   for (r = s_row1; r < s_row2; r++) {
-    for (c = 0; c < 80; c++) {
+    for (c = 0; c < MAXCOLS; c++) {
       screen[r][c] = screen[r+1][c];
       updatepos (screen[r][c], r, c);
     }
   }
 
-  for (c = 0; c < 80; c++) {
+  for (c = 0; c < MAXCOLS; c++) {
     screen[s_row2][c] = ' ';
     updatepos (screen[s_row2][c], s_row2, c);
   }
@@ -102,13 +102,13 @@ scrolldown (void)
   int c;
 
   for (r = s_row2; r > s_row1; r--) {
-    for (c = 0; c < 80; c++) {
+    for (c = 0; c < MAXCOLS; c++) {
       screen[r][c] = screen[r-1][c];
       updatepos (screen[r][c], r, c);
     }
   }
 
-  for (c = 0; c < 80; c++) {
+  for (c = 0; c < MAXCOLS; c++) {
     screen[s_row1][c] = ' ';
     updatepos (screen[s_row1][c], s_row1, c);
   }
@@ -122,7 +122,7 @@ printscreen (void)
   debuglog ("             1111111111222222222233333333334444444444555555555566666666667777777777\n");
   debuglog ("   01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
 
-  for (i=0; i < 24; ++i) {
+  for (i=0; i < MAXROWS; ++i) {
     debuglog ("%02d", i);
 
     if (i >= s_row1 && i <= s_row2) {
@@ -132,7 +132,7 @@ printscreen (void)
       debuglog (" ");
     }
 
-    for (j = 0; j < 80; ++j) {
+    for (j = 0; j < MAXCOLS; ++j) {
       if (i == row && j == col)
         debuglog ("_");
       else
@@ -155,6 +155,8 @@ printscreen (void)
  * implies that we have synchronized with Rogue.
  */
 
+#define GAMEOVER (pc_protocol() ? "see rankings" : ")______")
+
 void getrogue (waitstr, onat)
 char *waitstr;                          /* String to synchronize with */
 int   onat;                             /* 0 ==> Wait for waitstr
@@ -175,7 +177,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
   m = "re--";				/* FSM to check for '--More--' */
   call = "Call it:";			/* FSM to check for 'Call it:' */
   q = "(* for list): ";			/* FSM to check for prompt */
-  d = ")______";			/* FSM to check for tombstone grass */
+  d = GAMEOVER;			/* FSM to check for tombstone grass */
 
   if (moved)				/* If we moved last time, put any */
     { sleepmonster (); moved = 0; }	/* Old monsters to sleep */
@@ -215,7 +217,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
     /* Available on that system. Hopefully the grass is the same   */
     /* in all versions of Rogue!                                   */
     if (ch == *d) { if (0 == *++d) { addch (ch); deadrogue (); return; } }
-    else d = ")_______";
+    else d = GAMEOVER;
 
     /* If the message has a more, strip it off and call terpmes */
     if (ch == *m) {
@@ -280,13 +282,13 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
       case CE_TOK:
 
-        if (row && row < 23)
-          for (i = col; i < 80; i++) {
+        if (row && row < STATUSROW)
+          for (i = col; i < MAXCOLS; i++) {
             updatepos (' ', row, i);
             screen[row][i] = ' ';
           }
         else
-          for (i = col; i < 80; i++)
+          for (i = col; i < MAXCOLS; i++)
             screen[row][i] = ' ';
 
         if (row) { at (row, col); clrtoeol (); }
@@ -431,7 +433,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
           if (!emacs && !terse) add_to_screen (row, col, ch);
 
-          if (row == 23) botprinted = 1;
+          if (row == STATUSROW) botprinted = 1;
           else           updatepos (ch, row, col);
         }
         else if (col == 0)
@@ -465,7 +467,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
     resetinv();
   }
 
-  if (version < RV53A && checkrange && !pending ())
+  if (dynamic_inv_order() && checkrange && !pending ())
     { command (T_OTHER, "Iz"); checkrange = 0; }
 
   /* If mapping status has changed */
@@ -516,11 +518,11 @@ void terpbot ()
   register int i, oldstr = Str, oldAc = Ac, oldExp = Explev;
 
   /* Since we use scanf to read this field, it must not be left blank */
-  if (screen[23][78] == ' ') screen[23][78] = 'X';
+  if (screen[STATUSROW][(MAXCOLS-2)] == ' ') screen[STATUSROW][(MAXCOLS-2)] = 'X';
 
   /* Read the bottom line, there are three versions of the status line */
-  if (version < RV52A) {	/* Rogue 3.6, Rogue 4.7? */
-    sscanf (screen[23],
+  if (status_v1()) {	/* Rogue 3.6, Rogue 4.7? */
+    sscanf (screen[STATUSROW],
             " Level: %d Gold: %d Hp: %d(%d) Str: %s Ac: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, sstr, &Ac, &Explev, &Exp, Ms);
     sscanf (sstr, "%d/%d", &Str, &Str18);
@@ -528,15 +530,22 @@ void terpbot ()
 
     if (Str > Strmax) Strmax = Str;
   }
-  else if (version < RV53A) {	/* Rogue 5.2 (versions A and B) */
-    sscanf (screen[23],
+  else if (status_v2()) {	/* Rogue 5.2 (versions A and B) */
+    sscanf (screen[STATUSROW],
             " Level: %d Gold: %d Hp: %d(%d) Str: %d(%d) Ac: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);
 
     Str = Str * 100; Strmax = Strmax * 100;
   }
+  else if (status_v3()) {	/* Rogue PC 1.1 */
+      sscanf(screen[STATUSROW],
+          "Level:%d Hits:%d(%d) Str:%d(%d) Gold:%d Armor:%d Exp:%d/%d",
+          &Level, &Hp, &Hpmax, &Str, &Strmax, &Gold, &Ac, &Explev, &Exp);
+      Ms[0] = screen[STATUSROW + 1][58];
+      Str = Str * 100; Strmax = Strmax * 100; Ac = 10 - Ac;
+  }
   else {			/* Rogue 5.3 (and beyond???) */
-    sscanf (screen[23],
+    sscanf (screen[STATUSROW],
             " Level: %d Gold: %d Hp: %d(%d) Str: %d(%d) Arm: %d Exp: %d/%d %s",
             &Level, &Gold, &Hp, &Hpmax, &Str, &Strmax, &Ac, &Explev, &Exp, Ms);
 
@@ -544,7 +553,7 @@ void terpbot ()
   }
 
   /* Monitor changes in some variables */
-  if (screen[23][78] == 'X') screen[23][78] = ' ';	/* Restore blank */
+  if (screen[STATUSROW][(MAXCOLS-2)] == 'X') screen[STATUSROW][(MAXCOLS-2)] = ' ';	/* Restore blank */
 
   if (oldlev != Level)       newlevel ();
 
@@ -580,20 +589,20 @@ void terpbot ()
     /* Handle Emacs and Terse mode */
     if (emacs || terse) {
       /* Skip backward over blanks and nulls */
-      for (i = 79; screen[23][i] == ' ' || screen[23][i] == '\0'; i--);
+      for (i = (MAXCOLS-1); screen[STATUSROW][i] == ' ' || screen[STATUSROW][i] == '\0'; i--);
 
-      screen[23][++i] = '\0';
+      screen[STATUSROW][++i] = '\0';
 
       if (emacs) {
-        sprintf (modeline, " %s (%%b)", screen[23]);
+        sprintf (modeline, " %s (%%b)", screen[STATUSROW]);
 
-        if (strlen (modeline) > 72) sprintf (modeline, " %s", screen[23]);
+        if (strlen (modeline) > (MAXCOLS-8)) sprintf (modeline, " %s", screen[STATUSROW]);
 
         fprintf (realstdout, "%s", modeline);
         fflush (realstdout);
       }
       else if (terse && oldlev != Level) {
-        fprintf (realstdout, "%s\n", screen[23]);
+        fprintf (realstdout, "%s\n", screen[STATUSROW]);
         fflush (realstdout);
       }
     }
@@ -611,8 +620,8 @@ void dumpwalls ()
 
   printexplored ();
 
-  for (r = 1; r < 23; r++) {
-    for (c = 0; c < 80; c++) {
+  for (r = 1; r < STATUSROW; r++) {
+    for (c = 0; c < MAXCOLS; c++) {
       S=scrmap[r][c];
       ch = (ARROW&S)                   ? 'a' :
            (TELTRAP&S)                 ? 't' :
@@ -771,9 +780,9 @@ int   r, c;
  * game.
  */
 
-# define GOLDROW 15
-# define KILLROW 17
-# define TOMBCOL 19
+# define GOLDROW (pc_protocol() ? 18 : 15)
+# define KILLROW (pc_protocol() ? 16 : 17)
+# define TOMBCOL (pc_protocol() ? 30 : 19)
 
 void deadrogue ()
 {
@@ -785,12 +794,12 @@ void deadrogue ()
 
   sscanf (&screen[GOLDROW][TOMBCOL], "%18d", &Gold);
 
-  killer = &screen[KILLROW][TOMBCOL];
-  killend = killer+17;
-
-  while (*killer==' ') ++killer;
+  killend = &screen[KILLROW][TOMBCOL] + 17;
 
   while (*killend==' ') *(killend--) = '\0';
+  killer = killend - 1;
+  while (*killer!= ' ') --killer;
+  ++killer;
 
   /* Record the death blow if killed by a monster */
   if ((mh = findmonster (killer)) != NONE) {
@@ -843,7 +852,7 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
            sumline, Ac, Explev, Exp, ltm.gamecnt);
 
   /* Now write the summary line to the log file */
-  at (23, 0); clrtoeol (); refresh ();
+  at (STATUSROW, 0); clrtoeol (); refresh ();
 
   /* 22 is index of score in sumline */
   if (!replaying)
@@ -866,7 +875,7 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
 
   /* Send the requisite handshaking to Rogue */
   if (terminationtype == DIED)
-    if (version == RV54A)
+    if (version == RV54A || version == RVPC11)
       sendnow ("\n\n");
     else
       sendnow ("\n");
@@ -980,11 +989,11 @@ void waitforspace ()
 
 char *nexthelp[] = {
   "Rgm commands: t=toggle run mode, e=logging, i=inventory, -=status    [?]",
-  "Rgm commands: <ret>=singlestep, `=summary, /=snapshot, R=replay      [?]",
+  "Rgm commands: <ret>=singlestep, ~=summary, /=snapshot, R=replay      [?]",
   "Rgm commands: m=long term memory display, G=display gene settings    [?]",
   "Rogue cmds: S=Save, Q=Quit, h j k l H J K L b n u y N B U Y f s < >  [?]",
   "Wizard: d=debug, !=show items, @=show monsters, #=show level flags   [?]",
-  "Wizard: ~=version, ^=bowrank, %%=armorrank, $=weaponrank, ==ringrank  [?]",
+  "Wizard: v=version, ^=bowrank, %%=armorrank, $=weaponrank, ==ringrank  [?]",
   "Wizard: (=database, )=cycles, +=possible secret doors, :=chicken     [?]",
   "Wizard: [=weapstat, ]=rustproof armor, r=resetinv, &=object count    [?]",
   "Wizard: *=toggle blind, C=toggle cosmic, M=mazedoor, A=attempt, {=flags",
@@ -1008,7 +1017,7 @@ void givehelp ()
 
 void pauserogue ()
 {
-  at (23, 0);
+  at (STATUSROW, 0);
   addstr ("--press space to continue--");
   clrtoeol ();
   refresh ();
@@ -1061,7 +1070,13 @@ void getrogver ()
 
   if (stlmatch (versionstr, "3.6"))		version = RV36B;
   else if (stlmatch (versionstr, "5.2"))	version = RV52A;
+#ifdef ROGUE_COLLECTION
+  else if (stlmatch (versionstr, "5.3"))	version = RV53NMT;
+  else if (stlmatch (versionstr, "1.1"))	version = RVPC11;
+  else if (stlmatch (versionstr, "1.48"))	version = RVPC148;
+#else
   else if (stlmatch (versionstr, "5.3"))	version = RV53A;
+#endif
   else if (stlmatch (versionstr, "5.4"))	version = RV54A;
   else saynow ("What a strange version of Rogue! ");
 }
@@ -1102,7 +1117,7 @@ void redrawscreen ()
 
   clear ();
 
-  for (i = 1; i < 24; i++) for (j = 0; j < 80; j++)
+  for (i = 1; i < MAXROWS; i++) for (j = 0; j < MAXCOLS; j++)
       if ((ch = screen[i][j]) > ' ') add_to_screen(i, j, ch);
 
   at (row, col);
@@ -1200,18 +1215,18 @@ FILE *f;
            ts -> tm_hour, ts -> tm_min, ts -> tm_sec);
 
   /* Print the current map */
-  putn ('-', f, 79);
+  putn ('-', f, (MAXCOLS-1));
   fprintf (f, "\n");
 
-  for (i = 0; i < 24; i++) {
-    for (j = 0; j < 80; j++) {
+  for (i = 0; i < MAXROWS; i++) {
+    for (j = 0; j < MAXCOLS; j++) {
         fprintf(f, "%c", get_from_screen(i, j));
     }
 
     fprintf (f, "\n");
   }
 
-  putn ('-', f, 79);
+  putn ('-', f, (MAXCOLS-1));
 
   /* Print status variables */
   fprintf (f, "\n\n%s\n\n", statusline ());
@@ -1220,7 +1235,7 @@ FILE *f;
 
   dumpinv (f);
   fprintf (f, "\n");
-  putn ('-', f, 79);
+  putn ('-', f, (MAXCOLS-1));
   fprintf (f, "\n");
 }
 
@@ -1249,7 +1264,14 @@ void dosnapshot ()
 
       sprintf_s(filename, 80, "run-%d-lvl%d.bat", g_seed, Level);
       if ((batch = wopen(filename, "w")) != NULL) {
-          char game = version == RV36B ? 'f' : version == RV52A ? 'e' : version == RV54A ? 'c' : 'X';
+          char game =
+              version == RV36B ? 'f' :
+              version == RV52A ? 'e' :
+              version == RV53NMT ? 'd' :
+              version == RV54A ? 'c' :
+              version == RVPC11 ? 'b' :
+              version == RVPC148 ? 'a' :
+              'X';
           fprintf(batch,
               "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
               game, g_seed, knob[0], knob[1], knob[2], knob[3],
@@ -1275,8 +1297,8 @@ void clearscreen ()
   clear ();
   screen00 = ' ';
 
-  for (i = 0; i < 24; i++)
-    for (j = 0; j < 80; j++) {
+  for (i = 0; i < MAXROWS; i++)
+    for (j = 0; j < MAXCOLS; j++) {
       screen[i][j] = ' ';
       scrmap[i][j] = SCRMINIT;
     }
@@ -1341,12 +1363,20 @@ statusline ()
 
 void add_to_screen(int row, int col, char ch)
 {
-    if (row > 0 && row < 23) {
+    if (row > 0 && row < STATUSROW) {
         mvaddrawch(row, col, PC_GFX_TRANSLATE(ch));
         return;
     }
 
+    if (row == STATUSROW) {
+        PC_GFX_COLOR(0x0e);
+    }
+
     mvaddch(row, col, ch ? ch : ' ');
+
+    if (row == STATUSROW) {
+        PC_GFX_NOCOLOR(0x0e);
+    }
 }
 
 char get_from_screen(int row, int col)

@@ -6,6 +6,7 @@
 struct OutputInterface
 {
     virtual void clear() = 0;
+    virtual void redraw() = 0;
 
     //Turn cursor on and off
     virtual bool cursor(bool ison) = 0;

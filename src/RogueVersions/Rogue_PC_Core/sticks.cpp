@@ -24,6 +24,7 @@
 #include "hero.h"
 #include "room.h"
 #include "monster.h"
+#include "text.h"
 
 Monster* get_monster_in_direction(Coord dir, bool check_distant)
 {
@@ -196,7 +197,7 @@ bool MagicMissileStick::Zap(Coord dir)
     if ((monster = game->level().monster_at(missile->position())) != NULL && !save_throw(VS_MAGIC, monster))
         projectile_hit(missile->position(), missile);
     else
-        msg("the missile vanishes with a puff of smoke");
+        msg(get_text(text_missile_vanishes));
 
     return true;
 }
@@ -581,20 +582,23 @@ Monster* fire_bolt(Coord start, Coord *dir, MagicBolt* bolt)
                 }
             }
 
-            //draw bolt
-            int standout = 0;
-            if (game->level().use_standout(bolt->position(), dirch)) {
-                standout = 0x70;
+            if (game->options.interactive())
+            {
+                //draw bolt
+                int standout = 0;
+                if (game->level().use_standout(bolt->position(), dirch)) {
+                    standout = 0x70;
+                }
+                if (bolt->is_frost() || bolt->is_ice())
+                    game->screen().set_attr(standout | 0x01);
+                else if (bolt->is_lightning())
+                    game->screen().set_attr(standout | 0x0e);
+                else
+                    game->screen().set_attr(standout | 0x04);
+                tick_pause();
+                game->screen().add_tile(bolt->position(), dirch);
+                game->screen().standend();
             }
-            if (bolt->is_frost() || bolt->is_ice())
-                game->screen().set_attr(standout | 0x01);
-            else if (bolt->is_lightning())
-                game->screen().set_attr(standout | 0x0e);
-            else
-                game->screen().set_attr(standout | 0x04);
-            tick_pause();
-            game->screen().add_tile(bolt->position(), dirch);
-            game->screen().standend();
         }
     }
 

@@ -30,7 +30,9 @@ Watch an [AI from the early 1980s](https://www.cs.princeton.edu/~appel/papers/ro
 Rogomatic knows how to play:
 + Unix Rogue v3.6.3
 + Unix Rogue v5.2.1
++ Unix Rogue v5.3 (Coming in 3.0.5)
 + Unix Rogue v5.4.2
++ PC Rogue v1.1 (Experimental in 3.0.5)
 
 <img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/rogomatic.gif" height=250>
 

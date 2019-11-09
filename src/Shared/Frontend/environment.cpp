@@ -109,17 +109,22 @@ void Environment::Deserialize(std::istream& in)
 
 void Environment::SetRogomaticValues()
 {
+    Set("prompt_for_name", "false");
+    Set("prompt_for_help", "true");
+    Set("unix_output", "true");
     Set("name", "rogomatic");
     Set("fruit", "apricot");
     Set("terse", "true");
     Set("jump", "true");
-    Set("step", "true");
     Set("seefloor", "true");
     Set("flush", "false");
     Set("askme", "false");
     Set("passgo", "false");
+    Set("step", "true");
     Set("inven", "slow");
+    Set("menu", "false");
     Set("showac", "");
+    Set("interactive", "false");
 }
 
 void Environment::SetDefaults()

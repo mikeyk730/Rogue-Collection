@@ -26,6 +26,7 @@
 #include "level.h"
 #include "food.h"
 #include "hero.h"
+#include "text.h"
 
 template<typename T>
 Item* createInstance() { return new T; }
@@ -635,13 +636,13 @@ void Item::call_it()
         char buf[MAXNAME];
         if (Category()->is_discovered())
             Category()->guess("");
-        else if (Category()->guess().empty())
+        else if (Category()->guess().empty() && game->options.askme())
         {
-            msg("%scall it? ", noterse("what do you want to "));
+            msg(get_text(text_used_item_call_it_prompt));
             getinfo(buf, MAXNAME);
             if (*buf != ESCAPE)
                 Category()->guess(buf);
-            msg("");
+            clear_msg();
         }
     }
 }

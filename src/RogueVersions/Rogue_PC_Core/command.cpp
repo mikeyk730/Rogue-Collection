@@ -53,6 +53,7 @@ namespace
 
         //informational/utility actions
         { 'i', do_inventory },
+        { 'I', do_single_inventory },
         { 'c', do_call },
         { 'D', do_discovered },
         { '^', do_id_trap },
@@ -181,7 +182,12 @@ int get_translated_char()
 {
     int ch;
     ch = readchar();
-    clear_msg();
+    if (game->options.interactive()) {
+        msg("");
+    }
+    else {
+        reset_msg_position(); // mdk: don't clear the line so Rogomatic doesn't get confused
+    }
     return translate_command(ch);
 }
 
@@ -293,6 +299,10 @@ Command get_command()
 
 void show_count(int n)
 {
+    if (!game->options.interactive()) {
+        return;
+    }
+
     const int COLS = game->screen().columns();
     const int LINES = game->screen().lines();
 

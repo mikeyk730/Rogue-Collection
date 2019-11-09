@@ -23,6 +23,7 @@ public:
     ~OutputShim();
 
     void clear();
+    void redraw();
 
     //Turn cursor on and off
     bool cursor(bool ison);

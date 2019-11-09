@@ -34,13 +34,13 @@
 
 # define SEARCHES(r,c)						\
 	(onrc(DEADEND,r,c) ?					\
-	    ((version < RV53A || !isexplored (r,c)) ?		\
+	    ((!has_hidden_passages() || !isexplored (r,c)) ?		\
 		(timestosearch + k_door / 5) :			\
 		(timestosearch - k_door / 5 + 5)) :		\
 	    timestosearch)
 
 static int expDor, expavoidval;
-static int avdmonsters[24][80];
+static int avdmonsters[MAXROWS][MAXCOLS];
 
 int rogo_connect[9][4] = {
   /* Room  top    bot   left  right*/
@@ -90,7 +90,7 @@ int genericinit ()
  */
 
 # define N 100
-static int secretvalues[16]= { 0, N-24, N-22, N-20,
+static int secretvalues[16]= { 0,    N-24, N-22, N-20,
                                N-9,  N-6,  N-5,  N-5,
                                N-3,  N-2,  N-1,  N-1,
                                N,    N,    N,    N
@@ -144,7 +144,7 @@ int r, c, depth, *val, *avd, *cont;
          onrc (MONSTER, r, c) ? 150 :
          expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
   *val = r == gotorow && c == gotocol ? 1 : 0;
@@ -172,7 +172,7 @@ int r, c, depth, *val, *avd, *cont;
          onrc (MONSTER, r, c) ? 150 :
          expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
   if (onrc (SLEEPER, r, c)) {
@@ -225,7 +225,7 @@ int setpsd (print)
   markmissingrooms ();
 
   /* Changed loop boundaries to ignore border around screen -- mlm 5/18/82 */
-  for (i=2; i<22; i++) for (j=1; j<79; j++) {
+  for (i=2; i<(STATUSROW-1); i++) for (j=1; j<(MAXCOLS-1); j++) {
       unsetrc (PSD|DEADEND,i,j);
 
       /* If attempt > 3, allow ANYTHING to be a secret door! */
@@ -239,7 +239,7 @@ int setpsd (print)
         { if (!onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j); }
 
       /* Set Possible Secret Door for corridor secret door */
-      else if (version >= RV53A &&
+      else if (has_hidden_passages() &&
                ! onrc (BEEN|DOOR|HALL|ROOM|WALL|STAIRS, i, j) &&
                nextto (DOOR, i, j))
         { if (!onrc (PSD, i, j)) numberpsd++; setrc(PSD,i,j); }
@@ -293,7 +293,7 @@ int setpsd (print)
     }
 
   /* Now remove PSD bits from walls which already have doors */
-  for (i=2; i<22; i++) for (j=1; j<79; j++) {
+  for (i=2; i<(STATUSROW-1); i++) for (j=1; j<(MAXCOLS-1); j++) {
       if (onrc (DOOR, i, j)) {
         for (k = i-1; onrc (WALL, k, j); k--)
           { if (onrc (PSD, k, j)) numberpsd--; unsetrc (PSD, k, j);}
@@ -310,7 +310,7 @@ int setpsd (print)
     }
 
   if (print || debug (D_SCREEN))
-    for (i=0; i<24; i++) for (j=0; j<80; j++)
+    for (i=0; i<MAXROWS; i++) for (j=0; j<MAXCOLS; j++)
         if (onrc (PSD,i,j)) { at (i,j); addch ('P'); }
 
   reusepsd = numberpsd+1;
@@ -449,7 +449,7 @@ int r, c, depth, *val, *avd, *cont;
          onrc (MONSTER, r, c) ? 150 :
          0;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
   if (onrc (MONSTER, r, c))
@@ -528,7 +528,7 @@ int *val, *avd, *cont;
          onrc (WATERAP, r, c) ? 100 :
          onrc (MONSTER, r, c) ? 50 : 0;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
   if (onrc (RUNOK, r, c))	{ *val = 2;}
@@ -593,7 +593,7 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     { *avd = a+1000; *val=0; return (1); }
 
   if (onrc (BEEN+SEEN, r, c) == SEEN) { /* If been or not seen, not a target */
@@ -602,7 +602,7 @@ int *val, *avd, *cont;
       nc = c + deltc[k];
 
       /* For each unseen neighbour: add 10 to value. */
-      if (nr >= 1 && nr <= 22 && nc >= 0 && nc <= 80 &&
+      if (nr >= 1 && nr <= (STATUSROW-1) && nc >= 0 && nc <= MAXCOLS &&
           !onrc (SEEN, nr, nc)) {
         v += 10;
 
@@ -701,7 +701,7 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     { *avd = a+1000; *val=0; return (1); }
 
   if (onrc (BEEN+SEEN, r, c) == SEEN) { /* If been or not seen, not a target */
@@ -710,7 +710,7 @@ int *val, *avd, *cont;
       nc = c + deltc[k];
 
       /* For each unseen neighbour: add 10 to value. */
-      if (nr >= 1 && nr <= 22 && nc >= 0 && nc <= 80 &&
+      if (nr >= 1 && nr <= (STATUSROW-1) && nc >= 0 && nc <= MAXCOLS &&
           !onrc (SEEN, nr, nc)) {
         v += 10;
 
@@ -774,15 +774,15 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     a += 200;
 
   for (k=0; k<8; k++) {  /* examine adjacent squares */
     register int nr = r + deltr[k];
     register int nc = c + deltc[k];
 
-    if (nr >= 1 && nr <= 22 &&
-        nc >= 0 && nc <= 80 &&
+    if (nr >= 1 && nr <= (STATUSROW-1) &&
+        nc >= 0 && nc <= MAXCOLS &&
         onrc (PSD, nr, nc) && timessearched[nr][nc] < SEARCHES(nr,nc)) {
       /* If adjacent square is on the screen */
       /* and if it has PSD set but has not been searched completely */
@@ -795,7 +795,7 @@ int *val, *avd, *cont;
   }
 
   if (v>0) {
-    if (version >= RV53A &&
+    if (has_hidden_passages() &&
         onrc (DOOR|BEEN, r, c) == (DOOR|BEEN) &&
         (onrc (CANGO|WALL, r+1, c) == 0 || onrc (CANGO|WALL, r-1, c) == 0 ||
          onrc (CANGO|WALL, r, c+1) == 0 || onrc (CANGO|WALL, r, c-1) == 0))
@@ -826,7 +826,7 @@ void avoidmonsters ()
   register int i, r, c, wearingstealth;
 
   /* Clear old avoid monster values */
-  for (i = 24*80; i--; ) avdmonsters[0][i] = 0;
+  for (i = MAXROWS*MAXCOLS; i--; ) avdmonsters[0][i] = 0;
 
   /* Set stealth status */
   wearingstealth = (wearing ("stealth") != NONE);
@@ -907,7 +907,7 @@ void pinavoid ()
   register int i;
 
   /* Clear old avoid monster values */
-  for (i = 24*80; i--; ) avdmonsters[0][i] = 0;
+  for (i = MAXROWS*MAXCOLS; i--; ) avdmonsters[0][i] = 0;
 
   /* Avoid each monster in turn */
   for (i=0; i<mlistlen; i++) {
@@ -944,7 +944,7 @@ int secret ()
   int secretinit(), secretvalue();
 
   /* Secret passage adjacent to door? */
-  if (version >= RV53A && on (DOOR) && !blinded &&
+  if (has_hidden_passages() && on (DOOR) && !blinded &&
       (seerc (' ',atrow+1,atcol) || seerc (' ',atrow-1,atcol) ||
        seerc (' ',atrow,atcol+1) || seerc (' ',atrow,atcol-1)) &&
       SEARCHES (atrow, atcol) < timestosearch+20) {
@@ -961,7 +961,7 @@ int secret ()
 
   /* If Level 1 or edge of screen: dead end cannot be room, mark and return */
   if (Level == 1 && attempt == 0 ||
-      version < RV53A && (atrow<=1 || atrow>=22 || atcol<=0 || atcol>=79))
+      !has_hidden_passages() && (atrow<=1 || atrow>=(STATUSROW-1) || atcol<=0 || atcol>=(MAXCOLS-1)))
     { markexplored (atrow, atcol); return (0); }
 
   /* Have we mapped this level? */
@@ -970,7 +970,7 @@ int secret ()
   /* Found a dead end, should we search it? */
   if (nexttowall (atrow, atcol) ||
       canbedoor (atrow, atcol) &&
-      (version >= RV53A || !isexplored (atrow, atcol))) {
+      (has_hidden_passages() || !isexplored (atrow, atcol))) {
     setrc (DEADEND, atrow, atcol);
 
     if ((SEARCHES (atrow, atcol) - timessearched[atrow][atcol]) > 0) {
@@ -1072,7 +1072,7 @@ int r, c, depth, *val, *avd, *cont;
          expavoidval;
   *val = 0;
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 500;
 
   if (onrc(CANGO, r, c)) {
@@ -1112,7 +1112,7 @@ int avoid ()
  * battlestations will handle firing at him.
  */
 
-static int archrow = NONE, archcol = NONE, archturns = NONE, archval[24][80];
+static int archrow = NONE, archcol = NONE, archturns = NONE, archval[MAXROWS][MAXCOLS];
 
 int archmonster (m, trns)
 register int m;		/* Monster to attack */
@@ -1171,7 +1171,7 @@ int archeryinit ()
   register int dir, r, c, dr, dc, dist;
 
   /* Clear the archery value array */
-  for (r = 24*80; r--; ) archval[0][r] = 0;
+  for (r = MAXROWS*MAXCOLS; r--; ) archval[0][r] = 0;
 
   /* Scan around monster to see how far away we can shoot from */
   for (dir = 0; dir < 8; dir++) {
@@ -1214,7 +1214,7 @@ int r, c, depth, *val, *avd, *cont;
           onrc (MONSTER, r, c)	? 150 :
           expavoidval) + avdmonsters[r][c];
 
-  if (onrc (SCAREM, r, c) && version < RV53A && objcount != maxobj)
+  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 500;
 
   *val = archval[r][c];
@@ -1287,7 +1287,7 @@ int depth, *val, *avd, *cont;
   if (onrc (TRAP|MONSTER,r, c))               { *avd = ROGINFINITY; return (0); }
   else if (restinroom && onrc (DOOR,r, c))    { *avd = ROGINFINITY; return (0); }
   else if (onrc (SCAREM, r, c)) {
-    if (objcount == maxobj || version >= RV53A) { *val = 500; return (1); }
+    if (objcount == maxobj || can_move_without_pickup()) { *val = 500; return (1); }
     else                                      { *avd = ROGINFINITY; return (0); }
   }
   else if (onrc (STAIRS, r, c))               { *val = 400; return (1); }

@@ -79,7 +79,7 @@ int obj;
 {
   if (cursedweapon) return (0);
 
-  if (version >= RV54A) {
+  if (new_weapon_protocol()) {
 
     if (itemis(currentweapon, CURSED)) {
       cursedweapon=1;
@@ -111,10 +111,8 @@ int obj;
   /* send 2 escapes because I needed to patch the new rogue to not hang
    * momentatirily on the first escape
    */
-  else if (version == RV53A)
-    command (T_HANDLING, "w%cw%c%c", LETTER (obj), ESC, ctrl('p'));
   else
-    command (T_HANDLING, "w%cw%c%c", LETTER (obj), ESC, ctrl('r'));
+    command (T_HANDLING, "w%cw%c%c", LETTER (obj), ESC, get_repeat_message_key());
 
   return (1);
 }
@@ -238,7 +236,7 @@ int obj, dir;
     return (0);
   else {
     command (T_HANDLING, "%c%c%c",
-             (version < RV52A) ? 'p' : 'z',	/* R5.2 MLM */
+             get_zap_key(),	/* R5.2 MLM */
              keydir[dir], LETTER (obj));
     return (1);
   }
@@ -668,7 +666,7 @@ int obj;
   return (! (protected ||
              armorclass (obj) > 8 || armorclass (obj) < -5 ||
              itemis (obj, PROTECTED) ||
-             stlmatch (inven[obj].str, "leather") && version > RV36B));
+             stlmatch (inven[obj].str, "leather") && leather_is_rustproof()));
 }
 
 /*

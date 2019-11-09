@@ -81,7 +81,7 @@ void terpmes ()
 
   /* Set 't' to the tail of the message,
       skip backward until you find a letter, digit, or punctuation */
-  t=topline+79;
+  t=topline+(MAXCOLS-1);
 
   while ((isspace(*t) || *t == '.' || *t == '-') && (t > topline)) {
     if (*t == '-' || *t == '.' || *t == '\0')
@@ -117,13 +117,13 @@ void terpmes ()
 
     /* :ANT: for debugging screen now has to be at least 31x80 */
     if debug(D_MESSAGE) {
-      at (24,0);
-      printw (">%-79.79s",screen);
-      at (25,0);
-      printw (">%-79.79s",topline);
-      at (26,0);
+      at (MAXROWS,0);
+      printw (DBG_FMT,screen);
+      at ((MAXROWS+1),0);
+      printw (DBG_FMT,topline);
+      at ((MAXROWS+2),0);
       clrtoeol ();
-      printw (">%-79.79s",mess);
+      printw (DBG_FMT,mess);
       refresh ();
     }
 
@@ -133,13 +133,13 @@ void terpmes ()
 
     /* :ANT: for debugging */
     if debug(D_MESSAGE) {
-      at (24,0);
-      printw ("<%-79.79s",screen);
-      at (25,0);
-      printw ("<%-79.79s",topline);
-      at (26,0);
+      at (MAXROWS,0);
+      printw (DBG_FMT2,screen);
+      at ((MAXROWS+1),0);
+      printw (DBG_FMT2,topline);
+      at ((MAXROWS+2),0);
       clrtoeol ();
-      printw ("<%-79.79s",mess);
+      printw (DBG_FMT2,mess);
       refresh ();
     }
 
@@ -216,13 +216,19 @@ register char *mess, *mend;
         /* :ANT: */
 
         else if (MATCH("a new monster is nearby*")) infer ("create monster", Scroll);
-        else if (MATCH("a staff of * [*](*)*")) infer (res1, wand);
-        else if (MATCH("a wand of * [*](*)*")) infer (res1, wand);
-        else if (MATCH("a ring of *(*)*")) infer (res1, ring);
-        else if (MATCH("a wand of *(*)*")) infer (res1, wand);
-        else if (MATCH("a staff of *(*)*")) infer (res1, wand);
+        else if (MATCH("a staff of * [*](*)*")) infer(res1, wand);
+        else if (MATCH("a staff of * [*]*")) infer(res1, wand);
+        else if (MATCH("a wand of * [*](*)*")) infer(res1, wand);
+        else if (MATCH("a wand of * [*]*")) infer(res1, wand);
+        else if (MATCH("a ring of *(*)*")) infer(res1, ring);
+        else if (MATCH("a ring of *")) infer(res1, ring);
+        else if (MATCH("a wand of *(*)*")) infer(res1, wand);
+        else if (MATCH("a wand of *")) infer(res1, wand);
+        else if (MATCH("a staff of *(*)*")) infer(res1, wand);
+        else if (MATCH("a staff of *")) infer(res1, wand);
         else if (MATCH("a scroll of *")) infer (res1, Scroll);
-        else if (MATCH("a potion of *(*)*")) infer (res1, potion);
+        else if (MATCH("a potion of *(*)*")) infer(res1, potion);
+        else if (MATCH("a potion of *")) infer(res1, potion);
         else if (MATCH("a +*")) ;
         else if (MATCH("an +*")) ;
         else if (MATCH("a -*")) ;
@@ -428,7 +434,8 @@ register char *mess, *mend;
         else if (MATCH("the flame *")) ;
         else if (MATCH("the ice hits*")) ;
         else if (MATCH("the ice misses*")) ;
-        else if (MATCH("the ice whizzes by you*")) wasmissed ("ice monster");
+        else if (MATCH("the ice whizzes by you*")) wasmissed("ice monster");
+        else if (MATCH("the * whizzes past*")) echoit = 0;
         else if (MATCH("the * hits it*")) {echoit=0; mshit ("it");}
         else if (MATCH("the * misses it*")) {echoit=0; msmiss ("it");}
         else if (MATCH("the * hits the *")) {echoit=0; mshit (res2);}
@@ -506,6 +513,7 @@ register char *mess, *mend;
         else if (MATCH("wait*that's a *")) ;
         else if (MATCH("what a*feeling*")) { infer("confusion", potion); confused=1; }
         else if (MATCH("what a*piece of paper*")) infer ("blank paper", Scroll);
+        else if (MATCH("what a bizarre schtick*")); //todo:mdk infer nothing
         else if (MATCH("welcome to level *")) ;
         else if (MATCH("was wearing*")) ;
         else if (MATCH("what bulging muscles*")) infer ("gain strength", potion);
@@ -528,6 +536,7 @@ register char *mess, *mend;
         else if (MATCH("you can move again*")) echoit=0;
         else if (MATCH("you are still stuck *")) nametrap (BEARTRP,HERE);
         else if (MATCH("you can't move*")) echoit=0;
+        else if (MATCH("you are hit by the*")) echoit = 0;
         else if (MATCH("you can't carry anything else*"))
           { echoit=0; set (STUFF); maxobj=objcount; }
         else if (MATCH("you can*")) curseditem ();
@@ -543,6 +552,7 @@ register char *mess, *mend;
         else if (MATCH("you suddenly feel much more skillful*"))
           { infer("raise level", potion); }
         else if (MATCH("your nose tingles*")) infer ("food detection", Scroll);
+        else if (MATCH("you hear a growling*")) infer("food detection", Scroll); //todo:mdk PC message
         else if (MATCH("you start to float in the air*"))
           { infer ("levitation", potion); floating=1; }
         else if (MATCH("you're floating off the ground!*")) floating=1;
@@ -552,7 +562,7 @@ register char *mess, *mend;
         else if (MATCH("you feel yourself slowing down*"))
           { hasted = 0; doublehasted = 0; }
         else if (MATCH("you faint from exhaustion*"))
-          { if (version < RV52A) doublehasted = 1; else hasted = 0; }
+          { if (has_double_haste_bug()) doublehasted = 1; else hasted = 0; }
         else if (MATCH("you feel less confused now*")) confused = 0;
         else if (MATCH("you feel less trip*")) confused = 0;
         else if (MATCH("your * vanishes as it hits the ground*"))
@@ -560,6 +570,7 @@ register char *mess, *mend;
         else if (MATCH("your hands begin to glow *"))
           { infer ("monster confusion", Scroll); redhands = 1; }
         else if (MATCH("your hands stop glowing *")) redhands = 0;
+        else if (MATCH("your * gives off a flash*")) infer("vorpalize weapon", Scroll); //todo:mdk handle vorpalized weapon elsewhere
 
         else if (MATCH("you feel as if somebody is watching over you*") ||
                  MATCH("you feel in touch with the universal onenes*")) {
@@ -631,16 +642,17 @@ register char *mess, *mend;
         else if (MATCH("your purse feels lighter*")) ;
         else if (MATCH("you suddenly feel weaker*")) ;
         else if (MATCH("you must identify something*")) ;
-        else if (MATCH("you have a * feeling for a moment, then it passes*")) infer ("monster detection", potion);
+        else if (MATCH("you have a * feeling for a moment, then it passes*")) infer ("monster detection", potion); //todo:mdk
         else if (MATCH("you have a * feeling for a moment*")) infer ("monster detection", potion);
         else if (MATCH("you daydream of * for a moment, then it passes*")) infer ("magic detection", potion);
         else if (MATCH("you feel deeply moved*")) infer ("teleportation", Scroll);
 
         else if (MATCH("you are transfixed*")) ;
         else if (MATCH("you are frozen*")) washit ("ice monster");
-        else if (MATCH("you faint*")) {echoit=0; if (version<RV36B) eat();}
+        else if (MATCH("you faint*")) {echoit=0; if (eat_after_fainting()) eat();}
         else if (MATCH("you freak out*")) echoit = 0;
         else if (MATCH("you fell into a trap!*")) ;
+        else if (MATCH("you are damaged by the fall*"));
         else if (MATCH("yum*")) echoit=0;
         else if (MATCH("yuk*")) echoit=0;
         else if (MATCH("you sense the presence of magic*")) { infer ("magic detection", potion); echoit=0; }
@@ -684,10 +696,10 @@ register char *mess, *mend;
     }
 
   /* Log unknown or troublesome messages */
-  if ((morecount > 150) && (morecount < 200)) {
+  if ((morecount > 200) && (morecount < 4000)) {
     dwait(D_WARNING, "More Loop ->%s<-.", mess);
   }
-  else if (morecount >= 200) {
+  else if (morecount >= 4000) {
     dwait(D_FATAL, "More Loop Exit ->%s<-.", mess);
   }
   else if (unknown)
@@ -751,7 +763,7 @@ char *name;
   stuff item_type = none;
   char lookup_name[NAMSIZ];
 
-  if (!replaying && version < RV53A &&
+  if (!replaying && dynamic_inv_order() &&
       (nextid < LETTER (0) || nextid > LETTER (invcount))) {
     dwait (D_FATAL, "Readident: nextid %d, afterid %d, invcount %d.",
            nextid, afterid, invcount);
@@ -761,11 +773,11 @@ char *name;
 
   at (0,0);
   clrtoeol ();
-  memset (screen,' ', 80);
+  memset (screen,' ', MAXCOLS);
   at (row, col);
   refresh ();
 
-  if (version < RV53A) {	/* Rogue 3.6, Rogue 5.2 */
+  if (has_universal_identify_scroll()) {	/* Rogue 3.6, Rogue 5.2 */
     deleteinv (OBJECT (afterid));	/* Assume object gone */
     sendnow (" %c", nextid);		/* Identify it */
 
@@ -962,7 +974,7 @@ register char *monster;
   dwait (D_BATTLE | D_MONSTER, "Killed '%s'", monster);
 
   /* If cheating against Rogue 3.6, check out our arrow */
-  if (version < RV52A && cheat) {
+  if (version_has_arrow_bug() && cheat) {
     if (usingarrow && hitstokill > 1 && !beingstalked && goodarrow < 20) {
       saynow ("Oops, bad arrow...");
       newweapon = badarrow = 1; remember (currentweapon, WORTHLESS);
@@ -1197,7 +1209,7 @@ char sep;
 
 void versiondep ()
 {
-  if (version >= RV53A)		genocide = "DMJGU";
+  if (version_has_new_monsters())		genocide = "DMJGU";
   else if (version >= RV52A)	genocide = "UDVPX";
   else				genocide = "UXDPW";
 
@@ -1218,7 +1230,7 @@ int hitormiss;
     { return (findmonster ("it")); }
   else {
     if (streq (monster, "it") && hitormiss) {
-      if (version < RV53A) {
+      if (version_has_invisible_stalker()) {
         if (! seemonster ("invisible stalker")) beingstalked=INVHIT;
 
         return (findmonster ("invisible stalker"));

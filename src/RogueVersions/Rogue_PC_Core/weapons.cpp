@@ -23,6 +23,7 @@
 #include "hero.h"
 #include "pack.h"
 #include "monster.h"
+#include "text.h"
 
 //mdk: IS_MISL has no effect.  It did in Unix 3.6.3, but I think it was
 //correctly made obsolete.
@@ -131,7 +132,7 @@ void do_motion(Item *obj, Coord delta)
         if (step_ok(ch = game->level().get_tile_or_monster(obj->position(), hit_mimics)) && ch != DOOR)
         {
             //It hasn't hit anything yet, so display it if alright.
-            if (game->hero().can_see(obj->position()))
+            if (game->hero().can_see(obj->position()) && game->options.interactive())
             {
                 //mdk:bugfix: xerox tile was replaced with floor after object passed
                 under = game->screen().mvinch(obj->position());
@@ -185,7 +186,7 @@ void fall(Item *obj, bool pr)
         pr = 0;
     }
     if (pr)
-        msg("the %s vanishes%s.", obj->name().c_str(), noterse(" as it hits the ground"));
+        msg(get_text(text_item_vanishes), obj->name().c_str());
     delete obj;
 }
 
@@ -313,7 +314,8 @@ bool Weapon::vorpalize()
     m_hit_plus++;
     m_damage_plus++;
     m_charges = 1;
-    msg(flash_msg, TypeName().c_str(), short_msgs() ? "" : intense);
+    msg(get_text(text_vorpalize_weapon));
+
 
     //Sometimes this is a mixed blessing ...
     if (game->options.act_like_v1_1()) {
@@ -398,7 +400,7 @@ void Weapon::enchant_weapon()
         this->m_hit_plus++;
     else
         this->m_damage_plus++;
-    ifterse("your %s glows blue", "your %s glows blue for a moment", TypeName().c_str());
+    msg(get_text(text_enchant_weapon), TypeName().c_str());
 }
 
 bool Weapon::is_vorpalized() const

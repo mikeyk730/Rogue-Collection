@@ -11,6 +11,7 @@
 #include "mach_dep.h"
 #include "output_interface.h"
 #include "game_state.h"
+#include "io.h"
 
 typedef uint32_t chartype;
 
@@ -83,7 +84,8 @@ struct ScreenOutput : public OutputInterface
     ~ScreenOutput();
 
 public:
-    virtual void clear();
+    virtual void clear() override;
+    virtual void redraw() override;
 
     //Turn cursor on and off
     virtual bool cursor(bool ison);
@@ -217,6 +219,10 @@ ScreenOutput::~ScreenOutput()
 void ScreenOutput::clear()
 {
     blot_out(0, 0, LINES - 1, COLS - 1);
+}
+
+void ScreenOutput::redraw()
+{
 }
 
 //Turn cursor on and off
@@ -519,7 +525,7 @@ void ScreenOutput::implode()
     for (r = 0, c = 0, ec = COLS - 1; r < 10; r++, c += cinc, er--, ec -= cinc)
     {
         vbox(sng_box, r, c, er, ec);
-        go_to_sleep(25);
+        pause(25);
         for (j = r + 1; j <= er - 1; j++)
         {
             move(j, c + 1); repchr(' ', cinc - 1);
@@ -541,7 +547,7 @@ void ScreenOutput::drop_curtain()
     {
         move(r, 1);
         repchr(0xb1, COLS - 2);
-        go_to_sleep(20);
+        pause(20);
     }
     move(0, 0);
     standend();
@@ -555,7 +561,7 @@ void ScreenOutput::raise_curtain()
     for (int r = LINES - 2; r > 0; r--)
     {
         Render({1, r, COLS-2, r});
-        go_to_sleep(20);
+        pause(20);
     }
     Render();
 }
@@ -664,6 +670,11 @@ OutputShim::~OutputShim()
 void OutputShim::clear()
 {
     m_output_interface->clear();
+}
+
+void OutputShim::redraw()
+{
+    m_output_interface->redraw();
 }
 
 bool OutputShim::cursor(bool ison)

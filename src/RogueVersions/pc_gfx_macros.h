@@ -54,7 +54,7 @@ void fix_tombstone();
 #define PC_GFX_TOMBSTONE()            fix_tombstone()
 #define PC_GFX_WALL_CASES             case LLWALL: case LRWALL: case URWALL: case ULWALL:
 
-#if defined(ROGUE_5_2_1) || defined(ROGUE_5_4_2) || defined(ROGUE_5_3)
+#if defined(ROGUE_5_2_1) || defined(ROGUE_5_4_2) || defined(ROGUE_5_3) || defined(ROGOMATIC)
 #define PC_GFX_PASSGE_COLOR(r,c,ch,cl)   if ((flat(r,c) & F_PASS) && ch != PASSAGE && ch != ' ') PC_GFX_COLOR(cl)
 #define PC_GFX_COLOR(c)                  attron(COLOR_PAIR(c))
 #define PC_GFX_NOCOLOR(c)                attroff(COLOR_PAIR(c))

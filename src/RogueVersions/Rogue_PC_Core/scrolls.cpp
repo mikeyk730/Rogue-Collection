@@ -25,12 +25,10 @@
 #include "monster.h"
 #include "ring.h"
 #include "armor.h"
+#include "text.h"
 
 const char *c_set = "bcdfghjklmnpqrstvwxyz";
 const char *v_set = "aeiou";
-
-const char *laugh = "you hear maniacal laughter%s.";
-const char *in_dist = " in the distance";
 
 //random_char_in(): return random character in given string
 char random_char_in(const char *string)
@@ -93,7 +91,7 @@ bool do_read_scroll()
         return true;
     }
 
-    ifterse("the scroll vanishes", "as you read the scroll, it vanishes");
+    msg(get_text(text_read_scroll));
     if (scroll == game->hero().get_current_weapon())
         game->hero().set_current_weapon(NULL);
 
@@ -233,7 +231,7 @@ void EnchantArmor::Read()
     if (game->hero().get_current_armor() != NULL)
     {
         game->hero().get_current_armor()->enchant_armor();
-        ifterse("your armor glows faintly", "your armor glows faintly for a moment");
+        msg(get_text(text_enchant_armor));
     }
 }
 
@@ -243,14 +241,14 @@ void Identify::Read()
     discover();
     msg("this scroll is an identify scroll");
     if (game->options.show_inventory_menu())
-        more(" More ");
+        more();
     whatis();
 }
 
 void ScareMonster::Read()
 {
     //Reading it is a mistake and produces laughter at the poor rogue's boo boo.
-    msg(laugh, short_msgs() ? "" : in_dist);
+    msg(get_text(text_maniacal_laughter));
 }
 
 void FoodDetection::Read()
@@ -283,8 +281,7 @@ void FoodDetection::Read()
         msg("your nose tingles as you sense food");
     }
     else
-        ifterse("you hear a growling noise close by", "you hear a growling noise very close to you");
-
+        msg(get_text(text_detect_food_fail));
 }
 
 void TeleportationScroll::Read()
@@ -315,7 +312,7 @@ void CreateMonster::Read()
         Monster::CreateMonster(randmonster(false, game->get_level()), &position, game->get_level());
     }
     else
-        ifterse("you hear a faint cry of anguish", "you hear a faint cry of anguish in the distance");
+        msg(get_text(text_create_monster_fail));
 }
 
 bool CreateMonster::IsEvil() const
@@ -334,14 +331,14 @@ void RemoveCurse::Read()
     if (game->hero().get_ring(RIGHT))
         game->hero().get_ring(RIGHT)->remove_curse();
 
-    ifterse("somebody is watching over you", "you feel as if somebody is watching over you");
+    msg(get_text(text_remove_curse));
 }
 
 void AggravateMonsters::Read()
 {
     //This scroll aggravates all the monsters on the current level and sets them running towards the hero
     game->level().aggravate_monsters();
-    ifterse("you hear a humming noise", "you hear a high pitched humming noise");
+    msg(get_text(text_aggravate_monsters));
 }
 
 bool AggravateMonsters::IsEvil() const
@@ -360,7 +357,7 @@ void VorpalizeWeapon::Read()
     Item* item = game->hero().get_current_weapon();
     Weapon* weapon = dynamic_cast<Weapon*>(item);
     if (!weapon) {
-        msg(laugh, short_msgs() ? "" : in_dist);
+        msg(get_text(text_maniacal_laughter));
         return;
     }
     if (weapon->vorpalize())

@@ -89,7 +89,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>false</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ROGUE_COLLECTION;USE_PC_STYLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ROGUE_COLLECTION;ROGOMATIC;USE_PC_STYLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -118,7 +118,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)src\MyCurses\;$(SolutionDir)src\Shared\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>ROGUE_COLLECTION;USE_PC_STYLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ROGUE_COLLECTION;ROGOMATIC;USE_PC_STYLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -175,6 +175,7 @@
     <ClCompile Include="things.c" />
     <ClCompile Include="titlepage.c" />
     <ClCompile Include="utility.c" />
+    <ClCompile Include="versions.c" />
     <ClCompile Include="worth.c" />
   </ItemGroup>
   <ItemGroup>

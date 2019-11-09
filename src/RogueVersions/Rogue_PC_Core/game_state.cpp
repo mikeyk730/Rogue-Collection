@@ -366,6 +366,11 @@ bool Options::show_inventory_menu() const
     return get_environment("menu") != "false";
 }
 
+bool Options::use_slow_inventory() const
+{
+    return get_environment("step") == "true";
+}
+
 bool Options::dir_key_clears_more() const
 {
     return get_environment("dir_key_clears_more") == "true";
@@ -374,6 +379,16 @@ bool Options::dir_key_clears_more() const
 bool Options::prompt_for_name() const
 {
     return get_environment("prompt_for_name") != "false";
+}
+
+bool Options::prompt_for_help() const
+{
+    return get_environment("prompt_for_help") == "true";
+}
+
+bool Options::askme() const
+{
+    return get_environment("askme") != "false";
 }
 
 bool Options::start_replay_paused() const
@@ -398,12 +413,27 @@ bool Options::monochrome() const
 
 bool Options::use_exp_level_names() const
 {
-    return get_environment("use_exp_level_names") != "false";
+    return !act_like_v1_1();
 }
 
 bool Options::show_armor_class() const
 {
     return get_environment("showac") == "true";
+}
+
+bool Options::unix_output() const
+{
+    return get_environment("unix_output") == "true";
+}
+
+bool Options::terse() const
+{
+    return get_environment("terse") == "true";
+}
+
+bool Options::interactive() const
+{
+    return get_environment("interactive") != "false";
 }
 
 bool Options::trap_bugfix() const

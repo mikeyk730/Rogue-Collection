@@ -23,6 +23,7 @@
 #include "hero.h"
 #include "level.h"
 #include "monster.h"
+#include "text.h"
 
 #define HOLD_TIME    spread(2)
 
@@ -30,7 +31,7 @@
 bool do_quaff()
 {
     Item* item = get_item("quaff", POTION);
-    if (!item) 
+    if (!item)
         return false;
 
     //Make certain that it is something that we want to drink
@@ -118,7 +119,7 @@ std::string Potion::InventoryName() const
 
     bool show_true_name(info.is_discovered() || game->wizard().reveal_items());
     bool has_guess(!info.guess().empty());
-    
+
     const std::string& color(info.identifier());
 
     if (show_true_name || has_guess) {
@@ -162,7 +163,7 @@ int Potion::Worth() const
 {
     int worth = Category()->worth();
     worth *= m_count;
-    if (!Category()->is_discovered()) 
+    if (!Category()->is_discovered())
         worth /= 2;
     return worth;
 }
@@ -244,7 +245,7 @@ bool Blindness::IsEvil() const
 void RestoreStrength::Quaff()
 {
     game->hero().restore_strength();
-    msg("%syou feel warm all over", noterse("hey, this tastes great.  It makes "));
+    msg(get_text(text_restore_strength));
 }
 
 void HasteSelf::Quaff()
@@ -289,21 +290,21 @@ void RaiseLevel::AffectMonster(Monster* monster)
 
 void MagicDetection::Quaff()
 {
-    //Potion of magic detection.  Find everything interesting on the level and show him where they are. 
+    //Potion of magic detection.  Find everything interesting on the level and show him where they are.
     //Also give hints as to whether he would want to use the object.
     if (game->level().reveal_magic()) {
         discover();
         msg("You sense the presence of magic.");
     }
     else {
-        msg("you have a strange feeling for a moment%s.", noterse(", then it passes"));
+        msg(get_text(text_magic_detect_fail));
     }
 }
 
 void MonsterDetection::Quaff()
 {
     if (!game->level().has_monsters())
-        msg("you have a strange feeling%s.", noterse(" for a moment"));
+        msg(get_text(text_monster_detect_fail));
     else {
         if (detect_monsters(true))
             discover();
@@ -340,19 +341,17 @@ void GainStrength::Quaff()
 {
     discover();
     game->hero().adjust_strength(1);
-    msg("you feel stronger. What bulging muscles!");
+    msg(get_text(text_gain_strength));
 }
 
 void Poison::Quaff()
 {
-    const char* sick = "you feel %s sick.";
-
     discover();
     if (game->hero().adjust_strength(-(rnd(3) + 1))) {
-        msg(sick, "very");
+        msg(get_text(text_sick));
     }
     else
-        msg(sick, "momentarily");
+        msg("You feel momentarily sick.");
 }
 
 bool Poison::IsEvil() const

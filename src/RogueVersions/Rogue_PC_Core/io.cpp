@@ -23,6 +23,7 @@
 #include "input_interface_ex.h"
 #include "mach_dep.h"
 #include "armor.h"
+#include "text.h"
 
 #define PT(i,j)  ((COLS==40)?i:j)
 
@@ -56,17 +57,6 @@ void set_brief_mode(bool enable)
 bool in_brief_mode()
 {
     return expert;
-}
-
-//msg: Display a message at the top of the screen.
-void ifterse(const char *tfmt, const char *format, ...)
-{
-    char dest[1024 * 16];
-    va_list argptr;
-    va_start(argptr, format);
-    vsprintf(dest, expert ? tfmt : format, argptr);
-    va_end(argptr);
-    msg(dest);
 }
 
 void reset_msg_position()
@@ -159,7 +149,7 @@ void endmsg()
     if (game->msg_position) {
         look(false);
         game->screen().move(0, game->msg_position);
-        more(" More ");
+        more();
     }
     //All messages should start with uppercase, except ones that start with a pack addressing character
     if (islower(msgbuf[0]) && msgbuf[1] != ')')
@@ -177,6 +167,11 @@ bool is_direction(int ch)
         return true;
     }
     return false;
+}
+
+void more()
+{
+    more(get_text(text_more));
 }
 
 //More: tag the end of a line and wait for a space
@@ -277,8 +272,10 @@ void scrl(int msgline, const char *str1, const char *str2)
     if (str1 == 0)
     {
         game->screen().move(msgline, 0);
-        if (strlen(str2) < (size_t)COLS) game->screen().clrtoeol();
         game->screen().printw(fmt, str2);
+        if (strlen(str2) < (size_t)COLS) {
+            game->screen().clrtoeol();
+        }
     }
     else while (str1 <= str2)
     {
@@ -363,7 +360,7 @@ void update_status_bar()
     }
 
     //Exp:
-    if (!game->options.use_exp_level_names() || game->options.act_like_v1_1())
+    if (!game->options.use_exp_level_names())
     {
         game->screen().move(23, PT(22, 62));
         game->screen().printw("Exp:%d/%d  ", game->hero().m_stats.m_level, game->hero().experience());
@@ -637,11 +634,6 @@ void handle_key_state()
 */
 }
 
-const char *noterse(const char *str)
-{
-    return (short_msgs() ? "" : str);
-}
-
 //clear_typeahead_buffer: Flush typeahead for traps, etc.
 void clear_typeahead_buffer()
 {
@@ -655,7 +647,7 @@ void tick_pause()
 
 void pause(int n)
 {
-    if (!game->in_replay())
+    if (!game->in_replay() && game->options.interactive())
         go_to_sleep(n);
 }
 

@@ -163,6 +163,9 @@
     <ClCompile Include="item_category.cpp">
       <Filter>Items</Filter>
     </ClCompile>
+    <ClCompile Include="text.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="armor.h">
@@ -314,6 +317,9 @@
     </ClInclude>
     <ClInclude Include="input_interface_ex.h">
       <Filter>Input</Filter>
+    </ClInclude>
+    <ClInclude Include="text.h">
+      <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

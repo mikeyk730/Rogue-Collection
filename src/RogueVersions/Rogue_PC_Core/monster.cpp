@@ -19,6 +19,7 @@
 #include "ring.h"
 #include "armor.h"
 #include "gold.h"
+#include "text.h"
 
 #define DRAGONSHOT  5 //one chance in DRAGONSHOT that a dragon will flame
 
@@ -567,7 +568,7 @@ bool Monster::freeze_attack()
 
     if (game->hero().get_sleep_turns() == 0)
     {
-        ifterse("you are frozen", "you are frozen by the %s", get_name().c_str());
+        msg(get_text(text_frozen), get_name().c_str());
     }
 
     int turns = rnd(2) + 2;
@@ -584,7 +585,7 @@ bool Monster::drain_strength_attack()
     //Rattlesnakes have poisonous bites
     if (!save(VS_POISON)) {
         if (game->hero().adjust_strength(-1)) {
-            msg("you feel a bite in your leg%s", noterse(" and now feel weaker"));
+            msg(get_text(text_bite));
             return true;
         }
         else

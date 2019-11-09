@@ -21,6 +21,7 @@
 #include "potion.h"
 #include "monster.h"
 #include "amulet.h"
+#include "text.h"
 
 void Level::clear_level()
 {
@@ -136,7 +137,7 @@ void Level::search(Coord pos)
             set_flag(pos, F_REAL);
             game->cancel_repeating_cmd();
             game->stop_run_cmd();
-            msg("you found %s", tr_name(get_trap_type(pos)));
+            msg(get_text(text_found_trap), tr_name(get_trap_type(pos)));
             break;
         }
     }
@@ -401,7 +402,6 @@ void Level::treas_room()
                 debug("treasure roomm bailout");
             monster->set_is_mean(true); //no sloughers in THIS room
             monster->give_pack();
-
         }
     }
 }

@@ -568,7 +568,7 @@ bool SdlDisplay::HandleEventKeyDown(const SDL_Event & e)
 
 bool SdlDisplay::HandleEventText(const SDL_Event & e)
 {
-    if (e.text.text[0] == '~')
+    if (e.text.text[0] == '`')
     {
         NextGfxMode();
         return true;

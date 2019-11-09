@@ -29,6 +29,7 @@
 #include "pack.h"
 #include "monster.h"
 #include "gold.h"
+#include "text.h"
 
 char tbuf[MAXSTR];
 
@@ -209,7 +210,7 @@ void killed_by_hero(Monster* monster, bool print)
 
     if (print)
     {
-        addmsg("you have defeated ");
+        addmsg(get_text(text_defeated_monster));
         if (game->hero().is_blind())
             msg(it);
         else

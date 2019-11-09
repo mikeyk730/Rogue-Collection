@@ -50,6 +50,12 @@
 # define SUCCESS     (1)
 # define FAILURE     (0)
 
+#define MAXROWS 25
+#define STATUSROW 23
+#define MAXCOLS 80
+#define DBG_FMT  ">%-79.79s"
+#define DBG_FMT2 "<%-79.79s"
+
 /*
  * Magic numbers for Invisible stalker strategies
  */
@@ -149,6 +155,9 @@
 # define RV36B    (362)	/* CURROG: Rogue 3.6 with wands */
 # define RV52A    (521)	/* NEWROG: Rogue 5.2 */
 # define RV52B    (522)	/* Rogue 5.2 with maze rooms */
+# define RVPC11   (527)	/* Rogue PC 1.1 */
+# define RVPC148  (528)	/* Rogue PC 1.48 */
+# define RV53NMT  (530)	/* Rogue 5.3 NMT */
 # define RV53A    (531)	/* Rogue 5.3 new monsters */
 # define RV54A    (544)	/* Rogue 5.4.4 mystery trap */
 

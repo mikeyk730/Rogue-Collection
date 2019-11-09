@@ -26,6 +26,7 @@
 #include "scrolls.h"
 #include "things.h"
 #include "sticks.h"
+#include "text.h"
 
 #define HUNGER_TIME  spread(1300)
 #define MORE_TIME    150
@@ -88,12 +89,12 @@ void Hero::calculate_roll_stats(Agent *defender, Item *object, bool hurl,
     }
 
     if (hurl) {
-        //mdk: the original code never used throw damage except for arrows and crossbow bolts.
+        //mdk:bugfix the original code never used throw damage except for arrows and crossbow bolts.
         //This bug was introduced in the PC port, as the behavior is correct in Unix Rogue 5.2.
         if (object->launcher() == NO_WEAPON) {
             *damage_string = object->throw_damage();
         }
-        //if we've used the right object to launch the projectile, we use the throw 
+        //if we've used the right object to launch the projectile, we use the throw
         //damage of the projectile, and get the plusses from the launcher.
         else if (current_weapon && object->launcher() == current_weapon->m_which)
         {
@@ -248,7 +249,7 @@ void Hero::digest()
         game->stop_run_cmd();
         game->cancel_repeating_cmd();
         hungry_state = 3;
-        msg("%syou faint from lack of food", noterse("you feel very weak. "));
+        msg(get_text(text_faint));
     }
     else
     {
@@ -270,7 +271,7 @@ void Hero::digest()
         }
         else if (food_left < 2 * MORE_TIME && oldfood >= 2 * MORE_TIME) {
             hungry_state = 1;
-            msg("you are starting to get hungry");
+            msg(get_text(text_hungry));
         }
     }
 }
@@ -352,15 +353,15 @@ void Hero::teleport()
         set_position(c);
         enter_room(position());
     }
-    else { 
-        set_position(c); 
-        look(true); 
+    else {
+        set_position(c);
+        look(true);
     }
     game->screen().add_tile(position(), PLAYER);
 
     //turn off IS_HELD in case teleportation was done while fighting a Flytrap
     clear_hold();
-    
+
     reset_trap_turns();
     game->cancel_repeating_cmd();
     game->stop_run_cmd();
@@ -440,14 +441,14 @@ bool Hero::can_see_monster(Monster *monster)
         (monster->room() != room() || monster->room()->is_dark() || monster->room()->is_maze()))
         return false;
 
-    //If we are seeing the enemy of a vorpally enchanted object for the first time, 
+    //If we are seeing the enemy of a vorpally enchanted object for the first time,
     //give the player a hint as to what that object is good for.
     Item* item = get_current_weapon();
     Weapon* weapon = dynamic_cast<Weapon*>(item);
     if (weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
     {
         weapon->set_flashed();
-        msg(flash_msg, weapon->name().c_str(), short_msgs() ? "" : intense);
+        msg(get_text(text_vorpalize_weapon));
     }
     return true;
 }
@@ -604,7 +605,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
 {
     bool from_floor = false;
     if (!obj)
-    {   
+    {
         from_floor = true;
         obj = find_obj(position(), true);
         if (!obj)
@@ -620,7 +621,7 @@ void Hero::add_to_pack(Item *obj, bool silent)
 
     //Notify the user
     if (!silent) {
-        msg("%s%s (%c)", noterse("you now have "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
+        msg(get_text(text_gain_item), obj->inventory_name(*this, true).c_str(), pack_char(obj));
         game->screen().play_sound("item");
     }
 }
@@ -672,7 +673,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
             delete *obj;
             game->screen().add_tile(position(), floor);
             game->level().set_tile(position(), floor);
-            msg("the scroll turns to dust%s.", noterse(" as you pick it up"));
+            msg(get_text(text_destroy_scare_monster));
             return false;
         }
         else (*obj)->set_found();
@@ -729,7 +730,7 @@ bool Hero::add_to_list(Item** obj, bool from_floor)
 void Hero::pick_up_gold(int value)
 {
     adjust_purse(value);
-    msg("you found %d gold pieces", value);
+    msg(get_text(text_found_gold), value);
     game->screen().play_sound("gold");
 }
 
@@ -775,7 +776,7 @@ bool Hero::wield()
     }
 
     set_current_weapon(obj);
-    ifterse("now wielding %s (%c)", "you are now wielding %s (%c)", obj->inventory_name(*this, true).c_str(), pack_char(obj));
+    msg(get_text(text_now_wielding), obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;
 }
 
@@ -810,22 +811,22 @@ bool Hero::put_on_ring()
         msg("you can't put that on your finger");
         return false;
     }
-        
+
     if (is_in_use(obj)) {
         return false;
     }
 
     //find out which hand to put it on
     int ring = -1;
-    if (get_ring(LEFT) == NULL) 
+    if (get_ring(LEFT) == NULL)
         ring = LEFT;
     if (get_ring(RIGHT) == NULL)
         ring = RIGHT;
-    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL) 
+    if (get_ring(LEFT) == NULL && get_ring(RIGHT) == NULL)
         if ((ring = get_hand()) < 0)
             return false;
-    
-    if (ring < 0) { 
+
+    if (ring < 0) {
         msg("you already have a ring on each hand");
         return false;
     }
@@ -834,8 +835,8 @@ bool Hero::put_on_ring()
 
     //Calculate the effect it has on the poor guy.
     obj->PutOn();
-    
-    msg("%swearing %s (%c)", noterse("you are now "), obj->inventory_name(*this, true).c_str(), pack_char(obj));
+
+    msg(get_text(text_wear_ring), obj->inventory_name(*this, true).c_str(), pack_char(obj));
     return true;
 }
 
@@ -870,12 +871,12 @@ bool Hero::remove_ring()
 bool Hero::wear_armor()
 {
     if (get_current_armor()) {
-        msg("you are already wearing some%s.", noterse(".  You'll have to take it off first"));
+        msg(get_text(text_already_wearing_armor));
         return false;
     }
 
     Item *obj = get_item("wear", ARMOR);
-    if (!obj) 
+    if (!obj)
         return false;
 
     //mdk: trying to wear non-armor counts as turn
@@ -888,7 +889,7 @@ bool Hero::wear_armor()
     waste_time(); //mdk: putting on armor takes 2 turns
 
     set_current_armor(armor);
-    msg("you are now wearing %s", armor->inventory_name(*this, true).c_str());
+    msg(get_text(text_wear_armor), armor->inventory_name(*this, true).c_str());
     return true;
 }
 
@@ -906,7 +907,7 @@ bool Hero::take_off_armor()
         return true;
 
     set_current_armor(NULL);
-    msg("you used to be wearing %c) %s", pack_char(obj), obj->inventory_name(*this, true).c_str());
+    msg(get_text(text_remove_armor), pack_char(obj), obj->inventory_name(*this, true).c_str());
     return true;
 }
 

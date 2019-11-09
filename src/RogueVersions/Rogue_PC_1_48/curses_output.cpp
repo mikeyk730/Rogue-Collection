@@ -80,7 +80,8 @@ struct PdCursesOutput : public OutputInterface
     ~PdCursesOutput();
 
 public:
-    virtual void clear();
+    virtual void clear() override;
+    virtual void redraw() override;
 
     //Turn cursor on and off
     virtual bool cursor(bool ison);
@@ -252,6 +253,12 @@ void PdCursesOutput::clear()
 {
     ::clear();
     Render();
+}
+
+void PdCursesOutput::redraw()
+{
+    ::clearok(curscr, TRUE);
+    ::wrefresh(curscr);
 }
 
 //Turn cursor on and off
