@@ -221,51 +221,51 @@ Old Monsters
 New Monsters
 ------------
 
-| Monster           |  Version | Drop| Mean|   XP | Lvl| Arm| Damage Rolls      | Notes                       |
-| ------------------|---------:|----:|----:|-----:|---:|---:|------------------:|-----------------------------|
-| aquator           |      all |   0 | yes |   20 |  5 |  2 | 0x0/0x0           | rusts armor                 |
-| bat               |      all |   0 |  no |    1 |  1 |  3 | 1x2               | flying, confused            |
-| centaur           |        * |  15 |  no |    * |  4 |  4 | *                 |                             |
-|                   |      5.4 |     |     |   17 |    |    | 1x2/1x5/1x5       |                             |
-|                   |      1.1 |     |     |   15 |    |    | 1d6/1d6           |                             |
-|                   |     1.48 |     |     |   25 |    |    | 1d6/1d6           |                             |
-| dragon            |        * | 100 | yes |    * | 10 | -1 | 1x8/1x8/3x10      | shoots fire, immune to fire |
-|                   |      5.4 |     |     | 5000 |    |    |                   |                             |
-|                   |       PC |     |     | 6000 |    |    |                   |                             |
-| emu               |      all |   0 | yes |    2 |  1 |  7 | 1x2               |                             |
-| venus flytrap     |      all |   0 | yes |   80 |  8 |  3 | 0x0               | stationary, holds           |
-| griffin           |        * |  20 | yes | 2000 | 13 |  2 | *                 | flying                      |
-|                   |      5.4 |     |     |      |    |    | 4x3/3x5           |                             |
-|                   |       PC |     |     |      |    |    | 4d3/3d5/4d3       |                             |
-| hobgoblin         |      all |   0 | yes |    3 |  1 |  5 | 1x8               |                             |
-| ice monster       |        * |   0 |   * |    * |  1 |  9 | *                 | *                           |
-|                   | 5.4, 1.1 |     |  no |    5 |    |    | 0x0               | freezes                     |
-|                   |      5.4 |     | yes |   15 |    |    | 1d2               | shoots ice, unfreezes       |
-| jabberwock        |        * |  70 |  no |    * | 15 |  6 | 2x12/2x4          |                             |
-|                   |      5.4 |     |     | 3000 |    |    |                   |                             |
-|                   |       PC |     |     | 4000 |    |    |                   |                             |
-| kestrel           |      5.4 |   0 | yes |    1 |  1 |  7 | 1x4               | flying                      |
-| kestral           |       PC |   0 | yes |    1 |  1 |  7 | 1x4               | flying                      |
-| leprechaun        |        * |   0 |  no |   10 |  3 |  8 | *                 | steals/drops gold           |
-|                   | 5.4, 1.1 |     |     |      |    |    | 1x1               |                             |
-|                   |     1.48 |     |     |      |    |    | 1x2               |                             |
-| medusa            |      all |  40 | yes |  200 |  8 |  2 | 3x4/3x4/2x5       | confuses                    |
-| nymph             |      all | 100 |  no |   37 |  3 |  9 | 0x0               | steals/drops item           |
-| orc               |      all |  15 |  no |    5 |  1 |  6 | 1x8               | guards gold                 |
-| phantom           |      all |   0 |  no |  120 |  8 |  3 | 4x4               | invisible, confused         |
-| quagga            |        * |   * | yes |    * |  3 |  * | *                 |                             |
-|                   |      5.4 |   0 |     |   15 |    |  3 | 1x5/1x5           |                             |
-|                   |       PC |  30 |     |   32 |    |  2 | 1d2/1d2/1d4       |                             |
-| rattlesnake       |      all |   0 | yes |    9 |  2 |  3 | 1x6               | drains strength             |
-| snake             | 5.4, 1.1 |   0 | yes |    2 |  1 |  5 | 1x3               |                             |
-| slime             |     1.48 |   0 | yes |    1 |  2 |  8 | 1x3               | divides, slow               |
-| troll             |      all |  50 | yes |  120 |  6 |  4 | 1x8/1x8/2x6       |                             |
-| black unicorn     |      5.4 |   0 | yes |  190 |  7 | -2 | 1x9/1x9/2x9       |                             |
-| ur-ville          |       PC |   0 | yes |  190 |  7 | -2 | 1d3/1d3/1d3/4d6   |                             |
-| vampire           |      all |  20 | yes |  350 |  8 |  1 | 1x10              | drains hp                   |
-| wraith            |      all |   0 |  no |   55 |  5 |  4 | 1x6               | drains xp                   |
-| xeroc             |        * |  30 |  no |  100 |  7 |  7 | *                 | mimics items                |
-|                   |      5.4 |     |     |      |    |    | 4x4               |                             |
-|                   |       PC |     |     |      |    |    | 3x4               |                             |
-| yeti              |      all |  30 |  no |   50 |  4 |  6 | 1x6/1x6           |                             |
-| zombie            |      all |   0 | yes |    6 |  2 |  8 | 1x8               |                             |
+| Monster           |   Version | Drop| Mean|   XP | Lvl| Arm| Damage Rolls      | Notes                       |
+| ------------------|----------:|----:|----:|-----:|---:|---:|------------------:|-----------------------------|
+| aquator           |       all |   0 | yes |   20 |  5 |  2 | 0x0/0x0           | rusts armor                 |
+| bat               |       all |   0 |  no |    1 |  1 |  3 | 1x2               | flying, confused            |
+| centaur           |         * |  15 |  no |    * |  4 |  4 | *                 |                             |
+|                   |       5.4 |     |     |   17 |    |    | 1x2/1x5/1x5       |                             |
+|                   |       1.1 |     |     |   15 |    |    | 1d6/1d6           |                             |
+|                   |      1.48 |     |     |   25 |    |    | 1d6/1d6           |                             |
+| dragon            |         * | 100 | yes |    * | 10 | -1 | 1x8/1x8/3x10      | shoots fire, immune to fire |
+|                   |       5.4 |     |     | 5000 |    |    |                   |                             |
+|                   | 1.1, 1.48 |     |     | 6000 |    |    |                   |                             |
+| emu               |       all |   0 | yes |    2 |  1 |  7 | 1x2               |                             |
+| venus flytrap     |       all |   0 | yes |   80 |  8 |  3 | 0x0               | stationary, holds           |
+| griffin           |         * |  20 | yes | 2000 | 13 |  2 | *                 | flying                      |
+|                   |       5.4 |     |     |      |    |    | 4x3/3x5           |                             |
+|                   | 1.1, 1.48 |     |     |      |    |    | 4d3/3d5/4d3       |                             |
+| hobgoblin         |       all |   0 | yes |    3 |  1 |  5 | 1x8               |                             |
+| ice monster       |         * |   0 |   * |    * |  1 |  9 | *                 | *                           |
+|                   |  5.4, 1.1 |     |  no |    5 |    |    | 0x0               | freezes                     |
+|                   |       5.4 |     | yes |   15 |    |    | 1d2               | shoots ice, unfreezes       |
+| jabberwock        |         * |  70 |  no |    * | 15 |  6 | 2x12/2x4          |                             |
+|                   |       5.4 |     |     | 3000 |    |    |                   |                             |
+|                   | 1.1, 1.48 |     |     | 4000 |    |    |                   |                             |
+| kestrel           |       5.4 |   0 | yes |    1 |  1 |  7 | 1x4               | flying                      |
+| kestral           | 1.1, 1.48 |   0 | yes |    1 |  1 |  7 | 1x4               | flying                      |
+| leprechaun        |         * |   0 |  no |   10 |  3 |  8 | *                 | steals/drops gold           |
+|                   |  5.4, 1.1 |     |     |      |    |    | 1x1               |                             |
+|                   |      1.48 |     |     |      |    |    | 1x2               |                             |
+| medusa            |       all |  40 | yes |  200 |  8 |  2 | 3x4/3x4/2x5       | confuses                    |
+| nymph             |       all | 100 |  no |   37 |  3 |  9 | 0x0               | steals/drops item           |
+| orc               |       all |  15 |  no |    5 |  1 |  6 | 1x8               | guards gold                 |
+| phantom           |       all |   0 |  no |  120 |  8 |  3 | 4x4               | invisible, confused         |
+| quagga            |         * |   * | yes |    * |  3 |  * | *                 |                             |
+|                   |       5.4 |   0 |     |   15 |    |  3 | 1x5/1x5           |                             |
+|                   | 1.1, 1.48 |  30 |     |   32 |    |  2 | 1d2/1d2/1d4       |                             |
+| rattlesnake       |       all |   0 | yes |    9 |  2 |  3 | 1x6               | drains strength             |
+| snake             |  5.4, 1.1 |   0 | yes |    2 |  1 |  5 | 1x3               |                             |
+| slime             |      1.48 |   0 | yes |    1 |  2 |  8 | 1x3               | divides, slow               |
+| troll             |       all |  50 | yes |  120 |  6 |  4 | 1x8/1x8/2x6       |                             |
+| black unicorn     |       5.4 |   0 | yes |  190 |  7 | -2 | 1x9/1x9/2x9       |                             |
+| ur-ville          | 1.1, 1.48 |   0 | yes |  190 |  7 | -2 | 1d3/1d3/1d3/4d6   |                             |
+| vampire           |       all |  20 | yes |  350 |  8 |  1 | 1x10              | drains hp                   |
+| wraith            |       all |   0 |  no |   55 |  5 |  4 | 1x6               | drains xp                   |
+| xeroc             |         * |  30 |  no |  100 |  7 |  7 | *                 | mimics items                |
+|                   |       5.4 |     |     |      |    |    | 4x4               |                             |
+|                   | 1.1, 1.48 |     |     |      |    |    | 3x4               |                             |
+| yeti              |       all |  30 |  no |   50 |  4 |  6 | 1x6/1x6           |                             |
+| zombie            |       all |   0 | yes |    6 |  2 |  8 | 1x8               |                             |
