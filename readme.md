@@ -9,7 +9,7 @@ Download [_Retro Rogue Collection_](https://github.com/mikeyk730/Rogue-Collectio
 
 Six Classic Versions
 ---------------------
-Rogue went through big changes throughout the 1980s.  Originally developed for Unix mainframes, it eventually saw an IBM PC release.  _Retro Rogue Collection_ lets you relive this whole era by offering six different versions of the game:
+Rogue went through big changes throughout the 1980s.  Originally developed for Unix mainframes, it eventually saw an IBM PC release.  _Retro Rogue Collection_ lets you relive this whole era by offering six different versions of the game.  See the [versions page](https://github.com/mikeyk730/Rogue-Collection/blob/master/docs/versions.md) for detailed information about the different versions.
 
 + PC Rogue v1.48
 + PC Rogue v1.1
