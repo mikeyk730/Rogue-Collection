@@ -1366,7 +1366,15 @@ void add_to_screen(int row, int col, char ch)
         return;
     }
 
+    if (row == STATUSROW) {
+        PC_GFX_COLOR(0x0e);
+    }
+
     mvaddch(row, col, ch ? ch : ' ');
+
+    if (row == STATUSROW) {
+        PC_GFX_NOCOLOR(0x0e);
+    }
 }
 
 char get_from_screen(int row, int col)
