@@ -989,11 +989,11 @@ void waitforspace ()
 
 char *nexthelp[] = {
   "Rgm commands: t=toggle run mode, e=logging, i=inventory, -=status    [?]",
-  "Rgm commands: <ret>=singlestep, `=summary, /=snapshot, R=replay      [?]",
+  "Rgm commands: <ret>=singlestep, ~=summary, /=snapshot, R=replay      [?]",
   "Rgm commands: m=long term memory display, G=display gene settings    [?]",
   "Rogue cmds: S=Save, Q=Quit, h j k l H J K L b n u y N B U Y f s < >  [?]",
   "Wizard: d=debug, !=show items, @=show monsters, #=show level flags   [?]",
-  "Wizard: ~=version, ^=bowrank, %%=armorrank, $=weaponrank, ==ringrank  [?]",
+  "Wizard: v=version, ^=bowrank, %%=armorrank, $=weaponrank, ==ringrank  [?]",
   "Wizard: (=database, )=cycles, +=possible secret doors, :=chicken     [?]",
   "Wizard: [=weapstat, ]=rustproof armor, r=resetinv, &=object count    [?]",
   "Wizard: *=toggle blind, C=toggle cosmic, M=mazedoor, A=attempt, {=flags",

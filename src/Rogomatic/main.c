@@ -698,11 +698,11 @@ char *env[];
           say (chicken ? "chicken" : "aggressive");
           break;
 
-        case '~': if (replaying)
+        case 'v': if (replaying)
             saynow ("Replaying log file %s, version %s.",
                     logfilename, versionstr);
           else
-            saynow (" %s: version %s, genotype %d, quit at %d.",
+            saynow ("%s: version %s, genotype %d, quit at %d.",
                     roguename, versionstr, geneid, quitat);
 
           break;
@@ -721,7 +721,7 @@ char *env[];
         case '-': saynow (statusline ());
           break;
 
-        case '`': clear ();
+        case '~': clear ();
           summary ((FILE *) NULL, '\n');
           pauserogue ();
           break;
