@@ -191,29 +191,29 @@ Monsters
 
 | Monster           | Drop| Mean| XPv3 | XPv5 | Lvl| Arm| Damage Rolls    | Notes                       |
 |-------------------|-----|-----|------|------|----|----|-----------------|-----------------------------|
-| giant ant         |   0 | yes |   10 |    9 |  2 |  3 | 1d6             |                             |
+| giant ant         |   0 | yes |   10 |    9 |  2 |  3 | 1d6             | drains strength             |
 | bat               |   0 |     |    1 |    1 |  1 |  3 | 1d2             |                             |
 | centaur           |  15 |     |   15 |   15 |  4 |  4 | 1d6/1d6         |                             |
 | dragon            | 100 |   * | 9000 | 6800 | 10 | -1 | 1d8/1d8/3d10    | v3.6 guards gold, v5.2 mean |
-| floating eye      |   0 |     |    5 |    5 |  1 |  9 | 0d0             |                             |
-| violet fungi      |   0 | yes |   85 |   80 |  8 |  3 | 000d0           |                             |
+| floating eye      |   0 |     |    5 |    5 |  1 |  9 | 0d0             | freezes                     |
+| violet fungi      |   0 | yes |   85 |   80 |  8 |  3 | 000d0           | stationary, holds           |
 | gnome             |  10 |     |    8 |    7 |  1 |  5 | 1d6             |                             |
 | hobgoblin         |   0 | yes |    3 |    3 |  1 |  5 | 1d8             |                             |
 | invisible stalker |   0 |     |  120 |  120 |  8 |  3 | 4d4             | invisible                   |
 | jackal            |   0 | yes |    2 |    2 |  1 |  7 | 1d2             |                             |
 | kobold            |   0 | yes |    1 |    1 |  1 |  7 | 1d4             |                             |
-| leprechaun        |   0 |     |   10 |   10 |  3 |  8 | 1d1             |                             |
-| mimic             |  30 |     |  140 |  100 |  7 |  7 | 3d4             |                             |
-| nymph             | 100 |     |   40 |   37 |  3 |  9 | 0d0             |                             |
+| leprechaun        |   0 |     |   10 |   10 |  3 |  8 | 1d1             | steals/drops gold           |
+| mimic             |  30 |     |  140 |  100 |  7 |  7 | 3d4             | mimics items                |
+| nymph             | 100 |     |   40 |   37 |  3 |  9 | 0d0             | steals/drops item           |
 | orc               |  15 |     |    5 |    5 |  1 |  6 | 1d8             | v5.2 guards gold            |
 | purple worm       |  70 |     | 7000 | 4000 | 15 |  6 | 2d12/2d4        |                             |
-| quasit            |  30 | yes |   35 |   32 |  3 |  2 | 1d2/1d2/1d4     |                             |
+| quasit            |  30 | yes |   35 |   32 |  3 |  2 | 1d2/1d2/1d4     | rusts armor                 |
 | rust monster      |   0 | yes |   25 |   20 |  5 |  2 | 0d0/0d0         |                             |
 | snake             |   0 | yes |    3 |    2 |  1 |  5 | 1d3             |                             |
 | troll             |  50 | yes |   55 |  120 |  6 |  4 | 1d8/1d8/2d6     | v3.6 regenerates            |
 | umber hulk        |  40 | yes |  130 |  200 |  8 |  2 | 3d4/3d4/2d5     |                             |
-| vampire           |  20 | yes |  380 |  350 |  8 |  1 | 1d10            | v3.6 regenerates            |
-| wraith            |   0 |     |   55 |   55 |  5 |  4 | 1d6             |                             |
+| vampire           |  20 | yes |  380 |  350 |  8 |  1 | 1d10            | v3.6 regenerates, drains hp |
+| wraith            |   0 |     |   55 |   55 |  5 |  4 | 1d6             | drains xp                   |
 | xorn              |   0 | yes |  120 |  190 |  7 | -2 | 1d3/1d3/1d3/4d6 |                             |
 | yeti              |  30 |     |   50 |   50 |  4 |  6 | 1d6/1d6         |                             |
 | zombie            |   0 | yes |    7 |    6 |  2 |  8 | 1d8             |                             |
@@ -250,9 +250,9 @@ Monsters
 | nymph             |          | 100 |  no |   37 |  3 |  9 | 0x0               | steals/drops item           |
 | orc               |          |  15 |  no |    5 |  1 |  6 | 1x8               | guards gold                 |
 | phantom           |          |   0 |  no |  120 |  8 |  3 | 4x4               | invisible, confused         |
-| quagga            |          | *** | yes |  *** |  3 |*** | ***               |                             |
-|                   |          |   0 |     |   15 |    |  3 | 1x5/1x5           |                             |
-|                   |          |  30 |     |   32 |    |  2 | 1d2/1d2/1d4       |                             |
+| quagga            |      *** | *** | yes |  *** |  3 |*** | ***               |                             |
+|                   |      5.4 |   0 |     |   15 |    |  3 | 1x5/1x5           |                             |
+|                   |       PC |  30 |     |   32 |    |  2 | 1d2/1d2/1d4       |                             |
 | rattlesnake       |          |   0 | yes |    9 |  2 |  3 | 1x6               | drains strength             |
 | snake             | 5.4, 1.1 |   0 | yes |    2 |  1 |  5 | 1x3               |                             |
 | slime             |     1.48 |   0 | yes |    1 |  2 |  8 | 1x3               | divides, slow               |
