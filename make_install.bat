@@ -1,6 +1,6 @@
 @echo off
 echo This file assumes you've built the following:
-echo  - Rogue.sln in Release
+echo  - Rogue.sln in Release to bin\Win32\Release
 echo  - RogueCollection.pro to bin\build-RogueCollection-Static_32bit-Release
 echo  - RetroRogueCollection.pro to bin\build-RetroRogueCollection-Static_32bit-Release
 
@@ -20,7 +20,7 @@ xcopy data\sticks.dat bin\RogueCollection\data\ /F /D
 xcopy data\rings.dat bin\RogueCollection\data\ /F /D
 
 xcopy src\RogueCollectionQml\gpl-3.0.txt bin\RogueCollection\license\ /F /D
-xcopy src\RogueVersions\Rogue_5_4_2\LICENSE.TXT  bin\RogueCollection\license\unix-rogue.txt /F /D
+echo F | xcopy src\RogueVersions\Rogue_5_4_2\LICENSE.TXT bin\RogueCollection\license\unix-rogue.txt /F /D
 
 xcopy bin\build-RogueCollection-Static_32bit-Release\RogueCollection.exe bin\RogueCollection\ /F /D
 xcopy src\RogueCollectionQml\Rogomatic.bat bin\RogueCollection\ /F /D

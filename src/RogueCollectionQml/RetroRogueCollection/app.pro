@@ -32,9 +32,9 @@ RESOURCES += qml/resources.qrc
 win32 {
     DEFINES += "WINVER=0x0500"
     contains(QT_ARCH, x86_64) {
-        LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/x64/User32.Lib"
+        LIBS += "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.22621.0/um/x64/User32.Lib"
     } else {
-        LIBS += "C:/Program Files (x86)/Microsoft SDKs/Windows/v7.1A/Lib/User32.Lib"
+        LIBS += "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.22621.0/um/x86/User32.Lib"
     }
 
     CONFIG( debug, debug|release ) {
