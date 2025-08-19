@@ -6,6 +6,7 @@
 #include <QtPlugin>
 #include <QQmlContext>
 #include <QScreen>
+#include <stdexcept>
 #include "start_process.h"
 #include "../RoguePlugin/utility_qml.h"
 

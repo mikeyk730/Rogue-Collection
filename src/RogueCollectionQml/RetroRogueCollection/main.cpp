@@ -7,6 +7,7 @@
 #include <QScreen>
 #include <QFontDatabase>
 #include <QtPlugin>
+#include <stdexcept>
 #include "fileio.h"
 #include "start_process.h"
 #include "../RoguePlugin/utility_qml.h"
