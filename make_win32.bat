@@ -1,5 +1,8 @@
-@rem This script builds the repo into 'bin\RogueCollection'. It assumes Visual Studio 2022
-@rem Community and Qt 5.7.0 are installed.
+@rem This script builds the repo into 'bin\RogueCollection'. It assumes the following is installed:
+@rem
+@rem   Visual Studio 2022 Community     C:\Program Files\Microsoft Visual Studio\2022\Community
+@rem   Windows 10 SDK                   C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22621.0\um
+@rem   Qt 5.7.0                         C:\Qt\Qt5.7.0
 @rem
 @rem If Qt is installed with qt-opensource-windows-x86-msvc2015-5.7.0.exe from qt.io, the Qt dlls
 @rem from 'C:\Qt\Qt5.7.0\5.7\msvc2015\bin' need to be distributed alongside RogueCollection.exe and
