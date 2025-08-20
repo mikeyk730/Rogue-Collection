@@ -145,6 +145,8 @@ printscreen (void)
   debuglog ("--------------------------------------------------------------------------------\n");
 }
 
+void process_delayed_update();
+
 /*
  * Getrogue: Sensory interface.
  *
@@ -225,7 +227,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
     /* "Press return" prompt only happens if there is a score file */
     /* Available on that system. Hopefully the grass is the same   */
     /* in all versions of Rogue!                                   */
-    if (ch == *d) { if (0 == *++d) { addch (ch); deadrogue (); return; } }
+    if (ch == *d) { if (0 == *++d) { addch (ch); process_delayed_update(); deadrogue (); return; } }
     else d = GAMEOVER;
 
     /* If the message has a more, strip it off and call terpmes */
@@ -478,19 +480,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
     }
   }
 
-  // mdk: process delayed update
-  for (int i = 0; i < MAXROWS; ++i)
-  {
-      for (int j = 0; j < MAXCOLS; ++j)
-      {
-          if (delayed_updates[i][j] != 0)
-          {
-              updatepos(delayed_updates[i][j], i, j);
-              screen[i][j] = delayed_updates[i][j];
-              debuglog("DELAYED OTHER   [%c] [%2d, %2d] [%c]\n", screen[i][j], i, j, screen[i][j]);
-          }
-      }
-  }
+  process_delayed_update();
 
   if (botprinted) terpbot ();
 
@@ -541,6 +531,24 @@ int   onat;                             /* 0 ==> Wait for waitstr
   if (!emacs && !terse) refresh ();
 
   printscreen ();
+
+}
+
+void process_delayed_update()
+{
+    // mdk: process delayed update
+    for (int i = 0; i < MAXROWS; ++i)
+    {
+        for (int j = 0; j < MAXCOLS; ++j)
+        {
+            if (delayed_updates[i][j] != 0)
+            {
+                updatepos(delayed_updates[i][j], i, j);
+                screen[i][j] = delayed_updates[i][j];
+                debuglog("DELAYED OTHER   [%c] [%2d, %2d] [%c]\n", screen[i][j], i, j, screen[i][j]);
+            }
+        }
+    }
 
 }
 
