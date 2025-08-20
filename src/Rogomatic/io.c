@@ -194,6 +194,15 @@ int   onat;                             /* 0 ==> Wait for waitstr
     refresh ();
   }
 
+  // mdk: clear delayed update
+  for (int i = 0; i < MAXROWS; ++i)
+  {
+      for (int j = 0; j < MAXCOLS; ++j)
+      {
+          delayed_updates[i][j] = 0;
+      }
+  }
+
   /* While we have not reached the end of the Rogue input, read */
   /* characters from Rogue and figure out what they mean.       */
   while ((*s) ||
@@ -434,7 +443,24 @@ int   onat;                             /* 0 ==> Wait for waitstr
           if (!emacs && !terse) add_to_screen (row, col, ch);
 
           if (row == STATUSROW) botprinted = 1;
-          else           updatepos (ch, row, col);
+          else {
+              if (!pc_protocol() || ch == '@')
+              {
+                  updatepos(ch, row, col);
+              }
+              else
+              {
+                  // mdk: hack for PC versions: delay calls to updatepos for map/monsters
+                  //
+                  // rogomatic is recieving 2 updates per tile: one for the map tile and one
+                  // for the monster. This throws off the logic. This hack lets us process
+                  // only the final state of each tile
+                  delayed_updates[row][col] = ch;
+                  debuglog("DELAYING OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, col, screen[row][col]);
+                  col++;
+                  break;
+              }
+          }
         }
         else if (col == 0)
           { screen00 = screen[0][0]; }
@@ -450,6 +476,20 @@ int   onat;                             /* 0 ==> Wait for waitstr
         debuglog ("OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, (col-1), screen[row][col-1]);
         break;
     }
+  }
+
+  // mdk: process delayed update
+  for (int i = 0; i < MAXROWS; ++i)
+  {
+      for (int j = 0; j < MAXCOLS; ++j)
+      {
+          if (delayed_updates[i][j] != 0)
+          {
+              updatepos(delayed_updates[i][j], i, j);
+              screen[i][j] = delayed_updates[i][j];
+              debuglog("DELAYED OTHER   [%c] [%2d, %2d] [%c]\n", screen[i][j], i, j, screen[i][j]);
+          }
+      }
   }
 
   if (botprinted) terpbot ();
