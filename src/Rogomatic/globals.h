@@ -53,6 +53,7 @@ extern char pending_call_name[];	/* Pack object name for letter */
 extern char queue[];		/* stuff to be sent to Rogue */
 extern char roguename[];		/* Name we are playing under */
 extern char screen[MAXROWS][MAXCOLS];	/* characters drawn by Rogue */
+extern char delayed_updates[MAXROWS][MAXCOLS];	/* Map for next tick */
 extern char sumline[];		/* Summation line */
 extern char *termination;	/* Latin verb for how we died */
 extern char versionstr[];	/* Version of Rogue we are playing */

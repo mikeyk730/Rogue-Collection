@@ -153,6 +153,7 @@ char  lastcmd[NAMSIZ];		/* Copy of last command sent to Rogue */
 char  lastname[NAMSIZ];		/* Name of last potion/scroll/wand */
 char  nextid = '\0';            /* Next object to identify */
 char  screen[MAXROWS][MAXCOLS];		/* Map of current Rogue screen */
+char  delayed_updates[MAXROWS][MAXCOLS];		/* Map of Rogue screen for next tick */
 char  sumline[128];		/* Termination message for Rogomatic */
 char  ourkiller[NAMSIZ];		/* How we died */
 char  versionstr[32];		/* Version of Rogue being used */
