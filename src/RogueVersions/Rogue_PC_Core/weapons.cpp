@@ -314,7 +314,7 @@ bool Weapon::vorpalize()
     m_hit_plus++;
     m_damage_plus++;
     m_charges = 1;
-    msg(get_text(text_vorpalize_weapon));
+    msg(get_text(text_vorpalize_weapon), TypeName().c_str());
 
 
     //Sometimes this is a mixed blessing ...
