@@ -969,6 +969,11 @@ void startlesson ()
 
 void endlesson ()
 {
+  char* genes_var = getenv("GENES");
+  if (genes_var != NULL) {
+    return;
+  }
+
   if (geneid > 0 &&
       (stlmatch (termination, "perditus") ||
        stlmatch (termination, "victorius") ||
