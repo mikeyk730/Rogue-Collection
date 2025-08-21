@@ -57,3 +57,34 @@ Debugging Controls
 | &       | Show object count
 | *       | Toggle blinded vs sighted
 | C       | Toggle cosmic vs boring
+
+Rog-O-Matic Files
+====
+Rog-O-Matic data files live in the `rlog` directory
+
+## rgmdelta
+The `rgmdelta` file has a summary of all games
+```
+Date         Player      Gold Killed By          Lvl HP   Str  AC Exp       Game    Seed          Genes
+```
+```
+Aug 21, 2025 rogomati    2820 ur-vile            16  62   13  10  9/2071    1277    1755751260    24 37 48 46 44 28 13 65
+Aug 21, 2025 rogomati     599 starvation          6  55   14   4  7/377     1278    1755751314    12 37 43 46 44 18 25 88
+Aug 21, 2025 rogomati     883 centaur             8  50   13   7  7/345     1279    1755751359    17 37 43 60 40 52 12 67
+Aug 21, 2025 rogomati    2665 troll              12  46   16   8  8/1012    1280    1755751405    22 37 35 46 39 18 13 88
+```
+
+## ltm
+The `ltm` file is updated after every game. It contains Rog-O-Matic's long term memory about monsters.
+This file is copied to `ltm.<seed>` at the begining of every game.
+
+## snapshot.rgm
+The `snapshot.rgm` contains all snapshots that we captured
+
+Replaying a Rog-O-Matic Run
+====
+You can replay a run by passing the seed and genes on the command line. For example:
+
+    RogueCollection.exe b --rogomatic --seed 1755751405 --genes "22 37 35 46 39 18 13 88"
+
+Rog-O-Matic will load `ltm.<seed>` so it starts with the same memory as the original run
