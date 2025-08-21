@@ -22,6 +22,8 @@ Many of the original Rogue commands allow you to take control of Rog-O-Matic
 - Search
 - Go up/down stairs
 
+## General Controls
+
 | Command | Action
 |---------|----------------------------------------------------------------------
 | ?       | List all commands. Keep pressing ? to cycle through the pages
@@ -31,8 +33,7 @@ Many of the original Rogue commands allow you to take control of Rog-O-Matic
 | c       | Toggle cheating vs righteous
 | Q       | Quit Rog-O-Matic
 
-Debugging Controls
-========
+## Debugging Controls
 
 | Command | Action
 |---------|----------------------------------------------------------------------
