@@ -23,6 +23,7 @@ Many of the original Rogue commands allow you to take control of Rog-O-Matic
 | Enter   | Step through Rog-O-Matic 1 turn at a time
 | :       | Toggle chicken vs aggressive
 | c       | Toggle cheating vs righteous
+| Q       | Quit Rog-O-Matic
 
 Debugging Controls
 ========
@@ -44,7 +45,7 @@ Debugging Controls
 | [       | Print battle info
 | -       | Print status
 | ~       | Print Rog-O-Matic version
-| |       | Show time stats
+| \|       | Show time stats
 | !       | Show stuff on map
 | @       | Show monsters on map
 | #       | Show walls
@@ -56,4 +57,3 @@ Debugging Controls
 | &       | Show object count
 | *       | Toggle blinded vs sighted
 | C       | Toggle cosmic vs boring
-| Q       | Quit
