@@ -1,12 +1,18 @@
 Rog-O-Matic
 ===========================
 
+```
+RogueCollection.exe --rogomatic [game_letter]
+RetroRogueCollection.exe --rogomatic [game_letter]
+```
+
 When using Rog-O-Matic, 2 similar windows launch:
 - The Rogue game
 - The Rog-O-Matic interface
 
-Select your game version on the main Rogue window, and Rog-O-Matic will start to play.
-You can interact with the Rog-O-Matic window
+If you didn't supply the game version on the command line, you will need to select it
+from the menu on the main Rogue window. Rog-O-Matic will start to play automatically,
+and you can type commands on the Rog-O-Matic window
 
 Controls
 ========
@@ -79,7 +85,9 @@ The `ltm` file is updated after every game. It contains Rog-O-Matic's long term 
 This file is copied to `ltm.<seed>` at the begining of every game.
 
 ## snapshot.rgm
-The `snapshot.rgm` contains all snapshots that we captured
+The `snapshot.rgm` contains all snapshots that we captured. Snapshots can be taken manually with `/`.
+They are also taken automatically during unexpected scenarios for debugging, or during notable game
+events like finding the amulet
 
 Replaying a Rog-O-Matic Run
 ====
