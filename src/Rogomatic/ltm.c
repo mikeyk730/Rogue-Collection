@@ -230,7 +230,7 @@ int CopyFile(const char *from, const char *to, int ignored)
 
 void copyltm()
 {
-    if (!nosave)
+    if (!nosave && !getenv("NOLTM"))
     {
         char dest[80];
         sprintf(dest, "%s/ltm%d.%d", getRgmDir(), version, g_seed);
