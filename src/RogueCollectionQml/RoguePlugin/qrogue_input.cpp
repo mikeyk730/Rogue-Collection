@@ -3,6 +3,9 @@
 #include "qrogue_input.h"
 #include "qrogue.h"
 #include "key_utility.h"
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 #define CTRL(ch)   (ch&0x1f)
 #define ESCAPE     0x1b
@@ -115,6 +118,15 @@ void QtRogueInput::TranslateKey(QKeyEvent *event, int *key, std::string *input)
     }
 }
 
+bool IsScrollLockOn()
+{
+#ifdef _WIN32
+    return LOBYTE(GetKeyState(VK_SCROLL)) != 0;
+#else
+    return false;
+#endif
+}
+
 bool QtRogueInput::HandleKeyEvent(QKeyEvent *event)
 {
     if (InReplay()) {
@@ -143,12 +155,20 @@ bool QtRogueInput::HandleKeyEvent(QKeyEvent *event)
     }
 
     // Ctrl+dir is translated to 'f'+dir for most versions
-    if (IsCtrlOn(event) && IsDirectionKey(tolower(key)))
+    if ((IsCtrlOn(event) || IsScrollLockOn()) && IsDirectionKey(tolower(key)))
     {
-        if (Options().emulate_ctrl_controls){
+        if (Options().emulate_ctrl_controls)
+        {
             std::string keybuf;
             keybuf.push_back('f');
             keybuf.push_back(tolower(key));
+            QueueInput(keybuf);
+            return true;
+        }
+        else if (!IsCtrlOn(event) && IsScrollLockOn())
+        {
+            std::string keybuf;
+            keybuf.push_back(CTRL(tolower(key)));
             QueueInput(keybuf);
             return true;
         }
