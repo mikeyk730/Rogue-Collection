@@ -899,6 +899,11 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
   sprintf (sumline, "%s %2d %2d/%-6d  %d",
            sumline, Ac, Explev, Exp, ltm.gamecnt);
 
+  /* mdk: save seed and genes so run can be replayed */
+  sprintf(sumline, "%s    %d    %d %d %d %d %d %d %d %d", sumline,
+      g_seed, knob[0], knob[1], knob[2], knob[3],
+      knob[4], knob[5], knob[6], knob[7]);
+
   /* Now write the summary line to the log file */
   at (STATUSROW, 0); clrtoeol (); refresh ();
 

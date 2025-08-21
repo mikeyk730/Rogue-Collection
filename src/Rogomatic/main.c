@@ -516,6 +516,7 @@ char *env[];
   if (!replaying) {
     initseed();
     restoreltm ();			/* Get long term memory of version */
+    copyltm();  /* mdk: save copy of ltm so run can be replayed */
     startlesson ();			/* Start genetic learning */
   }
 
