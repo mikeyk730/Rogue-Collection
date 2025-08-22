@@ -42,6 +42,16 @@ tr_name(int ch)
     return s;
 }
 
+int offmap(int y, int x)
+{
+	if ((y > 0 && y < LINES - 1) && (x >= 0 && x < COLS))
+	{
+		return 0;
+	}
+
+	return 1;
+}
+
 /*
  * Look:
  *	A quick glance all around the player
@@ -63,8 +73,11 @@ look(int wakeup)
     {
 	for (x = oldpos.x - 1; x <= oldpos.x + 1; x++)
 	    for (y = oldpos.y - 1; y <= oldpos.y + 1; y++)
+	    {
+		if (offmap(y, x)) continue; /* mdk: bounds check */
 		if ((y != hero.y || x != hero.x) && show(y, x) == FLOOR)
 		    mvwaddrawch(cw, y, x, ' ');
+		}
     }
     inpass = ((rp = roomin(&hero)) == NULL);
     ey = hero.y + 1;
@@ -72,6 +85,7 @@ look(int wakeup)
     for (x = hero.x - 1; x <= ex; x++)
 	if (x >= 0 && x < COLS) for (y = hero.y - 1; y <= ey; y++)
 	{
+		if (offmap(y, x)) continue; /* mdk: bounds check */
 	    if (y <= 0 || y >= LINES - 1)
 		continue;
 	    if (ismons(CMVWINCH(mw, y, x)))

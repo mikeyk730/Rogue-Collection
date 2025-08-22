@@ -360,6 +360,7 @@ rndmove(struct thing *who)
 	    {
 		if (x < 0 || x >= COLS)
 		    continue;
+		if (offmap(y, x)) continue; /* mdk: bounds check */
 		ch = winat(y, x);
 		if (step_ok(ch))
 		{

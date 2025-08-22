@@ -281,6 +281,7 @@ coord *ee;
 	for (x = er->x - 1; x <= ex; x++)
 	    for (y = er->y - 1; y <= ey; y++)
 	    {
+		if (offmap(y, x)) continue; /* mdk: bounds check */
 		coord tryp;
 
 		tryp.x = x;

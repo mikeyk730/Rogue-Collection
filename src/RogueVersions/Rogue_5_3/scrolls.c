@@ -112,6 +112,7 @@ read_scroll()
 		for (y = hero.y - 1; y <= hero.y + 1; y++)
 		    for (x = hero.x - 1; x <= hero.x + 1; x++)
 		    {
+		    if (offmap(y, x)) continue; /* mdk: bounds check */
 			/*
 			 * Don't put a monster in top of the player.
 			 */

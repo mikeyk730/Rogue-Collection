@@ -22,6 +22,15 @@
  */
 #undef DEBUG
 
+int offmap(int y, int x)
+{
+	if ((y > 0 && y < LINES - 1) && (x >= 0 && x < COLS))
+	{
+		return 0;
+	}
+
+	return 1;
+}
 
 void
 look(int wakeup)

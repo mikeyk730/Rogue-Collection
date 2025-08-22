@@ -267,6 +267,7 @@ register bool pass;
     for (y = pos->y - 1; y <= pos->y + 1; y++)
 	for (x = pos->x - 1; x <= pos->x + 1; x++)
 	{
+		if (offmap(y, x)) continue; /* mdk: bounds check */
 	    /*
 	     * check to make certain the spot is empty, if it is,
 	     * put the object there, set it in the level list
