@@ -376,6 +376,7 @@ chase(THING *tp, const coord *ee)
 	    tryp.x = x;
 	    for (y = er->y - 1; y <= ey; y++)
 	    {
+		if (offmap(y, x)) continue; /* mdk: bounds check */
 		tryp.y = y;
 		if (!diag_ok(er, &tryp))
 		    continue;

@@ -273,7 +273,9 @@ void QRogue::autosave()
     std::string value;
     if (input_ && env_->Get("autosave", &value)){
         if ((value == "true" && !thread_exited_) || value == "force"){
-            std::string name = "autosave-" + GetTimestamp() + ".sav";
+            std::string seed;
+            game_env_->Get("seed", &seed);
+            std::string name = "autosave-" + seed + "-" + GetTimestamp() + ".sav";
             SaveGame(name, false);
         }
     }

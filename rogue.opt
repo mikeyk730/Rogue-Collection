@@ -22,7 +22,7 @@ gfx=
 ;
 ; Possible values: true, false
 ;
-sound=true
+sound=false
 
 ;
 ; If set to true, the smallest possible map size is used.  This is most
@@ -37,8 +37,10 @@ small_screen=false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ; If set to true, the game is automatically saved when the window is closed.
+; If set to force, the game will be saved even if the game has ended. This
+; is useful for re-watching games played by Rogomatic
 ;
-; Possible values: true, false
+; Possible values: true, false, force
 ;
 autosave=false
 
@@ -47,14 +49,14 @@ autosave=false
 ;
 ; Possible values: true, false
 ;
-exit_on_save=true
+exit_on_save=false
 
 ;
 ; If set to true, the savefile is deleted after it is restored.
 ;
 ; Possible values: true, false
 ;
-delete_on_restore=true
+delete_on_restore=false
 
 ;
 ; If set to true, a restored game starts paused.
@@ -157,6 +159,12 @@ use_exp_level_names=true
 ;
 macro=v
 
+;
+; If set, debug messages will be logged to the the supplied file during the game.
+;
+; Versions: all PC versions
+;
+logfile=
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Unix options
@@ -273,3 +281,11 @@ rogomatic_level_delay=0
 ; Possible values: true, false
 ;
 rogomatic_debug=false
+
+;
+; If set to true, Rog-O-Matic will wait for the Visual Studio debugger to be
+; attached before starting
+;
+; Possible values: true, false
+;
+rogomatic_debug_break=false

@@ -117,6 +117,8 @@ read_scroll(void)
 	    i = 0;
 	    for (y = hero.y - 1; y <= hero.y + 1; y++)
 		for (x = hero.x - 1; x <= hero.x + 1; x++)
+	    {
+		    if (offmap(y, x)) continue; /* mdk: bounds check */
 		    /*
 		     * Don't put a monster in top of the player.
 		     */
@@ -137,6 +139,7 @@ read_scroll(void)
 			    mp.x = x;
 			}
 		    }
+		}
 	    if (i == 0)
 		msg("you hear a faint cry of anguish in the distance");
 	    else

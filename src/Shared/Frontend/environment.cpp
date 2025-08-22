@@ -217,6 +217,10 @@ bool Environment::WriteToOs(bool for_unix)
     {
         SetEnvVariable("NOLTM=true");
     }
+    if (IsEqual("rogomatic_debug_break", "true"))
+    {
+        SetEnvVariable("ROGOMATIC_DEBUG_BREAK=true");
+    }
     if (Get("rogomatic_delay", &value))
     {
         SetEnvVariable(("ROGOMATIC_DELAY=" + value).c_str());

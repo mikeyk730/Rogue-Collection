@@ -120,7 +120,7 @@ int dwait (int msgtype, char* f, ...)
         break;
       case '(': dumpdatabase (); at (row, col); break;
       case ')': new_mark++; markcycles (DOPRINT); at (row, col); break;
-      case '~': saynow ("Version %d, quit at %d", version, quitat); break;
+      case '~': saynow ("Version %s, quit at %d", versionstr, quitat); break;
       case '/': dosnapshot (); break;
       default: at (row, col); return (1);
     }

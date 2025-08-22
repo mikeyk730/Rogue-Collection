@@ -370,6 +370,7 @@ search()
     for (y = hero.y - 1; y <= ey; y++)
 	for (x = hero.x - 1; x <= ex; x++)
 	{
+		if (offmap(y, x)) continue; /* mdk: bounds check */
 	    if (y == hero.y && x == hero.x)
 		continue;
 	    fp = &flat(y, x);
