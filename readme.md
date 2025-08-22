@@ -27,12 +27,15 @@ Rog-O-Matic
 -----------
 Watch an [AI from the early 1980s](https://www.cs.princeton.edu/~appel/papers/rogomatic.html) put your skills to shame.  Rogomatic speeds through the dungeons of Unix Rogue.  Using a genetic algorithm, Rogomatic learns from every game it plays.  Will you witness it become a total winner?
 
-Rogomatic knows how to play:
+Rogomatic was coded to play the following versions, so it should do quite well:
 + Unix Rogue v3.6.3
 + Unix Rogue v5.2.1
-+ Unix Rogue v5.3 (Coming in 3.0.5)
 + Unix Rogue v5.4.2
-+ PC Rogue v1.1 (Experimental in 3.0.5)
+
+Starting in 3.0.5 you can run Rogomatic against all versions. It doesn't have any specific tactics for the following games, so it may get confused by the new features and monsters:
++ Unix Rogue v5.3 
++ PC Rogue v1.1
++ PC Rogue v1.48
 
 <img src="https://raw.githubusercontent.com/mikeyk730/Rogue-Collection/master/docs/screenshots/rogomatic.gif" height=250>
 
@@ -60,3 +63,4 @@ _Retro Rogue Collection_ allows you to save your game with a full history of mov
 Linux Support
 -------------
 With version 3.0 the code builds and runs on Linux!
+
