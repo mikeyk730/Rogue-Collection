@@ -400,6 +400,9 @@ char *env[];
   }
 
   char* env_value;
+  if ((env_value = getenv("ROGOMATIC_DEBUG_BREAK")) != NULL) {
+      WaitForDebugger();
+  }
   if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL) {
       g_debug_protocol = strcmp(env_value, "true") == 0;
   }
@@ -919,7 +922,7 @@ void initseed()
        value and use a version of rogue that also uses a SEED
        environment variable.  this makes testing so much easier... */
     g_seed = atoi(getenv("SEED"));
-    rogo_srand(g_seed);
+    rogo_srand(g_seed); /* mdk: setting this only affects generating the next genome, not any rogomatic moves */
   }
   else
     /* Start random number generator based upon the current time */
@@ -933,9 +936,9 @@ void initseed()
 
 void startlesson ()
 {
-  sprintf (genelog, "%s/GeneLog%d", getRgmDir (), version);
-  sprintf (genepool, "%s/GenePool%d", getRgmDir (), version);
-  sprintf (genelock, "%s/GeneLock%d", getRgmDir (), version);
+  sprintf (genelog, "%s/GeneLog%s", getRgmDir (), versionstr);
+  sprintf (genepool, "%s/GenePool%s", getRgmDir (), versionstr);
+  sprintf (genelock, "%s/GeneLock%s", getRgmDir (), versionstr);
 
   critical ();				/* Disable interrupts */
 

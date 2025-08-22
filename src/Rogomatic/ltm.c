@@ -233,7 +233,7 @@ void copyltm()
     if (!nosave && !getenv("NOLTM"))
     {
         char dest[80];
-        sprintf(dest, "%s/ltm%d.%d", getRgmDir(), version, g_seed);
+        sprintf(dest, "%s/ltm%s.%d", getRgmDir(), versionstr, g_seed);
         CopyFile(ltmnam, dest, TRUE);
     }
 }
@@ -241,10 +241,10 @@ void copyltm()
 void restoreltm ()
 {
   /* mdk: load ltm from seed file if it exists. */
-  sprintf (ltmnam, "%s/ltm%d.%d", getRgmDir (), version, g_seed);
+  sprintf (ltmnam, "%s/ltm%s.%d", getRgmDir (), versionstr, g_seed);
   nosave = 1;
   if (!fexists(ltmnam)) {
-      sprintf (ltmnam, "%s/ltm%d", getRgmDir (), version);
+      sprintf (ltmnam, "%s/ltm%s", getRgmDir (), versionstr);
       nosave = 0;
   }
   dwait (D_CONTROL, "Restoreltm called, reading file '%s'", ltmnam);
