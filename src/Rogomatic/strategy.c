@@ -645,10 +645,10 @@ int adj;		/* How many attackers are there? */
   }
 
   /*
-   * Be clever when facing multiple monsters?
+   * Be clever when facing multiple monsters? mdk: or slime
    */
 
-  if (adj > 1 && !confused && !beingheld && !on (STAIRS | DOOR) &&
+  if ((adj > 1 || streq (monster, "slime")) && !confused && !beingheld && !on (STAIRS | DOOR) &&
       backtodoor (turns))
     return (1);
 
