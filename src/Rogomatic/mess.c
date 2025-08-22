@@ -233,6 +233,10 @@ register char *mess, *mend;
         else if (MATCH("an +*")) ;
         else if (MATCH("a -*")) ;
         else if (MATCH("an -*")) ;
+
+        /* mdk */
+        else if (MATCH("and achieve the rank *")) ;
+
         else unknown++;
 
         break;
@@ -484,7 +488,9 @@ register char *mess, *mend;
         else if (MATCH("time now seems to be going slower*")) nametrap (BEARTRP,HERE);
         else if (MATCH("the light in here suddenly seems*")) nametrap (BEARTRP,HERE);
 
-        /* :ANT: */
+        /* mdk */
+        else if (MATCH("the slime divides.  ick!")) ;
+        else if (MATCH("the frost whizzes by you")) ;
 
         else unknown++;
 
