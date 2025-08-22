@@ -260,7 +260,7 @@ void Level::new_level(int do_implode)
     do_rooms(); //Draw rooms
 
     if (do_implode) {
-        if (!game->options.act_like_v1_1())
+        if (!game->options.act_like_v1_1() && game->options.interactive())
             game->screen().implode();
         else
             game->screen().blot_out(0, 0, maxrow() - 1, game->screen().columns() - 1);

@@ -153,6 +153,11 @@ void QRogue::setGame(const GameConfig& game)
 
 bool QRogue::showTitleScreen()
 {
+    if (args_.rogomatic)
+    {
+        return false;
+    }
+
     return config_.name == "PC Rogue 1.48" && restore_count_ == 0;
 }
 
