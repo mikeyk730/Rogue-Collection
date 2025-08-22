@@ -6,18 +6,18 @@ RogueCollection.exe --rogomatic [game_letter]
 RetroRogueCollection.exe --rogomatic [game_letter]
 ```
 
-When using Rog-O-Matic, 2 similar windows launch:
+When using Rogomatic, 2 similar windows launch:
 - The Rogue game
-- The Rog-O-Matic interface
+- The Rogomatic interface
 
 If you didn't supply the game version on the command line, you will need to select it
-from the menu on the main Rogue window. Rog-O-Matic will start to play automatically,
-and you can type commands on the Rog-O-Matic window
+from the menu on the main Rogue window. Rogomatic will start to play automatically,
+and you can type commands on the Rogomatic window
 
 Controls
 ========
 
-Many of the original Rogue commands allow you to take control of Rog-O-Matic
+Many of the original Rogue commands allow you to take control of Rogomatic
 - Movement keys
 - Search
 - Go up/down stairs
@@ -27,11 +27,11 @@ Many of the original Rogue commands allow you to take control of Rog-O-Matic
 | Command | Action
 |---------|----------------------------------------------------------------------
 | ?       | List all commands. Keep pressing ? to cycle through the pages
-| t       | Pause/resume Rog-O-Matic
-| Enter   | Step through Rog-O-Matic 1 turn at a time
+| t       | Pause/resume Rogomatic
+| Enter   | Step through Rogomatic 1 turn at a time
 | :       | Toggle chicken vs aggressive
 | c       | Toggle cheating vs righteous
-| Q       | Quit Rog-O-Matic
+| Q       | Quit Rogomatic
 
 ## Debugging Controls
 
@@ -51,7 +51,7 @@ Many of the original Rogue commands allow you to take control of Rog-O-Matic
 | G       | Show genome
 | [       | Print battle info
 | -       | Print status
-| ~       | Print Rog-O-Matic version
+| ~       | Print Rogomatic version
 | \|       | Show time stats
 | !       | Show stuff on map
 | @       | Show monsters on map
@@ -65,9 +65,9 @@ Many of the original Rogue commands allow you to take control of Rog-O-Matic
 | *       | Toggle blinded vs sighted
 | C       | Toggle cosmic vs boring
 
-Rog-O-Matic Files
+Rogomatic Files
 ====
-Rog-O-Matic data files live in the `rlog` directory
+Rogomatic data files live in the `rlog` directory
 
 ## rgmdelta
 The `rgmdelta` file has a summary of all games
@@ -82,7 +82,7 @@ Aug 21, 2025 rogomati    2665 troll              12  46   16   8  8/1012    1280
 ```
 
 ## ltm
-The `ltm` file is updated after every game. It contains Rog-O-Matic's long term memory about monsters.
+The `ltm` file is updated after every game. It contains Rogomatic's long term memory about monsters.
 This file is copied to `ltm.<seed>` at the begining of every game.
 
 ## snapshot.rgm
@@ -90,10 +90,10 @@ The `snapshot.rgm` contains all snapshots that we captured. Snapshots can be tak
 They are also taken automatically during unexpected scenarios for debugging, or during notable game
 events like finding the amulet
 
-Replaying a Rog-O-Matic Run
+Replaying a Rogomatic Run
 ====
 You can replay a run by passing the seed and genes on the command line. For example:
 
     RogueCollection.exe b --rogomatic --seed 1755751405 --genes "22 37 35 46 39 18 13 88"
 
-Rog-O-Matic will load `ltm.<seed>` so it starts with the same memory as the original run
+Rogomatic will load `ltm.<seed>` so it starts with the same memory as the original run
