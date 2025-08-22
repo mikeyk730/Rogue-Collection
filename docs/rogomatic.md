@@ -96,4 +96,5 @@ You can replay a run by passing the seed and genes on the command line. For exam
 
     RogueCollection.exe b --rogomatic --seed 1755751405 --genes "22 37 35 46 39 18 13 88"
 
-Rogomatic will load `ltm.<seed>` so it starts with the same memory as the original run
+Rogomatic will load `ltm.<seed>` so it starts with the same memory as the original run.
+Some sample winning runs are available [here](https://github.com/mikeyk730/Rogue-Collection/tree/main/test)!
