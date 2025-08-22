@@ -109,7 +109,7 @@ int status_v2()
 
 int status_v3()
 {
-    return version == RVPC11;
+    return version == RVPC11 || version == RVPC148;
 }
 
 int version_uses_new_strength()

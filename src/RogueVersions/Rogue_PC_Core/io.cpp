@@ -360,7 +360,7 @@ void update_status_bar()
     }
 
     //Exp:
-    if (!game->options.use_exp_level_names())
+    if (!game->options.use_exp_level_names() || !game->options.interactive())
     {
         game->screen().move(23, PT(22, 62));
         game->screen().printw("Exp:%d/%d  ", game->hero().m_stats.m_level, game->hero().experience());

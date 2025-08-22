@@ -107,6 +107,7 @@ bug list:
 
 #ifdef _WIN32
 #include <Windows.h>
+#include <debugapi.h>
 #undef MOUSE_MOVED
 #undef OPTIONAL
 #undef NEAR
@@ -371,6 +372,14 @@ char roguename[100];
 
 /* Used by onintr() to restart Rgm at top of command loop */
 jmp_buf  commandtop;
+
+void WaitForDebugger()
+{
+#ifdef _WIN32
+    while (!IsDebuggerPresent())
+        Sleep(100);
+#endif
+}
 
 /*
  * Main program

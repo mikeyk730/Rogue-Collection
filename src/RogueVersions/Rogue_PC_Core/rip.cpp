@@ -282,7 +282,7 @@ void death(char monst)
 
     game->hero().adjust_purse(-(game->hero().get_purse() / 10));
 
-    if (!game->options.act_like_v1_1())
+    if (!game->options.act_like_v1_1() && game->options.interactive())
         game->screen().drop_curtain();
     game->screen().clear();
     game->screen().brown();
