@@ -60,8 +60,11 @@ Replay System
 -------------
 _Retro Rogue Collection_ allows you to save your game with a full history of moves.  You can watch a replay of your entire game, or step through individual turns.  If you become a total winner, why not share it with a friend?
 
+Some sample winning runs are available [here](https://github.com/mikeyk730/Rogue-Collection/tree/main/test)!
+
 Linux Support
 -------------
 With version 3.0 the code builds and runs on Linux!
+
 
 
