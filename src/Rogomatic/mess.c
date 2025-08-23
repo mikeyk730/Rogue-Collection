@@ -678,7 +678,8 @@ register char *mess, *mend;
         else if (MATCH("you are already wearing some*"))
           dwait (D_ERROR, "Logic error, we should know this already. '%s'", mess);
 
-        /* :ANT: */
+        /* mdk */
+        else if (MATCH("you feel bloated and fall asleep"));
 
         else unknown++;
 
