@@ -32,7 +32,7 @@ Rogomatic was coded to play the following versions, so it should do quite well:
 + Unix Rogue v5.2.1
 + Unix Rogue v5.4.2
 
-Starting in 3.0.5 you can run Rogomatic against the remaining versions. It doesn't have any specific tactics for these versions, so it may get confused by the new features and monsters:
+Starting in 3.1.0 you can run Rogomatic against the remaining versions. It doesn't have any specific tactics for these versions, so it may get confused by the new features and monsters:
 + Unix Rogue v5.3 
 + PC Rogue v1.1
 + PC Rogue v1.48

@@ -24,7 +24,7 @@ import QtQuick.Controls 1.0
 import "utils.js" as Utils
 
 QtObject{
-    property string version: "3.0.5"
+    property string version: "3.1.0"
 
     property Item rogue
 
