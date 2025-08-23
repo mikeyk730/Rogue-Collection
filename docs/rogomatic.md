@@ -11,7 +11,7 @@ When using Rogomatic, 2 similar windows launch:
 - The Rogomatic interface
 
 If you didn't supply the game version on the command line, you will need to select it
-from the menu on the main Rogue window. Rogomatic will start to play automatically,
+from the menu on the main Rogue window. Rogomatic will then start to play automatically,
 and you can type commands on the Rogomatic window
 
 Controls
@@ -33,7 +33,7 @@ Many of the original Rogue commands allow you to take control of Rogomatic
 | c       | Toggle cheating vs righteous
 | Q       | Quit Rogomatic
 
-## Debugging Controls
+## Debugging Commands
 
 | Command | Action
 |---------|----------------------------------------------------------------------
@@ -64,6 +64,27 @@ Many of the original Rogue commands allow you to take control of Rogomatic
 | &       | Show object count
 | *       | Toggle blinded vs sighted
 | C       | Toggle cosmic vs boring
+
+Genes and Long Term Memory
+====
+Rogomatic's strategy is largely hard coded, but it uses a genetic algorithm to tweak
+how likely it is to take certain actions
+
+|Gene|Effect
+|-|-
+|Sr|Propensity for searching for traps
+|Dr|Propensity for searching for doors
+|Re|Propensity for resting
+|Ar|Propensity for firing arrows
+|Ex|Level*10 on which to experiment with items
+|Rn|Propensity for retreating
+|Wk|Propensity for waking things up
+|Fd|Propensity for hoarding food (affects rings)
+
+Rogomatic doesn't have any hard-coded stats about how powerful monsters are. It tracks combat statistics across all games,
+and uses this long term memory to determine the danger (how likely the monsster is to hit, how much damage it's likely to deal).
+The more games it plays, the more accurate it should be. On the other hand, behavior to deal with monster's special abilities
+is hard coded into the program.
 
 Rogomatic Files
 ====
