@@ -11,7 +11,7 @@
 @rem To statically link Qt into the executables, you must build Qt from source, according to
 @rem 'lib\Qt5\MakeQtStaticMd.bat'
 
-set QtMsvcRoot=C:\Qt\Qt5.7.0\5.7\msvc2015
+set QtMsvcRoot="C:\dev\Qt\Qtv5.7.0_X86_MSVC2015_MD\qtbase"
 set QtCreatorRoot=C:\Qt\Qt5.7.0\Tools\QtCreator
 if not defined VSINSTALLDIR (
     call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat"
@@ -66,4 +66,6 @@ if %ERRORLEVEL% NEQ 0 (
 popd
 
 call make_install.bat
-xcopy %QtMsvcRoot%\bin\*.dll bin\RogueCollection\ /F /D
+
+rem If building to use Qt dynamic libs
+rem xcopy %QtMsvcRoot%\bin\*.dll bin\RogueCollection\ /F /D
