@@ -238,6 +238,7 @@ register char *mess, *mend;
 
         /* mdk */
         else if (MATCH("and achieve the rank *")) ;
+        else if (MATCH("a bite momentarily weakens you")) ;
 
         else unknown++;
 
