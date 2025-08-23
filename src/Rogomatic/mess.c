@@ -216,6 +216,8 @@ register char *mess, *mend;
         /* :ANT: */
 
         else if (MATCH("a new monster is nearby*")) infer ("create monster", Scroll);
+
+        /* mdk: i don't think any of infers here work. doesn't seem to have an effect though: id'ed items are known in inventory, and the inference db is only for unknown things */
         else if (MATCH("a staff of * [*](*)*")) infer(res1, wand);
         else if (MATCH("a staff of * [*]*")) infer(res1, wand);
         else if (MATCH("a wand of * [*](*)*")) infer(res1, wand);
@@ -795,6 +797,7 @@ char *name;
     }
 
     knowident = identifying = 1;	/* Set variables */
+    memset(lastname, '\0', NAMSIZ); /* mdk: prevent id'ed item from being added to inference db. since the infers earlier in the file corrupt the db. known items don't need to be added. this variable should probably be cleared more broadly. */
   }
   else {			/* Rogue 5.3 */
     if (streq (name, "identify ring, wand or staff")) {
