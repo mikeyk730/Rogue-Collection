@@ -15,7 +15,7 @@ RetroRogueCollection.exe --rogomatic [game_letter]
 ```
 
 I've added utility scripts `Rogomatic.bat` and `RetroRogomatic.bat` to make this easier for people without command line experience.
-After you've selected you version, Rogomatic will then start to play automatically.
+After selecting your version of Rogue, Rogomatic will then start to play automatically. Set `rogomatic_paused=true` in `rogue.opt` if you'd like it to start paused.
 
 When using Rogomatic, 2 similar windows launch:
 - The Rogue game (has the Rogue version in the title bar)
@@ -125,7 +125,7 @@ events like finding the amulet
 
 Replaying a Rogomatic Run
 ====
-Rogomatic is deterministic, so if it plays the same game of Rogue, it will make the same decisions. 
+Rogomatic is deterministic, so if it plays the same seed of Rogue, it will make the same decisions. 
 You can replay a run by passing the seed and genes on the command line (find these in `rgmdelta`). For example:
 
     RogueCollection.exe b --rogomatic --seed 1755751405 --genes "22 37 35 46 39 18 13 88"
@@ -133,5 +133,6 @@ You can replay a run by passing the seed and genes on the command line (find the
 Rogomatic will load `ltm.<seed>` so it starts with the same memory as the original run.
 
 Another useful tip for replaying: If you set `autosave=force` in `rogue.opt`, a .sav file will be created for every run.
-I've left Rogomatic running overnight, and looked at `rgmdelta` to see which were worth watching.
+Loading the .sav will simply replay the inputs, rather than running Rogomatic again. I've left Rogomatic running overnight,
+and looked at `rgmdelta` to see which were worth watching.
 Some sample winning runs are available [here](https://github.com/mikeyk730/Rogue-Collection/tree/main/test)!
