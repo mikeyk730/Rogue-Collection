@@ -14,7 +14,7 @@ RogueCollection.exe --rogomatic [game_letter]
 RetroRogueCollection.exe --rogomatic [game_letter]
 ```
 
-I've added utility scripts `Rogomatic.bat` and `RetroRogomatic.bat` to make this easier for people with out command line experience.
+I've added utility scripts `Rogomatic.bat` and `RetroRogomatic.bat` to make this easier for people without command line experience.
 After you've selected you version, Rogomatic will then start to play automatically.
 
 When using Rogomatic, 2 similar windows launch:
