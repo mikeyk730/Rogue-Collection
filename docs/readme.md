@@ -17,7 +17,7 @@ Most controls have not been modified.  Use '?' in game to see a list of controls
 
 | Control        | Versions            | Action
 |----------------|---------------------|----------------------------------------------------------------------
-| Ctrl+direction | All versions        | Run until you're beside something of interest
+| Ctrl+direction | All versions        | Run until you're beside something of interest. (If Scroll Lock is on, running is the default behavior)
 | .              | All versions        | Rest
 | z+direction    | All versions        | Zap in the given direction
 | m+direction    | PC 1.48, Unix 5.4.2 | Move onto an object without picking it up
