@@ -94,7 +94,7 @@ PC Versions
     - Equip/unequip all rings to find the cursed ones (in case it's a `remove curse`)
 - Use bad potions against monsters:
     - Always throw potions at monsters in v1.48, since they'll always hit. In v1.1 monsters will get a saving throw, so you'll need more luck
-    - In v1.1 potions can be wielded and never break, so you can reuse them to affect
+    - In v1.1 potions can be wielded and never break, so you can reuse them as a special weapon
     - Confusion and blindness potions will confuse the monster
     - Paralysis potions will freeze the monster in place, preventing it from chasing you
 - Know the useful tactics for getting through the later levels
