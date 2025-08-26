@@ -156,3 +156,8 @@ int eat_after_fainting()
 {
     return version < RV36B;
 }
+
+int vorpalize_weapon_can_be_cursed()
+{
+    return version == RVPC11;
+}

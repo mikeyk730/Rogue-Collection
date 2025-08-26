@@ -152,6 +152,7 @@ char  *genocide;		/* List of monsters to be genocided */
 char  genocided[100];		/* List of monsters genocided */
 char  lastcmd[NAMSIZ];		/* Copy of last command sent to Rogue */
 char  lastname[NAMSIZ];		/* Name of last potion/scroll/wand */
+stuff lasttype = none;
 char  nextid = '\0';            /* Next object to identify */
 char  screen[MAXROWS][MAXCOLS];		/* Map of current Rogue screen */
 char  delayed_updates[MAXROWS][MAXCOLS];		/* Map of Rogue screen for next tick */

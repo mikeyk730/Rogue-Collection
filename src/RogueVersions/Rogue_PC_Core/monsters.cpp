@@ -356,7 +356,7 @@ Monster *wake_monster(Coord p)
             monster->start_run(false);
         }
         else
-            monster->start_run(&game->hero());
+            monster->start_run(&game->hero()); //todo:mdk should skip if monster held
     }
     return monster;
 }

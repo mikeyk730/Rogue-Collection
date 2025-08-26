@@ -573,6 +573,7 @@ char *msgstart, *msgend;
     inven[ipos].count = n;
     inven[ipos].phit = plushit;
     inven[ipos].traits = 0; /* mdk:bugfix clear traits for new items */
+    /* todo:mdk: can't track vorpal as a trait, since it gets cleared every inventory */
 
     if ((plushit != UNKNOWN) && (plushit > 0))
       remember (ipos, ENCHANTED | KNOWN);
