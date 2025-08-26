@@ -35,7 +35,7 @@ PC 1.1
 + Maze rooms starting on level 11
 + Haste self gives 2 turns
 + Potions can be used against monsters:
-    + Nagative effects on monster: confusion, paralysis, blindness
+    + Negative effects on monster: confusion, paralysis, blindness
     + Positive effects on monster: haste self, healing extra healing, raise level
 + Wielded potions don't break during combat
 + Thrown potions can miss
