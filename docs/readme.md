@@ -82,6 +82,42 @@ game_letter:  Letter from the game select menu (e.g. "b").
 game_name:    Name from the game select menu (e.g. "PC Rogue 1.1").
 ~~~
 
+Strategy
+=======
+PC Versions
+-------
+- Try to identify `scare monster` scrolls before picking them up
+    - Since monsters won't pass over `scare monster` scrolls, try to lure a monster over the scroll. If the monster avoids it, you know it's a `scare monster`. These are too useful to waste by reading them
+- Before reading unknown scrolls:
+    - Equip some good armor (in case it's `enchant armor`)
+    - Equip a good weapon (in case it's `enchant weapon` or `vorpalize weapon`)
+    - Equip/unequip all rings to find the cursed ones (in case it's a `remove curse`)
+- Use bad potions against monsters:
+    - Always throw potions at monsters in v1.48, since they'll always hit. In v1.1 monsters will get a saving throw, so you'll need more luck
+    - In v1.1 potions can be wielded and never break, so you can reuse them as a special weapon
+    - Confusion and blindness potions will confuse the monster
+    - Paralysis potions will freeze the monster in place, preventing it from chasing you
+- Know the useful tactics for getting through the later levels
+    - Avoid monsters in the later levels if you can. Read a `scroll of magic mapping` to find the stairs and get out ASAP
+    - Prevent monsters from attacking:
+      - Drop a `scroll of scare monster`. Enemies won't attack while you're standing on it 
+    - Freeze the monster so you can run away:
+      - Read a `scroll of hold monster` to freeze all monsters in a 3x3 area around the player
+      - Throw a `potion of paralysis` at a monster to freeze it in place
+    - Teleport in an emergency:
+      - Read the `scroll of teleportation` if you're desparate to jump to a new location
+      - Zap the monster with a `teleport away` stick to send it somewhere else
+    - Transform the monster:
+      - Zap the monster with a `polymorph` stick to turn a dangeous monster into something (hopefully) less powerful
+    - Take extra actions on your turn:
+      - Quaff a `potion of haste self` to get 2-3 actions per turn. This allows you to get extra hits on the monster or run away
+    - Confuse the monster:
+      - Throw a `potion of confusion` or `potion of blindness` at a monster to confuse it.
+      - Read a `scroll of monster confusion` and your next hit will confuse the monster. It takes a turn to read the scroll, and then you still need to land a hit
+- Know which items are not generally useful:
+    - Scrolls: sleep, blank paper, create monster, aggravate monsters
+    - Potions: poison, thirst quenching
+
 Credits
 =======
 Rogue
