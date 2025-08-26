@@ -245,7 +245,6 @@ register char *mess, *mend;
         /* todo:mdk: doesn't exist in game. create monster never inferred */
         //else if (MATCH("a new monster is nearby*")) infer ("create monster", Scroll);
 
-        /* mdk: i don't think any of infers here work. doesn't seem to have an effect though: id'ed items are known in inventory, and the inference db is only for unknown things */
         else if (MATCH("a staff of * [*](*)*"));
         else if (MATCH("a staff of * [*]*"));
         else if (MATCH("a wand of * [*](*)*"));
