@@ -59,7 +59,7 @@ PC 1.48
     + Slime replace snakes
     + Ice monsters shoot frost from a distance, are mean, can do damage, and can be wandering
     + Flying monsters get 2 turns if far away
-    + Emus, zombies, quaggas, and ur-illes are wandering only
+    + Emus, zombies, quaggas, and ur-villes are wandering only
     + Centaurs give more XP
     + Leprachauns do more damage
     + Monster distribution slightly different from v1.1
