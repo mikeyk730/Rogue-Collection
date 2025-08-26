@@ -147,6 +147,33 @@ void terpmes ()
   }
 }
 
+
+void handle_vorpalize_flash()
+{
+    if (is_reading_scroll())
+    {
+        infer("vorpalize weapon", Scroll);
+        newweapon = 1;
+
+        if (vorpalize_weapon_can_be_cursed())
+        {
+            forget(currentweapon, CURSED);
+            forget(currentweapon, UNCURSED);
+        }
+
+        /* todo:mdk remember weapon is vorpalized, so can identify and zap with later */
+    }
+    else
+    {
+        /* todo:mdk target monster is visible, can we infer which one it is? */
+    }
+}
+
+void handle_vorpalize_disappear()
+{
+    removeinv(currentweapon);
+}
+
 /*
  * parsemsg: Parse a single message, and if necessary set variables
  * or call functions.
@@ -215,22 +242,23 @@ register char *mess, *mend;
 
         /* :ANT: */
 
-        else if (MATCH("a new monster is nearby*")) infer ("create monster", Scroll);
+        /* todo:mdk: doesn't exist in game. create monster never inferred */
+        //else if (MATCH("a new monster is nearby*")) infer ("create monster", Scroll);
 
         /* mdk: i don't think any of infers here work. doesn't seem to have an effect though: id'ed items are known in inventory, and the inference db is only for unknown things */
-        else if (MATCH("a staff of * [*](*)*")) infer(res1, wand);
-        else if (MATCH("a staff of * [*]*")) infer(res1, wand);
-        else if (MATCH("a wand of * [*](*)*")) infer(res1, wand);
-        else if (MATCH("a wand of * [*]*")) infer(res1, wand);
-        else if (MATCH("a ring of *(*)*")) infer(res1, ring);
-        else if (MATCH("a ring of *")) infer(res1, ring);
-        else if (MATCH("a wand of *(*)*")) infer(res1, wand);
-        else if (MATCH("a wand of *")) infer(res1, wand);
-        else if (MATCH("a staff of *(*)*")) infer(res1, wand);
-        else if (MATCH("a staff of *")) infer(res1, wand);
-        else if (MATCH("a scroll of *")) infer (res1, Scroll);
-        else if (MATCH("a potion of *(*)*")) infer(res1, potion);
-        else if (MATCH("a potion of *")) infer(res1, potion);
+        else if (MATCH("a staff of * [*](*)*"));
+        else if (MATCH("a staff of * [*]*"));
+        else if (MATCH("a wand of * [*](*)*"));
+        else if (MATCH("a wand of * [*]*"));
+        else if (MATCH("a ring of *(*)*"));
+        else if (MATCH("a ring of *"));
+        else if (MATCH("a wand of *(*)*"));
+        else if (MATCH("a wand of *"));
+        else if (MATCH("a staff of *(*)*"));
+        else if (MATCH("a staff of *"));
+        else if (MATCH("a scroll of *"));
+        else if (MATCH("a potion of *(*)*"));
+        else if (MATCH("a potion of *"));
         else if (MATCH("a +*")) ;
         else if (MATCH("an +*")) ;
         else if (MATCH("a -*")) ;
@@ -553,7 +581,7 @@ register char *mess, *mend;
         else if (MATCH("you begin to feel much better*")) infer("extra healing", potion);
         else if (MATCH("you begin to sense the presence of monsters*"))
           { infer("monster detection", potion); }
-        else if (MATCH("you feel a strange sense of loss*")) infer("hold monster", Scroll);
+        else if (MATCH("you feel a strange sense of loss*")) infer("hold monster", Scroll); //todo:mdk could be others: enchant weapon w/ no weapon (all), protect armor w/ no armor (5.4), hold monster w/ no monster (5.3, 5.4)
         else if (MATCH("you feel a wrenching sensation in your gut*")) ;
         else if (MATCH("you feel stronger, now*")) infer ("gain strength", potion);
         else if (MATCH("you feel very sick now*")) infer ("poison", potion);
@@ -579,7 +607,19 @@ register char *mess, *mend;
         else if (MATCH("your hands begin to glow *"))
           { infer ("monster confusion", Scroll); redhands = 1; }
         else if (MATCH("your hands stop glowing *")) redhands = 0;
-        else if (MATCH("your * gives off a flash*")) infer("vorpalize weapon", Scroll); //todo:mdk handle vorpalized weapon elsewhere
+        else if (MATCH("your * gives off a flash*"))
+          handle_vorpalize_flash();
+        else if (MATCH("your * vanishes in a puff of smoke"))
+          handle_vorpalize_disappear();
+        else if (MATCH("you feel a sudden desire to kill *"));
+        else if (MATCH("you hear a faint cry of anguish*"))
+            infer("create monster", Scroll);
+        /*
+          pc scrolls never infered:
+          hold monster -- tough to tell, chasing monster stops
+          teleport -- look for change in postion after reading
+          create monster -- look for new monster after reading
+        */
 
         else if (MATCH("you feel as if somebody is watching over you*") ||
                  MATCH("you feel in touch with the universal onenes*")) {
@@ -599,7 +639,8 @@ register char *mess, *mend;
           if (gushed) { gushed=0; nametrap (WATERAP,HERE); }
         }
 
-        else if (MATCH("your scalp itches")) infer ("protect armor", Scroll);
+        //mdk: message doesn't exist
+        //else if (MATCH("your scalp itches")) infer ("protect armor", Scroll);
         else if (MATCH("your armor is covered by a shimmering * shield*")) {
           infer ("protect armor", Scroll);
           forget (currentarmor, CURSED);
@@ -609,7 +650,8 @@ register char *mess, *mend;
           remember (currentarmor, PROTECTED);
         }
 
-        else if (MATCH("your arms tingle")) infer ("enchant armor", Scroll);
+        //mdk: message doesn't exist
+        //else if (MATCH("your arms tingle")) infer ("enchant armor", Scroll);
         else if (MATCH("your armor glows * for a moment*")) {
           infer ("enchant armor", Scroll);
           cursedarmor = 0;
@@ -622,7 +664,8 @@ register char *mess, *mend;
           forget (currentarmor, CURSED);
           remember (currentarmor, UNCURSED);
         }
-        else if (MATCH("your hands tingle")) infer ("enchant weapon", Scroll);
+        //mdk: message doesn't exist
+        //else if (MATCH("your hands tingle")) infer ("enchant weapon", Scroll);
         else if (MATCH("your * glows * for a moment*")) {
           infer ("enchant weapon", Scroll);
           cursedweapon = 0;
@@ -651,10 +694,15 @@ register char *mess, *mend;
         else if (MATCH("your purse feels lighter*")) ;
         else if (MATCH("you suddenly feel weaker*")) ;
         else if (MATCH("you must identify something*")) ;
+
+        /* todo:mdk: this could be monster or magic detection, since messages shared on 3.6, 5.3, 5.4 */
         else if (MATCH("you have a * feeling for a moment, then it passes*")) infer ("monster detection", potion); //todo:mdk
+        /* mdk: short message is always monster detection (occurs on 5.2 and PC) */
         else if (MATCH("you have a * feeling for a moment*")) infer ("monster detection", potion);
-        else if (MATCH("you daydream of * for a moment, then it passes*")) infer ("magic detection", potion);
-        else if (MATCH("you feel deeply moved*")) infer ("teleportation", Scroll);
+
+        /* mdk: these don't appear in games */
+        //else if (MATCH("you daydream of * for a moment, then it passes*")) infer ("magic detection", potion);
+        //else if (MATCH("you feel deeply moved*")) infer ("teleportation", Scroll); //todo:mdk message doesn't exist, rogo will never infer teleportation scroll
 
         else if (MATCH("you are transfixed*")) ;
         else if (MATCH("you are frozen*")) washit ("ice monster");
@@ -799,7 +847,6 @@ char *name;
     }
 
     knowident = identifying = 1;	/* Set variables */
-    memset(lastname, '\0', NAMSIZ); /* mdk: prevent id'ed item from being added to inference db. since the infers earlier in the file corrupt the db. known items don't need to be added. this variable should probably be cleared more broadly. */
   }
   else {			/* Rogue 5.3 */
     if (streq (name, "identify ring, wand or staff")) {
@@ -951,6 +998,11 @@ char *objname;
 stuff item_type;
 {
   register int i;
+
+  if (item_type != lasttype)
+  {
+    dwait (D_ERROR, "Type mismatch in inference: %s (%d) inferred to be %s (%d)", lastname, lasttype, objname, item_type);
+  }
 
   if (*lastname && *objname && !stlmatch (objname, lastname)) {
     infername (lastname, objname, item_type);
