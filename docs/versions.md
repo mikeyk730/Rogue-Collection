@@ -34,12 +34,16 @@ PC 1.1
 + New monsters
 + Maze rooms starting on level 11
 + Haste self gives 2 turns
++ Potions can be used against monsters:
+    + Negative effects on monster: confusion, paralysis, blindness
+    + Positive effects on monster: haste self, healing extra healing, raise level
 + Wielded potions don't break during combat
 + Thrown potions can miss
 + Monsters get a saving throw against magic potions
 + Confused monsters have a 1/20 chance of becoming unconfused
 + Vorpalize scroll has a 1/20 chance of cursing your weapon
 + Striking staff improved vs Unix versions
++ Hold monster scroll affects a 7x7 grid, compared to 5x5 of Unix versions
 + Player's XP are shown
 + Player gets a poision saving throw against Ice Monster
 + Hear a growling if read food detection on level with no food
