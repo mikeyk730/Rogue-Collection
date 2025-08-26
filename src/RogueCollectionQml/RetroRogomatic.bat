@@ -1,3 +1,8 @@
+@if [%1] == [] goto getgame
+@set id=%1
+@goto play
+
+:getgame
 @echo Run Rogomatic for which game?
 @echo.
 @echo a) PC Rogue 1.48
@@ -8,5 +13,7 @@
 @echo f) Unix Rogue 3.6.3
 @echo.
 @set /p "id=Enter letter: "
+@goto play
 
+:play
 RetroRogueCollection.exe --rogomatic %id%

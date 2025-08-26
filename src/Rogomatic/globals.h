@@ -43,6 +43,7 @@ extern char *genocide;		/* List of monsters to genocide */
 extern char genocided[];	/* List of monsters genocided */
 extern char lastcmd[];		/* Copy of last command sent to Rogue */
 extern char lastname[];		/* Name of last potion/scroll/wand */
+stuff lasttype;
 extern char nextid;		/* Next object to identify */
 extern char ourkiller[];	/* What was listed on the tombstone */
 #ifndef ROGUE_COLLECTION
@@ -82,7 +83,7 @@ extern int cosmic;		/* True if hallucinating */
 extern int currentarmor;	/* Index of our armor */
 extern int currentweapon;	/* Index of our weapon */
 extern int cursedarmor;		/* True if armor is cursed */
-extern int cursedweapon;	/* True if weapon if cursed */
+extern int cursedweapon;	/* True if weapon is cursed */
 extern int darkdir;		/* Direction of arrow in dark room */
 extern int darkturns;		/* # arrows left to fire in dark room */
 extern int debugging;		/* Debugging options in effect */

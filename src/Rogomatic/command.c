@@ -68,6 +68,49 @@ int   d, mode;
   command (mode, "m%c", keydir[d]);
 }
 
+
+void set_active_item(stuff type, const char* name)
+{
+    lasttype = type;
+    strcpy(lastname, name);
+}
+
+void clear_active_item()
+{
+    lasttype = none;
+    memset(lastname, '\0', NAMSIZ);
+}
+
+void set_reading(const char* name)
+{
+    set_active_item(Scroll, name);
+}
+
+int is_reading_scroll()
+{
+    return lasttype == Scroll;
+}
+
+void set_quaffing(const char* name)
+{
+    set_active_item(potion, name);
+}
+
+int is_quaffing()
+{
+    return lasttype == potion;
+}
+
+void set_zapping(const char* name)
+{
+    set_active_item(wand, name);
+}
+
+int is_zapping()
+{
+    return lasttype == wand;
+}
+
 /*
  * command: Send a command which takes Rogue time to execute. These
  * include movement commands, sitting, and physical actions. Actions which
@@ -127,6 +170,8 @@ void command (int tmode, char* f, ...)
           dwait(D_WARNING, "Moving for %d turns, mode: %d", timespent[Level].activity[tmode], tmode);
       }
   }
+
+  clear_active_item(); /* mdk:clear active item */
 
   /* Do the inventory stuff */
   if (movedir == NOTAMOVE)
@@ -227,14 +272,14 @@ char *cmd;
 
     case 'q':	lastobj = OBJECT (commandarg (cmd, 1));
       usemsg ("Quaffing", lastobj);
-      strcpy (lastname, inven[lastobj].str);
+      set_quaffing(inven[lastobj].str);
       useobj (inven[lastobj].str);
       removeinv (lastobj);
       break;
 
     case 'r':	lastobj = OBJECT (commandarg (cmd, 1));
       usemsg ("Reading", lastobj);
-      strcpy (lastname, inven[lastobj].str);
+      set_reading(inven[lastobj].str);
       useobj (inven[lastobj].str);
       removeinv (lastobj);
       break;
@@ -269,7 +314,7 @@ char *cmd;
     case 'p': case 'z':
       lastwand = OBJECT (commandarg (cmd, 2));
       usemsg ("Pointing", lastwand);
-      strcpy (lastname, inven[lastwand].str);
+      set_zapping(inven[lastwand].str);
       useobj (inven[lastwand].str);
 
       /* Update number of charges */
