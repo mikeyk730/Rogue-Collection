@@ -102,11 +102,12 @@ PC Versions
     - Prevent monsters from attacking:
       - Drop a `scroll of scare monster`. Enemies won't attack while you're standing on it 
     - Freeze the monster so you can run away:
-      - Read a `scroll of hold monster` to freeze all monsters in a 3x3 area around the player
+      - Read a `scroll of hold monster` to freeze all monsters in a 7x7 grid around the player
       - Throw a `potion of paralysis` at a monster to freeze it in place
-    - Teleport in an emergency:
+    - Teleport in an emergency to buy time:
       - Read the `scroll of teleportation` if you're desparate to jump to a new location
       - Zap the monster with a `teleport away` stick to send it somewhere else
+      - Wear a `ring of teleportation` if you have one that you've uncursed
     - Transform the monster:
       - Zap the monster with a `polymorph` stick to turn a dangeous monster into something (hopefully) less powerful
     - Take extra actions on your turn:

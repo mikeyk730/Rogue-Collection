@@ -256,7 +256,35 @@ int readscroll ()
     return (reads (obj));
   }
 
-  /* In older version, have multiple uses for generic identify scrolls */
+  /* In older version, have multiple uses for generic identify scrolls
+
+  Note:
+  "unknown" means the KNOWN trait isn't set. See inventory() to see when it is set.
+  "unidentified" is an "unknown" item that we've used before, but still couldn't infer
+
+  General identification preferences:
+    1. The weapon we're carrying if it's unknown
+       - todo:mdk: if we can track vorpalized weapons, we could id to find target monster
+    2. Unknown rings
+    3. Wands we've tried before, but couldn't infer
+    4. Scrolls we've tried before, but couldn't infer
+    5. Unknown wands (if level 11+)
+    6. If the game doesn't have wands (v3.6), we'll consider unknown potion and any scrolls
+
+    mdk: observations:
+    - We never id scrolls without trying them first, so we'll always waste the first scare monster.
+    Interestingly in 3.6, we won't even give preference to a unknown scroll over a scroll we've
+    already identified.
+    - We have an inference db. It maps codename -> actual name, and records if we've tried the item.
+    Once we identify an item, the inference db is no longer relevant for that item.
+    - We don't seem to track known things. If the known item isn't actually in our inventory,
+    we can't use that in our decision making. Even if we've identified all scrolls except for scare
+    monster, we'd still have to read one to discover that
+    - Everything about an item is parsed from the inventory list, so we can't track traits that don't
+    show in inventory text, e.g. did we enchant this weapon? is this weapon vorpalized? for which monster?
+    - Cursed rings aren't tracked. We only wear rings that are known to be good
+    - Potions are never thrown or wielded
+  */
   if ((obj = havenamed (Scroll, "identify")) != NONE &&
       (currentweapon != NONE) &&
       (!itemis (currentweapon, KNOWN) &&
