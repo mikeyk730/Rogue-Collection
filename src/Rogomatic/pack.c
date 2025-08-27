@@ -325,9 +325,9 @@ char *msgstart, *msgend;
   if (*mend == '-')
     mend-=1;
 
-  if (mess[1] == ')')
+  if (mess[1] == ')') // handle format: a) item description
     { newitem = 1; ipos = DIGIT(*mess); mess += 3;}
-  else
+  else // handle format: item description (a)
     { ipos = DIGIT(mend[-2]); mend -= 4; }
 
 
@@ -344,7 +344,7 @@ char *msgstart, *msgend;
   }
 
   if (ISDIGIT(*mess))
-    { n = atoi(mess); mess += 2+(n>9); }
+    { n = atoi(mess); mess += 2+(n>9); } // get item quantity
   else {
     n = 1;
 
@@ -423,8 +423,16 @@ char *msgstart, *msgend;
 
   while (mend[-1] == ' ') mend--;
 
-  /* Undo plurals by removing trailing 's' (but not for "blindne->ss<-") */
-  if ((mend[-1]=='s') && (mend[-2] != 's')) mend--;
+  /* Undo plurals by removing trailing 's' (but not for "blindne->ss<-") mdk: or paralysis */
+  if ((mend[-1]=='s') && ((mend[-2] != 's') && (mend[-2] != 'i'))) mend--; //todo:mdk handle paralysis
+
+  static char weaponname[NAMSIZ], monstername[NAMSIZ], garbage[NAMSIZ];
+  static char* vorpalresult[] = { weaponname, monstername, garbage };
+  if (smatch(mess, "* of * slaying*", vorpalresult))
+  {
+      mess = weaponname;
+      mend = strlen(mess) + mess;
+  }
 
   /* Now find what we have picked up: */
   if (stlmatch(mend-4,"food")) {what=food; xknow=KNOWN;}
@@ -470,7 +478,8 @@ char *msgstart, *msgend;
   else if (stlmatch(mend-4,"dart")) xtr(missile,0,0,0)
   else if (stlmatch(mend-4,"rock")) xtr(missile,0,0,0)
   else if (stlmatch(mend-4,"bolt")) xtr(missile,0,0,0)
-  else xtr(strange,0,0,0)
+  else
+      xtr(strange,0,0,0)
 
   /* Copy the name of the object into a string */
   memset (objname, '\0', 100);
@@ -538,11 +547,12 @@ char *msgstart, *msgend;
     for (p = codename, q = codenamebeg; q <= codenameend;  p++, q++) *p = *q;
 
     if ((strlen (codename) > 2) &&
-      (strlen (findentry_getrealname (codename, what)) == 0)) {
+      (strlen (findentry_getrealname (codename, what)) == 0)) { //todo:mdk do we need to update db here?
       infername (codename, objname, what);
     }
   }
 
+  //todo:mdk newitem is always true?
   /* If new item, record the change */
   if (newitem && what == armor)
     newarmor = 1;
