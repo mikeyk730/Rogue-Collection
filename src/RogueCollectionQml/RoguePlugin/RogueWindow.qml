@@ -120,7 +120,7 @@ Item {
 
         onRendered: root.rendered()
 
-        property string title: "Rogue Collection " + (rogue.game ? ' - ' + rogue.game : '')
+        property string title: (rogue.game ? rogue.game + ' - ' : '') + "Rogue Collection"
 
         z: 0
         width: screenSize.width * fontSize.width

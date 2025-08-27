@@ -484,8 +484,15 @@ register char *mess, *mend;
         else if (MATCH("the * appears confused*")) ;
         else if (MATCH("the rust vanishes instantly*"))
           { if (gushed) { gushed = 0; nametrap (WATERAP, HERE); } }
-        else if (MATCH("the room is lit*")) { setnewgoal (); infer ("light", wand); }
-        else if (MATCH("the corridor glows*")) { infer ("light", wand); }
+        else if (MATCH("the room is lit*"))
+        {
+           setnewgoal ();
+           infer ("light", lasttype);
+        }
+        else if (MATCH("the corridor glows*"))
+        {
+           infer ("light", lasttype);
+        }
         else if (MATCH("the * has confused you*")) confused = 1;
         else if (MATCH("this scroll is an identify scroll scroll*"))
           { readident ("identify scroll"); }
@@ -690,10 +697,12 @@ register char *mess, *mend;
           { infer ("genocide", Scroll); echoit=0; rampage (); }
         else if (MATCH("you have a tingling feeling*")) infer ("drain life", wand);
         else if (MATCH("you are too weak to use it*")) infer ("drain life", wand);
-        else if (MATCH("you begin to feel greedy*")) infer ("gold detection", potion);
-        else if (MATCH("you feel a pull downward*")) infer ("gold detection", potion);
+        else if (MATCH("you begin to feel greedy*"))
+          infer ("gold detection", Scroll);
+        else if (MATCH("you feel a pull downward*"))
+          infer ("gold detection", Scroll);
         else if (MATCH("you begin to feel a pull downward*"))
-          { infer ("gold detection", potion); }
+          { infer ("gold detection", Scroll); }
         else if (MATCH("you are caught *")) nametrap (BEARTRP,HERE);
         else if (MATCH("your purse feels lighter*")) ;
         else if (MATCH("you suddenly feel weaker*")) ;
@@ -1009,7 +1018,9 @@ stuff item_type;
 
   if (item_type != lasttype)
   {
-    dwait (D_ERROR, "Type mismatch in inference: %s (%d) inferred to be %s (%d)", lastname, lasttype, objname, item_type);
+    dwait (D_ERROR, "Type mismatch in inference: %s (%d %s) inferred to be %s (%d %s)",
+      lastname, lasttype, get_item_type_string(lasttype),
+      objname, item_type, get_item_type_string(item_type));
   }
 
   if (*lastname && *objname && !stlmatch (objname, lastname)) {

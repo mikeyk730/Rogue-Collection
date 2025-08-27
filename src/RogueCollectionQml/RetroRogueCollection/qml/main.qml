@@ -8,7 +8,8 @@ ApplicationWindow{
 
     property alias windowScale: appSettings.windowScale
 
-    title: "Retro " + terminalContainer.title
+    title: terminalContainer.title.replace("Rogue Collection", "Retro Rogue Collection")
+
     color: "black"
     minimumWidth: 320
     minimumHeight: 200
