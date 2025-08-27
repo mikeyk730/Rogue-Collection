@@ -1,6 +1,6 @@
 Rog-O-Matic
 ===========================
-[Rogomatic was created in the the early 1980s](https://www.cs.princeton.edu/~appel/papers/rogomatic.html)
+[Rogomatic was created in the the early 1980s](https://www.cs.princeton.edu/~appel/papers/rogomatic.html) 
 to play the Unix versions of Rogue. I've made changes to get it running against all versions,
 but it may not perform as well on the PC versions, since it doesn't have any specific tactics for them.
 It is capable of becoming a total winner, and some example runs are available [here](https://github.com/mikeyk730/Rogue-Collection/tree/main/test)
@@ -125,7 +125,7 @@ events like finding the amulet
 
 Replaying a Rogomatic Run
 ====
-Rogomatic is deterministic, so if it plays the same seed of Rogue, it will make the same decisions.
+Rogomatic is deterministic, so if it plays the same seed of Rogue, it will make the same decisions. 
 You can replay a run by passing the seed and genes on the command line (find these in `rgmdelta`). For example:
 
     RogueCollection.exe b --rogomatic --seed 1755751405 --genes "22 37 35 46 39 18 13 88"
@@ -136,8 +136,3 @@ Another useful tip for replaying: If you set `autosave=force` in `rogue.opt`, a 
 Loading the .sav will simply replay the inputs, rather than running Rogomatic again. I've left Rogomatic running overnight,
 and looked at `rgmdelta` to see which were worth watching.
 Some sample winning runs are available [here](https://github.com/mikeyk730/Rogue-Collection/tree/main/test)!
-
-Known Bugs
-=======
-More loop: trying to drop on trap
-RogueCollection.exe --rogomatic --seed 1756315545 --genes "6 43 60 78 22 51 88 94"
