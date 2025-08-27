@@ -136,6 +136,7 @@ extern int poorarrow;		/* # Times we failed to kill in one blow */
 extern int protected;		/* True if we protected our armor */
 extern int putonseeinv;		/* Time when last put on see invisible ring */
 extern int quitat;		/* Score we are trying to beat */
+extern int read_vorpal;
 extern int redhands;		/* True if our hands are red */
 extern int replaying;		/* True if replaying old game */
 extern int revvideo;		/* True if in rev. video mode */

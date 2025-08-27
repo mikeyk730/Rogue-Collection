@@ -244,6 +244,7 @@ int   poorarrow = 0;		/* True if arrow has missed */
 int   protected = 0;		/* True if we protected our armor */
 int   putonseeinv = 0;          /* Turn when last put on see inv ring */
 int   quitat = BOGUS;		/* Score to beat, quit if within 10% more */
+int read_vorpal = 0;
 int   redhands = 0;		/* True if we have red hands */
 int   replaying = 0;		/* True if replaying old game */
 int   revvideo = 0;		/* True if in rev. video mode */

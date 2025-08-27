@@ -1,5 +1,10 @@
 #include "globals.h"
 
+int is_pc_version()
+{
+    return version == RVPC11 || version == RVPC148;
+}
+
 int version_has_arrow_bug()
 {
     return version <= RV36B;
@@ -82,7 +87,7 @@ else
 
 int new_weapon_protocol()
 {
-    return version >= RV54A;
+    return version >= RV54A || is_pc_version();
 }
 
 int dynamic_inv_order()
@@ -109,7 +114,7 @@ int status_v2()
 
 int status_v3()
 {
-    return version == RVPC11 || version == RVPC148;
+    return is_pc_version();
 }
 
 int version_uses_new_strength()
@@ -149,7 +154,7 @@ int has_hidden_passages()
 
 int pc_protocol()
 {
-    return version == RVPC11 || version == RVPC148;
+    return is_pc_version();
 }
 
 int eat_after_fainting()
@@ -160,4 +165,9 @@ int eat_after_fainting()
 int vorpalize_weapon_can_be_cursed()
 {
     return version == RVPC11;
+}
+
+int enable_bugfixes()
+{
+    return 0; //todo:mdk these are disabled so old replays still work. i should add a new gene that acts like a bitset of feature flags
 }

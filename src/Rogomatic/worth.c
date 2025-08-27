@@ -167,7 +167,7 @@ int i;
 
   /* Many potions are useless */
   if (inven[i].type == potion && itemis (i, KNOWN) &&
-      (stlmatch (inven[i].str, "paralysi") || //todo:mdk typo. should i fix?
+      (stlmatch (inven[i].str, "paralysis") ||
        stlmatch (inven[i].str, "confusion") ||
        stlmatch (inven[i].str, "hallucination") ||
        stlmatch (inven[i].str, "blind") ||
