@@ -479,7 +479,10 @@ char *msgstart, *msgend;
   else if (stlmatch(mend-4,"rock")) xtr(missile,0,0,0)
   else if (stlmatch(mend-4,"bolt")) xtr(missile,0,0,0)
   else
+  {
+      dwait (D_ERROR, "strange item in pack: %s", mess);
       xtr(strange,0,0,0)
+  }
 
   /* Copy the name of the object into a string */
   memset (objname, '\0', 100);
