@@ -88,10 +88,15 @@ PC Versions
 -------
 - Try to identify `scare monster` scrolls before picking them up
     - Since monsters won't pass over `scare monster` scrolls, try to lure a monster over the scroll. If the monster avoids it, you know it's a `scare monster`. These are too useful to waste by reading them
-- Before reading unknown scrolls:
+- Wait to have a bunch of scrolls (and items to identify) before you start to read them:
     - Equip some good armor (in case it's `enchant armor`)
     - Equip a good weapon (in case it's `enchant weapon` or `vorpalize weapon`)
     - Equip/unequip all rings to find the cursed ones (in case it's a `remove curse`)
+- Experiment with potions early on
+    - Strength is the most important factor
+    - If you have full strength, quaff potions as soon as you pick them up. You're hoping to discover a `potion of increase strength` before a `potion of restore strength` (This potion make you feel warm all over)
+    - Only drink `potion of increase strength` when you're at full strength, since they're permanently increase your maximum strength
+    - If you do not have full strength, wait until you're on level 13 to quaff unknown potions. Rattlesnakes only appear on levels 3-12, so you don't have to worry about them draining your strength anymore. As, soon as you discover a `potion of restore strength`
 - Use bad potions against monsters:
     - Always throw potions at monsters in v1.48, since they'll always hit. In v1.1 monsters will get a saving throw, so you'll need more luck
     - In v1.1 potions can be wielded and never break, so you can reuse them as a special weapon
