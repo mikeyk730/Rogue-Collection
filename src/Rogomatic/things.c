@@ -92,7 +92,8 @@ int obj;
       cursedweapon=0;
       command (T_HANDLING, "w%c", LETTER (obj));
     }
-    else if (itemis(currentweapon, ENCHANTED)) {
+    else if (itemis(currentweapon, ENCHANTED)
+        && (!vorpalize_weapon_can_be_cursed() || !read_vorpal)) { //mdk: vorpalized weapon is enchanted but can be cursed
       remember(currentweapon, UNCURSED);
       cursedweapon=0;
       command (T_HANDLING, "w%c", LETTER (obj));
@@ -112,7 +113,7 @@ int obj;
    * momentatirily on the first escape
    */
   else
-    command (T_HANDLING, "w%cw%c%c", LETTER (obj), ESC, get_repeat_message_key());
+    command (T_HANDLING, "w%cw%c%c", LETTER (obj), ESC, get_repeat_message_key()); /* mdk: this was causing pc rogue to hang. "wc" when weapon cursed would cause "c" to be treated as a command and trigger a more loop */
 
   return (1);
 }
@@ -619,7 +620,7 @@ int haveuseless ()
          stlmatch (inven[i].str, "poison") ||
          stlmatch (inven[i].str, "confusion") ||
          stlmatch (inven[i].str, "magic detection") ||
-         stlmatch (inven[i].str, "paralysis") ||
+         (enable_bugfixes() && stlmatch (inven[i].str, "paralysis")) || //mdk: this code didn't used to get hit, since item was "paralysi" in inventory
          stlmatch (inven[i].str, "hallucination") ||
          stlmatch (inven[i].str, "thirst") ||
          stlmatch (inven[i].str, "food detection") ||

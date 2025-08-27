@@ -152,6 +152,8 @@ void handle_vorpalize_flash()
 {
     if (is_reading_scroll())
     {
+        read_vorpal = 1;
+
         infer("vorpalize weapon", Scroll);
         newweapon = 1;
 
@@ -980,7 +982,11 @@ void curseditem ()
 
     /* Is it our weapon (may be wielding a hitter or a bogus magic arrow)? */
     else if (inven[lastdrop].type==hitter || inven[lastdrop].type==missile)
-      { currentweapon = lastdrop; cursedweapon = 1; return; }
+    {
+        currentweapon = lastdrop;
+        cursedweapon = 1;
+        return;
+    }
   }
 
   /* Don't know what was cursed, so assume the worst */
