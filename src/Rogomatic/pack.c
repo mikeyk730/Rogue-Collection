@@ -424,7 +424,7 @@ char *msgstart, *msgend;
   while (mend[-1] == ' ') mend--;
 
   /* Undo plurals by removing trailing 's' (but not for "blindne->ss<-") mdk: or paralysis */
-  if ((mend[-1]=='s') && ((mend[-2] != 's') && (mend[-2] != 'i'))) mend--; //todo:mdk handle paralysis
+  if ((mend[-1]=='s') && ((mend[-2] != 's') && (mend[-2] != 'i'))) mend--;
 
   static char weaponname[NAMSIZ], monstername[NAMSIZ], garbage[NAMSIZ];
   static char* vorpalresult[] = { weaponname, monstername, garbage };
