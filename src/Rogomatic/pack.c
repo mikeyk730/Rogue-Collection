@@ -552,7 +552,7 @@ char *msgstart, *msgend;
     }
   }
 
-  //todo:mdk newitem is always true?
+  //todo:mdk inventory is reset a lot, and newitem will always be true during a reset. things like lastfoodlevel are not accurate
   /* If new item, record the change */
   if (newitem && what == armor)
     newarmor = 1;
