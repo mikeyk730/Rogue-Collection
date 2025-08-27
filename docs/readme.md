@@ -92,11 +92,11 @@ PC Versions
     - Equip some good armor (in case it's `enchant armor`)
     - Equip a good weapon (in case it's `enchant weapon` or `vorpalize weapon`)
     - Equip/unequip all rings to find the cursed ones (in case it's a `remove curse`)
-- Experiment with potions early on
-    - Strength is the most important factor
-    - If you have full strength, quaff potions as soon as you pick them up. You're hoping to discover a `potion of increase strength` before a `potion of restore strength` (This potion make you feel warm all over)
-    - Only drink `potion of increase strength` when you're at full strength, since they're permanently increase your maximum strength
-    - If you do not have full strength, wait until you're on level 13 to quaff unknown potions. Rattlesnakes only appear on levels 3-12, so you don't have to worry about them draining your strength anymore. As, soon as you discover a `potion of restore strength`
+- Experiment with potions
+    - Strength is the most important factor. `poison` drains strength, `restore strength` brings you up to the maxium, and `gain strength` can permanently increase your maximum
+    - Hold onto potions of `restore strength` until level 13. Rattlesnakes only appear on levels 3-12, and they're the biggest threat to strength
+    - Only quaff potions of `gain strength` when you are at the maximum strength. If you're already at the max, the potion permanently increases your maximum
+    - While you full strength, quaff potions as soon as you pick them up. Once you lose strength, wait until you're on level 13 to quaff more unknowns.
 - Use bad potions against monsters:
     - Always throw potions at monsters in v1.48, since they'll always hit. In v1.1 monsters will get a saving throw, so you'll need more luck
     - In v1.1 potions can be wielded and never break, so you can reuse them as a special weapon
