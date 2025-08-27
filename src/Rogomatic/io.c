@@ -222,10 +222,10 @@ int   onat;                             /* 0 ==> Wait for waitstr
     if (ch == *q) {
         if (*++q == 0) {
             /*
-                mdk: Message line wasn't getting cleared on pc, leading to garbage like:
+                mdk: Message line wasn't getting cleared, leading to garbage like:
                 "wield what? (* for list): bow(weapon in hand) (c)"
             */
-            if (pc_protocol())
+            if (needs_msg_clear())
             {
                 for (int i = col; i < MAXCOLS; i++) {
                     screen[row][i] = ' ';

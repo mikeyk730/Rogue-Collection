@@ -381,4 +381,5 @@ int has_hidden_passages();
 int pc_protocol();
 int vorpalize_weapon_can_be_cursed();
 int is_reading_scroll();
+int needs_msg_clear();
 int enable_bugfixes();

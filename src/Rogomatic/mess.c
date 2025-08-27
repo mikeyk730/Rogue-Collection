@@ -203,9 +203,12 @@ register char *mess, *mend;
 
   /* Message indicates we picked up a new item */
   else if (*(mend-1)==')' && *(mend-3)=='(') {
-    inventory (mess, mend);
-    identifying = justreadid = 0;
-    usesynch=0;
+      if (MATCH("was wearing*"));
+      else {
+          inventory(mess, mend);
+          identifying = justreadid = 0;
+          usesynch = 0;
+      }
   }
   /* Message describes an old item already in our pack */
   else if (mess[1]==')') {
