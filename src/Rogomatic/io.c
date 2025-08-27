@@ -219,7 +219,21 @@ int   onat;                             /* 0 ==> Wait for waitstr
     }
 
     /* If message ends in "(* for list): ", call terpmes */
-    if (ch == *q) { if (*++q == 0) terpmes (); }
+    if (ch == *q) {
+        if (*++q == 0) {
+            /*
+                mdk: Message line wasn't getting cleared, leading to garbage like:
+                "wield what? (* for list): bow(weapon in hand) (c)"
+            */
+            if (needs_msg_clear())
+            {
+                for (int i = col; i < MAXCOLS; i++) {
+                    screen[row][i] = ' ';
+                }
+            }
+            terpmes();
+        }
+    }
     else q = "(* for list): ";
 
     /* Rogomatic now keys off of the grass under the Tombstone to  */

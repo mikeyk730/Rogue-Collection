@@ -161,3 +161,13 @@ int vorpalize_weapon_can_be_cursed()
 {
     return version == RVPC11;
 }
+
+int needs_msg_clear()
+{
+    return version == RV53NMT || version == RV52A || is_pc_version();
+}
+
+int enable_bugfixes()
+{
+    return 0; //todo:mdk these are disabled so old replays still work. i should add a new gene that acts like a bitset of feature flags
+}
