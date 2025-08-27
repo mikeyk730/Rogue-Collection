@@ -40,6 +40,11 @@ static char *stuffmess [] = {
   "none"
 };
 
+const char* get_item_type_string(int type)
+{
+  return stuffmess[type];
+}
+
 /*
  * itemstr: print the inventory message for a single item.
  */
