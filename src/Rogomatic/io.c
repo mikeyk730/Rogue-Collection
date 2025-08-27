@@ -221,7 +221,11 @@ int   onat;                             /* 0 ==> Wait for waitstr
     /* If message ends in "(* for list): ", call terpmes */
     if (ch == *q) {
         if (*++q == 0) {
-            if (pc_protocol()) //mdk: lines were not getting cleared on pc. if previous message was longer, extra garbage would be present
+            /*
+                mdk: Message line wasn't getting cleared on pc, leading to garbage like:
+                "wield what? (* for list): bow(weapon in hand) (c)"
+            */
+            if (pc_protocol())
             {
                 for (int i = col; i < MAXCOLS; i++) {
                     screen[row][i] = ' ';
