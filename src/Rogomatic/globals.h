@@ -165,7 +165,6 @@ extern int g_level_delay;
 extern int g_debug;
 extern int g_debug_protocol;
 extern int g_expect_extra_bytes;
-extern int g_last_stuck_level;
 
 //
 // Vorpalize weapon strategy

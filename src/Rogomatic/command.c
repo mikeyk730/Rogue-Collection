@@ -160,15 +160,15 @@ void command (int tmode, char* f, ...)
 
   turns += times;
   timespent[Level].timestamp = turns;
+  int previous = timespent[Level].activity[tmode];
   timespent[Level].activity[tmode] += times > 1 ? times : 1;
+  int current = timespent[Level].activity[tmode];
 
   /* mdk: added to detect bugs where rogomatic gets stuck on a level */
-  if (timespent[Level].activity[tmode] > 1000 && g_last_stuck_level != Level) {
-      g_last_stuck_level = Level;
+  if (previous/1000 != current/1000)
+  {
       dosnapshot();
-      if (g_debug_protocol) {
-          dwait(D_WARNING, "Moving for %d turns, mode: %d", timespent[Level].activity[tmode], tmode);
-      }
+      dwait(D_WARNING, "Moved for %d turns on level, mode: %d", timespent[Level].activity[tmode], tmode);
   }
 
   clear_active_item(); /* mdk:clear active item */

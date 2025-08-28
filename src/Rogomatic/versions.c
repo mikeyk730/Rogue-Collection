@@ -174,5 +174,5 @@ int needs_msg_clear()
 
 int enable_bugfixes()
 {
-    return 0; //todo:mdk these are disabled so old replays still work. i should add a new gene that acts like a bitset of feature flags
+    return 1; //todo:mdk make conditional so old replays still work. i should add a new gene that acts like a bitset of feature flags
 }
