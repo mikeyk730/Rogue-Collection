@@ -384,3 +384,4 @@ int is_reading_scroll();
 int needs_msg_clear();
 int enable_bugfixes();
 const char* get_item_type_string(int type);
+int is_monster_vorpal_target(const char* monster);

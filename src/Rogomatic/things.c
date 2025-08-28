@@ -78,6 +78,10 @@ int wield (obj)
 int obj;
 {
   if (cursedweapon) return (0);
+  if (did_read_vorpal)
+  {
+    return 0; /* mdk: stick with the vorpalized weapon (to make logic easier for now) */
+  }
 
   if (new_weapon_protocol()) {
 
@@ -93,7 +97,7 @@ int obj;
       command (T_HANDLING, "w%c", LETTER (obj));
     }
     else if (itemis(currentweapon, ENCHANTED)
-        && (!vorpalize_weapon_can_be_cursed() || !read_vorpal)) { //mdk: vorpalized weapon is enchanted but can be cursed
+        && (!vorpalize_weapon_can_be_cursed() || !did_read_vorpal)) { //mdk: vorpalized weapon is enchanted but can be cursed
       remember(currentweapon, UNCURSED);
       cursedweapon=0;
       command (T_HANDLING, "w%c", LETTER (obj));
@@ -228,19 +232,27 @@ int obj;
 int point (obj, dir)
 int obj, dir;
 {
-  if (inven[obj].type != wand) {
-    dwait (D_ERROR, "Trying to point %c", LETTER (obj));
-    return (0);
+  int is_vorpal_zap =
+    obj == currentweapon
+    && currentweapon != NONE
+    && itemis(currentweapon, VORPALIZED)
+    && !did_vorpal_zap;
+
+  if (!is_vorpal_zap)
+  {
+      if (inven[obj].type != wand) {
+        dwait (D_ERROR, "Trying to point %c", LETTER (obj));
+        return (0);
+      }
+
+      if (itemis (obj, USELESS))
+        return (0);
   }
 
-  if (itemis (obj, USELESS))
-    return (0);
-  else {
-    command (T_HANDLING, "%c%c%c",
-             get_zap_key(),	/* R5.2 MLM */
-             keydir[dir], LETTER (obj));
-    return (1);
-  }
+  command (T_HANDLING, "%c%c%c",
+           get_zap_key(),	/* R5.2 MLM */
+           keydir[dir], LETTER (obj));
+  return (1);
 }
 
 /*

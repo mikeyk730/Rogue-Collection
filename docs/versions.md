@@ -28,6 +28,7 @@ Unix 5.4
 + Maze rooms starting on level 2
 + Passages can be hidden requiring the player to search
 + Inventory order doesn't shift
++ There are 5 different types of identify scrolls, each one can only identify items of certain types
 
 PC 1.1
 ------
@@ -81,95 +82,210 @@ PC 1.48
 
 Scrolls
 -------
+Probability
 
-| Scroll                  | v3.6    | v5.2    | v5.3    | v5.4    | PC      |
-|-------------------------|---------|---------|---------|---------|---------|
-| monster confusion       |  8, 170 |  8, 140 |  8, 140 |  7, 140 |  8, 140 |
-| magic mapping           |  5, 180 |  5, 150 |  5, 150 |  4, 150 |  5, 150 |
-| light                   | 10, 100 |         |         |         |         |
-| hold monster            |  2, 200 |  3, 180 |  3, 180 |  2, 180 |  3, 180 |
-| sleep                   |  5,  50 |  5,   5 |  5,   5 |  3,   5 |  5,   5 |
-| enchant armor           |  8, 130 |  8, 160 |  8, 160 |  7, 160 |  8, 160 |
-| identify                | 21, 100 | 27, 100 | 27, 100 |         | 27, 100 |
-| identify potion         |         |         |         | 10,  80 |         |
-| identify scroll         |         |         |         | 10,  80 |         |
-| identify weapon         |         |         |         |  6,  80 |         |
-| identify armor          |         |         |         |  7, 100 |         |
-| identify ring, wand or staff |    |         |         | 10, 115 |         |
-| scare monster           |  4, 180 |  4, 200 |  4, 200 |  3, 200 |  4, 200 |
-| gold detection          |  4, 110 |  4,  50 |  4,  50 |         |         |
-| food detection          |         |         |         |  2,  60 |  4,  50 |
-| teleportation           |  7, 175 |  7, 165 |  7, 165 |  5, 165 |  7, 165 |
-| enchant weapon          | 10, 150 | 10, 150 | 10, 150 |  8, 150 | 10, 150 |
-| create monster          |  5,  75 |  5,  75 |  5,  75 |  4,  75 |  5,  75 |
-| remove curse            |  8, 105 |  8, 105 |  8, 105 |  7, 105 |  8, 105 |
-| aggravate monsters      |  1,  60 |  4,  20 |  4,  20 |  3,  20 |  4,  20 |
-| blank paper             |  1,  50 |  1,   5 |  1,   5 |         |  1,   5 |
-| genocide                |  1, 200 |  1, 300 |  1, 300 |         |         |
-| protect armor           |         |         |         |  2, 250 |         |
-| vorpalize weapon        |         |         |         |         |  1, 300 |
+| Scroll                  | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| monster confusion       |    8 |    8 |    8 |    7 |    8 |
+| magic mapping           |    5 |    5 |    5 |    4 |    5 |
+| light                   |   10 |      |      |      |      |
+| hold monster            |    2 |    3 |    3 |    2 |    3 |
+| sleep                   |    5 |    5 |    5 |    3 |    5 |
+| enchant armor           |    8 |    8 |    8 |    7 |    8 |
+| identify                |   21 |   27 |   27 |      |   27 |
+| identify potion         |      |      |      |   10 |      |
+| identify scroll         |      |      |      |   10 |      |
+| identify weapon         |      |      |      |    6 |      |
+| identify armor          |      |      |      |    7 |      |
+| identify ring, wand or staff | |      |      |   10 |      |
+| scare monster           |    4 |    4 |    4 |    3 |    4 |
+| gold detection          |    4 |    4 |    4 |      |      |
+| food detection          |      |      |      |    2 |    4 |
+| teleportation           |    7 |    7 |    7 |    5 |    7 |
+| enchant weapon          |   10 |   10 |   10 |    8 |   10 |
+| create monster          |    5 |    5 |    5 |    4 |    5 |
+| remove curse            |    8 |    8 |    8 |    7 |    8 |
+| aggravate monsters      |    1 |    4 |    4 |    3 |    4 |
+| blank paper             |    1 |    1 |    1 |      |    1 |
+| genocide                |    1 |    1 |    1 |      |      |
+| protect armor           |      |      |      |    2 |      |
+| vorpalize weapon        |      |      |      |      |    1 |
+
+Worth
+
+| Scroll                  | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| monster confusion       |  170 |  140 |  140 |  140 |  140 |
+| magic mapping           |  180 |  150 |  150 |  150 |  150 |
+| light                   |  100 |      |      |      |      |
+| hold monster            |  200 |  180 |  180 |  180 |  180 |
+| sleep                   |   50 |    5 |    5 |    5 |    5 |
+| enchant armor           |  130 |  160 |  160 |  160 |  160 |
+| identify                |  100 |  100 |  100 |      |  100 |
+| identify potion         |      |      |      |   80 |      |
+| identify scroll         |      |      |      |   80 |      |
+| identify weapon         |      |      |      |   80 |      |
+| identify armor          |      |      |      |  100 |      |
+| identify ring, wand or staff | |      |      |  115 |      |
+| scare monster           |  180 |  200 |  200 |  200 |  200 |
+| gold detection          |  110 |   50 |   50 |      |      |
+| food detection          |      |      |      |   60 |   50 |
+| teleportation           |  175 |  165 |  165 |  165 |  165 |
+| enchant weapon          |  150 |  150 |  150 |  150 |  150 |
+| create monster          |   75 |   75 |   75 |   75 |   75 |
+| remove curse            |  105 |  105 |  105 |  105 |  105 |
+| aggravate monsters      |   60 |   20 |   20 |   20 |   20 |
+| blank paper             |   50 |    5 |    5 |      |    5 |
+| genocide                |  200 |  300 |  300 |      |      |
+| protect armor           |      |      |      |  250 |      |
+| vorpalize weapon        |      |      |      |      |  300 |
 
 Potions
 -------
+Probability
 
-| Potion                  | v3.6    | v5.2    | v5.3    | v5.4    | PC      |
-|-------------------------|---------|---------|---------|---------|---------|
-| confusion               |  8,  50 |  8,   5 |  8,   5 |  7,   5 |  8,   5 |
-| paralysis               | 10,  50 | 10,   5 |         |         | 10,   5 |
-| hallucination           |         |         |  8,   5 |  8,   5 |         |
-| poison                  |  8,  50 |  8,   5 |  8,   5 |  8,   5 |  8,   5 |
-| gain strength           | 15, 150 | 15, 150 | 15, 150 | 13, 150 | 15, 150 |
-| see invisible           |  2, 170 |  2, 100 |  3, 100 |  3, 100 |  2, 100 |
-| healing                 | 15, 130 | 15, 130 | 15, 130 | 13, 130 | 15, 130 |
-| monster detection       |  6, 120 |  6, 130 |  6, 130 |  6, 130 |  6, 130 |
-| magic detection         |  6, 105 |  6, 105 |  6, 105 |  6, 105 |  6, 105 |
-| raise level             |  2, 220 |  2, 250 |  2, 250 |  2, 250 |  2, 250 |
-| extra healing           |  5, 180 |  5, 200 |  5, 200 |  5, 200 |  5, 200 |
-| haste self              |  4, 200 |  4, 190 |  5, 190 |  5, 190 |  4, 190 |
-| restore strength        | 14, 120 | 14, 130 | 14, 130 | 13, 130 | 14, 130 |
-| blindness               |  4,  50 |  4,   5 |  4,   5 |  5,   5 |  4,   5 |
-| thirst quenching        |  1,  50 |  1,   5 |  1,   5 |         |  1,   5 |
-| levitation              |         |         |         |  6,  75 |         |
+| Potion                  | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| confusion               |    8 |    8 |    8 |    7 |    8 |
+| paralysis               |   10 |   10 |      |      |   10 |
+| hallucination           |      |      |    8 |    8 |      |
+| poison                  |    8 |    8 |    8 |    8 |    8 |
+| gain strength           |   15 |   15 |   15 |   13 |   15 |
+| see invisible           |    2 |    2 |    3 |    3 |    2 |
+| healing                 |   15 |   15 |   15 |   13 |   15 |
+| monster detection       |    6 |    6 |    6 |    6 |    6 |
+| magic detection         |    6 |    6 |    6 |    6 |    6 |
+| raise level             |    2 |    2 |    2 |    2 |    2 |
+| extra healing           |    5 |    5 |    5 |    5 |    5 |
+| haste self              |    4 |    4 |    5 |    5 |    4 |
+| restore strength        |   14 |   14 |   14 |   13 |   14 |
+| blindness               |    4 |    4 |    4 |    5 |    4 |
+| thirst quenching        |    1 |    1 |    1 |      |    1 |
+| levitation              |      |      |      |    6 |      |
+
+Worth
+
+| Potion                  | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| confusion               |   50 |    5 |    5 |    5 |    5 |
+| paralysis               |   50 |    5 |      |      |    5 |
+| hallucination           |      |      |    5 |    5 |      |
+| poison                  |   50 |    5 |    5 |    5 |    5 |
+| gain strength           |  150 |  150 |  150 |  150 |  150 |
+| see invisible           |  170 |  100 |  100 |  100 |  100 |
+| healing                 |  130 |  130 |  130 |  130 |  130 |
+| monster detection       |  120 |  130 |  130 |  130 |  130 |
+| magic detection         |  105 |  105 |  105 |  105 |  105 |
+| raise level             |  220 |  250 |  250 |  250 |  250 |
+| extra healing           |  180 |  200 |  200 |  200 |  200 |
+| haste self              |  200 |  190 |  190 |  190 |  190 |
+| restore strength        |  120 |  130 |  130 |  130 |  130 |
+| blindness               |   50 |    5 |    5 |    5 |    5 |
+| thirst quenching        |   50 |    5 |    5 |      |    5 |
+| levitation              |      |      |      |   75 |      |
 
 Rings
 -----
-| Ring                    | v3.6    | v5.2    | v5.3    | v5.4    | PC      |
-|-------------------------|---------|---------|---------|---------|---------|
-| protection              |  9, 200 |  9, 400 |  9, 400 |  9, 400 |  9, 400 |
-| add strength            |  9, 200 |  9, 400 |  9, 400 |  9, 400 |  9, 400 |
-| sustain strength        |  5, 180 |  5, 280 |  5, 280 |  5, 280 |  5, 280 |
-| searching               | 10, 200 | 10, 420 | 10, 420 | 10, 420 | 10, 420 |
-| see invisible           | 10, 175 | 10, 310 | 10, 310 | 10, 310 | 10, 310 |
-| adornment               |  1, 100 |  1,  10 |  1,  10 |  1,  10 |  1,  10 |
-| aggravate monster       | 11, 100 | 10,  10 | 10,  10 | 10,  10 | 10,  10 |
-| dexterity               |  8, 220 |  8, 440 |  8, 440 |  8, 440 |  8, 440 |
-| increase damage         |  8, 220 |  8, 400 |  8, 400 |  8, 400 |  8, 400 |
-| regeneration            |  4, 260 |  4, 460 |  4, 460 |  4, 460 |  4, 460 |
-| slow digestion          |  9, 240 |  9, 240 |  9, 240 |  9, 240 |  9, 240 |
-| teleportation           |  9, 100 |  5,  30 |  5,  30 |  5,  30 |  5,  30 |
-| stealth                 |  7, 100 |  7, 470 |  7, 470 |  7, 470 |  7, 470 |
-| maintain armor          |         |  5, 380 |  5, 380 |  5, 380 |  5, 380 |
+Probability
+
+| Ring                    | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| protection              |    9 |    9 |    9 |    9 |    9 |
+| add strength            |    9 |    9 |    9 |    9 |    9 |
+| sustain strength        |    5 |    5 |    5 |    5 |    5 |
+| searching               |   10 |   10 |   10 |   10 |   10 |
+| see invisible           |   10 |   10 |   10 |   10 |   10 |
+| adornment               |    1 |    1 |    1 |    1 |    1 |
+| aggravate monster       |   11 |   10 |   10 |   10 |   10 |
+| dexterity               |    8 |    8 |    8 |    8 |    8 |
+| increase damage         |    8 |    8 |    8 |    8 |    8 |
+| regeneration            |    4 |    4 |    4 |    4 |    4 |
+| slow digestion          |    9 |    9 |    9 |    9 |    9 |
+| teleportation           |    9 |    5 |    5 |    5 |    5 |
+| stealth                 |    7 |    7 |    7 |    7 |    7 |
+| maintain armor          |      |    5 |    5 |    5 |    5 |
+
+Food Cost Per Turn
+
+Most rings didn't cost food in v3.6. Food cost was standardized in v5.2. In the PC versions, the ring of `searching` was made less expensive to use
+
+| Ring                    | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| protection              |    0 |   -1 |   -1 |   -1 |   -1 |
+| add strength            |    0 |   -1 |   -1 |   -1 |   -1 |
+| sustain strength        |   -1 |   -1 |   -1 |   -1 |   -1 |
+| searching               | -1/3 | -1/3 | -1/3 | -1/3 | -1/5 |
+| see invisible           |    0 | -1/5 | -1/5 | -1/5 | -1/5 |
+| adornment               |    0 |    0 |    0 |    0 |    0 |
+| aggravate monster       |    0 |    0 |    0 |    0 |    0 |
+| dexterity               |    0 | -1/3 | -1/3 | -1/3 | -1/3 |
+| increase damage         |    0 | -1/3 | -1/3 | -1/3 | -1/3 |
+| regeneration            |   -2 |   -2 |   -2 |   -2 |   -2 |
+| slow digestion          | +1/2 | +1/2 | +1/2 | +1/2 | +1/2 |
+| teleportation           |    0 |    0 |    0 |    0 |    0 |
+| stealth                 |    0 |   -1 |   -1 |   -1 |   -1 |
+| maintain armor          |      |   -1 |   -1 |   -1 |   -1 |
+
+Worth
+
+| Ring                    | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| protection              |  200 |  400 |  400 |  400 |  400 |
+| add strength            |  200 |  400 |  400 |  400 |  400 |
+| sustain strength        |  180 |  280 |  280 |  280 |  280 |
+| searching               |  200 |  420 |  420 |  420 |  420 |
+| see invisible           |  175 |  310 |  310 |  310 |  310 |
+| adornment               |  100 |   10 |   10 |   10 |   10 |
+| aggravate monster       |  100 |   10 |   10 |   10 |   10 |
+| dexterity               |  220 |  440 |  440 |  440 |  440 |
+| increase damage         |  220 |  400 |  400 |  400 |  400 |
+| regeneration            |  260 |  460 |  460 |  460 |  460 |
+| slow digestion          |  240 |  240 |  240 |  240 |  240 |
+| teleportation           |  100 |   30 |   30 |   30 |   30 |
+| stealth                 |  100 |  470 |  470 |  470 |  470 |
+| maintain armor          |      |  380 |  380 |  380 |  380 |
 
 Wands and Staves
 ----------------
+Probability
 
-| Wand/Staff              | v3.6    | v5.2    | v5.3    | v5.4    | PC      |
-|-------------------------|---------|---------|---------|---------|---------|
-| light                   | 12, 120 | 12, 250 | 12, 250 | 12, 250 | 12  250 |
-| striking                |  9, 115 |  9,  75 |         |         |  9   75 |
-| invisibility            |         |         |  6,   5 |  6,   5 |         |
-| lightning               |  3, 200 |  3, 330 |  3, 330 |  3, 330 |  3  330 |
-| fire                    |  3, 200 |  3, 330 |  3, 330 |  3, 330 |  3  330 |
-| cold                    |  3, 200 |  3, 330 |  3, 330 |  3, 330 |  3  330 |
-| polymorph               | 15, 210 | 15, 310 | 15, 310 | 15, 310 | 15  310 |
-| magic missile           | 10, 170 | 10, 170 | 10, 170 | 10, 170 | 10  170 |
-| haste monster           |  9,  50 |  9,   5 | 10,   5 | 10,   5 |  9    5 |
-| slow monster            | 11, 220 | 11, 350 | 11, 350 | 11, 350 | 11  350 |
-| drain life              |  9, 210 |  9, 300 |  9, 300 |  9, 300 |  9  300 |
-| nothing                 |  1,  70 |  1,   5 |  1,   5 |  1,   5 |  1    5 |
-| teleport away           |  5, 140 |  5, 340 |  6, 340 |  6, 340 |  5  340 |
-| teleport to             |  5,  60 |  5,  50 |  6,  50 |  6,  50 |  5   50 |
-| cancellation            |  5, 130 |  5, 280 |  5, 280 |  5, 280 |  5  280 |
+| Wand/Staff              | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| light                   |   12 |   12 |   12 |   12 |   12 |
+| striking                |    9 |    9 |      |      |    9 |
+| invisibility            |      |      |    6 |    6 |      |
+| lightning               |    3 |    3 |    3 |    3 |    3 |
+| fire                    |    3 |    3 |    3 |    3 |    3 |
+| cold                    |    3 |    3 |    3 |    3 |    3 |
+| polymorph               |   15 |   15 |   15 |   15 |   15 |
+| magic missile           |   10 |   10 |   10 |   10 |   10 |
+| haste monster           |    9 |    9 |   10 |   10 |    9 |
+| slow monster            |   11 |   11 |   11 |   11 |   11 |
+| drain life              |    9 |    9 |    9 |    9 |    9 |
+| nothing                 |    1 |    1 |    1 |    1 |    1 |
+| teleport away           |    5 |    5 |    6 |    6 |    5 |
+| teleport to             |    5 |    5 |    6 |    6 |    5 |
+| cancellation            |    5 |    5 |    5 |    5 |    5 |
+
+Worth
+
+| Wand/Staff              | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| light                   |  120 |  250 |  250 |  250 |  250 |
+| striking                |  115 |   75 |      |      |   75 |
+| invisibility            |      |      |    5 |    5 |      |
+| lightning               |  200 |  330 |  330 |  330 |  330 |
+| fire                    |  200 |  330 |  330 |  330 |  330 |
+| cold                    |  200 |  330 |  330 |  330 |  330 |
+| polymorph               |  210 |  310 |  310 |  310 |  310 |
+| magic missile           |  170 |  170 |  170 |  170 |  170 |
+| haste monster           |   50 |    5 |    5 |    5 |    5 |
+| slow monster            |  220 |  350 |  350 |  350 |  350 |
+| drain life              |  210 |  300 |  300 |  300 |  300 |
+| nothing                 |   70 |    5 |    5 |    5 |    5 |
+| teleport away           |  140 |  340 |  340 |  340 |  340 |
+| teleport to             |   60 |   50 |   50 |   50 |   50 |
+| cancellation            |  130 |  280 |  280 |  280 |  280 |
 
 Weapons
 -------
