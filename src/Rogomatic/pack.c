@@ -73,7 +73,8 @@ register int i;
     if (inven[i].charges != UNKNOWN)
       sprintf (item, "%s [%d]", item, inven[i].charges);
 
-    sprintf (item, "%s %s%s%s%s%s%s%s%s%s",	  /* DR UTexas */
+    int is_vorp = itemis(i, VORPALIZED);
+    sprintf (item, "%s %s%s%s%s%s%s%s%s%s%s%c%c",	  /* DR UTexas */
              item, inven[i].str,
              (itemis (i, KNOWN) ? "" : ", unk"),
              (used (inven[i].str) ? ", tried" : ""),
@@ -84,7 +85,10 @@ register int i;
              (itemis (i, WORTHLESS) ? ", useless" : ""),
              (!itemis (i, INUSE) ? "" :
               (inven[i].type == armor || inven[i].type == ring) ?
-              ", on" : ", inhand"));
+              ", on" : ", inhand"),
+              is_vorp ? ", vorp:" : "",
+              is_vorp ? vorpal_target : ' ',
+              is_vorp && !did_vorpal_zap ? '+' : ' ');
   }
 
   return (item);
@@ -124,7 +128,7 @@ int pos;
     clearpack  (pos);		/* Assure nothing at that spot  DR UT */
 
     forget (pos, (KNOWN | CURSED | ENCHANTED | PROTECTED | UNCURSED |
-                  INUSE | WORTHLESS));
+                  INUSE | WORTHLESS | VORPALIZED));
 
     rollpackup (pos);		/* Close up the hole */
   }
@@ -147,7 +151,7 @@ int pos;
     clearpack  (pos);		/* Assure nothing at that spot  DR UT */
 
     forget (pos, (KNOWN | CURSED | ENCHANTED | PROTECTED | UNCURSED |
-                  INUSE | WORTHLESS));
+                  INUSE | WORTHLESS | VORPALIZED));
 
     rollpackup (pos);		/* Close up the hole */
   }
@@ -175,7 +179,7 @@ int pos;
      protected, cursed etc.
 
   forget (pos, (KNOWN | CURSED | ENCHANTED | PROTECTED | UNCURSED |
-                INUSE | WORTHLESS));
+                INUSE | WORTHLESS | VORPALIZED));
   */
 
   forget (pos, ( INUSE ));
@@ -312,6 +316,7 @@ char *msgstart, *msgend;
   int  plushit = UNKNOWN, plusdam = UNKNOWN, charges = UNKNOWN;
   stuff what;
   char *xbeg, *xend, *codenamebeg, *codenameend;
+  int init_traits = 0;
 
   xbeg = xend = codenamebeg = codenameend = "";
   dwait (D_PACK, "inv: message %s", mess);
@@ -437,6 +442,26 @@ char *msgstart, *msgend;
   {
       mess = weaponname;
       mend = strlen(mess) + mess;
+
+      init_traits |= VORPALIZED;
+      did_id_vorpal = 1;
+
+      if (currentweapon != ipos)
+      {
+          dwait(D_ERROR, "Vorpalize: Expected vorpalized weapon to be current");
+      }
+
+      int num = monsternum(monstername);
+      if (num >= 1 && num <= 26)
+      {
+          vorpal_target = num + 'A' - 1;
+      }
+      else
+      {
+          dwait(D_ERROR, "Vorpalize: Unknown target: %s", monstername);
+      }
+
+       dwait(D_INFORM, "Vorpalize: Setting target %c %s", vorpal_target, monname(vorpal_target));
   }
 
   /* Now find what we have picked up: */
@@ -590,8 +615,8 @@ char *msgstart, *msgend;
     inven[ipos].type = what;
     inven[ipos].count = n;
     inven[ipos].phit = plushit;
-    inven[ipos].traits = 0; /* mdk:bugfix clear traits for new items */
-    /* todo:mdk: can't track vorpal as a trait, since it gets cleared every inventory */
+    inven[ipos].traits = init_traits; /* mdk:bugfix clear traits for new items */
+    /* todo:mdk: can't track vorpal as a trait without ident, since it gets cleared every inventory */
 
     if ((plushit != UNKNOWN) && (plushit > 0))
       remember (ipos, ENCHANTED | KNOWN);

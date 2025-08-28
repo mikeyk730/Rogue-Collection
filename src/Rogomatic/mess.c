@@ -150,11 +150,10 @@ void terpmes ()
 
 void handle_vorpalize_flash()
 {
-    if (is_reading_scroll())
+    if (is_reading_scroll() && !did_read_vorpal)
     {
-        read_vorpal = 1;
-
         infer("vorpalize weapon", Scroll);
+        did_read_vorpal = 1;
         newweapon = 1;
 
         if (vorpalize_weapon_can_be_cursed())
@@ -163,11 +162,13 @@ void handle_vorpalize_flash()
             forget(currentweapon, UNCURSED);
         }
 
-        /* todo:mdk remember weapon is vorpalized, so can identify and zap with later */
+        /* todo:mdk remember weapon is vorpalized without having to use identify scroll */
     }
     else
     {
-        /* todo:mdk target monster is visible, can we infer which one it is? */
+        /* todo:mdk target monster should be visible, can we infer which one it is? sadly, mlist isn't updated yet for current frame */
+        for (int m = 0; m < mlistlen; ++m)
+            dwait(D_INFORM, "Vorpalize: target could be %c", mlist[m].chr);
     }
 }
 
@@ -533,6 +534,7 @@ register char *mess, *mend;
         /* mdk */
         else if (MATCH("the slime divides.  ick!")) ;
         else if (MATCH("the frost whizzes by you")) ;
+        else if (MATCH("the * vanishes in a puff of smoke")) ;
 
         else unknown++;
 

@@ -530,6 +530,11 @@ aftermelee ()
   return (foughtmonster = 0);
 }
 
+int is_monster_vorpal_target(const char* monster)
+{
+  return vorpal_target && streq(monster, monname(vorpal_target));
+}
+
 /*
  * battlestations:
  *
@@ -743,6 +748,18 @@ int adj;		/* How many attackers are there? */
   if (die_in (2) && turns > 0 && !redhands &&
       ((obj = havenamed (Scroll, "monster confusion")) != NONE))
     return (reads (obj));
+
+  /*
+   * mdk: if we can zap with our vorpalized weapon, use it now!
+   */
+  if (die_in (1)
+      && is_monster_vorpal_target(monster)
+      && point(currentweapon, mdir))
+  {
+    dwait(D_INFORM, "Vorpalize: Zap with weapon %d: %s", currentweapon, monster);
+    did_vorpal_zap = 1;
+    return (1);
+  }
 
   /*
    * Put them all to sleep? This does us little good, since we cant

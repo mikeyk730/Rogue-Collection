@@ -889,6 +889,17 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
   /* Save the killer and score */
   for (k=ourkiller, r=reason; *r && *r != ' '; ++k, ++r) *k = *r;
 
+
+  if (is_monster_vorpal_target(reason) && !did_vorpal_zap)
+  {
+    dwait (D_ERROR, "Strategy: Died to a %s with a vorpal charge left", reason);
+  }
+
+  if (havenamed(Scroll, "scare monster") != NONE)
+  {
+    dwait(D_ERROR, "Strategy: Died to a %s with a scare monster left", reason);
+  }
+
   *k = '\0';
   ourscore = gld;
 
