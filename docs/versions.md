@@ -82,33 +82,63 @@ PC 1.48
 
 Scrolls
 -------
+Probability
 
-| Scroll                  | v3.6    | v5.2    | v5.3    | v5.4    | PC      |
-|-------------------------|---------|---------|---------|---------|---------|
-| monster confusion       |  8, 170 |  8, 140 |  8, 140 |  7, 140 |  8, 140 |
-| magic mapping           |  5, 180 |  5, 150 |  5, 150 |  4, 150 |  5, 150 |
-| light                   | 10, 100 |         |         |         |         |
-| hold monster            |  2, 200 |  3, 180 |  3, 180 |  2, 180 |  3, 180 |
-| sleep                   |  5,  50 |  5,   5 |  5,   5 |  3,   5 |  5,   5 |
-| enchant armor           |  8, 130 |  8, 160 |  8, 160 |  7, 160 |  8, 160 |
-| identify                | 21, 100 | 27, 100 | 27, 100 |         | 27, 100 |
-| identify potion         |         |         |         | 10,  80 |         |
-| identify scroll         |         |         |         | 10,  80 |         |
-| identify weapon         |         |         |         |  6,  80 |         |
-| identify armor          |         |         |         |  7, 100 |         |
-| identify ring, wand or staff |    |         |         | 10, 115 |         |
-| scare monster           |  4, 180 |  4, 200 |  4, 200 |  3, 200 |  4, 200 |
-| gold detection          |  4, 110 |  4,  50 |  4,  50 |         |         |
-| food detection          |         |         |         |  2,  60 |  4,  50 |
-| teleportation           |  7, 175 |  7, 165 |  7, 165 |  5, 165 |  7, 165 |
-| enchant weapon          | 10, 150 | 10, 150 | 10, 150 |  8, 150 | 10, 150 |
-| create monster          |  5,  75 |  5,  75 |  5,  75 |  4,  75 |  5,  75 |
-| remove curse            |  8, 105 |  8, 105 |  8, 105 |  7, 105 |  8, 105 |
-| aggravate monsters      |  1,  60 |  4,  20 |  4,  20 |  3,  20 |  4,  20 |
-| blank paper             |  1,  50 |  1,   5 |  1,   5 |         |  1,   5 |
-| genocide                |  1, 200 |  1, 300 |  1, 300 |         |         |
-| protect armor           |         |         |         |  2, 250 |         |
-| vorpalize weapon        |         |         |         |         |  1, 300 |
+| Scroll                  | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| monster confusion       |    8 |    8 |    8 |    7 |    8 |
+| magic mapping           |    5 |    5 |    5 |    4 |    5 |
+| light                   |   10 |      |      |      |      |
+| hold monster            |    2 |    3 |    3 |    2 |    3 |
+| sleep                   |    5 |    5 |    5 |    3 |    5 |
+| enchant armor           |    8 |    8 |    8 |    7 |    8 |
+| identify                |   21 |   27 |   27 |      |   27 |
+| identify potion         |      |      |      |   10 |      |
+| identify scroll         |      |      |      |   10 |      |
+| identify weapon         |      |      |      |    6 |      |
+| identify armor          |      |      |      |    7 |      |
+| identify ring, wand or staff | |      |      |   10 |      |
+| scare monster           |    4 |    4 |    4 |    3 |    4 |
+| gold detection          |    4 |    4 |    4 |      |      |
+| food detection          |      |      |      |    2 |    4 |
+| teleportation           |    7 |    7 |    7 |    5 |    7 |
+| enchant weapon          |   10 |   10 |   10 |    8 |   10 |
+| create monster          |    5 |    5 |    5 |    4 |    5 |
+| remove curse            |    8 |    8 |    8 |    7 |    8 |
+| aggravate monsters      |    1 |    4 |    4 |    3 |    4 |
+| blank paper             |    1 |    1 |    1 |      |    1 |
+| genocide                |    1 |    1 |    1 |      |      |
+| protect armor           |      |      |      |    2 |      |
+| vorpalize weapon        |      |      |      |      |    1 |
+
+Worth
+
+| Scroll                  | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| monster confusion       |  170 |  140 |  140 |  140 |  140 |
+| magic mapping           |  180 |  150 |  150 |  150 |  150 |
+| light                   |  100 |      |      |      |      |
+| hold monster            |  200 |  180 |  180 |  180 |  180 |
+| sleep                   |   50 |    5 |    5 |    5 |    5 |
+| enchant armor           |  130 |  160 |  160 |  160 |  160 |
+| identify                |  100 |  100 |  100 |      |  100 |
+| identify potion         |      |      |      |   80 |      |
+| identify scroll         |      |      |      |   80 |      |
+| identify weapon         |      |      |      |   80 |      |
+| identify armor          |      |      |      |  100 |      |
+| identify ring, wand or staff | |      |      |  115 |      |
+| scare monster           |  180 |  200 |  200 |  200 |  200 |
+| gold detection          |  110 |   50 |   50 |      |      |
+| food detection          |      |      |      |   60 |   50 |
+| teleportation           |  175 |  165 |  165 |  165 |  165 |
+| enchant weapon          |  150 |  150 |  150 |  150 |  150 |
+| create monster          |   75 |   75 |   75 |   75 |   75 |
+| remove curse            |  105 |  105 |  105 |  105 |  105 |
+| aggravate monsters      |   60 |   20 |   20 |   20 |   20 |
+| blank paper             |   50 |    5 |    5 |      |    5 |
+| genocide                |  200 |  300 |  300 |      |      |
+| protect armor           |      |      |      |  250 |      |
+| vorpalize weapon        |      |      |      |      |  300 |
 
 Potions
 -------
