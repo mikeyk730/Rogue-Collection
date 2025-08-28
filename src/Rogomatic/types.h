@@ -175,6 +175,8 @@
 # define T_DOORSRCH  (9)
 # define T_LISTLEN   (10)
 
+const char* tmode_to_str(int tmode);
+
 /* Bit value for debugging types (for debugging function dwait and
    screen message debugging).  If D_MESSAGE is set the screen must
    be at least 31x80 information displayed to fit.  */

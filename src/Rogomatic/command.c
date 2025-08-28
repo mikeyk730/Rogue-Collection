@@ -168,7 +168,8 @@ void command (int tmode, char* f, ...)
   if (previous/1000 != current/1000)
   {
       dosnapshot();
-      dwait(D_WARNING, "Moved for %d turns on level, mode: %d", timespent[Level].activity[tmode], tmode);
+      int severity = (current > 15000) ? D_FATAL : D_WARNING;
+      dwait(severity, "Excessive %s for %d turns on level %d", tmode_to_str(tmode), timespent[Level].activity[tmode], Level);
   }
 
   clear_active_item(); /* mdk:clear active item */

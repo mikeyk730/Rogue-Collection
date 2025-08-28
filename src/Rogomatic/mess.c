@@ -513,7 +513,7 @@ register char *mess, *mend;
           { infer ("see invisible", potion); if (version == RV36A) sendnow ("%c", ESC); }
         else if (MATCH("this scroll seems to be blank*")) infer ("blank paper", Scroll); /* mdk:bugfix: missing argument */
         else if (MATCH("the * bounces*")) ;
-        else if (MATCH("the * vanishes as it hits the ground*"))
+        else if (MATCH("the * vanishes as it hits*"))
           { darkturns = 0; darkdir = NONE; targetmonster = 0; echoit=0; }
         else if (MATCH("there is something there already*")) {
           set(STUFF);
@@ -619,7 +619,7 @@ register char *mess, *mend;
           { if (has_double_haste_bug()) doublehasted = 1; else hasted = 0; }
         else if (MATCH("you feel less confused now*")) confused = 0;
         else if (MATCH("you feel less trip*")) confused = 0;
-        else if (MATCH("your * vanishes as it hits the ground*"))
+        else if (MATCH("your * vanishes as it hits*"))
           { darkturns = 0; darkdir = NONE; echoit=0; }
         else if (MATCH("your hands begin to glow *"))
           { infer ("monster confusion", Scroll); redhands = 1; }
