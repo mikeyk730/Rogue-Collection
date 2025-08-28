@@ -37,6 +37,30 @@
 # include "globals.h"
 # include "install.h"
 
+#ifdef ROGUE_COLLECTION
+char get_game_char()
+{
+  return
+    version == RV36B ? 'f' :
+    version == RV52A ? 'e' :
+    version == RV53NMT ? 'd' :
+    version == RV54A ? 'c' :
+    version == RVPC11 ? 'b' :
+    version == RVPC148 ? 'a' :
+    'x';
+}
+
+void print_command_line(FILE *errfil)
+{
+  fprintf(
+    errfil,
+    "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"\n\n",
+    get_game_char(),
+    g_seed,
+    knob[0], knob[1], knob[2], knob[3], knob[4], knob[5], knob[6], knob[7]);
+}
+#endif
+
 /*
  * Debugging wait loop: Handle the usual Rogomatic command chars, and also
  * allows dumping the flags '^' command. Exits when a non-command char is
@@ -65,6 +89,9 @@ int dwait (int msgtype, char* f, ...)
     if ((errfil = wopen (errfn, "a")) != NULL) {
       fprintf (errfil, "User %s, error type %d:  %s\n\n",
                getname(), msgtype, msg);
+#ifdef ROGUE_COLLECTION
+    print_command_line(errfil);
+#endif
 
       if (msgtype & (D_FATAL | D_ERROR)) {
         dosnapshot();

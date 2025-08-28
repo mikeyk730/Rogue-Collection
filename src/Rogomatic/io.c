@@ -892,12 +892,12 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
 
   if (is_monster_vorpal_target(reason) && !did_vorpal_zap)
   {
-    dwait (D_ERROR, "Strategy: Died to a %s with a vorpal charge left", reason);
+    dwait (D_WARNING, "Strategy: Died to a %s with a vorpal charge left", reason);
   }
 
   if (havenamed(Scroll, "scare monster") != NONE)
   {
-    dwait(D_ERROR, "Strategy: Died to a %s with a scare monster left", reason);
+    dwait(D_WARNING, "Strategy: Died to a %s with a scare monster left", reason);
   }
 
   *k = '\0';

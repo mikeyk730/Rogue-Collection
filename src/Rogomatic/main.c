@@ -1,4 +1,11 @@
 /*
+mdk:known issues 2025:
+- can get into infinite loop trying to drop an item on a tile with a sleeping trap
+- after reading mapping scroll that doesn't reveal doorways, player may not search
+  for hidden door leading into passageway, and can get stuck on the level
+*/
+
+/*
 bug list:
 + item traits not initialized
 + call it not working
@@ -10,7 +17,8 @@ bug list:
 - unpinning loop (seed: 1569794071)
 - sleeping monster blocking door (seed: 1569806185)
 - teleport trap at doorway infinite loop
-
+*/
+/*
  * Rog-O-Matic
  * Automatically exploring the dungeons of doom.
  *
