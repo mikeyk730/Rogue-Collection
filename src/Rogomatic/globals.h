@@ -136,7 +136,6 @@ extern int poorarrow;		/* # Times we failed to kill in one blow */
 extern int protected;		/* True if we protected our armor */
 extern int putonseeinv;		/* Time when last put on see invisible ring */
 extern int quitat;		/* Score we are trying to beat */
-extern int read_vorpal;
 extern int redhands;		/* True if our hands are red */
 extern int replaying;		/* True if replaying old game */
 extern int revvideo;		/* True if in rev. video mode */
@@ -167,6 +166,22 @@ extern int g_debug;
 extern int g_debug_protocol;
 extern int g_expect_extra_bytes;
 extern int g_last_stuck_level;
+
+//
+// Vorpalize weapon strategy
+//
+// Once we read a vorapalize weapon scroll, we stick with the weapon for
+// the rest of the run. We will use our first identify scroll to discover
+// the target monster. If we get in trouble against that monster later on,
+// we will use the zap against it.
+//
+// We could add much more flexibilty if we could track which weapons have
+// been vorpalized across Rogomatic's inventory resets
+//
+extern int did_read_vorpal; // Did we read a vorpalize weapon scroll yet?
+extern int did_id_vorpal;   // Did we attempt to identify a vorpalized weapon yet?
+extern int vorpal_target;   // Letter of the monster that we are buffed for
+extern int did_vorpal_zap;  // Have we zapped with our vorpalized weapon yet?
 
 /* Status line variables */
 extern int Level,MaxLevel,Gold,Hp,Hpmax,Str,Strmax,Ac,Exp,Explev;

@@ -226,6 +226,7 @@
 # define UNCURSED  (0000000020)
 # define INUSE     (0000000040)
 # define WORTHLESS (0000000100)
+# define VORPALIZED (0000000200)
 
 /* Miscellaneous macros */
 

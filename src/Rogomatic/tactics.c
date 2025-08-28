@@ -285,10 +285,17 @@ int readscroll ()
     - Cursed rings aren't tracked. We only wear rings that are known to be good
     - Potions are never thrown or wielded
   */
+  int have_vorpal_to_id = did_read_vorpal && !did_id_vorpal;
   if ((obj = havenamed (Scroll, "identify")) != NONE &&
       (currentweapon != NONE) &&
-      (!itemis (currentweapon, KNOWN) &&
-       (!usingarrow || goodarrow > 20))) {
+      (have_vorpal_to_id ||
+      (!itemis (currentweapon, KNOWN) && (!usingarrow || goodarrow > 20))))
+  {
+    if (have_vorpal_to_id)
+    {
+        did_id_vorpal = 1;
+    }
+
     prepareident (currentweapon, obj);
     return (reads (obj));
   }
