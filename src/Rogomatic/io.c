@@ -889,15 +889,29 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
   /* Save the killer and score */
   for (k=ourkiller, r=reason; *r && *r != ' '; ++k, ++r) *k = *r;
 
-
-  if (is_monster_vorpal_target(reason) && !did_vorpal_zap)
+  if (streq(reason, "starvation"))
   {
-    dwait (D_WARNING, "Strategy: Died to a %s with a vorpal charge left", reason);
+    dwait (D_WARNING, "Possible bug: died of starvation");
   }
-
-  if (havenamed(Scroll, "scare monster") != NONE)
+  else if (streq(reason, "fatal error trap"))
   {
-    dwait(D_WARNING, "Strategy: Died to a %s with a scare monster left", reason);
+    dwait (D_WARNING, "Possible bug: fatal error trap");
+  }
+  else if (streq(reason, "total winner"))
+  {
+    dwait (D_WARNING, "Total winner!");
+  }
+  else
+  {
+    if (is_monster_vorpal_target(reason) && !did_vorpal_zap)
+    {
+      dwait (D_WARNING, "Strategy blunder: Died to a %s with a vorpal charge left", reason);
+    }
+
+    if (havenamed(Scroll, "scare monster") != NONE)
+    {
+      dwait(D_WARNING, "Strategy blunder: Died to a %s with a scare monster left", reason);
+    }
   }
 
   *k = '\0';
