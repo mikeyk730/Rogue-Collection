@@ -186,25 +186,64 @@ Worth
 
 Rings
 -----
-The triplet: probability that a ring is of this type, worth if you become a total winner, food cost per turn
+Probability
+
+| Ring                    | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| protection              |    9 |    9 |    9 |    9 |    9 |
+| add strength            |    9 |    9 |    9 |    9 |    9 |
+| sustain strength        |    5 |    5 |    5 |    5 |    5 |
+| searching               |   10 |   10 |   10 |   10 |   10 |
+| see invisible           |   10 |   10 |   10 |   10 |   10 |
+| adornment               |    1 |    1 |    1 |    1 |    1 |
+| aggravate monster       |   11 |   10 |   10 |   10 |   10 |
+| dexterity               |    8 |    8 |    8 |    8 |    8 |
+| increase damage         |    8 |    8 |    8 |    8 |    8 |
+| regeneration            |    4 |    4 |    4 |    4 |    4 |
+| slow digestion          |    9 |    9 |    9 |    9 |    9 |
+| teleportation           |    9 |    5 |    5 |    5 |    5 |
+| stealth                 |    7 |    7 |    7 |    7 |    7 |
+| maintain armor          |      |    5 |    5 |    5 |    5 |
+
+Food Cost Per Turn
 
 Most rings didn't cost food in v3.6. Food cost was standardized in v5.2. In the PC versions, the ring of `searching` was made less expensive to use
-| Ring                    | v3.6          | v5.2          | v5.3          | v5.4          | PC            |
-|-------------------------|---------------|---------------|---------------|---------------|---------------|
-| protection              |  9, 200,    0 |  9, 400,   -1 |  9, 400,   -1 |  9, 400,   -1 |  9, 400,   -1 |
-| add strength            |  9, 200,    0 |  9, 400,   -1 |  9, 400,   -1 |  9, 400,   -1 |  9, 400,   -1 |
-| sustain strength        |  5, 180,   -1 |  5, 280,   -1 |  5, 280,   -1 |  5, 280,   -1 |  5, 280,   -1 |
-| searching               | 10, 200, -1/3 | 10, 420, -1/3 | 10, 420, -1/3 | 10, 420, -1/3 | 10, 420, -1/5 |
-| see invisible           | 10, 175,    0 | 10, 310, -1/5 | 10, 310, -1/5 | 10, 310, -1/5 | 10, 310, -1/5 |
-| adornment               |  1, 100,    0 |  1,  10,    0 |  1,  10,    0 |  1,  10,    0 |  1,  10,    0 |
-| aggravate monster       | 11, 100,    0 | 10,  10,    0 | 10,  10,    0 | 10,  10,    0 | 10,  10,    0 |
-| dexterity               |  8, 220,    0 |  8, 440, -1/3 |  8, 440, -1/3 |  8, 440, -1/3 |  8, 440, -1/3 |
-| increase damage         |  8, 220,    0 |  8, 400, -1/3 |  8, 400, -1/3 |  8, 400, -1/3 |  8, 400, -1/3 |
-| regeneration            |  4, 260,   -2 |  4, 460,   -2 |  4, 460,   -2 |  4, 460,   -2 |  4, 460,   -2 |
-| slow digestion          |  9, 240, +1/2 |  9, 240, +1/2 |  9, 240, +1/2 |  9, 240, +1/2 |  9, 240, +1/2 |
-| teleportation           |  9, 100,    0 |  5,  30,    0 |  5,  30,    0 |  5,  30,    0 |  5,  30,    0 |
-| stealth                 |  7, 100,    0 |  7, 470,   -1 |  7, 470,   -1 |  7, 470,   -1 |  7, 470,   -1 |
-| maintain armor          |               |  5, 380,   -1 |  5, 380,   -1 |  5, 380,   -1 |  5, 380,   -1 |
+
+| Ring                    | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| protection              |    0 |   -1 |   -1 |   -1 |   -1 |
+| add strength            |    0 |   -1 |   -1 |   -1 |   -1 |
+| sustain strength        |   -1 |   -1 |   -1 |   -1 |   -1 |
+| searching               | -1/3 | -1/3 | -1/3 | -1/3 | -1/5 |
+| see invisible           |    0 | -1/5 | -1/5 | -1/5 | -1/5 |
+| adornment               |    0 |    0 |    0 |    0 |    0 |
+| aggravate monster       |    0 |    0 |    0 |    0 |    0 |
+| dexterity               |    0 | -1/3 | -1/3 | -1/3 | -1/3 |
+| increase damage         |    0 | -1/3 | -1/3 | -1/3 | -1/3 |
+| regeneration            |   -2 |   -2 |   -2 |   -2 |   -2 |
+| slow digestion          | +1/2 | +1/2 | +1/2 | +1/2 | +1/2 |
+| teleportation           |    0 |    0 |    0 |    0 |    0 |
+| stealth                 |    0 |   -1 |   -1 |   -1 |   -1 |
+| maintain armor          |      |   -1 |   -1 |   -1 |   -1 |
+
+Worth
+
+| Ring                    | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| protection              |  200 |  400 |  400 |  400 |  400 |
+| add strength            |  200 |  400 |  400 |  400 |  400 |
+| sustain strength        |  180 |  280 |  280 |  280 |  280 |
+| searching               |  200 |  420 |  420 |  420 |  420 |
+| see invisible           |  175 |  310 |  310 |  310 |  310 |
+| adornment               |  100 |   10 |   10 |   10 |   10 |
+| aggravate monster       |  100 |   10 |   10 |   10 |   10 |
+| dexterity               |  220 |  440 |  440 |  440 |  440 |
+| increase damage         |  220 |  400 |  400 |  400 |  400 |
+| regeneration            |  260 |  460 |  460 |  460 |  460 |
+| slow digestion          |  240 |  240 |  240 |  240 |  240 |
+| teleportation           |  100 |   30 |   30 |   30 |   30 |
+| stealth                 |  100 |  470 |  470 |  470 |  470 |
+| maintain armor          |      |  380 |  380 |  380 |  380 |
 
 Wands and Staves
 ----------------
