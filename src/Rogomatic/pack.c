@@ -467,7 +467,7 @@ char *msgstart, *msgend;
   /* Now find what we have picked up: */
   if (stlmatch(mend-4,"food")) {what=food; xknow=KNOWN;}
   else if (stlmatch(mess,"amulet")) {
-      dwait (D_WARNING, "Have amulet!");
+      dwait (D_WARNING, "Have amulet on level %d!", Level);
       xtr(amulet,0,0,KNOWN)
   }
   else if (stlmatch(mess,"potion of ")) xtr(potion,10,0,KNOWN)

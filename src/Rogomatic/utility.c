@@ -52,6 +52,37 @@
 # define TRUE 1
 # define FALSE 0
 
+const char* tmode_to_str(int tmode)
+{
+  switch (tmode)
+  {
+    case T_OTHER:
+      return "OTHER";
+    case T_HANDLING:
+      return "HANDLING";
+    case T_FIGHTING:
+      return "FIGHTING";
+    case T_RESTING:
+      return "RESTING";
+    case T_MOVING:
+      return "MOVING";
+    case T_EXPLORING:
+      return "EXPLORING";
+    case T_RUNNING:
+      return "RUNNING";
+    case T_GROPING:
+      return "GROPING";
+    case T_SEARCHING:
+      return "SEARCHING";
+    case T_DOORSRCH:
+      return "DOORSRCH";
+    case T_LISTLEN:
+      return "LISTLEN";
+  }
+
+  return "BAD_TMODE_PARAM";
+}
+
 /*
  * rogo_baudrate: Determine the baud rate of the terminal
  */

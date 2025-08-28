@@ -889,17 +889,26 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
   /* Save the killer and score */
   for (k=ourkiller, r=reason; *r && *r != ' '; ++k, ++r) *k = *r;
 
+  if (streq(reason, "total winner"))
+  {
+    dwait (D_WARNING, "Good game: Total winner!");
+  }
+  else if (have (amulet) != NONE)
+  {
+    dwait (D_WARNING, "Good game: Found amulet!");
+  }
+  else if (MaxLevel >= 20)
+  {
+    dwait (D_WARNING, "Good game: Got to level %d", MaxLevel);
+  }
+
   if (streq(reason, "starvation"))
   {
-    dwait (D_WARNING, "Possible bug: died of starvation");
+    dwait (D_WARNING, "Possible bug: Died of starvation");
   }
   else if (streq(reason, "fatal error trap"))
   {
-    dwait (D_WARNING, "Possible bug: fatal error trap");
-  }
-  else if (streq(reason, "total winner"))
-  {
-    dwait (D_WARNING, "Total winner!");
+    dwait (D_WARNING, "Possible bug: Fatal error trap");
   }
   else
   {

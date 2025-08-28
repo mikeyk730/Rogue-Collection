@@ -271,6 +271,7 @@ void restoreltm ()
   }
   else {
     saynow ("Warning: could not lock long term memory file!");
+    dwait(D_ERROR, "Could not lock long term memory file!");
     nosave = 1;
   }
 
