@@ -112,25 +112,47 @@ Scrolls
 
 Potions
 -------
+Probability
 
-| Potion                  | v3.6    | v5.2    | v5.3    | v5.4    | PC      |
-|-------------------------|---------|---------|---------|---------|---------|
-| confusion               |  8,  50 |  8,   5 |  8,   5 |  7,   5 |  8,   5 |
-| paralysis               | 10,  50 | 10,   5 |         |         | 10,   5 |
-| hallucination           |         |         |  8,   5 |  8,   5 |         |
-| poison                  |  8,  50 |  8,   5 |  8,   5 |  8,   5 |  8,   5 |
-| gain strength           | 15, 150 | 15, 150 | 15, 150 | 13, 150 | 15, 150 |
-| see invisible           |  2, 170 |  2, 100 |  3, 100 |  3, 100 |  2, 100 |
-| healing                 | 15, 130 | 15, 130 | 15, 130 | 13, 130 | 15, 130 |
-| monster detection       |  6, 120 |  6, 130 |  6, 130 |  6, 130 |  6, 130 |
-| magic detection         |  6, 105 |  6, 105 |  6, 105 |  6, 105 |  6, 105 |
-| raise level             |  2, 220 |  2, 250 |  2, 250 |  2, 250 |  2, 250 |
-| extra healing           |  5, 180 |  5, 200 |  5, 200 |  5, 200 |  5, 200 |
-| haste self              |  4, 200 |  4, 190 |  5, 190 |  5, 190 |  4, 190 |
-| restore strength        | 14, 120 | 14, 130 | 14, 130 | 13, 130 | 14, 130 |
-| blindness               |  4,  50 |  4,   5 |  4,   5 |  5,   5 |  4,   5 |
-| thirst quenching        |  1,  50 |  1,   5 |  1,   5 |         |  1,   5 |
-| levitation              |         |         |         |  6,  75 |         |
+| Potion                  | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| confusion               |    8 |    8 |    8 |    7 |    8 |
+| paralysis               |   10 |   10 |      |      |   10 |
+| hallucination           |      |      |    8 |    8 |      |
+| poison                  |    8 |    8 |    8 |    8 |    8 |
+| gain strength           |   15 |   15 |   15 |   13 |   15 |
+| see invisible           |    2 |    2 |    3 |    3 |    2 |
+| healing                 |   15 |   15 |   15 |   13 |   15 |
+| monster detection       |    6 |    6 |    6 |    6 |    6 |
+| magic detection         |    6 |    6 |    6 |    6 |    6 |
+| raise level             |    2 |    2 |    2 |    2 |    2 |
+| extra healing           |    5 |    5 |    5 |    5 |    5 |
+| haste self              |    4 |    4 |    5 |    5 |    4 |
+| restore strength        |   14 |   14 |   14 |   13 |   14 |
+| blindness               |    4 |    4 |    4 |    5 |    4 |
+| thirst quenching        |    1 |    1 |    1 |      |    1 |
+| levitation              |      |      |      |    6 |      |
+
+Worth
+
+| Potion                  | v3.6 | v5.2 | v5.3 | v5.4 | PC   |
+|-------------------------|------|------|------|------|------|
+| confusion               |   50 |    5 |    5 |    5 |    5 |
+| paralysis               |   50 |    5 |      |      |    5 |
+| hallucination           |      |      |    5 |    5 |      |
+| poison                  |   50 |    5 |    5 |    5 |    5 |
+| gain strength           |  150 |  150 |  150 |  150 |  150 |
+| see invisible           |  170 |  100 |  100 |  100 |  100 |
+| healing                 |  130 |  130 |  130 |  130 |  130 |
+| monster detection       |  120 |  130 |  130 |  130 |  130 |
+| magic detection         |  105 |  105 |  105 |  105 |  105 |
+| raise level             |  220 |  250 |  250 |  250 |  250 |
+| extra healing           |  180 |  200 |  200 |  200 |  200 |
+| haste self              |  200 |  190 |  190 |  190 |  190 |
+| restore strength        |  120 |  130 |  130 |  130 |  130 |
+| blindness               |   50 |    5 |    5 |    5 |    5 |
+| thirst quenching        |   50 |    5 |    5 |      |    5 |
+| levitation              |      |      |      |   75 |      |
 
 Rings
 -----
