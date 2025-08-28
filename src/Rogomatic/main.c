@@ -286,7 +286,6 @@ int   g_seed = 0;
 int   g_expect_extra_bytes = 0;
 int   g_move_delay = 0;
 int   g_level_delay = 0;
-int   g_last_stuck_level = -1;
 int   g_debug = 1;
 int   g_debug_protocol = 0;
 
