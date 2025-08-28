@@ -56,7 +56,7 @@ QtObject{
 
     property int windowScale: defaultScale
     property bool maintainAspect: true
-    property bool sound: true
+    property bool sound: false
 
     onWindowScalingChanged: handleFontChanged();
 
