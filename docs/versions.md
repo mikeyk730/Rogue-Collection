@@ -28,6 +28,7 @@ Unix 5.4
 + Maze rooms starting on level 2
 + Passages can be hidden requiring the player to search
 + Inventory order doesn't shift
++ There are 5 different types of identify scrolls, each one can only identify items of certain types
 
 PC 1.1
 ------
