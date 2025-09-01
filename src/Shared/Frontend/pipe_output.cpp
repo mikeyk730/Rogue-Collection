@@ -56,6 +56,22 @@ void PipeOutput::WriteRogomaticPosition(Coord pos)
     _write(pipe_fd_, buf.c_str(), buf.size());
 }
 
+void PipeOutput::WriteStandoutStart()
+{
+    std::ostringstream ss;
+    ss << ESC << "[7m";
+    auto buf = ss.str();
+    _write(pipe_fd_, buf.c_str(), buf.size());
+}
+
+void PipeOutput::WriteStandoutEnd()
+{
+    std::ostringstream ss;
+    ss << ESC << "[m";
+    auto buf = ss.str();
+    _write(pipe_fd_, buf.c_str(), buf.size());
+}
+
 void PipeOutput::WriteRogomaticScreen(uint32_t* data, char* dirty)
 {
     int rows = dimensions_.y;

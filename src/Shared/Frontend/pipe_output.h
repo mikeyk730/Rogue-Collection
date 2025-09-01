@@ -13,6 +13,9 @@ struct PipeOutput : public DisplayInterface
     virtual void DisplayMessage(const std::string& message) override;
 
 private:
+    void WriteStandoutStart();
+    void WriteStandoutEnd();
+
     void WriteRogomaticPosition(Coord pos);
     void WriteRogomaticScreen(uint32_t* data, char* dirty);
     int TotalChars() const;

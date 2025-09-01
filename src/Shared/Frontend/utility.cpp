@@ -99,6 +99,11 @@ bool IsText(uint32_t ch)
     return (ch & 0x010000) == 0;
 }
 
+bool IsStandout(uint32_t ch)
+{
+    return CharColor(ch) == 0x70;
+}
+
 bool BlinkChar(uint32_t ch)
 {
     return CharText(ch) == STAIRS;
@@ -111,6 +116,11 @@ uint32_t GetUnixChar(uint32_t c)
         return i->second;
 
     return c;
+}
+
+bool IsStandout(uint32_t* data, int r, int c, int cols)
+{
+    return IsStandout(data[r*cols + c]);
 }
 
 char GetRawCharFromData(uint32_t* data, int r, int c, int cols)
