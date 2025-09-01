@@ -272,6 +272,7 @@ register char *mess, *mend;
         /* mdk */
         else if (MATCH("and achieve the rank *")) ;
         else if (MATCH("a bite momentarily weakens you")) ;
+        else if (MATCH("an apricot")) ;
 
         else unknown++;
 
@@ -619,7 +620,7 @@ register char *mess, *mend;
           { if (has_double_haste_bug()) doublehasted = 1; else hasted = 0; }
         else if (MATCH("you feel less confused now*")) confused = 0;
         else if (MATCH("you feel less trip*")) confused = 0;
-        else if (MATCH("your * vanishes as it hits*"))
+        else if (MATCH("your * vanishes as it *"))
           { darkturns = 0; darkdir = NONE; echoit=0; }
         else if (MATCH("your hands begin to glow *"))
           { infer ("monster confusion", Scroll); redhands = 1; }
