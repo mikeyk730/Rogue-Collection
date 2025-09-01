@@ -225,34 +225,45 @@ int obj;
   return (1);
 }
 
+int can_vorpal_zap(int obj)
+{
+    return obj != NONE
+        && obj == currentweapon
+        && itemis(currentweapon, VORPALIZED)
+        && !did_vorpal_zap;
+}
+
 /*
  * build and send a point with wand command.
  */
 
-int point (obj, dir)
-int obj, dir;
+int point(int obj, int dir)
 {
-  int is_vorpal_zap =
-    obj == currentweapon
-    && currentweapon != NONE
-    && itemis(currentweapon, VORPALIZED)
-    && !did_vorpal_zap;
+    // We should either be pointing a wand or a vorpalized weapon
+    int is_vorpal_zap = can_vorpal_zap(obj);
+    int is_wand_zap = !is_vorpal_zap;
 
-  if (!is_vorpal_zap)
-  {
-      if (inven[obj].type != wand) {
-        dwait (D_ERROR, "Trying to point %c", LETTER (obj));
-        return (0);
-      }
+    if (is_wand_zap)
+    {
+        if (inven[obj].type != wand)
+        {
+            dwait(D_ERROR, "Trying to point unexpected item: %s (%c) of type %s",
+                inven[obj].str,
+                LETTER(obj),
+                get_item_type_string(inven[obj].type));
+            return 0;
+        }
+        else if (itemis(obj, USELESS))
+        {
+            return 0;
+        }
+    }
 
-      if (itemis (obj, USELESS))
-        return (0);
-  }
-
-  command (T_HANDLING, "%c%c%c",
-           get_zap_key(),	/* R5.2 MLM */
-           keydir[dir], LETTER (obj));
-  return (1);
+    command(T_HANDLING, "%c%c%c",
+        get_zap_key(),
+        keydir[dir],
+        LETTER(obj));
+    return 1;
 }
 
 /*

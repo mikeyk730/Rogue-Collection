@@ -12,12 +12,12 @@
 @rem 'lib\Qt5\MakeQtStaticMd.bat'
 
 @rem This variable controls whether the script links against static or dynamic Qt libs
-set MdkQtStatic=1
+set MdkQtStatic=0
 
 @rem Static Qt libs are built from source
-if defined MdkQtStatic set QtMsvcRoot="C:\dev\Qt\Qtv5.7.0_X86_MSVC2015_MD\qtbase"
+if %MdkQtStatic% EQU 1 set QtMsvcRoot="C:\dev\Qt\Qtv5.7.0_X86_MSVC2015_MD\qtbase"
 @rem Dynamic Qt libs are from installer
-if not defined MdkQtStatic rem set QtMsvcRoot=C:\Qt\Qt5.7.0\5.7\msvc2015
+if %MdkQtStatic% EQU 0 set QtMsvcRoot=C:\Qt\Qt5.7.0\5.7\msvc2015
 @rem Qt Creator is from installer
 set QtCreatorRoot=C:\Qt\Qt5.7.0\Tools\QtCreator
 
@@ -76,4 +76,4 @@ popd
 call make_install.bat
 
 @rem If building with Qt dynamic libs, we need the .dlls
-if not defined MdkQtStatic xcopy %QtMsvcRoot%\bin\*.dll bin\RogueCollection\ /F /D
+if %MdkQtStatic% EQU 0 xcopy %QtMsvcRoot%\bin\*.dll bin\RogueCollection\ /F /D
