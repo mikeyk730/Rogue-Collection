@@ -753,6 +753,7 @@ int adj;		/* How many attackers are there? */
    * mdk: if we can zap with our vorpalized weapon, use it now!
    */
   if (die_in (1)
+      && can_vorpal_zap(currentweapon)
       && is_monster_vorpal_target(monster)
       && point(currentweapon, mdir))
   {

@@ -198,6 +198,8 @@ int obj;
 int quaff (obj)
 int obj;
 {
+  dwait(D_POTION, "Quaffing %s", inven[obj].str);
+
   if (inven[obj].type != potion) {
     dwait (D_ERROR, "Trying to quaff %c", LETTER (obj));
     usesynch = 0;
@@ -215,6 +217,8 @@ int obj;
 int reads (obj)
 int obj;
 {
+  dwait(D_SCROLL, "Reading %s", inven[obj].str);
+
   if (inven[obj].type != Scroll) {
     dwait (D_ERROR, "Trying to read %c", LETTER (obj));
     usesynch = 0;
@@ -225,34 +229,47 @@ int obj;
   return (1);
 }
 
+int can_vorpal_zap(int obj)
+{
+    return obj != NONE
+        && obj == currentweapon
+        && itemis(currentweapon, VORPALIZED)
+        && !did_vorpal_zap;
+}
+
 /*
  * build and send a point with wand command.
  */
 
-int point (obj, dir)
-int obj, dir;
+int point(int obj, int dir)
 {
-  int is_vorpal_zap =
-    obj == currentweapon
-    && currentweapon != NONE
-    && itemis(currentweapon, VORPALIZED)
-    && !did_vorpal_zap;
+    dwait(D_WAND, "Zapping %s %d", inven[obj].str, dir);
 
-  if (!is_vorpal_zap)
-  {
-      if (inven[obj].type != wand) {
-        dwait (D_ERROR, "Trying to point %c", LETTER (obj));
-        return (0);
-      }
+    // We should either be pointing a wand or a vorpalized weapon
+    int is_vorpal_zap = can_vorpal_zap(obj);
+    int is_wand_zap = !is_vorpal_zap;
 
-      if (itemis (obj, USELESS))
-        return (0);
-  }
+    if (is_wand_zap)
+    {
+        if (inven[obj].type != wand)
+        {
+            dwait(D_ERROR, "Trying to point unexpected item: %s (%c) of type %s",
+                inven[obj].str,
+                LETTER(obj),
+                get_item_type_string(inven[obj].type));
+            return 0;
+        }
+        else if (itemis(obj, USELESS))
+        {
+            return 0;
+        }
+    }
 
-  command (T_HANDLING, "%c%c%c",
-           get_zap_key(),	/* R5.2 MLM */
-           keydir[dir], LETTER (obj));
-  return (1);
+    command(T_HANDLING, "%c%c%c",
+        get_zap_key(),
+        keydir[dir],
+        LETTER(obj));
+    return 1;
 }
 
 /*
@@ -278,6 +295,8 @@ int obj, dir;
 int puton (obj)
 int obj;
 {
+  dwait(D_RING, "Put on %s", inven[obj].str);
+
   if (leftring == NONE && rightring == NONE)
     { command (T_HANDLING, "P%cl", LETTER (obj)); return (1); }
 
@@ -294,6 +313,8 @@ int obj;
 int removering (obj)
 int obj;
 {
+  dwait(D_RING, "Take off %s", inven[obj].str);
+
   if (leftring != NONE && rightring != NONE && leftring == obj)
     { command (T_HANDLING, "Rl"); return (1); }
 

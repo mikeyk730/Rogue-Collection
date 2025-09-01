@@ -113,6 +113,11 @@ hplusfix=true
 ;
 showac=false
 
+;
+; If set, debug messages will be logged to the the supplied file during the game.
+;
+logfile=
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; PC options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -158,13 +163,6 @@ use_exp_level_names=true
 ; Possible values: true, false
 ;
 macro=v
-
-;
-; If set, debug messages will be logged to the the supplied file during the game.
-;
-; Versions: all PC versions
-;
-logfile=
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Unix options

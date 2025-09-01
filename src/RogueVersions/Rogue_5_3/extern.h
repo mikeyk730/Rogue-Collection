@@ -66,3 +66,5 @@ int	checkout();
 long	lseek();// , time();
 
 extern char *md_getusername();
+
+extern FILE* g_game_log;

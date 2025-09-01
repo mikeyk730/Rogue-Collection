@@ -168,3 +168,5 @@ void md_onsignal_default(void);
 int md_issymlink(char *sp);
 extern char *xcrypt(const char *key, const char *setting);
 
+extern FILE* g_game_log;
+

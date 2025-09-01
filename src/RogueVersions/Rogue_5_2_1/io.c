@@ -146,6 +146,7 @@ WINDOW *win;
     }
 #endif
 
+    MDK_LOG("input: '%c' (%x)\n", ch, ch);
     return(ch);
 }
 

@@ -172,7 +172,11 @@ void command (int tmode, char* f, ...)
       dwait(severity, "Excessive %s for %d turns on level %d", tmode_to_str(tmode), timespent[Level].activity[tmode], Level);
   }
 
-  clear_active_item(); /* mdk:clear active item */
+  /* mdk:clear active item if we're doing something different than inventory */
+  if (cmd[0] != 'i' && cmd[0] != 'I')
+  {
+      clear_active_item();
+  }
 
   /* Do the inventory stuff */
   if (movedir == NOTAMOVE)

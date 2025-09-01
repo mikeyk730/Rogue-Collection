@@ -239,8 +239,12 @@ void toggledebug ()
   int type = debugging & ~(D_FATAL | D_ERROR | D_WARNING);
 
   if (debugging == D_ALL)         debugging = D_NORMAL;
-  else if (debugging == D_NORMAL) debugging = D_NORMAL | D_SEARCH;
-  else if (type == D_SEARCH)      debugging = D_NORMAL | D_BATTLE;
+  else if (debugging == D_NORMAL) debugging = D_NORMAL | D_ITEM;
+  else if (type == D_ITEM)        debugging = D_NORMAL | D_SCROLL;
+  else if (type == D_SCROLL)      debugging = D_NORMAL | D_POTION;
+  else if (type == D_POTION)      debugging = D_NORMAL | D_WAND;
+  else if (type == D_WAND)        debugging = D_NORMAL | D_RING;
+  else if (type == D_RING)        debugging = D_NORMAL | D_BATTLE;
   else if (type == D_BATTLE)      debugging = D_NORMAL | D_MESSAGE;
   else if (type == D_MESSAGE)     debugging = D_NORMAL | D_PACK;
   else if (type == D_PACK)        debugging = D_NORMAL | D_MONSTER;
@@ -259,6 +263,15 @@ void toggledebug ()
   if (debug(D_WARNING))   strcat (debugstr, "warn:");
 
   if (debug(D_INFORM))    strcat (debugstr, "info:");
+
+  if (debug(D_SCROLL))
+      strcat(debugstr, "scrolls:");
+  if (debug(D_POTION))
+      strcat(debugstr, "potions:");
+  if (debug(D_WAND))
+      strcat(debugstr, "wands:");
+  if (debug(D_RING))
+      strcat(debugstr, "rings:");
 
   if (debug(D_SEARCH))    strcat (debugstr, "search:");
 
