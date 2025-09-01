@@ -81,6 +81,11 @@ char **envp;
     strcpy(file_name, home);
     strcat(file_name, "rogue36.sav");
 
+    if ((env = getenv("LOGFILE")) != NULL)
+    {
+        g_game_log = fopen(env, "w");
+    }
+
     if ((env = getenv("ROGUEOPTS")) != NULL)
 	parse_opts(env);
     if (env == NULL || whoami[0] == '\0')

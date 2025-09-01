@@ -512,7 +512,10 @@ int   onat;                             /* 0 ==> Wait for waitstr
   }
 
   if (dynamic_inv_order() && checkrange && !pending ())
-    { command (T_OTHER, "Iz"); checkrange = 0; }
+  {
+      command (T_OTHER, "Iz");
+      checkrange = 0;
+  }
 
   /* If mapping status has changed */
   if (wasmapped != didreadmap) {

@@ -697,20 +697,26 @@ register char *mess, *mend;
         }
         else if (MATCH("you hear a high pitched humming noise*"))
           { infer ("aggravate monsters", Scroll); wakemonster (9); aggravated = 1; }
-        else if (MATCH("you hear maniacal laughter*")) infer ("scare monster", Scroll);
-        else if (MATCH("you hear a faint cry*")) infer ("create monster", Scroll);
-        else if (MATCH("you fall asleep*")) infer ("sleep", Scroll);
+        else if (MATCH("you hear maniacal laughter*"))
+            infer ("scare monster", Scroll);
+        else if (MATCH("you hear a faint cry*"))
+            infer ("create monster", Scroll);
+        else if (MATCH("you fall asleep*"))
+            infer ("sleep", Scroll);
         else if (MATCH("you have been granted the boon of genocide*"))
           { infer ("genocide", Scroll); echoit=0; rampage (); }
-        else if (MATCH("you have a tingling feeling*")) infer ("drain life", wand);
-        else if (MATCH("you are too weak to use it*")) infer ("drain life", wand);
+        else if (MATCH("you have a tingling feeling*"))
+            infer ("drain life", wand);
+        else if (MATCH("you are too weak to use it*"))
+            infer ("drain life", wand);
         else if (MATCH("you begin to feel greedy*"))
           infer ("gold detection", Scroll);
         else if (MATCH("you feel a pull downward*"))
           infer ("gold detection", Scroll);
         else if (MATCH("you begin to feel a pull downward*"))
           { infer ("gold detection", Scroll); }
-        else if (MATCH("you are caught *")) nametrap (BEARTRP,HERE);
+        else if (MATCH("you are caught *"))
+            nametrap (BEARTRP,HERE);
         else if (MATCH("your purse feels lighter*")) ;
         else if (MATCH("you suddenly feel weaker*")) ;
         else if (MATCH("you must identify something*")) ;

@@ -152,6 +152,7 @@ command(void)
 		last_pick = NULL;
 	    }
 over:
+		MDK_LOG("command: %c\n", ch);
 	    switch (ch)
 	    {
 		case ',': {

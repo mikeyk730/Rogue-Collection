@@ -701,3 +701,5 @@ void                    waste_time(void);
 void                    wear(void);
 void                    whatis(void);
 void                    wield(void);
+
+extern FILE* g_game_log;

@@ -198,6 +198,8 @@ int obj;
 int quaff (obj)
 int obj;
 {
+  dwait(D_POTION, "Quaffing %s", inven[obj].str);
+
   if (inven[obj].type != potion) {
     dwait (D_ERROR, "Trying to quaff %c", LETTER (obj));
     usesynch = 0;
@@ -215,6 +217,8 @@ int obj;
 int reads (obj)
 int obj;
 {
+  dwait(D_SCROLL, "Reading %s", inven[obj].str);
+
   if (inven[obj].type != Scroll) {
     dwait (D_ERROR, "Trying to read %c", LETTER (obj));
     usesynch = 0;
@@ -239,6 +243,8 @@ int can_vorpal_zap(int obj)
 
 int point(int obj, int dir)
 {
+    dwait(D_WAND, "Zapping %s %d", inven[obj].str, dir);
+
     // We should either be pointing a wand or a vorpalized weapon
     int is_vorpal_zap = can_vorpal_zap(obj);
     int is_wand_zap = !is_vorpal_zap;
@@ -289,6 +295,8 @@ int obj, dir;
 int puton (obj)
 int obj;
 {
+  dwait(D_RING, "Put on %s", inven[obj].str);
+
   if (leftring == NONE && rightring == NONE)
     { command (T_HANDLING, "P%cl", LETTER (obj)); return (1); }
 
@@ -305,6 +313,8 @@ int obj;
 int removering (obj)
 int obj;
 {
+  dwait(D_RING, "Take off %s", inven[obj].str);
+
   if (leftring != NONE && rightring != NONE && leftring == obj)
     { command (T_HANDLING, "Rl"); return (1); }
 

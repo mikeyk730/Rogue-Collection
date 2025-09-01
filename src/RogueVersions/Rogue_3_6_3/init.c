@@ -594,3 +594,5 @@ struct h_list helpstr[] = {
     'Q',	"	quit",
     0, 0
 };
+
+FILE* g_game_log = NULL;

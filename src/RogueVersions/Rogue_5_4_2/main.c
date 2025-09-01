@@ -63,6 +63,11 @@ GAME_MAIN(int argc, char **argv)
     /*strcat(file_name, "rogue.save");*/
     strcat(file_name, "rogue54.sav");
 
+    if ((env = getenv("LOGFILE")) != NULL)
+    {
+        g_game_log = fopen(env, "w");
+    }
+
     if ((env = getenv("ROGUEOPTS")) != NULL)
 	parse_opts(env);
     if (env == NULL || whoami[0] == '\0')
@@ -81,9 +86,9 @@ GAME_MAIN(int argc, char **argv)
 
     open_score();
 
-	/* 
-     * Drop setuid/setgid after opening the scoreboard file. 
-     */ 
+	/*
+     * Drop setuid/setgid after opening the scoreboard file.
+     */
 
     md_normaluser();
 
@@ -208,7 +213,7 @@ rnd(int range)
  * roll:
  *	Roll a number of dice
  */
-int 
+int
 roll(int number, int sides)
 {
     int dtotal = 0;

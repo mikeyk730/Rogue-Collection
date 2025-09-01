@@ -407,3 +407,5 @@ struct delayed_action d_list[MAXDAEMONS] = {
 };
 
 int group = 2;
+
+FILE* g_game_log = NULL;

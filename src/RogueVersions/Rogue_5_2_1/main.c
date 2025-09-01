@@ -86,6 +86,11 @@ char **envp;
     /* Line below needs slash (added by RRPF) */
     strcat(file_name, "/rogue52.sav");
 
+    if ((env = getenv("LOGFILE")) != NULL)
+    {
+        g_game_log = fopen(env, "w");
+    }
+
     if ((env = getenv("ROGUEOPTS")) != NULL)
 	parse_opts(env);
     if (env == NULL || whoami[0] == '\0')

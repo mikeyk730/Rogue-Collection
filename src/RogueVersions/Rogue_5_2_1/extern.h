@@ -31,12 +31,12 @@ extern bool	after, amulet, askme, door_stop, fight_flush,
 		slow_invent, terse, wizard, ws_know[];
 
 
-extern const char *p_colors[], *r_stones[], *w_names[], 
+extern const char *p_colors[], *r_stones[], *w_names[],
                   *a_names[], *ws_made[];
 extern char	_flags[], file_name[], fruit[],
 		home[], huh[], outbuf[], *p_guess[],
 		prbuf[], *r_guess[], *release, runch,
-		*s_guess[], *s_names[]; 
+		*s_guess[], *s_names[];
 extern byte take, _level[];
 extern char whoami[],
 		*ws_guess[], *ws_type[];
@@ -82,7 +82,7 @@ extern bool  got_genocide;
 
 #if defined(__GLIBC__) || defined(__INTERIX)
 /*
-   O_BINARY flag not provided in Interix/SFU or some versions of Linux. 
+   O_BINARY flag not provided in Interix/SFU or some versions of Linux.
    It is the same as default behavior so we just zero define it here
    to make source code compatible.
 */
@@ -92,3 +92,5 @@ extern bool  got_genocide;
 extern FILE *md_fdopen(int fd, char *mode);
 extern char *md_getusername(int uid);
 extern char *md_gethomedir();
+
+extern FILE* g_game_log;

@@ -233,6 +233,10 @@ bool Environment::WriteToOs(bool for_unix)
     {
         SetEnvVariable("ROGOMATIC_DEBUG_PROTOCOL=true");
     }
+    if (Get("logfile", &value))
+    {
+        SetEnvVariable(("LOGFILE=" + value).c_str());
+    }
 
     std::string seed;
     if (!Get("seed", &seed))

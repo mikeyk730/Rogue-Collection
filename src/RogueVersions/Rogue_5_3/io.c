@@ -125,7 +125,7 @@ readchar()
     char c;
 
     c = getch();
-    MDK_LOG("getch: '%c' (%x)\n", c, c);
+    MDK_LOG("input: '%c' (%x)\n", c, c);
     //cnt = 0;
     //while (read(0, &c, 1) <= 0)
 	//if (cnt++ > 100)	/* if we are getting infinite EOFs */
