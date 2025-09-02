@@ -1134,7 +1134,7 @@ int is_harmless_enemy(const char* monster)
  * washit: Record being hit by a monster.
  */
 
-washit (monster)
+void washit (monster)
 char *monster;
 {
   register int mh = 0, m = 0;
