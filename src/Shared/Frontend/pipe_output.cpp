@@ -56,6 +56,27 @@ void PipeOutput::WriteRogomaticPosition(Coord pos)
     _write(pipe_fd_, buf.c_str(), buf.size());
 }
 
+void PipeOutput::WriteStandoutStart()
+{
+    std::ostringstream ss;
+    ss << ESC << "[7m";
+    auto buf = ss.str();
+    _write(pipe_fd_, buf.c_str(), buf.size());
+}
+
+void PipeOutput::WriteStandoutEnd()
+{
+    std::ostringstream ss;
+    ss << ESC << "[m";
+    auto buf = ss.str();
+    _write(pipe_fd_, buf.c_str(), buf.size());
+}
+
+bool UseStandout(char ch, bool is_standout, int row)
+{
+    return is_standout && row > 0 && ch >= 'A' && ch <= 'Z';
+}
+
 void PipeOutput::WriteRogomaticScreen(uint32_t* data, char* dirty)
 {
     int rows = dimensions_.y;
@@ -74,9 +95,23 @@ void PipeOutput::WriteRogomaticScreen(uint32_t* data, char* dirty)
             if (dirty[r*cols + c])
             {
                 WriteRogomaticPosition({ c, r });
-                while (c < cols && dirty[r*cols + c]) {
-                    auto buf = GetRawCharFromData(data, r, c, cols);
-                    _write(pipe_fd_, &buf, 1);
+                while (c < cols && dirty[r*cols + c])
+                {
+                    auto ch = GetRawCharFromData(data, r, c, cols);
+                    bool is_standout = IsStandout(data, r, c, cols);
+                    bool use_standout = UseStandout(ch, is_standout, r);
+                    if (use_standout)
+                    {
+                        WriteStandoutStart();
+                    }
+
+                    _write(pipe_fd_, &ch, 1);
+
+                    if (use_standout)
+                    {
+                        WriteStandoutEnd();
+                    }
+
                     ++c;
                 }
             }

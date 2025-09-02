@@ -667,8 +667,11 @@ register int row, col;
           }
         }
 
-        if (!revvideo && ch != oldch) { /* R5.2 MLM */
-          blinded = 0;
+        if (ch != oldch)
+        {
+          //blinded = 0; //mdk: removed check to prevent "detect monster" from making us sighted
+
+          //todo:mdk: consider revvideo: monster is either near us in passage, or detected
 
           if (seenbefore)
             addmonster (ch, row, col, AWAKE);
