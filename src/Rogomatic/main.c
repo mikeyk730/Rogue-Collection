@@ -428,7 +428,15 @@ char *env[];
       g_level_delay = atoi(env_value);
   }
 
-  debuglog_open ("debuglog.player");
+  /* The third argument is an option list */
+  if (argc > 3)
+  {
+      sscanf(argv[3], "%d,%d,%d,%d,%d,%d,%d,%d",
+          &cheat, &noterm, &g_debug, &nohalf,
+          &emacs, &terse, &transparent, &quitat);
+  }
+
+  debuglog_open("rogomatic.game.log");
 
   /*
    * Initialize some storage
@@ -490,16 +498,12 @@ char *env[];
     open_frogue_fd (frogue_fd);
     trogue = fdopen (trogue_fd, "wb");
     setbuf (trogue, NULL);
-    open_frogue_debuglog ("debuglog.frogue");
+    open_frogue_debuglog ("rogomatic.frogue.log");
   }
 
   /* The second argument to player is the process id of Rogue */
   if (argc > 2) rogpid = atoi (argv[2]);
 
-  /* The third argument is an option list */
-  if (argc > 3) sscanf (argv[3], "%d,%d,%d,%d,%d,%d,%d,%d",
-                          &cheat, &noterm, &g_debug, &nohalf,
-                          &emacs, &terse, &transparent, &quitat);
   if (g_debug) {
       debugging = D_NORMAL | D_WARNING;
       startecho = 1;

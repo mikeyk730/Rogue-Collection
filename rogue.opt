@@ -274,7 +274,8 @@ rogomatic_delay=0
 rogomatic_level_delay=0
 
 ;
-; If set to true, debuging features will be enabled in Rog-O-Matic.
+; If set to true, a debug log will be written, and the in-game debugger will
+; break on any fatal, error, or warning breakpoints.
 ;
 ; Possible values: true, false
 ;
@@ -282,7 +283,8 @@ rogomatic_debug=false
 
 ;
 ; If set to true, a file named ipc.txt will be used for communication from
-; Rogue to Rogomatic. If set to false, a named pipe will be used.
+; Rogue to Rogomatic, and a log of the token stream will be written. If set
+; to false, a named pipe will be used for communication.
 ;
 rogomatic_debug_protocol=false
 

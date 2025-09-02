@@ -126,7 +126,7 @@ static FILE *froguelog = NULL;
 
 void open_frogue_debuglog (const char *file)
 {
-  if (g_debug)
+  if (g_debug_protocol)
     froguelog = fopen (file,"w");
 }
 
