@@ -495,7 +495,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
           if (!emacs && !terse) add_to_screen (row, col, ch);
 
-          if (row == STATUSROW) botprinted = 1;
+          if (row >= STATUSROW) botprinted = 1;
           else {
               if (!pc_protocol() || ch == '@')
               {
