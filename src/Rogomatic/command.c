@@ -131,8 +131,8 @@ void command (const char* description, int tmode, char* f, ...)
   vsprintf (cmd, f, args);
   va_end(args);
 
-  debuglog ("strategy: %s\n", description);
-  debuglog ("command : command (%s)\n",cmd);
+  debuglog("strategy: %s\n", description);
+  debuglog("command: (%s)\n", cmd);
 
   /* Echo the command if in transparent mode */
   if (transparent)		showcommand (cmd);

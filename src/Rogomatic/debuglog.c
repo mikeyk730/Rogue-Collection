@@ -67,7 +67,16 @@ void debuglog (const char *fmt, ...)
   va_end (ap);
 }
 
+int g_verbose = 0; //todo:mdk add config
+
 void debuglog_protocol(const char* fmt, ...)
 {
-    //todo:mdk add verbosity and enable
+    if (g_verbose)
+    {
+        va_list  ap;
+
+        va_start(ap, fmt);
+        err_doit(0, 0, fmt, ap);
+        va_end(ap);
+    }
 }

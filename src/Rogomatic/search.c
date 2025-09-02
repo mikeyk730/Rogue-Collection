@@ -212,7 +212,7 @@ evaluate_ptr evaluate;
   dwait (D_CONTROL | D_SEARCH, "Validatemap: type %d", movetype);
 
   if (mvtype != movetype) {
-    dwait (D_SEARCH, "Validatemap: move type mismatch, map invalid.");
+    dwait (D_SEARCH, "Validatemap: move type mismatch %d != %d, map invalid.", movetype, mvtype);
     return (0);
   }
 

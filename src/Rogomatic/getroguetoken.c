@@ -126,7 +126,7 @@ static FILE *froguelog = NULL;
 
 void open_frogue_debuglog (const char *file)
 {
-  if (g_debug)
+  if (g_debug_protocol)
     froguelog = fopen (file,"w");
 }
 
@@ -476,7 +476,7 @@ getroguetoken (void)
             }
             else {
               ch = GETROGUECHAR; PUTDEBUGCHAR (ch);
-              debuglog ("UNRECOGNIZED 1 : ^[[?%c\n",ch);
+              debuglog_protocol("UNRECOGNIZED 1 : ^[[?%c\n", ch);
             }
           }
           break;
@@ -567,26 +567,26 @@ getroguetoken (void)
                             }
                             break;
                             default:
-                              debuglog ("UNRECOGNIZED 7\n");
+                                debuglog_protocol("UNRECOGNIZED 7\n");
                               break;
                           }
                         }
                       }
                       break;
                       default:
-                        debuglog ("UNRECOGNIZED 2\n");
+                          debuglog_protocol("UNRECOGNIZED 2\n");
                         break;
                     }
                   }
                 }
                 break;
                 default:
-                  debuglog ("UNRECOGNIZED 3\n");
+                    debuglog_protocol("UNRECOGNIZED 3\n");
                   break;
               }
             }
             else {
-              debuglog ("UNRECOGNIZED 4\n");
+                debuglog_protocol("UNRECOGNIZED 4\n");
             }
         }
 
@@ -597,7 +597,7 @@ getroguetoken (void)
           ch = ER_TOK;
         }
         else {
-          debuglog ("UNRECOGNIZED 5\n");
+            debuglog_protocol("UNRECOGNIZED 5\n");
         }
 
         break;
@@ -615,7 +615,7 @@ getroguetoken (void)
         break;
 
       default:
-        debuglog ("UNRECOGNIZED 6 ^[%c\n",ch);
+          debuglog_protocol("UNRECOGNIZED 6 ^[%c\n", ch);
     }
   }
   else if (ch == ctrl('O')) {

@@ -81,6 +81,8 @@ int dwait (int msgtype, char* f, ...)
   vsprintf (msg, f, args);
   va_end(args);
 
+  debuglog("dwait: %s\n", msg);
+
   /* Log the message if the error is severe enough */
   if (!replaying && (msgtype & (D_FATAL | D_ERROR | D_WARNING))) {
     char errfn[128]; FILE *errfil;

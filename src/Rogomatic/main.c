@@ -1,9 +1,10 @@
 /*
 mdk:known issues 2025:
-- can get into infinite loop trying to drop an item on a tile with a sleeping trap
 - after reading mapping scroll that doesn't reveal doorways, player may not search
   for hidden door leading into passageway, and can get stuck on the level
 - with rust monster and another enemy around, player gets stuck
+- player gets stuck in treasure room deciding between 2 different monsters
+  RogueCollection.exe a --rogomatic --seed 1756837966 --genes "84 56 75 11 54 34 86 42 3"
 */
 
 /*
@@ -286,7 +287,7 @@ int   g_seed = 0;
 int   g_expect_extra_bytes = 0;
 int   g_move_delay = 0;
 int   g_level_delay = 0;
-int   g_debug = 1;
+int   g_debug = 0;
 int   g_debug_protocol = 0;
 int g_bug_fixes = B_ALL;
 
@@ -428,7 +429,15 @@ char *env[];
       g_level_delay = atoi(env_value);
   }
 
-  debuglog_open ("debuglog.player");
+  /* The third argument is an option list */
+  if (argc > 3)
+  {
+      sscanf(argv[3], "%d,%d,%d,%d,%d,%d,%d,%d",
+          &cheat, &noterm, &g_debug, &nohalf,
+          &emacs, &terse, &transparent, &quitat);
+  }
+
+  debuglog_open("rogomatic.log");
 
   /*
    * Initialize some storage
@@ -490,16 +499,12 @@ char *env[];
     open_frogue_fd (frogue_fd);
     trogue = fdopen (trogue_fd, "wb");
     setbuf (trogue, NULL);
-    open_frogue_debuglog ("debuglog.frogue");
+    open_frogue_debuglog ("rogomatic.frogue");
   }
 
   /* The second argument to player is the process id of Rogue */
   if (argc > 2) rogpid = atoi (argv[2]);
 
-  /* The third argument is an option list */
-  if (argc > 3) sscanf (argv[3], "%d,%d,%d,%d,%d,%d,%d,%d",
-                          &cheat, &noterm, &g_debug, &nohalf,
-                          &emacs, &terse, &transparent, &quitat);
   if (g_debug) {
       debugging = D_NORMAL | D_WARNING;
       startecho = 1;
