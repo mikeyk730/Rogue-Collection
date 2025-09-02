@@ -1159,11 +1159,32 @@ char *monster;
 
   terpbot ();			/* Hit points changed, read bottom */
 
+  // mdk: don't add stats if the damage could be from a "drain life" wand.
+  // This prevents us from fearing aquators and other low damage enemies.
+  if (is_drain_life() || could_be_drain_life())
+  {
+      if (enable_bugfix(B_LTM))
+      {
+          return;
+      }
+  }
+
   /* Add data about the event to long term memory */
-  if (mh != NONE) {
-    addprob (&monhist[mh].theyhit, SUCCESS);
-    addstat (&monhist[mh].damage, lastdamage);
-    analyzeltm ();
+  if (mh != NONE)
+  {
+      addprob(&monhist[mh].theyhit, SUCCESS);
+
+      int invalid_damage = lastdamage > 0 && is_harmless_enemy(monhist[mh].m_name);
+      if (invalid_damage && enable_bugfix(B_LTM)) //mdk: add check to prevent corruption
+      {
+          dwait(D_ERROR, "%s couldn't have dealt %d damage", monhist[mh].m_name, lastdamage);
+      }
+      else
+      {
+          addstat(&monhist[mh].damage, lastdamage);
+      }
+
+      analyzeltm();
   }
 }
 
@@ -1320,9 +1341,9 @@ char sep;
   if (numgold > 0)
     sprintf (s, "%sGold %d total, %d pots, %d average.%c", s,
              sumgold, numgold, (sumgold*10+5) / (numgold*10), sep);
-  sprintf(s, "%sSeed: %d, Genotype: %d %d %d %d %d %d %d %d.%c", s,
+  sprintf(s, "%sSeed: %d, Genotype: %d %d %d %d %d %d %d %d %d.%c", s,
       g_seed, knob[0], knob[1], knob[2], knob[3],
-      knob[4], knob[5], knob[6], knob[7], sep);
+      knob[4], knob[5], knob[6], knob[7], g_bug_fixes, sep);
 
   if (f == NULL)
     addstr (s);

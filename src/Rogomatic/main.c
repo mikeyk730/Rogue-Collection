@@ -288,6 +288,8 @@ int   g_move_delay = 0;
 int   g_level_delay = 0;
 int   g_debug = 1;
 int   g_debug_protocol = 0;
+int g_bug_fixes = B_ALL;
+
 
 /* Functions */
 void (*istat)(int);
@@ -564,9 +566,9 @@ char *env[];
     { saynow (msg); }
 
 #ifdef ROGUE_COLLECTION
-  debuglog("--seed %d --genes \"%d %d %d %d %d %d %d %d\"\n",
+  debuglog("--seed %d --genes \"%d %d %d %d %d %d %d %d %d\"\n",
       g_seed, knob[0], knob[1], knob[2], knob[3],
-      knob[4], knob[5], knob[6], knob[7]);
+      knob[4], knob[5], knob[6], knob[7], g_bug_fixes);
 #endif
 
   /*
@@ -960,9 +962,10 @@ void startlesson ()
   /* mdk: allow genes to be set through the environment for deterministic testing */
   char* genes_var = getenv("GENES");
   if (genes_var != NULL) {
-      sscanf(genes_var, "%d %d %d %d %d %d %d %d",
+      sscanf(genes_var, "%d %d %d %d %d %d %d %d %d",
           &knob[0], &knob[1], &knob[2], &knob[3],
-          &knob[4], &knob[5], &knob[6], &knob[7]);
+          &knob[4], &knob[5], &knob[6], &knob[7],
+          &g_bug_fixes);
   }
   /* Serialize access to the gene pool */
   else if (lock_file (genelock, MAXLOCK)) {	/* Lock the gene pool */

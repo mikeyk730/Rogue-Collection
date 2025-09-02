@@ -653,7 +653,7 @@ int haveuseless ()
          stlmatch (inven[i].str, "poison") ||
          stlmatch (inven[i].str, "confusion") ||
          stlmatch (inven[i].str, "magic detection") ||
-         (enable_bugfixes() && stlmatch (inven[i].str, "paralysis")) || //mdk: this code didn't used to get hit, since item was "paralysi" in inventory
+         (enable_bugfix(B_PARALYSIS) && stlmatch (inven[i].str, "paralysis")) || //mdk: this code didn't used to get hit, since item was "paralysi" in inventory
          stlmatch (inven[i].str, "hallucination") ||
          stlmatch (inven[i].str, "thirst") ||
          stlmatch (inven[i].str, "food detection") ||

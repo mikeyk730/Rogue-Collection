@@ -292,7 +292,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
     switch (ch) {
       case BS_TOK:
         col--;
-        debuglog ("BS_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol ("BS_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
 
       case CB_TOK:
@@ -302,7 +302,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
           screen[row][i] = ' ';
         }
 
-        debuglog ("CB_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol ("CB_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
 
       case CE_TOK:
@@ -319,28 +319,28 @@ int   onat;                             /* 0 ==> Wait for waitstr
         if (row) { at (row, col); clrtoeol (); }
         else if (col == 0) screen00 = ' ';
 
-        debuglog ("CE_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol ("CE_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
 
       case CH_TOK:
-        debuglog ("CH_TOK [%d, %d] [%d, %d]\n",number1, number2, row, col);
+        debuglog_protocol ("CH_TOK [%d, %d] [%d, %d]\n",number1, number2, row, col);
         s_row1 = number1-1;
         s_row2 = number2-1;
-        debuglog ("CH_TOK scroll region %d - %d\n",s_row1, s_row2);
+        debuglog_protocol ("CH_TOK scroll region %d - %d\n",s_row1, s_row2);
         break;
 
       case CL_TOK:
         clearscreen ();
         row = 0;
         col = 0;
-        debuglog ("CL_TOK [%d, %d]\n", row, col);
+        debuglog_protocol ("CL_TOK [%d, %d]\n", row, col);
         break;
 
       case CM_TOK:
         screen00 = screen[0][0];
         row = number1 - 1;
         col = number2 - 1;
-        debuglog ("CM_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol ("CM_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
 #ifndef _WIN32
       case CR_TOK:
@@ -350,7 +350,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
          *   terpmes ();
          */
         col = 0;
-        debuglog ("CR_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol ("CR_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
 #endif
       case ER_TOK:
@@ -359,39 +359,39 @@ int   onat;                             /* 0 ==> Wait for waitstr
       case LF_TOK:
 #ifdef _WIN32
         col = 0;
-        debuglog("CR_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol("CR_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
 #endif
         row++;
-        debuglog ("LF_TOK      check for scroll %d > %d\n",row, s_row2);
+        debuglog_protocol ("LF_TOK      check for scroll %d > %d\n",row, s_row2);
 
         if (row > s_row2) {
-          debuglog ("LF_TOK      scroll up\n");
+          debuglog_protocol ("LF_TOK      scroll up\n");
           scrollup ();
         }
 
-        debuglog ("LF_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol ("LF_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
 
       case ND_TOK:
         row += number1;
-        debuglog ("ND_TOK [%2d] [%2d, %2d] [%c]\n", number1, row, col, screen[row][col]);
+        debuglog_protocol ("ND_TOK [%2d] [%2d, %2d] [%c]\n", number1, row, col, screen[row][col]);
         break;
 
       case SE_TOK:
-        debuglog ("SE_TOK\n");
+        debuglog_protocol ("SE_TOK\n");
         revvideo = 0;
         standend ();
         break;
 
       case SO_TOK:
-        debuglog ("SO_TOK\n");
+        debuglog_protocol ("SO_TOK\n");
         revvideo = 1;
         standout ();
         break;
 
       case TA_TOK:
         col = 8 * (1 + col / 8);
-        debuglog ("TA_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol ("TA_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
 
       case EOF:
@@ -409,41 +409,41 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
       case UP_TOK:
         row--;
-        debuglog ("UP_TOK      [%2d, %2d] [%c]\n", row, col,screen[row][col]);
+        debuglog_protocol ("UP_TOK      [%2d, %2d] [%c]\n", row, col,screen[row][col]);
         break;
 
       case HM_TOK:
         col = 0;
         row = 0;
-        debuglog ("HM_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+        debuglog_protocol ("HM_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
 
       case NU_TOK:
         row -= number1;
-        debuglog ("NU_TOK [%2d] [%2d, %2d] [%c]\n", number1, row, col, screen[row][col]);
+        debuglog_protocol ("NU_TOK [%2d] [%2d, %2d] [%c]\n", number1, row, col, screen[row][col]);
         break;
 
       case NR_TOK:
         col += number1;
-        debuglog ("NR_TOK [%2d] [%2d, %2d] [%c]\n", number1, row, col, screen[row][col]);
+        debuglog_protocol ("NR_TOK [%2d] [%2d, %2d] [%c]\n", number1, row, col, screen[row][col]);
         break;
 
       case NL_TOK:
-        debuglog ("NL_TOK\n");
+        debuglog_protocol ("NL_TOK\n");
         col -= number1;
-        debuglog ("NL_TOK [%2d] [%2d, %2d] [%c]\n", number1, row, col, screen[row][col]);
+        debuglog_protocol ("NL_TOK [%2d] [%2d, %2d] [%c]\n", number1, row, col, screen[row][col]);
         break;
 
       case SC_TOK:
-        debuglog ("SC_TOK      [%2d, %2d]\n", row, col);
+        debuglog_protocol ("SC_TOK      [%2d, %2d]\n", row, col);
         break;
 
       case RC_TOK:
-        debuglog ("RC_TOK      [%2d, %2d]\n", row, col);
+        debuglog_protocol ("RC_TOK      [%2d, %2d]\n", row, col);
         break;
 
       case SR_TOK:
-        debuglog ("SR_TOK      [%2d, %2d]\n", row, col);
+        debuglog_protocol ("SR_TOK      [%2d, %2d]\n", row, col);
         scrolldown ();
         break;
 
@@ -472,7 +472,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
                   // for the monster. This throws off the logic. This hack lets us process
                   // only the final state of each tile
                   delayed_updates[row][col] = ch;
-                  debuglog("DELAYING OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, col, screen[row][col]);
+                  debuglog_protocol("DELAYING OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, col, screen[row][col]);
                   col++;
                   break;
               }
@@ -489,7 +489,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
         }
 
         screen[row][col++] = ch;
-        debuglog ("OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, (col-1), screen[row][col-1]);
+        debuglog_protocol ("OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, (col-1), screen[row][col-1]);
         break;
     }
   }
@@ -562,7 +562,7 @@ void process_delayed_update()
             {
                 updatepos(delayed_updates[i][j], i, j);
                 screen[i][j] = delayed_updates[i][j];
-                debuglog("DELAYED OTHER   [%c] [%2d, %2d] [%c]\n", screen[i][j], i, j, screen[i][j]);
+                debuglog_protocol("DELAYED OTHER   [%c] [%2d, %2d] [%c]\n", screen[i][j], i, j, screen[i][j]);
             }
         }
     }
@@ -951,9 +951,9 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
            sumline, Ac, Explev, Exp, ltm.gamecnt);
 
   /* mdk: save seed and genes so run can be replayed */
-  sprintf(sumline, "%s    %d    %d %d %d %d %d %d %d %d", sumline,
+  sprintf(sumline, "%s    %d    %d %d %d %d %d %d %d %d %d", sumline,
       g_seed, knob[0], knob[1], knob[2], knob[3],
-      knob[4], knob[5], knob[6], knob[7]);
+      knob[4], knob[5], knob[6], knob[7], g_bug_fixes);
 
   /* Now write the summary line to the log file */
   at (STATUSROW, 0); clrtoeol (); refresh ();

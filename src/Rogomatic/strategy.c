@@ -591,7 +591,7 @@ int adj;		/* How many attackers are there? */
   }
 
   /*
-   * Take invisible stalkers into account into account,
+   * Take invisible stalkers into account,
    * fightmonster() and tomonster() cant see stalkers.
    */
 
@@ -601,6 +601,9 @@ int adj;		/* How many attackers are there? */
   dwait (D_BATTLE,
          "Battlestations: %s(%d), total danger %d, dir %d, %d turns, %d adj.",
          monster, mbad, danger, mdir, turns, adj);
+
+  debuglog("Battlestations: %s(%d), total danger %d, dir %d, %d turns, %d adj.",
+      monster, mbad, danger, mdir, turns, adj);
 
   /*
    * Switch back to our mace or sword?
