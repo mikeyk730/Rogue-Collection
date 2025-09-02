@@ -83,6 +83,49 @@ const char* tmode_to_str(int tmode)
   return "BAD_TMODE_PARAM";
 }
 
+const char* get_move_type_str(int movetype)
+{
+    switch (movetype)
+    {
+    case EXPLORE:
+        return "EXPLORE";
+    case EXPLORERUN:
+        return "EXPLORERUN";
+    case RUNTODOOR:
+        return "RUNTODOOR";
+    case RUNAWAY:
+        return "RUNAWAY";
+    case SECRETDOOR:
+        return "SECRETDOOR";
+    case FINDSAFE:
+        return "FINDSAFE";
+    case GOTOMOVE:
+        return "GOTOMOVE";
+    case ATTACKSLEEP:
+        return "ATTACKSLEEP";
+    case ARCHERYMOVE:
+        return "ARCHERYMOVE";
+    case UNPIN:
+        return "UNPIN";
+    case UNPINEXP:
+        return "UNPINEXP";
+    case EXPLOREROOM:
+        return "EXPLOREROOM";
+    case FINDROOM:
+        return "FINDROOM";
+    case RESTMOVE:
+        return "RESTMOVE";
+    case DOWNMOVE:
+        return "DOWNMOVE";
+    case RUNDOWN:
+        return "RUNDOWN";
+    case NUMMOVES:
+        return "NUMMOVES";
+    }
+
+    return "BAD_TYPE";
+}
+
 /*
  * rogo_baudrate: Determine the baud rate of the terminal
  */

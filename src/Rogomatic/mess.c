@@ -354,7 +354,10 @@ register char *mess, *mend;
 
       case 'i':
 
-        if (MATCH("it hit*")) { washit ("it"); echoit=0; }
+        if (MATCH("it hit*")) {
+            washit ("it");
+            echoit=0;
+        }
         else if (MATCH("it misses*"))  { wasmissed ("it"); echoit=0; }
         else if (MATCH("it appears confused*")) ;
         else if (MATCH("ice *")) ;
@@ -482,7 +485,11 @@ register char *mess, *mend;
         else if (MATCH("the * misses it*")) {echoit=0; msmiss ("it");}
         else if (MATCH("the * hits the *")) {echoit=0; mshit (res2);}
         else if (MATCH("the * misses the *")) {echoit=0; msmiss (res2);}
-        else if (MATCH("the * hit*")) { washit (res1); gushed=0; echoit=0; }
+        else if (MATCH("the * hit*")) {
+            washit (res1);
+            gushed=0;
+            echoit=0;
+        }
         else if (MATCH("the * misses*")) { wasmissed (res1); echoit=0; }
         else if (MATCH("the * appears confused*")) ;
         else if (MATCH("the rust vanishes instantly*"))
@@ -731,7 +738,8 @@ register char *mess, *mend;
         //else if (MATCH("you feel deeply moved*")) infer ("teleportation", Scroll); //todo:mdk message doesn't exist, rogo will never infer teleportation scroll
 
         else if (MATCH("you are transfixed*")) ;
-        else if (MATCH("you are frozen*")) washit ("ice monster");
+        else if (MATCH("you are frozen*"))
+            washit ("ice monster");
         else if (MATCH("you faint*")) {echoit=0; if (eat_after_fainting()) eat();}
         else if (MATCH("you freak out*")) echoit = 0;
         else if (MATCH("you fell into a trap!*")) ;
@@ -1106,11 +1114,35 @@ register char *monster;
     beingstalked = 0;
 }
 
+int is_drain_life()
+{
+    return streq(lastname, "drain life");
+}
+
+int could_be_drain_life()
+{
+    // If we're zapping with an unknown wand, and we've lost at least half of our HP,
+    // it could be due to the wand
+    int originalHp = Hp + lastdamage;
+    return is_zapping() &&
+        havewand("drain life") == NONE &&
+        (originalHp / 2) <= lastdamage;
+}
+
+int is_harmless_enemy(const char* monster)
+{
+    return streq("aquator", monster) ||
+        streq("rust monster", monster) ||
+        streq("nymph", monster) ||
+        streq("floating eye", monster) ||
+        (streq("ice monster", monster) && version != RVPC148);
+}
+
 /*
  * washit: Record being hit by a monster.
  */
 
-washit (monster)
+void washit (monster)
 char *monster;
 {
   register int mh = 0, m = 0;

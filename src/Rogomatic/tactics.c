@@ -458,7 +458,7 @@ register int turns;
   register int k, moves;
 
   if (atrow < 2 || atcol < 1) {
-    command (T_GROPING, "%ds", (turns > 0) ? turns : 1);
+    command ("grope", T_GROPING, "%ds", (turns > 0) ? turns : 1);
     return (1);
   }
 
@@ -474,9 +474,9 @@ register int turns;
     if ((onrc(CANGO|TRAP, atdrow(blindir), atdcol(blindir)) == CANGO))
       break;
 
-  if (turns) command (T_GROPING, "%c%c%ds", keydir[blindir],
+  if (turns) command ("grope 2", T_GROPING, "%c%c%ds", keydir[blindir],
                         keydir[(blindir+4)&7], turns);
-  else       command (T_GROPING, "%c%c", keydir[blindir],
+  else       command ("grope 3", T_GROPING, "%c%c", keydir[blindir],
                         keydir[(blindir+4)&7]);
 
   blindir = (blindir+2) % 8;
@@ -553,7 +553,7 @@ register int running; /* True ==> don't do anything fancy */
 
   if (atrow == stairrow && atcol == staircol &&
       !running && larder > 0 && Hp < max (10, percent (Hpmax, p))) {
-    command (T_RESTING, "s");
+    command ("rest on stairs", T_RESTING, "s");
     display ("Resting on stairs before next level");
     return (1);
   }
@@ -567,7 +567,7 @@ register int running; /* True ==> don't do anything fancy */
     { saynow ("Cannot escape, floating in mid-air!"); return (0); }
   else if (floating) {
     saynow ("Floating above stairs...");
-    command (T_RESTING, "s"); return (1);
+    command ("resting to stop floating", T_RESTING, "s"); return (1);
   }
 
   /* If we are on the stairs, go down */
@@ -578,7 +578,7 @@ register int running; /* True ==> don't do anything fancy */
     if (Level > (GOODGAME-2) && !replaying && !logging) toggleecho ();
 
     /* Send the DOWN command and return */
-    command (T_MOVING, ">");
+    command ("go down stairs", T_MOVING, ">");
     return (1);
   }
 
@@ -726,7 +726,7 @@ int running;
 
     /* Not at the top yet, keep on trucking */
     else
-      { command (T_MOVING, "<"); return (1); }
+      { command ("go up stairs", T_MOVING, "<"); return (1); }
   }
 
   /* If we know where the stairs are, go there */
@@ -762,12 +762,12 @@ int restup ()
   register int obj, turns;
 
   /* If we are confused, sit still so we don't bump into anything bad */
-  if (confused) { command (T_RESTING, "s"); return (1); }
+  if (confused) { command ("rest to clear confusion", T_RESTING, "s"); return (1); }
 
   /* If cosmic and plenty of hit points and food, rest for long periods */
   if (cosmic && (Hp >= percent (Hpmax, 80)) && larder > 2) {
     display ("Oh wow man, I'm contemplating my navel!");
-    command (T_RESTING, "100s"); return (1);
+    command ("rest to get rid of cosmic", T_RESTING, "100s"); return (1);
   }
 
   /* If we are well, return */
@@ -811,7 +811,7 @@ int restup ()
 
   if ((!darkroom () && ammo) || Hp < Level*2+8 || Level > 15) turns = 1;
 
-  command (T_RESTING, "%ds", turns);
+  command ("rest", T_RESTING, "%ds", turns);
   return (1);
 }
 
@@ -949,7 +949,7 @@ int eat ()
   int obj;
 
   if ((obj = have (food)) != NONE) {
-    command (T_HANDLING, "e%c", LETTER (obj));
+    command ("eat", T_HANDLING, "e%c", LETTER(obj));
     return (1);
   }
 

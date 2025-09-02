@@ -513,7 +513,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
   if (dynamic_inv_order() && checkrange && !pending ())
   {
-      command (T_OTHER, "Iz");
+      command ("internal: find inventory bounds", T_OTHER, "Iz");
       checkrange = 0;
   }
 
@@ -1248,7 +1248,7 @@ void toggleecho ()
     else {
       saynow ("Logging to file %s", ROGUELOG);
 
-      if (*versionstr) command (T_OTHER, "v");
+      if (*versionstr) command ("internal: find version", T_OTHER, "v");
     }
   }
   else {
@@ -1357,34 +1357,6 @@ void dosnapshot ()
     fclose (snapshot);
     saynow ("Snapshot added to %s.", SNAPSHOT);
   }
-
-#ifdef ROGUE_COLLECTION
-  if (g_debug)
-  {
-      copyltm();
-#ifdef _WIN32
-      char filename[80];
-      FILE* batch;
-
-      sprintf_s(filename, 80, "run-%d-lvl%d.bat", g_seed, Level);
-      if ((batch = wopen(filename, "w")) != NULL) {
-          char game =
-              version == RV36B ? 'f' :
-              version == RV52A ? 'e' :
-              version == RV53NMT ? 'd' :
-              version == RV54A ? 'c' :
-              version == RVPC11 ? 'b' :
-              version == RVPC148 ? 'a' :
-              'X';
-          fprintf(batch,
-              "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"",
-              game, g_seed, knob[0], knob[1], knob[2], knob[3],
-              knob[4], knob[5], knob[6], knob[7]);
-      }
-      fclose(batch);
-#endif
-  }
-#endif
 }
 
 /*

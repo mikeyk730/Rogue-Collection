@@ -677,14 +677,16 @@ char *env[];
         case 'Y': case 'U': case 'B': case 'N':
         case 'h': case 'j': case 'k': case 'l':
         case 'y': case 'u': case 'b': case 'n':
-        case 's': command (T_OTHER, "%c", ch); transparent = 1; break;
+        case 's': command ("user input", T_OTHER, "%c", ch); transparent = 1; break;
 
         case 'f': ch = getch ();
 
           for (s = "hjklyubnHJKLYUBN"; *s; s++) {
             if (ch == *s) {
-              if (run_uses_f_prefix()) command (T_OTHER, "f%c", ch);
-              else                 command (T_OTHER, "%c", ctrl (ch));
+              if (run_uses_f_prefix())
+                  command ("user input", T_OTHER, "f%c", ch);
+              else
+                  command ("user input", T_OTHER, "%c", ctrl (ch));
             }
           }
 
@@ -697,12 +699,12 @@ char *env[];
         case 'M':   dumpmazedoor (); break;
 
         case '>': if (atrow == stairrow && atcol == staircol)
-            command (T_OTHER, ">");
+            command ("go down a level", T_OTHER, ">");
 
           transparent = 1; break;
 
         case '<': if (atrow == stairrow && atcol == staircol &&
-                        have (amulet) != NONE) command (T_OTHER, "<");
+                        have (amulet) != NONE) command ("go up a level", T_OTHER, "<");
 
           transparent = 1; break;
 
