@@ -391,7 +391,9 @@ int can_vorpal_zap(int obj);
 const char* describe(const char* msg, const char* monster);
 char* populate_top_line(char* topline, char replacement);
 
-#define B_PARALYSIS		0x0001
-#define B_LTM			0x0002
-#define B_ALL			B_PARALYSIS | B_LTM;
+#define B_PARALYSIS     0x0001
+#define B_LTM           0x0002
+#define B_TILE_FIX      0x0004
+#define B_STATUS_FIX    0x0008
+#define B_ALL           B_PARALYSIS | B_LTM | B_TILE_FIX | B_STATUS_FIX;
 int enable_bugfix(int bug);

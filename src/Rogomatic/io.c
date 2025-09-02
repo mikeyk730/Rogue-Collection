@@ -495,12 +495,26 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
           if (!emacs && !terse) add_to_screen (row, col, ch);
 
-          if (row >= STATUSROW) botprinted = 1;
+          if (row == STATUSROW)
+          {
+              botprinted = 1;
+          }
+          // mdk: previously, we'd get a update for the 2nd row of the status bar, and treat it as
+          // the map. We'd track monsters like H, W, and F from the Hungry, Weak, and Faint messages
+          else if (row > STATUSROW && enable_bugfix(B_STATUS_FIX))
+          {
+          }
           else {
               if (!pc_protocol() || ch == '@')
               {
                   updatepos(ch, row, col);
-                  delayed_updates[row][col] = 0;
+                  // mdk: if we get 2 updates for the space that the player is on, we shouldn't process
+                  // the tile underneath the player. This fixes a bug where we'd try to drop an item on
+                  // a trap infinitely
+                  if (enable_bugfix(B_TILE_FIX))
+                  {
+                      delayed_updates[row][col] = 0;
+                  }
               }
               else
               {
