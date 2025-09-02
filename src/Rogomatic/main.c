@@ -436,7 +436,7 @@ char *env[];
           &emacs, &terse, &transparent, &quitat);
   }
 
-  debuglog_open("rogomatic.game.log");
+  debuglog_open("rogomatic.log");
 
   /*
    * Initialize some storage
@@ -498,7 +498,7 @@ char *env[];
     open_frogue_fd (frogue_fd);
     trogue = fdopen (trogue_fd, "wb");
     setbuf (trogue, NULL);
-    open_frogue_debuglog ("rogomatic.frogue.log");
+    open_frogue_debuglog ("rogomatic.frogue");
   }
 
   /* The second argument to player is the process id of Rogue */
