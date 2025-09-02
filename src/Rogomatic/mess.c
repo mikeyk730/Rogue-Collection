@@ -57,6 +57,31 @@ static int echoit;		/* True ==> echo this message to the user */
 static char res1[NAMSIZ], res2[NAMSIZ], res3[NAMSIZ], res4[NAMSIZ], res5[NAMSIZ];
 static char *result[] = { res1, res2, res3, res4, res5 };
 
+char* populate_top_line(char* topline, char replacement)
+{
+    const char* s = &screen[0][0];
+    memset(topline, '\0', 128);
+    strncpy(topline, s, 127);
+
+    /* Set 't' to the tail of the message,
+        skip backward until you find a letter, digit, or punctuation */
+    char* t = topline + (MAXCOLS - 1);
+
+    while ((isspace(*t) || *t == '.' || *t == '-') && (t > topline))
+    {
+        if (*t == '-' || *t == '.' || *t == '\0')
+        {
+            *t = replacement;
+        }
+
+        t--;
+    }
+
+    t++;  /* t -> beyond string */
+
+    return t;
+}
+
 /*
  * terpmes: called when a message from Rogue is on the top line,
  * this function parses the message and notes the information.
@@ -74,23 +99,8 @@ void terpmes ()
   char mess[128]; char topline[128];
   register char *m, *mend, *s, *t;
 
-  s=&screen[0][0];
-  memset (topline, '\0', 128);
-  strncpy (topline, s, 127);
-  s=topline;
-
-  /* Set 't' to the tail of the message,
-      skip backward until you find a letter, digit, or punctuation */
-  t=topline+(MAXCOLS-1);
-
-  while ((isspace(*t) || *t == '.' || *t == '-') && (t > topline)) {
-    if (*t == '-' || *t == '.' || *t == '\0')
-      *t = ' ';
-
-    t--;
-  }
-
-  t++;  /* t -> beyond string */
+  s = topline;
+  t = populate_top_line(topline, ' ');
 
   /*
    * Loop through each message, finding the beginning and end, and
@@ -115,6 +125,7 @@ void terpmes ()
 
     mend = m;
 
+    debuglog("message: %s\n", mess);
     /* :ANT: for debugging screen now has to be at least 31x80 */
     if debug(D_MESSAGE) {
       at (MAXROWS,0);
@@ -176,6 +187,14 @@ void handle_vorpalize_disappear()
 {
     removeinv(currentweapon);
 }
+
+void prevent_more_loop()
+{
+    dwait(D_WARNING, "Try to cancel last command to prevent more loop");
+    sendnow("%c;", ESC);
+}
+
+static int logging_cooldown = 0;
 
 /*
  * parsemsg: Parse a single message, and if necessary set variables
@@ -415,7 +434,10 @@ register char *mess, *mend;
       case 'o':
 
         if (MATCH("oh no! an arrow shot *"))
-          { arrowshot=1; nametrap(ARROW,HERE); }
+        {
+            arrowshot = 1;
+            nametrap(ARROW, HERE);
+        }
         else if (MATCH("oh, now this scroll has a map *"))
           { infer ("magic mapping", Scroll); didreadmap = Level; }
         else if (MATCH("oh, bummer!  everything is dark!  help!*"))
@@ -527,10 +549,10 @@ register char *mess, *mend;
           set(STUFF);
           usesynch=0;
         }
-        else if (MATCH("there is something here*")) {
+        /*mdk: not in game, else if (MATCH("there is something here*")) {
           set(STUFF);
           usesynch=0;
-        }
+        }*/
         else if (MATCH("the munchies are interfering*")) ;
         else if (MATCH("the monsters around you freeze*")) holdmonsters ();
         else if (MATCH("the monster freezes*")) holdmonsters ();
@@ -788,11 +810,21 @@ register char *mess, *mend;
     }
 
   /* Log unknown or troublesome messages */
-  if ((morecount > 200) && (morecount < 4000)) {
-    dwait(D_WARNING, "More Loop ->%s<-.", mess);
-  }
-  else if (morecount >= 4000) {
+  if (morecount >= 4000)
+  {
     dwait(D_FATAL, "More Loop Exit ->%s<-.", mess);
+  }
+  else if (morecount > 200)
+  {
+      if (logging_cooldown == 0) //mdk: only log every 25 iterations to avoid spamming log
+      {
+          dwait(D_WARNING, "More Loop %d ->%s<-.", morecount, mess);
+          logging_cooldown = 24;
+      }
+      else
+      {
+          --logging_cooldown;
+      }
   }
   else if (unknown)
     dwait (D_WARNING, "Unknown message '%s'", mess);

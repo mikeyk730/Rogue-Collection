@@ -575,7 +575,7 @@ register int running; /* True ==> don't do anything fancy */
     halftimeshow (Level);
 
     /* Start logging at Level GOODGAME, if we arent already */
-    if (Level > (GOODGAME-2) && !replaying && !logging) toggleecho ();
+    //mdk: don't log: if (Level > (GOODGAME-2) && !replaying && !logging) toggleecho ();
 
     /* Send the DOWN command and return */
     command ("go down stairs", T_MOVING, ">");

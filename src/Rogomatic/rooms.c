@@ -40,12 +40,20 @@
 
 int levelmap[9];
 
+int g_break_at_level = 0; //mdk:todo: allow this to be set from command line
+
 /*
  * newlevel: Clear old data structures and set up for a new level.
  */
 
 void newlevel ()
 {
+  debuglog("level: %d\n", Level);
+  if (Level == g_break_at_level)
+  {
+      dwait(D_WARNING, "Breaking at level %d", Level);
+  }
+
   int   i, j;
 
   initstufflist ();			/* Delete the list of items */
@@ -162,13 +170,15 @@ register int r,c;
  * nametrap: look around for a trap and set its type.
  */
 
-void nametrap (traptype, standingonit)
-int traptype, standingonit;
+void nametrap (int traptype, int standingonit)
 {
   register int i, r, c, tdir = NONE, monsteradj = 0;
 
   if (standingonit)
-    { r=atrow; c=atcol; }
+  {
+      r=atrow;
+      c=atcol;
+  }
 
   else if (blinded)		/* Cant see, dont bother */
     return;
@@ -213,6 +223,7 @@ int traptype, standingonit;
   /* Set the trap type */
   unsetrc (TELTRAP|TRAPDOR|BEARTRP|GASTRAP|ARROW|DARTRAP, r, c);
   setrc (TRAP | traptype, r, c);
+  debuglog("discover: trap at %d %d\n", r, c);
 }
 
 /*
@@ -521,6 +532,7 @@ register int row, col;
       unsetrc (MONSTER | SLEEPER, row, col);
       atrow = row;
       atcol = col;
+      debuglog("player: at %d %d\n", atrow, atcol);
       break;
 
     case '#':

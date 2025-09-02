@@ -185,6 +185,8 @@ char  *codename;
 char  *name;
 stuff item_type;
 {
+  debuglog("infer: '%s' is '%s' (%s)\n", codename, name, get_item_type_string(item_type));
+
   register int i;
 
   i = findfake (codename, item_type);

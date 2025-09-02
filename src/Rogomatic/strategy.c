@@ -602,7 +602,7 @@ int adj;		/* How many attackers are there? */
          "Battlestations: %s(%d), total danger %d, dir %d, %d turns, %d adj.",
          monster, mbad, danger, mdir, turns, adj);
 
-  debuglog("Battlestations: %s(%d), total danger %d, dir %d, %d turns, %d adj.",
+  debuglog("Battlestations: %s(%d), total danger %d, dir %d, %d turns, %d adj.\n",
       monster, mbad, danger, mdir, turns, adj);
 
   /*

@@ -211,6 +211,18 @@ int   onat;                             /* 0 ==> Wait for waitstr
          ((!hasted || version != RV36A) && onat && screen[row][col] != '@')) {
     ch = getroguetoken ();
 
+    /*
+    * mdk: observation:
+    * - Rogomatic relies on sending ";" to Rogue, which results in "Illegal command ';'"
+    * - We read updates from Rogue until:
+    *   - The player is written to the screen
+    *   - A ";" character is written to the screen
+    * - We interpret messages in 3 cases:
+    *   - When we write "message ends in "(* for list)" to the top line
+    *   - When we write "re--" to the top line
+    *   - When we're about to overwrite a message with "Il"
+    */
+
     if debug(D_MESSAGE) {
       at (28,col);
       printw ("%s", unctrl((unsigned char)ch));
@@ -247,15 +259,26 @@ int   onat;                             /* 0 ==> Wait for waitstr
     /* If the message has a more, strip it off and call terpmes */
     if (ch == *m) {
       if (*++m == 0) {
+        ++morecount;
+
         /* More than 50 messages since last command ==> start logging */
-        if (++morecount > 50 && !logging) {
+        /*mdk: disable logging: if (morecount > 50 && !logging) {
           toggleecho ();
           dwait (D_WARNING, "Started logging --More-- loop.");
-        }
+        }*/
 
-        /* Send a space (and possibly a semicolon) to clear the message */
-        if (onat == 2) sendnow (" ;");
-        else           sendnow (" ");
+        // mdk: try to break loop
+        if (morecount > 200)
+        {
+            dwait(D_WARNING, "Trying to break out of More loop");
+            sendnow("%c %c;", ESC, ESC);
+        }
+        else
+        {
+            /* Send a space (and possibly a semicolon) to clear the message */
+            if (onat == 2) sendnow(" ;");
+            else           sendnow(" ");
+        }
 
         /* Clear the --More-- of the end of the message */
         for (i = col - 7; i < col; screen[0][i++] = ' ');
@@ -286,7 +309,13 @@ int   onat;                             /* 0 ==> Wait for waitstr
     else call = "Call it:";
 
     /* Check to see whether we have read the synchronization string */
-    if (*s) { if (ch == *s) s++; else s = waitstr; }
+    if (*s)
+    {
+        if (ch == *s)
+            s++;
+        else
+            s = waitstr;
+    }
 
     /* Now figure out what the token means */
     switch (ch) {
@@ -316,8 +345,13 @@ int   onat;                             /* 0 ==> Wait for waitstr
           for (i = col; i < MAXCOLS; i++)
             screen[row][i] = ' ';
 
-        if (row) { at (row, col); clrtoeol (); }
-        else if (col == 0) screen00 = ' ';
+        if (row)
+        {
+            at (row, col);
+            clrtoeol ();
+        }
+        else if (col == 0)
+            screen00 = ' ';
 
         debuglog_protocol ("CE_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
         break;
@@ -337,11 +371,13 @@ int   onat;                             /* 0 ==> Wait for waitstr
         break;
 
       case CM_TOK:
-        screen00 = screen[0][0];
-        row = number1 - 1;
-        col = number2 - 1;
-        debuglog_protocol ("CM_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
-        break;
+      {
+          screen00 = screen[0][0];
+          row = number1 - 1;
+          col = number2 - 1;
+          debuglog_protocol("CM_TOK      [%2d, %2d] [%c]\n", row, col, screen[row][col]);
+          break;
+      }
 #ifndef _WIN32
       case CR_TOK:
         /* Handle missing '--more--' between inventories  MLM 24-Jun-83 */
@@ -379,14 +415,15 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
       case SE_TOK:
         debuglog_protocol ("SE_TOK\n");
-        revvideo = 0;
-        standend ();
+        //todo:mdk: update protocol to support
+        //revvideo = 0;
+        //standend ();
         break;
 
       case SO_TOK:
         debuglog_protocol ("SO_TOK\n");
-        revvideo = 1;
-        standout ();
+        //revvideo = 1;
+        //standout ();
         break;
 
       case TA_TOK:
@@ -463,6 +500,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
               if (!pc_protocol() || ch == '@')
               {
                   updatepos(ch, row, col);
+                  delayed_updates[row][col] = 0;
               }
               else
               {
@@ -471,6 +509,13 @@ int   onat;                             /* 0 ==> Wait for waitstr
                   // rogomatic is recieving 2 updates per tile: one for the map tile and one
                   // for the monster. This throws off the logic. This hack lets us process
                   // only the final state of each tile
+                  //
+                  // I think the PC versions send the map, then update the 3x3 area around the player
+                  //
+                  if (delayed_updates[row][col] != 0 && delayed_updates[row][col] != ch)
+                  {
+                      debuglog_protocol("DELAYING OTHER: OVERWRITING [%2d, %2d] [%c]->[%c]\n", row, col, delayed_updates[row][col], ch);
+                  }
                   delayed_updates[row][col] = ch;
                   debuglog_protocol("DELAYING OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, col, screen[row][col]);
                   col++;
@@ -479,17 +524,24 @@ int   onat;                             /* 0 ==> Wait for waitstr
           }
         }
         else if (col == 0)
-          { screen00 = screen[0][0]; }
-        else if (col == 1 && ch == 'l' && screen[0][0] == 'I') {
-          screen[0][0] = screen00;
+        {
+            // save old contents of 0,0
+            screen00 = screen[0][0];
+        }
+        else if (col == 1 && ch == 'l' && screen[0][0] == 'I')
+        {
+            // If 0,0 wasn't empty, we assume we're overwriting a message with "Illegal command ';'"
+            if (screen00 != ' ')
+            {
+                screen[0][0] = screen00;
+                terpmes();
+            }
 
-          if (screen00 != ' ') terpmes ();
-
-          screen[0][0] = 'I';
+            screen[0][0] = 'I';
         }
 
         screen[row][col++] = ch;
-        debuglog_protocol ("OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, (col-1), screen[row][col-1]);
+        debuglog_protocol("OTHER   [%c] [%2d, %2d] [%c]\n", ch, row, (col-1), screen[row][col-1]);
         break;
     }
   }
@@ -562,6 +614,7 @@ void process_delayed_update()
             {
                 updatepos(delayed_updates[i][j], i, j);
                 screen[i][j] = delayed_updates[i][j];
+                delayed_updates[i][j] = 0;
                 debuglog_protocol("DELAYED OTHER   [%c] [%2d, %2d] [%c]\n", screen[i][j], i, j, screen[i][j]);
             }
         }
@@ -734,6 +787,8 @@ void sendnow (char* f, ...)
   va_start(args, f);
   vsprintf (cmd, f, args);
   va_end(args);
+
+  debuglog("sendnow: (%s)\n", cmd);
 
   while (*s) sendcnow (*s++);
 }
