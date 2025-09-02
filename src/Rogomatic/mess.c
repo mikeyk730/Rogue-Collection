@@ -1106,6 +1106,30 @@ register char *monster;
     beingstalked = 0;
 }
 
+int is_drain_life()
+{
+    return streq(lastname, "drain life");
+}
+
+int could_be_drain_life()
+{
+    // If we're zapping with an unknown wand, and we've lost at least half of our HP,
+    // it could be due to the wand
+    int originalHp = Hp + lastdamage;
+    return is_zapping() &&
+        havewand("drain life") == NONE &&
+        (originalHp / 2) <= lastdamage;
+}
+
+int is_harmless_enemy(const char* monster)
+{
+    return streq("aquator", monster) ||
+        streq("rust monster", monster) ||
+        streq("nymph", monster) ||
+        streq("floating eye", monster) ||
+        (streq("ice monster", monster) && version != RVPC148);
+}
+
 /*
  * washit: Record being hit by a monster.
  */
@@ -1127,11 +1151,28 @@ char *monster;
 
   terpbot ();			/* Hit points changed, read bottom */
 
+  // mdk: don't add stats if the damage could be from a "drain life" wand.
+  // This prevents us from fearing aquators and other low damage enemies.
+  if (is_drain_life() || could_be_drain_life())
+  {
+      return;
+  }
+
   /* Add data about the event to long term memory */
-  if (mh != NONE) {
-    addprob (&monhist[mh].theyhit, SUCCESS);
-    addstat (&monhist[mh].damage, lastdamage);
-    analyzeltm ();
+  if (mh != NONE)
+  {
+      addprob(&monhist[mh].theyhit, SUCCESS);
+
+      if (lastdamage > 0 && is_harmless_enemy(monhist[mh].m_name)) //mdk: add check to prevent corruption
+      {
+          dwait(D_ERROR, "%s couldn't have dealt %d damage", monhist[mh].m_name, lastdamage);
+      }
+      else
+      {
+          addstat(&monhist[mh].damage, lastdamage);
+      }
+
+      analyzeltm();
   }
 }
 

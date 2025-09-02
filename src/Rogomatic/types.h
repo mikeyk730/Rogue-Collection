@@ -150,6 +150,8 @@
 # define RUNDOWN     (16)
 # define NUMMOVES    (17)
 
+const char* get_move_type_str(int movetype);
+
 /* Version numbers */
 # define RV36A    (361)	/* OLDROG: Rogue 3.6 w/o wands */
 # define RV36B    (362)	/* CURROG: Rogue 3.6 with wands */

@@ -148,7 +148,7 @@ register int movetype;
       onrc (HALL|BEEN, targetrow, targetcol) != (HALL|BEEN) &&
       onrc (HALL,r,c) &&
       !beingstalked)			/* Feb 10, 1985 - mlm */
-    { fmove (dir); return (1); }
+    { fmove ("explore new passage",dir); return (1); }
 
   /* Timemode tells why we are moving this way, T_RUNNING ==> no search */
   timemode = (movetype == GOTOMOVE)    ? T_MOVING :
@@ -178,19 +178,19 @@ register int movetype;
   /* Maybe search unsafe square before moving onto it */
   if (timemode != T_RUNNING && !onrc (SAFE, atrow+dr, atcol+dc) &&
       timessearched[atrow+dr][atcol+dc] < searchit)
-    { command (T_SEARCHING, "s"); return (1); }
+    { command ("search for trap", T_SEARCHING, "s"); return (1); }
 
   /* Maybe take armor off before stepping on rust trap */
   if (timemode != T_RUNNING && onrc (WATERAP, atrow+dr, atcol+dc) &&
       currentarmor != NONE && willrust (currentarmor) && takeoff ())
-    { rmove (1, dir, timemode); return (1); }
+    { rmove ("step on rust trap", 1, dir, timemode); return (1); }
 
   /* If we are about to step onto a scare monster scroll, use the 'm' cmd */
   if (can_move_without_pickup() && onrc (SCAREM, atrow+dr, atcol+dc))
-    { mmove (dir, timemode); return (1); }
+    { mmove ("move on scare monster", dir, timemode); return (1); }
 
   /* Send the movement command and return success */
-  rmove (count, dir, timemode); return (1);
+  rmove (get_move_type_str(movetype), count, dir, timemode); return (1);
 }
 
 /*

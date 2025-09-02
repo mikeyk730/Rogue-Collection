@@ -40,32 +40,34 @@
 static int cmdonscreen = 0;
 
 /* Move one square in direction 'd' */
-void move1 (d)
-int   d;
+void move1 (const char* desc, int d)
 {
-  command (T_MOVING, "%c", keydir[d]);
+  command (desc, T_MOVING, "%c", keydir[d]);
 }
 
 /* Move in direction 'd' until we find something */
-void fmove (d)
+void fmove (desc, d)
+const char* desc;
 int   d;
 {
-  if (run_uses_f_prefix())	command (T_MOVING, "f%c", keydir[d]);
-  else			command (T_MOVING, "%c", ctrl (keydir[d]));
+  if (run_uses_f_prefix())	command (desc, T_MOVING, "f%c", keydir[d]);
+  else			command (desc, T_MOVING, "%c", ctrl(keydir[d]));
 }
 
 /* Move 'count' squares in direction 'd', with time use mode 'mode' */
-void rmove (count, d, mode)
+void rmove(desc, count, d, mode)
+const char* desc;
 int   count, d, mode;
 {
-  command (mode, "%d%c", count, keydir[d]);
+  command (desc, mode, "%d%c", count, keydir[d]);
 }
 
 /* Move one square in direction 'd' without picking anything up */
-void mmove (d, mode)
+void mmove (desc, d, mode)
+const char* desc;
 int   d, mode;
 {
-  command (mode, "m%c", keydir[d]);
+  command (desc, mode, "m%c", keydir[d]);
 }
 
 
@@ -118,7 +120,7 @@ int is_zapping()
  */
 
 /* VARARGS2 */
-void command (int tmode, char* f, ...)
+void command (const char* description, int tmode, char* f, ...)
 {
   int times;
   char cmd[128], functionchar ();
@@ -129,6 +131,7 @@ void command (int tmode, char* f, ...)
   vsprintf (cmd, f, args);
   va_end(args);
 
+  debuglog ("strategy: %s\n", description);
   debuglog ("command : command (%s)\n",cmd);
 
   /* Echo the command if in transparent mode */
@@ -408,7 +411,7 @@ replaycommand ()
   char oldcmd[128];
 
   getoldcommand (oldcmd);
-  command (T_OTHER, oldcmd);
+  command ("replaying", T_OTHER, oldcmd);
   return (1);
 }
 

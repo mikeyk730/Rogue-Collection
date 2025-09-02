@@ -227,7 +227,7 @@ int callitpending ()
    * extract a function below to actually send the name.
    */
   if (pending_call_letter != ' ') {
-    command (T_OTHER, "c%c", pending_call_letter);
+    command ("internal: call item", T_OTHER, "c%c", pending_call_letter);
     return (1);
   }
   return (0);
@@ -245,6 +245,17 @@ void finishcallit()
         dwait(D_FATAL, "No object to call, %c %s", pending_call_letter, pending_call_name);
     }
 }
+
+static char buf[128];
+
+const char* describe(const char* msg, const char* monster)
+{
+    memset(buf, 0, 128);
+    strcat(buf, msg);
+    strcat(buf, monster);
+    return buf;
+}
+
 
 /*
  * fightmonster: looks for adjacent monsters. If found, it calls
@@ -333,7 +344,10 @@ int   fightmonster ()
 
   if (battlestations (m, monster, mbad, danger, adjacent ? mdir : wanddir,
                       adjacent ? 1 : 2, alertmonster, max (1, adjacent)))
-    { foughtmonster = DIDFIGHT; return (1); }
+    {
+      foughtmonster = DIDFIGHT;
+      return (1);
+    }
 
   /*
    * If we did not wait for him last turn, and he is not adjacent,
@@ -341,7 +355,7 @@ int   fightmonster ()
    */
 
   if (!lyinginwait && !adjacent) {
-    command (T_FIGHTING, "s");
+    command (describe("lying in wait for ", monster), T_FIGHTING, "s");
     dwait (D_BATTLE, "Lying in wait...");
     lyinginwait = 1;
     foughtmonster = DIDFIGHT;
@@ -365,7 +379,7 @@ int   fightmonster ()
   lastmonster = monc-'A'+1;
 
   /* Move towards the monster (this causes us to hit him) */
-  rmove (1, mdir, T_FIGHTING);
+  rmove(describe("battle: strike monster ", monster), 1, mdir, T_FIGHTING);
   lyinginwait = 0;
   foughtmonster = DIDFIGHT;
   return (1);
@@ -453,7 +467,7 @@ int   tomonster ()
 
   /* If he is an odd number of squares away, lie in wait for him */
   if ((closest&1) == 0 && !lyinginwait) {
-    command (T_FIGHTING, "s");
+    command ("waiting for monster, odd spaces", T_FIGHTING, "s");
     dwait (D_BATTLE, "Waiting for monster an odd number of squares away...");
     lyinginwait = 1;
     return (1);
@@ -515,14 +529,14 @@ aftermelee ()
 {
   if (foughtmonster > 0) {
     lyinginwait = 1;
-    command (T_RESTING, "s");
+    command ("rest after battle", T_RESTING, "s");
     dwait (D_BATTLE, "Aftermelee: waiting for %d rounds.", foughtmonster);
     return (1);
   }
 
   /* If critically weak, rest up so traps won't kill us.  DR Utexas */
   if (Hp < 6 && larder > 0) {
-    command (T_RESTING, "s");
+    command ("recover from severe battle", T_RESTING, "s");
     display ("Recovering from severe beating...");
     return (1);
   }
@@ -570,7 +584,7 @@ int adj;		/* How many attackers are there? */
       (turns > 0 || confused) &&
       !streq(monster, "dragon") &&
       (Hp < percent (Hpmax, 95))) {
-    command (T_RESTING, "s");
+    command ("rest on scare monster", T_RESTING, "s");
     display ("Resting on scare monster");
     dwait (D_BATTLE, "Battlestations: resting, on scaremonster.");
     return (1);
@@ -587,6 +601,14 @@ int adj;		/* How many attackers are there? */
   dwait (D_BATTLE,
          "Battlestations: %s(%d), total danger %d, dir %d, %d turns, %d adj.",
          monster, mbad, danger, mdir, turns, adj);
+
+  if (die_in(1))
+  {
+      dwait(D_INFORM,
+          "Battlestations 1: %s(%d), total danger %d, dir %d, %d turns, %d adj.",
+          monster, mbad, danger, mdir, turns, adj);
+
+  }
 
   /*
    * Switch back to our mace or sword?
@@ -666,7 +688,7 @@ int adj;		/* How many attackers are there? */
     int rdir = (mdir+4)%8;
 
     if (onrc (CANGO | TRAP, atdrow(rdir), atdcol(rdir)) == CANGO)
-      { move1 (rdir); stepback = 7; return (1); }
+      { move1 ("step back to see if awake", rdir); stepback = 7; return (1); }
   }
 
   if (stepback) stepback--;     /* Decrement turns until step back again */
@@ -971,7 +993,7 @@ int adj;		/* How many attackers are there? */
    */
 
   if (!alert && !lyinginwait && turns > 0) {
-    command (T_FIGHTING, "s");
+    command ("rest to see if monster is awake", T_FIGHTING, "s");
     dwait (D_BATTLE, "Waiting to see if he is awake...");
     lyinginwait = 1;
     return (1);
@@ -1168,7 +1190,7 @@ fightinvisible ()
 
   /* If can only go two ways, then go back and forth (will hit) */
   if (liberties == 1 || liberties == 2) {
-    command (T_FIGHTING, "%c%c", keydir[lastdir], keydir[(lastdir+4)&7]);
+    command ("fight: back and forth", T_FIGHTING, "%c%c", keydir[lastdir], keydir[(lastdir + 4) & 7]);
     return (1);
   }
 
@@ -1182,8 +1204,8 @@ fightinvisible ()
         (onrc(CANGO, atrow+2*deltr[dir], atcol+2*deltc[dir])))
       break;
 
-  if (dir > 7)	command (T_FIGHTING, "hjlk");
-  else		command (T_FIGHTING, "%c%c%c", keydir[dir],
+  if (dir > 7)	command ("battle tactic 1: run in circle", T_FIGHTING, "hjlk");
+  else		command ("battle tactic 2", T_FIGHTING, "%c%c%c", keydir[dir],
                      keydir[dir], keydir[(dir+4)&7]);
 
   return (1);

@@ -951,7 +951,7 @@ int secret ()
     int count = timessearched[atrow][atcol]+1;
     saynow ("Searching dead end door (%d,%d) for the %d%s time...",
             atrow, atcol, count, ordinal (count));
-    command (T_DOORSRCH, "s"); return (1);
+    command ("searching dead end door", T_DOORSRCH, "s"); return (1);
   }
 
   /* Verify that we are actually at a dead end */
@@ -977,7 +977,7 @@ int secret ()
       int count = timessearched[atrow][atcol]+1;
       saynow ("Searching dead end (%d,%d) for the %d%s time...",
               atrow, atcol, count, ordinal (count));
-      command (T_DOORSRCH, "s");
+      command ("searching dead end", T_DOORSRCH, "s");
       return (1);
     }
     else {
@@ -1045,7 +1045,7 @@ int doorexplore()
     searchcount++;
     saynow ("Searching square (%d,%d) for the %d%s time...",
             atrow, atcol, searchcount, ordinal (searchcount));
-    command (T_DOORSRCH, "s");
+    command ("searching square", T_DOORSRCH, "s");
     return (1);
   }
 

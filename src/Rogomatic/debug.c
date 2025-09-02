@@ -87,8 +87,8 @@ int dwait (int msgtype, char* f, ...)
     sprintf (errfn, "%s/error%s", getRgmDir (), versionstr);
 
     if ((errfil = wopen (errfn, "a")) != NULL) {
-      fprintf (errfil, "User %s, error type %d:  %s\n\n",
-               getname(), msgtype, msg);
+      fprintf (errfil, "Level %d, error %d:  %s\n\n",
+               Level, msgtype, msg);
 #ifdef ROGUE_COLLECTION
     print_command_line(errfil);
 #endif

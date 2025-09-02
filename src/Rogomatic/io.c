@@ -513,7 +513,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
   if (dynamic_inv_order() && checkrange && !pending ())
   {
-      command (T_OTHER, "Iz");
+      command ("internal: find inventory bounds", T_OTHER, "Iz");
       checkrange = 0;
   }
 
@@ -1248,7 +1248,7 @@ void toggleecho ()
     else {
       saynow ("Logging to file %s", ROGUELOG);
 
-      if (*versionstr) command (T_OTHER, "v");
+      if (*versionstr) command ("internal: find version", T_OTHER, "v");
     }
   }
   else {

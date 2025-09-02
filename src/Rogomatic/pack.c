@@ -264,7 +264,7 @@ register int pos;
 void resetinv()
 {
   if (!replaying) {
-    command (T_OTHER, "i");
+    command ("internal: reset inventory", T_OTHER, "i");
   }
   else {
     /* if we are replaying, then the original game would have caused

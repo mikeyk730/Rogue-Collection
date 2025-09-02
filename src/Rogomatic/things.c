@@ -47,7 +47,7 @@ int obj;
 
   if (cursedarmor) return (0);
 
-  command (T_HANDLING, "W%c", LETTER (obj));
+  command ("wear armor", T_HANDLING, "W%c", LETTER(obj));
   usesynch = 0;
   return (1);
 }
@@ -65,7 +65,7 @@ int takeoff ()
 
   if (cursedarmor) return (0);
 
-  command (T_HANDLING, "T");
+  command ("take off armor", T_HANDLING, "T");
   usesynch = 0;
   return (1);
 }
@@ -90,24 +90,24 @@ int obj;
       return (0);
     }
     else if (currentweapon == NONE) {
-      command (T_HANDLING, "w%c", LETTER (obj));
+      command (describe("wield 1 ", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
     }
     else if (itemis(currentweapon, UNCURSED)) {
       cursedweapon=0;
-      command (T_HANDLING, "w%c", LETTER (obj));
+      command (describe("wield 2 ", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
     }
     else if (itemis(currentweapon, ENCHANTED)
         && (!vorpalize_weapon_can_be_cursed() || !did_read_vorpal)) { //mdk: vorpalized weapon is enchanted but can be cursed
       remember(currentweapon, UNCURSED);
       cursedweapon=0;
-      command (T_HANDLING, "w%c", LETTER (obj));
+      command (describe("wield 3 ", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
     }
     else {
 
       /* current weapon might be cursed */
       if (currentweapon != NONE) {
         lastdrop = currentweapon;
-        command (T_HANDLING, "w%c", ESC);
+        command ("cancel wield", T_HANDLING, "w%c", ESC);
       }
     return (0);
     }
@@ -117,7 +117,7 @@ int obj;
    * momentatirily on the first escape
    */
   else
-    command (T_HANDLING, "w%cw%c%c", LETTER (obj), ESC, get_repeat_message_key()); /* mdk: this was causing pc rogue to hang. "wc" when weapon cursed would cause "c" to be treated as a command and trigger a more loop */
+    command (describe("wield 4 ", inven[obj].str), T_HANDLING, "w%cw%c%c", LETTER(obj), ESC, get_repeat_message_key()); /* mdk: this was causing pc rogue to hang. "wc" when weapon cursed would cause "c" to be treated as a command and trigger a more loop */
 
   return (1);
 }
@@ -187,7 +187,7 @@ int obj;
       quaff (obj))
     { return (1); }
 
-  command (T_HANDLING, "d%c", LETTER (obj));
+  command (describe("drop ", inven[obj].str), T_HANDLING, "d%c", LETTER(obj));
   return (1);
 }
 
@@ -206,7 +206,7 @@ int obj;
     return (0);
   }
 
-  command (T_HANDLING, "q%c", LETTER (obj));
+  command (describe("quaff ", inven[obj].str), T_HANDLING, "q%c", LETTER(obj));
   return (1);
 }
 
@@ -225,7 +225,7 @@ int obj;
     return (0);
   }
 
-  command (T_HANDLING, "r%c", LETTER (obj));
+  command (describe("read ", inven[obj].str), T_HANDLING, "r%c", LETTER(obj));
   return (1);
 }
 
@@ -265,7 +265,7 @@ int point(int obj, int dir)
         }
     }
 
-    command(T_HANDLING, "%c%c%c",
+    command(describe("zap ", inven[obj].str), T_HANDLING, "%c%c%c",
         get_zap_key(),
         keydir[dir],
         LETTER(obj));
@@ -284,7 +284,7 @@ int obj, dir;
     return (0);
   }
 
-  command (T_HANDLING, "t%c%c", keydir[dir], LETTER (obj));
+  command ("throw", T_HANDLING, "t%c%c", keydir[dir], LETTER(obj));
   return (1);
 }
 
@@ -298,10 +298,10 @@ int obj;
   dwait(D_RING, "Put on %s", inven[obj].str);
 
   if (leftring == NONE && rightring == NONE)
-    { command (T_HANDLING, "P%cl", LETTER (obj)); return (1); }
+    { command (describe("put on ", inven[obj].str), T_HANDLING, "P%cl", LETTER(obj)); return (1); }
 
   if (leftring == NONE || rightring == NONE)
-    { command (T_HANDLING, "P%c", LETTER (obj)); return (1); }
+    { command (describe("put on ", inven[obj].str), T_HANDLING, "P%c", LETTER(obj)); return (1); }
 
   return (0);
 }
@@ -316,13 +316,13 @@ int obj;
   dwait(D_RING, "Take off %s", inven[obj].str);
 
   if (leftring != NONE && rightring != NONE && leftring == obj)
-    { command (T_HANDLING, "Rl"); return (1); }
+    { command ("take off left ring", T_HANDLING, "Rl"); return (1); }
 
   if (leftring != NONE && rightring != NONE && rightring == obj)
-    { command (T_HANDLING, "Rr"); return (1); }
+    { command ("take off right ring", T_HANDLING, "Rr"); return (1); }
 
   if (leftring == obj || rightring == obj)
-    { command (T_HANDLING, "R"); return (1); }
+    { command ("take off ring", T_HANDLING, "R"); return (1); }
 
   return (0);
 }
