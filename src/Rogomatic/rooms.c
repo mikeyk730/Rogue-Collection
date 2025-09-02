@@ -509,7 +509,7 @@ register int row, col;
   int   unseen = !onrc (SEEN, row, col);
   int   rm = whichroom (row, col);
 
-  debuglog ("rooms : updatepos (%c, %d, %d)\n",ch, row, col);
+  debuglog_protocol ("rooms : updatepos (%c, %d, %d)\n",ch, row, col);
 
   if (mlistlen && ch != oldch) deletemonster (row, col);
 

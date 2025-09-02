@@ -62,7 +62,8 @@ void add_score(char *new_line, char *vers, int ntrm);
 void nametrap(int traptype, int standingonit);
 void getrogue(char *waitstr, int onat);
 void at(int r, int c);
-void debuglog(const char *fmt, ...);
+void debuglog(const char* fmt, ...);
+void debuglog_protocol(const char *fmt, ...);
 void deletestuff(int row, int col);
 void dosnapshot(void);
 void waitforspace(void);
@@ -384,8 +385,12 @@ int is_reading_scroll();
 int is_quaffing();
 int is_zapping();
 int needs_msg_clear();
-int enable_bugfixes();
 const char* get_item_type_string(int type);
 int is_monster_vorpal_target(const char* monster);
 int can_vorpal_zap(int obj);
 const char* describe(const char* msg, const char* monster);
+
+#define B_PARALYSIS		0x0001
+#define B_LTM			0x0002
+#define B_ALL			B_PARALYSIS | B_LTM;
+int enable_bugfix(int bug);

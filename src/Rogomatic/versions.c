@@ -172,7 +172,7 @@ int needs_msg_clear()
     return version == RV53NMT || version == RV52A || is_pc_version();
 }
 
-int enable_bugfixes()
+int enable_bugfix(int bug)
 {
-    return 1; //todo:mdk make conditional so old replays still work. i should add a new gene that acts like a bitset of feature flags
+    return g_bug_fixes & bug;
 }

@@ -66,3 +66,8 @@ void debuglog (const char *fmt, ...)
   err_doit (0, 0, fmt, ap);
   va_end (ap);
 }
+
+void debuglog_protocol(const char* fmt, ...)
+{
+    //todo:mdk add verbosity and enable
+}

@@ -54,10 +54,11 @@ void print_command_line(FILE *errfil)
 {
   fprintf(
     errfil,
-    "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d\"\n\n",
+    "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d %d\"\n\n",
     get_game_char(),
     g_seed,
-    knob[0], knob[1], knob[2], knob[3], knob[4], knob[5], knob[6], knob[7]);
+    knob[0], knob[1], knob[2], knob[3], knob[4], knob[5], knob[6], knob[7],
+    g_bug_fixes);
 }
 #endif
 
