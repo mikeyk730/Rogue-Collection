@@ -281,8 +281,14 @@ rogomatic_level_delay=0
 rogomatic_debug=false
 
 ;
+; If set to true, a file named ipc.txt will be used for communication from
+; Rogue to Rogomatic. If set to false, a named pipe will be used.
+;
+rogomatic_debug_protocol=false
+
+;
 ; If set to true, Rog-O-Matic will wait for the Visual Studio debugger to be
-; attached before starting
+; attached before starting.
 ;
 ; Possible values: true, false
 ;
