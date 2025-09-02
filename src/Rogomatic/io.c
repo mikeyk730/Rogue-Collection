@@ -212,13 +212,13 @@ int   onat;                             /* 0 ==> Wait for waitstr
     ch = getroguetoken ();
 
     /*
-    * mdk: observation:
+    * mdk: observations:
     * - Rogomatic relies on sending ";" to Rogue, which results in "Illegal command ';'"
     * - We read updates from Rogue until:
     *   - The player is written to the screen
     *   - A ";" character is written to the screen
     * - We interpret messages in 3 cases:
-    *   - When we write "message ends in "(* for list)" to the top line
+    *   - When we write "(* for list)" to the top line
     *   - When we write "re--" to the top line
     *   - When we're about to overwrite a message with "Il"
     */
