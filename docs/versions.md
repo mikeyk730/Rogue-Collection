@@ -360,7 +360,7 @@ New Monsters
 | hobgoblin         |       all |   0 | yes |    3 |  1 |  5 | 1x8               |                             |
 | ice monster       |         * |   0 |   * |    * |  1 |  9 | *                 | *                           |
 |                   |  5.4, 1.1 |     |  no |    5 |    |    | 0x0               | freezes                     |
-|                   |       5.4 |     | yes |   15 |    |    | 1d2               | shoots ice, unfreezes       |
+|                   |      1.48 |     | yes |   15 |    |    | 1d2               | shoots ice, unfreezes       |
 | jabberwock        |         * |  70 |  no |    * | 15 |  6 | 2x12/2x4          |                             |
 |                   |       5.4 |     |     | 3000 |    |    |                   |                             |
 |                   | 1.1, 1.48 |     |     | 4000 |    |    |                   |                             |

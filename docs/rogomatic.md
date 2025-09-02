@@ -117,6 +117,17 @@ Aug 21, 2025 rogomati    2665 troll              12  46   16   8  8/1012    1280
 The `ltm` file is updated after every game. It contains Rogomatic's long term memory about monsters.
 This file is copied to `ltm.<seed>` at the begining of every game, so previous runs can be repeated
 
+```
+typedef struct { int   fail, win; } probability;
+typedef struct {
+  int   count;
+  double sum, sumsq, low, high;
+} statistic;
+
+  probability wehit, theyhit, arrowhit;
+  statistic htokill, damage, atokill;
+```
+
 ## snapshot.rgm
 The `snapshot.rgm` contains all snapshots that we captured. Snapshots show a representation of the current screen
 and a dump of the player's inventory. Snapshots can be taken manually during the run with `/`.
