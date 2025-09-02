@@ -602,14 +602,6 @@ int adj;		/* How many attackers are there? */
          "Battlestations: %s(%d), total danger %d, dir %d, %d turns, %d adj.",
          monster, mbad, danger, mdir, turns, adj);
 
-  if (die_in(1))
-  {
-      dwait(D_INFORM,
-          "Battlestations 1: %s(%d), total danger %d, dir %d, %d turns, %d adj.",
-          monster, mbad, danger, mdir, turns, adj);
-
-  }
-
   /*
    * Switch back to our mace or sword?
    */

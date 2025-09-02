@@ -389,4 +389,3 @@ const char* get_item_type_string(int type);
 int is_monster_vorpal_target(const char* monster);
 int can_vorpal_zap(int obj);
 const char* describe(const char* msg, const char* monster);
-
