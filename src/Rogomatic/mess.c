@@ -378,7 +378,7 @@ register char *mess, *mend;
             echoit=0;
         }
         else if (MATCH("it misses*"))  { wasmissed ("it"); echoit=0; }
-        else if (MATCH("it appears confused*")) ;
+        else if (MATCH("it appears confused*")) { confused_monster = 5; }
         else if (MATCH("ice *")) ;
         else if (MATCH("identify what*")) echoit=0;
         else if (MATCH("illegal command*")) echoit=0;
@@ -513,7 +513,7 @@ register char *mess, *mend;
             echoit=0;
         }
         else if (MATCH("the * misses*")) { wasmissed (res1); echoit=0; }
-        else if (MATCH("the * appears confused*")) ;
+        else if (MATCH("the * appears confused*")) { confused_monster = 5; }
         else if (MATCH("the rust vanishes instantly*"))
           { if (gushed) { gushed = 0; nametrap (WATERAP, HERE); } }
         else if (MATCH("the room is lit*"))
@@ -563,9 +563,10 @@ register char *mess, *mend;
         else if (MATCH("the light in here suddenly seems*")) nametrap (BEARTRP,HERE);
 
         /* mdk */
-        else if (MATCH("the slime divides.  ick!")) ;
-        else if (MATCH("the frost whizzes by you")) ;
-        else if (MATCH("the * vanishes in a puff of smoke")) ;
+        else if (MATCH("the slime divides.  ick!"));
+        else if (MATCH("the frost whizzes by you"));
+        else if (MATCH("the * vanishes in a puff of smoke"));
+        else if (MATCH("the flask shatters"));
 
         else unknown++;
 
@@ -620,7 +621,11 @@ register char *mess, *mend;
         else if (MATCH("you can move again*")) echoit=0;
         else if (MATCH("you are still stuck *")) nametrap (BEARTRP,HERE);
         else if (MATCH("you can't move*")) echoit=0;
-        else if (MATCH("you are hit by the*")) echoit = 0;
+        else if (MATCH("you are hit by the *"))
+        {
+            washit(res1);
+            echoit = 0;
+        }
         else if (MATCH("you can't carry anything else*"))
           { echoit=0; set (STUFF); maxobj=objcount; }
         else if (MATCH("you can*")) curseditem ();
@@ -814,7 +819,7 @@ register char *mess, *mend;
   {
     dwait(D_FATAL, "More Loop Exit ->%s<-.", mess);
   }
-  else if (morecount > 200)
+  else if (morecount >= 200)
   {
       if (logging_cooldown == 0) //mdk: only log every 25 iterations to avoid spamming log
       {
@@ -1138,7 +1143,7 @@ register char *monster;
   monkilled[m]++; totalkilled++;	/* Bump kill count */
   hitstokill = mhit = mmiss = 0;	/* Clear indiviual monster stats */
   mtarget = NONE;			/* Clear target */
-  beingheld = cancelled = 0;		/* Clear flags */
+  beingheld = cancelled = confused_monster = 0;		/* Clear flags */
 
   /* If we killed an invisible, assume no more invisible around */
   if (!cosmic && !blinded &&
@@ -1170,12 +1175,16 @@ int is_harmless_enemy(const char* monster)
         (streq("ice monster", monster) && version != RVPC148);
 }
 
+int is_damage_impossible(int damage, const char* monster)
+{
+    return damage > 0 && is_harmless_enemy(monster);
+}
+
 /*
  * washit: Record being hit by a monster.
  */
 
-void washit (monster)
-char *monster;
+void washit (char* monster)
 {
   register int mh = 0, m = 0;
 
@@ -1183,7 +1192,7 @@ char *monster;
   if ((mh = getmonhist (monster, 1)) != NONE)
     { monster = monhist[mh].m_name; m = monsternum (monster); }
 
-  dwait (D_MONSTER, "Was hit by a '%s'", monster);
+  dwait (D_MONSTER, "Hit by a %s (%d)", monster, m);
 
   timeshit++;			/* Bump global count */
 
@@ -1191,11 +1200,13 @@ char *monster;
 
   terpbot ();			/* Hit points changed, read bottom */
 
+  dwait(D_MONSTER, "The %s did %d damage", monster, lastdamage);
+
   // mdk: don't add stats if the damage could be from a "drain life" wand.
   // This prevents us from fearing aquators and other low damage enemies.
   if (is_drain_life() || could_be_drain_life())
   {
-      if (enable_bugfix(B_LTM))
+      if (enable(B_LTM_FIX))
       {
           return;
       }
@@ -1206,8 +1217,9 @@ char *monster;
   {
       addprob(&monhist[mh].theyhit, SUCCESS);
 
-      int invalid_damage = lastdamage > 0 && is_harmless_enemy(monhist[mh].m_name);
-      if (invalid_damage && enable_bugfix(B_LTM)) //mdk: add check to prevent corruption
+      //mdk: added check to prevent corruption
+      //mdk:todo: still need to fix underlying issue with multiple monsters
+      if (is_damage_impossible(lastdamage, monhist[mh].m_name) && enable(B_LTM_FIX))
       {
           dwait(D_ERROR, "%s couldn't have dealt %d damage", monhist[mh].m_name, lastdamage);
       }

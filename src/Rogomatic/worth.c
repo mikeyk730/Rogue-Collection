@@ -53,15 +53,15 @@ int   objval[] = {
   /* none */         0
 };
 
-int worth (obj)
-int obj;
+int worth (int obj)
 {
   int value, w;
 
   /* Do we have an easy out? */
-  if (useless (obj)) return (0);
+  if (useless(obj)) return (0);
 
   /* Poison has a use in RV52B and RV53A, so give it a low positive value */
+  // mdk: poison loses strength, but ends a cosmic trip. Poison is discarded by dropjunk() so, we likely won't get here.
   if (stlmatch (inven[obj].str, "poison")) return (1);
 
   /* Set base value */
@@ -137,6 +137,12 @@ int obj;
   else if (stlmatch (inven[obj].str, "extra healing")) value = 900;
   else if (stlmatch (inven[obj].str, "healing")) value = 750;
   else if (stlmatch (inven[obj].str, "protect") && !protected) value = 1000;
+  else if (potions_always_hit())
+  {
+    if (stlmatch(inven[obj].str, "paralysis")) value = 700;
+    else if (stlmatch(inven[obj].str, "confusion")) value = 650;
+    else if (stlmatch(inven[obj].str, "blind")) value = 650;
+  }
 
   /* Now return the value, assure in the range [0..5000] */
   return (value < 0 ? 0 : value > 5000 ? 5000 : value);
@@ -147,8 +153,7 @@ int obj;
  * object is of no use. Used by worth to set value to 0.
  */
 
-int useless (i)
-int i;
+int useless(int i) //mdk: similar to haveuseless() but not same :(
 {
   /* Not useless if we are using it */
   if (itemis (i, INUSE))
@@ -167,10 +172,7 @@ int i;
 
   /* Many potions are useless */
   if (inven[i].type == potion && itemis (i, KNOWN) &&
-      (stlmatch (inven[i].str, "paralysis") ||
-       stlmatch (inven[i].str, "confusion") ||
-       stlmatch (inven[i].str, "hallucination") ||
-       stlmatch (inven[i].str, "blind") ||
+      (stlmatch (inven[i].str, "hallucination") ||
        stlmatch (inven[i].str, "monster detection") ||
        stlmatch (inven[i].str, "magic detection") ||
        stlmatch (inven[i].str, "thirst") ||
@@ -179,12 +181,19 @@ int i;
         havenamed (ring, "see invisible") != NONE)))
     return (1);
 
+  if (inven[i].type == potion && itemis (i, KNOWN) && !potions_always_hit() &&
+      (stlmatch (inven[i].str, "paralysis") ||
+       stlmatch (inven[i].str, "confusion") ||
+       stlmatch (inven[i].str, "blind")))
+    return (1);
+
   /* So are many scrolls */
   if (inven[i].type == Scroll && itemis (i, KNOWN) &&
       (stlmatch (inven[i].str, "blank") ||
        stlmatch (inven[i].str, "create monster") ||
        stlmatch (inven[i].str, "sleep") ||
        stlmatch (inven[i].str, "gold detection") ||
+       (stlmatch (inven[i].str, "vorpalize weapon") && did_read_vorpal) ||
        stlmatch (inven[i].str, "aggravate")))
     return (1);
 

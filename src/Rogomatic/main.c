@@ -191,6 +191,7 @@ int   beingstalked = 0;		/* True if recently hit by inv. stalker */
 int   blinded = 0;		/* True if blinded */
 int   blindir = 0;		/* Last direction we moved when blind */
 int   cancelled = 0;		/* True ==> recently zapped w/cancel */
+int   confused_monster = 0;		/* True ==> recently confused monster */
 int   cheat = 0;		/* True ==> cheat, use bugs, etc. */
 int   checkrange = 0;           /* True ==> check range */
 int   chicken = 0;		/* True ==> check run away code */
@@ -283,14 +284,16 @@ int   wplusdam = 2;		/* Our plus damage from weapon bonus */
 int   wplushit = 1;		/* Our plus hit from weapon bonus */
 int   zone = NONE;		/* Current screen zone, 0..8 */
 int   zonemap[9][9];		/* Map of zones connections */
-int   g_seed = 0;
-int   g_expect_extra_bytes = 0;
-int   g_move_delay = 0;
-int   g_level_delay = 0;
-int   g_debug = 0;
-int   g_debug_protocol = 0;
-int g_bug_fixes = B_ALL;
 
+int g_seed = 0;
+int g_move_delay = 0;
+int g_level_delay = 0;
+int g_pause_at_level = 0;
+int g_debug = 0;
+int g_debug_protocol = 0;
+int g_expect_extra_bytes = 0;
+int g_verbose_logs = 0;
+int g_bug_fixes = B_ALL;
 
 /* Functions */
 void (*istat)(int);
@@ -391,6 +394,7 @@ jmp_buf  commandtop;
 
 void WaitForDebugger()
 {
+    saynow("Rog-O-Matic is waiting for a debugger to attach...");
 #ifdef _WIN32
     while (!IsDebuggerPresent())
         Sleep(100);
@@ -421,6 +425,12 @@ char *env[];
   }
   if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL) {
       g_debug_protocol = strcmp(env_value, "true") == 0;
+  }
+  if ((env_value = getenv("ROGOMATIC_LOG_VERBOSITY")) != NULL) {
+      g_verbose_logs = strcmp(env_value, "verbose") == 0;
+  }
+  if ((env_value = getenv("ROGOMATIC_PAUSE_AT_LEVEL")) != NULL) {
+      g_pause_at_level = atoi(env_value);
   }
   if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL) {
       g_move_delay = atoi(env_value);
@@ -684,7 +694,7 @@ char *env[];
         case 'Y': case 'U': case 'B': case 'N':
         case 'h': case 'j': case 'k': case 'l':
         case 'y': case 'u': case 'b': case 'n':
-        case 's': command ("user input", T_OTHER, "%c", ch); transparent = 1; break;
+        case 's': case '.': command("user input", T_OTHER, "%c", ch); transparent = 1; break;
 
         case 'f': ch = getch ();
 

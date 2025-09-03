@@ -40,8 +40,6 @@
 
 int levelmap[9];
 
-int g_break_at_level = 0; //mdk:todo: allow this to be set from command line
-
 /*
  * newlevel: Clear old data structures and set up for a new level.
  */
@@ -49,7 +47,7 @@ int g_break_at_level = 0; //mdk:todo: allow this to be set from command line
 void newlevel ()
 {
   debuglog("level: %d\n", Level);
-  if (Level == g_break_at_level)
+  if (Level == g_pause_at_level)
   {
       dwait(D_WARNING, "Breaking at level %d", Level);
   }

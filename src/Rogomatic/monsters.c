@@ -129,7 +129,7 @@ void sleepmonster ()
   register int m;
 
   for (m = 0; m < mlistlen; ++m) {
-    if (mlist[m].q == 0 && ! ADJACENT (m)) {
+    if (mlist[m].q == 0 && ! ADJACENT (m)) { //todo: why not adjacent?
       dwait (D_MONSTER, "Found a sleeping %s at %d,%d",
              monname (mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
 
@@ -137,6 +137,22 @@ void sleepmonster ()
     }
   }
 }
+
+void hold_monster(int m)
+{
+    dwait(D_MONSTER, "Holding %s at %d,%d",
+        monname(mlist[m].chr),
+        mlist[m].mrow,
+        mlist[m].mcol);
+
+    mlist[m].q = HELD;
+}
+
+int is_held(int m)
+{
+    return mlist[m].q == HELD;
+}
+
 
 /*
  * holdmonsters: Mark all close monsters as being held.
@@ -150,10 +166,7 @@ void holdmonsters ()
     if (mlist[m].q == 0 &&
         (max (abs (mlist[m].mrow - atrow),
               abs (mlist[m].mcol - atcol)) < 3)) {
-      dwait (D_MONSTER, "Holding %s at %d,%d",
-             monname (mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
-
-      mlist[m].q = HELD;
+        hold_monster(m);
     }
   }
 }

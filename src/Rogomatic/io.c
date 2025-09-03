@@ -114,8 +114,7 @@ scrolldown (void)
   }
 }
 
-void
-printscreen (void)
+void printscreen()
 {
   int i, j;
   debuglog ("-- cursor  [%2d, %2d] [%c] [%3d] -------------------------------------------------\n", row, col, screen[row][col], screen[row][col]);
@@ -143,6 +142,39 @@ printscreen (void)
   }
 
   debuglog ("--------------------------------------------------------------------------------\n");
+}
+
+void dumpscreenattr(int attr)
+{
+    int i, j;
+    debuglog("             1111111111222222222233333333334444444444555555555566666666667777777777\n");
+    debuglog("   01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
+
+    for (i = 0; i < MAXROWS; ++i) {
+        debuglog("%02d", i);
+
+        if (i >= s_row1 && i <= s_row2) {
+            debuglog("*");
+        }
+        else {
+            debuglog(" ");
+        }
+
+        for (j = 0; j < MAXCOLS; ++j) {
+            if (onrc(attr, i, j))
+            {
+                debuglog("X");
+            }
+            else
+            {
+                debuglog("%c", screen[i][j]);
+            }
+        }
+
+        debuglog("\n");
+    }
+
+    debuglog("--------------------------------------------------------------------------------\n");
 }
 
 void process_delayed_update();
@@ -181,8 +213,12 @@ int   onat;                             /* 0 ==> Wait for waitstr
   q = "(* for list): ";			/* FSM to check for prompt */
   d = GAMEOVER;			/* FSM to check for tombstone grass */
 
-  if (moved)				/* If we moved last time, put any */
-    { sleepmonster (); moved = 0; }	/* Old monsters to sleep */
+  //todo:mdk moved is off by a frame, not detecting wraith as sleeping, RogueCollection.exe a --rogomatic --seed 1756923471 --genes "53 52 68 31 21 80 11 30 31"
+  if (moved)				/* If we moved last time, put any */ //todo:mdk code to sleep to see if something is awake doesn't do anything??
+  {
+      sleepmonster(); /* Old monsters to sleep */
+      moved = 0;
+  }
 
   /* debugging info */
   if debug(D_MESSAGE) {
@@ -268,7 +304,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
         }*/
 
         // mdk: try to break loop
-        if (morecount > 200)
+        if (morecount >= 200)
         {
             dwait(D_WARNING, "Trying to break out of More loop");
             sendnow("%c %c;", ESC, ESC);
@@ -501,7 +537,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
           }
           // mdk: previously, we'd get a update for the 2nd row of the status bar, and treat it as
           // the map. We'd track monsters like H, W, and F from the Hungry, Weak, and Faint messages
-          else if (row > STATUSROW && enable_bugfix(B_STATUS_FIX))
+          else if (row > STATUSROW && enable(B_STATUS_FIX))
           {
           }
           else {
@@ -511,7 +547,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
                   // mdk: if we get 2 updates for the space that the player is on, we shouldn't process
                   // the tile underneath the player. This fixes a bug where we'd try to drop an item on
                   // a trap infinitely
-                  if (enable_bugfix(B_TILE_FIX))
+                  if (enable(B_TILE_FIX))
                   {
                       delayed_updates[row][col] = 0;
                   }

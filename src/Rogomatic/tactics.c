@@ -177,12 +177,13 @@ int quaffpotion ()
       quaff (obj))
     return (1);
 
-  if (cosmic && Str != Strmax &&
+  //mdk: this doesn't work. we don't come down from a trip if we're wearing sustain strength
+  /*if (cosmic && Str != Strmax &&
       (obj = havenamed (potion, "poison")) != NONE) {
     if (wearing ("sustain strength") != NONE && quaff (obj) ||
         findring ("sustain strength"))
       return (1);
-  }
+  }*/
 
   /*
    * Quaff healing to raise our MaxHp
@@ -511,17 +512,42 @@ findarrow ()
  * we can fire from a door, even if we cant shoot through one).
  */
 
-int checkcango (dir, turns)
-register int dir, turns;
+int checkcango(register int dir, register int turns)
 {
-  register int r, c, dr, dc;
+    int dr = deltr[dir];
+    int dc = deltc[dir];
 
-  for (dr = deltr[dir], dc = deltc[dir], r=atrow+dr, c=atcol+dc;
-       turns > 0 && onrc (CANGO | DOOR, r, c) == CANGO;
-       r+=dr, c+=dc, turns--)
-    ;
+    int r = atrow;
+    int c = atcol;
 
-  return (turns==0);
+    while (turns > 0)
+    {
+        r += dr;
+        c += dc;
+
+        if (onrc(CANGO, r, c) != CANGO)
+        {
+            break;
+        }
+
+        if (turns > 1) //mdk: can't throw through a door, but okay if monster is on a door
+        {
+            if (onrc(DOOR, r, c) == DOOR)
+            {
+                break;
+            }
+
+            if (onrc(MONSTER, r, c) == MONSTER)
+            {
+                //todo:mdk should consider if another monster is blocking path
+                dwait(D_ERROR, "Another monster in the way of target");
+            }
+        }
+
+        --turns;
+    }
+
+    return (turns == 0);
 }
 
 /*
@@ -707,7 +733,7 @@ int running;
     /* If we are about to win, dump any magic arrows or minus things */
     if (Level == 1 &&
         ((obj = havearrow ()) != NONE || (obj = haveminus ()) != NONE) &&
-        throw (obj, 0))
+        throw_item(obj, 0, "discard item before winning"))
       { return (1); }
 
     /* No magic arrows, time to leave */
@@ -888,7 +914,7 @@ int shootindark ()
   if ((obj = havemissile ()) == NONE) return (0);
 
   /* Throw the arrow in the arching direction */
-  return (throw (obj, darkdir));
+  return (throw_item(obj, darkdir, "archery in dark"));
 }
 
 /*

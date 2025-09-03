@@ -120,7 +120,7 @@ void updateat(void);
 void setnewgoal(void);
 int takeoff(void);
 void summary(FILE *f, char sep);
-int throw (int obj, int dir);
+int throw_item(int obj, int dir, const char* description);
 void critical(void);
 void uncritical(void);
 void unlock_file(const char *lokfil);
@@ -129,6 +129,7 @@ int movetorest(void);
 int reads(int obj);
 int armorclass(int i);
 int dropjunk(void);
+int destroyjunk(int obj);
 int gotocorner(void);
 int light(void);
 int shootindark(void);
@@ -152,7 +153,7 @@ int handlearmor(void);
 int haveweapon(int k, int print);
 int havebow(int k, int print);
 int havearmor(int k, int print, int rustproof);
-int havenamed(stuff otype, char *name);
+int havenamed(stuff otype, const char *name);
 int havemult(stuff otype, char *name, int count);
 int havefood(int n);
 int have(stuff otype);
@@ -224,6 +225,8 @@ int haveminus(void);
 int havemissile(void);
 int haveuseless(void);
 void holdmonsters(void);
+void hold_monster(int m);
+int is_held(int m);
 int hungry(void);
 void initstufflist(void);
 int lightroom(void);
@@ -325,7 +328,7 @@ int useless(int i);
 int isholder(register char *monster);
 int nextto(register int type, register int r, register int c);
 void setknobs(int *newid, int *knb, int *best, int *avg);
-int battlestations(int m, char *monster, int mbad, int danger, int mdir, int mdist, int alert, int adj);
+int battlestations(int m, char *monster, int mbad, int danger, int mdir, int step_turns, int zap_dist, int alert, int adj);
 int havewand(char *name);
 int backtodoor(int dist);
 int canbedoor(int deadr, int deadc);
@@ -348,6 +351,8 @@ int removering(int obj);
 int haveother(stuff otype, int other);
 int haveexplored(int n);
 int downright(int *drow, int *dcol);
+const char* tmp(const char* fmt, ...);
+void dumpscreenattr(int attr);
 
 #include <curses.h>
 int md_readchar(WINDOW *win);
@@ -381,6 +386,8 @@ int has_universal_identify_scroll();
 int has_hidden_passages();
 int pc_protocol();
 int vorpalize_weapon_can_be_cursed();
+int can_throw_potions();
+int potions_always_hit();
 int is_reading_scroll();
 int is_quaffing();
 int is_zapping();
@@ -388,12 +395,12 @@ int needs_msg_clear();
 const char* get_item_type_string(int type);
 int is_monster_vorpal_target(const char* monster);
 int can_vorpal_zap(int obj);
-const char* describe(const char* msg, const char* monster);
 char* populate_top_line(char* topline, char replacement);
 
-#define B_PARALYSIS     0x0001
-#define B_LTM           0x0002
+#define B_PARALYSIS_FIX 0x0001
+#define B_LTM_FIX       0x0002
 #define B_TILE_FIX      0x0004
 #define B_STATUS_FIX    0x0008
-#define B_ALL           B_PARALYSIS | B_LTM | B_TILE_FIX | B_STATUS_FIX;
-int enable_bugfix(int bug);
+#define B_THROW_POTIONS 0x0010
+#define B_ALL           B_PARALYSIS_FIX | B_LTM_FIX | B_TILE_FIX | B_STATUS_FIX | B_THROW_POTIONS;
+int enable(int bug);

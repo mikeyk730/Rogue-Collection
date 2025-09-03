@@ -67,11 +67,9 @@ void debuglog (const char *fmt, ...)
   va_end (ap);
 }
 
-int g_verbose = 0; //todo:mdk add config
-
 void debuglog_protocol(const char* fmt, ...)
 {
-    if (g_verbose)
+    if (g_verbose_logs)
     {
         va_list  ap;
 

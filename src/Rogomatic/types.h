@@ -75,7 +75,7 @@
 # define CANGO    (00000000002)
 # define DOOR     (00000000004)
 # define HALL     (00000000010)
-# define PSD      (00000000020)
+# define PSD      (00000000020) //possible secret door
 # define ROOM     (00000000040)
 # define SAFE     (00000000100)
 # define SEEN     (00000000200)

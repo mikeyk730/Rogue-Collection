@@ -1114,9 +1114,9 @@ int avoid ()
 
 static int archrow = NONE, archcol = NONE, archturns = NONE, archval[MAXROWS][MAXCOLS];
 
-int archmonster (m, trns)
-register int m;		/* Monster to attack */
-register int trns;	/* Minimum number of arrows to make it worthwhile */
+int archmonster (register int m, register int trns)
+//register int m;		/* Monster to attack */
+//register int trns;	/* Minimum number of arrows to make it worthwhile */
 {
   register int mr, mc;
 

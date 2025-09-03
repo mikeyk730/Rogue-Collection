@@ -67,13 +67,13 @@ int   strategize ()
   if (callitpending ())         /* We have this to do */
     return (1);
 
-  if (fightmonster ())          /* We are under attack! */
+  if (fightmonster())          /* We are under attack! */
     return (1);
 
   if (fightinvisible ())        /* Claude Raines! */
     return (1);
 
-  if (tomonster ())             /* Go play with the pretty monster */
+  if (tomonster())             /* Go play with the pretty monster */
     return (1);
 
   if (shootindark ())           /* Shoot arrows in dark rooms */
@@ -101,6 +101,8 @@ int   strategize ()
   if (slowed) slowed--; 	        /* Turns since we slowed a monster */
 
   if (cancelled) cancelled--;		/* Turns since we zapped 'cancel' */
+
+  if (confused_monster) confused_monster--;
 
   if (beingheld) beingheld--;		/* Turns since held by a fungus */
 
@@ -246,14 +248,26 @@ void finishcallit()
     }
 }
 
-static char buf[128];
-
-const char* describe(const char* msg, const char* monster)
+const char* tmpv(const char* fmt, va_list ap)
 {
-    memset(buf, 0, 128);
-    strcat(buf, msg);
-    strcat(buf, monster);
+    static char buf[128];
+
+    vsnprintf(buf, 128, fmt, ap);
+
     return buf;
+}
+
+
+const char* tmp(const char* fmt, ...)
+{
+    const char* r;
+
+    va_list  ap;
+    va_start(ap, fmt);
+    r = tmpv(fmt, ap);
+    va_end(ap);
+
+    return r;
 }
 
 
@@ -263,7 +277,7 @@ const char* describe(const char* msg, const char* monster)
  * weapon already in hand.
  */
 
-int   fightmonster ()
+int fightmonster()
 {
   register int i, rr, cc, mdir = NONE, mbad  = NONE, danger = 0;
   int  melee = 0, adjacent = 0, alertmonster = 0;
@@ -305,6 +319,15 @@ int   fightmonster ()
       danger += maxhitchar(mon);	/* Add to the danger */
 
       /* If he is adjacent, add to the adj count */
+      /* mdk: observations: a diagonal enemy is only adjacent if there's free movement.
+       * Diagonal in a passageway or on a door is not sufficient:
+       *
+       *                 |K
+       *     #         ##@
+       *     K           |
+       *     #@##
+       *
+       */
       if (onrc (CANGO, rr, atcol) && onrc (CANGO, atrow, cc)) {
         adjacent++; howmean = isholder (monster) ? 10000 : avghit(i);
 
@@ -317,7 +340,9 @@ int   fightmonster ()
 
       /* If we havent yet a line of sight, check this guy out */
       else if (wanddir == NONE)
-        { wanddir = direc (rr-atrow, cc-atcol); }
+      {
+          wanddir = direc (rr-atrow, cc-atcol);
+      }
 
       /* Debugging breakpoint */
       dwait (D_BATTLE, "%c <%d,%d>, danger %d, worst %c(%d,%d), total %d",
@@ -342,8 +367,8 @@ int   fightmonster ()
 
   monster = monname (monc);
 
-  if (battlestations (m, monster, mbad, danger, adjacent ? mdir : wanddir,
-                      adjacent ? 1 : 2, alertmonster, max (1, adjacent)))
+  if (battlestations(m, monster, mbad, danger, adjacent ? mdir : wanddir,
+                      adjacent ? 1 : 2, 1, alertmonster, adjacent))
     {
       foughtmonster = DIDFIGHT;
       return (1);
@@ -355,7 +380,7 @@ int   fightmonster ()
    */
 
   if (!lyinginwait && !adjacent) {
-    command (describe("lying in wait for ", monster), T_FIGHTING, "s");
+    command (tmp("lying in wait for %s", monster), T_FIGHTING, "s");
     dwait (D_BATTLE, "Lying in wait...");
     lyinginwait = 1;
     foughtmonster = DIDFIGHT;
@@ -363,13 +388,18 @@ int   fightmonster ()
   }
 
   /* If we are here but have no direction, there was a bug somewhere */
-  if (mdir < 0) {
-    dwait (D_BATTLE, "Adjacent, but no direction known!");
-    return (0);
+  if (mdir < 0)
+  {
+      if (adjacent)
+      {
+          dwait(D_ERROR, "Adjacent, but no direction known!");
+      }
+      return (0);
   }
 
   /* If we could die this round, tell the user about it */
-  if (danger >= Hp) display ("In trouble...");
+  if (danger >= Hp)
+      display ("In trouble...");
 
   /* Well, nothing better than to hit the beast! Tell dwait about it */
   dwait (D_BATTLE, "Attacking %s(%d) direction %d (total danger %d)...",
@@ -379,7 +409,7 @@ int   fightmonster ()
   lastmonster = monc-'A'+1;
 
   /* Move towards the monster (this causes us to hit him) */
-  rmove(describe("battle: strike monster ", monster), 1, mdir, T_FIGHTING);
+  rmove(tmp("battle: strike monster %s", monster), 1, mdir, T_FIGHTING);
   lyinginwait = 0;
   foughtmonster = DIDFIGHT;
   return (1);
@@ -393,7 +423,7 @@ int   fightmonster ()
  * charging after him. Special case for sitting on a door.
  */
 
-int   tomonster ()
+int tomonster()
 {
   register int i, dist, rr, cc, mdir = NONE, mbad = NONE;
   int   closest, which, danger = 0, adj = 0, alert = 0;
@@ -462,7 +492,7 @@ int   tomonster ()
   alert = (mlist[which].q == AWAKE) ? 1 : 0;
 
   /* If 'battlestations' has an action, use that action */
-  if (battlestations (which, monster, mbad, danger, mdir, closest, alert, adj))
+  if (battlestations(which, monster, mbad, danger, mdir, closest, closest, alert, adj))
     return (1);
 
   /* If he is an odd number of squares away, lie in wait for him */
@@ -549,6 +579,62 @@ int is_monster_vorpal_target(const char* monster)
   return vorpal_target && streq(monster, monname(vorpal_target));
 }
 
+int throw_potion(const char* name, const char* monster, int mdir)
+{
+    if (!can_throw_potions())
+    {
+        return 0;
+    }
+
+    int obj = havenamed(potion, name);
+    if (obj == NONE)
+    {
+        return 0;
+    }
+
+    if (mdir == NONE)
+    {
+        dwait(D_ERROR, "No mdir! Can't throw potion of %s at %s", name, monster);
+        return 0;
+    }
+
+    dwait(D_BATTLE, "Battlestations: throwing potion of %s at %s", name, monster);
+    return throw_item(obj, mdir, tmp("throw potion of %s at %s", name, monster));
+
+}
+
+int tactic_confuse_monster_with_potion(const char* monster, int mdir)
+{
+    if (confused_monster > 0)
+    {
+        return 0;
+    }
+
+    if (throw_potion("confusion", monster, mdir) || throw_potion("blindness", monster, mdir))
+    {
+        confused_monster = 5;
+        return 1;
+    }
+
+    return 0;
+}
+
+int tactic_hold_monster_with_potion(int m, const char* monster, int mdir)
+{
+    if (is_held(m))
+    {
+        return 0;
+    }
+
+    if (throw_potion("paralysis", monster, mdir))
+    {
+        hold_monster(m);
+        return 1;
+    }
+
+    return 0;
+}
+
 /*
  * battlestations:
  *
@@ -559,21 +645,33 @@ int is_monster_vorpal_target(const char* monster)
 # define die_in(n)	(Hp/n < danger*50/(100-k_run))
 # define live_for(n)	(! die_in(n))
 
-battlestations (m, monster, mbad, danger, mdir, mdist, alert, adj)
-int m;			/* Monster index */
-char *monster;          /* What is it? */
-int mbad;               /* How bad is it? */
-int danger;             /* How many points damage per round? */
-int mdir;               /* Which direction (clear line of sight)? */
-int mdist;              /* How many turns until battle? */
-int alert;              /* Is he known to be awake? */
-int adj;		/* How many attackers are there? */
+int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdist, int zap_dist, int alert, int adj)
+//int m;                  /* Monster index */
+//char *monster;          /* What is it? */
+//int mbad;               /* How bad is it? */
+//int danger;             /* How many points damage per round? */
+//int mdir;               /* Which direction (clear line of sight)? */
+//int mdist;              /* How many turns until battle? */
+//int zap_dist;           /* How many tiles away is the monster? */
+//int alert;              /* Is he known to be awake? */
+//int adj;		          /* How many attackers are there? */
 {
   int obj, turns;
   static int stepback = 0;
 
+  /*
+
+    In the following scenario, mdist is 2, but zap_dist is 1
+
+    #
+    #
+    K
+    #@####
+
+  */
+
   /* Ascertain whether we have a clear path to this monster */
-  if (mdir != NONE && !checkcango (mdir, mdist))
+  if (mdir != NONE && !checkcango (mdir, zap_dist))
     mdir = NONE;
 
   /* Number of turns is one less than distance (modified if we are hasted) */
@@ -759,14 +857,16 @@ int adj;		/* How many attackers are there? */
    * Confuse the poor beast?
    */
 
-  if (die_in (2) && turns > 0 && !redhands &&
+  if (die_in (2) && turns > 0 && !redhands && !confused_monster &&
       ((obj = havenamed (Scroll, "monster confusion")) != NONE))
     return (reads (obj));
+
+  int close_to_death = die_in(1) || (die_in(2) && adj > 1);
 
   /*
    * mdk: if we can zap with our vorpalized weapon, use it now!
    */
-  if (die_in (1)
+  if (close_to_death
       && can_vorpal_zap(currentweapon)
       && is_monster_vorpal_target(monster)
       && point(currentweapon, mdir))
@@ -827,6 +927,14 @@ int adj;		/* How many attackers are there? */
     return (reads (obj));
   }
 
+  // mdk: try paralyzing the monster with a potion
+  if (close_to_death &&
+      potions_always_hit() &&
+      tactic_hold_monster_with_potion(m, monster, mdir))
+  {
+      return 1;
+  }
+
   /*
    * The better part of valor...
    */
@@ -876,6 +984,14 @@ int adj;		/* How many attackers are there? */
       ! (itemis (obj, WORTHLESS))
       )
     return (point (obj, mdir));
+
+  // mdk: try confusing the monster with a potion
+  if (close_to_death &&
+      potions_always_hit() &&
+      tactic_confuse_monster_with_potion(monster, mdir))
+  {
+      return 1;
+  }
 
   /*
    * Any life prolonging wands?
@@ -1021,7 +1137,7 @@ int adj;		/* How many attackers are there? */
         return (1);
 
       /* And shoot! */
-      throw (obj, mdir);
+      throw_item(obj, mdir, tmp("shoot arrow at %s", monster));
       return (1);
     }
   }
@@ -1294,14 +1410,10 @@ pickupafter ()
  *           removed from the game.
  */
 
-int dropjunk ()
+int dropjunk()
 {
-  int obj;
-
-  if ((obj = haveuseless ()) != NONE && (gotocorner () || throw (obj, 7)))
-    return (1);
-
-  return (0);
+    int obj = haveuseless();
+    return destroyjunk(obj);
 }
 
 /*
