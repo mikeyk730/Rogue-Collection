@@ -261,8 +261,7 @@ int unpin ()
  *             door.
  */
 
-int backtodoor (dist)
-int dist;
+int backtodoor (int dist)
 {
   static int lastcall= -10, stillcount=0, notmoving=0, closest=99;
 
@@ -293,8 +292,11 @@ int dist;
   else if (dist > 0 && (on (DOOR) || nextto (DOOR, atrow, atcol)))
     dwait (D_BATTLE, "backtodoor: next to door, have time");
 
-  else if (makemove (RUNTODOOR, rundoorinit, rundoorvalue, REEVAL))
-    { dwait (D_BATTLE, "Back to the door..."); return (1); }
+  else if (makemove(RUNTODOOR, rundoorinit, rundoorvalue, REEVAL))
+  {
+      dwait(D_BATTLE, "Back to the door...");
+      return (1);
+  }
 
   return (0);
 }

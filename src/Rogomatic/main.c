@@ -1003,7 +1003,12 @@ void startlesson ()
   /* Cache the parameters for easier use */
   k_srch = knob[K_SRCH];	k_door = knob[K_DOOR];
   k_rest = knob[K_REST];	k_arch = knob[K_ARCH];
-  k_exper = knob[K_EXPER];	k_run = knob[K_RUN];
+  k_exper = knob[K_EXPER];
+
+  k_run = knob[K_RUN];
+  if (enable(B_NERF_RUN_GENE))
+      k_run /= 2;
+
   k_wake = knob[K_WAKE];	k_food = knob[K_FOOD];
 }
 

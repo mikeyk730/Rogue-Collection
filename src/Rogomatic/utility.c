@@ -126,6 +126,47 @@ const char* get_move_type_str(int movetype)
     return "BAD_TYPE";
 }
 
+const char* get_debug_str(int d)
+{
+    switch (d)
+    {
+    case D_FATAL:
+        return "D_FATAL";
+    case D_ERROR:
+        return "D_ERROR";
+    case D_WARNING:
+        return "D_WARNING";
+    case D_INFORM:
+        return "D_INFORM";
+    case D_SEARCH:
+        return "D_SEARCH";
+    case D_BATTLE:
+        return "D_BATTLE";
+    case D_MESSAGE:
+        return "D_MESSAGE";
+    case D_PACK:
+        return "D_PACK";
+    case D_CONTROL:
+        return "D_CONTROL";
+    case D_SCREEN:
+        return "D_SCREEN";
+    case D_MONSTER:
+        return "D_MONSTER";
+    case D_SAY:
+        return "D_SAY";
+    case D_SCROLL:
+        return "D_SCROLL";
+    case D_POTION:
+        return "D_POTION";
+    case D_WAND:
+        return "D_WAND";
+    case D_RING:
+        return "D_RING";
+    }
+
+    return "BAD_TYPE";
+}
+
 /*
  * rogo_baudrate: Determine the baud rate of the terminal
  */

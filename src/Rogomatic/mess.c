@@ -1196,7 +1196,8 @@ void washit (char* monster)
 
   timeshit++;			/* Bump global count */
 
-  if (m>0) wakemonster(-m);	/* Wake him up */
+  if (m > 0)
+      wakemonster(-m);	/* Wake him up */
 
   terpbot ();			/* Hit points changed, read bottom */
 
@@ -1249,7 +1250,8 @@ char *monster;
 
   timesmissed++;		/* Bump global count */
 
-  if (m>0) wakemonster(-m);	/* Wake him up */
+  if (m>0)
+      wakemonster(-m);	/* Wake him up */
 
   /* Add data to long term memory */
   if (mh != NONE) {

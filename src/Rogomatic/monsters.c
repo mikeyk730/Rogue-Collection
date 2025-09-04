@@ -180,8 +180,7 @@ void holdmonsters ()
  * dir = -m  means wake up all adjacent monsters of type m.
  */
 
-void wakemonster (dir)
-int dir;
+void wakemonster (int dir)
 {
   register int m;
 
@@ -194,8 +193,17 @@ int dir;
       dwait (D_MONSTER, "Waking up %s at %d,%d",
              monname (mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
 
-      mlist[m].q = AWAKE;
-      setrc (EVERCLR, mlist[m].mrow, mlist[m].mcol);
+      int skip_wake = mlist[m].q == HELD && dir < 0;
+      if (!skip_wake)
+      {
+          mlist[m].q = AWAKE;
+          setrc(EVERCLR, mlist[m].mrow, mlist[m].mcol);
+      }
+      else
+      {
+          dwait(D_ERROR, "Not waking up HELD %s at %d,%d after damage",
+              monname(mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
+      }
     }
   }
 }

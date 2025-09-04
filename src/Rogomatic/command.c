@@ -171,7 +171,7 @@ void command (const char* description, int tmode, char* f, ...)
   if (previous/1000 != current/1000)
   {
       dosnapshot();
-      int severity = (current > 15000) ? D_FATAL : D_WARNING;
+      int severity = (current > 15000) ? D_FATAL : D_ERROR;
       dwait(severity, "Excessive %s for %d turns on level %d", tmode_to_str(tmode), timespent[Level].activity[tmode], Level);
   }
 

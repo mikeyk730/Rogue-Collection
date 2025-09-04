@@ -52,6 +52,11 @@ void newlevel ()
       dwait(D_WARNING, "Breaking at level %d", Level);
   }
 
+  if (Level >= 20)
+  {
+      dwait(D_WARNING, "Good game in progress, level %d", Level);
+  }
+
   int   i, j;
 
   initstufflist ();			/* Delete the list of items */
@@ -520,7 +525,10 @@ register int row, col;
 
   debuglog_protocol ("rooms : updatepos (%c, %d, %d)\n",ch, row, col);
 
-  if (mlistlen && ch != oldch) deletemonster (row, col);
+  if (mlistlen && ch != oldch)
+  {
+      deletemonster(row, col); //todo:mdk don't clear held monsters that are still awake
+  }
 
   if (unseen) { foundnew (); }
 

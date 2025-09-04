@@ -304,12 +304,12 @@ int   onat;                             /* 0 ==> Wait for waitstr
         }*/
 
         // mdk: try to break loop
-        if (morecount >= 200)
+        /*if (morecount >= 200)
         {
             dwait(D_WARNING, "Trying to break out of More loop");
             sendnow("%c %c;", ESC, ESC);
         }
-        else
+        else*/
         {
             /* Send a space (and possibly a semicolon) to clear the message */
             if (onat == 2) sendnow(" ;");
@@ -1085,9 +1085,9 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
   /* Send the requisite handshaking to Rogue */
   if (terminationtype == DIED)
     if (version == RV54A || version == RVPC11 || version == RVPC148)
-      sendnow ("\n\n");
+      sendnow ("\n\n\n\n");
     else
-      sendnow ("\n");
+      sendnow ("\n\n\n");
   else if (terminationtype == FINISHED)
     sendnow ("Qy\n");
   else
@@ -1127,7 +1127,7 @@ char *mess;
  */
 
 /* VARARGS1 */
-void say (char* f, ...)
+void say (const char* f, ...)
 {
     va_list args;
     va_start(args, f);
@@ -1135,7 +1135,7 @@ void say (char* f, ...)
     va_end(args);
 }
 
-void say_impl (char* f, va_list args)
+void say_impl (const char* f, va_list args)
 {
   char buf[BUFSIZ], *b;
 
@@ -1150,6 +1150,7 @@ void say_impl (char* f, va_list args)
     at (row, col);
 
     printf("%s\n", buf);
+    debuglog("say: %s\n", buf);
   }
 }
 
@@ -1159,7 +1160,7 @@ void say_impl (char* f, va_list args)
  */
 
 /* VARARGS1 */
-void saynow (char* f, ...)
+void saynow (const char* f, ...)
 {
   if (!emacs && !terse) {
     va_list args;

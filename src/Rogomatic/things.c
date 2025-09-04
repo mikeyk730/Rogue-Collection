@@ -422,8 +422,7 @@ void dumpstuff ()
 /*
  * display: Print a message on line 1 of the screen.
  */
-void display (s)
-char *s;
+void display (const char* s)
 {
   saynow (s);
   msgonscreen=1;

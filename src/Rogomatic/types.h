@@ -200,6 +200,8 @@ const char* tmode_to_str(int tmode);
 # define D_WAND    (0x4000)
 # define D_RING    (0x8000)
 
+const char* get_debug_str(int d);
+
 # define D_ALL     (0x03FF)
 # define D_NORMAL  (D_FATAL | D_ERROR)
 # define D_ITEM    (D_SCROLL | D_POTION | D_WAND | D_RING)

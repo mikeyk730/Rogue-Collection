@@ -541,6 +541,7 @@ int checkcango(register int dir, register int turns)
             {
                 //todo:mdk should consider if another monster is blocking path
                 dwait(D_ERROR, "Another monster in the way of target");
+                break;
             }
         }
 

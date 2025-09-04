@@ -208,7 +208,7 @@ int   strategize ()
   /*
    * Don't give up, start all over!
    */
-
+  dwait(D_ERROR, "stubborn");
   newlevel ();
   display ("I would give up, but I am too stubborn, starting over...");
   return (grope (10));
@@ -270,6 +270,63 @@ const char* tmp(const char* fmt, ...)
     return r;
 }
 
+int is_threat(int monster_q)
+{
+    return monster_q != ASLEEP && monster_q != HELD;
+}
+
+const char* get_monster_state_str(int q)
+{
+    switch (q)
+    {
+    case AWAKE:
+        return "AWAKE";
+    case ASLEEP:
+        return "ASLEEP";
+    case HELD:
+        return "HELD";
+    default:
+        return "UNKNOWN";
+    }
+}
+
+int is_space_free(r, c)
+{
+    if (r < 0 || r >= MAXROWS || c < 0 || c >= MAXCOLS)
+        return 0;
+
+    int can_go = onrc(CANGO, r, c);
+    int has_monster = onrc(MONSTER, r, c);
+    return can_go && !has_monster;
+}
+
+int is_space_freed(r, c, tor, toc)
+{
+    return is_space_free(tor, toc) &&
+        (onrc(ROOM, r, c) && onrc(ROOM, tor, toc));
+}
+
+int is_trapped()
+{
+    if (is_space_freed(atrow, atcol, atrow-1, atcol-1))
+        return 0;
+    if (is_space_free(atrow-1, atcol))
+        return 0;
+    if (is_space_freed(atrow, atcol, atrow-1, atcol+1))
+        return 0;
+    if (is_space_free(atrow, atcol-1))
+        return 0;
+    if (is_space_free(atrow, atcol+1))
+        return 0;
+    if (is_space_freed(atrow, atcol, atrow+1, atcol-1))
+        return 0;
+    if (is_space_free(atrow+1, atcol))
+        return 0;
+    if (is_space_freed(atrow, atcol, atrow+1, atcol+1))
+        return 0;
+
+    return 1;
+}
 
 /*
  * fightmonster: looks for adjacent monsters. If found, it calls
@@ -280,75 +337,119 @@ const char* tmp(const char* fmt, ...)
 int fightmonster()
 {
   register int i, rr, cc, mdir = NONE, mbad  = NONE, danger = 0;
-  int  melee = 0, adjacent = 0, alertmonster = 0;
+  int  melee = 0, adjacent = 0;
   int  wanddir = NONE, m = NONE, howmean;
   char mon, monc = ':', *monster;
 
+  int has_awake = 0;
+  int has_unknown = 0;
+  int has_held = 0;
+  int has_asleep = 0;
+
   /* Check for adjacent monsters */
-  for (i = 0; i < mlistlen; i++) {
-    rr = mlist[i].mrow; cc = mlist[i].mcol;
+  for (i = 0; i < mlistlen; i++)
+  {
+      rr = mlist[i].mrow;
+      cc = mlist[i].mcol;
 
-    if (max (abs (atrow-rr), abs (atcol-cc)) == 1) {
-      if (mlist[i].q != ASLEEP) {
-        if (mlist[i].q != HELD || Hp >= Hpmax || !havefood (1)) {
-          melee = 1;
-
-          if (mlist[i].q == AWAKE) alertmonster = 1;
-        }
+      if (max(abs(atrow - rr), abs(atcol - cc)) == 1)
+      {
+          switch (mlist[i].q)
+          {
+          case AWAKE:
+              has_awake = 1;
+              break;
+          case ASLEEP:
+              has_asleep = 1;
+              break;
+          case HELD:
+              has_held = 1;
+              break;
+          default:
+              has_unknown = 1;
+              break;
+          }
       }
-    }
   }
 
-  if (!melee) return (0);               /* No one to fight */
+  melee = has_unknown
+      || has_awake
+      || (has_held && (Hp >= Hpmax || !havefood(1)));
+
+  if (!melee)
+      return (0);               /* No one to fight */
+
+  int choose_worst = has_unknown || has_awake;
 
   /* Loop to find worst monster and tally danger & number adjacent */
-  for (i = 0; i < mlistlen; i++) {
-    rr = mlist[i].mrow; cc = mlist[i].mcol;	/* Monster position */
+  for (i = 0; i < mlistlen; i++)
+  {
+      /* Monster position */
+      rr = mlist[i].mrow;
+      cc = mlist[i].mcol;
 
-    /*
-     * If the monster is adjacent and is either awake or
-     * we don't know yet whether he is asleep, but we havent
-     * see any alert monsters yet.
-     */
-
-    if (max (abs (atrow-rr), abs (atcol-cc)) == 1 &&
-        (alertmonster ? mlist[i].q == AWAKE :
-         mlist[i].q != ASLEEP)) { /* DR Utexas 26 Jan 84 */
-      mon = mlist[i].chr;		/* Record the monster type */
-      monster = monname (mon);		/* Record the monster name */
-      danger += maxhitchar(mon);	/* Add to the danger */
-
-      /* If he is adjacent, add to the adj count */
-      /* mdk: observations: a diagonal enemy is only adjacent if there's free movement.
-       * Diagonal in a passageway or on a door is not sufficient:
-       *
-       *                 |K
-       *     #         ##@
-       *     K           |
-       *     #@##
-       *
-       */
-      if (onrc (CANGO, rr, atcol) && onrc (CANGO, atrow, cc)) {
-        adjacent++; howmean = isholder (monster) ? 10000 : avghit(i);
-
-        /* If he is adjacent and the worst monster yet, save him */
-        if (howmean > mbad) {
-          wanddir = mdir = direc (rr-atrow, cc-atcol);
-          monc = mon; m = i; mbad = howmean;
-        }
-      }
-
-      /* If we havent yet a line of sight, check this guy out */
-      else if (wanddir == NONE)
+      if (max(abs(atrow - rr), abs(atcol - cc)) != 1)
       {
-          wanddir = direc (rr-atrow, cc-atcol);
+          continue;
       }
 
-      /* Debugging breakpoint */
-      dwait (D_BATTLE, "%c <%d,%d>, danger %d, worst %c(%d,%d), total %d",
-             screen[rr][cc], rr-atrow, cc-atcol,
-             danger, monc, mdir, mbad, adjacent);
-    }
+      mon = mlist[i].chr;		/* Record the monster type */
+      monster = monname(mon);		/* Record the monster name */
+
+      /*
+       * If the monster is adjacent and is either awake or
+       * we don't know yet whether he is asleep, but we havent
+       * see any alert monsters yet.
+       */
+      int threat = is_threat(mlist[i].q);
+      if (choose_worst ? threat : !threat)
+      {
+          danger += maxhitchar(mon);	/* Add to the danger */
+
+          //todo:mdk prefer highest of awake or unknown. else min of sleeping/held
+
+          /* If he is adjacent, add to the adj count */
+          /* mdk: observations: a diagonal enemy is only adjacent if there's free movement.
+           * Diagonal in a passageway or on a door is not sufficient:
+           *
+           *                 |K
+           *     #         ##@
+           *     K           |
+           *     #@##
+           *
+           */
+          if (onrc(CANGO, rr, atcol) && onrc(CANGO, atrow, cc))
+          {
+              adjacent++;
+              howmean = isholder(monster) ? 10000 : avghit(i);
+
+              /* If he is adjacent and the worst monster yet, save him */
+              if (choose_worst && (howmean > mbad || mbad == NONE) || !choose_worst && (howmean < mbad || mbad == NONE))
+              {
+                  wanddir = mdir = direc(rr - atrow, cc - atcol);
+                  monc = mon;
+                  m = i;
+                  mbad = howmean;
+              }
+          }
+
+          /* If we havent yet a line of sight, check this guy out */
+          else if (wanddir == NONE) //todo:mdk maybe pick best/worst diagonal enemy?
+          {
+              wanddir = direc(rr - atrow, cc - atcol); //todo:mdk track separate wand/throw vs melee targets
+              monc = mon;
+              m = i;
+          }
+
+          /* Debugging breakpoint */
+          dwait(D_BATTLE, "fight monster: consider %s: %c <%d,%d>, danger %d, %s %c(%d,%d), adjacent %d",
+              get_monster_state_str(mlist[i].q), screen[rr][cc], rr - atrow, cc - atcol,
+              danger, choose_worst ? "hardest" : "easiest", monc, mdir, mbad, adjacent);
+      }
+      else {
+          dwait(D_BATTLE, "fight monster: skipping %s: %c <%d,%d>",
+              get_monster_state_str(mlist[i].q), screen[rr][cc], rr - atrow, cc - atcol);
+      }
   }
 
   /*
@@ -365,10 +466,18 @@ int fightmonster()
    * Check whether the battlestations expert has a suggested action.
    */
 
+  dwait(D_BATTLE, "fight monster: chose: danger %d, %s %c(%d,%d), adjacent %d",
+      danger, choose_worst ? "hardest" : "easiest", monc, mdir, mbad, adjacent);
+
+  if (monc == ':')
+  {
+      dwait(D_ERROR, "Didn't determine monster to fight");
+  }
+
   monster = monname (monc);
 
   if (battlestations(m, monster, mbad, danger, adjacent ? mdir : wanddir,
-                      adjacent ? 1 : 2, 1, alertmonster, adjacent))
+                      adjacent ? 1 : 2, 1, has_awake, adjacent))
     {
       foughtmonster = DIDFIGHT;
       return (1);
@@ -415,6 +524,63 @@ int fightmonster()
   return (1);
 }
 
+int should_target_monster(char monchar, int monq, int avg_hit, int max_hit)
+{
+    if (usingarrow)
+        return 1;
+
+    if (monq == AWAKE)
+        return 1;
+
+    if ((monq == HELD && Hp >= Hpmax))
+        return 1;
+
+    if (wanttowake(monchar) &&
+        (avg_hit <= 50 || (max_hit + 50 - k_wake) < Hp))
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int should_target_monster_v2(char monchar, int monq, int avg_hit, int max_hit)
+{
+    if (usingarrow)
+        return 1;
+
+    if (monq == AWAKE)
+        return 1;
+
+    if ((monq == HELD && Hp >= Hpmax))
+        return 1;
+
+    if (wanttowake(monchar))
+    {
+        if (monq == 0)
+        {
+            int target = 2 * max_hit + max_hit * k_wake / 25;
+            if (target < Hp)
+            {
+                dwait(D_BATTLE, "Targeting %c (%s) with max damage %d, target:%d < HP:%d", monchar, get_monster_state_str(monq), max_hit, target, Hp);
+                return 1;
+            }
+        }
+        else
+        {
+            int target = 2 * max_hit + max_hit * k_wake / 25;
+            if (target < Hp)
+            {
+                dwait(D_BATTLE, "Targeting %c (%s) with max damage %d, target:%d < HP:%d", monchar, get_monster_state_str(monq), max_hit, target, Hp);
+                return 1;
+            }
+        }
+    }
+
+
+    return 0;
+}
+
 /*
  * tomonster: if we can see a monster (and either it is awake or we
  * think we can beat it) then pick the worst one, call battlestations,
@@ -423,11 +589,11 @@ int fightmonster()
  * charging after him. Special case for sitting on a door.
  */
 
-int tomonster()
+int tomonster() //todo:mdk need to account for missing stairs
 {
-  register int i, dist, rr, cc, mdir = NONE, mbad = NONE;
-  int   closest, which, danger = 0, adj = 0, alert = 0;
-  char  monc = ':', monchar = ':', *monster;
+  register int mdir = NONE, mbad = NONE;
+  int   closest = 999, which = NONE, danger = 0, adj = 0, alert = 0;
+  char  monc = ':', *monster;
 
   /* If no monsters, fail */
   if (mlistlen==0)
@@ -438,49 +604,64 @@ int tomonster()
    * and distance of the closest monster worth fighting.
    */
 
-  for (i = 0, which = NONE, closest = 999; i < mlistlen; i++) {
-    dist = max (abs (mlist[i].mrow - atrow), abs (mlist[i].mcol - atcol));
-    monchar = mlist[i].chr;
+  for (int i = 0; i < mlistlen; i++)
+  {
+      int dist = max(abs(mlist[i].mrow - atrow), abs(mlist[i].mcol - atcol));
+      int ch = mlist[i].chr;
+      int monq = mlist[i].q;
 
-    /*
-     * IF   we are not using a magic arrow OR
-     *      we want to wake this monster up AND we can beat him OR
-     *      he is standing near something we want and we will have to
-     *        fight him anywhay
-     * THEN consider fighting the monster.
-     *
-     * Don't pick fights with sleepers if cosmic.  DR UTexas 25 Jan 84
-     */
+      /*
+       * IF   we are not using a magic arrow OR
+       *      we want to wake this monster up AND we can beat him OR
+       *      he is standing near something we want and we will have to
+       *        fight him anywhay
+       * THEN consider fighting the monster.
+       *
+       * Don't pick fights with sleepers if cosmic.  DR UTexas 25 Jan 84
+       */
 
-    if (usingarrow || mlist[i].q == AWAKE ||
-        (!cosmic && wanttowake (monchar) &&
-         (avghit (i) <= 50 || (maxhit (i) + 50 - k_wake) < Hp)) ||
-        (mlist[i].q == HELD && Hp >= Hpmax)) {
-      if (dist == 1) { /* mdk:bugfix more accurate damage and adjacent count. Fixes regeneration ring deadlock. */
-        danger += maxhit(i);		/* track total danger */
-        adj++;				/* count number of monsters */
+      int avg_hit = avghit(i);
+      int max_hit = maxhit(i);
+
+      if (should_target_monster_v2(ch, monq, avg_hit, max_hit))
+      {
+          if (dist == 1) /* mdk:bugfix more accurate damage and adjacent count. Fixes regeneration ring deadlock. */
+          {
+              danger += max_hit;		/* track total danger */
+              adj++;				/* count number of monsters */ //todo:mdk this adj doesn't take into account if we can move
+          }
+
+          /* If he is the closest monster, save his index and distance */
+          if (dist < closest)
+          {
+              closest = dist;
+              which = i;
+              monc = mlist[i].chr;
+              mbad = avg_hit;
+          }
+
+          /* Or if he is meaner than another equally close monster, save him */
+          else if (dist == closest && avg_hit > avghit(which))
+          {
+              dwait(D_BATTLE, "Chasing %c(%d) rather than %c(%d) at distance %d.",
+                  mlist[i].chr, avghit(i),
+                  mlist[which].chr, avghit(which),
+                  dist);
+
+              closest = dist;
+              which = i;
+              monc = mlist[i].chr;
+              mbad = avg_hit;
+          }
       }
-
-      /* If he is the closest monster, save his index and distance */
-      if (dist < closest)
-        { closest = dist; which = i; monc = mlist[i].chr; mbad = avghit(i); }
-
-      /* Or if he is meaner than another equally close monster, save him */
-      else if (dist == closest && avghit(i) > avghit(which)) {
-        dwait (D_BATTLE, "Chasing %c(%d) rather than %c(%d) at distance %d.",
-               mlist[i].chr, avghit(i), mlist[which].chr,
-               avghit(which), dist);
-
-        closest = dist; which = i; monc = mlist[i].chr; mbad = avghit(i);
-      }
-    }
   }
 
   /* No monsters worth bothering, return failure */
   if (which < 0) return (0);
 
   /* Save the monsters location in registers */
-  rr = mlist[which].mrow - atrow; cc = mlist[which].mcol - atcol;
+  int rr = mlist[which].mrow - atrow;
+  int cc = mlist[which].mcol - atcol;
 
   /* If the monster is on an exact diagonal, record direction */
   mdir = (rr==0 || cc==0 || abs(rr)==abs(cc)) ? direc (rr, cc) : -1;
@@ -520,13 +701,12 @@ int tomonster()
  * Some monsters are included here because we want to shoot arrows at them.
  */
 
-int wanttowake(c)
-char c;
+int wanttowake(char c)
 {
-  char *monster = monname (c);
+  if (cosmic)
+      return 0;
 
-  if (missedstairs)
-    return (1);
+  char* monster = monname(c);
 
   /*
    * If monster sleeping but won't wake up when we move around him,
@@ -539,6 +719,8 @@ char c;
       streq (monster, "ice monster") ||
       streq (monster, "leprechaun") ||
       streq (monster, "nymph") ||
+      streq (monster, "rattlesnake") ||
+      streq (monster, "aquator") ||
       streq (monster, "wraith") ||
       streq (monster, "purple worm") )
     return (0);
@@ -598,7 +780,13 @@ int throw_potion(const char* name, const char* monster, int mdir)
         return 0;
     }
 
+    if (is_harmless_enemy(monster))
+    {
+        return 0;
+    }
+
     dwait(D_BATTLE, "Battlestations: throwing potion of %s at %s", name, monster);
+    dwait(D_ERROR, "Battlestations: throwing potion of %s at %s", name, monster); //todo:mdk: temp
     return throw_item(obj, mdir, tmp("throw potion of %s at %s", name, monster));
 
 }
@@ -658,6 +846,12 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
 {
   int obj, turns;
   static int stepback = 0;
+
+  int sandwiched = is_trapped() && adj > 1;
+  if (sandwiched)
+  {
+      dwait(D_BATTLE, "Player is sandwiched between monsters");
+  }
 
   /*
 
@@ -752,7 +946,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Don't run away from Dragons!!!  They'll just flame you.
    */
 
-  if (!confused && !beingheld && (!on(DOOR) || turns < 1) &&
+  if (!confused && !beingheld && !sandwiched && (!on(DOOR) || turns < 1) &&
       (!streq (monster, "dragon") || cosmic) && Hp+Explev < Hpmax &&
       ((die_in(1) || Hp <= danger + between (Level-10, 0, 10)) || chicken) &&
       runaway ()) {
@@ -765,7 +959,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Be clever when facing multiple monsters? mdk: or slime
    */
 
-  if ((adj > 1 || streq (monster, "slime")) && !confused && !beingheld && !on (STAIRS | DOOR) &&
+  if ((adj > 1 || streq (monster, "slime")) && !sandwiched && !confused && !beingheld && !on (STAIRS | DOOR) &&
       backtodoor (turns))
     return (1);
 
@@ -773,7 +967,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * stepback to see if he is awake.
    */
 
-  if (!alert && !beingheld && !stepback && mdir != NONE &&
+  if (!alert && !beingheld && !stepback && !sandwiched && mdir != NONE &&
       turns == 0 && !on (DOOR | STAIRS)) {
     int rdir = (mdir+4)%8;
 
@@ -861,7 +1055,9 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
       ((obj = havenamed (Scroll, "monster confusion")) != NONE))
     return (reads (obj));
 
-  int close_to_death = die_in(1) || (die_in(2) && adj > 1);
+  int close_to_death = die_in(1)
+      || (die_in(2) && sandwiched)
+      || (die_in(3) && adj > 1);
 
   /*
    * mdk: if we can zap with our vorpalized weapon, use it now!
@@ -871,7 +1067,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
       && is_monster_vorpal_target(monster)
       && point(currentweapon, mdir))
   {
-    dwait(D_INFORM, "Vorpalize: Zap with weapon %d: %s", currentweapon, monster);
+    dwait(D_ERROR, "Vorpalize: Zap with weapon %d: %s", currentweapon, monster);
     did_vorpal_zap = 1;
     return (1);
   }
@@ -899,11 +1095,12 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
       drop (obj)) {
     set (SCAREM);
     droppedscare++;
+    dwait(D_ERROR, "Dropped scare monster");
     return (1);
   }
 
   /*
-   * Buy buy birdy!
+   * Bye bye birdy!
    */
 
   if (die_in (1) && mdir != NONE && turns == 0 &&
@@ -953,7 +1150,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Try to protect our armor from Rusties.
    */
 
-  if (!cursedarmor && currentarmor != NONE &&
+  if (!die_in(1) && !cursedarmor && currentarmor != NONE &&
       (seeawakemonster ("rust monster") || seeawakemonster ("aquator")) &&
       live_for (1) &&
       !(cosmic && Level < 8) &&               /* DR UTexas 25 Jan 84 */
@@ -986,7 +1183,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
     return (point (obj, mdir));
 
   // mdk: try confusing the monster with a potion
-  if (close_to_death &&
+  if (die_in(2) && turns > 0 &&
       potions_always_hit() &&
       tactic_confuse_monster_with_potion(monster, mdir))
   {
@@ -1048,7 +1245,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Don't run away from dragons, they'll just flame you!!
    */
 
-  if (confused && !beingheld && (!on(DOOR) || turns < 1) &&
+  if (confused && !sandwiched && !beingheld && (!on(DOOR) || turns < 1) &&
       ! streq (monster, "dragon") &&
       ((die_in (1) && Hp+Explev/2+3 < Hpmax) || chicken) &&
       runaway ())
@@ -1060,7 +1257,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * they'll just flame you!!!
    */
 
-  if (!confused && !beingheld && ! streq (monster, "dragon") &&
+  if (!confused && !sandwiched && !beingheld && ! streq (monster, "dragon") &&
       (mdir < 0 || turns < 5) &&
       (((adj > 1 || live_for (1)) && die_in (4) && !canrun ())) &&
       unpin ())
@@ -1100,7 +1297,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Wait to see if he is really awake.
    */
 
-  if (!alert && !lyinginwait && turns > 0) {
+  if (!alert && !sandwiched && !lyinginwait && turns > 0) {
     command ("rest to see if monster is awake", T_FIGHTING, "s");
     dwait (D_BATTLE, "Waiting to see if he is awake...");
     lyinginwait = 1;
@@ -1112,7 +1309,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * shoot an arrow at the beast. Conserve arrows below SAVEARROWS.
    */
 
-  if ((streq (monster, "leprechaun") ||
+  if (!sandwiched && (streq (monster, "leprechaun") ||
        streq (monster, "nymph") ||
        streq (monster, "floating eye") ||
        streq (monster, "ice monster") ||

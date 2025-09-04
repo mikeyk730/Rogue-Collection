@@ -67,10 +67,7 @@ evaluate_ptr evaluate;
  *           the correct state for validatemap or followmap to work.	MLM
  */
 
-int findmove (movetype, evalinit, evaluate, reevaluate)
-int movetype, reevaluate;
-evalinit_ptr evalinit;
-evaluate_ptr evaluate;
+int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int reevaluate)
 {
   int result;
 

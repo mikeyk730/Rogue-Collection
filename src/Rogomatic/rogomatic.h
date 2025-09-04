@@ -32,11 +32,11 @@ FILE *md_fdopen(int fd,char *mode);
 FILE *rogo_openlog(char *genelog);
 FILE *rogo_openlog(register char *genelog);
 FILE *wopen(char* fname, char* mode);
-void saynow(char* f, ...);
-void say(char* f, ...);
+void saynow(const char* f, ...);
+void say(const char* f, ...);
 void command(const char* description, int tmode, char* f, ...);
 void sendnow(char* f, ...);
-void say_impl(char* f, va_list args);
+void say_impl(const char* f, va_list args);
 void add_to_screen(int row, int col, char ch);
 char get_from_screen(int row, int col);
 void bumpsearchcount(void);
@@ -273,7 +273,7 @@ void useobj(char *string);
 void addobj(char *codename, int pack_index, stuff item_type);
 void dumpdatabase(void);
 void timehistory(FILE *f, char sep);
-void display(char *s);
+void display(const char *s);
 int findmonster(char *monster);
 int addmonhist(char *monster);
 void addstat(register statistic *s, register int datum);
@@ -396,11 +396,14 @@ const char* get_item_type_string(int type);
 int is_monster_vorpal_target(const char* monster);
 int can_vorpal_zap(int obj);
 char* populate_top_line(char* topline, char replacement);
+int is_harmless_enemy(const char* monster);
+
 
 #define B_PARALYSIS_FIX 0x0001
 #define B_LTM_FIX       0x0002
 #define B_TILE_FIX      0x0004
 #define B_STATUS_FIX    0x0008
 #define B_THROW_POTIONS 0x0010
-#define B_ALL           B_PARALYSIS_FIX | B_LTM_FIX | B_TILE_FIX | B_STATUS_FIX | B_THROW_POTIONS;
+#define B_NERF_RUN_GENE 0x0020
+#define B_ALL           B_PARALYSIS_FIX | B_LTM_FIX | B_TILE_FIX | B_STATUS_FIX | B_THROW_POTIONS | B_NERF_RUN_GENE;
 int enable(int bug);
