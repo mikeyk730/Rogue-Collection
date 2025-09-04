@@ -562,16 +562,18 @@ int should_target_monster_v2(char monchar, int monq, int avg_hit, int max_hit)
             int target = 2 * max_hit + max_hit * k_wake / 25;
             if (target < Hp)
             {
-                dwait(D_BATTLE, "Targeting %c (%s) with max damage %d, target:%d < HP:%d", monchar, get_monster_state_str(monq), max_hit, target, Hp);
+                int severity = Level > 16 ? D_ERROR : D_BATTLE;
+                dwait(severity, "Targeting %c (%s) with max damage %d on level %d, target:%d < HP:%d", monchar, get_monster_state_str(monq), max_hit, Level, target, Hp);
                 return 1;
             }
         }
         else
         {
             int target = 2 * max_hit + max_hit * k_wake / 25;
-            if (target < Hp)
+            if (target < Hp && (Level <= 12 || Level <= 16 && Hp == Hpmax))
             {
-                dwait(D_BATTLE, "Targeting %c (%s) with max damage %d, target:%d < HP:%d", monchar, get_monster_state_str(monq), max_hit, target, Hp);
+                int severity = Level > 16 ? D_ERROR : D_BATTLE;
+                dwait(severity, "Targeting %c (%s) with max damage %d on level %d, target:%d < HP:%d", monchar, get_monster_state_str(monq), max_hit, Level, target, Hp);
                 return 1;
             }
         }
@@ -847,10 +849,13 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
   int obj, turns;
   static int stepback = 0;
 
-  int sandwiched = is_trapped() && adj > 1;
-  if (sandwiched)
+  int trapped = is_trapped();
+  int deadend = trapped && adj == 1; //monster has us pinned in dead end
+  int sandwiched = trapped && adj > 1; //trapped in between monsters
+  if (trapped)
   {
-      dwait(D_BATTLE, "Player is sandwiched between monsters");
+      int severity = (adj == 1 || adj == 2) ? D_BATTLE : D_ERROR;
+      dwait(severity, "Player is trapped by %d monsters", adj);
   }
 
   /*

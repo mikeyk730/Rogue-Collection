@@ -780,17 +780,19 @@ int *val, *avd, *cont;
   for (k=0; k<8; k++) {  /* examine adjacent squares */
     register int nr = r + deltr[k];
     register int nc = c + deltc[k];
-
+    int already = timessearched[nr][nc];
+    int target = SEARCHES(nr, nc);
     if (nr >= 1 && nr <= (STATUSROW-1) &&
         nc >= 0 && nc <= MAXCOLS &&
-        onrc (PSD, nr, nc) && timessearched[nr][nc] < SEARCHES(nr,nc)) {
+        onrc (PSD, nr, nc) && already < target) {
       /* If adjacent square is on the screen */
       /* and if it has PSD set but has not been searched completely */
       /* count useful neighbours */
       if (screen[nr][nc] == '|')	v += 4;
       else				v ++;
 
-      if (debug (D_SCREEN | D_INFORM)) mvaddch (nr, nc, 'S');
+      if (debug (D_SCREEN | D_INFORM))
+          mvaddch (nr, nc, 'S');
     }
   }
 
@@ -996,9 +998,11 @@ int secret ()
 int findroom ()
 {
   if (new_findroom) {
-    if (!on (ROOM) && secret ())			return (1);
+    if (!on (ROOM) && secret ())
+        return (1);
 
-    if (makemove (EXPLORE, expinit, expvalue, REUSE))	 return (1);
+    if (makemove (EXPLORE, expinit, expvalue, REUSE))
+        return (1);
   }
 
   new_findroom = 0;
@@ -1012,9 +1016,11 @@ int findroom ()
 
 int exploreroom ()
 {
-  if (!on (ROOM) || isexplored (atrow, atcol)) return (0);
+  if (!on (ROOM) || isexplored (atrow, atcol))
+      return (0);
 
-  if (makemove (EXPLOREROOM, roominit, expvalue, REUSE)) return (1);
+  if (makemove (EXPLOREROOM, roominit, expvalue, REUSE))
+      return (1);
 
   markexplored (atrow, atcol);
 
@@ -1025,10 +1031,10 @@ int exploreroom ()
 /*
  *   D O O R E X P L O R E : look for secret doors
  */
+searchcount = 0;
 
 int doorexplore()
 {
-  static searchcount = 0;
   int secretinit(), secretvalue();
 
   /* If no new squares or read map, dont bother */
@@ -1036,10 +1042,16 @@ int doorexplore()
     { searchcount = 0; return (0); }
 
   if (makemove (SECRETDOOR, secretinit, secretvalue, REUSE))  /* move */
-    { searchcount = 0; return (1); }
+  {
+      searchcount = 0;
+      return (1);
+  }
 
   if (searchcount > 20)
-    { new_search = 0; return (0); }
+  {
+      new_search = 0;
+      return (0);
+  }
 
   if (ontarget) { /* Moved to a possible secret door, search it */
     searchcount++;

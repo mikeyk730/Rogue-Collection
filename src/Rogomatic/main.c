@@ -5,6 +5,54 @@ mdk:known issues 2025:
 - with rust monster and another enemy around, player gets stuck
 - player gets stuck in treasure room deciding between 2 different monsters
   RogueCollection.exe a --rogomatic --seed 1756837966 --genes "84 56 75 11 54 34 86 42 3"
+- sandwiched not working: reports 1 adj instead of 2:
+  RogueCollection.exe a --rogomatic --seed 1757003241 --genes "64 66 80 30 31 62 17 84 63"
+- player struggles with maze rooms
+  RogueCollection.exe a --rogomatic --seed 1757003309 --genes "39 53 39 58 57 36 16 63 63"
+- player struggles with passage
+  RogueCollection.exe a --rogomatic --seed 1757006301 --genes "39 62 38 25 57 36 18 2 63"
+- player infinite loop, starve
+  RogueCollection.exe a --rogomatic --seed 1757003266 --genes "56 66 80 30 31 62 17 84 63"
+- not considering all doors
+  RogueCollection.exe a --rogomatic --seed 1757006691 --genes "51 62 38 25 32 99 54 84 63"
+- double hold of flytrap
+  RogueCollection.exe a --rogomatic --seed 1757003439 --genes "26 62 38 25 32 8 54 73 63"
+- infinite loop, not taking stairs
+  RogueCollection.exe a --rogomatic --seed 1757003522 --genes "64 62 38 25 31 62 17 2 63"
+- polymorph on flytrap doesn't reset player held status
+- check what happens when want to arch, but another monster is blocking target
+  RogueCollection.exe a --rogomatic --seed 1757003719 --genes "51 62 38 25 32 8 70 84 63"
+- should remember held enemies after walking away
+- stuck on level even though door is obvious
+  RogueCollection.exe a --rogomatic --seed 1757005783 --genes "64 62 38 25 31 62 17 2 63"
+- stuck
+  RogueCollection.exe a --rogomatic --seed 1757007227 --genes "51 53 38 25 32 99 17 72 63"
+  RogueCollection.exe a --rogomatic --seed 1757007248 --genes "60 70 86 34 28 99 17 84 63"
+  RogueCollection.exe a --rogomatic --seed 1757007288 --genes "51 53 42 58 43 62 19 2 63"
+- check dragon strats: (should always try to hold or vorpal zap?)
+  RogueCollection.exe a --rogomatic --seed 1757005854 --genes "51 53 39 58 57 36 16 84 63"
+- player trapped by 0 monsters? actual 2!
+  RogueCollection.exe a --rogomatic --seed 1757006027 --genes "26 62 38 25 32 8 54 73 63"
+- trapped by monsters and stave to death??
+  RogueCollection.exe a --rogomatic --seed 1757006707 --genes "39 62 38 25 57 36 16 84 63"
+- should take stairs if teleport trap delays for too long:
+  RogueCollection.exe a --rogomatic --seed 1757006106 --genes "51 62 38 25 32 8 54 73 63"
+- door can be under monster?
+  RogueCollection.exe a --rogomatic --seed 1757007044 --genes "65 62 80 30 31 65 17 84 63"
+  RogueCollection.exe a --rogomatic --seed 1757007190 --genes "56 66 82 30 24 62 17 84 63"
+- sleeping monster in front of door can disrupt
+  RogueCollection.exe a --rogomatic --seed 1757007076 --genes "51 53 39 58 43 62 18 12 63"
+- attack G with bad health while it's held
+  RogueCollection.exe a --rogomatic --seed 1757003743 --genes "51 62 38 25 32 8 67 73 63"
+- shouldn't consider held Y when deciding to throw potion at C
+  RogueCollection.exe a --rogomatic --seed 1757005650 --genes "64 66 80 30 31 62 17 84 63"
+- when held monster is blocking path, should rest till max hp (to repro, revert consitions to not wake sleeping monster on high levels)
+  RogueCollection.exe a --rogomatic --seed 1756971140 --genes "24 26 35 21 17 7 11 63 63"
+- when have scare, should prefer to fight in passage, not on door?
+- flytrap with scare, on door?
+  RogueCollection.exe a --rogomatic --seed 1757007370 --genes "39 62 86 34 28 66 21 84 63"
+- cant find exit
+  RogueCollection.exe a --rogomatic --seed 1757007504 --genes "39 62 38 25 32 99 54 84 63"
 */
 
 /*

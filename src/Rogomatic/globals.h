@@ -240,4 +240,7 @@ extern int k_run;		/* Propensity for retreating */
 extern int k_wake;		/* Propensity for waking things up */
 extern int k_food;		/* Propensity for hoarding food (rings) */
 
+extern int searchcount;
+
+
 #include "rogomatic.h"

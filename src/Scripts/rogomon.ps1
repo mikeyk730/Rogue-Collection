@@ -3,7 +3,7 @@
 
 $targetImageName = "RogueCollection.exe"
 $checkInterval = 5
-$maxStagnantTime = 15
+$maxStagnantTime = 10
 $processStats = @{}
 
 while ($true) {

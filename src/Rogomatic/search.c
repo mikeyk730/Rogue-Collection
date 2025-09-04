@@ -91,13 +91,21 @@ int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int ree
   searchstartr = atrow; searchstartc = atcol;
 
   if (!(*evalinit)())    /* Compute evalinit from current location */
-    { dwait (D_SEARCH, "Findmove: evalinit failed."); return (0); }
+  {
+      dwait (D_SEARCH, "Findmove: evalinit failed.");
+      return (0);
+  }
 
   if (!searchfrom (atrow, atcol, evaluate, mvdir, &targetrow, &targetcol))
-    { return (0); }	/* move failed */
+  {
+      return (0); /* move failed */
+  }
 
   if (targetrow == atrow && targetcol == atcol)
-    { ontarget = 1; return (0); }
+  {
+      ontarget = 1;
+      return (0);
+  }
 
   /* <<copy the newly created map to save*[][]>> */
   mvtype = movetype;	/* mvtype will be the type of saved map */
@@ -206,10 +214,10 @@ evaluate_ptr evaluate;
   register int thedir, dir, r, c;
   int val, avd, cont;
 
-  dwait (D_CONTROL | D_SEARCH, "Validatemap: type %d", movetype);
+  dwait (D_CONTROL | D_SEARCH, "Validatemap: type %s", get_move_type_str(movetype));
 
   if (mvtype != movetype) {
-    dwait (D_SEARCH, "Validatemap: move type mismatch %d != %d, map invalid.", movetype, mvtype);
+    dwait (D_SEARCH, "Validatemap: move type mismatch %s != %s, map invalid.", get_move_type_str(movetype), get_move_type_str(mvtype));
     return (0);
   }
 
@@ -274,7 +282,8 @@ evaluate_ptr evaluate;
 void cancelmove (movetype)
 int movetype;
 {
-  if (movetype == mvtype) mvtype = 0;
+  if (movetype == mvtype)
+      mvtype = 0;
 }
 
 /*

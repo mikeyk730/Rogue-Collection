@@ -54,7 +54,7 @@ void newlevel ()
 
   if (Level >= 20)
   {
-      dwait(D_WARNING, "Good game in progress, level %d", Level);
+      dwait(D_ERROR, "Good game in progress, level %d", Level);
   }
 
   int   i, j;
@@ -81,7 +81,7 @@ void newlevel ()
   newarmor = newweapon = newring = 1;	/* Reevaluate our items */
   foundnew ();				/* Reactivate all rules */
   clearsendqueue ();	/* Clear old commands */
-
+  searchcount = 0;
   /*
    * Clear the highlevel map
    */
