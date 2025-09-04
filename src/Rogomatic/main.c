@@ -29,6 +29,7 @@ mdk:known issues 2025:
   RogueCollection.exe a --rogomatic --seed 1757007227 --genes "51 53 38 25 32 99 17 72 63"
   RogueCollection.exe a --rogomatic --seed 1757007248 --genes "60 70 86 34 28 99 17 84 63"
   RogueCollection.exe a --rogomatic --seed 1757007288 --genes "51 53 42 58 43 62 19 2 63"
+  RogueCollection.exe a --rogomatic --seed 1757007769 --genes "93 75 62 43 8 74 66 54 63"
 - check dragon strats: (should always try to hold or vorpal zap?)
   RogueCollection.exe a --rogomatic --seed 1757005854 --genes "51 53 39 58 57 36 16 84 63"
 - player trapped by 0 monsters? actual 2!
@@ -53,6 +54,16 @@ mdk:known issues 2025:
   RogueCollection.exe a --rogomatic --seed 1757007370 --genes "39 62 86 34 28 66 21 84 63"
 - cant find exit
   RogueCollection.exe a --rogomatic --seed 1757007504 --genes "39 62 38 25 32 99 54 84 63"
+- wake up held J on lvl25 to check one door, when another is available. should treat held monster as deterant
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- lvl27 food detection shows where amulet is. do we attempt this? no bee line
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- medusas not confusing player?? still surviving against faint lvl26 on way up
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- have lots of paralysis potions. should use them on late levels
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- battles with maze rooms not working well, lvl27
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
 */
 
 /*

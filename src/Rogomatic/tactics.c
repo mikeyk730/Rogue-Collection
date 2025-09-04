@@ -539,8 +539,7 @@ int checkcango(register int dir, register int turns)
 
             if (onrc(MONSTER, r, c) == MONSTER)
             {
-                //todo:mdk should consider if another monster is blocking path
-                dwait(D_ERROR, "Another monster in the way of target");
+                dwait(D_BATTLE, "Another monster in the way of target");
                 break;
             }
         }
