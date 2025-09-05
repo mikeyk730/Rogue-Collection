@@ -50,9 +50,9 @@
  * from the user).
  */
 
-int   strategize ()
+int strategize()
 {
-  dwait (D_CONTROL, "Strategizing...");
+  dwait (D_CONTROL, "Strategizing... attempt %d", attempt);
 
   /* If replaying, instead of making an action, return the old one */
   if (replaying) return (replaycommand ());
@@ -159,6 +159,10 @@ int   strategize ()
   if (findarrow ())		/* Do we have an unitialized arrow? */
     return (1);
 
+  // mdk: bail on the level early if we had trouble finding the stairs
+  if (attempt > 4 && godownstairs(NOTRUNNING))
+    return (1);
+
   if (findroom ())		/* Look for another room */
     return (1);
 
@@ -170,7 +174,8 @@ int   strategize ()
    * the SLEEPER bit for each square with a sleeping monster.  Go find
    * such a monster and kill it to see whether (s)he was on the stairs).
    */
-
+  //mdk:this didn't work, attempt would always be 0, since we call newlevel() when we're stubborn
+  //todo:mdk: SLEEPER not set for all sleeping monsters.
   if (attempt > 4 && makemove (ATTACKSLEEP, genericinit, sleepvalue, REUSE)) {
     display ("No stairs, attacking sleeping monster...");
     return (1);
@@ -190,19 +195,40 @@ int   strategize ()
    * (ie we were hallucinating when we saw them last time).
    */
 
-  if (on (STAIRS) && (atrow != stairrow || atcol != staircol))
-    { dwait (D_ERROR, "Stairs moved!"); findstairs (NONE, NONE); return (1); }
+  if (on(STAIRS) && (atrow != stairrow || atcol != staircol))
+  {
+      dwait(D_ERROR, "Stairs moved!");
+      findstairs(NONE, NONE);
+      return (1);
+  }
 
   /*
    * If we failed to find the stairs, explore each possible secret door
    * another ten times.
    */
 
+  // mdk: previously we'd never get to attempt > 0 in broader loop
   while (attempt++ < MAXATTEMPTS) {
     timestosearch += max (3, k_door / 5);
     foundnew ();
 
-    if (doorexplore ()) return (1);
+    //mdk: if (doorexplore ()) return (1);
+
+    int severity = attempt >= 5 ? D_ERROR : D_INFORM;
+    dwait(severity, "Couldn't find stairs. Attempt %d", attempt);
+
+    return grope(1);
+  }
+
+  //mdk: backup in case above fails us
+  if (!missedstairs)
+  {
+      missedstairs = 1;
+      foundnew();
+
+      dwait(D_ERROR, "Need to attack sleeping monsters");
+
+      return grope(1);
   }
 
   /*
@@ -546,6 +572,9 @@ int should_target_monster(char monchar, int monq, int avg_hit, int max_hit)
 
 int should_target_monster_v2(char monchar, int monq, int avg_hit, int max_hit)
 {
+    if (missedstairs)
+        return 1;
+
     if (usingarrow)
         return 1;
 
@@ -592,7 +621,7 @@ int should_target_monster_v2(char monchar, int monq, int avg_hit, int max_hit)
  * charging after him. Special case for sitting on a door.
  */
 
-int tomonster() //todo:mdk need to account for missing stairs
+int tomonster()
 {
   register int mdir = NONE, mbad = NONE;
   int   closest = 999, which = NONE, danger = 0, adj = 0, alert = 0;
@@ -824,6 +853,21 @@ int tactic_hold_monster_with_potion(int m, const char* monster, int mdir)
     }
 
     return 0;
+}
+
+int has_hp_for_drain_life()
+{
+    return Hp > 40;
+}
+
+int has_hp_for_drain_life_v2(int danger)
+{
+    return (Hp > 40 && Hp > danger * 2);
+}
+
+int wand_has_charge(int obj)
+{
+    return !(itemis(obj, WORTHLESS));
 }
 
 /*
@@ -1186,10 +1230,10 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Any life saving wands?
    */
 
-  if (die_in (2) && (Hp > 40 && Hp > danger * 2) && turns < 3 &&
+  if (die_in (2) && has_hp_for_drain_life_v2(danger) && turns < 3 &&
       !(streq (monster, "purple worm") || streq (monster, "jabberwock")) &&
       (obj = havewand ("drain life")) != NONE &&
-      ! (itemis (obj, WORTHLESS))
+      wand_has_charge(obj)
      )
     return (point (obj, 0));
 
@@ -1201,7 +1245,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
        streq (monster, "griffin")    || streq (monster, "venus flytrap") ||
        streq (monster, "umber hulk") || streq (monster, "black unicorn")) &&
       (obj = havewand ("polymorph")) != NONE &&
-      ! (itemis (obj, WORTHLESS))
+      wand_has_charge(obj)
       )
     return (point (obj, mdir));
 

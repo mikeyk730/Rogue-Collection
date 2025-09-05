@@ -51,10 +51,7 @@ static int didinit=0;
  * Modified to use findmove.			5/13	MLM
  */
 
-int makemove (movetype, evalinit, evaluate, reevaluate)
-int movetype, reevaluate;
-evalinit_ptr evalinit;
-evaluate_ptr evaluate;
+int makemove (int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int reevaluate)
 {
   if (findmove (movetype, evalinit, evaluate, reevaluate))
     return (followmap (movetype));

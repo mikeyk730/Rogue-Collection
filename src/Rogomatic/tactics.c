@@ -554,8 +554,8 @@ int checkcango(register int dir, register int turns)
  * godownstairs: issues a down command and check for the halftimeshow.
  */
 
-int godownstairs (running)
-register int running; /* True ==> don't do anything fancy */
+int godownstairs(int running)
+//register int running; /* True ==> don't do anything fancy */
 {
   register int p;
 

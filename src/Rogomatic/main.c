@@ -74,16 +74,16 @@ mdk:known issues 2025:
   RogueCollection.exe a --rogomatic --seed 1757011078 --genes "50 57 65 28 69 73 63 84 63"
   RogueCollection.exe a --rogomatic --seed 1757016291 --genes "35 21 23 36 2 13 67 15 63"
 - door can be under monster?
-  RogueCollection.exe a --rogomatic --seed 1757007044 --genes "65 62 80 30 31 65 17 84 63"
-  RogueCollection.exe a --rogomatic --seed 1757007190 --genes "56 66 82 30 24 62 17 84 63"
-  RogueCollection.exe a --rogomatic --seed 1757009988 --genes "50 57 79 74 45 39 67 15 63"
-  RogueCollection.exe a --rogomatic --seed 1757010659 --genes "50 57 7 30 11 17 11 30 63"
-  RogueCollection.exe a --rogomatic --seed 1757016679 --genes "57 38 23 54 10 13 67 15 63"
-  RogueCollection.exe a --rogomatic --seed 1757019507 --genes "68 43 23 70 2 74 67 15 63"
-  RogueCollection.exe a --rogomatic --seed 1757021050 --genes "57 57 12 54 97 8 62 10 63"
-  RogueCollection.exe a --rogomatic --seed 1757023928 --genes "57 46 17 49 7 1 67 15 63"
-  RogueCollection.exe a --rogomatic --seed 1757024745 --genes "57 46 17 49 2 1 61 21 63"
-  RogueCollection.exe a --rogomatic --seed 1757026288 --genes "58 72 12 49 7 13 70 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757007044 --genes "65 62 80 30 31 65 17 84 63"
+y  RogueCollection.exe a --rogomatic --seed 1757007190 --genes "56 66 82 30 24 62 17 84 63"
+y  RogueCollection.exe a --rogomatic --seed 1757009988 --genes "50 57 79 74 45 39 67 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757010659 --genes "50 57 7 30 11 17 11 30 63"
+y  RogueCollection.exe a --rogomatic --seed 1757016679 --genes "57 38 23 54 10 13 67 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757019507 --genes "68 43 23 70 2 74 67 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757021050 --genes "57 57 12 54 97 8 62 10 63"
+y  RogueCollection.exe a --rogomatic --seed 1757023928 --genes "57 46 17 49 7 1 67 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757024745 --genes "57 46 17 49 2 1 61 21 63"
+y  RogueCollection.exe a --rogomatic --seed 1757026288 --genes "58 72 12 49 7 13 70 15 63"
   RogueCollection.exe a --rogomatic --seed 1757025784 --genes "58 72 11 41 2 1 67 14 63"
   RogueCollection.exe a --rogomatic --seed 1757027048 --genes "58 46 12 54 2 1 67 14 63"
   RogueCollection.exe a --rogomatic --seed 1757028911 --genes "65 69 10 49 7 98 61 21 63"
@@ -92,6 +92,7 @@ mdk:known issues 2025:
   RogueCollection.exe a --rogomatic --seed 1757037376 --genes "58 88 3 58 5 19 55 25 63"
   RogueCollection.exe a --rogomatic --seed 1757038602 --genes "77 91 3 58 1 93 55 25 63"
 - sleeping monster in front of door can disrupt
+  RogueCollection.exe a --rogomatic --seed 1757052721 --genes "50 77 9 31 85 86 49 25 63"
   RogueCollection.exe a --rogomatic --seed 1757007076 --genes "51 53 39 58 43 62 18 12 63"
   RogueCollection.exe a --rogomatic --seed 1757023225 --genes "57 57 7 49 2 74 67 21 63"
   RogueCollection.exe a --rogomatic --seed 1757026602 --genes "58 72 17 49 93 1 61 14 63"
@@ -577,7 +578,8 @@ char *env[];
           &emacs, &terse, &transparent, &quitat);
   }
 
-  debuglog_open("rogomatic.log");
+  if (g_debug)
+      debuglog_open("rogomatic.log");
 
   /*
    * Initialize some storage
@@ -922,7 +924,8 @@ char *env[];
 
         case 'd': toggledebug ();	break;
 
-        case 'e': toggleecho ();        break;
+        case 'e': toggledebuglog(); //mdk toggleecho ();
+            break;
 
         case '!': dumpstuff ();         break;
 

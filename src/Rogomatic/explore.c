@@ -158,8 +158,7 @@ int r, c, depth, *val, *avd, *cont;
  */
 
 /* ARGSUSED */
-int sleepvalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int sleepvalue (int r, int c, int depth, int* val, int* avd, int* cont)
 {
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :

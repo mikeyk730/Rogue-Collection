@@ -353,6 +353,7 @@ int haveexplored(int n);
 int downright(int *drow, int *dcol);
 const char* tmp(const char* fmt, ...);
 void dumpscreenattr(int attr);
+void toggledebuglog();
 
 #include <curses.h>
 int md_readchar(WINDOW *win);
