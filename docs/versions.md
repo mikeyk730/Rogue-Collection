@@ -33,7 +33,7 @@ Unix 5.4
 PC 1.1
 ------
 + New monsters
-+ Maze rooms starting on level 11
++ Maze rooms starting on level 11, monsters won't enter
 + Haste self gives 2 turns
 + Potions can be used against monsters:
     + Negative effects on monster: confusion, paralysis, blindness
@@ -64,7 +64,7 @@ PC 1.48
     + Centaurs give more XP
     + Leprachauns do more damage
     + Monster distribution slightly different from v1.1
-+ Maze rooms starting on level 11
++ Maze rooms starting on level 11, monsters won't enter
 + Haste self gives 2-3 turns
 + Player takes half damage on first level
 + Player can move onto item without picking it up
