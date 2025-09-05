@@ -305,8 +305,7 @@ void doresetinv ()
 
 # define xtr(w,b,e,k) {what=(w);xbeg=mess+(b);xend=mend-(e);xknow|=(k);}
 
-int inventory (msgstart, msgend)
-char *msgstart, *msgend;
+int inventory (char* msgstart, char* msgend, int affectmap)
 {
   register char *p, *q, *mess = msgstart, *mend = msgend;
   char objname[100];
@@ -348,7 +347,7 @@ char *msgstart, *msgend;
            MAXINV, ipos, invcount, msgstart, mess);
     return(printed);
   }
-  else {
+  else if (affectmap) { //mdk: added affectmap check
     deletestuff (atrow, atcol);
     unsetrc (USELESS, atrow, atcol);
   }

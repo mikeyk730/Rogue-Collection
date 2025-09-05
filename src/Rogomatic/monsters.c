@@ -190,18 +190,19 @@ void wakemonster (int dir)
          (dir < 0 && ADJACENT(m) && mlist[m].chr == -dir + 'A' - 1) ||
          (dir >= 0 && dir < 8 &&
           mlist[m].mrow == atdrow(dir) && mlist[m].mcol == atdcol(dir)))) {
-      dwait (D_MONSTER, "Waking up %s at %d,%d",
-             monname (mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
 
       int skip_wake = mlist[m].q == HELD && dir < 0;
       if (skip_wake)
       {
-          dwait(D_ERROR, "Not waking up HELD %s at %d,%d after damage",
+          dwait(D_MONSTER, "Not waking up HELD %s at %d,%d after damage",
               monname(mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
       }
       else
       {
-          mlist[m].q = AWAKE;
+        dwait (D_MONSTER, "Waking up %s at %d,%d",
+             monname (mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
+
+        mlist[m].q = AWAKE;
           setrc(EVERCLR, mlist[m].mrow, mlist[m].mcol);
       }
     }

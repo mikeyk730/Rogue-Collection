@@ -281,7 +281,7 @@ void addprob(register probability *p, register int success);
 void addmonster(char ch, int r, int c, int quiescence);
 void addstuff(char ch, int row, int col);
 int bowclass(int i);
-int inventory(char *msgstart, char *msgend);
+int inventory(char *msgstart, char *msgend, int affectmap);
 int md_unlink(const char *file);
 int archmonster(register int m, register int trns);
 int getfilelength(char *f);

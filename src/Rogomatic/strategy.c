@@ -214,7 +214,7 @@ int strategize()
 
     //mdk: if (doorexplore ()) return (1);
 
-    int severity = attempt >= 5 ? D_ERROR : D_INFORM;
+    int severity = attempt > 5 ? D_ERROR : D_INFORM;
     dwait(severity, "Couldn't find stairs. Attempt %d", attempt);
 
     return grope(1);
@@ -676,7 +676,7 @@ int tomonster()
           else if (dist == closest && avg_hit > avghit(which))
           {
               dwait(D_BATTLE, "Chasing %c(%d) rather than %c(%d) at distance %d.",
-                  mlist[i].chr, avghit(i),
+                  mlist[i].chr, avg_hit,
                   mlist[which].chr, avghit(which),
                   dist);
 
@@ -818,7 +818,6 @@ int throw_potion(const char* name, const char* monster, int mdir)
     }
 
     dwait(D_BATTLE, "Battlestations: throwing potion of %s at %s", name, monster);
-    dwait(D_ERROR, "Battlestations: throwing potion of %s at %s", name, monster); //todo:mdk: temp
     return throw_item(obj, mdir, tmp("throw potion of %s at %s", name, monster));
 
 }
@@ -895,12 +894,10 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
   static int stepback = 0;
 
   int trapped = is_trapped();
-  int deadend = trapped && adj == 1; //monster has us pinned in dead end
-  int sandwiched = trapped && adj > 1; //trapped in between monsters
+  int sandwiched = trapped && adj > 1; //trapped in between monsters. could also another scenario with other held/asleep monsters
   if (trapped)
   {
-      int severity = (adj == 1 || adj == 2) ? D_BATTLE : D_ERROR;
-      dwait(severity, "Player is trapped by %d monsters", adj);
+      dwait(D_BATTLE, "Player is trapped by %d monsters", adj);
   }
 
   /*
@@ -1162,7 +1159,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
       drop (obj)) {
     set (SCAREM);
     droppedscare++;
-    dwait(D_ERROR, "Dropped scare monster");
+    dwait(D_INFORM, "Dropped scare monster");
     return (1);
   }
 

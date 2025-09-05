@@ -179,6 +179,17 @@ void dumpscreenattr(int attr)
 
 void process_delayed_update();
 
+// Called when we are about to overwrite the top line.
+// This is a place for hacks until I can understand the protocol better
+void mdk_check_msg()
+{
+    const char* top = &screen[0][0];
+    if (starts_with(top, "There is something there already"))
+    {
+        terpmes();
+    }
+}
+
 /*
  * Getrogue: Sensory interface.
  *
@@ -317,7 +328,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
         }
 
         /* Clear the --More-- of the end of the message */
-        for (i = col - 7; i < col; screen[0][i++] = ' ');
+        for (i = col - 7; i <= col; screen[0][i++] = ' ');
 
         terpmes ();			/* Interpret the message */
       }
@@ -371,6 +382,8 @@ int   onat;                             /* 0 ==> Wait for waitstr
         break;
 
       case CE_TOK:
+        if (row == 0)
+          mdk_check_msg();
 
         if (row && row < STATUSROW)
           for (i = col; i < MAXCOLS; i++) {
@@ -575,6 +588,8 @@ int   onat;                             /* 0 ==> Wait for waitstr
         }
         else if (col == 0)
         {
+            mdk_check_msg();
+
             // save old contents of 0,0
             screen00 = screen[0][0];
         }

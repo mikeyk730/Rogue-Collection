@@ -388,8 +388,7 @@ int   row, col;
  * deletestuff: remove the object from the stuff list at location (x,y)
  */
 
-void deletestuff (row, col)
-int   row, col;
+void deletestuff (int row, int col)
 {
   register int   i;
   unsetrc (STUFF, row, col);

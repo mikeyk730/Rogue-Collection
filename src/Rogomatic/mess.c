@@ -69,7 +69,7 @@ char* populate_top_line(char* topline, char replacement)
 
     while ((isspace(*t) || *t == '.' || *t == '-') && (t > topline))
     {
-        if (*t == '-' || *t == '.' || *t == '\0')
+        if (*t == '-' || *t == '.' || *t == '\0' || *t == ' ')
         {
             *t = replacement;
         }
@@ -191,7 +191,16 @@ void handle_vorpalize_disappear()
 void prevent_more_loop()
 {
     dwait(D_WARNING, "Try to cancel last command to prevent more loop");
-    sendnow("%c;", ESC);
+
+    /*
+        mdk: messages will be like:
+
+         call what? (* for list): --More--
+         message: range is 'a' to 'r'
+    */
+
+    //mdk: this should clear the command whether there's a --More-- or not
+    sendnow("%c %c;", ESC, ESC);
 }
 
 static int logging_cooldown = 0;
@@ -225,7 +234,7 @@ register char *mess, *mend;
   else if (*(mend-1)==')' && *(mend-3)=='(') {
       if (MATCH("was wearing*"));
       else {
-          inventory(mess, mend);
+          inventory(mess, mend, 1);
           identifying = justreadid = 0;
           usesynch = 0;
       }
@@ -234,7 +243,7 @@ register char *mess, *mend;
   else if (mess[1]==')') {
     echoit = identifying;
     identifying = justreadid = 0;
-    inventory (mess, mend);
+    inventory (mess, mend, 0);
   }
   /* A random message, switch of first char to save some time... */
   else switch (mess[0]) {
@@ -545,9 +554,12 @@ register char *mess, *mend;
         else if (MATCH("the * bounces*")) ;
         else if (MATCH("the * vanishes as it hits*"))
           { darkturns = 0; darkdir = NONE; targetmonster = 0; echoit=0; }
-        else if (MATCH("there is something there already*")) {
+        else if (MATCH("there is something there already*"))
+        {
           set(STUFF);
+          unset(USELESS);
           usesynch=0;
+          prevent_more_loop();
         }
         /*mdk: not in game, else if (MATCH("there is something here*")) {
           set(STUFF);

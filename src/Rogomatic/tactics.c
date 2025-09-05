@@ -752,7 +752,11 @@ int running;
 
     /* Not at the top yet, keep on trucking */
     else
-      { command ("go up stairs", T_MOVING, "<"); return (1); }
+    {
+        dwait(D_ERROR, "going up stairs");
+        command ("go up stairs", T_MOVING, "<");
+        return (1);
+    }
   }
 
   /* If we know where the stairs are, go there */

@@ -1,5 +1,68 @@
 /*
 mdk:known issues 2025:
+- maze rooms, bad fighting with J on 3rd lvl25. don't rest much and let monster chip
+  RogueCollection.exe a --rogomatic --seed 1757056469 --genes "4 93 2 80 12 13 72 79 63"
+- bad logic for seaching in maze rooms. can assume gone
+- don't rest up after paralyzing only enemy. especially bad if confused from medusa
+- shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
+
+- stuck after teleporting
+  RogueCollection.exe a --rogomatic --seed 1757064190 --genes "9 46 2 30 69 1 59 89 63"
+  RogueCollection.exe a --rogomatic --seed 1757065288 --genes "8 87 13 40 69 95 69 2 63"
+  RogueCollection.exe a --rogomatic --seed 1757070194 --genes "17 89 99 16 69 96 80 0 63"
+  RogueCollection.exe a --rogomatic --seed 1757069026 --genes "33 47 25 32 72 85 69 86 63"
+  RogueCollection.exe a --rogomatic --seed 1757057864 --genes "16 94 19 10 8 63 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757065121 --genes "20 87 2 30 69 1 65 2 63"
+
+- can't find stairs
+  RogueCollection.exe a --rogomatic --seed 1757054848 --genes "50 74 16 81 1 2 57 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757055988 --genes "48 94 2 10 12 48 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757056579 --genes "4 93 2 91 77 13 27 75 63"
+RogueCollection.exe a --rogomatic --seed 1757056621 --genes "16 26 22 30 11 88 14 16 63"
+RogueCollection.exe a --rogomatic --seed 1757065906 --genes "20 87 9 40 69 1 59 4 63"
+RogueCollection.exe a --rogomatic --seed 1757073366 --genes "20 96 25 32 69 96 69 89 63"
+
+- not taking stairs (don't recognize gone room)
+  RogueCollection.exe a --rogomatic --seed 1757070988 --genes "21 42 25 32 88 96 89 2 63"
+  RogueCollection.exe a --rogomatic --seed 1757058830 --genes "16 94 31 4 8 63 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757056703 --genes "48 94 10 30 82 13 14 16 63"
+RogueCollection.exe a --rogomatic --seed 1757059504 --genes "48 94 5 10 5 63 77 76 63"
+RogueCollection.exe a --rogomatic --seed 1757062130 --genes "16 26 2 10 8 13 65 98 63"
+RogueCollection.exe a --rogomatic --seed 1757073905 --genes "12 41 24 26 86 91 69 2 63"
+
+- cant find hidden door
+  RogueCollection.exe a --rogomatic --seed 1757056469 --genes "4 93 2 80 12 13 72 79 63"
+RogueCollection.exe a --rogomatic --seed 1757060393 --genes "16 26 2 30 81 63 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757061151 --genes "6 94 40 10 8 70 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757063101 --genes "16 87 2 40 75 63 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757063250 --genes "26 87 2 40 75 95 69 2 63"
+RogueCollection.exe a --rogomatic --seed 1757065790 --genes "7 87 2 33 69 95 69 2 63"
+RogueCollection.exe a --rogomatic --seed 1757066706 --genes "20 87 5 40 73 1 69 9 63"
+RogueCollection.exe a --rogomatic --seed 1757067889 --genes "20 89 2 21 79 95 70 2 63"
+RogueCollection.exe a --rogomatic --seed 1757068104 --genes "20 89 2 21 79 85 69 89 63"
+
+- should give up after too many teleport trap
+RogueCollection.exe a --rogomatic --seed 1757060779 --genes "16 25 2 19 17 63 65 79 63"
+
+- stuck
+  RogueCollection.exe a --rogomatic --seed 1757070622 --genes "17 67 9 16 58 90 74 94 63"
+  RogueCollection.exe a --rogomatic --seed 1757054793 --genes "50 55 16 81 1 2 65 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757055213 --genes "30 38 65 91 77 48 6 75 63"
+  RogueCollection.exe a --rogomatic --seed 1757055679 --genes "4 93 10 10 69 48 6 75 63"
+RogueCollection.exe a --rogomatic --seed 1757072475 --genes "22 87 24 37 88 7 89 2 63"
+
+- more loop
+  lvl12: teleport trap onto gold, try to drop item. we never terp "there is something there already"
+f RogueCollection.exe a --rogomatic --seed 1757030896 --genes "60 70 11 49 7 98 67 18 63"
+  lvl6: land on item with "you can't carry anything else", try to drop
+f RogueCollection.exe a --rogomatic --seed 1757067643 --genes "20 87 2 32 69 73 65 2 63"
+  lvl11: land on item with "you can't carry anything else", try to drop
+f RogueCollection.exe a --rogomatic --seed 1757010065 --genes "50 21 4 30 11 17 11 30 63"
+  no bug: ice monsters freeze us forever
+  RogueCollection.exe a --rogomatic --seed 1757065693 --genes "20 87 4 34 69 1 69 89 63"
+
+
+
 - after reading mapping scroll that doesn't reveal doorways, player may not search
   for hidden door leading into passageway, and can get stuck on the level
 - with rust monster and another enemy around, player gets stuck
@@ -37,9 +100,6 @@ mdk:known issues 2025:
 - stuck on level even though door is obvious
   RogueCollection.exe a --rogomatic --seed 1757005783 --genes "64 62 38 25 31 62 17 2 63"
   RogueCollection.exe a --rogomatic --seed 1757030242 --genes "51 49 13 58 1 2 65 25 63"
-- more loop
-  RogueCollection.exe a --rogomatic --seed 1757010065 --genes "50 21 4 30 11 17 11 30 63"
-  RogueCollection.exe a --rogomatic --seed 1757030896 --genes "60 70 11 49 7 98 67 18 63"
 - does teleport trap need to reset state?
   RogueCollection.exe a --rogomatic --seed 1757035849 --genes "62 73 16 64 85 2 57 31 63"
 - stuck

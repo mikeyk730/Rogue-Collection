@@ -303,6 +303,17 @@ const char* get_debug_str(int d);
 /* Define a more mnemonic string comparison */
 # define streq(s1,s2) (strcmp ((s1),(s2)) == 0)
 
+inline int starts_with(const char* s, const char* prefix)
+{
+    while (*prefix)
+    {
+        if (*prefix++ != *s++)
+            return 0;
+    }
+
+    return 1;
+}
+
 /* Monster value macros */
 # define maxhitchar(m) (cosmic ? Level*3/2+6 : monatt[(m)-'A'].maxdam)
 # define avghitchar(m) (cosmic ? Level*2/3+4 : monatt[(m)-'A'].expdam)
