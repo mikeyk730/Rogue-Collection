@@ -194,15 +194,15 @@ void wakemonster (int dir)
              monname (mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
 
       int skip_wake = mlist[m].q == HELD && dir < 0;
-      if (!skip_wake)
-      {
-          mlist[m].q = AWAKE;
-          setrc(EVERCLR, mlist[m].mrow, mlist[m].mcol);
-      }
-      else
+      if (skip_wake)
       {
           dwait(D_ERROR, "Not waking up HELD %s at %d,%d after damage",
               monname(mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
+      }
+      else
+      {
+          mlist[m].q = AWAKE;
+          setrc(EVERCLR, mlist[m].mrow, mlist[m].mcol);
       }
     }
   }

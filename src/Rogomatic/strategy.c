@@ -357,16 +357,16 @@ int fightmonster()
           switch (mlist[i].q)
           {
           case AWAKE:
-              has_awake = 1;
+              has_awake++;
               break;
           case ASLEEP:
-              has_asleep = 1;
+              has_asleep++;
               break;
           case HELD:
-              has_held = 1;
+              has_held++;
               break;
           default:
-              has_unknown = 1;
+              has_unknown++;
               break;
           }
       }
@@ -562,8 +562,8 @@ int should_target_monster_v2(char monchar, int monq, int avg_hit, int max_hit)
             int target = 2 * max_hit + max_hit * k_wake / 25;
             if (target < Hp)
             {
-                int severity = Level > 16 ? D_ERROR : D_BATTLE;
-                dwait(severity, "Targeting %c (%s) with max damage %d on level %d, target:%d < HP:%d", monchar, get_monster_state_str(monq), max_hit, Level, target, Hp);
+                dwait(D_BATTLE, "Targeting %c (%s) with max damage %d on level %d, target:%d < HP:%d",
+                    monchar, get_monster_state_str(monq), max_hit, Level, target, Hp);
                 return 1;
             }
         }
@@ -573,7 +573,8 @@ int should_target_monster_v2(char monchar, int monq, int avg_hit, int max_hit)
             if (target < Hp && (Level <= 12 || Level <= 16 && Hp == Hpmax))
             {
                 int severity = Level > 16 ? D_ERROR : D_BATTLE;
-                dwait(severity, "Targeting %c (%s) with max damage %d on level %d, target:%d < HP:%d", monchar, get_monster_state_str(monq), max_hit, Level, target, Hp);
+                dwait(severity, "Targeting %c (%s) with max damage %d on level %d, target:%d < HP:%d",
+                    monchar, get_monster_state_str(monq), max_hit, Level, target, Hp);
                 return 1;
             }
         }
@@ -976,8 +977,25 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
       turns == 0 && !on (DOOR | STAIRS)) {
     int rdir = (mdir+4)%8;
 
+    //todo:mdk this only considers step in exact opposite direction.
+/*  Should be able to retreat to door here, though also will forget monster when we leave room
+
+07*                                        #####
+08*                                        #
+09*                                       -+-           ---
+10*                                               |  ###+@.
+11*                           +                   |  #  |*J
+12*                           |                   +###
+13*                           ---------------------
+14*
+*/
+
     if (onrc (CANGO | TRAP, atdrow(rdir), atdcol(rdir)) == CANGO)
-      { move1 ("step back to see if awake", rdir); stepback = 7; return (1); }
+    {
+        move1 ("step back to see if awake", rdir);
+        stepback = 7;
+        return (1);
+    }
   }
 
   if (stepback) stepback--;     /* Decrement turns until step back again */
@@ -1168,7 +1186,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Any life saving wands?
    */
 
-  if (die_in (2) && Hp > 40 && turns < 3 &&
+  if (die_in (2) && (Hp > 40 && Hp > danger * 2) && turns < 3 &&
       !(streq (monster, "purple worm") || streq (monster, "jabberwock")) &&
       (obj = havewand ("drain life")) != NONE &&
       ! (itemis (obj, WORTHLESS))

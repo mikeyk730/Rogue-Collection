@@ -49,6 +49,8 @@ void newlevel ()
   debuglog("level: %d\n", Level);
   if (Level == g_pause_at_level)
   {
+      if (debugging == 0)
+        debugging = D_NORMAL;
       dwait(D_WARNING, "Breaking at level %d", Level);
   }
 
@@ -513,9 +515,7 @@ void updateat ()
  * updatepos: Something changed on the screen, update the screen map
  */
 
-void updatepos (ch, row, col)
-register char  ch;
-register int row, col;
+void updatepos(char ch, int row, int col)
 {
   char  oldch = screen[row][col], *monster, functionchar();
   int   seenbefore = onrc (EVERCLR, row, col);
