@@ -454,13 +454,15 @@ void updateat ()
   if (newzone != NONE)
     zone = newzone;
 
-
   /*
    * Check for teleport, else if we moved multiple squares, mark them as BEEN
    */
 
-  if (direc (dr, dc) != movedir || dr && dc && abs(dr) != abs(dc))
-    teleport ();
+  if (direc(dr, dc) != movedir || dr && dc && abs(dr) != abs(dc))
+  {
+      if (!is_exploring_passage && !confused)
+        teleport();
+  }
   else {
     dist = (abs(dr)>abs(dc)) ? abs(dr) : abs(dc);
     dr = (dr > 0) ? 1 : (dr < 0) ? -1 : 0;
@@ -495,18 +497,31 @@ void updateat ()
         seerc ('-', atrow, atcol-1) && seerc ('-', atrow, atcol+1)) {
       set (DOOR | SAFE); unset (HALL | ROOM); terrain = "door";
 
-      if ((rm = whichroom (atrow, atcol)) != NONE) levelmap[rm] |= HASROOM;
+      if ((rm = whichroom (atrow, atcol)) != NONE)
+          levelmap[rm] |= HASROOM; //todo:mdk set more hasroom from scrolls/potions?
     }
     else if (halls > 0)
-      { set (HALL | SAFE); unset (DOOR | ROOM); terrain = "hall"; }
+    {
+        set(HALL | SAFE);
+        unset (DOOR | ROOM);
+        terrain = "hall";
+    }
     else if (rooms > 0)
-      { set (ROOM); unset (HALL | DOOR); terrain = "room"; }
+    {
+        set (ROOM);
+        unset (HALL | DOOR);
+        terrain = "room";
+    }
     else
-      return;
+    {
+        dwait(D_INFORM, "Couldn't infer terrain at %d,%d.", atrow, atcol); //todo:mdk could do better by looking at all 8 positions
+        return;
+    }
 
     dwait (D_INFORM, "Inferring %s at %d,%d.", terrain, atrow, atcol);
   }
-  else if (on (DOOR | ROOM) && !isexplored (atrow, atcol) && !darkroom ()) {
+  else if (on (DOOR | ROOM) && !isexplored (atrow, atcol) && !darkroom ())
+  {
     markexplored (atrow, atcol);
   }
 }
@@ -728,29 +743,63 @@ void updatepos(char ch, int row, int col)
  * avoid doing silly things.
  */
 
-void teleport ()
+void teleport()
 {
   register int r = atrow0, c = atcol0;
 
-  goalr = goalc = NONE; setnewgoal ();
+  goalr = goalc = NONE;
+  setnewgoal();
 
-  hitstokill = 0; darkdir = NONE; darkturns = 0;
+  hitstokill = 0;
+  darkdir = NONE;
+  darkturns = 0;
 
-  if (movedir >= 0 && movedir < 8 && !confused) {
+  confused = 1; //todo:mdk make obvious
+  beingheld = 0;
+
+  int why = 0;
+
+  if (is_reading_scroll())
+  {
+      dwait(D_ERROR, "Assuming '%s' scroll is teleportation", lastname);
+      infer("teleportation", Scroll);
+      why = 1;
+  }
+  else if (movedir >= 0 && movedir < 8)
+  {
     teleported++;
 
-    while (r > 1 && r < STATUSROW && c > 0 && c < (MAXCOLS-1)) {
-      if (onrc (WALL | DOOR | HALL, r, c)) break;
+    while (r > 1 && r < STATUSROW && c > 0 && c < (MAXCOLS-1))
+    {
+      dwait(D_INFORM, "Looking for teleport trap at %d,%d: %s",
+          r, c, describe_tile(scrmap[r][c]));
+
+      if (!onrc(CANGO, r, c)) break;
 
       if (onrc (TRAP, r, c)) {
-        if (!onrc (ARROW|DARTRAP|GASTRAP|BEARTRP|TRAPDOR|TELTRAP, r, c))
-          saynow ("Assuming teleport trap at %d, %d", r, c);
-
+          if (!onrc(ARROW | DARTRAP | GASTRAP | BEARTRP | TRAPDOR | TELTRAP, r, c))
+          {
+              dwait(D_INFORM, "Assuming teleport trap at %d, %d", r, c);
+              saynow("Assuming teleport trap at %d, %d", r, c);
+              setrc(TELTRAP, r, c);
+              why = 1;
+          }
+          else if (onrc(TELTRAP, r, c))
+          {
+              dwait(D_ERROR, "Used known teleport trap at %d, %d", r, c);
+              why = 1;
+          }
         break;
       }
 
       r += deltr[movedir]; c += deltc[movedir];
     }
+  }
+
+  if (!why)
+  {
+      dwait(D_ERROR, "Teleported (%d,%d)->(%d,%d) for unknown reason, move dir %d",
+          atrow0, atcol0, atrow, atcol, movedir);
   }
 }
 

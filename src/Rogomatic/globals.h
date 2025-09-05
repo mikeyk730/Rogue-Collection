@@ -80,6 +80,7 @@ extern int checkrange;		/* True ==> check range */
 extern int chicken;		/* True ==> test run away code */
 extern int compression;		/* True ==> move multiple squares */
 extern int confused;		/* True if confused */
+extern int unconfuse_next;
 extern int cosmic;		/* True if hallucinating */
 extern int currentarmor;	/* Index of our armor */
 extern int currentweapon;	/* Index of our weapon */
@@ -241,6 +242,6 @@ extern int k_wake;		/* Propensity for waking things up */
 extern int k_food;		/* Propensity for hoarding food (rings) */
 
 extern int searchcount;
-
+extern int is_exploring_passage;
 
 #include "rogomatic.h"

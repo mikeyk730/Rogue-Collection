@@ -54,7 +54,7 @@ static int didinit=0;
 int makemove (int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int reevaluate)
 {
   if (findmove (movetype, evalinit, evaluate, reevaluate))
-    return (followmap (movetype));
+    return followmap(movetype);
 
   return (0);
 }
@@ -119,8 +119,7 @@ int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int ree
  * May 13, MLM
  */
 
-int followmap (movetype)
-register int movetype;
+int followmap (int movetype)
 {
   register int dir, dr, dc, r, c;
   int timemode, searchit, count=1;
@@ -150,7 +149,11 @@ register int movetype;
       onrc (HALL|BEEN, targetrow, targetcol) != (HALL|BEEN) &&
       onrc (HALL,r,c) &&
       !beingstalked)			/* Feb 10, 1985 - mlm */
-    { fmove ("explore new passage",dir); return (1); }
+  {
+      fmove ("explore new passage", dir);
+      is_exploring_passage = 1; //todo:mdk
+      return (1);
+  }
 
   /* Timemode tells why we are moving this way, T_RUNNING ==> no search */
   timemode = (movetype == GOTOMOVE)    ? T_MOVING :
@@ -192,7 +195,8 @@ register int movetype;
     { mmove ("move on scare monster", dir, timemode); return (1); }
 
   /* Send the movement command and return success */
-  rmove (get_move_type_str(movetype), count, dir, timemode); return (1);
+  rmove(tmp("followmap %s", get_move_type_str(movetype)), count, dir, timemode);
+  return (1);
 }
 
 /*

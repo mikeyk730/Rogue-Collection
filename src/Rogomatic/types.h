@@ -101,6 +101,8 @@
 # define EVERCLR  (00400000000)
 # define CHOKE    (01000000000)
 
+const char* describe_tile(int attr);
+
 # define TOPW     (0)
 # define BOTW     (1)
 # define LEFTW    (2)

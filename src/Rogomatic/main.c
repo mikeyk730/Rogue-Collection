@@ -6,13 +6,11 @@ mdk:known issues 2025:
 - don't rest up after paralyzing only enemy. especially bad if confused from medusa
 - shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
 
-- stuck after teleporting
-  RogueCollection.exe a --rogomatic --seed 1757064190 --genes "9 46 2 30 69 1 59 89 63"
-  RogueCollection.exe a --rogomatic --seed 1757065288 --genes "8 87 13 40 69 95 69 2 63"
-  RogueCollection.exe a --rogomatic --seed 1757070194 --genes "17 89 99 16 69 96 80 0 63"
-  RogueCollection.exe a --rogomatic --seed 1757069026 --genes "33 47 25 32 72 85 69 86 63"
-  RogueCollection.exe a --rogomatic --seed 1757057864 --genes "16 94 19 10 8 63 65 79 63"
-RogueCollection.exe a --rogomatic --seed 1757065121 --genes "20 87 2 30 69 1 65 2 63"
+- reuse teleport trap rather than find new room
+RogueCollection.exe a --rogomatic --seed 1757103596 --genes "20 24 15 16 77 86 96 79 63"
+
+can't battle in maze rooms :(
+RogueCollection.exe a --rogomatic --seed 1757107529 --genes "20 24 2 32 86 7 96 79 63"
 
 - can't find stairs
   RogueCollection.exe a --rogomatic --seed 1757054848 --genes "50 74 16 81 1 2 57 25 63"
@@ -41,27 +39,12 @@ RogueCollection.exe a --rogomatic --seed 1757066706 --genes "20 87 5 40 73 1 69 
 RogueCollection.exe a --rogomatic --seed 1757067889 --genes "20 89 2 21 79 95 70 2 63"
 RogueCollection.exe a --rogomatic --seed 1757068104 --genes "20 89 2 21 79 85 69 89 63"
 
-- should give up after too many teleport trap
-RogueCollection.exe a --rogomatic --seed 1757060779 --genes "16 25 2 19 17 63 65 79 63"
-
 - stuck
   RogueCollection.exe a --rogomatic --seed 1757070622 --genes "17 67 9 16 58 90 74 94 63"
   RogueCollection.exe a --rogomatic --seed 1757054793 --genes "50 55 16 81 1 2 65 25 63"
   RogueCollection.exe a --rogomatic --seed 1757055213 --genes "30 38 65 91 77 48 6 75 63"
   RogueCollection.exe a --rogomatic --seed 1757055679 --genes "4 93 10 10 69 48 6 75 63"
 RogueCollection.exe a --rogomatic --seed 1757072475 --genes "22 87 24 37 88 7 89 2 63"
-
-- more loop
-  lvl12: teleport trap onto gold, try to drop item. we never terp "there is something there already"
-f RogueCollection.exe a --rogomatic --seed 1757030896 --genes "60 70 11 49 7 98 67 18 63"
-  lvl6: land on item with "you can't carry anything else", try to drop
-f RogueCollection.exe a --rogomatic --seed 1757067643 --genes "20 87 2 32 69 73 65 2 63"
-  lvl11: land on item with "you can't carry anything else", try to drop
-f RogueCollection.exe a --rogomatic --seed 1757010065 --genes "50 21 4 30 11 17 11 30 63"
-  no bug: ice monsters freeze us forever
-  RogueCollection.exe a --rogomatic --seed 1757065693 --genes "20 87 4 34 69 1 69 89 63"
-
-
 
 - after reading mapping scroll that doesn't reveal doorways, player may not search
   for hidden door leading into passageway, and can get stuck on the level
@@ -388,6 +371,7 @@ int   checkrange = 0;           /* True ==> check range */
 int   chicken = 0;		/* True ==> check run away code */
 int   compression = 1;		/* True ==> move more than one square/turn */
 int   confused = 0;		/* True if we are confused */
+int unconfuse_next = 0;
 int   cosmic = 0;		/* True if we are hallucinating */
 int   currentarmor = NONE;	/* Index of our armor */
 int   currentweapon = NONE;     /* Index of our weapon */
@@ -485,6 +469,8 @@ int g_debug_protocol = 0;
 int g_expect_extra_bytes = 0;
 int g_verbose_logs = 0;
 int g_bug_fixes = B_ALL;
+
+int is_exploring_passage = 0;
 
 /* Functions */
 void (*istat)(int);

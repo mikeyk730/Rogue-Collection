@@ -104,6 +104,12 @@ int strategize()
 
   if (confused_monster) confused_monster--;
 
+  if (unconfuse_next) //todo:mdk need to figure off by 1 errors :(
+  {
+      unconfuse_next = 0;
+      confused = 0;
+  }
+
   if (beingheld) beingheld--;		/* Turns since held by a fungus */
 
   /* ---- End of short term memory modification ---- */

@@ -453,8 +453,7 @@ char *name;
  * fails to move us).		MLM
  */
 
-int grope (turns)
-register int turns;
+int grope(int turns)
 {
   register int k, moves;
 

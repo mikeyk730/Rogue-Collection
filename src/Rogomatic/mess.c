@@ -534,7 +534,8 @@ register char *mess, *mend;
         {
            infer ("light", lasttype);
         }
-        else if (MATCH("the * has confused you*")) confused = 1;
+        else if (MATCH("the * has confused you*"))
+            confused = 1;
         else if (MATCH("this scroll is an identify scroll scroll*"))
           { readident ("identify scroll"); }
         else if (MATCH("this scroll is an * scroll*")) {
@@ -603,9 +604,17 @@ register char *mess, *mend;
         else if (MATCH("wielding a*")) ;
         else if (MATCH("wear what*")) echoit=0;
         else if (MATCH("what monster*")) echoit=0;
-        else if (MATCH("wait, what's going*")) {infer("confusion", potion); confused=1;}
+        else if (MATCH("wait, what's going*"))
+        {
+            infer("confusion", potion);
+            confused=1;
+        }
         else if (MATCH("wait*that's a *")) ;
-        else if (MATCH("what a*feeling*")) { infer("confusion", potion); confused=1; }
+        else if (MATCH("what a*feeling*"))
+        {
+            infer("confusion", potion);
+            confused=1;
+        }
         else if (MATCH("what a*piece of paper*")) infer ("blank paper", Scroll);
         else if (MATCH("what a bizarre schtick*"))
         {
@@ -664,8 +673,10 @@ register char *mess, *mend;
           { hasted = 0; doublehasted = 0; }
         else if (MATCH("you faint from exhaustion*"))
           { if (has_double_haste_bug()) doublehasted = 1; else hasted = 0; }
-        else if (MATCH("you feel less confused now*")) confused = 0;
-        else if (MATCH("you feel less trip*")) confused = 0;
+        else if (MATCH("you feel less confused now*"))
+            unconfuse_next = 1;
+        else if (MATCH("you feel less trip*"))
+            unconfuse_next = 1;
         else if (MATCH("your * vanishes as it *"))
           { darkturns = 0; darkdir = NONE; echoit=0; }
         else if (MATCH("your hands begin to glow *"))

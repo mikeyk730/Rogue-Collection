@@ -136,7 +136,7 @@ int r, c, depth, *val, *avd, *cont;
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :
          onrc (TRAPDOR, r, c) ? 175 :
-         onrc (TELTRAP, r, c) ? 50 :
+         onrc (TELTRAP, r, c) ? 125 :
          onrc (GASTRAP, r, c) ? 50 :
          onrc (BEARTRP, r, c) ? 50 :
          onrc (DARTRAP, r, c) ? 200 :

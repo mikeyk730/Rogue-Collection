@@ -132,9 +132,6 @@ void printscreen()
     }
 
     for (j = 0; j < MAXCOLS; ++j) {
-      if (i == row && j == col)
-        debuglog ("_");
-      else
         debuglog ("%c", screen[i][j]);
     }
 
