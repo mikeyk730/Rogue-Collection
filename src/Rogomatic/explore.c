@@ -108,11 +108,10 @@ static int secretcont[16] =  { 0, 16, 15, 14,
 
 int gotorow = NONE, gotocol = NONE;
 
-int gotowards (r, c, running)
-int r, c, running;
+int gotowards(const char* why, int r, int c, int running)
 {
   gotorow = r; gotocol = c;
-  return (makemove (running ? RUNAWAY:GOTOMOVE, gotoinit, gotovalue, REUSE));
+  return (makemove(why, running ? RUNAWAY:GOTOMOVE, gotoinit, gotovalue, REUSE));
 }
 
 /*
@@ -136,7 +135,7 @@ int r, c, depth, *val, *avd, *cont;
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :
          onrc (TRAPDOR, r, c) ? 175 :
-         onrc (TELTRAP, r, c) ? 50 :
+         onrc (TELTRAP, r, c) ? 125 :
          onrc (GASTRAP, r, c) ? 50 :
          onrc (BEARTRP, r, c) ? 50 :
          onrc (DARTRAP, r, c) ? 200 :
@@ -158,8 +157,7 @@ int r, c, depth, *val, *avd, *cont;
  */
 
 /* ARGSUSED */
-int sleepvalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int sleepvalue (int r, int c, int depth, int* val, int* avd, int* cont)
 {
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :
@@ -780,17 +778,19 @@ int *val, *avd, *cont;
   for (k=0; k<8; k++) {  /* examine adjacent squares */
     register int nr = r + deltr[k];
     register int nc = c + deltc[k];
-
+    int already = timessearched[nr][nc];
+    int target = SEARCHES(nr, nc);
     if (nr >= 1 && nr <= (STATUSROW-1) &&
         nc >= 0 && nc <= MAXCOLS &&
-        onrc (PSD, nr, nc) && timessearched[nr][nc] < SEARCHES(nr,nc)) {
+        onrc (PSD, nr, nc) && already < target) {
       /* If adjacent square is on the screen */
       /* and if it has PSD set but has not been searched completely */
       /* count useful neighbours */
       if (screen[nr][nc] == '|')	v += 4;
       else				v ++;
 
-      if (debug (D_SCREEN | D_INFORM)) mvaddch (nr, nc, 'S');
+      if (debug (D_SCREEN | D_INFORM))
+          mvaddch (nr, nc, 'S');
     }
   }
 
@@ -996,9 +996,11 @@ int secret ()
 int findroom ()
 {
   if (new_findroom) {
-    if (!on (ROOM) && secret ())			return (1);
+    if (!on (ROOM) && secret ())
+        return (1);
 
-    if (makemove (EXPLORE, expinit, expvalue, REUSE))	 return (1);
+    if (makemove("findroom", EXPLORE, expinit, expvalue, REUSE))
+        return (1);
   }
 
   new_findroom = 0;
@@ -1012,9 +1014,11 @@ int findroom ()
 
 int exploreroom ()
 {
-  if (!on (ROOM) || isexplored (atrow, atcol)) return (0);
+  if (!on (ROOM) || isexplored (atrow, atcol))
+      return (0);
 
-  if (makemove (EXPLOREROOM, roominit, expvalue, REUSE)) return (1);
+  if (makemove("explore room", EXPLOREROOM, roominit, expvalue, REUSE))
+      return (1);
 
   markexplored (atrow, atcol);
 
@@ -1025,21 +1029,27 @@ int exploreroom ()
 /*
  *   D O O R E X P L O R E : look for secret doors
  */
+searchcount = 0;
 
 int doorexplore()
 {
-  static searchcount = 0;
   int secretinit(), secretvalue();
 
   /* If no new squares or read map, dont bother */
   if (! new_search || Level == didreadmap)
     { searchcount = 0; return (0); }
 
-  if (makemove (SECRETDOOR, secretinit, secretvalue, REUSE))  /* move */
-    { searchcount = 0; return (1); }
+  if (makemove("door explore", SECRETDOOR, secretinit, secretvalue, REUSE))  /* move */
+  {
+      searchcount = 0;
+      return (1);
+  }
 
   if (searchcount > 20)
-    { new_search = 0; return (0); }
+  {
+      new_search = 0;
+      return (0);
+  }
 
   if (ontarget) { /* Moved to a possible secret door, search it */
     searchcount++;
@@ -1094,7 +1104,7 @@ int r, c, depth, *val, *avd, *cont;
 
 int findsafe()
 {
-  return (makemove (FINDSAFE, genericinit, safevalue, REEVAL));
+  return makemove("find safe", FINDSAFE, genericinit, safevalue, REEVAL);
 }
 
 /* How scared are we of hitting a trap? */
@@ -1114,9 +1124,9 @@ int avoid ()
 
 static int archrow = NONE, archcol = NONE, archturns = NONE, archval[MAXROWS][MAXCOLS];
 
-int archmonster (m, trns)
-register int m;		/* Monster to attack */
-register int trns;	/* Minimum number of arrows to make it worthwhile */
+int archmonster (register int m, register int trns)
+//register int m;		/* Monster to attack */
+//register int trns;	/* Minimum number of arrows to make it worthwhile */
 {
   register int mr, mc;
 
@@ -1138,7 +1148,7 @@ register int trns;	/* Minimum number of arrows to make it worthwhile */
   archrow = mlist[m].mrow; archcol = mlist[m].mcol; archturns = trns;
 
   /* Can we get to a suitable square */
-  if (makemove (ARCHERYMOVE, archeryinit, archeryvalue, REUSE))
+  if (makemove ("archmonster", ARCHERYMOVE, archeryinit, archeryvalue, REUSE))
     { dwait (D_BATTLE, "archmonster, made a move"); return (1); }
 
   /* If no move made and not on target, no path to monster */
@@ -1248,7 +1258,7 @@ int movetorest ()
     { dwait (D_SEARCH, "movetorest: already on square"); return (0); }
 
   /* Try to move to a better square (remember position) */
-  if (makemove (RESTMOVE, restinit, restvalue, REUSE)) {
+  if (makemove("move to rest", RESTMOVE, restinit, restvalue, REUSE)) {
     dwait (D_SEARCH, "movetorest wins.");
     restr = targetrow; restc = targetcol;
     return (1);

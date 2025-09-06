@@ -81,7 +81,7 @@ int dwait (int msgtype, char* f, ...)
   vsprintf (msg, f, args);
   va_end(args);
 
-  debuglog("dwait: %s\n", msg);
+  debuglog("dwait: %s: %s\n", get_debug_str(msgtype), msg);
 
   /* Log the message if the error is severe enough */
   if (!replaying && (msgtype & (D_FATAL | D_ERROR | D_WARNING))) {
@@ -90,8 +90,8 @@ int dwait (int msgtype, char* f, ...)
     sprintf (errfn, "%s/error%s", getRgmDir (), versionstr);
 
     if ((errfil = wopen (errfn, "a")) != NULL) {
-      fprintf (errfil, "Level %d, error %d:  %s\n\n",
-               Level, msgtype, msg);
+      fprintf (errfil, "%d Level %d, error %d:  %s\n\n",
+               g_seed, Level, msgtype, msg);
 #ifdef ROGUE_COLLECTION
     print_command_line(errfil);
 #endif

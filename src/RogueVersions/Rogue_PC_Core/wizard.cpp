@@ -377,7 +377,9 @@ namespace
     {
         Coord pos = game->hero().position();
         std::ostringstream ss;
-        ss << "Hero at (" << pos.x << "," << pos.y << ")";
+        Room* r = game->hero().room();
+        ss << "Hero at (" << pos.x << "," << pos.y << ") in "
+           << (r->is_maze() ? "maze" : r->is_gone() ? "passage" : "room") << " " << game->hero().room()->m_index;
         add_line("", ss.str().c_str(), "");
     }
 }

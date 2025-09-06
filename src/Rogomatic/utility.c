@@ -126,6 +126,175 @@ const char* get_move_type_str(int movetype)
     return "BAD_TYPE";
 }
 
+const char* get_debug_str(int d)
+{
+    switch (d)
+    {
+    case D_FATAL:
+        return "D_FATAL";
+    case D_ERROR:
+        return "D_ERROR";
+    case D_WARNING:
+        return "D_WARNING";
+    case D_INFORM:
+        return "D_INFORM";
+    case D_SEARCH:
+        return "D_SEARCH";
+    case D_BATTLE:
+        return "D_BATTLE";
+    case D_MESSAGE:
+        return "D_MESSAGE";
+    case D_PACK:
+        return "D_PACK";
+    case D_CONTROL:
+        return "D_CONTROL";
+    case D_SCREEN:
+        return "D_SCREEN";
+    case D_MONSTER:
+        return "D_MONSTER";
+    case D_SAY:
+        return "D_SAY";
+    case D_SCROLL:
+        return "D_SCROLL";
+    case D_POTION:
+        return "D_POTION";
+    case D_WAND:
+        return "D_WAND";
+    case D_RING:
+        return "D_RING";
+    }
+
+    return "BAD_TYPE";
+}
+
+
+
+const char* describe_tile(int attr)
+{
+    static char buf[200];
+    memset(buf, 0, 200);
+    buf[0] = '|';
+
+    if (attr & SCRMINIT)
+    {
+        strcat(buf, "SCRMINIT|");
+    }
+    if (attr & BEEN)
+    {
+        strcat(buf, "BEEN|");
+    }
+    if (attr & CANGO)
+    {
+        strcat(buf, "CANGO|");
+    }
+    if (attr & DOOR)
+    {
+        strcat(buf, "DOOR|");
+    }
+    if (attr & HALL)
+    {
+        strcat(buf, "HALL|");
+    }
+    if (attr & PSD)
+    {
+        strcat(buf, "PSD|");
+    }
+    if (attr & ROOM)
+    {
+        strcat(buf, "ROOM|");
+    }
+    if (attr & SAFE)
+    {
+        strcat(buf, "SAFE|");
+    }
+    if (attr & SEEN)
+    {
+        strcat(buf, "SEEN|");
+    }
+    if (attr & DEADEND)
+    {
+        strcat(buf, "DEADEND|");
+    }
+    if (attr & STUFF)
+    {
+        strcat(buf, "STUFF|");
+    }
+    if (attr & TRAP)
+    {
+        strcat(buf, "TRAP|");
+    }
+    if (attr & ARROW)
+    {
+        strcat(buf, "ARROW|");
+    }
+    if (attr & TRAPDOR)
+    {
+        strcat(buf, "TRAPDOR|");
+    }
+    if (attr & TELTRAP)
+    {
+        strcat(buf, "TELTRAP|");
+    }
+    if (attr & GASTRAP)
+    {
+        strcat(buf, "GASTRAP|");
+    }
+    if (attr & BEARTRP)
+    {
+        strcat(buf, "BEARTRP|");
+    }
+    if (attr & DARTRAP)
+    {
+        strcat(buf, "DARTRAP|");
+    }
+    if (attr & WATERAP)
+    {
+        strcat(buf, "WATERAP|");
+    }
+    if (attr & MONSTER)
+    {
+        strcat(buf, "MONSTER|");
+    }
+    if (attr & WALL)
+    {
+        strcat(buf, "WALL|");
+    }
+    if (attr & USELESS)
+    {
+        strcat(buf, "USELESS|");
+    }
+    if (attr & SCAREM)
+    {
+        strcat(buf, "SCAREM|");
+    }
+    if (attr & STAIRS)
+    {
+        strcat(buf, "STAIRS|");
+    }
+    if (attr & RUNOK)
+    {
+        strcat(buf, "RUNOK|");
+    }
+    if (attr & BOUNDARY)
+    {
+        strcat(buf, "BOUNDARY|");
+    }
+    if (attr & SLEEPER)
+    {
+        strcat(buf, "SLEEPER|");
+    }
+    if (attr & EVERCLR)
+    {
+        strcat(buf, "EVERCLR|");
+    }
+    if (attr & CHOKE)
+    {
+        strcat(buf, "CHOKE|");
+    }
+
+    return buf;
+}
+
 /*
  * rogo_baudrate: Determine the baud rate of the terminal
  */

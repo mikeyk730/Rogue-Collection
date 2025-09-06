@@ -13,6 +13,7 @@ struct Args
     std::string gfx;
     bool rogomatic = false;
     bool rogomatic_player = false;
+    std::string rogomatic_pause_at_level;
     std::string seed;
     std::string genes;
     bool print_score = false;
@@ -21,6 +22,7 @@ struct Args
     bool small_screen = false;
     std::string trogue_fd;
     std::string frogue_fd;
+    bool log = false;
 
     int GetDescriptorToRogue() const;
     int GetDescriptorFromRogue() const;

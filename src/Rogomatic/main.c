@@ -1,10 +1,187 @@
 /*
 mdk:known issues 2025:
+- maze rooms, bad fighting with J on 3rd lvl25. don't rest much and let monster chip
+  RogueCollection.exe a --rogomatic --seed 1757056469 --genes "4 93 2 80 12 13 72 79 63"
+- bad logic for seaching in maze rooms. can assume gone
+- don't rest up after paralyzing only enemy. especially bad if confused from medusa
+- shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
+
+- lvl23: bad tactics with maze, and waking a held dragon when on low HP :(
+RogueCollection.exe a --rogomatic --seed 1757123581 --genes "20 45 15 39 65 73 66 66 63"
+
+- lvl16: can't battle in maze rooms :(. searching when already connected to door
+RogueCollection.exe a --rogomatic --seed 1757107529 --genes "20 24 2 32 86 7 96 79 63"
+
+- reuse teleport trap rather than find new room
+RogueCollection.exe a --rogomatic --seed 1757103596 --genes "20 24 15 16 77 86 96 79 63"
+
+- can't find stairs
+  RogueCollection.exe a --rogomatic --seed 1757054848 --genes "50 74 16 81 1 2 57 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757055988 --genes "48 94 2 10 12 48 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757056579 --genes "4 93 2 91 77 13 27 75 63"
+RogueCollection.exe a --rogomatic --seed 1757056621 --genes "16 26 22 30 11 88 14 16 63"
+RogueCollection.exe a --rogomatic --seed 1757065906 --genes "20 87 9 40 69 1 59 4 63"
+RogueCollection.exe a --rogomatic --seed 1757073366 --genes "20 96 25 32 69 96 69 89 63"
+
+- not taking stairs (don't recognize gone room)
+  RogueCollection.exe a --rogomatic --seed 1757070988 --genes "21 42 25 32 88 96 89 2 63"
+  RogueCollection.exe a --rogomatic --seed 1757058830 --genes "16 94 31 4 8 63 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757056703 --genes "48 94 10 30 82 13 14 16 63"
+RogueCollection.exe a --rogomatic --seed 1757059504 --genes "48 94 5 10 5 63 77 76 63"
+RogueCollection.exe a --rogomatic --seed 1757062130 --genes "16 26 2 10 8 13 65 98 63"
+RogueCollection.exe a --rogomatic --seed 1757073905 --genes "12 41 24 26 86 91 69 2 63"
+
+- cant find hidden door
+  RogueCollection.exe a --rogomatic --seed 1757056469 --genes "4 93 2 80 12 13 72 79 63"
+RogueCollection.exe a --rogomatic --seed 1757060393 --genes "16 26 2 30 81 63 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757061151 --genes "6 94 40 10 8 70 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757063101 --genes "16 87 2 40 75 63 65 79 63"
+RogueCollection.exe a --rogomatic --seed 1757063250 --genes "26 87 2 40 75 95 69 2 63"
+RogueCollection.exe a --rogomatic --seed 1757065790 --genes "7 87 2 33 69 95 69 2 63"
+RogueCollection.exe a --rogomatic --seed 1757066706 --genes "20 87 5 40 73 1 69 9 63"
+RogueCollection.exe a --rogomatic --seed 1757067889 --genes "20 89 2 21 79 95 70 2 63"
+RogueCollection.exe a --rogomatic --seed 1757068104 --genes "20 89 2 21 79 85 69 89 63"
+
+- stuck
+  RogueCollection.exe a --rogomatic --seed 1757070622 --genes "17 67 9 16 58 90 74 94 63"
+  RogueCollection.exe a --rogomatic --seed 1757054793 --genes "50 55 16 81 1 2 65 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757055213 --genes "30 38 65 91 77 48 6 75 63"
+  RogueCollection.exe a --rogomatic --seed 1757055679 --genes "4 93 10 10 69 48 6 75 63"
+RogueCollection.exe a --rogomatic --seed 1757072475 --genes "22 87 24 37 88 7 89 2 63"
+
 - after reading mapping scroll that doesn't reveal doorways, player may not search
   for hidden door leading into passageway, and can get stuck on the level
 - with rust monster and another enemy around, player gets stuck
 - player gets stuck in treasure room deciding between 2 different monsters
   RogueCollection.exe a --rogomatic --seed 1756837966 --genes "84 56 75 11 54 34 86 42 3"
+- sandwiched not working: reports 1 adj instead of 2:
+  RogueCollection.exe a --rogomatic --seed 1757003241 --genes "64 66 80 30 31 62 17 84 63"
+- player struggles with maze rooms
+  RogueCollection.exe a --rogomatic --seed 1757003309 --genes "39 53 39 58 57 36 16 63 63"
+  RogueCollection.exe a --rogomatic --seed 1757010030 --genes "50 21 4 30 69 76 57 84 63"
+  RogueCollection.exe a --rogomatic --seed 1757011314 --genes "50 21 6 36 69 13 21 91 63"
+  RogueCollection.exe a --rogomatic --seed 1757012129 --genes "53 21 6 36 69 76 57 84 63"
+  RogueCollection.exe a --rogomatic --seed 1757030943 --genes "52 72 12 49 17 98 72 27 63"
+  RogueCollection.exe a --rogomatic --seed 1757034549 --genes "62 73 16 56 0 95 63 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757035174 --genes "50 88 3 58 7 2 57 21 63"
+  RogueCollection.exe a --rogomatic --seed 1757036778 --genes "50 77 10 54 1 2 65 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757041656 --genes "63 63 19 58 1 86 49 36 63"
+- player struggles with passage
+  RogueCollection.exe a --rogomatic --seed 1757006301 --genes "39 62 38 25 57 36 18 2 63"
+  RogueCollection.exe a --rogomatic --seed 1757033089 --genes "60 70 10 54 1 2 67 18 63"
+  RogueCollection.exe a --rogomatic --seed 1757035759 --genes "60 70 16 58 21 2 55 25 63"
+- player infinite loop, starve
+  RogueCollection.exe a --rogomatic --seed 1757003266 --genes "56 66 80 30 31 62 17 84 63"
+- not considering all doors
+  RogueCollection.exe a --rogomatic --seed 1757006691 --genes "51 62 38 25 32 99 54 84 63"
+- double hold of flytrap
+  RogueCollection.exe a --rogomatic --seed 1757003439 --genes "26 62 38 25 32 8 54 73 63"
+- infinite loop, not taking stairs
+  RogueCollection.exe a --rogomatic --seed 1757041853 --genes "55 77 3 31 85 86 49 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757003522 --genes "64 62 38 25 31 62 17 2 63"
+- polymorph on flytrap doesn't reset player held status
+- check what happens when want to arch, but another monster is blocking target
+  RogueCollection.exe a --rogomatic --seed 1757003719 --genes "51 62 38 25 32 8 70 84 63"
+- should remember held enemies after walking away
+- stuck on level even though door is obvious
+  RogueCollection.exe a --rogomatic --seed 1757005783 --genes "64 62 38 25 31 62 17 2 63"
+  RogueCollection.exe a --rogomatic --seed 1757030242 --genes "51 49 13 58 1 2 65 25 63"
+- does teleport trap need to reset state?
+  RogueCollection.exe a --rogomatic --seed 1757035849 --genes "62 73 16 64 85 2 57 31 63"
+- stuck
+  RogueCollection.exe a --rogomatic --seed 1757007227 --genes "51 53 38 25 32 99 17 72 63"
+  RogueCollection.exe a --rogomatic --seed 1757007248 --genes "60 70 86 34 28 99 17 84 63"
+  RogueCollection.exe a --rogomatic --seed 1757007288 --genes "51 53 42 58 43 62 19 2 63"
+  RogueCollection.exe a --rogomatic --seed 1757007769 --genes "93 75 62 43 8 74 66 54 63"
+  RogueCollection.exe a --rogomatic --seed 1757010309 --genes "50 21 4 30 11 17 78 15 63"
+  RogueCollection.exe a --rogomatic --seed 1757013918 --genes "50 21 0 54 2 13 21 91 63"
+  RogueCollection.exe a --rogomatic --seed 1757016547 --genes "35 21 23 36 2 74 57 91 63"
+  RogueCollection.exe a --rogomatic --seed 1757017639 --genes "57 72 23 54 2 74 57 91 63"
+  RogueCollection.exe a --rogomatic --seed 1757017973 --genes "54 57 12 70 2 74 75 27 63"
+  RogueCollection.exe a --rogomatic --seed 1757020522 --genes "68 36 17 54 2 1 67 22 63"
+  RogueCollection.exe a --rogomatic --seed 1757020797 --genes "57 57 7 49 7 13 84 15 63"
+  RogueCollection.exe a --rogomatic --seed 1757023487 --genes "57 46 34 54 2 1 61 15 63"
+  RogueCollection.exe a --rogomatic --seed 1757024366 --genes "58 70 17 49 10 1 67 14 63"
+  RogueCollection.exe a --rogomatic --seed 1757026450 --genes "76 57 17 49 2 1 67 14 63"
+  RogueCollection.exe a --rogomatic --seed 1757026706 --genes "58 72 17 49 7 1 67 14 63"
+  RogueCollection.exe a --rogomatic --seed 1757027207 --genes "58 72 17 49 7 1 61 17 63"
+  RogueCollection.exe a --rogomatic --seed 1757033329 --genes "62 64 10 54 21 98 60 21 63"
+  RogueCollection.exe a --rogomatic --seed 1757034298 --genes "58 46 3 59 91 98 68 22 63"
+  RogueCollection.exe a --rogomatic --seed 1757034499 --genes "58 46 3 59 91 98 63 22 63"
+  RogueCollection.exe a --rogomatic --seed 1757036293 --genes "60 70 16 58 1 2 57 21 63"
+- check dragon strats: (should always try to hold or vorpal zap?)
+  RogueCollection.exe a --rogomatic --seed 1757005854 --genes "51 53 39 58 57 36 16 84 63"
+- player trapped by 0 monsters? actual 2!
+  RogueCollection.exe a --rogomatic --seed 1757006027 --genes "26 62 38 25 32 8 54 73 63"
+- trapped by monsters and stave to death??
+  RogueCollection.exe a --rogomatic --seed 1757006707 --genes "39 62 38 25 57 36 16 84 63"
+- should take stairs if teleport trap delays for too long:
+  RogueCollection.exe a --rogomatic --seed 1757006106 --genes "51 62 38 25 32 8 54 73 63"
+  RogueCollection.exe a --rogomatic --seed 1757011078 --genes "50 57 65 28 69 73 63 84 63"
+  RogueCollection.exe a --rogomatic --seed 1757016291 --genes "35 21 23 36 2 13 67 15 63"
+- door can be under monster?
+y  RogueCollection.exe a --rogomatic --seed 1757007044 --genes "65 62 80 30 31 65 17 84 63"
+y  RogueCollection.exe a --rogomatic --seed 1757007190 --genes "56 66 82 30 24 62 17 84 63"
+y  RogueCollection.exe a --rogomatic --seed 1757009988 --genes "50 57 79 74 45 39 67 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757010659 --genes "50 57 7 30 11 17 11 30 63"
+y  RogueCollection.exe a --rogomatic --seed 1757016679 --genes "57 38 23 54 10 13 67 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757019507 --genes "68 43 23 70 2 74 67 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757021050 --genes "57 57 12 54 97 8 62 10 63"
+y  RogueCollection.exe a --rogomatic --seed 1757023928 --genes "57 46 17 49 7 1 67 15 63"
+y  RogueCollection.exe a --rogomatic --seed 1757024745 --genes "57 46 17 49 2 1 61 21 63"
+y  RogueCollection.exe a --rogomatic --seed 1757026288 --genes "58 72 12 49 7 13 70 15 63"
+  RogueCollection.exe a --rogomatic --seed 1757025784 --genes "58 72 11 41 2 1 67 14 63"
+  RogueCollection.exe a --rogomatic --seed 1757027048 --genes "58 46 12 54 2 1 67 14 63"
+  RogueCollection.exe a --rogomatic --seed 1757028911 --genes "65 69 10 49 7 98 61 21 63"
+  RogueCollection.exe a --rogomatic --seed 1757033767 --genes "60 70 10 54 21 1 61 21 63"
+  RogueCollection.exe a --rogomatic --seed 1757033923 --genes "62 73 16 58 1 2 65 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757037376 --genes "58 88 3 58 5 19 55 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757038602 --genes "77 91 3 58 1 93 55 25 63"
+- sleeping monster in front of door can disrupt
+  RogueCollection.exe a --rogomatic --seed 1757052721 --genes "50 77 9 31 85 86 49 25 63"
+  RogueCollection.exe a --rogomatic --seed 1757007076 --genes "51 53 39 58 43 62 18 12 63"
+  RogueCollection.exe a --rogomatic --seed 1757023225 --genes "57 57 7 49 2 74 67 21 63"
+  RogueCollection.exe a --rogomatic --seed 1757026602 --genes "58 72 17 49 93 1 61 14 63"
+  RogueCollection.exe a --rogomatic --seed 1757034664 --genes "50 77 10 54 7 2 65 25 63"
+- attack G with bad health while it's held
+  RogueCollection.exe a --rogomatic --seed 1757003743 --genes "51 62 38 25 32 8 67 73 63"
+- shouldn't consider held Y when deciding to throw potion at C
+  RogueCollection.exe a --rogomatic --seed 1757005650 --genes "64 66 80 30 31 62 17 84 63"
+- when held monster is blocking path, should rest till max hp (to repro, revert consitions to not wake sleeping monster on high levels)
+  RogueCollection.exe a --rogomatic --seed 1756971140 --genes "24 26 35 21 17 7 11 63 63"
+- when have scare, should prefer to fight in passage, not on door?
+- flytrap with scare, on door?
+  RogueCollection.exe a --rogomatic --seed 1757007370 --genes "39 62 86 34 28 66 21 84 63"
+- cant find exit
+  RogueCollection.exe a --rogomatic --seed 1757007504 --genes "39 62 38 25 32 99 54 84 63"
+- wake up held J on lvl25 to check one door, when another is available. should treat held monster as deterant
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- lvl27 food detection shows where amulet is. do we attempt this? no bee line
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- medusas not confusing player?? still surviving against faint lvl26 on way up
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- have lots of paralysis potions. should use them on late levels
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- battles with maze rooms not working well, lvl27
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- do we arch fly traps?
+  RogueCollection.exe a --rogomatic --seed 1757009040 --genes "50 57 74 74 45 39 74 27 63"
+- throw 2 hold at same monster monster without resting (if held is target, rest if not at max hp)
+  RogueCollection.exe a --rogomatic --seed 1757015303 --genes "35 21 4 36 69 74 57 35 63"
+- check medusa. if held medusa, rest until unconfused? throw aggressively at medusa
+  RogueCollection.exe a --rogomatic --seed 1757016201 --genes "57 57 4 36 69 76 67 15 63"
+- bad double throw
+  RogueCollection.exe a --rogomatic --seed 1757018291 --genes "35 21 23 54 19 13 67 15 63"
+- lvl26
+  RogueCollection.exe a --rogomatic --seed 1757011914 --genes "50 21 4 36 69 74 72 86 63"
+  RogueCollection.exe a --rogomatic --seed 1757016664 --genes "68 38 23 56 93 13 67 15 63"
+  RogueCollection.exe a --rogomatic --seed 1757030121 --genes "51 49 13 59 7 98 61 21 63"
+- don't record 0 damage hits (W+A)
+  RogueCollection.exe a --rogomatic --seed 1757019132 --genes "57 43 17 54 2 1 67 15 63"
+- should rest if only held monsters nearby
+  RogueCollection.exe a --rogomatic --seed 1757030110 --genes "60 70 10 54 7 98 67 18 63"
+- level 22 should step back on jabberwock to see if asleep
+  RogueCollection.exe a --rogomatic --seed 1757033456 --genes "50 77 10 54 7 2 57 21 63"
 */
 
 /*
@@ -191,11 +368,13 @@ int   beingstalked = 0;		/* True if recently hit by inv. stalker */
 int   blinded = 0;		/* True if blinded */
 int   blindir = 0;		/* Last direction we moved when blind */
 int   cancelled = 0;		/* True ==> recently zapped w/cancel */
+int   confused_monster = 0;		/* True ==> recently confused monster */
 int   cheat = 0;		/* True ==> cheat, use bugs, etc. */
 int   checkrange = 0;           /* True ==> check range */
 int   chicken = 0;		/* True ==> check run away code */
 int   compression = 1;		/* True ==> move more than one square/turn */
 int   confused = 0;		/* True if we are confused */
+int unconfuse_next = 0;
 int   cosmic = 0;		/* True if we are hallucinating */
 int   currentarmor = NONE;	/* Index of our armor */
 int   currentweapon = NONE;     /* Index of our weapon */
@@ -283,14 +462,18 @@ int   wplusdam = 2;		/* Our plus damage from weapon bonus */
 int   wplushit = 1;		/* Our plus hit from weapon bonus */
 int   zone = NONE;		/* Current screen zone, 0..8 */
 int   zonemap[9][9];		/* Map of zones connections */
-int   g_seed = 0;
-int   g_expect_extra_bytes = 0;
-int   g_move_delay = 0;
-int   g_level_delay = 0;
-int   g_debug = 0;
-int   g_debug_protocol = 0;
+
+int g_seed = 0;
+int g_move_delay = 0;
+int g_level_delay = 0;
+int g_pause_at_level = 0;
+int g_debug = 0;
+int g_debug_protocol = 0;
+int g_expect_extra_bytes = 0;
+int g_verbose_logs = 0;
 int g_bug_fixes = B_ALL;
 
+int is_exploring_passage = 0;
 
 /* Functions */
 void (*istat)(int);
@@ -391,6 +574,7 @@ jmp_buf  commandtop;
 
 void WaitForDebugger()
 {
+    saynow("Rog-O-Matic is waiting for a debugger to attach...");
 #ifdef _WIN32
     while (!IsDebuggerPresent())
         Sleep(100);
@@ -422,6 +606,12 @@ char *env[];
   if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL) {
       g_debug_protocol = strcmp(env_value, "true") == 0;
   }
+  if ((env_value = getenv("ROGOMATIC_LOG_VERBOSITY")) != NULL) {
+      g_verbose_logs = strcmp(env_value, "verbose") == 0;
+  }
+  if ((env_value = getenv("ROGOMATIC_PAUSE_AT_LEVEL")) != NULL) {
+      g_pause_at_level = atoi(env_value);
+  }
   if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL) {
       g_move_delay = atoi(env_value);
   }
@@ -437,7 +627,8 @@ char *env[];
           &emacs, &terse, &transparent, &quitat);
   }
 
-  debuglog_open("rogomatic.log");
+  if (g_debug)
+      debuglog_open("rogomatic.log");
 
   /*
    * Initialize some storage
@@ -684,7 +875,7 @@ char *env[];
         case 'Y': case 'U': case 'B': case 'N':
         case 'h': case 'j': case 'k': case 'l':
         case 'y': case 'u': case 'b': case 'n':
-        case 's': command ("user input", T_OTHER, "%c", ch); transparent = 1; break;
+        case 's': case '.': command("user input", T_OTHER, "%c", ch); transparent = 1; break;
 
         case 'f': ch = getch ();
 
@@ -782,7 +973,8 @@ char *env[];
 
         case 'd': toggledebug ();	break;
 
-        case 'e': toggleecho ();        break;
+        case 'e': toggledebuglog(); //mdk toggleecho ();
+            break;
 
         case '!': dumpstuff ();         break;
 
@@ -993,7 +1185,12 @@ void startlesson ()
   /* Cache the parameters for easier use */
   k_srch = knob[K_SRCH];	k_door = knob[K_DOOR];
   k_rest = knob[K_REST];	k_arch = knob[K_ARCH];
-  k_exper = knob[K_EXPER];	k_run = knob[K_RUN];
+  k_exper = knob[K_EXPER];
+
+  k_run = knob[K_RUN];
+  if (enable(B_NERF_RUN_GENE))
+      k_run /= 2;
+
   k_wake = knob[K_WAKE];	k_food = knob[K_FOOD];
 }
 

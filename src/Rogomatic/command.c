@@ -171,7 +171,7 @@ void command (const char* description, int tmode, char* f, ...)
   if (previous/1000 != current/1000)
   {
       dosnapshot();
-      int severity = (current > 15000) ? D_FATAL : D_WARNING;
+      int severity = (current > 15000) ? D_FATAL : D_ERROR;
       dwait(severity, "Excessive %s for %d turns on level %d", tmode_to_str(tmode), timespent[Level].activity[tmode], Level);
   }
 
@@ -179,6 +179,7 @@ void command (const char* description, int tmode, char* f, ...)
   if (cmd[0] != 'i' && cmd[0] != 'I')
   {
       clear_active_item();
+      is_exploring_passage = 0;
   }
 
   /* Do the inventory stuff */
@@ -216,7 +217,9 @@ char *cmd;
 {
   register char *s = cmd;
 
-  while (ISDIGIT (*s) || *s == 'f') s++;
+  while (ISDIGIT(*s) || *s == 'f') s++;
+  if (can_move_without_pickup())
+      while (ISDIGIT(*s) || *s == 'm') s++;
 
   return (*s);
 }

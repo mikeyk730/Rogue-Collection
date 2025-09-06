@@ -167,12 +167,22 @@ int vorpalize_weapon_can_be_cursed()
     return version == RVPC11;
 }
 
+int can_throw_potions()
+{
+    return is_pc_version() && enable(B_THROW_POTIONS);
+}
+
+int potions_always_hit()
+{
+    return can_throw_potions() && version == RVPC148;
+}
+
 int needs_msg_clear()
 {
     return version == RV53NMT || version == RV52A || is_pc_version();
 }
 
-int enable_bugfix(int bug)
+int enable(int bug)
 {
     return g_bug_fixes & bug;
 }

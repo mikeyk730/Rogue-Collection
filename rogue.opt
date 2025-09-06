@@ -274,12 +274,26 @@ rogomatic_delay=0
 rogomatic_level_delay=0
 
 ;
+; If Rogomatic reaches this level, it will pause in the in-game debugger
+;
+; Possible values: Any non-negative integer, e.g. 26
+;
+rogomatic_pause_at_level=
+
+;
 ; If set to true, a debug log will be written, and the in-game debugger will
 ; break on any fatal, error, or warning breakpoints.
 ;
 ; Possible values: true, false
 ;
 rogomatic_debug=false
+
+;
+; If set to verbose, more detailed information will be included in the debug log.
+;
+; Possible values: verbose
+;
+rogomatic_log_verbosity=
 
 ;
 ; If set to true, a file named ipc.txt will be used for communication from

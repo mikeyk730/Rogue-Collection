@@ -74,11 +74,13 @@ extern int beingstalked;	/* True if an Invisible Stalker is around */
 extern int blinded;		/* True if blinded */
 extern int blindir;		/* Last direction we moved when blind */
 extern int cancelled;		/* Turns till use cancellation again */
+extern int confused_monster;		/* Turns till should confuse a monster again */
 extern int cheat;		/* True ==> cheat to win */
 extern int checkrange;		/* True ==> check range */
 extern int chicken;		/* True ==> test run away code */
 extern int compression;		/* True ==> move multiple squares */
 extern int confused;		/* True if confused */
+extern int unconfuse_next;
 extern int cosmic;		/* True if hallucinating */
 extern int currentarmor;	/* Index of our armor */
 extern int currentweapon;	/* Index of our weapon */
@@ -166,6 +168,8 @@ extern int g_debug;
 extern int g_debug_protocol;
 extern int g_expect_extra_bytes;
 extern int g_bug_fixes;
+extern int g_verbose_logs;
+extern int g_pause_at_level;
 
 //
 // Vorpalize weapon strategy
@@ -236,5 +240,8 @@ extern int k_exper;		/* Level on which to experiment with items */
 extern int k_run;		/* Propensity for retreating */
 extern int k_wake;		/* Propensity for waking things up */
 extern int k_food;		/* Propensity for hoarding food (rings) */
+
+extern int searchcount;
+extern int is_exploring_passage;
 
 #include "rogomatic.h"

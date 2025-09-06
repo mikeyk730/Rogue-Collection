@@ -51,13 +51,10 @@ static int didinit=0;
  * Modified to use findmove.			5/13	MLM
  */
 
-int makemove (movetype, evalinit, evaluate, reevaluate)
-int movetype, reevaluate;
-evalinit_ptr evalinit;
-evaluate_ptr evaluate;
+int makemove(const char* why, int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int reevaluate)
 {
   if (findmove (movetype, evalinit, evaluate, reevaluate))
-    return (followmap (movetype));
+    return followmap(why, movetype);
 
   return (0);
 }
@@ -67,10 +64,7 @@ evaluate_ptr evaluate;
  *           the correct state for validatemap or followmap to work.	MLM
  */
 
-int findmove (movetype, evalinit, evaluate, reevaluate)
-int movetype, reevaluate;
-evalinit_ptr evalinit;
-evaluate_ptr evaluate;
+int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int reevaluate)
 {
   int result;
 
@@ -94,13 +88,21 @@ evaluate_ptr evaluate;
   searchstartr = atrow; searchstartc = atcol;
 
   if (!(*evalinit)())    /* Compute evalinit from current location */
-    { dwait (D_SEARCH, "Findmove: evalinit failed."); return (0); }
+  {
+      dwait (D_SEARCH, "Findmove: evalinit failed.");
+      return (0);
+  }
 
   if (!searchfrom (atrow, atcol, evaluate, mvdir, &targetrow, &targetcol))
-    { return (0); }	/* move failed */
+  {
+      return (0); /* move failed */
+  }
 
   if (targetrow == atrow && targetcol == atcol)
-    { ontarget = 1; return (0); }
+  {
+      ontarget = 1;
+      return (0);
+  }
 
   /* <<copy the newly created map to save*[][]>> */
   mvtype = movetype;	/* mvtype will be the type of saved map */
@@ -117,8 +119,7 @@ evaluate_ptr evaluate;
  * May 13, MLM
  */
 
-int followmap (movetype)
-register int movetype;
+int followmap(const char* why, int movetype)
 {
   register int dir, dr, dc, r, c;
   int timemode, searchit, count=1;
@@ -148,7 +149,11 @@ register int movetype;
       onrc (HALL|BEEN, targetrow, targetcol) != (HALL|BEEN) &&
       onrc (HALL,r,c) &&
       !beingstalked)			/* Feb 10, 1985 - mlm */
-    { fmove ("explore new passage",dir); return (1); }
+  {
+      fmove ("explore new passage", dir);
+      is_exploring_passage = 1; //todo:mdk
+      return (1);
+  }
 
   /* Timemode tells why we are moving this way, T_RUNNING ==> no search */
   timemode = (movetype == GOTOMOVE)    ? T_MOVING :
@@ -190,7 +195,8 @@ register int movetype;
     { mmove ("move on scare monster", dir, timemode); return (1); }
 
   /* Send the movement command and return success */
-  rmove (get_move_type_str(movetype), count, dir, timemode); return (1);
+  rmove(tmp("followmap: %s: %s", why, get_move_type_str(movetype)), count, dir, timemode);
+  return (1);
 }
 
 /*
@@ -209,10 +215,10 @@ evaluate_ptr evaluate;
   register int thedir, dir, r, c;
   int val, avd, cont;
 
-  dwait (D_CONTROL | D_SEARCH, "Validatemap: type %d", movetype);
+  dwait (D_CONTROL | D_SEARCH, "Validatemap: type %s", get_move_type_str(movetype));
 
   if (mvtype != movetype) {
-    dwait (D_SEARCH, "Validatemap: move type mismatch %d != %d, map invalid.", movetype, mvtype);
+    dwait (D_SEARCH, "Validatemap: move type mismatch %s != %s, map invalid.", get_move_type_str(movetype), get_move_type_str(mvtype));
     return (0);
   }
 
@@ -277,14 +283,15 @@ evaluate_ptr evaluate;
 void cancelmove (movetype)
 int movetype;
 {
-  if (movetype == mvtype) mvtype = 0;
+  if (movetype == mvtype)
+      mvtype = 0;
 }
 
 /*
  * setnewgoal: Invalidate all stored moves.
  */
 
-void setnewgoal ()
+void setnewgoal()
 {
   mvtype = 0;
   goalr = goalc = NONE;

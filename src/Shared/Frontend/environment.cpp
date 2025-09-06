@@ -91,7 +91,14 @@ void Environment::ApplyArgs(const Args& args)
         Set("replay_pause_at", args.pause_at);
     if (!args.genes.empty())
         Set("genes", args.genes);
-
+    if (!args.rogomatic_pause_at_level.empty())
+        Set("rogomatic_pause_at_level", args.rogomatic_pause_at_level);
+    if (args.log)
+    {
+        Set("replay_paused", "true");
+        Set("logfile", "rogue.log");
+        Set("rogomatic_debug", "true");
+    }
 }
 
 void Environment::Deserialize(std::istream& in)
@@ -220,6 +227,14 @@ bool Environment::WriteToOs(bool for_unix)
     if (IsEqual("rogomatic_debug_break", "true"))
     {
         SetEnvVariable("ROGOMATIC_DEBUG_BREAK=true");
+    }
+    if (Get("rogomatic_log_verbosity", &value))
+    {
+        SetEnvVariable(("ROGOMATIC_LOG_VERBOSITY=" + value).c_str());
+    }
+    if (Get("rogomatic_pause_at_level", &value))
+    {
+        SetEnvVariable(("ROGOMATIC_PAUSE_AT_LEVEL=" + value).c_str());
     }
     if (Get("rogomatic_delay", &value))
     {
