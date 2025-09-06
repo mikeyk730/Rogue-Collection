@@ -6,11 +6,12 @@ mdk:known issues 2025:
 - don't rest up after paralyzing only enemy. especially bad if confused from medusa
 - shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
 
+
+- lvl16: can't battle in maze rooms :(. searching when already connected to door
+RogueCollection.exe a --rogomatic --seed 1757107529 --genes "20 24 2 32 86 7 96 79 63"
+
 - reuse teleport trap rather than find new room
 RogueCollection.exe a --rogomatic --seed 1757103596 --genes "20 24 15 16 77 86 96 79 63"
-
-can't battle in maze rooms :(
-RogueCollection.exe a --rogomatic --seed 1757107529 --genes "20 24 2 32 86 7 96 79 63"
 
 - can't find stairs
   RogueCollection.exe a --rogomatic --seed 1757054848 --genes "50 74 16 81 1 2 57 25 63"

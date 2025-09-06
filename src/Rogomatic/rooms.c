@@ -1136,7 +1136,7 @@ register int type, r, c;
 /*
  * nexttowall:  Is there a wall adjacent wall?
  *			|
- *  e.g.	########|   <----   there should be a door here.
+ *  e.g.	+#######|   <----   there should be a door here.
  *			|
  * Fuzzy:	Replaces knowisdoor (), October 17, 1983.
  */

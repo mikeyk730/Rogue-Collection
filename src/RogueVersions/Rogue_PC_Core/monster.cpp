@@ -273,7 +273,13 @@ Monster* Monster::do_chase() //todo: understand
         repeat = false;
         //If the object of our desire is in a different room, and we are not in a maze,
         //run to the door nearest to our goal.
-        if (monster_room != destination_room && (monster_room->is_maze()) == 0)
+        //
+        // mdk: The following could be added to make monsters enter mazes like the Unix versions.
+        // I might want to add an option for this, since room_bugfix() prevents monsters
+        // from glitching into mazes.
+        //
+        // if (monster_room != destination_room && !monster_room->is_maze() && !destination_room->is_maze())
+        if (monster_room != destination_room && !monster_room->is_maze())
         {
             //loop through doors
             for (int i = 0; i < monster_room->m_num_exits; i++)
