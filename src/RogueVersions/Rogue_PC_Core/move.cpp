@@ -55,9 +55,14 @@ void finish_do_move(bool is_passage, bool is_maze)
 {
     game->level().draw_char(game->hero().position());
     if (is_passage && (game->level().get_tile(game->hero().previous_position()) == DOOR || (game->level().is_maze(game->hero().previous_position()))))
-        //mdk:bugfix: the tile where a passage meets a maze is flagged as both passage and maze.
-        //This could cause the player to "leave" a maze even when he hadn't.  Monsters could
-        //then incorrectly enter the maze.
+        // mdk:bugfix: a single tile where a passage meets a maze is flagged as both passage and maze.
+        // This could cause the player to "leave" a maze even when he hadn't.  Monsters could
+        // then incorrectly enter the maze.
+        //
+        // Specifically, the game would work as intended if you entered from the passage
+        // to the maze -- monsters wouldn't follow. If you moved from a maze tile, to the
+        // overlap tile, to a maze tile, the bug would cause you to be considered in
+        // the passage, so the monster would start to attack.
         if(!is_maze || !game->options.room_bugfix())
             leave_room(new_position);
     if (is_maze && (game->level().is_maze(game->hero().previous_position())) == 0)
