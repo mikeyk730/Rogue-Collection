@@ -753,7 +753,6 @@ void teleport()
 {
   register int r = atrow0, c = atcol0;
 
-  goalr = goalc = NONE;
   setnewgoal();
 
   hitstokill = 0;

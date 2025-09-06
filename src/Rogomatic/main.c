@@ -6,6 +6,8 @@ mdk:known issues 2025:
 - don't rest up after paralyzing only enemy. especially bad if confused from medusa
 - shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
 
+- lvl23: bad tactics with maze, and waking a held dragon when on low HP :(
+RogueCollection.exe a --rogomatic --seed 1757123581 --genes "20 45 15 39 65 73 66 66 63"
 
 - lvl16: can't battle in maze rooms :(. searching when already connected to door
 RogueCollection.exe a --rogomatic --seed 1757107529 --genes "20 24 2 32 86 7 96 79 63"

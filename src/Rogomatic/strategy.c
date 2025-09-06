@@ -147,7 +147,7 @@ int strategize()
   if (trywand ())		/* Try to use a wand */
     return (1);
 
-  if (gotowardsgoal ())		/* Keep on trucking */
+  if (gotowardsgoal("go to goal"))		/* Keep on trucking */
     return (1);
 
   if (exploreroom ())		/* Search the room */
@@ -182,7 +182,7 @@ int strategize()
    */
   //mdk:this didn't work, attempt would always be 0, since we call newlevel() when we're stubborn
   //todo:mdk: SLEEPER not set for all sleeping monsters.
-  if (attempt > 4 && makemove (ATTACKSLEEP, genericinit, sleepvalue, REUSE)) {
+  if (attempt > 4 && makemove("attack sleepers", ATTACKSLEEP, genericinit, sleepvalue, REUSE)) {
     display ("No stairs, attacking sleeping monster...");
     return (1);
   }
@@ -723,7 +723,7 @@ int tomonster()
   }
 
   /* "We have him! Move toward him!" */
-  if (gotowards (mlist[which].mrow, mlist[which].mcol, 0)) {
+  if (gotowards("tomonster", mlist[which].mrow, mlist[which].mcol, 0)) {
     goalr = mlist[which].mrow; goalc = mlist[which].mcol;
     lyinginwait = 0;
     return (1);
@@ -854,6 +854,7 @@ int tactic_hold_monster_with_potion(int m, const char* monster, int mdir)
     if (throw_potion("paralysis", monster, mdir))
     {
         hold_monster(m);
+        setnewgoal();
         return 1;
     }
 
@@ -1477,10 +1478,15 @@ int tostuff ()
   what= slist[which].what; wrow= slist[which].srow; wcol= slist[which].scol;
 
   /* We can always pick up more gold */
-  if (what == gold) return (gotowards (wrow, wcol, 0));
+  if (what == gold)
+      return gotowards("pick up gold", wrow, wcol, 0);
 
   /* Have space in our pack, go get it */
-  if (objcount < maxobj) return (gotowards (wrow, wcol, 0));
+  if (objcount < maxobj)
+  {
+      dwait(D_INFORM, "Go toward %s at (%d,%d)", get_item_type_string(what), wrow, wcol);
+      return gotowards("pick up item", wrow, wcol, 0);
+  }
 
   /* No space in pack and we cannot drop something here, fail */
   if (on (STUFF | DOOR | TRAP | STAIRS)) return (0);
@@ -1667,7 +1673,7 @@ pickupafter ()
   }
 
   /* Else go for it */
-  return (gotowards (agoalr, agoalc, 0));
+  return (gotowards("pickup after", agoalr, agoalc, 0));
 }
 
 /*

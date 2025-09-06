@@ -495,7 +495,7 @@ findarrow ()
     return (0);
 
   else if (!usingarrow && foundarrowtrap && !on (ARROW) &&
-           gotowards (trapr, trapc, 0))
+           gotowards("findarrow", trapr, trapc, 0))
     { display ("Trying for arrow..."); return (1); }
 
   return (0);
@@ -608,12 +608,12 @@ int godownstairs(int running)
   }
 
   /* If we are running and can run to the next level, do that */
-  if (running && makemove (RUNDOWN, genericinit, downvalue, REEVAL)) {
+  if (running && makemove("run to stairs or trap door", RUNDOWN, genericinit, downvalue, REEVAL)) {
     return (1);
   }
 
   /* If we see the stairs or a trap door, go there */
-  if (!running && makemove (DOWNMOVE, genericinit, downvalue, REUSE)) {
+  if (!running && makemove("move to stairs or trap door", DOWNMOVE, genericinit, downvalue, REUSE)) {
     goalr = targetrow; goalc = targetcol;   /* Set a goal (CPU time hack) */
     return (1);
   }
@@ -696,14 +696,14 @@ int waitaround ()
 {
   register int i, j;
 
-  if (gotowardsgoal ()) return (1);
+  if (gotowardsgoal("go to goal while waiting")) return (1);
 
   gc = ++gc % 4;
 
   for (i = cb[gc].vertstart; i != cb[gc].vertend; i += cb[gc].vertdelt)
     for (j = cb[gc].horstart; j != cb[gc].horend; j += cb[gc].hordelt)
       if (onrc (BEEN | CANGO | ROOM, i, j) &&
-          !onrc (TRAP, i, j) && gotowards (i, j, 0))
+          !onrc (TRAP, i, j) && gotowards("wait around", i, j, 0))
         { goalr = i; goalc = j; return (1); }
 
   return (0);
@@ -760,7 +760,7 @@ int running;
 
   /* If we know where the stairs are, go there */
   else if ((goalr = stairrow) > 0 && (goalc = staircol) > 0 &&
-           gotowards (goalr, goalc, running))
+           gotowards("go to stairs (up)", goalr, goalc, running))
     return (1);
 
   return (0);
@@ -849,12 +849,21 @@ int restup ()
  * that square. Calls gotowards which calls bfsearch.
  */
 
-int gotowardsgoal ()
+int gotowardsgoal(const char* why)
 {
   if (goalr > 0 && goalc > 0) { /* Keep on trucking */
-    if (goalr == atrow && goalc == atcol) { goalr = NONE; goalc = NONE; }
-    else if (gotowards (goalr, goalc, 0)) { return (1); }
-    else                                  { goalr = NONE; goalc = NONE; }
+    if (goalr == atrow && goalc == atcol)
+    {
+        goalr = NONE; goalc = NONE;
+    }
+    else if (gotowards(why, goalr, goalc, 0))
+    {
+        return (1);
+    }
+    else
+    {
+        goalr = NONE; goalc = NONE;
+    }
   }
 
   return (0);
@@ -875,7 +884,7 @@ int gotocorner ()
   if (debug (D_SCREEN))
     { saynow ("Gotocorner called:"); mvaddch (r, c, 'T'); at (row, col); }
 
-  if (gotowards (r, c, 0)) { goalr=r; goalc=c; return (1); }
+  if (gotowards("go to corner", r, c, 0)) { goalr = r; goalc = c; return (1); }
 
   return (0);
 }

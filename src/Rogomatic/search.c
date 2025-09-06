@@ -51,10 +51,10 @@ static int didinit=0;
  * Modified to use findmove.			5/13	MLM
  */
 
-int makemove (int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int reevaluate)
+int makemove(const char* why, int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int reevaluate)
 {
   if (findmove (movetype, evalinit, evaluate, reevaluate))
-    return followmap(movetype);
+    return followmap(why, movetype);
 
   return (0);
 }
@@ -119,7 +119,7 @@ int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int ree
  * May 13, MLM
  */
 
-int followmap (int movetype)
+int followmap(const char* why, int movetype)
 {
   register int dir, dr, dc, r, c;
   int timemode, searchit, count=1;
@@ -195,7 +195,7 @@ int followmap (int movetype)
     { mmove ("move on scare monster", dir, timemode); return (1); }
 
   /* Send the movement command and return success */
-  rmove(tmp("followmap %s", get_move_type_str(movetype)), count, dir, timemode);
+  rmove(tmp("followmap: %s: %s", why, get_move_type_str(movetype)), count, dir, timemode);
   return (1);
 }
 
@@ -291,7 +291,7 @@ int movetype;
  * setnewgoal: Invalidate all stored moves.
  */
 
-void setnewgoal ()
+void setnewgoal()
 {
   mvtype = 0;
   goalr = goalc = NONE;

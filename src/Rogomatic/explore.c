@@ -108,11 +108,10 @@ static int secretcont[16] =  { 0, 16, 15, 14,
 
 int gotorow = NONE, gotocol = NONE;
 
-int gotowards (r, c, running)
-int r, c, running;
+int gotowards(const char* why, int r, int c, int running)
 {
   gotorow = r; gotocol = c;
-  return (makemove (running ? RUNAWAY:GOTOMOVE, gotoinit, gotovalue, REUSE));
+  return (makemove(why, running ? RUNAWAY:GOTOMOVE, gotoinit, gotovalue, REUSE));
 }
 
 /*
@@ -1000,7 +999,7 @@ int findroom ()
     if (!on (ROOM) && secret ())
         return (1);
 
-    if (makemove (EXPLORE, expinit, expvalue, REUSE))
+    if (makemove("findroom", EXPLORE, expinit, expvalue, REUSE))
         return (1);
   }
 
@@ -1018,7 +1017,7 @@ int exploreroom ()
   if (!on (ROOM) || isexplored (atrow, atcol))
       return (0);
 
-  if (makemove (EXPLOREROOM, roominit, expvalue, REUSE))
+  if (makemove("explore room", EXPLOREROOM, roominit, expvalue, REUSE))
       return (1);
 
   markexplored (atrow, atcol);
@@ -1040,7 +1039,7 @@ int doorexplore()
   if (! new_search || Level == didreadmap)
     { searchcount = 0; return (0); }
 
-  if (makemove (SECRETDOOR, secretinit, secretvalue, REUSE))  /* move */
+  if (makemove("door explore", SECRETDOOR, secretinit, secretvalue, REUSE))  /* move */
   {
       searchcount = 0;
       return (1);
@@ -1105,7 +1104,7 @@ int r, c, depth, *val, *avd, *cont;
 
 int findsafe()
 {
-  return (makemove (FINDSAFE, genericinit, safevalue, REEVAL));
+  return makemove("find safe", FINDSAFE, genericinit, safevalue, REEVAL);
 }
 
 /* How scared are we of hitting a trap? */
@@ -1149,7 +1148,7 @@ int archmonster (register int m, register int trns)
   archrow = mlist[m].mrow; archcol = mlist[m].mcol; archturns = trns;
 
   /* Can we get to a suitable square */
-  if (makemove (ARCHERYMOVE, archeryinit, archeryvalue, REUSE))
+  if (makemove ("archmonster", ARCHERYMOVE, archeryinit, archeryvalue, REUSE))
     { dwait (D_BATTLE, "archmonster, made a move"); return (1); }
 
   /* If no move made and not on target, no path to monster */
@@ -1259,7 +1258,7 @@ int movetorest ()
     { dwait (D_SEARCH, "movetorest: already on square"); return (0); }
 
   /* Try to move to a better square (remember position) */
-  if (makemove (RESTMOVE, restinit, restvalue, REUSE)) {
+  if (makemove("move to rest", RESTMOVE, restinit, restvalue, REUSE)) {
     dwait (D_SEARCH, "movetorest wins.");
     restr = targetrow; restc = targetcol;
     return (1);

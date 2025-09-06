@@ -195,7 +195,7 @@ int runaway ()
     return (goupstairs (RUNNING) || godownstairs (RUNNING));
 
   if (canrun ())		/* If canrun finds a move, use it */
-    return (followmap (RUNAWAY));
+    return (followmap("run away", RUNAWAY));
 
   return (0);			/* Cant run away */
 }
@@ -227,7 +227,7 @@ int canrun ()
  *		"The Love Song of J. Alfred Prufrock", T.S. Eliot
  */
 
-int unpin ()
+int unpin()
 {
   int result, oldcomp = compression;
   int unpininit (), runvalue (), expunpininit (),
@@ -249,8 +249,8 @@ int unpin ()
   /* currentrectangle ();   // always done after each move of the rogue // */
 
   compression = 0;	/* Be tense when fleeing */
-  result = (makemove (UNPIN, unpininit, runvalue, REEVAL) ||
-            makemove (UNPINEXP, expunpininit, expunpinvalue, REEVAL));
+  result = (makemove("unpin", UNPIN, unpininit, runvalue, REEVAL) ||
+            makemove("unpin", UNPINEXP, expunpininit, expunpinvalue, REEVAL));
 
   compression = oldcomp;
   return (result);
@@ -292,7 +292,7 @@ int backtodoor (int dist)
   else if (dist > 0 && (on (DOOR) || nextto (DOOR, atrow, atcol)))
     dwait (D_BATTLE, "backtodoor: next to door, have time");
 
-  else if (makemove(RUNTODOOR, rundoorinit, rundoorvalue, REEVAL))
+  else if (makemove("run to door", RUNTODOOR, rundoorinit, rundoorvalue, REEVAL))
   {
       dwait(D_BATTLE, "Back to the door...");
       return (1);
