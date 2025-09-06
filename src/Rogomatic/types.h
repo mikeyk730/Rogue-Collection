@@ -114,6 +114,7 @@ const char* describe_tile(int attr);
 # define ROGINFINITY (10000)
 
 # define NOTAMOVE (-1)
+# define NOTAMOVE_NEWLEVEL (-2)
 
 # define FORCE    (1)
 # define OPTIONAL (0)

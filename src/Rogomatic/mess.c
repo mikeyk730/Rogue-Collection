@@ -792,7 +792,8 @@ register char *mess, *mend;
             washit ("ice monster");
         else if (MATCH("you faint*")) {echoit=0; if (eat_after_fainting()) eat();}
         else if (MATCH("you freak out*")) echoit = 0;
-        else if (MATCH("you fell into a trap!*")) ;
+        else if (MATCH("you fell into a trap!*"))
+            newlevel();
         else if (MATCH("you are damaged by the fall*"));
         else if (MATCH("yum*")) echoit=0;
         else if (MATCH("yuk*")) echoit=0;

@@ -84,6 +84,7 @@ void newlevel ()
   foundnew ();				/* Reactivate all rules */
   clearsendqueue ();	/* Clear old commands */
   searchcount = 0;
+  movedir = NOTAMOVE_NEWLEVEL;
   /*
    * Clear the highlevel map
    */
@@ -460,7 +461,7 @@ void updateat ()
 
   if (direc(dr, dc) != movedir || dr && dc && abs(dr) != abs(dc))
   {
-      if (!is_exploring_passage && !confused)
+      if (!is_exploring_passage && !confused && movedir != NOTAMOVE_NEWLEVEL)
         teleport();
   }
   else {
@@ -759,16 +760,13 @@ void teleport()
   darkdir = NONE;
   darkturns = 0;
 
-  confused = 1; //todo:mdk make obvious
-  beingheld = 0;
-
-  int why = 0;
+  int confirmed = 0;
 
   if (is_reading_scroll())
   {
       dwait(D_SCROLL, "Assuming '%s' scroll is teleportation", lastname);
       infer("teleportation", Scroll);
-      why = 1;
+      confirmed = 1;
   }
   else if (movedir >= 0 && movedir < 8)
   {
@@ -787,21 +785,27 @@ void teleport()
               dwait(D_INFORM, "Assuming teleport trap at %d, %d", r, c);
               saynow("Assuming teleport trap at %d, %d", r, c);
               setrc(TELTRAP, r, c);
-              why = 1;
+              confirmed = 1;
           }
           else if (onrc(TELTRAP, r, c))
           {
               dwait(D_INFORM, "Used known teleport trap at %d, %d", r, c);
-              why = 1;
+              confirmed = 1;
           }
         break;
       }
 
-      r += deltr[movedir]; c += deltc[movedir];
+      r += deltr[movedir];
+      c += deltc[movedir];
     }
   }
 
-  if (!why)
+  if (confirmed)
+  {
+      confused = 1; //todo:mdk make obvious
+      beingheld = 0;
+  }
+  else
   {
       dwait(D_ERROR, "Teleported (%d,%d)->(%d,%d) for unknown reason, move dir %d",
           atrow0, atcol0, atrow, atcol, movedir);

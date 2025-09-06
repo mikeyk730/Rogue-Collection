@@ -1151,10 +1151,12 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * We have a lot more programming to do here!!!!   Fuzzy
    */
 
-  if (die_in (1) && (obj = havenamed (Scroll, "hold monster")) != NONE &&
-      reads (obj)) {
-    holdmonsters ();
-    return (1);
+  if (die_in(1) && (obj = havenamed(Scroll, "hold monster")) != NONE &&
+      reads(obj))
+  {
+      dwait(D_ERROR, "Read hold monster");
+      holdmonsters();
+      return (1);
   }
 
   /*
@@ -1429,7 +1431,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
  * try to drop our least useful item. If pack is still full, fail.
  */
 
-int tostuff ()
+int tostuff()
 {
   register int i, closest, dist, w, worst, worstval;
   int   which, wrow, wcol;
@@ -1450,15 +1452,18 @@ int tostuff ()
    * to do something else...
    */
 
-  for (i = 0, which = NONE, closest = 999; i < slistlen; i++) {
+  for (i = 0, which = NONE, closest = 999; i < slistlen; i++)
+  {
     if (!onrc (USELESS, slist[i].srow, slist[i].scol) ||
         (droppedscare && objcount < maxobj &&
-         !onrc (SCAREM, slist[i].srow, slist[i].scol))) {
+         !onrc (SCAREM, slist[i].srow, slist[i].scol)))
+    {
       dist = max (abs (slist[i].srow - atrow), abs (slist[i].scol - atcol));
 
       /* Ignore Junk */
       if (onrc (USELESS, slist[i].srow, slist[i].scol) &&
-         (!onrc (SCAREM, slist[i].srow, slist[i].scol))) dist = ROGINFINITY;
+         (!onrc (SCAREM, slist[i].srow, slist[i].scol)))
+          dist = ROGINFINITY;
 
       /* make scaremonster infinity when we don't need it */
       if (onrc (SCAREM, slist[i].srow, slist[i].scol))
@@ -1467,7 +1472,10 @@ int tostuff ()
 
       /* If this is the closest item, save its distance and index */
       if (dist < closest)
-        { closest = dist; which = i; }
+      {
+          closest = dist;
+          which = i;
+      }
     }
   }
 
@@ -1475,7 +1483,9 @@ int tostuff ()
   if (which < 0) return (0);
 
   /* Found something, save its location and type in registers */
-  what= slist[which].what; wrow= slist[which].srow; wcol= slist[which].scol;
+  what= slist[which].what;
+  wrow= slist[which].srow;
+  wcol= slist[which].scol;
 
   /* We can always pick up more gold */
   if (what == gold)
@@ -1484,24 +1494,30 @@ int tostuff ()
   /* Have space in our pack, go get it */
   if (objcount < maxobj)
   {
-      dwait(D_INFORM, "Go toward %s at (%d,%d)", get_item_type_string(what), wrow, wcol);
+      dwait(D_INFORM, "Go toward %s at (%d,%d), dist: %d", get_item_type_string(what), wrow, wcol, closest);
       return gotowards("pick up item", wrow, wcol, 0);
   }
 
   /* No space in pack and we cannot drop something here, fail */
-  if (on (STUFF | DOOR | TRAP | STAIRS)) return (0);
+  if (on (STUFF | DOOR | TRAP | STAIRS))
+      return (0);
 
   /* Must drop something, pick least valuable item to drop */
   for (worst = NONE, worstval = 9999, i = 0;   i < invcount;   i++) {
     if (inven[i].count && !itemis (i, INUSE) && (w = worth (i)) < worstval)
-      { worst = i; worstval = w; }
+    {
+        worst = i;
+        worstval = w;
+    }
 
     /* Once we have found a totally useless item, stop looking */
-    if (worstval == 0) break;
+    if (worstval == 0)
+        break;
   }
 
   /* Found an item, drop it */
-  if (worst != NONE) return (drop (worst));
+  if (worst != NONE)
+      return drop(worst);
 
   /* Pack is full and we can't find something to drop, fail */
   return (0);

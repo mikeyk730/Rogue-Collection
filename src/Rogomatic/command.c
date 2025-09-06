@@ -55,9 +55,7 @@ int   d;
 }
 
 /* Move 'count' squares in direction 'd', with time use mode 'mode' */
-void rmove(desc, count, d, mode)
-const char* desc;
-int   count, d, mode;
+void rmove(const char* desc, int count, int d, int mode)
 {
   command (desc, mode, "%d%c", count, keydir[d]);
 }

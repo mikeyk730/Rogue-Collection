@@ -194,6 +194,13 @@ int followmap(const char* why, int movetype)
   if (can_move_without_pickup() && onrc (SCAREM, atrow+dr, atcol+dc))
     { mmove ("move on scare monster", dir, timemode); return (1); }
 
+  /*if (Hp <= Hpmax && will_hit_sleeping_monster(dir))
+  {
+      dwait(D_ERROR, "Rest before waking");
+      command("Rest before waking", T_RESTING, ".");
+      return 1;
+  }*/
+
   /* Send the movement command and return success */
   rmove(tmp("followmap: %s: %s", why, get_move_type_str(movetype)), count, dir, timemode);
   return (1);

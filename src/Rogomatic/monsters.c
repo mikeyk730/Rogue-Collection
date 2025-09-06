@@ -133,7 +133,7 @@ void sleepmonster ()
       dwait (D_MONSTER, "Found a sleeping %s at %d,%d",
              monname (mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
 
-      mlist[m].q = ASLEEP;
+      mlist[m].q = ASLEEP; //todo:mdk do we set SLEEPER here?
     }
   }
 }
@@ -145,7 +145,7 @@ void hold_monster(int m)
         mlist[m].mrow,
         mlist[m].mcol);
 
-    mlist[m].q = HELD;
+    mlist[m].q = HELD; //todo:mdk do we set SLEEPER here?
 }
 
 int is_held(int m)
@@ -277,7 +277,7 @@ void newmonsterlevel ()
         streq (monster, "leprechaun")     ||
         streq (monster, "nymph")          ||
         streq (monster, "ice monster"))
-      mlist[m].q = ASLEEP;
+      mlist[m].q = ASLEEP; //todo:mdk do we set SLEEPER here?
     else
       mlist[m].q = 0;
   }
