@@ -2,8 +2,8 @@
 # This script terminates the process if it's been idle for too long.
 
 $targetImageName = "RogueCollection.exe"
-$checkInterval = 5
-$maxStagnantTime = 10
+$checkInterval = 2
+$maxStagnantTime = 4
 $processStats = @{}
 
 while ($true) {

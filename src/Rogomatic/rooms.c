@@ -545,7 +545,13 @@ void updatepos(char ch, int row, int col)
       deletemonster(row, col); //todo:mdk don't clear held monsters that are still awake
   }
 
-  if (unseen) { foundnew (); }
+  //mdk: spaces were causing foundnew to reset state like teleportation count,
+  // breaking downstream logic that relies on short term memory
+  int mdk_skip_char = (ch == ' ' && oldch == ch);
+  if (unseen && !mdk_skip_char)
+  {
+      foundnew();
+  }
 
   switch (ch) {
     case '@':
@@ -761,7 +767,7 @@ void teleport()
 
   if (is_reading_scroll())
   {
-      dwait(D_ERROR, "Assuming '%s' scroll is teleportation", lastname);
+      dwait(D_SCROLL, "Assuming '%s' scroll is teleportation", lastname);
       infer("teleportation", Scroll);
       why = 1;
   }
@@ -771,8 +777,8 @@ void teleport()
 
     while (r > 1 && r < STATUSROW && c > 0 && c < (MAXCOLS-1))
     {
-      dwait(D_INFORM, "Looking for teleport trap at %d,%d: %s",
-          r, c, describe_tile(scrmap[r][c]));
+      //dwait(D_INFORM, "Looking for teleport trap at %d,%d: %s",
+      //    r, c, describe_tile(scrmap[r][c]));
 
       if (!onrc(CANGO, r, c)) break;
 
@@ -786,7 +792,7 @@ void teleport()
           }
           else if (onrc(TELTRAP, r, c))
           {
-              dwait(D_ERROR, "Used known teleport trap at %d, %d", r, c);
+              dwait(D_INFORM, "Used known teleport trap at %d, %d", r, c);
               why = 1;
           }
         break;
