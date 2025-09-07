@@ -147,7 +147,7 @@ void endmsg()
     game->log("msg", msgbuf);
     strcpy(game->last_message, msgbuf);
     if (game->msg_position) {
-        look(false);
+        look(false); //todo:mdk this can cause a new message when we're already processing one. medusa confused + vorpalized flash
         game->screen().move(0, game->msg_position);
         more();
     }
