@@ -46,10 +46,12 @@ err_doit(int errnoflag, int error, const char *fmt, va_list ap)
   }*/
 }
 
-void debuglog_open(const char *log)
+void debuglog_open()
 {
     if (!debug)
-        debug = fopen (log, "w");
+    {
+        debug = fopen("debug-rogomatic.log", "w");
+    }
 }
 
 void debuglog_close()
@@ -70,7 +72,7 @@ void toggledebuglog()
     else
     {
         saynow("Opening debug log");
-        debuglog_open("rogomatic.log");
+        debuglog_open();
     }
 }
 

@@ -53,7 +53,7 @@ void newlevel ()
       {
           debugging = D_NORMAL | D_WARNING;
       }
-      debuglog_open("debug-rogomatic.log");
+      debuglog_open();
       dwait(D_WARNING, "Breaking at level %d", Level);
   }
 

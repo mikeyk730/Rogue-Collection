@@ -564,7 +564,9 @@ char *env[];
   }
 
   if (g_debug)
-      debuglog_open("rogomatic.log");
+  {
+      debuglog_open();
+  }
 
   /*
    * Initialize some storage

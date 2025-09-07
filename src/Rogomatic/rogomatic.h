@@ -197,7 +197,7 @@ void close_frogue_debuglog(void);
 void copyltm(void);
 void currentrectangle(void);
 void debuglog_close(void);
-void debuglog_open(const char *log);
+void debuglog_open();
 int doorexplore(void);
 int drop(int obj);
 void dumpdatabase(void);
