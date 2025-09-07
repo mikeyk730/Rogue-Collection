@@ -1434,37 +1434,52 @@ void versiondep ()
   analyzeltm ();
 }
 
+int is_stalker(const char* monster)
+{
+    return streq(monster, "invisible stalker") || streq(monster, "phantom");
+}
+
+const char* stalker_name()
+{
+    return version_has_invisible_stalker() ? "invisible stalker" : "phantom";
+}
+
 /*
  * getmonhist: Retrieve the index in the history array of a monster,
  * taking our status into account.  This code is responsible for determining
  * when we are being stalked by an invisible monster.
  */
 
-int getmonhist (monster, hitormiss)
-char *monster;
-int hitormiss;
+int getmonhist(char* monster, int hitormiss)
 {
-  if (cosmic || blinded)
-    { return (findmonster ("it")); }
-  else {
-    if (streq (monster, "it") && hitormiss) {
-      if (version_has_invisible_stalker()) {
-        if (! seemonster ("invisible stalker")) beingstalked=INVHIT;
-
-        return (findmonster ("invisible stalker"));
-      }
-      else {
-        if (! seemonster ("phantom")) beingstalked=INVHIT;
-
-        return (findmonster ("phantom"));
-      }
+    if (cosmic || blinded)
+    {
+        return findmonster("it");
     }
-    else {
-      if (version < RV52B && streq (monster, "invisible stalker") &&
-          ! seemonster (monster))
-        beingstalked = INVHIT;
 
-      return (findmonster (monster));
+    //
+    // mdk: newer versions of Unix Rogue hide the identity of "invisible stalker" or "phantom"
+    // and say "it" instead. If we're hit or missed by an "it", we assume it's a stalker.
+    //
+    if (streq(monster, "it") && hitormiss)
+    {
+        const char* stalker = stalker_name();
+        if (!seemonster(stalker))
+        {
+            beingstalked = INVHIT;
+            dwait(D_INFORM, "Being stalked by it (%s)", stalker);
+        }
+
+        return findmonster(stalker);
     }
-  }
+    else
+    {
+        if (is_stalker(monster) && !seemonster(monster))
+        {
+            beingstalked = INVHIT;
+            dwait(D_INFORM, "Being stalked by %s", monster);
+        }
+
+        return findmonster(monster);
+    }
 }

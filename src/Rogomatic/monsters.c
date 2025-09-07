@@ -213,8 +213,7 @@ void wakemonster (int dir)
  * seemonster: Return true if a particular monster is on the monster list.
  */
 
-int seemonster (monster)
-char *monster;
+int seemonster(const char* monster)
 {
   register int m;
 
