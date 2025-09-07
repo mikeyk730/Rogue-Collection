@@ -459,7 +459,10 @@ void Cheats::apply_powers()
 
 void Cheats::on_new_level()
 {
-    apply_powers();
+    if (enabled())
+    {
+        apply_powers();
+    }
 }
 
 bool Cheats::is_enabled(const std::string& power) const
