@@ -48,12 +48,13 @@ err_doit(int errnoflag, int error, const char *fmt, va_list ap)
 
 void debuglog_open(const char *log)
 {
-    debug = fopen (log, "w");
+    if (!debug)
+        debug = fopen (log, "w");
 }
 
 void debuglog_close()
 {
-    if (debug != NULL)
+    if (debug)
         fclose(debug);
 
     debug = NULL;

@@ -151,6 +151,8 @@ int StartProcess(int (*start)(int argc, char** argv), int argc, char** argv)
                 "--seed", ("\"" + args.seed + "\"").c_str(),
                 "--genes", ("\"" + args.genes + "\"").c_str(),
                 "--profile", ("\"" + profile + "\"").c_str(),
+                "--debug-at-level", ("\"" + args.debug_at_level + "\"").c_str(),
+                "--optfile", ("\"" + args.optfile + "\"").c_str(),
                 nullptr)) == -1)
             {
                 perror("Spawning Rogomatic failed");

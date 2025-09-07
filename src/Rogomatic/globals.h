@@ -169,7 +169,7 @@ extern int g_debug_protocol;
 extern int g_expect_extra_bytes;
 extern int g_bug_fixes;
 extern int g_verbose_logs;
-extern int g_pause_at_level;
+extern int g_debug_at_level;
 
 //
 // Vorpalize weapon strategy

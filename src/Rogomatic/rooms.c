@@ -47,10 +47,13 @@ int levelmap[9];
 void newlevel ()
 {
   debuglog("level: %d\n", Level);
-  if (Level == g_pause_at_level)
+  if (Level == g_debug_at_level)
   {
       if (debugging == 0)
-        debugging = D_NORMAL;
+      {
+          debugging = D_NORMAL | D_WARNING;
+      }
+      debuglog_open("debug-rogomatic.log");
       dwait(D_WARNING, "Breaking at level %d", Level);
   }
 

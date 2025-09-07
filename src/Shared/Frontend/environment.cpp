@@ -91,13 +91,10 @@ void Environment::ApplyArgs(const Args& args)
         Set("replay_pause_at", args.pause_at);
     if (!args.genes.empty())
         Set("genes", args.genes);
-    if (!args.rogomatic_pause_at_level.empty())
-        Set("rogomatic_pause_at_level", args.rogomatic_pause_at_level);
-    if (args.log)
+    if (!args.debug_at_level.empty())
     {
-        Set("replay_paused", "true");
-        Set("logfile", "rogue.log");
-        Set("rogomatic_debug", "true");
+        Set("debug_at_level", args.debug_at_level);
+        Set("logfile", "debug-rogue.log");
     }
 }
 
@@ -216,7 +213,7 @@ bool Environment::WriteToOs(bool for_unix)
         return false;
 
     std::string value;
-    if (Get("genes", &value))
+    if (Get("genes", &value)) //todo:mdk: should rogomatic read from ROGUEOPTS?
     {
         SetEnvVariable(("GENES=" + value).c_str());
     }
@@ -232,9 +229,9 @@ bool Environment::WriteToOs(bool for_unix)
     {
         SetEnvVariable(("ROGOMATIC_LOG_VERBOSITY=" + value).c_str());
     }
-    if (Get("rogomatic_pause_at_level", &value))
+    if (Get("debug_at_level", &value))
     {
-        SetEnvVariable(("ROGOMATIC_PAUSE_AT_LEVEL=" + value).c_str());
+        SetEnvVariable(("DEBUG_AT_LEVEL=" + value).c_str());
     }
     if (Get("rogomatic_delay", &value))
     {
@@ -248,7 +245,7 @@ bool Environment::WriteToOs(bool for_unix)
     {
         SetEnvVariable("ROGOMATIC_DEBUG_PROTOCOL=true");
     }
-    if (Get("logfile", &value))
+    if (Get("logfile", &value)) //todo:mdk: remove this and read it from ROGUEOPTS
     {
         SetEnvVariable(("LOGFILE=" + value).c_str());
     }

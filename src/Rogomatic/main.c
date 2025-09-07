@@ -396,7 +396,7 @@ int   zonemap[9][9];		/* Map of zones connections */
 int g_seed = 0;
 int g_move_delay = 0;
 int g_level_delay = 0;
-int g_pause_at_level = 0;
+int g_debug_at_level = 0;
 int g_debug = 0;
 int g_debug_protocol = 0;
 int g_expect_extra_bytes = 0;
@@ -530,22 +530,28 @@ char *env[];
   }
 
   char* env_value;
-  if ((env_value = getenv("ROGOMATIC_DEBUG_BREAK")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_DEBUG_BREAK")) != NULL)
+  {
       WaitForDebugger();
   }
-  if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL)
+  {
       g_debug_protocol = strcmp(env_value, "true") == 0;
   }
-  if ((env_value = getenv("ROGOMATIC_LOG_VERBOSITY")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_LOG_VERBOSITY")) != NULL)
+  {
       g_verbose_logs = strcmp(env_value, "verbose") == 0;
   }
-  if ((env_value = getenv("ROGOMATIC_PAUSE_AT_LEVEL")) != NULL) {
-      g_pause_at_level = atoi(env_value);
+  if ((env_value = getenv("DEBUG_AT_LEVEL")) != NULL)
+  {
+      g_debug_at_level = atoi(env_value);
   }
-  if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL)
+  {
       g_move_delay = atoi(env_value);
   }
-  if ((env_value = getenv("ROGOMATIC_LEVEL_DELAY")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_LEVEL_DELAY")) != NULL)
+  {
       g_level_delay = atoi(env_value);
   }
 

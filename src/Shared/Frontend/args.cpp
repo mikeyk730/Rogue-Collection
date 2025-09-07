@@ -49,12 +49,9 @@ bool Args::LoadArg(const std::string& arg, const std::string& next)
         pause_at = next;
         return true;
     }
-    else if (arg == "--rogomatic-pause-at-level") {
-        rogomatic_pause_at_level = next;
+    else if (arg == "--debug-at-level") {
+        debug_at_level = next;
         return true;
-    }
-    else if (arg == "--log") {
-        log = true;
     }
     else if (arg == "--seed") {
         seed = next;
