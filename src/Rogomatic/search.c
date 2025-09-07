@@ -219,7 +219,7 @@ int followmap(const char* why, int movetype)
 
       if (Hp < (Hpmax * 3 / 4))
       {
-          dwait(D_WARNING, "Gaining some HP before waking monster");
+          debuglog("tactic: Gaining some HP before waking monster");
           command("Rest before waking", T_RESTING, ".");
           return 1;
       }

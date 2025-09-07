@@ -1015,11 +1015,11 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
   }
   else if (have (amulet) != NONE)
   {
-    dwait (D_WARNING, "Good game: Found amulet!");
+    dwait (D_WARNING, "Good game: Found amulet! (died to %s on level %d)", reason, Level);
   }
   else if (MaxLevel >= 20)
   {
-    dwait (D_WARNING, "Good game: Got to level %d", MaxLevel);
+    dwait (D_WARNING, "Good game: Got to level %d (died to %s)", MaxLevel, reason);
   }
 
   if (streq(reason, "starvation"))
