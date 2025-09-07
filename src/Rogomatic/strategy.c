@@ -144,6 +144,9 @@ int strategize()
   if (goupstairs (NOTRUNNING))	/* Up we go! Make sure that we get */
     return (1);			  /* a better rank on the board. */
 
+  if (mdk_plunge()) // more aggressive plunge in later levels
+      return 1;
+
   if (trywand ())		/* Try to use a wand */
     return (1);
 

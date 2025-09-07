@@ -1,13 +1,27 @@
 /*
 mdk:known issues 2025:
+- keep on resting while phantom hits us and kills us
 - maze rooms, bad fighting with J on 3rd lvl25. don't rest much and let monster chip
   RogueCollection.exe a --rogomatic --seed 1757056469 --genes "4 93 2 80 12 13 72 79 63"
 - bad logic for seaching in maze rooms. can assume gone
 - don't rest up after paralyzing only enemy. especially bad if confused from medusa
 - shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
 
+-amulet games with room bugfix disabled
+RogueCollection.exe a --rogomatic --seed 1757184258 --genes "38 86 52 9 94 90 30 31 63" --debug-at-level 25
+RogueCollection.exe a --rogomatic --seed 1757193304 --genes "53 97 55 12 97 25 36 53 63" --debug-at-level 25
+
+- lvl12, still getting stuck in tele rooms
+RogueCollection.exe a --rogomatic --seed 1757168967 --genes "95 52 26 77 26 73 21 6 63"
+
+
+- lvl25: plunge mode, know stairs, but faffing about
+RogueCollection.exe a --rogomatic --seed 1757140238 --genes "44 77 12 39 1 73 66 67 63"
+
 - lvl23: bad tactics with maze, and waking a held dragon when on low HP :(
 RogueCollection.exe a --rogomatic --seed 1757123581 --genes "20 45 15 39 65 73 66 66 63"
+- lvl16 waking held U instead of exploring
+RogueCollection.exe a --rogomatic --seed 1757131033 --genes "20 45 25 39 86 7 96 79 63"
 
 - lvl16: can't battle in maze rooms :(. searching when already connected to door
 RogueCollection.exe a --rogomatic --seed 1757107529 --genes "20 24 2 32 86 7 96 79 63"

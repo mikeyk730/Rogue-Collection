@@ -143,6 +143,13 @@ int r, c, depth, *val, *avd, *cont;
          onrc (MONSTER, r, c) ? 150 :
          expavoidval;
 
+  /*if (onrc(MONSTER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
+  {
+      *avd = 1000;
+      *val = 0;
+      return (1);
+  }*/
+
   if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     *avd += 200;
 
@@ -593,6 +600,13 @@ int *val, *avd, *cont;
 
   if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
     { *avd = a+1000; *val=0; return (1); }
+
+  /*if (onrc(MONSTER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
+  {
+      *avd = a + 1000;
+      *val = 0;
+      return (1);
+  }*/
 
   if (onrc (BEEN+SEEN, r, c) == SEEN) { /* If been or not seen, not a target */
     for (k=0; k<8; k++) {
@@ -1162,6 +1176,7 @@ int archmonster (register int m, register int trns)
   if (darkroom ()) {
     darkdir = direc (mr-atrow, mc-atcol);
     darkturns = max (abs (mr-atrow), abs (mc-atcol));
+    debuglog("goal: archery target\n");
     agoalr = mr; agoalc = mc;	/* Go here to pick up what (s)he drops */
   }
 

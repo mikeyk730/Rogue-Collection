@@ -613,7 +613,9 @@ int godownstairs(int running)
   }
 
   /* If we see the stairs or a trap door, go there */
-  if (!running && makemove("move to stairs or trap door", DOWNMOVE, genericinit, downvalue, REUSE)) {
+  if (!running && makemove("move to stairs or trap door", DOWNMOVE, genericinit, downvalue, REUSE))
+  {
+      debuglog("goal: stairs or trap door\n");
     goalr = targetrow; goalc = targetcol;   /* Set a goal (CPU time hack) */
     return (1);
   }
@@ -667,6 +669,32 @@ int plunge ()
   return (0);
 }
 
+
+int mdk_plunge()
+{
+    if (stairrow == NONE && !foundtrapdoor)
+    {
+        return 0;
+    }
+
+    if (have(amulet) != NONE)
+    {
+        return 0;
+    }
+
+    if (Level > 17 && Level < 26 && godownstairs(NOTRUNNING))
+    {
+        if (!on(STAIRS))
+        {
+            saynow("Exiting level ASAP!");
+        }
+
+        return 1;
+    }
+
+    return 0;
+}
+
 /*
  * waitaround: Hang around here waiting for monsters.
  */
@@ -704,7 +732,11 @@ int waitaround ()
     for (j = cb[gc].horstart; j != cb[gc].horend; j += cb[gc].hordelt)
       if (onrc (BEEN | CANGO | ROOM, i, j) &&
           !onrc (TRAP, i, j) && gotowards("wait around", i, j, 0))
-        { goalr = i; goalc = j; return (1); }
+      {
+          debuglog("goal: wait around\n");
+          goalr = i; goalc = j;
+          return (1);
+      }
 
   return (0);
 }
@@ -759,9 +791,12 @@ int running;
   }
 
   /* If we know where the stairs are, go there */
-  else if ((goalr = stairrow) > 0 && (goalc = staircol) > 0 &&
-           gotowards("go to stairs (up)", goalr, goalc, running))
-    return (1);
+  else {
+      debuglog("goal: stairs if known\n");
+      if ((goalr = stairrow) > 0 && (goalc = staircol) > 0 &&
+          gotowards("go to stairs (up)", goalr, goalc, running))
+          return (1);
+  }
 
   return (0);
 }
@@ -884,7 +919,12 @@ int gotocorner ()
   if (debug (D_SCREEN))
     { saynow ("Gotocorner called:"); mvaddch (r, c, 'T'); at (row, col); }
 
-  if (gotowards("go to corner", r, c, 0)) { goalr = r; goalc = c; return (1); }
+  if (gotowards("go to corner", r, c, 0))
+  {
+      debuglog("goal: corner\n");
+      goalr = r; goalc = c;
+      return (1);
+  }
 
   return (0);
 }

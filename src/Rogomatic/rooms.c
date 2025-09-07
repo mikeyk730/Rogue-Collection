@@ -570,7 +570,8 @@ void updatepos(char ch, int row, int col)
         timestosearch = k_door / 5;
       }
 
-      if (onrc (STUFF, row, col)) deletestuff (row, col);
+      if (onrc (STUFF, row, col))
+          deletestuff (row, col);
 
       setrc (SEEN | CANGO | SAFE | HALL | EVERCLR, row, col);
       unsetrc (DOOR | ROOM | TRAP | ARROW | TRAPDOR | TELTRAP | GASTRAP |
@@ -587,7 +588,8 @@ void updatepos(char ch, int row, int col)
         *newdoors++ = row;  *newdoors++ = col;
       }
 
-      if (onrc (STUFF, row, col)) deletestuff (row, col);
+      if (onrc (STUFF, row, col))
+          deletestuff (row, col);
 
       setrc (SEEN | CANGO | SAFE | DOOR | WALL | EVERCLR, row, col);
       unsetrc (ROOM | TRAP | ARROW | TRAPDOR | TELTRAP | GASTRAP | BEARTRP |
@@ -681,7 +683,8 @@ void updatepos(char ch, int row, int col)
     case '^':
       setrc (SEEN | CANGO | ROOM | TRAP | EVERCLR, row, col);
 
-      if (onrc (STUFF, row, col)) deletestuff (row, col);
+      if (onrc (STUFF, row, col))
+          deletestuff (row, col);
 
       unsetrc (SAFE | HALL | DOOR | MONSTER | SCAREM | WALL | SLEEPER,
                row, col);

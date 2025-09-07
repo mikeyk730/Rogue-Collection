@@ -110,6 +110,22 @@ int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int ree
   return (1);
 }
 
+int will_hit_sleeping_monster(int dir)
+{
+    int r = atdrow(dir);
+    int c = atdcol(dir);
+
+    for (int i = 0; i < mlistlen; i++)
+    {
+        if (r == mlist[i].mrow && c == mlist[i].mcol && mlist[i].q == HELD)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 /*
  * followmap: Assuming that the mvdir map is correct, send a movement
  *            command following the map (possibly searching first).
@@ -121,6 +137,7 @@ int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int ree
 
 int followmap(const char* why, int movetype)
 {
+  static int last_level_printed = 0;
   register int dir, dr, dc, r, c;
   int timemode, searchit, count=1;
 
@@ -194,12 +211,19 @@ int followmap(const char* why, int movetype)
   if (can_move_without_pickup() && onrc (SCAREM, atrow+dr, atcol+dc))
     { mmove ("move on scare monster", dir, timemode); return (1); }
 
-  /*if (Hp <= Hpmax && will_hit_sleeping_monster(dir))
+  if (will_hit_sleeping_monster(dir))
   {
-      dwait(D_ERROR, "Rest before waking");
-      command("Rest before waking", T_RESTING, ".");
-      return 1;
-  }*/
+      if (last_level_printed != Level)
+        dwait(D_ERROR, "followmap: %s: %s will hit HELD monster", why, get_move_type_str(movetype));
+      last_level_printed = Level;
+
+      if (Hp < (Hpmax * 3 / 4))
+      {
+          dwait(D_WARNING, "Gaining some HP before waking monster");
+          command("Rest before waking", T_RESTING, ".");
+          return 1;
+      }
+  }
 
   /* Send the movement command and return success */
   rmove(tmp("followmap: %s: %s", why, get_move_type_str(movetype)), count, dir, timemode);
