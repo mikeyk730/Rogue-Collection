@@ -71,3 +71,4 @@ extern const char *const level_titles[], *const helpcoms[], *const helpobjs[];
 extern char prbuf[];
 extern Random* g_random;
 extern GameState* game;
+extern int g_is_in_endmsg;
