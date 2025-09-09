@@ -264,8 +264,7 @@ int notr, notc;
  * downright: Find a square from which we cannot go down or right.
  */
 
-int downright (drow, dcol)
-int *drow, *dcol;
+int downright(int* drow, int* dcol)
 {
   register int i=atrow, j=atcol;
 
@@ -1177,8 +1176,7 @@ register int r1, c1, r2, c2;
  * September 25, 1983	Michael L. Mauldin
  */
 
-int canbedoor (deadr, deadc)
-int deadr, deadc;
+int canbedoor (int deadr, int deadc)
 {
   register int r, c, dr, dc, k, count;
 

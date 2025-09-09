@@ -1718,7 +1718,10 @@ pickupafter ()
 int dropjunk()
 {
     int obj = haveuseless();
-    return destroyjunk(obj);
+    if (destroyjunk(obj))
+        return 1;
+
+    return drop(obj);
 }
 
 /*

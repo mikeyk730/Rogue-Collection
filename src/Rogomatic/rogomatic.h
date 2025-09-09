@@ -410,5 +410,6 @@ int can_return_to_scare_monster();
 #define B_STATUS_FIX    0x0008
 #define B_THROW_POTIONS 0x0010
 #define B_NERF_RUN_GENE 0x0020
-#define B_ALL           B_PARALYSIS_FIX | B_LTM_FIX | B_TILE_FIX | B_STATUS_FIX | B_THROW_POTIONS | B_NERF_RUN_GENE;
+#define B_NEW_DESTROY   0x0040
+#define B_ALL           B_PARALYSIS_FIX | B_LTM_FIX | B_TILE_FIX | B_STATUS_FIX | B_THROW_POTIONS | B_NERF_RUN_GENE | B_NEW_DESTROY;
 int enable(int bug);

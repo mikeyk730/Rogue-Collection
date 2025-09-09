@@ -910,7 +910,7 @@ int gotowardsgoal(const char* why)
  *		them into the corner (which destroys them).
  */
 
-int gotocorner ()
+int gotocorner()
 {
   int r, c;
 

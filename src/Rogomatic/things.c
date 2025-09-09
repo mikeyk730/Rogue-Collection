@@ -133,20 +133,70 @@ int obj;
   return (1);
 }
 
+// From the current position, can we throw an item in a certain direction to destroy it?
+int get_destroy_direction()
+{
+    if (!onrc(CANGO, atrow-1, atcol) && !onrc(CANGO, atrow, atcol+1))
+    {
+        return 1;
+    }
+    if (!onrc(CANGO, atrow-1, atcol) && !onrc(CANGO, atrow, atcol-1))
+    {
+        return 3;
+    }
+    if (!onrc(CANGO, atrow+1, atcol) && !onrc(CANGO, atrow, atcol-1))
+    {
+        return 5;
+    }
+    if (!onrc(CANGO, atrow+1, atcol) && !onrc(CANGO, atrow, atcol+1))
+    {
+        return 7;
+    }
+
+    return NONE;
+}
+
+// less risky destroy that doesn't move from the current spot
+int mdk_destroyjunk(int obj)
+{
+    if (obj == NONE)
+        return 0;
+
+    int dir = get_destroy_direction();
+    if (dir != NONE &&
+        throw_item(
+            obj,
+            dir,
+            tmp("destroy item '%s' %s", inven[obj].str, get_item_type_string(inven[obj].type))))
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
 /*
  * destroyjunk: When an object is thrown diagonally into a corner,
  *           Rogue can't find a place to put it, and the object is
  *           removed from the game (adapted from dropjunk).
  */
 
-int destroyjunk (int obj)
+int orig_destroyjunk(int obj)
 {
-  if ((obj != NONE)
-      && (gotocorner () ||
-          throw_item(obj, 7, tmp("destroy item '%s' %s", inven[obj].str, get_item_type_string(inven[obj].type)))))
-    return (1);
+    if ((obj != NONE)
+        && (gotocorner() ||
+            throw_item(obj, 7, tmp("destroy item '%s' %s", inven[obj].str, get_item_type_string(inven[obj].type)))))
+        return (1);
 
-  return (0);
+    return (0);
+}
+
+int destroyjunk(int obj)
+{
+    if (enable(B_NEW_DESTROY))
+        return mdk_destroyjunk(obj);
+    else
+        return orig_destroyjunk(obj);
 }
 
 /*
@@ -165,7 +215,10 @@ int drop(int obj)
     return (0);
 
   if ((obj != NONE) && (inven[obj].type == wand))
-    return (destroyjunk (obj));
+  {
+      if (destroyjunk(obj))
+        return 1;
+  }
 
   /* read unknown scrolls or good scrolls rather than dropping them */
   if (inven[obj].type == Scroll &&

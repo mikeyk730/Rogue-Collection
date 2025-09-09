@@ -4,9 +4,8 @@ RogueCollection.exe a --rogomatic --seed 1757406436 --genes "71 56 65 37 26 96 5
 RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 1
 -amulet
 RogueCollection.exe a --rogomatic --seed 1757393291 --genes "26 60 9 75 18 67 15 51 63" --debug-at-level 25
-lvl 26: doesn't search for obvious door. Goes for useless item
+lvl 26: doesn't search for obvious door. Goes for item instead of stairs
 RogueCollection.exe a --rogomatic --seed 1757396402 --genes "75 60 35 15 26 78 15 99 63" --debug-at-level 24
-RogueCollection.exe a --rogomatic --seed 1757420427 --genes "85 42 92 23 39 9 50 51 63" --debug-at-level 10
 -lvl 26
 RogueCollection.exe a --rogomatic --seed 1757392587 --genes "26 60 35 15 26 78 15 51 63" --debug-at-level 26
 RogueCollection.exe a --rogomatic --seed 1757394731 --genes "45 60 75 49 26 78 52 42 63" --debug-at-level 26
@@ -94,50 +93,12 @@ RogueCollection.exe a --rogomatic --seed 1757103596 --genes "20 24 15 16 77 86 9
 - with rust monster and another enemy around, player gets stuck
 - player gets stuck in treasure room deciding between 2 different monsters
   RogueCollection.exe a --rogomatic --seed 1756837966 --genes "84 56 75 11 54 34 86 42 3"
-- sandwiched not working: reports 1 adj instead of 2:
-  RogueCollection.exe a --rogomatic --seed 1757003241 --genes "64 66 80 30 31 62 17 84 63"
-- player struggles with passage
-  RogueCollection.exe a --rogomatic --seed 1757006301 --genes "39 62 38 25 57 36 18 2 63"
-  RogueCollection.exe a --rogomatic --seed 1757033089 --genes "60 70 10 54 1 2 67 18 63"
-  RogueCollection.exe a --rogomatic --seed 1757035759 --genes "60 70 16 58 21 2 55 25 63"
-- player infinite loop, starve
-  RogueCollection.exe a --rogomatic --seed 1757003266 --genes "56 66 80 30 31 62 17 84 63"
-- not considering all doors
-  RogueCollection.exe a --rogomatic --seed 1757006691 --genes "51 62 38 25 32 99 54 84 63"
 - double hold of flytrap
   RogueCollection.exe a --rogomatic --seed 1757003439 --genes "26 62 38 25 32 8 54 73 63"
-- infinite loop, not taking stairs
-  RogueCollection.exe a --rogomatic --seed 1757041853 --genes "55 77 3 31 85 86 49 25 63"
-  RogueCollection.exe a --rogomatic --seed 1757003522 --genes "64 62 38 25 31 62 17 2 63"
 - polymorph on flytrap doesn't reset player held status
 - check what happens when want to arch, but another monster is blocking target
   RogueCollection.exe a --rogomatic --seed 1757003719 --genes "51 62 38 25 32 8 70 84 63"
 - should remember held enemies after walking away
-- stuck on level even though door is obvious
-  RogueCollection.exe a --rogomatic --seed 1757005783 --genes "64 62 38 25 31 62 17 2 63"
-  RogueCollection.exe a --rogomatic --seed 1757030242 --genes "51 49 13 58 1 2 65 25 63"
-- does teleport trap need to reset state?
-  RogueCollection.exe a --rogomatic --seed 1757035849 --genes "62 73 16 64 85 2 57 31 63"
-- check dragon strats: (should always try to hold or vorpal zap?)
-  RogueCollection.exe a --rogomatic --seed 1757005854 --genes "51 53 39 58 57 36 16 84 63"
-- player trapped by 0 monsters? actual 2!
-  RogueCollection.exe a --rogomatic --seed 1757006027 --genes "26 62 38 25 32 8 54 73 63"
-- trapped by monsters and stave to death??
-  RogueCollection.exe a --rogomatic --seed 1757006707 --genes "39 62 38 25 57 36 16 84 63"
-- should take stairs if teleport trap delays for too long:
-  RogueCollection.exe a --rogomatic --seed 1757006106 --genes "51 62 38 25 32 8 54 73 63"
-  RogueCollection.exe a --rogomatic --seed 1757011078 --genes "50 57 65 28 69 73 63 84 63"
-  RogueCollection.exe a --rogomatic --seed 1757016291 --genes "35 21 23 36 2 13 67 15 63"
-- sleeping monster in front of door can disrupt
-  RogueCollection.exe a --rogomatic --seed 1757052721 --genes "50 77 9 31 85 86 49 25 63"
-  RogueCollection.exe a --rogomatic --seed 1757007076 --genes "51 53 39 58 43 62 18 12 63"
-  RogueCollection.exe a --rogomatic --seed 1757023225 --genes "57 57 7 49 2 74 67 21 63"
-  RogueCollection.exe a --rogomatic --seed 1757026602 --genes "58 72 17 49 93 1 61 14 63"
-  RogueCollection.exe a --rogomatic --seed 1757034664 --genes "50 77 10 54 7 2 65 25 63"
-- shouldn't consider held Y when deciding to throw potion at C
-  RogueCollection.exe a --rogomatic --seed 1757005650 --genes "64 66 80 30 31 62 17 84 63"
-- when held monster is blocking path, should rest till max hp (to repro, revert consitions to not wake sleeping monster on high levels)
-  RogueCollection.exe a --rogomatic --seed 1756971140 --genes "24 26 35 21 17 7 11 63 63"
 - when have scare, should prefer to fight in passage, not on door?
 - flytrap with scare, on door?
   RogueCollection.exe a --rogomatic --seed 1757007370 --genes "39 62 86 34 28 66 21 84 63"
@@ -149,10 +110,6 @@ RogueCollection.exe a --rogomatic --seed 1757103596 --genes "20 24 15 16 77 86 9
   RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
 - medusas not confusing player?? still surviving against faint lvl26 on way up
   RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
-- have lots of paralysis potions. should use them on late levels
-  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
-- battles with maze rooms not working well, lvl27
-  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
 - do we arch fly traps?
   RogueCollection.exe a --rogomatic --seed 1757009040 --genes "50 57 74 74 45 39 74 27 63"
 - throw 2 hold at same monster monster without resting (if held is target, rest if not at max hp)
@@ -163,10 +120,6 @@ RogueCollection.exe a --rogomatic --seed 1757103596 --genes "20 24 15 16 77 86 9
   RogueCollection.exe a --rogomatic --seed 1757018291 --genes "35 21 23 54 19 13 67 15 63"
 - don't record 0 damage hits (W+A)
   RogueCollection.exe a --rogomatic --seed 1757019132 --genes "57 43 17 54 2 1 67 15 63"
-- should rest if only held monsters nearby
-  RogueCollection.exe a --rogomatic --seed 1757030110 --genes "60 70 10 54 7 98 67 18 63"
-- level 22 should step back on jabberwock to see if asleep
-  RogueCollection.exe a --rogomatic --seed 1757033456 --genes "50 77 10 54 7 2 57 21 63"
 */
 
 /*
