@@ -113,7 +113,9 @@ void dumpmonster ()
             mlist[i].mrow, mlist[i].mcol,
             mlist[i].chr);
 
-  printw ("You are at %d,%d.", atrow, atcol);
+  int rm = whichroom(atrow, atcol);
+
+  printw ("You are at %d,%d. Room %d", atrow, atcol, rm);
   at (row, col);
 }
 

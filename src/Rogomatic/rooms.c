@@ -518,6 +518,7 @@ void updateat ()
 
   /* Mark surrounding area according to what we see */
 
+  // Things in the cardinal directions
   int halls = 0, rooms = 0;
   int halls_in_same_room = 0;
   for (i = 0; i < 8; i += 2)
@@ -540,9 +541,21 @@ void updateat ()
       }
   }
 
+  // Things in the diagonal directions
+  int halls_at_diagonal = 0;
+  for (i = 1; i < 8; i += 2)
+  {
+      int rr = atdrow(i);
+      int cc = atdcol(i);
+      if (onrc(HALL, rr, cc))
+      {
+          halls_at_diagonal++;
+      }
+  }
+
   // Every time we see a passage with 3+ branches into the same room, we count
   // this as evidence of a maze
-  if (isnewloc && halls_in_same_room >= 3)
+  if (isnewloc && halls_in_same_room >= 3 && !halls_at_diagonal)
   {
       markexplored(atrow, atcol); //todo:mdk mark as explored or just gone?? what if stairs in maze not found
 

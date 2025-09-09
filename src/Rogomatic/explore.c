@@ -32,6 +32,11 @@
 # include "types.h"
 # include "globals.h"
 
+int is_inv_full()
+{
+    return objcount == maxobj;
+}
+
 # define SEARCHES(r,c)						\
 	(onrc(DEADEND,r,c) ?					\
 	    ((!has_hidden_passages() || !isexplored (r,c)) ?		\
@@ -129,8 +134,7 @@ int gotoinit ()
  */
 
 /* ARGSUSED */
-int gotovalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int gotovalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :
@@ -150,7 +154,7 @@ int r, c, depth, *val, *avd, *cont;
       return (1);
   }*/
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 200;
 
   *val = r == gotorow && c == gotocol ? 1 : 0;
@@ -164,7 +168,7 @@ int r, c, depth, *val, *avd, *cont;
  */
 
 /* ARGSUSED */
-int sleepvalue (int r, int c, int depth, int* val, int* avd, int* cont)
+int sleepvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :
@@ -177,7 +181,7 @@ int sleepvalue (int r, int c, int depth, int* val, int* avd, int* cont)
          onrc (MONSTER, r, c) ? 150 :
          expavoidval;
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 200;
 
   if (onrc (SLEEPER, r, c)) {
@@ -327,8 +331,7 @@ int setpsd (print)
  */
 
 /* ARGSUSED */
-int downvalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int downvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :
@@ -366,8 +369,7 @@ int expruninit ()
  * Try to see a new square when running.
  */
 
-int exprunvalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int exprunvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   if (r == atrow && c == atcol)		/* Current square useless MLM */
     *val = 0;
@@ -401,8 +403,7 @@ int expunpininit ()
  * Try to see a new square when unpinning, but unpin anywhere if need be.
  */
 
-int expunpinvalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int expunpinvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   if (r == atrow && c == atcol)		/* Current square useless MLM */
     *val = 0;
@@ -441,8 +442,7 @@ int runinit ()
  * Gave GasTraps and BearTraps infinite avoidance.	MLM 10/11/83
  */
 
-int runvalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int runvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   *avd = onrc (ARROW, r, c) ? 50 :
          onrc (TRAPDOR, r, c) ? 0 :
@@ -454,7 +454,7 @@ int r, c, depth, *val, *avd, *cont;
          onrc (MONSTER, r, c) ? 150 :
          0;
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 200;
 
   if (onrc (MONSTER, r, c))
@@ -520,9 +520,7 @@ int rundoorinit()
  */
 
 /* ARGSUSED */
-int rundoorvalue (r, c, depth, val, avd, cont)
-int r, c, depth;
-int *val, *avd, *cont;
+int rundoorvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   *avd = onrc (ARROW, r, c) ? 50 :
          onrc (TRAPDOR, r, c) ? 0 :
@@ -533,7 +531,7 @@ int *val, *avd, *cont;
          onrc (WATERAP, r, c) ? 100 :
          onrc (MONSTER, r, c) ? 50 : 0;
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 200;
 
   if (onrc (RUNOK, r, c))	{ *val = 2;}
@@ -580,9 +578,7 @@ int roominit ()
  */
 
 /* ARGSUSED */
-int expvalue (r, c, depth, val, avd, cont)
-int r, c, depth;
-int *val, *avd, *cont;
+int expvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   register int k, nr, nc, l;
   int a, v = 0, nunseenb = 0, nseenb = 0, nearb = 0;
@@ -598,7 +594,7 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     { *avd = a+1000; *val=0; return (1); }
 
   /*if (onrc(MONSTER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
@@ -696,9 +692,7 @@ int *val, *avd, *cont;
  */
 
 /* ARGSUSED */
-int zigzagvalue (r, c, depth, val, avd, cont)
-int r, c, depth;
-int *val, *avd, *cont;
+int zigzagvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   register int k, nr, nc, a, v = 0, nunseenb = 0;
 
@@ -713,7 +707,7 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     { *avd = a+1000; *val=0; return (1); }
 
   if (onrc (BEEN+SEEN, r, c) == SEEN) { /* If been or not seen, not a target */
@@ -767,9 +761,7 @@ int secretinit ()
 }
 
 /* ARGSUSED */
-int secretvalue (r, c, depth, val, avd, cont)
-int r, c, depth;
-int *val, *avd, *cont;
+int secretvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   register int v, a, k;
 
@@ -786,7 +778,7 @@ int *val, *avd, *cont;
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     a += 200;
 
   for (k=0; k<8; k++) {  /* examine adjacent squares */
@@ -979,7 +971,8 @@ int secret ()
     { markexplored (atrow, atcol); return (0); }
 
   /* Have we mapped this level? */
-  if (Level == didreadmap) return (0);
+  if (Level == didreadmap)
+      return 0;
 
   /* Found a dead end, should we search it? */  //todo:mdk update for maze rooms
   if (nexttowall (atrow, atcol) ||
@@ -994,7 +987,8 @@ int secret ()
       command ("searching dead end", T_DOORSRCH, "s");
       return (1);
     }
-    else {
+    else
+    {
       markexplored (atrow, atcol);
       return (0);
     }
@@ -1081,8 +1075,7 @@ int doorexplore()
  *   S A F E   S Q U A R E   S E A R C H 	Use genericinit.
  */
 
-int safevalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int safevalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   register int k, v;
 
@@ -1096,7 +1089,7 @@ int r, c, depth, *val, *avd, *cont;
          expavoidval;
   *val = 0;
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 500;
 
   if (onrc(CANGO, r, c)) {
@@ -1162,8 +1155,11 @@ int archmonster (register int m, register int trns)
   archrow = mlist[m].mrow; archcol = mlist[m].mcol; archturns = trns;
 
   /* Can we get to a suitable square */
-  if (makemove ("archmonster", ARCHERYMOVE, archeryinit, archeryvalue, REUSE))
-    { dwait (D_BATTLE, "archmonster, made a move"); return (1); }
+  if (makemove("archmonster", ARCHERYMOVE, archeryinit, archeryvalue, REUSE))
+  {
+      dwait(D_BATTLE, "archmonster, made a move");
+      return (1);
+  }
 
   /* If no move made and not on target, no path to monster */
   if (!ontarget) { new_arch = 0; return (0); }
@@ -1224,8 +1220,7 @@ int archeryinit ()
  */
 
 /* ARGSUSED */
-int archeryvalue (r, c, depth, val, avd, cont)
-int r, c, depth, *val, *avd, *cont;
+int archeryvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   *avd = (onrc (SAFE, r, c)	? 0 :
           onrc (TRAPDOR, r, c)	? ROGINFINITY :
@@ -1239,7 +1234,7 @@ int r, c, depth, *val, *avd, *cont;
           onrc (MONSTER, r, c)	? 150 :
           expavoidval) + avdmonsters[r][c];
 
-  if (onrc (SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && objcount != maxobj)
+  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 500;
 
   *val = archval[r][c];
@@ -1292,11 +1287,6 @@ int restinit ()
   restinlight = (on (ROOM) && !darkroom ());
   restinroom = on (ROOM);
   return (1);
-}
-
-int is_inv_full()
-{
-    return objcount == maxobj;
 }
 
 /* ARGSUSED */
