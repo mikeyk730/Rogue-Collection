@@ -164,7 +164,7 @@ int gotovalue(int r, int c, int depth, int* val, int* avd, int* cont)
   {
       if (last_level_printed != Level && Level >= 15)
       {
-          dwait(D_ERROR, "Avoid held monster in gotovalue");
+          dwait(D_INFORM, "Avoid held monster in gotovalue");
           last_level_printed = Level;
           dumpscreenattr(SLEEPER);
       }
@@ -645,7 +645,7 @@ int expvalue(int r, int c, int depth, int* val, int* avd, int* cont)
   {
       if (last_level_printed != Level && Level >= 15)
       {
-          dwait(D_ERROR, "Avoid held monster in expvalue");
+          dwait(D_INFORM, "Avoid held monster in expvalue");
           last_level_printed = Level;
           dumpscreenattr(SLEEPER);
       }

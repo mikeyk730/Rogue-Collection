@@ -110,16 +110,19 @@ int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int ree
   return (1);
 }
 
-int will_hit_held_monster(int dir)
+int will_hit_monster(int dir, int q)
 {
     int r = atdrow(dir);
     int c = atdcol(dir);
 
     for (int i = 0; i < mlistlen; i++)
     {
-        if (r == mlist[i].mrow && c == mlist[i].mcol && mlist[i].q == HELD)
+        if (r == mlist[i].mrow && c == mlist[i].mcol)
         {
-            return 1;
+            if (mlist[i].q == q)
+            {
+                return 1;
+            }
         }
     }
 
@@ -230,10 +233,13 @@ int followmap(const char* why, int movetype)
       }
   }
 
-  if (will_hit_held_monster(dir))
+  int to_held = will_hit_monster(dir, HELD);
+  int to_asleep = will_hit_monster(dir, ASLEEP);
+  if (to_held || to_asleep)
   {
       if (last_level_printed != Level)
-        dwait(D_ERROR, "followmap: %s: %s will hit HELD monster", why, get_move_type_str(movetype));
+          dwait(D_ERROR, "followmap: %s: %s will hit %s monster, attempt %d",
+              why, get_move_type_str(movetype), to_held ? "HELD" : "ASLEEP", attempt);
       last_level_printed = Level;
 
       if (timemode != T_RUNNING && Hp < (Hpmax * 3 / 4))
