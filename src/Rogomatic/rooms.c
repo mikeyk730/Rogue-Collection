@@ -686,6 +686,7 @@ void updatepos(char ch, int row, int col)
       /* The square cant be any of these */
       unsetrc (HALL | DOOR | MONSTER | SCAREM | WALL | TRAP | ARROW |
                TRAPDOR | TELTRAP | GASTRAP | BEARTRP | DARTRAP, row, col);
+      unsetrc(SLEEPER, row, col);
 
       //if (!onrc (ROOM, row, col))		/* New room? */ //mdk: prevents room from being explored if kill monster at door, then leave
         //unmarkexplored (row, col);

@@ -184,27 +184,28 @@ void markchokepts ()
 
 int runaway ()
 {
-  if (on (SCAREM)) {
-    dwait (D_BATTLE, "Not running, on scare monster scroll!");
-    return (0);
+  if (on(SCAREM))
+  {
+    dwait(D_BATTLE, "Not running, on scare monster scroll!");
+    return 0;
   }
 
-  dwait (D_BATTLE | D_SEARCH, "Run away!!!!");
+  dwait(D_BATTLE | D_SEARCH, "Run away!!!!");
 
-  if (on (STAIRS) && !floating)		/* Go up or down */
-    return (goupstairs (RUNNING) || godownstairs (RUNNING));
+  if (on(STAIRS) && !floating)		/* Go up or down */
+    return (goupstairs(RUNNING) || godownstairs(RUNNING));
 
-  if (canrun ())		/* If canrun finds a move, use it */
-    return (followmap("run away", RUNAWAY));
+  if (canrun())		/* If canrun finds a move, use it */
+    return followmap("run away", RUNAWAY);
 
-  return (0);			/* Cant run away */
+  return 0;			/* Cant run away */
 }
 
 /*
  * Canrun: set up a move which will get us away from danger.
  */
 
-int canrun ()
+int canrun()
 {
   int result, oldcomp = compression;
 
@@ -230,8 +231,6 @@ int canrun ()
 int unpin()
 {
   int result, oldcomp = compression;
-  int unpininit (), runvalue (), expunpininit (),
-      exprunvalue (), expunpinvalue ();
 
   if (on (SCAREM)) {
     dwait (D_BATTLE, "Not unpinning, on scare monster scroll!");

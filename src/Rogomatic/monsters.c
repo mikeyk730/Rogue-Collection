@@ -148,6 +148,7 @@ void hold_monster(int m)
         mlist[m].mcol);
 
     mlist[m].q = HELD; //todo:mdk do we set SLEEPER here?
+    setrc(SLEEPER, mlist[m].mrow, mlist[m].mcol);
 }
 
 int is_held(int m)

@@ -811,6 +811,7 @@ void dumpwalls ()
            (GASTRAP&S)                 ? 'g' :
            (BEARTRP&S)                 ? 'b' :
            (DARTRAP&S)                 ? 's' :
+           (SCAREM&S)                  ? 'S' :
            (WATERAP&S)                 ? 'w' :
            (TRAP&S)                    ? '^' :
            (STAIRS&S)                  ? '>' :
@@ -1244,7 +1245,7 @@ void pauserogue ()
   at (STATUSROW, 0);
   addstr ("--press space to continue--");
   clrtoeol ();
-  refresh ();
+  refresh();
 
   waitforspace ();
 

@@ -18,7 +18,7 @@ int striking_takes_2_charges()
 
 int can_step_on_scare_monster_if_inv_full()
 {
-    return version < RV53A;
+    return version < RV53A || is_pc_version();
 }
 
 int can_move_without_pickup()

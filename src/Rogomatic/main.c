@@ -1,6 +1,57 @@
 /*
+-total winners
+RogueCollection.exe a --rogomatic --seed 1757406436 --genes "71 56 65 37 26 96 50 82 63" --debug-at-level 1
+RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 1
+-amulet
+RogueCollection.exe a --rogomatic --seed 1757393291 --genes "26 60 9 75 18 67 15 51 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757396402 --genes "75 60 35 15 26 78 15 99 63" --debug-at-level 24
+RogueCollection.exe a --rogomatic --seed 1757420427 --genes "85 42 92 23 39 9 50 51 63" --debug-at-level 10
+-lvl 26
+RogueCollection.exe a --rogomatic --seed 1757392587 --genes "26 60 35 15 26 78 15 51 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757394731 --genes "45 60 75 49 26 78 52 42 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757395313 --genes "36 91 35 13 26 78 44 92 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757419300 --genes "80 44 85 26 37 7 50 94 63" --debug-at-level 26
+
 mdk:known issues 2025:
-- don't leave room to arch!
+- should prefer to find rooms before looking at passages in maze room
+RogueCollection.exe a --rogomatic --seed 1757392587 --genes "26 60 35 15 26 78 15 51 63" --debug-at-level 26
+- lvl12:stuck in maze, doesn't know where to search:
+RogueCollection.exe a --rogomatic --seed 1757391656 --genes "95 94 22 61 4 88 25 99 63" --debug-at-level 12
+- lvl25: why search for trap so much after coming off scare monster?
+RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 25
+- lvl25: doesn't re-use scare monster scroll when running away
+RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 25
+- lvl22: waking up HELD T for no reason
+RogueCollection.exe a --rogomatic --seed 1757387955 --genes "63 60 95 61 4 53 97 43 63" --debug-at-level 22
+- lvl12: bad maze strats infinte loop: get hit -> run away -> rest -> get hit -> ...
+RogueCollection.exe a --rogomatic --seed 1757391868 --genes "26 60 35 15 4 53 97 43 63" --debug-at-level 12
+RogueCollection.exe a --rogomatic --seed 1757391878 --genes "26 60 35 15 26 88 19 55 63" --debug-at-level 14
+RogueCollection.exe a --rogomatic --seed 1757388374 --genes "51 51 9 13 8 54 37 89 63" --debug-at-level 12
+- lvl13: unecessary searching in maze room
+RogueCollection.exe a --rogomatic --seed 1757388537 --genes "63 60 95 15 19 78 44 42 63" --debug-at-level 13
+- lvl17: bad maze strats against phantom
+RogueCollection.exe a --rogomatic --seed 1757388033 --genes "36 58 35 15 19 78 44 42 63" --debug-at-level 17
+- if map scroll, won't detect maze
+- false positive for maze:
+ RogueCollection.exe a --rogomatic --seed 1757385764 --genes "35 15 4 37 44 31 8 98 63" --debug-at-level 8
+
+                                    #                             #######
+   ----------------------           #                                  -+-
+   |....................+#######################     |                   |
+   |....................|                   #  #     |                   |
+   ----------------------                   #  #    #+
+                                            #  #    #|
+                                            #########    ^  %
+
+-infinte loop: take off armor -> lie in wait -> purt on armor
+RogueCollection.exe a --rogomatic --seed 1757424329 --genes "78 47 92 31 27 97 37 39 63" --debug-at-level 9
+
+ |.......................|
+ |..............%........+##########################
+ |.......................|                         #                    A--
+ |.......................|                         #                   |L@|
+ ---------+---------------                         ####################+.^|
+          #                                                            -+-
 
 - bad logic for seaching in maze rooms. can assume gone
 - shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
@@ -903,7 +954,10 @@ char *env[];
           pauserogue ();
           break;
 
-        case 'r': resetinv (); say ("Inventory reset."); break;
+        case 'r':
+          redrawscreen();
+          //resetinv (); say ("Inventory reset.");
+          break;
 
         case 'i': clear (); dumpinv ((FILE *) NULL); pauserogue (); break;
 

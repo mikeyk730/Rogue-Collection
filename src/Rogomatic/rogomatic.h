@@ -402,6 +402,7 @@ char* populate_top_line(char* topline, char replacement);
 int is_harmless_enemy(const char* monster);
 const char* get_move_dir_str(int movedir);
 int is_maze(int room);
+int can_return_to_scare_monster();
 
 #define B_PARALYSIS_FIX 0x0001
 #define B_LTM_FIX       0x0002

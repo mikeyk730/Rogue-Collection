@@ -37,6 +37,18 @@ int is_inv_full()
     return objcount == maxobj;
 }
 
+int would_unecessarily_destroy_scare_monster()
+{
+  return !can_move_without_pickup() &&
+      can_step_on_scare_monster_if_inv_full() && !is_inv_full();
+}
+
+int can_return_to_scare_monster()
+{
+  return can_move_without_pickup() ||
+    (can_step_on_scare_monster_if_inv_full() && is_inv_full());
+}
+
 # define SEARCHES(r,c)						\
 	(onrc(DEADEND,r,c) ?					\
 	    ((!has_hidden_passages() || !isexplored (r,c)) ?		\
@@ -136,6 +148,7 @@ int gotoinit ()
 /* ARGSUSED */
 int gotovalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
+    static int last_level_printed = 0;
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :
          onrc (TRAPDOR, r, c) ? 175 :
@@ -147,12 +160,18 @@ int gotovalue(int r, int c, int depth, int* val, int* avd, int* cont)
          onrc (MONSTER, r, c) ? 150 :
          expavoidval;
 
-  /*if (onrc(MONSTER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
+  if (onrc(SLEEPER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
   {
-      *avd = 1000;
-      *val = 0;
-      return (1);
-  }*/
+      if (last_level_printed != Level && Level >= 15)
+      {
+          dwait(D_ERROR, "Avoid held monster in gotovalue");
+          last_level_printed = Level;
+          dumpscreenattr(SLEEPER);
+      }
+
+      *avd = ROGINFINITY;
+      return 1;
+  }
 
   if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 200;
@@ -454,8 +473,20 @@ int runvalue(int r, int c, int depth, int* val, int* avd, int* cont)
          onrc (MONSTER, r, c) ? 150 :
          0;
 
-  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
-    *avd += 200;
+  if (onrc(SCAREM, r, c))
+  {
+    if (would_unecessarily_destroy_scare_monster())
+    {
+      *avd += 200;
+    }
+    else if (can_return_to_scare_monster())
+    {
+      *val = 5000;
+      *avd = 0;
+      *cont = ROGINFINITY;
+      return 1;
+    }
+  }
 
   if (onrc (MONSTER, r, c))
     { *val = 0; }
@@ -531,8 +562,19 @@ int rundoorvalue(int r, int c, int depth, int* val, int* avd, int* cont)
          onrc (WATERAP, r, c) ? 100 :
          onrc (MONSTER, r, c) ? 50 : 0;
 
-  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
-    *avd += 200;
+  if (onrc(SCAREM, r, c))
+  {
+    if (would_unecessarily_destroy_scare_monster())
+    {
+      *avd += 200;
+    }
+    else if (can_return_to_scare_monster())
+    {
+      *val = 5000;
+      *avd = 0;
+      return 1;
+    }
+  }
 
   if (onrc (RUNOK, r, c))	{ *val = 2;}
   else if (onrc (DOOR, r, c))	{ *val = 1; *cont = ROGINFINITY;}
@@ -580,6 +622,8 @@ int roominit ()
 /* ARGSUSED */
 int expvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
+    static int last_level_printed = 0;
+
   register int k, nr, nc, l;
   int a, v = 0, nunseenb = 0, nseenb = 0, nearb = 0;
 
@@ -597,12 +641,18 @@ int expvalue(int r, int c, int depth, int* val, int* avd, int* cont)
   if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     { *avd = a+1000; *val=0; return (1); }
 
-  /*if (onrc(MONSTER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
+  if (onrc(SLEEPER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
   {
-      *avd = a + 1000;
-      *val = 0;
-      return (1);
-  }*/
+      if (last_level_printed != Level && Level >= 15)
+      {
+          dwait(D_ERROR, "Avoid held monster in expvalue");
+          last_level_printed = Level;
+          dumpscreenattr(SLEEPER);
+      }
+
+      *avd = ROGINFINITY;
+      return 1;
+  }
 
   if (onrc (BEEN+SEEN, r, c) == SEEN) { /* If been or not seen, not a target */
     for (k=0; k<8; k++) {
@@ -707,8 +757,21 @@ int zigzagvalue(int r, int c, int depth, int* val, int* avd, int* cont)
       onrc (MONSTER, r, c) ? 150 :
       expavoidval;
 
-  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
-    { *avd = a+1000; *val=0; return (1); }
+  if (onrc(SCAREM, r, c))
+  {
+    if (would_unecessarily_destroy_scare_monster())
+    {
+      *avd = a+1000;
+      *val = 0;
+      return 1;
+    }
+    else if (can_return_to_scare_monster())
+    {
+      *val = 5000;
+      *avd = 0;
+      return 1;
+    }
+  }
 
   if (onrc (BEEN+SEEN, r, c) == SEEN) { /* If been or not seen, not a target */
     for (k=0; k<8; k++) {
@@ -957,7 +1020,7 @@ int secret ()
     int count = timessearched[atrow][atcol]+1;
     saynow ("Searching dead end door (%d,%d) for the %d%s time...",
             atrow, atcol, count, ordinal (count));
-    command ("searching dead end door", T_DOORSRCH, "s"); return (1);
+    command ("searching dead end door", T_DOORSRCH, "s"); return (1); //todo:mdk: modify for maze
   }
 
   /* Verify that we are actually at a dead end */
@@ -974,7 +1037,7 @@ int secret ()
   if (Level == didreadmap)
       return 0;
 
-  /* Found a dead end, should we search it? */  //todo:mdk update for maze rooms
+  /* Found a dead end, should we search it? */
   if (nexttowall (atrow, atcol) ||
       canbedoor (atrow, atcol) &&
       (has_hidden_passages() || !isexplored (atrow, atcol))) {
@@ -984,7 +1047,7 @@ int secret ()
       int count = timessearched[atrow][atcol]+1;
       saynow ("Searching dead end (%d,%d) for the %d%s time...",
               atrow, atcol, count, ordinal (count));
-      command ("searching dead end", T_DOORSRCH, "s");
+      command ("searching dead end", T_DOORSRCH, "s"); //todo:mdk: modify for maze
       return (1);
     }
     else
@@ -1063,7 +1126,7 @@ int doorexplore()
     searchcount++;
     saynow ("Searching square (%d,%d) for the %d%s time...",
             atrow, atcol, searchcount, ordinal (searchcount));
-    command ("searching square", T_DOORSRCH, "s");
+    command ("searching square", T_DOORSRCH, "s"); //todo:mdk: modify for maze
     return (1);
   }
 
@@ -1089,8 +1152,19 @@ int safevalue(int r, int c, int depth, int* val, int* avd, int* cont)
          expavoidval;
   *val = 0;
 
-  if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
-    *avd += 500;
+  if (onrc(SCAREM, r, c))
+  {
+    if (would_unecessarily_destroy_scare_monster())
+    {
+      *avd += 500;
+    }
+    else if (can_return_to_scare_monster())
+    {
+      *val = 5000;
+      *avd = 0;
+      return 1;
+    }
+  }
 
   if (onrc(CANGO, r, c)) {
     v = 0;
@@ -1318,14 +1392,13 @@ int restvalue(int r, int c, int depth, int* val, int* avd, int* cont)
   else if (onrc(SCAREM, r, c))
   {
       // Ideal case is to get back onto a scare monster scroll
-      if ((can_step_on_scare_monster_if_inv_full() && is_inv_full())
-          || can_move_without_pickup())
+      if (can_return_to_scare_monster())
       {
           *val = 500;
           return 1;
       }
       // Avoid a scare monster scroll if it's possible to reuse it later
-      else if (can_step_on_scare_monster_if_inv_full() && !is_inv_full())
+      else if (would_unecessarily_destroy_scare_monster())
       {
           *avd = ROGINFINITY;
           return 0;

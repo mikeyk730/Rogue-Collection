@@ -110,7 +110,7 @@ int findmove(int movetype, evalinit_ptr evalinit, evaluate_ptr evaluate, int ree
   return (1);
 }
 
-int will_hit_sleeping_monster(int dir)
+int will_hit_held_monster(int dir)
 {
     int r = atdrow(dir);
     int c = atdcol(dir);
@@ -182,9 +182,13 @@ int followmap(const char* why, int movetype)
              (movetype == RUNAWAY)     ? T_RUNNING :
              (movetype == UNPIN)       ? T_RUNNING :
              (movetype == UNPINEXP)    ? T_RUNNING :
-             (movetype == RUNAWAY)     ? T_RUNNING :
              (movetype == RUNDOWN)     ? T_RUNNING :
-             (movetype == ATTACKSLEEP) ? T_FIGHTING :  T_MOVING;
+             (movetype == ATTACKSLEEP) ? T_FIGHTING :
+             (movetype == SECRETDOOR)  ? T_MOVING :
+             (movetype == FINDSAFE)    ? T_MOVING :
+             (movetype == ARCHERYMOVE) ? T_MOVING :
+             (movetype == RESTMOVE)    ? T_MOVING :
+             (movetype == DOWNMOVE)    ? T_MOVING : T_MOVING;
 
   /* How many times do we wish to search each square before moving? */
   /* Search up to k times if 2 or more foods and deeper than level 6 */
@@ -207,17 +211,32 @@ int followmap(const char* why, int movetype)
       currentarmor != NONE && willrust (currentarmor) && takeoff ())
     { rmove ("step on rust trap", 1, dir, timemode); return (1); }
 
-  /* If we are about to step onto a scare monster scroll, use the 'm' cmd */
-  if (can_move_without_pickup() && onrc (SCAREM, atrow+dr, atcol+dc))
-    { mmove ("move on scare monster", dir, timemode); return (1); }
+  if (onrc(SCAREM, atrow+dr, atcol+dc))
+  {
+      if (can_return_to_scare_monster())
+      {
+          dwait(D_ERROR, "Moving back onto scare monster");
+      }
+      else
+      {
+          dwait(D_ERROR, "Destroying scare monster");
+      }
 
-  if (will_hit_sleeping_monster(dir))
+      if (can_move_without_pickup())
+      {
+          /* If we are about to step onto a scare monster scroll, use the 'm' cmd */
+          mmove("move on scare monster", dir, timemode);
+          return 1;
+      }
+  }
+
+  if (will_hit_held_monster(dir))
   {
       if (last_level_printed != Level)
         dwait(D_ERROR, "followmap: %s: %s will hit HELD monster", why, get_move_type_str(movetype));
       last_level_printed = Level;
 
-      if (Hp < (Hpmax * 3 / 4))
+      if (timemode != T_RUNNING && Hp < (Hpmax * 3 / 4))
       {
           debuglog("tactic: Gaining some HP before waking monster");
           command("Rest before waking", T_RESTING, ".");

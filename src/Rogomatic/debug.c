@@ -137,6 +137,9 @@ int dwait (int msgtype, char* f, ...)
         say ("i=inv, d=debug !=stf, @=mon, #=wls, $=id, ^=flg, &=chr");
         break;
       case 'i': at (1,0); dumpinv ((FILE *) NULL); at (row, col); break;
+      case 'r':
+        redrawscreen();
+        break;
       case 'd': toggledebug (); 	break;
       case 't': transparent = 1;        break;
       case '!': dumpstuff ();           break;

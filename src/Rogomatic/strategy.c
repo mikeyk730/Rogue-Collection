@@ -1028,7 +1028,6 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
       turns == 0 && !on (DOOR | STAIRS)) {
     int rdir = (mdir+4)%8;
 
-    //todo:mdk this only considers step in exact opposite direction.
 /*  Should be able to retreat to door here, though also will forget monster when we leave room
 
 07*                                        #####
@@ -1040,12 +1039,18 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
 13*                           ---------------------
 14*
 */
-
-    if (onrc (CANGO | TRAP, atdrow(rdir), atdcol(rdir)) == CANGO)
+    //mdk: previously this would only consider the exact opposite direction. now it considers all
+    //moves that move away from the monster. The the example above, the player would step back into the door
+    int adjust[5] = { 0, -1, +1, -2, 2 };
+    for (int x = 0; x < 5; ++x)
     {
-        move1 ("step back to see if awake", rdir);
-        stepback = 7;
-        return (1);
+        int trydir = (rdir + 8 + adjust[x]) % 8;
+        if (onrc(CANGO | TRAP | MONSTER, atdrow(trydir), atdcol(trydir)) == CANGO)
+        {
+            move1("step back to see if awake", trydir);
+            stepback = 7;
+            return (1);
+        }
     }
   }
 
@@ -1336,8 +1341,11 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
   if (!confused && !sandwiched && !beingheld && ! streq (monster, "dragon") &&
       (mdir < 0 || turns < 5) &&
       (((adj > 1 || live_for (1)) && die_in (4) && !canrun ())) &&
-      unpin ())
-    { display ("Unpinning!!!"); return(1); }
+      unpin())
+  {
+      display("Unpinning!!!");
+      return 1;
+  }
 
   /*
    * Light up the room if we are in combat.
