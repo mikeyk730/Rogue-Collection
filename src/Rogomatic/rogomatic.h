@@ -397,9 +397,11 @@ int needs_msg_clear();
 const char* get_item_type_string(int type);
 int is_monster_vorpal_target(const char* monster);
 int can_vorpal_zap(int obj);
+int can_monsters_enter_mazes();
 char* populate_top_line(char* topline, char replacement);
 int is_harmless_enemy(const char* monster);
 const char* get_move_dir_str(int movedir);
+int is_maze(int room);
 
 #define B_PARALYSIS_FIX 0x0001
 #define B_LTM_FIX       0x0002

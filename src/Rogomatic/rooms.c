@@ -959,12 +959,12 @@ void markexplored(int row, int col)
   if (rm != NONE && !(levelmap[rm] & EXPLORED))
   {
     levelmap[rm] |= EXPLORED;
-    dwait(D_ERROR, "Room %d is now explored.", rm);
+    dwait(D_INFORM, "Room %d is now explored.", rm);
 
     if (!(levelmap[rm] & HASROOM))
     {
         saynow("Assuming room %d is gone.", rm);
-        dwait(D_ERROR, "Assuming room %d is gone.", rm);
+        dwait(D_INFORM, "Assuming room %d is gone.", rm);
     }
   }
 }

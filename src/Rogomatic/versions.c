@@ -182,6 +182,11 @@ int needs_msg_clear()
     return version == RV53NMT || version == RV52A || is_pc_version();
 }
 
+int can_monsters_enter_mazes()
+{
+    return !is_pc_version();
+}
+
 int enable(int bug)
 {
     return g_bug_fixes & bug;

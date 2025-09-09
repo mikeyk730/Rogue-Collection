@@ -1234,6 +1234,12 @@ int archeryvalue(int r, int c, int depth, int* val, int* avd, int* cont)
           onrc (MONSTER, r, c)	? 150 :
           expavoidval) + avdmonsters[r][c];
 
+  // mdk: we shouldn't leave room. above check doesn't work because hall can be SAFE.
+  // this avoids an infinite loop where we can leave room, lose sight of the monster,
+  // enter room, decide to arch, leave room...
+  if (onrc(HALL, r, c))
+      *avd = ROGINFINITY;
+
   if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 500;
 
@@ -1325,7 +1331,16 @@ int restvalue(int r, int c, int depth, int* val, int* avd, int* cont)
           return 0;
       }
   }
-  else if (onrc (STAIRS, r, c))               { *val = 400; return (1); }
+  else if (onrc (STAIRS, r, c))
+  {
+      *val = 400;
+      return (1);
+  }
+  else if (is_maze(rm) && !can_monsters_enter_mazes()) //mdk: encourage resting in mazes
+  {
+      *val = 400;
+      return 1;
+  }
   else if (onrc (ROOM, r, c))                 { *val = 1; *cont = 99;}
   else if (!onrc (SAFE|BEEN|STUFF, r, c))     { *avd = 5; }
 
