@@ -149,6 +149,8 @@ void command (const char* description, int tmode, char* f, ...)
     default:  movedir = NOTAMOVE;
   }
 
+  debuglog("movedir %s\n", get_move_dir_str(movedir));
+
   /* If command takes time to execute, mark monsters as sleeping */
   /* If they move, wakemonsters will mark them as awake */
   if (tmode != T_OTHER)
@@ -205,21 +207,54 @@ char *cmd;
   return (max (times, 1));
 }
 
+int is_dir_key(char c)
+{
+  switch (c)
+  {
+    case 'y':
+    case 'u':
+    case 'h':
+    case 'j':
+    case 'k':
+    case 'l':
+    case 'n':
+    case 'm':
+      return 1;
+  }
+
+  return 0;
+}
+
+int is_command_only_dir_keys(const char* command)
+{
+  for (const char* s = command; *s != 0; ++s)
+  {
+    if (!is_dir_key(*s))
+      return 0;
+  }
+
+  return 1;
+}
+
 /*
  * functionchar: return the function character of a command.
  */
 
-char
-functionchar (cmd)
-char *cmd;
+char functionchar(const char* cmd)
 {
-  register char *s = cmd;
+  if (is_command_only_dir_keys(cmd))
+  {
+    int len = strlen(cmd);
+    return cmd[len - 1];
+  }
+
+  const char *s = cmd;
 
   while (ISDIGIT(*s) || *s == 'f') s++;
   if (can_move_without_pickup())
       while (ISDIGIT(*s) || *s == 'm') s++;
 
-  return (*s);
+  return *s;
 }
 
 /*

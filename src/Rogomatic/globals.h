@@ -66,7 +66,7 @@ extern int ammo;		/* Number of missiles in pack */
 extern int arglen;		/* Length of argument space */
 extern int arrowshot;		/* True if trap fired at us this round */
 extern int atrow,atcol;		/* where is the '@'? (us) */
-extern int atrow0,atcol0;	/* where was the '@' last time */
+extern int atrow0,atcol0,isnewloc;	/* where was the '@' last time */
 extern int attempt;		/* # times have we explored this level */
 extern int badarrow;		/* True if we missed with this arrow */
 extern int beingheld;		/* True if being held by a fungus */
@@ -160,7 +160,7 @@ extern int version;		/* From types.h, set by getrougeversion */
 extern int wplusdam;		/* Weapon damage bonus */
 extern int wplushit;		/* Weapon hit bonus */
 extern int zone;		/* Current zone (0 to 8) */
-extern int zonemap[9][9];	/* Connectivity map */
+extern int zone_connections[9][9];	/* Connectivity map */
 extern int g_seed;
 extern int g_move_delay;
 extern int g_level_delay;

@@ -392,144 +392,178 @@ char dir[MAXROWS][MAXCOLS];
  * attempting to hack it into a faster form. 			11/6/82 MLM
  */
 
-int searchto (row, col, evaluate, dir, trow, tcol)
-int row, col, *trow, *tcol;
-evaluate_ptr evaluate;
-char dir[MAXROWS][MAXCOLS];
+int searchto(int row, int col, evaluate_ptr evaluate, char dir[MAXROWS][MAXCOLS], int* trow, int* tcol)
 {
-  int searchcontinue = 10000000, type, havetarget=0, depth=0;
-  register int r, c, nr, nc;
-  register int k;
-  char begin[QSIZE], *end, *head, *tail;
-  int saveavd[MAXROWS][MAXCOLS], val, avd, cont;
-  int any;
-  static int sdirect[8] = {4, 6, 0, 2, 5, 7, 1, 3},
-             sdeltr[8]  = {0,-1, 0, 1,-1,-1, 1, 1},
-             sdeltc[8]  = {1, 0,-1, 0, 1,-1,-1, 1};
+    int searchcontinue = 10000000, type, havetarget = 0, depth = 0;
+    register int r, c, nr, nc;
+    register int k;
+    char begin[QSIZE], * end, * head, * tail;
+    int saveavd[MAXROWS][MAXCOLS], val, avd, cont;
+    int any;
+    static int sdirect[8] = { 4, 6, 0, 2, 5, 7, 1, 3 },
+                sdeltr[8] = { 0,-1, 0, 1,-1,-1, 1, 1 },
+                sdeltc[8] = { 1, 0,-1, 0, 1,-1,-1, 1 };
 
-  head = tail = begin;
-  end = begin + QSIZE;
+    head = tail = begin;
+    end = begin + QSIZE;
 
-  for (c = STATUSROW*MAXCOLS; c--; ) dir[0][c] = NOTTRIED;		/* MLM */
+    for (c = STATUSROW * MAXCOLS; c--; )
+        dir[0][c] = NOTTRIED;		/* MLM */
 
-  for (c = MAXCOLS; c--; ) dir[0][c] = 0;			/* MLM */
+    for (c = MAXCOLS; c--; )
+        dir[0][c] = 0;			/* MLM */
 
-  *(tail++) = row;  *(tail++) = col;
-  *(tail++) = QUEUEBREAK;  *(tail++) = QUEUEBREAK;
-  dir[row][col] = TARGET;  moveval[row][col] = NONE;
-  any = 1;
+    *(tail++) = row;
+    *(tail++) = col;
+    *(tail++) = QUEUEBREAK;
+    *(tail++) = QUEUEBREAK;
+    dir[row][col] = TARGET;
+    moveval[row][col] = NONE;
+    any = 1;
 
-  while (1) {
-    /* Process the next queued square. */
-    r = *(head++);  c = *(head++);
+    while (1)
+    {
+        /* Process the next queued square. */
+        r = *(head++);
+        c = *(head++);
 
-    if (head == end) head = begin;  /* wrap-around queue */
+        if (head == end)
+            head = begin;  /* wrap-around queue */
 
-    if (r==QUEUEBREAK) {
-      /* If we have completed an evaluation loop */
-      if (searchcontinue <= 0 || !any) {
-        if (havetarget) dwait (D_SEARCH, "Searchto wins.");
-        else dwait (D_SEARCH, "Searchto fails.");
+        if (r == QUEUEBREAK) {
+            /* If we have completed an evaluation loop */
+            if (searchcontinue <= 0 || !any) {
+                if (havetarget)
+                    dwait(D_SEARCH, "Searchto wins.");
+                else
+                    dwait(D_SEARCH, "Searchto fails.");
 
-        return (havetarget);  /* have found somewhere to go */
-      }
+                return havetarget;  /* have found somewhere to go */
+            }
 
-      searchcontinue--;   depth++;
+            searchcontinue--;
+            depth++;
 
-      /* ----------------------------------------------------------------
-      if (debug (D_SCREEN))
-        dwait (D_SEARCH, "Searchto: at queue break, cont=%d, havetarget=%d",
-         searchcontinue, havetarget);
-      ---------------------------------------------------------------- */
+            /* ----------------------------------------------------------------
+            if (debug (D_SCREEN))
+              dwait (D_SEARCH, "Searchto: at queue break, cont=%d, havetarget=%d",
+               searchcontinue, havetarget);
+            ---------------------------------------------------------------- */
 
-      any = 0;    /* None found in queue this time round */
+            any = 0;    /* None found in queue this time round */
 
-      *(tail++) = QUEUEBREAK;  *(tail++) = QUEUEBREAK;
+            *(tail++) = QUEUEBREAK;
+            *(tail++) = QUEUEBREAK;
 
-      if (tail == end) tail = begin;
+            if (tail == end)
+                tail = begin;
 
-      continue;
-    }
-
-    any = 1;   /* Something in queue */
-
-    if (moveval[r][c] == NONE) {
-      /* unevaluated: evaluate it */
-      val = avd = cont = 0;
-
-      if ((*evaluate)(r,c,depth,&val,&avd,&cont)) { /* Evaluate it. */
-        movedepth[r][c] = depth;
-        moveavd[r][c] = avd;
-        moveval[r][c] = val;
-        movecont[r][c] = cont;
-
-        if (avd >= ROGINFINITY) {
-          /* Infinite avoidance */
-          dir[r][c]=UNREACHABLE;  /* we cant get here */
-          continue;	/* discard the square from consideration. */
+            continue;
         }
-        else {
-          saveavd[r][c]=avd;
+
+        any = 1;   /* Something in queue */
+
+        if (moveval[r][c] == NONE)
+        {
+            /* unevaluated: evaluate it */
+            val = avd = cont = 0;
+
+            if ((*evaluate)(r, c, depth, &val, &avd, &cont))
+            { /* Evaluate it. */
+                movedepth[r][c] = depth;
+                moveavd[r][c] = avd;
+                moveval[r][c] = val;
+                movecont[r][c] = cont;
+
+                if (avd >= ROGINFINITY)
+                {
+                    /* Infinite avoidance */
+                    dir[r][c] = UNREACHABLE;  /* we cant get here */
+                    continue;	/* discard the square from consideration. */
+                }
+                else
+                {
+                    saveavd[r][c] = avd;
+                }
+            }
+            else {	/* If evaluate fails, forget it for now. */
+                dwait(D_SEARCH, "Searchto: evaluate failed.");
+                continue;
+            }
         }
-      }
-      else {	/* If evaluate fails, forget it for now. */
-        dwait (D_SEARCH, "Searchto: evaluate failed.");
-        continue;
-      }
-    }
 
-    if (saveavd[r][c]) {
-      /* If to be avoided, leave in queue for a while */
-      *(tail++) = r;  *(tail++) = c;   --(saveavd[r][c]);  /* Dec avoidance */
+        if (saveavd[r][c])
+        {
+            /* If to be avoided, leave in queue for a while */
+            *(tail++) = r;
+            *(tail++) = c;
+            --(saveavd[r][c]);  /* Dec avoidance */
 
-      if (tail == end) tail = begin;
+            if (tail == end)
+                tail = begin;
 
-      continue;
-    }
-
-    if (moveval[r][c] > havetarget) {
-      /* It becomes the target if it has value bigger than the best found
-      so far, and if it has a non-zero value.
-       */
-
-      if (debug (D_SCREEN | D_SEARCH | D_INFORM)) {
-        mvprintw (r, c, "=");
-        dwait (D_SEARCH, "Searchto: target value %d.", moveval[r][c]);
-      }
-
-      searchcontinue = movecont[r][c];
-      *trow = r;  *tcol = c;  havetarget = moveval[r][c];
-    }
-
-    type = SAFE;
-
-    while (1) {
-      for (k=0; k<8; k++) {
-        register int S;
-
-        /* examine adjacent squares. */
-        nr = r + sdeltr[k];
-        nc = c + sdeltc[k];
-        S = scrmap[nr][nc];
-
-        /* IF we have not considered stepping on the square yet */
-        /* and if it is accessible    THEN: Put it on the queue */
-        if (dir[nr][nc] == NOTTRIED && (CANGO&S) && (type&S) == type &&
-            (k<4 || onrc (CANGO,r,nc) && onrc (CANGO,nr,c))) {
-          moveval[nr][nc] = NONE;  /* flag unevaluated */
-
-          *(tail++) = nr;  *(tail++) = nc; if (tail == end) tail = begin;
-
-          dir[nr][nc] = sdirect[k];  /* direction we used to get here */
-
-          if (debug (D_SCREEN | D_SEARCH | D_INFORM))
-            { at (nr, nc); printw ("%c", ">/^\\</v\\  ~"[dir[nr][nc]]);}
+            continue;
         }
-      }
 
-      if (type == 0) break;
+        if (moveval[r][c] > havetarget)
+        {
+            /* It becomes the target if it has value bigger than the best found
+            so far, and if it has a non-zero value.
+             */
 
-      type = 0;
+            if (debug(D_SCREEN | D_SEARCH | D_INFORM))
+            {
+                mvprintw(r, c, "=");
+                dwait(D_SEARCH, "Searchto: target value %d.", moveval[r][c]);
+            }
+
+            searchcontinue = movecont[r][c];
+            *trow = r;
+            *tcol = c;
+            havetarget = moveval[r][c];
+        }
+
+        type = SAFE;
+
+        while (1)
+        {
+            for (k = 0; k < 8; k++)
+            {
+                register int S;
+
+                /* examine adjacent squares. */
+                nr = r + sdeltr[k];
+                nc = c + sdeltc[k];
+                S = scrmap[nr][nc];
+
+                /* IF we have not considered stepping on the square yet */
+                /* and if it is accessible    THEN: Put it on the queue */
+                if (dir[nr][nc] == NOTTRIED &&
+                    (CANGO & S) &&
+                    (type & S) == type &&
+                    (k < 4 || onrc(CANGO, r, nc) && onrc(CANGO, nr, c)))
+                {
+                    moveval[nr][nc] = NONE;  /* flag unevaluated */
+
+                    *(tail++) = nr;
+                    *(tail++) = nc;
+                    if (tail == end)
+                        tail = begin;
+
+                    dir[nr][nc] = sdirect[k];  /* direction we used to get here */
+
+                    if (debug(D_SCREEN | D_SEARCH | D_INFORM))
+                    {
+                        at(nr, nc);
+                        printw("%c", ">/^\\</v\\  ~"[dir[nr][nc]]);
+                    }
+                }
+            }
+
+            if (type == 0)
+                break;
+
+            type = 0;
+        }
     }
-  }
 }

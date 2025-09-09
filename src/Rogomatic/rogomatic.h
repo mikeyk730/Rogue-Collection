@@ -18,7 +18,7 @@ char *monname(char m);
 char *realname(char* codename);
 char *statusline(void);
 char commandarg(char* cmd, int n);
-char functionchar(char* cmd);
+char functionchar(const char* cmd);
 char getroguechar(void);
 char getroguetoken(void);
 char *getname(void);
@@ -399,7 +399,7 @@ int is_monster_vorpal_target(const char* monster);
 int can_vorpal_zap(int obj);
 char* populate_top_line(char* topline, char replacement);
 int is_harmless_enemy(const char* monster);
-
+const char* get_move_dir_str(int movedir);
 
 #define B_PARALYSIS_FIX 0x0001
 #define B_LTM_FIX       0x0002

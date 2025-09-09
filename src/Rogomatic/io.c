@@ -215,6 +215,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
   newdoors = doorlist;			/* no new doors found yet */
   atrow0 = atrow; atcol0 = atcol;	/* Save our current posistion */
+  isnewloc = 0;
   s = waitstr;				/* FSM to check for the wait msg */
   m = "re--";				/* FSM to check for '--More--' */
   call = "Call it:";			/* FSM to check for 'Call it:' */
@@ -612,8 +613,9 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
   if (botprinted) terpbot ();
 
-  if (atrow != atrow0 || atcol != atcol0) {
-    updateat ();	/* Changed position, record the move */
+  if (atrow != atrow0 || atcol != atcol0)
+  {
+    updateat();	/* Changed position, record the move */
     moved = 1;		/* Indicate that we moved */
     wakemonster (8);	/* Wake up adjacent mean monsters */
     currentrectangle();	/* Keep current rectangle up to date.   LGCH */

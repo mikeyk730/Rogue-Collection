@@ -1,9 +1,14 @@
 /*
 mdk:known issues 2025:
+- don't leave room to arch!
+
 - bad logic for seaching in maze rooms. can assume gone
 - shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
 - gets fixated on item in different room
 - rest in corner logic often chooses a far away place
+
+- lvl8: arching L at door infinite loop, lvl18c die to G in maze room
+RogueCollection.exe a --rogomatic --seed 1757306677 --genes "44 68 37 68 26 42 12 84 63" --debug-at-level 8
 
 - lvl26:attack D and J without checking if asleep, lvl26b:bad maze battle strats
 RogueCollection.exe a --rogomatic --seed 1757233220 --genes "50 50 50 50 50 50 50 50 63" --debug-at-level 26
@@ -291,6 +296,7 @@ int   ammo = 0;                 /* How many missiles? */
 int   arrowshot = 0;		/* True if an arrow shot us last turn */
 int   atrow, atcol;		/* Current position of the Rogue (@) */
 int   atrow0, atcol0;		/* Position at start of turn */
+int isnewloc;
 int   attempt = 0;		/* Number times we searched whole level */
 int   badarrow = 0;		/* True if cursed/lousy arrow in hand */
 int   beingheld = 0;		/* True if a fungus has ahold of us */
@@ -302,7 +308,7 @@ int   confused_monster = 0;		/* True ==> recently confused monster */
 int   cheat = 0;		/* True ==> cheat, use bugs, etc. */
 int   checkrange = 0;           /* True ==> check range */
 int   chicken = 0;		/* True ==> check run away code */
-int   compression = 1;		/* True ==> move more than one square/turn */
+int   compression = 0;		/* True ==> move more than one square/turn */
 int   confused = 0;		/* True if we are confused */
 int unconfuse_next = 0;
 int   cosmic = 0;		/* True if we are hallucinating */
@@ -373,6 +379,7 @@ int   revvideo = 0;		/* True if in rev. video mode */
 int   rightring = NONE;		/* Index of our right ring */
 int   rogpid = 0;		/* Pid of rogue process */
 int   room[9];			/* Flags for each room */
+int   maze_evidence[9];
 int   row, col;			/* Current cursor position */
 int   scrmap[MAXROWS][MAXCOLS];		/* Flags bits for level map */
 int   singlestep = 0;		/* True ==> go one turn */
@@ -391,7 +398,7 @@ int   version;			/* Rogue version, integer */
 int   wplusdam = 2;		/* Our plus damage from weapon bonus */
 int   wplushit = 1;		/* Our plus hit from weapon bonus */
 int   zone = NONE;		/* Current screen zone, 0..8 */
-int   zonemap[9][9];		/* Map of zones connections */
+int   zone_connections[9][9];		/* Map of zones connections */
 
 int g_seed = 0;
 int g_move_delay = 0;

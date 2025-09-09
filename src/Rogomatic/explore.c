@@ -981,7 +981,7 @@ int secret ()
   /* Have we mapped this level? */
   if (Level == didreadmap) return (0);
 
-  /* Found a dead end, should we search it? */
+  /* Found a dead end, should we search it? */  //todo:mdk update for maze rooms
   if (nexttowall (atrow, atcol) ||
       canbedoor (atrow, atcol) &&
       (has_hidden_passages() || !isexplored (atrow, atcol))) {
@@ -1294,26 +1294,46 @@ int restinit ()
   return (1);
 }
 
+int is_inv_full()
+{
+    return objcount == maxobj;
+}
+
 /* ARGSUSED */
-int restvalue (r, c, depth, val, avd, cont)
-register int r, c;
-int depth, *val, *avd, *cont;
+int restvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
   register int dr, dc, ar, ac;
   int count, dir, rm;
 
   /* Find room number for diagonal selection */
-  if ((rm = whichroom (r, c)) < 0) rm = 4;
+  if ((rm = whichroom (r, c)) < 0)
+  {
+      rm = 4;
+  }
 
   /* Default is no value, no avoidance */
   *avd = *val = 0;
 
+  //todo:mdk we want to rest in maze rooms
+
   /* Set base value of square */
   if (onrc (TRAP|MONSTER,r, c))               { *avd = ROGINFINITY; return (0); }
   else if (restinroom && onrc (DOOR,r, c))    { *avd = ROGINFINITY; return (0); }
-  else if (onrc (SCAREM, r, c)) {
-    if (objcount == maxobj || can_move_without_pickup()) { *val = 500; return (1); }
-    else                                      { *avd = ROGINFINITY; return (0); }
+  else if (onrc(SCAREM, r, c))
+  {
+      // Ideal case is to get back onto a scare monster scroll
+      if ((can_step_on_scare_monster_if_inv_full() && is_inv_full())
+          || can_move_without_pickup())
+      {
+          *val = 500;
+          return 1;
+      }
+      // Avoid a scare monster scroll if it's possible to reuse it later
+      else if (can_step_on_scare_monster_if_inv_full() && !is_inv_full())
+      {
+          *avd = ROGINFINITY;
+          return 0;
+      }
   }
   else if (onrc (STAIRS, r, c))               { *val = 400; return (1); }
   else if (onrc (ROOM, r, c))                 { *val = 1; *cont = 99;}
