@@ -141,7 +141,7 @@ int strategize()
   if (restup ())		/* Yawn! */
     return (1);
 
-  if (goupstairs (NOTRUNNING))	/* Up we go! Make sure that we get */
+  if (goupstairs(NOTRUNNING))	/* Up we go! Make sure that we get */
     return (1);			  /* a better rank on the board. */
 
   if (mdk_plunge()) // more aggressive plunge in later levels
@@ -967,6 +967,11 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
     return (0);
   }
 
+  if (on(STAIRS) && goupstairs(RUNNING))
+  {
+      return 1;
+  }
+
   /*
    * If we were busy resting on the stairs and we see a monster, go down
    * Go on down if about to be attacked by a monster with an effective
@@ -981,7 +986,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
         turns < 2 && willrust (currentarmor) &&
         wearing ("maintain armor") == NONE) ||
        seeawakemonster ("medusa") || seeawakemonster ("umber hulk"))) {
-    if (goupstairs (RUNNING) || godownstairs (RUNNING))
+    if (goupstairs(RUNNING) || godownstairs (RUNNING))
       return (1);
   }
 

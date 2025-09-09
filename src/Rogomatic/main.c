@@ -1,9 +1,10 @@
 /*
--total winners
+-total winners!
 RogueCollection.exe a --rogomatic --seed 1757406436 --genes "71 56 65 37 26 96 50 82 63" --debug-at-level 1
 RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 1
 -amulet
-RogueCollection.exe a --rogomatic --seed 1757393291 --genes "26 60 9 75 18 67 15 51 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757393291 --genes "26 60 9 75 18 67 15 51 63" --debug-at-level 25
+lvl 26: doesn't search for obvious door. Goes for useless item
 RogueCollection.exe a --rogomatic --seed 1757396402 --genes "75 60 35 15 26 78 15 99 63" --debug-at-level 24
 RogueCollection.exe a --rogomatic --seed 1757420427 --genes "85 42 92 23 39 9 50 51 63" --debug-at-level 10
 -lvl 26
@@ -18,8 +19,6 @@ RogueCollection.exe a --rogomatic --seed 1757392587 --genes "26 60 35 15 26 78 1
 - lvl12:stuck in maze, doesn't know where to search:
 RogueCollection.exe a --rogomatic --seed 1757391656 --genes "95 94 22 61 4 88 25 99 63" --debug-at-level 12
 - lvl25: why search for trap so much after coming off scare monster?
-RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 25
-- lvl25: doesn't re-use scare monster scroll when running away
 RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 25
 - lvl22: waking up HELD T for no reason
 RogueCollection.exe a --rogomatic --seed 1757387955 --genes "63 60 95 61 4 53 97 43 63" --debug-at-level 22
