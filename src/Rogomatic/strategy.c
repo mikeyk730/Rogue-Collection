@@ -1520,7 +1520,7 @@ int tostuff()
   /* Have space in our pack, go get it */
   if (objcount < maxobj)
   {
-      dwait(D_INFORM, "Go toward %s at (%d,%d), dist: %d", get_item_type_string(what), wrow, wcol, closest);
+      dwait(D_INFORM, "Go toward %s at (%d,%d), dist: %d", get_item_type_str(what), wrow, wcol, closest);
       return gotowards("pick up item", wrow, wcol, 0);
   }
 

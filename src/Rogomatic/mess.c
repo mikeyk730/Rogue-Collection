@@ -236,7 +236,7 @@ register char *mess, *mend;
       else {
           inventory(mess, mend, 1);
           identifying = justreadid = 0;
-          usesynch = 0;
+          //usesynch = 0;
       }
   }
   /* Message describes an old item already in our pack */
@@ -1101,8 +1101,8 @@ stuff item_type;
   if (item_type != lasttype)
   {
     dwait (D_ERROR, "Type mismatch in inference: %s (%d %s) inferred to be %s (%d %s)",
-      lastname, lasttype, get_item_type_string(lasttype),
-      objname, item_type, get_item_type_string(item_type));
+      lastname, lasttype, get_item_type_str(lasttype),
+      objname, item_type, get_item_type_str(item_type));
   }
 
   if (*lastname && *objname && !stlmatch (objname, lastname)) {

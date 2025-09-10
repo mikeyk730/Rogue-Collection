@@ -218,6 +218,7 @@ extern int	new_mark, new_findroom, new_search, new_stairs, new_arch;
 extern char	timessearched[MAXROWS][MAXCOLS], timestosearch;
 extern int	searchstartr, searchstartc;
 extern int	reusepsd;
+extern FILE* debug;
 
 /* Results of last makemove */
 extern int	ontarget, targetrow, targetcol;

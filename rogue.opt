@@ -148,6 +148,14 @@ menu=true
 room_bugfix=true
 
 ;
+; This controls the behavior when the user types an invalid command, i.e. ';'.
+; If true, monsters can wake up after the invalid command. If false, monsters
+; can only wake up after a valid command. This was added to not penalize
+; Rogomatic, which uses ';' for synchronization.
+;
+illegal_commands_wake_monsters=false
+
+;
 ; If set to true, the experience level name (e.g Warrior) is shown.  If set to
 ; false, the numeric value is shown.
 ;

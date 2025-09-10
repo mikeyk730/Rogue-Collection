@@ -268,8 +268,6 @@ void get_command_from_user(Command* command)
 Command get_command()
 {
     game->repeat_last_action = false;
-    look(true);
-
     if (!game->in_run_cmd())
         game->m_stop_at_door = false;
 
@@ -313,7 +311,7 @@ void show_count(int n)
         game->screen().addstr("    ");
 }
 
-bool dispatch_command(Command c)
+CommandResult dispatch_command(Command c)
 {
     //handle directional movement commands
     if (c.is_move())
@@ -337,21 +335,24 @@ bool dispatch_command(Command c)
 
     msg("illegal command '%s'", unctrl(c.ch));
     game->cancel_repeating_cmd();
-    return false;
+    return CommandResult(false, true);
 }
 
 
 void execute_player_command()
 {
-    bool counts_as_turn;
+    CommandResult result;
     do
     {
+        bool wake_monsters = !result.illegal_command || game->options.illegal_commands_wake_monsters();
+        look(wake_monsters);
+
         Command c = get_command();
-        counts_as_turn = dispatch_command(c);
+        result = dispatch_command(c);
 
         //todo: why is this here?
         if (!game->in_run_cmd())
             game->m_stop_at_door = false;
 
-    } while (!counts_as_turn);
+    } while (!result.counts_as_turn);
 }

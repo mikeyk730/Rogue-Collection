@@ -167,7 +167,7 @@ int mdk_destroyjunk(int obj)
         throw_item(
             obj,
             dir,
-            tmp("destroy item '%s' %s", inven[obj].str, get_item_type_string(inven[obj].type))))
+            tmp("destroy item '%s' %s", inven[obj].str, get_item_type_str(inven[obj].type))))
     {
         return 1;
     }
@@ -185,7 +185,7 @@ int orig_destroyjunk(int obj)
 {
     if ((obj != NONE)
         && (gotocorner() ||
-            throw_item(obj, 7, tmp("destroy item '%s' %s", inven[obj].str, get_item_type_string(inven[obj].type)))))
+            throw_item(obj, 7, tmp("destroy item '%s' %s", inven[obj].str, get_item_type_str(inven[obj].type)))))
         return (1);
 
     return (0);
@@ -258,7 +258,7 @@ int drop(int obj)
   }
 
   command(
-      tmp("drop '%s' %s", inven[obj].str, get_item_type_string(inven[obj].type)),
+      tmp("drop '%s' %s", inven[obj].str, get_item_type_str(inven[obj].type)),
       T_HANDLING,
       "d%c",
       LETTER(obj));
@@ -331,7 +331,7 @@ int point(int obj, int dir)
             dwait(D_ERROR, "Trying to point unexpected item: %s (%c) of type %s",
                 inven[obj].str,
                 LETTER(obj),
-                get_item_type_string(inven[obj].type));
+                get_item_type_str(inven[obj].type));
             return 0;
         }
         else if (itemis(obj, USELESS))
@@ -444,7 +444,7 @@ int   row, col;
 void deletestuff (int row, int col)
 {
   register int   i;
-  unsetrc (STUFF, row, col);
+  unsetrc(STUFF, row, col);
 
   for (i = 0; i < slistlen; ++i)
     if (slist[i].scol == col && slist[i].srow == row) {
@@ -755,6 +755,11 @@ int haveuseless() //mdk: similar to useless(obj), but not same :(
          stlmatch (inven[i].str, "adornment") ||
          stlmatch (inven[i].str, "aggravate monster")))
         return (i);
+      else if (itemis(i, WORTHLESS))
+      {
+          dwait(D_ERROR, "Dropping worthless %s '%s'", get_item_type_str(inven[i].type), inven[i].str);
+          return i;
+      }
     }
   }
   if (Level > 14) {

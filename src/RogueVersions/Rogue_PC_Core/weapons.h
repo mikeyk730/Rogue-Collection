@@ -21,7 +21,7 @@ struct Weapon : public Item
     bool vorpalize();
     bool zap_vorpalized_weapon(Coord dir);
     bool is_vorpalized() const;
-    bool is_vorpalized_against(Monster* monster) const;    
+    bool is_vorpalized_against(Monster* monster) const;
     bool did_flash() const;
     void set_flashed();
     std::string get_vorpalized_name() const;
@@ -32,7 +32,7 @@ private:
 protected:
     std::string m_name;
 private:
-    char enemy = 0; 
+    char enemy = 0;
     bool m_flashed = false;
 };
 

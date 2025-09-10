@@ -129,6 +129,7 @@ void Environment::SetRogomaticValues()
     Set("menu", "false");
     Set("showac", "");
     Set("interactive", "false");
+    Set("illegal_commands_wake_monsters", "false");
 }
 
 void Environment::SetDefaults()

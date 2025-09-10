@@ -500,7 +500,7 @@ void updateat ()
         zone_connections[zone][newzone] = 1;
         zone_connections[newzone][zone] = 1;
 
-        dwait(D_ERROR, "Level %d: added connection between rooms %d and %d", Level, zone, newzone);
+        dwait(D_INFORM, "Level %d: added connection between rooms %d and %d", Level, zone, newzone);
     }
 
     if ((levelmap[zone] & (EXPLORED | HASROOM)) == 0) //todo:mdk consider maze a room?
@@ -985,7 +985,8 @@ void markexplored(const char* why, int row, int col)
   if (rm != NONE && !(levelmap[rm] & EXPLORED))
   {
     levelmap[rm] |= EXPLORED;
-    dwait(D_ERROR, "Room %d is now explored, %s.", rm, why);
+    int severity = (streq(why, "in lit room") || streq(why, "explore room finished")) ? D_INFORM : D_ERROR;
+    dwait(severity, "Room %d is now explored, %s.", rm, why);
 
     if (!(levelmap[rm] & HASROOM))
     {

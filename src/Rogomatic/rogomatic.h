@@ -399,7 +399,7 @@ int is_reading_scroll();
 int is_quaffing();
 int is_zapping();
 int needs_msg_clear();
-const char* get_item_type_string(int type);
+const char* get_item_type_str(int type);
 int is_monster_vorpal_target(const char* monster);
 int can_vorpal_zap(int obj);
 int can_monsters_enter_mazes();

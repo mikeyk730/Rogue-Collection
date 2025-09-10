@@ -249,20 +249,14 @@ void toggledebug ()
   char debugstr[100];
   int type = debugging & ~(D_FATAL | D_ERROR | D_WARNING);
 
-  if (debugging == D_ALL)         debugging = D_NORMAL;
+  if (debugging == D_ALL)         debugging = 0;
+  else if (debugging == 0)        debugging = D_NORMAL;
   else if (debugging == D_NORMAL) debugging = D_NORMAL | D_ITEM;
   else if (type == D_ITEM)        debugging = D_NORMAL | D_SCROLL;
   else if (type == D_SCROLL)      debugging = D_NORMAL | D_POTION;
   else if (type == D_POTION)      debugging = D_NORMAL | D_WAND;
   else if (type == D_WAND)        debugging = D_NORMAL | D_RING;
-  else if (type == D_RING)        debugging = D_NORMAL | D_BATTLE;
-  else if (type == D_BATTLE)      debugging = D_NORMAL | D_MESSAGE;
-  else if (type == D_MESSAGE)     debugging = D_NORMAL | D_PACK;
-  else if (type == D_PACK)        debugging = D_NORMAL | D_MONSTER;
-  else if (type == D_MONSTER)     debugging = D_NORMAL | D_CONTROL;
-  else if (type == D_CONTROL)     debugging = D_NORMAL | D_SCREEN;
-  else if (type == D_SCREEN)      debugging = D_NORMAL | D_WARNING;
-  else if (!debug (D_INFORM))     debugging = D_NORMAL | D_WARNING | D_INFORM;
+  else if (type == D_RING)        debugging = D_NORMAL | D_ALL;
   else                            debugging = D_ALL;
 
   strncpy (debugstr, "Debugging :", 100);

@@ -340,7 +340,6 @@ Monster* Monster::do_chase() //todo: understand
                     break;
 
                 std::ostringstream ss;
-                ss.str(std::string());
                 ss << get_name() << " " << position() << " obtaining " << obj->name();
                 game->log("monster", ss.str());
 

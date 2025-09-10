@@ -1,5 +1,17 @@
 #pragma once
 
+struct CommandResult
+{
+    CommandResult(bool counts = true, bool illegal = false)
+    {
+        counts_as_turn = counts;
+        illegal_command = illegal;
+    }
+
+    bool counts_as_turn;
+    bool illegal_command;
+};
+
 struct Command
 {
     Command();

@@ -745,8 +745,10 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
   if (!emacs && !terse) refresh ();
 
-  printscreen ();
-
+  printscreen();
+  if (debug)
+      dumpinv(debug);
+  printscreenattrs();
 }
 
 void process_delayed_update()
@@ -879,6 +881,7 @@ char attrchar(int S, char def)
     return //(ARROW&S)                   ? 'a' :
            (TELTRAP&S)                 ? 't' :
            (TRAPDOR&S)                 ? 'v' :
+           (USELESS&S)                 ? 'u' :
            //(GASTRAP&S)                 ? 'g' :
            //(BEARTRP&S)                 ? 'b' :
            //(DARTRAP&S)                 ? 's' :
