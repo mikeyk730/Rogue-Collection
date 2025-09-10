@@ -453,15 +453,40 @@ void set_is_maze(int room)
  * Bug if teleported horiz or vert. Infers cango
  */
 
+int maybe_teleported = 0;
+
 void updateat ()
 {
   register int dr = atrow - atrow0, dc = atcol - atcol0;
   register int i, r, c;
   int   dist, newzone, sum;
 
+  int known_teleport = 0;
+  maybe_teleported = 0;
+
   /*
    * Record passage from one zone to the next
    */
+  int odd_jump = direc(dr, dc) != movedir || dr && dc && abs(dr) != abs(dc);
+
+  if (odd_jump)
+  {
+      //todo:mdk: movedir may be wrong for strats like:
+      // strategy: fight: back and forth
+      // command: (hl)
+      if (!is_exploring_passage && !confused && movedir != NOTAMOVE_NEWLEVEL)
+      {
+          if (teleport())
+          {
+              known_teleport = 1;
+          }
+          else
+          {
+              maybe_teleported = 1;
+          }
+      }
+  }
+
 
   newzone = whichroom (atrow, atcol);
   // If we've moved from one zone to another, mark the connection.
@@ -470,16 +495,23 @@ void updateat ()
   {
     new_arch = 1;
 
-    zone_connections[zone][newzone] = 1;
-    zone_connections[newzone][zone] = 1;
+    if (!known_teleport && zone_connections[zone][newzone] == 0)
+    {
+        zone_connections[zone][newzone] = 1;
+        zone_connections[newzone][zone] = 1;
 
-    if ((levelmap[zone] & (EXPLORED | HASROOM)) == 0)
+        dwait(D_ERROR, "Level %d: added connection between rooms %d and %d", Level, zone, newzone);
+    }
+
+    if ((levelmap[zone] & (EXPLORED | HASROOM)) == 0) //todo:mdk consider maze a room?
     {
       for (i = 0, sum = 0; i < 9; i++)
           sum += zone_connections[zone][i];
 
       if (sum >= 3)
-          markexplored(atrow0, atcol0); //todo:mdk why?
+      {
+          markexplored(tmp("room %d has %d connections", zone, sum), atrow0, atcol0); //todo:mdk why?
+      }
     }
   }
 
@@ -490,15 +522,7 @@ void updateat ()
    * Check for teleport, else if we moved multiple squares, mark them as BEEN
    */
 
-  if (direc(dr, dc) != movedir || dr && dc && abs(dr) != abs(dc))
-  {
-    //todo:mdk: movedir may be wrong for strats like:
-    // strategy: fight: back and forth
-    // command: (hl)
-      if (!is_exploring_passage && !confused && movedir != NOTAMOVE_NEWLEVEL)
-        teleport();
-  }
-  else
+  if (!odd_jump)
   {
       dist = (abs(dr) > abs(dc)) ? abs(dr) : abs(dc);
       dr = (dr > 0) ? 1 : (dr < 0) ? -1 : 0;
@@ -556,7 +580,7 @@ void updateat ()
   // this as evidence of a maze
   if (isnewloc && halls_in_same_room >= 3 && !halls_at_diagonal)
   {
-      markexplored(atrow, atcol); //todo:mdk mark as explored or just gone?? what if stairs in maze not found
+      markexplored("passage is winding", atrow, atcol); //todo:mdk mark as explored or just gone?? what if stairs in maze not found
 
       maze_evidence[zone]++;
       if (!is_maze(zone) && maze_evidence[zone] >= 3)
@@ -597,9 +621,9 @@ void updateat ()
 
     dwait (D_INFORM, "Inferring %s at %d,%d.", terrain, atrow, atcol);
   }
-  else if (on (DOOR | ROOM) && !isexplored(atrow, atcol) && !darkroom ())
+  else if (on(DOOR | ROOM) && !isexplored(atrow, atcol) && !darkroom())
   {
-    markexplored (atrow, atcol);
+    markexplored("in lit room", atrow, atcol);
   }
 }
 
@@ -652,7 +676,7 @@ void updatepos(char ch, int row, int col)
 
       setrc (SEEN | CANGO | SAFE | HALL | EVERCLR, row, col);
       unsetrc (DOOR | ROOM | TRAP | ARROW | TRAPDOR | TELTRAP | GASTRAP |
-               BEARTRP | DARTRAP | MONSTER | SCAREM | WALL | SLEEPER | STAIRS,
+               BEARTRP | DARTRAP | MONSTER | SCAREM | WALL | SLEEPER | STAIRS, //todo:mdk we forget about passage sleepers when not in our vision
                row, col);
       break;
 
@@ -756,6 +780,7 @@ void updatepos(char ch, int row, int col)
                row, col);
       stairrow = row;
       staircol = col;
+      debuglog("stairs at %d,%d\n", stairrow, staircol);
       setnewgoal ();
       break;
 
@@ -799,7 +824,7 @@ void updatepos(char ch, int row, int col)
             addmonster (ch, row, col, AWAKE);
           else if (!onrc (HALL | DOOR, row, col) && !aggravated &&
                    (streq (monster, "floating eye") ||
-                    streq (monster, "ice monster") ||
+                    (streq (monster, "ice monster") && version != RVPC148) ||
                     streq (monster, "leprechaun") ||
                     streq (monster, "nymph") ||
                     (version < RV52A && (ch == 'T' || ch == 'P')))) {
@@ -857,16 +882,9 @@ const char* get_move_dir_str(int movedir)
  * avoid doing silly things.
  */
 
-void teleport()
+int teleport()
 {
   register int r = atrow0, c = atcol0;
-
-  setnewgoal();
-
-  hitstokill = 0;
-  darkdir = NONE;
-  darkturns = 0;
-
   int confirmed = 0;
 
   if (is_reading_scroll())
@@ -909,13 +927,21 @@ void teleport()
 
   if (confirmed)
   {
+      setnewgoal();
+
+      hitstokill = 0;
+      darkdir = NONE;
+      darkturns = 0;
+
       confused = 1; //todo:mdk make obvious
       beingheld = 0;
+      return 1;
   }
   else
   {
       dwait(D_ERROR, "Teleported (%d,%d)->(%d,%d) for unknown reason, move dir %s",
           atrow0, atcol0, atrow, atcol, get_move_dir_str(movedir));
+      return 0;
   }
 }
 
@@ -952,14 +978,14 @@ void mapinfer()
  * markexplored: If we are in a room, mark the location as explored.
  */
 
-void markexplored(int row, int col)
+void markexplored(const char* why, int row, int col)
 {
   register int rm = whichroom (row, col);
 
   if (rm != NONE && !(levelmap[rm] & EXPLORED))
   {
     levelmap[rm] |= EXPLORED;
-    dwait(D_INFORM, "Room %d is now explored.", rm);
+    dwait(D_ERROR, "Room %d is now explored, %s.", rm, why);
 
     if (!(levelmap[rm] & HASROOM))
     {

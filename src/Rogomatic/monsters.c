@@ -135,7 +135,8 @@ void sleepmonster ()
       dwait (D_MONSTER, "Found a sleeping %s at %d,%d",
              monname (mlist[m].chr), mlist[m].mrow, mlist[m].mcol);
 
-      mlist[m].q = ASLEEP; //todo:mdk do we set SLEEPER here?
+      mlist[m].q = ASLEEP;
+      setrc(SLEEPER, mlist[m].mrow, mlist[m].mcol);
     }
   }
 }
@@ -275,11 +276,14 @@ void newmonsterlevel ()
   for (m=0; m<mlistlen; m++) {
     monster = monname (mlist[m].chr);
 
-    if (streq (monster, "floating eye")   ||
-        streq (monster, "leprechaun")     ||
-        streq (monster, "nymph")          ||
-        streq (monster, "ice monster"))
-      mlist[m].q = ASLEEP; //todo:mdk do we set SLEEPER here?
+    if (streq(monster, "floating eye") ||
+        streq(monster, "leprechaun") ||
+        streq(monster, "nymph") ||
+        (streq(monster, "ice monster") && version != RVPC148))
+    {
+        mlist[m].q = ASLEEP;
+        setrc(SLEEPER, mlist[m].mrow, mlist[m].mcol);
+    }
     else
       mlist[m].q = 0;
   }

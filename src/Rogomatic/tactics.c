@@ -424,8 +424,7 @@ int handlering ()
  * Could be extended to have an ordering of rings to wear.
  */
 
-int findring (name)
-char *name;
+int findring(char* name)
 {
   int obj;
 

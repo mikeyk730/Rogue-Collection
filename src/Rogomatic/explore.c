@@ -160,7 +160,8 @@ int gotovalue(int r, int c, int depth, int* val, int* avd, int* cont)
          onrc (MONSTER, r, c) ? 150 :
          expavoidval;
 
-  if (onrc(SLEEPER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
+  int at_target = r == gotorow && c == gotocol;
+  if (!at_target && onrc(SLEEPER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
   {
       if (last_level_printed != Level && Level >= 15)
       {
@@ -176,7 +177,7 @@ int gotovalue(int r, int c, int depth, int* val, int* avd, int* cont)
   if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     *avd += 200;
 
-  *val = r == gotorow && c == gotocol ? 1 : 0;
+  *val = at_target ? 1 : 0;
   /*  *cont = 0; // default value when called // */
   return (1);
 }
@@ -217,21 +218,30 @@ int sleepvalue(int r, int c, int depth, int* val, int* avd, int* cont)
  *           is there. Part of doorinit   Guy Jacobson 5/82
  */
 
-int wallkind (r, c)
-int r, c;
+int wallkind(int r, int c)
 {
-  switch (screen[r][c]) {
+    switch (screen[r][c])
+    {
+    case '|':
+        if (onrc(ROOM, r, c + 1))
+            return (LEFTW);
+        else
+            return (RIGHTW);
 
-    case '|': if (onrc (ROOM, r, c+1)) return (LEFTW);
-      else return (RIGHTW);
+    case '-':
+        if (onrc(ROOM, r + 1, c))
+            return (TOPW);
+        else if (onrc(ROOM, r - 1, c))
+            return (BOTW);
+        else
+            return (CORNERW);
 
-    case '-': if (onrc (ROOM, r+1, c)) return (TOPW);
-      else if (onrc (ROOM, r-1, c)) return (BOTW);
-      else return (CORNERW);
+    case '+':
+        return (DOORW);
 
-    case '+': return (DOORW);
-    default:  return (NOTW);
-  }
+    default:
+        return (NOTW);
+    }
 }
 
 /*
@@ -352,6 +362,20 @@ int setpsd (print)
 /* ARGSUSED */
 int downvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
+    static int last_level_printed = 0;
+    if (onrc(SLEEPER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
+    {
+        if (last_level_printed != Level && Level >= 15)
+        {
+            dwait(D_INFORM, "Avoid held monster in downvalue");
+            last_level_printed = Level;
+            dumpscreenattr(SLEEPER);
+        }
+
+        *avd = ROGINFINITY;
+        return 1;
+    }
+
   *avd = onrc (SAFE, r, c)    ? 0 :
          onrc (ARROW, r, c)   ? 50 :
          onrc (TRAPDOR, r, c) ? 175 :
@@ -826,7 +850,8 @@ int secretinit ()
 /* ARGSUSED */
 int secretvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
-  register int v, a, k;
+    static int last_level_printed = 0;
+    register int v, a, k;
 
   *val=0;
   v = 0;	/* establish value of square */
@@ -843,6 +868,19 @@ int secretvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 
   if (onrc(SCAREM, r, c) && can_step_on_scare_monster_if_inv_full() && !is_inv_full())
     a += 200;
+
+  if (onrc(SLEEPER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
+  {
+      if (last_level_printed != Level && Level >= 15)
+      {
+          dwait(D_INFORM, "Avoid held monster in secretvalue");
+          last_level_printed = Level;
+          dumpscreenattr(SLEEPER);
+      }
+
+      *avd = ROGINFINITY;
+      return 1;
+  }
 
   for (k=0; k<8; k++) {  /* examine adjacent squares */
     register int nr = r + deltr[k];
@@ -1029,9 +1067,18 @@ int secret ()
     return (0);
 
   /* If Level 1 or edge of screen: dead end cannot be room, mark and return */
-  if (Level == 1 && attempt == 0 ||
-      !has_hidden_passages() && (atrow<=1 || atrow>=(STATUSROW-1) || atcol<=0 || atcol>=(MAXCOLS-1)))
-    { markexplored (atrow, atcol); return (0); }
+  if (Level == 1 && attempt == 0)
+  {
+      markexplored("dead end level 1", atrow, atcol);
+      return 0;
+  }
+
+  if (!has_hidden_passages() &&
+       (atrow<=1 || atrow>=(STATUSROW-1) || atcol<=0 || atcol>=(MAXCOLS-1)))
+  {
+      markexplored("dead end off grid", atrow, atcol);
+      return 0;
+  }
 
   /* Have we mapped this level? */
   if (Level == didreadmap)
@@ -1052,7 +1099,7 @@ int secret ()
     }
     else
     {
-      markexplored (atrow, atcol);
+      markexplored("exhausted search at dead end", atrow, atcol);
       return (0);
     }
   }
@@ -1091,7 +1138,7 @@ int exploreroom ()
   if (makemove("explore room", EXPLOREROOM, roominit, expvalue, REUSE))
       return (1);
 
-  markexplored (atrow, atcol);
+  markexplored("explore room finished", atrow, atcol); //todo:mdk: won't always be explored here (e.g. sleeping monsters blocking path)
 
   dwait (D_SEARCH, "exploreroom failed.");
   return (0);
@@ -1110,7 +1157,7 @@ int doorexplore()
   if (! new_search || Level == didreadmap)
     { searchcount = 0; return (0); }
 
-  if (makemove("door explore", SECRETDOOR, secretinit, secretvalue, REUSE))  /* move */
+  if (makemove("door explore", SECRETDOOR, secretinit, secretvalue, REUSE))  //todo:mdk do we need to REEVAL if attempt has changed?
   {
       searchcount = 0;
       return (1);
@@ -1243,7 +1290,8 @@ int archmonster (register int m, register int trns)
   mlist[m].q = AWAKE; dwait (D_BATTLE, "archmonster, waking him up");
 
   /* Set dark room archery variables, add goal of standing on square */
-  if (darkroom ()) {
+  if (darkroom ())
+  {
     darkdir = direc (mr-atrow, mc-atcol);
     darkturns = max (abs (mr-atrow), abs (mc-atcol));
     debuglog("goal: archery target\n");
@@ -1296,7 +1344,8 @@ int archeryinit ()
 /* ARGSUSED */
 int archeryvalue(int r, int c, int depth, int* val, int* avd, int* cont)
 {
-  *avd = (onrc (SAFE, r, c)	? 0 :
+    static int last_level_printed = 0;
+    *avd = (onrc (SAFE, r, c)	? 0 :
           onrc (TRAPDOR, r, c)	? ROGINFINITY :
           onrc (HALL, r, c)	? ROGINFINITY :
           onrc (ARROW, r, c)	? 50 :
@@ -1307,6 +1356,20 @@ int archeryvalue(int r, int c, int depth, int* val, int* avd, int* cont)
           onrc (WATERAP, r, c)	? 50 :
           onrc (MONSTER, r, c)	? 150 :
           expavoidval) + avdmonsters[r][c];
+
+  if (onrc(SLEEPER, r, c) && attempt == 0) //mdk: avoid monsters in first attempt
+  {
+      if (last_level_printed != Level && Level >= 15)
+      {
+          dwait(D_INFORM, "Avoid held monster in archeryvalue");
+          last_level_printed = Level;
+          dumpscreenattr(SLEEPER);
+      }
+
+      *avd = ROGINFINITY;
+      return 1;
+  }
+
 
   // mdk: we shouldn't leave room. above check doesn't work because hall can be SAFE.
   // this avoids an infinite loop where we can leave room, lose sight of the monster,
@@ -1361,12 +1424,12 @@ int movetorest ()
   return (0);
 }
 
-int restinit ()
+int restinit()
 {
-  expavoidval = avoid();
-  restinlight = (on (ROOM) && !darkroom ());
-  restinroom = on (ROOM);
-  return (1);
+    expavoidval = avoid();
+    restinlight = (on(ROOM) && !darkroom());
+    restinroom = on(ROOM);
+    return (1);
 }
 
 /* ARGSUSED */

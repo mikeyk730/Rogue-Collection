@@ -211,13 +211,17 @@ int strategize()
       return (1);
   }
 
+  printscreenattrs();
+  printtimessearched();
+
   /*
    * If we failed to find the stairs, explore each possible secret door
    * another ten times.
    */
 
   // mdk: previously we'd never get to attempt > 0 in broader loop
-  while (attempt++ < MAXATTEMPTS) {
+  while (attempt++ < MAXATTEMPTS)
+  {
     timestosearch += max (3, k_door / 5);
     foundnew ();
 
@@ -225,6 +229,8 @@ int strategize()
 
     int severity = attempt > 5 ? D_ERROR : D_INFORM;
     dwait(severity, "Couldn't find stairs. Attempt %d", attempt);
+
+    resetmove(); //mdk: added this
 
     return grope(1);
   }
@@ -511,8 +517,12 @@ int fightmonster()
 
   monster = monname (monc);
 
+  int monster_state =
+      has_awake ? AWAKE :
+      has_unknown ? 0 : ASLEEP; //todo:mdk not very precise
+
   if (battlestations(m, monster, mbad, danger, adjacent ? mdir : wanddir,
-                      adjacent ? 1 : 2, 1, has_awake, adjacent))
+                      adjacent ? 1 : 2, 1, monster_state, adjacent))
     {
       foughtmonster = DIDFIGHT;
       return (1);
@@ -633,7 +643,7 @@ int should_target_monster_v2(char monchar, int monq, int avg_hit, int max_hit)
 int tomonster()
 {
   register int mdir = NONE, mbad = NONE;
-  int   closest = 999, which = NONE, danger = 0, adj = 0, alert = 0;
+  int   closest = 999, which = NONE, danger = 0, adj = 0;
   char  monc = ':', *monster;
 
   /* If no monsters, fail */
@@ -710,11 +720,8 @@ int tomonster()
   /* Get a string which names the monster */
   monster = monname (monc);
 
-  /* Is the monster alert */
-  alert = (mlist[which].q == AWAKE) ? 1 : 0;
-
   /* If 'battlestations' has an action, use that action */
-  if (battlestations(which, monster, mbad, danger, mdir, closest, closest, alert, adj))
+  if (battlestations(which, monster, mbad, danger, mdir, closest, closest, mlist[which].q, adj))
     return (1);
 
   /* If he is an odd number of squares away, lie in wait for him */
@@ -757,7 +764,7 @@ int wanttowake(char c)
   if (streq (monster, "centaur") ||
       streq (monster, "dragon") ||
       streq (monster, "floating eye") ||
-      streq (monster, "ice monster") ||
+      (streq(monster, "ice monster") && version != RVPC148) ||
       streq (monster, "leprechaun") ||
       streq (monster, "nymph") ||
       streq (monster, "rattlesnake") ||
@@ -889,7 +896,7 @@ int wand_has_charge(int obj)
 # define die_in(n)	(Hp/n < danger*50/(100-k_run))
 # define live_for(n)	(! die_in(n))
 
-int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdist, int zap_dist, int alert, int adj)
+int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdist, int zap_dist, int monster_state, int adj)
 //int m;                  /* Monster index */
 //char *monster;          /* What is it? */
 //int mbad;               /* How bad is it? */
@@ -897,7 +904,6 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
 //int mdir;               /* Which direction (clear line of sight)? */
 //int mdist;              /* How many turns until battle? */
 //int zap_dist;           /* How many tiles away is the monster? */
-//int alert;              /* Is he known to be awake? */
 //int adj;		          /* How many attackers are there? */
 {
   int obj, turns;
@@ -909,6 +915,9 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
   {
       dwait(D_BATTLE, "Player is trapped by %d monsters", adj);
   }
+
+  int have_freedom = !trapped && adj <= 1;
+  int should_test_monster = (monster_state == 0 && have_freedom);
 
   /*
 
@@ -1008,7 +1017,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Don't run away from Dragons!!!  They'll just flame you.
    */
 
-  if (!confused && !beingheld && !sandwiched && (!on(DOOR) || turns < 1) &&
+  if (!confused && !beingheld && !trapped && (!on(DOOR) || turns < 1) &&
       (!streq (monster, "dragon") || cosmic) && Hp+Explev < Hpmax &&
       ((die_in(1) || Hp <= danger + between (Level-10, 0, 10)) || chicken) &&
       runaway ()) {
@@ -1021,7 +1030,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Be clever when facing multiple monsters? mdk: or slime
    */
 
-  if ((adj > 1 || streq (monster, "slime")) && !sandwiched && !confused && !beingheld && !on (STAIRS | DOOR) &&
+  if ((adj > 1 || streq (monster, "slime")) && !trapped && !confused && !beingheld && !on (STAIRS | DOOR) &&
       backtodoor (turns))
     return (1);
 
@@ -1029,7 +1038,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * stepback to see if he is awake.
    */
 
-  if (!alert && !beingheld && !stepback && !sandwiched && mdir != NONE &&
+  if (should_test_monster && !beingheld && !stepback && mdir != NONE &&
       turns == 0 && !on (DOOR | STAIRS)) {
     int rdir = (mdir+4)%8;
 
@@ -1130,14 +1139,6 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
       die_in (2) && (obj = havenamed (potion, "haste self")) != NONE &&
       quaff (obj))
     return (1);
-
-  /*
-   * Confuse the poor beast?
-   */
-
-  if (die_in (2) && turns > 0 && !redhands && !confused_monster &&
-      ((obj = havenamed (Scroll, "monster confusion")) != NONE))
-    return (reads (obj));
 
   int close_to_death = die_in(1)
       || (die_in(2) && sandwiched)
@@ -1277,6 +1278,14 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
   }
 
   /*
+   * Confuse the poor beast?
+   */
+
+  if (die_in(2) && turns > 0 && !redhands && !confused_monster &&
+      ((obj = havenamed(Scroll, "monster confusion")) != NONE))
+      return (reads(obj));
+
+  /*
    * Any life prolonging wands?
    */
 
@@ -1331,7 +1340,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Don't run away from dragons, they'll just flame you!!
    */
 
-  if (confused && !sandwiched && !beingheld && (!on(DOOR) || turns < 1) &&
+  if (confused && !trapped && !beingheld && (!on(DOOR) || turns < 1) &&
       ! streq (monster, "dragon") &&
       ((die_in (1) && Hp+Explev/2+3 < Hpmax) || chicken) &&
       runaway ())
@@ -1343,7 +1352,7 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * they'll just flame you!!!
    */
 
-  if (!confused && !sandwiched && !beingheld && ! streq (monster, "dragon") &&
+  if (!confused && !trapped && !beingheld && ! streq (monster, "dragon") &&
       (mdir < 0 || turns < 5) &&
       (((adj > 1 || live_for (1)) && die_in (4) && !canrun ())) &&
       unpin())
@@ -1356,14 +1365,14 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Light up the room if we are in combat.
    */
 
-  if (turns > 0 && die_in (3) && lightroom ())
+  if (turns > 0 && die_in (3) && lightroom())
     return (1);
 
   /*
    * We arent yet in danger and can shoot at the old monster.
    */
 
-  if ((live_for (5) || turns > 1) && shootindark ())
+  if ((live_for (5) || turns > 1) && shootindark())
     return (1);
 
   /*
@@ -1386,7 +1395,8 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * Wait to see if he is really awake.
    */
 
-  if (!alert && !sandwiched && !lyinginwait && turns > 0) {
+  if (should_test_monster && !lyinginwait && turns > 0)
+  {
     command ("rest to see if monster is awake", T_FIGHTING, "s");
     dwait (D_BATTLE, "Waiting to see if he is awake...");
     lyinginwait = 1;
@@ -1398,19 +1408,19 @@ int battlestations(int m, char* monster, int mbad, int danger, int mdir, int mdi
    * shoot an arrow at the beast. Conserve arrows below SAVEARROWS.
    */
 
-  if (!sandwiched && (streq (monster, "leprechaun") ||
+  if (have_freedom && (streq (monster, "leprechaun") ||
        streq (monster, "nymph") ||
        streq (monster, "floating eye") ||
-       streq (monster, "ice monster") ||
+       (streq (monster, "ice monster") && version != RVPC148) ||
        streq (monster, "giant ant") ||
        streq (monster, "rattlesnake") ||
        streq (monster, "wraith") ||
-       streq (monster, "vampire") ||
+       streq (monster, "vampire") || //todoLmdk list not consistent with archery()
        streq (monster, "centaur") ||   /* DR UTexas 21 Jan 84 */
        die_in (1+k_arch/20) || ammo > SAVEARROWS+5-k_arch/10) &&
       (obj = havemissile ()) != NONE) {
     /* Move into position */
-    if ((!alert || mdir < 0) && turns > 0 && archmonster (m, 1))
+    if ((monster_state == ASLEEP || (mdir < 0 && turns > 0)) && archmonster (m, 1))
       return (1);
 
     /* If in position */
@@ -1662,7 +1672,7 @@ archery ()
          streq (monster, "giant ant")	  ||
          streq (monster, "rattlesnake")	  ||
          streq (monster, "centaur")	  ||
-         streq (monster, "ice monster"))  &&
+         (streq (monster, "ice monster") && version != RVPC148))  &&
         (ammo >= (mtk = monatt[mlist[m].chr-'A'].mtokill - gplushit)) &&
         (larder > 0 ||
         ((streq (monster, "leprechaun") && !hungry ()) ||

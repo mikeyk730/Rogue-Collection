@@ -28,6 +28,7 @@
  */
 
 # include <stdio.h>
+# include <string.h>
 # include <curses.h>
 # include "types.h"
 # include "globals.h"
@@ -237,16 +238,19 @@ int followmap(const char* why, int movetype)
   int to_asleep = will_hit_monster(dir, ASLEEP);
   if (to_held || to_asleep)
   {
-      if (last_level_printed != Level)
-          dwait(D_ERROR, "followmap: %s: %s will hit %s monster, attempt %d",
-              why, get_move_type_str(movetype), to_held ? "HELD" : "ASLEEP", attempt);
-      last_level_printed = Level;
-
-      if (timemode != T_RUNNING && Hp < (Hpmax * 3 / 4))
+      if (!streq(why, "tomonster"))
       {
-          debuglog("tactic: Gaining some HP before waking monster");
-          command("Rest before waking", T_RESTING, ".");
-          return 1;
+          if (last_level_printed != Level)
+              dwait(D_ERROR, "followmap: %s: %s will hit %s monster, attempt %d",
+                  why, get_move_type_str(movetype), to_held ? "HELD" : "ASLEEP", attempt);
+          last_level_printed = Level;
+
+          if (timemode != T_RUNNING && Hp < (Hpmax * 3 / 4))
+          {
+              debuglog("tactic: Gaining some HP before waking monster");
+              command("Rest before waking", T_RESTING, ".");
+              return 1;
+          }
       }
   }
 
@@ -336,11 +340,15 @@ evaluate_ptr evaluate;
  * cancelmove: Invalidate all stored moves of a particular type.
  */
 
-void cancelmove (movetype)
-int movetype;
+void cancelmove(int movetype)
 {
-  if (movetype == mvtype)
-      mvtype = 0;
+    if (movetype == mvtype)
+        mvtype = 0;
+}
+
+void resetmove()
+{
+    mvtype = 0;
 }
 
 /*

@@ -155,7 +155,11 @@ int dwait (int msgtype, char* f, ...)
       case '(': dumpdatabase (); at (row, col); break;
       case ')': new_mark++; markcycles (DOPRINT); at (row, col); break;
       case '~': saynow ("Version %s, quit at %d", versionstr, quitat); break;
-      case '/': dosnapshot (); break;
+      case '/':
+          printscreen();
+          printscreenattrs();
+          printtimessearched();
+          break;
       default: at (row, col); return (1);
     }
   }

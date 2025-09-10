@@ -141,6 +141,88 @@ void printscreen()
   debuglog ("--------------------------------------------------------------------------------\n");
 }
 
+char get_times_searched_char(int times, char def)
+{
+    if (times == 0)
+    {
+        return def;
+    }
+    if (times >= 1 && times <= 9)
+    {
+        return times - 1 + '1';
+    }
+    if (times >= 10 && times <= 35)
+    {
+        return times - 1 + 'a';
+    }
+    if (times >= 36 && times <= 61)
+    {
+        return times - 1 + 'A';
+    }
+    return '+';
+}
+
+void printtimessearched()
+{
+    int i, j;
+    debuglog("-- times searched -----------------------------------------------------------------\n");
+    debuglog("    123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\n");
+    debuglog("             1111111111222222222233333333334444444444555555555566666666667777777777\n");
+    debuglog("   01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
+
+    for (i = 0; i < MAXROWS; ++i) {
+        debuglog("%02d", i);
+
+        if (i >= s_row1 && i <= s_row2) {
+            debuglog("*");
+        }
+        else {
+            debuglog(" ");
+        }
+
+        for (j = 0; j < MAXCOLS; ++j) {
+            debuglog("%c", get_times_searched_char(timessearched[i][j], screen[i][j]));
+        }
+
+        debuglog("\n");
+    }
+
+    debuglog("--------------------------------------------------------------------------------\n");
+}
+
+
+void printscreenattrs()
+{
+    int i, j;
+    debuglog("-- attrs --------------------------------------------------------------------------\n");
+    debuglog("             1111111111222222222233333333334444444444555555555566666666667777777777\n");
+    debuglog("   01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
+
+    for (i = 0; i < MAXROWS; ++i)
+    {
+        debuglog("%02d", i);
+
+        if (i >= s_row1 && i <= s_row2)
+        {
+            debuglog("*");
+        }
+        else
+        {
+            debuglog(" ");
+        }
+
+        for (j = 0; j < MAXCOLS; ++j)
+        {
+            debuglog("%c", attrchar(scrmap[i][j], ' '));
+        }
+
+        debuglog("\n");
+    }
+
+    debuglog("--------------------------------------------------------------------------------\n");
+}
+
+
 void dumpscreenattr(int attr)
 {
     int i, j;
@@ -791,49 +873,59 @@ void terpbot ()
   }
 }
 
+
+char attrchar(int S, char def)
+{
+    return //(ARROW&S)                   ? 'a' :
+           (TELTRAP&S)                 ? 't' :
+           (TRAPDOR&S)                 ? 'v' :
+           //(GASTRAP&S)                 ? 'g' :
+           //(BEARTRP&S)                 ? 'b' :
+           //(DARTRAP&S)                 ? 's' :
+           //(WATERAP&S)                 ? 'w' :
+           (TRAP&S)                    ? '^' :
+           (PSD&S)                     ? 'P' :
+           (STAIRS&S)                  ? '%' :
+           (RUNOK&S)                   ? '*' :
+           ((DOOR+BEEN&S)==DOOR+BEEN)  ? 'H' :
+           (DOOR&S)                    ? '+' :
+           //((BOUNDARY+BEEN&S)==BOUNDARY+BEEN) ? 'B' :
+           ((ROOM+BEEN&S)==ROOM+BEEN)  ? 'o' :
+           (BEEN&S)                    ? ':' :
+           (HALL&S)                    ? '#' :
+           //((BOUNDARY+WALL&S)==BOUNDARY+WALL) ? 'W' :
+           //(BOUNDARY&S)                ? 'b' :
+           (ROOM&S)                    ? '.' :
+           (CANGO&S)                   ? '_' :
+           (WALL&S)                    ? '|' :
+           (S)                         ? 'X' : def;
+}
+
 /*
  * dumpwalls: Dump the current screen map
  */
 
-void dumpwalls ()
+void dumpwalls()
 {
-  register int   r, c, S;
-  char ch;
+    register int   r, c, S;
+    char ch;
 
-  printexplored ();
+    printexplored();
 
-  for (r = 1; r < STATUSROW; r++) {
-    for (c = 0; c < MAXCOLS; c++) {
-      S=scrmap[r][c];
-      ch = (ARROW&S)                   ? 'a' :
-           (TELTRAP&S)                 ? 't' :
-           (TRAPDOR&S)                 ? 'v' :
-           (GASTRAP&S)                 ? 'g' :
-           (BEARTRP&S)                 ? 'b' :
-           (DARTRAP&S)                 ? 's' :
-           (SCAREM&S)                  ? 'S' :
-           (WATERAP&S)                 ? 'w' :
-           (TRAP&S)                    ? '^' :
-           (STAIRS&S)                  ? '>' :
-           (RUNOK&S)                   ? '%' :
-           ((DOOR+BEEN&S)==DOOR+BEEN)  ? 'D' :
-           (DOOR&S)                    ? 'd' :
-           ((BOUNDARY+BEEN&S)==BOUNDARY+BEEN) ? 'B' :
-           ((ROOM+BEEN&S)==ROOM+BEEN)  ? 'R' :
-           (BEEN&S)                    ? ':' :
-           (HALL&S)                    ? '#' :
-           ((BOUNDARY+WALL&S)==BOUNDARY+WALL) ? 'W' :
-           (BOUNDARY&S)                ? 'b' :
-           (ROOM&S)                    ? 'r' :
-           (CANGO&S)                   ? '.' :
-           (WALL&S)                    ? 'W' :
-           (S)                         ? 'X' : '\0';
-
-      if (ch) mvaddch (r, c, ch);
+    for (r = 1; r < STATUSROW; r++)
+    {
+        for (c = 0; c < MAXCOLS; c++)
+        {
+            S = scrmap[r][c];
+            ch = attrchar(S, 0);
+            if (ch)
+            {
+                mvaddch(r, c, ch);
+            }
+        }
     }
-  }
 
-  at (row, col);
+    at(row, col);
 }
 
 /*
