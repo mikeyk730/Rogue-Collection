@@ -1718,6 +1718,21 @@ pickupafter ()
   return (gotowards("pickup after", agoalr, agoalc, 0));
 }
 
+int is_next_to_door()
+{
+    for (int i = 0; i < 8; ++i)
+    {
+        int r = atdrow(i);
+        int c = atdcol(i);
+        if (onrc(DOOR, r, c))
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 /*
  * dropjunk: This doesnt just drop something.  It destroys it.
  *           When an object is thrown diagonally into a corner,
@@ -1728,10 +1743,27 @@ pickupafter ()
 int dropjunk()
 {
     int obj = haveuseless();
+    if (obj == NONE)
+        return 0;
+
     if (destroyjunk(obj))
         return 1;
 
-    return drop(obj);
+    // Don't drop in a hall or near a door to prevent excessive accidental pickups
+    if (on(ROOM) && !is_next_to_door())
+    {
+        int type = inven[obj].type;
+        char str[100];
+        strcpy(str, inven[obj].str);
+
+        if (drop(obj))
+        {
+            dwait(D_PACK, "Dropped worthless %s '%s'", get_item_type_str(type), str);
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 /*

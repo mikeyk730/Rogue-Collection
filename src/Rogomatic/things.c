@@ -163,13 +163,20 @@ int mdk_destroyjunk(int obj)
         return 0;
 
     int dir = get_destroy_direction();
-    if (dir != NONE &&
-        throw_item(
+    if (dir != NONE)
+    {
+        int type = inven[obj].type;
+        char str[100];
+        strcpy(str, inven[obj].str);
+
+        if (throw_item(
             obj,
             dir,
             tmp("destroy item '%s' %s", inven[obj].str, get_item_type_str(inven[obj].type))))
-    {
-        return 1;
+        {
+            dwait(D_PACK, "Destroyed worthless %s '%s'", get_item_type_str(type), str);
+            return 1;
+        }
     }
 
     return 0;
@@ -193,7 +200,7 @@ int orig_destroyjunk(int obj)
 
 int destroyjunk(int obj)
 {
-    if (enable(B_NEW_DESTROY))
+    if (enable(B_NEW_DESTROY) && can_move_without_pickup())
         return mdk_destroyjunk(obj);
     else
         return orig_destroyjunk(obj);
@@ -755,9 +762,9 @@ int haveuseless() //mdk: similar to useless(obj), but not same :(
          stlmatch (inven[i].str, "adornment") ||
          stlmatch (inven[i].str, "aggravate monster")))
         return (i);
-      else if (itemis(i, WORTHLESS))
+      else if (itemis(i, WORTHLESS) && inven[i].type == wand)
       {
-          dwait(D_ERROR, "Dropping worthless %s '%s'", get_item_type_str(inven[i].type), inven[i].str);
+          dwait(D_INFORM, "Have worthless %s '%s'", get_item_type_str(inven[i].type), inven[i].str);
           return i;
       }
     }

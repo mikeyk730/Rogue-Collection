@@ -881,7 +881,9 @@ char attrchar(int S, char def)
     return //(ARROW&S)                   ? 'a' :
            (TELTRAP&S)                 ? 't' :
            (TRAPDOR&S)                 ? 'v' :
+           (SCAREM&S)                  ? 'M' :
            (USELESS&S)                 ? 'u' :
+           (SLEEPER&S)                 ? 'S' :
            //(GASTRAP&S)                 ? 'g' :
            //(BEARTRP&S)                 ? 'b' :
            //(DARTRAP&S)                 ? 's' :

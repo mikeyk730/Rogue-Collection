@@ -1,4 +1,21 @@
 /*
+- sleeper not removed
+RogueCollection.exe a --rogomatic --seed 1757501405 --genes "77 30 92 24 40 89 60 39 127" --debug-at-level 13
+- stuck after teleport
+RogueCollection.exe a --rogomatic --seed 1757492134 --genes "68 72 85 79 28 36 37 43 127" --debug-at-level 11
+RogueCollection.exe a --rogomatic --seed 1757493384 --genes "21 62 69 84 83 72 81 9 127" --debug-at-level 16
+- stuck with monster at maze door
+RogueCollection.exe a --rogomatic --seed 1757492246 --genes "47 83 85 96 28 30 57 33 127" --debug-at-level 12
+RogueCollection.exe a --rogomatic --seed 1757492607 --genes "47 65 85 5 55 25 37 45 127" --debug-at-level 14
+RogueCollection.exe a --rogomatic --seed 1757492738 --genes "35 55 85 96 28 36 37 44 127" --debug-at-level 16
+- can't find passage of particular shapre
+RogueCollection.exe a --rogomatic --seed 1757492315 --genes "47 65 77 79 28 25 37 44 127" --debug-at-level 15
+- can't find door
+RogueCollection.exe a --rogomatic --seed 1757492753 --genes "47 61 85 76 28 25 37 43 127" --debug-at-level 16
+- stuck
+RogueCollection.exe a --rogomatic --seed 1757492676 --genes "68 65 85 96 28 25 57 31 127" --debug-at-level 7
+RogueCollection.exe a --rogomatic --seed 1757492647 --genes "68 60 85 79 28 40 37 33 127" --debug-at-level 9
+
 -total winners!
 RogueCollection.exe a --rogomatic --seed 1757449377 --genes "80 75 44 24 7 25 45 74 127"
 RogueCollection.exe a --rogomatic --seed 1757406436 --genes "71 56 65 37 26 96 50 82 63" --debug-at-level 1

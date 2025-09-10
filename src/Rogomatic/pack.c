@@ -312,7 +312,7 @@ int inventory(char* msgstart, char* msgend, int picked_up)
   char objname[100];
   char dbname[NAMSIZ];
   char codename[NAMSIZ];
-  int  n, ipos, xknow = 0, inuse = 0, printed = 0, len = 0, useless = 0;
+  int  n, ipos, xknow = 0, inuse = 0, printed = 0, len = 0;
   int  plushit = UNKNOWN, plusdam = UNKNOWN, charges = UNKNOWN;
   stuff what;
   char *xbeg, *xend, *codenamebeg, *codenameend;
@@ -355,9 +355,13 @@ int inventory(char* msgstart, char* msgend, int picked_up)
   }
   else if (picked_up)
   {
-      useless = on(USELESS);
+      if (on(USELESS))
+      {
+          init_traits |= WORTHLESS;
+          unset(USELESS);
+      }
+
       deletestuff(atrow, atcol);
-      unset(USELESS);
   }
 
   if (ISDIGIT(*mess))
@@ -677,10 +681,6 @@ int inventory(char* msgstart, char* msgend, int picked_up)
   if (ipos == currentweapon) usingarrow = (what == missile);
 
   countpack ();
-
-  /* If we picked up a useless thing, note that fact */
-  if (useless)
-      remember (ipos, WORTHLESS);
 
   checkrange = 1;
 

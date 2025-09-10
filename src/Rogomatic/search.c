@@ -165,17 +165,6 @@ int followmap(const char* why, int movetype)
 
   r=atrow+dr; c=atcol+dc;		/* Save next square in registers */
 
-  /* If exploring and are moving to a new hall square, use fmove */
-  if (movetype == EXPLORE &&
-      onrc (HALL|BEEN, targetrow, targetcol) != (HALL|BEEN) &&
-      onrc (HALL,r,c) &&
-      !beingstalked)			/* Feb 10, 1985 - mlm */
-  {
-      fmove ("explore new passage", dir);
-      is_exploring_passage = 1; //todo:mdk
-      return (1);
-  }
-
   /* Timemode tells why we are moving this way, T_RUNNING ==> no search */
   timemode = (movetype == GOTOMOVE)    ? T_MOVING :
              (movetype == EXPLORE)     ? T_EXPLORING :
@@ -193,6 +182,42 @@ int followmap(const char* why, int movetype)
              (movetype == ARCHERYMOVE) ? T_MOVING :
              (movetype == RESTMOVE)    ? T_MOVING :
              (movetype == DOWNMOVE)    ? T_MOVING : T_MOVING;
+
+  if (onrc(SCAREM, atrow + dr, atcol + dc))
+  {
+      if (can_return_to_scare_monster())
+      {
+          dwait(D_ERROR, "Moving back onto scare monster");
+      }
+      else
+      {
+          dwait(D_ERROR, "Destroying scare monster");
+      }
+
+      if (can_move_without_pickup())
+      {
+          /* If we are about to step onto a scare monster scroll, use the 'm' cmd */
+          mmove(tmp("followmap: %s: %s: move onto scare monster", why, get_move_type_str(movetype)), dir, timemode);
+          return 1;
+      }
+  }
+
+  if (can_move_without_pickup() && onrc(USELESS, atrow + dr, atcol + dc))
+  {
+      mmove(tmp("followmap: %s: %s: don't pickup useless item", why, get_move_type_str(movetype)), dir, timemode);
+      return 1;
+  }
+
+  /* If exploring and are moving to a new hall square, use fmove */
+  if (movetype == EXPLORE &&
+      onrc (HALL|BEEN, targetrow, targetcol) != (HALL|BEEN) &&
+      onrc (HALL,r,c) &&
+      !beingstalked)			/* Feb 10, 1985 - mlm */
+  {
+      fmove ("explore new passage", dir);
+      is_exploring_passage = 1; //todo:mdk
+      return (1);
+  }
 
   /* How many times do we wish to search each square before moving? */
   /* Search up to k times if 2 or more foods and deeper than level 6 */
@@ -214,25 +239,6 @@ int followmap(const char* why, int movetype)
   if (timemode != T_RUNNING && onrc (WATERAP, atrow+dr, atcol+dc) &&
       currentarmor != NONE && willrust (currentarmor) && takeoff ())
     { rmove ("step on rust trap", 1, dir, timemode); return (1); }
-
-  if (onrc(SCAREM, atrow+dr, atcol+dc))
-  {
-      if (can_return_to_scare_monster())
-      {
-          dwait(D_ERROR, "Moving back onto scare monster");
-      }
-      else
-      {
-          dwait(D_ERROR, "Destroying scare monster");
-      }
-
-      if (can_move_without_pickup())
-      {
-          /* If we are about to step onto a scare monster scroll, use the 'm' cmd */
-          mmove("move on scare monster", dir, timemode);
-          return 1;
-      }
-  }
 
   int to_held = will_hit_monster(dir, HELD);
   int to_asleep = will_hit_monster(dir, ASLEEP);

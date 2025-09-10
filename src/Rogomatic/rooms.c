@@ -510,7 +510,8 @@ void updateat ()
 
       if (sum >= 3)
       {
-          markexplored(tmp("room %d has %d connections", zone, sum), atrow0, atcol0); //todo:mdk why?
+          //If we've gotten to 2 other rooms from this passage, it's a gone room.
+          markexplored(tmp("room %d has %d connections", zone, sum), atrow0, atcol0);
       }
     }
   }
@@ -585,7 +586,7 @@ void updateat ()
       maze_evidence[zone]++;
       if (!is_maze(zone) && maze_evidence[zone] >= 3)
       {
-          dwait(D_ERROR, "In a maze room");
+          dwait(D_INFORM, "In a maze room");
           set_is_maze(zone);
       }
   }
@@ -634,16 +635,28 @@ void updateat ()
 void updatepos(char ch, int row, int col)
 {
   char  oldch = screen[row][col], *monster, functionchar();
-  int   seenbefore = onrc (EVERCLR, row, col);
+  int   have_ever_seen_under = onrc (EVERCLR, row, col);
   int   couldgo = onrc (CANGO, row, col);
   int   unseen = !onrc (SEEN, row, col);
   int   rm = whichroom (row, col);
 
   debuglog_protocol ("rooms : updatepos (%c, %d, %d)\n",ch, row, col);
 
+  if (onrc(SLEEPER, row, col))
+  {
+      // if there's any change aside from lighting/darkening the area, it's no longer a sleeper
+      if (ch != oldch && (ch != '#' && ch != ' ') && (oldch != '#' && oldch != ' ')) //todo:mdk if monster of same type replaces, we won't know
+      {
+          debuglog("Clearing sleeper at %d,%d\n", row, col);
+          unsetrc(SLEEPER, row, col);
+          foundnew();
+          resetmove();
+      }
+  }
+
   if (mlistlen && ch != oldch)
   {
-      deletemonster(row, col); //todo:mdk don't clear held monsters that are still awake
+      deletemonster(row, col); //todo:mdk don't clear held monsters that are still alive, but out of sight
   }
 
   //mdk: spaces were causing foundnew to reset state like teleportation count,
@@ -676,7 +689,7 @@ void updatepos(char ch, int row, int col)
 
       setrc (SEEN | CANGO | SAFE | HALL | EVERCLR, row, col);
       unsetrc (DOOR | ROOM | TRAP | ARROW | TRAPDOR | TELTRAP | GASTRAP |
-               BEARTRP | DARTRAP | MONSTER | SCAREM | WALL | SLEEPER | STAIRS, //todo:mdk we forget about passage sleepers when not in our vision
+               BEARTRP | DARTRAP | MONSTER | WALL | SLEEPER | STAIRS, //todo:mdk we forget about passage sleepers when not in our vision. need to only clear sleeper if we're adjacent to the # being added. equivalent of look(). fast moving through passages is a problem, need to set all spaces we passed through as clear/been/not sleeper, does running in passage work the same for unix?
                row, col);
       break;
 
@@ -820,7 +833,12 @@ void updatepos(char ch, int row, int col)
 
           //todo:mdk: consider revvideo: monster is either near us in passage, or detected
 
-          if (seenbefore)
+          if (onrc(SLEEPER, row, col))
+          {
+              dwait(D_ERROR, "Assuming %c at %d,%d is still asleep", ch, row, col);
+              addmonster(ch, row, col, ASLEEP);
+          }
+          else if (have_ever_seen_under)
             addmonster (ch, row, col, AWAKE);
           else if (!onrc (HALL | DOOR, row, col) && !aggravated &&
                    (streq (monster, "floating eye") ||
@@ -985,8 +1003,7 @@ void markexplored(const char* why, int row, int col)
   if (rm != NONE && !(levelmap[rm] & EXPLORED))
   {
     levelmap[rm] |= EXPLORED;
-    int severity = (streq(why, "in lit room") || streq(why, "explore room finished")) ? D_INFORM : D_ERROR;
-    dwait(severity, "Room %d is now explored, %s.", rm, why);
+    dwait(D_INFORM, "Room %d is now explored, %s.", rm, why);
 
     if (!(levelmap[rm] & HASROOM))
     {
