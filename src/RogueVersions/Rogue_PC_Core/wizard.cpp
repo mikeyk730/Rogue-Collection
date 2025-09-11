@@ -215,6 +215,20 @@ bool do_toggle_detect()
     return false;
 }
 
+bool do_toggle_invuln()
+{
+    msg("Toggling invulnerability");
+    game->wizard().toggle_powers("invulnerability");
+    return false;
+}
+
+bool do_create_roaming_monster()
+{
+    msg("Creating monster");
+    create_wandering_monster();
+    return true;
+}
+
 bool do_toggle_wizard()
 {
     if (!game->wizard().enabled()) {

@@ -73,7 +73,8 @@ namespace
         { CTRL('P'), do_toggle_wizard },
     };
     //commands that are recognized only in wizard mode
-    //unmapped ctrl keys: qszvm
+    //unmapped ctrl keys: szm
+    //note: ctrl+m is enter key
     std::map<int, bool(*)()> s_wizard_commands = {
         { '|', do_msg_position },
         { 'C', do_summon_object },
@@ -89,6 +90,8 @@ namespace
         { CTRL('C'), do_add_passages },
         { CTRL('X'), do_toggle_detect },
         { CTRL('G'), do_add_goods },
+        { CTRL('Q'), do_toggle_invuln },
+        { CTRL('V'), do_create_roaming_monster },
 
         { CTRL('O'), do_toggle_powers },
         { CTRL('R'), do_raise_level },

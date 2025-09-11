@@ -24,7 +24,8 @@ bool do_reveal_all();
 bool do_add_goods();
 bool do_toggle_powers();
 bool do_toggle_wizard();
-
+bool do_toggle_invuln();
+bool do_create_roaming_monster();
 
 void debug_screen();
 

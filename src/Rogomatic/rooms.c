@@ -835,7 +835,8 @@ void updatepos(char ch, int row, int col)
 
           if (onrc(SLEEPER, row, col))
           {
-              dwait(D_ERROR, "Assuming %c at %d,%d is still asleep", ch, row, col);
+              int severity = (ch == 'L' || ch == 'N' || ch == 'C' || ch == 'B') ? D_INFORM : D_ERROR;
+              dwait(severity, "Assuming %c at %d,%d is still asleep", ch, row, col);
               addmonster(ch, row, col, ASLEEP);
           }
           else if (have_ever_seen_under)
