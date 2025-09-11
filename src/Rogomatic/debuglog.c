@@ -51,6 +51,7 @@ void debuglog_open()
     if (!debug)
     {
         debug = fopen("debug-rogomatic.log", "w");
+        print_command_line(debug);
     }
 }
 
