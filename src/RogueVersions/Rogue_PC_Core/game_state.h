@@ -45,6 +45,7 @@ struct Options
     bool confused_bugfix() const;
     bool hit_plus_bugfix() const;
     bool throws_affect_mimics() const;
+    bool illegal_commands_wake_monsters() const;
     bool act_like_v1_1() const;
 
     bool disable_scroll_lock() const;

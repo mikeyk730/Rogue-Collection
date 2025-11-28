@@ -141,13 +141,17 @@ void addmsg(const char *format, ...)
     doadd(dest);
 }
 
+int g_is_in_endmsg = 0;
+
 //endmsg: Display a new msg (giving him a chance to see the previous one if it is up there with the -More-)
 void endmsg()
 {
+    g_is_in_endmsg = 1;
+
     game->log("msg", msgbuf);
     strcpy(game->last_message, msgbuf);
     if (game->msg_position) {
-        look(false);
+        look(false); //todo:mdk this can cause a new message when we're already processing one. medusa confused + vorpalized flash
         game->screen().move(0, game->msg_position);
         more();
     }
@@ -157,6 +161,8 @@ void endmsg()
     putmsg(0, msgbuf);
     game->msg_position = newpos;
     newpos = 0;
+
+    g_is_in_endmsg = 0;
 }
 
 bool is_direction(int ch)

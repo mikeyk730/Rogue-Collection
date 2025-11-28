@@ -328,7 +328,10 @@ Monster *wake_monster(Coord p)
         }
 
         if (!stealth)
+        {
+            game->log("monster", std::string("Start running monster ") + monster->m_type);
             monster->start_run(&game->hero());
+        }
     }
     if (monster->causes_confusion() && !game->hero().is_blind() && !monster->is_found() && !monster->powers_cancelled() && monster->is_running())
     {

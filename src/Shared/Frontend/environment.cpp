@@ -91,7 +91,11 @@ void Environment::ApplyArgs(const Args& args)
         Set("replay_pause_at", args.pause_at);
     if (!args.genes.empty())
         Set("genes", args.genes);
-
+    if (!args.debug_at_level.empty())
+    {
+        Set("debug_at_level", args.debug_at_level);
+        Set("logfile", "debug-rogue.log");
+    }
 }
 
 void Environment::Deserialize(std::istream& in)
@@ -125,6 +129,7 @@ void Environment::SetRogomaticValues()
     Set("menu", "false");
     Set("showac", "");
     Set("interactive", "false");
+    Set("illegal_commands_wake_monsters", "false");
 }
 
 void Environment::SetDefaults()
@@ -209,7 +214,7 @@ bool Environment::WriteToOs(bool for_unix)
         return false;
 
     std::string value;
-    if (Get("genes", &value))
+    if (Get("genes", &value)) //todo:mdk: should rogomatic read from ROGUEOPTS?
     {
         SetEnvVariable(("GENES=" + value).c_str());
     }
@@ -220,6 +225,14 @@ bool Environment::WriteToOs(bool for_unix)
     if (IsEqual("rogomatic_debug_break", "true"))
     {
         SetEnvVariable("ROGOMATIC_DEBUG_BREAK=true");
+    }
+    if (Get("rogomatic_log_verbosity", &value))
+    {
+        SetEnvVariable(("ROGOMATIC_LOG_VERBOSITY=" + value).c_str());
+    }
+    if (Get("debug_at_level", &value))
+    {
+        SetEnvVariable(("DEBUG_AT_LEVEL=" + value).c_str());
     }
     if (Get("rogomatic_delay", &value))
     {
@@ -233,7 +246,7 @@ bool Environment::WriteToOs(bool for_unix)
     {
         SetEnvVariable("ROGOMATIC_DEBUG_PROTOCOL=true");
     }
-    if (Get("logfile", &value))
+    if (Get("logfile", &value)) //todo:mdk: remove this and read it from ROGUEOPTS
     {
         SetEnvVariable(("LOGFILE=" + value).c_str());
     }

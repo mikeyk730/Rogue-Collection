@@ -90,17 +90,17 @@ int obj;
       return (0);
     }
     else if (currentweapon == NONE) {
-      command (describe("wield 1 ", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
+      command(tmp("wield 1 %s", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
     }
     else if (itemis(currentweapon, UNCURSED)) {
       cursedweapon=0;
-      command (describe("wield 2 ", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
+      command(tmp("wield 2 %s", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
     }
     else if (itemis(currentweapon, ENCHANTED)
         && (!vorpalize_weapon_can_be_cursed() || !did_read_vorpal)) { //mdk: vorpalized weapon is enchanted but can be cursed
       remember(currentweapon, UNCURSED);
       cursedweapon=0;
-      command (describe("wield 3 ", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
+      command(tmp("wield 3 %s", inven[obj].str), T_HANDLING, "w%c", LETTER(obj));
     }
     else {
 
@@ -117,9 +117,69 @@ int obj;
    * momentatirily on the first escape
    */
   else
-    command (describe("wield 4 ", inven[obj].str), T_HANDLING, "w%cw%c%c", LETTER(obj), ESC, get_repeat_message_key()); /* mdk: this was causing pc rogue to hang. "wc" when weapon cursed would cause "c" to be treated as a command and trigger a more loop */
+  {
+      /* mdk: this was causing pc rogue to hang. "wc" when weapon cursed would cause "c"
+       * to be treated as a command and trigger a more loop. We now use the new protocol for PC
+       */
+      command(
+          tmp("wield 4 %s", inven[obj].str),
+          T_HANDLING,
+          "w%cw%c%c",
+          LETTER(obj),
+          ESC,
+          get_repeat_message_key());
+  }
 
   return (1);
+}
+
+// From the current position, can we throw an item in a certain direction to destroy it?
+int get_destroy_direction()
+{
+    if (!onrc(CANGO, atrow-1, atcol) && !onrc(CANGO, atrow, atcol+1))
+    {
+        return 1;
+    }
+    if (!onrc(CANGO, atrow-1, atcol) && !onrc(CANGO, atrow, atcol-1))
+    {
+        return 3;
+    }
+    if (!onrc(CANGO, atrow+1, atcol) && !onrc(CANGO, atrow, atcol-1))
+    {
+        return 5;
+    }
+    if (!onrc(CANGO, atrow+1, atcol) && !onrc(CANGO, atrow, atcol+1))
+    {
+        return 7;
+    }
+
+    return NONE;
+}
+
+// less risky destroy that doesn't move from the current spot
+int mdk_destroyjunk(int obj)
+{
+    if (obj == NONE)
+        return 0;
+
+    int dir = get_destroy_direction();
+    if (dir != NONE)
+    {
+        int type = inven[obj].type;
+        char str[100];
+        strcpy(str, inven[obj].str);
+
+        if (throw_item(
+            obj,
+            dir,
+            tmp("destroy item '%s' %s", inven[obj].str, get_item_type_str(inven[obj].type))))
+        {
+            dwait(D_PACK, "Destroyed worthless %s '%s'", get_item_type_str(type), str);
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 /*
@@ -128,14 +188,22 @@ int obj;
  *           removed from the game (adapted from dropjunk).
  */
 
-destroyjunk (obj)
-int obj;
+int orig_destroyjunk(int obj)
 {
+    if ((obj != NONE)
+        && (gotocorner() ||
+            throw_item(obj, 7, tmp("destroy item '%s' %s", inven[obj].str, get_item_type_str(inven[obj].type)))))
+        return (1);
 
-  if ((obj != NONE) && (gotocorner () || throw (obj, 7)))
-    return (1);
+    return (0);
+}
 
-  return (0);
+int destroyjunk(int obj)
+{
+    if (enable(B_NEW_DESTROY) && can_move_without_pickup())
+        return mdk_destroyjunk(obj);
+    else
+        return orig_destroyjunk(obj);
 }
 
 /*
@@ -143,8 +211,7 @@ int obj;
  * and returns 1 if it wins and 0 if it fails.
  */
 
-int drop (obj)
-int obj;
+int drop(int obj)
 {
   /* Can't if not there, in use, or on something else or
      dropped something else already */
@@ -155,7 +222,10 @@ int obj;
     return (0);
 
   if ((obj != NONE) && (inven[obj].type == wand))
-    return (destroyjunk (obj));
+  {
+      if (destroyjunk(obj))
+        return 1;
+  }
 
   /* read unknown scrolls or good scrolls rather than dropping them */
   if (inven[obj].type == Scroll &&
@@ -165,13 +235,17 @@ int obj;
        stlmatch (inven[obj].str, "enchant") ||
        stlmatch (inven[obj].str, "genocide") ||
        stlmatch (inven[obj].str, "gold detection") ||
+       stlmatch (inven[obj].str, "food detection") ||
+       (stlmatch (inven[obj].str, "vorpalize weapon") && !did_read_vorpal) ||
        stlmatch (inven[obj].str, "hold monster") ||
        stlmatch (inven[obj].str, "light") ||
        stlmatch (inven[obj].str, "magic mapping") ||
        stlmatch (inven[obj].str, "monster confusion") ||
        stlmatch (inven[obj].str, "remove curse")) &&
       reads (obj))
-    { return (1); }
+  {
+      return (1);
+  }
 
   /* quaff unknown potions or good potions rather than dropping them */
   if (inven[obj].type == potion &&
@@ -182,13 +256,21 @@ int obj;
        stlmatch (inven[obj].str, "healing") ||
        stlmatch (inven[obj].str, "haste self") && !hasted ||
        stlmatch (inven[obj].str, "extra healing") ||
+       stlmatch (inven[obj].str, "see invisible") ||
        stlmatch (inven[obj].str, "restore strength") ||
        stlmatch (inven[obj].str, "gain strength")) &&
       quaff (obj))
-    { return (1); }
+  {
+      return (1);
+  }
 
-  command (describe("drop ", inven[obj].str), T_HANDLING, "d%c", LETTER(obj));
-  return (1);
+  command(
+      tmp("drop '%s' %s", inven[obj].str, get_item_type_str(inven[obj].type)),
+      T_HANDLING,
+      "d%c",
+      LETTER(obj));
+
+  return 1;
 }
 
 /*
@@ -206,7 +288,7 @@ int obj;
     return (0);
   }
 
-  command (describe("quaff ", inven[obj].str), T_HANDLING, "q%c", LETTER(obj));
+  command(tmp("quaff %s", inven[obj].str), T_HANDLING, "q%c", LETTER(obj));
   return (1);
 }
 
@@ -225,7 +307,7 @@ int obj;
     return (0);
   }
 
-  command (describe("read ", inven[obj].str), T_HANDLING, "r%c", LETTER(obj));
+  command(tmp("read %s", inven[obj].str), T_HANDLING, "r%c", LETTER(obj));
   return (1);
 }
 
@@ -256,7 +338,7 @@ int point(int obj, int dir)
             dwait(D_ERROR, "Trying to point unexpected item: %s (%c) of type %s",
                 inven[obj].str,
                 LETTER(obj),
-                get_item_type_string(inven[obj].type));
+                get_item_type_str(inven[obj].type));
             return 0;
         }
         else if (itemis(obj, USELESS))
@@ -265,7 +347,7 @@ int point(int obj, int dir)
         }
     }
 
-    command(describe("zap ", inven[obj].str), T_HANDLING, "%c%c%c",
+    command(tmp("zap %s", inven[obj].str), T_HANDLING, "%c%c%c",
         get_zap_key(),
         keydir[dir],
         LETTER(obj));
@@ -273,35 +355,40 @@ int point(int obj, int dir)
 }
 
 /*
- * throw: build and send a throw object command.
+ * throw_item: build and send a throw object command.
  */
 
-int throw (obj, dir)
-int obj, dir;
+int throw_item(int obj, int dir, const char* description)
 {
-  if (obj < 0 || obj >= invcount) {
-    dwait (D_ERROR, "Trying to throw %c", LETTER (obj));
-    return (0);
-  }
+    if (obj < 0 || obj >= invcount)
+    {
+        dwait(D_ERROR, "Trying to throw invalid item %c", LETTER(obj));
+        return 0;
+    }
 
-  command ("throw", T_HANDLING, "t%c%c", keydir[dir], LETTER(obj));
-  return (1);
+    command(description, T_HANDLING, "t%c%c", keydir[dir], LETTER(obj));
+    return 1;
 }
 
 /*
  * puton: build and send a command to put on a ring.
  */
 
-int puton (obj)
-int obj;
+int puton (int obj)
 {
   dwait(D_RING, "Put on %s", inven[obj].str);
 
   if (leftring == NONE && rightring == NONE)
-    { command (describe("put on ", inven[obj].str), T_HANDLING, "P%cl", LETTER(obj)); return (1); }
+   {
+      command(tmp("put on %s", inven[obj].str), T_HANDLING, "P%cl", LETTER(obj));
+      return (1);
+  }
 
   if (leftring == NONE || rightring == NONE)
-    { command (describe("put on ", inven[obj].str), T_HANDLING, "P%c", LETTER(obj)); return (1); }
+  {
+      command(tmp("put on %s", inven[obj].str), T_HANDLING, "P%c", LETTER(obj));
+      return (1);
+  }
 
   return (0);
 }
@@ -361,11 +448,10 @@ int   row, col;
  * deletestuff: remove the object from the stuff list at location (x,y)
  */
 
-void deletestuff (row, col)
-int   row, col;
+void deletestuff (int row, int col)
 {
   register int   i;
-  unsetrc (STUFF, row, col);
+  unsetrc(STUFF, row, col);
 
   for (i = 0; i < slistlen; ++i)
     if (slist[i].scol == col && slist[i].srow == row) {
@@ -395,8 +481,7 @@ void dumpstuff ()
 /*
  * display: Print a message on line 1 of the screen.
  */
-void display (s)
-char *s;
+void display (const char* s)
 {
   saynow (s);
   msgonscreen=1;
@@ -515,9 +600,7 @@ stuff otype;
  * name which is not in use .
  */
 
-int havenamed (otype,name)
-stuff otype;
-char *name;
+int havenamed (stuff otype, const char* name)
 {
   register int i;
 
@@ -637,7 +720,7 @@ int haveminus ()
  *   and if all those fail return NONE
  */
 
-int haveuseless ()
+int haveuseless() //mdk: similar to useless(obj), but not same :(
 {
   register int i;
 
@@ -649,21 +732,24 @@ int haveuseless ()
           itemis (i, WORTHLESS) && streq (inven[i].str, "arrow"))
         return (i);
       else if (inven[i].type == potion &&
-        (stlmatch (inven[i].str, "blindness") ||
-         stlmatch (inven[i].str, "poison") ||
-         stlmatch (inven[i].str, "confusion") ||
+        (stlmatch (inven[i].str, "poison") ||
          stlmatch (inven[i].str, "magic detection") ||
-         (enable_bugfix(B_PARALYSIS) && stlmatch (inven[i].str, "paralysis")) || //mdk: this code didn't used to get hit, since item was "paralysi" in inventory
          stlmatch (inven[i].str, "hallucination") ||
          stlmatch (inven[i].str, "thirst") ||
          stlmatch (inven[i].str, "food detection") ||
          stlmatch (inven[i].str, "monster detection")))
+        return (i);
+      else if (inven[i].type == potion && !potions_always_hit() &&
+        (stlmatch (inven[i].str, "blindness") ||
+         stlmatch (inven[i].str, "confusion") ||
+         (enable(B_PARALYSIS_FIX) && stlmatch (inven[i].str, "paralysis")))) //mdk: item used to be "paralysi" in inventory, so didn't match here
         return (i);
       else if (inven[i].type == Scroll &&
         (stlmatch (inven[i].str, "sleep") ||
          stlmatch (inven[i].str, "blank") ||
          stlmatch (inven[i].str, "create monster") ||
          stlmatch (inven[i].str, "gold detection") ||
+         (stlmatch(inven[i].str, "vorpalize weapon") && did_read_vorpal) ||
          stlmatch (inven[i].str, "aggravate monsters")))
         return (i);
       else if (!itemis (i, INUSE) && itemis (i, KNOWN) &&
@@ -676,6 +762,11 @@ int haveuseless ()
          stlmatch (inven[i].str, "adornment") ||
          stlmatch (inven[i].str, "aggravate monster")))
         return (i);
+      else if (itemis(i, WORTHLESS) && inven[i].type == wand)
+      {
+          dwait(D_INFORM, "Have worthless %s '%s'", get_item_type_str(inven[i].type), inven[i].str);
+          return i;
+      }
     }
   }
   if (Level > 14) {

@@ -54,11 +54,12 @@ void print_command_line(FILE *errfil)
 {
   fprintf(
     errfil,
-    "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d %d\"\n\n",
+    "RogueCollection.exe %c --rogomatic --seed %d --genes \"%d %d %d %d %d %d %d %d %d\" --debug-at-level %d\n\n",
     get_game_char(),
     g_seed,
     knob[0], knob[1], knob[2], knob[3], knob[4], knob[5], knob[6], knob[7],
-    g_bug_fixes);
+    g_bug_fixes,
+    Level);
 }
 #endif
 
@@ -81,7 +82,7 @@ int dwait (int msgtype, char* f, ...)
   vsprintf (msg, f, args);
   va_end(args);
 
-  debuglog("dwait: %s\n", msg);
+  debuglog("dwait: %s: %s\n", get_debug_str(msgtype), msg);
 
   /* Log the message if the error is severe enough */
   if (!replaying && (msgtype & (D_FATAL | D_ERROR | D_WARNING))) {
@@ -90,8 +91,8 @@ int dwait (int msgtype, char* f, ...)
     sprintf (errfn, "%s/error%s", getRgmDir (), versionstr);
 
     if ((errfil = wopen (errfn, "a")) != NULL) {
-      fprintf (errfil, "Level %d, error %d:  %s\n\n",
-               Level, msgtype, msg);
+      fprintf (errfil, "%d Level %d, error %d:  %s\n\n",
+               g_seed, Level, msgtype, msg);
 #ifdef ROGUE_COLLECTION
     print_command_line(errfil);
 #endif
@@ -136,6 +137,9 @@ int dwait (int msgtype, char* f, ...)
         say ("i=inv, d=debug !=stf, @=mon, #=wls, $=id, ^=flg, &=chr");
         break;
       case 'i': at (1,0); dumpinv ((FILE *) NULL); at (row, col); break;
+      case 'r':
+        redrawscreen();
+        break;
       case 'd': toggledebug (); 	break;
       case 't': transparent = 1;        break;
       case '!': dumpstuff ();           break;
@@ -151,7 +155,11 @@ int dwait (int msgtype, char* f, ...)
       case '(': dumpdatabase (); at (row, col); break;
       case ')': new_mark++; markcycles (DOPRINT); at (row, col); break;
       case '~': saynow ("Version %s, quit at %d", versionstr, quitat); break;
-      case '/': dosnapshot (); break;
+      case '/':
+          printscreen();
+          printscreenattrs();
+          printtimessearched();
+          break;
       default: at (row, col); return (1);
     }
   }
@@ -241,20 +249,14 @@ void toggledebug ()
   char debugstr[100];
   int type = debugging & ~(D_FATAL | D_ERROR | D_WARNING);
 
-  if (debugging == D_ALL)         debugging = D_NORMAL;
+  if (debugging == D_ALL)         debugging = 0;
+  else if (debugging == 0)        debugging = D_NORMAL;
   else if (debugging == D_NORMAL) debugging = D_NORMAL | D_ITEM;
   else if (type == D_ITEM)        debugging = D_NORMAL | D_SCROLL;
   else if (type == D_SCROLL)      debugging = D_NORMAL | D_POTION;
   else if (type == D_POTION)      debugging = D_NORMAL | D_WAND;
   else if (type == D_WAND)        debugging = D_NORMAL | D_RING;
-  else if (type == D_RING)        debugging = D_NORMAL | D_BATTLE;
-  else if (type == D_BATTLE)      debugging = D_NORMAL | D_MESSAGE;
-  else if (type == D_MESSAGE)     debugging = D_NORMAL | D_PACK;
-  else if (type == D_PACK)        debugging = D_NORMAL | D_MONSTER;
-  else if (type == D_MONSTER)     debugging = D_NORMAL | D_CONTROL;
-  else if (type == D_CONTROL)     debugging = D_NORMAL | D_SCREEN;
-  else if (type == D_SCREEN)      debugging = D_NORMAL | D_WARNING;
-  else if (!debug (D_INFORM))     debugging = D_NORMAL | D_WARNING | D_INFORM;
+  else if (type == D_RING)        debugging = D_NORMAL | D_ALL;
   else                            debugging = D_ALL;
 
   strncpy (debugstr, "Debugging :", 100);

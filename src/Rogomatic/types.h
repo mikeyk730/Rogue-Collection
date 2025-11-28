@@ -75,7 +75,7 @@
 # define CANGO    (00000000002)
 # define DOOR     (00000000004)
 # define HALL     (00000000010)
-# define PSD      (00000000020)
+# define PSD      (00000000020) //possible secret door
 # define ROOM     (00000000040)
 # define SAFE     (00000000100)
 # define SEEN     (00000000200)
@@ -101,6 +101,8 @@
 # define EVERCLR  (00400000000)
 # define CHOKE    (01000000000)
 
+const char* describe_tile(int attr);
+
 # define TOPW     (0)
 # define BOTW     (1)
 # define LEFTW    (2)
@@ -112,6 +114,7 @@
 # define ROGINFINITY (10000)
 
 # define NOTAMOVE (-1)
+# define NOTAMOVE_NEWLEVEL (-2)
 
 # define FORCE    (1)
 # define OPTIONAL (0)
@@ -199,6 +202,8 @@ const char* tmode_to_str(int tmode);
 # define D_POTION  (0x2000)
 # define D_WAND    (0x4000)
 # define D_RING    (0x8000)
+
+const char* get_debug_str(int d);
 
 # define D_ALL     (0x03FF)
 # define D_NORMAL  (D_FATAL | D_ERROR)
@@ -300,6 +305,17 @@ const char* tmode_to_str(int tmode);
 
 /* Define a more mnemonic string comparison */
 # define streq(s1,s2) (strcmp ((s1),(s2)) == 0)
+
+inline int starts_with(const char* s, const char* prefix)
+{
+    while (*prefix)
+    {
+        if (*prefix++ != *s++)
+            return 0;
+    }
+
+    return 1;
+}
 
 /* Monster value macros */
 # define maxhitchar(m) (cosmic ? Level*3/2+6 : monatt[(m)-'A'].maxdam)

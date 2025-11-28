@@ -184,27 +184,28 @@ void markchokepts ()
 
 int runaway ()
 {
-  if (on (SCAREM)) {
-    dwait (D_BATTLE, "Not running, on scare monster scroll!");
-    return (0);
+  if (on(SCAREM))
+  {
+    dwait(D_BATTLE, "Not running, on scare monster scroll!");
+    return 0;
   }
 
-  dwait (D_BATTLE | D_SEARCH, "Run away!!!!");
+  dwait(D_BATTLE | D_SEARCH, "Run away!!!!");
 
-  if (on (STAIRS) && !floating)		/* Go up or down */
-    return (goupstairs (RUNNING) || godownstairs (RUNNING));
+  if (on(STAIRS) && !floating)		/* Go up or down */
+    return (goupstairs(RUNNING) || godownstairs(RUNNING));
 
-  if (canrun ())		/* If canrun finds a move, use it */
-    return (followmap (RUNAWAY));
+  if (canrun())		/* If canrun finds a move, use it */
+    return followmap("run away", RUNAWAY);
 
-  return (0);			/* Cant run away */
+  return 0;			/* Cant run away */
 }
 
 /*
  * Canrun: set up a move which will get us away from danger.
  */
 
-int canrun ()
+int canrun()
 {
   int result, oldcomp = compression;
 
@@ -227,11 +228,9 @@ int canrun ()
  *		"The Love Song of J. Alfred Prufrock", T.S. Eliot
  */
 
-int unpin ()
+int unpin()
 {
   int result, oldcomp = compression;
-  int unpininit (), runvalue (), expunpininit (),
-      exprunvalue (), expunpinvalue ();
 
   if (on (SCAREM)) {
     dwait (D_BATTLE, "Not unpinning, on scare monster scroll!");
@@ -249,8 +248,8 @@ int unpin ()
   /* currentrectangle ();   // always done after each move of the rogue // */
 
   compression = 0;	/* Be tense when fleeing */
-  result = (makemove (UNPIN, unpininit, runvalue, REEVAL) ||
-            makemove (UNPINEXP, expunpininit, expunpinvalue, REEVAL));
+  result = (makemove("unpin", UNPIN, unpininit, runvalue, REEVAL) ||
+            makemove("unpin", UNPINEXP, expunpininit, expunpinvalue, REEVAL));
 
   compression = oldcomp;
   return (result);
@@ -261,8 +260,7 @@ int unpin ()
  *             door.
  */
 
-int backtodoor (dist)
-int dist;
+int backtodoor (int dist)
 {
   static int lastcall= -10, stillcount=0, notmoving=0, closest=99;
 
@@ -293,8 +291,11 @@ int dist;
   else if (dist > 0 && (on (DOOR) || nextto (DOOR, atrow, atcol)))
     dwait (D_BATTLE, "backtodoor: next to door, have time");
 
-  else if (makemove (RUNTODOOR, rundoorinit, rundoorvalue, REEVAL))
-    { dwait (D_BATTLE, "Back to the door..."); return (1); }
+  else if (makemove("run to door", RUNTODOOR, rundoorinit, rundoorvalue, REEVAL))
+  {
+      dwait(D_BATTLE, "Back to the door...");
+      return (1);
+  }
 
   return (0);
 }

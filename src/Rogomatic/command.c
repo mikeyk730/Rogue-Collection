@@ -55,9 +55,7 @@ int   d;
 }
 
 /* Move 'count' squares in direction 'd', with time use mode 'mode' */
-void rmove(desc, count, d, mode)
-const char* desc;
-int   count, d, mode;
+void rmove(const char* desc, int count, int d, int mode)
 {
   command (desc, mode, "%d%c", count, keydir[d]);
 }
@@ -151,6 +149,8 @@ void command (const char* description, int tmode, char* f, ...)
     default:  movedir = NOTAMOVE;
   }
 
+  debuglog("movedir %s\n", get_move_dir_str(movedir));
+
   /* If command takes time to execute, mark monsters as sleeping */
   /* If they move, wakemonsters will mark them as awake */
   if (tmode != T_OTHER)
@@ -171,7 +171,7 @@ void command (const char* description, int tmode, char* f, ...)
   if (previous/1000 != current/1000)
   {
       dosnapshot();
-      int severity = (current > 15000) ? D_FATAL : D_WARNING;
+      int severity = (current > 15000) ? D_FATAL : D_ERROR;
       dwait(severity, "Excessive %s for %d turns on level %d", tmode_to_str(tmode), timespent[Level].activity[tmode], Level);
   }
 
@@ -179,6 +179,7 @@ void command (const char* description, int tmode, char* f, ...)
   if (cmd[0] != 'i' && cmd[0] != 'I')
   {
       clear_active_item();
+      is_exploring_passage = 0;
   }
 
   /* Do the inventory stuff */
@@ -206,19 +207,54 @@ char *cmd;
   return (max (times, 1));
 }
 
+int is_dir_key(char c)
+{
+  switch (c)
+  {
+    case 'y':
+    case 'u':
+    case 'h':
+    case 'j':
+    case 'k':
+    case 'l':
+    case 'n':
+    case 'm':
+      return 1;
+  }
+
+  return 0;
+}
+
+int is_command_only_dir_keys(const char* command)
+{
+  for (const char* s = command; *s != 0; ++s)
+  {
+    if (!is_dir_key(*s))
+      return 0;
+  }
+
+  return 1;
+}
+
 /*
  * functionchar: return the function character of a command.
  */
 
-char
-functionchar (cmd)
-char *cmd;
+char functionchar(const char* cmd)
 {
-  register char *s = cmd;
+  if (is_command_only_dir_keys(cmd))
+  {
+    int len = strlen(cmd);
+    return cmd[len - 1];
+  }
 
-  while (ISDIGIT (*s) || *s == 'f') s++;
+  const char *s = cmd;
 
-  return (*s);
+  while (ISDIGIT(*s) || *s == 'f') s++;
+  if (can_move_without_pickup())
+      while (ISDIGIT(*s) || *s == 'm') s++;
+
+  return *s;
 }
 
 /*

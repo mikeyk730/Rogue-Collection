@@ -177,12 +177,13 @@ int quaffpotion ()
       quaff (obj))
     return (1);
 
-  if (cosmic && Str != Strmax &&
+  //mdk: this doesn't work. we don't come down from a trip if we're wearing sustain strength
+  /*if (cosmic && Str != Strmax &&
       (obj = havenamed (potion, "poison")) != NONE) {
     if (wearing ("sustain strength") != NONE && quaff (obj) ||
         findring ("sustain strength"))
       return (1);
-  }
+  }*/
 
   /*
    * Quaff healing to raise our MaxHp
@@ -423,8 +424,7 @@ int handlering ()
  * Could be extended to have an ordering of rings to wear.
  */
 
-int findring (name)
-char *name;
+int findring(char* name)
 {
   int obj;
 
@@ -452,8 +452,7 @@ char *name;
  * fails to move us).		MLM
  */
 
-int grope (turns)
-register int turns;
+int grope(int turns)
 {
   register int k, moves;
 
@@ -495,7 +494,7 @@ findarrow ()
     return (0);
 
   else if (!usingarrow && foundarrowtrap && !on (ARROW) &&
-           gotowards (trapr, trapc, 0))
+           gotowards("findarrow", trapr, trapc, 0))
     { display ("Trying for arrow..."); return (1); }
 
   return (0);
@@ -511,25 +510,50 @@ findarrow ()
  * we can fire from a door, even if we cant shoot through one).
  */
 
-int checkcango (dir, turns)
-register int dir, turns;
+int checkcango(register int dir, register int turns)
 {
-  register int r, c, dr, dc;
+    int dr = deltr[dir];
+    int dc = deltc[dir];
 
-  for (dr = deltr[dir], dc = deltc[dir], r=atrow+dr, c=atcol+dc;
-       turns > 0 && onrc (CANGO | DOOR, r, c) == CANGO;
-       r+=dr, c+=dc, turns--)
-    ;
+    int r = atrow;
+    int c = atcol;
 
-  return (turns==0);
+    while (turns > 0)
+    {
+        r += dr;
+        c += dc;
+
+        if (onrc(CANGO, r, c) != CANGO)
+        {
+            break;
+        }
+
+        if (turns > 1) //mdk: can't throw through a door, but okay if monster is on a door
+        {
+            if (onrc(DOOR, r, c) == DOOR)
+            {
+                break;
+            }
+
+            if (onrc(MONSTER, r, c) == MONSTER)
+            {
+                dwait(D_BATTLE, "Another monster in the way of target");
+                break;
+            }
+        }
+
+        --turns;
+    }
+
+    return (turns == 0);
 }
 
 /*
  * godownstairs: issues a down command and check for the halftimeshow.
  */
 
-int godownstairs (running)
-register int running; /* True ==> don't do anything fancy */
+int godownstairs(int running)
+//register int running; /* True ==> don't do anything fancy */
 {
   register int p;
 
@@ -583,12 +607,14 @@ register int running; /* True ==> don't do anything fancy */
   }
 
   /* If we are running and can run to the next level, do that */
-  if (running && makemove (RUNDOWN, genericinit, downvalue, REEVAL)) {
+  if (running && makemove("run to stairs or trap door", RUNDOWN, genericinit, downvalue, REEVAL)) {
     return (1);
   }
 
   /* If we see the stairs or a trap door, go there */
-  if (!running && makemove (DOWNMOVE, genericinit, downvalue, REUSE)) {
+  if (!running && makemove("move to stairs or trap door", DOWNMOVE, genericinit, downvalue, REUSE))
+  {
+      debuglog("goal: stairs or trap door\n");
     goalr = targetrow; goalc = targetcol;   /* Set a goal (CPU time hack) */
     return (1);
   }
@@ -642,6 +668,32 @@ int plunge ()
   return (0);
 }
 
+
+int mdk_plunge()
+{
+    if (stairrow == NONE && !foundtrapdoor)
+    {
+        return 0;
+    }
+
+    if (have(amulet) != NONE)
+    {
+        return 0;
+    }
+
+    if (Level > 17 && Level < 26 && godownstairs(NOTRUNNING))
+    {
+        if (!on(STAIRS))
+        {
+            saynow("Exiting level ASAP!");
+        }
+
+        return 1;
+    }
+
+    return 0;
+}
+
 /*
  * waitaround: Hang around here waiting for monsters.
  */
@@ -671,15 +723,19 @@ int waitaround ()
 {
   register int i, j;
 
-  if (gotowardsgoal ()) return (1);
+  if (gotowardsgoal("go to goal while waiting")) return (1);
 
   gc = ++gc % 4;
 
   for (i = cb[gc].vertstart; i != cb[gc].vertend; i += cb[gc].vertdelt)
     for (j = cb[gc].horstart; j != cb[gc].horend; j += cb[gc].hordelt)
       if (onrc (BEEN | CANGO | ROOM, i, j) &&
-          !onrc (TRAP, i, j) && gotowards (i, j, 0))
-        { goalr = i; goalc = j; return (1); }
+          !onrc (TRAP, i, j) && gotowards("wait around", i, j, 0))
+      {
+          debuglog("goal: wait around\n");
+          goalr = i; goalc = j;
+          return (1);
+      }
 
   return (0);
 }
@@ -707,7 +763,7 @@ int running;
     /* If we are about to win, dump any magic arrows or minus things */
     if (Level == 1 &&
         ((obj = havearrow ()) != NONE || (obj = haveminus ()) != NONE) &&
-        throw (obj, 0))
+        throw_item(obj, 0, "discard item before winning"))
       { return (1); }
 
     /* No magic arrows, time to leave */
@@ -726,13 +782,20 @@ int running;
 
     /* Not at the top yet, keep on trucking */
     else
-      { command ("go up stairs", T_MOVING, "<"); return (1); }
+    {
+        dwait(D_ERROR, "going up stairs");
+        command ("go up stairs", T_MOVING, "<");
+        return (1);
+    }
   }
 
   /* If we know where the stairs are, go there */
-  else if ((goalr = stairrow) > 0 && (goalc = staircol) > 0 &&
-           gotowards (goalr, goalc, running))
-    return (1);
+  else {
+      debuglog("goal: stairs if known\n");
+      if ((goalr = stairrow) > 0 && (goalc = staircol) > 0 &&
+          gotowards("go to stairs (up)", goalr, goalc, running))
+          return (1);
+  }
 
   return (0);
 }
@@ -820,12 +883,21 @@ int restup ()
  * that square. Calls gotowards which calls bfsearch.
  */
 
-int gotowardsgoal ()
+int gotowardsgoal(const char* why)
 {
   if (goalr > 0 && goalc > 0) { /* Keep on trucking */
-    if (goalr == atrow && goalc == atcol) { goalr = NONE; goalc = NONE; }
-    else if (gotowards (goalr, goalc, 0)) { return (1); }
-    else                                  { goalr = NONE; goalc = NONE; }
+    if (goalr == atrow && goalc == atcol)
+    {
+        goalr = NONE; goalc = NONE;
+    }
+    else if (gotowards(why, goalr, goalc, 0))
+    {
+        return (1);
+    }
+    else
+    {
+        goalr = NONE; goalc = NONE;
+    }
   }
 
   return (0);
@@ -837,7 +909,7 @@ int gotowardsgoal ()
  *		them into the corner (which destroys them).
  */
 
-int gotocorner ()
+int gotocorner()
 {
   int r, c;
 
@@ -846,7 +918,12 @@ int gotocorner ()
   if (debug (D_SCREEN))
     { saynow ("Gotocorner called:"); mvaddch (r, c, 'T'); at (row, col); }
 
-  if (gotowards (r, c, 0)) { goalr=r; goalc=c; return (1); }
+  if (gotowards("go to corner", r, c, 0))
+  {
+      debuglog("goal: corner\n");
+      goalr = r; goalc = c;
+      return (1);
+  }
 
   return (0);
 }
@@ -888,7 +965,7 @@ int shootindark ()
   if ((obj = havemissile ()) == NONE) return (0);
 
   /* Throw the arrow in the arching direction */
-  return (throw (obj, darkdir));
+  return (throw_item(obj, darkdir, "archery in dark"));
 }
 
 /*

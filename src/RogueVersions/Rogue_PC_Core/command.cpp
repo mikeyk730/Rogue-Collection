@@ -73,7 +73,8 @@ namespace
         { CTRL('P'), do_toggle_wizard },
     };
     //commands that are recognized only in wizard mode
-    //unmapped ctrl keys: qszvm
+    //unmapped ctrl keys: szm
+    //note: ctrl+m is enter key
     std::map<int, bool(*)()> s_wizard_commands = {
         { '|', do_msg_position },
         { 'C', do_summon_object },
@@ -89,6 +90,8 @@ namespace
         { CTRL('C'), do_add_passages },
         { CTRL('X'), do_toggle_detect },
         { CTRL('G'), do_add_goods },
+        { CTRL('Q'), do_toggle_invuln },
+        { CTRL('V'), do_create_roaming_monster },
 
         { CTRL('O'), do_toggle_powers },
         { CTRL('R'), do_raise_level },
@@ -268,8 +271,6 @@ void get_command_from_user(Command* command)
 Command get_command()
 {
     game->repeat_last_action = false;
-    look(true);
-
     if (!game->in_run_cmd())
         game->m_stop_at_door = false;
 
@@ -313,7 +314,7 @@ void show_count(int n)
         game->screen().addstr("    ");
 }
 
-bool dispatch_command(Command c)
+CommandResult dispatch_command(Command c)
 {
     //handle directional movement commands
     if (c.is_move())
@@ -337,21 +338,24 @@ bool dispatch_command(Command c)
 
     msg("illegal command '%s'", unctrl(c.ch));
     game->cancel_repeating_cmd();
-    return false;
+    return CommandResult(false, true);
 }
 
 
 void execute_player_command()
 {
-    bool counts_as_turn;
+    CommandResult result;
     do
     {
+        bool wake_monsters = !result.illegal_command || game->options.illegal_commands_wake_monsters();
+        look(wake_monsters);
+
         Command c = get_command();
-        counts_as_turn = dispatch_command(c);
+        result = dispatch_command(c);
 
         //todo: why is this here?
         if (!game->in_run_cmd())
             game->m_stop_at_door = false;
 
-    } while (!counts_as_turn);
+    } while (!result.counts_as_turn);
 }

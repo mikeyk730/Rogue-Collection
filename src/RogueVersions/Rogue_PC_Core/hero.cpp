@@ -445,7 +445,7 @@ bool Hero::can_see_monster(Monster *monster)
     //give the player a hint as to what that object is good for.
     Item* item = get_current_weapon();
     Weapon* weapon = dynamic_cast<Weapon*>(item);
-    if (weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
+    if (!g_is_in_endmsg && weapon && weapon->is_vorpalized_against(monster) && !weapon->did_flash())
     {
         weapon->set_flashed();
         msg(get_text(text_vorpalize_weapon), weapon->name().c_str());

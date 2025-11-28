@@ -13,6 +13,7 @@ struct Args
     std::string gfx;
     bool rogomatic = false;
     bool rogomatic_player = false;
+    std::string debug_at_level;
     std::string seed;
     std::string genes;
     bool print_score = false;

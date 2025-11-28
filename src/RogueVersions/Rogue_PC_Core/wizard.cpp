@@ -215,6 +215,20 @@ bool do_toggle_detect()
     return false;
 }
 
+bool do_toggle_invuln()
+{
+    msg("Toggling invulnerability");
+    game->wizard().toggle_powers("invulnerability");
+    return false;
+}
+
+bool do_create_roaming_monster()
+{
+    msg("Creating monster");
+    create_wandering_monster();
+    return true;
+}
+
 bool do_toggle_wizard()
 {
     if (!game->wizard().enabled()) {
@@ -377,7 +391,9 @@ namespace
     {
         Coord pos = game->hero().position();
         std::ostringstream ss;
-        ss << "Hero at (" << pos.x << "," << pos.y << ")";
+        Room* r = game->hero().room();
+        ss << "Hero at (" << pos.x << "," << pos.y << ") in "
+           << (r->is_maze() ? "maze" : r->is_gone() ? "passage" : "room") << " " << game->hero().room()->m_index;
         add_line("", ss.str().c_str(), "");
     }
 }
@@ -457,7 +473,10 @@ void Cheats::apply_powers()
 
 void Cheats::on_new_level()
 {
-    apply_powers();
+    if (enabled())
+    {
+        apply_powers();
+    }
 }
 
 bool Cheats::is_enabled(const std::string& power) const

@@ -25,6 +25,8 @@ bool isfloor(byte c) {
     return ((c) == FLOOR || (c) == PASSAGE);
 }
 
+int g_test_maze = 0; //mdk: enable to
+
 //do_rooms: Create rooms and corridors with a connectivity graph
 void Level::do_rooms()
 {
@@ -49,14 +51,14 @@ void Level::do_rooms()
         room->reset();
     }
     //Put the gone rooms, if any, on the level
-    left_out = rnd(4);
+    left_out = g_test_maze ? 1 : rnd(4);
     for (i = 0; i < left_out; i++)
     {
         do {
             room = rnd_room();
         } while (room->is_maze());
         room->set_gone();
-        if (room->m_index > 2 && game->get_level() > 10 && rnd(20) < game->get_level() - 9)
+        if (room->m_index > 2 && ((game->get_level() > 10 && rnd(20) < game->get_level() - 9) || g_test_maze))
             room->set_maze();
     }
     //dig and populate all the rooms on the level

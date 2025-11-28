@@ -256,7 +256,7 @@ int game_main(int argc, char **argv, std::shared_ptr<OutputInterface> output, st
             std::ifstream in(args.optfile);
             game->options.from_file(in);
         }
-        game->set_logfile(main_options.get_environment("logfile"));
+        game->set_logfile(game->options.get_environment("logfile"));
         game->process_environment();
     }
 

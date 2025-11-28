@@ -46,17 +46,37 @@ err_doit(int errnoflag, int error, const char *fmt, va_list ap)
   }*/
 }
 
-void debuglog_open (const char *log)
+void debuglog_open()
 {
-  if (g_debug)
-    debug = fopen (log, "w");
+    if (!debug)
+    {
+        debug = fopen("debug-rogomatic.log", "w");
+        print_command_line(debug);
+    }
 }
 
-void debuglog_close (void)
+void debuglog_close()
 {
-  if (debug != NULL)
-    fclose (debug);
+    if (debug)
+        fclose(debug);
+
+    debug = NULL;
 }
+
+void toggledebuglog()
+{
+    if (debug)
+    {
+        saynow("Closing debug log");
+        debuglog_close();
+    }
+    else
+    {
+        saynow("Opening debug log");
+        debuglog_open();
+    }
+}
+
 
 void debuglog (const char *fmt, ...)
 {
@@ -67,11 +87,9 @@ void debuglog (const char *fmt, ...)
   va_end (ap);
 }
 
-int g_verbose = 0; //todo:mdk add config
-
 void debuglog_protocol(const char* fmt, ...)
 {
-    if (g_verbose)
+    if (g_verbose_logs)
     {
         va_list  ap;
 

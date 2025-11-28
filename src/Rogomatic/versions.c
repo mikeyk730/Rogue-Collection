@@ -18,7 +18,7 @@ int striking_takes_2_charges()
 
 int can_step_on_scare_monster_if_inv_full()
 {
-    return version < RV53A;
+    return version < RV53A || is_pc_version();
 }
 
 int can_move_without_pickup()
@@ -167,12 +167,27 @@ int vorpalize_weapon_can_be_cursed()
     return version == RVPC11;
 }
 
+int can_throw_potions()
+{
+    return is_pc_version() && enable(B_THROW_POTIONS);
+}
+
+int potions_always_hit()
+{
+    return can_throw_potions() && version == RVPC148;
+}
+
 int needs_msg_clear()
 {
     return version == RV53NMT || version == RV52A || is_pc_version();
 }
 
-int enable_bugfix(int bug)
+int can_monsters_enter_mazes()
+{
+    return !is_pc_version();
+}
+
+int enable(int bug)
 {
     return g_bug_fixes & bug;
 }

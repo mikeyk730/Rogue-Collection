@@ -40,7 +40,7 @@ static char *stuffmess [] = {
   "none"
 };
 
-const char* get_item_type_string(int type)
+const char* get_item_type_str(int type)
 {
   return stuffmess[type];
 }
@@ -287,6 +287,7 @@ void doresetinv ()
 
   usesynch = 1;
   checkrange = 0;
+  lastwand = 0;
 
   for(i=0; i<MAXINV; ++i) {
     inven[i].str = space[i];
@@ -305,14 +306,13 @@ void doresetinv ()
 
 # define xtr(w,b,e,k) {what=(w);xbeg=mess+(b);xend=mend-(e);xknow|=(k);}
 
-int inventory (msgstart, msgend)
-char *msgstart, *msgend;
+int inventory(char* msgstart, char* msgend, int picked_up)
 {
   register char *p, *q, *mess = msgstart, *mend = msgend;
   char objname[100];
   char dbname[NAMSIZ];
   char codename[NAMSIZ];
-  int  n, ipos, xknow = 0, newitem = 0, inuse = 0, printed = 0, len = 0;
+  int  n, ipos, xknow = 0, inuse = 0, printed = 0, len = 0;
   int  plushit = UNKNOWN, plusdam = UNKNOWN, charges = UNKNOWN;
   stuff what;
   char *xbeg, *xend, *codenamebeg, *codenameend;
@@ -336,10 +336,15 @@ char *msgstart, *msgend;
     mend-=1;
 
   if (mess[1] == ')') // handle format: a) item description
-    { newitem = 1; ipos = DIGIT(*mess); mess += 3;}
+  {
+      ipos = DIGIT(*mess);
+      mess += 3;
+  }
   else // handle format: item description (a)
-    { ipos = DIGIT(mend[-2]); mend -= 4; }
-
+  {
+      ipos = DIGIT(mend[-2]);
+      mend -= 4;
+  }
 
   if ((ipos < 0) || (ipos > MAXINV)) {
     len = msgend - msgstart;
@@ -348,9 +353,15 @@ char *msgstart, *msgend;
            MAXINV, ipos, invcount, msgstart, mess);
     return(printed);
   }
-  else {
-    deletestuff (atrow, atcol);
-    unsetrc (USELESS, atrow, atcol);
+  else if (picked_up)
+  {
+      if (on(USELESS))
+      {
+          init_traits |= WORTHLESS;
+          unset(USELESS);
+      }
+
+      deletestuff(atrow, atcol);
   }
 
   if (ISDIGIT(*mess))
@@ -546,7 +557,7 @@ char *msgstart, *msgend;
       pending_call_letter = LETTER (ipos);
       xknow = KNOWN;
 
-      if (newitem) {
+      if (picked_up) {
         at (0,0);
 
         if (n == 1) printw ("a ");
@@ -585,15 +596,14 @@ char *msgstart, *msgend;
     }
   }
 
-  //todo:mdk inventory is reset a lot, and newitem will always be true during a reset. things like lastfoodlevel are not accurate
   /* If new item, record the change */
-  if (newitem && what == armor)
+  if (picked_up && what == armor)
     newarmor = 1;
-  else if (newitem && what == ring)
+  else if (picked_up && what == ring)
     newring = 1;
-  else if (newitem && what == food)
+  else if (picked_up && what == food)
     { newring = 1; lastfoodlevel = Level; }
-  else if (newitem && (what == hitter || what == missile || what == wand))
+  else if (picked_up && (what == hitter || what == missile || what == wand))
     newweapon = 1;
 
   /* If the object is an old object, set its count, else allocate */
@@ -671,10 +681,6 @@ char *msgstart, *msgend;
   if (ipos == currentweapon) usingarrow = (what == missile);
 
   countpack ();
-
-  /* If we picked up a useless thing, note that fact */
-  if (newitem && on (USELESS))	remember (ipos, WORTHLESS);
-  else if (newitem)		forget (ipos, WORTHLESS);
 
   checkrange = 1;
 

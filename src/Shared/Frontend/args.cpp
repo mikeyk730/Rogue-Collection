@@ -49,6 +49,10 @@ bool Args::LoadArg(const std::string& arg, const std::string& next)
         pause_at = next;
         return true;
     }
+    else if (arg == "--debug-at-level") {
+        debug_at_level = next;
+        return true;
+    }
     else if (arg == "--seed") {
         seed = next;
         return true;

@@ -114,8 +114,7 @@ scrolldown (void)
   }
 }
 
-void
-printscreen (void)
+void printscreen()
 {
   int i, j;
   debuglog ("-- cursor  [%2d, %2d] [%c] [%3d] -------------------------------------------------\n", row, col, screen[row][col], screen[row][col]);
@@ -133,9 +132,6 @@ printscreen (void)
     }
 
     for (j = 0; j < MAXCOLS; ++j) {
-      if (i == row && j == col)
-        debuglog ("_");
-      else
         debuglog ("%c", screen[i][j]);
     }
 
@@ -145,7 +141,133 @@ printscreen (void)
   debuglog ("--------------------------------------------------------------------------------\n");
 }
 
+char get_times_searched_char(int times, char def)
+{
+    if (times == 0)
+    {
+        return def;
+    }
+    if (times >= 1 && times <= 9)
+    {
+        return times - 1 + '1';
+    }
+    if (times >= 10 && times <= 35)
+    {
+        return times - 1 + 'a';
+    }
+    if (times >= 36 && times <= 61)
+    {
+        return times - 1 + 'A';
+    }
+    return '+';
+}
+
+void printtimessearched()
+{
+    int i, j;
+    debuglog("-- times searched -----------------------------------------------------------------\n");
+    debuglog("    123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ\n");
+    debuglog("             1111111111222222222233333333334444444444555555555566666666667777777777\n");
+    debuglog("   01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
+
+    for (i = 0; i < MAXROWS; ++i) {
+        debuglog("%02d", i);
+
+        if (i >= s_row1 && i <= s_row2) {
+            debuglog("*");
+        }
+        else {
+            debuglog(" ");
+        }
+
+        for (j = 0; j < MAXCOLS; ++j) {
+            debuglog("%c", get_times_searched_char(timessearched[i][j], screen[i][j]));
+        }
+
+        debuglog("\n");
+    }
+
+    debuglog("--------------------------------------------------------------------------------\n");
+}
+
+
+void printscreenattrs()
+{
+    int i, j;
+    debuglog("-- attrs --------------------------------------------------------------------------\n");
+    debuglog("             1111111111222222222233333333334444444444555555555566666666667777777777\n");
+    debuglog("   01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
+
+    for (i = 0; i < MAXROWS; ++i)
+    {
+        debuglog("%02d", i);
+
+        if (i >= s_row1 && i <= s_row2)
+        {
+            debuglog("*");
+        }
+        else
+        {
+            debuglog(" ");
+        }
+
+        for (j = 0; j < MAXCOLS; ++j)
+        {
+            debuglog("%c", attrchar(scrmap[i][j], ' '));
+        }
+
+        debuglog("\n");
+    }
+
+    debuglog("--------------------------------------------------------------------------------\n");
+}
+
+
+void dumpscreenattr(int attr)
+{
+    int i, j;
+    debuglog("             1111111111222222222233333333334444444444555555555566666666667777777777\n");
+    debuglog("   01234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
+
+    for (i = 0; i < MAXROWS; ++i) {
+        debuglog("%02d", i);
+
+        if (i >= s_row1 && i <= s_row2) {
+            debuglog("*");
+        }
+        else {
+            debuglog(" ");
+        }
+
+        for (j = 0; j < MAXCOLS; ++j) {
+            if (onrc(attr, i, j))
+            {
+                debuglog("X");
+            }
+            else
+            {
+                debuglog("%c", screen[i][j]);
+            }
+        }
+
+        debuglog("\n");
+    }
+
+    debuglog("--------------------------------------------------------------------------------\n");
+}
+
 void process_delayed_update();
+
+// Called when we are about to overwrite the top line.
+// This is a place for hacks until I can understand the protocol better
+void mdk_check_msg()
+{
+    const char* top = &screen[0][0];
+    if (starts_with(top, "There is something there already"))
+    {
+        terpmes();
+    }
+}
 
 /*
  * Getrogue: Sensory interface.
@@ -175,14 +297,19 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
   newdoors = doorlist;			/* no new doors found yet */
   atrow0 = atrow; atcol0 = atcol;	/* Save our current posistion */
+  isnewloc = 0;
   s = waitstr;				/* FSM to check for the wait msg */
   m = "re--";				/* FSM to check for '--More--' */
   call = "Call it:";			/* FSM to check for 'Call it:' */
   q = "(* for list): ";			/* FSM to check for prompt */
   d = GAMEOVER;			/* FSM to check for tombstone grass */
 
-  if (moved)				/* If we moved last time, put any */
-    { sleepmonster (); moved = 0; }	/* Old monsters to sleep */
+  //todo:mdk moved is off by a frame, not detecting wraith as sleeping, RogueCollection.exe a --rogomatic --seed 1756923471 --genes "53 52 68 31 21 80 11 30 31"
+  if (moved)				/* If we moved last time, put any */ //todo:mdk code to sleep to see if something is awake doesn't do anything??
+  {
+      sleepmonster(); /* Old monsters to sleep */
+      moved = 0;
+  }
 
   /* debugging info */
   if debug(D_MESSAGE) {
@@ -268,12 +395,12 @@ int   onat;                             /* 0 ==> Wait for waitstr
         }*/
 
         // mdk: try to break loop
-        if (morecount > 200)
+        /*if (morecount >= 200)
         {
             dwait(D_WARNING, "Trying to break out of More loop");
             sendnow("%c %c;", ESC, ESC);
         }
-        else
+        else*/
         {
             /* Send a space (and possibly a semicolon) to clear the message */
             if (onat == 2) sendnow(" ;");
@@ -281,7 +408,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
         }
 
         /* Clear the --More-- of the end of the message */
-        for (i = col - 7; i < col; screen[0][i++] = ' ');
+        for (i = col - 7; i <= col; screen[0][i++] = ' ');
 
         terpmes ();			/* Interpret the message */
       }
@@ -335,6 +462,8 @@ int   onat;                             /* 0 ==> Wait for waitstr
         break;
 
       case CE_TOK:
+        if (row == 0)
+          mdk_check_msg();
 
         if (row && row < STATUSROW)
           for (i = col; i < MAXCOLS; i++) {
@@ -501,7 +630,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
           }
           // mdk: previously, we'd get a update for the 2nd row of the status bar, and treat it as
           // the map. We'd track monsters like H, W, and F from the Hungry, Weak, and Faint messages
-          else if (row > STATUSROW && enable_bugfix(B_STATUS_FIX))
+          else if (row > STATUSROW && enable(B_STATUS_FIX))
           {
           }
           else {
@@ -511,7 +640,7 @@ int   onat;                             /* 0 ==> Wait for waitstr
                   // mdk: if we get 2 updates for the space that the player is on, we shouldn't process
                   // the tile underneath the player. This fixes a bug where we'd try to drop an item on
                   // a trap infinitely
-                  if (enable_bugfix(B_TILE_FIX))
+                  if (enable(B_TILE_FIX))
                   {
                       delayed_updates[row][col] = 0;
                   }
@@ -539,6 +668,8 @@ int   onat;                             /* 0 ==> Wait for waitstr
         }
         else if (col == 0)
         {
+            mdk_check_msg();
+
             // save old contents of 0,0
             screen00 = screen[0][0];
         }
@@ -564,8 +695,9 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
   if (botprinted) terpbot ();
 
-  if (atrow != atrow0 || atcol != atcol0) {
-    updateat ();	/* Changed position, record the move */
+  if (atrow != atrow0 || atcol != atcol0)
+  {
+    updateat();	/* Changed position, record the move */
     moved = 1;		/* Indicate that we moved */
     wakemonster (8);	/* Wake up adjacent mean monsters */
     currentrectangle();	/* Keep current rectangle up to date.   LGCH */
@@ -613,8 +745,10 @@ int   onat;                             /* 0 ==> Wait for waitstr
 
   if (!emacs && !terse) refresh ();
 
-  printscreen ();
-
+  printscreen();
+  if (debug)
+      dumpinv(debug);
+  printscreenattrs();
 }
 
 void process_delayed_update()
@@ -741,48 +875,62 @@ void terpbot ()
   }
 }
 
+
+char attrchar(int S, char def)
+{
+    return //(ARROW&S)                   ? 'a' :
+           (TELTRAP&S)                 ? 't' :
+           (TRAPDOR&S)                 ? 'v' :
+           (SCAREM&S)                  ? 'M' :
+           (USELESS&S)                 ? 'u' :
+           (SLEEPER&S)                 ? 'S' :
+           //(GASTRAP&S)                 ? 'g' :
+           //(BEARTRP&S)                 ? 'b' :
+           //(DARTRAP&S)                 ? 's' :
+           //(WATERAP&S)                 ? 'w' :
+           (TRAP&S)                    ? '^' :
+           (PSD&S)                     ? 'P' :
+           (STAIRS&S)                  ? '%' :
+           (RUNOK&S)                   ? '*' :
+           ((DOOR+BEEN&S)==DOOR+BEEN)  ? 'H' :
+           (DOOR&S)                    ? '+' :
+           //((BOUNDARY+BEEN&S)==BOUNDARY+BEEN) ? 'B' :
+           ((ROOM+BEEN&S)==ROOM+BEEN)  ? 'o' :
+           (BEEN&S)                    ? ':' :
+           (HALL&S)                    ? '#' :
+           //((BOUNDARY+WALL&S)==BOUNDARY+WALL) ? 'W' :
+           //(BOUNDARY&S)                ? 'b' :
+           (ROOM&S)                    ? '.' :
+           (CANGO&S)                   ? '_' :
+           (WALL&S)                    ? '|' :
+           (S)                         ? 'X' : def;
+}
+
 /*
  * dumpwalls: Dump the current screen map
  */
 
-void dumpwalls ()
+void dumpwalls()
 {
-  register int   r, c, S;
-  char ch;
+    register int   r, c, S;
+    char ch;
 
-  printexplored ();
+    printexplored();
 
-  for (r = 1; r < STATUSROW; r++) {
-    for (c = 0; c < MAXCOLS; c++) {
-      S=scrmap[r][c];
-      ch = (ARROW&S)                   ? 'a' :
-           (TELTRAP&S)                 ? 't' :
-           (TRAPDOR&S)                 ? 'v' :
-           (GASTRAP&S)                 ? 'g' :
-           (BEARTRP&S)                 ? 'b' :
-           (DARTRAP&S)                 ? 's' :
-           (WATERAP&S)                 ? 'w' :
-           (TRAP&S)                    ? '^' :
-           (STAIRS&S)                  ? '>' :
-           (RUNOK&S)                   ? '%' :
-           ((DOOR+BEEN&S)==DOOR+BEEN)  ? 'D' :
-           (DOOR&S)                    ? 'd' :
-           ((BOUNDARY+BEEN&S)==BOUNDARY+BEEN) ? 'B' :
-           ((ROOM+BEEN&S)==ROOM+BEEN)  ? 'R' :
-           (BEEN&S)                    ? ':' :
-           (HALL&S)                    ? '#' :
-           ((BOUNDARY+WALL&S)==BOUNDARY+WALL) ? 'W' :
-           (BOUNDARY&S)                ? 'b' :
-           (ROOM&S)                    ? 'r' :
-           (CANGO&S)                   ? '.' :
-           (WALL&S)                    ? 'W' :
-           (S)                         ? 'X' : '\0';
-
-      if (ch) mvaddch (r, c, ch);
+    for (r = 1; r < STATUSROW; r++)
+    {
+        for (c = 0; c < MAXCOLS; c++)
+        {
+            S = scrmap[r][c];
+            ch = attrchar(S, 0);
+            if (ch)
+            {
+                mvaddch(r, c, ch);
+            }
+        }
     }
-  }
 
-  at (row, col);
+    at(row, col);
 }
 
 /*
@@ -967,11 +1115,11 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
   }
   else if (have (amulet) != NONE)
   {
-    dwait (D_WARNING, "Good game: Found amulet!");
+    dwait (D_WARNING, "Good game: Found amulet! (died to %s on level %d)", reason, Level);
   }
   else if (MaxLevel >= 20)
   {
-    dwait (D_WARNING, "Good game: Got to level %d", MaxLevel);
+    dwait (D_WARNING, "Good game: Got to level %d (died to %s)", MaxLevel, reason);
   }
 
   if (streq(reason, "starvation"))
@@ -1049,9 +1197,9 @@ int terminationtype;            /* SAVED, FINSISHED, or DIED */
   /* Send the requisite handshaking to Rogue */
   if (terminationtype == DIED)
     if (version == RV54A || version == RVPC11 || version == RVPC148)
-      sendnow ("\n\n");
+      sendnow ("\n\n\n\n");
     else
-      sendnow ("\n");
+      sendnow ("\n\n\n");
   else if (terminationtype == FINISHED)
     sendnow ("Qy\n");
   else
@@ -1091,7 +1239,7 @@ char *mess;
  */
 
 /* VARARGS1 */
-void say (char* f, ...)
+void say (const char* f, ...)
 {
     va_list args;
     va_start(args, f);
@@ -1099,7 +1247,7 @@ void say (char* f, ...)
     va_end(args);
 }
 
-void say_impl (char* f, va_list args)
+void say_impl (const char* f, va_list args)
 {
   char buf[BUFSIZ], *b;
 
@@ -1114,6 +1262,7 @@ void say_impl (char* f, va_list args)
     at (row, col);
 
     printf("%s\n", buf);
+    debuglog("say: %s\n", buf);
   }
 }
 
@@ -1123,7 +1272,7 @@ void say_impl (char* f, va_list args)
  */
 
 /* VARARGS1 */
-void saynow (char* f, ...)
+void saynow (const char* f, ...)
 {
   if (!emacs && !terse) {
     va_list args;
@@ -1193,7 +1342,7 @@ void pauserogue ()
   at (STATUSROW, 0);
   addstr ("--press space to continue--");
   clrtoeol ();
-  refresh ();
+  refresh();
 
   waitforspace ();
 

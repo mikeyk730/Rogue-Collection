@@ -95,8 +95,7 @@ char *monster;
  * history array.  Return -1 if the monster is not in the table.
  */
 
-int findmonster (monster)
-char *monster;
+int findmonster(const char* monster)
 {
   register int m;
 

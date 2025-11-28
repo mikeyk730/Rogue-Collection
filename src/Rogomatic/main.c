@@ -1,10 +1,143 @@
 /*
+- sleeper not removed
+RogueCollection.exe a --rogomatic --seed 1757501405 --genes "77 30 92 24 40 89 60 39 127" --debug-at-level 13
+- stuck after teleport
+RogueCollection.exe a --rogomatic --seed 1757492134 --genes "68 72 85 79 28 36 37 43 127" --debug-at-level 11
+RogueCollection.exe a --rogomatic --seed 1757493384 --genes "21 62 69 84 83 72 81 9 127" --debug-at-level 16
+- stuck with monster at maze door
+RogueCollection.exe a --rogomatic --seed 1757492246 --genes "47 83 85 96 28 30 57 33 127" --debug-at-level 12
+RogueCollection.exe a --rogomatic --seed 1757492607 --genes "47 65 85 5 55 25 37 45 127" --debug-at-level 14
+RogueCollection.exe a --rogomatic --seed 1757492738 --genes "35 55 85 96 28 36 37 44 127" --debug-at-level 16
+- can't find passage of particular shapre
+RogueCollection.exe a --rogomatic --seed 1757492315 --genes "47 65 77 79 28 25 37 44 127" --debug-at-level 15
+- can't find door
+RogueCollection.exe a --rogomatic --seed 1757492753 --genes "47 61 85 76 28 25 37 43 127" --debug-at-level 16
+- stuck
+RogueCollection.exe a --rogomatic --seed 1757492676 --genes "68 65 85 96 28 25 57 31 127" --debug-at-level 7
+RogueCollection.exe a --rogomatic --seed 1757492647 --genes "68 60 85 79 28 40 37 33 127" --debug-at-level 9
+
+-total winners!
+RogueCollection.exe a --rogomatic --seed 1757449377 --genes "80 75 44 24 7 25 45 74 127"
+RogueCollection.exe a --rogomatic --seed 1757406436 --genes "71 56 65 37 26 96 50 82 63" --debug-at-level 1
+RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 1
+-amulet
+RogueCollection.exe a --rogomatic --seed 1757393291 --genes "26 60 9 75 18 67 15 51 63" --debug-at-level 25
+lvl 26: doesn't search for obvious door. Goes for item instead of stairs
+RogueCollection.exe a --rogomatic --seed 1757396402 --genes "75 60 35 15 26 78 15 99 63" --debug-at-level 24
+-lvl 26
+RogueCollection.exe a --rogomatic --seed 1757392587 --genes "26 60 35 15 26 78 15 51 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757394731 --genes "45 60 75 49 26 78 52 42 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757395313 --genes "36 91 35 13 26 78 44 92 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757419300 --genes "80 44 85 26 37 7 50 94 63" --debug-at-level 26
+
 mdk:known issues 2025:
+- should prefer to find rooms before looking at passages in maze room
+RogueCollection.exe a --rogomatic --seed 1757392587 --genes "26 60 35 15 26 78 15 51 63" --debug-at-level 26
+- lvl12:stuck in maze, doesn't know where to search:
+RogueCollection.exe a --rogomatic --seed 1757391656 --genes "95 94 22 61 4 88 25 99 63" --debug-at-level 12
+- lvl25: why search for trap so much after coming off scare monster?
+RogueCollection.exe a --rogomatic --seed 1757417485 --genes "80 44 86 27 37 7 52 99 63" --debug-at-level 25
+- lvl22: waking up HELD T for no reason
+RogueCollection.exe a --rogomatic --seed 1757387955 --genes "63 60 95 61 4 53 97 43 63" --debug-at-level 22
+- lvl12: bad maze strats infinte loop: get hit -> run away -> rest -> get hit -> ...
+RogueCollection.exe a --rogomatic --seed 1757391868 --genes "26 60 35 15 4 53 97 43 63" --debug-at-level 12
+RogueCollection.exe a --rogomatic --seed 1757391878 --genes "26 60 35 15 26 88 19 55 63" --debug-at-level 14
+RogueCollection.exe a --rogomatic --seed 1757388374 --genes "51 51 9 13 8 54 37 89 63" --debug-at-level 12
+- lvl13: unecessary searching in maze room
+RogueCollection.exe a --rogomatic --seed 1757388537 --genes "63 60 95 15 19 78 44 42 63" --debug-at-level 13
+- lvl17: bad maze strats against phantom
+RogueCollection.exe a --rogomatic --seed 1757388033 --genes "36 58 35 15 19 78 44 42 63" --debug-at-level 17
+- if map scroll, won't detect maze
+- false positive for maze:
+ RogueCollection.exe a --rogomatic --seed 1757385764 --genes "35 15 4 37 44 31 8 98 63" --debug-at-level 8
+
+                                    #                             #######
+   ----------------------           #                                  -+-
+   |....................+#######################     |                   |
+   |....................|                   #  #     |                   |
+   ----------------------                   #  #    #+
+                                            #  #    #|
+                                            #########    ^  %
+
+-infinte loop: take off armor -> lie in wait -> purt on armor
+RogueCollection.exe a --rogomatic --seed 1757424329 --genes "78 47 92 31 27 97 37 39 63" --debug-at-level 9
+
+ |.......................|
+ |..............%........+##########################
+ |.......................|                         #                    A--
+ |.......................|                         #                   |L@|
+ ---------+---------------                         ####################+.^|
+          #                                                            -+-
+
+- bad logic for seaching in maze rooms. can assume gone
+- shouldn't add 0 dmg to ltm (avghit determines which enemy to prioritize)
+- gets fixated on item in different room
+- rest in corner logic often chooses a far away place
+
+- lvl8: arching L at door infinite loop, lvl18c die to G in maze room
+RogueCollection.exe a --rogomatic --seed 1757306677 --genes "44 68 37 68 26 42 12 84 63" --debug-at-level 8
+
+- lvl26:attack D and J without checking if asleep, lvl26b:bad maze battle strats
+RogueCollection.exe a --rogomatic --seed 1757233220 --genes "50 50 50 50 50 50 50 50 63" --debug-at-level 26
+- lvl26: attack J without check (first J we do step back, second J no)
+RogueCollection.exe a --rogomatic --seed 1757240848 --genes "50 50 50 50 50 50 50 50 63" --debug-at-level 26
+
+- amulet games
+RogueCollection.exe a --rogomatic --seed 1757232274 --genes "50 50 50 50 50 50 50 50 63" --debug-at-level 24
+RogueCollection.exe a --rogomatic --seed 1757233220 --genes "50 50 50 50 50 50 50 50 63" --debug-at-level 26
+RogueCollection.exe a --rogomatic --seed 1757234184 --genes "50 50 50 50 50 50 50 50 63" --debug-at-level 24
+RogueCollection.exe a --rogomatic --seed 1757240848 --genes "50 50 50 50 50 50 50 50 63" --debug-at-level 26
+
+
+
+- lvl12, still getting stuck in tele rooms
+RogueCollection.exe a --rogomatic --seed 1757168967 --genes "95 52 26 77 26 73 21 6 63"
+
+
+- lvl23: bad tactics with maze, and waking a held dragon when on low HP :(
+RogueCollection.exe a --rogomatic --seed 1757123581 --genes "20 45 15 39 65 73 66 66 63"
+- lvl16 waking held U instead of exploring
+RogueCollection.exe a --rogomatic --seed 1757131033 --genes "20 45 25 39 86 7 96 79 63"
+
+- lvl16: can't battle in maze rooms :(. searching when already connected to door
+RogueCollection.exe a --rogomatic --seed 1757107529 --genes "20 24 2 32 86 7 96 79 63"
+
+- reuse teleport trap rather than find new room
+RogueCollection.exe a --rogomatic --seed 1757103596 --genes "20 24 15 16 77 86 96 79 63"
+
+
 - after reading mapping scroll that doesn't reveal doorways, player may not search
   for hidden door leading into passageway, and can get stuck on the level
 - with rust monster and another enemy around, player gets stuck
 - player gets stuck in treasure room deciding between 2 different monsters
   RogueCollection.exe a --rogomatic --seed 1756837966 --genes "84 56 75 11 54 34 86 42 3"
+- double hold of flytrap
+  RogueCollection.exe a --rogomatic --seed 1757003439 --genes "26 62 38 25 32 8 54 73 63"
+- polymorph on flytrap doesn't reset player held status
+- check what happens when want to arch, but another monster is blocking target
+  RogueCollection.exe a --rogomatic --seed 1757003719 --genes "51 62 38 25 32 8 70 84 63"
+- should remember held enemies after walking away
+- when have scare, should prefer to fight in passage, not on door?
+- flytrap with scare, on door?
+  RogueCollection.exe a --rogomatic --seed 1757007370 --genes "39 62 86 34 28 66 21 84 63"
+- cant find exit
+  RogueCollection.exe a --rogomatic --seed 1757007504 --genes "39 62 38 25 32 99 54 84 63"
+- wake up held J on lvl25 to check one door, when another is available. should treat held monster as deterant
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- lvl27 food detection shows where amulet is. do we attempt this? no bee line
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- medusas not confusing player?? still surviving against faint lvl26 on way up
+  RogueCollection.exe a --rogomatic --seed 1757007798 --genes "50 21 6 23 11 17 11 30 63"
+- do we arch fly traps?
+  RogueCollection.exe a --rogomatic --seed 1757009040 --genes "50 57 74 74 45 39 74 27 63"
+- throw 2 hold at same monster monster without resting (if held is target, rest if not at max hp)
+  RogueCollection.exe a --rogomatic --seed 1757015303 --genes "35 21 4 36 69 74 57 35 63"
+- check medusa. if held medusa, rest until unconfused? throw aggressively at medusa
+  RogueCollection.exe a --rogomatic --seed 1757016201 --genes "57 57 4 36 69 76 67 15 63"
+- bad double throw
+  RogueCollection.exe a --rogomatic --seed 1757018291 --genes "35 21 23 54 19 13 67 15 63"
+- don't record 0 damage hits (W+A)
+  RogueCollection.exe a --rogomatic --seed 1757019132 --genes "57 43 17 54 2 1 67 15 63"
 */
 
 /*
@@ -184,6 +317,7 @@ int   ammo = 0;                 /* How many missiles? */
 int   arrowshot = 0;		/* True if an arrow shot us last turn */
 int   atrow, atcol;		/* Current position of the Rogue (@) */
 int   atrow0, atcol0;		/* Position at start of turn */
+int isnewloc;
 int   attempt = 0;		/* Number times we searched whole level */
 int   badarrow = 0;		/* True if cursed/lousy arrow in hand */
 int   beingheld = 0;		/* True if a fungus has ahold of us */
@@ -191,11 +325,13 @@ int   beingstalked = 0;		/* True if recently hit by inv. stalker */
 int   blinded = 0;		/* True if blinded */
 int   blindir = 0;		/* Last direction we moved when blind */
 int   cancelled = 0;		/* True ==> recently zapped w/cancel */
+int   confused_monster = 0;		/* True ==> recently confused monster */
 int   cheat = 0;		/* True ==> cheat, use bugs, etc. */
 int   checkrange = 0;           /* True ==> check range */
 int   chicken = 0;		/* True ==> check run away code */
-int   compression = 1;		/* True ==> move more than one square/turn */
+int   compression = 0;		/* True ==> move more than one square/turn */
 int   confused = 0;		/* True if we are confused */
+int unconfuse_next = 0;
 int   cosmic = 0;		/* True if we are hallucinating */
 int   currentarmor = NONE;	/* Index of our armor */
 int   currentweapon = NONE;     /* Index of our weapon */
@@ -264,6 +400,7 @@ int   revvideo = 0;		/* True if in rev. video mode */
 int   rightring = NONE;		/* Index of our right ring */
 int   rogpid = 0;		/* Pid of rogue process */
 int   room[9];			/* Flags for each room */
+int   maze_evidence[9];
 int   row, col;			/* Current cursor position */
 int   scrmap[MAXROWS][MAXCOLS];		/* Flags bits for level map */
 int   singlestep = 0;		/* True ==> go one turn */
@@ -282,15 +419,19 @@ int   version;			/* Rogue version, integer */
 int   wplusdam = 2;		/* Our plus damage from weapon bonus */
 int   wplushit = 1;		/* Our plus hit from weapon bonus */
 int   zone = NONE;		/* Current screen zone, 0..8 */
-int   zonemap[9][9];		/* Map of zones connections */
-int   g_seed = 0;
-int   g_expect_extra_bytes = 0;
-int   g_move_delay = 0;
-int   g_level_delay = 0;
-int   g_debug = 0;
-int   g_debug_protocol = 0;
+int   zone_connections[9][9];		/* Map of zones connections */
+
+int g_seed = 0;
+int g_move_delay = 0;
+int g_level_delay = 0;
+int g_debug_at_level = 0;
+int g_debug = 0;
+int g_debug_protocol = 0;
+int g_expect_extra_bytes = 0;
+int g_verbose_logs = 0;
 int g_bug_fixes = B_ALL;
 
+int is_exploring_passage = 0;
 
 /* Functions */
 void (*istat)(int);
@@ -391,6 +532,7 @@ jmp_buf  commandtop;
 
 void WaitForDebugger()
 {
+    saynow("Rog-O-Matic is waiting for a debugger to attach...");
 #ifdef _WIN32
     while (!IsDebuggerPresent())
         Sleep(100);
@@ -416,16 +558,28 @@ char *env[];
   }
 
   char* env_value;
-  if ((env_value = getenv("ROGOMATIC_DEBUG_BREAK")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_DEBUG_BREAK")) != NULL)
+  {
       WaitForDebugger();
   }
-  if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_DEBUG_PROTOCOL")) != NULL)
+  {
       g_debug_protocol = strcmp(env_value, "true") == 0;
   }
-  if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_LOG_VERBOSITY")) != NULL)
+  {
+      g_verbose_logs = strcmp(env_value, "verbose") == 0;
+  }
+  if ((env_value = getenv("DEBUG_AT_LEVEL")) != NULL)
+  {
+      g_debug_at_level = atoi(env_value);
+  }
+  if ((env_value = getenv("ROGOMATIC_DELAY")) != NULL)
+  {
       g_move_delay = atoi(env_value);
   }
-  if ((env_value = getenv("ROGOMATIC_LEVEL_DELAY")) != NULL) {
+  if ((env_value = getenv("ROGOMATIC_LEVEL_DELAY")) != NULL)
+  {
       g_level_delay = atoi(env_value);
   }
 
@@ -437,7 +591,10 @@ char *env[];
           &emacs, &terse, &transparent, &quitat);
   }
 
-  debuglog_open("rogomatic.log");
+  if (g_debug)
+  {
+      debuglog_open();
+  }
 
   /*
    * Initialize some storage
@@ -684,7 +841,7 @@ char *env[];
         case 'Y': case 'U': case 'B': case 'N':
         case 'h': case 'j': case 'k': case 'l':
         case 'y': case 'u': case 'b': case 'n':
-        case 's': command ("user input", T_OTHER, "%c", ch); transparent = 1; break;
+        case 's': case '.': command("user input", T_OTHER, "%c", ch); transparent = 1; break;
 
         case 'f': ch = getch ();
 
@@ -767,7 +924,10 @@ char *env[];
           pauserogue ();
           break;
 
-        case 'r': resetinv (); say ("Inventory reset."); break;
+        case 'r':
+          redrawscreen();
+          //resetinv (); say ("Inventory reset.");
+          break;
 
         case 'i': clear (); dumpinv ((FILE *) NULL); pauserogue (); break;
 
@@ -782,7 +942,8 @@ char *env[];
 
         case 'd': toggledebug ();	break;
 
-        case 'e': toggleecho ();        break;
+        case 'e': toggledebuglog(); //mdk toggleecho ();
+            break;
 
         case '!': dumpstuff ();         break;
 
@@ -993,7 +1154,12 @@ void startlesson ()
   /* Cache the parameters for easier use */
   k_srch = knob[K_SRCH];	k_door = knob[K_DOOR];
   k_rest = knob[K_REST];	k_arch = knob[K_ARCH];
-  k_exper = knob[K_EXPER];	k_run = knob[K_RUN];
+  k_exper = knob[K_EXPER];
+
+  k_run = knob[K_RUN];
+  if (enable(B_NERF_RUN_GENE))
+      k_run /= 2;
+
   k_wake = knob[K_WAKE];	k_food = knob[K_FOOD];
 }
 

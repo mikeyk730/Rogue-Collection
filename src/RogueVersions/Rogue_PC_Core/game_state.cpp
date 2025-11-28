@@ -456,6 +456,11 @@ bool Options::hit_plus_bugfix() const
     return get_environment("hplusfix") != "false";
 }
 
+bool Options::illegal_commands_wake_monsters() const
+{
+    return get_environment("illegal_commands_wake_monsters") != "false";
+}
+
 int GameState::get_level()
 {
     return m_level_number;

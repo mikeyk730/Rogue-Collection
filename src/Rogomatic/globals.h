@@ -66,7 +66,7 @@ extern int ammo;		/* Number of missiles in pack */
 extern int arglen;		/* Length of argument space */
 extern int arrowshot;		/* True if trap fired at us this round */
 extern int atrow,atcol;		/* where is the '@'? (us) */
-extern int atrow0,atcol0;	/* where was the '@' last time */
+extern int atrow0,atcol0,isnewloc;	/* where was the '@' last time */
 extern int attempt;		/* # times have we explored this level */
 extern int badarrow;		/* True if we missed with this arrow */
 extern int beingheld;		/* True if being held by a fungus */
@@ -74,11 +74,13 @@ extern int beingstalked;	/* True if an Invisible Stalker is around */
 extern int blinded;		/* True if blinded */
 extern int blindir;		/* Last direction we moved when blind */
 extern int cancelled;		/* Turns till use cancellation again */
+extern int confused_monster;		/* Turns till should confuse a monster again */
 extern int cheat;		/* True ==> cheat to win */
 extern int checkrange;		/* True ==> check range */
 extern int chicken;		/* True ==> test run away code */
 extern int compression;		/* True ==> move multiple squares */
 extern int confused;		/* True if confused */
+extern int unconfuse_next;
 extern int cosmic;		/* True if hallucinating */
 extern int currentarmor;	/* Index of our armor */
 extern int currentweapon;	/* Index of our weapon */
@@ -158,7 +160,7 @@ extern int version;		/* From types.h, set by getrougeversion */
 extern int wplusdam;		/* Weapon damage bonus */
 extern int wplushit;		/* Weapon hit bonus */
 extern int zone;		/* Current zone (0 to 8) */
-extern int zonemap[9][9];	/* Connectivity map */
+extern int zone_connections[9][9];	/* Connectivity map */
 extern int g_seed;
 extern int g_move_delay;
 extern int g_level_delay;
@@ -166,6 +168,8 @@ extern int g_debug;
 extern int g_debug_protocol;
 extern int g_expect_extra_bytes;
 extern int g_bug_fixes;
+extern int g_verbose_logs;
+extern int g_debug_at_level;
 
 //
 // Vorpalize weapon strategy
@@ -214,6 +218,7 @@ extern int	new_mark, new_findroom, new_search, new_stairs, new_arch;
 extern char	timessearched[MAXROWS][MAXCOLS], timestosearch;
 extern int	searchstartr, searchstartc;
 extern int	reusepsd;
+extern FILE* debug;
 
 /* Results of last makemove */
 extern int	ontarget, targetrow, targetcol;
@@ -236,5 +241,8 @@ extern int k_exper;		/* Level on which to experiment with items */
 extern int k_run;		/* Propensity for retreating */
 extern int k_wake;		/* Propensity for waking things up */
 extern int k_food;		/* Propensity for hoarding food (rings) */
+
+extern int searchcount;
+extern int is_exploring_passage;
 
 #include "rogomatic.h"

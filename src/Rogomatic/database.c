@@ -185,7 +185,7 @@ char  *codename;
 char  *name;
 stuff item_type;
 {
-  debuglog("infer: '%s' is '%s' (%s)\n", codename, name, get_item_type_string(item_type));
+  debuglog("infer: '%s' is '%s' (%s)\n", codename, name, get_item_type_str(item_type));
 
   register int i;
 
@@ -223,7 +223,7 @@ char *codename;
     if (streq (dbase[i].fakename, codename))
       return (dbase[i].used);
 
-  dwait (D_PACK, "used: unknown codename '%s'", codename); /* mdk: added dwait */
+  //dwait (D_PACK, "used: unknown codename '%s'", codename); /* mdk: added dwait */
   return 0;
 }
 
